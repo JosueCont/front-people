@@ -1,0 +1,61 @@
+{
+  "TIME_ZONE": "America/Merida",
+  "DB": {
+    "HOST": "localhost",
+    "NAME": "kuiz",
+    "USER": "admin",
+    "PASSWORD": "admin",
+    "PORT": "5432"
+  },
+  "USE_HTTPS": false,
+  "SECURITY": {
+    "SECRET_KEY": "4&n*!ha(vk_135b(@gke%b1y31m220+0cf^gb-6s^doh7ti(9g",
+    "DAYS_TO_ACTIVATE_ACCOUNT": 3,
+    "LOGIN_REDIRECT_URL": "/",
+    "ALLOWED_HOSTS": [
+      "127.0.0.1",
+      "localhost",
+      "*"
+    ]
+  },
+  "DEBUG": true,
+  "URL_SERVER": "http://localhost:8000",
+  "EMAIL": {
+    "EMAIL_USE_TLS": true,
+    "EMAIL_HOST": "smtp.gmail.com",
+    "EMAIL_PORT": 587,
+    "EMAIL_BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+    "EMAIL_HOST_USER": "kiub.cloud@gmail.com",
+    "EMAIL_HOST_PASSWORD": "kiub@2019",
+    "DEFAULT_FROM_EMAIL": "kiub.cloud@gmail.com",
+    "CONTACT_EMAIL": "kiub.cloud@gmail.com"
+  },
+  "LOGGING": {
+    "DEBUG_FILE": "debug.log",
+    "TRACEBACK_FILE": "error.log"
+  },
+  "RECAPTCHA": {
+    "RECAPTCHA_PUBLIC_KEY": "XXXXXXX",
+    "RECAPTCHA_PRIVATE_KEY": "XXXXXXX"
+  },
+  "CELERY": {
+    "BROKER_URL": "amqp://guest:guest@localhost:5672/"
+  },
+  "CACHE": {
+    "BACKEND": "django_redis.cache.RedisCache",
+    "IP": "127.0.0.1",
+    "PORT": 6379,
+    "KEY_PREFIX": "localhost",
+    "TIMEOUT": 300
+  },
+  "AMAZON": {
+    "AWS_ACCESS_KEY_ID": "sdoihioushdih",
+    "AWS_SECRET_ACCESS_KEY": "sdlkfkñjsd//ebU",
+    "S3": {
+      "USE_S3": false,
+      "AWS_STORAGE_BUCKET_NAME": "df",
+      "AWS_S3_CUSTOM_DOMAIN": "df.s3.df.com",
+      "MEDIAFILES_LOCATION": "media"
+    }
+  }
+}
