@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/doc/(?P<format>\.json|\.yaml)/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('api/doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     # Own Django Apps.
+    path('person/', include('people.apps.person.urls')),
 ]
 
 if settings.DEBUG:  # Adding statics only if debug = True

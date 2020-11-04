@@ -2,7 +2,7 @@
   "TIME_ZONE": "America/Merida",
   "DB": {
     "HOST": "localhost",
-    "NAME": "kuiz",
+    "NAME": "people",
     "USER": "admin",
     "PASSWORD": "admin",
     "PORT": "5432"

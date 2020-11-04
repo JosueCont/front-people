@@ -19,6 +19,8 @@ __AFTER_DJANGO_APPS = (  # Apps de terceros o propias que deben cargar después 
 __OWN_APPS = (
     'people.apps.apidoc',
     'people.apps.khonnect',
+    'people.apps.person',
+    'people.apps.business'
 )
 
 __THIRD_PARTY_APPS = (
