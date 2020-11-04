@@ -61,7 +61,7 @@ class Person(models.Model):
 class GeneralPerson(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
-    place_birth = models.DateField(verbose_name=_("Lugar de nacimiento"), null=True, blank=True)
+    place_birth = models.CharField(max_length=150,verbose_name=_("Lugar de nacimiento"), null=True, blank=True)
     nationality = models.CharField(max_length=150, verbose_name=_("Nacionalidad"), null=True, blank=True)
     other_nationality = models.CharField(max_length=150, verbose_name=_("Otra nacionaldiad"), null=True, blank=True)
     availability_travel = models.BooleanField(default=False, verbose_name=_("Disponibilidad para viajar"), null=True, blank=True)
