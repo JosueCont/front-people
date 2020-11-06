@@ -8,6 +8,7 @@ class Relationship(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     name = models.CharField(max_length=150, verbose_name=_("Nombre"))
     code = models.CharField(max_length=50, unique=True, verbose_name=_("Codigo"))
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
 
     def __str__(self):
         return self.name
@@ -21,6 +22,7 @@ class Bank(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     name = models.CharField(max_length=100, null=True, blank=True, verbose_name=_("Nombre"))
     code = models.CharField(max_length=50, unique=True, verbose_name=_("Codigo"))
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
 
     def __str__(self):
         return self.name
@@ -34,6 +36,7 @@ class ExperienceType(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     name = models.CharField(max_length=150, verbose_name=_("Nombre"))
     code = models.CharField(max_length=50, unique=True, verbose_name=_("Codigo"))
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
 
     def __str__(self):
         return self.name
@@ -47,6 +50,7 @@ class ReasonSeparation(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     name = models.CharField(max_length=150, verbose_name=_("Nombre"))
     code = models.CharField(max_length=50, unique=True, verbose_name=_("Codigo"))
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
 
     def __str__(self):
         return self.name
@@ -60,6 +64,7 @@ class LaborRelationship(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     name = models.CharField(max_length=150, verbose_name=_("Nombre"))
     code = models.CharField(max_length=50, unique=True, verbose_name=_("Codigo"))
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
 
     def __str__(self):
         return self.name
