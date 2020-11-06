@@ -1,6 +1,10 @@
+import json
 
-from rest_framework import viewsets
+import requests
+from requests import Response
+from rest_framework import viewsets, status
 
+from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson
@@ -26,12 +30,26 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.filter(is_deleted=False).order_by('id')
     filterset_class = PersonFilters
 
-
-class PersonViewSet(viewsets.ModelViewSet):
-
-    serializer_class = serializers.PersonSerializer
-    queryset = Person.objects.all()
-    filterset_fields = ('id', 'name')
+    def perform_create(self, serializer):
+        config = Config.objects.all().first()
+        try:
+            headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
+            url = f"{config.url_server}/signup/"
+            data = {"first_name": serializer.validated_data["name"],
+                    "last_name": serializer.validated_data["flast_name"] + " " + serializer.validated_data["mlast_name"],
+                    "email": serializer.validated_data["email"],
+                    "password": serializer.validated_data["password"]}
+            response = requests.post(url, json.dumps(data), headers=headers)
+            if response.ok:
+                resp = json.loads(response.text)
+                if resp["level"] == "success":
+                    if 'user_id' in resp:
+                        if resp["user_id"]:
+                            serializer.save(khonnect_id=resp["user_id"])
+                else:
+                    return Response(data={"message": resp["level"]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):

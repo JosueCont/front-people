@@ -7,4 +7,3 @@ class PersonFilters(filters.FilterSet):
     class Meta:
         model = Person
         fields = {'id', 'name'}
-

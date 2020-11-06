@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext as _
-from ..functions import get_clean_uuid
-
+from people.apps.functions import get_clean_uuid
+# people/apps/functions.py
 
 class PersonType(models.Model):
     code = models.CharField(max_length=50, verbose_name=_("Codigo"), unique=True)
@@ -34,7 +34,7 @@ class Job(models.Model):
 class Person(models.Model):
     #Informacion general y requerida pra crear un apersona
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
-    khonnect_id = models.CharField(max_length=40, verbose_name=_("Khonnect id"), help_text=_("Informacion que proviene del microservicio khonnect"))
+    khonnect_id = models.CharField(max_length=40, verbose_name=_("Khonnect id"), null=True, blank=True, help_text=_("Informacion que proviene del microservicio khonnect"))
     name = models.CharField(max_length=150, verbose_name=_("Nombre"))
     flast_name = models.CharField(max_length=150, verbose_name=_("Apellido paterno"))
     mlast_name = models.CharField(max_length=150, verbose_name=_("Apellido materno"))
