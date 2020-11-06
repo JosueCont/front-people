@@ -26,5 +26,6 @@ class PersonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Person
-        # fields = "__all__"
-        exclude = ['khonnect_id']
+        fields = ['name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted', 'is_active', 'person_type', 'job', 'email', 'password']
+        # exclude = ['khonnect_id']
+

@@ -30,8 +30,23 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.filter(is_deleted=False).order_by('id')
     filterset_class = PersonFilters
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validate_data = serializer.validated_data
+        #if hasattr(validate_data, 'email'):
+        del validate_data['email']
+        #if hasattr(validate_data, 'password'):
+        del validate_data['password']
+        instance = Person(**serializer.validated_data)
+        instance.khonnect_id = '123'
+        instance.save()
+        # headers = self.get_success_headers(serializer.data)
+        return Response(data={"message": serializer}, status=status.HTTP_200_OK)
+
+    def perform_create1(self, serializer):
         config = Config.objects.all().first()
+        # serializer.save(khonnect_id='3434')
         try:
             headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
             url = f"{config.url_server}/signup/"

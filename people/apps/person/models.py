@@ -77,3 +77,58 @@ class GeneralPerson(models.Model):
     class Meta:
         verbose_name = _("General")
         verbose_name_plural = _("Generales")
+
+
+class Relationship(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    name = models.CharField(max_length=150, verbose_name=_("Parentesco"))
+
+
+class Family(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    person_id = models.ForeignKey(Person, verbose_name=_("Persona"), on_delete=models.CASCADE)
+    relationship_id = models.ForeignKey(Relationship, verbose_name=_("Parentesco"), on_delete=models.CASCADE)
+    fullname = models.CharField(max_length=40, verbose_name=_("Nombre completo"))
+
+
+class ContactEmergency(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    relationship_id = models.ForeignKey(Relationship, verbose_name=_("Parentesco"), on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, verbose_name=_("Direccion"), on_delete=models.CASCADE)
+    fullname = models.CharField(max_length=150, verbose_name=_("Nombre completo"))
+    phone_one = models.CharField(max_length=150, verbose_name=_("Numero telefonico 1"))
+    phone_two = models.CharField(max_length=150, verbose_name=_("Numero telefonico 2"))
+
+
+class ExperienceType(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    name = models.CharField(max_length=150, verbose_name=_("Tipo de experiencia"))
+
+
+class ReasonSeparation(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    name = models.CharField(max_length=150, verbose_name=_("Tipo de experiencia"))
+
+
+class LaborRelationship(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    name = models.CharField(max_length=150, verbose_name=_("Tipo de experiencia"))
+
+
+class ExperieneJob(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    experience_type = models.ForeignKey(ExperienceType, verbose_name=_("Tipo de experiencia"), on_delete=models.CASCADE)
+    labor_relationship = models.ForeignKey(LaborRelationship, verbose_name=_("Relacion laboral"), on_delete=models.CASCADE)
+    reason_separation = models.ForeignKey(ReasonSeparation, verbose_name=_("Motivo de separacion"), on_delete=models.CASCADE)
+    company = models.CharField(max_length=150, verbose_name=_("Empresa"))
+    since = models.DateTimeField(verbose_name=_("Fecha de inicio"))
+    until = models.DateTimeField(verbose_name=_("Fecha de termino"))
+    turn = models.CharField(max_length=150, verbose_name=_("Giro empresarial"))
+    function = models.CharField(max_length=350, verbose_name=_("Funciones"))
+    startin_salary = models.CharField(max_length=150, verbose_name=_("Salario incial"))
+    last_salary = models.CharField(max_length=150, verbose_name=_("Salario final"))
+    immediate_boos = models.CharField(max_length=150, verbose_name=_("Jefe inmediato"))
+    addres_company = models.CharField(max_length=300, verbose_name=_("Direccion de la empresa"))
+    phone_company = models.CharField(max_length=40,  verbose_name=_("Telefono de la empresa"))
+    notes = models.CharField(max_length=300, verbose_name=_("Notas"))
+    cv = models.CharField(max_length=300, verbose_name=_("Curriculum"))
