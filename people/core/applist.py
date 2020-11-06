@@ -20,7 +20,8 @@ __OWN_APPS = (
     'people.apps.apidoc',
     'people.apps.khonnect',
     'people.apps.person',
-    'people.apps.business'
+    'people.apps.business',
+    'people.apps.setup'
 )
 
 __THIRD_PARTY_APPS = (

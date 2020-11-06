@@ -82,7 +82,7 @@ class GeneralPerson(models.Model):
 
 
 class Family(models.Model):
-    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     person = models.ForeignKey(Person, verbose_name=_("Persona"), on_delete=models.CASCADE)
     relationship = models.ForeignKey(Relationship, verbose_name=_("Parentesco"), on_delete=models.CASCADE)
     fullname = models.CharField(max_length=40, verbose_name=_("Nombre completo"))
@@ -115,7 +115,7 @@ class Address(models.Model):
 
 
 class ContactEmergency(models.Model):
-    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     relationship = models.ForeignKey(Relationship, verbose_name=_("Parentesco"), on_delete=models.CASCADE)
     address = models.ForeignKey(Address, verbose_name=_("Direccion"), on_delete=models.CASCADE)
     fullname = models.CharField(max_length=150, verbose_name=_("Nombre completo"))
@@ -131,7 +131,7 @@ class ContactEmergency(models.Model):
 
 
 class ExperieneJob(models.Model):
-    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     experience_type = models.ForeignKey(ExperienceType, verbose_name=_("Tipo de experiencia"), on_delete=models.CASCADE)
     labor_relationship = models.ForeignKey(LaborRelationship, verbose_name=_("Relacion laboral"), on_delete=models.CASCADE)
     reason_separation = models.ForeignKey(ReasonSeparation, verbose_name=_("Motivo de separacion"), on_delete=models.CASCADE)
@@ -157,12 +157,12 @@ class ExperieneJob(models.Model):
 
 
 class Training(models.Model):
-    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
     school = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Escuela"))
     since = models.DateTimeField(auto_now_add=False, verbose_name=_("Fecha de inicio"))
     until = models.DateTimeField(auto_now_add=False, verbose_name=_("Fecha de termino"))
-    accreditationDocument = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Documeto de acreditacion"))
+    accreditation_document = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Documeto de acreditacion"))
     currently_studing = models.BooleanField(default=False, null=True, blank=True, verbose_name=_("Estudia actualmente"))
     completed_period = models.IntegerField(null=True, blank=True, verbose_name=_("Periodo completado"))
 
@@ -175,7 +175,7 @@ class Training(models.Model):
 
 
 class BankAccount(models.Model):
-    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     bank = models.ForeignKey(Bank, on_delete=models.CASCADE, verbose_name=_("Banco"), null=True, blank=True)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
     account_number = models.CharField(max_length=40, null=True, blank=True, verbose_name=_("Numero de cuenta"))
