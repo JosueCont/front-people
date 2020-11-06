@@ -28,3 +28,27 @@ class PersonSerializer(serializers.ModelSerializer):
         model = models.Person
         # fields = "__all__"
         exclude = ['khonnect_id']
+
+
+class AddressSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = models.Address
+        fields = "__all__"
+
+
+class TrainingSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = models.Training
+        fields = "__all__"
+
+
+class BankSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = models.Bank
+        fields = "__all__"
+
+
+class BankAccountSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = models.BankAccount
+        fields = "__all__"

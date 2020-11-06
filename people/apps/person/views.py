@@ -7,7 +7,7 @@ from rest_framework import viewsets, status
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
-from people.apps.person.models import Person, PersonType, Job, GeneralPerson
+from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount
 
 
 class PersonTypeViewSet(viewsets.ModelViewSet):
@@ -57,3 +57,31 @@ class GeneralPersonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.GeneralPersonSerializer
     queryset = GeneralPerson.objects.all()
     filterset_fields = ('id', 'person')
+
+
+class AddressViewSet(viewsets.ModelViewSet):
+
+    serializer_class = serializers.AddressSerialiser
+    queryset = Address.objects.all()
+    filterset_fields = ('id', 'person')
+
+
+class TrainingViewSet(viewsets.ModelViewSet):
+
+    serializer_class = serializers.TrainingSerialiser
+    queryset = Training.objects.all()
+    filterset_fields = ('id', 'person')
+
+
+class BankViewSet(viewsets.ModelViewSet):
+
+    serializer_class = serializers.BankSerialiser
+    queryset = Bank.objects.all()
+    filterset_fields = ('id', 'name')
+
+
+class BankAccountViewSet(viewsets.ModelViewSet):
+
+    serializer_class = serializers.BankAccountSerialiser
+    queryset = BankAccount.objects.all()
+    filterset_fields = ('id', 'accountNumber')

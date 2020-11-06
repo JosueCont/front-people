@@ -77,3 +77,67 @@ class GeneralPerson(models.Model):
     class Meta:
         verbose_name = _("General")
         verbose_name_plural = _("Generales")
+
+
+class Address(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
+    street = models.CharField(max_length=100, verbose_name=_("Calle"), null=True, blank=True)
+    numberOne = models.CharField(max_length=50, verbose_name=_("Numero uno"), null=True, blank=True)
+    numberTwo = models.CharField(max_length=50, verbose_name=_("Numero dos"), null=True, blank=True)
+    building = models.CharField(max_length=50, verbose_name=_("Edificio"), null=True, blank=True)
+    reference = models.IntegerField(verbose_name=_("Referencia"), null=True, blank=True)
+    postalCode = models.CharField(max_length=50, verbose_name=_("Codigo postal"), null=True, blank=True)
+    suburb = models.CharField(max_length=100, verbose_name=_("Suburbio"), null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Direccion")
+        verbose_name_plural = _("Direcciones")
+
+
+class Training(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
+    school = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Escuela"))
+    since = models.DateTimeField(auto_now_add=False, verbose_name=_("Desde"))
+    until = models.DateTimeField(auto_now_add=False, verbose_name=_("Hasta"))
+    accreditationDocument = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Documeto de acreditacion"))
+    currentlyStuding = models.BooleanField(default=False, null=True, blank=True, verbose_name=_("Estuidia actualmente"))
+    completedPeriod = models.IntegerField(null=True, blank=True, verbose_name=_("Periodo completado"))
+
+    def __str__(self):
+        return self.school
+
+    class Meta:
+        verbose_name = _("Formacion")
+        verbose_name_plural = _("Formaciones")
+
+
+class Bank(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    name = models.CharField(max_length=100, null=True, blank=True, verbose_name=_("Nombre"))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Banco")
+        verbose_name_plural = _("Bancos")
+
+
+class BankAccount(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid(), editable=False)
+    bank = models.ForeignKey(Bank, on_delete=models.CASCADE, verbose_name=_("Banco"), null=True, blank=True)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
+    accountNumber = models.CharField(max_length=40, null=True, blank=True, verbose_name=_("Numero de cuenta"))
+    interbankKey = models.CharField(max_length=40, null=True, blank=True, verbose_name=_("Clave interbancaria"))
+
+    def __str__(self):
+        return self.accountNumber
+
+    class Meta:
+        verbose_name = _("Numero de cuenta")
+        verbose_name_plural = _("Numeros de cuenta")
