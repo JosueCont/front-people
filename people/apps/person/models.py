@@ -162,7 +162,7 @@ class Training(models.Model):
     school = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Escuela"))
     since = models.DateTimeField(auto_now_add=False, verbose_name=_("Fecha de inicio"))
     until = models.DateTimeField(auto_now_add=False, verbose_name=_("Fecha de termino"))
-    accreditationDocument = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Documeto de acreditacion"))
+    accreditation_document = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Documeto de acreditacion"))
     currently_studing = models.BooleanField(default=False, null=True, blank=True, verbose_name=_("Estudia actualmente"))
     completed_period = models.IntegerField(null=True, blank=True, verbose_name=_("Periodo completado"))
 
