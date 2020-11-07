@@ -26,11 +26,6 @@ class PersonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Person
-<<<<<<< HEAD
-        fields = ['name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted', 'is_active', 'person_type', 'job', 'email', 'password']
-        # exclude = ['khonnect_id']
-
-=======
         # fields = "__all__"
         exclude = ['khonnect_id']
 
@@ -47,14 +42,8 @@ class TrainingSerialiser(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class BankSerialiser(serializers.ModelSerializer):
-    class Meta:
-        model = models.Bank
-        fields = "__all__"
-
-
 class BankAccountSerialiser(serializers.ModelSerializer):
     class Meta:
         model = models.BankAccount
         fields = "__all__"
->>>>>>> 3e884152ef0041e00ce2f3774eecef8ddd60f66a
+

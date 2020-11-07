@@ -40,20 +40,13 @@ class Address(admin.ModelAdmin):
 
 @admin.register(Training)
 class Training(admin.ModelAdmin):
-    list_display = ('id', 'person')
+    list_display = ('id', 'school')
     search_fields = ['person']
     list_filter = ('person',)
 
 
-@admin.register(Bank)
-class Training(admin.ModelAdmin):
-    list_display = ('id', 'name')
-    search_fields = ['name']
-    list_filter = ('name',)
-
-
 @admin.register(BankAccount)
-class Training(admin.ModelAdmin):
-    list_display = ('id', 'accountNumber')
+class BankAccount(admin.ModelAdmin):
+    list_display = ('id', 'account_number')
     search_fields = ['bank']
     list_filter = ('bank',)

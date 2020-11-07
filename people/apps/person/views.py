@@ -104,13 +104,6 @@ class TrainingViewSet(viewsets.ModelViewSet):
     filterset_fields = ('id', 'person')
 
 
-class BankViewSet(viewsets.ModelViewSet):
-
-    serializer_class = serializers.BankSerialiser
-    queryset = Bank.objects.all()
-    filterset_fields = ('id', 'name')
-
-
 class BankAccountViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.BankAccountSerialiser

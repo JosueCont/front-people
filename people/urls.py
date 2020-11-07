@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     # Own Django Apps.
     path('person/', include('people.apps.person.urls')),
+    path('setup/', include('people.apps.setup.urls')),
 ]
 
 if settings.DEBUG:  # Adding statics only if debug = True
