@@ -30,15 +30,33 @@ class PersonSerializer(serializers.ModelSerializer):
         exclude = ['khonnect_id']
 
 
+class FamilySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Family
+        fields = "__all__"
+
+
 class AddressSerialiser(serializers.ModelSerializer):
     class Meta:
         model = models.Address
         fields = "__all__"
 
 
+class ContactEmergencySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ContactEmergency
+        fields = "__all__"
+
+
 class TrainingSerialiser(serializers.ModelSerializer):
     class Meta:
         model = models.Training
+        fields = "__all__"
+
+
+class ExperienceJobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ExperienceJob
         fields = "__all__"
 
 

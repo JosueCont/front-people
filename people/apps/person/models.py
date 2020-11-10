@@ -130,7 +130,7 @@ class ContactEmergency(models.Model):
         verbose_name_plural = _("Contactos de emergencia")
 
 
-class ExperieneJob(models.Model):
+class ExperienceJob(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     experience_type = models.ForeignKey(ExperienceType, verbose_name=_("Tipo de experiencia"), on_delete=models.CASCADE)
     labor_relationship = models.ForeignKey(LaborRelationship, verbose_name=_("Relacion laboral"), on_delete=models.CASCADE)

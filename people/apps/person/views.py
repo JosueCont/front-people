@@ -90,6 +90,27 @@ class GeneralPersonViewSet(viewsets.ModelViewSet):
     filterset_fields = ('id', 'person')
 
 
+class FamilyViewSet(viewsets.ModelViewSet):
+
+    serializer_class = serializers.FamilySerializer
+    queryset = GeneralPerson.objects.all()
+    filterset_fields = ('id', 'person')
+
+
+class ContactEmergencyViewSet(viewsets.ModelViewSet):
+
+    serializer_class = serializers.ContactEmergencySerializer
+    queryset = GeneralPerson.objects.all()
+    filterset_fields = ('id', 'person')
+
+
+class ExperienceJobViewSet(viewsets.ModelViewSet):
+
+    serializer_class = serializers.ExperienceJobSerializer
+    queryset = GeneralPerson.objects.all()
+    filterset_fields = ('id', 'person')
+
+
 class AddressViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.AddressSerialiser
