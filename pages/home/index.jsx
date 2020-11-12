@@ -1,33 +1,203 @@
-import { Layout, Menu, Breadcrumb, Avatar, Image } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import {
+  Layout,
+  Breadcrumb,
+  Table,
+  Row,
+  Col,
+  Input,
+  Select,
+  Switch,
+} from "antd";
+import Axios from "axios";
+import { useCallback, useEffect, useState } from "react";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  InfoCircleOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import HeaderCustom from "../../components/header";
+import _ from "lodash";
 
-const { Header, Content, Footer } = Layout;
+const { Content } = Layout;
 
-export default function Home()  {
-    return (
-        <>  
-        <Layout>
-            <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
-            <div className="logo" />           
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-                <Menu.Item key="1">nav 1</Menu.Item>
-                <Menu.Item key="2">nav 2</Menu.Item>
-                <Menu.Item key="3">nav 3</Menu.Item>  
-                <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />                        
-            </Menu>                    
-            </Header>
-            <Content className="site-layout" style={{ padding: '0 50px', marginTop: 64 }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
-                <Breadcrumb.Item>List</Breadcrumb.Item>
-                <Breadcrumb.Item>App</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>
-                Content
+const homeScreen = () => {
+  const [person, setPerson] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(false);
+
+  const getPerson = (text = "") => {
+    setLoading(true);
+    if (text) {
+      Axios.get("http://demo.localhost:8000/person/person/")
+        .then((response) => {
+          console.log("RESPONSE-->> ", response);
+          response.data.results.map((item) => {
+            item["fullname"] =
+              item.name + " " + item.flast_name + " " + item.mlast_name;
+            item.timestamp = item.timestamp.substring(0, 10);
+          });
+          setPerson(response.data.results);
+          setLoading(false);
+          2;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    } else {
+      Axios.get("http://demo.localhost:8000/person/person/")
+        .then((response) => {
+          console.log("RESPONSE-->> ", response);
+          response.data.results.map((item) => {
+            item["fullname"] =
+              item.name + " " + item.flast_name + " " + item.mlast_name;
+            item.timestamp = item.timestamp.substring(0, 10);
+          });
+          setPerson(response.data.results);
+          setLoading(false);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
+
+  const searchPerson = ({ target: { value } }) => {
+    setLoading(true);
+    search(value);
+  };
+
+  const statusPeron = () => {
+    console.log(status);
+    setStatus(status ? false : true);
+  };
+
+  const search = useCallback(
+    _.debounce((value) => {
+      getPerson(value);
+    }, 600)
+  );
+
+  useEffect(() => {
+    getPerson();
+  }, []);
+
+  const columns = [
+    {
+      title: "Nombre",
+      dataIndex: "fullname",
+      key: "id",
+    },
+    {
+      title: "Fecha de registro",
+      dataIndex: "timestamp",
+      key: "id",
+    },
+    {
+      title: "RFC",
+      dataIndex: "rfc",
+      key: "id",
+    },
+    {
+      title: "IMSS",
+      dataIndex: "imss",
+      key: "id",
+    },
+    {
+      title: "Opciones",
+      key: "id",
+      render: () => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <InfoCircleOutlined />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const { Search } = Input;
+
+  const genders = [
+    {
+      label: "Maculino",
+      value: "M",
+    },
+    {
+      label: "Femenino",
+      value: "F",
+    },
+  ];
+
+  return (
+    <>
+      <Layout>
+        <HeaderCustom />
+        <Content
+          className="site-layout"
+          style={{ padding: "0 50px", marginTop: 64 }}
+        >
+          <Breadcrumb style={{ margin: "16px 0" }}>
+            <Breadcrumb.Item>Home</Breadcrumb.Item>
+            <Breadcrumb.Item>Person</Breadcrumb.Item>
+          </Breadcrumb>
+          <div
+            className="site-layout-background"
+            style={{ padding: 24, minHeight: 380, height: "100%" }}
+          >
+            <div style={{ padding: 24 }}>
+              <Row>
+                <Col span={18}>
+                  <Search
+                    placeholder="Nombre..."
+                    loading={loading}
+                    onChange={searchPerson}
+                    onSearch={getPerson}
+                    enterButton={((<SearchOutlined />), "Buscar")}
+                  />
+                </Col>
+                <Col span={5}>
+                  <Select
+                    style={{ marginLeft: "10%", width: "100%" }}
+                    options={genders}
+                    placeholder="Género"
+                  />
+                </Col>
+              </Row>
+              <Row style={{ marginTop: "2%" }}>
+                <Col span={4}>
+                  <label>
+                    <span style={{ fontWeight: "bold" }}>Activos:</span>
+                  </label>
+                  <Switch
+                    style={{ marginLeft: "10%" }}
+                    defaultChecked
+                    onChange={statusPeron}
+                  />
+                </Col>
+              </Row>
             </div>
-            </Content>
-            <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
-        </Layout>
-        </>
-    )
-}
+            <Table
+              size="small"
+              columns={columns}
+              dataSource={person}
+              loading={loading}
+            />
+          </div>
+        </Content>
+        {/* <FooterCustom /> */}
+      </Layout>
+    </>
+  );
+};
+export default homeScreen;

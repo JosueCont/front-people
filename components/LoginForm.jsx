@@ -9,7 +9,7 @@ const LoginForm = () => {
 
   const login = async (username,password)=>{    
     try{
-        console.log(username, username)        
+        console.log(username, password)        
         Router.push("/home");      
     }catch(e){
         alert('Hubo un  problema al iniciar sesión, por favor verifica tus credenciales')
@@ -61,4 +61,4 @@ const LoginForm = () => {
     );
 };
 
-export default LoginFom;
+export default LoginForm;
