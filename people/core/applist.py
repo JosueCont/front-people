@@ -34,7 +34,7 @@ __THIRD_PARTY_APPS = (
     'import_export',
     'colorfield',
     'drf_yasg',
-    'corsheaders'
+    'corsheaders',
 )
 
 SHARED_APPS = (

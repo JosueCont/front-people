@@ -1,14 +1,18 @@
 import json
+from urllib import request
 
 import requests
 from requests import Response
 from rest_framework import viewsets, status
+from rest_framework.views import APIView
+from tablib import Dataset
+from import_export import resources
 
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount
-
+from django.utils.translation import ugettext_lazy as _
 
 class PersonTypeViewSet(viewsets.ModelViewSet):
 
@@ -108,4 +112,45 @@ class BankAccountViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.BankAccountSerialiser
     queryset = BankAccount.objects.all()
-    filterset_fields = ('id', 'accountNumber')
+    filterset_fields = ('id', 'account_number')
+
+
+class PersonaResource(resources.ModelResource):
+   class Meta:
+     model = Person
+
+
+class ImportPersonApiView(APIView):
+
+    def post(self, request):
+        # template = loader.get_template('export/importar.html')
+        if request.method == 'POST':
+            try:
+                person_resource = PersonaResource()
+                dataset = Dataset()
+                print(dataset)
+                nuevas_personas = request.FILES['xlsfile']
+                print(nuevas_personas)
+                imported_data = dataset.load(nuevas_personas.read())
+                print(dataset)
+                result = person_resource.import_data(dataset, dry_run=True)  # Test the data import
+                # print(result.has_errors())
+                if not result.has_errors():
+                    person_resource.import_data(dataset, dry_run=False)  # Actually import now
+                    person_resource.save()
+                    message = _("Se han agregado nuevas personas")
+                    return Response(data={'message': message}, status=status.HTTP_200_OK)
+                else:
+                    message = _("Error al hacer el post")
+                    return Response(data={'message': message}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                print(e)
+                message = _("Ha ocurrido una excepcion")
+                return Response(data={'message': message}, status=status.HTTP_404_NOT_FOUND)
+
+        else:
+            message = _("Error al hacer el post")
+            return Response(data={'message': message}, status=status.HTTP_404_NOT_FOUND)
+
+
+
