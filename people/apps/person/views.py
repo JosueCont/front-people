@@ -1,8 +1,12 @@
 import json
 
 import requests
+from django.http import HttpResponse
 from requests import Response
 from rest_framework import viewsets, status
+from import_export import resources
+from rest_framework.views import APIView
+from tablib import Dataset
 
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
@@ -129,4 +133,46 @@ class BankAccountViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.BankAccountSerialiser
     queryset = BankAccount.objects.all()
-    filterset_fields = ('id', 'accountNumber')
+    filterset_fields = ('id', 'account_number')
+
+
+class ImportExportPersonViewSet(APIView):
+
+    # queryset = Person.objects.all()
+    persons = serializers.PersonResource()
+    dataset = Dataset()
+
+    def post(self, request):
+        try:
+            new_persons = request.FILES['person']
+            imported_data = self.dataset.load(new_persons.read())
+            result = self.persons.import_data(self.dataset, dry_run=True)  # Test the data import
+            if not result.has_errors():
+                self.persons.import_data(self.dataset, dry_run=False)  # Actually import now
+            return Response(data={"message": self.dataset}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format_file):
+        try:
+            file_format = format_file
+            self.dataset = self.persons.export()
+            if file_format == 'CSV':
+                response = HttpResponse(self.dataset.csv, content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
+                return response
+            elif file_format == 'JSON':
+                response = HttpResponse(self.dataset.json, content_type='application/json')
+                response['Content-Disposition'] = 'attachment; filename="exported_data.json"'
+                return response
+            elif file_format == 'XLS':
+                response = HttpResponse(self.dataset.xls, content_type='application/vnd.ms-excel')
+                response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
+                return response
+            elif file_format == 'XLSX':
+                response = HttpResponse(self.dataset.xlsx, content_type='application/vnd.ms-excel')
+                response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
+                return response
+        except Exception as e:
+            return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+

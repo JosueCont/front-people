@@ -19,3 +19,6 @@ THUMBNAIL_ALIASES = {
 }
 
 THUMBNAIL_BASEDIR = "thumbs"
+
+if settings['AMAZON']['S3']['USE_S3']:
+    THUMBNAIL_DEFAULT_STORAGE = 'people.core.custom_storages.MediaStorage'

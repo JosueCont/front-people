@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from people.apps.person.models import PersonType, Job, Person, GeneralPerson
+from people.apps.person.models import Person
 
 
 class PersonFilters(filters.FilterSet):

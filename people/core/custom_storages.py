@@ -1,18 +1,25 @@
 import os
+from django.db import connection
 from tempfile import SpooledTemporaryFile
-
 from ..core.aws import MEDIAFILES_LOCATION
 from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class MediaStorage(S3Boto3Storage):
-    location = MEDIAFILES_LOCATION
+    # location = MEDIAFILES_LOCATION + '/%s' % connection.tenant.schema_name
+
+    @property
+    def location(self):
+        # _location = MEDIAFILES_LOCATION + '/%s' % connection.tenant.schema_name
+        _location = f'{connection.tenant.schema_name}/people'
+        return _location
 
     def _save_content(self, obj, content, parameters):
         """
         We create a clone of the content file as when this is passed to boto3 it wrongly closes
         the file upon upload where as the storage backend expects it to still be open
         """
+        print(self.location)
         # Seek our content back to the start
         content.seek(0, os.SEEK_SET)
 

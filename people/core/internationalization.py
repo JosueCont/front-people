@@ -56,5 +56,6 @@ DATETIME_INPUT_FORMATS = (
 DATE_INPUT_FORMATS = (
     '%d/%m/%Y',                         # '25/10/2006'
     '%d/%m/%y',                         # '25/10/06'
+    '%Y-%m-%d',                         # '2006-10-25'
 )
 
