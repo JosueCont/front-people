@@ -1,5 +1,4 @@
 import json
-
 import requests
 from django.http import HttpResponse
 from requests import Response
