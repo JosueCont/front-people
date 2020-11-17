@@ -1,3 +1,5 @@
+from django.urls import path
+
 from . import views
 from rest_framework import routers
 
@@ -13,4 +15,8 @@ router.register(r'address', views.AddressViewSet)
 router.register(r'training', views.TrainingViewSet)
 router.register(r'bank-account', views.BankAccountViewSet)
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('person-import', views.ImportPersonApiView.as_view()),
+]
+
+urlpatterns = router.urls + urlpatterns
