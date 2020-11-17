@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
+from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, BankAccount, \
     Family, ContactEmergency, ExperienceJob
 
 

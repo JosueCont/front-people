@@ -1,3 +1,4 @@
+from import_export import resources
 from rest_framework import serializers
 from people.apps.person import models
 
@@ -21,8 +22,8 @@ class GeneralPersonSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(max_length=40)
-    password = serializers.CharField(max_length=40)
+    # email = serializers.EmailField(max_length=40)
+    # password = serializers.CharField(max_length=40)
 
     class Meta:
         model = models.Person
@@ -65,3 +66,11 @@ class BankAccountSerialiser(serializers.ModelSerializer):
         model = models.BankAccount
         fields = "__all__"
 
+
+class PersonResource(resources.ModelResource):
+    class Meta:
+        model = models.Person
+        # fields = "__all__"
+        exclude = ('id')
+        import_id_fields = ('khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted', 'is_active', 'person_type',  'job')
+        export_id_fields = ('khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted', 'is_active', 'person_type',  'job')

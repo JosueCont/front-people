@@ -1,8 +1,17 @@
+import os
+from fileinput import filename
+
 from django.db import models
+from django.utils import timezone
+from django.utils.text import slugify
 from django.utils.translation import gettext as _
+from easy_thumbnails.fields import ThumbnailerImageField, ThumbnailerField
+
 from people.apps.functions import get_clean_uuid
 # people/apps/functions.py
 from people.apps.setup.models import Relationship, ExperienceType, LaborRelationship, ReasonSeparation, Bank
+
+MAIN_APP_PATH = 'person/'
 
 
 class PersonType(models.Model):
@@ -61,6 +70,16 @@ class Person(models.Model):
 
 
 class GeneralPerson(models.Model):
+
+    def upload_photo(self, filename):
+        now = timezone.now()
+        extension = os.path.splitext(filename)[1][1:]
+        file_name = os.path.splitext(filename)[0]
+        url = f"{MAIN_APP_PATH}images/photo-profile/%s%s%s%s%s%s/%s.%s" % (now.day, now.month, now.year, now.hour,
+                                                                 now.minute, now.second,
+                                                                 slugify(str(file_name)), extension)
+        return url
+
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
     place_birth = models.CharField(max_length=150,verbose_name=_("Lugar de nacimiento"), null=True, blank=True)
@@ -71,6 +90,7 @@ class GeneralPerson(models.Model):
                                                         verbose_name=_("Disponibilidad para cambio de residencia"), null=True, blank=True)
     allergies = models.CharField(max_length=500, verbose_name=_("Alergias"), null=True, blank=True)
     blood_type = models.CharField(max_length=10, verbose_name=_("Tipo de sangre"), null=True, blank=True)
+    photo = ThumbnailerImageField(upload_to=upload_photo, null=True, blank=True, verbose_name=_("Fotografia"))
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
 
     def __str__(self):
