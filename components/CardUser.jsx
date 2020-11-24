@@ -11,6 +11,7 @@ export default function cardUser() {
   return (
     <>
       <Card
+        hoverable={true}
         style={{ width: 300 }}
         cover={
           <img

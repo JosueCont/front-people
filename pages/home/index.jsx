@@ -19,7 +19,6 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
-import CardUser from "../../components/CardUser";
 import _ from "lodash";
 import FormPerson from "../../components/FormPerson";
 
@@ -217,7 +216,6 @@ const homeScreen = () => {
             />
           </div>
         </Content>
-        <CardUser />
         <FormPerson close={getModal} visible={modal} />
       </Layout>
     </>

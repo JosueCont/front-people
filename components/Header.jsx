@@ -1,7 +1,21 @@
-import { Layout, Menu, Avatar } from "antd";
-import { AppstoreOutlined } from "@ant-design/icons";
+import { Layout, Menu, Avatar, Dropdown, message } from "antd";
+import { AppstoreOutlined, UserOutlined } from "@ant-design/icons";
+import CardUser from "./CardUser";
+import CardApps from "./CardApps";
 
 const { Header } = Layout;
+
+const userCardDisplay = () => (
+  <>
+    <CardUser />
+  </>
+);
+
+const appsCardDisplay = () => (
+  <>
+    <CardApps />
+  </>
+);
 
 export default function headerCustom() {
   return (
@@ -9,7 +23,13 @@ export default function headerCustom() {
       <Header style={{ position: "fixed", zIndex: 1, width: "100%" }}>
         <div className="logo" />
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["2"]}>
-          <AppstoreOutlined style={{ fontSize: "26px", color: "#08c" }} />
+          <div style={{ float: "left" }}>
+            <Dropdown overlay={appsCardDisplay}>
+              <div>
+                <AppstoreOutlined style={{ fontSize: "26px", color: "#08c" }} />
+              </div>
+            </Dropdown>
+          </div>
           <Menu.Item key="1" disabled="true">
             nav 1
           </Menu.Item>
@@ -20,7 +40,11 @@ export default function headerCustom() {
             nav 3
           </Menu.Item>
           <div style={{ float: "right" }}>
-            <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+            <Dropdown overlay={userCardDisplay}>
+              <div>
+                <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+              </div>
+            </Dropdown>
           </div>
         </Menu>
       </Header>
