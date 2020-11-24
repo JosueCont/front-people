@@ -7,6 +7,7 @@ import {
   Input,
   Select,
   Switch,
+  Button,
 } from "antd";
 import Axios from "axios";
 import { useCallback, useEffect, useState } from "react";
@@ -15,9 +16,12 @@ import {
   EditOutlined,
   InfoCircleOutlined,
   SearchOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
-import HeaderCustom from "../../components/header";
+import HeaderCustom from "../../components/Header";
+import CardUser from "../../components/CardUser";
 import _ from "lodash";
+import FormPerson from "../../components/FormPerson";
 
 const { Content } = Layout;
 
@@ -25,6 +29,7 @@ const homeScreen = () => {
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(false);
+  const [modal, setModal] = useState(false);
 
   const getPerson = (text = "") => {
     setLoading(true);
@@ -39,7 +44,6 @@ const homeScreen = () => {
           });
           setPerson(response.data.results);
           setLoading(false);
-          2;
         })
         .catch((e) => {
           console.log(e);
@@ -49,6 +53,7 @@ const homeScreen = () => {
         .then((response) => {
           console.log("RESPONSE-->> ", response);
           response.data.results.map((item) => {
+            item["key"] = item.id;
             item["fullname"] =
               item.name + " " + item.flast_name + " " + item.mlast_name;
             item.timestamp = item.timestamp.substring(0, 10);
@@ -86,26 +91,25 @@ const homeScreen = () => {
     {
       title: "Nombre",
       dataIndex: "fullname",
-      key: "id",
+      key: "fullname",
     },
     {
       title: "Fecha de registro",
       dataIndex: "timestamp",
-      key: "id",
+      key: "timestamp",
     },
     {
       title: "RFC",
       dataIndex: "rfc",
-      key: "id",
+      key: "rfc",
     },
     {
       title: "IMSS",
       dataIndex: "imss",
-      key: "id",
+      key: "imss",
     },
     {
       title: "Opciones",
-      key: "id",
       render: () => {
         return (
           <div>
@@ -139,6 +143,11 @@ const homeScreen = () => {
     },
   ];
 
+  const getModal = (value) => {
+    console.log("Open Modal-->> ", modal);
+    setModal(value);
+  };
+
   return (
     <>
       <Layout>
@@ -151,6 +160,19 @@ const homeScreen = () => {
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>Person</Breadcrumb.Item>
           </Breadcrumb>
+          <div style={{ padding: "1%", float: "right" }}>
+            <Button
+              style={{
+                background: "#fa8c16",
+                fontWeight: "bold",
+                color: "white",
+              }}
+              onClick={() => getModal(true)}
+            >
+              <PlusOutlined />
+              Agregar persona
+            </Button>
+          </div>
           <div
             className="site-layout-background"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
@@ -195,7 +217,8 @@ const homeScreen = () => {
             />
           </div>
         </Content>
-        {/* <FooterCustom /> */}
+        <CardUser />
+        <FormPerson close={getModal} visible={modal} />
       </Layout>
     </>
   );
