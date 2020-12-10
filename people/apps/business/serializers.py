@@ -1,5 +1,5 @@
 from people.apps.business import models
-from people.apps.setup import serializers
+from rest_framework import serializers
 
 
 class NodeSerializer(serializers.ModelSerializer):

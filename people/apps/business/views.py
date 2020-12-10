@@ -15,4 +15,4 @@ class NodePersonViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.NodePersonSerializer
     queryset = NodePerson.objects.all()
-    filterset_fields = ('id', 'name')
+    filterset_fields = ('id',)
