@@ -31,6 +31,13 @@ class PersonSerializer(serializers.ModelSerializer):
         exclude = ['khonnect_id']
 
 
+class PersonResponseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Person
+        fields = "__all__"
+
+
 class FamilySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Family

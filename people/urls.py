@@ -15,6 +15,7 @@ urlpatterns = [
     # Own Django Apps.
     path('person/', include('people.apps.person.urls')),
     path('setup/', include('people.apps.setup.urls')),
+    path('business/', include('people.apps.business.urls')),
 ]
 
 if settings.DEBUG:  # Adding statics only if debug = True
