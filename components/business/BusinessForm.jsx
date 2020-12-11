@@ -8,6 +8,7 @@ import {
   Select,
   Switch,
   Button,
+  Modal, Form
 } from "antd";
 import Axios from "axios";
 import { useCallback, useEffect, useState } from "react";
@@ -20,12 +21,51 @@ import {
 } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
 import { API_URL } from '../../config/config'
+import Router from "next/router";
 
 const { Content } = Layout;
 
 const businessForm = () => {
   const [business, setBusiness] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const onFinish = values => {
+    console.log('Received values of form: ', values);
+    addBusiness(values.name, values.description)
+  };
+  const addBusiness = async (name, description) => {
+      const data = {
+          'name': name,
+          'description':description
+      }
+      Axios.post(API_URL + '/business/node/',data, )
+          .then(function (response) {
+              console.log(response.data);
+              if(response.status === 200){
+                  Router.push("/business/business");
+              }
+              getBusiness();
+              setIsModalVisible(false);
+              setLoading(false);
+          })
+          .catch(function (error) {
+              setLoading(false);
+              console.log(error);
+          });
+  }
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   const getBusiness = () => {
     setLoading(true);
@@ -89,6 +129,7 @@ const businessForm = () => {
                     fontWeight: "bold",
                     color: "white",
                   }}
+                  onClick={showModal}
               >
                 <PlusOutlined />
                 Agregar empresa
@@ -105,6 +146,39 @@ const businessForm = () => {
                   loading={loading}
               />
             </div>
+            <Modal
+                title="Agregar empresa"
+                visible={isModalVisible}
+                footer={[
+                    <Button key="back" onClick={handleCancel}>
+                        Regresar
+                    </Button>,
+                  <Button form="addBusinessForm" type="primary" key="submit" htmlType="submit">
+                    Agregar
+                  </Button>
+                ]}
+            >
+              <Form
+                  id="addBusinessForm"
+                  name="normal_login"
+                  onFinish={onFinish}
+              >
+                <Form.Item
+                    name="name"
+                    label="Nombre"
+                    rules={[{ required: true, message: 'Ingresa un nombre' }]}
+                >
+                  <Input  placeholder="Nombre de la empresa" />
+                </Form.Item>
+                <Form.Item
+                    name="description"
+                    label="Descripción"
+                    rules={[{ required: true, message: 'Ingresa una descripción' }]}
+                >
+                  <Input  placeholder="Descripción de la empresa" />
+                </Form.Item>
+              </Form>
+            </Modal>
           </Content>
         </Layout>
       </>
