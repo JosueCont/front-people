@@ -29,17 +29,24 @@ const businessForm = () => {
   const [business, setBusiness] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [formBusiness] = Form.useForm();
 
   const onFinish = values => {
     console.log('Received values of form: ', values);
-    addBusiness(values.name, values.description)
+    if (!isEdit){
+       addBusiness(values.name, values.description)
+    }else{
+        updateBusiness(values.id, values.name, values.description)
+    }
+
   };
-  const addBusiness = async (name, description) => {
+  const updateBusiness = async (id, name, description) => {
       const data = {
           'name': name,
           'description':description
       }
-      Axios.post(API_URL + '/business/node/',data, )
+      Axios.put(API_URL + '/business/node/' + id + '/',data)
           .then(function (response) {
               console.log(response.data);
               if(response.status === 200){
@@ -55,8 +62,40 @@ const businessForm = () => {
           });
   }
 
-  const showModal = () => {
-    setIsModalVisible(true);
+    const addBusiness = async (name, description) => {
+        const data = {
+            'name': name,
+            'description':description
+        }
+        Axios.post(API_URL + '/business/node/',data )
+            .then(function (response) {
+                console.log(response.data);
+                if(response.status === 200){
+                    Router.push("/business/business");
+                }
+                getBusiness();
+                setIsModalVisible(false);
+                setLoading(false);
+            })
+            .catch(function (error) {
+                setLoading(false);
+                console.log(error);
+            });
+    }
+
+  const showModal = (type, item) => {
+      if (type === "add"){
+          setIsEdit(false)
+          formBusiness.resetFields();
+      }else {
+          setIsEdit(true);
+          formBusiness.setFieldsValue({
+              name: item.name,
+              description: item.description,
+              id: item.id
+          })
+      }
+      setIsModalVisible(true);
   };
 
   const handleOk = () => {
@@ -72,13 +111,7 @@ const businessForm = () => {
     Axios.get(API_URL + "/business/node/")
         .then((response) => {
           console.log("RESPONSE-->> ", response);
-          let business = [];
-          response.data.results.forEach(function(item){
-
-            business.push({'key': item.id, 'name': item.name, 'code': item.code, 'status': (item.active) ? 'Activo': 'Desactivado'})
-          });
-          console.log("SET BUSINESS-->> ", business);
-          setBusiness(business);
+          setBusiness(response.data.results);
           setLoading(false);
         })
         .catch((e) => {
@@ -107,7 +140,25 @@ const businessForm = () => {
       title: "Estatus",
       dataIndex: "status",
       key: "status",
-    }
+    },
+      {
+          title: "Opciones",
+          render: (item) => {
+              console.log("table", item)
+              return (
+                  <div>
+                      <Row gutter={16}>
+                          <Col className="gutter-row" span={6}>
+                              <EditOutlined onClick={()=> showModal("edit", item)}/>
+                          </Col>
+                          <Col className="gutter-row" span={6}>
+                              <DeleteOutlined/>
+                          </Col>
+                      </Row>
+                  </div>
+              );
+          },
+      },
   ];
 
   return (
@@ -129,7 +180,7 @@ const businessForm = () => {
                     fontWeight: "bold",
                     color: "white",
                   }}
-                  onClick={showModal}
+                  onClick={()=> showModal("add")}
               >
                 <PlusOutlined />
                 Agregar empresa
@@ -147,14 +198,14 @@ const businessForm = () => {
               />
             </div>
             <Modal
-                title="Agregar empresa"
+                title={isEdit? "Actualizar empresa": "Agregar empresa"}
                 visible={isModalVisible}
                 footer={[
                     <Button key="back" onClick={handleCancel}>
                         Regresar
                     </Button>,
                   <Button form="addBusinessForm" type="primary" key="submit" htmlType="submit">
-                    Agregar
+                      {isEdit? "Actualizar": "Agregar"}
                   </Button>
                 ]}
             >
@@ -162,7 +213,12 @@ const businessForm = () => {
                   id="addBusinessForm"
                   name="normal_login"
                   onFinish={onFinish}
+                  layout={'vertical'}
+                  form={formBusiness}
               >
+                  <Form.Item name="id" label="id" style={{ display: 'none' }}>
+                      <Input type="text" />
+                  </Form.Item>
                 <Form.Item
                     name="name"
                     label="Nombre"
