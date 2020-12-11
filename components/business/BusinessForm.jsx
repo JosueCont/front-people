@@ -31,16 +31,39 @@ const businessForm = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [formBusiness] = Form.useForm();
-
+  const [isModalDeleteVisible, setIsModalDeleteVisible] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [businessName, setBusinessName] = useState("")
   const onFinish = values => {
     console.log('Received values of form: ', values);
-    if (!isEdit){
-       addBusiness(values.name, values.description)
+    if (isDeleted){
+        deleteBusiness(values.id)
     }else{
-        updateBusiness(values.id, values.name, values.description)
+        if (!isEdit){
+            addBusiness(values.name, values.description)
+        }else{
+            updateBusiness(values.id, values.name, values.description)
+        }
     }
 
   };
+    const deleteBusiness = async (id, name, description) => {
+        Axios.delete(API_URL + '/business/node/' + id + '/')
+            .then(function (response) {
+                console.log(response.data);
+                if(response.status === 200){
+                    Router.push("/business/business");
+                }
+                getBusiness();
+                setIsModalVisible(false);
+                setIsModalDeleteVisible(false);
+                setLoading(false);
+            })
+            .catch(function (error) {
+                setLoading(false);
+                console.log(error);
+            });
+    };
   const updateBusiness = async (id, name, description) => {
       const data = {
           'name': name,
@@ -85,17 +108,28 @@ const businessForm = () => {
 
   const showModal = (type, item) => {
       if (type === "add"){
-          setIsEdit(false)
+          setIsDeleted(false);
+          setIsEdit(false);
           formBusiness.resetFields();
-      }else {
+          setIsModalVisible(true);
+      }else if (type === "edit"){
+          setIsDeleted(false);
           setIsEdit(true);
           formBusiness.setFieldsValue({
               name: item.name,
               description: item.description,
               id: item.id
           })
+          setIsModalVisible(true);
       }
-      setIsModalVisible(true);
+      else{
+          setIsDeleted(true);
+          setIsModalDeleteVisible(true)
+          setBusinessName(item.name)
+          formBusiness.setFieldsValue({
+              id: item.id
+          })
+      }
   };
 
   const handleOk = () => {
@@ -104,6 +138,7 @@ const businessForm = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setIsModalDeleteVisible(false);
   };
 
   const getBusiness = () => {
@@ -137,9 +172,14 @@ const businessForm = () => {
       key: "code",
     },
     {
-      title: "Estatus",
-      dataIndex: "status",
-      key: "status",
+      title: "Activo",
+      dataIndex: "active",
+      key: "active",
+      render: text => {
+            return (
+                text === true ? <p>Sí</p> : <p>No</p>
+            )
+        },
     },
       {
           title: "Opciones",
@@ -152,7 +192,7 @@ const businessForm = () => {
                               <EditOutlined onClick={()=> showModal("edit", item)}/>
                           </Col>
                           <Col className="gutter-row" span={6}>
-                              <DeleteOutlined/>
+                              <DeleteOutlined onClick={()=> showModal("delete", item)}/>
                           </Col>
                       </Row>
                   </div>
@@ -235,6 +275,35 @@ const businessForm = () => {
                 </Form.Item>
               </Form>
             </Modal>
+              <Modal
+                  title={"Eliminar empresa " + businessName}
+                  visible={isModalDeleteVisible}
+                  footer={[
+                      <Button key="back" onClick={handleCancel}>
+                          Regresar
+                      </Button>,
+                      <Button form="deleteBusinessForm" type="primary" key="submit" htmlType="submit">
+                          Eliminar
+                      </Button>
+                  ]}
+              >
+                  <Form
+                      id="deleteBusinessForm"
+                      name="normal_login"
+                      onFinish={onFinish}
+                      layout={'vertical'}
+                      form={formBusiness}
+                  >
+                      <div
+                          className="float-label"
+                      >
+                          <label>¿Está seguro de eliminar esta empresa?</label>
+                      </div>
+                      <Form.Item name="id" label="id" style={{display: 'none'}}>
+                          <Input type="text"/>
+                      </Form.Item>
+                  </Form>
+              </Modal>
           </Content>
         </Layout>
       </>
