@@ -22,6 +22,7 @@ import {
 import HeaderCustom from "../../components/Header";
 import { API_URL } from '../../config/config'
 import Router from "next/router";
+const { TextArea } = Input;
 
 const { Content } = Layout;
 
@@ -271,7 +272,7 @@ const businessForm = () => {
                     label="Descripción"
                     rules={[{ required: true, message: 'Ingresa una descripción' }]}
                 >
-                  <Input  placeholder="Descripción de la empresa" />
+                    <TextArea rows={4} />
                 </Form.Item>
               </Form>
             </Modal>
