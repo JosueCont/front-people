@@ -2,7 +2,7 @@ import {
     Layout,
     Breadcrumb,
     Tabs, Form, Input, Modal,
-    Row, Col
+    Row, Col, Spin
 } from "antd";
 import HeaderCustom from "../../components/Header";
 import Axios from "axios";
@@ -14,13 +14,11 @@ import { useRouter } from "next/router";
 
 const userDetailForm = () => {
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [user, setUser] = useState([]);
     const [formUser] = Form.useForm();
-    const getUserDetail = (id) => {
-        setLoading(true);
-        Axios.get(API_URL + "/person/person/?id=" + id)
-            .then((response) => {
+    useEffect(() => {
+        getUserDetail().then((response) => {
                 console.log("RESPONSE-->> ", response);
                 setUser(response.data.results);
                 formUser.setFieldsValue({
@@ -41,12 +39,10 @@ const userDetailForm = () => {
                 console.log(e);
                 setLoading(false);
             });
-
+    }, [router.query.id]);
+    const getUserDetail = async () => {
+        return await Axios.get(API_URL + "/person/person/?id=" + router.query.id)
     };
-    useEffect(() => {
-        const {id} = router.query;
-        getUserDetail(id);
-    }, []);
   return (
       <>
         <Layout>
@@ -63,11 +59,13 @@ const userDetailForm = () => {
                 className="site-layout-background"
                 style={{ padding: 24, minHeight: 380, height: "100%" }}
             >
+                <Spin tip="Loading..." spinning={loading}></Spin>
                 <Tabs type="card" defaultActiveKey="1">
                     <TabPane tab="Personales" key="1">
                         <Form
                             id="addBusinessForm"
                             name="normal_login"
+                            layout={'vertical'}
                             form={formUser}
                         >
                             <Row>
