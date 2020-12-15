@@ -22,8 +22,9 @@ class GeneralPersonSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    # email = serializers.EmailField(max_length=40)
-    # password = serializers.CharField(max_length=40)
+    email = serializers.EmailField(max_length=40, required=False)
+    password = serializers.CharField(max_length=40, required=False)
+    groups = serializers.ListField(max_length=1000, required=False)
 
     class Meta:
         model = models.Person

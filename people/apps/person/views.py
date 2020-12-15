@@ -40,9 +40,10 @@ class PersonViewSet(viewsets.ModelViewSet):
             headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
             url = f"{config.url_server}/signup/"
             data_ = {"first_name": serializer.validated_data["name"],
-                    "last_name": serializer.validated_data["flast_name"] + " " + serializer.validated_data["mlast_name"],
-                    "email": serializer.validated_data["email"],
-                    "password": serializer.validated_data["password"]}
+                "last_name": serializer.validated_data["flast_name"] + " " + serializer.validated_data["mlast_name"],
+                "email": serializer.validated_data["email"],
+                "password": serializer.validated_data["password"],
+                "groups": serializer.validated_data["groups"]}
             response = requests.post(url, json.dumps(data_), headers=headers)
             if response.ok:
                 resp = json.loads(response.text)
@@ -52,6 +53,7 @@ class PersonViewSet(viewsets.ModelViewSet):
                             validate_data = serializer.validated_data
                             del validate_data['email']
                             del validate_data['password']
+                            del validate_data['groups']
                             instance = Person(**serializer.validated_data)
                             instance.khonnect_id = resp["user_id"]
                             instance.save()
