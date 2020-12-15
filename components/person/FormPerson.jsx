@@ -21,7 +21,7 @@ const FormPerson = (props) => {
   useEffect(() => {
     const company_id = "5f417a53c37f6275fb614104";
     if (company_id !== undefined) {
-      getValuSelects(company_id);
+      getValueSelects(company_id);
     }
   }, []);
 
