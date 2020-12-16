@@ -1,9 +1,8 @@
 import json
 import requests
 from django.http import HttpResponse
-from requests import Response
+from rest_framework.response import Response
 from rest_framework import viewsets, status
-from import_export import resources
 from rest_framework.views import APIView
 from tablib import Dataset
 
@@ -40,11 +39,12 @@ class PersonViewSet(viewsets.ModelViewSet):
         try:
             headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
             url = f"{config.url_server}/signup/"
-            data = {"first_name": serializer.validated_data["name"],
-                    "last_name": serializer.validated_data["flast_name"] + " " + serializer.validated_data["mlast_name"],
-                    "email": serializer.validated_data["email"],
-                    "password": serializer.validated_data["password"]}
-            response = requests.post(url, json.dumps(data), headers=headers)
+            data_ = {"first_name": serializer.validated_data["name"],
+                "last_name": serializer.validated_data["flast_name"] + " " + serializer.validated_data["mlast_name"],
+                "email": serializer.validated_data["email"],
+                "password": serializer.validated_data["password"],
+                "groups": serializer.validated_data["groups"]}
+            response = requests.post(url, json.dumps(data_), headers=headers)
             if response.ok:
                 resp = json.loads(response.text)
                 if resp["level"] == "success":
@@ -53,37 +53,16 @@ class PersonViewSet(viewsets.ModelViewSet):
                             validate_data = serializer.validated_data
                             del validate_data['email']
                             del validate_data['password']
+                            del validate_data['groups']
                             instance = Person(**serializer.validated_data)
                             instance.khonnect_id = resp["user_id"]
                             instance.save()
-                            # headers = self.get_success_headers(serializer.data)
-                            return Response(data={"message": serializer}, status=status.HTTP_200_OK)
+                            person_json = serializers.PersonResponseSerializer(instance).data
+                            return Response(data=person_json, status=status.HTTP_200_OK)
                 else:
                     return Response(data={"message": resp["level"]}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
-
-    # def perform_create1(self, serializer):
-    #     config = Config.objects.all().first()
-    #     # serializer.save(khonnect_id='3434')
-    #     try:
-    #         headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
-    #         url = f"{config.url_server}/signup/"
-    #         data = {"first_name": serializer.validated_data["name"],
-    #                 "last_name": serializer.validated_data["flast_name"] + " " + serializer.validated_data["mlast_name"],
-    #                 "email": serializer.validated_data["email"],
-    #                 "password": serializer.validated_data["password"]}
-    #         response = requests.post(url, json.dumps(data), headers=headers)
-    #         if response.ok:
-    #             resp = json.loads(response.text)
-    #             if resp["level"] == "success":
-    #                 if 'user_id' in resp:
-    #                     if resp["user_id"]:
-    #                         serializer.save(khonnect_id=resp["user_id"])
-    #             else:
-    #                 return Response(data={"message": resp["level"]}, status=status.HTTP_400_BAD_REQUEST)
-    #     except Exception as e:
-    #         return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):
