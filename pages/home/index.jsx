@@ -20,7 +20,7 @@ import {
 } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
 import _ from "lodash";
-import FormPerson from "../../components/FormPerson";
+import FormPerson from "../../components/person/FormPerson";
 
 const { Content } = Layout;
 
@@ -35,8 +35,9 @@ const homeScreen = () => {
     if (text) {
       Axios.get("http://demo.localhost:8000/person/person/")
         .then((response) => {
-          console.log("RESPONSE-->> ", response);
+          // console.log("RESPONSE-->> ", response);
           response.data.results.map((item) => {
+            item["key"] = item.id;
             item["fullname"] =
               item.name + " " + item.flast_name + " " + item.mlast_name;
             item.timestamp = item.timestamp.substring(0, 10);
@@ -50,7 +51,7 @@ const homeScreen = () => {
     } else {
       Axios.get("http://demo.localhost:8000/person/person/")
         .then((response) => {
-          console.log("RESPONSE-->> ", response);
+          // console.log("RESPONSE-->> ", response);
           response.data.results.map((item) => {
             item["key"] = item.id;
             item["fullname"] =
@@ -114,10 +115,10 @@ const homeScreen = () => {
           <div>
             <Row gutter={16}>
               <Col className="gutter-row" span={6}>
-                <DeleteOutlined />
+                <EditOutlined />
               </Col>
               <Col className="gutter-row" span={6}>
-                <EditOutlined />
+                <DeleteOutlined />
               </Col>
               <Col className="gutter-row" span={6}>
                 <InfoCircleOutlined />
