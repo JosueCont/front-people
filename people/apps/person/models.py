@@ -13,6 +13,8 @@ from people.apps.setup.models import Relationship, ExperienceType, LaborRelation
 
 MAIN_APP_PATH = 'person/'
 
+GENDER_CHOISES = (1, _("Masculino")), (2, _("Femenino")), (3, _("Otro"))
+
 
 class PersonType(models.Model):
     code = models.CharField(max_length=50, verbose_name=_("Codigo"), unique=True)
@@ -43,6 +45,7 @@ class Job(models.Model):
 
 
 class Person(models.Model):
+
     #Informacion general y requerida pra crear un apersona
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     khonnect_id = models.CharField(max_length=40, verbose_name=_("Khonnect id"), null=True, blank=True, help_text=_("Informacion que proviene del microservicio khonnect"))
@@ -51,6 +54,7 @@ class Person(models.Model):
     mlast_name = models.CharField(max_length=150, verbose_name=_("Apellido materno"))
     person_type = models.ForeignKey(PersonType, on_delete=models.CASCADE, verbose_name=_("Tipo de persona"))
     job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Puesto de trabajo"))
+    gender = models.IntegerField(choices=GENDER_CHOISES, verbose_name=_("Genero"))
 
     #Campos opcionales
     birth_date = models.DateField(verbose_name=_("Fecha de nacimiento"), null=True, blank=True)
@@ -103,9 +107,20 @@ class GeneralPerson(models.Model):
 
 class Family(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
-    person = models.ForeignKey(Person, verbose_name=_("Persona"), on_delete=models.CASCADE)
-    relationship = models.ForeignKey(Relationship, verbose_name=_("Parentesco"), on_delete=models.CASCADE)
-    fullname = models.CharField(max_length=40, verbose_name=_("Nombre completo"))
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"))
+    relationship = models.ForeignKey(Relationship, on_delete=models.CASCADE, verbose_name=_("Parentesco"))
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Puesto de trabajo"))
+    name = models.CharField(max_length=150, verbose_name=_("Nombre"))
+    flast_name = models.CharField(max_length=150, verbose_name=_("Apellido paterno"))
+    mlast_name = models.CharField(max_length=150, verbose_name=_("Apellido materno"))
+    gender = models.IntegerField(choices=GENDER_CHOISES, verbose_name=_("Genero"))
+    life = models.BooleanField(default=True, verbose_name=_("¿Vive?"))
+    birth_date = models.DateField(verbose_name=_("Fecha de nacimiento"), null=True, blank=True)
+    benefit = models.CharField(max_length=50, verbose_name=_("% Beneficio"))
+    place_birth = models.CharField(max_length=150, verbose_name=_("Lugar de nacimiento"), null=True, blank=True)
+    nationality = models.CharField(max_length=150, verbose_name=_("Nacionalidad"), null=True, blank=True)
+    other_nationality = models.CharField(max_length=150, verbose_name=_("Otra nacionaldiad"), null=True, blank=True)
+    is_deleted = models.BooleanField(default=False, verbose_name=_("¿Eliminado?"))
 
     def __str__(self):
         return self.id
@@ -116,15 +131,20 @@ class Family(models.Model):
 
 
 class Address(models.Model):
+
+    STREET_TYPE = (1, _("Avenida")), (2, _("Boulevaard")), (3, _("Calle"))
+
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
+    street_type = models.IntegerField(choices=STREET_TYPE, verbose_name=_("Tipo de calle"), null=True, blank=True)
     street = models.CharField(max_length=100, verbose_name=_("Calle"), null=True, blank=True)
-    numberOne = models.CharField(max_length=50, verbose_name=_("Numero uno"), null=True, blank=True)
-    numberTwo = models.CharField(max_length=50, verbose_name=_("Numero dos"), null=True, blank=True)
+    numberOne = models.CharField(max_length=50, verbose_name=_("Numero exterior"), null=True, blank=True)
+    numberTwo = models.CharField(max_length=50, verbose_name=_("Numero interior"), null=True, blank=True)
     building = models.CharField(max_length=50, verbose_name=_("Edificio"), null=True, blank=True)
-    reference = models.IntegerField(verbose_name=_("Referencia"), null=True, blank=True)
     postalCode = models.CharField(max_length=50, verbose_name=_("Codigo postal"), null=True, blank=True)
     suburb = models.CharField(max_length=100, verbose_name=_("Suburbio"), null=True, blank=True)
+    location = models.CharField(max_length=300, verbose_name=_("Ubicacion del domicilio"))
+    reference = models.IntegerField(verbose_name=_("Referencia"), null=True, blank=True)
 
     def __str__(self):
         return self.id
@@ -134,10 +154,32 @@ class Address(models.Model):
         verbose_name_plural = _("Direcciones")
 
 
+class Phone(models.Model):
+
+    PHONE_TYPE = (1, _("Alterno")), (2, _("Principal")), (3, _("Recados"))
+    LINE_TYPE = (1, _("Celular")), (2, _("Fijo"))
+
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"))
+    country_code = models.CharField(max_length=20, verbose_name=_("Codigo del pais"))
+    international_code = models.CharField(max_length=20, verbose_name=_("Codigo internacional"))
+    national_code = models.CharField(max_length=20, verbose_name=_("Codigo nacional"))
+    phone = models.CharField(max_length=20, verbose_name=_("Telefono"))
+    phone_type = models.IntegerField(choices=PHONE_TYPE, verbose_name=("Tipo de telefono"))
+    line_type = models.IntegerField(choices=LINE_TYPE, verbose_name=("Tipo de linea"))
+
+    def __str__(self):
+        return self.id
+
+    class Meta:
+        verbose_name = _("Telefono")
+        verbose_name_plural = _("Telefonos")
+
+
 class ContactEmergency(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
-    relationship = models.ForeignKey(Relationship, verbose_name=_("Parentesco"), on_delete=models.CASCADE)
-    address = models.ForeignKey(Address, verbose_name=_("Direccion"), on_delete=models.CASCADE)
+    relationship = models.ForeignKey(Relationship, on_delete=models.CASCADE, verbose_name=_("Parentesco"))
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, verbose_name=_("Direccion"))
     fullname = models.CharField(max_length=150, verbose_name=_("Nombre completo"))
     phone_one = models.CharField(max_length=150, verbose_name=_("Numero telefonico 1"))
     phone_two = models.CharField(max_length=150, verbose_name=_("Numero telefonico 2"))
@@ -152,9 +194,9 @@ class ContactEmergency(models.Model):
 
 class ExperienceJob(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
-    experience_type = models.ForeignKey(ExperienceType, verbose_name=_("Tipo de experiencia"), on_delete=models.CASCADE)
-    labor_relationship = models.ForeignKey(LaborRelationship, verbose_name=_("Relacion laboral"), on_delete=models.CASCADE)
-    reason_separation = models.ForeignKey(ReasonSeparation, verbose_name=_("Motivo de separacion"), on_delete=models.CASCADE)
+    experience_type = models.ForeignKey(ExperienceType, on_delete=models.CASCADE, verbose_name=_("Tipo de experiencia"))
+    labor_relationship = models.ForeignKey(LaborRelationship, on_delete=models.CASCADE, verbose_name=_("Relacion laboral"))
+    reason_separation = models.ForeignKey(ReasonSeparation, on_delete=models.CASCADE, verbose_name=_("Motivo de separacion"))
     company = models.CharField(max_length=150, verbose_name=_("Empresa"))
     since = models.DateTimeField(verbose_name=_("Fecha de inicio"))
     until = models.DateTimeField(verbose_name=_("Fecha de termino"))

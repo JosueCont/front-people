@@ -9,9 +9,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('person', '0010_remove_generalperson_cv'),
-    ]
+    dependencies = [('person', '0010_remove_generalperson_cv'),]
 
     operations = [
         migrations.CreateModel(
