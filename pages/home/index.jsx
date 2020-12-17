@@ -23,6 +23,7 @@ import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
 
 const { Content } = Layout;
+import Link from 'next/link'
 
 const homeScreen = () => {
   const [person, setPerson] = useState([]);
@@ -110,12 +111,14 @@ const homeScreen = () => {
     },
     {
       title: "Opciones",
-      render: () => {
+      render: (item) => {
         return (
           <div>
             <Row gutter={16}>
               <Col className="gutter-row" span={6}>
-                <EditOutlined />
+                <Link href={`/home/${item.id}`}>
+                  <EditOutlined />
+                </Link>
               </Col>
               <Col className="gutter-row" span={6}>
                 <DeleteOutlined />

@@ -2,7 +2,7 @@ import {
     Layout,
     Breadcrumb,
     Tabs, Form, Input, Modal,
-    Row, Col, Spin
+    Row, Col, Spin, Card
 } from "antd";
 import HeaderCustom from "../../components/Header";
 import Axios from "axios";
@@ -68,6 +68,28 @@ const userDetailForm = () => {
                             layout={'vertical'}
                             form={formUser}
                         >
+                            <Row>
+                                <Card bordered={true}>
+                                    <Col span={6} offset={2}>
+                                        <Form.Item
+                                            name="treatment"
+                                            label="Tratamiento"
+                                            rules={[{message: 'Seleccione un tratamiento'}]}
+                                        >
+                                            <Input disabled/>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={6} offset={2}>
+                                        <Form.Item
+                                            name="status"
+                                            label="Estado"
+                                            rules={[{message: 'Seleccione un estatus'}]}
+                                        >
+                                            <Input disabled/>
+                                        </Form.Item>
+                                    </Col>
+                                </Card>
+                            </Row>
                             <Row>
                                 <Col span={6}  offset={2}>
                                     <Form.Item

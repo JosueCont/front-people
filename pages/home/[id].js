@@ -1,11 +1,11 @@
 import Head from 'next/head'
 import React, {useEffect} from 'react'
-import EmployeeDetail from '../../components/employee/EmployeeDetail'
+import FormPersonDetail from '../../components/person/FormPersonDetail'
 
 export default function EmployeeDetailPage() {
   return (
    <>
-       <EmployeeDetail/>
+       <FormPersonDetail/>
    </>
   )  
 }
