@@ -25,6 +25,7 @@ import Router from "next/router";
 const { TextArea } = Input;
 
 const { Content } = Layout;
+const { Option } = Select;
 
 const businessForm = () => {
   const [business, setBusiness] = useState([]);
@@ -41,9 +42,9 @@ const businessForm = () => {
         deleteBusiness(values.id)
     }else{
         if (!isEdit){
-            addBusiness(values.name, values.description)
+            addBusiness(values.name, values.description, values.FNode)
         }else{
-            updateBusiness(values.id, values.name, values.description)
+            updateBusiness(values.id, values.name, values.description, values.FNode)
         }
     }
 
@@ -53,7 +54,7 @@ const businessForm = () => {
             .then(function (response) {
                 console.log(response.data);
                 if(response.status === 200){
-                    Router.push("/business/business");
+                    Router.push("/business");
                 }
                 getBusiness();
                 setIsModalVisible(false);
@@ -65,16 +66,17 @@ const businessForm = () => {
                 console.log(error);
             });
     };
-  const updateBusiness = async (id, name, description) => {
+  const updateBusiness = async (id, name, description, fNode) => {
       const data = {
           'name': name,
-          'description':description
+          'description':description,
+          'parent': (fNode)? fNode: null
       }
       Axios.put(API_URL + '/business/node/' + id + '/',data)
           .then(function (response) {
               console.log(response.data);
               if(response.status === 200){
-                  Router.push("/business/business");
+                  Router.push("/business");
               }
               getBusiness();
               setIsModalVisible(false);
@@ -86,16 +88,17 @@ const businessForm = () => {
           });
   }
 
-    const addBusiness = async (name, description) => {
+    const addBusiness = async (name, description, fNode) => {
         const data = {
             'name': name,
-            'description':description
+            'description':description,
+            'parent': (fNode)? fNode: null
         }
         Axios.post(API_URL + '/business/node/',data )
             .then(function (response) {
                 console.log(response.data);
                 if(response.status === 200){
-                    Router.push("/business/business");
+                    Router.push("/business");
                 }
                 getBusiness();
                 setIsModalVisible(false);
@@ -119,6 +122,7 @@ const businessForm = () => {
           formBusiness.setFieldsValue({
               name: item.name,
               description: item.description,
+              FNode: (item.parent)? item.parent.id : null,
               id: item.id
           })
           setIsModalVisible(true);
@@ -172,6 +176,16 @@ const businessForm = () => {
       dataIndex: "code",
       key: "code",
     },
+      {
+          title: "Nodo padre",
+          dataIndex: "parent",
+          key: "parent",
+          render: parent => {
+              return (
+                  (parent)? parent.name: null
+              )
+          },
+      },
     {
       title: "Activo",
       dataIndex: "active",
@@ -274,6 +288,24 @@ const businessForm = () => {
                 >
                     <TextArea rows={4} />
                 </Form.Item>
+                  <Form.Item
+                      name="FNode"
+                      label="Nodo padre"
+                  >
+                      <Select
+                          showSearch
+                          placeholder="Select a person"
+                          optionFilterProp="children"
+                          name={"fNode"}
+                          filterOption={(input, option) =>
+                              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                          }
+                      >
+                          {business.map((bus) => (
+                              <Option value={bus.id}>{bus.name}</Option>
+                          ))}
+                      </Select>
+                  </Form.Item>
               </Form>
             </Modal>
               <Modal

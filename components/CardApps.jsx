@@ -1,13 +1,16 @@
-import { Card, Avatar, message } from "antd";
-import { QqOutlined, PlusOutlined } from "@ant-design/icons";
+import { Card, message, Space } from "antd";
+import { BankOutlined, PlusOutlined, TeamOutlined } from "@ant-design/icons";
+import Router from "next/router";
 
 const { Meta } = Card;
 
-const messageDialog = () => message.info("Bienvenido a Khor+");
+const cardApps = () => {
+  const openApp = (appName) => {
+    Router.push("/" + appName);
+  };
 
-const messageAdd = () => message.success("Agregar nueva App");
+  const messageAdd = () => message.success("Agregar nueva App");
 
-export default function cardApps() {
   return (
     <>
       <Card
@@ -15,8 +18,27 @@ export default function cardApps() {
         style={{ width: 300 }}
         actions={[<PlusOutlined onClick={messageAdd} key="setting" />]}
       >
-        <QqOutlined onClick={messageDialog} style={{ fontSize: "30px" }} />
+        <Space>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <BankOutlined
+              hoverable={true}
+              onClick={() => openApp("business")}
+              style={{ fontSize: "40px" }}
+            />
+            <span>Business</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <TeamOutlined
+              hoverable={true}
+              onClick={() => openApp("home")}
+              style={{ fontSize: "40px" }}
+            />
+            <span>People</span>
+          </div>
+        </Space>
       </Card>
     </>
   );
-}
+};
+
+export default cardApps;
