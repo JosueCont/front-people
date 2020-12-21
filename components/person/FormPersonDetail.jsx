@@ -19,6 +19,7 @@ const userDetailForm = () => {
     const [user, setUser] = useState([]);
     const [formUser] = Form.useForm();
     const { Title } = Typography;
+    const [personFullName, setPersonFullName] = useState("");
     useEffect(() => {
         getUserDetail().then((response) => {
             console.log("RESPONSE-->> ", response);
@@ -34,8 +35,15 @@ const userDetailForm = () => {
                 lastname1: response.data.results[0].mlast_name,
                 email: "",
                 cellphone: "",
+                status: (response.data.results[0].is_active)? "Activo": "Inactivo",
+                profile: response.data.results[0].job.name,
+                unit: response.data.results[0].job.unit[0].name,
+                treatment: response.data.results[0].treatment.name,
+                vacancy: (response.data.results[0].vacancy.length > 0)? response.data.results[0].vacancy[0].job.name: "",
+
             });
             setLoading(false);
+            setPersonFullName(response.data.results[0].name + " " + response.data.results[0].flast_name + " " + response.data.results[0].mlast_name)
         })
             .catch((e) => {
                 console.log(e);
@@ -66,6 +74,7 @@ const userDetailForm = () => {
                         style={{padding: 24, minHeight: 380, height: "100%"}}
                     >
                         <Title level={3}>Información Personal</Title>
+                        <Title level={4} style={{marginTop: 0}}>{personFullName}</Title>
                         <Spin tip="Loading..." spinning={loading}></Spin>
                         <Form
                             id="addBusinessForm"
@@ -138,17 +147,21 @@ const userDetailForm = () => {
                                     <Col span={6} offset={2}>
                                         <Form.Item
                                             name="unit"
-                                            label="Unidad"
+                                            label="Unidad estratégica "
                                             rules={[{message: 'Seleccione un unidad'}]}
                                         >
                                             <Input disabled/>
                                         </Form.Item>
                                     </Col>
+                                </Row>
+                            </Card>
+                            <Card bordered={true} style={{marginTop: "20px"}}>
+                                <Row>
                                     <Col span={6} offset={2}>
                                         <Form.Item
-                                            name="strategic"
-                                            label="Estrategía"
-                                            rules={[{message: 'Ingresa un apellido paterno'}]}
+                                            name="vacancy"
+                                            label="Plaza (Activa)"
+                                            rules={[{message: 'Seleccione una plaza'}]}
                                         >
                                             <Input disabled/>
                                         </Form.Item>
