@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, BankAccount, \
-    Family, ContactEmergency, ExperienceJob, Phone
+    Family, ContactEmergency, ExperienceJob, Phone, Vacancy
 
 
 @admin.register(PersonType)
@@ -79,3 +79,8 @@ class BankAccount(admin.ModelAdmin):
     list_display = ('id', 'account_number')
     search_fields = ['bank']
     list_filter = ('bank',)
+
+
+@admin.register(Vacancy)
+class Vacancy(admin.ModelAdmin):
+    pass

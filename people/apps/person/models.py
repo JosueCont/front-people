@@ -35,6 +35,7 @@ class Job(models.Model):
     name = models.CharField(max_length=150, verbose_name=_("Nombre de puesto"))
     code = models.CharField(max_length=50, unique=True, verbose_name=_("Codigo de puesto"))
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creacion"))
+    unit = models.ManyToManyField("business.Node", verbose_name=_("Unidad estratégica"), null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -64,6 +65,8 @@ class Person(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
     is_deleted = models.BooleanField(default=False, verbose_name=_("¿Eliminado?"))
     is_active = models.BooleanField(default=True, verbose_name=_("¿Activo?"))
+    treatment = models.ForeignKey("setup.Treatment", verbose_name=_("Tratamiento"), null=True, blank=True,
+                                  on_delete=models.CASCADE)  # Cuicab
 
     def __str__(self):
         return self.name
@@ -249,3 +252,23 @@ class BankAccount(models.Model):
     class Meta:
         verbose_name = _("Numero de cuenta")
         verbose_name_plural = _("Numeros de cuentas")
+
+
+class Vacancy(models.Model):
+    STATUS_CHOICES = (
+        (1, _("Activo")),
+        (2, _("Cancelado"))
+    )
+
+    job = models.ForeignKey(Job, verbose_name=_("Puesto"), on_delete=models.CASCADE)
+    description = models.TextField(verbose_name=_("Descripción"))
+    status = models.IntegerField(choices=STATUS_CHOICES, default=1)
+    users_applied = models.ManyToManyField(Person, verbose_name=_("Usuarios que aplicaron"))
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
+
+    def __str__(self):
+        return "{0} - {1}".format(self.job.name, self.job.code)
+
+    class Meta:
+        verbose_name = _("Vacante(Plaza)")
+        verbose_name_plural = _("Vacantes(Plazas)")
