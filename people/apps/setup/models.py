@@ -72,3 +72,16 @@ class LaborRelationship(models.Model):
     class Meta:
         verbose_name = _("Relacion laboral")
         verbose_name_plural = _("Relaciones laborales")
+
+
+class Treatment(models.Model):
+    name = models.CharField(max_length=150, verbose_name=_("Nombre"))
+    code = models.CharField(max_length=50, unique=True, verbose_name=_("Clave"))
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
+
+    def __str__(self):
+        return "{0} - {1}".format(self.code, self.name)
+
+    class Meta:
+        verbose_name = _("Tratamiento")
+        verbose_name_plural = _("Tratamientos")

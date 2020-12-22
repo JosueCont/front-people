@@ -1,6 +1,8 @@
 from import_export import resources
 from rest_framework import serializers
 from people.apps.person import models
+from people.apps.setup.models import Treatment
+from people.apps.business.serializers import ChildNodeSerializer
 
 
 class PersonTypeSerializer(serializers.ModelSerializer):
@@ -13,6 +15,11 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Job
         fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super(JobSerializer, self).to_representation(instance)
+        representation['unit'] = ChildNodeSerializer(instance.unit, many=True).data
+        return representation
 
 
 class GeneralPersonSerializer(serializers.ModelSerializer):
@@ -29,14 +36,45 @@ class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Person
         # fields = "__all__"
-        exclude = ['khonnect_id']
+        exclude = ['khonnect_id', 'treatment']
 
+    def to_representation(self, instance):
+        representation = super(PersonSerializer, self).to_representation(instance)
+        representation['treatment'] = TreatmentSerializer(instance.treatment).data
+        representation['job'] = JobSerializer(instance.job).data
+        representation['vacancy'] = VacancySerializer(models.Vacancy.objects.filter(users_applied__in=[instance.id]), many=True).data
+        return representation
+
+
+class VacancySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Vacancy
+        fields = ["description", "job"]
+
+    def to_representation(self, instance):
+        representation = super(VacancySerializer, self).to_representation(instance)
+        representation['job'] = JobSerializer(instance.job).data
+        return representation
+
+
+class TreatmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Treatment
+        fields = "__all__"
 
 class PersonResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Person
         fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super(PersonResponseSerializer, self).to_representation(instance)
+        representation['treatment'] = TreatmentSerializer(instance.treatment).data
+        representation['job'] = JobSerializer(instance.job).data
+        return representation
 
 
 class FamilySerializer(serializers.ModelSerializer):
