@@ -66,7 +66,8 @@ const userDetailForm = () => {
                     style={{padding: "0 50px", marginTop: 64}}
                 >
                     <Breadcrumb style={{margin: "16px 0"}}>
-                        <Breadcrumb.Item>Recursos Humanos</Breadcrumb.Item>
+                        <Breadcrumb.Item>Home</Breadcrumb.Item>
+                        <Breadcrumb.Item href="/home/">Person</Breadcrumb.Item>
                         <Breadcrumb.Item>Expediente de empleados</Breadcrumb.Item>
                     </Breadcrumb>
                     <div
