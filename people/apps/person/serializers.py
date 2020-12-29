@@ -27,6 +27,11 @@ class GeneralPersonSerializer(serializers.ModelSerializer):
         model = models.GeneralPerson
         fields = "__all__"
 
+    def to_representation(self, instance):
+        representation = super(GeneralPersonSerializer, self).to_representation(instance)
+        representation['person'] = PersonSerializer(instance.person).data
+        return representation
+
 
 class PersonSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=40, required=False)
