@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, BankAccount, \
-    Family, ContactEmergency, ExperienceJob, Phone, Vacancy
+    Family, ContactEmergency, JobExperience, Phone, Vacancy
 
 
 @admin.register(PersonType)
@@ -20,9 +20,9 @@ class Job(admin.ModelAdmin):
 
 @admin.register(Person)
 class Person(admin.ModelAdmin):
-    list_display = ('id', 'name')
-    search_fields = ['name']
-    list_filter = ('name', )
+    list_display = ('id', 'first_name')
+    search_fields = ['first_name']
+    list_filter = ('first_name', )
 
 
 @admin.register(GeneralPerson)
@@ -46,8 +46,8 @@ class ContactEmergency(admin.ModelAdmin):
     list_filter = ('fullname',)
 
 
-@admin.register(ExperienceJob)
-class ExperienceJob(admin.ModelAdmin):
+@admin.register(JobExperience)
+class JobExperience(admin.ModelAdmin):
     list_display = ('id', 'function')
     search_fields = ['function']
     list_filter = ('function',)

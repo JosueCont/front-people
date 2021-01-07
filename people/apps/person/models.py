@@ -47,15 +47,23 @@ class Job(models.Model):
 
 class Person(models.Model):
 
+    def upload_photo(self, filename):
+        now = timezone.now()
+        extension = os.path.splitext(filename)[1][1:]
+        file_name = os.path.splitext(filename)[0]
+        url = f"{MAIN_APP_PATH}images/photo-profile/%s%s%s%s%s%s/%s.%s" % (now.day, now.month, now.year, now.hour,
+                                                                 now.minute, now.second,
+                                                                 slugify(str(file_name)), extension)
+        return url
+
     #Informacion general y requerida pra crear un apersona
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
-    khonnect_id = models.CharField(max_length=40, verbose_name=_("Khonnect id"), null=True, blank=True, help_text=_("Informacion que proviene del microservicio khonnect"))
-    name = models.CharField(max_length=150, verbose_name=_("Nombre"))
+    khonnect_id = models.CharField(max_length=40, verbose_name=_("Khonnect id"),  help_text=_("Informacion que proviene del microservicio khonnect"))
+    first_name = models.CharField(max_length=150, verbose_name=_("Nombre"))
     flast_name = models.CharField(max_length=150, verbose_name=_("Apellido paterno"))
-    mlast_name = models.CharField(max_length=150, verbose_name=_("Apellido materno"))
-    person_type = models.ForeignKey(PersonType, on_delete=models.CASCADE, verbose_name=_("Tipo de persona"))
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Puesto de trabajo"))
-    gender = models.IntegerField(choices=GENDER_CHOISES, verbose_name=_("Genero"))
+    mlast_name = models.CharField(max_length=150, verbose_name=_("Apellido materno"), null=True, blank=True)
+    gender = models.IntegerField(default=3, choices=GENDER_CHOISES, verbose_name=_("Genero"))
+    email = models.EmailField(verbose_name=_("Email"), null=True, blank=True)
 
     #Campos opcionales
     birth_date = models.DateField(verbose_name=_("Fecha de nacimiento"), null=True, blank=True)
@@ -67,9 +75,12 @@ class Person(models.Model):
     is_active = models.BooleanField(default=True, verbose_name=_("¿Activo?"))
     treatment = models.ForeignKey("setup.Treatment", verbose_name=_("Tratamiento"), null=True, blank=True,
                                   on_delete=models.CASCADE)  # Cuicab
+    person_type = models.ForeignKey(PersonType, on_delete=models.CASCADE, verbose_name=_("Tipo de persona"), null=True, blank=True)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Puesto de trabajo"), null=True, blank=True)
+    photo = ThumbnailerImageField(upload_to=upload_photo, null=True, blank=True, verbose_name=_("Fotografia"))
 
     def __str__(self):
-        return self.name
+        return self.first_name
 
     class Meta:
         verbose_name = _("Persona")
@@ -97,7 +108,6 @@ class GeneralPerson(models.Model):
                                                         verbose_name=_("Disponibilidad para cambio de residencia"), null=True, blank=True)
     allergies = models.CharField(max_length=500, verbose_name=_("Alergias"), null=True, blank=True)
     blood_type = models.CharField(max_length=10, verbose_name=_("Tipo de sangre"), null=True, blank=True)
-    photo = ThumbnailerImageField(upload_to=upload_photo, null=True, blank=True, verbose_name=_("Fotografia"))
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
 
     def __str__(self):
@@ -195,7 +205,7 @@ class ContactEmergency(models.Model):
         verbose_name_plural = _("Contactos de emergencia")
 
 
-class ExperienceJob(models.Model):
+class JobExperience(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     experience_type = models.ForeignKey(ExperienceType, on_delete=models.CASCADE, verbose_name=_("Tipo de experiencia"))
     labor_relationship = models.ForeignKey(LaborRelationship, on_delete=models.CASCADE, verbose_name=_("Relacion laboral"))
