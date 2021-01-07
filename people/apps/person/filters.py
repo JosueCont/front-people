@@ -6,4 +6,4 @@ from people.apps.person.models import Person
 class PersonFilters(filters.FilterSet):
     class Meta:
         model = Person
-        fields = {'id', 'name'}
+        fields = {'id', 'first_name'}

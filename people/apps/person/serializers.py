@@ -34,7 +34,6 @@ class GeneralPersonSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(max_length=40, required=False)
     password = serializers.CharField(max_length=40, required=False)
     groups = serializers.ListField(max_length=1000, required=False)
 
@@ -68,6 +67,7 @@ class TreatmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Treatment
         fields = "__all__"
+
 
 class PersonResponseSerializer(serializers.ModelSerializer):
 
@@ -108,7 +108,7 @@ class TrainingSerialiser(serializers.ModelSerializer):
 
 class ExperienceJobSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.ExperienceJob
+        model = models.JobExperience
         fields = "__all__"
 
 
