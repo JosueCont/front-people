@@ -87,6 +87,7 @@ const FormPerson = (props) => {
 
     Axios.post("http://demo.localhost:8000/person/person/", value)
       .then((response) => {
+        console.log("Agreagdo-->> ", response);
         message.success("Agregado correctamente");
       })
       .catch((response) => {
@@ -142,25 +143,25 @@ const FormPerson = (props) => {
             }}
           >
             <Space>
-              <Form.Item rules={[ruleRequired]} name="person_type">
+              <Form.Item name="person_type">
                 <Select options={personType} placeholder="Tipo de persona" />
               </Form.Item>
 
-              <Form.Item rules={[ruleRequired]} name="job">
+              <Form.Item name="job">
                 <Select options={jobs} placeholder="Puesto de trabajo" />
               </Form.Item>
             </Space>
-            <Form.Item rules={[ruleRequired]} name="name">
+            <Form.Item rules={[ruleRequired]} name="first_name">
               <Input type="text" placeholder="Nombre" />
             </Form.Item>
             <Form.Item rules={[ruleRequired]} name="flast_name">
               <Input type="text" placeholder="Apellido paterno..." />
             </Form.Item>
-            <Form.Item rules={[ruleRequired]} name="mlast_name">
+            <Form.Item name="mlast_name">
               <Input type="text" placeholder="Apellido materno..." />
             </Form.Item>
             <Space>
-              <Form.Item rules={[ruleRequired]} name="gender">
+              <Form.Item name="gender">
                 <Select options={genders} placeholder="Género" />
               </Form.Item>
               <Form.Item name="birth_date">
@@ -176,7 +177,7 @@ const FormPerson = (props) => {
             <Form.Item rules={[ruleRequired]} name="password">
               <Input.Password type="text" placeholder="Contraseña" />
             </Form.Item>
-            <Form.Item rules={[ruleRequired]} name="groups">
+            <Form.Item name="groups">
               <Select
                 mode="multiple"
                 options={groups}
