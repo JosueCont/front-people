@@ -23,7 +23,7 @@ import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
 
 const { Content } = Layout;
-import Link from 'next/link'
+import Link from "next/link";
 
 const homeScreen = () => {
   const [person, setPerson] = useState([]);
@@ -40,7 +40,7 @@ const homeScreen = () => {
           response.data.results.map((item) => {
             item["key"] = item.id;
             item["fullname"] =
-              item.name + " " + item.flast_name + " " + item.mlast_name;
+              item.first_name + " " + item.flast_name + " " + item.mlast_name;
             item.timestamp = item.timestamp.substring(0, 10);
           });
           setPerson(response.data.results);
@@ -56,7 +56,7 @@ const homeScreen = () => {
           response.data.results.map((item) => {
             item["key"] = item.id;
             item["fullname"] =
-              item.name + " " + item.flast_name + " " + item.mlast_name;
+              item.first_name + " " + item.flast_name + " " + item.mlast_name;
             item.timestamp = item.timestamp.substring(0, 10);
           });
           setPerson(response.data.results);
