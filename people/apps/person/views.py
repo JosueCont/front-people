@@ -1,6 +1,7 @@
 import json
 import requests
 from django.http import HttpResponse
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
@@ -78,6 +79,20 @@ class PersonViewSet(viewsets.ModelViewSet):
             return Response(data=person_json, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'])
+    def general_person(self, request, pk):
+        try:
+            if pk:
+                person = self.get_object()
+                general_person = GeneralPerson.objects.get(person=person)
+                general_person = serializers.GeneralPersonSerializer(general_person)
+            else:
+                pass
+            return Response(data=general_person.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(data={'message': e}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):
 
