@@ -1,8 +1,8 @@
 import {
     Layout,
     Breadcrumb,
-    Tabs, Form, Input, Modal,
-    Row, Col, Spin, Card, Typography
+    Tabs, Form, Input, Modal, InputNumber,
+    Row, Col, Spin, Card, Typography, Select, DatePicker, Button
 } from "antd";
 import HeaderCustom from "../../components/Header";
 import Axios from "axios";
@@ -12,12 +12,14 @@ import {useEffect, useState} from "react";
 const {Content} = Layout;
 const {TabPane} = Tabs;
 import {useRouter} from "next/router";
+const { Option } = Select;
 
 const userDetailForm = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState([]);
     const [formUser] = Form.useForm();
+    const [formGeneralTab] = Form.useForm();
     const { Title } = Typography;
     const [personFullName, setPersonFullName] = useState("");
     useEffect(() => {
@@ -49,9 +51,39 @@ const userDetailForm = () => {
                 console.log(e);
                 setLoading(false);
             });
+        getGeneralTab().then((response) => {
+            console.log("RESPONSE GENERAL TAB-->> ", response);
+            formGeneralTab.setFieldsValue({
+                email: "",
+                birthDay: "",
+                civilStatus: "",
+                gender: response.data.results[0].person.gender.toString(),
+                placeBirth: response.data.results[0].place_birth,
+                nationality: response.data.results[0].nationality,
+                otherNationality: response.data.results[0].otherNationality,
+                nationalityType: "",
+                CURP: response.data.results[0].person.curp,
+                RFC: response.data.results[0].person.rfc,
+                IMSS: response.data.results[0].person.imss,
+                functionalityArea: "",
+                availabilityChangeHome: (response.data.results[0].availability_change_residence)? "true": "false",
+                referencedBy: "",
+                economicExpectation: "",
+                availabilityTravel: (response.data.results[0].availability_travel)? "true": "false",
+                useHands: "",
+            });
+            setLoading(false);
+        })
+            .catch((e) => {
+                console.log(e);
+                setLoading(false);
+            });
     }, [router.query.id]);
     const getUserDetail = async () => {
         return await Axios.get(API_URL + "/person/person/?id=" + router.query.id)
+    };
+    const getGeneralTab = async () => {
+        return await Axios.get(API_URL + "/person/general-person/?person=" + router.query.id)
     };
     const layout = {
         labelCol: { span: 5 },
@@ -172,22 +204,22 @@ const userDetailForm = () => {
                         </Form >
                             <Tabs type="card" defaultActiveKey="1"   style={{marginTop: "40px"}}>
                                 <TabPane tab="Generales" key="1">
-                                    <Form  id="addBusinessForm"
+                                    <Form  id="FormGeneralTab"
+                                           form={formGeneralTab}
                                            name="normal_login"  {...layout}>
                                         <Form.Item
                                             name="email"
                                             label="Dirección de E-Mail"
-                                            rules={[{message: 'Ingresa un expediente'}]}
+                                            rules={[{message: 'Ingresa un email'}]}
                                         >
-                                            <Input disabled/>
+                                            <Input/>
                                         </Form.Item>
 
                                         <Form.Item
-                                            name="idBirthDay"
+                                            name="birthDay"
                                             label="Fecha de nacimiento"
-                                            rules={[{message: 'Ingresa una fecha de nacimiento'}]}
                                         >
-                                            <Input disabled/>
+                                            <DatePicker style={{ width: 540 }} />
                                         </Form.Item>
 
                                         <Form.Item
@@ -195,7 +227,12 @@ const userDetailForm = () => {
                                             label="Estado Civil"
                                             rules={[{message: 'Selecciona un estado civil'}]}
                                         >
-                                            <Input disabled/>
+                                            <Select defaultValue="">
+                                                <Option value="">-------</Option>
+                                                <Option value="1">Casado</Option>
+                                                <Option value="2">Soltero</Option>
+                                                <Option value="3">Viudo</Option>
+                                            </Select>
                                         </Form.Item>
 
                                         <Form.Item
@@ -203,7 +240,12 @@ const userDetailForm = () => {
                                             label="Género"
                                             rules={[{message: 'Selecciona un genero'}]}
                                         >
-                                            <Input disabled/>
+                                            <Select defaultValue="">
+                                                <Option value="">-------</Option>
+                                                <Option value="1">Masculino</Option>
+                                                <Option value="2">Femenino</Option>
+                                                <Option value="3">Otro</Option>
+                                            </Select>
                                         </Form.Item>
 
                                         <Form.Item
@@ -211,7 +253,7 @@ const userDetailForm = () => {
                                             label="Lugar de nacimiento"
                                             rules={[{message: 'Selecciona un lugar de nacimiento'}]}
                                         >
-                                            <Input disabled/>
+                                            <Input/>
                                         </Form.Item>
 
                                         <Form.Item
@@ -219,7 +261,7 @@ const userDetailForm = () => {
                                             label="Nacionalidad"
                                             rules={[{message: 'Selecciona una nacionalidad'}]}
                                         >
-                                            <Input disabled/>
+                                            <Input/>
                                         </Form.Item>
 
                                         <Form.Item
@@ -227,7 +269,7 @@ const userDetailForm = () => {
                                             label="Otra Nacionalidad"
                                             rules={[{message: 'Introduce otra nacionalidad'}]}
                                         >
-                                            <Input disabled/>
+                                            <Input/>
                                         </Form.Item>
 
                                         <Form.Item
@@ -235,7 +277,9 @@ const userDetailForm = () => {
                                             label="Tipo de Nacionalidad"
                                             rules={[{message: 'Seleccione tipo de nacionalidad'}]}
                                         >
-                                            <Input disabled/>
+                                            <Select defaultValue="">
+                                                <Option value="">-------</Option>
+                                            </Select>
                                         </Form.Item>
 
                                         <Form.Item
@@ -243,7 +287,7 @@ const userDetailForm = () => {
                                             label="CURP"
                                             rules={[{message: 'Ingresa una CURP'}]}
                                         >
-                                            <Input disabled/>
+                                            <Input/>
                                         </Form.Item>
 
                                         <Form.Item
@@ -251,7 +295,7 @@ const userDetailForm = () => {
                                             label="RFC"
                                             rules={[{message: 'Ingresa un RFC'}]}
                                         >
-                                            <Input disabled/>
+                                            <Input/>
                                         </Form.Item>
 
 
@@ -260,7 +304,7 @@ const userDetailForm = () => {
                                             label="IMSS"
                                             rules={[{message: 'Ingresa tú número de IMSS'}]}
                                         >
-                                            <Input disabled/>
+                                            <Input/>
                                         </Form.Item>
 
                                         <Form.Item
@@ -268,7 +312,9 @@ const userDetailForm = () => {
                                             label="Área Funcional"
                                             rules={[{message: 'Seleccione una área funcional'}]}
                                         >
-                                            <Input disabled/>
+                                            <Select defaultValue="">
+                                                <Option value="">-------</Option>
+                                            </Select>
                                         </Form.Item>
 
                                         <Form.Item
@@ -276,15 +322,16 @@ const userDetailForm = () => {
                                             label="Referenciado por"
                                             rules={[{message: 'Seleccione un referenciado'}]}
                                         >
-                                            <Input disabled/>
+                                            <Select defaultValue="">
+                                                <Option value="">-------</Option>
+                                            </Select>
                                         </Form.Item>
 
                                         <Form.Item
                                             name="economicExpectation"
                                             label="Expectativa economica"
-                                            rules={[{message: 'Introduce una expectativa economica'}]}
                                         >
-                                            <Input disabled/>
+                                            <InputNumber style={{ width: 540 }}/>
                                         </Form.Item>
 
                                         <Form.Item
@@ -292,7 +339,11 @@ const userDetailForm = () => {
                                             label="Disponibilidad para viajar regularmente"
                                             rules={[{message: 'Seleccione una opción'}]}
                                         >
-                                            <Input disabled/>
+                                            <Select defaultValue="">
+                                                <Option value="">-------</Option>
+                                                <Option value="true">SI</Option>
+                                                <Option value="false">NO</Option>
+                                            </Select>
                                         </Form.Item>
 
                                         <Form.Item
@@ -300,7 +351,11 @@ const userDetailForm = () => {
                                             label="Disponibilidad para cambiar de residencia"
                                             rules={[{message: 'Seleccione una opción'}]}
                                         >
-                                            <Input disabled/>
+                                            <Select defaultValue="">
+                                                <Option value="">-------</Option>
+                                                <Option value="true">SI</Option>
+                                                <Option value="false">NO</Option>
+                                            </Select>
                                         </Form.Item>
 
                                         <Form.Item
@@ -308,7 +363,21 @@ const userDetailForm = () => {
                                             label="Uso de las manos"
                                             rules={[{message: 'Seleccione uso de las manos'}]}
                                         >
-                                            <Input disabled/>
+                                            <Select defaultValue="">
+                                                <Option value="">-------</Option>
+                                                <Option value="true">Diestro</Option>
+                                                <Option value="false">Derecho</Option>
+                                                <Option value="false">Zurdo</Option>
+                                            </Select>
+                                        </Form.Item>
+
+                                        <Form.Item>
+                                            <Button type="primary" htmlType="submit">
+                                                Aceptar
+                                            </Button>
+                                            <Button htmlType="button">
+                                                Regresar
+                                            </Button>
                                         </Form.Item>
 
                                     </Form>
