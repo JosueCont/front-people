@@ -160,7 +160,7 @@ class Address(models.Model):
     reference = models.IntegerField(verbose_name=_("Referencia"), null=True, blank=True)
 
     def __str__(self):
-        return self.id
+        return self.street
 
     class Meta:
         verbose_name = _("Direccion")
@@ -191,6 +191,7 @@ class Phone(models.Model):
 
 class ContactEmergency(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
+    person = models.ForeignKey(Person, null=True, blank=True, on_delete=models.CASCADE, verbose_name=_("Persona"))
     relationship = models.ForeignKey(Relationship, on_delete=models.CASCADE, verbose_name=_("Parentesco"))
     address = models.ForeignKey(Address, on_delete=models.CASCADE, verbose_name=_("Direccion"))
     fullname = models.CharField(max_length=150, verbose_name=_("Nombre completo"))

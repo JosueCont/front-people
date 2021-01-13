@@ -55,7 +55,7 @@ class JobExperience(admin.ModelAdmin):
 
 @admin.register(Address)
 class Address(admin.ModelAdmin):
-    list_display = ('id', 'person')
+    list_display = ('id', 'street', 'person')
     search_fields = ['person']
     list_filter = ('person',)
 
