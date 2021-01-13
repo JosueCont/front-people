@@ -89,8 +89,6 @@ class PersonViewSet(viewsets.ModelViewSet):
                     person.mlast_name = serializer.validated_data["mlast_name"]
                 if 'gender' in serializer.validated_data:
                     person.gender = serializer.validated_data["gender"]
-                if 'gender' in serializer.validated_data:
-                    person.gender = serializer.validated_data["gender"]
                 if 'email' in serializer.validated_data:
                     person.email = serializer.validated_data["email"]
                 if 'birth_date' in serializer.validated_data:
@@ -103,8 +101,13 @@ class PersonViewSet(viewsets.ModelViewSet):
                     person.imss = serializer.validated_data["imss"]
                 if 'photo' in serializer.validated_data:
                     person.photo = serializer.validated_data["photo"]
-                if 'photo' in serializer.validated_data:
-                    person.photo = serializer.validated_data["photo"]
+                validate_data = serializer.validated_data
+                if 'person_type' in validate_data:
+                    person.person_type = serializer.validated_data["person_type"]
+                if 'job' in validate_data:
+                    person.job = validate_data["job"]
+                if 'treatment' in validate_data:
+                    person.treatment = validate_data["treatment"]
                 person.save()
                 headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
                 url = f"{config.url_server}/user/update/"
