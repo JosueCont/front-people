@@ -34,13 +34,11 @@ class GeneralPersonSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(max_length=40, required=False)
-    groups = serializers.ListField(max_length=1000, required=False)
 
     class Meta:
         model = models.Person
         # fields = "__all__"
-        exclude = ['khonnect_id', 'treatment']
+        exclude = ['treatment']
 
     def to_representation(self, instance):
         representation = super(PersonSerializer, self).to_representation(instance)
@@ -69,14 +67,16 @@ class TreatmentSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PersonResponseSerializer(serializers.ModelSerializer):
+class PersonCustomSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(max_length=40, required=False)
+    groups = serializers.ListField(max_length=1000, required=False)
 
     class Meta:
         model = models.Person
-        fields = "__all__"
+        exclude = ['khonnect_id']
 
     def to_representation(self, instance):
-        representation = super(PersonResponseSerializer, self).to_representation(instance)
+        representation = super(PersonCustomSerializer, self).to_representation(instance)
         representation['treatment'] = TreatmentSerializer(instance.treatment).data
         representation['job'] = JobSerializer(instance.job).data
         return representation
