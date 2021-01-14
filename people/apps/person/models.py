@@ -56,6 +56,8 @@ class Person(models.Model):
                                                                  slugify(str(file_name)), extension)
         return url
 
+    CIVIL_STATUS = (1, _("Soltero")), (2, _("Casado")), (3, _("Divorsiado")), (4, _("Concubinato"))
+
     #Informacion general y requerida pra crear un apersona
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     khonnect_id = models.CharField(max_length=40, verbose_name=_("Khonnect id"),  help_text=_("Informacion que proviene del microservicio khonnect"))
@@ -78,6 +80,7 @@ class Person(models.Model):
     person_type = models.ForeignKey(PersonType, on_delete=models.CASCADE, verbose_name=_("Tipo de persona"), null=True, blank=True)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Puesto de trabajo"), null=True, blank=True)
     photo = ThumbnailerImageField(upload_to=upload_photo, null=True, blank=True, verbose_name=_("Fotografia"))
+    civil_status = models.IntegerField(choices=CIVIL_STATUS, verbose_name=_("Estado Civil"), null=True, blank=True)
 
     def __str__(self):
         return self.first_name

@@ -82,7 +82,7 @@ class NodePerson(models.Model):
     node = models.ForeignKey('Node', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.person.name + " - " + self.node.name
+        return self.person.first_name + " - " + self.node.name
 
     class Meta:
         app_label = app_label
