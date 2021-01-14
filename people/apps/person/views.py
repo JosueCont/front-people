@@ -110,6 +110,8 @@ class PersonViewSet(viewsets.ModelViewSet):
                     person.treatment = validate_data["treatment"]
                 if 'civil_status' in validate_data:
                     person.civil_status = validate_data["civil_status"]
+                if 'date_of_admission' in validate_data:
+                    person.date_of_admission = validate_data["date_of_admission"]
                 person.save()
                 headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
                 url = f"{config.url_server}/user/update/"
