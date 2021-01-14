@@ -81,6 +81,7 @@ class Person(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Puesto de trabajo"), null=True, blank=True)
     photo = ThumbnailerImageField(upload_to=upload_photo, null=True, blank=True, verbose_name=_("Fotografia"))
     civil_status = models.IntegerField(choices=CIVIL_STATUS, verbose_name=_("Estado Civil"), null=True, blank=True)
+    date_of_admission = models.DateField(verbose_name=_("Fecha de ingreso"), null=True, blank=True)
 
     def __str__(self):
         return self.first_name
