@@ -125,3 +125,9 @@ class PersonResource(resources.ModelResource):
         exclude = ('id')
         import_id_fields = ('khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted', 'is_active', 'person_type',  'job')
         export_id_fields = ('khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted', 'is_active', 'person_type',  'job')
+
+class DeletePersonMassiveSerializer(serializers.Serializer):
+    """
+    Serializer para eliminar varias personas
+    """
+    persons_id = serializers.CharField()

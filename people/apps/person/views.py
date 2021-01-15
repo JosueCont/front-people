@@ -12,6 +12,7 @@ from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount
+from people.apps.person.serializers import DeletePersonMassiveSerializer
 
 
 class PersonTypeViewSet(viewsets.ModelViewSet):
@@ -30,6 +31,12 @@ class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.PersonSerializer
     queryset = Person.objects.filter(is_deleted=False).order_by('id')
     filterset_class = PersonFilters
+
+    def get_serializer_class(self):
+
+        if self.action == 'delete_by_ids':
+            return DeletePersonMassiveSerializer
+        return serializers.PersonSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = serializers.PersonCustomSerializer(data=request.data)
@@ -148,6 +155,35 @@ class PersonViewSet(viewsets.ModelViewSet):
                 return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['post'])
+    def delete_by_ids(self, request, pk=None):
+        serializer = DeletePersonMassiveSerializer(data=request.data)
+        config = Config.objects.all().first()
+        if serializer.is_valid():
+            try:
+                persons_id = serializer.data['persons_id'].split(',')
+                for person_id in persons_id:
+                    with transaction.atomic():
+                        person = Person.objects.get(pk=person_id)
+                        if person:
+                            khonnect_id = person.khonnect_id
+                            person.delete()
+                            headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
+                            url = f"{config.url_server}/user/delete/"
+                            data_ = {"user_id": khonnect_id}
+                            response = requests.post(url, json.dumps(data_), headers=headers)
+                            if response.ok:
+                                resp = json.loads(response.text)
+                                if resp["level"] == "success":
+                                    pass
+                            else:
+                                raise ValueError
+                return Response(data={"message": "Se eliminaron las personas correctamente"}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):
