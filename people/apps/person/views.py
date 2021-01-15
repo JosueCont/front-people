@@ -182,6 +182,8 @@ class PersonViewSet(viewsets.ModelViewSet):
                 return Response(data={"message": "Se eliminaron las personas correctamente"}, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):
