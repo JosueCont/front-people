@@ -52,7 +52,7 @@ const homeScreen = () => {
     } else {
       Axios.get("http://demo.localhost:8000/person/person/")
         .then((response) => {
-          // console.log("RESPONSE-->> ", response);
+          console.log("RESPONSE-->> ", response);
           response.data.results.map((item) => {
             item["key"] = item.id;
             item["fullname"] =

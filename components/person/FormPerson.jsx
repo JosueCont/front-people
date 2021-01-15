@@ -18,6 +18,8 @@ const FormPerson = (props) => {
   const [groups, setGroups] = useState([]);
   const [personType, setPersonType] = useState([]);
   const [jobs, setJobs] = useState([]);
+  const [date, setDate] = useState("");
+
   useEffect(() => {
     const company_id = "5f417a53c37f6275fb614104";
     if (company_id !== undefined) {
@@ -26,12 +28,13 @@ const FormPerson = (props) => {
   }, []);
 
   const onFinish = (value) => {
-    value.birth_date = value.birth_date._i;
+    if (date !== "") {
+      value.birth_date = date;
+    }
     createPerson(value);
   };
 
   const getValueSelects = async (id) => {
-    console.log("GET GROUPS: ", id);
     const headers = {
       "client-id": "5f417a53c37f6275fb614104",
       "Content-Type": "application/json",
@@ -115,6 +118,11 @@ const FormPerson = (props) => {
     message: "Ingrese un correo electronico valido",
   };
 
+  function onChange(date, dateString) {
+    console.log(date, dateString);
+    setDate(dateString);
+  }
+
   const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
@@ -164,8 +172,9 @@ const FormPerson = (props) => {
               <Form.Item name="gender">
                 <Select options={genders} placeholder="Género" />
               </Form.Item>
-              <Form.Item name="birth_date">
+              <Form.Item>
                 <DatePicker
+                  onChange={onChange}
                   moment={"YYYY-MM-DD"}
                   placeholder="Fecha de nacimiento"
                 />
