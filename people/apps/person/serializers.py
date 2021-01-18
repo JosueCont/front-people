@@ -34,7 +34,6 @@ class GeneralPersonSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.Person
         # fields = "__all__"
@@ -44,12 +43,12 @@ class PersonSerializer(serializers.ModelSerializer):
         representation = super(PersonSerializer, self).to_representation(instance)
         representation['treatment'] = TreatmentSerializer(instance.treatment).data
         representation['job'] = JobSerializer(instance.job).data
-        representation['vacancy'] = VacancySerializer(models.Vacancy.objects.filter(users_applied__in=[instance.id]), many=True).data
+        representation['vacancy'] = VacancySerializer(models.Vacancy.objects.filter(users_applied__in=[instance.id]),
+                                                      many=True).data
         return representation
 
 
 class VacancySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.Vacancy
         fields = ["description", "job"]
@@ -61,7 +60,6 @@ class VacancySerializer(serializers.ModelSerializer):
 
 
 class TreatmentSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Treatment
         fields = "__all__"
@@ -123,11 +121,25 @@ class PersonResource(resources.ModelResource):
         model = models.Person
         # fields = "__all__"
         exclude = ('id')
-        import_id_fields = ('khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted', 'is_active', 'person_type',  'job')
-        export_id_fields = ('khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted', 'is_active', 'person_type',  'job')
+        import_id_fields = (
+        'khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted',
+        'is_active', 'person_type', 'job')
+        export_id_fields = (
+        'khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted',
+        'is_active', 'person_type', 'job')
+
 
 class DeletePersonMassiveSerializer(serializers.Serializer):
     """
     Serializer para eliminar varias personas
     """
     persons_id = serializers.CharField()
+
+
+class GetListPersonSerializer(serializers.Serializer):
+    """
+    Serializer para filtro de personas
+    """
+    first_name = serializers.CharField(required=False)
+    gender = serializers.IntegerField(required=False)
+    is_active = serializers.BooleanField()

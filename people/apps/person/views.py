@@ -12,7 +12,7 @@ from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount
-from people.apps.person.serializers import DeletePersonMassiveSerializer
+from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
 
 
 class PersonTypeViewSet(viewsets.ModelViewSet):
@@ -36,6 +36,8 @@ class PersonViewSet(viewsets.ModelViewSet):
 
         if self.action == 'delete_by_ids':
             return DeletePersonMassiveSerializer
+        if self.action == 'get_list_persons':
+            return GetListPersonSerializer
         return serializers.PersonSerializer
 
     def create(self, request, *args, **kwargs):
@@ -180,6 +182,35 @@ class PersonViewSet(viewsets.ModelViewSet):
                             else:
                                 raise ValueError
                 return Response(data={"message": "Se eliminaron las personas correctamente"}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['post'])
+    def get_list_persons(self, request, pk=None):
+        serializer = GetListPersonSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                persons = None
+                if 'first_name' in serializer.validated_data:
+                    if 'gender' in serializer.validated_data:
+                        persons = Person.objects.filter(first_name=serializer.validated_data["first_name"],
+                                                        is_active=serializer.validated_data["is_active"],
+                                                        gender=serializer.validated_data["gender"])
+                    else:
+                        persons = Person.objects.filter(first_name=serializer.validated_data["first_name"],
+                                                        is_active=serializer.validated_data["is_active"])
+                else:
+                    if 'gender' in serializer.validated_data:
+                        persons = Person.objects.filter(gender=serializer.validated_data["gender"],
+                                                        is_active=serializer.validated_data["is_active"])
+                if persons:
+                    person_json = []
+                    for person in persons:
+                        person_json.append(serializers.PersonSerializer(person).data)
+                return Response(data=person_json,
+                                status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
         else:
