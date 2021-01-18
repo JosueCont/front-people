@@ -92,6 +92,7 @@ const FormPerson = (props) => {
       .then((response) => {
         console.log("Agreagdo-->> ", response);
         message.success("Agregado correctamente");
+        props.close(false)
       })
       .catch((response) => {
         message.error("Error al agregar, intente de nuevo");
