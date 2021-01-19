@@ -11,8 +11,7 @@ import {
 } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import { useState } from "react";
-import { useEffect } from "react/cjs/react.development";
+import { useState, useEffect } from "react";
 
 const FormPerson = (props) => {
   const [form] = Form.useForm();
