@@ -1,3 +1,4 @@
+import csv
 import json
 import requests
 from django.db import transaction
@@ -8,10 +9,12 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from tablib import Dataset
 
+from people.apps.business.models import NodePerson, Node
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
-from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount
+from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
+    Phone
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
 
 
@@ -67,7 +70,7 @@ class PersonViewSet(viewsets.ModelViewSet):
                         if 'user_id' in resp:
                             if resp["user_id"]:
                                 validate_data = serializer.validated_data
-                                #del validate_data['password']
+                                # del validate_data['password']
                                 if 'groups' in serializer.validated_data:
                                     del validate_data['groups']
                                 instance.khonnect_id = resp["user_id"]
@@ -205,6 +208,9 @@ class PersonViewSet(viewsets.ModelViewSet):
                     if 'gender' in serializer.validated_data:
                         persons = Person.objects.filter(gender=serializer.validated_data["gender"],
                                                         is_active=serializer.validated_data["is_active"])
+                    else:
+                        if 'is_active' in serializer.validated_data:
+                            persons = Person.objects.filter(is_active=serializer.validated_data["is_active"])
                 if persons:
                     person_json = []
                     for person in persons:
@@ -259,6 +265,12 @@ class BankAccountViewSet(viewsets.ModelViewSet):
     filterset_fields = ('id', 'account_number')
 
 
+class PhoneViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.PhoneSerialiser
+    queryset = Phone.objects.all()
+    filterset_fields = ('id', 'phone')
+
+
 class ImportExportPersonViewSet(APIView):
     # queryset = Person.objects.all()
     persons = serializers.PersonResource()
@@ -277,23 +289,36 @@ class ImportExportPersonViewSet(APIView):
 
     def get(self, request, format_file):
         try:
-            file_format = format_file
-            self.dataset = self.persons.export()
-            if file_format == 'CSV':
-                response = HttpResponse(self.dataset.csv, content_type='text/csv')
-                response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
-                return response
-            elif file_format == 'JSON':
-                response = HttpResponse(self.dataset.json, content_type='application/json')
-                response['Content-Disposition'] = 'attachment; filename="exported_data.json"'
-                return response
-            elif file_format == 'XLS':
-                response = HttpResponse(self.dataset.xls, content_type='application/vnd.ms-excel')
-                response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
-                return response
-            elif file_format == 'XLSX':
-                response = HttpResponse(self.dataset.xlsx, content_type='application/vnd.ms-excel')
-                response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
-                return response
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="persons.csv"'
+
+            writer = csv.writer(response)
+            writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Puesto', 'Nodo organizacional'])
+
+            persons = Person.objects.all()
+            for person in persons:
+                row = []
+                nod = ''
+                phone = ''
+                try:
+                    node_person = NodePerson.objects.get(person=person)
+                    if node_person:
+                        nod = node_person.node.name
+                except:
+                    None
+                try:
+                    phone_person = Phone.objects.get(person=person)
+                    if phone_person:
+                        phone = phone_person.phone
+                except:
+                    None
+                row.append(person.first_name)
+                row.append(person.flast_name)
+                row.append(person.email)
+                row.append(phone)
+                row.append(person.job.name)
+                row.append(nod)
+                writer.writerow(row)
+            return response
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
