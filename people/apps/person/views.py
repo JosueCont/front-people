@@ -14,7 +14,7 @@ from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
-    Phone
+    Phone, Family, ContactEmergency
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
 
 
@@ -221,6 +221,76 @@ class PersonViewSet(viewsets.ModelViewSet):
                 return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'])
+    def phone_person(self, request, pk):
+
+        if pk:
+            try:
+                person = self.get_object()
+                phone_person = Phone.objects.get(person=person)
+                phone_person = serializers.PhoneSerialiser(phone_person)
+                return Response(data=phone_person.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'])
+    def family_person(self, request, pk):
+
+        if pk:
+            try:
+                person = self.get_object()
+                family_person = Family.objects.get(person=person)
+                family_person = serializers.FamilySerializer(family_person)
+                return Response(data=family_person.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'])
+    def contact_emergency_person(self, request, pk):
+
+        if pk:
+            try:
+                person = self.get_object()
+                contact_person = ContactEmergency.objects.get(person=person)
+                contact_person = serializers.ContactEmergencySerializer(contact_person)
+                return Response(data=contact_person.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'])
+    def training_person(self, request, pk):
+
+        if pk:
+            try:
+                person = self.get_object()
+                training_person = Training.objects.get(person=person)
+                training_person = serializers.TrainingSerialiser(training_person)
+                return Response(data=training_person.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'])
+    def bank_account_person(self, request, pk):
+
+        if pk:
+            try:
+                person = self.get_object()
+                bank_account_person = BankAccount.objects.get(person=person)
+                bank_account_person = serializers.BankAccountSerialiser(bank_account_person)
+                return Response(data=bank_account_person.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
 
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):
