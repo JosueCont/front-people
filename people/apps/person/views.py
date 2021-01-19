@@ -228,9 +228,12 @@ class PersonViewSet(viewsets.ModelViewSet):
         if pk:
             try:
                 person = self.get_object()
-                phone_person = Phone.objects.get(person=person)
-                phone_person = serializers.PhoneSerialiser(phone_person)
-                return Response(data=phone_person.data, status=status.HTTP_200_OK)
+                phone_person = Phone.objects.filter(person=person)
+                if phone_person:
+                    array_phones = []
+                    for phone in phone_person:
+                        array_phones.append(serializers.PhoneSerialiser(phone).data)
+                return Response(data=array_phones, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
         else:
@@ -242,9 +245,12 @@ class PersonViewSet(viewsets.ModelViewSet):
         if pk:
             try:
                 person = self.get_object()
-                family_person = Family.objects.get(person=person)
-                family_person = serializers.FamilySerializer(family_person)
-                return Response(data=family_person.data, status=status.HTTP_200_OK)
+                family_person = Family.objects.filter(person=person)
+                if family_person:
+                    array_family = []
+                    for family in family_person:
+                        array_family.append(serializers.FamilySerializer(family).data)
+                return Response(data=array_family, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
         else:
@@ -256,9 +262,12 @@ class PersonViewSet(viewsets.ModelViewSet):
         if pk:
             try:
                 person = self.get_object()
-                contact_person = ContactEmergency.objects.get(person=person)
-                contact_person = serializers.ContactEmergencySerializer(contact_person)
-                return Response(data=contact_person.data, status=status.HTTP_200_OK)
+                contact_person = ContactEmergency.objects.filter(person=person)
+                if contact_person:
+                    array_contact = []
+                    for contact in contact_person:
+                        array_contact.append(serializers.ContactEmergencySerializer(contact).data)
+                return Response(data=array_contact, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
         else:
@@ -270,9 +279,12 @@ class PersonViewSet(viewsets.ModelViewSet):
         if pk:
             try:
                 person = self.get_object()
-                training_person = Training.objects.get(person=person)
-                training_person = serializers.TrainingSerialiser(training_person)
-                return Response(data=training_person.data, status=status.HTTP_200_OK)
+                training_person = Training.objects.filter(person=person)
+                if training_person:
+                    array_training = []
+                    for training in training_person:
+                        array_training.append(serializers.TrainingSerialiser(training).data)
+                return Response(data=array_training, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
         else:
@@ -284,9 +296,12 @@ class PersonViewSet(viewsets.ModelViewSet):
         if pk:
             try:
                 person = self.get_object()
-                bank_account_person = BankAccount.objects.get(person=person)
-                bank_account_person = serializers.BankAccountSerialiser(bank_account_person)
-                return Response(data=bank_account_person.data, status=status.HTTP_200_OK)
+                bank_account_person = BankAccount.objects.filter(person=person)
+                if bank_account_person:
+                    array_bank_account = []
+                    for training in bank_account_person:
+                        array_bank_account.append(serializers.BankAccountSerialiser(training).data)
+                return Response(data=array_bank_account, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
         else:
@@ -363,7 +378,7 @@ class ImportExportPersonViewSet(APIView):
             response['Content-Disposition'] = 'attachment; filename="persons.csv"'
 
             writer = csv.writer(response)
-            writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Puesto', 'Nodo organizacional'])
+            writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Genero', 'Puesto', 'Nodo organizacional'])
 
             persons = Person.objects.all()
             for person in persons:
@@ -386,6 +401,14 @@ class ImportExportPersonViewSet(APIView):
                 row.append(person.flast_name)
                 row.append(person.email)
                 row.append(phone)
+                gend = ''
+                if person.gender == 1:
+                    gend = 'Masculino'
+                if person.gender == 2:
+                    gend = 'Femenino'
+                if person.gender == 3:
+                    gend = 'Otro'
+                row.append(gend)
                 row.append(person.job.name)
                 row.append(nod)
                 writer.writerow(row)
