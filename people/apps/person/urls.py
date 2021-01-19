@@ -17,6 +17,7 @@ router.register(r'experience-job', views.ExperienceJobViewSet)
 router.register(r'address', views.AddressViewSet)
 router.register(r'training', views.TrainingViewSet)
 router.register(r'bank-account', views.BankAccountViewSet)
+router.register(r'phone', views.PhoneViewSet)
 
 urlpatterns = [
     path('import-export-person', views.ImportExportPersonViewSet.as_view()),

@@ -143,3 +143,10 @@ class GetListPersonSerializer(serializers.Serializer):
     first_name = serializers.CharField(required=False)
     gender = serializers.IntegerField(required=False)
     is_active = serializers.BooleanField()
+
+
+class PhoneSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = models.Phone
+        fields = "__all__"
+
