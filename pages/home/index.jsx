@@ -8,8 +8,10 @@ import {
   Select,
   Switch,
   Button,
+  Form,
 } from "antd";
 import Axios from "axios";
+import { API_URL } from "../../config/config";
 import { useCallback, useEffect, useState } from "react";
 import {
   DeleteOutlined,
@@ -17,6 +19,7 @@ import {
   InfoCircleOutlined,
   SearchOutlined,
   PlusOutlined,
+  DownloadOutlined 
 } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
 import _ from "lodash";
@@ -28,13 +31,15 @@ import Link from "next/link";
 const homeScreen = () => {
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(false);
+  const [status, setStatus] = useState(true);
   const [modal, setModal] = useState(false);
+  const [formFilter] = Form.useForm();  
+  let filters = {};
 
-  const getPerson = (text = "") => {
+  const getPerson = (text) => {
     setLoading(true);
-    if (text) {
-      Axios.get("http://demo.localhost:8000/person/person/")
+    if (text == undefined) {
+      Axios.get(API_URL + `/person/person/`)
         .then((response) => {
           // console.log("RESPONSE-->> ", response);
           response.data.results.map((item) => {
@@ -50,27 +55,24 @@ const homeScreen = () => {
           console.log(e);
         });
     } else {
-      Axios.get("http://demo.localhost:8000/person/person/")
+      Axios.post(API_URL + `/person/person/get_list_persons/ `,filters)
         .then((response) => {
           console.log("RESPONSE-->> ", response);
-          response.data.results.map((item) => {
+          response.data.map((item) => {
             item["key"] = item.id;
             item["fullname"] =
               item.first_name + " " + item.flast_name + " " + item.mlast_name;
             item.timestamp = item.timestamp.substring(0, 10);
           });
-          setPerson(response.data.results);
+          setPerson(response.data);
           setLoading(false);
         })
         .catch((e) => {
+          setPerson([]);
+          setLoading(false);
           console.log(e);
         });
     }
-  };
-
-  const searchPerson = ({ target: { value } }) => {
-    setLoading(true);
-    search(value);
   };
 
   const statusPeron = () => {
@@ -78,11 +80,24 @@ const homeScreen = () => {
     setStatus(status ? false : true);
   };
 
-  const search = useCallback(
-    _.debounce((value) => {
-      getPerson(value);
-    }, 600)
-  );
+  const filter = (value) => {
+    console.log("LOS FILTROS", value)
+   
+    if(value.name !== undefined && value.name !== "")
+    {     
+        filters.first_name = value.name;      
+    }
+    if(value.gender !== undefined)
+    {
+      filters.gender = value.gender;
+    }
+    if(status !== undefined)
+    {      
+        filters.is_active = (status == false ? 0 : 1);      
+    }   
+    console.log(filters);
+    getPerson("filter");
+  }
 
   useEffect(() => {
     getPerson();
@@ -131,18 +146,20 @@ const homeScreen = () => {
         );
       },
     },
-  ];
-
-  const { Search } = Input;
+  ]; 
 
   const genders = [
     {
       label: "Maculino",
-      value: "M",
+      value: 1,
     },
     {
       label: "Femenino",
-      value: "F",
+      value: 2,
+    },
+    {
+      label: "Otro",
+      value: 3,
     },
   ];
 
@@ -150,6 +167,26 @@ const homeScreen = () => {
     console.log("Open Modal-->> ", modal);
     setModal(value);
   };
+
+  const downloadPersons = () => {
+    setLoading(true);
+    Axios.get(API_URL + `/person/import-export-person/csv`)
+        .then((response) => {
+          console.log("RESPONSE-->> ", response);
+          const type = response.headers['content-type']
+          const blob = new Blob([response.data], {type: type, encoding: 'UTF-8'})
+          const link = document.createElement('a')
+          link.href = window.URL.createObjectURL(blob)
+          link.download = 'Personas.csv'
+          link.click()
+          setLoading(false);
+        })
+        .catch((e) => {         
+          setLoading(false);
+          console.log(e);
+        });
+  };
+
 
   return (
     <>
@@ -181,37 +218,66 @@ const homeScreen = () => {
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
             <div style={{ padding: 24 }}>
-              <Row>
-                <Col span={18}>
-                  <Search
-                    placeholder="Nombre..."
-                    loading={loading}
-                    onChange={searchPerson}
-                    onSearch={getPerson}
-                    enterButton={((<SearchOutlined />), "Buscar")}
-                  />
-                </Col>
-                <Col span={5}>
-                  <Select
-                    style={{ marginLeft: "10%", width: "100%" }}
-                    options={genders}
-                    placeholder="Género"
-                  />
-                </Col>
-              </Row>
-              <Row style={{ marginTop: "2%" }}>
-                <Col span={4}>
-                  <label>
-                    <span style={{ fontWeight: "bold" }}>Activos:</span>
-                  </label>
-                  <Switch
-                    style={{ marginLeft: "10%" }}
-                    defaultChecked
-                    onChange={statusPeron}
-                  />
-                </Col>
-              </Row>
-            </div>
+              <Form onFinish={filter} layout={"vertical"} form={formFilter}>
+                <Row>
+                  <Col span={18}>                 
+                    <Form.Item
+                      name="name"                                                    
+                    >
+                      <Input placeholder="Nombre..." />
+                    </Form.Item>
+                  </Col>
+                  <Col span={5}>                 
+                    <Form.Item
+                      name="gender"                                                      
+                    >
+                        <Select
+                        style={{ marginLeft: "10%", width: "100%" }}                      
+                        options={genders}
+                        placeholder="Género"
+                      />
+                    </Form.Item>
+                  </Col>                              
+                </Row>
+                <Row style={{ marginTop: "2%" }}>
+                  <Col span={4}>
+                  <Form.Item
+                      name="is_active"                                                      
+                    >
+                    <label>
+                      <span style={{ fontWeight: "bold" }}>Activos:</span>
+                    </label>
+                    <Switch                  
+                      style={{ marginLeft: "10%" }}
+                      defaultChecked
+                      onChange={statusPeron}
+                    />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}
+                  style={{ float: "right"}}> 
+                  
+                            <Form.Item>
+                              <Button type="primary" htmlType="submit">
+                                Buscar
+                              </Button>                     
+                            </Form.Item>  
+                      </Col> 
+                </Row>
+              </Form>             
+              <div 
+                style={{
+                  float:'right'
+                  }}>
+                <Button 
+                  type="primary" 
+                  icon={<DownloadOutlined />} 
+                  size={{size:'large'}}
+                  onClick={() => downloadPersons()}>
+                  Descargar resultados
+                </Button>
+              </div>
+              </div>
             <Table
               size="small"
               columns={columns}
