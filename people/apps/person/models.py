@@ -197,7 +197,7 @@ class ContactEmergency(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     person = models.ForeignKey(Person, null=True, blank=True, on_delete=models.CASCADE, verbose_name=_("Persona"))
     relationship = models.ForeignKey(Relationship, on_delete=models.CASCADE, verbose_name=_("Parentesco"))
-    address = models.ForeignKey(Address, on_delete=models.CASCADE, verbose_name=_("Direccion"))
+    address = models.CharField(max_length=150, verbose_name=_("Direccion"))
     fullname = models.CharField(max_length=150, verbose_name=_("Nombre completo"))
     phone_one = models.CharField(max_length=150, verbose_name=_("Numero telefonico 1"))
     phone_two = models.CharField(max_length=150, verbose_name=_("Numero telefonico 2"))
