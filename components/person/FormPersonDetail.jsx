@@ -127,7 +127,7 @@ const userDetailForm = () => {
   const updatePerson = (value) => {
     setLoading(true);
     Axios.put(
-      `http://demo.localhost:8000/person/person/${router.query.id}/`,
+      API_URL + `/person/person/${router.query.id}/`,
       value
     )
       .then((response) => {
@@ -181,7 +181,7 @@ const userDetailForm = () => {
         console.log(e);
       });
 
-    Axios.get("http://demo.localhost:8000/person/person-type/")
+    Axios.get(API_URL + `/person/person-type/`)
       .then((response) => {
         if (response.status === 200) {
           let typesPerson = response.data.results;
@@ -195,7 +195,7 @@ const userDetailForm = () => {
         console.log(e);
       });
 
-    Axios.get("http://demo.localhost:8000/person/job/")
+    Axios.get(API_URL + `/person/job/`)
       .then((response) => {
         if (response.status === 200) {
           let job = response.data.results;

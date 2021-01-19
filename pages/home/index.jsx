@@ -11,6 +11,7 @@ import {
   Form,
 } from "antd";
 import Axios from "axios";
+import { API_URL } from "../../config/config";
 import { useCallback, useEffect, useState } from "react";
 import {
   DeleteOutlined,
@@ -18,6 +19,7 @@ import {
   InfoCircleOutlined,
   SearchOutlined,
   PlusOutlined,
+  DownloadOutlined 
 } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
 import _ from "lodash";
@@ -37,7 +39,7 @@ const homeScreen = () => {
   const getPerson = (text) => {
     setLoading(true);
     if (text == undefined) {
-      Axios.get("http://demo.localhost:8000/person/person/")
+      Axios.get(API_URL + `/person/person/`)
         .then((response) => {
           // console.log("RESPONSE-->> ", response);
           response.data.results.map((item) => {
@@ -53,7 +55,7 @@ const homeScreen = () => {
           console.log(e);
         });
     } else {
-      Axios.post("http://demo.localhost:8000/person/person/get_list_persons/",filters)
+      Axios.post(API_URL + `/person/person/get_list_persons/ `,filters)
         .then((response) => {
           console.log("RESPONSE-->> ", response);
           response.data.map((item) => {
@@ -166,6 +168,26 @@ const homeScreen = () => {
     setModal(value);
   };
 
+  const downloadPersons = () => {
+    setLoading(true);
+    Axios.get(API_URL + `/person/import-export-person/csv`)
+        .then((response) => {
+          console.log("RESPONSE-->> ", response);
+          const type = response.headers['content-type']
+          const blob = new Blob([response.data], {type: type, encoding: 'UTF-8'})
+          const link = document.createElement('a')
+          link.href = window.URL.createObjectURL(blob)
+          link.download = 'Personas.csv'
+          link.click()
+          setLoading(false);
+        })
+        .catch((e) => {         
+          setLoading(false);
+          console.log(e);
+        });
+  };
+
+
   return (
     <>
       <Layout>
@@ -243,6 +265,18 @@ const homeScreen = () => {
                       </Col> 
                 </Row>
               </Form>             
+              <div 
+                style={{
+                  float:'right'
+                  }}>
+                <Button 
+                  type="primary" 
+                  icon={<DownloadOutlined />} 
+                  size={{size:'large'}}
+                  onClick={() => downloadPersons()}>
+                  Descargar resultados
+                </Button>
+              </div>
               </div>
             <Table
               size="small"

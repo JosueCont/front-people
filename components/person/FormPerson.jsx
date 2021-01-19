@@ -10,6 +10,7 @@ import {
   message,
 } from "antd";
 import Axios from "axios";
+import { API_URL } from "../../config/config";
 import { useState } from "react";
 import { useEffect } from "react/cjs/react.development";
 
@@ -56,7 +57,7 @@ const FormPerson = (props) => {
         console.log(e);
       });
 
-    Axios.get("http://demo.localhost:8000/person/person-type/")
+    Axios.get(API_URL + `/person/person-type/`)
       .then((response) => {
         if (response.status === 200) {
           let typesPerson = response.data.results;
@@ -70,7 +71,7 @@ const FormPerson = (props) => {
         console.log(e);
       });
 
-    Axios.get("http://demo.localhost:8000/person/job/")
+    Axios.get(API_URL + `/person/job`)
       .then((response) => {
         if (response.status === 200) {
           let job = response.data.results;
@@ -88,7 +89,7 @@ const FormPerson = (props) => {
   const createPerson = (value) => {
     console.log("Crear-->> ", value);
 
-    Axios.post("http://demo.localhost:8000/person/person/", value)
+    Axios.post(API_URL + `/person/person/`, value)
       .then((response) => {
         console.log("Agreagdo-->> ", response);
         message.success("Agregado correctamente");
