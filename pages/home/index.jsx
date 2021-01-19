@@ -18,6 +18,7 @@ import {
   InfoCircleOutlined,
   SearchOutlined,
   PlusOutlined,
+  DownloadOutlined 
 } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
 import _ from "lodash";
@@ -166,6 +167,26 @@ const homeScreen = () => {
     setModal(value);
   };
 
+  const downloadPersons = () => {
+    setLoading(true);
+    Axios.get("http://demo.localhost:8000/person/import-export-person/csv")
+        .then((response) => {
+          console.log("RESPONSE-->> ", response);
+          const type = response.headers['content-type']
+          const blob = new Blob([response.data], {type: type, encoding: 'UTF-8'})
+          const link = document.createElement('a')
+          link.href = window.URL.createObjectURL(blob)
+          link.download = 'Personas.csv'
+          link.click()
+          setLoading(false);
+        })
+        .catch((e) => {         
+          setLoading(false);
+          console.log(e);
+        });
+  };
+
+
   return (
     <>
       <Layout>
@@ -243,6 +264,18 @@ const homeScreen = () => {
                       </Col> 
                 </Row>
               </Form>             
+              <div 
+                style={{
+                  float:'right'
+                  }}>
+                <Button 
+                  type="primary" 
+                  icon={<DownloadOutlined />} 
+                  size={{size:'large'}}
+                  onClick={() => downloadPersons()}>
+                  Descargar resultados
+                </Button>
+              </div>
               </div>
             <Table
               size="small"
