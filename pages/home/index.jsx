@@ -19,7 +19,7 @@ import {
   InfoCircleOutlined,
   SearchOutlined,
   PlusOutlined,
-  DownloadOutlined 
+  DownloadOutlined,
 } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
 import _ from "lodash";
@@ -33,7 +33,7 @@ const homeScreen = () => {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(true);
   const [modal, setModal] = useState(false);
-  const [formFilter] = Form.useForm();  
+  const [formFilter] = Form.useForm();
   let filters = {};
 
   const getPerson = (text) => {
@@ -41,7 +41,6 @@ const homeScreen = () => {
     if (text == undefined) {
       Axios.get(API_URL + `/person/person/`)
         .then((response) => {
-          // console.log("RESPONSE-->> ", response);
           response.data.results.map((item) => {
             item["key"] = item.id;
             item["fullname"] =
@@ -55,9 +54,8 @@ const homeScreen = () => {
           console.log(e);
         });
     } else {
-      Axios.post(API_URL + `/person/person/get_list_persons/ `,filters)
+      Axios.post(API_URL + `/person/person/get_list_persons/ `, filters)
         .then((response) => {
-          console.log("RESPONSE-->> ", response);
           response.data.map((item) => {
             item["key"] = item.id;
             item["fullname"] =
@@ -76,28 +74,21 @@ const homeScreen = () => {
   };
 
   const statusPeron = () => {
-    console.log(status);
     setStatus(status ? false : true);
   };
 
   const filter = (value) => {
-    console.log("LOS FILTROS", value)
-   
-    if(value.name !== undefined && value.name !== "")
-    {     
-        filters.first_name = value.name;      
+    if (value.name !== undefined && value.name !== "") {
+      filters.first_name = value.name;
     }
-    if(value.gender !== undefined)
-    {
+    if (value.gender !== undefined) {
       filters.gender = value.gender;
     }
-    if(status !== undefined)
-    {      
-        filters.is_active = (status == false ? 0 : 1);      
-    }   
-    console.log(filters);
+    if (status !== undefined) {
+      filters.is_active = status == false ? 0 : 1;
+    }
     getPerson("filter");
-  }
+  };
 
   useEffect(() => {
     getPerson();
@@ -146,7 +137,7 @@ const homeScreen = () => {
         );
       },
     },
-  ]; 
+  ];
 
   const genders = [
     {
@@ -164,29 +155,29 @@ const homeScreen = () => {
   ];
 
   const getModal = (value) => {
-    console.log("Open Modal-->> ", modal);
     setModal(value);
   };
 
   const downloadPersons = () => {
     setLoading(true);
     Axios.get(API_URL + `/person/import-export-person/csv`)
-        .then((response) => {
-          console.log("RESPONSE-->> ", response);
-          const type = response.headers['content-type']
-          const blob = new Blob([response.data], {type: type, encoding: 'UTF-8'})
-          const link = document.createElement('a')
-          link.href = window.URL.createObjectURL(blob)
-          link.download = 'Personas.csv'
-          link.click()
-          setLoading(false);
-        })
-        .catch((e) => {         
-          setLoading(false);
-          console.log(e);
+      .then((response) => {
+        const type = response.headers["content-type"];
+        const blob = new Blob([response.data], {
+          type: type,
+          encoding: "UTF-8",
         });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "Personas.csv";
+        link.click();
+        setLoading(false);
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
   };
-
 
   return (
     <>
@@ -220,64 +211,58 @@ const homeScreen = () => {
             <div style={{ padding: 24 }}>
               <Form onFinish={filter} layout={"vertical"} form={formFilter}>
                 <Row>
-                  <Col span={18}>                 
-                    <Form.Item
-                      name="name"                                                    
-                    >
+                  <Col span={18}>
+                    <Form.Item name="name">
                       <Input placeholder="Nombre..." />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>                 
-                    <Form.Item
-                      name="gender"                                                      
-                    >
-                        <Select
-                        style={{ marginLeft: "10%", width: "100%" }}                      
+                  <Col span={5}>
+                    <Form.Item name="gender">
+                      <Select
+                        style={{ marginLeft: "10%", width: "100%" }}
                         options={genders}
                         placeholder="Género"
                       />
                     </Form.Item>
-                  </Col>                              
+                  </Col>
                 </Row>
                 <Row style={{ marginTop: "2%" }}>
                   <Col span={4}>
-                  <Form.Item
-                      name="is_active"                                                      
-                    >
-                    <label>
-                      <span style={{ fontWeight: "bold" }}>Activos:</span>
-                    </label>
-                    <Switch                  
-                      style={{ marginLeft: "10%" }}
-                      defaultChecked
-                      onChange={statusPeron}
-                    />
+                    <Form.Item name="is_active">
+                      <label>
+                        <span style={{ fontWeight: "bold" }}>Activos:</span>
+                      </label>
+                      <Switch
+                        style={{ marginLeft: "10%" }}
+                        defaultChecked
+                        onChange={statusPeron}
+                      />
                     </Form.Item>
                   </Col>
-                  <Col span={8}
-                  style={{ float: "right"}}> 
-                  
-                            <Form.Item>
-                              <Button type="primary" htmlType="submit">
-                                Buscar
-                              </Button>                     
-                            </Form.Item>  
-                      </Col> 
+                  <Col span={8} style={{ float: "right" }}>
+                    <Form.Item>
+                      <Button type="primary" htmlType="submit">
+                        Buscar
+                      </Button>
+                    </Form.Item>
+                  </Col>
                 </Row>
-              </Form>             
-              <div 
+              </Form>
+              <div
                 style={{
-                  float:'right'
-                  }}>
-                <Button 
-                  type="primary" 
-                  icon={<DownloadOutlined />} 
-                  size={{size:'large'}}
-                  onClick={() => downloadPersons()}>
+                  float: "right",
+                }}
+              >
+                <Button
+                  type="primary"
+                  icon={<DownloadOutlined />}
+                  size={{ size: "large" }}
+                  onClick={() => downloadPersons()}
+                >
                   Descargar resultados
                 </Button>
               </div>
-              </div>
+            </div>
             <Table
               size="small"
               columns={columns}

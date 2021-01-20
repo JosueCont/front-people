@@ -86,13 +86,11 @@ const FormPerson = (props) => {
   };
 
   const createPerson = (value) => {
-    console.log("Crear-->> ", value);
-
     Axios.post(API_URL + `/person/person/`, value)
       .then((response) => {
-        console.log("Agreagdo-->> ", response);
         message.success("Agregado correctamente");
-        props.close(false)
+        form.resetFields();
+        props.close(false);
       })
       .catch((response) => {
         message.error("Error al agregar, intente de nuevo");
@@ -120,7 +118,6 @@ const FormPerson = (props) => {
   };
 
   function onChange(date, dateString) {
-    console.log(date, dateString);
     setDate(dateString);
   }
 
@@ -135,7 +132,7 @@ const FormPerson = (props) => {
           centered
           visible={props.visible}
           onOk={() => props.close(false)}
-          onCancel={() => props.close(false)}
+          onCancel={(() => props.close(false), form.resetFields())}
           footer={null}
         >
           <Form
