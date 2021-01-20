@@ -3,7 +3,10 @@ import {
   EditOutlined,
   EllipsisOutlined,
   SettingOutlined,
+  PoweroffOutlined,
 } from "@ant-design/icons";
+
+import Router from "next/router";
 
 const { Meta } = Card;
 
@@ -22,7 +25,7 @@ export default function cardUser() {
         actions={[
           <SettingOutlined key="setting" />,
           <EditOutlined key="edit" />,
-          <EllipsisOutlined key="ellipsis" />,
+          <PoweroffOutlined onClick={() => Router.push("/")} />,
         ]}
       >
         <Meta

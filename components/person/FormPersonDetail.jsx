@@ -26,7 +26,12 @@ import HeaderCustom from "../../components/Header";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { useEffect, useState } from "react";
-import { WarningOutlined } from "@ant-design/icons";
+import {
+  WarningOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ArrowLeftOutlined,
+} from "@ant-design/icons";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -42,13 +47,30 @@ const userDetailForm = () => {
   const router = useRouter();
   const { Title } = Typography;
   const [loading, setLoading] = useState(true);
+  const [loadingTable, setLoadingTable] = useState(true);
+  const [modal, setModal] = useState(false);
   const [personFullName, setPersonFullName] = useState("");
   const [status, setStatus] = useState(false);
   const [photo, setPhoto] = useState("");
   const [numberPanle, setNumberPanel] = useState("1");
   const [idGeneralP, setIdGeneralP] = useState("");
+
+  const [deleted, setDeleted] = useState({});
+
+  ////STATE BOLEAN SWITCH AND CHECKBOX
+  const [currenlyStuding, setCurrenlyStuding] = useState(false);
+
+  /////ID UPDATE
+  const [idBankAcc, setIdBankAcc] = useState("");
+  const [upBankAcc, setUpBankAcc] = useState(false);
   const [idPhone, setIdPhone] = useState("");
-  const [modal, setModal] = useState(false);
+  const [upPhone, setUpPhone] = useState(false);
+  const [idContEm, setIdContEm] = useState("");
+  const [upContEm, setUpContEm] = useState(false);
+  const [idFamily, setIdFamily] = useState("");
+  const [upFamily, setUpFamily] = useState(false);
+  const [idTraining, setIdTraining] = useState("");
+  const [upTraining, setUpTraining] = useState(false);
 
   ////FORMS
   const [formPerson] = Form.useForm();
@@ -69,25 +91,29 @@ const userDetailForm = () => {
   const [relationship, setRelationship] = useState([]);
 
   ////STATE TABLES
+  const [phones, setPhones] = useState([]);
   const [family, setFamily] = useState([]);
   const [contactEmergency, setContactEmergency] = useState([]);
-  const [phones, setPhones] = useState([]);
+  const [training, setTraining] = useState([]);
+  const [experineceJob, setExperienceJob] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
 
   /////STATE DATE
   const [birthDate, setBirthDate] = useState("");
-  const [admissionDate, setAdmissionDate] = useState("");
   const [birthDateFam, setBirthDateFam] = useState("");
+  const [dateAdmission, setDateAdmission] = useState("");
+  const [dateTraining, setDateTraining] = useState("");
+  const [dateExpjob, setDateExpjob] = useState("");
 
   /////STATE CHECKBOX
   const [checkedTravel, setCheckedTravel] = useState(false);
   const [checkedResidence, setCheckedResidence] = useState(false);
 
+  ////DEFAULT SELECT
   const layout = {
     labelCol: { span: 5 },
     wrapperCol: { span: 10 },
   };
-
   const genders = [
     {
       label: "Maculino",
@@ -102,7 +128,6 @@ const userDetailForm = () => {
       value: 3,
     },
   ];
-
   const civilStatus = [
     {
       label: "Soltero(a)",
@@ -117,7 +142,6 @@ const userDetailForm = () => {
       value: 3,
     },
   ];
-
   const typePhones = [
     {
       label: "Alterno",
@@ -132,7 +156,6 @@ const userDetailForm = () => {
       value: "3",
     },
   ];
-
   const typeLines = [
     {
       label: "Celular",
@@ -145,8 +168,20 @@ const userDetailForm = () => {
   ];
 
   ////CHANGE DATE
-  const onChangeDate = (date, dateString) => {
+  const onChangeBirthDate = (date, dateString) => {
     setBirthDate(dateString);
+  };
+  const onChangeDateAdmission = (date, dateString) => {
+    setDateAdmission(dateString);
+  };
+  const onChangeBDFamily = (date, dateString) => {
+    setBirthDateFam(dateString);
+  };
+  const onChangeDateTrainig = (date, dateString) => {
+    setDateTraining(dateString);
+  };
+  const onChangeDExJ = (date, dateString) => {
+    setDateExpjob(dateString);
   };
 
   /////CHANGE CHECKBOX
@@ -160,11 +195,10 @@ const userDetailForm = () => {
     checkedResidence ? setCheckedResidence(false) : setCheckedResidence(true);
     console.log(checkedResidence);
   };
-
-  const changePanel = () => {
-    console.log("PANEL-->> ", numberPanle);
-    if ((numberPanle = 1)) setNumberPanel(0);
-    console.log("PANEL-->> ", numberPanle);
+  const changeCurreStud = () => {
+    console.log(currenlyStuding);
+    currenlyStuding ? setCurrenlyStuding(false) : setCurrenlyStuding(true);
+    console.log(currenlyStuding);
   };
 
   ////LOAD PAGE
@@ -249,18 +283,93 @@ const userDetailForm = () => {
           setLoading(false);
         });
 
+      ///PHONE
+      Axios.get(API_URL + `/person/person/${router.query.id}/phone_person/`)
+        .then((response) => {
+          setPhones(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
+
+      ///FAMILY
+      Axios.get(API_URL + `/person/person/${router.query.id}/family_person/`)
+        .then((response) => {
+          response.data.map((a) => {
+            a.relation = a.relationship.name;
+            a.fullname = a.name + " " + a.flast_name + " " + a.mlast_name;
+          });
+          setFamily(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
+
+      ///CONTACT EMERGENCY
+      Axios.get(
+        API_URL + `/person/person/${router.query.id}/contact_emergency_person/`
+      )
+        .then((response) => {
+          setContactEmergency(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
+
+      ///TRAINIG
+      Axios.get(API_URL + `/person/person/${router.query.id}/training_person/`)
+        .then((response) => {
+          console.log("TRAINING-->>> ", response.data);
+          setTraining(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
+
+      ///JOB EXPERIENCE
+      Axios.get(
+        API_URL + `/person/person/${router.query.id}/job_experience_person/`
+      )
+        .then((response) => {
+          setExperienceJob(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
+
       ///GET BANK ACCOUNTS
       Axios.get(
         API_URL + `/person/person/${router.query.id}/bank_account_person/`
       )
         .then((response) => {
-          console.log("ACCOUNT-->> ", response.data);
           setBankAccounts(response.data);
           setLoading(false);
+          setLoadingTable(false);
         })
         .catch((e) => {
           console.log(e);
           setLoading(false);
+          setLoadingTable(false);
         });
     }
   }, [router.query.id]);
@@ -350,7 +459,6 @@ const userDetailForm = () => {
     value.birth_date = birthDate;
     // value.date_of_admission = admissionDate;
     value.id = router.query.id;
-    console.log("Form-->>> ", value);
     updatePerson(value);
   };
   const updatePerson = (value) => {
@@ -360,7 +468,6 @@ const userDetailForm = () => {
       value
     )
       .then((response) => {
-        console.log("PErson UPDATE-->>> ", response.data);
         formPerson.setFieldsValue({
           first_name: response.data.first_name,
           flast_name: response.data.flast_name,
@@ -409,17 +516,14 @@ const userDetailForm = () => {
 
   //////DATOS GENERALES
   const formGeneralData = (value) => {
-    console.log("ID GENERALES----->>>", idGeneralP);
     if (idGeneralP != "" && idGeneralP != undefined) {
       value.availability_travel = checkedTravel;
       value.availability_change_residence = checkedResidence;
-      console.log(" UPDATE GENERAL DATA-->>> ", value);
       updateGeneralData(value);
     } else {
       value.person = router.query.id;
       value.availability_travel = checkedTravel;
       value.availability_change_residence = checkedResidence;
-      console.log(" CREATE GENERAL DATA-->>> ", value);
       saveGeneralData(value);
     }
   };
@@ -431,7 +535,6 @@ const userDetailForm = () => {
           content: "Guardado correctamente.",
           className: "custom-class",
         });
-        console.log("GENERAL PERSON-->>> ", response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -447,7 +550,6 @@ const userDetailForm = () => {
           content: "Actualizado correctamente.",
           className: "custom-class",
         });
-        console.log("GENERAL UPDATE-->>> ", response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -457,96 +559,479 @@ const userDetailForm = () => {
   };
 
   /////TELEFONO
+  const getPhone = () => {
+    Axios.get(API_URL + `/person/person/${router.query.id}/phone_person/`)
+      .then((response) => {
+        setPhones(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setLoadingTable(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
   const formFinishPhone = (value) => {
-    if (value.id) {
+    if (upPhone) {
+      value.id = idPhone;
+      value.person = router.query.id;
+      updatePhone(value);
     } else {
       value.person = router.query.id;
       savePhone(value);
     }
   };
+  const updateFormPhone = (item) => {
+    formPhone.setFieldsValue({
+      country_code: item.country_code,
+      international_code: item.international_code,
+      line_type: item.line_type,
+      national_code: item.national_code,
+      phone: item.phone,
+      phone_type: item.phone_type,
+    });
+    setIdPhone(item.id);
+    setUpPhone(true);
+  };
   const savePhone = (data) => {
-    console.log("DATA PHONE", data);
     Axios.post(API_URL + `/person/phone/`, data)
       .then((response) => {
-        console.log("CREATE PHONE-->> ", response.data);
         message.success({
           content: "Guardado correctamente.",
           className: "custom-class",
         });
         setLoading(false);
+        getPhone();
+        formPhone.resetFields();
       })
       .catch((error) => {
         console.log(error);
         setLoading(false);
+      });
+  };
+  const updatePhone = (data) => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.put(API_URL + `/person/phone/${data.id}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        setUpPhone(false);
+        setIdPhone(null);
+        formPhone.resetFields();
+        getPhone();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const deletePhone = (data) => {
+    setLoadingTable(true);
+    Axios.delete(API_URL + `/person/phone/${data}/`)
+      .then((response) => {
+        message.success({
+          content: "Eliminado con exito.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        showModal();
+        getPhone();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
       });
   };
   const colPhone = [
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Codigo de pais",
+      dataIndex: "national_code",
+    },
+    {
+      title: "Numero",
+      dataIndex: "phone",
+    },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined onClick={() => updateFormPhone(item)} />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deletePhone" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
     },
   ];
 
   /////FAMILIA
-  const formFinishºFamily = (value) => {
-    setLoading(true);
-    saveFamily(value);
+  const getFamily = () => {
+    Axios.get(API_URL + `/person/person/${router.query.id}/family_person/`)
+      .then((response) => {
+        response.data.map((a) => {
+          a.relation = a.relationship.name;
+          a.fullname = a.name + " " + a.flast_name + " " + a.mlast_name;
+        });
+        setFamily(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const formFinishFamily = (value) => {
+    if (upFamily) {
+      value.person = router.query.id;
+      value.id = idFamily;
+      value.birth_date = birthDateFam;
+      updateFamily(value);
+    } else {
+      value.person = router.query.id;
+      value.birth_date = birthDateFam;
+      saveFamily(value);
+    }
+  };
+  const updateFormFamily = (item) => {
+    formFamily.setFieldsValue({
+      relationship: item.relationship.id,
+      name: item.name,
+      flast_name: item.flast_name,
+      mlast_name: item.mlast_name,
+      gender: item.gender,
+      life: item.life,
+      benefit: item.benefit,
+      place_birth: item.place_birth,
+      nationality: item.nationality,
+      other_nationality: item.other_nationality,
+    });
+    if (item.birth_date)
+      formFamily.setFieldsValue({
+        birth_date: moment(item.birth_date),
+      });
+    if (item.job)
+      formFamily.setFieldsValue({
+        job: item.job.id,
+      });
+    setIdFamily(item.id);
+    setUpFamily(true);
   };
   const saveFamily = (data) => {
+    setLoading(true);
     Axios.post(API_URL + `/person/family/`, data)
       .then((response) => {
-        console.log("FAMILIA-->> ", response.data);
         message.success({
           content: "Guardado correctamente.",
           className: "custom-class",
         });
         setLoading(false);
+        getFamily();
+        formFamily.resetFields();
       })
       .catch((error) => {
         setLoading(false);
         console.log(error);
       });
   };
+  const updateFamily = (data) => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.put(API_URL + `/person/family/${data.id}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        setUpFamily(false);
+        setIdFamily(null);
+        formFamily.resetFields();
+        getFamily();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const deleteFamily = (data) => {
+    setLoadingTable(true);
+    Axios.delete(API_URL + `/person/family/${data}/`)
+      .then((response) => {
+        message.success({
+          content: "Eliminado con exito.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        showModal();
+        getFamily();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
   const colFamily = [
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Nombre",
+      dataIndex: "fullname",
+    },
+    {
+      title: "Parentesco",
+      dataIndex: "relation",
+    },
+    {
+      title: "Beneficio",
+      dataIndex: "benefit",
+    },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined onClick={() => updateFormFamily(item)} />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deleteFamily" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
     },
   ];
 
   /////CONTACTO DE EMERGENCIA
+  const getContactEmergency = () => {
+    Axios.get(
+      API_URL + `/person/person/${router.query.id}/contact_emergency_person/`
+    )
+      .then((response) => {
+        setContactEmergency(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
   const formFinishContactE = (value) => {
-    if (value.id) {
+    if (upContEm) {
+      value.id = idContEm;
+      updateContEm(value);
     } else {
       value.person = router.query.id;
       saveContactE(value);
     }
   };
+  const updateFormContEm = (item) => {
+    formContactEmergency.setFieldsValue({
+      relationship: item.relationship.id,
+      address: item.address,
+      fullname: item.fullname,
+      phone_one: item.phone_one,
+      phone_two: item.phone_two,
+    });
+    setIdContEm(item.id);
+    setUpContEm(true);
+  };
   const saveContactE = (data) => {
     Axios.post(API_URL + `/person/contact-emergency/`, data)
       .then((response) => {
-        console.log("CONTACT EMERGENCY-->>> ", response.data);
         message.success({
           content: "Guardado correctamente.",
           className: "custom-class",
         });
         setLoading(false);
+        getContactEmergency;
+        formContactEmergency.resetFields();
       })
       .catch((error) => {
         setLoading(false);
         console.log(error);
       });
   };
+  const updateContEm = (data) => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.put(API_URL + `/person/contact-emergency/${data.id}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        setUpContEm(false);
+        setIdContEm(null);
+        getContactEmergency();
+        formContactEmergency.resetFields();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const deleteContEm = (data) => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.delete(API_URL + `/person/contact-emergency/${data}/`)
+      .then((response) => {
+        message.success({
+          content: "Eliminado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        getContactEmergency;
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
   const colContact = [
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Nombre",
+      dataIndex: "fullname",
+    },
+    {
+      title: "Telefono 1",
+      dataIndex: "phone_one",
+    },
+    {
+      title: "Telefono 2",
+      dataIndex: "phone_two",
+    },
+    {
+      title: "Dirección",
+      dataIndex: "address",
+    },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined onClick={() => updateFormContEm(item)} />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deleteContEm" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
     },
   ];
 
   /////FORMACION Y HABILIDADES
-  const formFinishTraining = (value) => {};
+  const getTraining = () => {
+    setLoadingTable(true);
+    Axios.get(API_URL + `/person/person/${router.query.id}/training_person/`)
+      .then((response) => {
+        setTraining(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const formFinishTraining = (value) => {
+    if (upTraining) {
+    } else {
+      value.since = dateTraining[0];
+      value.until = dateTraining[1];
+      value.currently_studing = currenlyStuding;
+      value.person = router.query.id;
+      saveTraining(value);
+    }
+  };
   const saveTraining = (data) => {
+    setLoading(true);
     Axios.post(API_URL + `/person/training/`, data)
       .then((response) => {
         message.success({
@@ -554,20 +1039,53 @@ const userDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
+        getTraining();
+        formTraining.resetFields();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
       })
       .catch((error) => {
         setLoading(false);
         console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
       });
   };
   const colTraining = [
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Escuela",
+      dataIndex: "school",
+    },
+    {
+      title: "Fecha inicio",
+      dataIndex: "since",
+    },
+    {
+      title: "Fecha fin",
+      dataIndex: "until",
+    },
+    {
+      title: "Documento",
+      dataIndex: "accreditation_document",
     },
   ];
 
   /////EPERIENCIA LABORAL
+  const getJobExperience = () => {
+    Axios.get(
+      API_URL + `/person/person/${router.query.id}/job_experience_person/`
+    )
+      .then((response) => {
+        setExperienceJob(response.data);
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+      });
+  };
   const formFinishJobExp = (value) => {};
   const saveJobExp = (data) => {
     Axios.post(API_URL + `/person/experience-job/`, data)
@@ -591,12 +1109,43 @@ const userDetailForm = () => {
   ];
 
   /////CUENTAS BANCARIAS
+  const getBankAccount = () => {
+    setLoadingTable(true);
+    Axios.get(
+      API_URL + `/person/person/${router.query.id}/bank_account_person/`
+    )
+      .then((response) => {
+        setBankAccounts(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
   const formBankAcc = (value) => {
-    console.log("Save bank-->> ", value);
-    if (value.id) {
+    if (upBankAcc) {
+      value.id = idBankAcc;
+      updateBankAcc(value);
     } else {
+      value.person = router.query.id;
       saveBankAcc(value);
     }
+  };
+  const updateFormbankAcc = (item) => {
+    formBank.setFieldsValue({
+      bank: item.bank.id,
+      account_number: item.account_number,
+      interbank_key: item.interbank_key,
+    });
+    setIdBankAcc(item.id);
+    setUpBankAcc(true);
   };
   const saveBankAcc = (data) => {
     setLoading(true);
@@ -606,8 +1155,9 @@ const userDetailForm = () => {
           content: "Guardado correctamente.",
           className: "custom-class",
         });
-        console.log("SAVE BANK-->>> ", response.data);
         setLoading(false);
+        getBankAccount();
+        formBank.resetFields();
       })
       .catch((error) => {
         setLoading(false);
@@ -619,23 +1169,102 @@ const userDetailForm = () => {
 
     const saveDoc = (data) => {};
   };
+  const updateBankAcc = (data) => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.put(API_URL + `/person/bank-account/${data.id}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        console.log("UPDATE BANK-->>> ", response.data);
+        setLoading(false);
+        setUpBankAcc(false);
+        setIdBankAcc(null);
+        formBank.resetFields();
+        getBankAccount();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+
+    /////DOCUMENTOS
+    const formDoc = (value) => {};
+
+    const saveDoc = (data) => {};
+  };
+  const deleteBankAcc = (data) => {
+    setLoadingTable(true);
+    Axios.delete(API_URL + `/person/bank-account/${data}/`)
+      .then((response) => {
+        message.success({
+          content: "Eliminado con exito.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        showModal();
+        getBankAccount();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
   const colBank = [
     {
-      title: "Name",
+      title: "Banco",
       dataIndex: "name",
+      key: "id",
     },
     {
       title: "Numero de cuenta",
       dataIndex: "account_number",
+      key: "account_number",
     },
     {
       title: "Clave interbancaria",
       dataIndex: "interbank_key",
+      key: "interbank_key",
+    },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined onClick={() => updateFormbankAcc(item)} />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deleteBankAcc" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
     },
   ];
 
   /////DELETE PERSON
-  const deletePerson = () => {
+  const deletePerson = (data) => {
     Axios.post(API_URL + `/person/person/delete_by_ids/`, {
       persons_id: router.query.id,
     })
@@ -649,10 +1278,23 @@ const userDetailForm = () => {
         console.log(error);
       });
   };
+
+  /////DELETE REGISTER
+  const setDeleteRegister = (props) => {
+    setDeleted(props);
+    showModal();
+  };
+  const deleteRegister = () => {
+    if (deleted.api == "deleteBankAcc") deleteBankAcc(deleted.id);
+    if (deleted.api == "deletePerson") deletePerson();
+    if (deleted.api == "deletePhone") deletePhone(deleted.id);
+    if (deleted.api == "deleteContEm") deleteContEm(deleted.id);
+    if (deleted.api == "deleteFamily") deleteFamily(deleted.id);
+  };
+
+  //////SHOW MODAL DELETE
   const showModal = () => {
-    console.log("DIALOG1-->> ", modal);
     modal ? setModal(false) : setModal(true);
-    console.log("DIALOG2-->> ", modal);
   };
 
   return (
@@ -740,7 +1382,7 @@ const userDetailForm = () => {
                       <Row>
                         <Form.Item name="date_of_admission">
                           <DatePicker
-                            onChange={onChangeDate}
+                            onChange={onChangeDateAdmission}
                             moment={"YYYY-MM-DD"}
                           />
                         </Form.Item>
@@ -771,7 +1413,7 @@ const userDetailForm = () => {
                               label="Fecha de nacimiento"
                             >
                               <DatePicker
-                                onChange={onChangeDate}
+                                onChange={onChangeBirthDate}
                                 moment={"YYYY-MM-DD"}
                                 placeholder="Fecha de nacimiento"
                               />
@@ -817,7 +1459,7 @@ const userDetailForm = () => {
                 </Form>
 
                 <Collapse accordion>
-                  <Panel onClick={changePanel} header="Datos generales">
+                  <Panel header="Datos generales">
                     <Form form={formGeneralTab} onFinish={formGeneralData}>
                       <Col span={18} pull={1}>
                         <Row flex>
@@ -939,15 +1581,18 @@ const userDetailForm = () => {
                         </Form.Item>
                       </Row>
                     </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colPhone} dataSource={phones} />
+                    </Spin>
                   </Panel>
 
                   <Panel header="Familia">
-                    <Col span={18} pull={1}>
-                      <Form>
+                    <Form form={formFamily} onFinish={formFinishFamily}>
+                      <Col span={18} pull={1}>
                         <Row flex>
                           <Col span={10} offset={2}>
                             <Form.Item name="relationship" label="Parentesco">
-                              <Select />
+                              <Select options={relationship} />
                             </Form.Item>
                           </Col>
                           <Col span={10} offset={2}>
@@ -992,14 +1637,14 @@ const userDetailForm = () => {
                               label="Fecha de nacimiento"
                             >
                               <DatePicker
-                                onChange={onChangeDate}
+                                onChange={onChangeBDFamily}
                                 moment={"YYYY-MM-DD"}
                               />
                             </Form.Item>
                           </Col>
                           <Col span={10} offset={2}>
                             <Form.Item
-                              name="palece_birth"
+                              name="place_birth"
                               label="Lugar de nacimiento"
                             >
                               <Input />
@@ -1024,15 +1669,18 @@ const userDetailForm = () => {
                             </Form.Item>
                           </Col>
                         </Row>
-                      </Form>
-                    </Col>
-                    <Row flex>
-                      <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                          Guardar
-                        </Button>
-                      </Form.Item>
-                    </Row>
+                      </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                        </Form.Item>
+                      </Row>
+                    </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colFamily} dataSource={family} />
+                    </Spin>
                   </Panel>
 
                   <Panel header="Contactos de Emergencia">
@@ -1077,10 +1725,16 @@ const userDetailForm = () => {
                         </Form.Item>
                       </Row>
                     </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table
+                        columns={colContact}
+                        dataSource={contactEmergency}
+                      />
+                    </Spin>
                   </Panel>
 
                   <Panel header="Formación/Habilidades">
-                    <Form>
+                    <Form form={formTraining} onFinish={formFinishTraining}>
                       <Col span={18} pull={1}>
                         <Row flex>
                           <Col span={10} offset={2}>
@@ -1089,15 +1743,15 @@ const userDetailForm = () => {
                             </Form.Item>
                           </Col>
                           <Col span={10} offset={2}>
-                            <Form.Item name="since" label="Fecha incio">
+                            <Form.Item name="since" label="Fecha Inicio-Fin">
                               <Space direction="vertical" size={12}>
-                                <RangePicker />
+                                <RangePicker onChange={onChangeDateTrainig} />
                               </Space>
                             </Form.Item>
                           </Col>
                           <Col span={10} offset={2}>
                             <Form.Item
-                              name="accreditation_documnt"
+                              name="accreditation_document"
                               label="Documento de acreditación"
                             >
                               <Input />
@@ -1108,12 +1762,15 @@ const userDetailForm = () => {
                               name="currently_studing"
                               label="Estudia actualmente"
                             >
-                              <Input />
+                              <Checkbox
+                                onChange={changeCurreStud}
+                                checked={currenlyStuding}
+                              />
                             </Form.Item>
                           </Col>
                           <Col span={10} offset={2}>
                             <Form.Item
-                              name="complet_period"
+                              name="completed_period"
                               label="Periodo completado"
                             >
                               <Input />
@@ -1129,6 +1786,9 @@ const userDetailForm = () => {
                         </Form.Item>
                       </Row>
                     </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colTraining} dataSource={training} />
+                    </Spin>
                   </Panel>
 
                   <Panel header="Experiencia laboral">
@@ -1166,12 +1826,7 @@ const userDetailForm = () => {
                           </Col>
                           <Col span={10} offset={2}>
                             <Form.Item name="since" label="Fecha de inicio">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col span={10} offset={2}>
-                            <Form.Item name="until" label="Fehca de termino">
-                              <Select options={genders} />
+                              <RangePicker onChange={onChangeDExJ} />
                             </Form.Item>
                           </Col>
                           <Col span={10} offset={2}>
@@ -1254,7 +1909,7 @@ const userDetailForm = () => {
                           </Col>
                           <Col span={10} offset={2}>
                             <Form.Item
-                              name="acount_number"
+                              name="account_number"
                               label="Numero de cuenta"
                             >
                               <Input />
@@ -1278,7 +1933,9 @@ const userDetailForm = () => {
                         </Form.Item>
                       </Row>
                     </Form>
-                    <Table columns={colBank} dataSource={bankAccounts} />
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colBank} dataSource={bankAccounts} />
+                    </Spin>
                   </Panel>
 
                   <Panel header="Documentos">
@@ -1302,7 +1959,12 @@ const userDetailForm = () => {
                           type="primary"
                           danger
                           icon={<WarningOutlined />}
-                          onClick={showModal}
+                          onClick={() =>
+                            setDeleteRegister({
+                              id: "",
+                              api: "deletePerson",
+                            })
+                          }
                         >
                           Eliminar persona
                         </Button>
@@ -1311,21 +1973,32 @@ const userDetailForm = () => {
                   </Panel>
                 </Collapse>
               </Card>
+              <Row flex>
+                <Col style={{ padding: "2%" }}>
+                  <Button
+                    icon={<ArrowLeftOutlined />}
+                    type="primary"
+                    onClick={() => Router.push("/home")}
+                  >
+                    Regresar
+                  </Button>
+                </Col>
+              </Row>
             </div>
           </Spin>
         </Content>
         <Modal
           title="Modal"
           visible={modal}
-          onOk={deletePerson}
+          onOk={deleteRegister}
           onCancel={showModal}
           okText="Si, Eliminar"
           cancelText="Cancelar"
         >
           <Alert
             message="Warning"
-            description="Al eliminar a una persona perdera todos los datos
-                    relacionados a ella de manera permante.
+            description="Al eliminar este registro perdera todos los datos
+                    relacionados a el de manera permante.
                     ¿Esta seguro de querer eliminarlo?"
             type="warning"
             showIcon
