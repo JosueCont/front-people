@@ -86,6 +86,10 @@ class Person(models.Model):
     def __str__(self):
         return self.first_name
 
+    @property
+    def full_name(self):
+        return "{0} {1} {2}".format(self.first_name, self.flast_name, self.mlast_name)
+
     class Meta:
         verbose_name = _("Persona")
         verbose_name_plural = _("Personas")
@@ -288,3 +292,24 @@ class Vacancy(models.Model):
     class Meta:
         verbose_name = _("Vacante(Plaza)")
         verbose_name_plural = _("Vacantes(Plazas)")
+
+
+class Vacation(models.Model):
+    STATUS_CHOICES = (
+        (1, _("Pendiente")),
+        (2, _("Aprobado")),
+        (3, _("Rechazado")),
+    )
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"))
+    days_requested = models.IntegerField(verbose_name=_("Días solicitados"))
+    departure_date = models.DateField(verbose_name=_("Fecha de salida"))
+    return_date = models.DateField(verbose_name=_("Fecha de regreso"))
+    status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name=_("Estatus"))
+    approved_by = models.ForeignKey(Person, related_name="approved_by", on_delete=models.CASCADE, verbose_name=_("Persona quien aprueba"), null=True, blank=True)
+
+    def __str__(self):
+        return "{0} - {1}".format(self.person.full_name, self.departure_date)
+
+    class Meta:
+        verbose_name = _("Vacaciones")
+        verbose_name_plural = _("Vacaciones")

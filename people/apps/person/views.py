@@ -14,7 +14,7 @@ from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
-    Phone, Family, ContactEmergency, JobExperience
+    Phone, Family, ContactEmergency, JobExperience, Vacation
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
 
 
@@ -434,3 +434,9 @@ class ImportExportPersonViewSet(APIView):
             return response
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VacationViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.VacationSerializer
+    queryset = Vacation.objects.all()
+    filterset_fields = ('departure_date', 'return_date')
