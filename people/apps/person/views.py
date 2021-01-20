@@ -333,19 +333,19 @@ class GeneralPersonViewSet(viewsets.ModelViewSet):
 
 class FamilyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.FamilySerializer
-    queryset = GeneralPerson.objects.all()
+    queryset = Family.objects.all()
     filterset_fields = ('id', 'person')
 
 
 class ContactEmergencyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ContactEmergencySerializer
-    queryset = GeneralPerson.objects.all()
+    queryset = ContactEmergency.objects.all()
     filterset_fields = ('id', 'person')
 
 
 class ExperienceJobViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ExperienceJobSerializer
-    queryset = GeneralPerson.objects.all()
+    queryset = JobExperience.objects.all()
     filterset_fields = ('id', 'person')
 
 
@@ -379,14 +379,16 @@ class ImportExportPersonViewSet(APIView):
     dataset = Dataset()
 
     def post(self, request):
+        dataset = Dataset()
         try:
-            new_persons = request.FILES['person']
-            if new_persons:
-                pass
-            #imported_data = self.dataset.load(new_persons.read())
-            #result = self.persons.import_data(self.dataset, dry_run=True)  # Test the data import
-            #if not result.has_errors():
-             #   self.persons.import_data(self.dataset, dry_run=False)  # Actually import now
+            new_persons = request.FILES['File']
+            imported_data = dataset.load(new_persons.read())
+            data = imported_data.dict
+            persons = serializers.GeneralPersonSerializer(data)
+            #En desarrollo...
+            result = self.persons.import_data(self.dataset, dry_run=True)  # Test the data import
+            if not result.has_errors():
+               self.persons.import_data(self.dataset, dry_run=False)  # Actually import now
             return Response(data={"message": self.dataset}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
