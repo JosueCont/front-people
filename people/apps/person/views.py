@@ -13,6 +13,7 @@ from people.apps.business.models import NodePerson, Node
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
+from people.apps.person.functions import save_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
     Phone, Family, ContactEmergency, JobExperience
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
@@ -383,13 +384,11 @@ class ImportExportPersonViewSet(APIView):
         try:
             new_persons = request.FILES['File']
             imported_data = dataset.load(new_persons.read())
-            data = imported_data.dict
-            persons = serializers.GeneralPersonSerializer(data)
-            #En desarrollo...
-            result = self.persons.import_data(self.dataset, dry_run=True)  # Test the data import
-            if not result.has_errors():
-               self.persons.import_data(self.dataset, dry_run=False)  # Actually import now
-            return Response(data={"message": self.dataset}, status=status.HTTP_200_OK)
+            persons = imported_data.dict
+            if persons:
+                res = save_persons(persons)
+                if res == 'OK':
+                    return Response(data={"message": "Guardado correctamente"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -74,6 +74,8 @@ class PersonCustomSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Person
         exclude = ['khonnect_id']
+        exclude = ['treatment']
+        exclude = ['job']
 
     def to_representation(self, instance):
         representation = super(PersonCustomSerializer, self).to_representation(instance)
