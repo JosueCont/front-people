@@ -147,12 +147,12 @@ class PersonResource(resources.ModelResource):
         model = models.Person
         # fields = "__all__"
         exclude = ('id')
-        import_id_fields = (
+        exclude = ('khonnect_id')
+        #import_id_fields = ('first_name', 'flast_name', 'mlast_name', 'curp',)
+
+        """export_id_fields = (
         'khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted',
-        'is_active', 'person_type', 'job')
-        export_id_fields = (
-        'khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted',
-        'is_active', 'person_type', 'job')
+        'is_active', 'person_type', 'job')"""
 
 
 class DeletePersonMassiveSerializer(serializers.Serializer):
