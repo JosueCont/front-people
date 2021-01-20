@@ -13,7 +13,7 @@ from people.apps.business.models import NodePerson, Node
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
-from people.apps.person.functions import save_persons
+from people.apps.person.functions import save_persons, decode_file_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
     Phone, Family, ContactEmergency, JobExperience
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
@@ -386,7 +386,7 @@ class ImportExportPersonViewSet(APIView):
             imported_data = dataset.load(new_persons.read())
             persons = imported_data.dict
             if persons:
-                res = save_persons(persons)
+                res = decode_file_persons(persons)
                 if res == 'OK':
                     return Response(data={"message": "Guardado correctamente"}, status=status.HTTP_200_OK)
         except Exception as e:
