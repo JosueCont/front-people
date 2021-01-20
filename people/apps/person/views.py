@@ -14,7 +14,7 @@ from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
-    Phone, Family, ContactEmergency
+    Phone, Family, ContactEmergency, JobExperience
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
 
 
@@ -307,6 +307,23 @@ class PersonViewSet(viewsets.ModelViewSet):
         else:
             return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, methods=['get'])
+    def job_experience_person(self, request, pk):
+
+        if pk:
+            try:
+                person = self.get_object()
+                job_experience_person = JobExperience.objects.filter(person=person)
+                if job_experience_person:
+                    array_job_experience = []
+                    for job_experience in job_experience_person:
+                        array_job_experience.append(serializers.ExperienceJobSerializer(job_experience).data)
+                return Response(data=array_job_experience, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
+
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.GeneralPersonSerializer
@@ -364,10 +381,12 @@ class ImportExportPersonViewSet(APIView):
     def post(self, request):
         try:
             new_persons = request.FILES['person']
-            imported_data = self.dataset.load(new_persons.read())
-            result = self.persons.import_data(self.dataset, dry_run=True)  # Test the data import
-            if not result.has_errors():
-                self.persons.import_data(self.dataset, dry_run=False)  # Actually import now
+            if new_persons:
+                pass
+            #imported_data = self.dataset.load(new_persons.read())
+            #result = self.persons.import_data(self.dataset, dry_run=True)  # Test the data import
+            #if not result.has_errors():
+             #   self.persons.import_data(self.dataset, dry_run=False)  # Actually import now
             return Response(data={"message": self.dataset}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)

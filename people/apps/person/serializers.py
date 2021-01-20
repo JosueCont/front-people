@@ -3,6 +3,8 @@ from rest_framework import serializers
 from people.apps.person import models
 from people.apps.setup.models import Treatment
 from people.apps.business.serializers import ChildNodeSerializer
+from people.apps.setup.serializers import BankSerializer, RelationshipSerializer, ExperienceTypeSerializer, \
+    LaborRelationshipSerializer, ReasonSeparationSerializer
 
 
 class PersonTypeSerializer(serializers.ModelSerializer):
@@ -85,6 +87,12 @@ class FamilySerializer(serializers.ModelSerializer):
         model = models.Family
         fields = "__all__"
 
+    def to_representation(self, instance):
+        representation = super(FamilySerializer, self).to_representation(instance)
+        representation['relationship'] = RelationshipSerializer(instance.relationship).data
+        representation['job'] = JobSerializer(instance.job).data
+        return representation
+
 
 class AddressSerialiser(serializers.ModelSerializer):
     class Meta:
@@ -96,6 +104,12 @@ class ContactEmergencySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ContactEmergency
         fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super(ContactEmergencySerializer, self).to_representation(instance)
+        representation['relationship'] = RelationshipSerializer(instance.relationship).data
+        return representation
+
 
 
 class TrainingSerialiser(serializers.ModelSerializer):
@@ -109,11 +123,23 @@ class ExperienceJobSerializer(serializers.ModelSerializer):
         model = models.JobExperience
         fields = "__all__"
 
+    def to_representation(self, instance):
+        representation = super(ExperienceJobSerializer, self).to_representation(instance)
+        representation['experience_type'] = ExperienceTypeSerializer(instance.experience_type).data
+        representation['labor_relationship'] = LaborRelationshipSerializer(instance.labor_relationship).data
+        representation['reason_separation'] = ReasonSeparationSerializer(instance.reason_separation).data
+        return representation
+
 
 class BankAccountSerialiser(serializers.ModelSerializer):
     class Meta:
         model = models.BankAccount
         fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super(BankAccountSerialiser, self).to_representation(instance)
+        representation['bank'] = BankSerializer(instance.bank).data
+        return representation
 
 
 class PersonResource(resources.ModelResource):

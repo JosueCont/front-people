@@ -212,6 +212,7 @@ class ContactEmergency(models.Model):
 
 class JobExperience(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
     experience_type = models.ForeignKey(ExperienceType, on_delete=models.CASCADE, verbose_name=_("Tipo de experiencia"))
     labor_relationship = models.ForeignKey(LaborRelationship, on_delete=models.CASCADE, verbose_name=_("Relacion laboral"))
     reason_separation = models.ForeignKey(ReasonSeparation, on_delete=models.CASCADE, verbose_name=_("Motivo de separacion"))
