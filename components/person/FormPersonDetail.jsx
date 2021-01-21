@@ -370,6 +370,10 @@ const userDetailForm = () => {
         API_URL + `/person/person/${router.query.id}/bank_account_person/`
       )
         .then((response) => {
+          let bancos = [];
+          bancos = response.data.map((a) => {
+            a.bankName = a.bank.name;
+          });
           setBankAccounts(response.data);
           setLoading(false);
           setLoadingTable(false);
@@ -813,6 +817,7 @@ const userDetailForm = () => {
       nationality: item.nationality,
       other_nationality: item.other_nationality,
     });
+    setBirthDateFam(item.birth_date);
     if (item.birth_date)
       formFamily.setFieldsValue({
         birth_date: moment(item.birth_date),
@@ -1162,7 +1167,6 @@ const userDetailForm = () => {
       value.person = router.query.id;
       value.since = dateExpjob[0];
       value.until = dateExpjob[1];
-      console.log("EXPERIENCE JOB-->>> ", value);
       saveJobExp(value);
     }
   };
@@ -1176,7 +1180,7 @@ const userDetailForm = () => {
         });
         setLoading(false);
         formExperiencejob.resetFields();
-        getJobExperience;
+        getJobExperience();
       })
       .catch((error) => {
         setLoading(false);
@@ -1201,6 +1205,10 @@ const userDetailForm = () => {
       API_URL + `/person/person/${router.query.id}/bank_account_person/`
     )
       .then((response) => {
+        let bancos = [];
+        bancos = response.data.map((a) => {
+          a.bankName = a.bank.name;
+        });
         setBankAccounts(response.data);
         setLoading(false);
         setTimeout(() => {
@@ -1259,7 +1267,6 @@ const userDetailForm = () => {
           content: "Actualizado correctamente.",
           className: "custom-class",
         });
-        console.log("UPDATE BANK-->>> ", response.data);
         setLoading(false);
         setUpBankAcc(false);
         setIdBankAcc(null);
@@ -1303,7 +1310,7 @@ const userDetailForm = () => {
   const colBank = [
     {
       title: "Banco",
-      dataIndex: "name",
+      dataIndex: "bankName",
       key: "id",
     },
     {
@@ -1952,7 +1959,7 @@ const userDetailForm = () => {
                           </Col>
                           <Col lg={6} xs={22} offset={1}>
                             <Form.Item
-                              name="startin_salary"
+                              name="starting_salary"
                               label="Salario incial"
                             >
                               <Input />
