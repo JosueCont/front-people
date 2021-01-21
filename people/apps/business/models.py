@@ -1,7 +1,8 @@
 import os
 from django.db import models
 from django.utils.translation import gettext as _
-from people.apps.person.models import Person
+from people.apps.person.models import Person, Job
+from people.apps.functions import get_clean_uuid
 
 app_label = 'business'
 
@@ -88,3 +89,31 @@ class NodePerson(models.Model):
         app_label = app_label
         verbose_name = _("Responsable de un nodo organizacional")
         verbose_name_plural = _("Responsables de nodos organizacionales")
+
+
+class Department(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
+    name = models.CharField(max_length=350)
+    description = models.CharField(max_length=1000)
+    code = models.CharField(max_length=200, null=True, blank=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Departamento")
+        verbose_name_plural = _("Departamentos")
+
+
+class JobDepartment(models.Model):
+    job = models.ForeignKey('person.Job', on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.job.name + " - " + self.department.name
+
+    class Meta:
+        app_label = app_label
+        verbose_name = _("Puesto de trabajo de departamento")
+        verbose_name_plural = _("Puestos de trabajo de departamentos")

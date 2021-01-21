@@ -22,7 +22,7 @@ class Job(admin.ModelAdmin):
 class Person(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'date_of_admission',)
     search_fields = ['first_name']
-    list_filter = ('first_name', 'job', 'curp', 'email', 'date_of_admission', 'is_active', 'gender')
+    list_filter = ('first_name', 'job_department', 'curp', 'email', 'date_of_admission', 'is_active', 'gender')
 
 
 @admin.register(GeneralPerson)

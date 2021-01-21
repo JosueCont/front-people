@@ -29,5 +29,5 @@ class ReasonSeparationSerializer(serializers.ModelSerializer):
 
 class LaborRelationshipSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.ReasonSeparation
+        model = models.LaborRelationship
         fields = "__all__"

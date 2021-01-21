@@ -114,6 +114,8 @@ class PersonViewSet(viewsets.ModelViewSet):
                     person.imss = serializer.validated_data["imss"]
                 if 'photo' in serializer.validated_data:
                     person.photo = serializer.validated_data["photo"]
+                if 'is_active' in serializer.validated_data:
+                    person.is_active = serializer.validated_data["is_active"]
                 validate_data = serializer.validated_data
                 if 'person_type' in validate_data:
                     person.person_type = serializer.validated_data["person_type"]
@@ -375,9 +377,6 @@ class PhoneViewSet(viewsets.ModelViewSet):
 
 
 class ImportExportPersonViewSet(APIView):
-    # queryset = Person.objects.all()
-    persons = serializers.PersonResource()
-    dataset = Dataset()
 
     def post(self, request):
         dataset = Dataset()

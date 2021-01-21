@@ -4,6 +4,7 @@ from django.contrib.sites import requests
 from django.db import transaction
 import requests
 
+from people.apps.business.models import Node
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 import json
@@ -30,6 +31,7 @@ def decode_file_persons(persons):
 
 
 def save_import_person(person, password, groups):
+    instance = None
     try:
         config = Config.objects.all().first()
         with transaction.atomic():
@@ -63,8 +65,7 @@ def save_import_person(person, password, groups):
                         if resp["user_id"]:
                             instance.khonnect_id = resp["user_id"]
                             instance.save()
-                            person_json = serializers.PersonSerializer(instance).data
-                            return person_json
+                            return instance
                 else:
                     return "error al guardar usuario"
             else:

@@ -24,3 +24,22 @@ class NodePersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.NodePerson
         fields = "__all__"
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Department
+        fields = "__all__"
+
+
+class JobDepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.JobDepartment
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super(JobDepartmentSerializer, self).to_representation(instance)
+        from people.apps.person.serializers import JobSerializer
+        representation['job'] = JobSerializer(instance.job).data
+        representation['department'] = DepartmentSerializer(instance.department).data
+        return representation
