@@ -55,7 +55,6 @@ const userDetailForm = () => {
   const [loadingTable, setLoadingTable] = useState(true);
   const [modal, setModal] = useState(false);
   const [personFullName, setPersonFullName] = useState("");
-  const [status, setStatus] = useState(false);
   const [photo, setPhoto] = useState("");
   const [numberPanle, setNumberPanel] = useState("1");
   const [idGeneralP, setIdGeneralP] = useState("");
@@ -63,6 +62,9 @@ const userDetailForm = () => {
   const [deleted, setDeleted] = useState({});
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
+  const [isActive, setIsActive] = useState(false);
+  const [checkedTravel, setCheckedTravel] = useState(false);
+  const [checkedResidence, setCheckedResidence] = useState(false);
   const [currenlyStuding, setCurrenlyStuding] = useState(false);
 
   /////ID UPDATE
@@ -115,10 +117,6 @@ const userDetailForm = () => {
   const [dateTraining, setDateTraining] = useState("");
   const [dateExpjob, setDateExpjob] = useState("");
 
-  /////STATE CHECKBOX
-  const [checkedTravel, setCheckedTravel] = useState(false);
-  const [checkedResidence, setCheckedResidence] = useState(false);
-
   ////DEFAULT SELECT
   const layout = {
     labelCol: { span: 5 },
@@ -126,7 +124,7 @@ const userDetailForm = () => {
   };
   const genders = [
     {
-      label: "Maculino",
+      label: "Masculino",
       value: 1,
     },
     {
@@ -196,19 +194,18 @@ const userDetailForm = () => {
 
   /////CHANGE CHECKBOX
   const checkTravel = () => {
-    console.log(checkedTravel);
-    checkTravel ? setCheckedTravel(false) : setCheckedTravel(true);
-    console.log(checkedTravel);
+    checkedTravel ? setCheckedTravel(false) : setCheckedTravel(true);
   };
   const checkResidence = () => {
-    console.log(checkedResidence);
     checkedResidence ? setCheckedResidence(false) : setCheckedResidence(true);
-    console.log(checkedResidence);
   };
   const changeCurreStud = () => {
-    console.log(currenlyStuding);
     currenlyStuding ? setCurrenlyStuding(false) : setCurrenlyStuding(true);
-    console.log(currenlyStuding);
+  };
+
+  /////CHANGE SWITCH
+  const changeStatus = () => {
+    isActive ? setIsActive(false) : setIsActive(true);
   };
 
   ////LOAD PAGE
@@ -218,6 +215,7 @@ const userDetailForm = () => {
       ///GET PERSON
       Axios.get(API_URL + `/person/person/${router.query.id}`)
         .then((response) => {
+          console.log("PERSON-->>> ", response.data);
           formPerson.setFieldsValue({
             first_name: response.data.first_name,
             flast_name: response.data.flast_name,
@@ -238,17 +236,18 @@ const userDetailForm = () => {
           if (response.data.job)
             formPerson.setFieldsValue({ job: response.data.job.id });
 
-          // if (response.data.date_of_admission)
-          //   formPerson.setFieldsValue({
-          //     date_of_admission: moment(response.data.date_of_admission),
-          //   });
+          if (response.data.date_of_admission)
+            formPerson.setFieldsValue({
+              date_of_admission: moment(response.data.date_of_admission),
+            });
 
           if (response.data.birth_date)
             formPerson.setFieldsValue({
               birth_date: moment(response.data.birth_date),
             });
+          setDateAdmission(response.data.date_of_admission);
           setBirthDate(response.data.birth_date);
-          setStatus(response.data.is_active);
+          setIsActive(response.data.is_active);
           if (response.data.photo) setPhoto(response.data.photo);
           else
             setPhoto(
@@ -516,16 +515,14 @@ const userDetailForm = () => {
   ////PERSON
   const onFinishPerson = (value) => {
     value.birth_date = birthDate;
-    // value.date_of_admission = admissionDate;
+    value.date_of_admission = dateAdmission;
     value.id = router.query.id;
+    value.is_active = isActive;
     updatePerson(value);
   };
   const updatePerson = (value) => {
     setLoading(true);
-    Axios.put(
-      `http://demo.localhost:8000/person/person/${router.query.id}/`,
-      value
-    )
+    Axios.put(API_URL + `/person/person/${router.query.id}/`, value)
       .then((response) => {
         formPerson.setFieldsValue({
           first_name: response.data.first_name,
@@ -548,17 +545,17 @@ const userDetailForm = () => {
         if (response.data.job)
           formPerson.setFieldsValue({ job: response.data.job.id });
 
-        // if (response.data.date_of_admission)
-        //   formPerson.setFieldsValue({
-        //     date_of_admission: moment(response.data.date_of_admission),
-        //   });
+        if (response.data.date_of_admission)
+          formPerson.setFieldsValue({
+            date_of_admission: moment(response.data.date_of_admission),
+          });
 
         if (response.data.birth_date)
           formPerson.setFieldsValue({
             birth_date: moment(response.data.birth_date),
           });
         setBirthDate(response.data.birth_date);
-        setStatus(response.data.is_active);
+        setIsActive(response.data.is_active);
         if (response.data.photo) setPhoto(response.data.photo);
         setLoading(false);
         message.success({
@@ -570,6 +567,20 @@ const userDetailForm = () => {
         setLoading(false);
         message.error("Error al actualizar, intente de nuevo.");
         console.log(e);
+      });
+  };
+  const deletePerson = (data) => {
+    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
+      persons_id: router.query.id,
+    })
+      .then((response) => {
+        setLoading(false);
+        showModal();
+        Router.push("/home");
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
       });
   };
 
@@ -1238,11 +1249,6 @@ const userDetailForm = () => {
         setLoading(false);
         console.log(error);
       });
-
-    /////DOCUMENTOS
-    const formDoc = (value) => {};
-
-    const saveDoc = (data) => {};
   };
   const updateBankAcc = (data) => {
     setLoading(true);
@@ -1270,11 +1276,6 @@ const userDetailForm = () => {
           setLoadingTable(false);
         }, 1000);
       });
-
-    /////DOCUMENTOS
-    const formDoc = (value) => {};
-
-    const saveDoc = (data) => {};
   };
   const deleteBankAcc = (data) => {
     setLoadingTable(true);
@@ -1338,21 +1339,8 @@ const userDetailForm = () => {
     },
   ];
 
-  /////DELETE PERSON
-  const deletePerson = (data) => {
-    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
-      persons_id: router.query.id,
-    })
-      .then((response) => {
-        setLoading(false);
-        showModal();
-        Router.push("/home");
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.log(error);
-      });
-  };
+  /////DOCUMENTS
+  const upDocument = () => {};
 
   /////DELETE REGISTER
   const setDeleteRegister = (props) => {
@@ -1418,79 +1406,84 @@ const userDetailForm = () => {
                   form={formPerson}
                 >
                   <Row>
-                    <Col span={18} pull={1}>
-                      <Row flex>
-                        <Col span={10} offset={2}>
+                    <Col span={17}>
+                      <Row>
+                        <Col lg={7} xs={22} offset={1}>
                           <Form.Item
                             name="flast_name"
                             label="Apellido Paterno"
                             rules={[{ message: "Ingresa un apellido paterno" }]}
                           >
-                            <Input size="small" />
+                            <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={10} offset={2}>
+                        <Col lg={7} xs={22} offset={1}>
                           <Form.Item
                             name="mlast_name"
                             label="Apellido Materno"
                             rules={[{ message: "Ingresa un apellido paterno" }]}
                           >
-                            <Input size="small" />
+                            <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={10} offset={2}>
+                        <Col lg={7} xs={22} offset={1}>
                           <Form.Item
                             name="first_name"
                             label="Nombre(s)"
                             rules={[{ message: "Ingresa un nombre" }]}
                           >
-                            <Input size="small" />
+                            <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={10} offset={2}>
+                        <Col lg={7} xs={22} offset={1}>
                           <Form.Item name="job" label="Puesto">
                             <Select
                               options={jobs}
                               placeholder="Selecciona un puesto"
-                              size="small"
                             />
                           </Form.Item>
                         </Col>
 
-                        <Col span={10} offset={2}>
+                        <Col lg={7} xs={22} offset={1}>
                           <Form.Item name="node" label="Unidad organizacional">
-                            <Input size="small" />
+                            <Input />
                           </Form.Item>
                         </Col>
-                        <Col span={10} offset={2}>
+                        <Col lg={7} xs={22} offset={1}>
                           <Form.Item name="unit" label="Reporta a ">
-                            <Input size="small" />
+                            <Input />
                           </Form.Item>
                         </Col>
                       </Row>
                     </Col>
-                    <Col span={5}>
-                      <Image width={200} src={photo} />
-                      <Row>
-                        <Form.Item name="date_of_admission">
-                          <DatePicker
-                            onChange={onChangeDateAdmission}
-                            moment={"YYYY-MM-DD"}
+                    <Col span={6}>
+                      <Row justify="center" align="top">
+                        <Image width={200} src={photo} />
+                        <Col>
+                          <Form.Item
+                            name="date_of_admission"
+                            label="Fecha de ingreso"
+                          >
+                            <DatePicker
+                              onChange={onChangeDateAdmission}
+                              moment={"YYYY-MM-DD"}
+                            />
+                          </Form.Item>
+                          <Switch
+                            checked={isActive}
+                            onClick={changeStatus}
+                            checkedChildren="Activo"
+                            unCheckedChildren="Inactivo"
                           />
-                        </Form.Item>
-                        <Switch
-                          checked={status}
-                          checkedChildren="Activo"
-                          unCheckedChildren="Inactivo"
-                        />
+                        </Col>
                       </Row>
                     </Col>
                   </Row>
                   <Collapse>
                     <Panel header="Informacion adicional">
-                      <Col span={18} pull={1}>
+                      <Col>
                         <Row flex>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="email"
                               label="Dirección de E-Mail"
@@ -1499,39 +1492,40 @@ const userDetailForm = () => {
                               <Input disabled />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="birth_date"
                               label="Fecha de nacimiento"
                             >
                               <DatePicker
+                                style={{ width: "100%" }}
                                 onChange={onChangeBirthDate}
                                 moment={"YYYY-MM-DD"}
                                 placeholder="Fecha de nacimiento"
                               />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="civil_status" label="Estado Civil">
-                              <Select options={civilStatus} size="small" />
+                              <Select options={civilStatus} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="gender" label="Género">
                               <Select options={genders} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="curp" label="CURP">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="rfc" label="RFC">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="imss" label="IMSS">
                               <Input />
                             </Form.Item>
@@ -1543,7 +1537,6 @@ const userDetailForm = () => {
                           <Button type="primary" htmlType="submit">
                             Guardar
                           </Button>
-                          <Button htmlType="button">Regresar</Button>
                         </Form.Item>
                       </Row>
                     </Panel>
@@ -1552,10 +1545,14 @@ const userDetailForm = () => {
 
                 <Collapse accordion>
                   <Panel header="Datos generales">
-                    <Form form={formGeneralTab} onFinish={formGeneralData}>
-                      <Col span={18} pull={1}>
-                        <Row flex>
-                          <Col span={10} offset={2}>
+                    <Form
+                      layout={"vertical"}
+                      form={formGeneralTab}
+                      onFinish={formGeneralData}
+                    >
+                      <Col span={24}>
+                        <Row>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="place_birth"
                               label="Lugar de nacimiento"
@@ -1563,12 +1560,12 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="nationality" label="Nacionalidad">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="other_nationality"
                               label="Otra nacionalidad"
@@ -1576,33 +1573,34 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="allergies" label="Alergias">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="blood_type" label="Tipo de sangre">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="availability_travel"
                               label="Disponibilidad para viajar"
                             >
                               <Checkbox
-                                onChange={checkTravel}
+                                onClick={checkTravel}
                                 checked={checkedTravel}
                               />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item label="Cambio de residencia">
                               <Checkbox
-                                onChange={checkResidence}
+                                onClick={checkResidence}
                                 checked={checkedResidence}
                               />
-                            </Form.Item>
-                          </Col>
-                          <Col span={10} offset={2}>
-                            <Form.Item name="allergies" label="Alergias">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col span={10} offset={2}>
-                            <Form.Item name="blood_type" label="Tipo de sangre">
-                              <Input />
                             </Form.Item>
                           </Col>
                         </Row>
@@ -1618,10 +1616,14 @@ const userDetailForm = () => {
                   </Panel>
 
                   <Panel header="Teléfono">
-                    <Form form={formPhone} onFinish={formFinishPhone}>
-                      <Col span={18} pull={1}>
+                    <Form
+                      layout={"vertical"}
+                      form={formPhone}
+                      onFinish={formFinishPhone}
+                    >
+                      <Col>
                         <Row flex>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="phone_type"
                               label="Tipo de telefono"
@@ -1629,12 +1631,12 @@ const userDetailForm = () => {
                               <Select options={typePhones} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="line_type" label="Tipo de linea">
                               <Select options={typeLines} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="international_code"
                               label="Codigo internacional"
@@ -1642,7 +1644,7 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="national_code"
                               label="Codigo de pais"
@@ -1650,7 +1652,7 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="country_code"
                               label="Codigo de ciudad"
@@ -1658,7 +1660,7 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="phone" label="Numero telefonico">
                               <Input />
                             </Form.Item>
@@ -1679,25 +1681,29 @@ const userDetailForm = () => {
                   </Panel>
 
                   <Panel header="Familia">
-                    <Form form={formFamily} onFinish={formFinishFamily}>
-                      <Col span={18} pull={1}>
+                    <Form
+                      layout={"vertical"}
+                      form={formFamily}
+                      onFinish={formFinishFamily}
+                    >
+                      <Col>
                         <Row flex>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="relationship" label="Parentesco">
                               <Select options={relationship} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="job" label="Puesto de trabajo">
                               <Select options={jobs} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="name" label="Nombre">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="flast_name"
                               label="Apellido paterno"
@@ -1705,7 +1711,7 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="mlast_name"
                               label="Apellido materno"
@@ -1713,28 +1719,29 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="gender" label="Genero">
                               <Select options={genders} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="liffe" label="¿Vive?">
                               <Checkbox />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="birth_date"
                               label="Fecha de nacimiento"
                             >
                               <DatePicker
+                                style={{ width: "100%" }}
                                 onChange={onChangeBDFamily}
                                 moment={"YYYY-MM-DD"}
                               />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="place_birth"
                               label="Lugar de nacimiento"
@@ -1742,12 +1749,12 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="nationality" label="Nacionalidad">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="other_nationality"
                               label="Otra nacionalidad"
@@ -1755,7 +1762,7 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="benefit" label="% Beneficio">
                               <Input />
                             </Form.Item>
@@ -1777,32 +1784,33 @@ const userDetailForm = () => {
 
                   <Panel header="Contactos de Emergencia">
                     <Form
+                      layout="vertical"
                       form={formContactEmergency}
                       onFinish={formFinishContactE}
                     >
-                      <Col span={18} pull={1}>
+                      <Col>
                         <Row flex>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="relationship" label="Parentesco">
                               <Select options={relationship} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="fullname" label="Nombre completo">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="phone_one" label="Telefono 1">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="phone_two" label="Telefono 2">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={20} offset={2}>
+                          <Col lg={13} xs={22} offset={1}>
                             <Form.Item name="address" label="Dirección">
                               <Input />
                             </Form.Item>
@@ -1826,22 +1834,29 @@ const userDetailForm = () => {
                   </Panel>
 
                   <Panel header="Formación/Habilidades">
-                    <Form form={formTraining} onFinish={formFinishTraining}>
-                      <Col span={18} pull={1}>
+                    <Form
+                      layout="vertical"
+                      form={formTraining}
+                      onFinish={formFinishTraining}
+                    >
+                      <Col>
                         <Row flex>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="school" label="Escuela">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="since" label="Fecha Inicio-Fin">
                               <Space direction="vertical" size={12}>
-                                <RangePicker onChange={onChangeDateTrainig} />
+                                <RangePicker
+                                  style={{ width: "100%" }}
+                                  onChange={onChangeDateTrainig}
+                                />
                               </Space>
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="accreditation_document"
                               label="Documento de acreditación"
@@ -1849,7 +1864,7 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="currently_studing"
                               label="Estudia actualmente"
@@ -1860,7 +1875,7 @@ const userDetailForm = () => {
                               />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="completed_period"
                               label="Periodo completado"
@@ -1884,10 +1899,14 @@ const userDetailForm = () => {
                   </Panel>
 
                   <Panel header="Experiencia laboral">
-                    <Form form={formExperiencejob} onFinish={formFinishJobExp}>
-                      <Col span={18} pull={1}>
+                    <Form
+                      layout="vertical"
+                      form={formExperiencejob}
+                      onFinish={formFinishJobExp}
+                    >
+                      <Col>
                         <Row flex>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="experience_type"
                               label="Tipo de experiencia"
@@ -1895,7 +1914,7 @@ const userDetailForm = () => {
                               <Select options={experienceType} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="labor_relationship"
                               label="Relación laboral"
@@ -1903,7 +1922,7 @@ const userDetailForm = () => {
                               <Select options={laborRelationship} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="reason_separation"
                               label="Motivo de separación"
@@ -1911,27 +1930,27 @@ const userDetailForm = () => {
                               <Select options={reasonSeparation} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="company" label="Empresa">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="since" label="Fecha de inicio">
                               <RangePicker onChange={onChangeDExJ} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="turn" label="Giro empresarial">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="function" label="Funciones">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="startin_salary"
                               label="Salario incial"
@@ -1939,12 +1958,12 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="last_salary" label="Salario final">
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="immediate_boos"
                               label="Jefe inmediato"
@@ -1952,7 +1971,7 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="address_company"
                               label="Direccion de la empresa"
@@ -1960,7 +1979,7 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="phone_company"
                               label="Teléfono de la empresa"
@@ -1968,12 +1987,12 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="notes" label="Notas">
                               <TextArea />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="cv" label="Curriculum">
                               <TextArea />
                             </Form.Item>
@@ -1994,15 +2013,19 @@ const userDetailForm = () => {
                   </Panel>
 
                   <Panel header="Cuentas bancarias">
-                    <Form form={formBank} onFinish={formBankAcc}>
-                      <Col span={18} pull={1}>
+                    <Form
+                      layout="vertical"
+                      form={formBank}
+                      onFinish={formBankAcc}
+                    >
+                      <Col>
                         <Row flex>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item name="bank" label="Banco">
                               <Select options={banks} />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="account_number"
                               label="Numero de cuenta"
@@ -2010,7 +2033,7 @@ const userDetailForm = () => {
                               <Input />
                             </Form.Item>
                           </Col>
-                          <Col span={10} offset={2}>
+                          <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="interbank_key"
                               label="Clave interbancaria"

@@ -156,6 +156,21 @@ const homeScreen = () => {
 
   const getModal = (value) => {
     setModal(value);
+    setLoading(true);
+    Axios.get(API_URL + `/person/person/`)
+      .then((response) => {
+        response.data.results.map((item) => {
+          item["key"] = item.id;
+          item["fullname"] =
+            item.first_name + " " + item.flast_name + " " + item.mlast_name;
+          item.timestamp = item.timestamp.substring(0, 10);
+        });
+        setPerson(response.data.results);
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const downloadPersons = () => {

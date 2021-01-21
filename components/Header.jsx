@@ -2,6 +2,8 @@ import { Layout, Menu, Avatar, Dropdown, message } from "antd";
 import { AppstoreOutlined, UserOutlined } from "@ant-design/icons";
 import CardUser from "./CardUser";
 import CardApps from "./CardApps";
+import { Router } from "next/router";
+import { useRouter } from "next/router";
 
 const { Header } = Layout;
 
@@ -18,11 +20,12 @@ const appsCardDisplay = () => (
 );
 
 export default function headerCustom() {
+  const router = useRouter();
   return (
     <>
       <Header style={{ position: "fixed", zIndex: 1, width: "100%" }}>
         <div className="logo" />
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["2"]}>
+        <Menu theme="dark" mode="horizontal">
           <div style={{ float: "left" }}>
             <Dropdown overlay={appsCardDisplay}>
               <div>
@@ -30,14 +33,14 @@ export default function headerCustom() {
               </div>
             </Dropdown>
           </div>
-          <Menu.Item key="1" disabled="true">
-            nav 1
+          <Menu.Item key="1" onClick={() => router.push({ pathname: "/home" })}>
+            Personas
           </Menu.Item>
-          <Menu.Item key="2" disabled="true">
-            nav 2
-          </Menu.Item>
-          <Menu.Item key="3" disabled="true">
-            nav 3
+          <Menu.Item
+            key="2"
+            onClick={() => router.push({ pathname: "/business" })}
+          >
+            Empresas
           </Menu.Item>
           <div style={{ float: "right" }}>
             <Dropdown overlay={userCardDisplay}>
