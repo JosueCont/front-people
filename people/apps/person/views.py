@@ -397,7 +397,7 @@ class ImportExportPersonViewSet(APIView):
             response['Content-Disposition'] = 'attachment; filename="persons.csv"'
 
             writer = csv.writer(response)
-            writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Genero', 'Puesto', 'Nodo organizacional'])
+            writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Genero', 'Nodo organizacional'])
 
             persons = Person.objects.all()
             for person in persons:
@@ -428,7 +428,7 @@ class ImportExportPersonViewSet(APIView):
                 if person.gender == 3:
                     gend = 'Otro'
                 row.append(gend)
-                row.append(person.job.name)
+                #row.append(person.job.name)
                 row.append(nod)
                 writer.writerow(row)
             return response
