@@ -121,6 +121,10 @@ const FormPerson = (props) => {
     setDate(dateString);
   }
 
+  const closeDialog = () => {
+    props.close(false);
+    form.resetFields();
+  };
   const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
@@ -131,8 +135,7 @@ const FormPerson = (props) => {
           title="Alta de personas"
           centered
           visible={props.visible}
-          onOk={() => props.close(false)}
-          onCancel={(() => props.close(false), form.resetFields())}
+          onCancel={() => closeDialog()}
           footer={null}
         >
           <Form
