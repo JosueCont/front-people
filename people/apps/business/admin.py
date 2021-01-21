@@ -16,6 +16,13 @@ class NodePerson(admin.ModelAdmin):
     list_filter = ('node',)
 
 
+@admin.register(Department)
+class Department(admin.ModelAdmin):
+    list_display = ('id', 'name',)
+    search_fields = ['name']
+    list_filter = ('name',)
+
+
 @admin.register(JobDepartment)
 class JobDepartment(admin.ModelAdmin):
     list_display = ('id', 'job', 'department')
