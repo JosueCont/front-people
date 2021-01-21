@@ -13,7 +13,7 @@ from people.apps.business.models import NodePerson, Node
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
-from people.apps.person.functions import save_persons
+from people.apps.person.functions import decode_file_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
     Phone, Family, ContactEmergency, JobExperience
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
@@ -114,6 +114,8 @@ class PersonViewSet(viewsets.ModelViewSet):
                     person.imss = serializer.validated_data["imss"]
                 if 'photo' in serializer.validated_data:
                     person.photo = serializer.validated_data["photo"]
+                if 'is_active' in serializer.validated_data:
+                    person.is_active = serializer.validated_data["is_active"]
                 validate_data = serializer.validated_data
                 if 'person_type' in validate_data:
                     person.person_type = serializer.validated_data["person_type"]
@@ -375,9 +377,6 @@ class PhoneViewSet(viewsets.ModelViewSet):
 
 
 class ImportExportPersonViewSet(APIView):
-    # queryset = Person.objects.all()
-    persons = serializers.PersonResource()
-    dataset = Dataset()
 
     def post(self, request):
         dataset = Dataset()
@@ -386,7 +385,7 @@ class ImportExportPersonViewSet(APIView):
             imported_data = dataset.load(new_persons.read())
             persons = imported_data.dict
             if persons:
-                res = save_persons(persons)
+                res = decode_file_persons(persons)
                 if res == 'OK':
                     return Response(data={"message": "Guardado correctamente"}, status=status.HTTP_200_OK)
         except Exception as e:

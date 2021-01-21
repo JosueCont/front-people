@@ -1,8 +1,10 @@
 from import_export import resources
 from rest_framework import serializers
+
+from people.apps import business
 from people.apps.person import models
 from people.apps.setup.models import Treatment
-from people.apps.business.serializers import ChildNodeSerializer
+from people.apps.business.serializers import ChildNodeSerializer, JobDepartmentSerializer, DepartmentSerializer
 from people.apps.setup.serializers import BankSerializer, RelationshipSerializer, ExperienceTypeSerializer, \
     LaborRelationshipSerializer, ReasonSeparationSerializer
 
@@ -44,9 +46,9 @@ class PersonSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super(PersonSerializer, self).to_representation(instance)
         representation['treatment'] = TreatmentSerializer(instance.treatment).data
-        representation['job'] = JobSerializer(instance.job).data
         representation['vacancy'] = VacancySerializer(models.Vacancy.objects.filter(users_applied__in=[instance.id]),
                                                       many=True).data
+        representation['job_department'] = JobDepartmentSerializer(instance.job_department).data
         return representation
 
 
@@ -73,14 +75,12 @@ class PersonCustomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Person
-        exclude = ['khonnect_id']
-        exclude = ['treatment']
-        exclude = ['job']
+        exclude = ['khonnect_id', 'treatment', 'job_department']
 
     def to_representation(self, instance):
         representation = super(PersonCustomSerializer, self).to_representation(instance)
         representation['treatment'] = TreatmentSerializer(instance.treatment).data
-        representation['job'] = JobSerializer(instance.job).data
+        representation['job_department'] = JobSerializer(instance.job_department).data
         return representation
 
 
