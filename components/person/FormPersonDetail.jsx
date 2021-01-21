@@ -21,6 +21,7 @@ import {
   Checkbox,
   Alert,
   Table,
+  Upload,
 } from "antd";
 import HeaderCustom from "../../components/Header";
 import Axios from "axios";
@@ -31,6 +32,8 @@ import {
   EditOutlined,
   DeleteOutlined,
   ArrowLeftOutlined,
+  InboxOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 
 const { Content } = Layout;
@@ -39,9 +42,11 @@ import { useRouter } from "next/router";
 import Router from "next/router";
 const { Option } = Select;
 import moment from "moment";
+import TextArea from "antd/lib/input/TextArea";
 const { Panel } = Collapse;
 const { Meta } = Card;
 const { RangePicker } = DatePicker;
+const { Dragger } = Upload;
 
 const userDetailForm = () => {
   const router = useRouter();
@@ -71,6 +76,8 @@ const userDetailForm = () => {
   const [upFamily, setUpFamily] = useState(false);
   const [idTraining, setIdTraining] = useState("");
   const [upTraining, setUpTraining] = useState(false);
+  const [idExperienceJob, setIdExperienceJob] = useState("");
+  const [upExperienceJob, setUpExperienceJob] = useState(false);
 
   ////FORMS
   const [formPerson] = Form.useForm();
@@ -89,6 +96,9 @@ const userDetailForm = () => {
   const [groups, setGroups] = useState([]);
   const [banks, setBanks] = useState([]);
   const [relationship, setRelationship] = useState([]);
+  const [experienceType, setExperienceType] = useState([]);
+  const [reasonSeparation, setReasonSeparation] = useState([]);
+  const [laborRelationship, setLaborRelationship] = useState([]);
 
   ////STATE TABLES
   const [phones, setPhones] = useState([]);
@@ -331,7 +341,6 @@ const userDetailForm = () => {
       ///TRAINIG
       Axios.get(API_URL + `/person/person/${router.query.id}/training_person/`)
         .then((response) => {
-          console.log("TRAINING-->>> ", response.data);
           setTraining(response.data);
           setLoading(false);
           setLoadingTable(false);
@@ -381,6 +390,7 @@ const userDetailForm = () => {
       "Content-Type": "application/json",
     };
 
+    ///GROUPS
     Axios.get("https://khonnect.hiumanlab.com/group/list/", {
       headers: headers,
     })
@@ -397,6 +407,7 @@ const userDetailForm = () => {
         console.log(e);
       });
 
+    /////PERSON TYPE
     Axios.get(API_URL + `/person/person-type/`)
       .then((response) => {
         if (response.status === 200) {
@@ -411,6 +422,7 @@ const userDetailForm = () => {
         console.log(e);
       });
 
+    /////JOB
     Axios.get(API_URL + `/person/job/`)
       .then((response) => {
         if (response.status === 200) {
@@ -425,7 +437,8 @@ const userDetailForm = () => {
         console.log(e);
       });
 
-    Axios.get("http://demo.localhost:8000/setup/banks/")
+    ////BANK
+    Axios.get(API_URL + "/setup/banks/")
       .then((response) => {
         if (response.status === 200) {
           let bank = response.data.results;
@@ -439,7 +452,8 @@ const userDetailForm = () => {
         console.log(e);
       });
 
-    Axios.get("http://demo.localhost:8000/setup/relationship/")
+    ////RELATIONSHIP
+    Axios.get(API_URL + "/setup/relationship/")
       .then((response) => {
         if (response.status === 200) {
           let relation = response.data.results;
@@ -447,6 +461,51 @@ const userDetailForm = () => {
             return { label: a.name, value: a.id };
           });
           setRelationship(relation);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    ////LABOR RELATIONSHIP
+    Axios.get(API_URL + "/setup/labor-relationship/")
+      .then((response) => {
+        if (response.status === 200) {
+          let relation = response.data.results;
+          relation = relation.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setLaborRelationship(relation);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    ////RELATIONSHIP
+    Axios.get(API_URL + "/setup/experience-type/")
+      .then((response) => {
+        if (response.status === 200) {
+          let experinece = response.data.results;
+          experinece = experinece.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setExperienceType(experinece);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    ////REASON SEPARATION
+    Axios.get(API_URL + "/setup/reason-separation/")
+      .then((response) => {
+        if (response.status === 200) {
+          let reason = response.data.results;
+          reason = reason.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setReasonSeparation(reason);
         }
       })
       .catch((e) => {
@@ -1086,8 +1145,18 @@ const userDetailForm = () => {
         setLoading(false);
       });
   };
-  const formFinishJobExp = (value) => {};
+  const formFinishJobExp = (value) => {
+    if (upExperienceJob) {
+    } else {
+      value.person = router.query.id;
+      value.since = dateExpjob[0];
+      value.until = dateExpjob[1];
+      console.log("EXPERIENCE JOB-->>> ", value);
+      saveJobExp(value);
+    }
+  };
   const saveJobExp = (data) => {
+    setLoading(true);
     Axios.post(API_URL + `/person/experience-job/`, data)
       .then((response) => {
         message.success({
@@ -1095,6 +1164,8 @@ const userDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
+        formExperiencejob.resetFields();
+        getJobExperience;
       })
       .catch((error) => {
         setLoading(false);
@@ -1103,8 +1174,12 @@ const userDetailForm = () => {
   };
   const colExpJob = [
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Empresa",
+      dataIndex: "company",
+    },
+    {
+      title: "Puesto",
+      dataIndex: "function",
     },
   ];
 
@@ -1295,6 +1370,23 @@ const userDetailForm = () => {
   //////SHOW MODAL DELETE
   const showModal = () => {
     modal ? setModal(false) : setModal(true);
+  };
+
+  /////CONFIG DRAG
+  const props = {
+    name: "file",
+    multiple: true,
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== "uploading") {
+        console.log("Cargados-->> ", info.file, info.fileList);
+      }
+      if (status === "done") {
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
   };
 
   return (
@@ -1792,15 +1884,15 @@ const userDetailForm = () => {
                   </Panel>
 
                   <Panel header="Experiencia laboral">
-                    <Col span={18} pull={1}>
-                      <Form>
+                    <Form form={formExperiencejob} onFinish={formFinishJobExp}>
+                      <Col span={18} pull={1}>
                         <Row flex>
                           <Col span={10} offset={2}>
                             <Form.Item
                               name="experience_type"
                               label="Tipo de experiencia"
                             >
-                              <Select />
+                              <Select options={experienceType} />
                             </Form.Item>
                           </Col>
                           <Col span={10} offset={2}>
@@ -1808,7 +1900,7 @@ const userDetailForm = () => {
                               name="labor_relationship"
                               label="Relación laboral"
                             >
-                              <Select />
+                              <Select options={laborRelationship} />
                             </Form.Item>
                           </Col>
                           <Col span={10} offset={2}>
@@ -1816,7 +1908,7 @@ const userDetailForm = () => {
                               name="reason_separation"
                               label="Motivo de separación"
                             >
-                              <Select />
+                              <Select options={reasonSeparation} />
                             </Form.Item>
                           </Col>
                           <Col span={10} offset={2}>
@@ -1878,24 +1970,27 @@ const userDetailForm = () => {
                           </Col>
                           <Col span={10} offset={2}>
                             <Form.Item name="notes" label="Notas">
-                              <Input />
+                              <TextArea />
                             </Form.Item>
                           </Col>
                           <Col span={10} offset={2}>
                             <Form.Item name="cv" label="Curriculum">
-                              <Input />
+                              <TextArea />
                             </Form.Item>
                           </Col>
                         </Row>
-                      </Form>
-                    </Col>
-                    <Row flex>
-                      <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                          Guardar
-                        </Button>
-                      </Form.Item>
-                    </Row>
+                      </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                        </Form.Item>
+                      </Row>
+                    </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colExpJob} dataSource={experineceJob} />
+                    </Spin>
                   </Panel>
 
                   <Panel header="Cuentas bancarias">
@@ -1939,10 +2034,29 @@ const userDetailForm = () => {
                   </Panel>
 
                   <Panel header="Documentos">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Nihil dicta suscipit in, placeat velit veritatis totam sed?
-                    Doloribus, commodi aliquam. Facere odit consequatur aliquid
-                    tempore assumenda quaerat repellendus, a voluptatibus.
+                    <Dragger {...props}>
+                      <p className="ant-upload-drag-icon">
+                        <InboxOutlined />
+                      </p>
+                      <p className="ant-upload-text">
+                        Click o Arrastra tus doccumentos aquí.
+                      </p>
+                      <p className="ant-upload-hint">
+                        Soporte para una carga única o masiva. Prohibido
+                        estrictamente la carga de datos ajenos a la persona.
+                      </p>
+                    </Dragger>
+                    <Row flex>
+                      <Col style={{ padding: "2%" }}>
+                        <Button
+                          icon={<UploadOutlined />}
+                          type="primary"
+                          onClick={() => "nada"}
+                        >
+                          Subir
+                        </Button>
+                      </Col>
+                    </Row>
                   </Panel>
 
                   <Panel header="Eliminar">
