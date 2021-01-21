@@ -5,7 +5,7 @@ import {
   Form,
   Input,
   Modal,
-  InputNumber,
+  Space,
   Row,
   Col,
   Spin,
@@ -17,43 +17,207 @@ import {
   Image,
   Switch,
   Collapse,
+  message,
+  Checkbox,
+  Alert,
+  Table,
+  Upload,
 } from "antd";
 import HeaderCustom from "../../components/Header";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { useEffect, useState } from "react";
+import {
+  WarningOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ArrowLeftOutlined,
+  InboxOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
 import { useRouter } from "next/router";
+import Router from "next/router";
 const { Option } = Select;
 import moment from "moment";
-import FormItem from "antd/lib/form/FormItem";
+import TextArea from "antd/lib/input/TextArea";
 const { Panel } = Collapse;
 const { Meta } = Card;
+const { RangePicker } = DatePicker;
+const { Dragger } = Upload;
 
 const userDetailForm = () => {
   const router = useRouter();
+  const { Title } = Typography;
   const [loading, setLoading] = useState(true);
+  const [loadingTable, setLoadingTable] = useState(true);
+  const [modal, setModal] = useState(false);
+  const [personFullName, setPersonFullName] = useState("");
+  const [status, setStatus] = useState(false);
+  const [photo, setPhoto] = useState("");
+  const [numberPanle, setNumberPanel] = useState("1");
+  const [idGeneralP, setIdGeneralP] = useState("");
+
+  const [deleted, setDeleted] = useState({});
+
+  ////STATE BOLEAN SWITCH AND CHECKBOX
+  const [currenlyStuding, setCurrenlyStuding] = useState(false);
+
+  /////ID UPDATE
+  const [idBankAcc, setIdBankAcc] = useState("");
+  const [upBankAcc, setUpBankAcc] = useState(false);
+  const [idPhone, setIdPhone] = useState("");
+  const [upPhone, setUpPhone] = useState(false);
+  const [idContEm, setIdContEm] = useState("");
+  const [upContEm, setUpContEm] = useState(false);
+  const [idFamily, setIdFamily] = useState("");
+  const [upFamily, setUpFamily] = useState(false);
+  const [idTraining, setIdTraining] = useState("");
+  const [upTraining, setUpTraining] = useState(false);
+  const [idExperienceJob, setIdExperienceJob] = useState("");
+  const [upExperienceJob, setUpExperienceJob] = useState(false);
+
+  ////FORMS
   const [formPerson] = Form.useForm();
   const [formGeneralTab] = Form.useForm();
-  const { Title } = Typography;
-  const [personFullName, setPersonFullName] = useState("");
-  const [groups, setGroups] = useState([]);
-  const [personType, setPersonType] = useState([]);
-  const [jobs, setJobs] = useState([]);
-  const [status, setStatus] = useState(false);
-  const [treatments, setTreatments] = useState([]);
-  const [photo, setPhoto] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [admissionDate, setAdmissionDate] = useState("");
+  const [formPhone] = Form.useForm();
+  const [formFamily] = Form.useForm();
+  const [formContactEmergency] = Form.useForm();
+  const [formTraining] = Form.useForm();
+  const [formExperiencejob] = Form.useForm();
+  const [formBank] = Form.useForm();
 
+  ////STATE SELECTS
+  const [jobs, setJobs] = useState([]);
+  const [treatments, setTreatments] = useState([]);
+  const [personType, setPersonType] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [banks, setBanks] = useState([]);
+  const [relationship, setRelationship] = useState([]);
+  const [experienceType, setExperienceType] = useState([]);
+  const [reasonSeparation, setReasonSeparation] = useState([]);
+  const [laborRelationship, setLaborRelationship] = useState([]);
+
+  ////STATE TABLES
+  const [phones, setPhones] = useState([]);
+  const [family, setFamily] = useState([]);
+  const [contactEmergency, setContactEmergency] = useState([]);
+  const [training, setTraining] = useState([]);
+  const [experineceJob, setExperienceJob] = useState([]);
+  const [bankAccounts, setBankAccounts] = useState([]);
+
+  /////STATE DATE
+  const [birthDate, setBirthDate] = useState("");
+  const [birthDateFam, setBirthDateFam] = useState("");
+  const [dateAdmission, setDateAdmission] = useState("");
+  const [dateTraining, setDateTraining] = useState("");
+  const [dateExpjob, setDateExpjob] = useState("");
+
+  /////STATE CHECKBOX
+  const [checkedTravel, setCheckedTravel] = useState(false);
+  const [checkedResidence, setCheckedResidence] = useState(false);
+
+  ////DEFAULT SELECT
+  const layout = {
+    labelCol: { span: 5 },
+    wrapperCol: { span: 10 },
+  };
+  const genders = [
+    {
+      label: "Maculino",
+      value: 1,
+    },
+    {
+      label: "Femenino",
+      value: 2,
+    },
+    {
+      label: "Otro",
+      value: 3,
+    },
+  ];
+  const civilStatus = [
+    {
+      label: "Soltero(a)",
+      value: 1,
+    },
+    {
+      label: "Casado(a)",
+      value: 2,
+    },
+    {
+      label: "Viudo(a)",
+      value: 3,
+    },
+  ];
+  const typePhones = [
+    {
+      label: "Alterno",
+      value: "1",
+    },
+    {
+      label: "Principal",
+      value: "2",
+    },
+    {
+      label: "Recados",
+      value: "3",
+    },
+  ];
+  const typeLines = [
+    {
+      label: "Celular",
+      value: "1",
+    },
+    {
+      label: "Fijo",
+      value: "2",
+    },
+  ];
+
+  ////CHANGE DATE
+  const onChangeBirthDate = (date, dateString) => {
+    setBirthDate(dateString);
+  };
+  const onChangeDateAdmission = (date, dateString) => {
+    setDateAdmission(dateString);
+  };
+  const onChangeBDFamily = (date, dateString) => {
+    setBirthDateFam(dateString);
+  };
+  const onChangeDateTrainig = (date, dateString) => {
+    setDateTraining(dateString);
+  };
+  const onChangeDExJ = (date, dateString) => {
+    setDateExpjob(dateString);
+  };
+
+  /////CHANGE CHECKBOX
+  const checkTravel = () => {
+    console.log(checkedTravel);
+    checkTravel ? setCheckedTravel(false) : setCheckedTravel(true);
+    console.log(checkedTravel);
+  };
+  const checkResidence = () => {
+    console.log(checkedResidence);
+    checkedResidence ? setCheckedResidence(false) : setCheckedResidence(true);
+    console.log(checkedResidence);
+  };
+  const changeCurreStud = () => {
+    console.log(currenlyStuding);
+    currenlyStuding ? setCurrenlyStuding(false) : setCurrenlyStuding(true);
+    console.log(currenlyStuding);
+  };
+
+  ////LOAD PAGE
   useEffect(() => {
     getValueSelects();
     if (router.query.id) {
+      ///GET PERSON
       Axios.get(API_URL + `/person/person/${router.query.id}`)
         .then((response) => {
-          console.log("RESPONSE PERSON-->> ", response.data);
           formPerson.setFieldsValue({
             first_name: response.data.first_name,
             flast_name: response.data.flast_name,
@@ -72,7 +236,7 @@ const userDetailForm = () => {
               person_type: response.data.person_type.id,
             });
           if (response.data.job)
-            formPerson.setFieldsValue({ person_type: response.data.job.id });
+            formPerson.setFieldsValue({ job: response.data.job.id });
 
           // if (response.data.date_of_admission)
           //   formPerson.setFieldsValue({
@@ -104,67 +268,129 @@ const userDetailForm = () => {
           setLoading(false);
         });
 
+      ///GET GENERAL PERSON
       Axios.get(API_URL + `/person/person/${router.query.id}/general_person/`)
         .then((response) => {
-          // console.log("RESPONSE GENERAL PERSON-->> ", response.data);
+          formGeneralTab.setFieldsValue({
+            place_birth: response.data.place_birth,
+            nationality: response.data.nationality,
+            other_nationality: response.data.other_nationality,
+            availability_travel: response.data.availability_travel,
+            availability_change_residence:
+              response.data.availability_change_residence,
+            allergies: response.data.allergies,
+            blood_type: response.data.blood_type,
+          });
+          if (response.data.availability_travel)
+            setCheckedTravel(response.data.availability_travel);
+          if (response.data.availability_change_residence)
+            setCheckedResidence(response.data.availability_change_residence);
+          setIdGeneralP(response.data.id);
           setLoading(false);
         })
         .catch((e) => {
           console.log(e);
           setLoading(false);
         });
+
+      ///PHONE
+      Axios.get(API_URL + `/person/person/${router.query.id}/phone_person/`)
+        .then((response) => {
+          setPhones(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
+
+      ///FAMILY
+      Axios.get(API_URL + `/person/person/${router.query.id}/family_person/`)
+        .then((response) => {
+          response.data.map((a) => {
+            a.relation = a.relationship.name;
+            a.fullname = a.name + " " + a.flast_name + " " + a.mlast_name;
+          });
+          setFamily(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
+
+      ///CONTACT EMERGENCY
+      Axios.get(
+        API_URL + `/person/person/${router.query.id}/contact_emergency_person/`
+      )
+        .then((response) => {
+          setContactEmergency(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
+
+      ///TRAINIG
+      Axios.get(API_URL + `/person/person/${router.query.id}/training_person/`)
+        .then((response) => {
+          setTraining(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
+
+      ///JOB EXPERIENCE
+      Axios.get(
+        API_URL + `/person/person/${router.query.id}/job_experience_person/`
+      )
+        .then((response) => {
+          setExperienceJob(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
+
+      ///GET BANK ACCOUNTS
+      Axios.get(
+        API_URL + `/person/person/${router.query.id}/bank_account_person/`
+      )
+        .then((response) => {
+          setBankAccounts(response.data);
+          setLoading(false);
+          setLoadingTable(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
+          setLoadingTable(false);
+        });
     }
   }, [router.query.id]);
 
-  const onFinish = (value) => {
-    value.birth_date = birthDate;
-    // value.date_of_admission = admissionDate;
-    value.id = router.query.id;
-    console.log("Form-->>> ", value);
-    updatePerson(value);
-  };
-
-  const updatePerson = (value) => {
-    setLoading(true);
-    Axios.put(
-      API_URL + `/person/person/${router.query.id}/`,
-      value
-    )
-      .then((response) => {
-        console.log("PErson UPDATE-->>> ", response.data);
-        formPerson.setFieldsValue({
-          first_name: response.data.first_name,
-          flast_name: response.data.flast_name,
-          mlast_name: response.data.mlast_name,
-          gender: response.data.gender,
-          email: response.data.email,
-          birth_date: moment(response.data.birth_date),
-          curp: response.data.curp,
-          rfc: response.data.rfc,
-          imss: response.data.imss,
-          is_active: response.data.is_active,
-          person_type: response.data.person_type.id,
-          job: response.data.job.id,
-          photo: response.data.photo,
-          civil_status: response.data.civil_status,
-          date_of_admission: null,
-        });
-        setStatus(response.data.is_active);
-        if (response.data.photo) setPhoto(response.data.photo);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
-  };
-
+  /////GET DATA SELCTS
   const getValueSelects = async (id) => {
     const headers = {
       "client-id": "5f417a53c37f6275fb614104",
       "Content-Type": "application/json",
     };
 
+    ///GROUPS
     Axios.get("https://khonnect.hiumanlab.com/group/list/", {
       headers: headers,
     })
@@ -181,6 +407,7 @@ const userDetailForm = () => {
         console.log(e);
       });
 
+    /////PERSON TYPE
     Axios.get(API_URL + `/person/person-type/`)
       .then((response) => {
         if (response.status === 200) {
@@ -195,6 +422,7 @@ const userDetailForm = () => {
         console.log(e);
       });
 
+    /////JOB
     Axios.get(API_URL + `/person/job/`)
       .then((response) => {
         if (response.status === 200) {
@@ -208,47 +436,958 @@ const userDetailForm = () => {
       .catch((e) => {
         console.log(e);
       });
+
+    ////BANK
+    Axios.get(API_URL + "/setup/banks/")
+      .then((response) => {
+        if (response.status === 200) {
+          let bank = response.data.results;
+          bank = bank.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setBanks(bank);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    ////RELATIONSHIP
+    Axios.get(API_URL + "/setup/relationship/")
+      .then((response) => {
+        if (response.status === 200) {
+          let relation = response.data.results;
+          relation = relation.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setRelationship(relation);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    ////LABOR RELATIONSHIP
+    Axios.get(API_URL + "/setup/labor-relationship/")
+      .then((response) => {
+        if (response.status === 200) {
+          let relation = response.data.results;
+          relation = relation.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setLaborRelationship(relation);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    ////RELATIONSHIP
+    Axios.get(API_URL + "/setup/experience-type/")
+      .then((response) => {
+        if (response.status === 200) {
+          let experinece = response.data.results;
+          experinece = experinece.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setExperienceType(experinece);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    ////REASON SEPARATION
+    Axios.get(API_URL + "/setup/reason-separation/")
+      .then((response) => {
+        if (response.status === 200) {
+          let reason = response.data.results;
+          reason = reason.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setReasonSeparation(reason);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
-  const layout = {
-    labelCol: { span: 5 },
-    wrapperCol: { span: 10 },
+  ////PERSON
+  const onFinishPerson = (value) => {
+    value.birth_date = birthDate;
+    // value.date_of_admission = admissionDate;
+    value.id = router.query.id;
+    updatePerson(value);
+  };
+  const updatePerson = (value) => {
+    setLoading(true);
+    Axios.put(
+      `http://demo.localhost:8000/person/person/${router.query.id}/`,
+      value
+    )
+      .then((response) => {
+        formPerson.setFieldsValue({
+          first_name: response.data.first_name,
+          flast_name: response.data.flast_name,
+          mlast_name: response.data.mlast_name,
+          gender: response.data.gender,
+          email: response.data.email,
+          birth_date: moment(response.data.birth_date),
+          curp: response.data.curp,
+          rfc: response.data.rfc,
+          imss: response.data.imss,
+          is_active: response.data.is_active,
+          civil_status: response.data.civil_status,
+          date_of_admission: null,
+        });
+        if (response.data.person_type)
+          formPerson.setFieldsValue({
+            person_type: response.data.person_type.id,
+          });
+        if (response.data.job)
+          formPerson.setFieldsValue({ job: response.data.job.id });
+
+        // if (response.data.date_of_admission)
+        //   formPerson.setFieldsValue({
+        //     date_of_admission: moment(response.data.date_of_admission),
+        //   });
+
+        if (response.data.birth_date)
+          formPerson.setFieldsValue({
+            birth_date: moment(response.data.birth_date),
+          });
+        setBirthDate(response.data.birth_date);
+        setStatus(response.data.is_active);
+        if (response.data.photo) setPhoto(response.data.photo);
+        setLoading(false);
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+      })
+      .catch((e) => {
+        setLoading(false);
+        message.error("Error al actualizar, intente de nuevo.");
+        console.log(e);
+      });
   };
 
-  const genders = [
+  //////DATOS GENERALES
+  const formGeneralData = (value) => {
+    if (idGeneralP != "" && idGeneralP != undefined) {
+      value.availability_travel = checkedTravel;
+      value.availability_change_residence = checkedResidence;
+      updateGeneralData(value);
+    } else {
+      value.person = router.query.id;
+      value.availability_travel = checkedTravel;
+      value.availability_change_residence = checkedResidence;
+      saveGeneralData(value);
+    }
+  };
+  const saveGeneralData = (data) => {
+    setLoading(true);
+    Axios.post(API_URL + `/person/general-person/`, data)
+      .then((response) => {
+        message.success({
+          content: "Guardado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+  const updateGeneralData = (data) => {
+    setLoading(true);
+    Axios.put(API_URL + `/person/general-person/${idGeneralP}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+
+  /////TELEFONO
+  const getPhone = () => {
+    Axios.get(API_URL + `/person/person/${router.query.id}/phone_person/`)
+      .then((response) => {
+        setPhones(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setLoadingTable(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const formFinishPhone = (value) => {
+    if (upPhone) {
+      value.id = idPhone;
+      value.person = router.query.id;
+      updatePhone(value);
+    } else {
+      value.person = router.query.id;
+      savePhone(value);
+    }
+  };
+  const updateFormPhone = (item) => {
+    formPhone.setFieldsValue({
+      country_code: item.country_code,
+      international_code: item.international_code,
+      line_type: item.line_type,
+      national_code: item.national_code,
+      phone: item.phone,
+      phone_type: item.phone_type,
+    });
+    setIdPhone(item.id);
+    setUpPhone(true);
+  };
+  const savePhone = (data) => {
+    Axios.post(API_URL + `/person/phone/`, data)
+      .then((response) => {
+        message.success({
+          content: "Guardado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        getPhone();
+        formPhone.resetFields();
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  };
+  const updatePhone = (data) => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.put(API_URL + `/person/phone/${data.id}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        setUpPhone(false);
+        setIdPhone(null);
+        formPhone.resetFields();
+        getPhone();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const deletePhone = (data) => {
+    setLoadingTable(true);
+    Axios.delete(API_URL + `/person/phone/${data}/`)
+      .then((response) => {
+        message.success({
+          content: "Eliminado con exito.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        showModal();
+        getPhone();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const colPhone = [
     {
-      label: "Maculino",
-      value: 1,
+      title: "Codigo de pais",
+      dataIndex: "national_code",
     },
     {
-      label: "Femenino",
-      value: 2,
+      title: "Numero",
+      dataIndex: "phone",
     },
     {
-      label: "Otro",
-      value: 3,
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined onClick={() => updateFormPhone(item)} />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deletePhone" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
     },
   ];
 
-  const civilStatus = [
+  /////FAMILIA
+  const getFamily = () => {
+    Axios.get(API_URL + `/person/person/${router.query.id}/family_person/`)
+      .then((response) => {
+        response.data.map((a) => {
+          a.relation = a.relationship.name;
+          a.fullname = a.name + " " + a.flast_name + " " + a.mlast_name;
+        });
+        setFamily(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const formFinishFamily = (value) => {
+    if (upFamily) {
+      value.person = router.query.id;
+      value.id = idFamily;
+      value.birth_date = birthDateFam;
+      updateFamily(value);
+    } else {
+      value.person = router.query.id;
+      value.birth_date = birthDateFam;
+      saveFamily(value);
+    }
+  };
+  const updateFormFamily = (item) => {
+    formFamily.setFieldsValue({
+      relationship: item.relationship.id,
+      name: item.name,
+      flast_name: item.flast_name,
+      mlast_name: item.mlast_name,
+      gender: item.gender,
+      life: item.life,
+      benefit: item.benefit,
+      place_birth: item.place_birth,
+      nationality: item.nationality,
+      other_nationality: item.other_nationality,
+    });
+    if (item.birth_date)
+      formFamily.setFieldsValue({
+        birth_date: moment(item.birth_date),
+      });
+    if (item.job)
+      formFamily.setFieldsValue({
+        job: item.job.id,
+      });
+    setIdFamily(item.id);
+    setUpFamily(true);
+  };
+  const saveFamily = (data) => {
+    setLoading(true);
+    Axios.post(API_URL + `/person/family/`, data)
+      .then((response) => {
+        message.success({
+          content: "Guardado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        getFamily();
+        formFamily.resetFields();
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+  const updateFamily = (data) => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.put(API_URL + `/person/family/${data.id}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        setUpFamily(false);
+        setIdFamily(null);
+        formFamily.resetFields();
+        getFamily();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const deleteFamily = (data) => {
+    setLoadingTable(true);
+    Axios.delete(API_URL + `/person/family/${data}/`)
+      .then((response) => {
+        message.success({
+          content: "Eliminado con exito.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        showModal();
+        getFamily();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const colFamily = [
     {
-      label: "Soltero(a)",
-      value: 1,
+      title: "Nombre",
+      dataIndex: "fullname",
     },
     {
-      label: "Casado(a)",
-      value: 2,
+      title: "Parentesco",
+      dataIndex: "relation",
     },
     {
-      label: "Viudo(a)",
-      value: 3,
+      title: "Beneficio",
+      dataIndex: "benefit",
+    },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined onClick={() => updateFormFamily(item)} />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deleteFamily" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
     },
   ];
 
-  function onChange(date, dateString) {
-    console.log(date, dateString);
-    setBirthDate(dateString);
-  }
+  /////CONTACTO DE EMERGENCIA
+  const getContactEmergency = () => {
+    Axios.get(
+      API_URL + `/person/person/${router.query.id}/contact_emergency_person/`
+    )
+      .then((response) => {
+        setContactEmergency(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const formFinishContactE = (value) => {
+    if (upContEm) {
+      value.id = idContEm;
+      updateContEm(value);
+    } else {
+      value.person = router.query.id;
+      saveContactE(value);
+    }
+  };
+  const updateFormContEm = (item) => {
+    formContactEmergency.setFieldsValue({
+      relationship: item.relationship.id,
+      address: item.address,
+      fullname: item.fullname,
+      phone_one: item.phone_one,
+      phone_two: item.phone_two,
+    });
+    setIdContEm(item.id);
+    setUpContEm(true);
+  };
+  const saveContactE = (data) => {
+    Axios.post(API_URL + `/person/contact-emergency/`, data)
+      .then((response) => {
+        message.success({
+          content: "Guardado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        getContactEmergency;
+        formContactEmergency.resetFields();
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+  const updateContEm = (data) => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.put(API_URL + `/person/contact-emergency/${data.id}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        setUpContEm(false);
+        setIdContEm(null);
+        getContactEmergency();
+        formContactEmergency.resetFields();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const deleteContEm = (data) => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.delete(API_URL + `/person/contact-emergency/${data}/`)
+      .then((response) => {
+        message.success({
+          content: "Eliminado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        getContactEmergency;
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const colContact = [
+    {
+      title: "Nombre",
+      dataIndex: "fullname",
+    },
+    {
+      title: "Telefono 1",
+      dataIndex: "phone_one",
+    },
+    {
+      title: "Telefono 2",
+      dataIndex: "phone_two",
+    },
+    {
+      title: "Dirección",
+      dataIndex: "address",
+    },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined onClick={() => updateFormContEm(item)} />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deleteContEm" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
+  ];
+
+  /////FORMACION Y HABILIDADES
+  const getTraining = () => {
+    setLoadingTable(true);
+    Axios.get(API_URL + `/person/person/${router.query.id}/training_person/`)
+      .then((response) => {
+        setTraining(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const formFinishTraining = (value) => {
+    if (upTraining) {
+    } else {
+      value.since = dateTraining[0];
+      value.until = dateTraining[1];
+      value.currently_studing = currenlyStuding;
+      value.person = router.query.id;
+      saveTraining(value);
+    }
+  };
+  const saveTraining = (data) => {
+    setLoading(true);
+    Axios.post(API_URL + `/person/training/`, data)
+      .then((response) => {
+        message.success({
+          content: "Guardado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        getTraining();
+        formTraining.resetFields();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const colTraining = [
+    {
+      title: "Escuela",
+      dataIndex: "school",
+    },
+    {
+      title: "Fecha inicio",
+      dataIndex: "since",
+    },
+    {
+      title: "Fecha fin",
+      dataIndex: "until",
+    },
+    {
+      title: "Documento",
+      dataIndex: "accreditation_document",
+    },
+  ];
+
+  /////EPERIENCIA LABORAL
+  const getJobExperience = () => {
+    Axios.get(
+      API_URL + `/person/person/${router.query.id}/job_experience_person/`
+    )
+      .then((response) => {
+        setExperienceJob(response.data);
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+      });
+  };
+  const formFinishJobExp = (value) => {
+    if (upExperienceJob) {
+    } else {
+      value.person = router.query.id;
+      value.since = dateExpjob[0];
+      value.until = dateExpjob[1];
+      console.log("EXPERIENCE JOB-->>> ", value);
+      saveJobExp(value);
+    }
+  };
+  const saveJobExp = (data) => {
+    setLoading(true);
+    Axios.post(API_URL + `/person/experience-job/`, data)
+      .then((response) => {
+        message.success({
+          content: "Guardado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        formExperiencejob.resetFields();
+        getJobExperience;
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+  const colExpJob = [
+    {
+      title: "Empresa",
+      dataIndex: "company",
+    },
+    {
+      title: "Puesto",
+      dataIndex: "function",
+    },
+  ];
+
+  /////CUENTAS BANCARIAS
+  const getBankAccount = () => {
+    setLoadingTable(true);
+    Axios.get(
+      API_URL + `/person/person/${router.query.id}/bank_account_person/`
+    )
+      .then((response) => {
+        setBankAccounts(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const formBankAcc = (value) => {
+    if (upBankAcc) {
+      value.id = idBankAcc;
+      updateBankAcc(value);
+    } else {
+      value.person = router.query.id;
+      saveBankAcc(value);
+    }
+  };
+  const updateFormbankAcc = (item) => {
+    formBank.setFieldsValue({
+      bank: item.bank.id,
+      account_number: item.account_number,
+      interbank_key: item.interbank_key,
+    });
+    setIdBankAcc(item.id);
+    setUpBankAcc(true);
+  };
+  const saveBankAcc = (data) => {
+    setLoading(true);
+    Axios.post(API_URL + `/person/bank-account/`, data)
+      .then((response) => {
+        message.success({
+          content: "Guardado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        getBankAccount();
+        formBank.resetFields();
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+
+    /////DOCUMENTOS
+    const formDoc = (value) => {};
+
+    const saveDoc = (data) => {};
+  };
+  const updateBankAcc = (data) => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.put(API_URL + `/person/bank-account/${data.id}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        console.log("UPDATE BANK-->>> ", response.data);
+        setLoading(false);
+        setUpBankAcc(false);
+        setIdBankAcc(null);
+        formBank.resetFields();
+        getBankAccount();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+
+    /////DOCUMENTOS
+    const formDoc = (value) => {};
+
+    const saveDoc = (data) => {};
+  };
+  const deleteBankAcc = (data) => {
+    setLoadingTable(true);
+    Axios.delete(API_URL + `/person/bank-account/${data}/`)
+      .then((response) => {
+        message.success({
+          content: "Eliminado con exito.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        showModal();
+        getBankAccount();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const colBank = [
+    {
+      title: "Banco",
+      dataIndex: "name",
+      key: "id",
+    },
+    {
+      title: "Numero de cuenta",
+      dataIndex: "account_number",
+      key: "account_number",
+    },
+    {
+      title: "Clave interbancaria",
+      dataIndex: "interbank_key",
+      key: "interbank_key",
+    },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined onClick={() => updateFormbankAcc(item)} />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deleteBankAcc" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
+  ];
+
+  /////DELETE PERSON
+  const deletePerson = (data) => {
+    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
+      persons_id: router.query.id,
+    })
+      .then((response) => {
+        setLoading(false);
+        showModal();
+        Router.push("/home");
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+
+  /////DELETE REGISTER
+  const setDeleteRegister = (props) => {
+    setDeleted(props);
+    showModal();
+  };
+  const deleteRegister = () => {
+    if (deleted.api == "deleteBankAcc") deleteBankAcc(deleted.id);
+    if (deleted.api == "deletePerson") deletePerson();
+    if (deleted.api == "deletePhone") deletePhone(deleted.id);
+    if (deleted.api == "deleteContEm") deleteContEm(deleted.id);
+    if (deleted.api == "deleteFamily") deleteFamily(deleted.id);
+  };
+
+  //////SHOW MODAL DELETE
+  const showModal = () => {
+    modal ? setModal(false) : setModal(true);
+  };
+
+  /////CONFIG DRAG
+  const props = {
+    name: "file",
+    multiple: true,
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== "uploading") {
+        console.log("Cargados-->> ", info.file, info.fileList);
+      }
+      if (status === "done") {
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
 
   return (
     <>
@@ -263,17 +1402,21 @@ const userDetailForm = () => {
             <Breadcrumb.Item href="/home/">Person</Breadcrumb.Item>
             <Breadcrumb.Item>Expediente de empleados</Breadcrumb.Item>
           </Breadcrumb>
-          <div
-            className="site-layout-background"
-            style={{ padding: 24, minHeight: 380, height: "100%" }}
-          >
-            <Title level={3}>Información Personal</Title>
-            <Title level={4} style={{ marginTop: 0 }}>
-              {personFullName}
-            </Title>
-            <Spin tip="Loading..." spinning={loading}>
-              <Form onFinish={onFinish} layout={"vertical"} form={formPerson}>
-                <Card bordered={true}>
+          <Spin tip="Loading..." spinning={loading}>
+            <div
+              className="site-layout-background"
+              style={{ padding: 24, minHeight: 380, height: "100%" }}
+            >
+              <Title level={3}>Información Personal</Title>
+              <Title level={4} style={{ marginTop: 0 }}>
+                {personFullName}
+              </Title>
+              <Card bordered={true}>
+                <Form
+                  onFinish={onFinishPerson}
+                  layout={"vertical"}
+                  form={formPerson}
+                >
                   <Row>
                     <Col span={18} pull={1}>
                       <Row flex>
@@ -331,7 +1474,7 @@ const userDetailForm = () => {
                       <Row>
                         <Form.Item name="date_of_admission">
                           <DatePicker
-                            onChange={onChange}
+                            onChange={onChangeDateAdmission}
                             moment={"YYYY-MM-DD"}
                           />
                         </Form.Item>
@@ -362,7 +1505,7 @@ const userDetailForm = () => {
                               label="Fecha de nacimiento"
                             >
                               <DatePicker
-                                onChange={onChange}
+                                onChange={onChangeBirthDate}
                                 moment={"YYYY-MM-DD"}
                                 placeholder="Fecha de nacimiento"
                               />
@@ -395,35 +1538,586 @@ const userDetailForm = () => {
                           </Col>
                         </Row>
                       </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                          <Button htmlType="button">Regresar</Button>
+                        </Form.Item>
+                      </Row>
                     </Panel>
                   </Collapse>
+                </Form>
 
-                  <Row flex>
-                    <Form.Item>
-                      <Button type="primary" htmlType="submit">
-                        Guardar
-                      </Button>
-                      <Button htmlType="button">Regresar</Button>
-                    </Form.Item>
-                  </Row>
-                </Card>
-              </Form>
-              <Tabs
-                type="card"
-                defaultActiveKey="1"
-                style={{ marginTop: "40px" }}
-              >
-                <TabPane tab="Generales" key="2">
-                  Content of Tab Pane 2
-                </TabPane>
+                <Collapse accordion>
+                  <Panel header="Datos generales">
+                    <Form form={formGeneralTab} onFinish={formGeneralData}>
+                      <Col span={18} pull={1}>
+                        <Row flex>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="place_birth"
+                              label="Lugar de nacimiento"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="nationality" label="Nacionalidad">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="other_nationality"
+                              label="Otra nacionalidad"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="availability_travel"
+                              label="Disponibilidad para viajar"
+                            >
+                              <Checkbox
+                                onChange={checkTravel}
+                                checked={checkedTravel}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item label="Cambio de residencia">
+                              <Checkbox
+                                onChange={checkResidence}
+                                checked={checkedResidence}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="allergies" label="Alergias">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="blood_type" label="Tipo de sangre">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                        </Form.Item>
+                      </Row>
+                    </Form>
+                  </Panel>
 
-                <TabPane tab="Adicionales" key="3">
-                  Content of Tab Pane 3
-                </TabPane>
-              </Tabs>
-            </Spin>
-          </div>
+                  <Panel header="Teléfono">
+                    <Form form={formPhone} onFinish={formFinishPhone}>
+                      <Col span={18} pull={1}>
+                        <Row flex>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="phone_type"
+                              label="Tipo de telefono"
+                            >
+                              <Select options={typePhones} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="line_type" label="Tipo de linea">
+                              <Select options={typeLines} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="international_code"
+                              label="Codigo internacional"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="national_code"
+                              label="Codigo de pais"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="country_code"
+                              label="Codigo de ciudad"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="phone" label="Numero telefonico">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                        </Form.Item>
+                      </Row>
+                    </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colPhone} dataSource={phones} />
+                    </Spin>
+                  </Panel>
+
+                  <Panel header="Familia">
+                    <Form form={formFamily} onFinish={formFinishFamily}>
+                      <Col span={18} pull={1}>
+                        <Row flex>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="relationship" label="Parentesco">
+                              <Select options={relationship} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="job" label="Puesto de trabajo">
+                              <Select options={jobs} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="name" label="Nombre">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="flast_name"
+                              label="Apellido paterno"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="mlast_name"
+                              label="Apellido materno"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="gender" label="Genero">
+                              <Select options={genders} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="liffe" label="¿Vive?">
+                              <Checkbox />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="birth_date"
+                              label="Fecha de nacimiento"
+                            >
+                              <DatePicker
+                                onChange={onChangeBDFamily}
+                                moment={"YYYY-MM-DD"}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="place_birth"
+                              label="Lugar de nacimiento"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="nationality" label="Nacionalidad">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="other_nationality"
+                              label="Otra nacionalidad"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="benefit" label="% Beneficio">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                        </Form.Item>
+                      </Row>
+                    </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colFamily} dataSource={family} />
+                    </Spin>
+                  </Panel>
+
+                  <Panel header="Contactos de Emergencia">
+                    <Form
+                      form={formContactEmergency}
+                      onFinish={formFinishContactE}
+                    >
+                      <Col span={18} pull={1}>
+                        <Row flex>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="relationship" label="Parentesco">
+                              <Select options={relationship} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="fullname" label="Nombre completo">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="phone_one" label="Telefono 1">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="phone_two" label="Telefono 2">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={20} offset={2}>
+                            <Form.Item name="address" label="Dirección">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                        </Form.Item>
+                      </Row>
+                    </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table
+                        columns={colContact}
+                        dataSource={contactEmergency}
+                      />
+                    </Spin>
+                  </Panel>
+
+                  <Panel header="Formación/Habilidades">
+                    <Form form={formTraining} onFinish={formFinishTraining}>
+                      <Col span={18} pull={1}>
+                        <Row flex>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="school" label="Escuela">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="since" label="Fecha Inicio-Fin">
+                              <Space direction="vertical" size={12}>
+                                <RangePicker onChange={onChangeDateTrainig} />
+                              </Space>
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="accreditation_document"
+                              label="Documento de acreditación"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="currently_studing"
+                              label="Estudia actualmente"
+                            >
+                              <Checkbox
+                                onChange={changeCurreStud}
+                                checked={currenlyStuding}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="completed_period"
+                              label="Periodo completado"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                        </Form.Item>
+                      </Row>
+                    </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colTraining} dataSource={training} />
+                    </Spin>
+                  </Panel>
+
+                  <Panel header="Experiencia laboral">
+                    <Form form={formExperiencejob} onFinish={formFinishJobExp}>
+                      <Col span={18} pull={1}>
+                        <Row flex>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="experience_type"
+                              label="Tipo de experiencia"
+                            >
+                              <Select options={experienceType} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="labor_relationship"
+                              label="Relación laboral"
+                            >
+                              <Select options={laborRelationship} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="reason_separation"
+                              label="Motivo de separación"
+                            >
+                              <Select options={reasonSeparation} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="company" label="Empresa">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="since" label="Fecha de inicio">
+                              <RangePicker onChange={onChangeDExJ} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="turn" label="Giro empresarial">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="function" label="Funciones">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="startin_salary"
+                              label="Salario incial"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="last_salary" label="Salario final">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="immediate_boos"
+                              label="Jefe inmediato"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="address_company"
+                              label="Direccion de la empresa"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="phone_company"
+                              label="Teléfono de la empresa"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="notes" label="Notas">
+                              <TextArea />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="cv" label="Curriculum">
+                              <TextArea />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                        </Form.Item>
+                      </Row>
+                    </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colExpJob} dataSource={experineceJob} />
+                    </Spin>
+                  </Panel>
+
+                  <Panel header="Cuentas bancarias">
+                    <Form form={formBank} onFinish={formBankAcc}>
+                      <Col span={18} pull={1}>
+                        <Row flex>
+                          <Col span={10} offset={2}>
+                            <Form.Item name="bank" label="Banco">
+                              <Select options={banks} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="account_number"
+                              label="Numero de cuenta"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col span={10} offset={2}>
+                            <Form.Item
+                              name="interbank_key"
+                              label="Clave interbancaria"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                        </Form.Item>
+                      </Row>
+                    </Form>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colBank} dataSource={bankAccounts} />
+                    </Spin>
+                  </Panel>
+
+                  <Panel header="Documentos">
+                    <Dragger {...props}>
+                      <p className="ant-upload-drag-icon">
+                        <InboxOutlined />
+                      </p>
+                      <p className="ant-upload-text">
+                        Click o Arrastra tus doccumentos aquí.
+                      </p>
+                      <p className="ant-upload-hint">
+                        Soporte para una carga única o masiva. Prohibido
+                        estrictamente la carga de datos ajenos a la persona.
+                      </p>
+                    </Dragger>
+                    <Row flex>
+                      <Col style={{ padding: "2%" }}>
+                        <Button
+                          icon={<UploadOutlined />}
+                          type="primary"
+                          onClick={() => "nada"}
+                        >
+                          Subir
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Panel>
+
+                  <Panel header="Eliminar">
+                    <Alert
+                      message="Warning"
+                      description="Al eliminar a una persona perdera todos los datos
+                    relacionados a ella de manera permante."
+                      type="warning"
+                      showIcon
+                    />
+                    <Row style={{ padding: "2%" }}>
+                      <Col>
+                        <Button
+                          type="primary"
+                          danger
+                          icon={<WarningOutlined />}
+                          onClick={() =>
+                            setDeleteRegister({
+                              id: "",
+                              api: "deletePerson",
+                            })
+                          }
+                        >
+                          Eliminar persona
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Panel>
+                </Collapse>
+              </Card>
+              <Row flex>
+                <Col style={{ padding: "2%" }}>
+                  <Button
+                    icon={<ArrowLeftOutlined />}
+                    type="primary"
+                    onClick={() => Router.push("/home")}
+                  >
+                    Regresar
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </Spin>
         </Content>
+        <Modal
+          title="Modal"
+          visible={modal}
+          onOk={deleteRegister}
+          onCancel={showModal}
+          okText="Si, Eliminar"
+          cancelText="Cancelar"
+        >
+          <Alert
+            message="Warning"
+            description="Al eliminar este registro perdera todos los datos
+                    relacionados a el de manera permante.
+                    ¿Esta seguro de querer eliminarlo?"
+            type="warning"
+            showIcon
+          />
+        </Modal>
       </Layout>
     </>
   );
