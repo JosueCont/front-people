@@ -9,10 +9,12 @@ import {
   Switch,
   Button,
   Form,
+  Upload,
+  message,
 } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -20,6 +22,7 @@ import {
   SearchOutlined,
   PlusOutlined,
   DownloadOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
 import _ from "lodash";
@@ -34,6 +37,7 @@ const homeScreen = () => {
   const [status, setStatus] = useState(true);
   const [modal, setModal] = useState(false);
   const [formFilter] = Form.useForm();
+  const inputFileRef = useRef(null);
   let filters = {};
 
   const getPerson = (text) => {
@@ -194,6 +198,32 @@ const homeScreen = () => {
       });
   };
 
+  const importFile = async (e) => {
+    let extension = getFileExtension(e.target.files[0].name);
+    if (extension == "xlsx") {
+      let formData = new FormData();
+      formData.append("File", e.target.files[0]);
+      console.log(formData);
+      setLoading(true);
+      Axios.post(API_URL + `/person/import-export-person`, formData)
+        .then((response) => {
+          setLoading(false);
+          message.success("Excel importado correctamente.");
+          getPerson();
+        })
+        .catch((e) => {
+          setLoading(false);
+          message.error("Error al importar.");
+          console.log(e);
+        });
+    } else {
+      message.error("Formato incorrecto, suba un archivo .xlsx");
+    }
+  };
+  const getFileExtension = (filename) => {
+    return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
+  };
+
   return (
     <>
       <Layout>
@@ -206,19 +236,6 @@ const homeScreen = () => {
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>Person</Breadcrumb.Item>
           </Breadcrumb>
-          <div style={{ padding: "1%", float: "right" }}>
-            <Button
-              style={{
-                background: "#fa8c16",
-                fontWeight: "bold",
-                color: "white",
-              }}
-              onClick={() => getModal(true)}
-            >
-              <PlusOutlined />
-              Agregar persona
-            </Button>
-          </div>
           <div
             className="site-layout-background"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
@@ -276,6 +293,28 @@ const homeScreen = () => {
                 >
                   Descargar resultados
                 </Button>
+                {/* <Upload
+                  // {...props}
+                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  listType="picture"
+                  maxCount={1}
+                  name="uploadperson"
+                > */}
+                <Button
+                  icon={<UploadOutlined />}
+                  onClick={() => {
+                    inputFileRef.current.click();
+                  }}
+                >
+                  Importar personas
+                </Button>
+                <input
+                  ref={inputFileRef}
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={(e) => importFile(e)}
+                />
+                {/* </Upload> */}
               </div>
             </div>
             <Table
