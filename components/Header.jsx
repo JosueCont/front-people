@@ -42,6 +42,7 @@ export default function headerCustom() {
           >
             Empresas
           </Menu.Item>
+          <Menu.Item key="3">Configuración</Menu.Item>
           <div style={{ float: "right" }}>
             <Dropdown overlay={userCardDisplay}>
               <div>
