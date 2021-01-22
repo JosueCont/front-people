@@ -386,7 +386,7 @@ class ImportExportPersonViewSet(APIView):
             persons = imported_data.dict
             if persons:
                 res = decode_file_persons(persons)
-                if res == 'OK':
+                if res == 'ok':
                     return Response(data={"message": "Guardado correctamente"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
