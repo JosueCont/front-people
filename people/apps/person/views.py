@@ -13,6 +13,7 @@ from people.apps.business.models import NodePerson, Node
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
+from people.apps.person.functions import decode_file_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
     Phone, Family, ContactEmergency, JobExperience, Vacation
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
@@ -113,6 +114,8 @@ class PersonViewSet(viewsets.ModelViewSet):
                     person.imss = serializer.validated_data["imss"]
                 if 'photo' in serializer.validated_data:
                     person.photo = serializer.validated_data["photo"]
+                if 'is_active' in serializer.validated_data:
+                    person.is_active = serializer.validated_data["is_active"]
                 validate_data = serializer.validated_data
                 if 'person_type' in validate_data:
                     person.person_type = serializer.validated_data["person_type"]
@@ -333,19 +336,19 @@ class GeneralPersonViewSet(viewsets.ModelViewSet):
 
 class FamilyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.FamilySerializer
-    queryset = GeneralPerson.objects.all()
+    queryset = Family.objects.all()
     filterset_fields = ('id', 'person')
 
 
 class ContactEmergencyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ContactEmergencySerializer
-    queryset = GeneralPerson.objects.all()
+    queryset = ContactEmergency.objects.all()
     filterset_fields = ('id', 'person')
 
 
 class ExperienceJobViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ExperienceJobSerializer
-    queryset = GeneralPerson.objects.all()
+    queryset = JobExperience.objects.all()
     filterset_fields = ('id', 'person')
 
 
@@ -374,20 +377,17 @@ class PhoneViewSet(viewsets.ModelViewSet):
 
 
 class ImportExportPersonViewSet(APIView):
-    # queryset = Person.objects.all()
-    persons = serializers.PersonResource()
-    dataset = Dataset()
 
     def post(self, request):
+        dataset = Dataset()
         try:
-            new_persons = request.FILES['person']
-            if new_persons:
-                pass
-            #imported_data = self.dataset.load(new_persons.read())
-            #result = self.persons.import_data(self.dataset, dry_run=True)  # Test the data import
-            #if not result.has_errors():
-             #   self.persons.import_data(self.dataset, dry_run=False)  # Actually import now
-            return Response(data={"message": self.dataset}, status=status.HTTP_200_OK)
+            new_persons = request.FILES['File']
+            decoded_file = new_persons.read().decode('utf-8').splitlines()
+            persons = csv.DictReader(decoded_file)
+            if persons:
+                res = decode_file_persons(persons)
+                if res == 'ok':
+                    return Response(data={"message": "Guardado correctamente"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -397,40 +397,44 @@ class ImportExportPersonViewSet(APIView):
             response['Content-Disposition'] = 'attachment; filename="persons.csv"'
 
             writer = csv.writer(response)
-            writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Genero', 'Puesto', 'Nodo organizacional'])
+            if format_file != 'plantilla':
+                writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Genero', 'Nodo organizacional'])
 
-            persons = Person.objects.all()
-            for person in persons:
-                row = []
-                nod = ''
-                phone = ''
-                try:
-                    node_person = NodePerson.objects.get(person=person)
-                    if node_person:
-                        nod = node_person.node.name
-                except:
-                    None
-                try:
-                    phone_person = Phone.objects.get(person=person)
-                    if phone_person:
-                        phone = phone_person.phone
-                except:
-                    None
-                row.append(person.first_name)
-                row.append(person.flast_name)
-                row.append(person.email)
-                row.append(phone)
-                gend = ''
-                if person.gender == 1:
-                    gend = 'Masculino'
-                if person.gender == 2:
-                    gend = 'Femenino'
-                if person.gender == 3:
-                    gend = 'Otro'
-                row.append(gend)
-                row.append(person.job.name)
-                row.append(nod)
-                writer.writerow(row)
+                persons = Person.objects.all()
+                for person in persons:
+                    row = []
+                    nod = ''
+                    phone = ''
+                    try:
+                        node_person = NodePerson.objects.get(person=person)
+                        if node_person:
+                            nod = node_person.node.name
+                    except:
+                        None
+                    try:
+                        phone_person = Phone.objects.get(person=person)
+                        if phone_person:
+                            phone = phone_person.phone
+                    except:
+                        None
+                    row.append(person.first_name)
+                    row.append(person.flast_name)
+                    row.append(person.email)
+                    row.append(phone)
+                    gend = ''
+                    if person.gender == 1:
+                        gend = 'Masculino'
+                    if person.gender == 2:
+                        gend = 'Femenino'
+                    if person.gender == 3:
+                        gend = 'Otro'
+                    row.append(gend)
+                    #row.append(person.job.name)
+                    row.append(nod)
+                    writer.writerow(row)
+            else:
+                writer.writerow(['code', 'first_name', 'flast_name', 'mlast_name', 'parentid', 'email',
+                                 'password', 'curp',  'job',  'code_job',  'department',  'gender'])
             return response
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
