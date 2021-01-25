@@ -215,7 +215,6 @@ const userDetailForm = () => {
       ///GET PERSON
       Axios.get(API_URL + `/person/person/${router.query.id}`)
         .then((response) => {
-          console.log("PERSON-->>> ", response.data);
           formPerson.setFieldsValue({
             first_name: response.data.first_name,
             flast_name: response.data.flast_name,
