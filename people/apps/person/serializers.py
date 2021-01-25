@@ -187,12 +187,14 @@ class VacationSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super(VacationSerializer, self).to_representation(instance)
         business = "N/A"
-        if instance.person.job:
-            if instance.person.job.unit.filter().exists():
+        department = "N/A"
+        if instance.person.job_department:
+            if instance.person.job_department.job.unit.filter().exists():
                 business = instance.person.job.unit.filter().first().name
+                department = instance.person.job_department.department.name
         representation['collaborator'] = instance.person.full_name
         representation['business'] = business
-        representation['department'] = "N/A"
+        representation['department'] = department
         representation['available_days'] = 6
         return representation
 
