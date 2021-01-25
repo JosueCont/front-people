@@ -307,6 +307,17 @@ const homeScreen = () => {
                 }}
               >
                 <Button
+                  style={{
+                    background: "#fa8c16",
+                    fontWeight: "bold",
+                    color: "white",
+                  }}
+                  onClick={() => getModal(true)}
+                >
+                  <PlusOutlined />
+                  Agregar persona
+                </Button>
+                <Button
                   type="primary"
                   icon={<DownloadOutlined />}
                   size={{ size: "large" }}
