@@ -382,8 +382,8 @@ class ImportExportPersonViewSet(APIView):
         dataset = Dataset()
         try:
             new_persons = request.FILES['File']
-            imported_data = dataset.load(new_persons.read())
-            persons = imported_data.dict
+            decoded_file = new_persons.read().decode('utf-8').splitlines()
+            persons = csv.DictReader(decoded_file)
             if persons:
                 res = decode_file_persons(persons)
                 if res == 'ok':
@@ -397,40 +397,44 @@ class ImportExportPersonViewSet(APIView):
             response['Content-Disposition'] = 'attachment; filename="persons.csv"'
 
             writer = csv.writer(response)
-            writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Genero', 'Nodo organizacional'])
+            if format_file != 'plantilla':
+                writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Genero', 'Nodo organizacional'])
 
-            persons = Person.objects.all()
-            for person in persons:
-                row = []
-                nod = ''
-                phone = ''
-                try:
-                    node_person = NodePerson.objects.get(person=person)
-                    if node_person:
-                        nod = node_person.node.name
-                except:
-                    None
-                try:
-                    phone_person = Phone.objects.get(person=person)
-                    if phone_person:
-                        phone = phone_person.phone
-                except:
-                    None
-                row.append(person.first_name)
-                row.append(person.flast_name)
-                row.append(person.email)
-                row.append(phone)
-                gend = ''
-                if person.gender == 1:
-                    gend = 'Masculino'
-                if person.gender == 2:
-                    gend = 'Femenino'
-                if person.gender == 3:
-                    gend = 'Otro'
-                row.append(gend)
-                #row.append(person.job.name)
-                row.append(nod)
-                writer.writerow(row)
+                persons = Person.objects.all()
+                for person in persons:
+                    row = []
+                    nod = ''
+                    phone = ''
+                    try:
+                        node_person = NodePerson.objects.get(person=person)
+                        if node_person:
+                            nod = node_person.node.name
+                    except:
+                        None
+                    try:
+                        phone_person = Phone.objects.get(person=person)
+                        if phone_person:
+                            phone = phone_person.phone
+                    except:
+                        None
+                    row.append(person.first_name)
+                    row.append(person.flast_name)
+                    row.append(person.email)
+                    row.append(phone)
+                    gend = ''
+                    if person.gender == 1:
+                        gend = 'Masculino'
+                    if person.gender == 2:
+                        gend = 'Femenino'
+                    if person.gender == 3:
+                        gend = 'Otro'
+                    row.append(gend)
+                    #row.append(person.job.name)
+                    row.append(nod)
+                    writer.writerow(row)
+            else:
+                writer.writerow(['code', 'first_name', 'flast_name', 'mlast_name', 'parentid', 'email',
+                                 'password', 'curp',  'job',  'code_job',  'department',  'gender'])
             return response
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
