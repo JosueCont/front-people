@@ -198,9 +198,30 @@ const homeScreen = () => {
       });
   };
 
+  const downloadPlantilla = () => {
+    setLoading(true);
+    Axios.get(API_URL + `/person/import-export-person/plantilla`)
+      .then((response) => {
+        const type = response.headers["content-type"];
+        const blob = new Blob([response.data], {
+          type: type,
+          encoding: "UTF-8",
+        });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "PlantillaPersonas.csv";
+        link.click();
+        setLoading(false);
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
+  };
+
   const importFile = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
-    if (extension == "xlsx") {
+    if (extension == "csv") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
       console.log(formData);
@@ -217,7 +238,7 @@ const homeScreen = () => {
           console.log(e);
         });
     } else {
-      message.error("Formato incorrecto, suba un archivo .xlsx");
+      message.error("Formato incorrecto, suba un archivo .csv");
     }
   };
   const getFileExtension = (filename) => {
@@ -293,13 +314,6 @@ const homeScreen = () => {
                 >
                   Descargar resultados
                 </Button>
-                {/* <Upload
-                  // {...props}
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  listType="picture"
-                  maxCount={1}
-                  name="uploadperson"
-                > */}
                 <Button
                   icon={<UploadOutlined />}
                   onClick={() => {
@@ -314,7 +328,14 @@ const homeScreen = () => {
                   style={{ display: "none" }}
                   onChange={(e) => importFile(e)}
                 />
-                {/* </Upload> */}
+                <Button
+                  type="primary"
+                  icon={<DownloadOutlined />}
+                  size={{ size: "large" }}
+                  onClick={() => downloadPlantilla()}
+                >
+                  Descargar plantilla
+                </Button>
               </div>
             </div>
             <Table
