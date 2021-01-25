@@ -21,16 +21,23 @@ def decode_file_persons(persons):
                     result_person = None
                     # Es persona
                     person = Person()
-                    person.first_name = data["first_name"]
-                    person.flast_name = data["flast_name"]
-                    person.mlast_name = data["mlast_name"]
-                    person.email = data["email"]
-                    person.curp = data["curp"]
-                    person.code = data["code"]
-                    password = data["password"]
-                    # Verificando existencia de persona
+                    person.first_name = data["first_name"].strip()
+                    person.flast_name = data["flast_name"].strip()
+                    person.mlast_name = data["mlast_name"].strip()
+                    person.email = data["email"].strip()
+                    person.curp = data["curp"].strip()
+                    person.code = data["code"].strip()
+                    gender = data["gender"].strip()
+                    if gender == "Masculino":
+                        person.gender = 1
+                    if gender == "Femenino":
+                        person.gender = 2
+                    if gender == "Otro":
+                        person.gender = 3
+                    password = data["password"].strip()
+                    # Verificando existencia de a
                     try:
-                        person_exist = Person.objects.get(email=data["email"])
+                        person_exist = Person.objects.get(email=data["email"].strip())
                     except:
                         person_exist = None
                     if person_exist:
@@ -41,7 +48,7 @@ def decode_file_persons(persons):
                     if result_person.id:
                         if data["parentid"]:
                             try:
-                                node_p = Node.objects.get(code=data["parentid"])
+                                node_p = Node.objects.get(code=data["parentid"].strip())
                             except:
                                 node_p = None
                             if node_p:
@@ -59,32 +66,32 @@ def decode_file_persons(persons):
                         result_job_department = None
                         if data["department"]:
                             try:
-                                exist_department = Department.objects.get(name=data["department"])
+                                exist_department = Department.objects.get(name=data["department"].strip())
                             except:
                                 exist_department = None
                             if exist_department:
                                 result_department = exist_department
                             else:
                                 department = Department()
-                                department.name = data["department"]
-                                department.description = data["department"]
-                                department.code = data["department"]
+                                department.name = data["department"].strip()
+                                department.description = data["department"].strip()
+                                department.code = data["department"].strip()
                                 department.save()
                                 result_department = department
                         if data["job"]:
                             try:
-                                exist_job = Job.objects.get(name=data["job"])
+                                exist_job = Job.objects.get(name=data["job"].strip())
                             except:
                                 exist_job = None
                             if exist_job:
                                 result_job = exist_job
                             else:
                                 job = Job()
-                                job.name = data["job"]
-                                job.code = data["code_job"]
+                                job.name = data["job"].strip()
+                                job.code = data["code_job"].strip()
                                 job.save()
                                 try:
-                                    unit = Node.objects.get(code=data["parentid"])
+                                    unit = Node.objects.get(code=data["parentid"].strip())
                                 except:
                                     unit = None
                                 if unit:
@@ -110,16 +117,16 @@ def decode_file_persons(persons):
                         # Es nodo con padre
                         result_node = None
                         try:
-                            node_exist = Node.objects.get(code=data["code"])
+                            node_exist = Node.objects.get(code=data["code"].strip())
                         except:
                             node_exist = None
                         if node_exist is None:
                             node = Node()
-                            node.code = data["code"]
-                            node.name = data["first_name"]
-                            node.description = data["first_name"]
+                            node.code = data["code"].strip()
+                            node.name = data["first_name"].strip()
+                            node.description = data["first_name"].strip()
                             try:
-                                parent = Node.objects.get(code=data["parentid"])
+                                parent = Node.objects.get(code=data["parentid"].strip())
                             except:
                                 parent = None
                             if parent:
@@ -128,12 +135,12 @@ def decode_file_persons(persons):
                             result_node = node
                         else:
                             # Probable update
-                            node_exist.code = data["code"]
-                            node_exist.name = data["first_name"]
-                            node_exist.description = data["first_name"]
+                            node_exist.code = data["code"].strip()
+                            node_exist.name = data["first_name"].strip()
+                            node_exist.description = data["first_name"].strip()
                             node_exist.pare = data["first_name"]
                             try:
-                                parent = Node.objects.get(code=data["parentid"])
+                                parent = Node.objects.get(code=data["parentid"].strip())
                             except:
                                 parent = None
                             if parent:
@@ -147,21 +154,21 @@ def decode_file_persons(persons):
                             # Es nodo principal
                             result_node = None
                             try:
-                                node_exist = Node.objects.get(code=data["code"])
+                                node_exist = Node.objects.get(code=data["code"].strip())
                             except:
                                 node_exist = None
                             if node_exist is None:
                                 node = Node()
-                                node.code = data["code"]
-                                node.name = data["first_name"]
-                                node.description = data["first_name"]
+                                node.code = data["code"].strip()
+                                node.name = data["first_name"].strip()
+                                node.description = data["first_name"].strip()
                                 node.save()
                                 result_node = node
                             else:
                                 # Probable update
-                                node_exist.code = data["code"]
-                                node_exist.name = data["first_name"]
-                                node_exist.description = data["first_name"]
+                                node_exist.code = data["code"].strip()
+                                node_exist.name = data["first_name"].strip()
+                                node_exist.description = data["first_name"].strip()
                                 node_exist.save()
                                 result_node = node_exist
                             if result_node:
