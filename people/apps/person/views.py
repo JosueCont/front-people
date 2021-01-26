@@ -16,7 +16,8 @@ from people.apps.person.filters import PersonFilters
 from people.apps.person.functions import decode_file_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
     Phone, Family, ContactEmergency, JobExperience, Document
-from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
+from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer, DocumentSerializer
+from people.apps.setup.models import DocumentType
 
 
 class PersonTypeViewSet(viewsets.ModelViewSet):
@@ -461,3 +462,20 @@ class DocumentViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.DocumentSerializer
     queryset = Document.objects.all()
     filterset_fields = ('id', 'document_type')
+
+    def create(self, request):
+        data = request.data
+        serializer = DocumentSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                document = Document()
+                document.document_type = serializer.validated_data['document_type']
+                document.person = serializer.validated_data['person']
+                document.description = serializer.validated_data['description']
+                document.document = serializer.validated_data['document']
+                document.save()
+                return Response(data={"message": "success"}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
