@@ -345,6 +345,20 @@ class PersonViewSet(viewsets.ModelViewSet):
         else:
             return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, methods=['get'])
+    def document_person(self, request, pk):
+        if pk:
+            try:
+                person = self.get_object()
+                array_doc = []
+                for doc in Document.objects.filter(person=person):
+                    array_doc.append(serializers.DocumentSerializer(doc).data)
+                return Response(data=array_doc, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
+
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.GeneralPersonSerializer
@@ -474,6 +488,25 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 document.description = serializer.validated_data['description']
                 document.document = serializer.validated_data['document']
                 document.save()
+                return Response(data={"message": "success"}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = DocumentSerializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            try:
+                document = Document.objects.filter(id=instance.id).first()
+                if document:
+                    document.document_type = serializer.validated_data['document_type']
+                    document.person = serializer.validated_data['person']
+                    document.description = serializer.validated_data['description']
+                    document.document = serializer.validated_data['document']
+                    document.save()
                 return Response(data={"message": "success"}, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
