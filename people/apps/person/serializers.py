@@ -113,7 +113,6 @@ class ContactEmergencySerializer(serializers.ModelSerializer):
         return representation
 
 
-
 class TrainingSerialiser(serializers.ModelSerializer):
     class Meta:
         model = models.Training
@@ -150,7 +149,7 @@ class PersonResource(resources.ModelResource):
         # fields = "__all__"
         exclude = ('id')
         exclude = ('khonnect_id')
-        #import_id_fields = ('first_name', 'flast_name', 'mlast_name', 'curp',)
+        # import_id_fields = ('first_name', 'flast_name', 'mlast_name', 'curp',)
 
         """export_id_fields = (
         'khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted',
@@ -178,3 +177,8 @@ class PhoneSerialiser(serializers.ModelSerializer):
         model = models.Phone
         fields = "__all__"
 
+
+class DocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Document
+        fields = "__all__"

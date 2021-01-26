@@ -31,3 +31,9 @@ class LaborRelationshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.LaborRelationship
         fields = "__all__"
+
+
+class DocumentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.DocumentType
+        fields = "__all__"
