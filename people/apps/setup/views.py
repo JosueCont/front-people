@@ -2,7 +2,8 @@ from django.shortcuts import render
 from rest_framework import viewsets
 
 from people.apps.setup import serializers
-from people.apps.setup.models import Relationship, Bank, ExperienceType, ReasonSeparation, LaborRelationship
+from people.apps.setup.models import Relationship, Bank, ExperienceType, ReasonSeparation, LaborRelationship, \
+    DocumentType
 
 
 class RelationshipViewSet(viewsets.ModelViewSet):
@@ -37,4 +38,11 @@ class LaborRelationshipViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.LaborRelationshipSerializer
     queryset = LaborRelationship.objects.all()
+    filterset_fields = ('code', 'name')
+
+
+class DocumentTypeViewSet(viewsets.ModelViewSet):
+
+    serializers = serializers.DocumentTypeSerializer
+    queryset = DocumentType.objects.all()
     filterset_fields = ('code', 'name')

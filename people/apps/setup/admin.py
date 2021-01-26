@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from people.apps.setup.models import Bank, Relationship, ExperienceType, ReasonSeparation, LaborRelationship, Treatment
+from people.apps.setup.models import Bank, Relationship, ExperienceType, ReasonSeparation, LaborRelationship, Treatment, \
+    DocumentType
 
 
 @admin.register(Bank)
@@ -41,7 +42,13 @@ class LaborRelationship(admin.ModelAdmin):
 
 @admin.register(Treatment)
 class Treatment(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'code')
+    search_fields = ['name']
+    list_filter = ('name',)
 
 
-
+@admin.register(DocumentType)
+class DocumentType(admin.ModelAdmin):
+    list_display = ('id', 'name',)
+    search_fields = ['name']
+    list_filter = ('name',)

@@ -9,7 +9,8 @@ from easy_thumbnails.fields import ThumbnailerImageField, ThumbnailerField
 
 from people.apps.functions import get_clean_uuid
 # people/apps/functions.py
-from people.apps.setup.models import Relationship, ExperienceType, LaborRelationship, ReasonSeparation, Bank
+from people.apps.setup.models import Relationship, ExperienceType, LaborRelationship, ReasonSeparation, Bank, \
+    DocumentType
 
 MAIN_APP_PATH = 'person/'
 
@@ -35,7 +36,7 @@ class Job(models.Model):
     name = models.CharField(max_length=150, verbose_name=_("Nombre de puesto"))
     code = models.CharField(max_length=50, unique=True, verbose_name=_("Codigo de puesto"))
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creacion"))
-    unit = models.ManyToManyField("business.Node", verbose_name=_("Unidad estratégica"), null=True, blank=True)
+    unit = models.ManyToManyField("business.Node", verbose_name=_("Unidad estratégica"))
 
     def __str__(self):
         return self.name
@@ -161,7 +162,7 @@ class Address(models.Model):
     postalCode = models.CharField(max_length=50, verbose_name=_("Codigo postal"), null=True, blank=True)
     suburb = models.CharField(max_length=100, verbose_name=_("Suburbio"), null=True, blank=True)
     location = models.CharField(max_length=300, verbose_name=_("Ubicacion del domicilio"))
-    reference = models.IntegerField(verbose_name=_("Referencia"), null=True, blank=True)
+    reference = models.CharField(max_length=200, verbose_name=_("Referencia"), null=True, blank=True)
 
     def __str__(self):
         return self.street
@@ -288,3 +289,28 @@ class Vacancy(models.Model):
     class Meta:
         verbose_name = _("Vacante(Plaza)")
         verbose_name_plural = _("Vacantes(Plazas)")
+
+
+class Document(models.Model):
+
+    def upload_document(self, filename):
+        now = timezone.now()
+        extension = os.path.splitext(filename)[1][1:]
+        file_name = os.path.splitext(filename)[0]
+        url = f"{MAIN_APP_PATH}documents/personal-documents/%s%s%s%s%s%s/%s.%s" % (now.day, now.month, now.year, now.hour,
+                                                                           now.minute, now.second,
+                                                                           slugify(str(file_name)), extension)
+        return url
+
+    id = models.CharField(max_length=150, primary_key=True, default=get_clean_uuid, editable=False)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"))
+    document_type = models.ForeignKey(DocumentType, verbose_name=_("Tipo de documento"), on_delete=models.CASCADE)
+    description = models.TextField(verbose_name=_("Descripción"))
+    document = ThumbnailerField(upload_to=upload_document, verbose_name=_("Documento"))
+
+    def __str__(self):
+        return self.description
+
+    class Meta:
+        verbose_name = _("Documento")
+        verbose_name_plural = _("Documentos")

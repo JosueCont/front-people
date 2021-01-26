@@ -15,7 +15,7 @@ from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.functions import decode_file_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
-    Phone, Family, ContactEmergency, JobExperience
+    Phone, Family, ContactEmergency, JobExperience, Document
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
 
 
@@ -327,6 +327,23 @@ class PersonViewSet(viewsets.ModelViewSet):
         else:
             return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, methods=['get'])
+    def address_person(self, request, pk):
+
+        if pk:
+            try:
+                person = self.get_object()
+                address_person = Address.objects.filter(person=person)
+                if address_person:
+                    array_address = []
+                    for address in address_person:
+                        array_address.append(serializers.AddressSerialiser(address).data)
+                return Response(data=array_address, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
+
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.GeneralPersonSerializer
@@ -429,12 +446,18 @@ class ImportExportPersonViewSet(APIView):
                     if person.gender == 3:
                         gend = 'Otro'
                     row.append(gend)
-                    #row.append(person.job.name)
+                    # row.append(person.job.name)
                     row.append(nod)
                     writer.writerow(row)
             else:
                 writer.writerow(['code', 'first_name', 'flast_name', 'mlast_name', 'parentid', 'email',
-                                 'password', 'curp',  'job',  'code_job',  'department',  'gender'])
+                                 'password', 'curp', 'job', 'code_job', 'department', 'gender'])
             return response
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DocumentViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.DocumentSerializer
+    queryset = Document.objects.all()
+    filterset_fields = ('id', 'document_type')
