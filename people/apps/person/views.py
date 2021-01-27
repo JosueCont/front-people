@@ -29,7 +29,7 @@ class PersonTypeViewSet(viewsets.ModelViewSet):
 class JobViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.JobSerializer
     queryset = Job.objects.all()
-    filterset_fields = ('id', 'name')
+    filterset_fields = ('id', 'name', 'unit')
 
 
 class PersonViewSet(viewsets.ModelViewSet):
