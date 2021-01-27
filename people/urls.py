@@ -16,6 +16,7 @@ urlpatterns = [
     path('person/', include('people.apps.person.urls')),
     path('setup/', include('people.apps.setup.urls')),
     path('business/', include('people.apps.business.urls')),
+    path('noticenter/', include('people.apps.noticenter.urls')),
 ]
 
 if settings.DEBUG:  # Adding statics only if debug = True
