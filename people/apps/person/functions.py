@@ -46,6 +46,9 @@ def decode_file_persons(persons):
                         result_person = save_import_person(person, password, [])
                         # si devuelve la instancia de persona verificar que tenga un nodo y/o puesto
                     if result_person.id:
+                        result_department = None
+                        result_job = None
+                        result_job_department = None
                         if data["parentid"]:
                             try:
                                 node_p = Node.objects.get(code=data["parentid"].strip())
@@ -61,9 +64,6 @@ def decode_file_persons(persons):
                                     node_person.node = node_p
                                     node_person.person = result_person
                                     node_person.save()
-                            result_department = None
-                            result_job = None
-                        result_job_department = None
                         if data["department"]:
                             try:
                                 exist_department = Department.objects.get(name=data["department"].strip())
@@ -110,8 +110,9 @@ def decode_file_persons(persons):
                                 job_dep.save()
                                 result_job_department = job_dep
                         if result_job_department:
-                            result_person.job_department = result_job_department
-
+                            result = 'ok'
+                            #result_person.job_department = result_job_department
+                        result = 'ok'
                 else:
                     if data["parentid"]:
                         # Es nodo con padre
