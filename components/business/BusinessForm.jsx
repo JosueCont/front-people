@@ -23,8 +23,9 @@ import {
 import HeaderCustom from "../../components/Header";
 import { API_URL } from "../../config/config";
 import Router from "next/router";
-const { TextArea } = Input;
+import MainLayout, {} from "../../layout/MainLayout"
 
+const { TextArea } = Input;
 const { Content } = Layout;
 const { Option } = Select;
 
@@ -216,18 +217,13 @@ const businessForm = () => {
   ];
 
   return (
-    <>
-      <Layout>
-        <HeaderCustom />
-        <Content
-          className="site-layout"
-          style={{ padding: "0 50px", marginTop: 64 }}
-        >
-          <Breadcrumb style={{ margin: "16px 0" }}>
+    <MainLayout currentKey="2">
+        <Breadcrumb>
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>Empresa</Breadcrumb.Item>
           </Breadcrumb>
-          <div style={{ padding: "1%", float: "right" }}>
+
+          <div style={{ padding: "20px 0", float: "right" }}>
             <Button
               style={{
                 background: "#fa8c16",
@@ -240,10 +236,7 @@ const businessForm = () => {
               Agregar empresa
             </Button>
           </div>
-          <div
-            className="site-layout-background"
-            style={{ padding: 24, minHeight: 380, height: "100%" }}
-          >
+          <div className="site-layout-background" >
             <Table
               size="small"
               columns={columns}
@@ -344,9 +337,7 @@ const businessForm = () => {
               </Form.Item>
             </Form>
           </Modal>
-        </Content>
-      </Layout>
-    </>
+    </MainLayout>
   );
 };
 export default businessForm;

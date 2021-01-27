@@ -25,6 +25,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
+import MainLayout from '../../layout/MainLayout';
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
 
@@ -246,22 +247,13 @@ const homeScreen = () => {
   };
 
   return (
-    <>
-      <Layout>
-        <HeaderCustom />
-        <Content
-          className="site-layout"
-          style={{ padding: "0 50px", marginTop: 64 }}
-        >
-          <Breadcrumb style={{ margin: "16px 0" }}>
+      <MainLayout currentKey="1">
+          <Breadcrumb>
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>Person</Breadcrumb.Item>
           </Breadcrumb>
-          <div
-            className="site-layout-background"
-            style={{ padding: 24, minHeight: 380, height: "100%" }}
-          >
-            <div style={{ padding: 24 }}>
+          
+            <div style={{ padding:'24px 0' }}>
               <Form onFinish={filter} layout={"vertical"} form={formFilter}>
                 <Row>
                   <Col span={18}>
@@ -355,11 +347,7 @@ const homeScreen = () => {
               dataSource={person}
               loading={loading}
             />
-          </div>
-        </Content>
-        <FormPerson close={getModal} visible={modal} />
-      </Layout>
-    </>
+      </MainLayout>
   );
 };
 export default homeScreen;
