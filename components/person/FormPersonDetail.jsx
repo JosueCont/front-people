@@ -620,6 +620,7 @@ const userDetailForm = () => {
       .then((response) => {
         setLoading(false);
         showModal();
+        message.success("Eliminado correctamente.");
         Router.push("/home");
       })
       .catch((error) => {
