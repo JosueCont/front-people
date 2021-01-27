@@ -151,10 +151,16 @@ class PersonViewSet(viewsets.ModelViewSet):
                     if job_dep:
                         person.job_department = job_dep
                 person.save()
+                flast_name = ""
+                mlast_name = ""
+                if person.flast_name:
+                    flast_name = instance.flast_name
+                if person.mlast_name:
+                    mlast_name = instance.mlast_name
                 headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
                 url = f"{config.url_server}/user/update/"
                 data_ = {"first_name": person.first_name,
-                         "last_name": person.flast_name + " " + person.mlast_name,
+                         "last_name": flast_name + " " + mlast_name,
                          "user_id": person.khonnect_id,
 
                          }
