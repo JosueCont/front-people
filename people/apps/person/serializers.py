@@ -72,6 +72,8 @@ class TreatmentSerializer(serializers.ModelSerializer):
 class PersonCustomSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=40, required=False)
     groups = serializers.ListField(max_length=1000, required=False)
+    department = serializers.CharField(max_length=50, required=False)
+    job = serializers.CharField(max_length=50, required=False)
 
     class Meta:
         model = models.Person

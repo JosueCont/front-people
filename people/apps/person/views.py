@@ -9,7 +9,7 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from tablib import Dataset
 
-from people.apps.business.models import NodePerson, Node
+from people.apps.business.models import NodePerson, Node, JobDepartment
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
@@ -53,7 +53,19 @@ class PersonViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 password = serializer.validated_data["password"]
                 del serializer.validated_data['password']
+                job = None
+                department = None
                 instance = Person(**serializer.validated_data)
+                if 'job' in serializer.validated_data:
+                    job = serializer.validated_data["job"]
+                    del serializer.validated_data['job']
+                if 'department' in serializer.validated_data:
+                    department = serializer.validated_data["department"]
+                    del serializer.validated_data['department']
+                if job and department:
+                    job_dep = JobDepartment.objects.filter(job=job, department=department).first()
+                    if job_dep:
+                        instance.job_department = job_dep
                 instance.save()
                 headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
                 url = f"{config.url_server}/signup/"
@@ -120,14 +132,18 @@ class PersonViewSet(viewsets.ModelViewSet):
                 validate_data = serializer.validated_data
                 if 'person_type' in validate_data:
                     person.person_type = serializer.validated_data["person_type"]
-                if 'job' in validate_data:
-                    person.job = validate_data["job"]
                 if 'treatment' in validate_data:
                     person.treatment = validate_data["treatment"]
                 if 'civil_status' in validate_data:
                     person.civil_status = validate_data["civil_status"]
                 if 'date_of_admission' in validate_data:
                     person.date_of_admission = validate_data["date_of_admission"]
+                if 'job' in validate_data and 'department' in validate_data:
+                    job = validate_data["job"]
+                    department = validate_data["department"]
+                    job_dep = JobDepartment.objects.filter(job=job, department=department).first()
+                    if job_dep:
+                        person.job_department = job_dep
                 person.save()
                 headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
                 url = f"{config.url_server}/user/update/"
