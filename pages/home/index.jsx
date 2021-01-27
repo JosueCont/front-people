@@ -9,7 +9,7 @@ import {
   Switch,
   Button,
   Form,
-  Upload,
+  Avatar,
   message,
 } from "antd";
 import Axios from "axios";
@@ -39,6 +39,9 @@ const homeScreen = () => {
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
   let filters = {};
+  const [defaulPhoto, setDefaulPhoto] = useState(
+    "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg"
+  );
 
   const getPerson = (text) => {
     setLoading(true);
@@ -50,6 +53,7 @@ const homeScreen = () => {
             item["fullname"] =
               item.first_name + " " + item.flast_name + " " + item.mlast_name;
             item.timestamp = item.timestamp.substring(0, 10);
+            if (!item.photo) item.photo = defaulPhoto;
           });
           setPerson(response.data.results);
           setLoading(false);
@@ -65,6 +69,7 @@ const homeScreen = () => {
             item["fullname"] =
               item.first_name + " " + item.flast_name + " " + item.mlast_name;
             item.timestamp = item.timestamp.substring(0, 10);
+            if (!item.photo) item.photo = defaulPhoto;
           });
           setPerson(response.data);
           setLoading(false);
@@ -100,6 +105,16 @@ const homeScreen = () => {
 
   const columns = [
     {
+      title: "Foto",
+      render: (item) => {
+        return (
+          <div>
+            <Avatar src={item.photo} />
+          </div>
+        );
+      },
+    },
+    {
       title: "Nombre",
       dataIndex: "fullname",
       key: "fullname",
@@ -129,12 +144,6 @@ const homeScreen = () => {
                 <Link href={`/home/${item.id}`}>
                   <EditOutlined />
                 </Link>
-              </Col>
-              <Col className="gutter-row" span={6}>
-                <DeleteOutlined />
-              </Col>
-              <Col className="gutter-row" span={6}>
-                <InfoCircleOutlined />
               </Col>
             </Row>
           </div>
@@ -168,12 +177,14 @@ const homeScreen = () => {
           item["fullname"] =
             item.first_name + " " + item.flast_name + " " + item.mlast_name;
           item.timestamp = item.timestamp.substring(0, 10);
+          if (!item.photo) item.photo = defaulPhoto;
         });
         setPerson(response.data.results);
         setLoading(false);
       })
       .catch((e) => {
         console.log(e);
+        setLoading(false);
       });
   };
 
@@ -225,6 +236,7 @@ const homeScreen = () => {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
       console.log(formData);
+      console.log("FORMDATA-->> ", formData);
       setLoading(true);
       Axios.post(API_URL + `/person/import-export-person`, formData)
         .then((response) => {
@@ -257,6 +269,19 @@ const homeScreen = () => {
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>Person</Breadcrumb.Item>
           </Breadcrumb>
+          <div style={{ padding: "1%", float: "right" }}>
+            <Button
+              style={{
+                background: "#fa8c16",
+                fontWeight: "bold",
+                color: "white",
+              }}
+              onClick={() => getModal(true)}
+            >
+              <PlusOutlined />
+              Agregar persona
+            </Button>
+          </div>
           <div
             className="site-layout-background"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
@@ -264,23 +289,17 @@ const homeScreen = () => {
             <div style={{ padding: 24 }}>
               <Form onFinish={filter} layout={"vertical"} form={formFilter}>
                 <Row>
-                  <Col span={18}>
+                  <Col lg={7} xs={22} offset={1}>
                     <Form.Item name="name">
                       <Input placeholder="Nombre..." />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
+                  <Col lg={4} xs={22} offset={1}>
                     <Form.Item name="gender">
-                      <Select
-                        style={{ marginLeft: "10%", width: "100%" }}
-                        options={genders}
-                        placeholder="Género"
-                      />
+                      <Select options={genders} placeholder="Género" />
                     </Form.Item>
                   </Col>
-                </Row>
-                <Row style={{ marginTop: "2%" }}>
-                  <Col span={4}>
+                  <Col lg={3} xs={5} offset={1}>
                     <Form.Item name="is_active">
                       <label>
                         <span style={{ fontWeight: "bold" }}>Activos:</span>
@@ -292,9 +311,13 @@ const homeScreen = () => {
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={8} style={{ float: "right" }}>
+                  <Col lg={2} xs={5} offset={1}>
                     <Form.Item>
-                      <Button type="primary" htmlType="submit">
+                      <Button
+                        icon={<SearchOutlined />}
+                        type="primary"
+                        htmlType="submit"
+                      >
                         Buscar
                       </Button>
                     </Form.Item>
@@ -343,6 +366,7 @@ const homeScreen = () => {
               columns={columns}
               dataSource={person}
               loading={loading}
+              rowSelection
             />
           </div>
         </Content>

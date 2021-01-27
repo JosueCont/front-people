@@ -34,7 +34,9 @@ import {
   ArrowLeftOutlined,
   InboxOutlined,
   UploadOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
+import DocumentModal from "../../components/modal/document";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -58,6 +60,8 @@ const userDetailForm = () => {
   const [photo, setPhoto] = useState("");
   const [numberPanle, setNumberPanel] = useState("1");
   const [idGeneralP, setIdGeneralP] = useState("");
+  const [idAddressP, setIdAddressP] = useState("");
+  const [modalDoc, setModalDoc] = useState(false);
 
   const [deleted, setDeleted] = useState({});
 
@@ -85,6 +89,7 @@ const userDetailForm = () => {
   const [formPerson] = Form.useForm();
   const [formGeneralTab] = Form.useForm();
   const [formPhone] = Form.useForm();
+  const [formAddress] = Form.useForm();
   const [formFamily] = Form.useForm();
   const [formContactEmergency] = Form.useForm();
   const [formTraining] = Form.useForm();
@@ -153,25 +158,39 @@ const userDetailForm = () => {
   const typePhones = [
     {
       label: "Alterno",
-      value: "1",
+      value: 1,
     },
     {
       label: "Principal",
-      value: "2",
+      value: 2,
     },
     {
       label: "Recados",
-      value: "3",
+      value: 3,
     },
   ];
   const typeLines = [
     {
       label: "Celular",
-      value: "1",
+      value: 1,
     },
     {
       label: "Fijo",
-      value: "2",
+      value: 2,
+    },
+  ];
+  const typeStreet = [
+    {
+      label: "Avenida",
+      value: 1,
+    },
+    {
+      label: "Boulevaard",
+      value: 2,
+    },
+    {
+      label: "Calle",
+      value: 3,
     },
   ];
 
@@ -302,6 +321,28 @@ const userDetailForm = () => {
           console.log(e);
           setLoading(false);
           setLoadingTable(false);
+        });
+
+      ///ADDRESS
+      Axios.get(API_URL + `/person/person/${router.query.id}/address/`)
+        .then((response) => {
+          formAddress.setFieldsValue({
+            street_type: response.data.street_type,
+            street: response.data.street,
+            numberOne: response.data.numberOne,
+            numberTwo: response.data.numberTwo,
+            building: response.data.building,
+            postalCode: response.data.postalCode,
+            suburb: response.data.suburb,
+            location: response.data.location,
+            reference: response.data.reference,
+          });
+          setIdAddressP(response.data.id);
+          setLoading(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
         });
 
       ///FAMILY
@@ -768,6 +809,51 @@ const userDetailForm = () => {
       },
     },
   ];
+
+  /////ADDRESS
+  const formAddressPerson = (value) => {
+    console.log("IP ADDRESS-->> ", idAddressP);
+    if (idAddressP != "" && idAddressP != undefined) {
+      console.log("ADDRESS UPDATE", value);
+      updateAddress(value);
+    } else {
+      value.person = router.query.id;
+      console.log("IP ADDRESS-->> ", idAddressP);
+      console.log("SAVE ADDRESS-->> ", value);
+      saveAddress(value);
+    }
+  };
+  const saveAddress = (data) => {
+    setLoading(true);
+    Axios.post(API_URL + `/person/address/`, data)
+      .then((response) => {
+        message.success({
+          content: "Guardado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+        setIdAddressP(response.data.id);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+  const updateAddress = (data) => {
+    setLoading(true);
+    Axios.put(API_URL + `/person/address/${idAddressP}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
 
   /////FAMILIA
   const getFamily = () => {
@@ -1366,21 +1452,9 @@ const userDetailForm = () => {
     modal ? setModal(false) : setModal(true);
   };
 
-  /////CONFIG DRAG
-  const props = {
-    name: "file",
-    multiple: true,
-    onChange(info) {
-      const { status } = info.file;
-      if (status !== "uploading") {
-        console.log("Cargados-->> ", info.file, info.fileList);
-      }
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
+  ////MODAL DOCUMENT
+  const getModalDoc = (value) => {
+    setModalDoc(value);
   };
 
   return (
@@ -1684,6 +1758,71 @@ const userDetailForm = () => {
                     <Spin tip="Loading..." spinning={loadingTable}>
                       <Table columns={colPhone} dataSource={phones} />
                     </Spin>
+                  </Panel>
+
+                  <Panel header="Dirección">
+                    <Form
+                      layout={"vertical"}
+                      form={formAddress}
+                      onFinish={formAddressPerson}
+                    >
+                      <Col>
+                        <Row flex>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="street_type" label="Tipo de calle">
+                              <Select options={typeStreet} />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="street" label="Calle">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="numberOne" label="Numero exterior">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="numberTwo" label="Numero interior">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="building" label="Edificio">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="postalCode" label="Codigo postal">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="suburb" label="Suburbio">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="location" label="Ubicacion">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="reference" label="Referencia">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Row flex>
+                        <Form.Item>
+                          <Button type="primary" htmlType="submit">
+                            Guardar
+                          </Button>
+                        </Form.Item>
+                      </Row>
+                    </Form>
                   </Panel>
 
                   <Panel header="Familia">
@@ -2063,26 +2202,14 @@ const userDetailForm = () => {
                   </Panel>
 
                   <Panel header="Documentos">
-                    <Dragger {...props}>
-                      <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
-                      </p>
-                      <p className="ant-upload-text">
-                        Click o Arrastra tus doccumentos aquí.
-                      </p>
-                      <p className="ant-upload-hint">
-                        Soporte para una carga única o masiva. Prohibido
-                        estrictamente la carga de datos ajenos a la persona.
-                      </p>
-                    </Dragger>
                     <Row flex>
                       <Col style={{ padding: "2%" }}>
                         <Button
-                          icon={<UploadOutlined />}
+                          icon={<PlusOutlined />}
                           type="primary"
-                          onClick={() => "nada"}
+                          onClick={() => getModalDoc(true)}
                         >
-                          Subir
+                          Agregar
                         </Button>
                       </Col>
                     </Row>
@@ -2147,6 +2274,11 @@ const userDetailForm = () => {
             showIcon
           />
         </Modal>
+        <DocumentModal
+          close={getModalDoc}
+          visible={modalDoc}
+          person={router.query.id}
+        />
       </Layout>
     </>
   );

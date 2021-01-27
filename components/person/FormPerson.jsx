@@ -198,7 +198,7 @@ const FormPerson = (props) => {
             </Form.Item>
             <Form.Item labelAlign="right">
               <Space style={{ float: "right" }}>
-                <Button type="danger" onClick={() => props.close(false)}>
+                <Button type="danger" onClick={() => closeDialog()}>
                   Cancelar
                 </Button>
                 <Button type="primary" htmlType="submit">
