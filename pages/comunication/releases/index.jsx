@@ -14,7 +14,7 @@ export default function Releases() {
     const {Column} = Table;
     const { Option } = Select;
     const { RangePicker } = DatePicker;
-    const childRef = useRef();
+    /* const childRef = useRef(); */
     const route = useRouter();
     /* Variables */
     const [list, setList] = useState([])
@@ -99,7 +99,7 @@ export default function Releases() {
                     </Col>
                 </Row>
             </div>
-            <ModalCreateNotification ref={childRef} reloadData={getNotifications} />
+            {/* <ModalCreateNotification  reloadData={getNotifications} /> */}
         </MainLayout>
     )
 }

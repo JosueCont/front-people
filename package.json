@@ -19,6 +19,7 @@
     "next": "10.0.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "react-froala-wysiwyg": "^3.2.6",
     "react-intl": "^5.10.19",
     "react-native": "^0.63.4"
   }

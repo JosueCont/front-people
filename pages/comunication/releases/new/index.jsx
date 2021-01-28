@@ -1,10 +1,15 @@
 import React, {useEffect, useState, useRef} from 'react'
 import { render } from 'react-dom'
 import MainLayout from '../../../../layout/MainLayout'
-import {Row, Col, Typography, Table, Breadcrumb, Button, Form, Input, Select, DatePicker, Space, Switch} from 'antd'
+import {Row, Col, Typography, Table, Breadcrumb, Button, Form, Input, Select, DatePicker, notification, Space, Switch} from 'antd'
 import {useRouter} from "next/router";
 import axiosApi, {} from "../../../../libs/axiosApi";
-import JoditEditor from "jodit-react";
+import { route } from 'next/dist/next-server/server/router';
+
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import FroalaEditorComponent from 'react-froala-wysiwyg';
+
 
 
 export default function Newrelease() {
@@ -12,31 +17,43 @@ export default function Newrelease() {
     const [form] = Form.useForm();
     const {Title} = Typography;
     const { TextArea } = Input;
-    const editor = useRef(null);
-    const [content, setContent] = useState('');
+    const route = useRouter();
+    
 
-    const config = {
-        readonly: false, // all options from https://xdsoft.net/jodit/doc/
-        toolbarButtonSize: "small",
-        buttonsSM: 	
-        [
-                'bold',
-                'italic',
-                '|',
-                'ul',
-                'ol',
-                'eraser',
-                '|',
-                'font',
-                'fontsize',
-                'brush',
-                'paragraph',
-                'table',
-                'align',
-                'undo',
-                'redo'
-            ]
-	}
+    const [message, setMessage] = useState(null)
+    const [sending, setSending] = useState(false);
+    /* const editor = useRef(null)
+    const [content, setContent] = useState('') */
+
+
+    const saveNotification = async (values) =>{
+
+        console.log(message)
+        values['created_by'] = "d25d4447bbd5423bbf2d5603cf553b81";
+        values.message =  message;
+        console.log(values);
+        setSending(true);
+        try {
+            let response = await axiosApi.post(`/noticenter/notification/`, values);
+            let data = response.data
+            console.log('data',data);
+            notification['success']({
+                message: 'Notification Title',
+                description:
+                  'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+              });
+              route.push('/comunication/releases');
+        } catch (error) {
+            console.log(error);
+        }finally{
+            setSending(false);
+        }
+    }
+    
+    const onCancel = () => {
+        route.push('/comunication/releases');
+    }
+
 
     return (
         <MainLayout currentKey="4.1">
@@ -48,7 +65,7 @@ export default function Newrelease() {
             <div className="container back-white" style={{ width:'100%' }}>
                 <Row justify={'center'}>
                     <Col span="23" style={{ padding: '20px 0 30px 0' }}>
-                        <Form form={form} layout="horizontal" labelCol={{ xs: 24, sm:24, md:5 }} >
+                        <Form form={form} layout="horizontal" onFinish={saveNotification} labelCol={{ xs: 24, sm:24, md:5 }} >
                             <Row>
                                 <Col span={24}>
                                     <Title level={3}>
@@ -74,13 +91,7 @@ export default function Newrelease() {
                                         <Input className={'formItemPayment'} />
                                     </Form.Item>
                                     <Form.Item name="message" label="Mensaje" labelAlign="left">
-                                        <JoditEditor
-                                            ref={editor}
-                                            config={config}
-                                            tabIndex={1} // tabIndex of textarea
-                                            onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-                                                onChange={newContent => {}}
-                                        />
+                                        <FroalaEditorComponent tag='textarea' model={message} onModelChange={setMessage}/>
                                     </Form.Item>
                                 </Col>
                                 <Col span={24}>
@@ -126,8 +137,8 @@ export default function Newrelease() {
                                     </Row>
                                 </Col>
                                 <Col span={24} style={{ textAlign: 'right' }}>
-                                    <Button style={{ padding:'0 50px', margin: '0 10px' }}>Cancelar</Button>        
-                                    <Button type="primary" style={{ padding:'0 50px', margin: '0 10px' }}>Enviar</Button>    
+                                    <Button onClick={() => onCancel() } disabled={sending} style={{ padding:'0 50px', margin: '0 10px' }}>Cancelar</Button>        
+                                    <Button htmlType="submit" loading={sending} type="primary" style={{ padding:'0 50px', margin: '0 10px' }}>Enviar</Button>    
                                 </Col>
                             </Row>
                         </Form>
