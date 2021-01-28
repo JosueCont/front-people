@@ -37,7 +37,6 @@ export default function Releases() {
   const [list, setList] = useState([]);
 
   let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
-  console.log("userToken", userToken);
 
   const getNotifications = async () => {
     try {
@@ -45,7 +44,7 @@ export default function Releases() {
       let data = response.data;
       setList(data.results);
     } catch (e) {
-      console.log("error");
+      console.log(e);
       /* setLoading(false); */
     }
   };
