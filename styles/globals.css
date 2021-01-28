@@ -132,12 +132,12 @@ a {
 .site-layout .site-layout-background {
   background: #fff;
 }
-div#__next{
+/* div#__next{
     height: 100% !important;
 }
 div#__next > section.layout{
     height: 100% !important;
-}
+} */
 
 
 .back-white{
