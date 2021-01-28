@@ -27,7 +27,6 @@ import { useRouter } from "next/router";
 import cookie from "js-cookie";
 
 export default function Releases() {
-<<<<<<< HEAD
   /* React */
   const { Column } = Table;
   const { Option } = Select;
@@ -36,20 +35,8 @@ export default function Releases() {
   const route = useRouter();
   /* Variables */
   const [list, setList] = useState([]);
-=======
-    /* React */
-    const {Column} = Table;
-    const { Option } = Select;
-    const { RangePicker } = DatePicker;
-    /* const childRef = useRef(); */
-    const route = useRouter();
-    /* Variables */
-    const [list, setList] = useState([])
-
->>>>>>> 59f47b2b607321066e8043d2542b4054d6a8bb0b
 
   let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
-  console.log("userToken", userToken);
 
   const getNotifications = async () => {
     try {
@@ -57,7 +44,7 @@ export default function Releases() {
       let data = response.data;
       setList(data.results);
     } catch (e) {
-      console.log("error");
+      console.log(e);
       /* setLoading(false); */
     }
   };

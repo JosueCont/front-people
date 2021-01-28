@@ -366,7 +366,6 @@ const homeScreen = () => {
   };
 
   return (
-<<<<<<< HEAD
     <MainLayout currentKey="1">
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -502,123 +501,6 @@ const homeScreen = () => {
         <ListElementsToDelete personsDelete={personsToDelete} />
       </Modal>
     </MainLayout>
-=======
-      <MainLayout currentKey="1">
-          <Breadcrumb>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>Person</Breadcrumb.Item>
-          </Breadcrumb>
-
-          <div style={{ padding: "1%", float: "right" }}>
-            <Button
-              style={{
-                background: "#fa8c16",
-                fontWeight: "bold",
-                color: "white",
-              }}
-              onClick={() => getModalPerson(true)}
-            >
-              <PlusOutlined />
-              Agregar persona
-            </Button>
-          </div>
-          <div
-            className="site-layout-background"
-            style={{ padding: 24, minHeight: 380, height: "100%" }}
-          >
-            <div style={{ padding: 24 }}>
-              <Form onFinish={filter} layout={"vertical"} form={formFilter}>
-                <Row>
-                  <Col lg={7} xs={22} offset={1}>
-                    <Form.Item name="name">
-                      <Input placeholder="Nombre" />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={4} xs={22} offset={1}>
-                    <Form.Item name="gender">
-                      <Select options={genders} placeholder="Género" />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={3} xs={5} offset={1}>
-                    <Form.Item name="is_active">
-                      <label>
-                        <span style={{ fontWeight: "bold" }}>Activos:</span>
-                      </label>
-                      <Switch
-                        style={{ marginLeft: "10%" }}
-                        defaultChecked
-                        onChange={statusPeron}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={2} xs={5} offset={1}>
-                    <Form.Item>
-                      <Button
-                        icon={<SearchOutlined />}
-                        type="primary"
-                        htmlType="submit"
-                      >
-                        Buscar
-                      </Button>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form>
-              <div>
-                <Row>
-                  <Button
-                    style={{
-                      margin: "20px",
-                    }}
-                    type="primary"
-                    icon={<DownloadOutlined />}
-                    size={{ size: "large" }}
-                    onClick={() => downloadPersons()}
-                  >
-                    Descargar resultados
-                  </Button>
-                  <Button
-                    style={{
-                      margin: "20px",
-                    }}
-                    icon={<UploadOutlined />}
-                    onClick={() => {
-                      inputFileRef.current.click();
-                    }}
-                  >
-                    Importar personas
-                  </Button>
-                  <input
-                    ref={inputFileRef}
-                    type="file"
-                    style={{ display: "none" }}
-                    onChange={(e) => importFile(e)}
-                  />
-                  <Button
-                    style={{
-                      margin: "20px",
-                    }}
-                    type="primary"
-                    icon={<DownloadOutlined />}
-                    size={{ size: "large" }}
-                    onClick={() => downloadPlantilla()}
-                  >
-                    Descargar plantilla
-                  </Button>
-                </Row>
-              </div>
-            </div>
-            <Table
-              size="small"
-              columns={columns}
-              dataSource={person}
-              loading={loading}
-              rowSelection={rowSelectionPerson}
-            />
-            </div>
-      </MainLayout>
-
->>>>>>> 59f47b2b607321066e8043d2542b4054d6a8bb0b
   );
 };
 export default homeScreen;
