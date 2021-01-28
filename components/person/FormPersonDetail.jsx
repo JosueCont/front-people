@@ -235,6 +235,7 @@ const userDetailForm = () => {
       ///GET PERSON
       Axios.get(API_URL + `/person/person/${router.query.id}`)
         .then((response) => {
+          console.log("PErson-->> ", response.data);
           formPerson.setFieldsValue({
             first_name: response.data.first_name,
             flast_name: response.data.flast_name,
@@ -252,9 +253,14 @@ const userDetailForm = () => {
             formPerson.setFieldsValue({
               person_type: response.data.person_type.id,
             });
-          if (response.data.job)
-            formPerson.setFieldsValue({ job: response.data.job.id });
-
+          if (response.data.job_department.job)
+            formPerson.setFieldsValue({
+              department: response.data.job_department.job.id,
+            });
+          if (response.data.job_department.department)
+            formPerson.setFieldsValue({
+              job: response.data.job_department.department.id,
+            });
           if (response.data.date_of_admission)
             formPerson.setFieldsValue({
               date_of_admission: moment(response.data.date_of_admission),
@@ -602,8 +608,14 @@ const userDetailForm = () => {
           formPerson.setFieldsValue({
             person_type: response.data.person_type.id,
           });
-        if (response.data.job)
-          formPerson.setFieldsValue({ job: response.data.job.id });
+        if (response.data.job_department.job)
+          formPerson.setFieldsValue({
+            department: response.data.job_department.job.id,
+          });
+        if (response.data.job_department.department)
+          formPerson.setFieldsValue({
+            job: response.data.job_department.department.id,
+          });
 
         if (response.data.date_of_admission)
           formPerson.setFieldsValue({
