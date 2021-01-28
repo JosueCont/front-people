@@ -253,13 +253,30 @@ const userDetailForm = () => {
             formPerson.setFieldsValue({
               person_type: response.data.person_type.id,
             });
+          if (response.data.job_department.department) {
+            formPerson.setFieldsValue({
+              department: response.data.job_department.department.id,
+            });
+            Axios.get(
+              API_URL +
+                `/business/department/${response.data.job_department.department.id}/job_for_department/`
+            )
+              .then((response) => {
+                if (response.status === 200) {
+                  let job = response.data;
+                  job = job.map((a) => {
+                    return { label: a.name, value: a.id };
+                  });
+                  setJobs(job);
+                }
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+          }
           if (response.data.job_department.job)
             formPerson.setFieldsValue({
-              department: response.data.job_department.job.id,
-            });
-          if (response.data.job_department.department)
-            formPerson.setFieldsValue({
-              job: response.data.job_department.department.id,
+              job: response.data.job_department.job.id,
             });
           if (response.data.date_of_admission)
             formPerson.setFieldsValue({
@@ -608,20 +625,35 @@ const userDetailForm = () => {
           formPerson.setFieldsValue({
             person_type: response.data.person_type.id,
           });
+        if (response.data.job_department.department) {
+          formPerson.setFieldsValue({
+            department: response.data.job_department.department.id,
+          });
+          Axios.get(
+            API_URL +
+              `/business/department/${response.data.job_department.department.id}/job_for_department/`
+          )
+            .then((response) => {
+              if (response.status === 200) {
+                let job = response.data;
+                job = job.map((a) => {
+                  return { label: a.name, value: a.id };
+                });
+                setJobs(job);
+              }
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+        }
         if (response.data.job_department.job)
           formPerson.setFieldsValue({
-            department: response.data.job_department.job.id,
+            job: response.data.job_department.job.id,
           });
-        if (response.data.job_department.department)
-          formPerson.setFieldsValue({
-            job: response.data.job_department.department.id,
-          });
-
         if (response.data.date_of_admission)
           formPerson.setFieldsValue({
             date_of_admission: moment(response.data.date_of_admission),
           });
-
         if (response.data.birth_date)
           formPerson.setFieldsValue({
             birth_date: moment(response.data.birth_date),
@@ -1488,9 +1520,9 @@ const userDetailForm = () => {
 
   /////GET JOBS
   const onChangeDepartment = (value) => {
+    console.log("DEPARTMENT-->>> ", value);
     Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
       .then((response) => {
-        console.log("DEPARTMENT-->>> ", response.data);
         if (response.status === 200) {
           let job = response.data;
           job = job.map((a) => {
