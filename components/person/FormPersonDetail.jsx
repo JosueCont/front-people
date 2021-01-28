@@ -23,7 +23,7 @@ import {
   Table,
   Upload,
 } from "antd";
-import HeaderCustom from "../../components/Header";
+import MainLayout from "../../layout/MainLayout";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { useEffect, useState } from "react";
@@ -1622,804 +1622,786 @@ const userDetailForm = () => {
   };
 
   return (
-    <>
-      <Layout>
-        <HeaderCustom />
-        <Content
-          className="site-layout"
-          style={{ padding: "0 50px", marginTop: 64 }}
-        >
-          <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item href="/home/">Person</Breadcrumb.Item>
-            <Breadcrumb.Item>Expediente de empleados</Breadcrumb.Item>
-          </Breadcrumb>
-          <Spin tip="Loading..." spinning={loading}>
-            <div
-              className="site-layout-background"
-              style={{ padding: 24, minHeight: 380, height: "100%" }}
-            >
-              <Title level={3}>Información Personal</Title>
-              <Title level={4} style={{ marginTop: 0 }}>
-                {personFullName}
-              </Title>
-              <Card bordered={true}>
-                <Form
-                  onFinish={onFinishPerson}
-                  layout={"vertical"}
-                  form={formPerson}
-                >
-                  <Row>
-                    <Col span={17}>
-                      <Row>
-                        <Col lg={7} xs={22} offset={1}>
-                          <Form.Item
-                            name="flast_name"
-                            label="Apellido Paterno"
-                            rules={[{ message: "Ingresa un apellido paterno" }]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col lg={7} xs={22} offset={1}>
-                          <Form.Item
-                            name="mlast_name"
-                            label="Apellido Materno"
-                            rules={[{ message: "Ingresa un apellido paterno" }]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col lg={7} xs={22} offset={1}>
-                          <Form.Item
-                            name="first_name"
-                            label="Nombre(s)"
-                            rules={[{ message: "Ingresa un nombre" }]}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col lg={7} xs={22} offset={1}>
-                          <Form.Item name="node" label="Unidad organizacional">
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col lg={7} xs={22} offset={1}>
-                          <Form.Item name="unit" label="Reporta a ">
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col lg={7} xs={22} offset={1}>
-                          <Form.Item name="department" label="Departamento">
-                            <Select
-                              options={departments}
-                              onChange={onChangeDepartment}
-                              placeholder="Departamento"
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col lg={7} xs={22} offset={1}>
-                          <Form.Item name="job" label="Puesto">
-                            <Select
-                              options={jobs}
-                              placeholder="Selecciona un puesto"
-                            />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col span={6}>
-                      <Row justify="center" align="top">
-                        <Image width={200} src={photo} />
-                        <Col>
-                          <Form.Item
-                            name="date_of_admission"
-                            label="Fecha de ingreso"
-                          >
-                            <DatePicker
-                              onChange={onChangeDateAdmission}
-                              moment={"YYYY-MM-DD"}
-                            />
-                          </Form.Item>
-                          <Switch
-                            checked={isActive}
-                            onClick={changeStatus}
-                            checkedChildren="Activo"
-                            unCheckedChildren="Inactivo"
-                          />
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-                  <Collapse>
-                    <Panel header="Informacion adicional">
-                      <Col>
-                        <Row flex>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="email"
-                              label="Dirección de E-Mail"
-                              rules={[{ message: "Ingresa un email" }]}
-                            >
-                              <Input disabled />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="birth_date"
-                              label="Fecha de nacimiento"
-                            >
-                              <DatePicker
-                                style={{ width: "100%" }}
-                                onChange={onChangeBirthDate}
-                                moment={"YYYY-MM-DD"}
-                                placeholder="Fecha de nacimiento"
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="civil_status" label="Estado Civil">
-                              <Select options={civilStatus} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="gender" label="Género">
-                              <Select options={genders} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="curp" label="CURP">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="rfc" label="RFC">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="imss" label="IMSS">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Row flex>
-                        <Form.Item>
-                          <Button type="primary" htmlType="submit">
-                            Guardar
-                          </Button>
-                        </Form.Item>
-                      </Row>
-                    </Panel>
-                  </Collapse>
-                </Form>
-
-                <Collapse accordion>
-                  <Panel header="Datos generales">
-                    <Form
-                      layout={"vertical"}
-                      form={formGeneralTab}
-                      onFinish={formGeneralData}
-                    >
-                      <Col span={24}>
-                        <Row>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="place_birth"
-                              label="Lugar de nacimiento"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="nationality" label="Nacionalidad">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="other_nationality"
-                              label="Otra nacionalidad"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="allergies" label="Alergias">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="blood_type" label="Tipo de sangre">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="availability_travel"
-                              label="Disponibilidad para viajar"
-                            >
-                              <Checkbox
-                                onClick={checkTravel}
-                                checked={checkedTravel}
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item label="Cambio de residencia">
-                              <Checkbox
-                                onClick={checkResidence}
-                                checked={checkedResidence}
-                              />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Row flex>
-                        <Form.Item>
-                          <Button type="primary" htmlType="submit">
-                            Guardar
-                          </Button>
-                        </Form.Item>
-                      </Row>
-                    </Form>
-                  </Panel>
-
-                  <Panel header="Teléfono">
-                    <Form
-                      layout={"vertical"}
-                      form={formPhone}
-                      onFinish={formFinishPhone}
-                    >
-                      <Col>
-                        <Row flex>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="phone_type"
-                              label="Tipo de telefono"
-                            >
-                              <Select options={typePhones} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="line_type" label="Tipo de linea">
-                              <Select options={typeLines} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="international_code"
-                              label="Código internacional"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="national_code"
-                              label="Código de pais"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="country_code"
-                              label="Código de ciudad"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="phone" label="Número telefónico">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Row flex>
-                        <Form.Item>
-                          <Button type="primary" htmlType="submit">
-                            Guardar
-                          </Button>
-                        </Form.Item>
-                      </Row>
-                    </Form>
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colPhone} dataSource={phones} />
-                    </Spin>
-                  </Panel>
-
-                  <Panel header="Dirección">
-                    <Form
-                      layout={"vertical"}
-                      form={formAddress}
-                      onFinish={formAddressPerson}
-                    >
-                      <Col>
-                        <Row flex>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="street_type" label="Tipo de calle">
-                              <Select options={typeStreet} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="street" label="Calle">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="numberOne" label="Número exterior">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="numberTwo" label="Número interior">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="building" label="Edificio">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="postalCode" label="Código postal">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="suburb" label="Suburbio">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="location" label="Ubicacion">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="reference" label="Referencia">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Row flex>
-                        <Form.Item>
-                          <Button type="primary" htmlType="submit">
-                            Guardar
-                          </Button>
-                        </Form.Item>
-                      </Row>
-                    </Form>
-                  </Panel>
-
-                  <Panel header="Familia">
-                    <Form
-                      layout={"vertical"}
-                      form={formFamily}
-                      onFinish={formFinishFamily}
-                    >
-                      <Col>
-                        <Row flex>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="relationship" label="Parentesco">
-                              <Select options={relationship} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="job" label="Puesto de trabajo">
-                              <Select options={jobs} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="name" label="Nombre">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="flast_name"
-                              label="Apellido paterno"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="mlast_name"
-                              label="Apellido materno"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="gender" label="Genero">
-                              <Select options={genders} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="liffe" label="¿Vive?">
-                              <Checkbox />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="birth_date"
-                              label="Fecha de nacimiento"
-                            >
-                              <DatePicker
-                                style={{ width: "100%" }}
-                                onChange={onChangeBDFamily}
-                                moment={"YYYY-MM-DD"}
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="place_birth"
-                              label="Lugar de nacimiento"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="nationality" label="Nacionalidad">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="other_nationality"
-                              label="Otra nacionalidad"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="benefit" label="% Beneficio">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Row flex>
-                        <Form.Item>
-                          <Button type="primary" htmlType="submit">
-                            Guardar
-                          </Button>
-                        </Form.Item>
-                      </Row>
-                    </Form>
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colFamily} dataSource={family} />
-                    </Spin>
-                  </Panel>
-
-                  <Panel header="Contactos de Emergencia">
-                    <Form
-                      layout="vertical"
-                      form={formContactEmergency}
-                      onFinish={formFinishContactE}
-                    >
-                      <Col>
-                        <Row flex>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="relationship" label="Parentesco">
-                              <Select options={relationship} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="fullname" label="Nombre completo">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="phone_one" label="Teléfono 1">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="phone_two" label="Teléfono 2">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={13} xs={22} offset={1}>
-                            <Form.Item name="address" label="Dirección">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Row flex>
-                        <Form.Item>
-                          <Button type="primary" htmlType="submit">
-                            Guardar
-                          </Button>
-                        </Form.Item>
-                      </Row>
-                    </Form>
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table
-                        columns={colContact}
-                        dataSource={contactEmergency}
-                      />
-                    </Spin>
-                  </Panel>
-
-                  <Panel header="Formación/Habilidades">
-                    <Form
-                      layout="vertical"
-                      form={formTraining}
-                      onFinish={formFinishTraining}
-                    >
-                      <Col>
-                        <Row flex>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="school" label="Escuela">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="since" label="Fecha Inicio-Fin">
-                              <Space direction="vertical" size={12}>
-                                <RangePicker
-                                  style={{ width: "100%" }}
-                                  onChange={onChangeDateTrainig}
-                                />
-                              </Space>
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="accreditation_document"
-                              label="Documento de acreditación"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="currently_studing"
-                              label="Estudia actualmente"
-                            >
-                              <Checkbox
-                                onChange={changeCurreStud}
-                                checked={currenlyStuding}
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="completed_period"
-                              label="Periodo completado"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Row flex>
-                        <Form.Item>
-                          <Button type="primary" htmlType="submit">
-                            Guardar
-                          </Button>
-                        </Form.Item>
-                      </Row>
-                    </Form>
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colTraining} dataSource={training} />
-                    </Spin>
-                  </Panel>
-
-                  <Panel header="Experiencia laboral">
-                    <Form
-                      layout="vertical"
-                      form={formExperiencejob}
-                      onFinish={formFinishJobExp}
-                    >
-                      <Col>
-                        <Row flex>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="experience_type"
-                              label="Tipo de experiencia"
-                            >
-                              <Select options={experienceType} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="labor_relationship"
-                              label="Relación laboral"
-                            >
-                              <Select options={laborRelationship} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="reason_separation"
-                              label="Motivo de separación"
-                            >
-                              <Select options={reasonSeparation} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="company" label="Empresa">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="since" label="Fecha de inicio">
-                              <RangePicker onChange={onChangeDExJ} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="turn" label="Giro empresarial">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="function" label="Funciones">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="starting_salary"
-                              label="Salario incial"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="last_salary" label="Salario final">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="immediate_boos"
-                              label="Jefe inmediato"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="address_company"
-                              label="Dirección de la empresa"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="phone_company"
-                              label="Teléfono de la empresa"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="notes" label="Notas">
-                              <TextArea />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="cv" label="Curriculum">
-                              <TextArea />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Row flex>
-                        <Form.Item>
-                          <Button type="primary" htmlType="submit">
-                            Guardar
-                          </Button>
-                        </Form.Item>
-                      </Row>
-                    </Form>
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colExpJob} dataSource={experineceJob} />
-                    </Spin>
-                  </Panel>
-
-                  <Panel header="Cuentas bancarias">
-                    <Form
-                      layout="vertical"
-                      form={formBank}
-                      onFinish={formBankAcc}
-                    >
-                      <Col>
-                        <Row flex>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="bank" label="Banco">
-                              <Select options={banks} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="account_number"
-                              label="Número de cuenta"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="interbank_key"
-                              label="Clave interbancaria"
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Row flex>
-                        <Form.Item>
-                          <Button type="primary" htmlType="submit">
-                            Guardar
-                          </Button>
-                        </Form.Item>
-                      </Row>
-                    </Form>
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colBank} dataSource={bankAccounts} />
-                    </Spin>
-                  </Panel>
-
-                  <Panel header="Documentos">
-                    <Row flex>
-                      <Col style={{ padding: "2%" }}>
-                        <Button
-                          icon={<PlusOutlined />}
-                          type="primary"
-                          onClick={() => getModalDoc(true)}
+    <MainLayout currentKey="1">
+      <Content className="site-layout">
+        <Breadcrumb style={{ margin: "16px 0" }}>
+          <Breadcrumb.Item>Home</Breadcrumb.Item>
+          <Breadcrumb.Item href="/home/">Person</Breadcrumb.Item>
+          <Breadcrumb.Item>Expediente de empleados</Breadcrumb.Item>
+        </Breadcrumb>
+        <Spin tip="Loading..." spinning={loading}>
+          <div
+            className="site-layout-background"
+            style={{ padding: 24, minHeight: 380, height: "100%" }}
+          >
+            <Title level={3}>Información Personal</Title>
+            <Title level={4} style={{ marginTop: 0 }}>
+              {personFullName}
+            </Title>
+            <Card bordered={true}>
+              <Form
+                onFinish={onFinishPerson}
+                layout={"vertical"}
+                form={formPerson}
+              >
+                <Row>
+                  <Col span={17}>
+                    <Row>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item
+                          name="flast_name"
+                          label="Apellido Paterno"
+                          rules={[{ message: "Ingresa un apellido paterno" }]}
                         >
-                          Agregar
-                        </Button>
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item
+                          name="mlast_name"
+                          label="Apellido Materno"
+                          rules={[{ message: "Ingresa un apellido paterno" }]}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item
+                          name="first_name"
+                          label="Nombre(s)"
+                          rules={[{ message: "Ingresa un nombre" }]}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="node" label="Unidad organizacional">
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="unit" label="Reporta a ">
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="department" label="Departamento">
+                          <Select
+                            options={departments}
+                            onChange={onChangeDepartment}
+                            placeholder="Departamento"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="job" label="Puesto">
+                          <Select
+                            options={jobs}
+                            placeholder="Selecciona un puesto"
+                          />
+                        </Form.Item>
                       </Col>
                     </Row>
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colDoc} dataSource={documents} />
-                    </Spin>
-                  </Panel>
-
-                  <Panel header="Eliminar">
-                    <Alert
-                      message="Warning"
-                      description="Al eliminar a una persona perderá todos los datos
-                    relacionados a ella de manera permanente."
-                      type="warning"
-                      showIcon
-                    />
-                    <Row style={{ padding: "2%" }}>
+                  </Col>
+                  <Col span={6}>
+                    <Row justify="center" align="top">
+                      <Image width={200} src={photo} />
                       <Col>
-                        <Button
-                          type="primary"
-                          danger
-                          icon={<WarningOutlined />}
-                          onClick={() =>
-                            setDeleteRegister({
-                              id: "",
-                              api: "deletePerson",
-                            })
-                          }
+                        <Form.Item
+                          name="date_of_admission"
+                          label="Fecha de ingreso"
                         >
-                          Eliminar persona
-                        </Button>
+                          <DatePicker
+                            onChange={onChangeDateAdmission}
+                            moment={"YYYY-MM-DD"}
+                          />
+                        </Form.Item>
+                        <Switch
+                          checked={isActive}
+                          onClick={changeStatus}
+                          checkedChildren="Activo"
+                          unCheckedChildren="Inactivo"
+                        />
                       </Col>
+                    </Row>
+                  </Col>
+                </Row>
+                <Collapse>
+                  <Panel header="Informacion adicional">
+                    <Col>
+                      <Row flex>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="email"
+                            label="Dirección de E-Mail"
+                            rules={[{ message: "Ingresa un email" }]}
+                          >
+                            <Input disabled />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="birth_date"
+                            label="Fecha de nacimiento"
+                          >
+                            <DatePicker
+                              style={{ width: "100%" }}
+                              onChange={onChangeBirthDate}
+                              moment={"YYYY-MM-DD"}
+                              placeholder="Fecha de nacimiento"
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="civil_status" label="Estado Civil">
+                            <Select options={civilStatus} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="gender" label="Género">
+                            <Select options={genders} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="curp" label="CURP">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="rfc" label="RFC">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="imss" label="IMSS">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Row flex>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Form.Item>
                     </Row>
                   </Panel>
                 </Collapse>
-              </Card>
+              </Form>
+
+              <Collapse accordion>
+                <Panel header="Datos generales">
+                  <Form
+                    layout={"vertical"}
+                    form={formGeneralTab}
+                    onFinish={formGeneralData}
+                  >
+                    <Col span={24}>
+                      <Row>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="place_birth"
+                            label="Lugar de nacimiento"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="nationality" label="Nacionalidad">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="other_nationality"
+                            label="Otra nacionalidad"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="allergies" label="Alergias">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="blood_type" label="Tipo de sangre">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="availability_travel"
+                            label="Disponibilidad para viajar"
+                          >
+                            <Checkbox
+                              onClick={checkTravel}
+                              checked={checkedTravel}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item label="Cambio de residencia">
+                            <Checkbox
+                              onClick={checkResidence}
+                              checked={checkedResidence}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Row flex>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Form.Item>
+                    </Row>
+                  </Form>
+                </Panel>
+
+                <Panel header="Teléfono">
+                  <Form
+                    layout={"vertical"}
+                    form={formPhone}
+                    onFinish={formFinishPhone}
+                  >
+                    <Col>
+                      <Row flex>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="phone_type" label="Tipo de telefono">
+                            <Select options={typePhones} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="line_type" label="Tipo de linea">
+                            <Select options={typeLines} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="international_code"
+                            label="Código internacional"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="national_code"
+                            label="Código de pais"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="country_code"
+                            label="Código de ciudad"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="phone" label="Número telefónico">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Row flex>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Form.Item>
+                    </Row>
+                  </Form>
+                  <Spin tip="Loading..." spinning={loadingTable}>
+                    <Table columns={colPhone} dataSource={phones} />
+                  </Spin>
+                </Panel>
+
+                <Panel header="Dirección">
+                  <Form
+                    layout={"vertical"}
+                    form={formAddress}
+                    onFinish={formAddressPerson}
+                  >
+                    <Col>
+                      <Row flex>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="street_type" label="Tipo de calle">
+                            <Select options={typeStreet} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="street" label="Calle">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="numberOne" label="Número exterior">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="numberTwo" label="Número interior">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="building" label="Edificio">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="postalCode" label="Código postal">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="suburb" label="Suburbio">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="location" label="Ubicacion">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="reference" label="Referencia">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Row flex>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Form.Item>
+                    </Row>
+                  </Form>
+                </Panel>
+
+                <Panel header="Familia">
+                  <Form
+                    layout={"vertical"}
+                    form={formFamily}
+                    onFinish={formFinishFamily}
+                  >
+                    <Col>
+                      <Row flex>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="relationship" label="Parentesco">
+                            <Select options={relationship} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="job" label="Puesto de trabajo">
+                            <Select options={jobs} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="name" label="Nombre">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="flast_name" label="Apellido paterno">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="mlast_name" label="Apellido materno">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="gender" label="Genero">
+                            <Select options={genders} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="liffe" label="¿Vive?">
+                            <Checkbox />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="birth_date"
+                            label="Fecha de nacimiento"
+                          >
+                            <DatePicker
+                              style={{ width: "100%" }}
+                              onChange={onChangeBDFamily}
+                              moment={"YYYY-MM-DD"}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="place_birth"
+                            label="Lugar de nacimiento"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="nationality" label="Nacionalidad">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="other_nationality"
+                            label="Otra nacionalidad"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="benefit" label="% Beneficio">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Row flex>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Form.Item>
+                    </Row>
+                  </Form>
+                  <Spin tip="Loading..." spinning={loadingTable}>
+                    <Table columns={colFamily} dataSource={family} />
+                  </Spin>
+                </Panel>
+
+                <Panel header="Contactos de Emergencia">
+                  <Form
+                    layout="vertical"
+                    form={formContactEmergency}
+                    onFinish={formFinishContactE}
+                  >
+                    <Col>
+                      <Row flex>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="relationship" label="Parentesco">
+                            <Select options={relationship} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="fullname" label="Nombre completo">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="phone_one" label="Teléfono 1">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="phone_two" label="Teléfono 2">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={13} xs={22} offset={1}>
+                          <Form.Item name="address" label="Dirección">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Row flex>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Form.Item>
+                    </Row>
+                  </Form>
+                  <Spin tip="Loading..." spinning={loadingTable}>
+                    <Table columns={colContact} dataSource={contactEmergency} />
+                  </Spin>
+                </Panel>
+
+                <Panel header="Formación/Habilidades">
+                  <Form
+                    layout="vertical"
+                    form={formTraining}
+                    onFinish={formFinishTraining}
+                  >
+                    <Col>
+                      <Row flex>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="school" label="Escuela">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="since" label="Fecha Inicio-Fin">
+                            <Space direction="vertical" size={12}>
+                              <RangePicker
+                                style={{ width: "100%" }}
+                                onChange={onChangeDateTrainig}
+                              />
+                            </Space>
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="accreditation_document"
+                            label="Documento de acreditación"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="currently_studing"
+                            label="Estudia actualmente"
+                          >
+                            <Checkbox
+                              onChange={changeCurreStud}
+                              checked={currenlyStuding}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="completed_period"
+                            label="Periodo completado"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Row flex>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Form.Item>
+                    </Row>
+                  </Form>
+                  <Spin tip="Loading..." spinning={loadingTable}>
+                    <Table columns={colTraining} dataSource={training} />
+                  </Spin>
+                </Panel>
+
+                <Panel header="Experiencia laboral">
+                  <Form
+                    layout="vertical"
+                    form={formExperiencejob}
+                    onFinish={formFinishJobExp}
+                  >
+                    <Col>
+                      <Row flex>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="experience_type"
+                            label="Tipo de experiencia"
+                          >
+                            <Select options={experienceType} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="labor_relationship"
+                            label="Relación laboral"
+                          >
+                            <Select options={laborRelationship} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="reason_separation"
+                            label="Motivo de separación"
+                          >
+                            <Select options={reasonSeparation} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="company" label="Empresa">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="since" label="Fecha de inicio">
+                            <RangePicker onChange={onChangeDExJ} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="turn" label="Giro empresarial">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="function" label="Funciones">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="starting_salary"
+                            label="Salario incial"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="last_salary" label="Salario final">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="immediate_boos"
+                            label="Jefe inmediato"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="address_company"
+                            label="Dirección de la empresa"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="phone_company"
+                            label="Teléfono de la empresa"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="notes" label="Notas">
+                            <TextArea />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="cv" label="Curriculum">
+                            <TextArea />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Row flex>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Form.Item>
+                    </Row>
+                  </Form>
+                  <Spin tip="Loading..." spinning={loadingTable}>
+                    <Table columns={colExpJob} dataSource={experineceJob} />
+                  </Spin>
+                </Panel>
+
+                <Panel header="Cuentas bancarias">
+                  <Form
+                    layout="vertical"
+                    form={formBank}
+                    onFinish={formBankAcc}
+                  >
+                    <Col>
+                      <Row flex>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item name="bank" label="Banco">
+                            <Select options={banks} />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="account_number"
+                            label="Número de cuenta"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={6} xs={22} offset={1}>
+                          <Form.Item
+                            name="interbank_key"
+                            label="Clave interbancaria"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Row flex>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Form.Item>
+                    </Row>
+                  </Form>
+                  <Spin tip="Loading..." spinning={loadingTable}>
+                    <Table columns={colBank} dataSource={bankAccounts} />
+                  </Spin>
+                </Panel>
+
+                <Panel header="Documentos">
+                  <Row flex>
+                    <Col style={{ padding: "2%" }}>
+                      <Button
+                        icon={<PlusOutlined />}
+                        type="primary"
+                        onClick={() => getModalDoc(true)}
+                      >
+                        Agregar
+                      </Button>
+                    </Col>
+                  </Row>
+                  <Spin tip="Loading..." spinning={loadingTable}>
+                    <Table columns={colDoc} dataSource={documents} />
+                  </Spin>
+                </Panel>
+
+                <Panel header="Eliminar">
+                  <Alert
+                    message="Warning"
+                    description="Al eliminar a una persona perderá todos los datos
+                    relacionados a ella de manera permanente."
+                    type="warning"
+                    showIcon
+                  />
+                  <Row style={{ padding: "2%" }}>
+                    <Col>
+                      <Button
+                        type="primary"
+                        danger
+                        icon={<WarningOutlined />}
+                        onClick={() =>
+                          setDeleteRegister({
+                            id: "",
+                            api: "deletePerson",
+                          })
+                        }
+                      >
+                        Eliminar persona
+                      </Button>
+                    </Col>
+                  </Row>
+                </Panel>
+              </Collapse>
               <Row flex>
-                <Col style={{ padding: "2%" }}>
+                <Col style={{ paddingTop: "2%", paddingBottom: "4%" }}>
                   <Button
                     icon={<ArrowLeftOutlined />}
                     type="primary"
@@ -2429,33 +2411,33 @@ const userDetailForm = () => {
                   </Button>
                 </Col>
               </Row>
-            </div>
-          </Spin>
-        </Content>
-        <Modal
-          title="Modal"
-          visible={modal}
-          onOk={deleteRegister}
-          onCancel={showModal}
-          okText="Si, Eliminar"
-          cancelText="Cancelar"
-        >
-          <Alert
-            message="Warning"
-            description="Al eliminar este registro perderá todos los datos
+            </Card>
+          </div>
+        </Spin>
+      </Content>
+      <Modal
+        title="Modal"
+        visible={modal}
+        onOk={deleteRegister}
+        onCancel={showModal}
+        okText="Si, Eliminar"
+        cancelText="Cancelar"
+      >
+        <Alert
+          message="Warning"
+          description="Al eliminar este registro perderá todos los datos
                     relacionados a el de manera permanente.
                     ¿Está seguro de querer eliminarlo?"
-            type="warning"
-            showIcon
-          />
-        </Modal>
-        <DocumentModal
-          close={getModalDoc}
-          visible={modalDoc}
-          person={router.query.id}
+          type="warning"
+          showIcon
         />
-      </Layout>
-    </>
+      </Modal>
+      <DocumentModal
+        close={getModalDoc}
+        visible={modalDoc}
+        person={router.query.id}
+      />
+    </MainLayout>
   );
 };
 export default userDetailForm;

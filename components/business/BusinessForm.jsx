@@ -23,7 +23,7 @@ import {
 import HeaderCustom from "../../components/Header";
 import { API_URL } from "../../config/config";
 import Router from "next/router";
-import MainLayout, {} from "../../layout/MainLayout"
+import MainLayout from "../../layout/MainLayout";
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -212,125 +212,123 @@ const businessForm = () => {
 
   return (
     <MainLayout currentKey="2">
-        <Breadcrumb>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>Empresa</Breadcrumb.Item>
-          </Breadcrumb>
+      <Breadcrumb style={{ margin: "16px 0" }}>
+        <Breadcrumb.Item>Home</Breadcrumb.Item>
+        <Breadcrumb.Item>Empresa</Breadcrumb.Item>
+      </Breadcrumb>
 
-          <div style={{ padding: "20px 0", float: "right" }}>
-            <Button
-              style={{
-                background: "#fa8c16",
-                fontWeight: "bold",
-                color: "white",
-              }}
-              onClick={() => showModal("add")}
-            >
-              <PlusOutlined />
-              Agregar empresa
-            </Button>
-          </div>
-          <div className="site-layout-background" >
-            <Table
-              size="small"
-              columns={columns}
-              dataSource={business}
-              loading={loading}
-            />
-          </div>
-          <Modal
-            title={isEdit ? "Actualizar empresa" : "Agregar empresa"}
-            visible={isModalVisible}
-            onCancel={() => handleOk()}
-            footer={[
-              <Button key="back" onClick={handleCancel}>
-                Regresar
-              </Button>,
-              <Button
-                form="addBusinessForm"
-                type="primary"
-                key="submit"
-                htmlType="submit"
-              >
-                {isEdit ? "Actualizar" : "Agregar"}
-              </Button>,
-            ]}
+      <div style={{ padding: "1%", float: "right" }}>
+        <Button
+          style={{
+            background: "#fa8c16",
+            fontWeight: "bold",
+            color: "white",
+          }}
+          onClick={() => showModal("add")}
+        >
+          <PlusOutlined />
+          Agregar empresa
+        </Button>
+      </div>
+      <div className="site-layout-background">
+        <Table
+          size="small"
+          columns={columns}
+          dataSource={business}
+          loading={loading}
+        />
+      </div>
+      <Modal
+        title={isEdit ? "Actualizar empresa" : "Agregar empresa"}
+        visible={isModalVisible}
+        onCancel={() => handleOk()}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Regresar
+          </Button>,
+          <Button
+            form="addBusinessForm"
+            type="primary"
+            key="submit"
+            htmlType="submit"
           >
-            <Form
-              id="addBusinessForm"
-              name="normal_login"
-              onFinish={onFinish}
-              layout={"vertical"}
-              form={formBusiness}
-            >
-              <Form.Item name="id" label="id" style={{ display: "none" }}>
-                <Input type="text" />
-              </Form.Item>
-              <Form.Item
-                name="name"
-                label="Nombre"
-                rules={[{ required: true, message: "Ingresa un nombre" }]}
-              >
-                <Input placeholder="Nombre de la empresa" />
-              </Form.Item>
-              <Form.Item
-                name="description"
-                label="Descripción"
-                rules={[{ required: true, message: "Ingresa una descripción" }]}
-              >
-                <TextArea rows={4} />
-              </Form.Item>
-              <Form.Item name="FNode" label="Nodo padre">
-                <Select
-                  showSearch
-                  placeholder="Select a person"
-                  optionFilterProp="children"
-                  name={"fNode"}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {business.map((bus) => (
-                    <Option value={bus.id}>{bus.name}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Form>
-          </Modal>
-          <Modal
-            title={"Eliminar empresa " + businessName}
-            visible={isModalDeleteVisible}
-            footer={[
-              <Button key="back" onClick={handleCancel}>
-                Regresar
-              </Button>,
-              <Button
-                form="deleteBusinessForm"
-                type="primary"
-                key="submit"
-                htmlType="submit"
-              >
-                Eliminar
-              </Button>,
-            ]}
+            {isEdit ? "Actualizar" : "Agregar"}
+          </Button>,
+        ]}
+      >
+        <Form
+          id="addBusinessForm"
+          name="normal_login"
+          onFinish={onFinish}
+          layout={"vertical"}
+          form={formBusiness}
+        >
+          <Form.Item name="id" label="id" style={{ display: "none" }}>
+            <Input type="text" />
+          </Form.Item>
+          <Form.Item
+            name="name"
+            label="Nombre"
+            rules={[{ required: true, message: "Ingresa un nombre" }]}
           >
-            <Form
-              id="deleteBusinessForm"
-              name="normal_login"
-              onFinish={onFinish}
-              layout={"vertical"}
-              form={formBusiness}
+            <Input placeholder="Nombre de la empresa" />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Descripción"
+            rules={[{ required: true, message: "Ingresa una descripción" }]}
+          >
+            <TextArea rows={4} />
+          </Form.Item>
+          <Form.Item name="FNode" label="Nodo padre">
+            <Select
+              showSearch
+              placeholder="Select a person"
+              optionFilterProp="children"
+              name={"fNode"}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
             >
-              <div className="float-label">
-                <label>¿Está seguro de eliminar esta empresa?</label>
-              </div>
-              <Form.Item name="id" label="id" style={{ display: "none" }}>
-                <Input type="text" />
-              </Form.Item>
-            </Form>
-          </Modal>
+              {business.map((bus) => (
+                <Option value={bus.id}>{bus.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title={"Eliminar empresa " + businessName}
+        visible={isModalDeleteVisible}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Regresar
+          </Button>,
+          <Button
+            form="deleteBusinessForm"
+            type="primary"
+            key="submit"
+            htmlType="submit"
+          >
+            Eliminar
+          </Button>,
+        ]}
+      >
+        <Form
+          id="deleteBusinessForm"
+          name="normal_login"
+          onFinish={onFinish}
+          layout={"vertical"}
+          form={formBusiness}
+        >
+          <div className="float-label">
+            <label>¿Está seguro de eliminar esta empresa?</label>
+          </div>
+          <Form.Item name="id" label="id" style={{ display: "none" }}>
+            <Input type="text" />
+          </Form.Item>
+        </Form>
+      </Modal>
     </MainLayout>
   );
 };

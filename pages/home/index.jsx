@@ -20,17 +20,13 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { useCallback, useEffect, useState, useRef } from "react";
 import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
   SearchOutlined,
   PlusOutlined,
   DownloadOutlined,
   UploadOutlined,
   EllipsisOutlined,
 } from "@ant-design/icons";
-import HeaderCustom from "../../components/Header";
-import MainLayout from '../../layout/MainLayout';
+import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
 
@@ -370,150 +366,141 @@ const homeScreen = () => {
   };
 
   return (
-      <MainLayout currentKey="1">
-          <Breadcrumb>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>Person</Breadcrumb.Item>
-          </Breadcrumb>
-<<<<<<< HEAD
-          
-            <div style={{ padding:'24px 0' }}>
-=======
-          <div style={{ padding: "1%", float: "right" }}>
-            <Button
-              style={{
-                background: "#fa8c16",
-                fontWeight: "bold",
-                color: "white",
-              }}
-              onClick={() => getModalPerson(true)}
-            >
-              <PlusOutlined />
-              Agregar persona
-            </Button>
-          </div>
-          <div
-            className="site-layout-background"
-            style={{ padding: 24, minHeight: 380, height: "100%" }}
+    <MainLayout currentKey="1">
+      <Breadcrumb style={{ margin: "16px 0" }}>
+        <Breadcrumb.Item>Home</Breadcrumb.Item>
+        <Breadcrumb.Item>Person</Breadcrumb.Item>
+      </Breadcrumb>
+      <Content className="site-layout">
+        <div style={{ padding: "1%", float: "right" }}>
+          <Button
+            style={{
+              background: "#fa8c16",
+              fontWeight: "bold",
+              color: "white",
+            }}
+            onClick={() => getModalPerson(true)}
           >
-            <div style={{ padding: 24 }}>
->>>>>>> 9d54b9f727ecf83634bff8d11959b28c72c52c7d
-              <Form onFinish={filter} layout={"vertical"} form={formFilter}>
-                <Row>
-                  <Col lg={7} xs={22} offset={1}>
-                    <Form.Item name="name">
-                      <Input placeholder="Nombre" />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={4} xs={22} offset={1}>
-                    <Form.Item name="gender">
-                      <Select options={genders} placeholder="Género" />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={3} xs={5} offset={1}>
-                    <Form.Item name="is_active">
-                      <label>
-                        <span style={{ fontWeight: "bold" }}>Activos:</span>
-                      </label>
-                      <Switch
-                        style={{ marginLeft: "10%" }}
-                        defaultChecked
-                        onChange={statusPeron}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={2} xs={5} offset={1}>
-                    <Form.Item>
-                      <Button
-                        icon={<SearchOutlined />}
-                        type="primary"
-                        htmlType="submit"
-                      >
-                        Buscar
-                      </Button>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form>
-              <div>
-                <Row>
-                  <Button
-                    style={{
-                      margin: "20px",
-                    }}
-                    type="primary"
-                    icon={<DownloadOutlined />}
-                    size={{ size: "large" }}
-                    onClick={() => downloadPersons()}
-                  >
-                    Descargar resultados
-                  </Button>
-                  <Button
-                    style={{
-                      margin: "20px",
-                    }}
-                    icon={<UploadOutlined />}
-                    onClick={() => {
-                      inputFileRef.current.click();
-                    }}
-                  >
-                    Importar personas
-                  </Button>
-                  <input
-                    ref={inputFileRef}
-                    type="file"
-                    style={{ display: "none" }}
-                    onChange={(e) => importFile(e)}
-                  />
-                  <Button
-                    style={{
-                      margin: "20px",
-                    }}
-                    type="primary"
-                    icon={<DownloadOutlined />}
-                    size={{ size: "large" }}
-                    onClick={() => downloadPlantilla()}
-                  >
-                    Descargar plantilla
-                  </Button>
-                </Row>
-              </div>
-            </div>
-            <Table
-              size="small"
-              columns={columns}
-              dataSource={person}
-              loading={loading}
-              rowSelection={rowSelectionPerson}
-            />
-<<<<<<< HEAD
-      </MainLayout>
-=======
-          </div>
-        </Content>
-        <FormPerson close={getModalPerson} visible={modalAddPerson} />
-        <Modal
-          title="Modal"
-          visible={modalDelete}
-          onOk={deletePerson}
-          onCancel={showModalDelete}
-          okText="Si, Eliminar"
-          cancelText="Cancelar"
+            <PlusOutlined />
+            Agregar persona
+          </Button>
+        </div>
+        <div
+          className="site-layout-background"
+          style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
-          <Alert
-            message="Warning"
-            description="Al eliminar este registro perderá todos los datos
-                    relacionados a el de manera permanente.
-                    ¿Está seguro de querer eliminarlo?"
-            type="warning"
-            showIcon
+          <div style={{ padding: 24 }}>
+            <Form onFinish={filter} layout={"vertical"} form={formFilter}>
+              <Row>
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item name="name">
+                    <Input placeholder="Nombre" />
+                  </Form.Item>
+                </Col>
+                <Col lg={4} xs={22} offset={1}>
+                  <Form.Item name="gender">
+                    <Select options={genders} placeholder="Género" />
+                  </Form.Item>
+                </Col>
+                <Col lg={3} xs={5} offset={1}>
+                  <Form.Item name="is_active">
+                    <label>
+                      <span style={{ fontWeight: "bold" }}>Activos:</span>
+                    </label>
+                    <Switch
+                      style={{ marginLeft: "10%" }}
+                      defaultChecked
+                      onChange={statusPeron}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={2} xs={5} offset={1}>
+                  <Form.Item>
+                    <Button
+                      icon={<SearchOutlined />}
+                      type="primary"
+                      htmlType="submit"
+                    >
+                      Buscar
+                    </Button>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+            <div>
+              <Row>
+                <Button
+                  style={{
+                    margin: "20px",
+                  }}
+                  type="primary"
+                  icon={<DownloadOutlined />}
+                  size={{ size: "large" }}
+                  onClick={() => downloadPersons()}
+                >
+                  Descargar resultados
+                </Button>
+                <Button
+                  style={{
+                    margin: "20px",
+                  }}
+                  icon={<UploadOutlined />}
+                  onClick={() => {
+                    inputFileRef.current.click();
+                  }}
+                >
+                  Importar personas
+                </Button>
+                <input
+                  ref={inputFileRef}
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={(e) => importFile(e)}
+                />
+                <Button
+                  style={{
+                    margin: "20px",
+                  }}
+                  type="primary"
+                  icon={<DownloadOutlined />}
+                  size={{ size: "large" }}
+                  onClick={() => downloadPlantilla()}
+                >
+                  Descargar plantilla
+                </Button>
+              </Row>
+            </div>
+          </div>
+          <Table
+            size="small"
+            columns={columns}
+            dataSource={person}
+            loading={loading}
+            rowSelection={rowSelectionPerson}
           />
+        </div>
+      </Content>
+      <FormPerson close={getModalPerson} visible={modalAddPerson} />
+      <Modal
+        title="Modal"
+        visible={modalDelete}
+        onOk={deletePerson}
+        onCancel={showModalDelete}
+        okText="Si, Eliminar"
+        cancelText="Cancelar"
+      >
+        <Alert
+          message="Warning"
+          description="Al eliminar este registro perderá todos los datos
+            relacionados a el de manera permanente.
+            ¿Está seguro de querer eliminarlo?"
+          type="warning"
+          showIcon
+        />
 
-          <ListElementsToDelete personsDelete={personsToDelete} />
-        </Modal>
-      </Layout>
-    </>
->>>>>>> 9d54b9f727ecf83634bff8d11959b28c72c52c7d
+        <ListElementsToDelete personsDelete={personsToDelete} />
+      </Modal>
+    </MainLayout>
   );
 };
 export default homeScreen;
