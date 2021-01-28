@@ -35,6 +35,7 @@ import {
   InboxOutlined,
   UploadOutlined,
   PlusOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import DocumentModal from "../../components/modal/document";
 
@@ -45,6 +46,7 @@ import Router from "next/router";
 const { Option } = Select;
 import moment from "moment";
 import TextArea from "antd/lib/input/TextArea";
+import Link from "next/link";
 const { Panel } = Collapse;
 const { Meta } = Card;
 const { RangePicker } = DatePicker;
@@ -58,11 +60,7 @@ const userDetailForm = () => {
   const [modal, setModal] = useState(false);
   const [personFullName, setPersonFullName] = useState("");
   const [photo, setPhoto] = useState("");
-  const [numberPanle, setNumberPanel] = useState("1");
-  const [idGeneralP, setIdGeneralP] = useState("");
-  const [idAddressP, setIdAddressP] = useState("");
   const [modalDoc, setModalDoc] = useState(false);
-
   const [deleted, setDeleted] = useState({});
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
@@ -84,6 +82,8 @@ const userDetailForm = () => {
   const [upTraining, setUpTraining] = useState(false);
   const [idExperienceJob, setIdExperienceJob] = useState("");
   const [upExperienceJob, setUpExperienceJob] = useState(false);
+  const [idGeneralP, setIdGeneralP] = useState("");
+  const [idAddressP, setIdAddressP] = useState("");
 
   ////FORMS
   const [formPerson] = Form.useForm();
@@ -115,6 +115,7 @@ const userDetailForm = () => {
   const [training, setTraining] = useState([]);
   const [experineceJob, setExperienceJob] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
+  const [documents, setDocuments] = useState([]);
 
   /////STATE DATE
   const [birthDate, setBirthDate] = useState("");
@@ -235,7 +236,6 @@ const userDetailForm = () => {
       ///GET PERSON
       Axios.get(API_URL + `/person/person/${router.query.id}`)
         .then((response) => {
-          console.log("PErson-->> ", response.data);
           formPerson.setFieldsValue({
             first_name: response.data.first_name,
             flast_name: response.data.flast_name,
@@ -261,23 +261,24 @@ const userDetailForm = () => {
               API_URL +
                 `/business/department/${response.data.job_department.department.id}/job_for_department/`
             )
-              .then((response) => {
-                if (response.status === 200) {
-                  let job = response.data;
+              .then((resp) => {
+                if (resp.status === 200) {
+                  let job = resp.data;
                   job = job.map((a) => {
                     return { label: a.name, value: a.id };
                   });
                   setJobs(job);
+                  if (response.data.job_department.job)
+                    formPerson.setFieldsValue({
+                      job: response.data.job_department.job.id,
+                    });
                 }
               })
               .catch((e) => {
                 console.log(e);
               });
           }
-          if (response.data.job_department.job)
-            formPerson.setFieldsValue({
-              job: response.data.job_department.job.id,
-            });
+
           if (response.data.date_of_admission)
             formPerson.setFieldsValue({
               date_of_admission: moment(response.data.date_of_admission),
@@ -348,18 +349,18 @@ const userDetailForm = () => {
         });
 
       ///ADDRESS
-      Axios.get(API_URL + `/person/person/${router.query.id}/address/`)
+      Axios.get(API_URL + `/person/person/${router.query.id}/address_person/`)
         .then((response) => {
           formAddress.setFieldsValue({
-            street_type: response.data.street_type,
-            street: response.data.street,
-            numberOne: response.data.numberOne,
-            numberTwo: response.data.numberTwo,
-            building: response.data.building,
-            postalCode: response.data.postalCode,
-            suburb: response.data.suburb,
-            location: response.data.location,
-            reference: response.data.reference,
+            street_type: response.data[0].street_type,
+            street: response.data[0].street,
+            numberOne: response.data[0].numberOne,
+            numberTwo: response.data[0].numberTwo,
+            building: response.data[0].building,
+            postalCode: response.data[0].postalCode,
+            suburb: response.data[0].suburb,
+            location: response.data[0].location,
+            reference: response.data[0].reference,
           });
           setIdAddressP(response.data.id);
           setLoading(false);
@@ -434,10 +435,6 @@ const userDetailForm = () => {
         API_URL + `/person/person/${router.query.id}/bank_account_person/`
       )
         .then((response) => {
-          let bancos = [];
-          bancos = response.data.map((a) => {
-            a.bankName = a.bank.name;
-          });
           setBankAccounts(response.data);
           setLoading(false);
           setLoadingTable(false);
@@ -446,6 +443,17 @@ const userDetailForm = () => {
           console.log(e);
           setLoading(false);
           setLoadingTable(false);
+        });
+
+      ///GET DOCUMENTS
+      Axios.get(API_URL + `/person/person/${router.query.id}/document_person/`)
+        .then((response) => {
+          setDocuments(response.data);
+          setLoading(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
         });
     }
   }, [router.query.id]);
@@ -633,13 +641,17 @@ const userDetailForm = () => {
             API_URL +
               `/business/department/${response.data.job_department.department.id}/job_for_department/`
           )
-            .then((response) => {
-              if (response.status === 200) {
-                let job = response.data;
+            .then((resp) => {
+              if (resp.status === 200) {
+                let job = resp.data;
                 job = job.map((a) => {
                   return { label: a.name, value: a.id };
                 });
                 setJobs(job);
+                if (response.data.job_department.job)
+                  formPerson.setFieldsValue({
+                    job: response.data.job_department.job.id,
+                  });
               }
             })
             .catch((e) => {
@@ -854,11 +866,15 @@ const userDetailForm = () => {
         return (
           <div>
             <Row gutter={16}>
-              <Col className="gutter-row" span={6}>
-                <EditOutlined onClick={() => updateFormPhone(item)} />
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => updateFormPhone(item)}
+                />
               </Col>
-              <Col className="gutter-row" span={6}>
+              <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
+                  style={{ fontSize: "25px" }}
                   onClick={() => {
                     setDeleteRegister({ id: item.id, api: "deletePhone" });
                   }}
@@ -873,14 +889,10 @@ const userDetailForm = () => {
 
   /////ADDRESS
   const formAddressPerson = (value) => {
-    console.log("IP ADDRESS-->> ", idAddressP);
     if (idAddressP != "" && idAddressP != undefined) {
-      console.log("ADDRESS UPDATE", value);
       updateAddress(value);
     } else {
       value.person = router.query.id;
-      console.log("IP ADDRESS-->> ", idAddressP);
-      console.log("SAVE ADDRESS-->> ", value);
       saveAddress(value);
     }
   };
@@ -1060,11 +1072,15 @@ const userDetailForm = () => {
         return (
           <div>
             <Row gutter={16}>
-              <Col className="gutter-row" span={6}>
-                <EditOutlined onClick={() => updateFormFamily(item)} />
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => updateFormFamily(item)}
+                />
               </Col>
-              <Col className="gutter-row" span={6}>
+              <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
+                  style={{ fontSize: "25px" }}
                   onClick={() => {
                     setDeleteRegister({ id: item.id, api: "deleteFamily" });
                   }}
@@ -1125,7 +1141,7 @@ const userDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
-        getContactEmergency;
+        getContactEmergency();
         formContactEmergency.resetFields();
       })
       .catch((error) => {
@@ -1205,11 +1221,15 @@ const userDetailForm = () => {
         return (
           <div>
             <Row gutter={16}>
-              <Col className="gutter-row" span={6}>
-                <EditOutlined onClick={() => updateFormContEm(item)} />
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => updateFormContEm(item)}
+                />
               </Col>
-              <Col className="gutter-row" span={6}>
+              <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
+                  style={{ fontSize: "25px" }}
                   onClick={() => {
                     setDeleteRegister({ id: item.id, api: "deleteContEm" });
                   }}
@@ -1351,10 +1371,6 @@ const userDetailForm = () => {
       API_URL + `/person/person/${router.query.id}/bank_account_person/`
     )
       .then((response) => {
-        let bancos = [];
-        bancos = response.data.map((a) => {
-          a.bankName = a.bank.name;
-        });
         setBankAccounts(response.data);
         setLoading(false);
         setTimeout(() => {
@@ -1456,7 +1472,9 @@ const userDetailForm = () => {
   const colBank = [
     {
       title: "Banco",
-      dataIndex: "bankName",
+      render: (item) => {
+        return <>{item.bank.name}</>;
+      },
       key: "id",
     },
     {
@@ -1475,11 +1493,15 @@ const userDetailForm = () => {
         return (
           <div>
             <Row gutter={16}>
-              <Col className="gutter-row" span={6}>
-                <EditOutlined onClick={() => updateFormbankAcc(item)} />
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => updateFormbankAcc(item)}
+                />
               </Col>
-              <Col className="gutter-row" span={6}>
+              <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
+                  style={{ fontSize: "25px" }}
                   onClick={() => {
                     setDeleteRegister({ id: item.id, api: "deleteBankAcc" });
                   }}
@@ -1492,8 +1514,91 @@ const userDetailForm = () => {
     },
   ];
 
-  /////DOCUMENTS
-  const upDocument = () => {};
+  ////DOCUMENT
+  const getDocument = () => {
+    setLoading(true);
+    setLoadingTable(true);
+    Axios.get(API_URL + `/person/person/${router.query.id}/document_person/`)
+      .then((response) => {
+        setDocuments(response.data);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
+  };
+  const getModalDoc = (value) => {
+    setModalDoc(value);
+    getDocument();
+  };
+  const deleteDocument = (value) => {
+    setLoading(true);
+    Axios.delete(API_URL + `/person/document/${value}/`)
+      .then((response) => {
+        getDocument();
+        showModal();
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+      });
+  };
+  const colDoc = [
+    {
+      title: "Tipo documento",
+      render: (item) => {
+        return <>{item.document_type.name}</>;
+      },
+    },
+    {
+      title: "Descripción",
+      dataIndex: "description",
+      key: "id",
+    },
+    {
+      title: "Documento",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <a href={item.document}>
+                  <FileTextOutlined style={{ fontSize: "30px" }} />
+                </a>
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deleteDocument" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
+  ];
 
   /////DELETE REGISTER
   const setDeleteRegister = (props) => {
@@ -1506,6 +1611,7 @@ const userDetailForm = () => {
     if (deleted.api == "deletePhone") deletePhone(deleted.id);
     if (deleted.api == "deleteContEm") deleteContEm(deleted.id);
     if (deleted.api == "deleteFamily") deleteFamily(deleted.id);
+    if (deleted.api == "deleteDocument") deleteDocument(deleted.id);
   };
 
   //////SHOW MODAL DELETE
@@ -1513,14 +1619,8 @@ const userDetailForm = () => {
     modal ? setModal(false) : setModal(true);
   };
 
-  ////MODAL DOCUMENT
-  const getModalDoc = (value) => {
-    setModalDoc(value);
-  };
-
   /////GET JOBS
   const onChangeDepartment = (value) => {
-    console.log("DEPARTMENT-->>> ", value);
     Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
       .then((response) => {
         if (response.status === 200) {
@@ -2300,6 +2400,9 @@ const userDetailForm = () => {
                         </Button>
                       </Col>
                     </Row>
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colDoc} dataSource={documents} />
+                    </Spin>
                   </Panel>
 
                   <Panel header="Eliminar">

@@ -131,7 +131,6 @@ const FormPerson = (props) => {
     ////JOBS
     Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
       .then((response) => {
-        console.log("DEPARTMENT-->>> ", response.data);
         if (response.status === 200) {
           let job = response.data;
           job = job.map((a) => {

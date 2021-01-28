@@ -47,9 +47,7 @@ const documentModal = (props) => {
   }, []);
 
   const selectedFile = (file) => {
-    // console.log("FILE Up-->> ", file);
     if (file.target.files.length > 0) {
-      //   console.log("FILE UPLOAD-->> ", file.target.files[0]);
       setDisabled(false);
       setFile(file.target.files[0]);
       setfileName(file.target.files[0].name);
@@ -61,19 +59,15 @@ const documentModal = (props) => {
   };
 
   const onFinish = (value) => {
-    // console.log("FORM-->>> ", value);
-    console.log("FILE-->>> ", file);
     let data = new FormData();
     data.append("document", file);
     data.append("person", props.person);
     data.append("document_type", value.document_type);
     data.append("description", value.description);
-    console.log("FOMR-->> ", data);
     uploadDocument(data);
   };
 
   const uploadDocument = (data) => {
-    console.log("DATA-->> ", data);
     Axios.post(API_URL + "/person/document/", data)
       .then((response) => {
         message.success({
@@ -137,7 +131,7 @@ const documentModal = (props) => {
                 onChange={(e) => selectedFile(e)}
               />
             </Form.Item>
-            <Form.Item name="description">
+            <Form.Item name="description" rules={[ruleRequired]}>
               <TextArea type="text" placeholder="Descripción..." />
             </Form.Item>
 
