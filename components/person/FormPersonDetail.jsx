@@ -187,7 +187,7 @@ const userDetailForm = () => {
       value: 1,
     },
     {
-      label: "Boulevaard",
+      label: "Boulevard",
       value: 2,
     },
     {
@@ -496,21 +496,6 @@ const userDetailForm = () => {
       .catch((e) => {
         console.log(e);
       });
-
-    /*     /////JOB
-    Axios.get(API_URL + `/person/job/`)
-      .then((response) => {
-        if (response.status === 200) {
-          let job = response.data.results;
-          job = job.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setJobs(job);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      }); */
 
     ////BANK
     Axios.get(API_URL + "/setup/banks/")
@@ -857,7 +842,7 @@ const userDetailForm = () => {
       dataIndex: "national_code",
     },
     {
-      title: "Numero",
+      title: "Número",
       dataIndex: "phone",
     },
     {
@@ -1204,11 +1189,11 @@ const userDetailForm = () => {
       dataIndex: "fullname",
     },
     {
-      title: "Telefono 1",
+      title: "Teléfono 1",
       dataIndex: "phone_one",
     },
     {
-      title: "Telefono 2",
+      title: "Teléfono 2",
       dataIndex: "phone_two",
     },
     {
@@ -1478,7 +1463,7 @@ const userDetailForm = () => {
       key: "id",
     },
     {
-      title: "Numero de cuenta",
+      title: "Número de cuenta",
       dataIndex: "account_number",
       key: "account_number",
     },
@@ -1928,7 +1913,7 @@ const userDetailForm = () => {
                             </Form.Item>
                           </Col>
                           <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="phone" label="Numero telefonico">
+                            <Form.Item name="phone" label="Número telefonico">
                               <Input />
                             </Form.Item>
                           </Col>
@@ -1966,12 +1951,12 @@ const userDetailForm = () => {
                             </Form.Item>
                           </Col>
                           <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="numberOne" label="Numero exterior">
+                            <Form.Item name="numberOne" label="Número exterior">
                               <Input />
                             </Form.Item>
                           </Col>
                           <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="numberTwo" label="Numero interior">
+                            <Form.Item name="numberTwo" label="Número interior">
                               <Input />
                             </Form.Item>
                           </Col>
@@ -2133,12 +2118,12 @@ const userDetailForm = () => {
                             </Form.Item>
                           </Col>
                           <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="phone_one" label="Telefono 1">
+                            <Form.Item name="phone_one" label="Teléfono 1">
                               <Input />
                             </Form.Item>
                           </Col>
                           <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="phone_two" label="Telefono 2">
+                            <Form.Item name="phone_two" label="Teléfono 2">
                               <Input />
                             </Form.Item>
                           </Col>
@@ -2306,7 +2291,7 @@ const userDetailForm = () => {
                           <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="address_company"
-                              label="Direccion de la empresa"
+                              label="Dirección de la empresa"
                             >
                               <Input />
                             </Form.Item>
@@ -2360,7 +2345,7 @@ const userDetailForm = () => {
                           <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="account_number"
-                              label="Numero de cuenta"
+                              label="Número de cuenta"
                             >
                               <Input />
                             </Form.Item>
@@ -2408,7 +2393,7 @@ const userDetailForm = () => {
                   <Panel header="Eliminar">
                     <Alert
                       message="Warning"
-                      description="Al eliminar a una persona perdera todos los datos
+                      description="Al eliminar a una persona perderá todos los datos
                     relacionados a ella de manera permante."
                       type="warning"
                       showIcon
@@ -2457,7 +2442,7 @@ const userDetailForm = () => {
         >
           <Alert
             message="Warning"
-            description="Al eliminar este registro perdera todos los datos
+            description="Al eliminar este registro perderá todos los datos
                     relacionados a el de manera permante.
                     ¿Esta seguro de querer eliminarlo?"
             type="warning"

@@ -499,7 +499,7 @@ const homeScreen = () => {
         >
           <Alert
             message="Warning"
-            description="Al eliminar este registro perdera todos los datos
+            description="Al eliminar este registro perderá todos los datos
                     relacionados a el de manera permante.
                     ¿Esta seguro de querer eliminarlo?"
             type="warning"
