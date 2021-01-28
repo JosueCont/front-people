@@ -6,7 +6,7 @@ from people.apps.person import models
 from people.apps.setup.models import Treatment
 from people.apps.business.serializers import ChildNodeSerializer, JobDepartmentSerializer, DepartmentSerializer
 from people.apps.setup.serializers import BankSerializer, RelationshipSerializer, ExperienceTypeSerializer, \
-    LaborRelationshipSerializer, ReasonSeparationSerializer
+    LaborRelationshipSerializer, ReasonSeparationSerializer, DocumentTypeSerializer
 
 
 class PersonTypeSerializer(serializers.ModelSerializer):
@@ -184,3 +184,8 @@ class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Document
         fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super(DocumentSerializer, self).to_representation(instance)
+        representation['document_type'] = DocumentTypeSerializer(instance.document_type).data
+        return representation
