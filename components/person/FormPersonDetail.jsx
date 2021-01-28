@@ -838,7 +838,7 @@ const userDetailForm = () => {
   };
   const colPhone = [
     {
-      title: "Codigo de pais",
+      title: "Código de pais",
       dataIndex: "national_code",
     },
     {
@@ -1891,7 +1891,7 @@ const userDetailForm = () => {
                           <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="international_code"
-                              label="Codigo internacional"
+                              label="Código internacional"
                             >
                               <Input />
                             </Form.Item>
@@ -1899,7 +1899,7 @@ const userDetailForm = () => {
                           <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="national_code"
-                              label="Codigo de pais"
+                              label="Código de pais"
                             >
                               <Input />
                             </Form.Item>
@@ -1907,13 +1907,13 @@ const userDetailForm = () => {
                           <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="country_code"
-                              label="Codigo de ciudad"
+                              label="Código de ciudad"
                             >
                               <Input />
                             </Form.Item>
                           </Col>
                           <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="phone" label="Número telefonico">
+                            <Form.Item name="phone" label="Número telefónico">
                               <Input />
                             </Form.Item>
                           </Col>
@@ -1966,7 +1966,7 @@ const userDetailForm = () => {
                             </Form.Item>
                           </Col>
                           <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="postalCode" label="Codigo postal">
+                            <Form.Item name="postalCode" label="Código postal">
                               <Input />
                             </Form.Item>
                           </Col>
@@ -2394,7 +2394,7 @@ const userDetailForm = () => {
                     <Alert
                       message="Warning"
                       description="Al eliminar a una persona perderá todos los datos
-                    relacionados a ella de manera permante."
+                    relacionados a ella de manera permanente."
                       type="warning"
                       showIcon
                     />
@@ -2443,8 +2443,8 @@ const userDetailForm = () => {
           <Alert
             message="Warning"
             description="Al eliminar este registro perderá todos los datos
-                    relacionados a el de manera permante.
-                    ¿Esta seguro de querer eliminarlo?"
+                    relacionados a el de manera permanente.
+                    ¿Está seguro de querer eliminarlo?"
             type="warning"
             showIcon
           />
