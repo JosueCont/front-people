@@ -55,7 +55,6 @@ class PersonViewSet(viewsets.ModelViewSet):
                 del serializer.validated_data['password']
                 job = None
                 department = None
-                instance = Person(**serializer.validated_data)
                 if 'job' in serializer.validated_data:
                     job = serializer.validated_data["job"]
                     del serializer.validated_data['job']
@@ -64,8 +63,9 @@ class PersonViewSet(viewsets.ModelViewSet):
                     del serializer.validated_data['department']
                 if job and department:
                     job_dep = JobDepartment.objects.filter(job=job, department=department).first()
-                    if job_dep:
-                        instance.job_department = job_dep
+                instance = Person(**serializer.validated_data)
+                if job_dep:
+                    instance.job_department = job_dep
                 instance.save()
                 flast_name = ""
                 mlast_name = ""
