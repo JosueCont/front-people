@@ -11,7 +11,6 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(null);
   const [errorLogin, setErrorLogin] = useState(false);
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
     login(values.email, values.password);
   };
 
@@ -27,7 +26,6 @@ const LoginForm = () => {
         email: email,
         password: password,
       };
-      console.log(headers);
       Axios.post(LOGIN_URL + "/login/", data, { headers: headers })
         .then(function (response) {
           if (response.status === 200) {
@@ -55,7 +53,7 @@ const LoginForm = () => {
       alert(
         "Hubo un  problema al iniciar sesión, por favor verifica tus credenciales"
       );
-      console.log(e);
+      //console.log(e);
     } finally {
     }
   };
