@@ -39,7 +39,6 @@ const businessForm = () => {
   const [isDeleted, setIsDeleted] = useState(false);
   const [businessName, setBusinessName] = useState("");
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
     if (isDeleted) {
       deleteBusiness(values.id);
     } else {
@@ -58,7 +57,6 @@ const businessForm = () => {
   const deleteBusiness = async (id, name, description) => {
     Axios.delete(API_URL + "/business/node/" + id + "/")
       .then(function (response) {
-        console.log(response.data);
         if (response.status === 200) {
           Router.push("/business");
         }
@@ -80,7 +78,6 @@ const businessForm = () => {
     };
     Axios.put(API_URL + "/business/node/" + id + "/", data)
       .then(function (response) {
-        console.log(response.data);
         if (response.status === 200) {
           Router.push("/business");
         }
@@ -102,7 +99,6 @@ const businessForm = () => {
     };
     Axios.post(API_URL + "/business/node/", data)
       .then(function (response) {
-        console.log(response.data);
         if (response.status === 200) {
           Router.push("/business");
         }
@@ -155,7 +151,6 @@ const businessForm = () => {
     setLoading(true);
     Axios.get(API_URL + "/business/node/")
       .then((response) => {
-        console.log("RESPONSE-->> ", response);
         setBusiness(response.data.results);
         setLoading(false);
       })
@@ -199,7 +194,6 @@ const businessForm = () => {
     {
       title: "Opciones",
       render: (item) => {
-        console.log("table", item);
         return (
           <div>
             <Row gutter={16}>

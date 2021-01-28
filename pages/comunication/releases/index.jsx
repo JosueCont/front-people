@@ -7,6 +7,7 @@ import axiosApi from "../../../libs/axiosApi";
 import Moment from 'moment';
 import ModalCreateNotification from '../../../components/modals/ModalCreateNotification'
 import { useRouter } from 'next/router';
+import cookie from "js-cookie";
 
 
 export default function Releases() {
@@ -18,7 +19,11 @@ export default function Releases() {
     const route = useRouter();
     /* Variables */
     const [list, setList] = useState([])
-    const [visibleCreate, setVisibleCreate] = useState(false);
+
+    let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
+    console.log('userToken', userToken)
+
+
 
     const getNotifications   = async () => {
         try{

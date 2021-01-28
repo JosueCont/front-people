@@ -9,8 +9,12 @@ import {
   Switch,
   Button,
   Form,
-  Upload,
+  Avatar,
   message,
+  Modal,
+  Alert,
+  Menu,
+  Dropdown,
 } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
@@ -23,6 +27,7 @@ import {
   PlusOutlined,
   DownloadOutlined,
   UploadOutlined,
+  EllipsisOutlined,
 } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
 import MainLayout from '../../layout/MainLayout';
@@ -36,11 +41,22 @@ const homeScreen = () => {
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(true);
-  const [modal, setModal] = useState(false);
+  const [modalAddPerson, setModalAddPerson] = useState(false);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
   let filters = {};
+  const [defaulPhoto, setDefaulPhoto] = useState(
+    "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg"
+  );
+  const [modalDelete, setModalDelete] = useState(false);
+  const [idsDelete, setIdsDelete] = useState("");
+  const [personsToDelete, setPersonsToDelete] = useState([]);
 
+  useEffect(() => {
+    getPerson();
+  }, []);
+
+  /////PEOPLE
   const getPerson = (text) => {
     setLoading(true);
     if (text == undefined) {
@@ -51,6 +67,7 @@ const homeScreen = () => {
             item["fullname"] =
               item.first_name + " " + item.flast_name + " " + item.mlast_name;
             item.timestamp = item.timestamp.substring(0, 10);
+            if (!item.photo) item.photo = defaulPhoto;
           });
           setPerson(response.data.results);
           setLoading(false);
@@ -66,6 +83,7 @@ const homeScreen = () => {
             item["fullname"] =
               item.first_name + " " + item.flast_name + " " + item.mlast_name;
             item.timestamp = item.timestamp.substring(0, 10);
+            if (!item.photo) item.photo = defaulPhoto;
           });
           setPerson(response.data);
           setLoading(false);
@@ -77,11 +95,46 @@ const homeScreen = () => {
         });
     }
   };
-
+  const deletePerson = () => {
+    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
+      persons_id: idsDelete,
+    })
+      .then((response) => {
+        showModalDelete();
+        getPerson();
+        setLoading(false);
+        message.success("Eliminado correctamente.");
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
   const statusPeron = () => {
     setStatus(status ? false : true);
   };
+  const getModalPerson = (value) => {
+    setModalAddPerson(value);
+    setLoading(true);
+    Axios.get(API_URL + `/person/person/`)
+      .then((response) => {
+        response.data.results.map((item) => {
+          item["key"] = item.id;
+          item["fullname"] =
+            item.first_name + " " + item.flast_name + " " + item.mlast_name;
+          item.timestamp = item.timestamp.substring(0, 10);
+          if (!item.photo) item.photo = defaulPhoto;
+        });
+        setPerson(response.data.results);
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+      });
+  };
 
+  ////SEARCH FILTER
   const filter = (value) => {
     if (value.name !== undefined && value.name !== "") {
       filters.first_name = value.name;
@@ -95,15 +148,42 @@ const homeScreen = () => {
     getPerson("filter");
   };
 
-  useEffect(() => {
-    getPerson();
-  }, []);
+  ////STYLE
+  const menuDropDownStyle = {
+    background: "#434343",
+    color: "#ffff",
+  };
 
+  /////TABLE PERSON
   const columns = [
+    {
+      title: "Foto",
+      render: (item) => {
+        return (
+          <div>
+            <Avatar src={item.photo} />
+          </div>
+        );
+      },
+    },
     {
       title: "Nombre",
       dataIndex: "fullname",
       key: "fullname",
+    },
+    {
+      title: "Estatus",
+      render: (item) => {
+        return (
+          <>
+            <Switch
+              defaultChecked={item.is_active}
+              checkedChildren="Activo"
+              unCheckedChildren="Inactivo"
+            />
+          </>
+        );
+      },
     },
     {
       title: "Fecha de registro",
@@ -121,29 +201,58 @@ const homeScreen = () => {
       key: "imss",
     },
     {
-      title: "Opciones",
+      title: () => {
+        return (
+          <>
+            <Dropdown overlay={menuGeneric}>
+              <Button style={menuDropDownStyle} size="small">
+                <EllipsisOutlined />
+              </Button>
+            </Dropdown>
+          </>
+        );
+      },
       render: (item) => {
         return (
-          <div>
-            <Row gutter={16}>
-              <Col className="gutter-row" span={6}>
-                <Link href={`/home/${item.id}`}>
-                  <EditOutlined />
-                </Link>
-              </Col>
-              <Col className="gutter-row" span={6}>
-                <DeleteOutlined />
-              </Col>
-              <Col className="gutter-row" span={6}>
-                <InfoCircleOutlined />
-              </Col>
-            </Row>
-          </div>
+          <>
+            <Dropdown overlay={() => menuPerson(item)}>
+              <Button
+                style={{ background: "#8c8c8c", color: "withe" }}
+                size="small"
+              >
+                <EllipsisOutlined />
+              </Button>
+            </Dropdown>
+          </>
         );
       },
     },
   ];
+  const rowSelectionPerson = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setPersonsToDelete(selectedRows);
+    },
+  };
 
+  const menuGeneric = (
+    <Menu>
+      <Menu.Item onClick={() => setDeleteModal(personsToDelete)}>
+        Eliminar
+      </Menu.Item>
+    </Menu>
+  );
+  const menuPerson = (item) => {
+    return (
+      <Menu>
+        <Menu.Item>
+          <Link href={`/home/${item.id}`}>Editar</Link>
+        </Menu.Item>
+        <Menu.Item onClick={() => setDeleteModal([item])}>Eliminar</Menu.Item>
+      </Menu>
+    );
+  };
+
+  ////DEFAULT SELECT
   const genders = [
     {
       label: "Maculino",
@@ -159,25 +268,42 @@ const homeScreen = () => {
     },
   ];
 
-  const getModal = (value) => {
-    setModal(value);
-    setLoading(true);
-    Axios.get(API_URL + `/person/person/`)
-      .then((response) => {
-        response.data.results.map((item) => {
-          item["key"] = item.id;
-          item["fullname"] =
-            item.first_name + " " + item.flast_name + " " + item.mlast_name;
-          item.timestamp = item.timestamp.substring(0, 10);
-        });
-        setPerson(response.data.results);
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log(e);
+  /////DELETE MODAL
+  const setDeleteModal = (value) => {
+    if (value.length > 0) {
+      setPersonsToDelete(value);
+      let ids = null;
+      value.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
       });
+      setIdsDelete(ids);
+      showModalDelete();
+    } else {
+      message.error("Selecciona una persona.");
+    }
+  };
+  const ListElementsToDelete = ({ personsDelete }) => {
+    return (
+      <div>
+        {personsDelete.map((p) => {
+          return (
+            <>
+              <Row>
+                <Avatar src={p.photo} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
+  };
+  const showModalDelete = () => {
+    modalDelete ? setModalDelete(false) : setModalDelete(true);
   };
 
+  ////IMPORT/EXPORT PERSON
   const downloadPersons = () => {
     setLoading(true);
     Axios.get(API_URL + `/person/import-export-person/csv`)
@@ -198,7 +324,6 @@ const homeScreen = () => {
         console.log(e);
       });
   };
-
   const downloadPlantilla = () => {
     setLoading(true);
     Axios.get(API_URL + `/person/import-export-person/plantilla`)
@@ -219,13 +344,11 @@ const homeScreen = () => {
         console.log(e);
       });
   };
-
   const importFile = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
     if (extension == "csv") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
-      console.log(formData);
       setLoading(true);
       Axios.post(API_URL + `/person/import-export-person`, formData)
         .then((response) => {
@@ -252,27 +375,42 @@ const homeScreen = () => {
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>Person</Breadcrumb.Item>
           </Breadcrumb>
+<<<<<<< HEAD
           
             <div style={{ padding:'24px 0' }}>
+=======
+          <div style={{ padding: "1%", float: "right" }}>
+            <Button
+              style={{
+                background: "#fa8c16",
+                fontWeight: "bold",
+                color: "white",
+              }}
+              onClick={() => getModalPerson(true)}
+            >
+              <PlusOutlined />
+              Agregar persona
+            </Button>
+          </div>
+          <div
+            className="site-layout-background"
+            style={{ padding: 24, minHeight: 380, height: "100%" }}
+          >
+            <div style={{ padding: 24 }}>
+>>>>>>> 9d54b9f727ecf83634bff8d11959b28c72c52c7d
               <Form onFinish={filter} layout={"vertical"} form={formFilter}>
                 <Row>
-                  <Col span={18}>
+                  <Col lg={7} xs={22} offset={1}>
                     <Form.Item name="name">
-                      <Input placeholder="Nombre..." />
+                      <Input placeholder="Nombre" />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
+                  <Col lg={4} xs={22} offset={1}>
                     <Form.Item name="gender">
-                      <Select
-                        style={{ marginLeft: "10%", width: "100%" }}
-                        options={genders}
-                        placeholder="Género"
-                      />
+                      <Select options={genders} placeholder="Género" />
                     </Form.Item>
                   </Col>
-                </Row>
-                <Row style={{ marginTop: "2%" }}>
-                  <Col span={4}>
+                  <Col lg={3} xs={5} offset={1}>
                     <Form.Item name="is_active">
                       <label>
                         <span style={{ fontWeight: "bold" }}>Activos:</span>
@@ -284,61 +422,61 @@ const homeScreen = () => {
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={8} style={{ float: "right" }}>
+                  <Col lg={2} xs={5} offset={1}>
                     <Form.Item>
-                      <Button type="primary" htmlType="submit">
+                      <Button
+                        icon={<SearchOutlined />}
+                        type="primary"
+                        htmlType="submit"
+                      >
                         Buscar
                       </Button>
                     </Form.Item>
                   </Col>
                 </Row>
               </Form>
-              <div
-                style={{
-                  float: "right",
-                }}
-              >
-                <Button
-                  style={{
-                    background: "#fa8c16",
-                    fontWeight: "bold",
-                    color: "white",
-                  }}
-                  onClick={() => getModal(true)}
-                >
-                  <PlusOutlined />
-                  Agregar persona
-                </Button>
-                <Button
-                  type="primary"
-                  icon={<DownloadOutlined />}
-                  size={{ size: "large" }}
-                  onClick={() => downloadPersons()}
-                >
-                  Descargar resultados
-                </Button>
-                <Button
-                  icon={<UploadOutlined />}
-                  onClick={() => {
-                    inputFileRef.current.click();
-                  }}
-                >
-                  Importar personas
-                </Button>
-                <input
-                  ref={inputFileRef}
-                  type="file"
-                  style={{ display: "none" }}
-                  onChange={(e) => importFile(e)}
-                />
-                <Button
-                  type="primary"
-                  icon={<DownloadOutlined />}
-                  size={{ size: "large" }}
-                  onClick={() => downloadPlantilla()}
-                >
-                  Descargar plantilla
-                </Button>
+              <div>
+                <Row>
+                  <Button
+                    style={{
+                      margin: "20px",
+                    }}
+                    type="primary"
+                    icon={<DownloadOutlined />}
+                    size={{ size: "large" }}
+                    onClick={() => downloadPersons()}
+                  >
+                    Descargar resultados
+                  </Button>
+                  <Button
+                    style={{
+                      margin: "20px",
+                    }}
+                    icon={<UploadOutlined />}
+                    onClick={() => {
+                      inputFileRef.current.click();
+                    }}
+                  >
+                    Importar personas
+                  </Button>
+                  <input
+                    ref={inputFileRef}
+                    type="file"
+                    style={{ display: "none" }}
+                    onChange={(e) => importFile(e)}
+                  />
+                  <Button
+                    style={{
+                      margin: "20px",
+                    }}
+                    type="primary"
+                    icon={<DownloadOutlined />}
+                    size={{ size: "large" }}
+                    onClick={() => downloadPlantilla()}
+                  >
+                    Descargar plantilla
+                  </Button>
+                </Row>
               </div>
             </div>
             <Table
@@ -346,8 +484,36 @@ const homeScreen = () => {
               columns={columns}
               dataSource={person}
               loading={loading}
+              rowSelection={rowSelectionPerson}
             />
+<<<<<<< HEAD
       </MainLayout>
+=======
+          </div>
+        </Content>
+        <FormPerson close={getModalPerson} visible={modalAddPerson} />
+        <Modal
+          title="Modal"
+          visible={modalDelete}
+          onOk={deletePerson}
+          onCancel={showModalDelete}
+          okText="Si, Eliminar"
+          cancelText="Cancelar"
+        >
+          <Alert
+            message="Warning"
+            description="Al eliminar este registro perderá todos los datos
+                    relacionados a el de manera permanente.
+                    ¿Está seguro de querer eliminarlo?"
+            type="warning"
+            showIcon
+          />
+
+          <ListElementsToDelete personsDelete={personsToDelete} />
+        </Modal>
+      </Layout>
+    </>
+>>>>>>> 9d54b9f727ecf83634bff8d11959b28c72c52c7d
   );
 };
 export default homeScreen;

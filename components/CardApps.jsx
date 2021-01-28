@@ -29,22 +29,6 @@ const cardApps = () => {
         actions={[<PlusOutlined onClick={messageAdd} key="setting" />]}
       >
         <Space>
-          {/* <div style={{ display: "flex", flexDirection: "column" }}>
-            <BankOutlined
-              hoverable={true}
-              onClick={() => openApp("business")}
-              style={{ fontSize: "40px" }}
-            />
-            <span>Business</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", marginLeft: "15px"}}>
-            <TeamOutlined
-              hoverable={true}
-              onClick={() => openApp("home")}
-              style={{ fontSize: "40px" }}
-            />
-            <span>People</span>
-          </div> */}
           <div
             style={{
               display: "flex",
