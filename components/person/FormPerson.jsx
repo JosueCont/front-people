@@ -230,7 +230,7 @@ const FormPerson = (props) => {
                     options={groups}
                     showArrow
                     style={{ width: "100%" }}
-                    placeholder="Permisos..."
+                    placeholder="Permisos"
                   ></Select>
                 </Form.Item>
               </Col>

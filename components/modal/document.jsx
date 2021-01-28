@@ -132,7 +132,7 @@ const documentModal = (props) => {
               />
             </Form.Item>
             <Form.Item name="description" rules={[ruleRequired]}>
-              <TextArea type="text" placeholder="Descripción..." />
+              <TextArea type="text" placeholder="Descripción" />
             </Form.Item>
 
             <Form.Item labelAlign="right">

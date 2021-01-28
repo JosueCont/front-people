@@ -402,7 +402,7 @@ const homeScreen = () => {
                 <Row>
                   <Col lg={7} xs={22} offset={1}>
                     <Form.Item name="name">
-                      <Input placeholder="Nombre..." />
+                      <Input placeholder="Nombre" />
                     </Form.Item>
                   </Col>
                   <Col lg={4} xs={22} offset={1}>
