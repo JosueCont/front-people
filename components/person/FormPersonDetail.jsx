@@ -98,6 +98,7 @@ const userDetailForm = () => {
 
   ////STATE SELECTS
   const [jobs, setJobs] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [treatments, setTreatments] = useState([]);
   const [personType, setPersonType] = useState([]);
   const [groups, setGroups] = useState([]);
@@ -465,7 +466,7 @@ const userDetailForm = () => {
         console.log(e);
       });
 
-    /////JOB
+    /*     /////JOB
     Axios.get(API_URL + `/person/job/`)
       .then((response) => {
         if (response.status === 200) {
@@ -478,7 +479,7 @@ const userDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
-      });
+      }); */
 
     ////BANK
     Axios.get(API_URL + "/setup/banks/")
@@ -549,6 +550,21 @@ const userDetailForm = () => {
             return { label: a.name, value: a.id };
           });
           setReasonSeparation(reason);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    /////DEPARTMENTS
+    Axios.get(API_URL + `/business/department/`)
+      .then((response) => {
+        if (response.status === 200) {
+          let dep = response.data.results;
+          dep = dep.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setDepartments(dep);
         }
       })
       .catch((e) => {
@@ -1458,6 +1474,24 @@ const userDetailForm = () => {
     setModalDoc(value);
   };
 
+  /////GET JOBS
+  const onChangeDepartment = (value) => {
+    Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
+      .then((response) => {
+        console.log("DEPARTMENT-->>> ", response.data);
+        if (response.status === 200) {
+          let job = response.data;
+          job = job.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setJobs(job);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   return (
     <>
       <Layout>
@@ -1517,15 +1551,6 @@ const userDetailForm = () => {
                           </Form.Item>
                         </Col>
                         <Col lg={7} xs={22} offset={1}>
-                          <Form.Item name="job" label="Puesto">
-                            <Select
-                              options={jobs}
-                              placeholder="Selecciona un puesto"
-                            />
-                          </Form.Item>
-                        </Col>
-
-                        <Col lg={7} xs={22} offset={1}>
                           <Form.Item name="node" label="Unidad organizacional">
                             <Input />
                           </Form.Item>
@@ -1533,6 +1558,23 @@ const userDetailForm = () => {
                         <Col lg={7} xs={22} offset={1}>
                           <Form.Item name="unit" label="Reporta a ">
                             <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={7} xs={22} offset={1}>
+                          <Form.Item name="department" label="Departamento">
+                            <Select
+                              options={departments}
+                              onChange={onChangeDepartment}
+                              placeholder="Departamento"
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col lg={7} xs={22} offset={1}>
+                          <Form.Item name="job" label="Puesto">
+                            <Select
+                              options={jobs}
+                              placeholder="Selecciona un puesto"
+                            />
                           </Form.Item>
                         </Col>
                       </Row>
