@@ -127,7 +127,7 @@ class Family(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"))
     relationship = models.ForeignKey(Relationship, on_delete=models.CASCADE, verbose_name=_("Parentesco"))
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Puesto de trabajo"))
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Puesto de trabajo"), null=True, blank=True)
     name = models.CharField(max_length=150, verbose_name=_("Nombre"))
     flast_name = models.CharField(max_length=150, verbose_name=_("Apellido paterno"))
     mlast_name = models.CharField(max_length=150, verbose_name=_("Apellido materno"))
