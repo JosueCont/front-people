@@ -20,7 +20,7 @@ const MainLayout = ({...props}) => {
         /* <IntlProvider locale={state.lang} messages={langMessages[state.lang]}> */
              <Layout className="layout">
                 <HeaderCustom currentKey={props.currentKey}/>
-                <Content style={{ padding: '50px' }}>
+                <Content style={{ padding: '30px 50px' }}>
                     {props.children}
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>

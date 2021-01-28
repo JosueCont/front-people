@@ -15,7 +15,7 @@ export default function Releases() {
             <div className="container" style={{ width:'100%' }}>
                 <Row justify={'end'}>
                     <Col style={{ padding:'20px 0' }}>
-                        <Button style={{background: "#fa8c16", fontWeight: "bold", color: "white" }}onClick={() => showModal("add")} >
+                        <Button style={{background: "#fa8c16", fontWeight: "bold", color: "white" }} >
                             <PlusOutlined />
                             Agregar nuevo evento
                         </Button>

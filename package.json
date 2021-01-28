@@ -13,9 +13,13 @@
     "@emotion/styled": "^10.0.27",
     "antd": "^4.11.2",
     "axios": "^0.21.1",
+    "jodit-react": "^1.0.70",
+    "js-cookie": "^2.2.1",
+    "moment": "^2.29.1",
     "next": "10.0.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "react-intl": "^5.10.19",
     "react-native": "^0.63.4"
   }
 }

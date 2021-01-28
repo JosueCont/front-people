@@ -140,3 +140,10 @@ div#__next > section.layout{
 }
 
 
+.back-white{
+    background-color: #fff;
+}
+
+.ant-layout-content > .container {
+    margin-top: 30px;
+}

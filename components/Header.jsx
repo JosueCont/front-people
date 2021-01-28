@@ -11,9 +11,18 @@ const { SubMenu } = Menu;
 
 
 const userCardDisplay = () => (
-  <>
-    <CardUser />
-  </>
+    <Menu>
+        <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
+            Mi perfil
+        </a>
+        </Menu.Item>
+        <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+            Cerrar sesión
+        </a>
+        </Menu.Item>
+    </Menu>
 );
 
 const appsCardDisplay = () => (
@@ -42,9 +51,9 @@ export default function headerCustom(props) {
             </SubMenu>
             
             <div style={{ float: "right" }}>
-                <Dropdown overlay={userCardDisplay}>
+                <Dropdown overlay={userCardDisplay} placement="bottomLeft">
                 <div>
-                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                    <Avatar src={'/images/usuario.png'} />
                 </div>
                 </Dropdown>
             </div>
