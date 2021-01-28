@@ -23,7 +23,7 @@ export default function FooterCustom() {
           width: "100%",
         }}
       >
-        Created <HeartIcon style={{ color: "hotpink" }} /> by{" Human"}
+        Created by{" Human"}
         <DingtalkOutlined />
       </Footer>
     </>
