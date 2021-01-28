@@ -32,10 +32,6 @@ const LoginForm = () => {
             let token = jwt_decode(response.data.token);
             if (token) {
               Cookies.set("userToken", token);
-              // console.log(
-              //   "Obteniendo coockies",
-              //   JSON.parse(Cookies.get("userToken"))
-              // );
               setLoading(false);
               router.push({ pathname: "/home" });
             }
@@ -53,7 +49,7 @@ const LoginForm = () => {
       alert(
         "Hubo un  problema al iniciar sesión, por favor verifica tus credenciales"
       );
-      //console.log(e);
+      console.log(e);
     } finally {
     }
   };
