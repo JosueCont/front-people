@@ -375,10 +375,7 @@ const homeScreen = () => {
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>Person</Breadcrumb.Item>
           </Breadcrumb>
-<<<<<<< HEAD
-          
-            <div style={{ padding:'24px 0' }}>
-=======
+
           <div style={{ padding: "1%", float: "right" }}>
             <Button
               style={{
@@ -397,7 +394,6 @@ const homeScreen = () => {
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
             <div style={{ padding: 24 }}>
->>>>>>> 9d54b9f727ecf83634bff8d11959b28c72c52c7d
               <Form onFinish={filter} layout={"vertical"} form={formFilter}>
                 <Row>
                   <Col lg={7} xs={22} offset={1}>
@@ -486,34 +482,9 @@ const homeScreen = () => {
               loading={loading}
               rowSelection={rowSelectionPerson}
             />
-<<<<<<< HEAD
+            </div>
       </MainLayout>
-=======
-          </div>
-        </Content>
-        <FormPerson close={getModalPerson} visible={modalAddPerson} />
-        <Modal
-          title="Modal"
-          visible={modalDelete}
-          onOk={deletePerson}
-          onCancel={showModalDelete}
-          okText="Si, Eliminar"
-          cancelText="Cancelar"
-        >
-          <Alert
-            message="Warning"
-            description="Al eliminar este registro perderá todos los datos
-                    relacionados a el de manera permanente.
-                    ¿Está seguro de querer eliminarlo?"
-            type="warning"
-            showIcon
-          />
 
-          <ListElementsToDelete personsDelete={personsToDelete} />
-        </Modal>
-      </Layout>
-    </>
->>>>>>> 9d54b9f727ecf83634bff8d11959b28c72c52c7d
   );
 };
 export default homeScreen;

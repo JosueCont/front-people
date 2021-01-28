@@ -20,8 +20,6 @@ export default function Releases() {
     /* Variables */
     const [list, setList] = useState([])
 
-    let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
-    console.log('userToken', userToken)
 
 
 
