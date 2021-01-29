@@ -46,6 +46,42 @@ const ModalCreateNotification = forwardRef((props, ref) => {
     form.resetFields();
   };
 
+<<<<<<< HEAD
+        showModal() {
+            console.log('okok')
+            setVisible(true);
+        }
+    
+      }));
+
+    const handleOk = (values) => {
+        form.submit();
+      };
+    
+    const onReset = () => {
+        form.resetFields();
+    };
+
+    const submitForm = async (values) => {
+        console.log("OK");
+        values['created_by'] = "d25d4447bbd5423bbf2d5603cf553b81";
+        try {
+            let response = await axiosApi.post(`/noticenter/notification/`, values);
+            let data = response.data
+            console.log('data',data);
+            onReset();
+            setVisible(false);
+            notification['success']({
+                message: 'Notification Title',
+                description:
+                  'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+              });
+        } catch (error) {
+            console.log(error);
+        }finally{
+            setLoading(false);
+        }
+=======
   const submitForm = async (values) => {
     values["created_by"] = "d25d4447bbd5423bbf2d5603cf553b81";
     try {
@@ -63,6 +99,7 @@ const ModalCreateNotification = forwardRef((props, ref) => {
       console.log(error);
     } finally {
       setLoading(false);
+>>>>>>> 92a865df4c29c335c8397c1a69032664960e8a45
     }
   };
 

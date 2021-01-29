@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { render } from "react-dom";
 import MainLayout from "../../../../layout/MainLayout";
 import {
   Row,
@@ -18,16 +17,20 @@ import {
 } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../../../libs/axiosApi";
-import { route } from "next/dist/next-server/server/router";
 import cookie from "js-cookie";
+import Axios from "axios";
+import { API_URL } from "../../../../config/config";
 
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
-import { FroalaEditorComponent } from "react-froala-wysiwyg";
+// import { FroalaEditorComponent } from "react-froala-wysiwyg";
+import dynamic from "next/dynamic";
+const FroalaEditorComponent = dynamic(import("react-froala-wysiwyg"), {
+  ssr: false,
+});
 
-let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
-
-export default function Newrelease() {
+const Newrelease = () => {
+  let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
   const [form] = Form.useForm();
   const { Title } = Typography;
   const { TextArea } = Input;
@@ -38,12 +41,17 @@ export default function Newrelease() {
   const [userId, setUserId] = useState(null);
   const [bussinessList, setBusinessList] = useState(null);
 
+  const [personType, setPersonType] = useState([]);
+  const [jobs, setJobs] = useState([]);
+  const [departments, setDepartments] = useState([]);
+
   let json = JSON.parse(userToken);
 
   useEffect(() => {
     if (json) {
       setUserId(json.user_i);
       getBussiness();
+      getValueSelects();
     }
   }, []);
 
@@ -84,12 +92,12 @@ export default function Newrelease() {
         options.push({ id: item.id, name: item.name });
       });
       setBusinessList(options);
-      /* notification['success']({
-                message: 'Notification Title',
-                description:
-                  'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-              });
-              route.push('/comunication/releases'); */
+      //  notification['success']({
+      //           message: 'Notification Title',
+      //           description:
+      //             'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+      //         });
+      //         route.push('/comunication/releases');
     } catch (error) {
       console.log("error", error);
     }
@@ -97,6 +105,82 @@ export default function Newrelease() {
 
   const onCancel = () => {
     route.push("/comunication/releases");
+  };
+
+  const genders = [
+    {
+      label: "Maculino",
+      value: 1,
+    },
+    {
+      label: "Femenino",
+      value: 2,
+    },
+    {
+      label: "Otro",
+      value: 3,
+    },
+  ];
+
+  const typeMessage = [
+    {
+      label: "Noticias",
+      value: "Noticia",
+    },
+    {
+      label: "Aviso",
+      value: "Aviso",
+    },
+  ];
+
+  /////GET DATA SELCTS
+  const getValueSelects = async (id) => {
+    /////PERSON TYPE
+    Axios.get(API_URL + `/person/person-type/`)
+      .then((response) => {
+        if (response.status === 200) {
+          let typesPerson = response.data.results;
+          typesPerson = typesPerson.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setPersonType(typesPerson);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    /////DEPARTMENTS
+    Axios.get(API_URL + `/business/department/`)
+      .then((response) => {
+        if (response.status === 200) {
+          let dep = response.data.results;
+          dep = dep.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setDepartments(dep);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const onChangeDepartment = (value) => {
+    ////JOBS
+    Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
+      .then((response) => {
+        if (response.status === 200) {
+          let job = response.data;
+          job = job.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setJobs(job);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   return (
@@ -112,8 +196,7 @@ export default function Newrelease() {
             <Form
               form={form}
               layout="horizontal"
-              onFinish={saveNotification}
-              labelCol={{ xs: 24, sm: 24, md: 5 }}
+              // onFinish={saveNotification}
             >
               <Row>
                 <Col span={24}>
@@ -121,21 +204,14 @@ export default function Newrelease() {
                     Datos Generales
                   </Title>
                 </Col>
+
                 <Col xs={24} sm={24} md={13} lg={13} xl={13}>
                   <Form.Item
                     name="category"
                     label="Categoria"
                     labelAlign={"left"}
                   >
-                    <Select style={{ width: 250 }}>
-                      s
-                      <Option key="avisos" value="avisos">
-                        Avisos
-                      </Option>
-                      <Option key="noticias" value="noticias">
-                        Noticias
-                      </Option>
-                    </Select>
+                    <Select options={typeMessage} />
                   </Form.Item>
                   <Form.Item label="Titulo" name="title" labelAlign={"left"}>
                     <Input className={"formItemPayment"} />
@@ -149,11 +225,13 @@ export default function Newrelease() {
                     />
                   </Form.Item>
                 </Col>
+
                 <Col span={24}>
                   <Title level={3} key="segmentacion">
                     Segmentación
                   </Title>
                 </Col>
+
                 <Col xs={24} sm={24} md={13} lg={13} xl={13}>
                   <Form.Item
                     name="send_to_all"
@@ -163,6 +241,7 @@ export default function Newrelease() {
                     <Switch />
                   </Form.Item>
                 </Col>
+
                 <Col xs={24} sm={24} md={13} lg={13} xl={13}>
                   <Row>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -171,29 +250,18 @@ export default function Newrelease() {
                         label="Empresa"
                         labelCol={{ span: 10 }}
                       >
-                        <Select>
-                          {bussinessList
-                            ? bussinessList.map((item) => {
-                                return (
-                                  <Option key={item.id} value={item.id}>
-                                    {item.name}
-                                  </Option>
-                                );
-                              })
-                            : null}
-                          {/* <Option value="rmb">RMB</Option>
-                                                    <Option value="dollar">Dollar</Option> */}
-                        </Select>
+                        <Select
+                          options={departments}
+                          onChange={onChangeDepartment}
+                          placeholder="Departamento"
+                        />
                       </Form.Item>
                       <Form.Item
                         name={"company"}
                         label="Puesto de trabajo"
                         labelCol={{ span: 10 }}
                       >
-                        <Select>
-                          <Option value="rmb">RMB</Option>
-                          <Option value="dollar">Dollar</Option>
-                        </Select>
+                        <Select options={jobs} />
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -202,25 +270,22 @@ export default function Newrelease() {
                         label="Tipo de persona"
                         labelCol={{ span: 10 }}
                       >
-                        <Select>
-                          <Option value="rmb">RMB</Option>
-                          <Option value="dollar">Dollar</Option>
-                        </Select>
+                        <Select options={personType} />
                       </Form.Item>
                       <Form.Item
                         name={"gender"}
                         label="Genero"
                         labelCol={{ span: 10 }}
                       >
-                        <Select>
-                          <Option value="rmb">RMB</Option>
-                          <Option value="dollar">Dollar</Option>
-                        </Select>
+                        <Select options={genders} />
                       </Form.Item>
                     </Col>
                   </Row>
                 </Col>
-                <Col span={24} style={{ textAlign: "right" }}>
+                <Col
+                  span={24}
+                  style={{ paddingTop: "2%", paddingBottom: "4%" }}
+                >
                   <Button
                     key="cancel"
                     onClick={() => onCancel()}
@@ -246,4 +311,6 @@ export default function Newrelease() {
       </div>
     </MainLayout>
   );
-}
+};
+
+export default Newrelease;
