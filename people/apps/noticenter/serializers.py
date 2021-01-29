@@ -23,3 +23,8 @@ class UserNotificationSerializer(serializers.ModelSerializer):
         model = UserNotification
         fields = "__all__"
 
+    def to_representation(self, instance):
+        representation = super(UserNotificationSerializer, self).to_representation(instance)
+        representation['person'] = PersonSerializer(instance=instance.person).data
+        return representation
+
