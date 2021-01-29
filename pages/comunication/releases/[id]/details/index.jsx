@@ -8,9 +8,9 @@ import axiosApi from '../../../../../libs/axiosApi';
 
 const Details = () => {
     const {Title, Text} = Typography
-    const router = useRouter()
+    const route = useRouter()
 
-    const { id } = router.query;
+    const { id } = route.query;
     const [details, setDetails] = useState({})
 
     const getDetails = async () =>{
@@ -28,7 +28,7 @@ const Details = () => {
 
     useEffect(() => {
         getDetails();
-    },[router])
+    },[route])
 
     return (
         <>
@@ -134,7 +134,7 @@ const Details = () => {
                                     </Row>
                                 </Col>
                                 <Col span={24} style={{ textAlign: 'right' }}>
-                                    <Button  style={{ padding:'0 50px', margin: '0 10px' }}>Regresar</Button>        
+                                    <Button onClick={() => route.push("/comunication/releases")}  style={{ padding:'0 50px', margin: '0 10px' }}>Regresar</Button>        
                                 </Col>
                                     
                                     {/* <Col xs={24} sm={24} md={13} lg={13} xl={13}>
