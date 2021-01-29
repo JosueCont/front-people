@@ -19,6 +19,13 @@ import {
 import { useRouter } from "next/router";
 import axiosApi from "../../../../libs/axiosApi";
 import { route } from "next/dist/next-server/server/router";
+import cookie from "js-cookie";
+
+import "froala-editor/css/froala_style.min.css";
+import "froala-editor/css/froala_editor.pkgd.min.css";
+import FroalaEditorComponent from "react-froala-wysiwyg";
+
+let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
 
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
@@ -30,18 +37,37 @@ export default function Newrelease() {
   const { TextArea } = Input;
   const route = useRouter();
 
+  const [form] = Form.useForm();
+  const { Title } = Typography;
+  const { TextArea } = Input;
+  const route = useRouter();
+
   const [message, setMessage] = useState(null);
   const [sending, setSending] = useState(false);
+  const [userId, setUserId] = useState(null);
   /* const editor = useRef(null)
     const [content, setContent] = useState('') */
 
+  let json = JSON.parse(userToken);
+  console.log(json);
+  //setUserId(json.user_id);
+
+  useEffect(() => {
+    if (json.user_id) {
+      setUserId(json.user_i);
+    }
+  }, []);
+
   const saveNotification = async (values) => {
+    console.log(message);
     values["created_by"] = "d25d4447bbd5423bbf2d5603cf553b81";
     values.message = message;
+    console.log(values);
     setSending(true);
     try {
       let response = await axiosApi.post(`/noticenter/notification/`, values);
       let data = response.data;
+      console.log("data", data);
       notification["success"]({
         message: "Notification Title",
         description:
@@ -49,7 +75,7 @@ export default function Newrelease() {
       });
       route.push("/comunication/releases");
     } catch (error) {
-      console.log(error);
+      console.log("error", error);
     } finally {
       setSending(false);
     }
