@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, BankAccount, \
-    Family, ContactEmergency, JobExperience, Phone, Vacancy, Document
+    Family, ContactEmergency, JobExperience, Phone, Vacancy, Document, Event
 
 
 @admin.register(PersonType)
@@ -91,3 +91,10 @@ class Document(admin.ModelAdmin):
     list_display = ('id', 'person', 'document_type')
     search_fields = ['person', 'document_type']
     list_filter = ('person',)
+
+
+@admin.register(Event)
+class Event(admin.ModelAdmin):
+    list_display = ('id', 'title',)
+    search_fields = ['title']
+    list_filter = ('title',)

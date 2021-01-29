@@ -4,7 +4,8 @@ from rest_framework import serializers
 from people.apps import business
 from people.apps.person import models
 from people.apps.setup.models import Treatment
-from people.apps.business.serializers import ChildNodeSerializer, JobDepartmentSerializer, DepartmentSerializer
+from people.apps.business.serializers import ChildNodeSerializer, JobDepartmentSerializer, DepartmentSerializer, \
+    NodeSerializer
 from people.apps.setup.serializers import BankSerializer, RelationshipSerializer, ExperienceTypeSerializer, \
     LaborRelationshipSerializer, ReasonSeparationSerializer, DocumentTypeSerializer
 
@@ -188,4 +189,18 @@ class DocumentSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super(DocumentSerializer, self).to_representation(instance)
         representation['document_type'] = DocumentTypeSerializer(instance.document_type).data
+        return representation
+
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Event
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super(EventSerializer, self).to_representation(instance)
+        if instance.node:
+            representation['node'] = NodeSerializer(instance.node).data
+        if instance.guests:
+            representation['guests'] = PersonSerializer(instance.guests, many=True).data
         return representation
