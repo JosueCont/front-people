@@ -36,35 +36,62 @@ export default function Newrelease() {
   const [message, setMessage] = useState(null);
   const [sending, setSending] = useState(false);
   const [userId, setUserId] = useState(null);
-  /* const editor = useRef(null)
-    const [content, setContent] = useState('') */
+  const [bussinessList, setBusinessList] = useState(null);
 
   let json = JSON.parse(userToken);
-  //setUserId(json.user_id);
 
   useEffect(() => {
-    if (json.user_id) {
+    if (json) {
       setUserId(json.user_i);
+      getBussiness();
     }
   }, []);
 
   const saveNotification = async (values) => {
     values["created_by"] = "d25d4447bbd5423bbf2d5603cf553b81";
     values.message = message;
-    setSending(true);
+    console.log(values);
+
+    let dat = {
+      title: values.title,
+      message: values.message,
+      created_by: "d25d4447bbd5423bbf2d5603cf553b81",
+    };
+    //setSending(true);
     try {
-      let response = await axiosApi.post(`/noticenter/notification/`, values);
+      let response = await axiosApi.post(`/noticenter/notification/`, dat);
       let data = response.data;
       notification["success"]({
         message: "Notification Title",
-        description:
-          "This is the content of the notification. This is the content of the notification. This is the content of the notification.",
+        description: "Información enviada correctamente.",
       });
       route.push("/comunication/releases");
+      console.log("res", response.data);
     } catch (error) {
-      console.log(error);
+      console.log("error", error);
     } finally {
       setSending(false);
+    }
+  };
+
+  const getBussiness = async () => {
+    try {
+      let response = await axiosApi.get(`/business/node/`);
+      let data = response.data.results;
+      console.log("data", data);
+      let options = [];
+      data.map((item) => {
+        options.push({ id: item.id, name: item.name });
+      });
+      setBusinessList(options);
+      /* notification['success']({
+                message: 'Notification Title',
+                description:
+                  'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+              });
+              route.push('/comunication/releases'); */
+    } catch (error) {
+      console.log("error", error);
     }
   };
 
@@ -74,7 +101,7 @@ export default function Newrelease() {
 
   return (
     <MainLayout currentKey="4.1">
-      <Breadcrumb>
+      <Breadcrumb key="Breadcrumb">
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Comunicados</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
@@ -90,7 +117,9 @@ export default function Newrelease() {
             >
               <Row>
                 <Col span={24}>
-                  <Title level={3}>Datos Generales</Title>
+                  <Title key="dats_gnrl" level={3}>
+                    Datos Generales
+                  </Title>
                 </Col>
                 <Col xs={24} sm={24} md={13} lg={13} xl={13}>
                   <Form.Item
@@ -99,8 +128,13 @@ export default function Newrelease() {
                     labelAlign={"left"}
                   >
                     <Select style={{ width: 250 }}>
-                      <Option value="rmb">RMB</Option>
-                      <Option value="dollar">Dollar</Option>
+                      s
+                      <Option key="avisos" value="avisos">
+                        Avisos
+                      </Option>
+                      <Option key="noticias" value="noticias">
+                        Noticias
+                      </Option>
                     </Select>
                   </Form.Item>
                   <Form.Item label="Titulo" name="title" labelAlign={"left"}>
@@ -108,6 +142,7 @@ export default function Newrelease() {
                   </Form.Item>
                   <Form.Item name="message" label="Mensaje" labelAlign="left">
                     <FroalaEditorComponent
+                      key="message"
                       tag="textarea"
                       model={message}
                       onModelChange={setMessage}
@@ -115,7 +150,9 @@ export default function Newrelease() {
                   </Form.Item>
                 </Col>
                 <Col span={24}>
-                  <Title level={3}>Segmentación</Title>
+                  <Title level={3} key="segmentacion">
+                    Segmentación
+                  </Title>
                 </Col>
                 <Col xs={24} sm={24} md={13} lg={13} xl={13}>
                   <Form.Item
@@ -135,8 +172,17 @@ export default function Newrelease() {
                         labelCol={{ span: 10 }}
                       >
                         <Select>
-                          <Option value="rmb">RMB</Option>
-                          <Option value="dollar">Dollar</Option>
+                          {bussinessList
+                            ? bussinessList.map((item) => {
+                                return (
+                                  <Option key={item.id} value={item.id}>
+                                    {item.name}
+                                  </Option>
+                                );
+                              })
+                            : null}
+                          {/* <Option value="rmb">RMB</Option>
+                                                    <Option value="dollar">Dollar</Option> */}
                         </Select>
                       </Form.Item>
                       <Form.Item
@@ -176,6 +222,7 @@ export default function Newrelease() {
                 </Col>
                 <Col span={24} style={{ textAlign: "right" }}>
                   <Button
+                    key="cancel"
                     onClick={() => onCancel()}
                     disabled={sending}
                     style={{ padding: "0 50px", margin: "0 10px" }}
@@ -183,6 +230,7 @@ export default function Newrelease() {
                     Cancelar
                   </Button>
                   <Button
+                    key="save"
                     htmlType="submit"
                     loading={sending}
                     type="primary"
