@@ -61,6 +61,7 @@ class PersonViewSet(viewsets.ModelViewSet):
                 if 'department' in serializer.validated_data:
                     department = serializer.validated_data["department"]
                     del serializer.validated_data['department']
+                job_dep = None
                 if job and department:
                     job_dep = JobDepartment.objects.filter(job=job, department=department).first()
                 instance = Person(**serializer.validated_data)
