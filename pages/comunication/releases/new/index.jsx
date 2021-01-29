@@ -49,7 +49,6 @@ export default function Newrelease() {
     const [content, setContent] = useState('') */
 
   let json = JSON.parse(userToken);
-  console.log(json);
   //setUserId(json.user_id);
 
   useEffect(() => {
@@ -59,15 +58,12 @@ export default function Newrelease() {
   }, []);
 
   const saveNotification = async (values) => {
-    console.log(message);
     values["created_by"] = "d25d4447bbd5423bbf2d5603cf553b81";
     values.message = message;
-    console.log(values);
     setSending(true);
     try {
       let response = await axiosApi.post(`/noticenter/notification/`, values);
       let data = response.data;
-      console.log("data", data);
       notification["success"]({
         message: "Notification Title",
         description:
@@ -75,7 +71,7 @@ export default function Newrelease() {
       });
       route.push("/comunication/releases");
     } catch (error) {
-      console.log("error", error);
+      console.log(error);
     } finally {
       setSending(false);
     }
