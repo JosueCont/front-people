@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import Notification
-from .serializers import NotificationSerializer
+from .models import Notification, UserNotification
+from .serializers import NotificationSerializer, UserNotificationSerializer
 from people.apps.person.models import Person
 
 # Create your views here.
@@ -21,3 +21,9 @@ class NotificationViewSet(viewsets.ModelViewSet):
         if created_by:
             instance.created_by = created_by
             instance.save()
+
+
+class UserNotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = UserNotificationSerializer
+    queryset = UserNotification.objects.all()
+    filterset_fields = ('is_read', 'date_read', 'notification', 'person')

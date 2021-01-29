@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Notification
+from .models import Notification, UserNotification
 from people.apps.business.serializers import NodeSerializer
 from people.apps.person.serializers import PersonTypeSerializer, JobSerializer, PersonSerializer
 
@@ -18,4 +18,8 @@ class NotificationSerializer(serializers.ModelSerializer):
         return representation
 
 
+class UserNotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserNotification
+        fields = "__all__"
 

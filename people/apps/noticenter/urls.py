@@ -5,6 +5,7 @@ app_name = 'noticenter'
 
 router = routers.SimpleRouter()
 router.register(r'notification', views.NotificationViewSet)
+router.register(r'user-notification', views.UserNotificationViewSet)
 
 urlpatterns = [
     #path('import-export-person', views.ImportExportPersonViewSet.as_view()),
