@@ -8,6 +8,7 @@ import Moment from 'moment';
 import ModalCreateNotification from '../../../components/modals/ModalCreateNotification'
 import { useRouter } from 'next/router';
 import cookie from "js-cookie";
+import { EyeOutlined } from '@ant-design/icons';
 
 
 export default function Releases() {
@@ -32,6 +33,11 @@ export default function Releases() {
             console.log("error")
             /* setLoading(false); */
         }
+    }
+
+    const GotoDetails = (details) =>{
+        console.log('details', details);
+        route.push('./releases/'+details.id+'/details');
     }
 
     useEffect(()=>{
@@ -95,7 +101,7 @@ export default function Releases() {
                             )} />
                             <Column title="Acciones" key="action"
                             render={(text, record) => (
-                                "action"
+                                <EyeOutlined onClick={() => GotoDetails(record)}  />
                             )}
                             />
                         </Table>

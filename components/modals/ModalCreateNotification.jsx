@@ -51,7 +51,6 @@ const ModalCreateNotification = forwardRef((props,ref) => {
                 description:
                   'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
               });
-            props.reloadData();
         } catch (error) {
             console.log(error);
         }finally{

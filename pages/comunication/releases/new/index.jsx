@@ -25,6 +25,7 @@ export default function Newrelease() {
     const [message, setMessage] = useState(null)
     const [sending, setSending] = useState(false);
     const [userId, setUserId] = useState(null);
+    const [bussinessList, setBusinessList] = useState(null);
     /* const editor = useRef(null)
     const [content, setContent] = useState('') */
 
@@ -35,6 +36,7 @@ export default function Newrelease() {
     useEffect(() =>{
         if(json.user_id){
             setUserId(json.user_i)
+            getBussiness();
         }
     }, [])
 
@@ -58,6 +60,30 @@ export default function Newrelease() {
             console.log('error',error);
         }finally{
             setSending(false);
+        }
+    }
+
+    const getBussiness = async () =>{
+        try {
+            let response = await axiosApi.get(`/business/node/`);
+            let data = response.data.results
+            console.log('data',data);
+            let options = []
+            data.map((item) => {
+                options.push(
+                    {id: item.id,
+                    name: item.name}
+                )
+            });
+            setBusinessList(options)
+            /* notification['success']({
+                message: 'Notification Title',
+                description:
+                  'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+              });
+              route.push('/comunication/releases'); */
+        } catch (error) {
+            console.log('error',error);
         }
     }
     
@@ -89,9 +115,9 @@ export default function Newrelease() {
                                         label="Categoria"
                                         labelAlign={'left'}
                                     >
-                                        <Select style={{ width: 250 }}>
-                                            <Option value="rmb">RMB</Option>
-                                            <Option value="dollar">Dollar</Option>
+                                        <Select style={{ width: 250 }}>s    
+                                            <Option value="avisos">Avisos</Option>
+                                            <Option value="noticias">Noticias</Option>
                                         </Select>
                                     </Form.Item> 
                                     <Form.Item 
@@ -119,9 +145,14 @@ export default function Newrelease() {
                                     <Row>
                                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                                             <Form.Item name={'company'}  label="Empresa" labelCol={{ span:10}}>
-                                                <Select >
-                                                    <Option value="rmb">RMB</Option>
-                                                    <Option value="dollar">Dollar</Option>
+                                                <Select>
+                                                    {
+                                                        bussinessList.map((item) =>{
+                                                            return (<Option value={item.id}>{item.name}</Option>)
+                                                        })
+                                                    }
+                                                    {/* <Option value="rmb">RMB</Option>
+                                                    <Option value="dollar">Dollar</Option> */}
                                                 </Select>
                                             </Form.Item>
                                             <Form.Item name={'company'}  label="Puesto de trabajo" labelCol={{ span:10}}>
