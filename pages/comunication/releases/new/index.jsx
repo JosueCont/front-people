@@ -17,12 +17,16 @@ export default function Newrelease() {
     const [form] = Form.useForm();
     const { Title } = Typography;
     const { TextArea } = Input;
+    const { Option } = Select;
     const route = useRouter();
 
     const [message, setMessage] = useState(null)
     const [sending, setSending] = useState(false);
     const [userId, setUserId] = useState(null);
-    const [bussinessList, setBusinessList] = useState(null);
+    const [bussinessList, setBusinessList] = useState([]);
+    const [personTypeList, setPersonTypeList] = useState([])
+    const [listJobs, setListJobs] = useState([]);
+
     
     let json = JSON.parse(userToken);
     
@@ -30,9 +34,12 @@ export default function Newrelease() {
     useEffect(() =>{
         if(json){
             setUserId(json.user_i)
-            getBussiness();
+            console.log(json);
         }
-    }, [])
+        getBussiness();
+        getPersontype();
+        getJobs();
+    }, [route])
 
     const saveNotification = async (values) =>{
         values['created_by'] = "d25d4447bbd5423bbf2d5603cf553b81";
@@ -67,25 +74,34 @@ export default function Newrelease() {
             let response = await axiosApi.get(`/business/node/`);
             let data = response.data.results
             console.log('data',data);
-            let options = []
-            data.map((item) => {
-                options.push(
-                    {id: item.id,
-                    name: item.name}
-                )
-            });
-            setBusinessList(options)
-            /* notification['success']({
-                message: 'Notification Title',
-                description:
-                  'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-              });
-              route.push('/comunication/releases'); */
+            
+            setBusinessList(data)
+        } catch (error) {
+            console.log('error',error);
+        }
+    }
+
+    const getPersontype = async () =>{
+        try {
+            let response = await axiosApi.get(`/person/person-type/`);
+            let data = response.data.results
+            console.log('data_personas',data);
+            setPersonTypeList(data)
         } catch (error) {
             console.log('error',error);
         }
     }
     
+    const getJobs = async () =>{
+        try {
+            let response = await axiosApi.get(`/person/job/`);
+            let data = response.data.results
+            console.log('jobs',data);
+            setListJobs(data)
+        } catch (error) {
+            console.log('error',error);
+        }
+    }
 
     const onCancel = () => {
         route.push("/comunication/releases");
@@ -115,8 +131,8 @@ export default function Newrelease() {
                                         labelAlign={'left'}
                                     >
                                         <Select style={{ width: 250 }}>s    
-                                            <Option key="avisos" value="avisos">Avisos</Option>
-                                            <Option key="noticias" value="noticias">Noticias</Option>
+                                            <Option key="1" value="1">Aviso</Option>
+                                            <Option key="2" value="2">Noticia</Option>
                                         </Select>
                                     </Form.Item> 
                                     <Form.Item 
@@ -136,14 +152,14 @@ export default function Newrelease() {
                                     </Title>
                                 </Col>
                                 <Col xs={24} sm={24} md={13} lg={13} xl={13}>
-                                    <Form.Item name="send_to_all" label="Enviar a todos" labelAlign="left">
-                                        <Switch  />
+                                    <Form.Item  name="send_to_all" label="Enviar a todos" labelAlign="left">
+                                        <Switch value={false}  />
                                     </Form.Item>
                                 </Col>
                                 <Col xs={24} sm={24} md={13} lg={13} xl={13}>
                                     <Row>
                                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                                            <Form.Item name={'company'}  label="Empresa" labelCol={{ span:10}}>
+                                            <Form.Item name={'target_company'}  label="Empresa" labelCol={{ span:10}}>
                                                 <Select>
                                                     { bussinessList ? 
                                                         bussinessList.map((item) =>{
@@ -154,24 +170,32 @@ export default function Newrelease() {
                                                     <Option value="dollar">Dollar</Option> */}
                                                 </Select>
                                             </Form.Item>
-                                            <Form.Item name={'company'}  label="Puesto de trabajo" labelCol={{ span:10}}>
+                                            <Form.Item name={'target_job'}  label="Puesto de trabajo" labelCol={{ span:10}}>
                                                 <Select >
-                                                    <Option value="rmb">RMB</Option>
-                                                    <Option value="dollar">Dollar</Option>
+                                                    { listJobs ? 
+                                                    listJobs.map( (item) => {
+                                                        return (<Option value={item.id} key={item.id}>{item.name}</Option>)
+                                                        }) : null
+                                                
+                                                    }
                                                 </Select>
                                             </Form.Item>
                                         </Col>
                                         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                                            <Form.Item name={'person_type'}  label="Tipo de persona" labelCol={{ span:10}}>
+                                            <Form.Item name={'target_person_type'}  label="Tipo de persona" labelCol={{ span:10}}>
                                                 <Select >
-                                                    <Option value="rmb">RMB</Option>
-                                                    <Option value="dollar">Dollar</Option>
+                                                    {
+                                                        personTypeList.map( (item) => {
+                                                            return (<Option value={item.id} key={'person_'+item.id}>{item.name}</Option>)
+                                                        })
+                                                    }
                                                 </Select>
                                             </Form.Item>
-                                            <Form.Item name={'gender'}  label="Genero" labelCol={{ span:10}}>
+                                            <Form.Item name={'target_gender'}  label="Genero" labelCol={{ span:10}}>
                                                 <Select >
-                                                    <Option value="rmb">RMB</Option>
-                                                    <Option value="dollar">Dollar</Option>
+                                                    <Option value="1" key="gender_1">Masculino</Option>
+                                                    <Option value="2" key="gender_2">Femenino</Option>
+                                                    <Option value="3" key="gender_3">Otro</Option>
                                                 </Select>
                                             </Form.Item>
                                         </Col>

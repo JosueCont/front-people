@@ -10,9 +10,23 @@ const { Header } = Layout;
 const { SubMenu } = Menu;
 
 const userCardDisplay = () => (
-  <>
-    <CardUser />
-  </>
+    <Menu>
+    <Menu.Item>
+      <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
+        1st menu item
+      </a>
+    </Menu.Item>
+    <Menu.Item>
+      <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+        2nd menu item
+      </a>
+    </Menu.Item>
+    <Menu.Item>
+      <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
+        3rd menu item
+      </a>
+    </Menu.Item>
+  </Menu>
 );
 
 const appsCardDisplay = () => (
@@ -32,13 +46,6 @@ export default function headerCustom(props) {
         mode="horizontal"
         defaultSelectedKeys={[props.currentKey]}
       >
-        <div style={{ float: "left" }}>
-          <Dropdown overlay={appsCardDisplay}>
-            <div>
-              <AppstoreOutlined style={{ fontSize: "26px", color: "#08c" }} />
-            </div>
-          </Dropdown>
-        </div>
         <Menu.Item key="1" onClick={() => router.push({ pathname: "/home" })}>
           Personas
         </Menu.Item>
