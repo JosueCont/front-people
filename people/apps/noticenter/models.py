@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from people.apps.person.models import Person, PersonType, Job
 from people.apps.business.models import Node
+from ckeditor.fields import RichTextField
 
 # Create your models here.
 
@@ -11,7 +12,7 @@ class Notification(models.Model):
     CATEGORY_CHOICES = (1, _("Aviso")), (2, _("Noticia"))
 
     title = models.CharField(max_length=500, verbose_name=_('Título'))
-    message = models.TextField(verbose_name=_('Mensaje'))
+    message = RichTextField(verbose_name=_('Mensaje'))
     category = models.IntegerField(choices=CATEGORY_CHOICES, verbose_name=_("Categoría"), default=1)
     # Falta la segmentación
     send_to_all = models.BooleanField(verbose_name=_("Enviar a todos"), default=False)
@@ -27,8 +28,8 @@ class Notification(models.Model):
         return '{0} - {1}'.format(self.title, self.timestamp)
 
     class Meta:
-        verbose_name = _("Notificación de usuario")
-        verbose_name_plural = _("Notificaciones de usuarios")
+        verbose_name = _("Notificación")
+        verbose_name_plural = _("Notificaciones")
 
 
 class UserNotification(models.Model):

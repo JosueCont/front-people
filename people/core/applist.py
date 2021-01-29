@@ -36,6 +36,7 @@ __THIRD_PARTY_APPS = (
     'colorfield',
     'drf_yasg',
     'corsheaders',
+    'ckeditor',
 )
 
 SHARED_APPS = (

@@ -5,7 +5,7 @@ from .models import Notification
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = "__all__"
+        exclude = ["created_by"]
 
 
 
