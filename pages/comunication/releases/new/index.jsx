@@ -23,20 +23,11 @@ import cookie from "js-cookie";
 
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
-import FroalaEditorComponent from "react-froala-wysiwyg";
+import { FroalaEditorComponent } from "react-froala-wysiwyg";
 
 let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
 
-import "froala-editor/css/froala_style.min.css";
-import "froala-editor/css/froala_editor.pkgd.min.css";
-import FroalaEditorComponent from "react-froala-wysiwyg";
-
 export default function Newrelease() {
-  const [form] = Form.useForm();
-  const { Title } = Typography;
-  const { TextArea } = Input;
-  const route = useRouter();
-
   const [form] = Form.useForm();
   const { Title } = Typography;
   const { TextArea } = Input;
