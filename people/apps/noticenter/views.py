@@ -26,4 +26,4 @@ class NotificationViewSet(viewsets.ModelViewSet):
 class UserNotificationViewSet(viewsets.ModelViewSet):
     serializer_class = UserNotificationSerializer
     queryset = UserNotification.objects.all()
-    filterset_fields = ('is_read', 'date_read', 'notification', 'person')
+    filterset_fields = ('id', 'is_read', 'date_read', 'notification_id', 'person_id')
