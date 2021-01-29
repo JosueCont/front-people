@@ -14,7 +14,7 @@ const MainLayout = ({ ...props }) => {
   return (
     /* <IntlProvider locale={state.lang} messages={langMessages[state.lang]}> */
     <Layout className="layout">
-      
+      <HeaderCustom key="custom_header" currentKey={props.currentKey} />
       <Content key="content"
         className="site-layout"
         style={{ padding: "30px 50px" }}
