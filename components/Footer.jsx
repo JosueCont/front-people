@@ -17,6 +17,7 @@ export default function FooterCustom() {
     <>
       <Footer
         style={{
+          textAlign: "center",
           position: "fixed",
           zIndex: 1,
           bottom: 0,
