@@ -1,4 +1,5 @@
-import { Form, Input, Button, Checkbox, Spin, Alert } from "antd";
+import { Form, Input, Button, Checkbox, Spin, Alert, Typography } from "antd";
+const { Text } = Typography;
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { LOGIN_URL } from "../config/config";
@@ -64,31 +65,36 @@ const LoginForm = () => {
       <Form
         name="normal_login"
         className="login-form"
+        layout="vertical"
         initialValues={{ remember: true }}
         onFinish={onFinish}
       >
+        <Text className="font-color-khor">Correo</Text>
         <Form.Item
           name="email"
-          label="Correo"
           rules={[{ required: true, message: "Please input your Email!" }]}
         >
-          <Input placeholder="Username" />
+          <Input style={{ marginTop: "5px" }} placeholder="Correo" />
         </Form.Item>
+        <Text className="font-color-khor">Contraseña</Text>
         <Form.Item
           name="password"
-          label="Contraseña"
           rules={[{ required: true, message: "Please input your Password!" }]}
         >
-          <Input type="password" placeholder="Password" />
+          <Input
+            style={{ marginTop: "5px" }}
+            type="password"
+            placeholder="Contraseña"
+          />
         </Form.Item>
         <Form.Item>
           <Form.Item
             name="remember"
             valuePropName="checked"
             className="ckeck-khor"
-            noStyle
+            style={{ float: "right", marginBottom: "5px" }}
           >
-            <Checkbox>Remember me</Checkbox>
+            <Checkbox className="font-color-khor">Remember me</Checkbox>
           </Form.Item>
         </Form.Item>
         {errorLogin && (
