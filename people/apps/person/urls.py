@@ -19,6 +19,7 @@ router.register(r'training', views.TrainingViewSet)
 router.register(r'bank-account', views.BankAccountViewSet)
 router.register(r'phone', views.PhoneViewSet)
 router.register(r'document', views.DocumentViewSet)
+router.register(r'event', views.EventViewSet)
 
 urlpatterns = [
     path('import-export-person', views.ImportExportPersonViewSet.as_view()),

@@ -15,7 +15,7 @@ from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.functions import decode_file_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
-    Phone, Family, ContactEmergency, JobExperience, Document
+    Phone, Family, ContactEmergency, JobExperience, Document, Event
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer, DocumentSerializer
 from people.apps.setup.models import DocumentType
 
@@ -536,6 +536,81 @@ class DocumentViewSet(viewsets.ModelViewSet):
                     document.document = serializer.validated_data['document']
                     document.save()
                 return Response(data={"message": "success"}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EventViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.EventSerializer
+    queryset = Event.objects.all()
+    filterset_fields = ('id', 'title')
+
+    def create(self, request):
+        #data = request.data
+        serializer = serializers.EventSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                guests = serializer.validated_data['guests']
+                node = serializer.validated_data['node']
+                if node or guests:
+                    event = Event()
+                    event.title = serializer.validated_data['title']
+                    event.date = serializer.validated_data['date']
+                    event.start_time = serializer.validated_data['start_time']
+                    event.end_time = serializer.validated_data['end_time']
+                    if guests:
+                        for guest in guests:
+                            person = Person.objects.filter(id=guest).first()
+                            if person:
+                                event.guests.add(person)
+                    else:
+                        node_org = Node.objects.filter(id=node.id).first()
+                        event.node = node_org
+                    event.save()
+                    return Response(data={"message": "success"}, status=status.HTTP_200_OK)
+                else:
+                    return Response(data={"message": "it is require to select a node or at least one guest"
+                                                     }, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = serializers.EventSerializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            try:
+                event = Event.objects.filter(id=instance.id).first()
+                if event:
+                    guests = serializer.validated_data['guests']
+                    node = serializer.validated_data['node']
+                    if node or guests:
+                        event.title = serializer.validated_data['title']
+                        event.date = serializer.validated_data['date']
+                        event.start_time = serializer.validated_data['start_time']
+                        event.end_time = serializer.validated_data['end_time']
+                        if len(guests) > 0:
+                            for guest in guests:
+                                person = Person.objects.filter(id=guest.id).first()
+                                if person:
+                                    event.guests.add(person)
+                            event.node = None
+                        else:
+                            node_org = Node.objects.filter(id=node.id).first()
+                            event.node = node_org
+                            event.guests.set([])
+                        event.save()
+                        return Response(data={"message": "success"}, status=status.HTTP_200_OK)
+                    else:
+                        return Response(data={"message": "it is require to select a node or at least one guest"
+                                              }, status=status.HTTP_200_OK)
+                else:
+                    return Response(data={"message": "Event not found"
+                                          }, status=status.HTTP_404_NOT_FOUND)
             except Exception as e:
                 return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
         else:

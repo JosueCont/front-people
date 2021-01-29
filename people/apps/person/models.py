@@ -53,22 +53,23 @@ class Person(models.Model):
         extension = os.path.splitext(filename)[1][1:]
         file_name = os.path.splitext(filename)[0]
         url = f"{MAIN_APP_PATH}images/photo-profile/%s%s%s%s%s%s/%s.%s" % (now.day, now.month, now.year, now.hour,
-                                                                 now.minute, now.second,
-                                                                 slugify(str(file_name)), extension)
+                                                                           now.minute, now.second,
+                                                                           slugify(str(file_name)), extension)
         return url
 
     CIVIL_STATUS = (1, _("Soltero")), (2, _("Casado")), (3, _("Divorsiado")), (4, _("Concubinato"))
 
-    #Informacion general y requerida pra crear un apersona
+    # Informacion general y requerida pra crear un apersona
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
-    khonnect_id = models.CharField(max_length=40, verbose_name=_("Khonnect id"),  help_text=_("Informacion que proviene del microservicio khonnect"))
+    khonnect_id = models.CharField(max_length=40, verbose_name=_("Khonnect id"),
+                                   help_text=_("Informacion que proviene del microservicio khonnect"))
     first_name = models.CharField(max_length=150, verbose_name=_("Nombre"))
     flast_name = models.CharField(max_length=150, verbose_name=_("Apellido paterno"))
     mlast_name = models.CharField(max_length=150, verbose_name=_("Apellido materno"), null=True, blank=True)
     gender = models.IntegerField(default=3, choices=GENDER_CHOISES, verbose_name=_("Genero"))
     email = models.EmailField(verbose_name=_("Email"), null=True, blank=True)
 
-    #Campos opcionales
+    # Campos opcionales
     birth_date = models.DateField(verbose_name=_("Fecha de nacimiento"), null=True, blank=True)
     curp = models.CharField(max_length=18, verbose_name=_("CURP"), null=True, blank=True)
     rfc = models.CharField(max_length=13, verbose_name=_("RFC"), null=True, blank=True)
@@ -78,8 +79,10 @@ class Person(models.Model):
     is_active = models.BooleanField(default=True, verbose_name=_("¿Activo?"))
     treatment = models.ForeignKey("setup.Treatment", verbose_name=_("Tratamiento"), null=True, blank=True,
                                   on_delete=models.CASCADE)  # Cuicab
-    person_type = models.ForeignKey(PersonType, on_delete=models.CASCADE, verbose_name=_("Tipo de persona"), null=True, blank=True)
-    job_department = models.ForeignKey('business.JobDepartment', on_delete=models.CASCADE, verbose_name=_("Puesto de trabajo Departamento"), null=True, blank=True)
+    person_type = models.ForeignKey(PersonType, on_delete=models.CASCADE, verbose_name=_("Tipo de persona"), null=True,
+                                    blank=True)
+    job_department = models.ForeignKey('business.JobDepartment', on_delete=models.CASCADE,
+                                       verbose_name=_("Puesto de trabajo Departamento"), null=True, blank=True)
     photo = ThumbnailerImageField(upload_to=upload_photo, null=True, blank=True, verbose_name=_("Fotografia"))
     civil_status = models.IntegerField(choices=CIVIL_STATUS, verbose_name=_("Estado Civil"), null=True, blank=True)
     date_of_admission = models.DateField(verbose_name=_("Fecha de ingreso"), null=True, blank=True)
@@ -99,18 +102,20 @@ class GeneralPerson(models.Model):
         extension = os.path.splitext(filename)[1][1:]
         file_name = os.path.splitext(filename)[0]
         url = f"{MAIN_APP_PATH}images/photo-profile/%s%s%s%s%s%s/%s.%s" % (now.day, now.month, now.year, now.hour,
-                                                                 now.minute, now.second,
-                                                                 slugify(str(file_name)), extension)
+                                                                           now.minute, now.second,
+                                                                           slugify(str(file_name)), extension)
         return url
 
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
-    place_birth = models.CharField(max_length=150,verbose_name=_("Lugar de nacimiento"), null=True, blank=True)
+    place_birth = models.CharField(max_length=150, verbose_name=_("Lugar de nacimiento"), null=True, blank=True)
     nationality = models.CharField(max_length=150, verbose_name=_("Nacionalidad"), null=True, blank=True)
     other_nationality = models.CharField(max_length=150, verbose_name=_("Otra nacionaldiad"), null=True, blank=True)
-    availability_travel = models.BooleanField(default=False, verbose_name=_("Disponibilidad para viajar"), null=True, blank=True)
+    availability_travel = models.BooleanField(default=False, verbose_name=_("Disponibilidad para viajar"), null=True,
+                                              blank=True)
     availability_change_residence = models.BooleanField(default=False,
-                                                        verbose_name=_("Disponibilidad para cambio de residencia"), null=True, blank=True)
+                                                        verbose_name=_("Disponibilidad para cambio de residencia"),
+                                                        null=True, blank=True)
     allergies = models.CharField(max_length=500, verbose_name=_("Alergias"), null=True, blank=True)
     blood_type = models.CharField(max_length=10, verbose_name=_("Tipo de sangre"), null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
@@ -149,7 +154,6 @@ class Family(models.Model):
 
 
 class Address(models.Model):
-
     STREET_TYPE = (1, _("Avenida")), (2, _("Boulevaard")), (3, _("Calle"))
 
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
@@ -173,7 +177,6 @@ class Address(models.Model):
 
 
 class Phone(models.Model):
-
     PHONE_TYPE = (1, _("Alterno")), (2, _("Principal")), (3, _("Recados"))
     LINE_TYPE = (1, _("Celular")), (2, _("Fijo"))
 
@@ -215,8 +218,10 @@ class JobExperience(models.Model):
     id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
     experience_type = models.ForeignKey(ExperienceType, on_delete=models.CASCADE, verbose_name=_("Tipo de experiencia"))
-    labor_relationship = models.ForeignKey(LaborRelationship, on_delete=models.CASCADE, verbose_name=_("Relacion laboral"))
-    reason_separation = models.ForeignKey(ReasonSeparation, on_delete=models.CASCADE, verbose_name=_("Motivo de separacion"))
+    labor_relationship = models.ForeignKey(LaborRelationship, on_delete=models.CASCADE,
+                                           verbose_name=_("Relacion laboral"))
+    reason_separation = models.ForeignKey(ReasonSeparation, on_delete=models.CASCADE,
+                                          verbose_name=_("Motivo de separacion"))
     company = models.CharField(max_length=150, verbose_name=_("Empresa"))
     since = models.DateField(verbose_name=_("Fecha de inicio"))
     until = models.DateField(verbose_name=_("Fecha de termino"))
@@ -226,7 +231,7 @@ class JobExperience(models.Model):
     last_salary = models.CharField(max_length=150, verbose_name=_("Salario final"))
     immediate_boos = models.CharField(max_length=150, verbose_name=_("Jefe inmediato"))
     address_company = models.CharField(max_length=300, verbose_name=_("Direccion de la empresa"))
-    phone_company = models.CharField(max_length=40,  verbose_name=_("Telefono de la empresa"))
+    phone_company = models.CharField(max_length=40, verbose_name=_("Telefono de la empresa"))
     notes = models.CharField(max_length=300, verbose_name=_("Notas"))
     cv = models.CharField(max_length=300, verbose_name=_("Curriculum"))
 
@@ -244,7 +249,8 @@ class Training(models.Model):
     school = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Escuela"))
     since = models.DateField(auto_now_add=False, verbose_name=_("Fecha de inicio"))
     until = models.DateField(auto_now_add=False, verbose_name=_("Fecha de termino"))
-    accreditation_document = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Documeto de acreditacion"))
+    accreditation_document = models.CharField(max_length=50, null=True, blank=True,
+                                              verbose_name=_("Documeto de acreditacion"))
     currently_studing = models.BooleanField(default=False, null=True, blank=True, verbose_name=_("Estudia actualmente"))
     completed_period = models.IntegerField(null=True, blank=True, verbose_name=_("Periodo completado"))
 
@@ -297,9 +303,10 @@ class Document(models.Model):
         now = timezone.now()
         extension = os.path.splitext(filename)[1][1:]
         file_name = os.path.splitext(filename)[0]
-        url = f"{MAIN_APP_PATH}documents/personal-documents/%s%s%s%s%s%s/%s.%s" % (now.day, now.month, now.year, now.hour,
-                                                                           now.minute, now.second,
-                                                                           slugify(str(file_name)), extension)
+        url = f"{MAIN_APP_PATH}documents/personal-documents/%s%s%s%s%s%s/%s.%s" % (
+        now.day, now.month, now.year, now.hour,
+        now.minute, now.second,
+        slugify(str(file_name)), extension)
         return url
 
     id = models.CharField(max_length=150, primary_key=True, default=get_clean_uuid, editable=False)
@@ -314,3 +321,21 @@ class Document(models.Model):
     class Meta:
         verbose_name = _("Documento")
         verbose_name_plural = _("Documentos")
+
+
+class Event(models.Model):
+    title = models.CharField(max_length=100, verbose_name=_("Titulo"))
+    date = models.DateField(verbose_name=_("Fecha"))
+    start_time = models.TimeField(verbose_name=_("Hora de inicio"))
+    end_time = models.TimeField(verbose_name=_("Hora de finalización"))
+    node = models.ForeignKey("business.Node", null=True, blank=True, on_delete=models.PROTECT,
+                             verbose_name=_("Nodo organizacional"))
+    guests = models.ManyToManyField(Person, null=True, blank=True, verbose_name=_("Invitados"))
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _("Evento")
+        verbose_name_plural = _("Eventos")
