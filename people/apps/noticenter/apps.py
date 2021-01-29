@@ -2,4 +2,7 @@ from django.apps import AppConfig
 
 
 class NoticenterConfig(AppConfig):
-    name = 'noticenter'
+    name = 'people.apps.noticenter'
+
+    def ready(self):
+        import people.apps.noticenter.signals

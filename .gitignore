@@ -172,5 +172,6 @@ celerybeat-schedule
 
 people/static/core/css
 people/static/core/js
+/static/
 #kuiz/static/
 

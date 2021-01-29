@@ -49,3 +49,24 @@ class UserNotification(models.Model):
     class Meta:
         verbose_name = _("Notificación de usuario")
         verbose_name_plural = _("Notificaciones de usuarios")
+
+
+class UserDevice(models.Model):
+    """
+     Dispositivos de usuarios logeados en la app
+    """
+    MOBILE_OS_CHOICES = (
+        (1, 'Android'),
+        (2, 'iOS')
+    )
+    person = models.ForeignKey(Person, verbose_name=_('Person'), on_delete=models.CASCADE)
+    device_id = models.CharField(max_length=500, verbose_name=_("ID del dispositivo"), help_text=_("No puede ser repetido"))
+    mobile_os = models.IntegerField(choices=MOBILE_OS_CHOICES, verbose_name=_("Sistema operativo"))
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
+
+    def __str__(self):
+        return "{0}-{1}".format(self.device_id, self.person.first_name)
+
+    class Meta:
+        verbose_name = _("Dispositivo")
+        verbose_name_plural = _("Dispositivos")
