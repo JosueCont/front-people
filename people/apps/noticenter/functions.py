@@ -58,6 +58,6 @@ class Pusher:
         :param extra:
         :return:
         """
-        to_devices = UserDevice.objects.filter(person__id=users_id)
+        to_devices = UserDevice.objects.filter(person__id__in=users_id)
         self.send_push_notification(to_devices, extra)
 

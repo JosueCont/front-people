@@ -21,7 +21,7 @@ def send_notification(sender, **kwargs):
         else:
             kwargs_filter = {}
             if notification.target_company:
-                kwargs_filter['job_department__job__unit__in'] = notification.target_company.id
+                kwargs_filter['job_department__job__unit__in'] = [notification.target_company.id]
             if notification.target_person_type:
                 kwargs_filter['person_type__id'] = notification.target_person_type.id
             if notification.target_job:
