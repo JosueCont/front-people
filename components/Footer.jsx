@@ -15,9 +15,13 @@ const HeartIcon = (props) => <Icon component={HeartSvg} {...props} />;
 export default function FooterCustom() {
   return (
     <>
-      <Footer key="footer"
+      <Footer
         style={{
-          textAlign: "center"
+          textAlign: "center",
+          position: "fixed",
+          zIndex: 1,
+          bottom: 0,
+          width: "100%",
         }}
       >
         Created by{" Human"}
