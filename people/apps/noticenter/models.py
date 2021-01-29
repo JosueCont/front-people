@@ -22,7 +22,7 @@ class Notification(models.Model):
     target_job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Puesto"), null=True, blank=True)
     target_gender = models.IntegerField(choices=GENDER_CHOICES, verbose_name=_("Genero"), null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('Fecha de creación'))
-    created_by = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_('Creado por'))
+    created_by = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_('Creado por'), null=True, blank=True)
 
     def __str__(self):
         return '{0} - {1}'.format(self.title, self.timestamp)
