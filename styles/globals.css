@@ -105,4 +105,18 @@ a {
 .site-layout .site-layout-background {
   background: #fff;
 }
+/* div#__next{
+    height: 100% !important;
+}
+div#__next > section.layout{
+    height: 100% !important;
+} */
 
+
+.back-white{
+    background-color: #fff;
+}
+
+.ant-layout-content > .container {
+    margin-top: 30px;
+}

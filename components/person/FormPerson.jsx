@@ -8,6 +8,8 @@ import {
   Space,
   Select,
   message,
+  Row,
+  Col,
 } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
@@ -19,6 +21,7 @@ const FormPerson = (props) => {
   const [personType, setPersonType] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [date, setDate] = useState("");
+  const [departments, setDepartments] = useState("");
 
   useEffect(() => {
     const company_id = "5f417a53c37f6275fb614104";
@@ -40,6 +43,7 @@ const FormPerson = (props) => {
       "Content-Type": "application/json",
     };
 
+    /////PERMSS GROUPS
     Axios.get("https://khonnect.hiumanlab.com/group/list/", {
       headers: headers,
     })
@@ -56,6 +60,7 @@ const FormPerson = (props) => {
         console.log(e);
       });
 
+    /////PERSON TYPE
     Axios.get(API_URL + `/person/person-type/`)
       .then((response) => {
         if (response.status === 200) {
@@ -70,14 +75,15 @@ const FormPerson = (props) => {
         console.log(e);
       });
 
-    Axios.get(API_URL + `/person/job`)
+    /////DEPARTMENTS
+    Axios.get(API_URL + `/business/department/`)
       .then((response) => {
         if (response.status === 200) {
-          let job = response.data.results;
-          job = job.map((a) => {
+          let dep = response.data.results;
+          dep = dep.map((a) => {
             return { label: a.name, value: a.id };
           });
-          setJobs(job);
+          setDepartments(dep);
         }
       })
       .catch((e) => {
@@ -121,6 +127,23 @@ const FormPerson = (props) => {
     setDate(dateString);
   }
 
+  const onChangeDepartment = (value) => {
+    ////JOBS
+    Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
+      .then((response) => {
+        if (response.status === 200) {
+          let job = response.data;
+          job = job.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setJobs(job);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   const closeDialog = () => {
     props.close(false);
     form.resetFields();
@@ -137,75 +160,93 @@ const FormPerson = (props) => {
           visible={props.visible}
           onCancel={() => closeDialog()}
           footer={null}
+          width={"60%"}
         >
-          <Form
-            onFinish={onFinish}
-            form={form}
-            initialValues={{
-              name: "",
-              flast_name: "",
-              mlast_name: "",
-              birth_date: "",
-              perms: [],
-              email: "",
-              password: "",
-            }}
-          >
-            <Space>
-              <Form.Item name="person_type">
-                <Select options={personType} placeholder="Tipo de persona" />
-              </Form.Item>
-
-              <Form.Item name="job">
-                <Select options={jobs} placeholder="Puesto de trabajo" />
-              </Form.Item>
-            </Space>
-            <Form.Item rules={[ruleRequired]} name="first_name">
-              <Input type="text" placeholder="Nombre" />
-            </Form.Item>
-            <Form.Item rules={[ruleRequired]} name="flast_name">
-              <Input type="text" placeholder="Apellido paterno..." />
-            </Form.Item>
-            <Form.Item name="mlast_name">
-              <Input type="text" placeholder="Apellido materno..." />
-            </Form.Item>
-            <Space>
-              <Form.Item name="gender">
-                <Select options={genders} placeholder="Género" />
-              </Form.Item>
-              <Form.Item>
-                <DatePicker
-                  onChange={onChange}
-                  moment={"YYYY-MM-DD"}
-                  placeholder="Fecha de nacimiento"
-                />
-              </Form.Item>
-            </Space>
-            <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
-              <Input type="email" placeholder="E-mail" />
-            </Form.Item>
-            <Form.Item rules={[ruleRequired]} name="password">
-              <Input.Password type="text" placeholder="Contraseña" />
-            </Form.Item>
-            <Form.Item name="groups">
-              <Select
-                mode="multiple"
-                options={groups}
-                showArrow
-                style={{ width: "100%" }}
-                placeholder="Permisos..."
-              ></Select>
-            </Form.Item>
-            <Form.Item labelAlign="right">
-              <Space style={{ float: "right" }}>
-                <Button type="danger" onClick={() => props.close(false)}>
-                  Cancelar
-                </Button>
-                <Button type="primary" htmlType="submit">
-                  Guardar
-                </Button>
-              </Space>
-            </Form.Item>
+          <Form onFinish={onFinish} form={form}>
+            <Row>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item name="person_type">
+                  <Select options={personType} placeholder="Tipo de persona" />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item name="department">
+                  <Select
+                    options={departments}
+                    onChange={onChangeDepartment}
+                    placeholder="Departamento"
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item name="job">
+                  <Select options={jobs} placeholder="Puesto de trabajo" />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item rules={[ruleRequired]} name="first_name">
+                  <Input type="text" placeholder="Nombre" />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item rules={[ruleRequired]} name="flast_name">
+                  <Input type="text" placeholder="Apellido paterno" />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item name="mlast_name">
+                  <Input type="text" placeholder="Apellido materno" />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item name="gender">
+                  <Select options={genders} placeholder="Género" />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item>
+                  <DatePicker
+                    style={{ width: "100%" }}
+                    onChange={onChange}
+                    moment={"YYYY-MM-DD"}
+                    placeholder="Fecha de nacimiento"
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
+                  <Input type="email" placeholder="E-mail" />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item rules={[ruleRequired]} name="password">
+                  <Input.Password type="text" placeholder="Contraseña" />
+                </Form.Item>
+              </Col>
+              <Col lg={15} xs={22} offset={1}>
+                <Form.Item name="groups">
+                  <Select
+                    mode="multiple"
+                    options={groups}
+                    showArrow
+                    style={{ width: "100%" }}
+                    placeholder="Permisos"
+                  ></Select>
+                </Form.Item>
+              </Col>
+              <Col lg={22} xs={22} offset={1}>
+                <Form.Item labelAlign="right">
+                  <Space style={{ float: "right" }}>
+                    <Button type="danger" onClick={() => closeDialog()}>
+                      Cancelar
+                    </Button>
+                    <Button type="primary" htmlType="submit">
+                      Guardar
+                    </Button>
+                  </Space>
+                </Form.Item>
+              </Col>
+            </Row>
           </Form>
         </Modal>
       </Layout>
