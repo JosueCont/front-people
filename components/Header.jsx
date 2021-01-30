@@ -38,10 +38,9 @@ const appsCardDisplay = () => (
 export default function headerCustom(props) {
   const router = useRouter();
   return (
-    <Header  key="header_main">
+    <Header style={{ position: "fixed", zIndex: 1, width: "100%" }}>
       <div className="logo" />
       <Menu
-        key="menu_header"
         theme="dark"
         mode="horizontal"
         defaultSelectedKeys={[props.currentKey]}

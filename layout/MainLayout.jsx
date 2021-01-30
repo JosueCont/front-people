@@ -14,10 +14,10 @@ const MainLayout = ({ ...props }) => {
   return (
     /* <IntlProvider locale={state.lang} messages={langMessages[state.lang]}> */
     <Layout className="layout">
-      <HeaderCustom key="custom_header" currentKey={props.currentKey} />
-      <Content key="content"
+      <HeaderCustom currentKey={props.currentKey} />
+      <Content
         className="site-layout"
-        style={{ padding: "30px 50px" }}
+        style={{ padding: "0 50px", marginTop: 64 }}
       >
         {props.children}
       </Content>
