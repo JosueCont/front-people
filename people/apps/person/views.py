@@ -55,12 +55,16 @@ class PersonViewSet(viewsets.ModelViewSet):
                 del serializer.validated_data['password']
                 job = None
                 department = None
+                groups = None
                 if 'job' in serializer.validated_data:
                     job = serializer.validated_data["job"]
                     del serializer.validated_data['job']
                 if 'department' in serializer.validated_data:
                     department = serializer.validated_data["department"]
                     del serializer.validated_data['department']
+                if 'groups' in serializer.validated_data:
+                    groups = serializer.validated_data['groups']
+                    del serializer.validated_data['groups']
                 job_dep = None
                 if job and department:
                     job_dep = JobDepartment.objects.filter(job=job, department=department).first()
@@ -82,18 +86,14 @@ class PersonViewSet(viewsets.ModelViewSet):
                          "email": serializer.validated_data["email"],
                          "password": password,
                          }
-                if 'groups' in serializer.validated_data:
-                    data_['groups'] = serializer.validated_data["groups"]
+                if groups:
+                    data_['groups'] = groups
                 response = requests.post(url, json.dumps(data_), headers=headers)
                 if response.ok:
                     resp = json.loads(response.text)
                     if resp["level"] == "success":
                         if 'user_id' in resp:
                             if resp["user_id"]:
-                                validate_data = serializer.validated_data
-                                # del validate_data['password']
-                                if 'groups' in serializer.validated_data:
-                                    del validate_data['groups']
                                 instance.khonnect_id = resp["user_id"]
                                 instance.save()
                                 person_json = serializers.PersonSerializer(instance).data
