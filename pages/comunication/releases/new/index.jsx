@@ -33,7 +33,8 @@ export default function Newrelease() {
 
     useEffect(() =>{
         if(json){
-            setUserId(json.user_i)
+            console.log('json', json);
+            setUserId(json.user_id)
             console.log(json);
         }
         getBussiness();
@@ -42,7 +43,11 @@ export default function Newrelease() {
     }, [route])
 
     const saveNotification = async (values) =>{
-        values['created_by'] = "d25d4447bbd5423bbf2d5603cf553b81";
+        console.log(userId);
+        /* values['created_by'] = "d25d4447bbd5423bbf2d5603cf553b81"; */
+        values['khonnect_id'] = userId;
+        values['created_by'] = userId;
+        
         values.message =  message;
         console.log(values);
 
@@ -53,7 +58,7 @@ export default function Newrelease() {
         }
         //setSending(true);
         try {
-            let response = await axiosApi.post(`/noticenter/notification/`, dat);
+            let response = await axiosApi.post(`/noticenter/notification/`, values);
             let data = response.data
             notification['success']({
                 message: 'Notification Title',

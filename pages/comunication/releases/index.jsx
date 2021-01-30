@@ -28,30 +28,36 @@ import { EyeOutlined } from '@ant-design/icons';
 
 export default function Releases() {
   /* React */
-  const { Column } = Table;
-  const { Option } = Select;
-  const { RangePicker } = DatePicker;
-  /* const childRef = useRef(); */
-  const route = useRouter();
-  /* Variables */
-  const [list, setList] = useState([]);
+    const { Column } = Table;
+    const { Option } = Select;
+    const { RangePicker } = DatePicker;
+    /* const childRef = useRef(); */
+    const route = useRouter();
+    /* Variables */
+    const [list, setList] = useState([]);
 
-  let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
+    let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
 
-  const getNotifications = async () => {
-    try {
-      let response = await axiosApi.get(`/noticenter/notification/`);
-      let data = response.data;
-      setList(data.results);
-    } catch (e) {
-      console.log(e);
-      /* setLoading(false); */
-    }
-  };
+    const getNotifications = async () => {
+        try {
+        let response = await axiosApi.get(`/noticenter/notification/`);
+        let data = response.data;
+        setList(data.results);
+        } catch (e) {
+        console.log(e);
+        /* setLoading(false); */
+        }
+    };
 
     const GotoDetails = (details) =>{
         console.log('details', details);
         route.push('./releases/'+details.id+'/details');
+    }
+
+    const GoToUserNotifications =  (props) => {
+        return (
+            <Button onClick={() => route.push('./releases/'+props.notification_id+'/users') } type="text">Ver</Button>
+        )
     }
 
     useEffect(()=>{
@@ -117,11 +123,17 @@ export default function Releases() {
                             render={(text, record) => (
                                 Moment(text).format('DD / MM / YYYY')
                             )} />
+                            <Column title="Recibieron" key="recibieron"
+                            render={(text, record) => (
+                                <GoToUserNotifications notification_id={record.id} />
+                            )}
+                            />
                             <Column title="Acciones" key="action"
                             render={(text, record) => (
                                 <EyeOutlined onClick={() => GotoDetails(record)}  />
                             )}
                             />
+                            
                         </Table>
                     </Col>
                 </Row>

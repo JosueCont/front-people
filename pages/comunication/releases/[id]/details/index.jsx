@@ -12,13 +12,16 @@ const Details = () => {
 
     const { id } = route.query;
     const [details, setDetails] = useState({})
+    const [loading, setLoading] = useState(false)
 
     const getDetails = async () =>{
+        setLoading(true);
         try{
             let response = await axiosApi.get(`/noticenter/notification/${id}`);
             let data = response.data
-            setDetails(data);
             console.log("data",data);
+            setDetails(data);
+            setLoading(false);
             //setList(data.results)
         }catch (e) {
             console.log("error",e)
@@ -26,8 +29,22 @@ const Details = () => {
         }
     }
 
+    const TextGender  = (props) =>{
+        let txt = ""
+        if(props.id_gender  === 1){
+            txt = "Masculino";
+        }else if(props.id_gender === 2){
+            txt = "Femenino";
+        }else{
+            txt = "Otro";
+        }
+        return (<span>{txt}</span>)
+    }
+
     useEffect(() => {
-        getDetails();
+        if(id){
+            getDetails();
+        }
     },[route])
 
     return (
@@ -46,7 +63,7 @@ const Details = () => {
                     <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className="container back-white" style={{ width:'100%' }}>
-                    <Row justify={'center'}>
+                     { !loading ? <Row justify={'center'}>
                         <Col span="23" style={{ padding: '20px 0 30px 0' }}>
                             <Row>
                                 <Col span={24}>
@@ -68,7 +85,7 @@ const Details = () => {
                                         <Text strong>Titulo:</Text>
                                         </Col>
                                         <Col span={20} className={'py-10'}>
-                                            {details.title}
+                                            { details ? details.title : null }
                                         </Col>
                                     </Row>
                                     <Row>
@@ -94,17 +111,17 @@ const Details = () => {
                                                     </Text>
                                                 </Col>
                                                 <Col span={14} className={'py-10'}>
-                                                    {details.target_company}
+                                                    { (details && details.target_company) ? details.target_company.name : null }
                                                 </Col>
                                             </Row>
                                             <Row>
                                                 <Col span={10} className={'py-10'}>
                                                     <Text strong>
                                                         Puesto de trabajo:
-                                                        </Text>
+                                                    </Text>
                                                 </Col>
                                                 <Col span={14} className={'py-10'}>
-                                                    {details.target_job}
+                                                    { (details && details.target_job) ? details.target_job.name : null }
                                                 </Col>
                                             </Row>
                                         </Col>
@@ -116,7 +133,7 @@ const Details = () => {
                                                     </Text>
                                                 </Col>
                                                 <Col span={14} className={'py-10'}>
-                                                    {details.target_person_type}
+                                                    { (details && details.target_person_type) ? details.target_person_type.name : null }
                                                 </Col>
                                             </Row>
                                             <Row>
@@ -126,8 +143,7 @@ const Details = () => {
                                                     </Text>
                                                 </Col>
                                                 <Col span={14} className={'py-10'}>
-                                                    
-                                                    {details.target_gender}
+                                                    <TextGender id_gender={details.target_gender}/> 
                                                 </Col>
                                             </Row>
                                         </Col>
@@ -175,7 +191,7 @@ const Details = () => {
                                     </Col> */}
                                 </Row>
                         </Col>
-                    </Row>
+                    </Row> : null }
                 </div>
             
             </MainLayout>
