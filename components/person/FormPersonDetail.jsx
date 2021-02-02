@@ -52,7 +52,7 @@ const { Meta } = Card;
 const { RangePicker } = DatePicker;
 const { Dragger } = Upload;
 
-const userDetailForm = () => {
+const personDetailForm = () => {
   const router = useRouter();
   const { Title } = Typography;
   const [loading, setLoading] = useState(true);
@@ -62,6 +62,7 @@ const userDetailForm = () => {
   const [photo, setPhoto] = useState("");
   const [modalDoc, setModalDoc] = useState(false);
   const [deleted, setDeleted] = useState({});
+  const [people, setPeople] = useState([]);
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -452,6 +453,23 @@ const userDetailForm = () => {
         .catch((e) => {
           console.log(e);
           setLoading(false);
+        });
+
+      ////GET PERSONS
+
+      Axios.get(API_URL + `/person/person/`)
+        .then((response) => {
+          let persons = response.data.results;
+          persons = persons.map((a) => {
+            a.name = a.first_name + " " + a.flast_name;
+            if (a.mlast_name) a.name = a.name + " " + a.mlast_name;
+            return { label: a.name, value: a.id };
+          });
+          setPeople(persons);
+          setLoading(false);
+        })
+        .catch((e) => {
+          console.log(e);
         });
     }
   }, [router.query.id]);
@@ -1679,7 +1697,7 @@ const userDetailForm = () => {
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="unit" label="Reporta a ">
-                          <Input />
+                          <Select options={people} />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
@@ -1883,7 +1901,7 @@ const userDetailForm = () => {
                             name="international_code"
                             label="Código internacional"
                           >
-                            <Input />
+                            <Input type="number" />
                           </Form.Item>
                         </Col>
                         <Col lg={6} xs={22} offset={1}>
@@ -1891,7 +1909,7 @@ const userDetailForm = () => {
                             name="national_code"
                             label="Código de pais"
                           >
-                            <Input />
+                            <Input type="number" />
                           </Form.Item>
                         </Col>
                         <Col lg={6} xs={22} offset={1}>
@@ -1899,12 +1917,12 @@ const userDetailForm = () => {
                             name="country_code"
                             label="Código de ciudad"
                           >
-                            <Input />
+                            <Input type="number" />
                           </Form.Item>
                         </Col>
                         <Col lg={6} xs={22} offset={1}>
                           <Form.Item name="phone" label="Número telefónico">
-                            <Input />
+                            <Input type="number" />
                           </Form.Item>
                         </Col>
                       </Row>
@@ -2103,12 +2121,12 @@ const userDetailForm = () => {
                         </Col>
                         <Col lg={6} xs={22} offset={1}>
                           <Form.Item name="phone_one" label="Teléfono 1">
-                            <Input />
+                            <Input type="number" />
                           </Form.Item>
                         </Col>
                         <Col lg={6} xs={22} offset={1}>
                           <Form.Item name="phone_two" label="Teléfono 2">
-                            <Input />
+                            <Input type="number" />
                           </Form.Item>
                         </Col>
                         <Col lg={13} xs={22} offset={1}>
@@ -2328,7 +2346,7 @@ const userDetailForm = () => {
                             name="account_number"
                             label="Número de cuenta"
                           >
-                            <Input />
+                            <Input type="number" />
                           </Form.Item>
                         </Col>
                         <Col lg={6} xs={22} offset={1}>
@@ -2336,7 +2354,7 @@ const userDetailForm = () => {
                             name="interbank_key"
                             label="Clabe interbancaria"
                           >
-                            <Input />
+                            <Input type="number" />
                           </Form.Item>
                         </Col>
                       </Row>
@@ -2438,4 +2456,4 @@ const userDetailForm = () => {
     </MainLayout>
   );
 };
-export default userDetailForm;
+export default personDetailForm;
