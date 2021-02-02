@@ -297,13 +297,11 @@ const userDetailForm = () => {
               "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg"
             );
           setLoading(false);
-          setPersonFullName(
-            response.data.first_name +
-              " " +
-              response.data.flast_name +
-              " " +
-              response.data.mlast_name
-          );
+          let personName =
+            response.data.first_name + " " + response.data.flast_name;
+          if (response.data.mlast_name)
+            personName = person + " " + response.data.mlast_name;
+          setPersonFullName(personName);
         })
         .catch((e) => {
           console.log(e);
@@ -1468,7 +1466,7 @@ const userDetailForm = () => {
       key: "account_number",
     },
     {
-      title: "Clave interbancaria",
+      title: "Clabe interbancaria",
       dataIndex: "interbank_key",
       key: "interbank_key",
     },
@@ -2253,7 +2251,7 @@ const userDetailForm = () => {
                         <Col lg={6} xs={22} offset={1}>
                           <Form.Item
                             name="starting_salary"
-                            label="Salario incial"
+                            label="Salario inicial"
                           >
                             <Input />
                           </Form.Item>
@@ -2336,7 +2334,7 @@ const userDetailForm = () => {
                         <Col lg={6} xs={22} offset={1}>
                           <Form.Item
                             name="interbank_key"
-                            label="Clave interbancaria"
+                            label="Clabe interbancaria"
                           >
                             <Input />
                           </Form.Item>
