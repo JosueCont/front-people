@@ -14,7 +14,7 @@ export default function Releases() {
   const { Column } = Table;
   return (
     <MainLayout currentKey="4.2">
-      <Breadcrumb style={{ margin: "16px 0" }}>
+      <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Eventos</Breadcrumb.Item>
       </Breadcrumb>
