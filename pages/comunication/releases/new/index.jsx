@@ -23,6 +23,7 @@ import { API_URL } from "../../../../config/config";
 
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
+
 // import { FroalaEditorComponent } from "react-froala-wysiwyg";
 import dynamic from "next/dynamic";
 const FroalaEditorComponent = dynamic(import("react-froala-wysiwyg"), {
@@ -50,24 +51,17 @@ const Newrelease = () => {
   useEffect(() => {
     if (json) {
       setUserId(json.user_i);
-      getBussiness();
+      /* getBussiness(); */
       getValueSelects();
     }
   }, []);
 
   const saveNotification = async (values) => {
-    values["created_by"] = "d25d4447bbd5423bbf2d5603cf553b81";
-    values.message = message;
-    console.log(values);
-
-    let dat = {
-      title: values.title,
-      message: values.message,
-      created_by: "d25d4447bbd5423bbf2d5603cf553b81",
-    };
+    values['khonnect_id'] = userId;
+    values['created_by'] = userId;
     //setSending(true);
     try {
-      let response = await axiosApi.post(`/noticenter/notification/`, dat);
+      let response = await axiosApi.post(`/noticenter/notification/`, values);
       let data = response.data;
       notification["success"]({
         message: "Notification Title",
@@ -91,6 +85,7 @@ const Newrelease = () => {
       data.map((item) => {
         options.push({ id: item.id, name: item.name });
       });
+      console.log()
       setBusinessList(options);
       //  notification['success']({
       //           message: 'Notification Title',
@@ -145,12 +140,27 @@ const Newrelease = () => {
           });
           setPersonType(typesPerson);
         }
+
       })
       .catch((e) => {
         console.log(e);
       });
 
-    /////DEPARTMENTS
+    /////Companies
+    try {
+        let response = await axiosApi.get(`/business/node/`);
+        let data = response.data.results;
+        console.log("data", data);
+        let options = [];
+        data.map((item) => {
+          options.push({ value: item.id, label: item.name });
+        });
+        setBusinessList(options);
+      } catch (error) {
+        console.log("error", error);
+      }
+
+
     Axios.get(API_URL + `/business/department/`)
       .then((response) => {
         if (response.status === 200) {
@@ -166,8 +176,17 @@ const Newrelease = () => {
       });
   };
 
+  const onChangecompany = (value) => {
+      console.log(value);
+  }
+
+
   const onChangeDepartment = (value) => {
     ////JOBS
+    form.setFieldsValue({
+        target_job: null
+    })
+    /* console.log(API_URL + `/business/department/${value}/job_for_department/`) */
     Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
       .then((response) => {
         if (response.status === 200) {
@@ -176,12 +195,16 @@ const Newrelease = () => {
             return { label: a.name, value: a.id };
           });
           setJobs(job);
+        }else{
+            setJobs([]);
         }
       })
       .catch((e) => {
         console.log(e);
+        setJobs([]);
       });
   };
+
 
   return (
     <MainLayout currentKey="4.1">
@@ -196,7 +219,8 @@ const Newrelease = () => {
             <Form
               form={form}
               layout="horizontal"
-              // onFinish={saveNotification}
+              labelCol={{ xs: 24, sm:24, md:5 }}
+              onFinish={saveNotification}
             >
               <Row>
                 <Col span={24}>
@@ -204,34 +228,32 @@ const Newrelease = () => {
                     Datos Generales
                   </Title>
                 </Col>
-
                 <Col xs={24} sm={24} md={13} lg={13} xl={13}>
-                  <Form.Item
-                    name="category"
-                    label="Categoria"
-                    labelAlign={"left"}
-                  >
-                    <Select options={typeMessage} />
-                  </Form.Item>
-                  <Form.Item label="Titulo" name="title" labelAlign={"left"}>
-                    <Input className={"formItemPayment"} />
-                  </Form.Item>
-                  <Form.Item name="message" label="Mensaje" labelAlign="left">
-                    <FroalaEditorComponent
-                      key="message"
-                      tag="textarea"
-                      model={message}
-                      onModelChange={setMessage}
-                    />
-                  </Form.Item>
+                    <Form.Item
+                        name="category"
+                        label="Categoria"
+                        labelAlign={'left'}
+                    >
+                        <Select style={{ width: 250 }} options={typeMessage} />   
+                    </Form.Item> 
+                    <Form.Item 
+                        label="Titulo"
+                        name="title"
+                        labelAlign={'left'}
+                    >
+                        <Input className={'formItemPayment'} />
+                    </Form.Item>
+                    <Form.Item name="message" label="Mensaje" labelAlign="left">
+                        <FroalaEditorComponent key="message" tag="textarea" model={message} onModelChange={setMessage} />
+                    </Form.Item>
                 </Col>
+
 
                 <Col span={24}>
                   <Title level={3} key="segmentacion">
                     Segmentación
                   </Title>
                 </Col>
-
                 <Col xs={24} sm={24} md={13} lg={13} xl={13}>
                   <Form.Item
                     name="send_to_all"
@@ -251,13 +273,24 @@ const Newrelease = () => {
                         labelCol={{ span: 10 }}
                       >
                         <Select
+                          options={bussinessList}
+                          onChange={onChangecompany}
+                          placeholder="Empresa"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={"departament"}
+                        label="Departamento"
+                        labelCol={{ span: 10 }}
+                      >
+                        <Select
                           options={departments}
                           onChange={onChangeDepartment}
                           placeholder="Departamento"
                         />
                       </Form.Item>
                       <Form.Item
-                        name={"company"}
+                        name={"target_job"}
                         label="Puesto de trabajo"
                         labelCol={{ span: 10 }}
                       >
@@ -266,14 +299,14 @@ const Newrelease = () => {
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                       <Form.Item
-                        name={"person_type"}
+                        name={"target_person_type"}
                         label="Tipo de persona"
                         labelCol={{ span: 10 }}
                       >
                         <Select options={personType} />
                       </Form.Item>
                       <Form.Item
-                        name={"gender"}
+                        name={"target_gender"}
                         label="Genero"
                         labelCol={{ span: 10 }}
                       >
@@ -282,16 +315,8 @@ const Newrelease = () => {
                     </Col>
                   </Row>
                 </Col>
-                <Col
-                  span={24}
-                  style={{ paddingTop: "2%", paddingBottom: "4%" }}
-                >
-                  <Button
-                    key="cancel"
-                    onClick={() => onCancel()}
-                    disabled={sending}
-                    style={{ padding: "0 50px", margin: "0 10px" }}
-                  >
+                <Col span={24} style={{ textAlign: 'right' }}>
+                <Button key="cancel" onClick={() => onCancel()} disabled={sending} style={{ padding: "0 50px", margin: "0 10px" }} >
                     Cancelar
                   </Button>
                   <Button

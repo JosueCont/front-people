@@ -10,9 +10,9 @@ const { Header } = Layout;
 const { SubMenu } = Menu;
 
 const userCardDisplay = () => (
-  <>
-    <CardUser />
-  </>
+    <>
+        <CardUser />
+    </>
 );
 
 const appsCardDisplay = () => (
@@ -24,23 +24,29 @@ const appsCardDisplay = () => (
 export default function headerCustom(props) {
   const router = useRouter();
   return (
-    <Header style={{ position: "fixed", zIndex: 1, width: "100%" }}>
+    <Header >
       <div className="logo" />
       <Menu
         theme="dark"
         mode="horizontal"
         defaultSelectedKeys={[props.currentKey]}
       >
-        <div style={{ float: "left" }}>
-          <Dropdown overlay={appsCardDisplay}>
-            <div>
-              <AppstoreOutlined style={{ fontSize: "26px", color: "#08c" }} />
-            </div>
-          </Dropdown>
-        </div>
         <Menu.Item key="1" onClick={() => router.push({ pathname: "/home" })}>
           Personas
         </Menu.Item>
+        <div style={{ float: "left" }}>
+
+          <Dropdown overlay={appsCardDisplay}>
+
+            <div>
+
+              <AppstoreOutlined style={{ fontSize: "26px", color: "#08c" }} />
+
+            </div>
+
+          </Dropdown>
+
+        </div>
         <Menu.Item
           key="2"
           onClick={() => router.push({ pathname: "/business" })}

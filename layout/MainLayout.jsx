@@ -17,9 +17,10 @@ const MainLayout = ({ ...props }) => {
       <HeaderCustom currentKey={props.currentKey} />
       <Content
         className="site-layout"
-        style={{ padding: "0 50px", marginTop: 64 }}
       >
-        {props.children}
+        <div style={{ minHeight: "calc(100vh - 134px)", padding: "30px 50px", }}>
+           {props.children}
+        </div>
       </Content>
       <Footer />
     </Layout>
