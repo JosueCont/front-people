@@ -183,6 +183,10 @@ const Newrelease = () => {
 
   const onChangeDepartment = (value) => {
     ////JOBS
+    form.setFieldsValue({
+        target_job: null
+    })
+    /* console.log(API_URL + `/business/department/${value}/job_for_department/`) */
     Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
       .then((response) => {
         if (response.status === 200) {
@@ -191,10 +195,13 @@ const Newrelease = () => {
             return { label: a.name, value: a.id };
           });
           setJobs(job);
+        }else{
+            setJobs([]);
         }
       })
       .catch((e) => {
         console.log(e);
+        setJobs([]);
       });
   };
 
