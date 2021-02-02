@@ -38,7 +38,7 @@ const appsCardDisplay = () => (
 export default function headerCustom(props) {
   const router = useRouter();
   return (
-    <Header style={{ position: "fixed", zIndex: 1, width: "100%" }}>
+    <Header >
       <div className="logo" />
       <Menu
         theme="dark"
