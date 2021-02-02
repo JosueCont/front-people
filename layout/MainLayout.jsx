@@ -15,11 +15,9 @@ const MainLayout = ({ ...props }) => {
     /* <IntlProvider locale={state.lang} messages={langMessages[state.lang]}> */
     <Layout className="layout">
       <HeaderCustom currentKey={props.currentKey} />
-      <Content
-        className="site-layout"
-      >
-        <div style={{ minHeight: "calc(100vh - 134px)", padding: "30px 50px", }}>
-           {props.children}
+      <Content className="site-layout">
+        <div style={{ minHeight: "calc(100vh - 134px)", padding: "30px 50px" }}>
+          {props.children}
         </div>
       </Content>
       <Footer />
