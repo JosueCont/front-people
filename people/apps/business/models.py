@@ -35,13 +35,11 @@ class Node(models.Model):
     def traverse_node_json(node):
         json_nodes = []
         for child in node.all_childs:
-            count_users = NodePerson.objects.filter(node=child).count()
             json_node = {}
-            json_node["id"] = child.id
-            json_node["name"] = child.name
+            json_node["value"] = child.id
+            json_node["label"] = child.name
             children = Node.traverse_node_json(child)
             json_node["children"] = children
-            json_node["count_users"] = count_users
             json_nodes.append(json_node)
         return json_nodes
 

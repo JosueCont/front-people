@@ -28,6 +28,22 @@ class NodeViewSet(viewsets.ModelViewSet):
             return Response(data={"id requerido"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+    @action(detail=False, methods=['post'])
+    def node_in_cascade(self, request, pk=None):
+        pk = request.POST.get('pk', None)
+        if pk:
+            root_node = Node.objects.get(id=pk)
+        else:
+            root_node = Node.objects.filter(parent__isnull=True).first()
+        json_nodes = {}
+        json_nodes["value"] = root_node.id
+        json_nodes["label"] = root_node.name
+        result = Node.traverse_node_json(root_node)
+        json_nodes["children"] = result
+        return Response(json_nodes)
+
+
+
 class NodePersonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.NodePersonSerializer
     queryset = NodePerson.objects.all()
