@@ -314,10 +314,12 @@ class Vacation(models.Model):
     departure_date = models.DateField(verbose_name=_("Fecha de salida"))
     return_date = models.DateField(verbose_name=_("Fecha de regreso"))
     status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name=_("Estatus"))
+    comment = models.TextField(verbose_name=_("Comentario"), null=True, blank=True, help_text=_("Razón por la cual se rechaza la solicitud (solo aplica para estatus rechazado)"))
     approved_by = models.ForeignKey(Person, related_name="approved_by", on_delete=models.CASCADE, verbose_name=_("Persona quien aprueba"), null=True, blank=True)
+    rejected_by = models.ForeignKey(Person, related_name="rejected_by", on_delete=models.CASCADE, verbose_name=_("Persona quien rechaza"), null=True, blank=True)
 
     def __str__(self):
-        return "{0} - {1}".format(self.person.full_name, self.departure_date)
+        return "{0} - {1}".format(self.person.full_name if self.person else "", self.departure_date)
 
     class Meta:
         verbose_name = _("Vacaciones")

@@ -544,6 +544,40 @@ class VacationViewSet(viewsets.ModelViewSet):
             instance.save()
 
 
+    @action(detail=False, methods=['post'])
+    def approve_request(self, request, pk=None):
+        if 'khonnect_id' in request.data and 'id' in request.data:
+            try:
+                vacation = Vacation.objects.get(id=request.data['id'])
+                approved_by = Person.objects.get(khonnect_id=request.data['khonnect_id'])
+                if approved_by:
+                    vacation.status = 2
+                    vacation.approved_by = approved_by
+                    vacation.save()
+                return Response(data={'message': 'Solicitud aprobada'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id/khonnect_id requerido"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['post'])
+    def reject_request(self, request, pk=None):
+        if 'khonnect_id' in request.data and 'id' in request.data:
+            try:
+                vacation = Vacation.objects.get(id=request.data['id'])
+                approved_by = Person.objects.get(khonnect_id=request.data['khonnect_id'])
+                if approved_by:
+                    vacation.status = 3
+                    vacation.comment = request.data['comment']
+                    vacation.rejected_by = approved_by
+                    vacation.save()
+                return Response(data={'message': 'Solicitud aprobada'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id/khonnect_id requerido"}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class DocumentViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.DocumentSerializer
     queryset = Document.objects.all()
