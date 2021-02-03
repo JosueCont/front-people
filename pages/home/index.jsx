@@ -247,7 +247,7 @@ const homeScreen = () => {
   ////DEFAULT SELECT
   const genders = [
     {
-      label: "Maculino",
+      label: "Masculino",
       value: 1,
     },
     {

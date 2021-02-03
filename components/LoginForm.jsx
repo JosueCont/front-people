@@ -2,7 +2,7 @@ import { Form, Input, Button, Checkbox, Spin, Alert, Typography } from "antd";
 const { Text } = Typography;
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { LOGIN_URL } from "../config/config";
+import { LOGIN_URL, APP_ID } from "../config/config";
 import Axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
@@ -20,7 +20,7 @@ const LoginForm = () => {
       setErrorLogin(false);
       setLoading(true);
       const headers = {
-        "client-id": "5f417a53c37f6275fb614104",
+        "client-id": APP_ID,
         "Content-Type": "application/json",
       };
       const data = {
