@@ -182,6 +182,26 @@ class PhoneSerialiser(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class VacationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Vacation
+        exclude = ['person']
+
+    def to_representation(self, instance):
+        representation = super(VacationSerializer, self).to_representation(instance)
+        business = "N/A"
+        department = "N/A"
+        if instance.person.job_department:
+            if instance.person.job_department.job.unit.filter().exists():
+                business = instance.person.job_department.job.unit.filter().first().name
+                department = instance.person.job_department.department.name
+        representation['collaborator'] = instance.person.full_name
+        representation['business'] = business
+        representation['department'] = department
+        representation['available_days'] = 6
+        return representation
+
+
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Document

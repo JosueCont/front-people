@@ -15,7 +15,7 @@ from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.functions import decode_file_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
-    Phone, Family, ContactEmergency, JobExperience, Document, Event
+    Phone, Family, ContactEmergency, JobExperience, Vacation, Document, Event
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer, DocumentSerializer, \
     PhotoSerializer
 from people.apps.setup.models import DocumentType
@@ -526,6 +526,22 @@ class ImportExportPersonViewSet(APIView):
             return response
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VacationViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.VacationSerializer
+    queryset = Vacation.objects.all()
+    filterset_fields = ('departure_date', 'return_date')
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        try:
+            person = Person.objects.get(khonnect_id=self.request.data['khonnect_id'])
+        except:
+            person = None
+        if person:
+            instance.person = person
+            instance.save()
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
