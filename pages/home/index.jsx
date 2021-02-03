@@ -59,10 +59,6 @@ const homeScreen = () => {
       Axios.get(API_URL + `/person/person/`)
         .then((response) => {
           response.data.results.map((item) => {
-            item["key"] = item.id;
-            item["fullname"] =
-              item.first_name + " " + item.flast_name + " " + item.mlast_name;
-            item.timestamp = item.timestamp.substring(0, 10);
             if (!item.photo) item.photo = defaulPhoto;
           });
           setPerson(response.data.results);
@@ -75,10 +71,6 @@ const homeScreen = () => {
       Axios.post(API_URL + `/person/person/get_list_persons/ `, filters)
         .then((response) => {
           response.data.map((item) => {
-            item["key"] = item.id;
-            item["fullname"] =
-              item.first_name + " " + item.flast_name + " " + item.mlast_name;
-            item.timestamp = item.timestamp.substring(0, 10);
             if (!item.photo) item.photo = defaulPhoto;
           });
           setPerson(response.data);
@@ -164,8 +156,11 @@ const homeScreen = () => {
     },
     {
       title: "Nombre",
-      dataIndex: "fullname",
-      key: "fullname",
+      render: (item) => {
+        let personName = item.first_name + " " + item.flast_name;
+        if (item.mlast_name) personName = personName + " " + item.mlast_name;
+        return <div>{personName}</div>;
+      },
     },
     {
       title: "Estatus",
@@ -182,9 +177,10 @@ const homeScreen = () => {
       },
     },
     {
-      title: "Fecha de registro",
-      dataIndex: "timestamp",
-      key: "timestamp",
+      title: "Fecha de ingreso",
+      render: (item) => {
+        return <div>{item.date_of_admission}</div>;
+      },
     },
     {
       title: "RFC",
@@ -251,7 +247,7 @@ const homeScreen = () => {
   ////DEFAULT SELECT
   const genders = [
     {
-      label: "Maculino",
+      label: "Masculino",
       value: 1,
     },
     {

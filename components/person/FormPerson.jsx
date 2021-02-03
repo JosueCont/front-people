@@ -105,7 +105,7 @@ const FormPerson = (props) => {
 
   const genders = [
     {
-      label: "Maculino",
+      label: "Masculino",
       value: 1,
     },
     {

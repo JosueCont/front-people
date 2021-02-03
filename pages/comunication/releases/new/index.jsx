@@ -57,8 +57,8 @@ const Newrelease = () => {
   }, []);
 
   const saveNotification = async (values) => {
-    values['khonnect_id'] = userId;
-    values['created_by'] = userId;
+    values["khonnect_id"] = userId;
+    values["created_by"] = userId;
     //setSending(true);
     try {
       let response = await axiosApi.post(`/noticenter/notification/`, values);
@@ -85,7 +85,7 @@ const Newrelease = () => {
       data.map((item) => {
         options.push({ id: item.id, name: item.name });
       });
-      console.log()
+      console.log();
       setBusinessList(options);
       //  notification['success']({
       //           message: 'Notification Title',
@@ -104,7 +104,7 @@ const Newrelease = () => {
 
   const genders = [
     {
-      label: "Maculino",
+      label: "Masculino",
       value: 1,
     },
     {
@@ -140,7 +140,6 @@ const Newrelease = () => {
           });
           setPersonType(typesPerson);
         }
-
       })
       .catch((e) => {
         console.log(e);
@@ -148,18 +147,17 @@ const Newrelease = () => {
 
     /////Companies
     try {
-        let response = await axiosApi.get(`/business/node/`);
-        let data = response.data.results;
-        console.log("data", data);
-        let options = [];
-        data.map((item) => {
-          options.push({ value: item.id, label: item.name });
-        });
-        setBusinessList(options);
-      } catch (error) {
-        console.log("error", error);
-      }
-
+      let response = await axiosApi.get(`/business/node/`);
+      let data = response.data.results;
+      console.log("data", data);
+      let options = [];
+      data.map((item) => {
+        options.push({ value: item.id, label: item.name });
+      });
+      setBusinessList(options);
+    } catch (error) {
+      console.log("error", error);
+    }
 
     Axios.get(API_URL + `/business/department/`)
       .then((response) => {
@@ -177,15 +175,14 @@ const Newrelease = () => {
   };
 
   const onChangecompany = (value) => {
-      console.log(value);
-  }
-
+    console.log(value);
+  };
 
   const onChangeDepartment = (value) => {
     ////JOBS
     form.setFieldsValue({
-        target_job: null
-    })
+      target_job: null,
+    });
     /* console.log(API_URL + `/business/department/${value}/job_for_department/`) */
     Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
       .then((response) => {
@@ -195,8 +192,8 @@ const Newrelease = () => {
             return { label: a.name, value: a.id };
           });
           setJobs(job);
-        }else{
-            setJobs([]);
+        } else {
+          setJobs([]);
         }
       })
       .catch((e) => {
@@ -204,7 +201,6 @@ const Newrelease = () => {
         setJobs([]);
       });
   };
-
 
   return (
     <MainLayout currentKey="4.1">
@@ -219,7 +215,7 @@ const Newrelease = () => {
             <Form
               form={form}
               layout="horizontal"
-              labelCol={{ xs: 24, sm:24, md:5 }}
+              labelCol={{ xs: 24, sm: 24, md: 5 }}
               onFinish={saveNotification}
             >
               <Row>
@@ -229,25 +225,25 @@ const Newrelease = () => {
                   </Title>
                 </Col>
                 <Col xs={24} sm={24} md={13} lg={13} xl={13}>
-                    <Form.Item
-                        name="category"
-                        label="Categoria"
-                        labelAlign={'left'}
-                    >
-                        <Select style={{ width: 250 }} options={typeMessage} />   
-                    </Form.Item> 
-                    <Form.Item 
-                        label="Titulo"
-                        name="title"
-                        labelAlign={'left'}
-                    >
-                        <Input className={'formItemPayment'} />
-                    </Form.Item>
-                    <Form.Item name="message" label="Mensaje" labelAlign="left">
-                        <FroalaEditorComponent key="message" tag="textarea" model={message} onModelChange={setMessage} />
-                    </Form.Item>
+                  <Form.Item
+                    name="category"
+                    label="Categoria"
+                    labelAlign={"left"}
+                  >
+                    <Select style={{ width: 250 }} options={typeMessage} />
+                  </Form.Item>
+                  <Form.Item label="Titulo" name="title" labelAlign={"left"}>
+                    <Input className={"formItemPayment"} />
+                  </Form.Item>
+                  <Form.Item name="message" label="Mensaje" labelAlign="left">
+                    <FroalaEditorComponent
+                      key="message"
+                      tag="textarea"
+                      model={message}
+                      onModelChange={setMessage}
+                    />
+                  </Form.Item>
                 </Col>
-
 
                 <Col span={24}>
                   <Title level={3} key="segmentacion">
@@ -315,8 +311,13 @@ const Newrelease = () => {
                     </Col>
                   </Row>
                 </Col>
-                <Col span={24} style={{ textAlign: 'right' }}>
-                <Button key="cancel" onClick={() => onCancel()} disabled={sending} style={{ padding: "0 50px", margin: "0 10px" }} >
+                <Col span={24} style={{ textAlign: "right" }}>
+                  <Button
+                    key="cancel"
+                    onClick={() => onCancel()}
+                    disabled={sending}
+                    style={{ padding: "0 50px", margin: "0 10px" }}
+                  >
                     Cancelar
                   </Button>
                   <Button
