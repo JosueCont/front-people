@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from people.apps.person.models import Person, PersonType, Job
-from people.apps.business.models import Node, JobDepartment
+from people.apps.business.models import Node, Department
 from ckeditor.fields import RichTextField
 
 # Create your models here.
@@ -17,7 +17,7 @@ class Notification(models.Model):
     # Falta la segmentación
     send_to_all = models.BooleanField(verbose_name=_("Enviar a todos"), default=False)
     target_company = models.ForeignKey(Node, on_delete=models.CASCADE, verbose_name=_("Empresa"), null=True, blank=True)
-    target_department = models.ForeignKey(JobDepartment, on_delete=models.CASCADE, verbose_name=_("Departamento"), null=True, blank=True)
+    target_department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name=_("Departamento"), null=True, blank=True)
     target_person_type = models.ForeignKey(PersonType, on_delete=models.CASCADE, verbose_name=_("Tipo de persona"), null=True,
                                     blank=True)
     target_job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name=_("Puesto"), null=True, blank=True)
