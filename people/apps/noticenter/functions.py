@@ -15,14 +15,18 @@ settings = json_settings()
 
 class Pusher:
 
-    def __init__(self, notification):
+    def __init__(self, notification=None):
         self.__notification = notification
 
-    def send_push_notification(self, to_list, extra=None):
+    def send_push_notification(self, to_list, extra=None, message=None):
         for device in to_list:
             user_notification = UserNotification()
             user_notification.person = device.person
-            user_notification.notification = self.__notification
+            if self.__notification:
+                user_notification.notification = self.__notification
+                user_notification.message = self.__notification.message
+            else:
+                user_notification.message = message
             try:
                 PushClient().publish(
                     PushMessage(
@@ -65,6 +69,10 @@ class Pusher:
         """
         to_devices = UserDevice.objects.filter(person__id__in=users_id)
         self.send_push_notification(to_devices, extra)
+
+    def notify_vacation_status(self, users_id, message, extra=None):
+        to_devices = UserDevice.objects.filter(person__id__in=users_id)
+        self.send_push_notification(to_devices, extra, message)
 
 
 class Email:

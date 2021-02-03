@@ -38,7 +38,8 @@ class UserNotification(models.Model):
     Historial de envío de notificaciones al usuario.
     """
     person = models.ForeignKey(Person, verbose_name=_('Person'), on_delete=models.CASCADE)
-    notification = models.ForeignKey(Notification, verbose_name=_('Notificación'), on_delete=models.CASCADE)
+    notification = models.ForeignKey(Notification, verbose_name=_('Notificación'), on_delete=models.CASCADE, null=True, blank=True)
+    message = models.TextField(verbose_name=_("Mensaje"), null=True, blank=True)
     log = models.TextField(verbose_name=_('log'), null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
     is_read = models.BooleanField(default=False, verbose_name=_("¿Leído?"))
