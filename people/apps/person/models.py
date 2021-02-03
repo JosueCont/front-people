@@ -86,6 +86,8 @@ class Person(models.Model):
     photo = ThumbnailerImageField(upload_to=upload_photo, null=True, blank=True, verbose_name=_("Fotografia"))
     civil_status = models.IntegerField(choices=CIVIL_STATUS, verbose_name=_("Estado Civil"), null=True, blank=True)
     date_of_admission = models.DateField(verbose_name=_("Fecha de ingreso"), null=True, blank=True)
+    report_to = models.ForeignKey('Person', on_delete=models.PROTECT, verbose_name=_("Reporta a"), null=True,
+                                  blank=True)
 
     def __str__(self):
         return self.first_name
@@ -329,9 +331,9 @@ class Document(models.Model):
         extension = os.path.splitext(filename)[1][1:]
         file_name = os.path.splitext(filename)[0]
         url = f"{MAIN_APP_PATH}documents/personal-documents/%s%s%s%s%s%s/%s.%s" % (
-        now.day, now.month, now.year, now.hour,
-        now.minute, now.second,
-        slugify(str(file_name)), extension)
+            now.day, now.month, now.year, now.hour,
+            now.minute, now.second,
+            slugify(str(file_name)), extension)
         return url
 
     id = models.CharField(max_length=150, primary_key=True, default=get_clean_uuid, editable=False)

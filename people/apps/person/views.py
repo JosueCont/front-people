@@ -16,8 +16,9 @@ from people.apps.person.filters import PersonFilters
 from people.apps.person.functions import decode_file_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
     Phone, Family, ContactEmergency, JobExperience, Vacation, Document, Event
-from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer, DocumentSerializer
-from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
+from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer, DocumentSerializer, \
+    PhotoSerializer
+from people.apps.setup.models import DocumentType
 
 
 class PersonTypeViewSet(viewsets.ModelViewSet):
@@ -43,6 +44,8 @@ class PersonViewSet(viewsets.ModelViewSet):
             return DeletePersonMassiveSerializer
         if self.action == 'get_list_persons':
             return GetListPersonSerializer
+        if self.action == 'update_pthoto_person':
+            return PhotoSerializer
         return serializers.PersonSerializer
 
     def create(self, request, *args, **kwargs):
@@ -92,12 +95,16 @@ class PersonViewSet(viewsets.ModelViewSet):
                 if response.ok:
                     resp = json.loads(response.text)
                     if resp["level"] == "success":
-                        if 'user_id' in resp:
-                            if resp["user_id"]:
-                                instance.khonnect_id = resp["user_id"]
+                        if 'user' in resp:
+                            if resp["user"]:
+                                user = resp["user"]
+                                instance.khonnect_id = user["id"]
                                 instance.save()
                                 person_json = serializers.PersonSerializer(instance).data
-                                return Response(data=person_json, status=status.HTTP_200_OK)
+                                return Response(data={"person": person_json, "groups": user["groups"],
+                                                      "perms": user["perms"],
+                                                      "url_password_reset": user["url_password_reset"]},
+                                                status=status.HTTP_200_OK)
                     else:
                         return Response(data={"message": resp["level"]}, status=status.HTTP_400_BAD_REQUEST)
                 else:
@@ -145,6 +152,8 @@ class PersonViewSet(viewsets.ModelViewSet):
                     person.civil_status = validate_data["civil_status"]
                 if 'date_of_admission' in validate_data:
                     person.date_of_admission = validate_data["date_of_admission"]
+                if 'report_to' in validate_data:
+                    person.report_to = validate_data["report_to"]
                 if 'job' in validate_data and 'department' in validate_data:
                     job = validate_data["job"]
                     department = validate_data["department"]
@@ -387,6 +396,25 @@ class PersonViewSet(viewsets.ModelViewSet):
         else:
             return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=['post'])
+    def update_pthoto_person(self, request, pk=None):
+        serializer = PhotoSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                person = Person.objects.filter(id=serializer.validated_data["id"]).first()
+                if person:
+                    person.photo = serializer.validated_data["photo"]
+                    person.save()
+                    data_person = serializers.PersonSerializer(person).data
+                    return Response(data=data_person,
+                                    status=status.HTTP_200_OK)
+                else:
+                    return Response(data={"message": "person not found"}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.GeneralPersonSerializer
@@ -553,7 +581,7 @@ class EventViewSet(viewsets.ModelViewSet):
     filterset_fields = ('id', 'title')
 
     def create(self, request):
-        #data = request.data
+        # data = request.data
         serializer = serializers.EventSerializer(data=request.data)
         if serializer.is_valid():
             try:
@@ -577,7 +605,7 @@ class EventViewSet(viewsets.ModelViewSet):
                     return Response(data={"message": "success"}, status=status.HTTP_200_OK)
                 else:
                     return Response(data={"message": "it is require to select a node or at least one guest"
-                                                     }, status=status.HTTP_404_NOT_FOUND)
+                                          }, status=status.HTTP_404_NOT_FOUND)
             except Exception as e:
                 return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
         else:

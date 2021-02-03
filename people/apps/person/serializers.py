@@ -1,3 +1,4 @@
+from easy_thumbnails.fields import ThumbnailerImageField
 from import_export import resources
 from rest_framework import serializers
 
@@ -224,3 +225,8 @@ class EventSerializer(serializers.ModelSerializer):
         if instance.guests:
             representation['guests'] = PersonSerializer(instance.guests, many=True).data
         return representation
+
+
+class PhotoSerializer(serializers.Serializer):
+    photo = serializers.FileField()
+    id = serializers.CharField()
