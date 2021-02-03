@@ -185,7 +185,7 @@ class PhoneSerialiser(serializers.ModelSerializer):
 class VacationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Vacation
-        fields = "__all__"
+        exclude = ['person']
 
     def to_representation(self, instance):
         representation = super(VacationSerializer, self).to_representation(instance)

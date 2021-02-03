@@ -533,6 +533,17 @@ class VacationViewSet(viewsets.ModelViewSet):
     queryset = Vacation.objects.all()
     filterset_fields = ('departure_date', 'return_date')
 
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        try:
+            person = Person.objects.get(khonnect_id=self.request.data['khonnect_id'])
+        except:
+            person = None
+        if person:
+            instance.person = person
+            instance.save()
+
+
 class DocumentViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.DocumentSerializer
     queryset = Document.objects.all()

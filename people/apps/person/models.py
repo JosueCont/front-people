@@ -309,7 +309,7 @@ class Vacation(models.Model):
         (2, _("Aprobado")),
         (3, _("Rechazado")),
     )
-    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"))
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name=_("Persona"), null=True, blank=True)
     days_requested = models.IntegerField(verbose_name=_("Días solicitados"))
     departure_date = models.DateField(verbose_name=_("Fecha de salida"))
     return_date = models.DateField(verbose_name=_("Fecha de regreso"))
