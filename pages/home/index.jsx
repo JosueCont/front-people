@@ -58,7 +58,8 @@ const homeScreen = () => {
     if (text == undefined) {
       Axios.get(API_URL + `/person/person/`)
         .then((response) => {
-          response.data.results.map((item) => {
+          response.data.results.map((item, i) => {
+            item.key = i;
             if (!item.photo) item.photo = defaulPhoto;
           });
           setPerson(response.data.results);
