@@ -9,13 +9,14 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from tablib import Dataset
 
-from people.apps.business.models import NodePerson, Node
+from people.apps.business.models import NodePerson, Node, JobDepartment
 from people.apps.khonnect.models import Config
 from people.apps.person import serializers
 from people.apps.person.filters import PersonFilters
 from people.apps.person.functions import decode_file_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
-    Phone, Family, ContactEmergency, JobExperience, Vacation
+    Phone, Family, ContactEmergency, JobExperience, Vacation, Document, Event
+from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer, DocumentSerializer
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer
 
 
@@ -28,7 +29,7 @@ class PersonTypeViewSet(viewsets.ModelViewSet):
 class JobViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.JobSerializer
     queryset = Job.objects.all()
-    filterset_fields = ('id', 'name')
+    filterset_fields = ('id', 'name', 'unit')
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -52,28 +53,47 @@ class PersonViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 password = serializer.validated_data["password"]
                 del serializer.validated_data['password']
+                job = None
+                department = None
+                groups = None
+                if 'job' in serializer.validated_data:
+                    job = serializer.validated_data["job"]
+                    del serializer.validated_data['job']
+                if 'department' in serializer.validated_data:
+                    department = serializer.validated_data["department"]
+                    del serializer.validated_data['department']
+                if 'groups' in serializer.validated_data:
+                    groups = serializer.validated_data['groups']
+                    del serializer.validated_data['groups']
+                job_dep = None
+                if job and department:
+                    job_dep = JobDepartment.objects.filter(job=job, department=department).first()
                 instance = Person(**serializer.validated_data)
+                if job_dep:
+                    instance.job_department = job_dep
                 instance.save()
+                flast_name = ""
+                mlast_name = ""
+                if instance.flast_name:
+                    flast_name = instance.flast_name
+                if instance.mlast_name:
+                    mlast_name = instance.mlast_name
+
                 headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
                 url = f"{config.url_server}/signup/"
                 data_ = {"first_name": serializer.validated_data["first_name"],
-                         "last_name": serializer.validated_data["flast_name"] + " " + serializer.validated_data[
-                             "mlast_name"],
+                         "last_name": flast_name + " " + mlast_name,
                          "email": serializer.validated_data["email"],
                          "password": password,
                          }
-                if 'groups' in serializer.validated_data:
-                    data_['groups'] = serializer.validated_data["groups"]
+                if groups:
+                    data_['groups'] = groups
                 response = requests.post(url, json.dumps(data_), headers=headers)
                 if response.ok:
                     resp = json.loads(response.text)
                     if resp["level"] == "success":
                         if 'user_id' in resp:
                             if resp["user_id"]:
-                                validate_data = serializer.validated_data
-                                # del validate_data['password']
-                                if 'groups' in serializer.validated_data:
-                                    del validate_data['groups']
                                 instance.khonnect_id = resp["user_id"]
                                 instance.save()
                                 person_json = serializers.PersonSerializer(instance).data
@@ -119,20 +139,29 @@ class PersonViewSet(viewsets.ModelViewSet):
                 validate_data = serializer.validated_data
                 if 'person_type' in validate_data:
                     person.person_type = serializer.validated_data["person_type"]
-                if 'job' in validate_data:
-                    person.job = validate_data["job"]
                 if 'treatment' in validate_data:
                     person.treatment = validate_data["treatment"]
                 if 'civil_status' in validate_data:
                     person.civil_status = validate_data["civil_status"]
                 if 'date_of_admission' in validate_data:
                     person.date_of_admission = validate_data["date_of_admission"]
+                if 'job' in validate_data and 'department' in validate_data:
+                    job = validate_data["job"]
+                    department = validate_data["department"]
+                    job_dep = JobDepartment.objects.filter(job=job, department=department).first()
+                    if job_dep:
+                        person.job_department = job_dep
                 person.save()
+                flast_name = ""
+                mlast_name = ""
+                if person.flast_name:
+                    flast_name = instance.flast_name
+                if person.mlast_name:
+                    mlast_name = instance.mlast_name
                 headers = {'client-id': config.client_id, 'Content-Type': 'application/json'}
                 url = f"{config.url_server}/user/update/"
-                data_ = {"first_name": serializer.validated_data["first_name"],
-                         "last_name": serializer.validated_data["flast_name"] + " " + serializer.validated_data[
-                             "mlast_name"],
+                data_ = {"first_name": person.first_name,
+                         "last_name": flast_name + " " + mlast_name,
                          "user_id": person.khonnect_id,
 
                          }
@@ -327,6 +356,37 @@ class PersonViewSet(viewsets.ModelViewSet):
         else:
             return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, methods=['get'])
+    def address_person(self, request, pk):
+
+        if pk:
+            try:
+                person = self.get_object()
+                address_person = Address.objects.filter(person=person)
+                if address_person:
+                    array_address = []
+                    for address in address_person:
+                        array_address.append(serializers.AddressSerialiser(address).data)
+                return Response(data=array_address, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'])
+    def document_person(self, request, pk):
+        if pk:
+            try:
+                person = self.get_object()
+                array_doc = []
+                for doc in Document.objects.filter(person=person):
+                    array_doc.append(serializers.DocumentSerializer(doc).data)
+                return Response(data=array_doc, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(data={"id requerido"}, tatus=status.HTTP_400_BAD_REQUEST)
+
 
 class GeneralPersonViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.GeneralPersonSerializer
@@ -429,12 +489,12 @@ class ImportExportPersonViewSet(APIView):
                     if person.gender == 3:
                         gend = 'Otro'
                     row.append(gend)
-                    #row.append(person.job.name)
+                    # row.append(person.job.name)
                     row.append(nod)
                     writer.writerow(row)
             else:
                 writer.writerow(['code', 'first_name', 'flast_name', 'mlast_name', 'parentid', 'email',
-                                 'password', 'curp',  'job',  'code_job',  'department',  'gender'])
+                                 'password', 'curp', 'job', 'code_job', 'department', 'gender'])
             return response
         except Exception as e:
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
@@ -444,3 +504,119 @@ class VacationViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.VacationSerializer
     queryset = Vacation.objects.all()
     filterset_fields = ('departure_date', 'return_date')
+
+class DocumentViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.DocumentSerializer
+    queryset = Document.objects.all()
+    filterset_fields = ('id', 'document_type')
+
+    def create(self, request):
+        data = request.data
+        serializer = DocumentSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                document = Document()
+                document.document_type = serializer.validated_data['document_type']
+                document.person = serializer.validated_data['person']
+                document.description = serializer.validated_data['description']
+                document.document = serializer.validated_data['document']
+                document.save()
+                return Response(data={"message": "success"}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = DocumentSerializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            try:
+                document = Document.objects.filter(id=instance.id).first()
+                if document:
+                    document.document_type = serializer.validated_data['document_type']
+                    document.person = serializer.validated_data['person']
+                    document.description = serializer.validated_data['description']
+                    document.document = serializer.validated_data['document']
+                    document.save()
+                return Response(data={"message": "success"}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EventViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.EventSerializer
+    queryset = Event.objects.all()
+    filterset_fields = ('id', 'title')
+
+    def create(self, request):
+        #data = request.data
+        serializer = serializers.EventSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                guests = serializer.validated_data['guests']
+                node = serializer.validated_data['node']
+                if node or guests:
+                    event = Event()
+                    event.title = serializer.validated_data['title']
+                    event.date = serializer.validated_data['date']
+                    event.start_time = serializer.validated_data['start_time']
+                    event.end_time = serializer.validated_data['end_time']
+                    if guests:
+                        for guest in guests:
+                            person = Person.objects.filter(id=guest).first()
+                            if person:
+                                event.guests.add(person)
+                    else:
+                        node_org = Node.objects.filter(id=node.id).first()
+                        event.node = node_org
+                    event.save()
+                    return Response(data={"message": "success"}, status=status.HTTP_200_OK)
+                else:
+                    return Response(data={"message": "it is require to select a node or at least one guest"
+                                                     }, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = serializers.EventSerializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            try:
+                event = Event.objects.filter(id=instance.id).first()
+                if event:
+                    guests = serializer.validated_data['guests']
+                    node = serializer.validated_data['node']
+                    if node or guests:
+                        event.title = serializer.validated_data['title']
+                        event.date = serializer.validated_data['date']
+                        event.start_time = serializer.validated_data['start_time']
+                        event.end_time = serializer.validated_data['end_time']
+                        if len(guests) > 0:
+                            for guest in guests:
+                                person = Person.objects.filter(id=guest.id).first()
+                                if person:
+                                    event.guests.add(person)
+                            event.node = None
+                        else:
+                            node_org = Node.objects.filter(id=node.id).first()
+                            event.node = node_org
+                            event.guests.set([])
+                        event.save()
+                        return Response(data={"message": "success"}, status=status.HTTP_200_OK)
+                    else:
+                        return Response(data={"message": "it is require to select a node or at least one guest"
+                                              }, status=status.HTTP_200_OK)
+                else:
+                    return Response(data={"message": "Event not found"
+                                          }, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

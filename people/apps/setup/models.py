@@ -85,3 +85,17 @@ class Treatment(models.Model):
     class Meta:
         verbose_name = _("Tratamiento")
         verbose_name_plural = _("Tratamientos")
+
+
+class DocumentType(models.Model):
+    id = models.CharField(max_length=40, primary_key=True, default=get_clean_uuid, editable=False)
+    name = models.CharField(max_length=100, verbose_name=_("Nombre"))
+    code = models.CharField(max_length=50, unique=True, verbose_name=_("Clave"))
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Tipo de documento")
+        verbose_name_plural = _("Tipos de Documentos")

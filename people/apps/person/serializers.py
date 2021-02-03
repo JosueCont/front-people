@@ -4,9 +4,10 @@ from rest_framework import serializers
 from people.apps import business
 from people.apps.person import models
 from people.apps.setup.models import Treatment
-from people.apps.business.serializers import ChildNodeSerializer, JobDepartmentSerializer, DepartmentSerializer
+from people.apps.business.serializers import ChildNodeSerializer, JobDepartmentSerializer, DepartmentSerializer, \
+    NodeSerializer
 from people.apps.setup.serializers import BankSerializer, RelationshipSerializer, ExperienceTypeSerializer, \
-    LaborRelationshipSerializer, ReasonSeparationSerializer
+    LaborRelationshipSerializer, ReasonSeparationSerializer, DocumentTypeSerializer
 
 
 class PersonTypeSerializer(serializers.ModelSerializer):
@@ -72,6 +73,8 @@ class TreatmentSerializer(serializers.ModelSerializer):
 class PersonCustomSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=40, required=False)
     groups = serializers.ListField(max_length=1000, required=False)
+    department = serializers.CharField(max_length=50, required=False)
+    job = serializers.CharField(max_length=50, required=False)
 
     class Meta:
         model = models.Person
@@ -113,7 +116,6 @@ class ContactEmergencySerializer(serializers.ModelSerializer):
         return representation
 
 
-
 class TrainingSerialiser(serializers.ModelSerializer):
     class Meta:
         model = models.Training
@@ -150,7 +152,7 @@ class PersonResource(resources.ModelResource):
         # fields = "__all__"
         exclude = ('id')
         exclude = ('khonnect_id')
-        #import_id_fields = ('first_name', 'flast_name', 'mlast_name', 'curp',)
+        # import_id_fields = ('first_name', 'flast_name', 'mlast_name', 'curp',)
 
         """export_id_fields = (
         'khonnect_id', 'name', 'flast_name', 'mlast_name', 'birth_date', 'curp', 'rfc', 'imss', 'is_deleted',
@@ -198,3 +200,27 @@ class VacationSerializer(serializers.ModelSerializer):
         representation['available_days'] = 6
         return representation
 
+
+class DocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Document
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super(DocumentSerializer, self).to_representation(instance)
+        representation['document_type'] = DocumentTypeSerializer(instance.document_type).data
+        return representation
+
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Event
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super(EventSerializer, self).to_representation(instance)
+        if instance.node:
+            representation['node'] = NodeSerializer(instance.node).data
+        if instance.guests:
+            representation['guests'] = PersonSerializer(instance.guests, many=True).data
+        return representation

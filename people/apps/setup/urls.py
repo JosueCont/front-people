@@ -9,5 +9,6 @@ router.register(r'banks', views.BankViewSet)
 router.register(r'experience-type', views.ExperienceTypeViewSet)
 router.register(r'reason-separation', views.ReasonSeparationViewSet)
 router.register(r'labor-relationship', views.LaborRelationshipViewSet)
+router.register(r'document-type', views.DocumentTypeViewSet)
 
 urlpatterns = router.urls

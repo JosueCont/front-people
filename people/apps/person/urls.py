@@ -18,6 +18,8 @@ router.register(r'address', views.AddressViewSet)
 router.register(r'training', views.TrainingViewSet)
 router.register(r'bank-account', views.BankAccountViewSet)
 router.register(r'phone', views.PhoneViewSet)
+router.register(r'document', views.DocumentViewSet)
+router.register(r'event', views.EventViewSet)
 router.register(r'vacation', views.VacationViewSet)
 
 urlpatterns = [

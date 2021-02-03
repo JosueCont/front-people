@@ -21,7 +21,8 @@ __OWN_APPS = (
     'people.apps.khonnect',
     'people.apps.person',
     'people.apps.business',
-    'people.apps.setup'
+    'people.apps.setup',
+    'people.apps.noticenter'
 )
 
 __THIRD_PARTY_APPS = (
@@ -35,6 +36,7 @@ __THIRD_PARTY_APPS = (
     'colorfield',
     'drf_yasg',
     'corsheaders',
+    'ckeditor',
 )
 
 SHARED_APPS = (
