@@ -10,9 +10,9 @@ const { Header } = Layout;
 const { SubMenu } = Menu;
 
 const userCardDisplay = () => (
-    <>
-        <CardUser />
-    </>
+  <>
+    <CardUser />
+  </>
 );
 
 const appsCardDisplay = () => (
@@ -24,7 +24,7 @@ const appsCardDisplay = () => (
 export default function headerCustom(props) {
   const router = useRouter();
   return (
-    <Header >
+    <Header>
       <div className="logo" />
       <Menu
         theme="dark"
@@ -35,17 +35,11 @@ export default function headerCustom(props) {
           Personas
         </Menu.Item>
         <div style={{ float: "left" }}>
-
           <Dropdown overlay={appsCardDisplay}>
-
             <div>
-
               <AppstoreOutlined style={{ fontSize: "26px", color: "#08c" }} />
-
             </div>
-
           </Dropdown>
-
         </div>
         <Menu.Item
           key="2"
@@ -69,6 +63,9 @@ export default function headerCustom(props) {
             Eventos
           </Menu.Item>
         </SubMenu>
+        <Menu.Item key="5" onClick={() => router.push({ pathname: "/groups" })}>
+          Grupos
+        </Menu.Item>
 
         <div style={{ float: "right" }}>
           <Dropdown overlay={userCardDisplay}>
