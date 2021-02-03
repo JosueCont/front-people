@@ -30,7 +30,7 @@ class NodeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def node_in_cascade(self, request, pk=None):
-        pk = request.POST.get('pk', None)
+        pk = request.data.get('pk', None)
         if pk:
             root_node = Node.objects.get(id=pk)
         else:
