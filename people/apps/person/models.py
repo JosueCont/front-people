@@ -109,6 +109,36 @@ class Person(models.Model):
         else:
             return 0
 
+    @property
+    def available_days_vacation(self):
+        if self.antiquity > 0:
+            if self.antiquity == 1:
+                return 6 - self.get_vacation_days
+            elif self.antiquity == 2:
+                return 8 - self.get_vacation_days
+            elif self.antiquity == 3:
+                return 10 - self.get_vacation_days
+            elif self.antiquity == 4:
+                return 12 - self.get_vacation_days
+            elif 5 <= self.antiquity <= 9:
+                return 12 - self.get_vacation_days
+            elif 10 <= self.antiquity <= 14:
+                return 16 - self.get_vacation_days
+            elif 15 <= self.antiquity <= 19:
+                return 18 - self.get_vacation_days
+            elif 20 <= self.antiquity <= 24:
+                return 20 - self.get_vacation_days
+            elif 25 <= self.antiquity <= 29:
+                return 22 - self.get_vacation_days
+            else:
+                return 22
+        else:
+            return 0
+
+    @property
+    def get_vacation_days(self):
+        return self.vacation_set.all().count()
+
     class Meta:
         verbose_name = _("Persona")
         verbose_name_plural = _("Personas")

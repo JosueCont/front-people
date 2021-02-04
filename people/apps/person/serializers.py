@@ -52,6 +52,7 @@ class PersonSerializer(serializers.ModelSerializer):
                                                       many=True).data
         representation['job_department'] = JobDepartmentSerializer(instance.job_department).data
         representation['antiquity'] = instance.antiquity
+        representation['Available_days_vacation'] = instance.available_days_vacation
         return representation
 
 
