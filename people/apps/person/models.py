@@ -96,6 +96,19 @@ class Person(models.Model):
     def full_name(self):
         return "{0} {1} {2}".format(self.first_name, self.flast_name, self.mlast_name)
 
+    @property
+    def antiquity(self):
+        from dateutil import relativedelta as rdelta
+        from datetime import date
+        if self.date_of_admission:
+            d2 = date.today()
+            d1 = self.date_of_admission
+            rd = rdelta.relativedelta(d2, d1)
+            #print("{0.years} years and {0.months} months".format(rd))
+            return rd.years
+        else:
+            return 0
+
     class Meta:
         verbose_name = _("Persona")
         verbose_name_plural = _("Personas")
