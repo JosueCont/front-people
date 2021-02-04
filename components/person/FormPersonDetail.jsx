@@ -23,10 +23,6 @@ import {
     Table,
     Upload,
 } from "antd";
-import MainLayout from "../../layout/MainLayout";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
-import { useEffect, useState } from "react";
 import {
     WarningOutlined,
     EditOutlined,
@@ -38,21 +34,22 @@ import {
     FileTextOutlined,
 } from "@ant-design/icons";
 import DocumentModal from "../../components/modal/document";
-
-const { Content } = Layout;
-const { TabPane } = Tabs;
+import MainLayout from "../../layout/MainLayout";
+import Axios from "axios";
+import { API_URL } from "../../config/config";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Router from "next/router";
-const { Option } = Select;
 import moment from "moment";
 import TextArea from "antd/lib/input/TextArea";
-import Link from "next/link";
+import DropdownTreeSelect from "react-dropdown-tree-select";
+import "react-dropdown-tree-select/dist/styles.css";
+const { Content } = Layout;
 const { Panel } = Collapse;
-const { Meta } = Card;
 const { RangePicker } = DatePicker;
-const { Dragger } = Upload;
 
 const personDetailForm = () => {
+
     const router = useRouter();
     const { Title } = Typography;
     const [loading, setLoading] = useState(true);
@@ -63,6 +60,7 @@ const personDetailForm = () => {
     const [modalDoc, setModalDoc] = useState(false);
     const [deleted, setDeleted] = useState({});
     const [people, setPeople] = useState([]);
+    const [dataTree, setDataTree] = useState([]);
 
     ////STATE BOLEAN SWITCH AND CHECKBOX
     const [isActive, setIsActive] = useState(false);
@@ -225,252 +223,35 @@ const personDetailForm = () => {
         currenlyStuding ? setCurrenlyStuding(false) : setCurrenlyStuding(true);
     };
 
+
     /////CHANGE SWITCH
-    const changeStatus = () => {
+    const changeStatus = (value) => {
         isActive ? setIsActive(false) : setIsActive(true);
+        let p = formPerson.getFieldsValue();
+        isActive ? (p.is_active = false) : (p.is_active = true);
+        delete p["date_of_admission"], p["node"], p["report_to"], p["department"];
+        Axios.put(API_URL + `/person/person/${router.query.id}/`, p)
+            .then((response) => { })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     ////LOAD PAGE
     useEffect(() => {
         getValueSelects();
         if (router.query.id) {
-            ///GET PERSON
-            Axios.get(API_URL + `/person/person/${router.query.id}`)
-                .then((response) => {
-                    formPerson.setFieldsValue({
-                        first_name: response.data.first_name,
-                        flast_name: response.data.flast_name,
-                        mlast_name: response.data.mlast_name,
-                        gender: response.data.gender,
-                        email: response.data.email,
-                        curp: response.data.curp,
-                        rfc: response.data.rfc,
-                        imss: response.data.imss,
-                        is_active: response.data.is_active,
-                        photo: response.data.photo,
-                        civil_status: response.data.civil_status,
-                    });
-                    if (response.data.person_type)
-                        formPerson.setFieldsValue({
-                            person_type: response.data.person_type.id,
-                        });
-                    if (response.data.job_department.department) {
-                        formPerson.setFieldsValue({
-                            department: response.data.job_department.department.id,
-                        });
-                        Axios.get(
-                            API_URL +
-                            `/business/department/${response.data.job_department.department.id}/job_for_department/`
-                        )
-                            .then((resp) => {
-                                if (resp.status === 200) {
-                                    let job = resp.data;
-                                    job = job.map((a) => {
-                                        return { label: a.name, value: a.id };
-                                    });
-                                    setJobs(job);
-                                    if (response.data.job_department.job)
-                                        formPerson.setFieldsValue({
-                                            job: response.data.job_department.job.id,
-                                        });
-                                }
-                            })
-                            .catch((e) => {
-                                console.log(e);
-                            });
-                    }
-
-                    if (response.data.date_of_admission)
-                        formPerson.setFieldsValue({
-                            date_of_admission: moment(response.data.date_of_admission),
-                        });
-
-                    if (response.data.birth_date)
-                        formPerson.setFieldsValue({
-                            birth_date: moment(response.data.birth_date),
-                        });
-                    setDateAdmission(response.data.date_of_admission);
-                    setBirthDate(response.data.birth_date);
-                    setIsActive(response.data.is_active);
-                    if (response.data.photo) setPhoto(response.data.photo);
-                    else
-                        setPhoto(
-                            "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg"
-                        );
-                    setLoading(false);
-                    let personName =
-                        response.data.first_name + " " + response.data.flast_name;
-                    if (response.data.mlast_name)
-                        personName = person + " " + response.data.mlast_name;
-                    setPersonFullName(personName);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    setLoading(false);
-                });
-
-            ///GET GENERAL PERSON
-            Axios.get(API_URL + `/person/person/${router.query.id}/general_person/`)
-                .then((response) => {
-                    formGeneralTab.setFieldsValue({
-                        place_birth: response.data.place_birth,
-                        nationality: response.data.nationality,
-                        other_nationality: response.data.other_nationality,
-                        availability_travel: response.data.availability_travel,
-                        availability_change_residence:
-                            response.data.availability_change_residence,
-                        allergies: response.data.allergies,
-                        blood_type: response.data.blood_type,
-                    });
-                    if (response.data.availability_travel)
-                        setCheckedTravel(response.data.availability_travel);
-                    if (response.data.availability_change_residence)
-                        setCheckedResidence(response.data.availability_change_residence);
-                    setIdGeneralP(response.data.id);
-                    setLoading(false);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    setLoading(false);
-                });
-
-            ///PHONE
-            Axios.get(API_URL + `/person/person/${router.query.id}/phone_person/`)
-                .then((response) => {
-                    setPhones(response.data);
-                    setLoading(false);
-                    setLoadingTable(false);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    setLoading(false);
-                    setLoadingTable(false);
-                });
-
-            ///ADDRESS
-            Axios.get(API_URL + `/person/person/${router.query.id}/address_person/`)
-                .then((response) => {
-                    formAddress.setFieldsValue({
-                        street_type: response.data[0].street_type,
-                        street: response.data[0].street,
-                        numberOne: response.data[0].numberOne,
-                        numberTwo: response.data[0].numberTwo,
-                        building: response.data[0].building,
-                        postalCode: response.data[0].postalCode,
-                        suburb: response.data[0].suburb,
-                        location: response.data[0].location,
-                        reference: response.data[0].reference,
-                    });
-                    setIdAddressP(response.data.id);
-                    setLoading(false);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    setLoading(false);
-                });
-
-            ///FAMILY
-            Axios.get(API_URL + `/person/person/${router.query.id}/family_person/`)
-                .then((response) => {
-                    response.data.map((a) => {
-                        a.relation = a.relationship.name;
-                        a.fullname = a.name + " " + a.flast_name + " " + a.mlast_name;
-                    });
-                    setFamily(response.data);
-                    setLoading(false);
-                    setLoadingTable(false);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    setLoading(false);
-                    setLoadingTable(false);
-                });
-
-            ///CONTACT EMERGENCY
-            Axios.get(
-                API_URL + `/person/person/${router.query.id}/contact_emergency_person/`
-            )
-                .then((response) => {
-                    setContactEmergency(response.data);
-                    setLoading(false);
-                    setLoadingTable(false);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    setLoading(false);
-                    setLoadingTable(false);
-                });
-
-            ///TRAINIG
-            Axios.get(API_URL + `/person/person/${router.query.id}/training_person/`)
-                .then((response) => {
-                    setTraining(response.data);
-                    setLoading(false);
-                    setLoadingTable(false);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    setLoading(false);
-                    setLoadingTable(false);
-                });
-
-            ///JOB EXPERIENCE
-            Axios.get(
-                API_URL + `/person/person/${router.query.id}/job_experience_person/`
-            )
-                .then((response) => {
-                    setExperienceJob(response.data);
-                    setLoading(false);
-                    setLoadingTable(false);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    setLoading(false);
-                    setLoadingTable(false);
-                });
-
-            ///GET BANK ACCOUNTS
-            Axios.get(
-                API_URL + `/person/person/${router.query.id}/bank_account_person/`
-            )
-                .then((response) => {
-                    setBankAccounts(response.data);
-                    setLoading(false);
-                    setLoadingTable(false);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    setLoading(false);
-                    setLoadingTable(false);
-                });
-
-            ///GET DOCUMENTS
-            Axios.get(API_URL + `/person/person/${router.query.id}/document_person/`)
-                .then((response) => {
-                    setDocuments(response.data);
-                    setLoading(false);
-                })
-                .catch((e) => {
-                    console.log(e);
-                    setLoading(false);
-                });
-
-            ////GET PERSONS
-
-            Axios.get(API_URL + `/person/person/`)
-                .then((response) => {
-                    let persons = response.data.results;
-                    persons = persons.map((a) => {
-                        a.name = a.first_name + " " + a.flast_name;
-                        if (a.mlast_name) a.name = a.name + " " + a.mlast_name;
-                        return { label: a.name, value: a.id };
-                    });
-                    setPeople(persons);
-                    setLoading(false);
-                })
-                .catch((e) => {
-                    console.log(e);
-                });
+            getPerson();
+            getGeneralData();
+            getPhone();
+            getAddress();
+            getFamily();
+            getContactEmergency();
+            getTraining();
+            getJobExperience();
+            getBankAccount();
+            getDocument();
+            getTreeNode();
         }
     }, [router.query.id]);
 
@@ -602,6 +383,22 @@ const personDetailForm = () => {
             .catch((e) => {
                 console.log(e);
             });
+
+        ////GET PERSONS
+        Axios.get(API_URL + `/person/person/`)
+            .then((response) => {
+                let persons = response.data.results;
+                persons = persons.map((a) => {
+                    a.name = a.first_name + " " + a.flast_name;
+                    if (a.mlast_name) a.name = a.name + " " + a.mlast_name;
+                    return { label: a.name, value: a.id };
+                });
+                setPeople(persons);
+                setLoading(false);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
     };
 
     ////PERSON
@@ -612,9 +409,9 @@ const personDetailForm = () => {
         value.is_active = isActive;
         updatePerson(value);
     };
-    const updatePerson = (value) => {
-        setLoading(true);
-        Axios.put(API_URL + `/person/person/${router.query.id}/`, value)
+
+    const getPerson = () => {
+        Axios.get(API_URL + `/person/person/${router.query.id}`)
             .then((response) => {
                 formPerson.setFieldsValue({
                     first_name: response.data.first_name,
@@ -622,13 +419,13 @@ const personDetailForm = () => {
                     mlast_name: response.data.mlast_name,
                     gender: response.data.gender,
                     email: response.data.email,
-                    birth_date: moment(response.data.birth_date),
                     curp: response.data.curp,
                     rfc: response.data.rfc,
                     imss: response.data.imss,
                     is_active: response.data.is_active,
+                    photo: response.data.photo,
                     civil_status: response.data.civil_status,
-                    date_of_admission: null,
+                    report_to: response.data.report_to,
                 });
                 if (response.data.person_type)
                     formPerson.setFieldsValue({
@@ -659,33 +456,132 @@ const personDetailForm = () => {
                             console.log(e);
                         });
                 }
-                if (response.data.job_department.job)
-                    formPerson.setFieldsValue({
-                        job: response.data.job_department.job.id,
-                    });
+
                 if (response.data.date_of_admission)
                     formPerson.setFieldsValue({
                         date_of_admission: moment(response.data.date_of_admission),
                     });
+
                 if (response.data.birth_date)
                     formPerson.setFieldsValue({
                         birth_date: moment(response.data.birth_date),
                     });
+                setDateAdmission(response.data.date_of_admission);
                 setBirthDate(response.data.birth_date);
                 setIsActive(response.data.is_active);
                 if (response.data.photo) setPhoto(response.data.photo);
+                else
+                    setPhoto(
+                        "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg"
+                    );
                 setLoading(false);
-                message.success({
-                    content: "Actualizado correctamente.",
-                    className: "custom-class",
-                });
+                let personName =
+                    response.data.first_name + " " + response.data.flast_name;
+                if (response.data.mlast_name)
+                    personName = person + " " + response.data.mlast_name;
+                setPersonFullName(personName);
             })
             .catch((e) => {
-                setLoading(false);
-                message.error("Error al actualizar, intente de nuevo.");
                 console.log(e);
+                setLoading(false);
             });
     };
+
+    const updatePerson = (value) => {
+        setLoading(true);
+        Axios.put(API_URL + `/person/person/${router.query.id}/`, value)
+            .then((response) => {
+                formPerson.setFieldsValue({
+                    first_name: response.data.first_name,
+                    flast_name: response.data.flast_name,
+                    mlast_name: response.data.mlast_name,
+                    gender: response.data.gender,
+                    email: response.data.email,
+                    birth_date: moment(response.data.birth_date),
+                    curp: response.data.curp,
+                    rfc: response.data.rfc,
+                    imss: response.data.imss,
+                    is_active: response.data.is_active,
+                    civil_status: response.data.civil_status,
+                    report_to: response.data.report_to,
+                });
+                if (response.data.person_type)
+                    formPerson.setFieldsValue({
+                        person_type: response.data.person_type.id,
+                    });
+
+                if (response.data.job_department.department) {
+                    formPerson.setFieldsValue({
+                        department: response.data.job_department.department.id,
+                    });
+                    Axios.get(
+                        API_URL +
+                        `/business/department/${response.data.job_department.department.id}/job_for_department/`
+                    )
+                        .then((resp) => {
+                            if (resp.status === 200) {
+                                let job = resp.data;
+                                job = job.map((a) => {
+                                    return { label: a.name, value: a.id };
+                                });
+                                if (response.data.person_type)
+                                    formPerson.setFieldsValue({
+                                        person_type: response.data.person_type.id,
+                                    });
+                                if (response.data.job_department.department) {
+                                    formPerson.setFieldsValue({
+                                        department: response.data.job_department.department.id,
+                                    });
+                                    Axios.get(
+                                        API_URL +
+                                        `/business/department/${response.data.job_department.department.id}/job_for_department/`
+                                    )
+                                        .then((resp) => {
+                                            if (resp.status === 200) {
+                                                let job = resp.data;
+                                                job = job.map((a) => {
+                                                    return { label: a.name, value: a.id };
+                                                });
+                                                setJobs(job);
+                                                if (response.data.job_department.job)
+                                                    formPerson.setFieldsValue({
+                                                        job: response.data.job_department.job.id,
+                                                    });
+                                            }
+                                        })
+                                        .catch((e) => {
+                                            console.log(e);
+                                        });
+                                }
+                                if (response.data.job_department.job)
+                                    formPerson.setFieldsValue({
+                                        job: response.data.job_department.job.id,
+                                    });
+                                if (response.data.date_of_admission)
+                                    formPerson.setFieldsValue({
+                                        date_of_admission: moment(response.data.date_of_admission),
+                                    });
+                                if (response.data.birth_date)
+                                    formPerson.setFieldsValue({
+                                        birth_date: moment(response.data.birth_date),
+                                    });
+                                setBirthDate(response.data.birth_date);
+                                setIsActive(response.data.is_active);
+                                if (response.data.photo) setPhoto(response.data.photo);
+                                setLoading(false);
+                                message.success({
+                                    content: "Actualizado correctamente.",
+                                    className: "custom-class",
+                                });
+                            })
+                        .catch((e) => {
+                            setLoading(false);
+                            message.error("Error al actualizar, intente de nuevo.");
+                            console.log(e);
+                        });
+                };
+            })
+    }
     const deletePerson = (data) => {
         Axios.post(API_URL + `/person/person/delete_by_ids/`, {
             persons_id: router.query.id,
@@ -715,6 +611,7 @@ const personDetailForm = () => {
             saveGeneralData(value);
         }
     };
+
     const saveGeneralData = (data) => {
         setLoading(true);
         Axios.post(API_URL + `/person/general-person/`, data)
@@ -730,6 +627,33 @@ const personDetailForm = () => {
                 console.log(error);
             });
     };
+
+    const getGeneralData = () => {
+        Axios.get(API_URL + `/person/person/${router.query.id}/general_person/`)
+            .then((response) => {
+                formGeneralTab.setFieldsValue({
+                    place_birth: response.data.place_birth,
+                    nationality: response.data.nationality,
+                    other_nationality: response.data.other_nationality,
+                    availability_travel: response.data.availability_travel,
+                    availability_change_residence:
+                        response.data.availability_change_residence,
+                    allergies: response.data.allergies,
+                    blood_type: response.data.blood_type,
+                });
+                if (response.data.availability_travel)
+                    setCheckedTravel(response.data.availability_travel);
+                if (response.data.availability_change_residence)
+                    setCheckedResidence(response.data.availability_change_residence);
+                setIdGeneralP(response.data.id);
+                setLoading(false);
+            })
+            .catch((e) => {
+                console.log(e);
+                setLoading(false);
+            });
+    };
+
     const updateGeneralData = (data) => {
         setLoading(true);
         Axios.put(API_URL + `/person/general-person/${idGeneralP}/`, data)
@@ -911,6 +835,29 @@ const personDetailForm = () => {
             .catch((error) => {
                 setLoading(false);
                 console.log(error);
+            });
+    };
+    const getAddress = () => {
+        ///ADDRESS
+        Axios.get(API_URL + `/person/person/${router.query.id}/address_person/`)
+            .then((response) => {
+                formAddress.setFieldsValue({
+                    street_type: response.data[0].street_type,
+                    street: response.data[0].street,
+                    numberOne: response.data[0].numberOne,
+                    numberTwo: response.data[0].numberTwo,
+                    building: response.data[0].building,
+                    postalCode: response.data[0].postalCode,
+                    suburb: response.data[0].suburb,
+                    location: response.data[0].location,
+                    reference: response.data[0].reference,
+                });
+                setIdAddressP(response.data.id);
+                setLoading(false);
+            })
+            .catch((e) => {
+                console.log(e);
+                setLoading(false);
             });
     };
     const updateAddress = (data) => {
@@ -1601,6 +1548,7 @@ const personDetailForm = () => {
         },
     ];
 
+
     /////DELETE REGISTER
     const setDeleteRegister = (props) => {
         setDeleted(props);
@@ -1613,6 +1561,25 @@ const personDetailForm = () => {
         if (deleted.api == "deleteContEm") deleteContEm(deleted.id);
         if (deleted.api == "deleteFamily") deleteFamily(deleted.id);
         if (deleted.api == "deleteDocument") deleteDocument(deleted.id);
+    };
+    ////TREENODE
+    const getTreeNode = () => {
+        Axios.post(API_URL + "/business/node/node_in_cascade/")
+            .then((response) => {
+                setDataTree(response.data);
+            })
+            .catch((error) => {
+                console.log(e);
+            });
+    };
+    const onChangeTree = (currentNode, selectedNodes) => {
+        console.log("onChange::", currentNode, selectedNodes);
+    };
+    const onActionTree = (node, action) => {
+        console.log("onAction::", action, node);
+    };
+    const onNodeToggleTree = (currentNode) => {
+        console.log("onNodeToggle::", currentNode);
     };
 
     //////SHOW MODAL DELETE

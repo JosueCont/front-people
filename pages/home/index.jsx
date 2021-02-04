@@ -173,6 +173,7 @@ const homeScreen = () => {
                             defaultChecked={item.is_active}
                             checkedChildren="Activo"
                             unCheckedChildren="Inactivo"
+                            onChange={() => onchangeStatus(item)}
                         />
                     </>
                 );
@@ -226,6 +227,21 @@ const homeScreen = () => {
         onChange: (selectedRowKeys, selectedRows) => {
             setPersonsToDelete(selectedRows);
         },
+    };
+    const onchangeStatus = (value) => {
+        value.is_active ? (value.is_active = false) : (value.is_active = true);
+        delete value["photo"];
+        Axios.put(API_URL + `/person/person/${value.id}/`, value)
+            .then((response) => {
+                if (!response.data.photo) response.data.photo = defaulPhoto;
+                response.data.key = value.key;
+                person.map((a) => {
+                    if (a.id == response.data.id) a = response.data;
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     const menuGeneric = (
