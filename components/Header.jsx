@@ -25,22 +25,28 @@ export default function headerCustom(props) {
   const router = useRouter();
   return (
     <Header>
-      <div className="logo" />
+      <div className="logo" key="content_logo" />
       <Menu
+        key="main_menu"
         theme="dark"
         mode="horizontal"
         defaultSelectedKeys={[props.currentKey]}
       >
+        <Menu.Item>
+          <div style={{ float: "left" }} key={"app_" + props.currentKey}>
+            <Dropdown overlay={appsCardDisplay} key="drop_icon">
+              <div key="app_icon_content">
+                <AppstoreOutlined
+                  key="icon_app"
+                  style={{ fontSize: "26px", color: "#08c" }}
+                />
+              </div>
+            </Dropdown>
+          </div>
+        </Menu.Item>
         <Menu.Item key="1" onClick={() => router.push({ pathname: "/home" })}>
           Personas
         </Menu.Item>
-        <div style={{ float: "left" }}>
-          <Dropdown overlay={appsCardDisplay}>
-            <div>
-              <AppstoreOutlined style={{ fontSize: "26px", color: "#08c" }} />
-            </div>
-          </Dropdown>
-        </div>
         <Menu.Item
           key="2"
           onClick={() => router.push({ pathname: "/business" })}
@@ -69,13 +75,14 @@ export default function headerCustom(props) {
         >
           Vacaciones
         </Menu.Item>
-        <Menu.Item key="6" onClick={() => router.push({ pathname: "/groups" })}>
-          Grupos
-        </Menu.Item>
-        <div style={{ float: "right" }}>
-          <Dropdown overlay={userCardDisplay}>
-            <div>
-              <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+
+        <div style={{ float: "right" }} key={"menu_user_" + props.currentKey}>
+          <Dropdown overlay={userCardDisplay} key="dropdown_user">
+            <div key="menu_user_content">
+              <Avatar
+                key="avatar_key"
+                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+              />
             </div>
           </Dropdown>
         </div>
