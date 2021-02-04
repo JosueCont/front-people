@@ -14,10 +14,12 @@ export default function cardUser() {
   return (
     <>
       <Card
+        key="card_user"
         hoverable={true}
         style={{ width: 300 }}
         cover={
           <img
+            key="img_user"
             alt="example"
             src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
           />
@@ -25,12 +27,13 @@ export default function cardUser() {
         actions={[
           <SettingOutlined key="setting" />,
           <EditOutlined key="edit" />,
-          <PoweroffOutlined onClick={() => Router.push("/")} />,
+          <PoweroffOutlined onClick={() => Router.push("/")} key="PoweroffOutlined" />,
         ]}
       >
         <Meta
+            
           avatar={
-            <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+            <Avatar key="avatar_user" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
           }
           title="Card title"
           description="This is the description"
