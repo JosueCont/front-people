@@ -16,67 +16,63 @@ a {
 }
 
 /* Styles  login by Pedro Leon*/
-.containerPrincipal { 
-  height: 100vh; 
-  background: #096dd9
+.containerPrincipal {
+  height: 100vh;
+  background: #096dd9;
 }
 
-.loginContainer {  
+.loginContainer {
   height: 100vh;
-    background: white;   
-    padding-top: 13%;
-    padding-bottom: 13%;
-    padding-left: 13%;
-    padding-right: 13%;    
+  background: white;
+  padding-top: 13%;
+  padding-bottom: 13%;
+  padding-left: 13%;
+  padding-right: 13%;
 }
 /* .card-login {
  height: 100vh;
  width: 100%;
 } */
 
-@media (max-width: 1015px) { 
-  .loginContainer {    
-     padding-top: 12%;
+@media (max-width: 1015px) {
+  .loginContainer {
+    padding-top: 12%;
     padding-bottom: 12%;
     padding-left: 12%;
-    padding-right: 12%;  
+    padding-right: 12%;
   }
 }
 
-@media (max-width: 950px) {  
-  .loginContainer {    
+@media (max-width: 950px) {
+  .loginContainer {
     padding-top: 13%;
     padding-bottom: 11%;
     padding-left: 11%;
-    padding-right: 11%;  
+    padding-right: 11%;
   }
 }
 @media (max-width: 720px) {
- 
-  .loginContainer {    
+  .loginContainer {
     padding-top: 13%;
     padding-bottom: 11%;
     padding-left: 11%;
-    padding-right: 11%; 
+    padding-right: 11%;
   }
 }
 @media (max-width: 660px) {
- 
- 
-  .loginContainer {    
-     padding-top: 20%;
+  .loginContainer {
+    padding-top: 20%;
     padding-bottom: 11%;
     padding-left: 11%;
-    padding-right: 11%;  
+    padding-right: 11%;
   }
 }
 @media (max-width: 577px) {
- 
-  .loginContainer {    
+  .loginContainer {
     padding-top: 30%;
     padding-bottom: 11%;
     padding-left: 11%;
-    padding-right: 11%;  
+    padding-right: 11%;
     height: 100vh;
   }
   .card-login {
@@ -84,14 +80,13 @@ a {
   }
 }
 
-
 .components-form-demo-normal-login .login-form {
   max-width: 300px;
 }
 
-.font-color-khor{
-  color:#252593;
-  font-weight:bold;
+.font-color-khor {
+  color: #252593;
+  font-weight: bold;
 }
 
 /* styles dash*/
@@ -112,26 +107,25 @@ div#__next > section.layout{
     height: 100% !important;
 } */
 
-
-.back-white{
-    background-color: #fff;
+.back-white {
+  background-color: #fff;
 }
 
 .ant-layout-content > .container {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
-.mainBreadcrumb{
-    margin-bottom: 20px;
+.mainBreadcrumb {
+  margin-bottom: 20px;
 }
 
-.ant-tabs-content-holder{
-    background-color: #fff;
+.ant-tabs-content-holder {
+  background-color: #fff;
 }
-.ant-tabs-nav{
-    margin-bottom: 0 !important;
+.ant-tabs-nav {
+  margin-bottom: 0 !important;
 }
 
-.icon_actions{
-    margin: 0 10px;
+.icon_actions {
+  margin: 0 10px;
 }

@@ -32,18 +32,15 @@ export default function headerCustom(props) {
         mode="horizontal"
         defaultSelectedKeys={[props.currentKey]}
       >
-        <Menu.Item>
-          <div style={{ float: "left" }} key={"app_" + props.currentKey}>
-            <Dropdown overlay={appsCardDisplay} key="drop_icon">
-              <div key="app_icon_content">
-                <AppstoreOutlined
-                  key="icon_app"
-                  style={{ fontSize: "26px", color: "#08c" }}
-                />
-              </div>
-            </Dropdown>
-          </div>
-        </Menu.Item>
+        {/* <Menu.Item>
+            <div style={{ float: "left" }} key={'app_'+props.currentKey}>
+                <Dropdown overlay={appsCardDisplay} key="drop_icon">
+                    <div key="app_icon_content">
+                        <AppstoreOutlined key="icon_app" style={{ fontSize: "26px", color: "#08c" }} />
+                    </div>
+                </Dropdown>
+            </div>
+        </Menu.Item> */}
         <Menu.Item key="1" onClick={() => router.push({ pathname: "/home" })}>
           Personas
         </Menu.Item>
