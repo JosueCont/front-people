@@ -63,10 +63,15 @@ export default function headerCustom(props) {
             Eventos
           </Menu.Item>
         </SubMenu>
-        <Menu.Item key="5" onClick={() => router.push({ pathname: "/groups" })}>
+        <Menu.Item
+          key="5"
+          onClick={() => router.push({ pathname: "/holidays" })}
+        >
+          Vacaciones
+        </Menu.Item>
+        <Menu.Item key="6" onClick={() => router.push({ pathname: "/groups" })}>
           Grupos
         </Menu.Item>
-
         <div style={{ float: "right" }}>
           <Dropdown overlay={userCardDisplay}>
             <div>
