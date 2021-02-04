@@ -32,15 +32,18 @@ class NodeViewSet(viewsets.ModelViewSet):
     def node_in_cascade(self, request, pk=None):
         pk = request.data.get('pk', None)
         if pk:
-            root_node = Node.objects.get(id=pk)
+            root_node = Node.objects.filter(id=pk) #se usa filter para que devuelve un array
         else:
-            root_node = Node.objects.filter(parent__isnull=True).first()
-        json_nodes = {}
-        json_nodes["value"] = root_node.id
-        json_nodes["label"] = root_node.name
-        result = Node.traverse_node_json(root_node)
-        json_nodes["children"] = result
-        return Response(json_nodes)
+            root_node = Node.objects.filter(parent__isnull=True)
+        json_nodes_list = []
+        for node in root_node:
+            json_nodes = {}
+            json_nodes["value"] = node.id
+            json_nodes["label"] = node.name
+            result = Node.traverse_node_json(node)
+            json_nodes["children"] = result
+            json_nodes_list.append(json_nodes)
+        return Response(json_nodes_list)
 
 
 
