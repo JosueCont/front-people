@@ -125,12 +125,12 @@ export default function Releases() {
                             )} />
                             <Column title="Recibieron" key="recibieron"
                             render={(text, record) => (
-                                <GoToUserNotifications notification_id={record.id} />
+                                <GoToUserNotifications key={'goUser'+record.id} notification_id={record.id} />
                             )}
                             />
                             <Column title="Acciones" key="action"
                             render={(text, record) => (
-                                <EyeOutlined onClick={() => GotoDetails(record)}  />
+                                <EyeOutlined key={'goDetails_'+record.id} onClick={() => GotoDetails(record)}  />
                             )}
                             />
                             

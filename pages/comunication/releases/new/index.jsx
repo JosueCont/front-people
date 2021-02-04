@@ -50,16 +50,19 @@ const Newrelease = () => {
 
   useEffect(() => {
     if (json) {
-      setUserId(json.user_i);
+      setUserId(json.user_id);
       /* getBussiness(); */
       getValueSelects();
     }
   }, []);
 
   const saveNotification = async (values) => {
+      
     values["khonnect_id"] = userId;
     values["created_by"] = userId;
-    //setSending(true);
+    values["message"] = message;
+    console.log(values)
+    setSending(true);
     try {
       let response = await axiosApi.post(`/noticenter/notification/`, values);
       let data = response.data;
@@ -120,19 +123,20 @@ const Newrelease = () => {
   const typeMessage = [
     {
       label: "Noticias",
-      value: "Noticia",
+      value: 2,
     },
     {
       label: "Aviso",
-      value: "Aviso",
+      value: 1,
     },
   ];
 
   /////GET DATA SELCTS
-  const getValueSelects = async (id) => {
+  const getValueSelects = async () => {
     /////PERSON TYPE
     Axios.get(API_URL + `/person/person-type/`)
       .then((response) => {
+          console.log('response',response)
         if (response.status === 200) {
           let typesPerson = response.data.results;
           typesPerson = typesPerson.map((a) => {
@@ -144,6 +148,7 @@ const Newrelease = () => {
       .catch((e) => {
         console.log(e);
       });
+
 
     /////Companies
     try {
@@ -159,7 +164,7 @@ const Newrelease = () => {
       console.log("error", error);
     }
 
-    Axios.get(API_URL + `/business/department/`)
+    /* Axios.get(API_URL + `/business/department/`)
       .then((response) => {
         if (response.status === 200) {
           let dep = response.data.results;
@@ -171,35 +176,46 @@ const Newrelease = () => {
       })
       .catch((e) => {
         console.log(e);
-      });
+      }); */
   };
 
-  const onChangecompany = (value) => {
+  const onChangecompany = async (value) => {
     console.log(value);
+    /* Clear form in specific fields */
+    form.setFieldsValue({
+        target_department: null,
+        target_job: null
+    });
+    try {
+        let response = await axiosApi.get(`business/node/${value}/department_for_node/`);
+        let data = response.data;
+        console.log("data", data);
+        data = data.map((a) => {
+            return { label: a.name, value: a.id, key: a.name+a.id };
+          });
+        setDepartments(data);
+      } catch (error) {
+        console.log("error", error);
+      }
   };
 
-  const onChangeDepartment = (value) => {
+  const onChangeDepartment = async (value) => {
     ////JOBS
     form.setFieldsValue({
       target_job: null,
     });
-    /* console.log(API_URL + `/business/department/${value}/job_for_department/`) */
-    Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
-      .then((response) => {
-        if (response.status === 200) {
-          let job = response.data;
-          job = job.map((a) => {
-            return { label: a.name, value: a.id };
+    console.log(`business/department/${value}/job_for_department/`);
+    try {
+        let response = await axiosApi.get(`business/department/${value}/job_for_department/`);
+        let data_jobs = response.data;
+        console.log("data_jobs", data_jobs);
+        data_jobs = data_jobs.map((a,index) => {
+            return { label: a.name, value: a.id, key: a.name+index };
           });
-          setJobs(job);
-        } else {
-          setJobs([]);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        setJobs([]);
-      });
+          setJobs(data_jobs);
+    } catch (error) {
+        
+    }
   };
 
   return (
@@ -210,9 +226,10 @@ const Newrelease = () => {
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container back-white" style={{ width: "100%" }}>
-        <Row justify={"center"}>
+        <Row   justify={"center"}>
           <Col span="23" style={{ padding: "20px 0 30px 0" }}>
             <Form
+                key="notification_form"
               form={form}
               layout="horizontal"
               labelCol={{ xs: 24, sm: 24, md: 5 }}
@@ -256,7 +273,7 @@ const Newrelease = () => {
                     label="Enviar a todos"
                     labelAlign="left"
                   >
-                    <Switch />
+                    <Switch value={false} />
                   </Form.Item>
                 </Col>
 
@@ -272,10 +289,11 @@ const Newrelease = () => {
                           options={bussinessList}
                           onChange={onChangecompany}
                           placeholder="Empresa"
+                          key="company_select"
                         />
                       </Form.Item>
                       <Form.Item
-                        name={"departament"}
+                        name={"target_department"}
                         label="Departamento"
                         labelCol={{ span: 10 }}
                       >
@@ -283,6 +301,7 @@ const Newrelease = () => {
                           options={departments}
                           onChange={onChangeDepartment}
                           placeholder="Departamento"
+                          key="departament_select"
                         />
                       </Form.Item>
                       <Form.Item
@@ -290,7 +309,7 @@ const Newrelease = () => {
                         label="Puesto de trabajo"
                         labelCol={{ span: 10 }}
                       >
-                        <Select options={jobs} />
+                        <Select options={jobs} key="jobs_select" />
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -299,14 +318,14 @@ const Newrelease = () => {
                         label="Tipo de persona"
                         labelCol={{ span: 10 }}
                       >
-                        <Select options={personType} />
+                        <Select options={personType} key="person_select" />
                       </Form.Item>
                       <Form.Item
                         name={"target_gender"}
                         label="Genero"
                         labelCol={{ span: 10 }}
                       >
-                        <Select options={genders} />
+                        <Select options={genders} key="gender_select" />
                       </Form.Item>
                     </Col>
                   </Row>

@@ -3,12 +3,14 @@ import { render } from "react-dom";
 import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Table, Breadcrumb, Button, Form, Input, Select } from "antd";
 import { useRouter } from "next/router";
+import axiosApi from "../../libs/axiosApi";
 import {
   DeleteOutlined,
   EditOutlined,
   InfoCircleOutlined,
   SearchOutlined,
   PlusOutlined,
+  EyeOutlined
 } from "@ant-design/icons";
 
 export default function Holidays() {
@@ -17,20 +19,28 @@ export default function Holidays() {
   const [form] = Form.useForm();
   const { Option } = Select;
 
-
   const [holidayList, setHolidayList] = useState([]);
 
 
-  /* const getAllHolidays = async () => {
+  const getAllHolidays = async () => {
     try {
-        let response = await axiosApi.get(`/noticenter/notification/`);
-        let data = response.data;
-        setList(data.results);
+        let response = await axiosApi.get(`/person/vacation/`);
+        let data = response.data.results;
+        console.log(data);
+        setHolidayList(data);
     } catch (e) {
         console.log(e);
     }
   }
- */
+
+  const GotoDetails = (data) => {
+      console.log(data);
+      route.push('holidays/'+data.id+'/details')
+  }
+
+  useEffect(() => {
+    getAllHolidays()
+  },[route])
 
   return (
     <MainLayout currentKey="5">
@@ -111,17 +121,22 @@ export default function Holidays() {
         </Row>
         <Row justify={"end"}>
           <Col span={24}>
-            <Table>
+            <Table dataSource={holidayList} key="table_holidays">
               <Column title="Colaborador" dataIndex="id" key="id"></Column>
-              <Column title="Empresa" dataIndex="name" key="name"></Column>
-              <Column title="Departamentos" dataIndex="name" key="name"></Column>
-              <Column title="Dias solicitados" dataIndex="name" key="name"></Column>
-              <Column title="Dias disponibles" dataIndex="name" key="name"></Column>
-              <Column title="Estatus" dataIndex="name" key="name"></Column>
+              <Column title="Empresa" dataIndex="business" key="business"></Column>
+              <Column title="Departamentos" dataIndex="department" key="department"></Column>
+              <Column title="Dias solicitados" dataIndex="days_requested" key="days_requested"></Column>
+              <Column title="Dias disponibles" dataIndex="available_days" key="available_days"></Column>
+              <Column title="Estatus" dataIndex="status" key="status"></Column>
               <Column
-                title="Message"
-                dataIndex="message"
-                key="message"
+                title="Acciones"
+                key="actions"
+                render={(text, record) => (
+                    <>
+                        <EyeOutlined className="icon_actions" key={'goDetails_'+record.id} onClick={() => GotoDetails(record)}  />
+                        <EditOutlined className="icon_actions" key={'edit_'+record.id} />
+                    </>
+                )}
               ></Column>
             </Table>
           </Col>

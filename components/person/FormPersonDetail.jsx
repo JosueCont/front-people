@@ -223,8 +223,16 @@ const personDetailForm = () => {
   };
 
   /////CHANGE SWITCH
-  const changeStatus = () => {
+  const changeStatus = (value) => {
     isActive ? setIsActive(false) : setIsActive(true);
+    let p = formPerson.getFieldsValue();
+    isActive ? (p.is_active = false) : (p.is_active = true);
+    delete p["date_of_admission"], p["node"], p["report_to"], p["department"];
+    Axios.put(API_URL + `/person/person/${router.query.id}/`, p)
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   ////LOAD PAGE
@@ -1552,14 +1560,12 @@ const personDetailForm = () => {
   const getTreeNode = () => {
     Axios.post(API_URL + "/business/node/node_in_cascade/")
       .then((response) => {
-        console.log("TREE NODE---->> ", response.data);
         setDataTree(response.data);
       })
       .catch((error) => {
         console.log(e);
       });
   };
-
   const onChangeTree = (currentNode, selectedNodes) => {
     console.log("onChange::", currentNode, selectedNodes);
   };
@@ -1674,7 +1680,7 @@ const personDetailForm = () => {
                         </Form.Item>
                         <Switch
                           checked={isActive}
-                          onClick={changeStatus}
+                          onClick={() => changeStatus(isActive)}
                           checkedChildren="Activo"
                           unCheckedChildren="Inactivo"
                         />
