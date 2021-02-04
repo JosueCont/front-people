@@ -92,7 +92,7 @@ export default function HolidaysNew() {
         <MainLayout currentKey="5">
             <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
                 <Breadcrumb.Item>Home</Breadcrumb.Item>
-                <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
+                <Breadcrumb.Item href="./">Vacaciones</Breadcrumb.Item>
                 <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>

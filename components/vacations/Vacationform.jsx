@@ -28,7 +28,7 @@ const Vacationform = (props) => {
                 <Form.Item label="Puesto" labelCol={{ span: 9 }} labelAlign={'left'}>
                     <Input readOnly value={props.job} />
                 </Form.Item>
-                <Form.Item name="days_requested" label="Dias solicitados" labelCol={{ span: 9 }} labelAlign={'left'}>
+                <Form.Item name="days_requested" label="Días solicitados" labelCol={{ span: 9 }} labelAlign={'left'}>
                     <InputNumber min={1} max={10} value={props.daysRequested ? props.daysRequested : null} />
                 </Form.Item>
             </Col>
@@ -39,7 +39,7 @@ const Vacationform = (props) => {
                 <Form.Item name="return_date" label="Fecha de rereso" labelCol={{ span: 9 }} labelAlign={'left'}>
                     <DatePicker key="return_date" onChange={props.onChangeReturnDate} />
                 </Form.Item>
-                <Form.Item label="Dias disponibles" labelCol={{ span: 9 }} labelAlign={'left'}>
+                <Form.Item label="Días disponibles" labelCol={{ span: 9 }} labelAlign={'left'}>
                     <Input value={props.availableDays ? props.availableDays : null} />
                 </Form.Item>
             </Col>
