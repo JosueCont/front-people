@@ -120,3 +120,14 @@ div#__next > section.layout{
 .ant-layout-content > .container {
     margin-top: 30px;
 }
+
+.mainBreadcrumb{
+    margin-bottom: 20px;
+}
+
+.ant-tabs-content-holder{
+    background-color: #fff;
+}
+.ant-tabs-nav{
+    margin-bottom: 0 !important;
+}

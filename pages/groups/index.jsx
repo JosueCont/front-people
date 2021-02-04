@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   Modal,
+  message,
 } from "antd";
 import {
   SearchOutlined,
@@ -30,7 +31,6 @@ import { useState, useEffect } from "react";
 const Groups = () => {
   const router = useRouter();
   const [form] = Form.useForm();
-  const [formFilter] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [groups, setGroups] = useState([]);
 
@@ -59,13 +59,13 @@ const Groups = () => {
   const deleteGroup = async (id) => {
     let data = { id: id };
 
-    Axios.post("http://demo.localhost:3000/group/delete/", data, {
+    Axios.post(LOGIN_URL + `/group/delete/`, data, {
       headers: headers,
     })
       .then(function (response) {
         if (response.status === 200) {
           message.success({
-            content: "Application deleted successfully",
+            content: "Group eliminado satisfactoriamente",
             className: "custom-class",
             style: {
               marginTop: "20vh",
@@ -89,9 +89,9 @@ const Groups = () => {
 
   const confirmDelete = (id) => {
     confirm({
-      title: "Do you want to delete the item?",
+      title: "Esta seguro de eliminar el elemento?",
       icon: <ExclamationCircleOutlined />,
-      content: "If you delete the item, you won't be able to get it back",
+      content: "Si elimina el elemento no podrá recuperarlo",
       onOk() {
         deleteGroup(id);
       },
@@ -150,7 +150,7 @@ const Groups = () => {
     <MainLayout currentKey="1">
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Person</Breadcrumb.Item>
+        <Breadcrumb.Item>Groups</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
         <div style={{ padding: "1%", float: "right" }}>
@@ -170,28 +170,6 @@ const Groups = () => {
           className="site-layout-background"
           style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
-          <div style={{ padding: 24 }}>
-            <Form onFinish={filter} layout={"vertical"} form={formFilter}>
-              <Row>
-                <Col lg={7} xs={22} offset={1}>
-                  <Form.Item name="name">
-                    <Input placeholder="Nombre" />
-                  </Form.Item>
-                </Col>
-                <Col lg={2} xs={5} offset={1}>
-                  <Form.Item>
-                    <Button
-                      icon={<SearchOutlined />}
-                      type="primary"
-                      htmlType="submit"
-                    >
-                      Buscar
-                    </Button>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
-          </div>
           <Table
             size="small"
             columns={columns}
