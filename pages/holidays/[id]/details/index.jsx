@@ -1,11 +1,45 @@
 import React, {useEffect, useState} from 'react';
 import { Tabs, Radio, Row, Col, Breadcrumb, Button, Image, Form, Input } from 'antd';
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../../../layout/MainLayout";
 import { render } from "react-dom";
 import { useRouter } from "next/router";
+import axiosApi from '../../../../libs/axiosApi';
+import moment from "moment";
 
 export default function HolidaysDetails (){
+    const route = useRouter()
+
     const { TabPane } = Tabs;
+    const [details, setDetails] = useState(null);
+    const { id } = route.query;
+
+    const [daysRequested, setDaysRequested] = useState(null);
+    const [departureDate, setDepartureDate] = useState(null);
+    const [returnDate, setReturnDate] = useState(null);
+    const [availableDays, setAvailableDays] = useState(null);
+
+
+    const getDetails = async () => {
+        try{
+            let response = await axiosApi.get(`/person/vacation/${id}/`);
+            let data = response.data
+            console.log("data",data);
+            setDaysRequested(data.days_requested);
+            setDepartureDate(moment(data.departure_date).format('DD/MM/YYYY'));
+            setReturnDate(moment(data.return_date).format('DD/MM/YYYY'));
+            setAvailableDays(data.available_days);
+
+            /* setLoading(false); */
+            //setList(data.results)
+        }catch (e) {
+            console.log("error",e)
+            /* setLoading(false); */
+        }
+    }
+
+    useEffect(() => {
+        getDetails();
+    }, [route])
 
     return (
         <MainLayout currentKey="5">
@@ -34,16 +68,16 @@ export default function HolidaysDetails (){
                                 <Col span={8} offset={1}>
                                     <Form>
                                         <Form.Item label="Dias solicitados" labelCol={{ span: 9 }} labelAlign={'left'}>
-                                            <Input/>
+                                            <Input value={daysRequested} readOnly/>
                                         </Form.Item>
                                         <Form.Item label="Dis disponibles" labelCol={{ span: 9 }} labelAlign={'left'}>
-                                            <Input/>
+                                            <Input value={availableDays} readOnly/>
                                         </Form.Item>
                                         <Form.Item label="Fecha de salida" labelCol={{ span: 9 }} labelAlign={'left'}>
-                                            <Input/>
+                                            <Input value={departureDate} readOnly/>
                                         </Form.Item>
                                         <Form.Item label="Fecha de regreso" labelCol={{ span: 9 }} labelAlign={'left'}>
-                                            <Input/>
+                                            <Input value={returnDate} readOnly/>
                                         </Form.Item>
                                     </Form>
                                 </Col>

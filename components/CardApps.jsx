@@ -24,12 +24,14 @@ const cardApps = () => {
   return (
     <>
       <Card
+        key="card_app"
         hoverable={true}
         style={{ width: 300 }}
         actions={[<PlusOutlined onClick={messageAdd} key="setting" />]}
       >
-        <Space>
+        <Space key="space_card_app">
           <div
+            key="div_card_app"
             style={{
               display: "flex",
               flexDirection: "column",
@@ -37,6 +39,7 @@ const cardApps = () => {
             }}
           >
             <VideoCameraOutlined
+                key="video_camara"
               hoverable={true}
               onClick={() => openExternalUrl("https://demo.lms.ddns.me")}
               style={{ fontSize: "40px" }}
