@@ -107,11 +107,11 @@ export default function Holidays() {
             </Col>
             <Col>
                 <Button
-                style={{
-                    background: "#fa8c16",
-                    fontWeight: "bold",
-                    color: "white",
-                }}
+                    style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white"
+                    }}
                 onClick={() => route.push('holidays/new')} 
                 >
                 <PlusOutlined />
@@ -134,7 +134,7 @@ export default function Holidays() {
                 render={(text, record) => (
                     <>
                         <EyeOutlined className="icon_actions" key={'goDetails_'+record.id} onClick={() => GotoDetails(record)}  />
-                        <EditOutlined className="icon_actions" key={'edit_'+record.id} />
+                        <EditOutlined className="icon_actions" key={'edit_'+record.id} onClick={() => route.push('holidays/'+record.id+'/edit') } />
                     </>
                 )}
               ></Column>
