@@ -8,113 +8,113 @@ import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
 const LoginForm = () => {
-  const router = useRouter();
-  const [loading, setLoading] = useState(null);
-  const [errorLogin, setErrorLogin] = useState(false);
-  const onFinish = (values) => {
-    login(values.email, values.password);
-  };
+    const router = useRouter();
+    const [loading, setLoading] = useState(null);
+    const [errorLogin, setErrorLogin] = useState(false);
+    const onFinish = (values) => {
+        login(values.email, values.password);
+    };
 
-  const login = async (email, password) => {
-    try {
-      setErrorLogin(false);
-      setLoading(true);
-      const headers = {
-        "client-id": APP_ID,
-        "Content-Type": "application/json",
-      };
-      const data = {
-        email: email,
-        password: password,
-      };
-      Axios.post(LOGIN_URL + "/login/", data, { headers: headers })
-        .then(function (response) {
-          if (response.status === 200) {
-            let token = jwt_decode(response.data.token);
-            if (token) {
-              Cookies.set("userToken", token);
-              setLoading(false);
-              router.push({ pathname: "/home" });
-            }
-          } else {
-            setLoading(false);
-            setErrorLogin(true);
-          }
-        })
-        .catch(function (error) {
-          setLoading(false);
-          setErrorLogin(true);
-          console.log(error);
-        });
-    } catch (e) {
-      alert(
-        "Hubo un  problema al iniciar sesión, por favor verifica tus credenciales"
-      );
-      console.log(e);
-    } finally {
-    }
-  };
+    const login = async (email, password) => {
+        try {
+            setErrorLogin(false);
+            setLoading(true);
+            const headers = {
+                "client-id": APP_ID,
+                "Content-Type": "application/json",
+            };
+            const data = {
+                email: email,
+                password: password,
+            };
+            Axios.post(LOGIN_URL + "/login/", data, { headers: headers })
+                .then(function (response) {
+                    if (response.status === 200) {
+                        let token = jwt_decode(response.data.token);
+                        if (token) {
+                            Cookies.set("userToken", token);
+                            setLoading(false);
+                            router.push({ pathname: "/home" });
+                        }
+                    } else {
+                        setLoading(false);
+                        setErrorLogin(true);
+                    }
+                })
+                .catch(function (error) {
+                    setLoading(false);
+                    setErrorLogin(true);
+                    console.log(error);
+                });
+        } catch (e) {
+            alert(
+                "Hubo un  problema al iniciar sesión, por favor verifica tus credenciales"
+            );
+            console.log(e);
+        } finally {
+        }
+    };
 
-  return (
-    <>
-      <Spin tip="Loading..." spinning={loading}></Spin>
-      <Form
-        name="normal_login"
-        className="login-form"
-        layout="vertical"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-      >
-        <Text className="font-color-khor">Correo</Text>
-        <Form.Item
-          name="email"
-          rules={[{ required: true, message: "Please input your Email!" }]}
-        >
-          <Input style={{ marginTop: "5px" }} placeholder="Correo" />
-        </Form.Item>
-        <Text className="font-color-khor">Contraseña</Text>
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: "Please input your Password!" }]}
-        >
-          <Input
-            style={{ marginTop: "5px" }}
-            type="password"
-            placeholder="Contraseña"
-          />
-        </Form.Item>
-        <Form.Item>
-          <Form.Item
-            name="remember"
-            valuePropName="checked"
-            className="ckeck-khor"
-            style={{ float: "right", marginBottom: "5px" }}
-          >
-            <Checkbox className="font-color-khor">Remember me</Checkbox>
-          </Form.Item>
-        </Form.Item>
-        {errorLogin && (
-          <Alert
-            message="Error iniciar sesión"
-            description="La contraseña y/o correo no son correctos"
-            type="error"
-            style={{ textAlign: "center" }}
-          />
-        )}
+    return (
+        <>
+            <Spin tip="Loading..." spinning={loading}></Spin>
+            <Form
+                name="normal_login"
+                className="login-form"
+                layout="vertical"
+                initialValues={{ remember: true }}
+                onFinish={onFinish}
+            >
+                <Text className="font-color-khor">Email</Text>
+                <Form.Item
+                    name="email"
+                    rules={[{ required: true, message: "Please input your Email!" }]}
+                >
+                    <Input style={{ marginTop: "5px" }} placeholder="Correo" />
+                </Form.Item>
+                <Text className="font-color-khor">Password</Text>
+                <Form.Item
+                    name="password"
+                    rules={[{ required: true, message: "Please input your Password!" }]}
+                >
+                    <Input
+                        style={{ marginTop: "5px" }}
+                        type="password"
+                        placeholder="Contraseña"
+                    />
+                </Form.Item>
+                <Form.Item>
+                    <Form.Item
+                        name="remember"
+                        valuePropName="checked"
+                        className="ckeck-khor"
+                        style={{ float: "right", marginBottom: "5px" }}
+                    >
+                        <Checkbox className="font-color-khor">Remember me</Checkbox>
+                    </Form.Item>
+                </Form.Item>
+                {errorLogin && (
+                    <Alert
+                        message="Error iniciar sesión"
+                        description="La contraseña y/o correo no son correctos"
+                        type="error"
+                        style={{ textAlign: "center" }}
+                    />
+                )}
 
-        <Form.Item>
-          <Button
-            style={{ width: "100%!important" }}
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-          >
-            Log in
+                <Form.Item>
+                    <Button
+                        style={{ width: "100%!important" }}
+                        type="primary"
+                        htmlType="submit"
+                        className="login-form-button"
+                    >
+                        Log in
           </Button>
-        </Form.Item>
-      </Form>
-    </>
-  );
+                </Form.Item>
+            </Form>
+        </>
+    );
 };
 
 export default LoginForm;
