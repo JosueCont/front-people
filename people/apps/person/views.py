@@ -161,6 +161,26 @@ class PersonViewSet(viewsets.ModelViewSet):
                     if job_dep:
                         person.job_department = job_dep
                 person.save()
+                nodes = None
+                with transaction.atomic():
+                    try:
+                        if 'nodes' in validate_data:
+                            nodes = validate_data['nodes']
+                            #se eliminan los existentes
+                            nod_per_exist = NodePerson.objects.filter(person=person)
+                            if nod_per_exist:
+                                for exist in nod_per_exist:
+                                    exist.delete()
+                           #se agregan los nuevos
+                            for nod in nodes:
+                                node = Node.objects.filter(id=nod).first()
+                                if node:
+                                    node_person = NodePerson()
+                                    node_person.node = node
+                                    node_person.person = instance
+                                    node_person.save()
+                    except:
+                        raise ValueError
                 flast_name = ""
                 mlast_name = ""
                 if person.flast_name:
