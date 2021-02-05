@@ -96,6 +96,47 @@ class Person(models.Model):
     def full_name(self):
         return "{0} {1} {2}".format(self.first_name, self.flast_name, self.mlast_name)
 
+    @property
+    def antiquity(self):
+        from dateutil import relativedelta as rdelta
+        from datetime import date
+        if self.date_of_admission:
+            d2 = date.today()
+            d1 = self.date_of_admission
+            rd = rdelta.relativedelta(d2, d1)
+            #print("{0.years} years and {0.months} months".format(rd))
+            return rd.years
+        else:
+            return 0
+
+    @property
+    def available_days_vacation(self):
+        vacation_days = 0
+        if self.antiquity > 0:
+            if self.antiquity >= 1:
+                vacation_days += 6
+            if self.antiquity >= 2:
+                vacation_days += 8
+            if self.antiquity >= 3:
+                vacation_days += 10
+            if self.antiquity >= 4:
+                vacation_days += 12
+            if 5 <= self.antiquity <= 9:
+                vacation_days += 12
+            if 10 <= self.antiquity <= 14:
+                vacation_days += 16
+            if 15 <= self.antiquity <= 19:
+                vacation_days += 18
+            if 20 <= self.antiquity <= 24:
+                vacation_days += 20
+            if 25 <= self.antiquity <= 29:
+                vacation_days += 22
+        return vacation_days - self.get_vacation_days
+
+    @property
+    def get_vacation_days(self):
+        return self.vacation_set.all().count()
+
     class Meta:
         verbose_name = _("Persona")
         verbose_name_plural = _("Personas")
