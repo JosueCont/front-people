@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, Radio, Row, Col, Breadcrumb, Typography, Button, Select, Form, Image, Input } from 'antd';
-import MainLayout from "../../../../layout/MainLayout";
+import MainLayout from "../../../layout/MainLayout";
 import { render } from "react-dom";
 import { useRouter } from "next/router";
-import axiosApi from '../../../../libs/axiosApi';
+import axiosApi from '../../../libs/axiosApi';
 import moment from "moment";
-import Vacationform from '../../../../components/vacations/Vacationform';
+import Vacationform from '../../../components/vacations/Vacationform';
 
 export default function HolidaysDetails() {
     const route = useRouter()
@@ -17,6 +17,7 @@ export default function HolidaysDetails() {
     const { id } = route.query;
     const [form] = Form.useForm();
 
+    const [loading, setLoading] = useState(false);
     const [sending, setSending] = useState(false);
     const [daysRequested, setDaysRequested] = useState(null);
     const [departureDate, setDepartureDate] = useState(null);
@@ -61,6 +62,7 @@ export default function HolidaysDetails() {
             setDepartureDate(moment(data.departure_date).format('DD/MM/YYYY'));
             setReturnDate(moment(data.return_date).format('DD/MM/YYYY'));
             setAvailableDays(data.available_days);
+            setLoading(false);
 
             /* setLoading(false); */
             //setList(data.results)
@@ -75,6 +77,7 @@ export default function HolidaysDetails() {
     }
 
     useEffect(() => {
+        setLoading(true);
         if (id) {
             getDetails();
         }
@@ -90,9 +93,10 @@ export default function HolidaysDetails() {
             <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>
                 <Row justify={'center'}>
                     <Col span={23}>
-                        <Form form={form} layout="horizontal" onFinish={saveRequest}>
-                            <Vacationform daysRequested={daysRequested} availableDays={availableDays} sending={sending} dateOfAdmission={dateOfAdmission} job={job} personList={personList} onChangeDepartureDate={onChangeDepartureDate} onCancel={onCancel} changePerson={changePerson} />
-                        </Form>
+                        {!loading ? <Form form={form} layout="horizontal" onFinish={saveRequest}  >
+                            <Vacationform returnDate={returnDate} departureDate={departureDate} daysRequested={daysRequested} availableDays={availableDays} sending={sending} dateOfAdmission={dateOfAdmission} job={job} personList={personList} onChangeDepartureDate={onChangeDepartureDate} onCancel={onCancel} changePerson={changePerson} />
+                        </Form> : null} 
+                        
                     </Col>
                 </Row>
             </div>

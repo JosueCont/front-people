@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Button, Form, Row, Col, Input, Image, Select, InputNumber, DatePicker } from 'antd';
-
+import moment from "moment";
 
 
 const Vacationform = (props) => {
@@ -29,18 +29,20 @@ const Vacationform = (props) => {
                     <Input readOnly value={props.job} />
                 </Form.Item>
                 <Form.Item name="days_requested" label="Días solicitados" labelCol={{ span: 9 }} labelAlign={'left'}>
-                    <InputNumber min={1} max={10} style={{ width:'100%' }} value={props.daysRequested ? props.daysRequested : null} />
+                    <InputNumber  defaultValue={props.daysRequested ? props.daysRequested : null } min={1} max={10} style={{ width:'100%' }} />
                 </Form.Item>
             </Col>
             <Col span="8" offset={1}>
                 <Form.Item name="departure_date" label="Fecha de salida" labelCol={{ span: 9 }} labelAlign={'left'}>
-                    <DatePicker key="departure_date" style={{ width:'100%' }} onChange={props.onChangeDepartureDate} />
+                    <span style={{ display: 'none' }}>{props.departureDate}</span>
+                    <DatePicker key="departure_date" defaultValue={ props.departureDate ? moment(props.departureDate, 'YYYY-MM-DD') : null} style={{ width:'100%' }} onChange={props.onChangeDepartureDate} />
                 </Form.Item>
                 <Form.Item name="return_date" label="Fecha de regreso" labelCol={{ span: 9 }} labelAlign={'left'}>
-                    <DatePicker key="return_date" style={{ width:'100%' }} onChange={props.onChangeReturnDate} />
+                    <DatePicker key="return_date" defaultValue={ props.returnDate ? moment(props.returnDate, 'YYYY-MM-DD') : null}  style={{ width:'100%' }} onChange={props.onChangeReturnDate} />
                 </Form.Item>
-                <Form.Item label="Días disponibles" labelCol={{ span: 9 }} labelAlign={'left'}>
-                    <Input value={props.availableDays ? props.availableDays : null} />
+                <Form.Item label="Días disponibles" name="available_days" labelCol={{ span: 9 }} labelAlign={'left'}>
+                    <span style={{ display:'none' }}>  {props.availableDays}</span>
+                    <Input defaultValue={props.availableDays} value={props.availableDays} />
                 </Form.Item>
             </Col>
             <Col span={20} offset={4}>
@@ -55,7 +57,7 @@ const Vacationform = (props) => {
             </Col>
             <Col span={8} offset={1}>
                 <Form.Item label="Antigüedad" labelCol={{ span: 9 }} labelAlign={'left'}>
-                    <Input readOnly></Input>
+                    <Input readOnly value={props.antiquity}></Input>
                 </Form.Item>
             </Col>
             <Col span={24} style={{ textAlign: 'right' }}>

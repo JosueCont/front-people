@@ -1,12 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import MainLayout from '../../../layout/MainLayout';
-import { Row, Col, Typography, Table, Breadcrumb, Image, Button, Form, Input, InputNumber, Select, DatePicker, notification, Space, Switch } from "antd";
+import React, { useEffect, useState } from "react";
+import MainLayout from "../../../layout/MainLayout";
+import {
+  Row,
+  Col,
+  Typography,
+  Table,
+  Breadcrumb,
+  Image,
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  DatePicker,
+  notification,
+  Space,
+  Switch,
+} from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
-import Vacationform from '../../../components/vacations/Vacationform'
-
-
+import Vacationform from "../../../components/vacations/Vacationform";
 
 export default function HolidaysNew() {
     const route = useRouter();
@@ -18,14 +32,14 @@ export default function HolidaysNew() {
     const [return_date, setReturnDate] = useState(null);
     const [job, setJob] = useState(null);
     const [dateOfAdmission, setDateOfAdmission] = useState(null);
-
+    const [availableDays, setAvailableDays] = useState(null);
     const [personList, setPersonList] = useState(null);
     const [allPersons, setAllPersons] = useState(null);
-
+    const [antiquity, setAntiquity] = useState(null);
 
     const onCancel = () => {
         route.push("/holidays");
-    };
+      };
 
     const changePerson = (value) => {
         console.log(value);
@@ -34,59 +48,64 @@ export default function HolidaysNew() {
         setDateOfAdmission(moment(index.date_of_admission).format('DD/MM/YYYY'))
         if (index.job_department.job) {
             setJob(index.job_department.job.name)
+            setAvailableDays(index.Available_days_vacation);
+            setAntiquity(index.antiquity)
         }
+    };
 
+  const saveRequest = async (values) => {
+    values["departure_date"] = departure_date;
+    values["return_date"] = return_date;
+    console.log(values);
+    setSending(true);
+    try {
+      let response = await axiosApi.post(`/person/vacation/`, values);
+      let data = response.data;
+      notification["success"]({
+        message: "Aviso",
+        description: "Información enviada correctamente.",
+      });
+      route.push("/holidays");
+      console.log("res", response.data);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setSending(false);
     }
+  };
 
-    const saveRequest = async (values) => {
-        values['departure_date'] = departure_date;
-        values['return_date'] = return_date;
-        setSending(true);
-        try {
-            let response = await axiosApi.post(`/person/vacation/`, values);
-            let data = response.data;
-            notification["success"]({
-                message: "Notification Title",
-                description: "Información enviada correctamente.",
-            });
-            route.push("/holidays");
-            console.log("res", response.data);
-        } catch (error) {
-            console.log("error", error);
-        } finally {
-            setSending(false);
-        }
+  const onChangeDepartureDate = (date, dateString) => {
+    console.log("date", date);
+    console.log("dateString", dateString);
+    setDepartureDate(dateString);
+  };
 
+  const onChangeReturnDate = (date, dateString) => {
+    setReturnDate(dateString);
+  };
+
+  const getAllPersons = async () => {
+    try {
+      let response = await axiosApi.get(`/person/person/`);
+      let data = response.data.results;
+      setAllPersons(data);
+      console.log(data);
+      data = data.map((a) => {
+        return {
+          label: a.first_name + " " + a.flast_name,
+          value: a.khonnect_id,
+          key: a.name + a.id,
+        };
+      });
+      setPersonList(data);
+    } catch (e) {
+      console.log(e);
     }
+  };
 
-    const onChangeDepartureDate = (date, dateString) => {
-        console.log('date', date);
-        console.log('dateString', dateString);
-        setDepartureDate(dateString)
-    }
-
-    const onChangeReturnDate = (date, dateString) => {
-        setReturnDate(dateString)
-    }
-
-    const getAllPersons = async () => {
-        try {
-            let response = await axiosApi.get(`/person/person/`);
-            let data = response.data.results;
-            setAllPersons(data);
-            console.log(data);
-            data = data.map((a) => {
-                return { label: a.first_name + ' ' + a.flast_name, value: a.khonnect_id, key: a.name + a.id };
-            });
-            setPersonList(data);
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-    useEffect(() => {
-        getAllPersons();
-    }, [route])
+  useEffect(() => {
+    getAllPersons();
+  }, [route]);
 
     return (
         <MainLayout currentKey="5">
@@ -99,7 +118,7 @@ export default function HolidaysNew() {
                 <Row justify={'center'}>
                     <Col span={23}>
                         <Form form={form} layout="horizontal" onFinish={saveRequest}>
-                            <Vacationform sending={sending} dateOfAdmission={dateOfAdmission} job={job} personList={personList} onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} changePerson={changePerson} />
+                            <Vacationform sending={sending} antiquity={antiquity} availableDays={availableDays} dateOfAdmission={dateOfAdmission} job={job} personList={personList} onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} changePerson={changePerson} />
                         </Form>
                     </Col>
                 </Row>
