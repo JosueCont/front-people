@@ -18,9 +18,11 @@ export default function HolidaysNew() {
     const [return_date, setReturnDate] = useState(null);
     const [job, setJob] = useState(null);
     const [dateOfAdmission, setDateOfAdmission] = useState(null);
+    const [availableDays, setAvailableDays] = useState(null);
 
     const [personList, setPersonList] = useState(null);
     const [allPersons, setAllPersons] = useState(null);
+    const [antiquity, setAntiquity] = useState(null);
 
 
     const onCancel = () => {
@@ -34,6 +36,8 @@ export default function HolidaysNew() {
         setDateOfAdmission(moment(index.date_of_admission).format('DD/MM/YYYY'))
         if (index.job_department.job) {
             setJob(index.job_department.job.name)
+            setAvailableDays(index.Available_days_vacation);
+            setAntiquity(index.antiquity)
         }
 
     }
@@ -100,7 +104,7 @@ export default function HolidaysNew() {
                 <Row justify={'center'}>
                     <Col span={23}>
                         <Form form={form} layout="horizontal" onFinish={saveRequest}>
-                            <Vacationform sending={sending} dateOfAdmission={dateOfAdmission} job={job} personList={personList} onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} changePerson={changePerson} />
+                            <Vacationform sending={sending} antiquity={antiquity} availableDays={availableDays} dateOfAdmission={dateOfAdmission} job={job} personList={personList} onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} changePerson={changePerson} />
                         </Form>
                     </Col>
                 </Row>

@@ -42,7 +42,7 @@ const Vacationform = (props) => {
                 </Form.Item>
                 <Form.Item label="Días disponibles" name="available_days" labelCol={{ span: 9 }} labelAlign={'left'}>
                     <span style={{ display:'none' }}>  {props.availableDays}</span>
-                    <Input defaultValue={props.availableDays} />
+                    <Input defaultValue={props.availableDays} value={props.availableDays} />
                 </Form.Item>
             </Col>
             <Col span={20} offset={4}>
@@ -57,7 +57,7 @@ const Vacationform = (props) => {
             </Col>
             <Col span={8} offset={1}>
                 <Form.Item label="Antigüedad" labelCol={{ span: 9 }} labelAlign={'left'}>
-                    <Input readOnly></Input>
+                    <Input readOnly value={props.antiquity}></Input>
                 </Form.Item>
             </Col>
             <Col span={24} style={{ textAlign: 'right' }}>
