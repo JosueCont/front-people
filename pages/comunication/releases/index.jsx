@@ -35,17 +35,50 @@ export default function Releases() {
     const route = useRouter();
     /* Variables */
     const [list, setList] = useState([]);
+    const [personList, setPersonList] = useState([])
+    const [loading, setLoading] = useState(false);
 
     let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
 
-    const getNotifications = async () => {
+    const getNotifications = async (created_by = null, category = null, timestamp = null ) => {
+        setLoading(true);
+        let url = `/noticenter/notification/?`
+        if(created_by){
+            url+=`created_by__id=${created_by}&`;
+        }
+        if(category){
+            url+=`category=${category}&`;
+        }
+        if(timestamp){
+            url+=`&timestamp=${timestamp}`;
+        }
         try {
-            let response = await axiosApi.get(`/noticenter/notification/`);
+            let response = await axiosApi.get(url);
             let data = response.data;
             setList(data.results);
+            setLoading(false);
         } catch (e) {
             console.log(e);
+            setLoading(false);
             /* setLoading(false); */
+        }
+    };
+
+    const getAllPersons = async () => {
+        try {
+          let response = await axiosApi.get(`/person/person/`);
+          let data = response.data.results;
+          console.log(data);
+          data = data.map((a) => {
+            return {
+              label: a.first_name + " " + a.flast_name,
+              value: a.id,
+              key: a.name + a.id,
+            };
+          });
+          setPersonList(data);
+        } catch (e) {
+          console.log(e);
         }
     };
 
@@ -60,8 +93,15 @@ export default function Releases() {
         )
     }
 
+    const sendFilter = (values) =>{
+        console.log(values);
+        getNotifications(values.send_by, values.category);
+        
+    }
+
     useEffect(() => {
         getNotifications();
+        getAllPersons();
     }, [])
 
     return (
@@ -77,45 +117,55 @@ export default function Releases() {
                             name="filter"
                             layout="inline"
                             key="form"
+                            onFinish={sendFilter}
                         >
                             <Form.Item
                                 key="send_by"
                                 name="send_by"
                                 label="Enviado por"
                             >
-                                <Input />
+                                <Select options={personList} style={{ width:150 }} placeholder={'Todos'} allowClear/>
                             </Form.Item>
                             <Form.Item
                                 key="category"
                                 name="category"
                                 label="Categoría"
                             >
-                                <Select style={{ width: 150 }} key="select">
-                                    <Option key="item_1" value="rmb">RMB</Option>
-                                    <Option key="item_2" value="dollar">Dollar</Option>
+                                <Select style={{ width: 150 }} key="select" allowClear>
+                                    <Option key="item_1" value="1">Aviso</Option>
+                                    <Option key="item_2" value="2">Noticia</Option>
                                 </Select>
                             </Form.Item>
                             <Form.Item
-                                name="send_date"
+                                /* name="send_date" */
                                 label="Fecha de envio"
                                 key="send_date"
                             >
                                 <RangePicker />
                             </Form.Item>
-
+                            <Button
+                                style={{
+                                background: "#fa8c16",
+                                fontWeight: "bold",
+                                color: "white",
+                                }}
+                                htmlType="submit"
+                            >
+                                Filtrar
+                            </Button>
                         </Form>
                     </Col>
                     <Col>
                         {/* <Button onClick={() => childRef.current.showModal()}  style={{background: "#fa8c16", fontWeight: "bold", color: "white" }} > */}
                         <Button key="add" onClick={() => route.push('releases/new')} style={{ background: "#fa8c16", fontWeight: "bold", color: "white" }} >
                             <PlusOutlined />
-                            Agregar nuevo comunicado
+                            Agregar nuevo
                         </Button>
                     </Col>
                 </Row>
                 <Row key="row2">
                     <Col span={24}>
-                        <Table dataSource={list} key="releases_table" className={'mainTable'}>
+                        <Table dataSource={list} key="releases_table" className={'mainTable'} loading={loading}>
                             <Column title="Categoría" dataIndex="title" key="title" />
                             <Column title="Enviado por" dataIndex="created_by" key="send_by"
                                 render={(text, record) => (
