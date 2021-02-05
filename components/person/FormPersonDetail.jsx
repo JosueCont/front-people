@@ -50,6 +50,7 @@ const { RangePicker } = DatePicker;
 
 const personDetailForm = () => {
 
+    const { TabPane } = Tabs;
     const router = useRouter();
     const { Title } = Typography;
     const [loading, setLoading] = useState(true);
@@ -509,7 +510,6 @@ const personDetailForm = () => {
                     formPerson.setFieldsValue({
                         person_type: response.data.person_type.id,
                     });
-
                 if (response.data.job_department.department) {
                     formPerson.setFieldsValue({
                         department: response.data.job_department.department.id,
@@ -524,64 +524,47 @@ const personDetailForm = () => {
                                 job = job.map((a) => {
                                     return { label: a.name, value: a.id };
                                 });
-                                if (response.data.person_type)
-                                    formPerson.setFieldsValue({
-                                        person_type: response.data.person_type.id,
-                                    });
-                                if (response.data.job_department.department) {
-                                    formPerson.setFieldsValue({
-                                        department: response.data.job_department.department.id,
-                                    });
-                                    Axios.get(
-                                        API_URL +
-                                        `/business/department/${response.data.job_department.department.id}/job_for_department/`
-                                    )
-                                        .then((resp) => {
-                                            if (resp.status === 200) {
-                                                let job = resp.data;
-                                                job = job.map((a) => {
-                                                    return { label: a.name, value: a.id };
-                                                });
-                                                setJobs(job);
-                                                if (response.data.job_department.job)
-                                                    formPerson.setFieldsValue({
-                                                        job: response.data.job_department.job.id,
-                                                    });
-                                            }
-                                        })
-                                        .catch((e) => {
-                                            console.log(e);
-                                        });
-                                }
+                                setJobs(job);
                                 if (response.data.job_department.job)
                                     formPerson.setFieldsValue({
                                         job: response.data.job_department.job.id,
                                     });
-                                if (response.data.date_of_admission)
-                                    formPerson.setFieldsValue({
-                                        date_of_admission: moment(response.data.date_of_admission),
-                                    });
-                                if (response.data.birth_date)
-                                    formPerson.setFieldsValue({
-                                        birth_date: moment(response.data.birth_date),
-                                    });
-                                setBirthDate(response.data.birth_date);
-                                setIsActive(response.data.is_active);
-                                if (response.data.photo) setPhoto(response.data.photo);
-                                setLoading(false);
-                                message.success({
-                                    content: "Actualizado correctamente.",
-                                    className: "custom-class",
-                                });
-                            })
+                            }
+                        })
                         .catch((e) => {
-                            setLoading(false);
-                            message.error("Error al actualizar, intente de nuevo.");
                             console.log(e);
                         });
-                };
+                }
+                if (response.data.job_department.job)
+                    formPerson.setFieldsValue({
+                        job: response.data.job_department.job.id,
+                    });
+                if (response.data.date_of_admission)
+                    formPerson.setFieldsValue({
+                        date_of_admission: moment(response.data.date_of_admission),
+                    });
+                if (response.data.birth_date)
+                    formPerson.setFieldsValue({
+                        birth_date: moment(response.data.birth_date),
+                    });
+                setBirthDate(response.data.birth_date);
+                setIsActive(response.data.is_active);
+                if (response.data.photo) setPhoto(response.data.photo);
+                setLoading(false);
+                message.success({
+                    content: "Actualizado correctamente.",
+                    className: "custom-class",
+                });
             })
-    }
+            .catch((e) => {
+                setLoading(false);
+                message.error("Error al actualizar, intente de nuevo.");
+                console.log(e);
+            });
+    };
+
+
+
     const deletePerson = (data) => {
         Axios.post(API_URL + `/person/person/delete_by_ids/`, {
             persons_id: router.query.id,
@@ -1569,7 +1552,7 @@ const personDetailForm = () => {
                 setDataTree(response.data);
             })
             .catch((error) => {
-                console.log(e);
+                console.log(error);
             });
     };
     const onChangeTree = (currentNode, selectedNodes) => {
@@ -1659,11 +1642,18 @@ const personDetailForm = () => {
                                             </Col>
                                             <Col lg={7} xs={22} offset={1}>
                                                 <Form.Item name="node" label="Unidad organizacional">
-                                                    <Input />
+                                                    <>
+                                                        <DropdownTreeSelect
+                                                            data={dataTree}
+                                                            onChange={onChangeTree}
+                                                            onAction={onActionTree}
+                                                            onNodeToggle={onNodeToggleTree}
+                                                        />
+                                                    </>
                                                 </Form.Item>
                                             </Col>
                                             <Col lg={7} xs={22} offset={1}>
-                                                <Form.Item name="unit" label="Reporta a ">
+                                                <Form.Item name="report_to" label="Reporta a ">
                                                     <Select options={people} />
                                                 </Form.Item>
                                             </Col>
@@ -2238,6 +2228,7 @@ const personDetailForm = () => {
                                     <Row style={{ padding: "2%" }}>
                                         <Col>
                                             <Button
+
                                                 type="primary"
                                                 danger
                                                 icon={<WarningOutlined />}
