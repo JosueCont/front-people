@@ -551,7 +551,7 @@ class ImportExportPersonViewSet(APIView):
 class VacationViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.VacationSerializer
     queryset = Vacation.objects.all()
-    filterset_fields = ('departure_date', 'return_date')
+    filterset_fields = ('person__id', 'departure_date', 'return_date', 'approved_by__id', 'rejected_by__id', 'status')
 
     def perform_create(self, serializer):
         instance = serializer.save()

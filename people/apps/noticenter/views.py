@@ -10,7 +10,8 @@ from people.apps.person.models import Person
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSerializer
     queryset = Notification.objects.all()
-    filterset_fields = ('category', 'timestamp', 'created_by')
+    filterset_fields = ('target_company__id', 'target_department__id', 'target_person_type__id', 'target_job__id',
+                        'target_gender', 'title', 'category', 'timestamp', 'created_by__id')
 
     def perform_create(self, serializer):
         instance = serializer.save()
