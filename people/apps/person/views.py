@@ -585,13 +585,13 @@ class VacationViewSet(viewsets.ModelViewSet):
         if 'khonnect_id' in request.data and 'id' in request.data:
             try:
                 vacation = Vacation.objects.get(id=request.data['id'])
-                approved_by = Person.objects.get(khonnect_id=request.data['khonnect_id'])
-                if approved_by:
+                rejected_by = Person.objects.get(khonnect_id=request.data['khonnect_id'])
+                if rejected_by:
                     vacation.status = 3
                     vacation.comment = request.data['comment']
-                    vacation.rejected_by = approved_by
+                    vacation.rejected_by = rejected_by
                     vacation.save()
-                return Response(data={'message': 'Solicitud aprobada'}, status=status.HTTP_200_OK)
+                return Response(data={'message': 'Solicitud rechazada'}, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(data={'message': 'No se encontraron datos'}, status=status.HTTP_404_NOT_FOUND)
         else:
