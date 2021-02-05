@@ -51,6 +51,8 @@ class PersonSerializer(serializers.ModelSerializer):
         representation['vacancy'] = VacancySerializer(models.Vacancy.objects.filter(users_applied__in=[instance.id]),
                                                       many=True).data
         representation['job_department'] = JobDepartmentSerializer(instance.job_department).data
+        representation['antiquity'] = instance.antiquity
+        representation['Available_days_vacation'] = instance.available_days_vacation
         return representation
 
 
