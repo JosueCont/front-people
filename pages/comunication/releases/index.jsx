@@ -67,7 +67,7 @@ export default function Releases() {
     return (
         <MainLayout currentKey="4.1">
             <Breadcrumb key="Breadcrumb">
-                <Breadcrumb.Item key="home">Home</Breadcrumb.Item>
+                <Breadcrumb.Item key="home">Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item key="releases">Comunicados</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: '100%' }}>
@@ -117,8 +117,16 @@ export default function Releases() {
                     <Col span={24}>
                         <Table dataSource={list} key="releases_table" className={'mainTable'}>
                             <Column title="Categoría" dataIndex="title" key="title" />
-                            <Column title="Enviado por" dataIndex="created_by" key="send_by" />
-                            <Column title="Categoría" dataIndex="category" key="cat" />
+                            <Column title="Enviado por" dataIndex="created_by" key="send_by"
+                                render={(text, record) => (
+                                    text.first_name+' '+text.flast_name
+                                )}
+                             />
+                            <Column title="Categoría" dataIndex="category" key="cat"
+                            render={(text,record) => (
+                                 text == 1 ? 'Aviso' : 'Noticia' 
+                            )}
+                             />
                             <Column title="Fecha" dataIndex="timestamp" key="date"
                                 render={(text, record) => (
                                     Moment(text).format('DD / MM / YYYY')

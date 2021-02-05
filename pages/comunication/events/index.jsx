@@ -15,7 +15,7 @@ export default function Releases() {
   return (
     <MainLayout currentKey="4.2">
       <Breadcrumb>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
+        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Eventos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

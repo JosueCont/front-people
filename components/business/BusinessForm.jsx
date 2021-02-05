@@ -213,7 +213,7 @@ const businessForm = () => {
     return (
         <MainLayout currentKey="2">
             <Breadcrumb>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item>Empresa</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: '100%' }}>

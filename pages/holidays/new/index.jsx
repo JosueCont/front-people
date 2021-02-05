@@ -29,7 +29,7 @@ export default function HolidaysNew() {
 
     const changePerson = (value) => {
         console.log(value);
-        let index = allPersons.find(data => data.id === value)
+        let index = allPersons.find(data => data.khonnect_id === value)
         console.log(index)
         setDateOfAdmission(moment(index.date_of_admission).format('DD/MM/YYYY'))
         if (index.job_department.job) {
@@ -76,7 +76,7 @@ export default function HolidaysNew() {
             setAllPersons(data);
             console.log(data);
             data = data.map((a) => {
-                return { label: a.first_name + ' ' + a.flast_name, value: a.id, key: a.name + a.id };
+                return { label: a.first_name + ' ' + a.flast_name, value: a.khonnect_id, key: a.name + a.id };
             });
             setPersonList(data);
         } catch (e) {
@@ -91,7 +91,7 @@ export default function HolidaysNew() {
     return (
         <MainLayout currentKey="5">
             <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item href="./">Vacaciones</Breadcrumb.Item>
                 <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
             </Breadcrumb>
@@ -99,7 +99,7 @@ export default function HolidaysNew() {
                 <Row justify={'center'}>
                     <Col span={23}>
                         <Form form={form} layout="horizontal" onFinish={saveRequest}>
-                            <Vacationform sending={sending} dateOfAdmission={dateOfAdmission} job={job} personList={personList} onChangeDepartureDate={onChangeDepartureDate} onCancel={onCancel} changePerson={changePerson} />
+                            <Vacationform sending={sending} dateOfAdmission={dateOfAdmission} job={job} personList={personList} onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} changePerson={changePerson} />
                         </Form>
                     </Col>
                 </Row>

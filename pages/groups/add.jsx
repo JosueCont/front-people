@@ -215,7 +215,7 @@ const GroupAdd = () => {
   return (
     <MainLayout currentKey="1">
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
+        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Person</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">

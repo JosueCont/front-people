@@ -45,7 +45,7 @@ export default function Holidays() {
     return (
         <MainLayout currentKey="5">
             <Breadcrumb className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
@@ -127,7 +127,11 @@ export default function Holidays() {
                             <Column title="Departamentos" dataIndex="department" key="department"></Column>
                             <Column title="Días solicitados" dataIndex="days_requested" key="days_requested"></Column>
                             <Column title="Días disponibles" dataIndex="available_days" key="available_days"></Column>
-                            <Column title="Estatus" dataIndex="status" key="status"></Column>
+                            <Column title="Estatus" dataIndex="status" key="status"
+                                render={(status, record)=>(
+                                    status === 1 ? 'Pendiente' : (status === 2 ? 'Aprobado' : 'Rechazado')  
+                                )}
+                            />
                             <Column
                                 title="Acciones"
                                 key="actions"

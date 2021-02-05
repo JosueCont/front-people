@@ -1,23 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Radio, Row, Col, Breadcrumb, Button, Image, Form, Input } from 'antd';
+import { Tabs, Radio, Row, Col, Breadcrumb, Button, Image, Typography, Form, Input, Modal, notification } from 'antd';
 import MainLayout from "../../../../layout/MainLayout";
 import { render } from "react-dom";
 import { useRouter } from "next/router";
 import axiosApi from '../../../../libs/axiosApi';
 import moment from "moment";
+import { ExclamationCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
+
+import cookie from "js-cookie";
 
 export default function HolidaysDetails() {
+    let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
+
     const route = useRouter()
 
     const { TabPane } = Tabs;
+    const {TextArea} = Input;
+    const {Text} = Typography;
     const [details, setDetails] = useState(null);
     const { id } = route.query;
+    const {confirm} = Modal;
 
+
+    const [visibleModalReject, setVisibleModalReject] = useState(false);
     const [daysRequested, setDaysRequested] = useState(null);
     const [departureDate, setDepartureDate] = useState(null);
     const [returnDate, setReturnDate] = useState(null);
     const [availableDays, setAvailableDays] = useState(null);
+    const [message, setMessage] = useState(null);
 
+    let json = JSON.parse(userToken);
+
+    const rejectCancel = () => {
+        setVisibleModalReject(false);
+        setMessage(null);
+    }
+
+    const onChangeMessage = (value) => {
+        setMessage(value);
+    }
 
     const getDetails = async () => {
         try {
@@ -37,6 +58,72 @@ export default function HolidaysDetails() {
         }
     }
 
+    const rejectRequest = async () =>{
+        if (json) {
+            console.log(json);
+            try {
+                let values = {
+                    "khonnect_id": json.user_id,
+                    "id": id,
+                    "comment": 1212231
+
+                }
+                console.log(values);
+                let response = await axiosApi.post(`/person/vacation/reject_request/`, values);
+                if(response.status == 200){
+                    notification["success"]({
+                        message: "Notification Title",
+                        description: "Solicitud rechazada.",
+                    });
+                    setMessage(null);
+                    /* route.push('/holidays'); */
+                    
+                }
+            } catch (e) {
+                console.log("error", e)
+            }
+        }
+    }
+
+
+    const approveRequest = async () =>{
+        if (json) {
+            console.log(json);
+            try {
+                let values = {
+                    "khonnect_id": json.user_id,
+                    "id": id
+                }
+                let response = await axiosApi.post(`/person/vacation/approve_request/`, values);
+                if(response.status == 200){
+
+                    confirm({
+                        title: 'Su solicitud de vacaciones anuales a sido ceptada',
+                        icon: <CheckCircleOutlined />,
+                        okText: 'Aceptar y notificar',
+                        cancelText: 'Cancelar',
+                        onOk() {
+                          /* console.log('OK'); */
+                          /* route.push('/holidays'); */
+                            route.push('/holidays');
+                        },
+                        onCancel() {
+                          console.log('Cancel');
+                        },
+                      });
+
+                    /* notification["success"]({
+                        message: "Notification Title",
+                        description: "Solicitud aprobada.",
+                    });
+                    route.push('/holidays') */
+                }
+            } catch (e) {
+                console.log("error", e)
+            }
+        }
+    }
+
     useEffect(() => {
         getDetails();
     }, [route])
@@ -44,7 +131,7 @@ export default function HolidaysDetails() {
     return (
         <MainLayout currentKey="5">
             <Breadcrumb className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item href="/holidays">Vacaciones</Breadcrumb.Item>
                 <Breadcrumb.Item>Detalles</Breadcrumb.Item>
             </Breadcrumb>
@@ -88,12 +175,12 @@ export default function HolidaysDetails() {
                                                 Cambiar estatus de la solicitud
                                         </strong>
                                         </p>
-                                        <Button key="cancel" style={{ padding: "0 50px", margin: "0 10px" }} >
+                                        <Button key="cancel" onClick={() => setVisibleModalReject(true)} style={{ padding: "0 50px", margin: "0 10px" }} >
                                             Rechazar
-                                    </Button>
-                                        <Button key="save" htmlType="submit" type="primary" style={{ padding: "0 50px", margin: "0 10px" }}>
+                                        </Button>
+                                        <Button key="save" onClick={approveRequest} type="primary" style={{ padding: "0 50px", margin: "0 10px" }}>
                                             Aceptar
-                                    </Button>
+                                        </Button>
                                     </Col>
                                 </Row>
                             </Col>
@@ -101,6 +188,10 @@ export default function HolidaysDetails() {
                     </TabPane>
                 </Tabs>
             </div>
+            <Modal title="Rechazar solicitud de vacaciones" visible={visibleModalReject} onOk={rejectRequest} onCancel={rejectCancel}>
+                <Text>Comentarios</Text>
+                <TextArea rows="4" onChange={onChangeMessage}/>
+            </Modal>
         </MainLayout>
     )
 }

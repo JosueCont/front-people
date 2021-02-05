@@ -761,7 +761,7 @@ const personDetailForm = () => {
     };
     const colPhone = [
         {
-            title: "Código de pais",
+            title: "Código de país",
             dataIndex: "national_code",
         },
         {
@@ -1591,7 +1591,7 @@ const personDetailForm = () => {
         <MainLayout currentKey="1">
             <Content className="site-layout">
                 <Breadcrumb style={{ margin: "16px 0" }}>
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
+                    <Breadcrumb.Item>Inicio</Breadcrumb.Item>
                     <Breadcrumb.Item href="/home/">Person</Breadcrumb.Item>
                     <Breadcrumb.Item>Expediente de empleados</Breadcrumb.Item>
                 </Breadcrumb>
@@ -1765,7 +1765,7 @@ const personDetailForm = () => {
                             </Form>
                             <hr style={{ border: 'solid 1px #efe9e9', margin: 20 }} />
                             <Tabs tabPosition={'left'}>
-                                <TabPane tab="Datos Generales" key="tab_1">
+                                <TabPane tab="Datos generales" key="tab_1">
                                     <Form
                                         layout={"vertical"}
                                         form={formGeneralTab}
@@ -1843,12 +1843,12 @@ const personDetailForm = () => {
 
                                         <Row>
                                             <Col lg={6} xs={22} offset={1}>
-                                                <Form.Item name="phone_type" label="Tipo de telefono">
+                                                <Form.Item name="phone_type" label="Tipo de teléfono">
                                                     <Select options={typePhones} />
                                                 </Form.Item>
                                             </Col>
                                             <Col lg={6} xs={22} offset={1}>
-                                                <Form.Item name="line_type" label="Tipo de linea">
+                                                <Form.Item name="line_type" label="Tipo de línea">
                                                     <Select options={typeLines} />
                                                 </Form.Item>
                                             </Col>
@@ -1863,7 +1863,7 @@ const personDetailForm = () => {
                                             <Col lg={6} xs={22} offset={1}>
                                                 <Form.Item
                                                     name="national_code"
-                                                    label="Código de pais"
+                                                    label="Código de país"
                                                 >
                                                     <Input type="number" />
                                                 </Form.Item>
@@ -1938,7 +1938,7 @@ const personDetailForm = () => {
                                                 </Form.Item>
                                             </Col>
                                             <Col lg={6} xs={22} offset={1}>
-                                                <Form.Item name="location" label="Ubicacion">
+                                                <Form.Item name="location" label="Ubicación">
                                                     <Input />
                                                 </Form.Item>
                                             </Col>
@@ -1990,7 +1990,7 @@ const personDetailForm = () => {
                                                 </Form.Item>
                                             </Col>
                                             <Col lg={6} xs={22} offset={1}>
-                                                <Form.Item name="gender" label="Genero">
+                                                <Form.Item name="gender" label="Género">
                                                     <Select options={genders} />
                                                 </Form.Item>
                                             </Col>
@@ -2050,7 +2050,7 @@ const personDetailForm = () => {
                                         <Table columns={colFamily} dataSource={family} />
                                     </Spin>
                                 </TabPane>
-                                <TabPane tab="Contactos de Emergencia" key="tab_5">
+                                <TabPane tab="Contactos de emergencia" key="tab_5">
                                     <Form
                                         layout="vertical"
                                         form={formContactEmergency}

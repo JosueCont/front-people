@@ -112,7 +112,7 @@ const Groups = () => {
       key: "name",
     },
     {
-      title: "Fecha de creacion",
+      title: "Fecha de creación",
       render: (item) => {
         return <div>{item.timestamp}</div>;
       },
@@ -149,7 +149,7 @@ const Groups = () => {
   return (
     <MainLayout currentKey="1">
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
+        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Groups</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
