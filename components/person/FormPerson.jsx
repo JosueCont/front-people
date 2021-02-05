@@ -53,7 +53,8 @@ const FormPerson = (props) => {
           group = group.map((a) => {
             return { label: a.name, value: a.id };
           });
-          setGroups(group);
+          console.log(groups)
+          setGroups(groups);
         }
       })
       .catch((e) => {
