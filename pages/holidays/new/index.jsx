@@ -41,6 +41,7 @@ export default function HolidaysNew() {
     const saveRequest = async (values) => {
         values['departure_date'] = departure_date;
         values['return_date'] = return_date;
+        console.log(values);
         setSending(true);
         try {
             let response = await axiosApi.post(`/person/vacation/`, values);
