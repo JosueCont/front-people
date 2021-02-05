@@ -75,13 +75,18 @@ export default function headerCustom(props) {
         <Menu.Item key="6" onClick={() => router.push({ pathname: "/groups" })}>
           Grupos
         </Menu.Item>
-
-        <div style={{ float: "right" }} key={"menu_user_" + props.currentKey}>
+        <div
+          className={"pointer"}
+          style={{ float: "right" }}
+          key={"menu_user_" + props.currentKey}
+        >
           <Dropdown overlay={userCardDisplay} key="dropdown_user">
             <div key="menu_user_content">
               <Avatar
                 key="avatar_key"
-                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                icon={
+                  <UserOutlined />
+                } /* src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" */
               />
             </div>
           </Dropdown>

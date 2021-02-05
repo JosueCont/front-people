@@ -1,3 +1,4 @@
+
 html,
 body {
   padding: 0;
@@ -126,6 +127,43 @@ div#__next > section.layout{
   margin-bottom: 0 !important;
 }
 
-.icon_actions {
-  margin: 0 10px;
+.icon_actions{
+    margin: 0 10px;
 }
+
+header.ant-layout-header{
+    background-color: var(--bluePrimary) ;
+}
+header.ant-layout-header > ul{
+    background-color: var(--bluePrimary) !important;
+}
+header.ant-layout-header > ul >li.ant-menu-item-selected{
+    background-color: var(--blueSecondary) !important;
+}
+
+header.ant-layout-header > ul >li.ant-menu-item-active,li.ant-menu-submenu-active, li.ant-menu-submenu-active::hover, li.ant-menu-submenu-active:focus-within {
+    background-color: var(--blueSecondary) !important;
+    color: white;
+}
+
+header.ant-layout-header > ul >li.ant-menu-submenu-active > div[aria-expanded=true]{
+    color:#fff
+}
+
+.ml-20{
+    margin-left: 20px;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+.ant-breadcrumb{
+    margin: 16px 0px;
+}
+.mainTable{
+    margin-top: 20px;
+}
+/* .formFilter{
+
+} */

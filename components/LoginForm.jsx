@@ -65,14 +65,14 @@ const LoginForm = () => {
         initialValues={{ remember: true }}
         onFinish={onFinish}
       >
-        <Text className="font-color-khor">Correo</Text>
+        <Text className="font-color-khor">Email</Text>
         <Form.Item
           name="email"
           rules={[{ required: true, message: "Please input your Email!" }]}
         >
           <Input style={{ marginTop: "5px" }} placeholder="Correo" />
         </Form.Item>
-        <Text className="font-color-khor">Contraseña</Text>
+        <Text className="font-color-khor">Password</Text>
         <Form.Item
           name="password"
           rules={[{ required: true, message: "Please input your Password!" }]}

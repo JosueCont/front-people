@@ -21,7 +21,6 @@ import {
   Divider,
   Tabs,
 } from "antd";
-import HeaderCustom from "../../components/header";
 import MainLayout from "../../layout/MainLayout";
 import Axios from "axios";
 import { LOGIN_URL, APP_ID } from "../../config/config";
@@ -215,7 +214,7 @@ const GroupAdd = () => {
   return (
     <MainLayout currentKey="1">
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
+        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Person</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">

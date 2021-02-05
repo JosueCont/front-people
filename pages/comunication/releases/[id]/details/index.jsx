@@ -1,51 +1,51 @@
 import Head from 'next/head'
-import React, {useEffect, useState} from 'react'
-import { Form, Row, Col, Input, Button, Typography, notification, Card,Layout, Menu, Breadcrumb } from "antd";
+import React, { useEffect, useState } from 'react'
+import { Form, Row, Col, Input, Button, Typography, notification, Card, Layout, Menu, Breadcrumb } from "antd";
 import MainLayout from '../../../../../layout/MainLayout';
 import { Global, css } from '@emotion/core'
 import { useRouter } from 'next/router';
 import axiosApi from '../../../../../libs/axiosApi';
 
 const Details = () => {
-    const {Title, Text} = Typography
+    const { Title, Text } = Typography
     const route = useRouter()
 
     const { id } = route.query;
     const [details, setDetails] = useState({})
     const [loading, setLoading] = useState(false)
 
-    const getDetails = async () =>{
+    const getDetails = async () => {
         setLoading(true);
-        try{
+        try {
             let response = await axiosApi.get(`/noticenter/notification/${id}`);
             let data = response.data
-            console.log("data",data);
+            console.log("data", data);
             setDetails(data);
             setLoading(false);
             //setList(data.results)
-        }catch (e) {
-            console.log("error",e)
+        } catch (e) {
+            console.log("error", e)
             /* setLoading(false); */
         }
     }
 
-    const TextGender  = (props) =>{
+    const TextGender = (props) => {
         let txt = ""
-        if(props.id_gender  === 1){
+        if (props.id_gender === 1) {
             txt = "Masculino";
-        }else if(props.id_gender === 2){
+        } else if (props.id_gender === 2) {
             txt = "Femenino";
-        }else{
+        } else {
             txt = "Otro";
         }
         return (<span>{txt}</span>)
     }
 
     useEffect(() => {
-        if(id){
+        if (id) {
             getDetails();
         }
-    },[route])
+    }, [route])
 
     return (
         <>
@@ -58,12 +58,12 @@ const Details = () => {
             />
             <MainLayout currentKey="4.1">
                 <Breadcrumb>
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item>Comunicados</Breadcrumb.Item>
-                    <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
+                    <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+                    <Breadcrumb.Item key="releases" href="/comunication/releases">Comunicados</Breadcrumb.Item>
+                    <Breadcrumb.Item>Detalles</Breadcrumb.Item>
                 </Breadcrumb>
-                <div className="container back-white" style={{ width:'100%' }}>
-                     { !loading ? <Row justify={'center'}>
+                <div className="container back-white" style={{ width: '100%' }}>
+                    {!loading ? <Row justify={'center'}>
                         <Col span="23" style={{ padding: '20px 0 30px 0' }}>
                             <Row>
                                 <Col span={24}>
@@ -74,7 +74,7 @@ const Details = () => {
                                 <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                                     <Row>
                                         <Col span={4} className={'py-10'}>
-                                        <Text strong>Categoria:</Text>
+                                            <Text strong>Categoría:</Text>
                                         </Col>
                                         <Col span={20} className={'py-10'}>
                                             Aviso
@@ -82,15 +82,15 @@ const Details = () => {
                                     </Row>
                                     <Row>
                                         <Col span={4} className={'py-10'}>
-                                        <Text strong>Titulo:</Text>
+                                            <Text strong>Título:</Text>
                                         </Col>
                                         <Col span={20} className={'py-10'}>
-                                            { details ? details.title : null }
+                                            {details ? details.title : null}
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col span={4} className={'py-10'}>
-                                        <Text strong>Mensaje:</Text>
+                                            <Text strong>Mensaje:</Text>
                                         </Col>
                                         <Col span={20} className={'py-10'} dangerouslySetInnerHTML={{ __html: details.message }}>
                                         </Col>
@@ -111,7 +111,7 @@ const Details = () => {
                                                     </Text>
                                                 </Col>
                                                 <Col span={14} className={'py-10'}>
-                                                    { (details && details.target_company) ? details.target_company.name : null }
+                                                    {(details && details.target_company) ? details.target_company.name : null}
                                                 </Col>
                                             </Row>
                                             <Row>
@@ -121,7 +121,7 @@ const Details = () => {
                                                     </Text>
                                                 </Col>
                                                 <Col span={14} className={'py-10'}>
-                                                    { (details && details.target_job) ? details.target_job.name : null }
+                                                    {(details && details.target_job) ? details.target_job.name : null}
                                                 </Col>
                                             </Row>
                                         </Col>
@@ -133,27 +133,27 @@ const Details = () => {
                                                     </Text>
                                                 </Col>
                                                 <Col span={14} className={'py-10'}>
-                                                    { (details && details.target_person_type) ? details.target_person_type.name : null }
+                                                    {(details && details.target_person_type) ? details.target_person_type.name : null}
                                                 </Col>
                                             </Row>
                                             <Row>
                                                 <Col span={10} className={'py-10'}>
                                                     <Text strong>
-                                                        Genero:
+                                                        Género:
                                                     </Text>
                                                 </Col>
                                                 <Col span={14} className={'py-10'}>
-                                                    <TextGender id_gender={details.target_gender}/> 
+                                                    <TextGender id_gender={details.target_gender} />
                                                 </Col>
                                             </Row>
                                         </Col>
                                     </Row>
                                 </Col>
                                 <Col span={24} style={{ textAlign: 'right' }}>
-                                    <Button onClick={() => route.push("/comunication/releases")}  style={{ padding:'0 50px', margin: '0 10px' }}>Regresar</Button>        
+                                    <Button onClick={() => route.push("/comunication/releases")} style={{ padding: '0 50px', margin: '0 10px' }}>Regresar</Button>
                                 </Col>
-                                    
-                                    {/* <Col xs={24} sm={24} md={13} lg={13} xl={13}>
+
+                                {/* <Col xs={24} sm={24} md={13} lg={13} xl={13}>
                                         <Row>
                                             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                                                 <Form.Item name={'company'}  label="Empresa" labelCol={{ span:10}}>
@@ -189,11 +189,11 @@ const Details = () => {
                                         <Button onClick={() => onCancel() } disabled={sending} style={{ padding:'0 50px', margin: '0 10px' }}>Cancelar</Button>        
                                         <Button htmlType="submit" loading={sending} type="primary" style={{ padding:'0 50px', margin: '0 10px' }}>Enviar</Button>    
                                     </Col> */}
-                                </Row>
+                            </Row>
                         </Col>
-                    </Row> : null }
+                    </Row> : null}
                 </div>
-            
+
             </MainLayout>
         </>
     )

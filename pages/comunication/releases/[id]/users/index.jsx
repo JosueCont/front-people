@@ -1,6 +1,6 @@
 import Head from 'next/head'
-import React, {useEffect, useState} from 'react'
-import { Form, Row, Col, Input, Button, Typography, notification, Card,Layout, Menu, Table, Breadcrumb } from "antd";
+import React, { useEffect, useState } from 'react'
+import { Form, Row, Col, Input, Button, Typography, notification, Card, Layout, Menu, Table, Breadcrumb } from "antd";
 import MainLayout from '../../../../../layout/MainLayout';
 import { Global, css } from '@emotion/core'
 import { useRouter } from 'next/router';
@@ -11,7 +11,7 @@ export default function UserNotification() {
     const route = useRouter();
     const [list, setList] = useState([]);
     const { id } = route.query;
-    const {Column} = Table
+    const { Column } = Table
 
     const getUsers = async () => {
         try {
@@ -25,40 +25,41 @@ export default function UserNotification() {
         }
     }
 
-    useEffect(()=> {
+    useEffect(() => {
         getUsers();
-    },[route])
+    }, [route])
 
     return (
         <MainLayout currentKey="4.1">
             <Breadcrumb key="Breadcrumb">
-                <Breadcrumb.Item key="home">Home</Breadcrumb.Item>
-                <Breadcrumb.Item key="releases">Comunicados</Breadcrumb.Item>
+                <Breadcrumb.Item key="home">Inicio</Breadcrumb.Item>
+                <Breadcrumb.Item key="releases" href="/comunication/releases">Comunicados</Breadcrumb.Item>
+                <Breadcrumb.Item key="releases" >Usuarios que recibieron</Breadcrumb.Item>
             </Breadcrumb>
-            <div className="container" style={{ width:'100%' }}>
-                <Row justify="space-between" key="row1" style={{ padding:'20px 0' }}>
+            <div className="container" style={{ width: '100%' }}>
+                <Row justify="space-between" key="row1" style={{ padding: '20px 0' }}>
                     <Col span={24}>
                         <Table dataSource={list} key="releases_table">
-                            <Column title="Nombre" dataIndex="person" key="name" 
+                            <Column title="Nombre" dataIndex="person" key="name"
                                 render={(text, record) => (
-                                      text.first_name+' '+text.flast_name
+                                    text.first_name + ' ' + text.flast_name
                                 )}
                             />
                             <Column title="Fecha de recibido" dataIndex="timestamp" key="date_received"
-                            render={(text, record) => (
-                                Moment(text).format('DD / MM / YYYY')
-                            )}
-                             />
+                                render={(text, record) => (
+                                    Moment(text).format('DD / MM / YYYY')
+                                )}
+                            />
                             <Column title="Fecha de lectura" dataIndex="is_read" key="read_date"
-                            render={(text, record) => (
-                                text ? Moment(record.date_read).format('DD / MM / YYYY') : null
-                                
-                            )}
-                             />
+                                render={(text, record) => (
+                                    text ? Moment(record.date_read).format('DD / MM / YYYY') : null
+
+                                )}
+                            />
                         </Table>
                     </Col>
                     <Col span={24} style={{ textAlign: 'right' }}>
-                        <Button onClick={() => route.push("/comunication/releases")}  style={{ padding:'0 50px', margin: '0 10px' }}>Regresar</Button>        
+                        <Button onClick={() => route.push("/comunication/releases")} style={{ padding: '0 50px', margin: '0 10px' }}>Regresar</Button>
                     </Col>
                 </Row>
             </div>

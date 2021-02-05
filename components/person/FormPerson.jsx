@@ -53,8 +53,7 @@ const FormPerson = (props) => {
           group = group.map((a) => {
             return { label: a.name, value: a.id };
           });
-          console.log(groups)
-          setGroups(groups);
+          setGroups(group);
         }
       })
       .catch((e) => {
@@ -238,9 +237,7 @@ const FormPerson = (props) => {
               <Col lg={22} xs={22} offset={1}>
                 <Form.Item labelAlign="right">
                   <Space style={{ float: "right" }}>
-                    <Button type="danger" onClick={() => closeDialog()}>
-                      Cancelar
-                    </Button>
+                    <Button onClick={() => closeDialog()}>Cancelar</Button>
                     <Button type="primary" htmlType="submit">
                       Guardar
                     </Button>
