@@ -78,6 +78,7 @@ class PersonCustomSerializer(serializers.ModelSerializer):
     groups = serializers.ListField(max_length=1000, required=False)
     department = serializers.CharField(max_length=50, required=False)
     job = serializers.CharField(max_length=50, required=False)
+    nodes = serializers.ListField(max_length=1000, required=False)
 
     class Meta:
         model = models.Person
