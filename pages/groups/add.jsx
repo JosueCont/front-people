@@ -21,7 +21,6 @@ import {
   Divider,
   Tabs,
 } from "antd";
-import HeaderCustom from "../../components/header";
 import MainLayout from "../../layout/MainLayout";
 import Axios from "axios";
 import { LOGIN_URL, APP_ID } from "../../config/config";
