@@ -111,29 +111,27 @@ class Person(models.Model):
 
     @property
     def available_days_vacation(self):
+        vacation_days = 0
         if self.antiquity > 0:
-            if self.antiquity == 1:
-                return 6 - self.get_vacation_days
-            elif self.antiquity == 2:
-                return 8 - self.get_vacation_days
-            elif self.antiquity == 3:
-                return 10 - self.get_vacation_days
-            elif self.antiquity == 4:
-                return 12 - self.get_vacation_days
-            elif 5 <= self.antiquity <= 9:
-                return 12 - self.get_vacation_days
-            elif 10 <= self.antiquity <= 14:
-                return 16 - self.get_vacation_days
-            elif 15 <= self.antiquity <= 19:
-                return 18 - self.get_vacation_days
-            elif 20 <= self.antiquity <= 24:
-                return 20 - self.get_vacation_days
-            elif 25 <= self.antiquity <= 29:
-                return 22 - self.get_vacation_days
-            else:
-                return 22
-        else:
-            return 0
+            if self.antiquity >= 1:
+                vacation_days += 6
+            if self.antiquity >= 2:
+                vacation_days += 8
+            if self.antiquity >= 3:
+                vacation_days += 10
+            if self.antiquity >= 4:
+                vacation_days += 12
+            if 5 <= self.antiquity <= 9:
+                vacation_days += 12
+            if 10 <= self.antiquity <= 14:
+                vacation_days += 16
+            if 15 <= self.antiquity <= 19:
+                vacation_days += 18
+            if 20 <= self.antiquity <= 24:
+                vacation_days += 20
+            if 25 <= self.antiquity <= 29:
+                vacation_days += 22
+        return vacation_days - self.get_vacation_days
 
     @property
     def get_vacation_days(self):
