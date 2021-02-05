@@ -221,7 +221,7 @@ const Newrelease = () => {
     return (
         <MainLayout currentKey="4.1">
             <Breadcrumb key="Breadcrumb">
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item href="./" >Comunicados</Breadcrumb.Item>
                 <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
             </Breadcrumb>

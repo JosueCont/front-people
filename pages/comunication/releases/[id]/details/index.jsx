@@ -58,9 +58,9 @@ const Details = () => {
             />
             <MainLayout currentKey="4.1">
                 <Breadcrumb>
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
+                    <Breadcrumb.Item>Inicio</Breadcrumb.Item>
                     <Breadcrumb.Item key="releases" href="/comunication/releases">Comunicados</Breadcrumb.Item>
-                    <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
+                    <Breadcrumb.Item>Detalles</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className="container back-white" style={{ width: '100%' }}>
                     {!loading ? <Row justify={'center'}>
@@ -74,7 +74,7 @@ const Details = () => {
                                 <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                                     <Row>
                                         <Col span={4} className={'py-10'}>
-                                            <Text strong>Categoria:</Text>
+                                            <Text strong>Categoría:</Text>
                                         </Col>
                                         <Col span={20} className={'py-10'}>
                                             Aviso
@@ -82,7 +82,7 @@ const Details = () => {
                                     </Row>
                                     <Row>
                                         <Col span={4} className={'py-10'}>
-                                            <Text strong>Titulo:</Text>
+                                            <Text strong>Título:</Text>
                                         </Col>
                                         <Col span={20} className={'py-10'}>
                                             {details ? details.title : null}
@@ -139,7 +139,7 @@ const Details = () => {
                                             <Row>
                                                 <Col span={10} className={'py-10'}>
                                                     <Text strong>
-                                                        Genero:
+                                                        Género:
                                                     </Text>
                                                 </Col>
                                                 <Col span={14} className={'py-10'}>

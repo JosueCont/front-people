@@ -83,7 +83,7 @@ export default function HolidaysDetails() {
     return (
         <MainLayout currentKey="5">
             <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item href="/holidays">Vacaciones</Breadcrumb.Item>
                 <Breadcrumb.Item>Editar solicitud</Breadcrumb.Item>
             </Breadcrumb>

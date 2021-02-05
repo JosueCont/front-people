@@ -32,7 +32,7 @@ export default function UserNotification() {
     return (
         <MainLayout currentKey="4.1">
             <Breadcrumb key="Breadcrumb">
-                <Breadcrumb.Item key="home">Home</Breadcrumb.Item>
+                <Breadcrumb.Item key="home">Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item key="releases" href="/comunication/releases">Comunicados</Breadcrumb.Item>
                 <Breadcrumb.Item key="releases" >Usuarios que recibieron</Breadcrumb.Item>
             </Breadcrumb>

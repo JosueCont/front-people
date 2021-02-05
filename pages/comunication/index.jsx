@@ -11,7 +11,7 @@ const List = (props) => {
     return (
         <MainLayout>
             <Breadcrumb style={{ margin: "16px 0" }}>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item>Empresa</Breadcrumb.Item>
             </Breadcrumb>   
             <div className="site-layout-content">
