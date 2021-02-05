@@ -108,10 +108,12 @@ class PersonViewSet(viewsets.ModelViewSet):
                                                       "url_password_reset": user["url_password_reset"]},
                                                 status=status.HTTP_200_OK)
                     else:
+                        raise ValueError
                         return Response(data={"message": resp["level"]}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     raise ValueError
         except Exception as e:
+            raise ValueError
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, *args, **kwargs):
@@ -202,12 +204,13 @@ class PersonViewSet(viewsets.ModelViewSet):
                     if resp["level"] == "success":
                         pass
                     else:
-                        pass
+                        raise ValueError
                 else:
                     raise ValueError
             person_json = serializers.PersonSerializer(instance).data
             return Response(data=person_json, status=status.HTTP_200_OK)
         except Exception as e:
+            raise ValueError
             return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['get'])
