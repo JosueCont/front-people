@@ -506,7 +506,8 @@ class ImportExportPersonViewSet(APIView):
 
             writer = csv.writer(response)
             if format_file != 'plantilla':
-                writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Genero', 'Nodo organizacional'])
+                writer.writerow(['Nombre', 'Apellido', 'Email', 'Telefono', 'Genero', 'Nodo organizacional',
+                                 'Fecha de nacimiento', 'Departamento', 'Puesto', 'CURP', 'RFC', 'IMSS'])
 
                 persons = Person.objects.all()
                 for person in persons:
@@ -539,6 +540,16 @@ class ImportExportPersonViewSet(APIView):
                     row.append(gend)
                     # row.append(person.job.name)
                     row.append(nod)
+                    row.append(person.birth_date)
+                    if person.job_department is not None:
+                        row.append(person.job_department.department.name)
+                        row.append(person.job_department.job.name)
+                    else:
+                        row.append('')
+                        row.append('')
+                    row.append(person.curp)
+                    row.append(person.rfc)
+                    row.append(person.imss)
                     writer.writerow(row)
             else:
                 writer.writerow(['code', 'first_name', 'flast_name', 'mlast_name', 'parentid', 'email',
@@ -658,9 +669,10 @@ class EventViewSet(viewsets.ModelViewSet):
                     event.date = serializer.validated_data['date']
                     event.start_time = serializer.validated_data['start_time']
                     event.end_time = serializer.validated_data['end_time']
+                    event.save()
                     if guests:
                         for guest in guests:
-                            person = Person.objects.filter(id=guest).first()
+                            person = Person.objects.filter(id=guest.id).first()
                             if person:
                                 event.guests.add(person)
                     else:
@@ -692,6 +704,7 @@ class EventViewSet(viewsets.ModelViewSet):
                         event.start_time = serializer.validated_data['start_time']
                         event.end_time = serializer.validated_data['end_time']
                         if len(guests) > 0:
+                            event.guests.set([])
                             for guest in guests:
                                 person = Person.objects.filter(id=guest.id).first()
                                 if person:
