@@ -17,7 +17,7 @@ from people.apps.person.functions import decode_file_persons
 from people.apps.person.models import Person, PersonType, Job, GeneralPerson, Address, Training, Bank, BankAccount, \
     Phone, Family, ContactEmergency, JobExperience, Vacation, Document, Event
 from people.apps.person.serializers import DeletePersonMassiveSerializer, GetListPersonSerializer, DocumentSerializer, \
-    PhotoSerializer
+    PhotoSerializer, KhonnectIdSerializer
 from people.apps.setup.models import DocumentType
 
 
@@ -46,6 +46,8 @@ class PersonViewSet(viewsets.ModelViewSet):
             return GetListPersonSerializer
         if self.action == 'update_pthoto_person':
             return PhotoSerializer
+        if self.action == 'person_for_khonnectid':
+            return KhonnectIdSerializer
         return serializers.PersonSerializer
 
     def create(self, request, *args, **kwargs):
@@ -425,6 +427,23 @@ class PersonViewSet(viewsets.ModelViewSet):
                 if person:
                     person.photo = serializer.validated_data["photo"]
                     person.save()
+                    data_person = serializers.PersonSerializer(person).data
+                    return Response(data=data_person,
+                                    status=status.HTTP_200_OK)
+                else:
+                    return Response(data={"message": "person not found"}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response(data={"message": e}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['post'])
+    def person_for_khonnectid(self, request, pk=None):
+        serializer = KhonnectIdSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                person = Person.objects.filter(khonnect_id=serializer.validated_data["id"]).first()
+                if person:
                     data_person = serializers.PersonSerializer(person).data
                     return Response(data=data_person,
                                     status=status.HTTP_200_OK)

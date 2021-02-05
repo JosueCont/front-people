@@ -234,3 +234,7 @@ class EventSerializer(serializers.ModelSerializer):
 class PhotoSerializer(serializers.Serializer):
     photo = serializers.FileField()
     id = serializers.CharField()
+
+
+class KhonnectIdSerializer(serializers.Serializer):
+    id = serializers.CharField()
