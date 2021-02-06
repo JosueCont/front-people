@@ -24,9 +24,7 @@ export default function HolidaysDetails() {
     const [returnDate, setReturnDate] = useState(null);
     const [availableDays, setAvailableDays] = useState(null);
     const [personList, setPersonList] = useState(null);
-    const [allPersons, setAllPersons] = useState(null);
-    const [job, setJob] = useState(null);
-    const [dateOfAdmission, setDateOfAdmission] = useState(null);
+    const [collaborator, setCollaborator] = useState(null);
 
     const onCancel = () => {
         route.push("/holidays");
@@ -42,17 +40,6 @@ export default function HolidaysDetails() {
         setReturnDate(dateString)
     }
 
-    const changePerson = (value) => {
-        console.log(value);
-        let index = allPersons.find(data => data.id === value)
-        console.log(index)
-        setDateOfAdmission(moment(index.date_of_admission).format('DD/MM/YYYY'))
-        if (index.job_department.job) {
-            setJob(index.job_department.job.name)
-        }
-
-    }
-
     const getDetails = async () => {
         try {
             let response = await axiosApi.get(`/person/vacation/${id}/`);
@@ -61,11 +48,9 @@ export default function HolidaysDetails() {
             setDaysRequested(data.days_requested);
             setDepartureDate(moment(data.departure_date).format('DD/MM/YYYY'));
             setReturnDate(moment(data.return_date).format('DD/MM/YYYY'));
-            setAvailableDays(data.available_days);
+            setCollaborator(data.collaborator);
             setLoading(false);
 
-            /* setLoading(false); */
-            //setList(data.results)
         } catch (e) {
             console.log("error", e)
             /* setLoading(false); */
@@ -94,7 +79,7 @@ export default function HolidaysDetails() {
                 <Row justify={'center'}>
                     <Col span={23}>
                         {!loading ? <Form form={form} layout="horizontal" onFinish={saveRequest}  >
-                            <Vacationform returnDate={returnDate} departureDate={departureDate} daysRequested={daysRequested} availableDays={availableDays} sending={sending} dateOfAdmission={dateOfAdmission} job={job} personList={personList} onChangeDepartureDate={onChangeDepartureDate} onCancel={onCancel} changePerson={changePerson} />
+                            <Vacationform collaborator={collaborator} returnDate={returnDate} departureDate={departureDate} daysRequested={daysRequested} sending={sending} onChangeDepartureDate={onChangeDepartureDate} onCancel={onCancel} />
                         </Form> : null} 
                         
                     </Col>

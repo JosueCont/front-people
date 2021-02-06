@@ -4,6 +4,11 @@ import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Table, Breadcrumb, Button, Form, Input, Select } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
+
+import SelectCompany from '../../components/selects/SelectCompany';
+import SelectDepartament from '../../components/selects/SelectDepartament';
+
+
 import {
   DeleteOutlined,
   EditOutlined,
@@ -20,13 +25,32 @@ export default function Holidays() {
   const { Option } = Select;
 
   const [holidayList, setHolidayList] = useState([]);
+  const [personList, setPersonList] = useState(null);
+  
+  /* Variables */
+  const [companyId, setCompanyId] = useState(null);
 
-  const getAllHolidays = async () => {
+  /* Select estatus */
+  const optionStatus = [
+    { value: 1, label: "Pendiente" },
+    { value: 2, label: "Aprobado" },
+    { value: 3, label: "Rechazado" },
+  ]
+
+  const getAllHolidays = async (collaborator = null, company = null, department = null, status = null) => {
     try {
-      let response = await axiosApi.get(`/person/vacation/`);
-      let data = response.data.results;
-      console.log(data);
-      setHolidayList(data);
+        let url = `/person/vacation/?`;
+        if(collaborator){
+            url+=`person__id=${collaborator}&`;
+        }
+        if(status){
+            url+=`status=${status}&`;
+        }
+
+        let response = await axiosApi.get(url);
+        let data = response.data.results;
+        console.log(data);
+        setHolidayList(data);
     } catch (e) {
       console.log(e);
     }
@@ -37,8 +61,39 @@ export default function Holidays() {
     route.push("holidays/" + data.id + "/details");
   };
 
+    const getAllPersons = async () => {
+        try {
+        let response = await axiosApi.get(`/person/person/`);
+        let data = response.data.results;
+        data = data.map((a) => {
+            return {
+            label: a.first_name + " " + a.flast_name,
+            /* value: a.khonnect_id, */
+            value: a.id,
+            key: a.name + a.id,
+            };
+        });
+        setPersonList(data);
+        } catch (e) {
+        console.log(e);
+        }
+    };
+
+    const filterHolidays = async (values) =>{
+        console.log(values);
+        getAllHolidays(values.collaborator, null, null,values.status);
+    }
+
+    /* Eventos de componentes */
+    const onChangeCompany = (val) =>{
+        console.log(val);
+        setCompanyId(val);
+    }
+
+
   useEffect(() => {
     getAllHolidays();
+    getAllPersons();
   }, [route]);
 
   return (
@@ -50,43 +105,41 @@ export default function Holidays() {
       <div className="container" style={{ width: "100%" }}>
         <Row justify="space-between" key="row1" style={{ paddingBottom: 20 }}>
           <Col>
-            <Form name="filter" layout="inline" key="form">
-              <Form.Item key="send_by" name="send_by" label="Colaborador">
-                <Input />
+            <Form name="filter" onFinish={filterHolidays} layout="inline" key="form">
+              <Form.Item key="collaborator" name="collaborator" label="Colaborador">
+                <Select 
+                    key="selectPerson"
+                    showSearch
+                    /* options={personList} */
+                    style={{ width:150 }}
+                    allowClear 
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                    filterSort={(optionA, optionB) =>
+                    optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
+                    }
+                 >
+                     {
+                          personList ? personList.map((item) => {
+                             return (<Option key={item.key} value={item.value}>{item.label}</Option>)
+                         }) : null
+                     }
+                     </Select>
               </Form.Item>
               <Form.Item key="company" name="company" label="Empresa">
-                <Select style={{ width: 150 }} key="select">
-                  <Option key="item_1" value="rmb">
-                    RMB
-                  </Option>
-                  <Option key="item_2" value="dollar">
-                    Dollar
-                  </Option>
-                </Select>
+                  <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
               </Form.Item>
               <Form.Item
                 key="department_select"
                 name="department"
                 label="Departamento"
               >
-                <Select style={{ width: 150 }} key="select">
-                  <Option key="item_1" value="rmb">
-                    RMB
-                  </Option>
-                  <Option key="item_2" value="dollar">
-                    Dollar
-                  </Option>
-                </Select>
+                  <SelectDepartament companyId={companyId} key="selectDepartament"/>
               </Form.Item>
-              <Form.Item key="estatus_filter" name="estatus" label="Estatus">
-                <Select style={{ width: 100 }} key="select">
-                  <Option key="item_1" value="rmb">
-                    RMB
-                  </Option>
-                  <Option key="item_2" value="dollar">
-                    Dollar
-                  </Option>
-                </Select>
+              <Form.Item key="estatus_filter" name="status" label="Estatus">
+                <Select style={{ width: 100 }} key="select" options={optionStatus} allowClear/>
               </Form.Item>
               <Button
                 style={{
@@ -94,7 +147,7 @@ export default function Holidays() {
                   fontWeight: "bold",
                   color: "white",
                 }}
-                onClick={() => route.push("holidays/new")}
+                htmlType="submit"
               >
                 Filtrar
               </Button>
@@ -116,7 +169,7 @@ export default function Holidays() {
         </Row>
         <Row justify={"end"}>
           <Col span={24}>
-            <Table dataSource={holidayList} key="table_holidays">
+            <Table dataSource={holidayList} key="tableHolidays">
               <Column
                 title="Colaborador"
                 dataIndex="collaborator"

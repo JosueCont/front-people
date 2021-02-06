@@ -84,28 +84,10 @@ export default function HolidaysNew() {
     setReturnDate(dateString);
   };
 
-  const getAllPersons = async () => {
-    try {
-      let response = await axiosApi.get(`/person/person/`);
-      let data = response.data.results;
-      setAllPersons(data);
-      console.log(data);
-      data = data.map((a) => {
-        return {
-          label: a.first_name + " " + a.flast_name,
-          value: a.khonnect_id,
-          key: a.name + a.id,
-        };
-      });
-      setPersonList(data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
-  useEffect(() => {
+  /* useEffect(() => {
     getAllPersons();
-  }, [route]);
+  }, [route]); */
 
     return (
         <MainLayout currentKey="5">
