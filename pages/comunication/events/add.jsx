@@ -139,10 +139,11 @@ const addEvent = () => {
                 </Col>
                 <Divider style={{ marginTop: "2px" }} />
                 <Col span={24}>
-                  <Form onFinish={onFinish} form={form}>
+                  <Form onFinish={onFinish} form={form} layout={"vertical"}>
                     <Row>
                       <Col lg={10} xs={22} offset={1}>
                         <Form.Item
+                          label="Titulo"
                           name="title"
                           rules={[
                             {
@@ -156,6 +157,7 @@ const addEvent = () => {
                       </Col>
                       <Col lg={10} xs={22} offset={1}>
                         <Form.Item
+                          label="Fecha"
                           name="date"
                           rules={[
                             {
@@ -174,6 +176,7 @@ const addEvent = () => {
                       </Col>
                       <Col lg={10} xs={22} offset={1}>
                         <Form.Item
+                          label="Hora de Inicio y Fin"
                           name="time"
                           rules={[
                             {
@@ -189,7 +192,7 @@ const addEvent = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={10} xs={22} offset={1}>
-                        <Form.Item name="guest_node">
+                        <Form.Item name="guest_node" label="Tipo de invitados">
                           <Select
                             showSearch
                             defaultValue={1}
@@ -204,6 +207,7 @@ const addEvent = () => {
                       {value === 1 ? (
                         <Col lg={10} xs={22} offset={1}>
                           <Form.Item
+                            label="Organización"
                             name="node"
                             rules={[
                               {
@@ -222,6 +226,7 @@ const addEvent = () => {
                       ) : (
                         <Col lg={10} xs={22} offset={1}>
                           <Form.Item
+                            label="Personas"
                             name="guests"
                             rules={[
                               {
