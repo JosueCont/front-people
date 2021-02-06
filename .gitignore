@@ -176,3 +176,4 @@ people/static/core/js
 #kuiz/static/
 
 
+.env.local

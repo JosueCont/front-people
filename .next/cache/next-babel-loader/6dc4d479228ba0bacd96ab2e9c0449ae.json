@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var API_URL = true ? process.env.NEXT_PUBLIC_API_BASE_URL : process.env.API_BASE_URL;\nexport var LOGIN_URL = \"https://khonnect.hiumanlab.com\";\n/* export const LOGIN_URL = \"http://demo.localhost:8000\" */\n\nexport var APP_ID = \"5fa42a1ca6f5f821bbe7fbea\"; ///Id de la app People","map":null,"metadata":{},"sourceType":"module"}
