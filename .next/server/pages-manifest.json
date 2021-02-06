@@ -3,6 +3,8 @@
   "/api/axios": "pages/api/axios.js",
   "/api/person": "pages/api/person.js",
   "/business": "pages/business.html",
+  "/comunication/events/add": "pages/comunication/events/add.html",
+  "/comunication/events/detail": "pages/comunication/events/detail.html",
   "/comunication/events": "pages/comunication/events.html",
   "/comunication": "pages/comunication.html",
   "/comunication/releases/[id]/details": "pages/comunication/releases/[id]/details.html",
