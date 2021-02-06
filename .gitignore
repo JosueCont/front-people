@@ -176,4 +176,6 @@ people/static/core/js
 #kuiz/static/
 
 
+*.next
 .env.local
+.gitignore
