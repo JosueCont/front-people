@@ -20,6 +20,7 @@ import {
   message,
   Divider,
   Tabs,
+  Table,
 } from "antd";
 import MainLayout from "../../layout/MainLayout";
 import Axios from "axios";
@@ -35,7 +36,6 @@ const GroupAdd = () => {
   const [loading, setLoading] = useState(null);
   const [edit, setEdit] = useState(false);
   const [perms, setPerms] = useState([]);
-  //   const [mostrar, setMostrar] = useState(false);
   const [getperms, setGetperms] = useState(false);
 
   const headers = {
@@ -45,7 +45,7 @@ const GroupAdd = () => {
   let data = {};
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
     data = values;
     data.perms = perms;
     if (!edit) {
@@ -71,7 +71,7 @@ const GroupAdd = () => {
           setPerms([]);
           router.push({ pathname: "/groups" });
           message.success({
-            content: "Group saved successfully",
+            content: "Grupo guardado exitosamente!",
             className: "custom-class",
             style: {
               marginTop: "20vh",
@@ -108,7 +108,7 @@ const GroupAdd = () => {
           setPerms([]);
           router.push({ pathname: "/groups" });
           message.success({
-            content: "Group saved successfully",
+            content: "Groupo editado exitosamente!",
             className: "custom-class",
             style: {
               marginTop: "20vh",
@@ -152,7 +152,7 @@ const GroupAdd = () => {
             setGetperms(true);
             checkPerms(group.perms);
           }
-          console.log("Perms", perms);
+          // console.log("Perms", perms);
         }
       })
       .catch((e) => {
@@ -162,7 +162,6 @@ const GroupAdd = () => {
 
   useEffect(() => {
     const { id } = router.query;
-    console.log(router.query);
     if (id !== undefined) {
       getGroup(id);
       setEdit(true);
@@ -174,7 +173,6 @@ const GroupAdd = () => {
 
   let arrayPerms = [];
   function handleClick(e) {
-    console.log("The link was clicked.", e.target.name, e.target.checked);
     if (getperms == false) {
       let index = perms.indexOf(e.target.name);
       if (index > -1) {
@@ -192,9 +190,9 @@ const GroupAdd = () => {
   }
 
   const views = [
-    { name: "person", value: "people.person" },
-    { name: "company", value: "people.company" },
-    { name: "comunication", value: "people.comunication" },
+    { name: "Personas", value: "people.person" },
+    { name: "Empresas", value: "people.company" },
+    { name: "Comunicacion", value: "people.comunication" },
   ];
 
   const checkPerms = (perms) => {
@@ -210,6 +208,72 @@ const GroupAdd = () => {
       setGetperms(false);
     }
   };
+
+  const columns = [
+    {
+      title: "Modulo",
+      id: "modulo",
+      render: (item) => {
+        return <div>{item.name}</div>;
+      },
+    },
+    {
+      title: "Ver",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.view"}
+              id={item.value + ".can.view"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Crear",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.create"}
+              id={item.value + ".can.create"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Editar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.edit"}
+              id={item.value + ".can.edit"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Eliminar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.delete"}
+              id={item.value + ".can.delete"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+  ];
 
   return (
     <MainLayout currentKey="1">
@@ -265,16 +329,7 @@ const GroupAdd = () => {
                       </Col>
                       <Col lg={18} md={18} xs={24}>
                         {edit === true ? (
-                          <Form.Item
-                            name="id"
-                            hidden
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please input the name!",
-                              },
-                            ]}
-                          >
+                          <Form.Item name="id" hidden>
                             <Input placeholder="Nombre" />
                           </Form.Item>
                         ) : null}
@@ -284,7 +339,7 @@ const GroupAdd = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Please input the name!",
+                              message: "Por favor ingresa el nombre!",
                             },
                           ]}
                           span={24}
@@ -305,45 +360,14 @@ const GroupAdd = () => {
                       name="tabPeople"
                       key="1"
                     >
-                      {views.map((element) => {
-                        return (
-                          <Row style={{ marginTop: "20px" }}>
-                            <Col xl={12} md={4} xs={24}>
-                              {element.name}
-                            </Col>
-                            <Col xl={12} md={20} xs={24}>
-                              <Checkbox
-                                name={element.value + ".can.create"}
-                                id={element.value + ".can.create"}
-                                onClick={handleClick}
-                              >
-                                Crear
-                              </Checkbox>
-                              <Checkbox
-                                name={element.value + ".can.edit"}
-                                id={element.value + ".can.edit"}
-                                onClick={handleClick}
-                              >
-                                Editar
-                              </Checkbox>
-                              <Checkbox
-                                name={element.value + ".can.delete"}
-                                id={element.value + ".can.delete"}
-                                onClick={handleClick}
-                              >
-                                Eliminar
-                              </Checkbox>
-                              <Checkbox
-                                name={element.value + ".can.view"}
-                                id={element.value + ".can.view"}
-                                onClick={handleClick}
-                              >
-                                Ver
-                              </Checkbox>
-                            </Col>
-                          </Row>
-                        );
-                      })}
+                      <Table
+                        className={"mainTable"}
+                        id="tableperms"
+                        key="2"
+                        size="small"
+                        columns={columns}
+                        dataSource={views}
+                      />
                     </TabPane>
                   </Tabs>
                 </Col>

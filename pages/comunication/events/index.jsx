@@ -12,33 +12,58 @@ import {
   message,
   Modal,
   Spin,
+  Input,
+  DatePicker,
 } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../../libs/axiosApi";
+import moment from "moment";
+
 import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
   ExclamationCircleOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 
 const Events = () => {
   const { Column } = Table;
   const { confirm } = Modal;
   const route = useRouter();
-  const [form] = Form.useForm();
+  const [formFilter] = Form.useForm();
   const [loading, setLoading] = useState(null);
   const { Option } = Select;
   const [evenstList, setEventList] = useState([]);
 
-  const getAllEvents = async () => {
+  const getAllEvents = async (filter) => {
     try {
       setLoading(true);
-      let response = await axiosApi.get(`/person/event/`);
-      let data = response.data.results;
-      setLoading(false);
-      console.log(data);
-      setEventList(data);
+      setEventList([]);
+      if (filter === undefined) {
+        let response = await axiosApi.get(`/person/event/`);
+        response.data.results.forEach((element) => {
+          element.date = moment(element.date).format("DD-MM-YYYY");
+        });
+        let data = response.data.results;
+        setLoading(false);
+        console.log(data);
+        setEventList(data);
+      } else {
+        setEventList([]);
+        let response = await axiosApi.post(
+          `/person/event/event_filter/`,
+          filter
+        );
+        console.log("Resultados", response);
+        response.data.forEach((element) => {
+          element.date = moment(element.date).format("DD-MM-YYYY");
+        });
+        let data = response.data;
+        setLoading(false);
+        console.log(data);
+        setEventList(data);
+      }
     } catch (e) {
       setLoading(false);
       console.log(e);
@@ -84,6 +109,27 @@ const Events = () => {
     getAllEvents();
   }, [route]);
 
+  const filter = (value) => {
+    let tit = false;
+    let date = false;
+    if (value.title !== undefined && value.title !== "") {
+      tit = true;
+    } else {
+      value.title = undefined;
+    }
+    if (value.date !== null && value.date !== undefined) {
+      date = true;
+      value.date = moment(value.date).format("YYYY-MM-DD");
+    } else {
+      value.date = undefined;
+    }
+    if (tit || date) {
+      getAllEvents(value);
+    } else {
+      getAllEvents();
+    }
+  };
+
   return (
     <MainLayout currentKey="4.2">
       <Breadcrumb>
@@ -92,6 +138,39 @@ const Events = () => {
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Spin tip="Loading..." spinning={loading}>
+          <Row>
+            <Col xs={24} sm={24} md={20} lg={20} xl={20}>
+              <Form onFinish={filter} form={formFilter}>
+                <Row>
+                  <Col lg={7} xs={22}>
+                    <Form.Item name="title" label="Titulo">
+                      <Input placeholder="Titulo" />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={7} xs={22} offset={1}>
+                    <Form.Item label="Fecha" name="date">
+                      <DatePicker
+                        style={{ width: "100%" }}
+                        moment={"YYYY-MM-DD"}
+                        placeholder="Fecha"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={2} xs={5} offset={1}>
+                    <Form.Item>
+                      <Button
+                        icon={<SearchOutlined />}
+                        type="primary"
+                        htmlType="submit"
+                      >
+                        Buscar
+                      </Button>
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Form>
+            </Col>
+          </Row>
           <Row justify={"end"}>
             <Col style={{ padding: "20px 0" }}>
               <Button
@@ -109,8 +188,8 @@ const Events = () => {
             <Col span={24}>
               <Table dataSource={evenstList} key="table_events">
                 <Column title="ID" dataIndex="id" key="id"></Column>
-                <Column title="title" dataIndex="title" key="title"></Column>
-                <Column title="Date" dataIndex="date" key="date"></Column>
+                <Column title="Titulo" dataIndex="title" key="title"></Column>
+                <Column title="Fecha" dataIndex="date" key="date"></Column>
                 <Column
                   title="Acciones"
                   key="actions"
