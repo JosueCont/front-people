@@ -6,7 +6,7 @@ import { route } from 'next/dist/next-server/server/router';
 
 export default function SelectCompany (props) {
 
-    const [options, setOptions] = useState([]);
+    const [options, setOptions] = useState(null);
     const route = useRouter();
 
     const getCompanies = async () => {
@@ -26,7 +26,7 @@ export default function SelectCompany (props) {
 
     useEffect(()=>{
         getCompanies();
-    },route)
+    },[route])
 
     return (
         <Select key="SelectCompany" style={{ width:150 }} options={options} onChange={props.onChange} allowClear />

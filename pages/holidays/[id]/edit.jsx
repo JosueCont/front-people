@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Radio, Row, Col, Breadcrumb, Typography, Button, Select, Form, Image, Input } from 'antd';
+import { Tabs, Radio, Row, Col, Breadcrumb, Typography, notification, Button, Select, Form, Image, Input } from 'antd';
 import MainLayout from "../../../layout/MainLayout";
 import { render } from "react-dom";
 import { useRouter } from "next/router";
@@ -9,56 +9,68 @@ import Vacationform from '../../../components/vacations/Vacationform';
 
 export default function HolidaysDetails() {
     const route = useRouter()
+    const [formVacation] = Form.useForm();
 
     const { TabPane } = Tabs;
     const { Title } = Typography;
     const { Options } = Select;
     const [details, setDetails] = useState(null);
     const { id } = route.query;
-    const [form] = Form.useForm();
 
     const [loading, setLoading] = useState(false);
     const [sending, setSending] = useState(false);
-    const [daysRequested, setDaysRequested] = useState(null);
-    const [departureDate, setDepartureDate] = useState(null);
-    const [returnDate, setReturnDate] = useState(null);
-    const [availableDays, setAvailableDays] = useState(null);
-    const [personList, setPersonList] = useState(null);
-    const [collaborator, setCollaborator] = useState(null);
+    const [departure_date, setDepartureDate] = useState(null);
+    const [return_date, setReturnDate] = useState(null);
 
     const onCancel = () => {
         route.push("/holidays");
     };
 
-    const onChangeDepartureDate = (date, dateString) => {
-        console.log('date', date);
-        console.log('dateString', dateString);
-        setDepartureDate(dateString)
-    }
-
-    const onChangeReturnDate = (date, dateString) => {
-        setReturnDate(dateString)
-    }
 
     const getDetails = async () => {
         try {
             let response = await axiosApi.get(`/person/vacation/${id}/`);
             let data = response.data
             console.log("data", data);
-            setDaysRequested(data.days_requested);
-            setDepartureDate(moment(data.departure_date).format('DD/MM/YYYY'));
-            setReturnDate(moment(data.return_date).format('DD/MM/YYYY'));
-            setCollaborator(data.collaborator);
+            setDetails(data);
+            setDepartureDate(data.departure_date)
+            setReturnDate(data.return_date)
             setLoading(false);
 
         } catch (e) {
             console.log("error", e)
-            /* setLoading(false); */
-        }
+            setLoading(false);
+        } 
     }
 
+    const onChangeDepartureDate = (date, dateString) => {
+        console.log(date);
+        console.log(dateString);
+        setDepartureDate(dateString);
+    };
+    
+    const onChangeReturnDate = (date, dateString) => {
+        setReturnDate(dateString);
+    };
+      
     const saveRequest = async (values) => {
+        values["departure_date"] = departure_date;
+        values["return_date"] = return_date;
         console.log(values);
+        try {
+            let response = await axiosApi.patch(`person/vacation/${id}/`, values);
+            let data = response.data;
+            notification["success"]({
+              message: "Aviso",
+              description: "Información enviada correctamente.",
+            });
+            route.push("/holidays");
+            console.log("res", response.data);
+          } catch (error) {
+            console.log("error", error);
+          } finally {
+            setSending(false);
+          }
     }
 
     useEffect(() => {
@@ -77,11 +89,12 @@ export default function HolidaysDetails() {
             </Breadcrumb>
             <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>
                 <Row justify={'center'}>
-                    <Col span={23}>
-                        {!loading ? <Form form={form} layout="horizontal" onFinish={saveRequest}  >
-                            <Vacationform collaborator={collaborator} returnDate={returnDate} departureDate={departureDate} daysRequested={daysRequested} sending={sending} onChangeDepartureDate={onChangeDepartureDate} onCancel={onCancel} />
-                        </Form> : null} 
-                        
+                    <Col span={23}> 
+                        {/* initialValues={{ 
+                            'availableDays': collaborator ? collaborator.Available_days_vacation : null,
+                            'khonnect_id' : collaborator ? collaborator.id : null
+                             }} */}
+                        <Vacationform details={details} onFinish={saveRequest} loading={loading} sending={sending} onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} />
                     </Col>
                 </Row>
             </div>
