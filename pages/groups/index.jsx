@@ -27,6 +27,7 @@ import Axios from "axios";
 import { API_URL, LOGIN_URL } from "../../config/config";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import moment from "moment";
 
 const Groups = () => {
   const router = useRouter();
@@ -46,7 +47,7 @@ const Groups = () => {
       .then((response) => {
         response.data.data.map((item) => {
           item["key"] = item.id;
-          item.timestamp = item.timestamp.substring(0, 10);
+          item.timestamp = moment(item.timestamp).format("DD/MM/YYYY");
         });
         setGroups(response.data.data);
         setLoading(false);
@@ -65,13 +66,13 @@ const Groups = () => {
       .then(function (response) {
         if (response.status === 200) {
           message.success({
-            content: "Group eliminado satisfactoriamente",
+            content: "Group eliminado exitosamente",
             className: "custom-class",
             style: {
               marginTop: "20vh",
             },
           });
-          console.log("Elemento Eliminado", id);
+          // console.log("Elemento Eliminado", id);
           getGroups();
         }
       })
@@ -118,7 +119,7 @@ const Groups = () => {
       },
     },
     {
-      title: "Opciones",
+      title: "Acciones",
       key: "id",
       render: (text, record) => {
         return (
@@ -150,7 +151,7 @@ const Groups = () => {
     <MainLayout currentKey="1">
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Groups</Breadcrumb.Item>
+        <Breadcrumb.Item>Grupos</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
         <div style={{ padding: "1%", float: "right" }}>
