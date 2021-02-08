@@ -21,7 +21,7 @@ import {
     PlusOutlined,
 } from "@ant-design/icons";
 import axiosApi from "../../../libs/axiosApi";
-import Moment from "moment";
+import moment from "moment-timezone";
 import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import { EyeOutlined } from '@ant-design/icons';
@@ -37,10 +37,12 @@ export default function Releases() {
     const [list, setList] = useState([]);
     const [personList, setPersonList] = useState([])
     const [loading, setLoading] = useState(false);
+    const [dateOne, setDateOne] = useState(null);
+    const [dateTwo, setDateTwo] = useState(null)
 
     let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
 
-    const getNotifications = async (created_by = null, category = null, timestamp = null ) => {
+    const getNotifications = async (created_by = null, category = null, dateOne = null, dateTwo = null ) => {
         setLoading(true);
         let url = `/noticenter/notification/?`
         if(created_by){
@@ -49,8 +51,12 @@ export default function Releases() {
         if(category){
             url+=`category=${category}&`;
         }
-        if(timestamp){
-            url+=`&timestamp=${timestamp}`;
+        if(dateOne !== "" && dateTwo !== ""){
+            let d1 = moment(`${dateOne} 00:00:01`).tz("America/Merida").format()
+            let d2 = moment(`${dateTwo} 23:59:00`).tz("America/Merida").format()
+            console.log(d1)
+            console.log(d2)
+            url+=`timestamp__gte=${d1}&timestamp__lte=${d2}&`;
         }
         try {
             let response = await axiosApi.get(url);
@@ -93,9 +99,16 @@ export default function Releases() {
         )
     }
 
+    const onchangeRange = (date, dateString) =>{
+        console.log(date);
+        console.log(dateString);
+        setDateOne(dateString[0]);
+        setDateTwo(dateString[1]);
+    }
+
     const sendFilter = (values) =>{
         console.log(values);
-        getNotifications(values.send_by, values.category);
+        getNotifications(values.send_by, values.category, dateOne, dateTwo);
         
     }
 
@@ -137,11 +150,11 @@ export default function Releases() {
                                 </Select>
                             </Form.Item>
                             <Form.Item
-                                /* name="send_date" */
+                                name="send_date"
                                 label="Fecha de envio"
                                 key="send_date"
                             >
-                                <RangePicker />
+                                <RangePicker onChange={onchangeRange} />
                             </Form.Item>
                             <Button
                                 style={{
@@ -179,7 +192,7 @@ export default function Releases() {
                              />
                             <Column title="Fecha" dataIndex="timestamp" key="date"
                                 render={(text, record) => (
-                                    Moment(text).format('DD / MM / YYYY')
+                                    moment(text).format('DD / MM / YYYY')
                                 )} />
                             <Column title="Recibieron" key="recibieron"
                                 render={(text, record) => (
