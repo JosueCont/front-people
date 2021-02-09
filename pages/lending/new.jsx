@@ -48,13 +48,13 @@ export default function HolidaysNew() {
         <MainLayout currentKey="7.1">
             <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
                 <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-                <Breadcrumb.Item href="./">Lending</Breadcrumb.Item>
+                <Breadcrumb.Item href="./">Prestamos</Breadcrumb.Item>
                 <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>
                 <Row justify={'center'}>
                     <Col span={23}>
-                        <Lendingform/>
+                        <Lendingform edit={false} />
                     </Col>
                 </Row>
             </div>

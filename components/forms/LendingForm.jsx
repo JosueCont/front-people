@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Button, Form, Row, Col, Input, Image, Select, InputNumber, DatePicker } from 'antd';
 import moment from "moment";
+import { useRouter } from "next/router";
 
 
 const Lendingform = (props) => {
     const {Title} = Typography;
     const {TextArea} = Input
+    const route = useRouter();
 
     return(
     <Form  layout="horizontal" >
@@ -39,17 +41,18 @@ const Lendingform = (props) => {
                 <Form.Item label="Motivo" labelCol={{ span: 4 }} labelAlign={'left'}>
                     <TextArea rows="4" />
                 </Form.Item>
-                <Button key="cancel" style={{ padding: "0 50px",  }} >
-                    Regresar
+                <Button onClick={() => route.push("/lending")} type="dashed" key="cancel" style={{ padding: "0 50px",  }} >
+                    { props.edit ? 'Regresar' : 'Cancelar' }
                 </Button>
-                <Button danger key="save" htmlType="submit" type="primary" style={{ padding: "0 50px", marginLeft: 15 }}>
+                { props.edit ? <Button danger onClick={props.onReject} key="save" type="primary" style={{ padding: "0 50px", marginLeft: 15 }}>
                     Rechazar
-                </Button>
-                <Button type="primary" key="cancel" style={{ padding: "0 50px", marginLeft: 15 }} >
+                </Button> : null }
+                { props.edit ? <Button onClick={props.onApprove} type="primary" key="cancel" style={{ padding: "0 50px", marginLeft: 15 }} >
                     Aprobar prestamo
-                </Button>
+                </Button> : null }
+                
                 <Button  key="save" htmlType="submit"  style={{ padding: "0 50px", marginLeft: 15 }}>
-                    Actualizar Datos
+                    { props.edit ? 'Actualizar Datos' : 'guardar' }
                 </Button>
             </Col>
         </Row>
