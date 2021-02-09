@@ -194,6 +194,24 @@ const personDetailForm = () => {
       value: 3,
     },
   ];
+  const periodicity = [
+    {
+      label: "Semanal",
+      value: 1,
+    },
+    {
+      label: "Catorcenal",
+      value: 2,
+    },
+    {
+      label: "Quincenal",
+      value: 3,
+    },
+    {
+        label: "Mensual",
+        value: 4,
+    },
+  ];
 
   ////CHANGE DATE
   const onChangeBirthDate = (date, dateString) => {
@@ -1666,6 +1684,14 @@ const personDetailForm = () => {
                           <Select
                             options={jobs}
                             placeholder="Selecciona un puesto"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="periodicity" label="Periodicidad">
+                          <Select
+                            options={periodicity}
+                            placeholder="Selecciona una opcion"
                           />
                         </Form.Item>
                       </Col>
