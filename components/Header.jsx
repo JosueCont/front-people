@@ -75,6 +75,14 @@ export default function headerCustom(props) {
         <Menu.Item key="6" onClick={() => router.push({ pathname: "/groups" })}>
           Grupos
         </Menu.Item>
+        <SubMenu key="7" title="Solicitudes">
+          <Menu.Item
+            key="7.1"
+            onClick={() => router.push({ pathname: "/lending" })}
+          >
+            Prestamos
+          </Menu.Item>
+          </SubMenu>
         <div
           className={"pointer"}
           style={{ float: "right" }}
