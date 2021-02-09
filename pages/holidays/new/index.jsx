@@ -56,7 +56,6 @@ export default function HolidaysNew() {
   const saveRequest = async (values) => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
-    console.log(values);
     setSending(true);
     try {
       let response = await axiosApi.post(`/person/vacation/`, values);
@@ -75,37 +74,12 @@ export default function HolidaysNew() {
   };
 
   const onChangeDepartureDate = (date, dateString) => {
-    console.log("date", date);
-    console.log("dateString", dateString);
     setDepartureDate(dateString);
   };
 
   const onChangeReturnDate = (date, dateString) => {
     setReturnDate(dateString);
   };
-
-  const getAllPersons = async () => {
-    try {
-      let response = await axiosApi.get(`/person/person/`);
-      let data = response.data.results;
-      setAllPersons(data);
-      console.log(data);
-      data = data.map((a) => {
-        return {
-          label: a.first_name + " " + a.flast_name,
-          value: a.khonnect_id,
-          key: a.name + a.id,
-        };
-      });
-      setPersonList(data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    getAllPersons();
-  }, [route]);
 
     return (
         <MainLayout currentKey="5">
@@ -117,9 +91,7 @@ export default function HolidaysNew() {
             <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>
                 <Row justify={'center'}>
                     <Col span={23}>
-                        <Form form={form} layout="horizontal" onFinish={saveRequest}>
-                            <Vacationform sending={sending} antiquity={antiquity} availableDays={availableDays} dateOfAdmission={dateOfAdmission} job={job} personList={personList} onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} changePerson={changePerson} />
-                        </Form>
+                        <Vacationform details={null} onFinish={saveRequest} sending={sending}  onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} />
                     </Col>
                 </Row>
             </div>

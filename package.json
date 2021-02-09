@@ -8,11 +8,22 @@
     "start": "next start -p 8078"
   },
   "dependencies": {
-    "antd": "^4.8.0",
-    "axios": "^0.21.0",
+    "@emotion/babel-preset-css-prop": "^10.0.27",
+    "@emotion/core": "^10.0.28",
+    "@emotion/styled": "^10.0.27",
+    "antd": "^4.12.2",
+    "axios": "^0.21.1",
+    "jodit-react": "^1.0.70",
+    "js-cookie": "^2.2.1",
+    "jwt-decode": "^3.1.2",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
     "next": "10.0.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "react-dropdown-tree-select": "^2.5.1",
+    "react-froala-wysiwyg": "^3.2.6",
+    "react-intl": "^5.12.1",
     "react-native": "^0.63.4"
   }
 }

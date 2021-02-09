@@ -188,7 +188,7 @@ const addEvent = () => {
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item>Eventos</Breadcrumb.Item>
-        <Breadcrumb.Item>Crear</Breadcrumb.Item>
+        <Breadcrumb.Item>Editar</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
         <Spin tip="Loading..." spinning={loading}>
@@ -199,7 +199,7 @@ const addEvent = () => {
             <div style={{ padding: 24 }}>
               <Row>
                 <Col span={24}>
-                  <Title level={3}>Crear Eventos</Title>
+                  <Title level={3}>Editar Eventos</Title>
                 </Col>
                 <Divider style={{ marginTop: "2px" }} />
                 <Col span={24}>
