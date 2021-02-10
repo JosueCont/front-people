@@ -185,7 +185,12 @@ export default function Holidays() {
                 title="Colaborador"
                 dataIndex="collaborator"
                 key="id"
-                render={( collaborator, record) => (collaborator ? collaborator.first_name+' '+collaborator.flast_name : null) }
+                render={( collaborator, record) => (
+                    <>
+                    {collaborator && collaborator.first_name ? collaborator.first_name+' ' : null } 
+                    {collaborator && collaborator.flast_name ? collaborator.flast_name : null }
+                    </>
+                    ) }
               />
               <Column
                 title="Empresa"
