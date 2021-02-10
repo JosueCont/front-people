@@ -73,9 +73,6 @@ const Permission = () => {
         url += `status=${status}&`;
       }
 
-      let response = await axiosApi.get(url);
-      let data = response.data.results;
-
       if (company) {
         url += `person__job_department__job__unit__id=${company}&`;
       }
