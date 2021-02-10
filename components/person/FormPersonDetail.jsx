@@ -32,6 +32,7 @@ import {
   UploadOutlined,
   PlusOutlined,
   FileTextOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import DocumentModal from "../../components/modal/document";
 import MainLayout from "../../layout/MainLayout";
@@ -44,6 +45,8 @@ import moment from "moment";
 import TextArea from "antd/lib/input/TextArea";
 import DropdownTreeSelect from "react-dropdown-tree-select";
 import "react-dropdown-tree-select/dist/styles.css";
+import ImgCrop from "antd-img-crop";
+
 const { Content } = Layout;
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
@@ -56,7 +59,7 @@ const personDetailForm = () => {
   const [loadingTable, setLoadingTable] = useState(true);
   const [modal, setModal] = useState(false);
   const [personFullName, setPersonFullName] = useState("");
-  const [photo, setPhoto] = useState("");
+  const [photo, setPhoto] = useState(null);
   const [modalDoc, setModalDoc] = useState(false);
   const [deleted, setDeleted] = useState({});
   const [people, setPeople] = useState([]);
@@ -208,8 +211,8 @@ const personDetailForm = () => {
       value: 3,
     },
     {
-        label: "Mensual",
-        value: 4,
+      label: "Mensual",
+      value: 4,
     },
   ];
 
@@ -487,10 +490,6 @@ const personDetailForm = () => {
         setBirthDate(response.data.birth_date);
         setIsActive(response.data.is_active);
         if (response.data.photo) setPhoto(response.data.photo);
-        else
-          setPhoto(
-            "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg"
-          );
         setLoading(false);
         let personName =
           response.data.first_name + " " + response.data.flast_name;
@@ -1600,6 +1599,51 @@ const personDetailForm = () => {
       });
   };
 
+  const uploadButton = (
+    <div>
+      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>Cargar</div>
+    </div>
+  );
+
+  function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
+  let numberPhoto = 0;
+  const upImage = (info) => {
+    console.log("INFO-->> ", info);
+    if (photo && photo.includes(info.file.name)) {
+    } else {
+      numberPhoto = numberPhoto + 1;
+      getBase64(info.file.originFileObj, (imageUrl) => setPhoto(imageUrl));
+      let data = new FormData();
+      data.append("id", router.query.id);
+      data.append("photo", info.file.originFileObj);
+      upImageProfile(data, info);
+    }
+  };
+
+  const upImageProfile = (data, img) => {
+    if (numberPhoto === 1) {
+      Axios.post(API_URL + `/person/person/update_pthoto_person/`, data)
+        .then((response) => {
+          getPerson();
+          message.success({
+            content: "Foto cargada correctamente.",
+            className: "custom-class",
+          });
+          numberPhoto = 0;
+        })
+        .catch((error) => {
+          console.log(error);
+          setPhoto(null);
+        });
+    }
+  };
+
   return (
     <MainLayout currentKey="1">
       <Content className="site-layout">
@@ -1754,7 +1798,42 @@ const personDetailForm = () => {
                   </Col>
                   <Col span={6}>
                     <Row justify="center" align="top">
-                      <Image width={200} src={photo} />
+                      <Row>
+                        <div
+                          style={
+                            photo
+                              ? {
+                                  width: "200px",
+                                  height: "200px",
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  alignContent: "center",
+                                  textAlign: "center",
+                                }
+                              : {}
+                          }
+                        >
+                          <Upload
+                            name="avatar"
+                            listType="picture-card"
+                            className="avatar-uploader"
+                            showUploadList={false}
+                            onChange={upImage}
+                          >
+                            {photo ? (
+                              <img
+                                src={photo}
+                                alt="avatar"
+                                width={200}
+                                preview={false}
+                                style={{ width: "200px", height: "200px" }}
+                              />
+                            ) : (
+                              uploadButton
+                            )}
+                          </Upload>
+                        </div>
+                      </Row>
                       <Col>
                         <Form.Item
                           name="date_of_admission"
