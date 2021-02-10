@@ -5,12 +5,12 @@ import { render } from "react-dom";
 import { useRouter } from "next/router";
 import axiosApi from '../../../libs/axiosApi';
 import moment from "moment";
-import Vacationform from '../../../components/forms/Vacationform';
+import PermissionForm from "../../../components/forms/PermissionForm";
 import BreadcrumbHome from '../../../components/BreadcrumbHome'
 
-export default function HolidaysDetails() {
+export default function PermissionDetails() {
     const route = useRouter()
-    const [formVacation] = Form.useForm();
+    /* const [formVacation] = Form.useForm(); */
 
     const { TabPane } = Tabs;
     const { Title } = Typography;
@@ -24,26 +24,8 @@ export default function HolidaysDetails() {
     const [return_date, setReturnDate] = useState(null);
 
     const onCancel = () => {
-        route.push("/holidays");
-    };
-
-
-    const getDetails = async () => {
-        try {
-            let response = await axiosApi.get(`/person/vacation/${id}/`);
-            let data = response.data
-            console.log("data", data);
-            setDetails(data);
-            setDepartureDate(data.departure_date)
-            setReturnDate(data.return_date)
-            
-            setLoading(false);
-
-        } catch (e) {
-            console.log("error", e)
-            setLoading(false);
-        } 
-    }
+        route.push("/permission");
+    }; 
 
     const onChangeDepartureDate = (date, dateString) => {
         console.log(date);
@@ -56,7 +38,7 @@ export default function HolidaysDetails() {
     };
       
     const saveRequest = async (values) => {
-        values["departure_date"] = departure_date;
+        /* values["departure_date"] = departure_date;
         values["return_date"] = return_date;
         console.log(values);
         try {
@@ -72,31 +54,35 @@ export default function HolidaysDetails() {
             console.log("error", error);
           } finally {
             setSending(false);
-          }
+          } */
+    }
+
+    const onReject = () =>{
+        alert("rechazar")
+    }
+
+    const onApprove = () => {
+        alert("onApprove")
     }
 
     useEffect(() => {
-        setLoading(true);
+        /* setLoading(true);
         if (id) {
             getDetails();
-        }
+        } */
     }, [route])
 
     return (
         <MainLayout currentKey="5">
             <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
                 <BreadcrumbHome/>
-                <Breadcrumb.Item href="/holidays">Vacaciones</Breadcrumb.Item>
+                <Breadcrumb.Item href="/permission">Vacaciones</Breadcrumb.Item>
                 <Breadcrumb.Item>Editar solicitud</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>
                 <Row justify={'center'}>
                     <Col span={23}> 
-                        {/* initialValues={{ 
-                            'availableDays': collaborator ? collaborator.Available_days_vacation : null,
-                            'khonnect_id' : collaborator ? collaborator.id : null
-                             }} */}
-                        <Vacationform details={details} onFinish={saveRequest} loading={loading} sending={sending} onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} />
+                    <PermissionForm readOnly={true} toApprove={true} details={details} onReject={onReject} onApprove={onApprove} onFinish={saveRequest} loading={loading} sending={sending} onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} />
                     </Col>
                 </Row>
             </div>

@@ -19,7 +19,7 @@ import {
   EyeOutlined,
 } from "@ant-design/icons";
 
-export default function Holidays() {
+export default function Permission() {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -105,7 +105,7 @@ export default function Holidays() {
     }, [route]);
 
   return (
-    <MainLayout currentKey="5">
+    <MainLayout currentKey="9">
       <Breadcrumb className={"mainBreadcrumb"}>
         <BreadcrumbHome/>
         <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
@@ -171,7 +171,7 @@ export default function Holidays() {
                 fontWeight: "bold",
                 color: "white",
               }}
-              onClick={() => route.push("holidays/new")}
+              onClick={() => route.push("/permission/new")}
               key="btn_new"
             >
               <PlusOutlined />
