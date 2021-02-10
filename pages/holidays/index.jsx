@@ -95,16 +95,6 @@ const Holidays = () => {
   };
 
   const filterHolidays = async (values) => {
-    console.log("values", values);
-    getAllHolidays(
-      values.collaborator,
-      values.company,
-      values.department,
-      values.status
-    );
-  };
-
-  const filterHolidays = async (values) => {
     console.log(values);
     getAllHolidays(
       values.collaborator,
