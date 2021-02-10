@@ -66,7 +66,7 @@ const Groups = () => {
       .then(function (response) {
         if (response.status === 200) {
           message.success({
-            content: "Group eliminado exitosamente",
+            content: "Grupo eliminado exitosamente",
             className: "custom-class",
             style: {
               marginTop: "20vh",
@@ -78,7 +78,7 @@ const Groups = () => {
       })
       .catch(function (error) {
         message.error({
-          content: "An error occurred",
+          content: "Ocurrió un error",
           className: "custom-class",
           style: {
             marginTop: "20vh",
@@ -151,7 +151,7 @@ const Groups = () => {
     <MainLayout currentKey="1">
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Grupos</Breadcrumb.Item>
+        <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
         <div style={{ padding: "1%", float: "right" }}>
@@ -164,7 +164,7 @@ const Groups = () => {
             onClick={() => router.push({ pathname: "/groups/add" })}
           >
             <PlusOutlined />
-            Agregar grupo
+            Agregar perfil
           </Button>
         </div>
         <div
