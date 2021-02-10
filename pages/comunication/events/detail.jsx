@@ -191,7 +191,7 @@ const addEvent = () => {
         <Breadcrumb.Item>Editar</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
-        <Spin tip="Loading..." spinning={loading}>
+        <Spin tip="Cargando..." spinning={loading}>
           <div
             className="site-layout-background"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
@@ -199,7 +199,7 @@ const addEvent = () => {
             <div style={{ padding: 24 }}>
               <Row>
                 <Col span={24}>
-                  <Title level={3}>Editar Eventos</Title>
+                  <Title level={3}>Editar eventos</Title>
                 </Col>
                 <Divider style={{ marginTop: "2px" }} />
                 <Col span={24}>
@@ -211,12 +211,12 @@ const addEvent = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Please input the title!",
+                              message: "Id requediro",
                             },
                           ]}
                           hidden
                         >
-                          <Input hidden type="text" placeholder="Titulo" />
+                          <Input hidden type="text" placeholder="Título" />
                         </Form.Item>
                       </Col>
                       <Col lg={10} xs={22} offset={1}>
@@ -226,11 +226,11 @@ const addEvent = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Please input the title!",
+                              message: "Por favor ingresa un titulo",
                             },
                           ]}
                         >
-                          <Input type="text" placeholder="Titulo" />
+                          <Input type="text" placeholder="Título" />
                         </Form.Item>
                       </Col>
                       <Col lg={10} xs={22} offset={1}>
@@ -240,7 +240,7 @@ const addEvent = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Please select the date!",
+                              message: "Por favor selecciona una fecha",
                             },
                           ]}
                         >
@@ -254,24 +254,6 @@ const addEvent = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={10} xs={22} offset={1}>
-                        <Form.Item
-                          label="Hora de Inicio y Fin"
-                          name="time"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Please input the start and end time!",
-                            },
-                          ]}
-                        >
-                          <RangePicker
-                            onChange={onChangeTime}
-                            style={{ width: "100%" }}
-                          />
-                        </Form.Item>
-                      </Col>
-
-                      <Col lg={10} xs={22} offset={1}>
                         <Form.Item name="guest_node" label="Tipo de invitados">
                           <Select
                             showSearch
@@ -279,9 +261,26 @@ const addEvent = () => {
                             placeholder="Tipo de invitados"
                             onChange={selectNodeGests}
                           >
-                            <Option value={1}>Organizacion</Option>
+                            <Option value={1}>Organización</Option>
                             <Option value={2}>Personas</Option>
                           </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={10} xs={22} offset={1}>
+                        <Form.Item
+                          label="Hora de inicio y fin"
+                          name="time"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Por favor selecciona un rango de horas",
+                            },
+                          ]}
+                        >
+                          <RangePicker
+                            onChange={onChangeTime}
+                            style={{ width: "100%" }}
+                          />
                         </Form.Item>
                       </Col>
                       {value === 1 ? (
@@ -292,7 +291,8 @@ const addEvent = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please select the Organization!",
+                                message:
+                                  "Por favor selecciona una organización",
                               },
                             ]}
                           >
@@ -311,14 +311,14 @@ const addEvent = () => {
                             rules={[
                               {
                                 required: true,
-                                message: "Please select the guests!",
+                                message: "Por favor selecciona invitados",
                               },
                             ]}
                           >
                             <Select
                               mode="multiple"
                               allowClear
-                              placeholder="Selecciona a los invitados"
+                              placeholder="Selecciona invitados"
                               options={persons}
                             ></Select>
                           </Form.Item>
@@ -329,7 +329,7 @@ const addEvent = () => {
                         <Form.Item labelAlign="right">
                           <Space style={{ float: "right" }}>
                             <Button
-                              type="danger"
+                              type="default"
                               onClick={() =>
                                 router.push("/comunication/events")
                               }
