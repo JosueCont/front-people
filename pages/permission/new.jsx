@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../layout/MainLayout";
 import {
   Row,
   Col,
@@ -18,11 +18,11 @@ import {
   Switch,
 } from "antd";
 import { useRouter } from "next/router";
-import axiosApi from "../../../libs/axiosApi";
+import axiosApi from "../../libs/axiosApi";
 import moment from "moment";
-import Vacationform from "../../../components/forms/Vacationform";
+import PermissionForm from "../../components/forms/PermissionForm";
 
-export default function HolidaysNew() {
+export default function PermissionNew() {
     const route = useRouter();
     const [form] = Form.useForm();
     const { Title } = Typography;
@@ -38,7 +38,7 @@ export default function HolidaysNew() {
     const [antiquity, setAntiquity] = useState(null);
 
     const onCancel = () => {
-        route.push("/holidays");
+        route.push("/Permission");
       };
 
     const changePerson = (value) => {
@@ -88,10 +88,10 @@ export default function HolidaysNew() {
                 <Breadcrumb.Item href="./">Vacaciones</Breadcrumb.Item>
                 <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
             </Breadcrumb>
-            <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>
+            <div className="container back-whiqvwte" style={{ width: "100%", padding: '20px 0' }}>
                 <Row justify={'center'}>
                     <Col span={23}>
-                        <Vacationform details={null} onFinish={saveRequest} sending={sending}  onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} />
+                        <Permissionform details={null} onFinish={saveRequest} sending={sending}  onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} />
                     </Col>
                 </Row>
             </div>

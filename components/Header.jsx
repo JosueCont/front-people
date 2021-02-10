@@ -123,8 +123,14 @@ export default function headerCustom(props) {
           >
             Vacaciones
           </Menu.Item>
-        </SubMenu>
-
+          <Menu.Item
+            key="7.3"
+            onClick={() => router.push({ pathname: "/permission" })}
+          >
+            Permisos
+          </Menu.Item>
+          
+          </SubMenu>
         <div
           className={"pointer"}
           style={{ float: "right" }}

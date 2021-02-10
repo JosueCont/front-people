@@ -19,7 +19,7 @@ import {
   EyeOutlined,
 } from "@ant-design/icons";
 
-export default function Holidays() {
+export default function Permission() {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -27,8 +27,6 @@ export default function Holidays() {
 
   const [holidayList, setHolidayList] = useState([]);
   const [personList, setPersonList] = useState(null);
-
-  const [departament, setDepartament] = useState(null);
   
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
@@ -68,14 +66,6 @@ export default function Holidays() {
         if(status){
             url+=`status=${status}&`;
         }
-        if(company){
-            url+=`person__job_department__job__unit__id=${company}&`;
-        }
-        if(department){
-            url+=`person__job_department__department__id=${department}&`;
-        }
-        
-        console.log('departament', department);
 
         let response = await axiosApi.get(url);
         let data = response.data.results;
@@ -101,14 +91,11 @@ export default function Holidays() {
 
     const filterHolidays = async (values) =>{
         console.log(values);
-        getAllHolidays(values.collaborator, values.company, values.department,values.status);
+        getAllHolidays(values.collaborator, null, null,values.status);
     }
 
     /* Eventos de componentes */
     const onChangeCompany = (val) =>{
-        form.setFieldsValue({
-            'department': null,
-        })
         setCompanyId(val);
     }
 
@@ -117,13 +104,8 @@ export default function Holidays() {
         getAllPersons();
     }, [route]);
 
-
-    const onChangeDepartament = (value) => {
-        console.log("valor", value )
-    }
-
   return (
-    <MainLayout currentKey="5">
+    <MainLayout currentKey="9">
       <Breadcrumb className={"mainBreadcrumb"}>
         <BreadcrumbHome/>
         <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
@@ -131,7 +113,7 @@ export default function Holidays() {
       <div className="container"  style={{ width: '100%' }} >
         <Row justify="space-between" style={{ paddingBottom: 20 }}  >
           <Col>
-              <Form name="filter" form={form} onFinish={filterHolidays} layout="inline" key="formFilter">
+              <Form name="filter" onFinish={filterHolidays} layout="inline" key="formFilter">
                 <Form.Item key="collaborator" name="collaborator" label="Colaborador">
                     <Select 
                         key="selectPerson"
@@ -154,12 +136,16 @@ export default function Holidays() {
                         }
                     </Select>
                 </Form.Item>
-                <Form.Item key="company_select" name="company" label="Empresa">
+                <Form.Item key="company" name="company" label="Empresa">
                     <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
                 </Form.Item>
-
-                <SelectDepartament onChange={onChangeDepartament} name="department" companyId={companyId} key="selectDepartament"/>
-                
+                <Form.Item
+                key="department_select"
+                name="department"
+                label="Departamento"
+                >
+                    <SelectDepartament companyId={companyId} key="selectDepartament"/>
+                </Form.Item>
                 <Form.Item key="estatus_filter" name="status" label="Estatus">
                     <Select style={{ width: 100 }} key="select" options={optionStatus} allowClear />
                 </Form.Item>
@@ -185,7 +171,7 @@ export default function Holidays() {
                 fontWeight: "bold",
                 color: "white",
               }}
-              onClick={() => route.push("holidays/new")}
+              onClick={() => route.push("/permission/new")}
               key="btn_new"
             >
               <PlusOutlined />
