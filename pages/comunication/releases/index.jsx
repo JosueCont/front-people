@@ -51,7 +51,7 @@ export default function Releases() {
         if(category){
             url+=`category=${category}&`;
         }
-        if(dateOne !== "" && dateTwo !== ""){
+        if(dateOne && dateTwo){
             let d1 = moment(`${dateOne} 00:00:01`).tz("America/Merida").format()
             let d2 = moment(`${dateTwo} 23:59:00`).tz("America/Merida").format()
             console.log(d1)

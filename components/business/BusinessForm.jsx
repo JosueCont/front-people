@@ -199,7 +199,7 @@ const businessForm = () => {
       },
     },
     {
-      title: "Opciones",
+      title: "Acciones",
       render: (item) => {
         return (
           <div>
