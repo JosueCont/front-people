@@ -26,6 +26,7 @@ import {
   ExclamationCircleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
+import { withAuthSync } from "../../../libs/auth";
 
 const Events = () => {
   const { Column } = Table;
@@ -224,4 +225,4 @@ const Events = () => {
     </MainLayout>
   );
 };
-export default Events;
+export default withAuthSync(Events);

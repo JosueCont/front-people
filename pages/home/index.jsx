@@ -18,7 +18,7 @@ import {
 } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, React } from "react";
 import {
   SearchOutlined,
   PlusOutlined,
@@ -29,6 +29,7 @@ import {
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
+import { withAuthSync } from "../../libs/auth";
 
 const { Content } = Layout;
 import Link from "next/link";
@@ -516,4 +517,4 @@ const homeScreen = () => {
     </MainLayout>
   );
 };
-export default homeScreen;
+export default withAuthSync(homeScreen);
