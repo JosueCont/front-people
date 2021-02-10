@@ -20,7 +20,7 @@ import {
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 import moment from "moment";
-import PermissionForm from "../../components/forms/PermissionForm";
+import Permissionform from "../../components/forms/PermissionForm";
 
 export default function PermissionNew() {
     const route = useRouter();
@@ -56,7 +56,8 @@ export default function PermissionNew() {
   const saveRequest = async (values) => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
-    setSending(true);
+    console.log(values);
+    /* setSending(true);
     try {
       let response = await axiosApi.post(`/person/vacation/`, values);
       let data = response.data;
@@ -70,7 +71,7 @@ export default function PermissionNew() {
       console.log("error", error);
     } finally {
       setSending(false);
-    }
+    } */
   };
 
   const onChangeDepartureDate = (date, dateString) => {
@@ -88,7 +89,7 @@ export default function PermissionNew() {
                 <Breadcrumb.Item href="./">Vacaciones</Breadcrumb.Item>
                 <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
             </Breadcrumb>
-            <div className="container back-whiqvwte" style={{ width: "100%", padding: '20px 0' }}>
+            <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>
                 <Row justify={'center'}>
                     <Col span={23}>
                         <Permissionform details={null} onFinish={saveRequest} sending={sending}  onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} />

@@ -25,7 +25,8 @@ export default function Permission() {
   const [form] = Form.useForm();
   const { Option } = Select;
 
-  const [holidayList, setHolidayList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [permissionsList, setPermissionsList] = useState([]);
   const [personList, setPersonList] = useState(null);
   
   /* Variables */
@@ -58,9 +59,10 @@ export default function Permission() {
     }
 };
 
-  const getAllHolidays = async (collaborator = null, company = null, department = null, status = null) => {
+  const getPermissions = async (collaborator = null, company = null, department = null, status = null) => {
+    setLoading(true);
     try {
-        let url = `/person/vacation/?`;
+        let url = `/person/permit/?`;
         if(collaborator){
             url+=`person__id=${collaborator}&`;
         }
@@ -78,18 +80,12 @@ export default function Permission() {
 
         let response = await axiosApi.get(url);
         let data = response.data.results;
-
-        data.map((item,index) => {
-            item.key = index;
-            console.log(item);
-            return item;
-        })
-        
-        console.log(data);
-    
-        setHolidayList(data);
+        console.log('permissions',data);
+        setPermissionsList(data);
     } catch (e) {
       console.log(e);
+    }finally {
+        setLoading(false);
     }
   };
 
@@ -113,7 +109,7 @@ export default function Permission() {
     }
 
     useEffect(() => {
-        getAllHolidays();
+        getPermissions();
         getAllPersons();
     }, [route]);
 
@@ -152,13 +148,7 @@ export default function Permission() {
                 <Form.Item key="company" name="company" label="Empresa">
                     <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
                 </Form.Item>
-                <Form.Item
-                key="department_select"
-                name="department"
-                label="Departamento"
-                >
-                    <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment"/>
-                </Form.Item>
+                <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment"/>
                 <Form.Item key="estatus_filter" name="status" label="Estatus">
                     <Select style={{ width: 100 }} key="select" options={optionStatus} allowClear />
                 </Form.Item>
@@ -194,7 +184,7 @@ export default function Permission() {
         </Row>
         <Row justify="end" >
           <Col span={24}>
-            <Table dataSource={holidayList} key="tableHolidays">
+            <Table dataSource={permissionsList} key="tableHolidays" loading={loading}>
               <Column
                 title="Colaborador"
                 dataIndex="collaborator"
