@@ -35,8 +35,6 @@ const Vacationform = (props) => {
             let index = allPersons.find(data => data.khonnect_id === value)
             console.log(index);
             formVacation.setFieldsValue({
-                /* khonnect_id: index.collaborator.id, */
-                /* days_requested: index.days_requested, */
                 antiquity: index.antiquity,
                 availableDays: index.Available_days_vacation,
                 dateOfAdmission: index.date_of_admission ? moment(index.date_of_admission).format('DD-MM-YYYY'): null
@@ -53,7 +51,6 @@ const Vacationform = (props) => {
             formVacation.setFieldsValue({
                 antiquity: null,
                 availableDays: null,
-                days_requested: null,
                 dateOfAdmission: null,
                 job: null
             });
