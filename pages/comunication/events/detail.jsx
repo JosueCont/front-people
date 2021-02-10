@@ -23,6 +23,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
+import { withAuthSync } from "../../../libs/auth";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -356,4 +357,4 @@ const addEvent = () => {
     </MainLayout>
   );
 };
-export default addEvent;
+export default withAuthSync(addEvent);

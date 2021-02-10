@@ -1,11 +1,14 @@
-import Head from 'next/head'
-import React, {useEffect} from 'react'
-import BusinessForm from '../../components/business/BusinessForm'
+import Head from "next/head";
+import React, { useEffect } from "react";
+import BusinessForm from "../../components/business/BusinessForm";
+import { withAuthSync } from "../../libs/auth";
 
-export default function Home() {   
+const Home = () => {
   return (
-   <>
-       <BusinessForm/>
-   </>
-  )  
-}
+    <>
+      <BusinessForm />
+    </>
+  );
+};
+
+export default withAuthSync(Home);

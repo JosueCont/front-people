@@ -20,14 +20,14 @@ import axiosApi from "../../../../libs/axiosApi";
 import cookie from "js-cookie";
 import Axios from "axios";
 import { API_URL } from "../../../../config/config";
-import BreadcrumbHome from '../../../../components/BreadcrumbHome'
-
+import BreadcrumbHome from "../../../../components/BreadcrumbHome";
 
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
 
 // import { FroalaEditorComponent } from "react-froala-wysiwyg";
 import dynamic from "next/dynamic";
+import { withAuthSync } from "../../../../libs/auth";
 const FroalaEditorComponent = dynamic(import("react-froala-wysiwyg"), {
   ssr: false,
 });
@@ -223,7 +223,7 @@ const Newrelease = () => {
   return (
     <MainLayout currentKey="4.1">
       <Breadcrumb key="Breadcrumb">
-        <BreadcrumbHome/>
+        <BreadcrumbHome />
         <Breadcrumb.Item href="./">Comunicados</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>
@@ -360,4 +360,4 @@ const Newrelease = () => {
   );
 };
 
-export default Newrelease;
+export default withAuthSync(Newrelease);

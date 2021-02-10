@@ -25,6 +25,7 @@ import {
 import MainLayout from "../../layout/MainLayout";
 import Axios from "axios";
 import { LOGIN_URL, APP_ID } from "../../config/config";
+import { withAuthSync } from "../../libs/auth";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -384,4 +385,4 @@ const GroupAdd = () => {
   );
 };
 
-export default GroupAdd;
+export default withAuthSync(GroupAdd);

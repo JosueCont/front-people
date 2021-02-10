@@ -28,6 +28,7 @@ import { API_URL, LOGIN_URL } from "../../config/config";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import moment from "moment";
+import { withAuthSync } from "../../libs/auth";
 
 const Groups = () => {
   const router = useRouter();
@@ -182,4 +183,4 @@ const Groups = () => {
     </MainLayout>
   );
 };
-export default Groups;
+export default withAuthSync(Groups);
