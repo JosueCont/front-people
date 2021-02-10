@@ -12,6 +12,7 @@
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
     "antd": "^4.12.2",
+    "antd-img-crop": "^3.13.2",
     "axios": "^0.21.1",
     "jodit-react": "^1.0.70",
     "js-cookie": "^2.2.1",

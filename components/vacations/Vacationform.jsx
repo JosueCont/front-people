@@ -10,6 +10,7 @@ import { route } from 'next/dist/next-server/server/router';
 
 const Vacationform = (props) => {
     const { Title } = Typography;
+
     const [formVacation] = Form.useForm();
 
     const {Option} = Select;
@@ -106,6 +107,7 @@ const Vacationform = (props) => {
     useEffect(() =>{
         getAllPersons()
     },[])
+
 
     return (
         <Form form={formVacation} layout="horizontal" onFinish={props.onFinish} >

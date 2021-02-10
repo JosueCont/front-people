@@ -75,6 +75,52 @@ export default function headerCustom(props) {
         <Menu.Item key="6" onClick={() => router.push({ pathname: "/groups" })}>
           Grupos
         </Menu.Item>
+        <SubMenu key="8" title="Reportes">
+          <Menu.Item
+            key="8.1"
+            onClick={() => router.push({ pathname: "/reports/collaborator" })}
+          >
+            Empleados
+          </Menu.Item>
+          <Menu.Item
+            key="8.2"
+          >
+            Nómina
+          </Menu.Item>
+          <Menu.Item
+            key="8.3"
+            onClick={() => router.push({ pathname: "/reports/payrollDepartament" })}
+          >
+            Nómina por departamento/área
+          </Menu.Item>
+          <Menu.Item
+            key="8.4"
+            onClick={() => router.push({ pathname: "/reports/loan_tracking" })}
+          >
+            Seguimiento de préstamos
+          </Menu.Item>
+          <Menu.Item
+            key="8.5"
+            onClick={() => router.push({ pathname: "/reports/holidays" })}
+          >
+            Solicitudes de vacaciones
+          </Menu.Item>
+          <Menu.Item
+            key="8.6"
+            onClick={() => router.push({ pathname: "/reports/inability" })}
+          >
+            Solicitudes de incapacidad
+          </Menu.Item>
+        </SubMenu>
+        <SubMenu key="7" title="Solicitudes">
+          <Menu.Item
+            key="7.1"
+            onClick={() => router.push({ pathname: "/lending" })}
+          >
+            Prestamos
+          </Menu.Item>
+          </SubMenu>
+
         <div
           className={"pointer"}
           style={{ float: "right" }}
