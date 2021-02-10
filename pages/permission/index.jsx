@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 
 import SelectCompany from "../../components/selects/SelectCompany";
-import SelectDepartament from "../../components/selects/SelectDepartament";
+import SelectDepartment from "../../components/selects/SelectDepartment";
 import BreadcrumbHome from "../../components/BreadcrumbHome";
 
 import {
@@ -30,6 +30,7 @@ const Permission = () => {
 
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
+  const [departamentId, setDepartamentId] = useState(null);
 
   /* Select estatus */
   const optionStatus = [
@@ -75,13 +76,16 @@ const Permission = () => {
       let response = await axiosApi.get(url);
       let data = response.data.results;
 
-      data.map((item, index) => {
-        item.key = index;
-        console.log(item);
-        return item;
-      });
+      if (company) {
+        url += `person__job_department__job__unit__id=${company}&`;
+      }
 
-      console.log(data);
+      if (department) {
+        url += `person__job_department__department__id=${department}&`;
+      }
+
+      let response = await axiosApi.get(url);
+      let data = response.data.results;
 
       setHolidayList(data);
     } catch (e) {
@@ -94,14 +98,19 @@ const Permission = () => {
     route.push("holidays/" + data.id + "/details");
   };
 
-  const filterHolidays = async (values) => {
+  const filterPermission = async (values) => {
     console.log(values);
-    getAllHolidays(values.collaborator, null, null, values.status);
+    getAllHolidays(
+      values.collaborator,
+      values.company,
+      departamentId,
+      values.status
+    );
   };
 
   /* Eventos de componentes */
-  const onChangeCompany = (val) => {
-    setCompanyId(val);
+  const changeDepartament = (val) => {
+    setDepartamentId(val);
   };
 
   useEffect(() => {
@@ -120,7 +129,7 @@ const Permission = () => {
           <Col>
             <Form
               name="filter"
-              onFinish={filterHolidays}
+              onFinish={filterPermission}
               layout="inline"
               key="formFilter"
             >
@@ -166,9 +175,10 @@ const Permission = () => {
                 name="department"
                 label="Departamento"
               >
-                <SelectDepartament
+                <SelectDepartment
                   companyId={companyId}
-                  key="selectDepartament"
+                  onChange={changeDepartament}
+                  key="SelectDepartment"
                 />
               </Form.Item>
               <Form.Item key="estatus_filter" name="status" label="Estatus">
