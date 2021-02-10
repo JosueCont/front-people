@@ -5,9 +5,8 @@ import { Row, Col, Table, Breadcrumb, Button, Form, Input, Select } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 
-import SelectCompany from '../../components/selects/SelectCompany';
-import SelectDepartament from '../../components/selects/SelectDepartament';
-
+import SelectCompany from "../../components/selects/SelectCompany";
+import SelectDepartament from "../../components/selects/SelectDepartament";
 
 import {
   DeleteOutlined,
@@ -26,82 +25,87 @@ export default function Holidays() {
 
   const [holidayList, setHolidayList] = useState([]);
   const [personList, setPersonList] = useState(null);
-  
+
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
 
   /* Select estatus */
   const optionStatus = [
-    { value: 1, label: "Pendiente", key: 'opt_1'},
-    { value: 2, label: "Aprobado", key: 'opt_2'},
-    { value: 3, label: "Rechazado", key: 'opt_3' },
-  ]
+    { value: 1, label: "Pendiente", key: "opt_1" },
+    { value: 2, label: "Aprobado", key: "opt_2" },
+    { value: 3, label: "Rechazado", key: "opt_3" },
+  ];
 
   const getAllPersons = async () => {
     try {
       let response = await axiosApi.get(`/person/person/`);
       let data = response.data.results;
-      let list  = [];
-      data = data.map((a,index) => {
-          let item = {
-            label: a.first_name + " " + a.flast_name,
-            value: a.id,
-            key: a.id+index,
-          };
+      let list = [];
+      data = data.map((a, index) => {
+        let item = {
+          label: a.first_name + " " + a.flast_name,
+          value: a.id,
+          key: a.id + index,
+        };
         list.push(item);
       });
       setPersonList(list);
     } catch (e) {
       console.log(e);
     }
-};
+  };
 
-  const getAllHolidays = async (collaborator = null, company = null, department = null, status = null) => {
+  const getAllHolidays = async (
+    collaborator = null,
+    company = null,
+    department = null,
+    status = null
+  ) => {
     try {
-        let url = `/person/vacation/?`;
-        if(collaborator){
-            url+=`person__id=${collaborator}&`;
-        }
-        if(status){
-            url+=`status=${status}&`;
-        }
+      let url = `/person/vacation/?`;
+      if (collaborator) {
+        url += `person__id=${collaborator}&`;
+      }
+      if (status) {
+        url += `status=${status}&`;
+      }
 
-        let response = await axiosApi.get(url);
-        let data = response.data.results;
+      let response = await axiosApi.get(url);
+      let data = response.data.results;
 
-        data.map((item,index) => {
-            item.key = index;
-            console.log(item);
-            return item;
-        })
-        
-        console.log(data);
-    
-        setHolidayList(data);
+      data.map((item, index) => {
+        item.key = index;
+        console.log(item);
+        return item;
+      });
+
+      console.log(data);
+
+      setHolidayList(data);
     } catch (e) {
       console.log(e);
     }
   };
 
-    const GotoDetails = (data) => {
-        console.log(data);
-        route.push("holidays/" + data.id + "/details");
-    };
+  const GotoDetails = (data) => {
+    console.log(data);
+    route.push("holidays/" + data.id + "/details");
+  };
 
-    const filterHolidays = async (values) =>{
-        console.log(values);
-        getAllHolidays(values.collaborator, null, null,values.status);
-    }
+  const filterHolidays = async (values) => {
+    console.log(values);
+    getAllHolidays(values.collaborator, null, null, values.status);
+  };
 
-    /* Eventos de componentes */
-    const onChangeCompany = (val) =>{
-        setCompanyId(val);
-    }
+  /* Eventos de componentes */
+  const onChangeCompany = (val) => {
+    setCompanyId(val);
+  };
 
-    useEffect(() => {
-        getAllHolidays();
-        getAllPersons();
-    }, [route]);
+  useEffect(() => {
+    getAllHolidays();
+    getAllPersons();
+  }, [route]);
 
   return (
     <MainLayout currentKey="5">
@@ -109,61 +113,86 @@ export default function Holidays() {
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
       </Breadcrumb>
-      <div className="container"  style={{ width: '100%' }} >
-        <Row justify="space-between" style={{ paddingBottom: 20 }}  >
+      <div className="container" style={{ width: "100%" }}>
+        <Row justify="space-between" style={{ paddingBottom: 20 }}>
           <Col>
-              <Form name="filter" onFinish={filterHolidays} layout="inline" key="formFilter">
-                <Form.Item key="collaborator" name="collaborator" label="Colaborador">
-                    <Select 
-                        key="selectPerson"
-                        showSearch
-                        /* options={personList} */
-                        style={{ width:150 }}
-                        allowClear 
-                        optionFilterProp="children"
-                        filterOption={(input, option) =>
-                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                        filterSort={(optionA, optionB) =>
-                        optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
-                        }
-                    >
-                        {
-                                personList ? personList.map((item) => {
-                                return (<Option key={item.key} value={item.value}>{item.label}</Option>)
-                            }) : null
-                        }
-                    </Select>
-                </Form.Item>
-                <Form.Item key="company" name="company" label="Empresa">
-                    <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
-                </Form.Item>
-                <Form.Item
+            <Form
+              name="filter"
+              onFinish={filterHolidays}
+              layout="inline"
+              key="formFilter"
+            >
+              <Form.Item
+                key="collaborator"
+                name="collaborator"
+                label="Colaborador"
+              >
+                <Select
+                  key="selectPerson"
+                  showSearch
+                  /* options={personList} */
+                  style={{ width: 150 }}
+                  allowClear
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  filterSort={(optionA, optionB) =>
+                    optionA.children
+                      .toLowerCase()
+                      .localeCompare(optionB.children.toLowerCase())
+                  }
+                >
+                  {personList
+                    ? personList.map((item) => {
+                        return (
+                          <Option key={item.key} value={item.value}>
+                            {item.label}
+                          </Option>
+                        );
+                      })
+                    : null}
+                </Select>
+              </Form.Item>
+              <Form.Item key="company" name="company" label="Empresa">
+                <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
+              </Form.Item>
+              <Form.Item
                 key="department_select"
                 name="department"
                 label="Departamento"
-                >
-                    <SelectDepartament companyId={companyId} key="selectDepartament"/>
-                </Form.Item>
-                <Form.Item key="estatus_filter" name="status" label="Estatus">
-                    <Select style={{ width: 100 }} key="select" options={optionStatus} allowClear />
-                </Form.Item>
-                    <Button
-                    style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                    }}
-                    key="buttonFilter"
-                    htmlType="submit"
-                    >
-                    Filtrar
-                    </Button>
+              >
+                <SelectDepartament
+                  companyId={companyId}
+                  key="selectDepartament"
+                />
+              </Form.Item>
+              <Form.Item key="estatus_filter" name="status" label="Estatus">
+                <Select
+                  style={{ width: 100 }}
+                  key="select"
+                  options={optionStatus}
+                  allowClear
+                />
+              </Form.Item>
+              <Button
+                style={{
+                  background: "#fa8c16",
+                  fontWeight: "bold",
+                  color: "white",
+                }}
+                key="buttonFilter"
+                htmlType="submit"
+              >
+                Filtrar
+              </Button>
             </Form>
 
-              {/*  */}
+            {/*  */}
           </Col>
-          <Col >
+          <Col>
             <Button
               style={{
                 background: "#fa8c16",
@@ -178,20 +207,20 @@ export default function Holidays() {
             </Button>
           </Col>
         </Row>
-        <Row justify="end" >
+        <Row justify="end">
           <Col span={24}>
             <Table dataSource={holidayList} key="tableHolidays">
               <Column
                 title="Colaborador"
                 dataIndex="collaborator"
                 key="id"
-                render={( collaborator, record) => (collaborator ? collaborator.first_name+' '+collaborator.flast_name : null) }
+                render={(collaborator, record) =>
+                  collaborator
+                    ? collaborator.first_name + " " + collaborator.flast_name
+                    : null
+                }
               />
-              <Column
-                title="Empresa"
-                dataIndex="business"
-                key="business"
-              />
+              <Column title="Empresa" dataIndex="business" key="business" />
               <Column
                 title="Departamentos"
                 dataIndex="department"
