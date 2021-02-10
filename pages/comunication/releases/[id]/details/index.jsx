@@ -17,6 +17,8 @@ import MainLayout from "../../../../../layout/MainLayout";
 import { Global, css } from "@emotion/core";
 import { useRouter } from "next/router";
 import axiosApi from "../../../../../libs/axiosApi";
+import BreadcrumbHome from "../../../../../components/BreadcrumbHome";
+import { withAuthSync } from "../../../../../libs/auth";
 
 const Details = () => {
   const { Title, Text } = Typography;
@@ -70,7 +72,7 @@ const Details = () => {
       />
       <MainLayout currentKey="4.1">
         <Breadcrumb>
-          <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+          <BreadcrumbHome />
           <Breadcrumb.Item key="releases" href="/comunication/releases">
             Comunicados
           </Breadcrumb.Item>
@@ -216,4 +218,4 @@ const Details = () => {
   );
 };
 
-export default Details;
+export default withAuthSync(Details);

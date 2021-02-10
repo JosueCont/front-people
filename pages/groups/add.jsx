@@ -25,6 +25,7 @@ import {
 import MainLayout from "../../layout/MainLayout";
 import Axios from "axios";
 import { LOGIN_URL, APP_ID } from "../../config/config";
+import { withAuthSync } from "../../libs/auth";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -108,7 +109,7 @@ const GroupAdd = () => {
           setPerms([]);
           router.push({ pathname: "/groups" });
           message.success({
-            content: "Groupo editado exitosamente!",
+            content: "Grupo editado exitosamente",
             className: "custom-class",
             style: {
               marginTop: "20vh",
@@ -118,7 +119,7 @@ const GroupAdd = () => {
       })
       .catch(function (error) {
         message.error({
-          content: "An error occurred",
+          content: "Ocurrió un error",
           className: "custom-class",
           style: {
             marginTop: "20vh",
@@ -171,7 +172,6 @@ const GroupAdd = () => {
     }
   }, []);
 
-  let arrayPerms = [];
   function handleClick(e) {
     if (getperms == false) {
       let index = perms.indexOf(e.target.name);
@@ -211,7 +211,7 @@ const GroupAdd = () => {
 
   const columns = [
     {
-      title: "Modulo",
+      title: "Módulo",
       id: "modulo",
       render: (item) => {
         return <div>{item.name}</div>;
@@ -279,10 +279,15 @@ const GroupAdd = () => {
     <MainLayout currentKey="1">
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Person</Breadcrumb.Item>
+        <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
+        {edit ? (
+          <Breadcrumb.Item>Editar perfil</Breadcrumb.Item>
+        ) : (
+          <Breadcrumb.Item>Crear perfil</Breadcrumb.Item>
+        )}
       </Breadcrumb>
       <Content className="site-layout">
-        <Spin tip="Loading..." spinning={loading}>
+        <Spin tip="Cargando..." spinning={loading}>
           <div
             className="site-layout-background"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
@@ -291,9 +296,9 @@ const GroupAdd = () => {
               <Row>
                 <Col span={24}>
                   {edit === true ? (
-                    <Title level={3}>Editar Grupos</Title>
+                    <Title level={3}>Editar perfil</Title>
                   ) : (
-                    <Title level={3}>Crear Grupos</Title>
+                    <Title level={3}>Crear perfil</Title>
                   )}
                 </Col>
                 <Divider style={{ marginTop: "2px" }} />
@@ -339,7 +344,7 @@ const GroupAdd = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Por favor ingresa el nombre!",
+                              message: "Por favor ingresa el nombre",
                             },
                           ]}
                           span={24}
@@ -380,4 +385,4 @@ const GroupAdd = () => {
   );
 };
 
-export default GroupAdd;
+export default withAuthSync(GroupAdd);

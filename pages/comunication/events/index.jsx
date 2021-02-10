@@ -26,6 +26,7 @@ import {
   ExclamationCircleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
+import { withAuthSync } from "../../../libs/auth";
 
 const Events = () => {
   const { Column } = Table;
@@ -137,14 +138,14 @@ const Events = () => {
         <Breadcrumb.Item>Eventos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
-        <Spin tip="Loading..." spinning={loading}>
+        <Spin tip="Cargando..." spinning={loading}>
           <Row>
             <Col xs={24} sm={24} md={20} lg={20} xl={20}>
               <Form onFinish={filter} form={formFilter}>
                 <Row>
                   <Col lg={7} xs={22}>
-                    <Form.Item name="title" label="Titulo">
-                      <Input placeholder="Titulo" />
+                    <Form.Item name="title" label="Título">
+                      <Input placeholder="Título" />
                     </Form.Item>
                   </Col>
                   <Col lg={7} xs={22} offset={1}>
@@ -188,7 +189,7 @@ const Events = () => {
             <Col span={24}>
               <Table dataSource={evenstList} key="table_events">
                 <Column title="ID" dataIndex="id" key="id"></Column>
-                <Column title="Titulo" dataIndex="title" key="title"></Column>
+                <Column title="Título" dataIndex="title" key="title"></Column>
                 <Column title="Fecha" dataIndex="date" key="date"></Column>
                 <Column
                   title="Acciones"
@@ -224,4 +225,4 @@ const Events = () => {
     </MainLayout>
   );
 };
-export default Events;
+export default withAuthSync(Events);

@@ -45,7 +45,6 @@ import moment from "moment";
 import TextArea from "antd/lib/input/TextArea";
 import DropdownTreeSelect from "react-dropdown-tree-select";
 import "react-dropdown-tree-select/dist/styles.css";
-import ImgCrop from "antd-img-crop";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -64,6 +63,7 @@ const personDetailForm = () => {
   const [deleted, setDeleted] = useState({});
   const [people, setPeople] = useState([]);
   const [dataTree, setDataTree] = useState([]);
+  const [nodesPerson, setNodesPerson] = useState([]);
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -427,6 +427,13 @@ const personDetailForm = () => {
     value.date_of_admission = dateAdmission;
     value.id = router.query.id;
     value.is_active = isActive;
+    if (nodePerson && nodesPerson.length > 0) {
+      let np = [];
+      nodesPerson.map((n) => {
+        np.push(n.value);
+      });
+      value.nodes = np;
+    }
     updatePerson(value);
   };
 
@@ -1569,6 +1576,7 @@ const personDetailForm = () => {
   };
   const onChangeTree = (currentNode, selectedNodes) => {
     console.log("onChange::", currentNode, selectedNodes);
+    setNodesPerson(selectedNodes);
   };
   const onActionTree = (node, action) => {
     console.log("onAction::", action, node);
@@ -1603,6 +1611,12 @@ const personDetailForm = () => {
     <div>
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Cargar</div>
+    </div>
+  );
+  const editButton = (
+    <div>
+      {loading ? <LoadingOutlined /> : <EditOutlined />}
+      <div style={{ marginTop: 8 }}>Editar</div>
     </div>
   );
 
@@ -1698,7 +1712,7 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="node" label="Unidad organizacional">
+                        <Form.Item name="nodes" label="Unidad organizacional">
                           <>
                             <DropdownTreeSelect
                               data={dataTree}
@@ -1781,17 +1795,17 @@ const personDetailForm = () => {
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="curp" label="CURP">
-                          <Input />
+                          <Input maxLength={18} />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="rfc" label="RFC">
-                          <Input />
+                          <Input maxLength={13} />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="imss" label="IMSS">
-                          <Input />
+                          <Input maxLength={11} />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -1803,8 +1817,8 @@ const personDetailForm = () => {
                           style={
                             photo
                               ? {
-                                  width: "200px",
-                                  height: "200px",
+                                  width: "190px",
+                                  height: "190px",
                                   display: "flex",
                                   flexWrap: "wrap",
                                   alignContent: "center",
@@ -1816,18 +1830,34 @@ const personDetailForm = () => {
                           <Upload
                             name="avatar"
                             listType="picture-card"
-                            className="avatar-uploader"
                             showUploadList={false}
                             onChange={upImage}
                           >
                             {photo ? (
-                              <img
-                                src={photo}
-                                alt="avatar"
-                                width={200}
-                                preview={false}
-                                style={{ width: "200px", height: "200px" }}
-                              />
+                              <div
+                                className="frontImage"
+                                style={
+                                  photo
+                                    ? {
+                                        width: "190px",
+                                        height: "190px",
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        alignContent: "center",
+                                        textAlign: "center",
+                                        alignContent: "center",
+                                      }
+                                    : {}
+                                }
+                              >
+                                <img
+                                  className="img"
+                                  src={photo}
+                                  alt="avatar"
+                                  preview={false}
+                                  style={{ width: "200px", height: "200px" }}
+                                />
+                              </div>
                             ) : (
                               uploadButton
                             )}

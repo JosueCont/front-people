@@ -1,18 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import {Select} from 'antd'
+import {Select, Form} from 'antd'
 import { useRouter } from "next/router";
 import axiosApi from '../../libs/axiosApi'
 import { route } from 'next/dist/next-server/server/router';
 
-export default function SelectDepartament (props) {
+export default function SelectDepartment (props) {
 
     const [options, setOptions] = useState([]);
     const [companyId, setCompanyId] = useState(props.companyId);
     
+    const { Option } = Select;
+
 
     const getDepartament = async () => {
         try {
-            let response = await axiosApi.get(`business/node/${companyId}/department_for_node/`);
+            let response = await axiosApi.get(`business/node/${props.companyId}/department_for_node/`);
             let data = response.data;
             console.log("data", data);
             let options = [];
@@ -27,24 +29,26 @@ export default function SelectDepartament (props) {
 
     /* useEffect(()=>{
         getCompanies();
-    },route) */
-
-    useEffect(()=>{
-        /* getCompanies(); */
         if(props.companyId){
             setCompanyId(props.companyId)
         }
         
-    })
+    }) */
 
     useEffect(()=>{
-        if(companyId){
-            console.log('companyId',companyId)
+        
+        if(props.companyId){
+            console.log('companyId',props.companyId)
             getDepartament();
         }
-    },[companyId])
+    },[props.companyId])
 
     return (
-        <Select key="SelectDepartament" style={{ width:150 }} options={options} allowClear />
+        <Form.Item key="department_select" name={props.name ? props.name : 'department'} label="Departamento">
+            <Select key="SelectDepartament" style={{ width:150 }} options={options} allowClear />
+        </Form.Item>
     )
+    /* return (
+            <Select key="SelectDepartament" style={{ width:150 }} options={options} onChange={props.onchange ? props.onChange : null} allowClear />
+    ) */
 }

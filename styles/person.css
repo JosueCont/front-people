@@ -1,0 +1,6 @@
+.frontImage :hover {
+  text-align: center;
+  opacity: 0.7;
+  background: black;
+  content: "hola";
+}

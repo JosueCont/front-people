@@ -32,7 +32,7 @@ const LoginForm = () => {
           if (response.status === 200) {
             let token = jwt_decode(response.data.token);
             if (token) {
-              Cookies.set("userToken", token);
+              Cookies.set("token", token);
               setLoading(false);
               router.push({ pathname: "/home" });
             }
@@ -57,62 +57,63 @@ const LoginForm = () => {
 
   return (
     <>
-      <Spin tip="Loading..." spinning={loading}></Spin>
-      <Form
-        name="normal_login"
-        className="login-form"
-        layout="vertical"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-      >
-        <Text className="font-color-khor">Email</Text>
-        <Form.Item
-          name="email"
-          rules={[{ required: true, message: "Please input your Email!" }]}
+      <Spin tip="Loading..." spinning={loading}>
+        <Form
+          name="normal_login"
+          className="login-form"
+          layout="vertical"
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
         >
-          <Input style={{ marginTop: "5px" }} placeholder="Correo" />
-        </Form.Item>
-        <Text className="font-color-khor">Password</Text>
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: "Please input your Password!" }]}
-        >
-          <Input
-            style={{ marginTop: "5px" }}
-            type="password"
-            placeholder="Contraseña"
-          />
-        </Form.Item>
-        <Form.Item>
+          <Text className="font-color-khor">Email</Text>
           <Form.Item
-            name="remember"
-            valuePropName="checked"
-            className="ckeck-khor"
-            style={{ float: "right", marginBottom: "5px" }}
+            name="email"
+            rules={[{ required: true, message: "Please input your Email!" }]}
           >
-            <Checkbox className="font-color-khor">Remember me</Checkbox>
+            <Input style={{ marginTop: "5px" }} placeholder="Correo" />
           </Form.Item>
-        </Form.Item>
-        {errorLogin && (
-          <Alert
-            message="Error iniciar sesión"
-            description="La contraseña y/o correo no son correctos"
-            type="error"
-            style={{ textAlign: "center" }}
-          />
-        )}
-
-        <Form.Item>
-          <Button
-            style={{ width: "100%!important" }}
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
+          <Text className="font-color-khor">Password</Text>
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: "Please input your Password!" }]}
           >
-            Log in
-          </Button>
-        </Form.Item>
-      </Form>
+            <Input
+              style={{ marginTop: "5px" }}
+              type="password"
+              placeholder="Contraseña"
+            />
+          </Form.Item>
+          <Form.Item>
+            <Form.Item
+              name="remember"
+              valuePropName="checked"
+              className="ckeck-khor"
+              style={{ float: "right", marginBottom: "5px" }}
+            >
+              <Checkbox className="font-color-khor">Remember me</Checkbox>
+            </Form.Item>
+          </Form.Item>
+          {errorLogin && (
+            <Alert
+              message="Error iniciar sesión"
+              description="La contraseña y/o correo no son correctos"
+              type="error"
+              style={{ textAlign: "center" }}
+            />
+          )}
+
+          <Form.Item>
+            <Button
+              style={{ width: "100%!important" }}
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
+            >
+              Log in
+            </Button>
+          </Form.Item>
+        </Form>
+      </Spin>
     </>
   );
 };

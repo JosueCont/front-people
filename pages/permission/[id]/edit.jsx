@@ -18,13 +18,13 @@ import { render } from "react-dom";
 import { useRouter } from "next/router";
 import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
-import Vacationform from "../../../components/forms/Vacationform";
+import PermissionForm from "../../../components/forms/PermissionForm";
 import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
 
-const HolidaysDetails = () => {
+const PermissionEdit = () => {
   const route = useRouter();
-  const [formVacation] = Form.useForm();
+  /* const [formVacation] = Form.useForm(); */
 
   const { TabPane } = Tabs;
   const { Title } = Typography;
@@ -38,23 +38,7 @@ const HolidaysDetails = () => {
   const [return_date, setReturnDate] = useState(null);
 
   const onCancel = () => {
-    route.push("/holidays");
-  };
-
-  const getDetails = async () => {
-    try {
-      let response = await axiosApi.get(`/person/vacation/${id}/`);
-      let data = response.data;
-      console.log("data", data);
-      setDetails(data);
-      setDepartureDate(data.departure_date);
-      setReturnDate(data.return_date);
-
-      setLoading(false);
-    } catch (e) {
-      console.log("error", e);
-      setLoading(false);
-    }
+    route.push("/permission");
   };
 
   const onChangeDepartureDate = (date, dateString) => {
@@ -68,30 +52,30 @@ const HolidaysDetails = () => {
   };
 
   const saveRequest = async (values) => {
-    values["departure_date"] = departure_date;
-    values["return_date"] = return_date;
-    console.log(values);
-    try {
-      let response = await axiosApi.patch(`person/vacation/${id}/`, values);
-      let data = response.data;
-      notification["success"]({
-        message: "Aviso",
-        description: "Información enviada correctamente.",
-      });
-      route.push("/holidays");
-      console.log("res", response.data);
-    } catch (error) {
-      console.log("error", error);
-    } finally {
-      setSending(false);
-    }
+    /* values["departure_date"] = departure_date;
+        values["return_date"] = return_date;
+        console.log(values);
+        try {
+            let response = await axiosApi.patch(`person/vacation/${id}/`, values);
+            let data = response.data;
+            notification["success"]({
+              message: "Aviso",
+              description: "Información enviada correctamente.",
+            });
+            route.push("/holidays");
+            console.log("res", response.data);
+          } catch (error) {
+            console.log("error", error);
+          } finally {
+            setSending(false);
+          } */
   };
 
   useEffect(() => {
-    setLoading(true);
-    if (id) {
-      getDetails();
-    }
+    /* setLoading(true);
+        if (id) {
+            getDetails();
+        } */
   }, [route]);
 
   return (
@@ -107,11 +91,7 @@ const HolidaysDetails = () => {
       >
         <Row justify={"center"}>
           <Col span={23}>
-            {/* initialValues={{ 
-                            'availableDays': collaborator ? collaborator.Available_days_vacation : null,
-                            'khonnect_id' : collaborator ? collaborator.id : null
-                             }} */}
-            <Vacationform
+            <PermissionForm
               details={details}
               onFinish={saveRequest}
               loading={loading}
@@ -126,4 +106,5 @@ const HolidaysDetails = () => {
     </MainLayout>
   );
 };
-export default withAuthSync(HolidaysDetails);
+
+export default withAuthSync(PermissionEdit);

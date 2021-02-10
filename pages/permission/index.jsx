@@ -19,7 +19,7 @@ import {
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 
-const Holidays = () => {
+const Permission = () => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -28,10 +28,9 @@ const Holidays = () => {
   const [holidayList, setHolidayList] = useState([]);
   const [personList, setPersonList] = useState(null);
 
-  const [departament, setDepartament] = useState(null);
-
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
+  const [departamentId, setDepartamentId] = useState(null);
 
   /* Select estatus */
   const optionStatus = [
@@ -73,20 +72,20 @@ const Holidays = () => {
       if (status) {
         url += `status=${status}&`;
       }
+
+      let response = await axiosApi.get(url);
+      let data = response.data.results;
+
       if (company) {
         url += `person__job_department__job__unit__id=${company}&`;
       }
+
       if (department) {
         url += `person__job_department__department__id=${department}&`;
       }
 
-      data.map((item, index) => {
-        item.key = index;
-        console.log(item);
-        return item;
-      });
-
-      console.log(data);
+      let response = await axiosApi.get(url);
+      let data = response.data.results;
 
       setHolidayList(data);
     } catch (e) {
@@ -94,32 +93,24 @@ const Holidays = () => {
     }
   };
 
-  const filterHolidays = async (values) => {
-    console.log("values", values);
-    getAllHolidays(
-      values.collaborator,
-      values.company,
-      values.department,
-      values.status
-    );
+  const GotoDetails = (data) => {
+    console.log(data);
+    route.push("holidays/" + data.id + "/details");
   };
 
-  const filterHolidays = async (values) => {
+  const filterPermission = async (values) => {
     console.log(values);
     getAllHolidays(
       values.collaborator,
       values.company,
-      values.department,
+      departamentId,
       values.status
     );
   };
 
   /* Eventos de componentes */
-  const onChangeCompany = (val) => {
-    form.setFieldsValue({
-      department: null,
-    });
-    setCompanyId(val);
+  const changeDepartament = (val) => {
+    setDepartamentId(val);
   };
 
   useEffect(() => {
@@ -128,7 +119,7 @@ const Holidays = () => {
   }, [route]);
 
   return (
-    <MainLayout currentKey="5">
+    <MainLayout currentKey="9">
       <Breadcrumb className={"mainBreadcrumb"}>
         <BreadcrumbHome />
         <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
@@ -138,8 +129,7 @@ const Holidays = () => {
           <Col>
             <Form
               name="filter"
-              form={form}
-              onFinish={filterHolidays}
+              onFinish={filterPermission}
               layout="inline"
               key="formFilter"
             >
@@ -177,18 +167,20 @@ const Holidays = () => {
                     : null}
                 </Select>
               </Form.Item>
-              <Form.Item key="company_select" name="company" label="Empresa">
+              <Form.Item key="company" name="company" label="Empresa">
                 <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
               </Form.Item>
-              {/* <Form.Item key="company_select_new" name="company_new" label="Empresa">
-                    <SelectCompany  key="SelectCompany" />
-                </Form.Item> */}
-
-              <SelectDepartment
+              <Form.Item
+                key="department_select"
                 name="department"
-                companyId={companyId}
-                key="selectDepartament"
-              />
+                label="Departamento"
+              >
+                <SelectDepartment
+                  companyId={companyId}
+                  onChange={changeDepartament}
+                  key="SelectDepartment"
+                />
+              </Form.Item>
               <Form.Item key="estatus_filter" name="status" label="Estatus">
                 <Select
                   style={{ width: 100 }}
@@ -219,7 +211,7 @@ const Holidays = () => {
                 fontWeight: "bold",
                 color: "white",
               }}
-              onClick={() => route.push("holidays/new")}
+              onClick={() => route.push("/permission/new")}
               key="btn_new"
             >
               <PlusOutlined />
@@ -306,4 +298,4 @@ const Holidays = () => {
   );
 };
 
-export default withAuthSync(Holidays);
+export default withAuthSync(Permission);

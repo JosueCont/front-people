@@ -16,95 +16,98 @@ import {
   notification,
   Space,
   Switch,
-  Modal
+  Modal,
 } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../../libs/axiosApi";
-import moduleName from '../../../components/forms/LendingForm';
+import moduleName from "../../../components/forms/LendingForm";
 import moment from "moment";
 import Lendingform from "../../../components/forms/LendingForm";
+import { withAuthSync } from "../../../libs/auth";
 
-export default function HolidaysNew() {
-    const route = useRouter();
-    const [form] = Form.useForm();
-    const { Title, Text } = Typography;
-    const {TextArea} = Input;
+const HolidaysNew = () => {
+  const route = useRouter();
+  const [form] = Form.useForm();
+  const { Title, Text } = Typography;
+  const { TextArea } = Input;
 
-    const [sending, setSending] = useState(false);
-    const { Option } = Select;
-    const [departure_date, setDepartureDate] = useState(null);
-    const [return_date, setReturnDate] = useState(null);
-    const [job, setJob] = useState(null);
-    const [dateOfAdmission, setDateOfAdmission] = useState(null);
-    const [availableDays, setAvailableDays] = useState(null);
-    const [personList, setPersonList] = useState(null);
-    const [allPersons, setAllPersons] = useState(null);
-    const [antiquity, setAntiquity] = useState(null);
-    const [message, setMessage] = useState(null);
-    
-    const [modalVisible, setModalVisible] = useState(false);
+  const [sending, setSending] = useState(false);
+  const { Option } = Select;
+  const [departure_date, setDepartureDate] = useState(null);
+  const [return_date, setReturnDate] = useState(null);
+  const [job, setJob] = useState(null);
+  const [dateOfAdmission, setDateOfAdmission] = useState(null);
+  const [availableDays, setAvailableDays] = useState(null);
+  const [personList, setPersonList] = useState(null);
+  const [allPersons, setAllPersons] = useState(null);
+  const [antiquity, setAntiquity] = useState(null);
+  const [message, setMessage] = useState(null);
 
-    const onCancel = () => {
-        route.push("/lending");
-    };
+  const [modalVisible, setModalVisible] = useState(false);
 
-    const approve = () =>{
-        Modal.success({
-            content: 'Préstamo autorizado',
-            okText: "Aceptar y notificar",
-            onOk() {
-                console.log('OK');
-              },
-          });
-    }
+  const onCancel = () => {
+    route.push("/lending");
+  };
 
-    const reject = () =>{
-        console.log("Reject");
-        route.push('/lending')
-        notification["success"]({
-            message: "Aviso",
-            description: "Información enviada correctamente.",
-          });
-    }
+  const approve = () => {
+    Modal.success({
+      content: "Préstamo autorizado",
+      okText: "Aceptar y notificar",
+      onOk() {
+        console.log("OK");
+      },
+    });
+  };
 
+  const reject = () => {
+    console.log("Reject");
+    route.push("/lending");
+    notification["success"]({
+      message: "Aviso",
+      description: "Información enviada correctamente.",
+    });
+  };
 
-    const onChangeMessage = (value) => {
-        setMessage(value);
-    };
+  const onChangeMessage = (value) => {
+    setMessage(value);
+  };
 
-    const ShowModal = () => {
-        setModalVisible(true);
-    }
+  const ShowModal = () => {
+    setModalVisible(true);
+  };
 
-    const rejectCancel = () => {
-        setModalVisible(false);
-        setMessage(null);
-      };
+  const rejectCancel = () => {
+    setModalVisible(false);
+    setMessage(null);
+  };
 
-
-    return (
-        <MainLayout currentKey="7.1">
-            <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-                <Breadcrumb.Item href="./">Prestamos</Breadcrumb.Item>
-                <Breadcrumb.Item>Editar Solicitud</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>
-                <Row justify={'center'}>
-                    <Col span={23}>
-                        <Lendingform edit={true} onApprove={approve} onReject={ShowModal} />
-                    </Col>
-                </Row>
-            </div>
-            <Modal
-                title="Rechazar solicitud de vacaciones"
-                visible={modalVisible}
-                onOk={reject}
-                onCancel={rejectCancel}
-            >
-                <Text>Comentarios</Text>
-                <TextArea rows="4" onChange={onChangeMessage} />
-            </Modal>
-        </MainLayout>
-    )
-}
+  return (
+    <MainLayout currentKey="7.1">
+      <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
+        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item href="./">Prestamos</Breadcrumb.Item>
+        <Breadcrumb.Item>Editar Solicitud</Breadcrumb.Item>
+      </Breadcrumb>
+      <div
+        className="container back-white"
+        style={{ width: "100%", padding: "20px 0" }}
+      >
+        <Row justify={"center"}>
+          <Col span={23}>
+            <Lendingform edit={true} onApprove={approve} onReject={ShowModal} />
+          </Col>
+        </Row>
+      </div>
+      <Modal
+        title="Rechazar solicitud de vacaciones"
+        visible={modalVisible}
+        onOk={reject}
+        onCancel={rejectCancel}
+      >
+        <Text>Comentarios</Text>
+        <TextArea rows="4" onChange={onChangeMessage} />
+      </Modal>
+    </MainLayout>
+  );
+};
+export default withAuthSync(HolidaysNew);
