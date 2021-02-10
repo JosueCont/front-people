@@ -7,6 +7,7 @@ import axiosApi from "../../libs/axiosApi";
 
 import SelectCompany from '../../components/selects/SelectCompany';
 import SelectDepartament from '../../components/selects/SelectDepartament';
+import BreadcrumbHome from '../../components/BreadcrumbHome'
 
 
 import {
@@ -106,7 +107,7 @@ export default function Holidays() {
   return (
     <MainLayout currentKey="5">
       <Breadcrumb className={"mainBreadcrumb"}>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <BreadcrumbHome/>
         <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container"  style={{ width: '100%' }} >

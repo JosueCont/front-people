@@ -6,6 +6,7 @@ import moment from 'moment';
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 import {DeleteOutlined, EditOutlined, InfoCircleOutlined, SearchOutlined, PlusOutlined, EyeOutlined } from "@ant-design/icons";
+import BreadcrumbHome from '../../components/BreadcrumbHome'
 
 export default function CollaboratorReports() {
     const { Column } = Table;
@@ -82,7 +83,7 @@ export default function CollaboratorReports() {
   return (
     <MainLayout currentKey="8.1">
       <Breadcrumb className={"mainBreadcrumb"}>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <BreadcrumbHome/>
         <Breadcrumb.Item>Reportes</Breadcrumb.Item>
         <Breadcrumb.Item>Reporte de empleados</Breadcrumb.Item>
       </Breadcrumb>

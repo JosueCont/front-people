@@ -20,6 +20,8 @@ import axiosApi from "../../../../libs/axiosApi";
 import cookie from "js-cookie";
 import Axios from "axios";
 import { API_URL } from "../../../../config/config";
+import BreadcrumbHome from '../../../../components/BreadcrumbHome'
+
 
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
@@ -221,7 +223,7 @@ const Newrelease = () => {
   return (
     <MainLayout currentKey="4.1">
       <Breadcrumb key="Breadcrumb">
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <BreadcrumbHome/>
         <Breadcrumb.Item href="./">Comunicados</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>

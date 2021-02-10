@@ -22,6 +22,7 @@ import {
   ExclamationCircleOutlined,
   CheckCircleOutlined,
 } from "@ant-design/icons";
+import BreadcrumbHome from '../../../components/BreadcrumbHome'
 
 import cookie from "js-cookie";
 
@@ -169,7 +170,7 @@ export default function HolidaysDetails() {
   return (
     <MainLayout currentKey="5">
       <Breadcrumb className={"mainBreadcrumb"}>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <BreadcrumbHome/>
         <Breadcrumb.Item href="/holidays">Vacaciones</Breadcrumb.Item>
         <Breadcrumb.Item>Detalles</Breadcrumb.Item>
       </Breadcrumb>

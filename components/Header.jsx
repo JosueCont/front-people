@@ -66,12 +66,12 @@ export default function headerCustom(props) {
             Eventos
           </Menu.Item>
         </SubMenu>
-        <Menu.Item
+        {/* <Menu.Item
           key="5"
           onClick={() => router.push({ pathname: "/holidays" })}
         >
           Vacaciones
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item key="6" onClick={() => router.push({ pathname: "/groups" })}>
           Grupos
         </Menu.Item>
@@ -118,6 +118,12 @@ export default function headerCustom(props) {
             onClick={() => router.push({ pathname: "/lending" })}
           >
             Prestamos
+          </Menu.Item>
+          <Menu.Item
+            key="7.2"
+            onClick={() => router.push({ pathname: "/holidays" })}
+          >
+            Vacaciones
           </Menu.Item>
           </SubMenu>
 

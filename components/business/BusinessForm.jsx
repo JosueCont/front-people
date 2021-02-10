@@ -1,29 +1,12 @@
-import {
-  Layout,
-  Breadcrumb,
-  Table,
-  Row,
-  Col,
-  Input,
-  Select,
-  Switch,
-  Button,
-  Modal,
-  Form,
-} from "antd";
+import {Layout, Breadcrumb, Table, Row, Col, Input, Select, Switch, Button, Modal, Form } from "antd";
 import Axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-  SearchOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, InfoCircleOutlined, SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
 import { API_URL } from "../../config/config";
 import Router from "next/router";
 import MainLayout from "../../layout/MainLayout";
+import BreadcrumbHome from '../../components/BreadcrumbHome'
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -224,7 +207,7 @@ const businessForm = () => {
   return (
     <MainLayout currentKey="2">
       <Breadcrumb>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <BreadcrumbHome/>
         <Breadcrumb.Item>Empresa</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
