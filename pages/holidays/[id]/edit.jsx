@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import axiosApi from '../../../libs/axiosApi';
 import moment from "moment";
 import Vacationform from '../../../components/vacations/Vacationform';
+import BreadcrumbHome from '../../../components/BreadcrumbHome'
 
 export default function HolidaysDetails() {
     const route = useRouter()
@@ -83,7 +84,7 @@ export default function HolidaysDetails() {
     return (
         <MainLayout currentKey="5">
             <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+                <BreadcrumbHome/>
                 <Breadcrumb.Item href="/holidays">Vacaciones</Breadcrumb.Item>
                 <Breadcrumb.Item>Editar solicitud</Breadcrumb.Item>
             </Breadcrumb>

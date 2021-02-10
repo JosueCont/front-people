@@ -25,6 +25,7 @@ import moment from "moment-timezone";
 import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import { EyeOutlined } from '@ant-design/icons';
+import BreadcrumbHome from '../../../components/BreadcrumbHome';
 
 export default function Releases() {
     /* React */
@@ -51,7 +52,7 @@ export default function Releases() {
         if(category){
             url+=`category=${category}&`;
         }
-        if(dateOne !== "" && dateTwo !== ""){
+        if(dateOne && dateTwo){
             let d1 = moment(`${dateOne} 00:00:01`).tz("America/Merida").format()
             let d2 = moment(`${dateTwo} 23:59:00`).tz("America/Merida").format()
             console.log(d1)
@@ -120,7 +121,7 @@ export default function Releases() {
     return (
         <MainLayout currentKey="4.1">
             <Breadcrumb key="Breadcrumb">
-                <Breadcrumb.Item key="home">Inicio</Breadcrumb.Item>
+            <BreadcrumbHome/>
                 <Breadcrumb.Item key="releases">Comunicados</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: '100%' }}>

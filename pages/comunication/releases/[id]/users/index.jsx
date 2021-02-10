@@ -6,6 +6,7 @@ import { Global, css } from '@emotion/core'
 import { useRouter } from 'next/router';
 import axiosApi from '../../../../../libs/axiosApi';
 import Moment from "moment";
+import BreadcrumbHome from '../../../../../components/BreadcrumbHome'
 
 export default function UserNotification() {
     const route = useRouter();
@@ -32,7 +33,7 @@ export default function UserNotification() {
     return (
         <MainLayout currentKey="4.1">
             <Breadcrumb key="Breadcrumb">
-                <Breadcrumb.Item key="home">Inicio</Breadcrumb.Item>
+                <BreadcrumbHome/>
                 <Breadcrumb.Item key="releases" href="/comunication/releases">Comunicados</Breadcrumb.Item>
                 <Breadcrumb.Item key="releases" >Usuarios que recibieron</Breadcrumb.Item>
             </Breadcrumb>
