@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 
 import SelectCompany from '../../components/selects/SelectCompany';
-import SelectDepartament from '../../components/selects/SelectDepartament';
+import SelectDepartment from '../../components/selects/SelectDepartment';
 import BreadcrumbHome from '../../components/BreadcrumbHome'
 
 
@@ -32,6 +32,7 @@ export default function Holidays() {
   
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
+
 
   /* Select estatus */
   const optionStatus = [
@@ -75,7 +76,6 @@ export default function Holidays() {
             url+=`person__job_department__department__id=${department}&`;
         }
         
-        console.log('departament', department);
 
         let response = await axiosApi.get(url);
         let data = response.data.results;
@@ -100,7 +100,7 @@ export default function Holidays() {
     };
 
     const filterHolidays = async (values) =>{
-        console.log(values);
+        console.log('values', values);
         getAllHolidays(values.collaborator, values.company, values.department,values.status);
     }
 
@@ -112,15 +112,12 @@ export default function Holidays() {
         setCompanyId(val);
     }
 
+    
+
     useEffect(() => {
         getAllHolidays();
         getAllPersons();
     }, [route]);
-
-
-    const onChangeDepartament = (value) => {
-        console.log("valor", value )
-    }
 
   return (
     <MainLayout currentKey="5">
@@ -157,9 +154,11 @@ export default function Holidays() {
                 <Form.Item key="company_select" name="company" label="Empresa">
                     <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
                 </Form.Item>
-
-                <SelectDepartament onChange={onChangeDepartament} name="department" companyId={companyId} key="selectDepartament"/>
+                {/* <Form.Item key="company_select_new" name="company_new" label="Empresa">
+                    <SelectCompany  key="SelectCompany" />
+                </Form.Item> */}
                 
+                <SelectDepartment  name="department" companyId={companyId} key="selectDepartament"/>
                 <Form.Item key="estatus_filter" name="status" label="Estatus">
                     <Select style={{ width: 100 }} key="select" options={optionStatus} allowClear />
                 </Form.Item>

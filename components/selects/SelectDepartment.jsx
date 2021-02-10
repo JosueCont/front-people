@@ -4,11 +4,13 @@ import { useRouter } from "next/router";
 import axiosApi from '../../libs/axiosApi'
 import { route } from 'next/dist/next-server/server/router';
 
-export default function SelectDepartament (props) {
+export default function SelectDepartment (props) {
 
     const [options, setOptions] = useState([]);
     const [companyId, setCompanyId] = useState(props.companyId);
     
+    const { Option } = Select;
+
 
     const getDepartament = async () => {
         try {
@@ -34,6 +36,7 @@ export default function SelectDepartament (props) {
     }) */
 
     useEffect(()=>{
+        
         if(props.companyId){
             console.log('companyId',props.companyId)
             getDepartament();
@@ -41,8 +44,11 @@ export default function SelectDepartament (props) {
     },[props.companyId])
 
     return (
-        <Form.Item key="department_select" name="department" label="Departamento">
+        <Form.Item key="department_select" name={props.name ? props.name : 'department'} label="Departamento">
             <Select key="SelectDepartament" style={{ width:150 }} options={options} allowClear />
         </Form.Item>
     )
+    /* return (
+            <Select key="SelectDepartament" style={{ width:150 }} options={options} onChange={props.onchange ? props.onChange : null} allowClear />
+    ) */
 }
