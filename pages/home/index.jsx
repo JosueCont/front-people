@@ -91,6 +91,7 @@ const homeScreen = () => {
       persons_id: idsDelete,
     })
       .then((response) => {
+        setIdsDelete("");
         showModalDelete();
         getPerson();
         setLoading(false);

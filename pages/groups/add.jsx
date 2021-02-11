@@ -192,7 +192,7 @@ const GroupAdd = () => {
   const views = [
     { name: "Personas", value: "people.person" },
     { name: "Empresas", value: "people.company" },
-    { name: "Comunicacion", value: "people.comunication" },
+    { name: "Comunicación", value: "people.comunication" },
   ];
 
   const checkPerms = (perms) => {
@@ -276,10 +276,10 @@ const GroupAdd = () => {
   ];
 
   return (
-    <MainLayout currentKey="1">
+    <MainLayout currentKey="3.2">
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
+        <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item href="/groups">Perfiles de seguridad</Breadcrumb.Item>
         {edit ? (
           <Breadcrumb.Item>Editar perfil</Breadcrumb.Item>
         ) : (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { React, useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -107,4 +107,4 @@ const PermissionNew = () => {
     )
 }
 
-export default PermissionNew;
+export default withAuthSync(PermissionNew);
