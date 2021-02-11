@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { React, useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -20,7 +20,7 @@ import {
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 import moment from "moment";
-import PermissionForm from "../../components/forms/PermissionForm";
+import Permissionform from "../../components/forms/PermissionForm";
 import { withAuthSync } from "../../libs/auth";
 
 const PermissionNew = () => {
@@ -57,7 +57,8 @@ const PermissionNew = () => {
   const saveRequest = async (values) => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
-    setSending(true);
+    console.log(values);
+    /* setSending(true);
     try {
       let response = await axiosApi.post(`/person/vacation/`, values);
       let data = response.data;
@@ -71,7 +72,7 @@ const PermissionNew = () => {
       console.log("error", error);
     } finally {
       setSending(false);
-    }
+    } */
   };
 
   const onChangeDepartureDate = (date, dateString) => {
@@ -90,7 +91,7 @@ const PermissionNew = () => {
         <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
       </Breadcrumb>
       <div
-        className="container back-whiqvwte"
+        className="container back-white"
         style={{ width: "100%", padding: "20px 0" }}
       >
         <Row justify={"center"}>

@@ -427,7 +427,7 @@ const personDetailForm = () => {
     value.date_of_admission = dateAdmission;
     value.id = router.query.id;
     value.is_active = isActive;
-    if (nodePerson && nodesPerson.length > 0) {
+    if (nodesPerson && nodesPerson.length > 0) {
       let np = [];
       nodesPerson.map((n) => {
         np.push(n.value);
@@ -1662,9 +1662,9 @@ const personDetailForm = () => {
     <MainLayout currentKey="1">
       <Content className="site-layout">
         <Breadcrumb style={{ margin: "16px 0" }}>
-          <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-          <Breadcrumb.Item href="/home/">Person</Breadcrumb.Item>
-          <Breadcrumb.Item>Expediente de empleados</Breadcrumb.Item>
+          <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
+          <Breadcrumb.Item href="/home/">Personas</Breadcrumb.Item>
+          <Breadcrumb.Item>Expediente de empleado</Breadcrumb.Item>
         </Breadcrumb>
         <Spin tip="Loading..." spinning={loading}>
           <div

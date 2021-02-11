@@ -3,6 +3,8 @@ import {Select, Form} from 'antd'
 import { useRouter } from "next/router";
 import axiosApi from '../../libs/axiosApi'
 import { route } from 'next/dist/next-server/server/router';
+import Axios from "axios";
+import { API_URL } from "../../config/config";
 
 export default function SelectDepartment (props) {
 
@@ -14,7 +16,9 @@ export default function SelectDepartment (props) {
 
     const getDepartament = async () => {
         try {
-            let response = await axiosApi.get(`business/node/${props.companyId}/department_for_node/`);
+            console.log(API_URL+`/business/node/${props.companyId}/department_for_node/`)
+            let response = await Axios.get(API_URL+`/business/node/${props.companyId}/department_for_node/`);
+            
             let data = response.data;
             console.log("data", data);
             let options = [];
@@ -45,7 +49,7 @@ export default function SelectDepartment (props) {
 
     return (
         <Form.Item key="department_select" name={props.name ? props.name : 'department'} label="Departamento">
-            <Select key="SelectDepartament" style={{ width:150 }} options={options} allowClear />
+            <Select key="SelectDepartament" style={{ width:150 }} options={options} allowClear onChange={props.onChange ? props.onChange : null} />
         </Form.Item>
     )
     /* return (

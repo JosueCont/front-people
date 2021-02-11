@@ -134,7 +134,7 @@ const Events = () => {
   return (
     <MainLayout currentKey="4.2">
       <Breadcrumb>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item href={"/home"}>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Eventos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

@@ -4,6 +4,8 @@ import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Table, Breadcrumb, Button, Form, Input, Select } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
+import Axios from "axios";
+import { API_URL } from "../../config/config";
 
 import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
@@ -42,7 +44,7 @@ const Holidays = () => {
 
   const getAllPersons = async () => {
     try {
-      let response = await axiosApi.get(`/person/person/`);
+      let response = await Axios.get(API_URL+`/person/person/`);
       let data = response.data.results;
       let list = [];
       data = data.map((a, index) => {
@@ -80,6 +82,9 @@ const Holidays = () => {
         url += `person__job_department__department__id=${department}&`;
       }
 
+      let response = await Axios.get(API_URL+url);
+      console.log('response', response)
+      let data = response.data.results;
       data.map((item, index) => {
         item.key = index;
         console.log(item);
@@ -90,9 +95,14 @@ const Holidays = () => {
 
       setHolidayList(data);
     } catch (e) {
-      console.log(e);
+      console.log('error',e );
     }
   };
+
+  const GotoDetails = (data) => {
+    console.log(data);
+    route.push("holidays/" + data.id + "/details");
+};
 
   const filterHolidays = async (values) => {
     console.log(values);
@@ -168,7 +178,7 @@ const Holidays = () => {
                 </Select>
               </Form.Item>
               <Form.Item key="company_select" name="company" label="Empresa">
-                <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
+                <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
               </Form.Item>
               {/* <Form.Item key="company_select_new" name="company_new" label="Empresa">
                     <SelectCompany  key="SelectCompany" />

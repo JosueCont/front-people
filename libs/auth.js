@@ -15,7 +15,7 @@ export const auth = (ctx) => {
   const { token } = nextCookie(ctx);
 
   if (ctx.req && !token) {
-    // console.log('Sin Token!!', token)
+    console.log('Sin Token!!', token)
     ctx.res.writeHead(302, { Location: "/" });
     ctx.res.end();
     return;
@@ -56,7 +56,7 @@ const setInitialProps = (component) => {
         axiosApi.defaults.headers.common[
           "Authorization"
         ] = `JWT ${token.token}`;
-        // console.log('FINALIZADO')
+/*         console.log('FINALIZADO') */
       } else {
         axiosApi.defaults.headers.common["Authorization"] = "";
       }
