@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { React, useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -82,21 +82,33 @@ const PermissionNew = () => {
   const onChangeReturnDate = (date, dateString) => {
     setReturnDate(dateString);
   };
-  
-    return (
-        <MainLayout currentKey="5">
-            <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-                <Breadcrumb.Item href="./">Vacaciones</Breadcrumb.Item>
-                <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>
-                <Row justify={'center'}>
-                    <Col span={23}>
-                        <Permissionform details={null} onFinish={saveRequest} sending={sending}  onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} />
-                    </Col>
-                </Row>
-            </div>
-        </MainLayout>
-    )
-}
+
+  return (
+    <MainLayout currentKey="5">
+      <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
+        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item href="./">Vacaciones</Breadcrumb.Item>
+        <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
+      </Breadcrumb>
+      <div
+        className="container back-white"
+        style={{ width: "100%", padding: "20px 0" }}
+      >
+        <Row justify={"center"}>
+          <Col span={23}>
+            <Permissionform
+              details={null}
+              onFinish={saveRequest}
+              sending={sending}
+              onChangeDepartureDate={onChangeDepartureDate}
+              onChangeReturnDate={onChangeReturnDate}
+              onCancel={onCancel}
+            />
+          </Col>
+        </Row>
+      </div>
+    </MainLayout>
+  );
+};
+
+export default withAuthSync(PermissionNew);

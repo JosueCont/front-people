@@ -29,7 +29,7 @@ const cardUser = (props) => {
           <Button>
             <SettingOutlined key="setting" />
           </Button>,
-          <Button onClick={() => Router.push(`/home/${person.id}`)}>
+          <Button onClick={() => Router.push(`/home/${props.person.id}`)}>
             <EditOutlined key="edit" />
           </Button>,
           <Button onClick={() => logoutAuth()}>
