@@ -24,6 +24,7 @@ import { API_URL } from "../../../config/config";
 import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
 import { withAuthSync } from "../../../libs/auth";
+import axios from "axios";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -62,30 +63,29 @@ const addEvent = () => {
   };
 
   const getPersons = async () => {
-    try {
-      let response = await axiosApi.get(`/person/person/`);
-      let data = response.data.results;
-      data = data.map((a) => {
-        return { label: a.first_name + " " + a.flast_name, value: a.id };
+    axios
+      .get(API_URL + `/person/person/`)
+      .then((response) => {
+        response.data.results = response.data.results.map((a) => {
+          return { label: a.first_name + " " + a.flast_name, value: a.id };
+        });
+        setPersons(response.data.results);
+        console.log(response.data.results);
+      })
+      .catch((e) => {
+        console.log(e);
       });
-      setPersons(data);
-      console.log(data);
-    } catch (e) {
-      console.log(e);
-    }
   };
+
   const getNodes = async () => {
-    try {
-      let response = await axiosApi.get(`/business/node/`);
+    axios.get(API_URL + `/business/node/`).then((response) => {
       let data = response.data.results;
       data = data.map((a) => {
         return { label: a.name, value: a.id };
       });
       setNodes(data);
       console.log(data);
-    } catch (e) {
-      console.log(e);
-    }
+    });
   };
   const onFinish = async (values) => {
     let datos = {};
