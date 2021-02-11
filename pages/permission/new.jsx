@@ -21,37 +21,38 @@ import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 import moment from "moment";
 import Permissionform from "../../components/forms/PermissionForm";
+import { withAuthSync } from "../../libs/auth";
 
-export default function PermissionNew() {
-    const route = useRouter();
-    const [form] = Form.useForm();
-    const { Title } = Typography;
-    const [sending, setSending] = useState(false);
-    const { Option } = Select;
-    const [departure_date, setDepartureDate] = useState(null);
-    const [return_date, setReturnDate] = useState(null);
-    const [job, setJob] = useState(null);
-    const [dateOfAdmission, setDateOfAdmission] = useState(null);
-    const [availableDays, setAvailableDays] = useState(null);
-    const [personList, setPersonList] = useState(null);
-    const [allPersons, setAllPersons] = useState(null);
-    const [antiquity, setAntiquity] = useState(null);
+const PermissionNew = () => {
+  const route = useRouter();
+  const [form] = Form.useForm();
+  const { Title } = Typography;
+  const [sending, setSending] = useState(false);
+  const { Option } = Select;
+  const [departure_date, setDepartureDate] = useState(null);
+  const [return_date, setReturnDate] = useState(null);
+  const [job, setJob] = useState(null);
+  const [dateOfAdmission, setDateOfAdmission] = useState(null);
+  const [availableDays, setAvailableDays] = useState(null);
+  const [personList, setPersonList] = useState(null);
+  const [allPersons, setAllPersons] = useState(null);
+  const [antiquity, setAntiquity] = useState(null);
 
-    const onCancel = () => {
-        route.push("/Permission");
-      };
+  const onCancel = () => {
+    route.push("/Permission");
+  };
 
-    const changePerson = (value) => {
-        console.log(value);
-        let index = allPersons.find(data => data.khonnect_id === value)
-        console.log(index)
-        setDateOfAdmission(moment(index.date_of_admission).format('DD/MM/YYYY'))
-        if (index.job_department.job) {
-            setJob(index.job_department.job.name)
-            setAvailableDays(index.Available_days_vacation);
-            setAntiquity(index.antiquity)
-        }
-    };
+  const changePerson = (value) => {
+    console.log(value);
+    let index = allPersons.find((data) => data.khonnect_id === value);
+    console.log(index);
+    setDateOfAdmission(moment(index.date_of_admission).format("DD/MM/YYYY"));
+    if (index.job_department.job) {
+      setJob(index.job_department.job.name);
+      setAvailableDays(index.Available_days_vacation);
+      setAntiquity(index.antiquity);
+    }
+  };
 
   const saveRequest = async (values) => {
     values["departure_date"] = departure_date;
@@ -81,7 +82,7 @@ export default function PermissionNew() {
   const onChangeReturnDate = (date, dateString) => {
     setReturnDate(dateString);
   };
-
+  
     return (
         <MainLayout currentKey="5">
             <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>

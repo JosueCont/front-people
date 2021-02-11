@@ -12,8 +12,9 @@ import {
   PlusOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
+import { withAuthSync } from "../../libs/auth";
 
-export default function Lending() {
+const Lending = () => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -102,7 +103,7 @@ export default function Lending() {
                 background: "#fa8c16",
                 fontWeight: "bold",
                 color: "white",
-                marginLeft:20
+                marginLeft: 20,
               }}
               onClick={() => route.push("lending/new")}
             >
@@ -144,11 +145,7 @@ export default function Lending() {
                 dataIndex="request_date"
                 key="request_date"
               />
-              <Column
-                title="Estatus"
-                dataIndex="status"
-                key="status"
-              />
+              <Column title="Estatus" dataIndex="status" key="status" />
               <Column
                 title="Acciones"
                 key="actions"
@@ -175,4 +172,6 @@ export default function Lending() {
       </div>
     </MainLayout>
   );
-}
+};
+
+export default withAuthSync(Lending);

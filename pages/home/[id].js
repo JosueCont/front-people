@@ -1,11 +1,14 @@
 import Head from "next/head";
 import React, { useEffect } from "react";
 import FormPersonDetail from "../../components/person/FormPersonDetail";
+import { withAuthSync } from "../../libs/auth";
 
-export default function EmployeeDetailPage() {
+const EmployeeDetailPage = () => {
   return (
     <>
       <FormPersonDetail />
     </>
   );
-}
+};
+
+export default withAuthSync(EmployeeDetailPage);

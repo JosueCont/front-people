@@ -20,14 +20,15 @@ import axiosApi from "../../../../libs/axiosApi";
 import cookie from "js-cookie";
 import Axios from "axios";
 import { API_URL } from "../../../../config/config";
-import BreadcrumbHome from '../../../../components/BreadcrumbHome'
-
+import BreadcrumbHome from "../../../../components/BreadcrumbHome";
+import SelectCompany from '../../../../components/selects/SelectCompany'
 
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
 
 // import { FroalaEditorComponent } from "react-froala-wysiwyg";
 import dynamic from "next/dynamic";
+import { withAuthSync } from "../../../../libs/auth";
 const FroalaEditorComponent = dynamic(import("react-froala-wysiwyg"), {
   ssr: false,
 });
@@ -65,7 +66,7 @@ const Newrelease = () => {
     console.log(values);
     setSending(true);
     try {
-      let response = await axiosApi.post(`/noticenter/notification/`, values);
+      let response = await Axios.post(API_URL+`/noticenter/notification/`, values);
       let data = response.data;
       notification["success"]({
         message: "Aviso",
@@ -82,7 +83,7 @@ const Newrelease = () => {
 
   const getBussiness = async () => {
     try {
-      let response = await axiosApi.get(`/business/node/`);
+      let response = await Axios.get(API_URL+`/business/node/`);
       let data = response.data.results;
       console.log("data", data);
       let options = [];
@@ -134,6 +135,7 @@ const Newrelease = () => {
 
   /////GET DATA SELCTS
   const getValueSelects = async () => {
+      console.log("get datas");
     /////PERSON TYPE
     Axios.get(API_URL + `/person/person-type/`)
       .then((response) => {
@@ -147,12 +149,12 @@ const Newrelease = () => {
         }
       })
       .catch((e) => {
-        console.log(e);
+        console.log('error_tipo_personas',e);
       });
 
     /////Companies
     try {
-      let response = await axiosApi.get(`/business/node/`);
+      let response = await Axios.get(API_URL+`/business/node/`);
       let data = response.data.results;
       console.log("data", data);
       let options = [];
@@ -187,8 +189,8 @@ const Newrelease = () => {
       target_job: null,
     });
     try {
-      let response = await axiosApi.get(
-        `business/node/${value}/department_for_node/`
+      let response = await Axios.get(
+        API_URL+`/business/node/${value}/department_for_node/`
       );
       let data = response.data;
       console.log("data", data);
@@ -206,10 +208,9 @@ const Newrelease = () => {
     form.setFieldsValue({
       target_job: null,
     });
-    console.log(`business/department/${value}/job_for_department/`);
     try {
-      let response = await axiosApi.get(
-        `business/department/${value}/job_for_department/`
+      let response = await Axios.get(
+        API_URL+`/business/department/${value}/job_for_department/`
       );
       let data_jobs = response.data;
       console.log("data_jobs", data_jobs);
@@ -223,7 +224,7 @@ const Newrelease = () => {
   return (
     <MainLayout currentKey="4.1">
       <Breadcrumb key="Breadcrumb">
-        <BreadcrumbHome/>
+        <BreadcrumbHome />
         <Breadcrumb.Item href="./">Comunicados</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>
@@ -243,7 +244,7 @@ const Newrelease = () => {
                     Datos Generales
                   </Title>
                 </Col>
-                <Col xs={24} sm={24} md={13} lg={13} xl={13}>
+                <Col xs={24} sm={24} md={14} lg={14} xl={14}>
                   <Form.Item
                     name="category"
                     label="Categoría"
@@ -279,7 +280,7 @@ const Newrelease = () => {
                   </Form.Item>
                 </Col>
 
-                <Col xs={24} sm={24} md={13} lg={13} xl={13}>
+                <Col xs={24} sm={24} md={14} lg={14} xl={14}>
                   <Row>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                       <Form.Item
@@ -287,12 +288,14 @@ const Newrelease = () => {
                         label="Empresa"
                         labelCol={{ span: 10 }}
                       >
-                        <Select
+                          <SelectCompany onChange={onChangecompany}  />
+
+                        {/* <Select
                           options={bussinessList}
                           onChange={onChangecompany}
                           placeholder="Empresa"
                           key="company_select"
-                        />
+                        /> */}
                       </Form.Item>
                       <Form.Item
                         name={"target_department"}
@@ -360,4 +363,4 @@ const Newrelease = () => {
   );
 };
 
-export default Newrelease;
+export default withAuthSync(Newrelease);
