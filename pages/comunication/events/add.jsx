@@ -123,9 +123,9 @@ const addEvent = () => {
   return (
     <MainLayout currentKey="4.2">
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item>Home</Breadcrumb.Item>
-        <Breadcrumb.Item>Eventos</Breadcrumb.Item>
-        <Breadcrumb.Item>Crear</Breadcrumb.Item>
+        <Breadcrumb.Item href={"/home"}>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item href={"/comunication/events"}>Eventos</Breadcrumb.Item>
+        <Breadcrumb.Item>Crear evento</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
         <Spin tip="Cargando..." spinning={loading}>

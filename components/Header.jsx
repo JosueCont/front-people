@@ -4,25 +4,53 @@ import CardUser from "./CardUser";
 import CardApps from "./CardApps";
 import { Router } from "next/router";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import Cookie from "js-cookie";
+import Axios from "axios";
+import { API_URL } from "../config/config";
 
 const { Header } = Layout;
 
 const { SubMenu } = Menu;
 
-const userCardDisplay = () => (
-  <>
-    <CardUser />
-  </>
-);
-
-const appsCardDisplay = () => (
-  <>
-    <CardApps />
-  </>
-);
-
-export default function headerCustom(props) {
+const headerCustom = (props) => {
   const router = useRouter();
+  const defaulPhoto =
+    "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
+  const [person, setPerson] = useState({});
+
+  useEffect(() => {
+    const user = JSON.parse(Cookie.get("token"));
+    Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
+      id: user.user_id,
+    })
+      .then((response) => {
+        if (!response.data.photo) response.data.photo = defaulPhoto;
+        let personName =
+          response.data.first_name + " " + response.data.flast_name;
+        if (response.data.mlast_name)
+          personName = person + " " + response.data.mlast_name;
+        response.data.fullName = personName;
+        setPerson(response.data);
+      })
+      .catch((e) => {
+        setPerson({ photo: defaulPhoto });
+        console.log(e);
+      });
+  }, []);
+
+  const userCardDisplay = () => (
+    <>
+      <CardUser person={person} />
+    </>
+  );
+
+  const appsCardDisplay = () => (
+    <>
+      <CardApps />
+    </>
+  );
+
   return (
     <Header>
       <div className="logo" key="content_logo" />
@@ -50,7 +78,15 @@ export default function headerCustom(props) {
         >
           Empresas
         </Menu.Item>
-        <Menu.Item key="3">Configuración</Menu.Item>
+        <SubMenu key="3" title="Configuración">
+          <Menu.Item key="3.1">Configuración general</Menu.Item>
+          <Menu.Item
+            key="3.2"
+            onClick={() => router.push({ pathname: "/groups" })}
+          >
+            Perfiles de seguridad
+          </Menu.Item>
+        </SubMenu>
 
         <SubMenu key="4" title="Comunicación">
           <Menu.Item
@@ -66,15 +102,7 @@ export default function headerCustom(props) {
             Eventos
           </Menu.Item>
         </SubMenu>
-        {/* <Menu.Item
-          key="5"
-          onClick={() => router.push({ pathname: "/holidays" })}
-        >
-          Vacaciones
-        </Menu.Item> */}
-        <Menu.Item key="6" onClick={() => router.push({ pathname: "/groups" })}>
-          Perfiles de seguridad
-        </Menu.Item>
+
         <SubMenu key="8" title="Reportes">
           <Menu.Item
             key="8.1"
@@ -129,8 +157,7 @@ export default function headerCustom(props) {
           >
             Permisos
           </Menu.Item>
-          
-          </SubMenu>
+        </SubMenu>
         <div
           className={"pointer"}
           style={{ float: "right" }}
@@ -140,9 +167,8 @@ export default function headerCustom(props) {
             <div key="menu_user_content">
               <Avatar
                 key="avatar_key"
-                icon={
-                  <UserOutlined />
-                } /* src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" */
+                icon={<UserOutlined />}
+                src={person.photo}
               />
             </div>
           </Dropdown>
@@ -150,4 +176,6 @@ export default function headerCustom(props) {
       </Menu>
     </Header>
   );
-}
+};
+
+export default headerCustom;
