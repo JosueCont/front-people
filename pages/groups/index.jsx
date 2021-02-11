@@ -149,9 +149,9 @@ const Groups = () => {
   ];
 
   return (
-    <MainLayout currentKey="1">
+    <MainLayout currentKey="3.2">
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
