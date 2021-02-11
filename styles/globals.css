@@ -164,6 +164,22 @@ header.ant-layout-header > ul >li.ant-menu-submenu-active > div[aria-expanded=tr
 .mainTable{
     margin-top: 20px;
 }
+.formPermission .ant-picker-disabled{
+    background-color: #fff;
+}
+.formPermission .ant-picker-disabled input{
+    color: #000;
+}
+
+.formPermission .ant-select-disabled > .ant-select-selector {
+    background-color: #fff !important;
+    color: #000 !important;
+}
+
+.formPermission .ant-input-number-disabled, .ant-input-disabled{
+    background-color: #fff !important;
+    color: #000 !important;
+}
 /* .formFilter{
 
 } */

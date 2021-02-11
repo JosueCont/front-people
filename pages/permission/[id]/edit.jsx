@@ -21,6 +21,10 @@ import moment from "moment";
 import PermissionForm from "../../../components/forms/PermissionForm";
 import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
+import Axios from 'axios';
+import {API_URL} from '../../../config/config'
+
+
 
 const PermissionEdit = () => {
   const route = useRouter();
@@ -51,31 +55,46 @@ const PermissionEdit = () => {
     setReturnDate(dateString);
   };
 
+  const getDetails = async () => {
+    setLoading(true);
+    try {
+      let response = await Axios.get(API_URL+`/person/permit/${id}/`);
+      let data = response.data;
+      setDetails(data);
+      setDepartureDate(data.departure_date);
+      setReturnDate(data.return_date);
+
+      setLoading(false);
+    } catch (e) {
+      console.log("error", e);
+      setLoading(false);
+    }
+  };
+
   const saveRequest = async (values) => {
-    /* values["departure_date"] = departure_date;
+        values["departure_date"] = departure_date;
         values["return_date"] = return_date;
         console.log(values);
         try {
-            let response = await axiosApi.patch(`person/vacation/${id}/`, values);
+            let response = await Axios.patch(API_URL+`/person/permit/${id}/`, values);
             let data = response.data;
+            route.push("/permission");
             notification["success"]({
               message: "Aviso",
-              description: "Información enviada correctamente.",
+              description: "Información actualizada correctamente.",
             });
-            route.push("/holidays");
             console.log("res", response.data);
           } catch (error) {
             console.log("error", error);
           } finally {
             setSending(false);
-          } */
+          }
   };
 
   useEffect(() => {
-    /* setLoading(true);
-        if (id) {
-            getDetails();
-        } */
+    if (id) {
+        getDetails();
+    }
   }, [route]);
 
   return (

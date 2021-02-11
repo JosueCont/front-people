@@ -70,7 +70,7 @@ const HolidaysDetails = () => {
       setDaysRequested(data.days_requested);
       setDepartureDate(moment(data.departure_date).format("DD/MM/YYYY"));
       setReturnDate(moment(data.return_date).format("DD/MM/YYYY"));
-      setAvailableDays(data.available_days);
+      setAvailableDays(data.collaborator.Available_days_vacation);
 
       if (data.collaborator && data.collaborator.first_name) {
         setFisrtName(data.collaborator.first_name);

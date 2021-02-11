@@ -22,6 +22,11 @@ import axiosApi from "../../libs/axiosApi";
 import moment from "moment";
 import Permissionform from "../../components/forms/PermissionForm";
 import { withAuthSync } from "../../libs/auth";
+import Axios from 'axios';
+import {API_URL} from '../../config/config';
+
+
+
 
 const PermissionNew = () => {
   const route = useRouter();
@@ -58,21 +63,22 @@ const PermissionNew = () => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
     console.log(values);
-    /* setSending(true);
-    try {
-      let response = await axiosApi.post(`/person/vacation/`, values);
-      let data = response.data;
-      notification["success"]({
-        message: "Aviso",
-        description: "Información enviada correctamente.",
-      });
-      route.push("/holidays");
-      console.log("res", response.data);
-    } catch (error) {
-      console.log("error", error);
-    } finally {
-      setSending(false);
-    } */
+    setSending(true);
+        try {
+        let response = await Axios.post(API_URL+`/person/permit/`, values);
+        let data = response.data;
+        route.push("/permission");
+        notification["success"]({
+            message: "Aviso",
+            description: "Información enviada correctamente.",
+        });
+        
+        console.log("res", response.data);
+        } catch (error) {
+        console.log("error", error);
+        } finally {
+        setSending(false);
+        }
   };
 
   const onChangeDepartureDate = (date, dateString) => {
@@ -100,3 +106,5 @@ const PermissionNew = () => {
         </MainLayout>
     )
 }
+
+export default PermissionNew;

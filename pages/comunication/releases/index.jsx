@@ -243,10 +243,19 @@ const Releases = () => {
                 title="Acciones"
                 key="action"
                 render={(text, record) => (
-                  <EyeOutlined
-                    key={"goDetails_" + record.id}
-                    onClick={() => GotoDetails(record)}
-                  />
+                    <>
+                    <EyeOutlined
+                        key={"goDetails_" + record.id}
+                        onClick={() => GotoDetails(record)}
+                    />
+                    <EditOutlined
+                      className="icon_actions"
+                      key={"edit_" + record.id}
+                      onClick={() =>
+                        route.push("/comunication/releases/" + record.id + "/edit")
+                      }
+                    />
+                    </>
                 )}
               />
             </Table>
