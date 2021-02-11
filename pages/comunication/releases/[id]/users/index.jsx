@@ -21,6 +21,9 @@ import axiosApi from "../../../../../libs/axiosApi";
 import Moment from "moment";
 import BreadcrumbHome from "../../../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../../../libs/auth";
+import Axios from 'axios'
+import { API_URL } from "../../../../../config/config";
+
 
 const UserNotification = () => {
   const route = useRouter();
@@ -30,8 +33,7 @@ const UserNotification = () => {
 
   const getUsers = async () => {
     try {
-      let response = await axiosApi.get(
-        `/noticenter/user-notification/?notification_id=${id}`
+      let response = await Axios.get(API_URL+`/noticenter/user-notification/?notification_id=${id}`
       );
       let data = response.data;
       setList(data.results);

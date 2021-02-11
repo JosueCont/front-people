@@ -26,9 +26,11 @@ import BreadcrumbHome from "../../../components/BreadcrumbHome";
 
 import cookie from "js-cookie";
 import { withAuthSync } from "../../../libs/auth";
+import Axios from 'axios';
+import {API_URL} from '../../../config/config'
 
 const HolidaysDetails = () => {
-  let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
+  let userToken = cookie.get("token") ? cookie.get("token") : null;
 
   const route = useRouter();
 
@@ -62,7 +64,7 @@ const HolidaysDetails = () => {
 
   const getDetails = async () => {
     try {
-      let response = await axiosApi.get(`/person/vacation/${id}/`);
+      let response = await Axios.get(API_URL+`/person/vacation/${id}/`);
       let data = response.data;
       console.log("data", data);
       setDaysRequested(data.days_requested);
@@ -101,8 +103,8 @@ const HolidaysDetails = () => {
           comment: 1212231,
         };
         console.log(values);
-        let response = await axiosApi.post(
-          `/person/vacation/reject_request/`,
+        let response = await Axios.post(
+          API_URL+`/person/vacation/reject_request/`,
           values
         );
         if (response.status == 200) {
@@ -111,7 +113,7 @@ const HolidaysDetails = () => {
             description: "Solicitud rechazada.",
           });
           setMessage(null);
-          /* route.push('/holidays'); */
+          route.push('/holidays');
         }
       } catch (e) {
         console.log("error", e);
@@ -127,8 +129,8 @@ const HolidaysDetails = () => {
           khonnect_id: json.user_id,
           id: id,
         };
-        let response = await axiosApi.post(
-          `/person/vacation/approve_request/`,
+        let response = await Axios.post(
+          API_URL+`/person/vacation/approve_request/`,
           values
         );
         if (response.status == 200) {
@@ -258,7 +260,7 @@ const HolidaysDetails = () => {
         onCancel={rejectCancel}
       >
         <Text>Comentarios</Text>
-        <TextArea rows="4" onChange={onChangeMessage} />
+        <TextArea rows="4"  onChange={onChangeMessage} />
       </Modal>
     </MainLayout>
   );
