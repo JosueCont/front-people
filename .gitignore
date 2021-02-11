@@ -50,3 +50,8 @@ Thumbs.db
 
 *.next
 .env.local
+
+package-lock.json
+
+##archivos Yarn
+yarn.lock
