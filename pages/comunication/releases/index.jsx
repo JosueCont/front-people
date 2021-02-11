@@ -27,6 +27,8 @@ import cookie from "js-cookie";
 import { EyeOutlined } from "@ant-design/icons";
 import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
+import Axios from "axios";
+import { API_URL } from "../../../config/config";
 
 const Releases = () => {
   /* React */
@@ -42,7 +44,7 @@ const Releases = () => {
   const [dateOne, setDateOne] = useState(null);
   const [dateTwo, setDateTwo] = useState(null);
 
-  let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
+  let userToken = cookie.get("toke") ? cookie.get("token") : null;
 
   const getNotifications = async (
     created_by = null,
@@ -66,7 +68,7 @@ const Releases = () => {
       url += `timestamp__gte=${d1}&timestamp__lte=${d2}&`;
     }
     try {
-      let response = await axiosApi.get(url);
+      let response = await Axios.get(API_URL+url);
       let data = response.data;
       setList(data.results);
       setLoading(false);
@@ -79,7 +81,7 @@ const Releases = () => {
 
   const getAllPersons = async () => {
     try {
-      let response = await axiosApi.get(`/person/person/`);
+      let response = await Axios.get(API_URL+`/person/person/`);
       let data = response.data.results;
       console.log(data);
       data = data.map((a) => {

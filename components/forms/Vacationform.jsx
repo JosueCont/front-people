@@ -5,6 +5,9 @@ import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 import { set } from 'js-cookie';
 import { route } from 'next/dist/next-server/server/router';
+import Axios from 'axios';
+import {API_URL} from '../../config/config';
+
 /* import SelectPerson from '../../components/selects/SelectPerson' */
 
 
@@ -60,7 +63,7 @@ const Vacationform = (props) => {
 
     const getAllPersons = async () => {
         try {
-          let response = await axiosApi.get(`/person/person/`);
+          let response = await Axios.get(API_URL+`/person/person/`);
           let data = response.data.results;
           setAllPersons(data);
           console.log(data);
@@ -156,7 +159,7 @@ const Vacationform = (props) => {
                         <Input readOnly />
                     </Form.Item>
                     <Form.Item name="days_requested" label="Días solicitados" labelCol={{ span: 9 }} labelAlign={'left'}>
-                        <InputNumber  /* defaultValue={props.daysRequested ? props.daysRequested : null } */ min={1} max={10} style={{ width:'100%' }} />
+                        <InputNumber  min={1} max={20} style={{ width:'100%' }} />
                     </Form.Item>
             </Col>
             <Col span="8" offset={1}>

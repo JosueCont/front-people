@@ -31,16 +31,9 @@ const Permissionform = (props) => {
 
     const changePerson = (value) => {
         console.log(value);
-        /* if(value){
+        if(value){
             let index = allPersons.find(data => data.khonnect_id === value)
             console.log(index);
-            formPermission.setFieldsValue({
-                //khonnect_id: index.collaborator.id,
-                //days_requested: index.days_requested,
-                antiquity: index.antiquity,
-                availableDays: index.Available_days_vacation,
-                dateOfAdmission: index.date_of_admission ? moment(index.date_of_admission).format('DD-MM-YYYY'): null
-            });
             if(index.job_department){
                 formPermission.setFieldsValue({
                     job: index.job_department.department.name
@@ -50,15 +43,11 @@ const Permissionform = (props) => {
             
 
         }else{
-            formVacation.setFieldsValue({
-                antiquity: null,
-                availableDays: null,
-                days_requested: null,
-                dateOfAdmission: null,
+            formPermission.setFieldsValue({
                 job: null
             });
             setUrlPhoto(null)
-        } */
+        }
     }
 
     const getAllPersons = async () => {
@@ -131,7 +120,7 @@ const Permissionform = (props) => {
             </Col>
             
             <Col span="8">
-                    <Form.Item label="Empleado" name="khonnect_id" labelCol={{ span: 9 }} labelAlign={'left'}>
+                    <Form.Item label="Empleado" /* name="khonnect_id" */ name="person" labelCol={{ span: 9 }} labelAlign={'left'}>
                         <Select
                             disabled={props.readOnly}
                         /* options={personList} */
@@ -159,7 +148,7 @@ const Permissionform = (props) => {
                     <Form.Item label="Puesto" name="job" labelCol={{ span: 9 }} labelAlign={'left'}>
                         <Input readOnly disabled={props.readOnly} />
                     </Form.Item>
-                    <Form.Item name="days_requested" label="Días solicitados" labelCol={{ span: 9 }} labelAlign={'left'}>
+                    <Form.Item name="requested_days" label="Días solicitados" labelCol={{ span: 9 }} labelAlign={'left'}>
                         <InputNumber disabled={props.readOnly} /* defaultValue={props.daysRequested ? props.daysRequested : null } */ min={1} max={10} style={{ width:'100%' }} />
                     </Form.Item>
             </Col>
@@ -172,7 +161,7 @@ const Permissionform = (props) => {
                 </Form.Item>
             </Col>
             <Col span={17} offset={4} style={{ textAlign: 'right' }}>
-                <Form.Item label="Motivo" labelCol={{ span: 4 }} labelAlign={'left'}>
+                <Form.Item name="reason" label="Motivo" labelCol={{ span: 4 }} labelAlign={'left'}>
                     <TextArea rows="4" style={{ marginLeft:6 }} disabled={props.readOnly} />
                 </Form.Item>
                 <Button onClick={props.onCancel} type="dashed" key="cancel" style={{ padding: "0 50px",  }} >

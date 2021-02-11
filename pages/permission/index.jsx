@@ -25,7 +25,8 @@ const Permission = () => {
   const [form] = Form.useForm();
   const { Option } = Select;
 
-  const [holidayList, setHolidayList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [permissionsList, setPermissionsList] = useState([]);
   const [personList, setPersonList] = useState(null);
 
   /* Variables */
@@ -58,20 +59,16 @@ const Permission = () => {
     }
   };
 
-  const getAllHolidays = async (
-    collaborator = null,
-    company = null,
-    department = null,
-    status = null
-  ) => {
+  const getPermissions = async (collaborator = null, company = null, department = null, status = null) => {
+    setLoading(true);
     try {
-      let url = `/person/vacation/?`;
-      if (collaborator) {
-        url += `person__id=${collaborator}&`;
-      }
-      if (status) {
-        url += `status=${status}&`;
-      }
+        let url = `/person/permit/?`;
+        if(collaborator){
+            url+=`person__id=${collaborator}&`;
+        }
+        if(status){
+            url+=`status=${status}&`;
+        }
 
       if (company) {
         url += `person__job_department__job__unit__id=${company}&`;
@@ -80,13 +77,15 @@ const Permission = () => {
       if (department) {
         url += `person__job_department__department__id=${department}&`;
       }
+        let response = await axiosApi.get(url);
+        let data = response.data.results;
+        console.log('permissions',data);
+        setPermissionsList(data);
 
-      let response = await axiosApi.get(url);
-      let data = response.data.results;
-
-      setHolidayList(data);
     } catch (e) {
       console.log(e);
+    }finally {
+        setLoading(false);
     }
   };
 
@@ -106,14 +105,22 @@ const Permission = () => {
   };
 
   /* Eventos de componentes */
+  const onChangeCompany = (val) => {
+    form.setFieldsValue({
+      department: null,
+    });
+    setCompanyId(val);
+  };
+
   const changeDepartament = (val) => {
     setDepartamentId(val);
   };
 
-  useEffect(() => {
-    getAllHolidays();
-    getAllPersons();
-  }, [route]);
+    useEffect(() => {
+        getPermissions();
+        getAllPersons();
+    }, [route]);
+
 
   return (
     <MainLayout currentKey="9">
@@ -124,82 +131,48 @@ const Permission = () => {
       <div className="container" style={{ width: "100%" }}>
         <Row justify="space-between" style={{ paddingBottom: 20 }}>
           <Col>
-            <Form
-              name="filter"
-              onFinish={filterPermission}
-              layout="inline"
-              key="formFilter"
-            >
-              <Form.Item
-                key="collaborator"
-                name="collaborator"
-                label="Colaborador"
-              >
-                <Select
-                  key="selectPerson"
-                  showSearch
-                  /* options={personList} */
-                  style={{ width: 150 }}
-                  allowClear
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                  filterSort={(optionA, optionB) =>
-                    optionA.children
-                      .toLowerCase()
-                      .localeCompare(optionB.children.toLowerCase())
-                  }
-                >
-                  {personList
-                    ? personList.map((item) => {
-                        return (
-                          <Option key={item.key} value={item.value}>
-                            {item.label}
-                          </Option>
-                        );
-                      })
-                    : null}
-                </Select>
-              </Form.Item>
-              <Form.Item key="company" name="company" label="Empresa">
-                <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
-              </Form.Item>
-              <Form.Item
-                key="department_select"
-                name="department"
-                label="Departamento"
-              >
-                <SelectDepartment
-                  companyId={companyId}
-                  onChange={changeDepartament}
-                  key="SelectDepartment"
-                />
-              </Form.Item>
-              <Form.Item key="estatus_filter" name="status" label="Estatus">
-                <Select
-                  style={{ width: 100 }}
-                  key="select"
-                  options={optionStatus}
-                  allowClear
-                />
-              </Form.Item>
-              <Button
-                style={{
-                  background: "#fa8c16",
-                  fontWeight: "bold",
-                  color: "white",
-                }}
-                key="buttonFilter"
-                htmlType="submit"
-              >
-                Filtrar
-              </Button>
+              <Form name="filter" onFinish={filterPermission} layout="inline" key="formFilter">
+                <Form.Item key="collaborator" name="collaborator" label="Colaborador">
+                    <Select 
+                        key="selectPerson"
+                        showSearch
+                        /* options={personList} */
+                        style={{ width:150 }}
+                        allowClear 
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        }
+                        filterSort={(optionA, optionB) =>
+                        optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
+                        }
+                    >
+                        {
+                                personList ? personList.map((item) => {
+                                return (<Option key={item.key} value={item.value}>{item.label}</Option>)
+                            }) : null
+                        }
+                    </Select>
+                </Form.Item>
+                <Form.Item key="company" name="company" label="Empresa">
+                    <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
+                </Form.Item>
+                <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment"/>
+                <Form.Item key="estatus_filter" name="status" label="Estatus">
+                    <Select style={{ width: 100 }} key="select" options={optionStatus} allowClear />
+                </Form.Item>
+                    <Button
+                    style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                    }}
+                    key="buttonFilter"
+                    htmlType="submit"
+                    >
+                    Filtrar
+                    </Button>
             </Form>
-
-            {/*  */}
           </Col>
           <Col>
             <Button
@@ -218,7 +191,7 @@ const Permission = () => {
         </Row>
         <Row justify="end">
           <Col span={24}>
-            <Table dataSource={holidayList} key="tableHolidays">
+            <Table dataSource={permissionsList} key="tableHolidays" loading={loading}>
               <Column
                 title="Colaborador"
                 dataIndex="collaborator"
