@@ -34,7 +34,7 @@ const FroalaEditorComponent = dynamic(import("react-froala-wysiwyg"), {
 });
 
 const Newrelease = () => {
-  let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
+  let userToken = cookie.get("token") ? cookie.get("token") : null;
   const [form] = Form.useForm();
   const { Title } = Typography;
   const { TextArea } = Input;
@@ -43,6 +43,7 @@ const Newrelease = () => {
   const [message, setMessage] = useState(null);
   const [sending, setSending] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [khonnectId, setKhonnectId] = useState(null);
   const [bussinessList, setBusinessList] = useState(null);
 
   const [personType, setPersonType] = useState([]);
@@ -53,9 +54,13 @@ const Newrelease = () => {
 
   useEffect(() => {
     if (json) {
-      setUserId(json.user_id);
-      /* getBussiness(); */
-      getValueSelects();
+        console.log("exist JSON")
+        console.log(json)
+        setUserId(json.user_id);
+        /* getBussiness(); */
+        getValueSelects();
+    }else{
+        console.log("no json")
     }
   }, []);
 
@@ -135,9 +140,9 @@ const Newrelease = () => {
 
   /////GET DATA SELCTS
   const getValueSelects = async () => {
-      console.log("get datas");
+    console.log("get datas");
     /////PERSON TYPE
-    Axios.get(API_URL + `/person/person-type/`)
+    await Axios.get(API_URL + `/person/person-type/`)
       .then((response) => {
         console.log("response", response);
         if (response.status === 200) {
@@ -153,7 +158,7 @@ const Newrelease = () => {
       });
 
     /////Companies
-    try {
+    /* try {
       let response = await Axios.get(API_URL+`/business/node/`);
       let data = response.data.results;
       console.log("data", data);
@@ -164,7 +169,7 @@ const Newrelease = () => {
       setBusinessList(options);
     } catch (error) {
       console.log("error", error);
-    }
+    } */
 
     /* Axios.get(API_URL + `/business/department/`)
           .then((response) => {

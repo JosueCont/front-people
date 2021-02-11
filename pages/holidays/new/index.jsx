@@ -22,6 +22,9 @@ import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
 import Vacationform from "../../../components/forms/Vacationform";
 import { withAuthSync } from "../../../libs/auth";
+import { API_URL } from '../../../config/config';
+import Axios from 'axios'
+
 
 const HolidaysNew = () => {
   const route = useRouter();
@@ -59,7 +62,7 @@ const HolidaysNew = () => {
     values["return_date"] = return_date;
     setSending(true);
     try {
-      let response = await axiosApi.post(`/person/vacation/`, values);
+      let response = await Axios.post(API_URL+`/person/vacation/`, values);
       let data = response.data;
       notification["success"]({
         message: "Aviso",

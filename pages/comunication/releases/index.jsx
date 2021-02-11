@@ -44,7 +44,7 @@ const Releases = () => {
   const [dateOne, setDateOne] = useState(null);
   const [dateTwo, setDateTwo] = useState(null);
 
-  let userToken = cookie.get("userToken") ? cookie.get("userToken") : null;
+  let userToken = cookie.get("toke") ? cookie.get("token") : null;
 
   const getNotifications = async (
     created_by = null,

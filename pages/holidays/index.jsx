@@ -99,6 +99,11 @@ const Holidays = () => {
     }
   };
 
+  const GotoDetails = (data) => {
+    console.log(data);
+    route.push("holidays/" + data.id + "/details");
+};
+
   const filterHolidays = async (values) => {
     console.log(values);
     getAllHolidays(
@@ -173,7 +178,7 @@ const Holidays = () => {
                 </Select>
               </Form.Item>
               <Form.Item key="company_select" name="company" label="Empresa">
-                <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
+                <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
               </Form.Item>
               {/* <Form.Item key="company_select_new" name="company_new" label="Empresa">
                     <SelectCompany  key="SelectCompany" />

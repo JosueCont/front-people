@@ -21,6 +21,9 @@ import moment from "moment";
 import Vacationform from "../../../components/forms/Vacationform";
 import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
+import Axios from 'axios'
+import {API_URL} from '../../../config/config';
+
 
 const HolidaysDetails = () => {
   const route = useRouter();
@@ -43,7 +46,7 @@ const HolidaysDetails = () => {
 
   const getDetails = async () => {
     try {
-      let response = await axiosApi.get(`/person/vacation/${id}/`);
+      let response = await Axios.get(API_URL+`/person/vacation/${id}/`);
       let data = response.data;
       console.log("data", data);
       setDetails(data);
@@ -72,7 +75,7 @@ const HolidaysDetails = () => {
     values["return_date"] = return_date;
     console.log(values);
     try {
-      let response = await axiosApi.patch(`person/vacation/${id}/`, values);
+      let response = await Axios.patch(API_URL+`/person/vacation/${id}/`, values);
       let data = response.data;
       notification["success"]({
         message: "Aviso",

@@ -56,7 +56,7 @@ const setInitialProps = (component) => {
         axiosApi.defaults.headers.common[
           "Authorization"
         ] = `JWT ${token.token}`;
-        console.log('FINALIZADO')
+/*         console.log('FINALIZADO') */
       } else {
         axiosApi.defaults.headers.common["Authorization"] = "";
       }
