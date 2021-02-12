@@ -65,11 +65,25 @@ const headerCustom = (props) => {
   return (
     <>
       <Header>
-        <div className="logo" key="content_logo" style={{ float: 'left',  height: '100%', display: 'flex' }}>
-        <img
-        style={{ float:'left', height: 60, margin: 'auto' }}
-         src={'https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png'} alt=""/>
-            </div>
+        <div
+          className="logo"
+          key="content_logo"
+          style={{
+            float: "left",
+            height: "100%",
+            display: "flex",
+            marginLeft: "-2%",
+            marginRight: "2%",
+          }}
+        >
+          <img
+            style={{ float: "left", height: 60, margin: "auto" }}
+            src={
+              "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"
+            }
+            alt=""
+          />
+        </div>
         {/* <img className="logo" src="/public/images/logo.png" alt=""/> */}
 
         <Menu
