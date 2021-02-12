@@ -24,7 +24,7 @@ a {
 .loginContainer {
   height: 100vh;
   background: white;
-  padding-top: 13%;
+  padding-top: 5%;
   padding-bottom: 13%;
   padding-left: 13%;
   padding-right: 13%;
@@ -169,21 +169,22 @@ header.ant-layout-header
 .mainTable {
   margin-top: 20px;
 }
-.formPermission .ant-picker-disabled{
-    background-color: #fff;
+.formPermission .ant-picker-disabled {
+  background-color: #fff;
 }
-.formPermission .ant-picker-disabled input{
-    color: #000;
+.formPermission .ant-picker-disabled input {
+  color: #000;
 }
 
 .formPermission .ant-select-disabled > .ant-select-selector {
-    background-color: #fff !important;
-    color: #000 !important;
+  background-color: #fff !important;
+  color: #000 !important;
 }
 
-.formPermission .ant-input-number-disabled, .ant-input-disabled{
-    background-color: #fff !important;
-    color: #000 !important;
+.formPermission .ant-input-number-disabled,
+.ant-input-disabled {
+  background-color: #fff !important;
+  color: #000 !important;
 }
 /* .formFilter{
 

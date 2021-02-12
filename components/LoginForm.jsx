@@ -80,7 +80,7 @@ const LoginForm = () => {
             name="email"
             rules={[{ required: true, message: "Please input your Email!" }]}
           >
-            <Input style={{ marginTop: "5px" }} placeholder="Correo" />
+            <Input style={{ marginTop: "5px" }} placeholder="Email" />
           </Form.Item>
           <Text className="font-color-khor">Password</Text>
           <Form.Item
@@ -90,7 +90,7 @@ const LoginForm = () => {
             <Input
               style={{ marginTop: "5px" }}
               type="password"
-              placeholder="Contraseña"
+              placeholder="Password"
             />
           </Form.Item>
           <Form.Item>
