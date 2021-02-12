@@ -137,7 +137,7 @@ const HolidaysDetails = () => {
         );
         if (response.status == 200) {
           confirm({
-            title: "Su solicitud de vacaciones anuales a sido ceptada",
+            title: "Su solicitud de vacaciones anuales ha sido aceptada",
             icon: <CheckCircleOutlined />,
             okText: "Aceptar y notificar",
             cancelText: "Cancelar",

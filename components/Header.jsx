@@ -194,6 +194,12 @@ const headerCustom = (props) => {
               Permisos
             </Menu.Item>
           </SubMenu>
+          <Menu.Item
+            key="8"
+            onClick={() => router.push({ pathname: "/uploadpayroll" })}
+          >
+            Recibos de nomina
+          </Menu.Item>
           <div
             className={"pointer"}
             style={{ float: "right" }}
