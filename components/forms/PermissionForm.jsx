@@ -6,7 +6,9 @@ import axiosApi from "../../libs/axiosApi";
 import { set } from 'js-cookie';
 import { route } from 'next/dist/next-server/server/router';
 /* import SelectPerson from '../../components/selects/SelectPerson' */
-
+import Axios from 'axios';
+import {API_URL} from '../../config/config'
+import { withAuthSync } from '../../libs/auth';
 
 const Permissionform = (props) => {
     const { Title } = Typography;
@@ -32,7 +34,7 @@ const Permissionform = (props) => {
     const changePerson = (value) => {
         console.log(value);
         if(value){
-            let index = allPersons.find(data => data.khonnect_id === value)
+            let index = allPersons.find(data => data.id === value)
             console.log(index);
             if(index.job_department){
                 formPermission.setFieldsValue({
@@ -52,14 +54,14 @@ const Permissionform = (props) => {
 
     const getAllPersons = async () => {
         try {
-          let response = await axiosApi.get(`/person/person/`);
+          let response = await Axios.get(API_URL+`/person/person/`);
           let data = response.data.results;
           setAllPersons(data);
           console.log(data);
           data = data.map((a,index) => {
             return {
               label: a.first_name + " " + a.flast_name,
-              value: a.khonnect_id,
+              value: a.id,
               /* value: a.id, */
               key: a.id+index,
             };
@@ -71,24 +73,24 @@ const Permissionform = (props) => {
     };
 
     useEffect(() =>{
-        /* if(props.details){
+        if(props.details){
             console.log('details', props.details);
-            formVacation.setFieldsValue({
-                khonnect_id: props.details.collaborator ? props.details.collaborator.khonnect_id : null,
-                days_requested: props.details.days_requested,
-                antiquity: props.details.collaborator  ? props.details.collaborator.antiquity : null,
-                availableDays: props.details.collaborator ? props.details.collaborator.Available_days_vacation : null,
-                dateOfAdmission: props.details.collaborator ? moment(props.details.collaborator.date_of_admission).format('DD-MM-YYYY'): null,
+            formPermission.setFieldsValue({
+                person: props.details.collaborator ? props.details.collaborator.id : null,
+                requested_days: props.details.days_requested,
                 departure_date: props.details.departure_date ? moment(props.details.departure_date, 'YYYY-MM-DD'): null,
-                return_date: props.details.return_date ? moment(props.details.return_date, 'YYYY-MM-DD'): null
+                return_date: props.details.return_date ? moment(props.details.return_date, 'YYYY-MM-DD'): null,
+                reason: props.details.reason,
+                requested_days: props.details.requested_days
             });
             if (props.details.collaborator && props.details.collaborator.job_department.job) {
-                formVacation.setFieldsValue({
+                formPermission.setFieldsValue({
                     job: props.details.collaborator.job_department.job.name
                 })
             }
+            
             setUrlPhoto(props.details.collaborator && props.details.collaborator.photo ? props.details.collaborator.photo : null); 
-        } */
+        }
     },[allPersons])
 
     useEffect(() =>{
@@ -97,7 +99,7 @@ const Permissionform = (props) => {
 
 
     return (
-        <Form form={formPermission} layout="horizontal" onFinish={props.onFinish} >
+        <Form form={formPermission} layout="horizontal" className={'formPermission'} onFinish={props.onFinish} >
         <Row>
             <Col span={20} offset={4}>
                 <Title key="dats_gnrl" level={4}>
@@ -146,10 +148,10 @@ const Permissionform = (props) => {
                         </Select>
                     </Form.Item>
                     <Form.Item label="Puesto" name="job" labelCol={{ span: 9 }} labelAlign={'left'}>
-                        <Input readOnly disabled={props.readOnly} />
+                        <Input  disabled={props.readOnly} />
                     </Form.Item>
                     <Form.Item name="requested_days" label="Días solicitados" labelCol={{ span: 9 }} labelAlign={'left'}>
-                        <InputNumber disabled={props.readOnly} /* defaultValue={props.daysRequested ? props.daysRequested : null } */ min={1} max={10} style={{ width:'100%' }} />
+                        <InputNumber disabled={props.readOnly} /* defaultValue={props.daysRequested ? props.daysRequested : null } */ min={1} max={20} style={{ width:'100%' }} />
                     </Form.Item>
             </Col>
             <Col span="8" offset={1}>
@@ -167,10 +169,10 @@ const Permissionform = (props) => {
                 <Button onClick={props.onCancel} type="dashed" key="cancel" style={{ padding: "0 50px",  }} >
                     { props.toApprove ? 'Regresar' : 'Cancelar' }
                 </Button>
-                { props.toApprove ? <Button danger onClick={props.onReject} key="save" type="primary" style={{ padding: "0 50px", marginLeft: 15 }}>
+                { props.toApprove ? <Button danger onClick={props.onReject} key="reject" type="primary" style={{ padding: "0 50px", marginLeft: 15 }}>
                     Rechazar
                 </Button> : null }
-                { props.toApprove ? <Button onClick={props.onApprove} type="primary" key="cancel" style={{ padding: "0 50px", marginLeft: 15 }} >
+                { props.toApprove ? <Button onClick={props.onApprove} type="primary" key="aprove" style={{ padding: "0 50px", marginLeft: 15 }} >
                     Aprobar permiso
                 </Button> : null }
                 { !props.toApprove ? 
@@ -185,4 +187,4 @@ const Permissionform = (props) => {
     )
 }
 
-export default Permissionform;
+export default withAuthSync(Permissionform);

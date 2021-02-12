@@ -4,6 +4,11 @@ import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Table, Breadcrumb, Button, Form, Input, Select } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
+import Axios from 'axios';
+import {API_URL} from '../../config/config'
+
+
+
 
 import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
@@ -42,7 +47,7 @@ const Permission = () => {
 
   const getAllPersons = async () => {
     try {
-      let response = await axiosApi.get(`/person/person/`);
+      let response = await Axios.get(API_URL+`/person/person/`);
       let data = response.data.results;
       let list = [];
       data = data.map((a, index) => {
@@ -77,7 +82,7 @@ const Permission = () => {
       if (department) {
         url += `person__job_department__department__id=${department}&`;
       }
-        let response = await axiosApi.get(url);
+        let response = await Axios.get(API_URL+url);
         let data = response.data.results;
         console.log('permissions',data);
         setPermissionsList(data);
@@ -91,12 +96,12 @@ const Permission = () => {
 
   const GotoDetails = (data) => {
     console.log(data);
-    route.push("holidays/" + data.id + "/details");
+    route.push("permission/" + data.id + "/details");
   };
 
   const filterPermission = async (values) => {
     console.log(values);
-    getAllHolidays(
+    getPermissions(
       values.collaborator,
       values.company,
       departamentId,
@@ -155,7 +160,7 @@ const Permission = () => {
                     </Select>
                 </Form.Item>
                 <Form.Item key="company" name="company" label="Empresa">
-                    <SelectCompany onChange={onChangeCompany} key="SelectCompany" />
+                    <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width:150 }} />
                 </Form.Item>
                 <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment"/>
                 <Form.Item key="estatus_filter" name="status" label="Estatus">
@@ -215,8 +220,8 @@ const Permission = () => {
               />
               <Column
                 title="Días solicitados"
-                dataIndex="days_requested"
-                key="days_requested"
+                dataIndex="requested_days"
+                key="requested_days"
               />
               <Column
                 title="Días disponibles"
@@ -254,7 +259,7 @@ const Permission = () => {
                       className="icon_actions"
                       key={"edit_" + record.id}
                       onClick={() =>
-                        route.push("holidays/" + record.id + "/edit")
+                        route.push("permission/" + record.id + "/edit")
                       }
                     />
                   </>
