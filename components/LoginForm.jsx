@@ -114,7 +114,7 @@ const LoginForm = () => {
 
           <Form.Item>
             <Button
-              style={{ width: "100% !important" }}
+              style={{ width: "100%" }}
               type="primary"
               htmlType="submit"
               className="login-form-button"
