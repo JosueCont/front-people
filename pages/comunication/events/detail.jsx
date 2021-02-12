@@ -66,7 +66,7 @@ const addEvent = () => {
 
   const getPersons = async () => {
     axios
-      .get(`/person/person/`)
+      .get(API_URL + `/person/person/`)
       .then((response) => {
         let data = response.data.results;
         data = data.map((a) => {
