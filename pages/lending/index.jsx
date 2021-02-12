@@ -4,6 +4,12 @@ import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Table, Breadcrumb, Button, Form, Input, Select } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
+import Axios from 'axios';
+import {API_URL} from './../../config/config'
+import moment from "moment";
+
+
+
 import {
   DeleteOutlined,
   EditOutlined,
@@ -21,17 +27,22 @@ const Lending = () => {
   const { Option } = Select;
 
   const [lendingList, setLendingList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
 
-  /* const getLending = async () => {
-    try {
-      let response = await axiosApi.get(`/person/vacation/`);
-      let data = response.data.results;
-      console.log(data);
-      setHolidayList(data);
-    } catch (e) {
-      console.log(e);
-    }
-  }; */
+  const getLending = async () => {
+      setLoading(true);
+        try {
+            let response = await Axios.get(API_URL+`/payroll/loan/`);
+            let data = response.data.results;
+              console.log(data);
+              setLendingList(data);
+        } catch (e) {
+            console.log(e);
+        }finally{
+            setLoading(false);
+        }
+  };
 
   /* const GotoDetails = (data) => {
     console.log(data);
@@ -39,7 +50,7 @@ const Lending = () => {
   }; */
 
   useEffect(() => {
-    /* getAllHolidays(); */
+    getLending();
   }, [route]);
 
   return (
@@ -117,35 +128,51 @@ const Lending = () => {
             <Table dataSource={lendingList} key="table_holidays">
               <Column
                 title="Colaborador"
-                dataIndex="collaborator"
+                dataIndex="person"
                 key="id"
+                render={(person) => (
+                    person.first_name+' '+person.flast_name
+                )}
               ></Column>
               <Column
                 title="Tipo de prestamo"
-                dataIndex="business"
-                key="business"
+                dataIndex="type"
+                key="type"
+                render={(type) => (
+                    type === 'EMP' ? 'Empresa' : 'E-Pesos'
+                )}
               ></Column>
               <Column
                 title="Cantidad"
-                dataIndex="department"
-                key="department"
+                dataIndex="amount"
+                key="amount"
               ></Column>
               <Column
                 title="Plazos"
-                dataIndex="days_requested"
-                key="days_requested"
+                dataIndex="deadline"
+                key="deadline"
               ></Column>
               <Column
                 title="Periodicidad"
-                dataIndex="available_days"
-                key="available_days"
+                dataIndex="periodicity"
+                key="periodicity"
+                render={(periodicity) => (
+                    periodicity === 1 ? 'Semanal' : periodicity === 2 ? 'Catorcenal' : periodicity === 3 ? 'Quincenal' : 'Mensual'
+                )}
               ></Column>
               <Column
                 title="Fecha solicitada"
-                dataIndex="request_date"
-                key="request_date"
+                dataIndex="timestamp"
+                key="timestamp"
+                render={(timestamp) => (
+                    moment(timestamp).format("DD/MM/YYYY")
+                )}
               />
-              <Column title="Estatus" dataIndex="status" key="status" />
+              <Column title="Estatus" dataIndex="status" key="status"
+              render={(status) =>(
+                status === 1 ? 'Pendiente' : status === 2 ? 'Aprobado' : 'Rechazado'
+              )}
+               />
               <Column
                 title="Acciones"
                 key="actions"
