@@ -77,7 +77,7 @@ const HolidaysNew = () => {
     <MainLayout currentKey="7.1">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Prestamos</Breadcrumb.Item>
+        <Breadcrumb.Item href="./">Préstamos</Breadcrumb.Item>
         <Breadcrumb.Item>Detalles</Breadcrumb.Item>
       </Breadcrumb>
       <div
@@ -87,7 +87,7 @@ const HolidaysNew = () => {
         <Row>
           <Col span={16} offset={1}>
             <Descriptions
-              title="Detalles del prestamo"
+              title="Detalles del préstamo"
               column={2}
               labelStyle={{ width: 150, fontWeight: 700 }}
             >
@@ -105,7 +105,7 @@ const HolidaysNew = () => {
               <Descriptions.Item label="Periodicidad">
                 Hangzhou, Zhejiang
               </Descriptions.Item>
-              <Descriptions.Item label="Tipo de prestamo">
+              <Descriptions.Item label="Tipo de préstamo">
                 empty
               </Descriptions.Item>
               <Descriptions.Item label="Pago">empty</Descriptions.Item>
