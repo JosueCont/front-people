@@ -57,7 +57,7 @@ const Lending = () => {
     <MainLayout currentKey="7.1">
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Prestamos</Breadcrumb.Item>
+        <Breadcrumb.Item>Préstamos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row justify="space-between" key="row1" style={{ paddingBottom: 20 }}>
@@ -135,7 +135,7 @@ const Lending = () => {
                 )}
               ></Column>
               <Column
-                title="Tipo de prestamo"
+                title="Tipo de préstamo"
                 dataIndex="type"
                 key="type"
                 render={(type) => (

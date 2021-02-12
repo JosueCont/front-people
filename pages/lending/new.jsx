@@ -47,7 +47,7 @@ const HolidaysNew = () => {
     <MainLayout currentKey="7.1">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Prestamos</Breadcrumb.Item>
+        <Breadcrumb.Item href="./">Préstamos</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>
       <div
