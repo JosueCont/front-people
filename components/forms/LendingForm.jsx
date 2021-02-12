@@ -52,7 +52,7 @@ const Lendingform = (props) => {
                 </Button> : null }
                 
                 <Button  key="save" htmlType="submit"  style={{ padding: "0 50px", marginLeft: 15 }}>
-                    { props.edit ? 'Actualizar Datos' : 'guardar' }
+                    { props.edit ? 'Actualizar Datos' : 'Guardar' }
                 </Button>
             </Col>
         </Row>

@@ -19,6 +19,7 @@ const Permissionform = (props) => {
     const {TextArea} = Input
     const [loading, setLoading] = useState(props.loading ? props.loading : true);
 
+
     const [allPersons, setAllPersons] = useState(null);
     const [personList, setPersonList] = useState(null);
     const [urlPhoto, setUrlPhoto] = useState(null);
@@ -163,8 +164,8 @@ const Permissionform = (props) => {
                 </Form.Item>
             </Col>
             <Col span={17} offset={4} style={{ textAlign: 'right' }}>
-                <Form.Item name="reason" label="Motivo" labelCol={{ span: 4 }} labelAlign={'left'}>
-                    <TextArea rows="4" style={{ marginLeft:6 }} disabled={props.readOnly} />
+                <Form.Item name="reason" label="Motivo" labelCol={{ span: 4 }} labelAlign={'left'} >
+                    <TextArea rows="4" style={{ marginLeft:6 }} disabled={props.readOnly} showCount maxLength={200} />
                 </Form.Item>
                 <Button onClick={props.onCancel} type="dashed" key="cancel" style={{ padding: "0 50px",  }} >
                     { props.toApprove ? 'Regresar' : 'Cancelar' }

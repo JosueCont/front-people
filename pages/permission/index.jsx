@@ -31,6 +31,7 @@ const Permission = () => {
   const { Option } = Select;
 
   const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
   const [permissionsList, setPermissionsList] = useState([]);
   const [personList, setPersonList] = useState(null);
 
@@ -91,6 +92,7 @@ const Permission = () => {
       console.log(e);
     }finally {
         setLoading(false);
+        setSending(false);
     }
   };
 
@@ -101,6 +103,7 @@ const Permission = () => {
 
   const filterPermission = async (values) => {
     console.log(values);
+    setSending(true);
     getPermissions(
       values.collaborator,
       values.company,
@@ -131,7 +134,7 @@ const Permission = () => {
     <MainLayout currentKey="9">
       <Breadcrumb className={"mainBreadcrumb"}>
         <BreadcrumbHome />
-        <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
+        <Breadcrumb.Item>Permisos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row justify="space-between" style={{ paddingBottom: 20 }}>
@@ -174,6 +177,7 @@ const Permission = () => {
                     }}
                     key="buttonFilter"
                     htmlType="submit"
+                    loading={sending}
                     >
                     Filtrar
                     </Button>
@@ -222,16 +226,6 @@ const Permission = () => {
                 title="Días solicitados"
                 dataIndex="requested_days"
                 key="requested_days"
-              />
-              <Column
-                title="Días disponibles"
-                dataIndex="available_days"
-                key="available_days"
-                render={(days, record) =>
-                  record.collaborator
-                    ? record.collaborator.Available_days_vacation
-                    : null
-                }
               />
               <Column
                 title="Estatus"

@@ -29,7 +29,8 @@ const Holidays = () => {
 
   const [holidayList, setHolidayList] = useState([]);
   const [personList, setPersonList] = useState(null);
-
+  const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
   const [departament, setDepartament] = useState(null);
 
   /* Variables */
@@ -67,6 +68,7 @@ const Holidays = () => {
     department = null,
     status = null
   ) => {
+    setLoading(true);
     try {
       let url = `/person/vacation/?`;
       if (collaborator) {
@@ -96,6 +98,9 @@ const Holidays = () => {
       setHolidayList(data);
     } catch (e) {
       console.log('error',e );
+    }finally{
+        setLoading(false);
+        setSearching(false);
     }
   };
 
@@ -105,7 +110,7 @@ const Holidays = () => {
 };
 
   const filterHolidays = async (values) => {
-    console.log(values);
+    setSearching(true);
     getAllHolidays(
       values.collaborator,
       values.company,
@@ -205,6 +210,7 @@ const Holidays = () => {
                 }}
                 key="buttonFilter"
                 htmlType="submit"
+                loading={searching}
               >
                 Filtrar
               </Button>
@@ -229,7 +235,7 @@ const Holidays = () => {
         </Row>
         <Row justify="end">
           <Col span={24}>
-            <Table dataSource={holidayList} key="tableHolidays">
+            <Table dataSource={holidayList} key="tableHolidays" loading={loading}>
               <Column
                 title="Colaborador"
                 dataIndex="collaborator"

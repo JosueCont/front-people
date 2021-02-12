@@ -101,13 +101,10 @@ const PermissionEdit = () => {
     <MainLayout currentKey="5">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <BreadcrumbHome />
-        <Breadcrumb.Item href="/holidays">Vacaciones</Breadcrumb.Item>
+        <Breadcrumb.Item href="/permission">Permisos</Breadcrumb.Item>
         <Breadcrumb.Item>Editar solicitud</Breadcrumb.Item>
       </Breadcrumb>
-      <div
-        className="container back-white"
-        style={{ width: "100%", padding: "20px 0" }}
-      >
+      <div className="container back-white" style={{ width: "100%", padding: "20px 0" }} >
         <Row justify={"center"}>
           <Col span={23}>
             <PermissionForm

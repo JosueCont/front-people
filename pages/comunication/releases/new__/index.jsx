@@ -289,7 +289,7 @@ const Newrelease = () => {
                   <Row>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                       <Form.Item
-                        name={"company"}
+                        name={"target_company"}
                         label="Empresa"
                         labelCol={{ span: 10 }}
                       >
