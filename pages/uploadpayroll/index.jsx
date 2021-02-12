@@ -75,7 +75,7 @@ const UploadPayroll = () => {
       key: "total_deductions",
     },
     {
-      title: "Numero de dias pagados",
+      title: "Número de días pagados",
       dataIndex: "number_of_days_paid",
       key: "number_of_days_paid",
     },
@@ -112,7 +112,7 @@ const UploadPayroll = () => {
     <MainLayout currentKey="8">
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Recibos de nomina</Breadcrumb.Item>
+        <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
         <div style={{ padding: "1%", float: "right" }}>
