@@ -81,8 +81,8 @@ const AddUploadPayroll = () => {
     <MainLayout currentKey="8">
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Recibos de nomina</Breadcrumb.Item>
-        <Breadcrumb.Item>Agregar recibos de nomina</Breadcrumb.Item>
+        <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
+        <Breadcrumb.Item>Agregar recibos de nómina</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
         <div style={{ padding: "1%", float: "right" }}>
