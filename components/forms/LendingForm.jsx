@@ -14,14 +14,14 @@ const Lendingform = (props) => {
         <Row justify={'start'}>
             <Col span={24}>
                 <Title key="dats_gnrl" level={4}>
-                    Nueva solicitud de prestamo
+                    Nueva solicitud de préstamo
                 </Title>
             </Col>
             <Col span="8">
                 <Form.Item label="Colaborador" name="khonnect_id" labelCol={{ span: 10 }} labelAlign={'left'}>
                     <Select options={[]} />
                 </Form.Item>
-                <Form.Item label="Tipo de prestamo" labelCol={{ span: 10 }} labelAlign={'left'}>
+                <Form.Item label="Tipo de préstamo" labelCol={{ span: 10 }} labelAlign={'left'}>
                     <Select options={[]} />
                 </Form.Item>
                 <Form.Item label="Cantidad solicitada" labelCol={{ span: 10 }} labelAlign={'left'}>
@@ -37,9 +37,9 @@ const Lendingform = (props) => {
                     <InputNumber min={1} max={10} style={{ width: '100%' }} />
                 </Form.Item>
             </Col>
-            <Col span={18} style={{ textAlign: 'right' }}>
+            <Col span={19} style={{ textAlign: 'right' }}>
                 <Form.Item label="Motivo" labelCol={{ span: 4 }} labelAlign={'left'}>
-                    <TextArea rows="4" />
+                    <TextArea rows="4" style={{ marginLeft: 6 }} />
                 </Form.Item>
                 <Button onClick={() => route.push("/lending")} type="dashed" key="cancel" style={{ padding: "0 50px",  }} >
                     { props.edit ? 'Regresar' : 'Cancelar' }
@@ -48,7 +48,7 @@ const Lendingform = (props) => {
                     Rechazar
                 </Button> : null }
                 { props.edit ? <Button onClick={props.onApprove} type="primary" key="cancel" style={{ padding: "0 50px", marginLeft: 15 }} >
-                    Aprobar prestamo
+                    Aprobar préstamo
                 </Button> : null }
                 
                 <Button  key="save" htmlType="submit"  style={{ padding: "0 50px", marginLeft: 15 }}>

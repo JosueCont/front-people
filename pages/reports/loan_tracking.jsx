@@ -67,9 +67,9 @@ const LoanTracking = () => {
       key: "Colaborador",
     },
     {
-      title: "Tipo de prestamo",
-      dataIndex: "Tipo de prestamo",
-      key: "Tipo de prestamo",
+      title: "Tipo de préstamo",
+      dataIndex: "Tipo de préstamo",
+      key: "Tipo de préstamo",
     },
     {
       title: "Estatus",
@@ -118,7 +118,7 @@ const LoanTracking = () => {
       <Breadcrumb className={"mainBreadcrumb"}>
         <BreadcrumbHome />
         <Breadcrumb.Item>Reportes</Breadcrumb.Item>
-        <Breadcrumb.Item>Reporte de prestamos</Breadcrumb.Item>
+        <Breadcrumb.Item>Reporte de préstamos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row justify="space-between" style={{ paddingBottom: 20 }}>
