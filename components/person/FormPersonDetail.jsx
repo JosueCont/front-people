@@ -685,6 +685,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setPhones([]);
         setLoading(false);
         setLoadingTable(false);
         setTimeout(() => {
@@ -773,6 +774,7 @@ const personDetailForm = () => {
       })
       .catch((error) => {
         setLoading(false);
+        showModal();
         console.log(error);
         setTimeout(() => {
           setLoadingTable(false);
@@ -895,6 +897,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setFamily([]);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -997,6 +1000,7 @@ const personDetailForm = () => {
         }, 1000);
       })
       .catch((error) => {
+        showModal();
         setLoading(false);
         console.log(error);
         setTimeout(() => {
@@ -1058,6 +1062,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setContactEmergency([]);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1136,6 +1141,7 @@ const personDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
+        showModal();
         getContactEmergency;
         setTimeout(() => {
           setLoadingTable(false);
@@ -1143,6 +1149,7 @@ const personDetailForm = () => {
       })
       .catch((error) => {
         setLoading(false);
+        showModal();
         console.log(error);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1206,6 +1213,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setTraining([]);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1275,6 +1283,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setExperienceJob([]);
         setLoading(false);
       });
   };
@@ -1330,6 +1339,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setBankAccounts([]);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1414,6 +1424,7 @@ const personDetailForm = () => {
       })
       .catch((error) => {
         setLoading(false);
+        showModal();
         console.log(error);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1479,6 +1490,8 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        showModal();
+        setDocuments([]);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1499,6 +1512,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        showModal();
         setLoading(false);
       });
   };

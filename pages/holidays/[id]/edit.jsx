@@ -45,6 +45,7 @@ const HolidaysDetails = () => {
   };
 
   const getDetails = async () => {
+    setLoading(true);
     try {
       let response = await Axios.get(API_URL+`/person/vacation/${id}/`);
       let data = response.data;
@@ -91,7 +92,7 @@ const HolidaysDetails = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
+    
     if (id) {
       getDetails();
     }

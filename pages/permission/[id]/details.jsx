@@ -8,6 +8,7 @@ import {
   Typography,
   notification,
   Button,
+  Modal,
   Select,
   Form,
   Image,
@@ -15,12 +16,19 @@ import {
 } from "antd";
 import MainLayout from "../../../layout/MainLayout";
 import { render } from "react-dom";
+import {
+    ExclamationCircleOutlined,
+    CheckCircleOutlined,
+  } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
 import PermissionForm from "../../../components/forms/PermissionForm";
 import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
+import Axios from 'axios';
+import {API_URL} from '../../../config/config'
+
 
 const PermissionDetails = () => {
   const route = useRouter();
@@ -31,11 +39,17 @@ const PermissionDetails = () => {
   const { Options } = Select;
   const [details, setDetails] = useState(null);
   const { id } = route.query;
+  const { TextArea } = Input;
+  const { Text } = Typography;
 
+  const { confirm } = Modal;
+
+  const [visibleModalReject, setVisibleModalReject] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [departure_date, setDepartureDate] = useState(null);
   const [return_date, setReturnDate] = useState(null);
+  const [message, setMessage] = useState(null);
 
   const onCancel = () => {
     route.push("/permission");
@@ -49,6 +63,22 @@ const PermissionDetails = () => {
 
   const onChangeReturnDate = (date, dateString) => {
     setReturnDate(dateString);
+  };
+
+  const getDetails = async () => {
+    setLoading(true);
+    try {
+      let response = await Axios.get(API_URL+`/person/permit/${id}/`);
+      let data = response.data;
+      setDetails(data);
+      setDepartureDate(data.departure_date);
+      setReturnDate(data.return_date);
+
+      setLoading(false);
+    } catch (e) {
+      console.log("error", e);
+      setLoading(false);
+    }
   };
 
   const saveRequest = async (values) => {
@@ -71,26 +101,70 @@ const PermissionDetails = () => {
           } */
   };
 
+  const rejectCancel = () => {
+    setVisibleModalReject(false);
+    setMessage(null);
+  };
+
+  const onChangeMessage = (value) => {
+    setMessage(value);
+  };
+
   const onReject = () => {
-    alert("rechazar");
+    /* changeStatus(3) */
+    setVisibleModalReject(true)
   };
 
   const onApprove = () => {
-    alert("onApprove");
+    changeStatus(2)
   };
 
+  const changeStatus = async (statusID) => {
+    let values = {
+        id: id,
+        status: statusID
+    }
+    let msg = "Solicitud de permiso aprobada";
+    if(statusID === 3){
+        msg = "Solicitud de permiso rechazada";
+    }
+    try {
+        let response = await Axios.post(API_URL+`/person/permit/change_status/`, values);
+
+        confirm({
+            title: msg,
+            icon: <CheckCircleOutlined />,
+            okText: "Aceptar y notificar",
+            cancelText: "Cancelar",
+            onOk() {
+              /* console.log('OK'); */
+              /* route.push('/holidays'); */
+              route.push("/permission");
+            },
+            onCancel() {
+              console.log("Cancel");
+            },
+          });
+
+        console.log("res", response.data);
+    } catch (error) {
+            console.log("error", error);
+    } finally {
+            setSending(false);
+    }
+  }
+
   useEffect(() => {
-    /* setLoading(true);
         if (id) {
             getDetails();
-        } */
+        }
   }, [route]);
 
   return (
     <MainLayout currentKey="5">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <BreadcrumbHome />
-        <Breadcrumb.Item href="/permission">Vacaciones</Breadcrumb.Item>
+        <Breadcrumb.Item href="/permission">Permisos</Breadcrumb.Item>
         <Breadcrumb.Item>Editar solicitud</Breadcrumb.Item>
       </Breadcrumb>
       <div
@@ -115,6 +189,15 @@ const PermissionDetails = () => {
           </Col>
         </Row>
       </div>
+      <Modal
+        title="Rechazar solicitud de permisos"
+        visible={visibleModalReject}
+        onOk={() => changeStatus(3) }
+        onCancel={rejectCancel}
+      >
+        <Text>Comentarios</Text>
+        <TextArea rows="4"  onChange={onChangeMessage} />
+      </Modal>
     </MainLayout>
   );
 };

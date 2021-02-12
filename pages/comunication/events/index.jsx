@@ -27,6 +27,8 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../../libs/auth";
+import axios from "axios";
+import { API_URL } from "../../../config/config";
 
 const Events = () => {
   const { Column } = Table;
@@ -37,61 +39,70 @@ const Events = () => {
   const { Option } = Select;
   const [evenstList, setEventList] = useState([]);
 
-  const getAllEvents = async (filter) => {
-    try {
-      setLoading(true);
-      setEventList([]);
-      if (filter === undefined) {
-        let response = await axiosApi.get(`/person/event/`);
-        response.data.results.forEach((element) => {
-          element.date = moment(element.date).format("DD-MM-YYYY");
+  const getAllEvents = (filter) => {
+    setLoading(true);
+    if (filter === undefined) {
+      console.log("SI");
+      axios
+        .get(API_URL + `/person/event/`)
+        .then((response) => {
+          console.log("Reponse-->>> ", response.data);
+          response.data.results.forEach((element) => {
+            element.date = moment(element.date).format("DD-MM-YYYY");
+          });
+          let data = response.data.results;
+          setLoading(false);
+          setEventList(data);
+        })
+        .catch((e) => {
+          setEventList([]);
+          setLoading(false);
+          console.log(e);
         });
-        let data = response.data.results;
-        setLoading(false);
-        console.log(data);
-        setEventList(data);
-      } else {
-        setEventList([]);
-        let response = await axiosApi.post(
-          `/person/event/event_filter/`,
-          filter
-        );
-        console.log("Resultados", response);
-        response.data.forEach((element) => {
-          element.date = moment(element.date).format("DD-MM-YYYY");
+    } else {
+      console.log("NO");
+      axios
+        .post(API_URL + `/person/event/event_filter/`, filter)
+        .then((response) => {
+          console.log("Resultados", response);
+          response.data.forEach((element) => {
+            element.date = moment(element.date).format("DD-MM-YYYY");
+          });
+          let data = response.data;
+          setLoading(false);
+          setEventList(data);
+        })
+
+        .catch((e) => {
+          setEventList([]);
+          setLoading(false);
+          console.log(e);
         });
-        let data = response.data;
-        setLoading(false);
-        console.log(data);
-        setEventList(data);
-      }
-    } catch (e) {
-      setLoading(false);
-      console.log(e);
     }
   };
 
   const deleteEvent = async (id) => {
-    try {
-      setLoading(true);
-      let response = await axiosApi.delete(`/person/event/${id}/`);
-      if (response.status === 204) {
-        setLoading(false);
-        message.success({
-          content: "Evento eliminado satisfactoriamente",
-          className: "custom-class",
-          style: {
-            marginTop: "20vh",
-          },
-        });
-        console.log("Elemento Eliminado", id);
-        getAllEvents();
-      }
-      console.log(response);
-    } catch (e) {
-      setLoading(false);
-      console.log(e);
-    }
+    setLoading(true);
+    axios
+      .delete(API_URL + `/person/event/${id}/`)
+      .then((response) => {
+        if (response.status === 204) {
+          setLoading(false);
+          message.success({
+            content: "Evento eliminado satisfactoriamente",
+            className: "custom-class",
+            style: {
+              marginTop: "20vh",
+            },
+          });
+          console.log("Elemento Eliminado", id);
+          getAllEvents();
+        }
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const confirmDelete = (id) => {
