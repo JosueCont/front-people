@@ -1,4 +1,4 @@
-import { Card, Image, Button } from "antd";
+import { Card, Image, Button, Modal } from "antd";
 import {
   EditOutlined,
   SettingOutlined,
@@ -6,7 +6,6 @@ import {
 } from "@ant-design/icons";
 
 import Router from "next/router";
-import { logoutAuth } from "../libs/auth";
 
 const { Meta } = Card;
 
@@ -32,7 +31,7 @@ const cardUser = (props) => {
           <Button onClick={() => Router.push(`/home/${props.person.id}`)}>
             <EditOutlined key="edit" />
           </Button>,
-          <Button onClick={() => logoutAuth()}>
+          <Button onClick={() => props.acction(true)}>
             <PoweroffOutlined key="PoweroffOutlined" />
           </Button>,
         ]}

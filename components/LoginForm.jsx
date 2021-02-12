@@ -1,4 +1,13 @@
-import { Form, Input, Button, Checkbox, Spin, Alert, Typography } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Checkbox,
+  Spin,
+  Alert,
+  Typography,
+  message,
+} from "antd";
 const { Text } = Typography;
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -32,6 +41,7 @@ const LoginForm = () => {
           if (response.status === 200) {
             let token = jwt_decode(response.data.token);
             if (token) {
+              message.success("Acceso correcto.");
               Cookies.set("token", token);
               setLoading(false);
               router.push({ pathname: "/home" });
@@ -70,7 +80,7 @@ const LoginForm = () => {
             name="email"
             rules={[{ required: true, message: "Please input your Email!" }]}
           >
-            <Input style={{ marginTop: "5px" }} placeholder="Correo" />
+            <Input style={{ marginTop: "5px" }} placeholder="Email" />
           </Form.Item>
           <Text className="font-color-khor">Password</Text>
           <Form.Item
@@ -80,7 +90,7 @@ const LoginForm = () => {
             <Input
               style={{ marginTop: "5px" }}
               type="password"
-              placeholder="Contraseña"
+              placeholder="Password"
             />
           </Form.Item>
           <Form.Item>
@@ -104,12 +114,12 @@ const LoginForm = () => {
 
           <Form.Item>
             <Button
-              style={{ width: "100%!important" }}
+              style={{ width: "100%" }}
               type="primary"
               htmlType="submit"
               className="login-form-button"
             >
-              Log in
+              Iniciar sesión
             </Button>
           </Form.Item>
         </Form>

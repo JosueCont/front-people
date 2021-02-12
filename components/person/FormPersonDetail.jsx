@@ -685,6 +685,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setPhones([]);
         setLoading(false);
         setLoadingTable(false);
         setTimeout(() => {
@@ -773,6 +774,7 @@ const personDetailForm = () => {
       })
       .catch((error) => {
         setLoading(false);
+        showModal();
         console.log(error);
         setTimeout(() => {
           setLoadingTable(false);
@@ -895,6 +897,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setFamily([]);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -997,6 +1000,7 @@ const personDetailForm = () => {
         }, 1000);
       })
       .catch((error) => {
+        showModal();
         setLoading(false);
         console.log(error);
         setTimeout(() => {
@@ -1058,6 +1062,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setContactEmergency([]);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1136,6 +1141,7 @@ const personDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
+        showModal();
         getContactEmergency;
         setTimeout(() => {
           setLoadingTable(false);
@@ -1143,6 +1149,7 @@ const personDetailForm = () => {
       })
       .catch((error) => {
         setLoading(false);
+        showModal();
         console.log(error);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1206,6 +1213,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setTraining([]);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1275,6 +1283,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setExperienceJob([]);
         setLoading(false);
       });
   };
@@ -1330,6 +1339,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        setBankAccounts([]);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1414,6 +1424,7 @@ const personDetailForm = () => {
       })
       .catch((error) => {
         setLoading(false);
+        showModal();
         console.log(error);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1479,6 +1490,8 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        showModal();
+        setDocuments([]);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1499,6 +1512,7 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
+        showModal();
         setLoading(false);
       });
   };
@@ -1658,6 +1672,8 @@ const personDetailForm = () => {
     }
   };
 
+  const ruleRequired = { required: true, message: "Este campo es requerido" };
+
   return (
     <MainLayout currentKey="1">
       <Content className="site-layout">
@@ -1749,7 +1765,7 @@ const personDetailForm = () => {
                         <Form.Item name="periodicity" label="Periodicidad">
                           <Select
                             options={periodicity}
-                            placeholder="Selecciona una opcion"
+                            placeholder="Selecciona una opción"
                           />
                         </Form.Item>
                       </Col>
@@ -1764,7 +1780,7 @@ const personDetailForm = () => {
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item
                           name="email"
-                          label="Dirección de E-Mail"
+                          label="Dirección de e-mail"
                           rules={[{ message: "Ingresa un email" }]}
                         >
                           <Input disabled />
@@ -1970,12 +1986,20 @@ const personDetailForm = () => {
                   >
                     <Row>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="phone_type" label="Tipo de teléfono">
+                        <Form.Item
+                          name="phone_type"
+                          label="Tipo de teléfono"
+                          rules={[ruleRequired]}
+                        >
                           <Select options={typePhones} />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="line_type" label="Tipo de línea">
+                        <Form.Item
+                          name="line_type"
+                          label="Tipo de línea"
+                          rules={[ruleRequired]}
+                        >
                           <Select options={typeLines} />
                         </Form.Item>
                       </Col>
@@ -1983,22 +2007,35 @@ const personDetailForm = () => {
                         <Form.Item
                           name="international_code"
                           label="Código internacional"
+                          rules={[ruleRequired]}
                         >
                           <Input type="number" />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="national_code" label="Código de país">
+                        <Form.Item
+                          name="national_code"
+                          label="Código de país"
+                          rules={[ruleRequired]}
+                        >
                           <Input type="number" />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="country_code" label="Código de ciudad">
+                        <Form.Item
+                          name="country_code"
+                          label="Código de ciudad"
+                          rules={[ruleRequired]}
+                        >
                           <Input type="number" />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="phone" label="Número telefónico">
+                        <Form.Item
+                          name="phone"
+                          label="Número telefónico"
+                          rules={[ruleRequired]}
+                        >
                           <Input type="number" />
                         </Form.Item>
                       </Col>
@@ -2023,17 +2060,29 @@ const personDetailForm = () => {
                   >
                     <Row>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="street_type" label="Tipo de calle">
+                        <Form.Item
+                          name="street_type"
+                          label="Tipo de calle"
+                          rules={[ruleRequired]}
+                        >
                           <Select options={typeStreet} />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="street" label="Calle">
+                        <Form.Item
+                          name="street"
+                          label="Calle"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="numberOne" label="Número exterior">
+                        <Form.Item
+                          name="numberOne"
+                          label="Número exterior"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
@@ -2048,17 +2097,29 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="postalCode" label="Código postal">
+                        <Form.Item
+                          name="postalCode"
+                          label="Código postal"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="suburb" label="Suburbio">
+                        <Form.Item
+                          name="suburb"
+                          label="Suburbio"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="location" label="Ubicación">
+                        <Form.Item
+                          name="location"
+                          label="Ubicación"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
@@ -2085,7 +2146,11 @@ const personDetailForm = () => {
                   >
                     <Row>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="relationship" label="Parentesco">
+                        <Form.Item
+                          name="relationship"
+                          label="Parentesco"
+                          rules={[ruleRequired]}
+                        >
                           <Select options={relationship} />
                         </Form.Item>
                       </Col>
@@ -2095,22 +2160,38 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="name" label="Nombre">
+                        <Form.Item
+                          name="name"
+                          label="Nombre"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="flast_name" label="Apellido paterno">
+                        <Form.Item
+                          name="flast_name"
+                          label="Apellido paterno"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="mlast_name" label="Apellido materno">
+                        <Form.Item
+                          name="mlast_name"
+                          label="Apellido materno"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="gender" label="Género">
+                        <Form.Item
+                          name="gender"
+                          label="Género"
+                          rules={[ruleRequired]}
+                        >
                           <Select options={genders} />
                         </Form.Item>
                       </Col>
@@ -2123,6 +2204,7 @@ const personDetailForm = () => {
                         <Form.Item
                           name="birth_date"
                           label="Fecha de nacimiento"
+                          rules={[ruleRequired]}
                         >
                           <DatePicker
                             style={{ width: "100%" }}
@@ -2153,7 +2235,11 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="benefit" label="% Beneficio">
+                        <Form.Item
+                          name="benefit"
+                          label="% Beneficio"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
@@ -2178,27 +2264,47 @@ const personDetailForm = () => {
                   >
                     <Row>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="relationship" label="Parentesco">
+                        <Form.Item
+                          name="relationship"
+                          label="Parentesco"
+                          rules={[ruleRequired]}
+                        >
                           <Select options={relationship} />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="fullname" label="Nombre completo">
+                        <Form.Item
+                          name="fullname"
+                          label="Nombre completo"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="phone_one" label="Teléfono 1">
+                        <Form.Item
+                          name="phone_one"
+                          label="Teléfono 1"
+                          rules={[ruleRequired]}
+                        >
                           <Input type="number" />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="phone_two" label="Teléfono 2">
+                        <Form.Item
+                          name="phone_two"
+                          label="Teléfono 2"
+                          rules={[ruleRequired]}
+                        >
                           <Input type="number" />
                         </Form.Item>
                       </Col>
                       <Col lg={13} xs={22} offset={1}>
-                        <Form.Item name="address" label="Dirección">
+                        <Form.Item
+                          name="address"
+                          label="Dirección"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
@@ -2223,12 +2329,20 @@ const personDetailForm = () => {
                   >
                     <Row>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="school" label="Escuela">
+                        <Form.Item
+                          name="school"
+                          label="Escuela"
+                          rules={[ruleRequired]}
+                        >
                           <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="since" label="Fecha Inicio-Fin">
+                        <Form.Item
+                          name="since"
+                          label="Fecha Inicio-Fin"
+                          rules={[ruleRequired]}
+                        >
                           <Space direction="vertical" size={12}>
                             <RangePicker
                               style={{ width: "100%" }}
@@ -2260,6 +2374,7 @@ const personDetailForm = () => {
                         <Form.Item
                           name="completed_period"
                           label="Periodo completado"
+                          rules={[ruleRequired]}
                         >
                           <Input />
                         </Form.Item>
@@ -2285,7 +2400,11 @@ const personDetailForm = () => {
                   >
                     <Row>
                       <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="bank" label="Banco">
+                        <Form.Item
+                          name="bank"
+                          label="Banco"
+                          rules={[ruleRequired]}
+                        >
                           <Select options={banks} />
                         </Form.Item>
                       </Col>
@@ -2293,6 +2412,7 @@ const personDetailForm = () => {
                         <Form.Item
                           name="account_number"
                           label="Número de cuenta"
+                          rules={[ruleRequired]}
                         >
                           <Input type="number" />
                         </Form.Item>
@@ -2334,7 +2454,7 @@ const personDetailForm = () => {
                     <Table columns={colDoc} dataSource={documents} />
                   </Spin>
                 </TabPane>
-                <TabPane tab="Eliminar" key="tab_9">
+                <TabPane tab="Eliminar persona" key="tab_9">
                   <Alert
                     message="Warning"
                     description="Al eliminar a una persona perderá todos los datos
