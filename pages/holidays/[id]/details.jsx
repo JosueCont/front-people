@@ -47,6 +47,7 @@ const HolidaysDetails = () => {
   const [returnDate, setReturnDate] = useState(null);
   const [availableDays, setAvailableDays] = useState(null);
   const [message, setMessage] = useState(null);
+  const [sending, setSending] = useState(false);
   const [firstName, setFisrtName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
@@ -124,6 +125,7 @@ const HolidaysDetails = () => {
   const approveRequest = async () => {
     if (json) {
       console.log(json);
+      setSending(true);
       try {
         let values = {
           khonnect_id: json.user_id,
@@ -157,6 +159,8 @@ const HolidaysDetails = () => {
         }
       } catch (e) {
         console.log("error", e);
+      }finally{
+          setSending(false)
       }
     }
   };
@@ -243,6 +247,7 @@ const HolidaysDetails = () => {
                       onClick={approveRequest}
                       type="primary"
                       style={{ padding: "0 50px", margin: "0 10px" }}
+                      loading={sending}
                     >
                       Aceptar
                     </Button>

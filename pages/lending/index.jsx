@@ -94,7 +94,7 @@ const Lending = () => {
                 fontWeight: "bold",
                 color: "white",
               }}
-              onClick={() => route.push("holidays/new")}
+              onClick={() => route.push("lending/config")}
             >
               Configuración
             </Button>

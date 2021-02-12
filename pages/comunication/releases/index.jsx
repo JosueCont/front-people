@@ -41,6 +41,7 @@ const Releases = () => {
   const [list, setList] = useState([]);
   const [personList, setPersonList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
   const [dateOne, setDateOne] = useState(null);
   const [dateTwo, setDateTwo] = useState(null);
 
@@ -71,11 +72,11 @@ const Releases = () => {
       let response = await Axios.get(API_URL+url);
       let data = response.data;
       setList(data.results);
-      setLoading(false);
     } catch (e) {
       console.log(e);
-      setLoading(false);
-      /* setLoading(false); */
+    }finally{
+        setLoading(false);
+        setSearching(false)
     }
   };
 
@@ -123,7 +124,7 @@ const Releases = () => {
   };
 
   const sendFilter = (values) => {
-    console.log(values);
+      setSearching(true);
     getNotifications(values.send_by, values.category, dateOne, dateTwo);
   };
 
@@ -135,7 +136,7 @@ const Releases = () => {
   return (
     <MainLayout currentKey="4.1">
       <Breadcrumb key="Breadcrumb">
-        <BreadcrumbHome />
+      <Breadcrumb.Item key="" className="pointer" onClick={() => route.push('/home') }>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item key="releases">Comunicados</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
@@ -178,14 +179,15 @@ const Releases = () => {
                   fontWeight: "bold",
                   color: "white",
                 }}
+                key="submit"
                 htmlType="submit"
+                loading={searching}
               >
                 Filtrar
               </Button>
             </Form>
           </Col>
           <Col>
-            {/* <Button onClick={() => childRef.current.showModal()}  style={{background: "#fa8c16", fontWeight: "bold", color: "white" }} > */}
             <Button
               key="add"
               onClick={() => route.push("releases/new")}
@@ -248,13 +250,13 @@ const Releases = () => {
                         key={"goDetails_" + record.id}
                         onClick={() => GotoDetails(record)}
                     />
-                    <EditOutlined
+                    {/* <EditOutlined
                       className="icon_actions"
                       key={"edit_" + record.id}
                       onClick={() =>
                         route.push("/comunication/releases/" + record.id + "/edit")
                       }
-                    />
+                    /> */}
                     </>
                 )}
               />
