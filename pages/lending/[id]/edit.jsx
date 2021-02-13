@@ -24,25 +24,21 @@ import moduleName from "../../../components/forms/LendingForm";
 import moment from "moment";
 import Lendingform from "../../../components/forms/LendingForm";
 import { withAuthSync } from "../../../libs/auth";
+import Axios from 'axios';
+import {API_URL} from '../../../config/config'
 
 const HolidaysNew = () => {
   const route = useRouter();
   const [form] = Form.useForm();
   const { Title, Text } = Typography;
   const { TextArea } = Input;
-
-  const [sending, setSending] = useState(false);
   const { Option } = Select;
-  const [departure_date, setDepartureDate] = useState(null);
-  const [return_date, setReturnDate] = useState(null);
-  const [job, setJob] = useState(null);
-  const [dateOfAdmission, setDateOfAdmission] = useState(null);
-  const [availableDays, setAvailableDays] = useState(null);
-  const [personList, setPersonList] = useState(null);
-  const [allPersons, setAllPersons] = useState(null);
-  const [antiquity, setAntiquity] = useState(null);
-  const [message, setMessage] = useState(null);
 
+  const { id } = route.query;
+  const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [details, setDetails] = useState(null);
+  const [message, setMessage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const onCancel = () => {
@@ -76,16 +72,53 @@ const HolidaysNew = () => {
     setModalVisible(true);
   };
 
+  const onFinish = async (values) => {
+      try {
+        let response = await Axios.patch(API_URL+`/payroll/loan/${id}/`, values);
+        route.push("/lending");
+        notification["success"]({
+            message: "Aviso",
+            description: "Información actualizada correctamente.",
+        });
+    } catch (error) {
+        console.log(error)
+    }finally{
+        setSending(false);
+    }
+  }
+
   const rejectCancel = () => {
     setModalVisible(false);
     setMessage(null);
   };
 
+  const getDetails = async () => {
+    setLoading(true);
+    try {
+      let response = await Axios.get(API_URL+`/payroll/loan/${id}`);
+      let data = response.data;
+      console.log("data", data);
+      setDetails(data);
+      /* setDepartureDate(data.departure_date);
+      setReturnDate(data.return_date); */
+    } catch (e) {
+      console.log("error", e);
+    }finally{
+        setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      getDetails();
+    }
+  }, [route]);
+
   return (
     <MainLayout currentKey="7.1">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Prestamos</Breadcrumb.Item>
+        <Breadcrumb.Item href="/lending">Prestamos</Breadcrumb.Item>
         <Breadcrumb.Item>Editar Solicitud</Breadcrumb.Item>
       </Breadcrumb>
       <div
@@ -94,7 +127,7 @@ const HolidaysNew = () => {
       >
         <Row justify={"center"}>
           <Col span={23}>
-            <Lendingform edit={true} onApprove={approve} onReject={ShowModal} />
+            { !loading ? <Lendingform details={details} edit={true} onApprove={approve} onReject={ShowModal} onFinish={onFinish} /> : null }
           </Col>
         </Row>
       </div>
