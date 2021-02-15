@@ -110,7 +110,7 @@ const Lending = () => {
                   allowClear
                 />
               </Form.Item>
-              <Button htmlType="submit" key="filter" style={{ background: "#fa8c16", fontWeight: "bold", color: "white",}}>
+              <Button loading={loading} htmlType="submit" key="filter" style={{ background: "#fa8c16", fontWeight: "bold", color: "white",}}>
                 Filtrar
               </Button>
             </Form>

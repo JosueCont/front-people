@@ -130,10 +130,7 @@ const HolidaysNew = () => {
                                 span={3}
                                 contentStyle={{ textAlign: "justify" }}
                             >
-                                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                                Possimus quidem rem expedita porro autem! Cum eius quidem sit
-                                placeat ducimus eligendi minus blanditiis quisquam. Maiores
-                                laborum modi dolorum placeat sequi.
+                                { details.reason ? details.reason : null }
                             </Descriptions.Item>
                         </Descriptions>
                         <Table columns={columns} />

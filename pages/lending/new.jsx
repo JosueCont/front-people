@@ -69,7 +69,7 @@ const HolidaysNew = () => {
           <Spin tip="Loading..." spinning={!ready}>
             <Row justify={"center"}>
             <Col span={23}>
-                <Lendingform details={null} edit={false} onFinish={saveRequest} config={config} />
+                <Lendingform sending={sending} details={null} edit={false} onFinish={saveRequest} config={config} />
             </Col>
             </Row>
         </Spin>
