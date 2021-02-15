@@ -22,18 +22,19 @@ const HolidaysNew = () => {
 
   const saveRequest = async (values)  => {
       setSending(true);
-    try {
-        let response = await Axios.post(API_URL+`/payroll/loan/`, values);
-        route.push("/lending");
-        notification["success"]({
-            message: "Aviso",
-            description: "Información enviada correctamente.",
-          });
-    } catch (error) {
-        console.log("error")
-    }finally{
-        setSending(false);
-    }
+      console.log(values);
+      try {
+          let response = await Axios.post(API_URL+`/payroll/loan/`, values);
+          route.push("/lending");
+          notification["success"]({
+              message: "Aviso",
+              description: "Información enviada correctamente.",
+            });
+      } catch (error) {
+            console.log("error")
+      }finally{
+            setSending(false);
+      }
   }
 
   const getConfig = async () => {

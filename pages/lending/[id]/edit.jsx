@@ -35,6 +35,7 @@ const HolidaysNew = () => {
   const { Option } = Select;
 
   const { id } = route.query;
+  const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [details, setDetails] = useState(null);
@@ -45,23 +46,46 @@ const HolidaysNew = () => {
     route.push("/lending");
   };
 
-  const approve = () => {
-    Modal.success({
-      content: "Préstamo autorizado",
-      okText: "Aceptar y notificar",
-      onOk() {
-        console.log("OK");
-      },
-    });
-  };
+    const approve = async () => {
+        let values = {
+            "status": 2
+        }
+        try {
+            let response = await Axios.patch(API_URL+`/payroll/loan/${id}/`, values);
+            route.push("/lending");
+            Modal.success({
+                content: "Préstamo autorizado",
+                okText: "Aceptar y notificar",
+                onOk() {
+                    console.log("OK");
+                },
+            });
+        } catch (error) {
+            console.log(error)
+        }finally{
+            setSending(false);
+        }
+    };
 
-  const reject = () => {
+  const reject = async () => {
     console.log("Reject");
-    route.push("/lending");
-    notification["success"]({
-      message: "Aviso",
-      description: "Información enviada correctamente.",
-    });
+    let values = {
+        "status": 3
+    }
+    try {
+        let response = await Axios.patch(API_URL+`/payroll/loan/${id}/`, values);
+        route.push('/lending');
+        notification["success"]({
+            message: "Aviso",
+            description: "Solicitud rechazada.",
+          });
+          setMessage(null);
+    } catch (error) {
+        console.log(error)
+    }finally{
+        setSending(false);
+    }
+    
   };
 
   const onChangeMessage = (value) => {
@@ -92,6 +116,16 @@ const HolidaysNew = () => {
     setMessage(null);
   };
 
+  const getConfig = async () => {
+    try {
+        let response = await Axios.get(API_URL+`/payroll/loan-config/`);
+        setConfig(response.data.results[0])
+        console.log(response.data.results[0])
+    } catch (error) {
+        console.log("error")
+    }
+} 
+
   const getDetails = async () => {
     setLoading(true);
     try {
@@ -111,8 +145,10 @@ const HolidaysNew = () => {
   useEffect(() => {
     if (id) {
       getDetails();
+      getConfig();
     }
   }, [route]);
+
 
   return (
     <MainLayout currentKey="7.1">
@@ -127,12 +163,12 @@ const HolidaysNew = () => {
       >
         <Row justify={"center"}>
           <Col span={23}>
-            { !loading ? <Lendingform details={details} edit={true} onApprove={approve} onReject={ShowModal} onFinish={onFinish} /> : null }
+            { !loading ? <Lendingform details={details} edit={true} onApprove={approve} onReject={ShowModal} onFinish={onFinish} config={config} /> : null }
           </Col>
         </Row>
       </div>
       <Modal
-        title="Rechazar solicitud de vacaciones"
+        title="Rechazar solicitud de prestamo"
         visible={modalVisible}
         onOk={reject}
         onCancel={rejectCancel}
