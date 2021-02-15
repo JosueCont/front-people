@@ -196,7 +196,7 @@ const headerCustom = (props) => {
           </SubMenu>
           <Menu.Item
             key="8"
-            onClick={() => router.push({ pathname: "/uploadpayroll" })}
+            onClick={() => router.push({ pathname: "/payrollvoucher" })}
           >
             Recibos de nómina
           </Menu.Item>

@@ -10,7 +10,7 @@ import {
   message,
   Upload,
 } from "antd";
-import { PlusOutlined, InboxOutlined, EditOutlined } from "@ant-design/icons";
+import { PlusOutlined, EyeOutlined } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 const { Content } = Layout;
 const { confirm } = Modal;
@@ -34,7 +34,8 @@ const UploadPayroll = () => {
     Axios.get(API_URL + `/payroll/payroll-voucher/`)
       .then((response) => {
         console.log("Reponse-->>> ", response.data);
-        response.data.results.forEach((element) => {
+        response.data.results.forEach((element, i) => {
+          element.key = i;
           element.timestamp = moment(element.timestamp).format("DD-MM-YYYY");
         });
         let data = response.data.results;
@@ -88,19 +89,16 @@ const UploadPayroll = () => {
             <Row gutter={16}>
               <Col className="gutter-row" span={6}>
                 <a
-                //   onClick={() =>
-                //     router.push({
-                //       pathname: "/uploadpayroll/detail",
-                //       query: { type: "edit", id: record.id },
-                //     })
-                //   }
+                  onClick={() =>
+                    router.push({
+                      pathname: "/payrollvoucher/detail",
+                      query: { type: "detail", id: record.id },
+                    })
+                  }
                 >
-                  <EditOutlined />
+                  <EyeOutlined />
                 </a>
               </Col>
-              {/* <Col className="gutter-row" span={6}>
-                <DeleteOutlined onClick={() => confirmDelete(record.id)} />
-              </Col> */}
             </Row>
           </div>
         );
@@ -122,7 +120,7 @@ const UploadPayroll = () => {
               fontWeight: "bold",
               color: "white",
             }}
-            onClick={() => router.push("uploadpayroll/add")}
+            onClick={() => router.push("payrollvoucher/add")}
           >
             <PlusOutlined />
             Agregar
