@@ -91,7 +91,8 @@ const Lendingform = (props) => {
                 amount: props.details.amount,
                 deadline: parseInt(props.details.deadline),
                 periodicity: props.details.periodicity,
-                periodicity_amount: props.details.periodicity_amount
+                periodicity_amount: props.details.periodicity_amount,
+                reason: props.details.reason
 
             })
             //form.setFieldsValue({ type: props.details.type });
@@ -177,14 +178,14 @@ const Lendingform = (props) => {
                 <Button onClick={() => route.push("/lending")} type="dashed" key="cancel" style={{ padding: "0 50px",  }} >
                     { props.edit ? 'Regresar' : 'Cancelar' }
                 </Button>
-                { props.edit ? <Button danger onClick={props.onReject} key="reject" type="primary" style={{ padding: "0 50px", marginLeft: 15 }}>
+                { props.edit ? <Button disabled={props.sending} danger onClick={props.onReject} key="reject" type="primary" style={{ padding: "0 50px", marginLeft: 15 }}>
                     Rechazar
                 </Button> : null }
-                { props.edit ? <Button onClick={props.onApprove} type="primary" key="aprove" style={{ padding: "0 50px", marginLeft: 15 }} >
+                { props.edit ? <Button disabled={props.sending} onClick={props.onApprove} type="primary" key="aprove" style={{ padding: "0 50px", marginLeft: 15 }} >
                     Aprobar préstamo
                 </Button> : null }
                 
-                <Button  key="save" htmlType="submit"  style={{ padding: "0 50px", marginLeft: 15 }}>
+                <Button loading={props.sending} key="save" htmlType="submit"  style={{ padding: "0 50px", marginLeft: 15 }}>
                     { props.edit ? 'Actualizar Datos' : 'Guardar' }
                 </Button>
             </Col>
