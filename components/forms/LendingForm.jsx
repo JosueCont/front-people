@@ -4,16 +4,21 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import SelectPerson from '../selects/SelectPerson';
 import details from '../../pages/holidays/[id]/details';
+import Axios from 'axios';
+import {API_URL} from '../../config/config'
+
 
 
 
 const Lendingform = (props) => {
     const [form] = Form.useForm();
     const {Title} = Typography;
-    const {TextArea} = Input
+    const {TextArea} = Input;
+    const {Option} = Select;
+
     const route = useRouter();
 
-    
+    const [personList, setPersonList] = useState([]);
     const [payment, setPayment] = useState(null);
     const [amount, setAmount] = useState(null);
 
@@ -30,44 +35,63 @@ const Lendingform = (props) => {
         { value: 4, label: "Mensual", key: "p4" },
       ]
 
+    const getPersons = async () => {
+        try {
+            let response = await Axios.get(API_URL+`/person/person/`);
+            let data = response.data.results;
+            let list = [];
+            data = data.map((a, index) => {
+                let item = {
+                label: a.first_name + " " + a.flast_name,
+                value: props.khonnect_id ? a.khonnect_id : a.id,
+                key: a.id + index,
+                };
+                list.push(item);
+            });
+            setPersonList(list);
+          } catch (error) {
+            console.log("error", error);
+          }
+    }
+
     const getPayment = () =>{
         let formAmount = form.getFieldValue('amount');
         let formDeadline = form.getFieldValue('deadline')
         
-        formAmount = formAmount ? formAmount : 0;
-        formDeadline = formDeadline ? formDeadline : 1;
-
-        let paym = formAmount/formDeadline;
-
-        /* PARA TOMAR EN CUENTA EL INTERES */
-        /* let paym = 0; */
-        /* if (props.interest === 0){
-            paym = formAmount/formDeadline;
-        }else{
-            console.log("no ")
-            console.log(formAmount)
-            console.log(props.interest)
-            console.log(formDeadline)
-            paym = (formAmount*(props.config.interest/100))/formDeadline;
-        } */
-        console.log(paym)
-
-        setPayment(paym)
+        formAmount = formAmount ? parseFloat(formAmount) : 0;
+        formDeadline = formDeadline ? parseInt(formDeadline) : 1;
 
         console.log(formAmount)
         console.log(formDeadline)
+        /* let paym = formAmount/formDeadline; */
+
+        /* PARA TOMAR EN CUENTA EL INTERES */
+        let paym = 0;
+
+        if (props.interest === 0){
+            paym = formAmount/formDeadline;
+        }else{
+            paym = ( formAmount + ( formAmount *  ( props.config.interest / 100 ) ) ) / formDeadline;
+        }
+
+        /* setPayment(paym) */
+        form.setFieldsValue({
+            periodicity_amount: paym
+        })
 
     }
 
     useEffect(() =>{
+        getPersons();
         if(props.details){
             console.log('details', props.details);
             form.setFieldsValue({
-                khonnect_id: props.details.person.khonnect_id,
+                person: props.details.person.id,
                 type: props.details.type,  
-                amount: parseInt(props.details.amount),
+                amount: props.details.amount,
                 deadline: parseInt(props.details.deadline),
-                periodicity: props.details.periodicity
+                periodicity: props.details.periodicity,
+                periodicity_amount: props.details.periodicity_amount
 
             })
             //form.setFieldsValue({ type: props.details.type });
@@ -75,12 +99,12 @@ const Lendingform = (props) => {
     },[route])
 
     /*  */
-    const onNumberChange = (value, e) => {
+    /* const onNumberChange = (value, e) => {
         if (Number.isNaN(value)) {
           return;
         }
         setAmount(value);
-      };
+      }; */
 
     return(
     <Form form={form} layout="horizontal" onFinish={props.onFinish} >
@@ -91,37 +115,63 @@ const Lendingform = (props) => {
                 </Title>
             </Col>
             <Col span="8">
-                {/* <Form.Item label="Colaborador" name="khonnect_id" labelCol={{ span: 10 }} labelAlign={'left'}> */}
-                    <SelectPerson khonnect_id  withLabel={true} defaultValue={props.details ? props.details.person.khonnect_id : null} />
-                {/* </Form.Item> */}
+                <Form.Item label="Colaborador" name="person" labelCol={{ span: 10 }} labelAlign={'left'}>
+                <Select
+                    key="selectPerson"
+                    showSearch
+                    allowClear
+                    optionFilterProp="children"
+                    placeholder="Todos"
+                    value={props.defaultValue}
+                    filterOption={(input, option) =>
+                        option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                    filterSort={(optionA, optionB) =>
+                    optionA.children
+                        .toLowerCase()
+                        .localeCompare(optionB.children.toLowerCase())
+                    }
+                >
+                    {personList ? personList.map((item) => {
+                        return (
+                                <Option key={item.key} value={item.value}>
+                                    {item.label}
+                                </Option>
+                            );
+                        })
+                    : null }
+                </Select>
+                </Form.Item>
                 <Form.Item name="type" label="Tipo de préstamo" labelCol={{ span: 10 }} labelAlign={'left'}>
                     <Select options={TypeOptions} allowClear />
                 </Form.Item>
-                <Form.Item  name="amount" label="Cantidad solicitada" labelCol={{ span: 10 }} labelAlign={'left'}
-                    /* rules={[
-                        {pattern: new RegExp("^[0-9,$]*$"), message:'Solo puedes ingresar numeros' }
-                    ]} */
-                >
-                    {/* <InputNumber onChange={getPayment} min={ props.config ? parseInt(props.config.min_amount) : null } max={ props.config ? parseInt(props.config.max_amount) : null }  style={{ width: '100%' }}
+                <Form.Item  name="amount" label="Cantidad solicitada" labelCol={{ span: 10 }} labelAlign={'left'}>
+                    <InputNumber onChange={getPayment}  style={{ width: '100%' }}
                         formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                         parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                     /> */}
-                     <Input />
+                     />
+                     {/* <InputNumber style={{ width: '100%' }} /> */}
                 </Form.Item>
                 <Form.Item name="deadline" label="Plazos" labelCol={{ span: 10 }} labelAlign={'left'}>
-                    {/* <InputNumber defaultValue={'2'} onChange={getPayment} min={ props.config ? parseInt(props.config.min_deadline) : null } max={ props.config ? parseInt(props.config.max_deadline) : null } style={{ width: '100%' }} /> */}
-                    <Input />
+                    <InputNumber onChange={getPayment}  style={{ width: '100%' }} />
+                    {/* <InputNumber style={{ width: '100%' }} onChange={getPayment}/> */}
                 </Form.Item>
                 <Form.Item name="periodicity" label="Periodicidad" labelCol={{ span: 10 }} labelAlign={'left'}>
                     <Select options={periodicityOptions} />
                 </Form.Item>
-                <Form.Item  label="Pago" labelCol={{ span: 10 }} labelAlign={'left'}>
-                    {/* <InputNumber value={payment}  style={{ width: '100%' }} readOnly /> */}
-                    <Input/>
+                <Form.Item name="periodicity_amount" label="Pago" labelCol={{ span: 10 }} labelAlign={'left'}>
+                    <InputNumber  style={{ width: '100%' }} readOnly 
+                    formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                    />
+                    {/* <Input/> */}
+                    {/* <InputNumber style={{ width: '100%' }} /> */}
                 </Form.Item>
             </Col>
             <Col span={19} style={{ textAlign: 'right' }}>
-                <Form.Item label="Motivo" labelCol={{ span: 4 }} labelAlign={'left'}>
+                <Form.Item label="Motivo" name="reason" labelCol={{ span: 4 }} labelAlign={'left'}>
                     <TextArea rows="4" style={{ marginLeft: 6 }} />
                 </Form.Item>
                 <Button onClick={() => route.push("/lending")} type="dashed" key="cancel" style={{ padding: "0 50px",  }} >

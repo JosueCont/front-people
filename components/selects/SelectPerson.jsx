@@ -40,7 +40,7 @@ export default function SelectPerson (props) {
             showSearch
             style={props.style ? props.style : null}
             allowClear
-            onChange={props.onChange ? props.onChange : null}
+            
             optionFilterProp="children"
             placeholder="Todos"
             value={props.defaultValue}
@@ -74,7 +74,7 @@ export default function SelectPerson (props) {
 
     return (
         props.withLabel ? 
-        <Form.Item  label="Colaborador" name="khonnect_id" labelCol={{ span: 10 }} labelAlign={'left'}>
+        <Form.Item  label="Colaborador" name={props.name ? props.name : 'khonnect_id' } labelCol={{ span: 10 }} labelAlign={'left'}>
             <DropDownList />
         </Form.Item> : <DropDownList />
     )

@@ -76,6 +76,10 @@ const Lending = () => {
       getLending(values.person, values.type, values.status)
   }
 
+  const GotoDetails = (item) => {
+      route.push(`/lending/${item.id}/details`)
+  }
+
 
   useEffect(() => {
     getLending();

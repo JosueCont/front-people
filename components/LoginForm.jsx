@@ -75,14 +75,14 @@ const LoginForm = () => {
           initialValues={{ remember: true }}
           onFinish={onFinish}
         >
-          <Text className="font-color-khor">Email</Text>
+          <Text className="font-color-khor">Correo electrónico</Text>
           <Form.Item
             name="email"
             rules={[{ required: true, message: "Please input your Email!" }]}
           >
             <Input style={{ marginTop: "5px" }} placeholder="Email" />
           </Form.Item>
-          <Text className="font-color-khor">Password</Text>
+          <Text className="font-color-khor">Contraseña</Text>
           <Form.Item
             name="password"
             rules={[{ required: true, message: "Please input your Password!" }]}
@@ -100,7 +100,7 @@ const LoginForm = () => {
               className="ckeck-khor"
               style={{ float: "right", marginBottom: "5px" }}
             >
-              <Checkbox className="font-color-khor">Remember me</Checkbox>
+              <Checkbox className="font-color-khor">Recordarme</Checkbox>
             </Form.Item>
           </Form.Item>
           {errorLogin && (
