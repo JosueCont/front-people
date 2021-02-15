@@ -171,7 +171,7 @@ const Lendingform = (props) => {
                 </Form.Item>
             </Col>
             <Col span={19} style={{ textAlign: 'right' }}>
-                <Form.Item label="Motivo" labelCol={{ span: 4 }} labelAlign={'left'}>
+                <Form.Item label="Motivo" name="reason" labelCol={{ span: 4 }} labelAlign={'left'}>
                     <TextArea rows="4" style={{ marginLeft: 6 }} />
                 </Form.Item>
                 <Button onClick={() => route.push("/lending")} type="dashed" key="cancel" style={{ padding: "0 50px",  }} >

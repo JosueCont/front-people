@@ -91,42 +91,50 @@ const HolidaysNew = () => {
                         <Descriptions
                         title="Detalles del préstamo"
                         column={2}
-                        labelStyle={{ width: 150, fontWeight: 700 }}
+                        labelStyle={{ width: 180, fontWeight: 700 }}
                         >
-                        <Descriptions.Item label="Estatus"> { strStatus }  </Descriptions.Item>
-                        <Descriptions.Item label="Fecha autorizada">
+                            <Descriptions.Item label="Estatus"> { strStatus }  </Descriptions.Item>
+                            <Descriptions.Item label="Fecha de solicitud">
+                                { details.timestamp ? moment(details.timestamp).format("DD/MMM/YYYY") : null }
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Colaborador">
+                                { details.person ? details.person.first_name+' '+details.person.flast_name : null }
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Fecha autorizada">
+                                {details.date_confirm ? moment(date_confirm).format("DD/MMM/YYYY") : null }
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Plazos">{details.deadline ? details.deadline : null }</Descriptions.Item>
+                            <Descriptions.Item label="Cantidad autorizada">
+                                {details.amount ? '$ '+details.amount : null }
+                            </Descriptions.Item>
                             
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Colaborador">
-                            { details.person ? details.person.first_name+' '+details.person.flast_name : null }
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Plazos">{details.deadline ? details.deadline : null }</Descriptions.Item>
-                        <Descriptions.Item label="Fecha de solicitud">
-                            { details.timestamp ? moment(details.timestamp).format("DD/MMM/YYYY") : null }
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Periodicidad">
-                            {
-                            details.periodicity && details.periodicity === 1 ? 'Semanal' 
-                            : details.periodicity && details.periodicity === 2 ? 'Catorcenal'
-                            : details.periodicity && details.periodicity === 3 ? 'Quincenal'
-                            : details.periodicity && details.periodicity === 4 ? 'Mensual'
-                            : null
-                        }
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Tipo de préstamo">
-                            { details.type && details.type === 'EMP' ? 'Empresa' : details.type && details.type === 'EPS' ? 'E-Pesos' : null }
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Pago">empty</Descriptions.Item>
-                        <Descriptions.Item
-                            label="Motivo"
-                            span={16}
-                            contentStyle={{ textAlign: "justify" }}
-                        >
-                            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                            Possimus quidem rem expedita porro autem! Cum eius quidem sit
-                            placeat ducimus eligendi minus blanditiis quisquam. Maiores
-                            laborum modi dolorum placeat sequi.
-                        </Descriptions.Item>
+                            
+                            <Descriptions.Item label="Periodicidad">
+                                {
+                                details.periodicity && details.periodicity === 1 ? 'Semanal' 
+                                : details.periodicity && details.periodicity === 2 ? 'Catorcenal'
+                                : details.periodicity && details.periodicity === 3 ? 'Quincenal'
+                                : details.periodicity && details.periodicity === 4 ? 'Mensual'
+                                : null
+                            }
+                            
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Pago"> {details.periodicity_amount ? '$ '+details.periodicity_amount : 0}</Descriptions.Item>
+                            <Descriptions.Item label="Tipo de préstamo">
+                                { details.type && details.type === 'EMP' ? 'Empresa' : details.type && details.type === 'EPS' ? 'E-Pesos' : null }
+                            </Descriptions.Item>
+                            
+                            <br/>
+                            <Descriptions.Item
+                                label="Motivo"
+                                span={3}
+                                contentStyle={{ textAlign: "justify" }}
+                            >
+                                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                                Possimus quidem rem expedita porro autem! Cum eius quidem sit
+                                placeat ducimus eligendi minus blanditiis quisquam. Maiores
+                                laborum modi dolorum placeat sequi.
+                            </Descriptions.Item>
                         </Descriptions>
                         <Table columns={columns} />
                     </Col>
