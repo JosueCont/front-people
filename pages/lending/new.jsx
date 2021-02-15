@@ -1,64 +1,78 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
-import {
-  Row,
-  Col,
-  Typography,
-  Table,
-  Breadcrumb,
-  Image,
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  DatePicker,
-  notification,
-  Space,
-  Switch,
-} from "antd";
+import { Spin, Row, Col, Typography, Table, Breadcrumb, Image, Button, Form, Input, InputNumber, Select, DatePicker, notification, Space, Switch } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 import moduleName from "../../components/forms/LendingForm";
 import moment from "moment";
 import Lendingform from "../../components/forms/LendingForm";
 import { withAuthSync } from "../../libs/auth";
+import Axios from 'axios';
+import {API_URL} from '../../config/config'
 
 const HolidaysNew = () => {
   const route = useRouter();
-  const [form] = Form.useForm();
-  const { Title } = Typography;
   const [sending, setSending] = useState(false);
-  const { Option } = Select;
-  const [departure_date, setDepartureDate] = useState(null);
-  const [return_date, setReturnDate] = useState(null);
-  const [job, setJob] = useState(null);
-  const [dateOfAdmission, setDateOfAdmission] = useState(null);
-  const [availableDays, setAvailableDays] = useState(null);
-  const [personList, setPersonList] = useState(null);
-  const [allPersons, setAllPersons] = useState(null);
-  const [antiquity, setAntiquity] = useState(null);
+  const [ready, setReady] = useState(false);
+  const [config, setConfig] = useState(null);
 
   const onCancel = () => {
     route.push("/lending");
   };
 
+  const saveRequest = async (values)  => {
+      setSending(true);
+      console.log(values);
+      try {
+          let response = await Axios.post(API_URL+`/payroll/loan/`, values);
+          route.push("/lending");
+          notification["success"]({
+              message: "Aviso",
+              description: "Información enviada correctamente.",
+            });
+      } catch (error) {
+            console.log("error")
+      }finally{
+            setSending(false);
+      }
+  }
+
+  const getConfig = async () => {
+        setReady(false);
+        try {
+            let response = await Axios.get(API_URL+`/payroll/loan-config/`);
+            setConfig(response.data.results[0])
+            console.log(response.data.results[0])
+        } catch (error) {
+            console.log("error")
+        }finally{
+            setReady(true);
+        }
+  }
+
+  useEffect(() => {
+      getConfig();
+  }, [])
+
+  useEffect(() => {
+    console.log(config)
+}, [config])
+
   return (
     <MainLayout currentKey="7.1">
-      <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Préstamos</Breadcrumb.Item>
-        <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
-      </Breadcrumb>
-      <div
-        className="container back-white"
-        style={{ width: "100%", padding: "20px 0" }}
-      >
-        <Row justify={"center"}>
-          <Col span={23}>
-            <Lendingform edit={false} />
-          </Col>
-        </Row>
+        <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
+            <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+            <Breadcrumb.Item href="./">Préstamos</Breadcrumb.Item>
+            <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
+        </Breadcrumb>
+        <div className="container back-white" style={{ width: "100%", padding: "20px 0" }} >
+          <Spin tip="Loading..." spinning={!ready}>
+            <Row justify={"center"}>
+            <Col span={23}>
+                <Lendingform details={null} edit={false} onFinish={saveRequest} config={config} />
+            </Col>
+            </Row>
+        </Spin>
       </div>
     </MainLayout>
   );

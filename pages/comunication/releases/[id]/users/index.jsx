@@ -23,6 +23,9 @@ import BreadcrumbHome from "../../../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../../../libs/auth";
 import Axios from 'axios'
 import { API_URL } from "../../../../../config/config";
+import {CheckOutlined} from '@ant-design/icons';
+
+
 
 
 const UserNotification = () => {
@@ -76,6 +79,15 @@ const UserNotification = () => {
                 dataIndex="timestamp"
                 key="date_received"
                 render={(text, record) => Moment(text).format("DD / MM / YYYY")}
+              />
+              <Column
+                title="Entreado"
+                dataIndex="is_read"
+                key="is_read"
+                align="center"
+                render={(is_read, record) => 
+                    is_read ? <CheckOutlined /> : null
+            }
               />
               <Column
                 title="Fecha de lectura"

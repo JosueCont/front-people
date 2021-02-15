@@ -137,7 +137,7 @@ const headerCustom = (props) => {
             </Menu.Item>
           </SubMenu>
 
-          <SubMenu key="8" title="Reportes">
+          {/* <SubMenu key="8" title="Reportes">
             <Menu.Item
               key="8.1"
               onClick={() => router.push({ pathname: "/reports/collaborator" })}
@@ -173,7 +173,7 @@ const headerCustom = (props) => {
             >
               Solicitudes de incapacidad
             </Menu.Item>
-          </SubMenu>
+          </SubMenu> */}
           <SubMenu key="7" title="Solicitudes">
             <Menu.Item
               key="7.1"
@@ -198,7 +198,7 @@ const headerCustom = (props) => {
             key="8"
             onClick={() => router.push({ pathname: "/uploadpayroll" })}
           >
-            Recibos de nomina
+            Recibos de nómina
           </Menu.Item>
           <div
             className={"pointer"}
