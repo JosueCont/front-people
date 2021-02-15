@@ -71,9 +71,13 @@ const homeScreen = () => {
           console.log(e);
         });
     } else {
+      if (filters.gender == 0) {
+        delete filters["gender"];
+      }
       Axios.post(API_URL + `/person/person/get_list_persons/ `, filters)
         .then((response) => {
-          response.data.map((item) => {
+          response.data.map((item, i) => {
+            item.key = i;
             if (!item.photo) item.photo = defaulPhoto;
           });
           setPerson(response.data);
@@ -86,6 +90,7 @@ const homeScreen = () => {
         });
     }
   };
+
   const deletePerson = () => {
     Axios.post(API_URL + `/person/person/delete_by_ids/`, {
       persons_id: idsDelete,
@@ -102,9 +107,11 @@ const homeScreen = () => {
         console.log(error);
       });
   };
+
   const statusPeron = () => {
     setStatus(status ? false : true);
   };
+
   const getModalPerson = (value) => {
     setModalAddPerson(value);
     setLoading(true);
@@ -267,6 +274,10 @@ const homeScreen = () => {
   ////DEFAULT SELECT
   const genders = [
     {
+      label: "Todos",
+      value: 0,
+    },
+    {
       label: "Masculino",
       value: 1,
     },
@@ -377,6 +388,7 @@ const homeScreen = () => {
           getPerson();
         })
         .catch((e) => {
+          getPerson();
           setLoading(false);
           message.error("Error al importar.");
           console.log(e);
@@ -387,6 +399,11 @@ const homeScreen = () => {
   };
   const getFileExtension = (filename) => {
     return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
+  };
+
+  const resetFilter = () => {
+    formFilter.resetFields();
+    getPerson();
   };
 
   return (
@@ -432,6 +449,9 @@ const homeScreen = () => {
                       Buscar
                     </Button>
                   </Form.Item>
+                </Col>
+                <Col lg={2} xs={5} offset={2}>
+                  <Button onClick={() => resetFilter()}>reset filter</Button>
                 </Col>
               </Row>
             </Form>

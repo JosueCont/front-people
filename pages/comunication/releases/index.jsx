@@ -69,22 +69,21 @@ const Releases = () => {
       url += `timestamp__gte=${d1}&timestamp__lte=${d2}&`;
     }
     try {
-      let response = await Axios.get(API_URL+url);
+      let response = await Axios.get(API_URL + url);
       let data = response.data;
       setList(data.results);
     } catch (e) {
       console.log(e);
-    }finally{
-        setLoading(false);
-        setSearching(false)
+    } finally {
+      setLoading(false);
+      setSearching(false);
     }
   };
 
   const getAllPersons = async () => {
     try {
-      let response = await Axios.get(API_URL+`/person/person/`);
+      let response = await Axios.get(API_URL + `/person/person/`);
       let data = response.data.results;
-      console.log(data);
       data = data.map((a) => {
         return {
           label: a.first_name + " " + a.flast_name,
@@ -124,7 +123,7 @@ const Releases = () => {
   };
 
   const sendFilter = (values) => {
-      setSearching(true);
+    setSearching(true);
     getNotifications(values.send_by, values.category, dateOne, dateTwo);
   };
 
@@ -136,7 +135,13 @@ const Releases = () => {
   return (
     <MainLayout currentKey="4.1">
       <Breadcrumb key="Breadcrumb">
-      <Breadcrumb.Item key="" className="pointer" onClick={() => route.push('/home') }>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item
+          key=""
+          className="pointer"
+          onClick={() => route.push("/home")}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item key="releases">Comunicados</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
@@ -245,10 +250,10 @@ const Releases = () => {
                 title="Acciones"
                 key="action"
                 render={(text, record) => (
-                    <>
+                  <>
                     <EyeOutlined
-                        key={"goDetails_" + record.id}
-                        onClick={() => GotoDetails(record)}
+                      key={"goDetails_" + record.id}
+                      onClick={() => GotoDetails(record)}
                     />
                     {/* <EditOutlined
                       className="icon_actions"
@@ -257,7 +262,7 @@ const Releases = () => {
                         route.push("/comunication/releases/" + record.id + "/edit")
                       }
                     /> */}
-                    </>
+                  </>
                 )}
               />
             </Table>

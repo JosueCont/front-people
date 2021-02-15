@@ -31,7 +31,7 @@ const headerCustom = (props) => {
         let personName =
           response.data.first_name + " " + response.data.flast_name;
         if (response.data.mlast_name)
-          personName = person + " " + response.data.mlast_name;
+          personName = personName + " " + response.data.mlast_name;
         response.data.fullName = personName;
         setPerson(response.data);
       })
