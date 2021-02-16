@@ -13,7 +13,10 @@ import {
   Select,
   Spin,
   Table,
+  Modal,
+  Alert,
 } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Title from "antd/lib/typography/Title";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
@@ -22,6 +25,7 @@ const { Content } = Layout;
 
 const configBusiness = () => {
   const { TabPane } = Tabs;
+  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [formDepartment] = Form.useForm();
   const [formJob] = Form.useForm();
   const [formTypePerson] = Form.useForm();
@@ -35,22 +39,123 @@ const configBusiness = () => {
   const [relationsShip, setRelationsShip] = useState([]);
   const [typesDocument, setTypesDocuments] = useState([]);
   const [banks, setBanks] = useState([]);
+  const [id, setId] = useState("");
+  const urls = [
+    "/business/department/",
+    "/person/person-type/",
+    "/setup/relationship/",
+    "/setup/document-type/",
+    "/setup/banks/",
+  ];
+  const [modal, setModal] = useState(false);
+  const [deleted, setDeleted] = useState({});
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    urls.map((a) => {
+      getCatalog(a);
+    });
+  }, []);
 
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
-
-  const onFinishForm = (value, url) => {
-    saveRegister(url, value);
-  };
-
-  const saveRegister = (rout, data) => {
-    console.log("ENVIO-->>> ", rout, " Data-->> ", data);
-    Axios.post(API_URL + rout, data)
-      .then((response) => {})
+  const getCatalog = (url) => {
+    Axios.get(API_URL + url)
+      .then((response) => {
+        if (url == "/business/department/")
+          setDepartments(response.data.results);
+        if (url == "jobs") setJobs(response.data.results);
+        if (url == "/person/person-type/")
+          setTypesPerson(response.data.results);
+        if (url == "/setup/relationship/")
+          setRelationsShip(response.data.results);
+        if (url == "/setup/document-type/")
+          setTypesDocuments(response.data.results);
+        if (url == "/setup/banks/") setBanks(response.data.results);
+        setLoadingTable(false);
+      })
       .catch((error) => {
+        setLoadingTable(false);
         console.log(error);
       });
+  };
+
+  const onFinishForm = (value, url) => {
+    if (id != "") updateRegister(url, value);
+    else saveRegister(url, value);
+  };
+
+  const saveRegister = (url, data) => {
+    setLoadingTable(true);
+    Axios.post(API_URL + url, data)
+      .then((response) => {
+        setId("");
+        resetForm();
+        if (response.data) getCatalog(url);
+      })
+      .catch((error) => {
+        resetForm();
+        setId("");
+        setLoadingTable(false);
+        console.log(error);
+      });
+  };
+  const updateRegister = (url, value) => {
+    Axios.put(API_URL + url + `${id}/`, value)
+      .then((response) => {
+        setId("");
+        resetForm;
+        setLoadingTable(true);
+        getCatalog(url);
+      })
+      .catch((error) => {
+        setId("");
+        setLoadingTable(false);
+        resetForm();
+      });
+  };
+
+  const editRegister = (item, param) => {
+    if (param == "dep") {
+      setId(item.id);
+      formDepartment.setFieldsValue({
+        name: item.name,
+        description: item.description,
+        code: item.code,
+      });
+    }
+    if (param == "job") {
+      setId(item.id);
+      formJob.setFieldsValue({
+        name: item.name,
+        code: item.code,
+      });
+    }
+    if (param == "tp") {
+      setId(item.id);
+      formTypePerson.setFieldsValue({
+        name: item.name,
+        code: item.code,
+      });
+    }
+    if (param == "rs") {
+      setId(item.id);
+      formRelationship.setFieldsValue({
+        name: item.name,
+        code: item.code,
+      });
+    }
+    if (param == "td") {
+      setId(item.id);
+      formTypeDocument.setFieldsValue({
+        name: item.name,
+        code: item.code,
+      });
+    }
+    if (param == "bank") {
+      setId(item.id);
+      formBank.setFieldsValue({
+        name: item.name,
+        code: item.code,
+      });
+    }
   };
 
   const colDepartment = [
@@ -67,7 +172,34 @@ const configBusiness = () => {
       title: "Codigo",
       dataIndex: "code",
     },
-    { title: "Acciones" },
+    {
+      title: "Acciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => editRegister(item, "dep")}
+                />
+              </Col>
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => {
+                    setDeleteRegister({
+                      id: item.id,
+                      url: "/business/department/",
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
   ];
   const colJob = [
     {
@@ -83,7 +215,34 @@ const configBusiness = () => {
       title: "Codigo",
       dataIndex: "code",
     },
-    { title: "Acciones" },
+    {
+      title: "Acciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => editRegister(item, "job")}
+                />
+              </Col>
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => {
+                    setDeleteRegister({
+                      id: item.id,
+                      url: "/business/department/",
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
   ];
   const colTypePerson = [
     {
@@ -95,7 +254,34 @@ const configBusiness = () => {
       title: "Codigo",
       dataIndex: "code",
     },
-    { title: "Acciones" },
+    {
+      title: "Acciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => editRegister(item, "tp")}
+                />
+              </Col>
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => {
+                    setDeleteRegister({
+                      id: item.id,
+                      url: "/person/person-type/",
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
   ];
   const colRelationShip = [
     {
@@ -107,7 +293,34 @@ const configBusiness = () => {
       title: "Codigo",
       dataIndex: "code",
     },
-    { title: "Acciones" },
+    {
+      title: "Acciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => editRegister(item, "rs")}
+                />
+              </Col>
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => {
+                    setDeleteRegister({
+                      id: item.id,
+                      url: "/setup/relationship/",
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
   ];
   const colTypeDocument = [
     {
@@ -119,7 +332,34 @@ const configBusiness = () => {
       title: "Codigo",
       dataIndex: "code",
     },
-    { title: "Acciones" },
+    {
+      title: "Acciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => editRegister(item, "td")}
+                />
+              </Col>
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => {
+                    setDeleteRegister({
+                      id: item.id,
+                      url: "/setup/document-type/",
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
   ];
   const colBank = [
     {
@@ -131,8 +371,71 @@ const configBusiness = () => {
       title: "Codigo",
       dataIndex: "code",
     },
-    { title: "Acciones" },
+    {
+      title: "Acciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => editRegister(item, "bank")}
+                />
+              </Col>
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => {
+                    setDeleteRegister({
+                      id: item.id,
+                      url: "/setup/banks/",
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
   ];
+
+  const showModal = () => {
+    modal ? setModal(false) : setModal(true);
+  };
+  const setDeleteRegister = (props) => {
+    setDeleted(props);
+    showModal();
+  };
+  const deleteRegister = () => {
+    console.log("Delete-->>> ", deleted);
+    Axios.delete(API_URL + deleted.url + `${deleted.id}/`)
+      .then((response) => {
+        resetForm();
+        setId("");
+        setLoadingTable(true);
+        getCatalog(deleted.url);
+        setDeleteRegister({});
+        showModal();
+      })
+      .catch((error) => {
+        setId("");
+        resetForm();
+        showModal();
+        setLoadingTable(false);
+        console.log(error);
+      });
+  };
+
+  const resetForm = () => {
+    formDepartment.resetFields();
+    formJob.resetFields();
+    formTypePerson.resetFields();
+    formRelationship.resetFields();
+    formTypeDocument.resetFields();
+    formBank.resetFields();
+  };
 
   return (
     <>
@@ -405,6 +708,23 @@ const configBusiness = () => {
           </Tabs>
         </div>
       </MainLayout>
+      <Modal
+        title="Modal"
+        visible={modal}
+        onOk={deleteRegister}
+        onCancel={showModal}
+        okText="Si, Eliminar"
+        cancelText="Cancelar"
+      >
+        <Alert
+          message="Warning"
+          description="Al eliminar este registro perderá todos los datos
+                    relacionados a el de manera permanente.
+                    ¿Está seguro de querer eliminarlo?"
+          type="warning"
+          showIcon
+        />
+      </Modal>
     </>
   );
 };
