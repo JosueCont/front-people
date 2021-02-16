@@ -60,6 +60,7 @@ const homeScreen = () => {
     if (text == undefined) {
       Axios.get(API_URL + `/person/person/`)
         .then((response) => {
+          setPerson([]);
           response.data.results.map((item, i) => {
             item.key = i;
             if (!item.photo) item.photo = defaulPhoto;
@@ -76,6 +77,7 @@ const homeScreen = () => {
       }
       Axios.post(API_URL + `/person/person/get_list_persons/ `, filters)
         .then((response) => {
+          setPerson([]);
           response.data.map((item, i) => {
             item.key = i;
             if (!item.photo) item.photo = defaulPhoto;
@@ -239,8 +241,12 @@ const homeScreen = () => {
   };
   const onchangeStatus = (value) => {
     value.is_active ? (value.is_active = false) : (value.is_active = true);
-    delete value["photo"];
-    Axios.put(API_URL + `/person/person/${value.id}/`, value)
+    let data = {
+      id: value.id,
+      status: value.is_active,
+    };
+    // Axios.put(API_URL + `/person/person/${value.id}/`, value)
+    Axios.post(API_URL + `/person/person/change_is_active/`, data)
       .then((response) => {
         if (!response.data.photo) response.data.photo = defaulPhoto;
         response.data.key = value.key;
@@ -249,6 +255,8 @@ const homeScreen = () => {
         });
       })
       .catch((error) => {
+        message.error("Ocurrio un error intente de nuevo.");
+        getPerson();
         console.log(error);
       });
   };
@@ -403,6 +411,7 @@ const homeScreen = () => {
 
   const resetFilter = () => {
     formFilter.resetFields();
+    setStatus(true);
     getPerson();
   };
 
