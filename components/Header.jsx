@@ -136,7 +136,12 @@ const headerCustom = (props) => {
               Eventos
             </Menu.Item>
           </SubMenu>
-
+          <Menu.Item
+              key="8"
+              onClick={() => router.push({ pathname: "/reports" })}
+            >
+              Reportes
+            </Menu.Item>
           {/* <SubMenu key="8" title="Reportes">
             <Menu.Item
               key="8.1"
