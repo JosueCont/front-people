@@ -107,7 +107,7 @@ const UploadPayroll = () => {
   ];
 
   return (
-    <MainLayout currentKey="8">
+    <MainLayout currentKey="9">
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
