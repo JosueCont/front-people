@@ -137,10 +137,10 @@ const homeScreen = () => {
 
   ////SEARCH FILTER
   const filter = (value) => {
-    if (value.name !== undefined && value.name !== "") {
+    if (value && value.name !== undefined && value.name !== "") {
       filters.first_name = value.name;
     }
-    if (value.gender !== undefined) {
+    if (value && value.gender !== undefined) {
       filters.gender = value.gender;
     }
     if (status !== undefined) {
@@ -345,7 +345,9 @@ const homeScreen = () => {
   ////IMPORT/EXPORT PERSON
   const downloadPersons = () => {
     setLoading(true);
-    Axios.get(API_URL + `/person/import-export-person/csv`)
+    filter();
+    console.log("Filter->> ", filters);
+    Axios.get(API_URL + `/person/import-export-person/csv`, filters)
       .then((response) => {
         const type = response.headers["content-type"];
         const blob = new Blob([response.data], {

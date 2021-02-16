@@ -169,7 +169,7 @@ const configBusiness = () => {
       dataIndex: "description",
     },
     {
-      title: "Codigo",
+      title: "Código",
       dataIndex: "code",
     },
     {
@@ -212,7 +212,7 @@ const configBusiness = () => {
       dataIndex: "name",
     },
     {
-      title: "Codigo",
+      title: "Código",
       dataIndex: "code",
     },
     {
@@ -251,7 +251,7 @@ const configBusiness = () => {
       key: "key",
     },
     {
-      title: "Codigo",
+      title: "Código",
       dataIndex: "code",
     },
     {
@@ -290,7 +290,7 @@ const configBusiness = () => {
       key: "key",
     },
     {
-      title: "Codigo",
+      title: "Código",
       dataIndex: "code",
     },
     {
@@ -329,7 +329,7 @@ const configBusiness = () => {
       key: "key",
     },
     {
-      title: "Codigo",
+      title: "Código",
       dataIndex: "code",
     },
     {
@@ -368,7 +368,7 @@ const configBusiness = () => {
       key: "key",
     },
     {
-      title: "Codigo",
+      title: "Código",
       dataIndex: "code",
     },
     {
@@ -481,7 +481,7 @@ const configBusiness = () => {
                     </Form.Item>
                   </Col>
                   <Col lg={6} xs={22} offset={1}>
-                    <Form.Item name="code" label="Codigo">
+                    <Form.Item name="code" label="Código">
                       <Input />
                     </Form.Item>
                   </Col>
@@ -528,7 +528,7 @@ const configBusiness = () => {
                   <Col lg={6} xs={22} offset={1}>
                     <Form.Item
                       name="code"
-                      label="Codigo"
+                      label="Código"
                       rules={[ruleRequired]}
                     >
                       <Input />
@@ -568,7 +568,7 @@ const configBusiness = () => {
                   <Col lg={6} xs={22} offset={1}>
                     <Form.Item
                       name="code"
-                      label="Codigo"
+                      label="Código"
                       rules={[ruleRequired]}
                     >
                       <Input />
@@ -608,7 +608,7 @@ const configBusiness = () => {
                   <Col lg={6} xs={22} offset={1}>
                     <Form.Item
                       name="code"
-                      label="Codigo"
+                      label="Código"
                       rules={[ruleRequired]}
                     >
                       <Input />
@@ -648,7 +648,7 @@ const configBusiness = () => {
                   <Col lg={6} xs={22} offset={1}>
                     <Form.Item
                       name="code"
-                      label="Codigo"
+                      label="Código"
                       rules={[ruleRequired]}
                     >
                       <Input />
@@ -686,7 +686,7 @@ const configBusiness = () => {
                   <Col lg={6} xs={22} offset={1}>
                     <Form.Item
                       name="code"
-                      label="Codigo"
+                      label="Código"
                       rules={[ruleRequired]}
                     >
                       <Input />
