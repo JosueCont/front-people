@@ -19,16 +19,16 @@ import {
   EllipsisOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../../layout/MainLayout";
 const { Content } = Layout;
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 import Axios from "axios";
-import { API_URL, LOGIN_URL } from "../../config/config";
+import { API_URL, LOGIN_URL } from "../../../config/config";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import moment from "moment";
-import { withAuthSync } from "../../libs/auth";
+import { withAuthSync } from "../../../libs/auth";
 
 const Groups = () => {
   const router = useRouter();
@@ -130,7 +130,7 @@ const Groups = () => {
                 <a
                   onClick={() =>
                     router.push({
-                      pathname: "/groups/add",
+                      pathname: "/config/groups/add",
                       query: { type: "edit", id: record.id },
                     })
                   }
@@ -162,7 +162,7 @@ const Groups = () => {
               fontWeight: "bold",
               color: "white",
             }}
-            onClick={() => router.push({ pathname: "/groups/add" })}
+            onClick={() => router.push({ pathname: "/config/groups/add" })}
           >
             <PlusOutlined />
             Agregar perfil
