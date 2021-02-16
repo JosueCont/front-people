@@ -38,7 +38,7 @@ const AddUploadPayroll = () => {
       Axios.post(API_URL + `/payroll/import-xml-payroll`, data)
         .then((response) => {
           message.success("Agregado correctamente");
-          router.push("/uploadpayroll");
+          router.push("/payrollvoucher");
           console.log("res", response.data);
           setLoading(false);
         })
@@ -88,7 +88,7 @@ const AddUploadPayroll = () => {
         <div style={{ padding: "1%", float: "right" }}>
           <Button
             style={{ marginRight: "5px" }}
-            onClick={() => router.push({ pathname: "/uploadpayroll" })}
+            onClick={() => router.push({ pathname: "/payrollvoucher" })}
           >
             Regresar
           </Button>

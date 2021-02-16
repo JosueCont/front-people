@@ -21,7 +21,7 @@ import cookie from "js-cookie";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import BreadcrumbHome from "../../../components/BreadcrumbHome";
-import SelectCompany from '../../../components/selects/SelectCompany'
+import SelectCompany from "../../../components/selects/SelectCompany";
 
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
@@ -54,13 +54,11 @@ const Newrelease = () => {
 
   useEffect(() => {
     if (json) {
-        console.log("exist JSON")
-        console.log(json)
-        setUserId(json.user_id);
-        /* getBussiness(); */
-        getValueSelects();
-    }else{
-        console.log("no json")
+      setUserId(json.user_id);
+      /* getBussiness(); */
+      getValueSelects();
+    } else {
+      console.log("no json");
     }
   }, []);
 
@@ -68,10 +66,15 @@ const Newrelease = () => {
     values["khonnect_id"] = userId;
     values["created_by"] = userId;
     values["message"] = message;
-    console.log(values);
+    if (values.target_gender == 0) {
+      delete values["target_gender"];
+    }
     setSending(true);
     try {
-      let response = await Axios.post(API_URL+`/noticenter/notification/`, values);
+      let response = await Axios.post(
+        API_URL + `/noticenter/notification/`,
+        values
+      );
       let data = response.data;
       notification["success"]({
         message: "Aviso",
@@ -88,7 +91,7 @@ const Newrelease = () => {
 
   const getBussiness = async () => {
     try {
-      let response = await Axios.get(API_URL+`/business/node/`);
+      let response = await Axios.get(API_URL + `/business/node/`);
       let data = response.data.results;
       console.log("data", data);
       let options = [];
@@ -113,6 +116,10 @@ const Newrelease = () => {
   };
 
   const genders = [
+    {
+      label: "Todos",
+      value: 0,
+    },
     {
       label: "Masculino",
       value: 1,
@@ -140,11 +147,9 @@ const Newrelease = () => {
 
   /////GET DATA SELCTS
   const getValueSelects = async () => {
-    console.log("get datas");
     /////PERSON TYPE
     await Axios.get(API_URL + `/person/person-type/`)
       .then((response) => {
-        console.log("response", response);
         if (response.status === 200) {
           let typesPerson = response.data.results;
           typesPerson = typesPerson.map((a) => {
@@ -154,7 +159,7 @@ const Newrelease = () => {
         }
       })
       .catch((e) => {
-        console.log('error_tipo_personas',e);
+        console.log("error_tipo_personas", e);
       });
 
     /////Companies
@@ -195,7 +200,7 @@ const Newrelease = () => {
     });
     try {
       let response = await Axios.get(
-        API_URL+`/business/node/${value}/department_for_node/`
+        API_URL + `/business/node/${value}/department_for_node/`
       );
       let data = response.data;
       console.log("data", data);
@@ -215,7 +220,7 @@ const Newrelease = () => {
     });
     try {
       let response = await Axios.get(
-        API_URL+`/business/department/${value}/job_for_department/`
+        API_URL + `/business/department/${value}/job_for_department/`
       );
       let data_jobs = response.data;
       console.log("data_jobs", data_jobs);
@@ -225,6 +230,8 @@ const Newrelease = () => {
       setJobs(data_jobs);
     } catch (error) {}
   };
+
+  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
     <MainLayout currentKey="4.1">
@@ -254,10 +261,16 @@ const Newrelease = () => {
                     name="category"
                     label="Categoría"
                     labelAlign={"left"}
+                    rules={[ruleRequired]}
                   >
                     <Select style={{ width: 250 }} options={typeMessage} />
                   </Form.Item>
-                  <Form.Item label="Título" name="title" labelAlign={"left"}>
+                  <Form.Item
+                    label="Título"
+                    name="title"
+                    labelAlign={"left"}
+                    rules={[ruleRequired]}
+                  >
                     <Input className={"formItemPayment"} />
                   </Form.Item>
                   <Form.Item name="message" label="Mensaje" labelAlign="left">
@@ -292,8 +305,9 @@ const Newrelease = () => {
                         name={"target_company"}
                         label="Empresa"
                         labelCol={{ span: 10 }}
+                        rules={[ruleRequired]}
                       >
-                          <SelectCompany onChange={onChangecompany}  />
+                        <SelectCompany onChange={onChangecompany} />
 
                         {/* <Select
                           options={bussinessList}
