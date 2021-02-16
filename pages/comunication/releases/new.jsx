@@ -22,6 +22,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import SelectCompany from "../../../components/selects/SelectCompany";
+import FormItemHTMLPlace from '../../../components/draft';
 
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
@@ -111,6 +112,11 @@ const Newrelease = () => {
     }
   };
 
+  const setHtml = (html) =>{
+    console.log(html);
+    setMessage(html);
+  }
+
   const onCancel = () => {
     route.push("/comunication/releases");
   };
@@ -162,33 +168,7 @@ const Newrelease = () => {
         console.log("error_tipo_personas", e);
       });
 
-    /////Companies
-    /* try {
-      let response = await Axios.get(API_URL+`/business/node/`);
-      let data = response.data.results;
-      console.log("data", data);
-      let options = [];
-      data.map((item) => {
-        options.push({ value: item.id, label: item.name });
-      });
-      setBusinessList(options);
-    } catch (error) {
-      console.log("error", error);
-    } */
-
-    /* Axios.get(API_URL + `/business/department/`)
-          .then((response) => {
-            if (response.status === 200) {
-              let dep = response.data.results;
-              dep = dep.map((a) => {
-                return { label: a.name, value: a.id };
-              });
-              setDepartments(dep);
-            }
-          })
-          .catch((e) => {
-            console.log(e);
-          }); */
+    
   };
 
   const onChangecompany = async (value) => {
@@ -273,14 +253,15 @@ const Newrelease = () => {
                   >
                     <Input className={"formItemPayment"} />
                   </Form.Item>
-                  <Form.Item name="message" label="Mensaje" labelAlign="left">
+                  <FormItemHTMLPlace html="" setHTML={setHtml} />
+                  {/* <Form.Item name="message" label="Mensaje" labelAlign="left">
                     <FroalaEditorComponent
                       key="message"
                       tag="textarea"
                       model={message}
                       onModelChange={setMessage}
                     />
-                  </Form.Item>
+                  </Form.Item> */}
                 </Col>
 
                 <Col span={24}>
@@ -309,12 +290,6 @@ const Newrelease = () => {
                       >
                         <SelectCompany onChange={onChangecompany} />
 
-                        {/* <Select
-                          options={bussinessList}
-                          onChange={onChangecompany}
-                          placeholder="Empresa"
-                          key="company_select"
-                        /> */}
                       </Form.Item>
                       <Form.Item
                         name={"target_department"}
