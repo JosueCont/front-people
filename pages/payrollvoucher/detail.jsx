@@ -33,6 +33,7 @@ const AddUploadPayroll = () => {
   const [payment_date, setPayment_date] = useState("");
   const [total_perceptions, setTotal_perceptions] = useState("");
   const [total_deductions, setTotal_deductions] = useState("");
+  const [amount, setAmount] = useState("");
   const [number_of_days_paid, setNumber_of_days_paid] = useState("");
   const [movement, setMovement] = useState([]);
   const [detailMov, setDetailMov] = useState([]);
@@ -54,6 +55,7 @@ const AddUploadPayroll = () => {
         setPayment_date(response.data.payroll_voucher.payment_end_date);
         setTotal_perceptions(response.data.payroll_voucher.total_perceptions);
         setTotal_deductions(response.data.payroll_voucher.total_deductions);
+        setAmount(response.data.payroll_voucher.amount);
         setNumber_of_days_paid(
           response.data.payroll_voucher.number_of_days_paid
         );
@@ -79,7 +81,7 @@ const AddUploadPayroll = () => {
     if (movement.length > 0) {
       return (
         <>
-          <Descriptions title="Recibo de nomina" layout="vertical" bordered>
+          <Descriptions title="Recibo de nómina" layout="vertical" bordered>
             <Descriptions.Item label="Colaborador:">
               {namePerson}
             </Descriptions.Item>
@@ -96,12 +98,13 @@ const AddUploadPayroll = () => {
             <Descriptions.Item label="Fecha de pago:">
               {payment_date}
             </Descriptions.Item>
-            <Descriptions.Item label="Total percepciones:" span={2}>
+            <Descriptions.Item label="Total percepciones:">
               ${total_perceptions}
             </Descriptions.Item>
             <Descriptions.Item label="Total deducciones:">
               ${total_deductions}
             </Descriptions.Item>
+            <Descriptions.Item label="Importe:">${amount}</Descriptions.Item>
 
             <Descriptions.Item label="Percepciones:" span={3}>
               {movement.map((mov, i) => (
@@ -124,7 +127,7 @@ const AddUploadPayroll = () => {
                 </div>
               ))}
             </Descriptions.Item>
-            <Descriptions.Item label="Detalle de percepcion:" span={3}>
+            <Descriptions.Item label="Detalle de percepción:" span={3}>
               {detailMov.map((det, i) => (
                 <div>
                   {det.movement_type === 1 && (
@@ -132,7 +135,7 @@ const AddUploadPayroll = () => {
                       <Col span={24}>
                         <Row>
                           <Col xl={8} md={8} xs={24}>
-                            Tipo de percepcion: {det.perception_type}
+                            Tipo de percepción: {det.perception_type}
                           </Col>
                           <Col xl={8} md={8} xs={24}>
                             Concepto: {det.concept}
@@ -180,7 +183,7 @@ const AddUploadPayroll = () => {
                       <Col span={24}>
                         <Row>
                           <Col xl={6} md={6} xs={24}>
-                            Tipo de deduccion: {det.deduction_type}
+                            Tipo de deducción: {det.deduction_type}
                           </Col>
                           <Col xl={6} md={6} xs={24}>
                             Concepto: {det.concept}
@@ -208,7 +211,7 @@ const AddUploadPayroll = () => {
   };
 
   return (
-    <MainLayout currentKey="8">
+    <MainLayout currentKey="9">
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
