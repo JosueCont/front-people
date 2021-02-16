@@ -111,10 +111,15 @@ const headerCustom = (props) => {
             Empresas
           </Menu.Item>
           <SubMenu key="3" title="Configuración">
-            <Menu.Item key="3.1">Configuración general</Menu.Item>
+            <Menu.Item
+              key="3.1"
+              onClick={() => router.push({ pathname: "/config/business" })}
+            >
+              Configuración general
+            </Menu.Item>
             <Menu.Item
               key="3.2"
-              onClick={() => router.push({ pathname: "/groups" })}
+              onClick={() => router.push({ pathname: "/config/groups" })}
             >
               Perfiles de seguridad
             </Menu.Item>
@@ -136,7 +141,12 @@ const headerCustom = (props) => {
               Eventos
             </Menu.Item>
           </SubMenu>
-
+          <Menu.Item
+            key="8"
+            onClick={() => router.push({ pathname: "/reports" })}
+          >
+            Reportes
+          </Menu.Item>
           {/* <SubMenu key="8" title="Reportes">
             <Menu.Item
               key="8.1"
@@ -195,7 +205,7 @@ const headerCustom = (props) => {
             </Menu.Item>
           </SubMenu>
           <Menu.Item
-            key="8"
+            key="9"
             onClick={() => router.push({ pathname: "/payrollvoucher" })}
           >
             Recibos de nómina

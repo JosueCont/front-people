@@ -22,10 +22,10 @@ import {
   Tabs,
   Table,
 } from "antd";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../../layout/MainLayout";
 import Axios from "axios";
-import { LOGIN_URL, APP_ID } from "../../config/config";
-import { withAuthSync } from "../../libs/auth";
+import { LOGIN_URL, APP_ID } from "../../../config/config";
+import { withAuthSync } from "../../../libs/auth";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -70,7 +70,7 @@ const GroupAdd = () => {
             perms: [],
           });
           setPerms([]);
-          router.push({ pathname: "/groups" });
+          router.push({ pathname: "/config/groups" });
           message.success({
             content: "Grupo guardado exitosamente!",
             className: "custom-class",
@@ -107,7 +107,7 @@ const GroupAdd = () => {
             perms: [],
           });
           setPerms([]);
-          router.push({ pathname: "/groups" });
+          router.push({ pathname: "/config/groups" });
           message.success({
             content: "Grupo editado exitosamente",
             className: "custom-class",
@@ -279,7 +279,9 @@ const GroupAdd = () => {
     <MainLayout currentKey="3.2">
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item href="/groups">Perfiles de seguridad</Breadcrumb.Item>
+        <Breadcrumb.Item href="/config/groups">
+          Perfiles de seguridad
+        </Breadcrumb.Item>
         {edit ? (
           <Breadcrumb.Item>Editar perfil</Breadcrumb.Item>
         ) : (
@@ -321,7 +323,9 @@ const GroupAdd = () => {
                             <Button
                               style={{ marginRight: "5px" }}
                               onClick={() =>
-                                router.push({ pathname: "/groups" })
+                                router.push({
+                                  pathname: "/config/groups",
+                                })
                               }
                             >
                               Regresar
