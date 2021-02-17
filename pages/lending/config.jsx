@@ -23,9 +23,8 @@ import moduleName from "../../components/forms/LendingForm";
 import moment from "moment";
 import Lendingform from "../../components/forms/LendingForm";
 import { withAuthSync } from "../../libs/auth";
-import Axios from 'axios'
-import {API_URL} from '../../config/config'
-
+import Axios from "axios";
+import { API_URL } from "../../config/config";
 
 const HolidaysNew = () => {
   const route = useRouter();
@@ -39,46 +38,47 @@ const HolidaysNew = () => {
     route.push("/lending");
   };
 
-  const getConfig = async () =>{
-      setLoading(true);
-      try {
-          let repsonse = await Axios.get(API_URL+`/payroll/loan-config/1/`);
-          console.log('response', repsonse);
-          let data = repsonse.data;
-          form.setFieldsValue({
-            min_amount: parseInt(data.max_amount),
-            max_amount:  parseInt(data.max_amount),
-            min_deadline: data.min_deadline,
-            max_deadline: data.max_deadline
-          })
-
-      } catch (error) {
-          console.log(error)
-      }
-  }
+  const getConfig = async () => {
+    setLoading(true);
+    try {
+      let repsonse = await Axios.get(API_URL + `/payroll/loan-config/1/`);
+      console.log("response", repsonse);
+      let data = repsonse.data;
+      form.setFieldsValue({
+        min_amount: parseInt(data.max_amount),
+        max_amount: parseInt(data.max_amount),
+        min_deadline: data.min_deadline,
+        max_deadline: data.max_deadline,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const saveConfig = async (values) => {
+    console.log(values);
+    setSending(true);
+    try {
+      let response = await Axios.patch(
+        API_URL + `/payroll/loan-config/1/`,
+        values
+      );
       console.log(values);
-      setSending(true);
-      try {
-          let response = await Axios.patch(API_URL+`/payroll/loan-config/1/`, values);
-          console.log(values);
-          route.push('/lending');
-          notification["success"]({
-            message: "Aviso",
-            description: "Información guardada correctamente.",
-          });
-      } catch (error) {
-          console.log('error', error);
-      }finally{
-        setSending(false);
-      }
-  }
+      route.push("/lending");
+      notification["success"]({
+        message: "Aviso",
+        description: "Información guardada correctamente.",
+      });
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setSending(false);
+    }
+  };
 
   useEffect(() => {
     getConfig();
-  },[])
-
+  }, []);
 
   return (
     <MainLayout currentKey="7.1">
@@ -103,19 +103,19 @@ const HolidaysNew = () => {
                 <Col span="8">
                   <Form.Item
                     name="min_amount"
-                    label="minimum"
+                    label="Mínimo"
                     labelCol={{ span: 10 }}
                     labelAlign={"left"}
                   >
-                    <InputNumber style={{ width: '150px' }} />
+                    <InputNumber style={{ width: "150px" }} />
                   </Form.Item>
                   <Form.Item
-                    label="Maximo"
+                    label="Máximo"
                     name="max_amount"
                     labelCol={{ span: 10 }}
                     labelAlign={"left"}
                   >
-                    <InputNumber style={{ width: '150px' }} />
+                    <InputNumber style={{ width: "150px" }} />
                   </Form.Item>
                 </Col>
                 <Col span={24}>
@@ -125,31 +125,36 @@ const HolidaysNew = () => {
                 </Col>
                 <Col span="8">
                   <Form.Item
-                    label="Minimo"
+                    label="Mínimo"
                     name="min_deadline"
                     labelCol={{ span: 10 }}
                     labelAlign={"left"}
                   >
-                    <InputNumber style={{ width: '150px' }} />
+                    <InputNumber style={{ width: "150px" }} />
                   </Form.Item>
                   <Form.Item
-                    label="Maximo"
+                    label="Máximo"
                     name="max_deadline"
                     labelCol={{ span: 10 }}
                     labelAlign={"left"}
                   >
-                    <InputNumber style={{ width: '150px' }} />
+                    <InputNumber style={{ width: "150px" }} />
                   </Form.Item>
                 </Col>
               </Row>
               <Row style={{ paddingTop: 20 }}>
-                <Col span={10} style={{ textAlign: 'right' }}>
-                    <Button style={{ padding: '0 40px', margin: '0 10px' }}>
-                        Cancelar
-                    </Button>
-                    <Button loading={sending} htmlType="submit" type={'primary'} style={{ padding: '0 40px', margin: '0 10px' }}>
-                        Guardar
-                    </Button>
+                <Col span={10} style={{ textAlign: "right" }}>
+                  <Button style={{ padding: "0 40px", margin: "0 10px" }}>
+                    Cancelar
+                  </Button>
+                  <Button
+                    loading={sending}
+                    htmlType="submit"
+                    type={"primary"}
+                    style={{ padding: "0 40px", margin: "0 10px" }}
+                  >
+                    Guardar
+                  </Button>
                 </Col>
               </Row>
             </Form>

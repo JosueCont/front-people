@@ -450,7 +450,7 @@ const homeScreen = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={2} xs={5} offset={1}>
+                <Col lg={2} xs={2} offset={1}>
                   <Form.Item>
                     <Button
                       icon={<SearchOutlined />}
@@ -473,6 +473,7 @@ const homeScreen = () => {
                 background: "#fa8c16",
                 fontWeight: "bold",
                 color: "white",
+                marginLeft: "5px",
               }}
               onClick={() => getModalPerson(true)}
             >

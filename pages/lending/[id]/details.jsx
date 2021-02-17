@@ -101,7 +101,7 @@ const HolidaysNew = () => {
                                 { details.person ? details.person.first_name+' '+details.person.flast_name : null }
                             </Descriptions.Item>
                             <Descriptions.Item label="Fecha autorizada">
-                                {details.date_confirm ? moment(date_confirm).format("DD/MMM/YYYY") : null }
+                                {details.date_confirm ? moment(details.date_confirm).format("DD/MMM/YYYY") : null }
                             </Descriptions.Item>
                             <Descriptions.Item label="Plazos">{details.deadline ? details.deadline : null }</Descriptions.Item>
                             <Descriptions.Item label="Cantidad autorizada">

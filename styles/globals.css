@@ -191,7 +191,7 @@ li.ant-menu-submenu-selected{
     background-color: #1d90ff !important;
 }
 
-.formFilterReports .ant-form-item{
+.formFilterReports .ant-col .ant-form-item{
     margin-bottom: 0% !important;
 }
 
