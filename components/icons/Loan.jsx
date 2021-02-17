@@ -23,8 +23,6 @@ const LoanIcon = (props) => {
 
     return (
         <Tooltip title="Seguimiento de préstamos" color="#3d78b9" key="#3d78b9"><LoanIconComponent style={{ fontSize: '32px' }} /></Tooltip>
-        
-
     )
 }
 
