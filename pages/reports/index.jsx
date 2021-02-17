@@ -25,6 +25,9 @@ import {
     PlusOutlined,
     EyeOutlined,
 } from "@ant-design/icons";
+import SelectPerson from '../../components/selects/SelectPerson';
+
+
 import CollaboratorsReport from "../../components/reports/Collaborators";
 import PayrollReport from '../../components/reports/Payroll';
 import LoanReport from '../../components/reports/Loan';
@@ -61,13 +64,13 @@ const Reports = () => {
                             <TabPane 
                                 tab={<UsersIcon />} 
                                 key="1">
-                                <CollaboratorsReport />
+                                <CollaboratorsReport selectCollaborator={<SelectPerson/>} />
                             </TabPane>
                             <TabPane tab={<NominaIcon />} key="2">
                                 <PayrollReport/>
                             </TabPane>
                             <TabPane tab={<LoanIcon />} key="3">
-                                <LoanReport />
+                                <LoanReport selectCollaborator={<SelectPerson/>}/>
                             </TabPane>
                             <TabPane tab={<HolidayIcon />} key="4">
                                 <HolidaysReport/>

@@ -107,7 +107,6 @@ const Newrelease = () => {
         console.log(values);  
         console.log(file);
 
-
         if (!message || (message && message.length <= 8)) {
             console.log("Requerido");
             setMessageAlert(true);
@@ -138,9 +137,9 @@ const Newrelease = () => {
             datos.append("gender", values.target_gender);
         }
         
+        if(file){
             datos.append("files", [file]);
-        
-
+        }
 
         setSending(true);
         try {
