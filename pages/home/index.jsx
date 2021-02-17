@@ -343,11 +343,11 @@ const homeScreen = () => {
   };
 
   ////IMPORT/EXPORT PERSON
-  const downloadPersons = () => {
+  const exportPersons = () => {
     setLoading(true);
     filter();
-    console.log("Filter->> ", filters);
-    Axios.get(API_URL + `/person/import-export-person/csv`, filters)
+    filters.format = "data";
+    Axios.post(API_URL + `/person/person/export_csv/`, filters)
       .then((response) => {
         const type = response.headers["content-type"];
         const blob = new Blob([response.data], {
@@ -365,9 +365,11 @@ const homeScreen = () => {
         console.log(e);
       });
   };
-  const downloadPlantilla = () => {
+  const downLoadPlantilla = () => {
     setLoading(true);
-    Axios.get(API_URL + `/person/import-export-person/plantilla`)
+    filter();
+    filters.format = "plantilla";
+    Axios.post(API_URL + `/person/person/export_csv/`, filters)
       .then((response) => {
         const type = response.headers["content-type"];
         const blob = new Blob([response.data], {
@@ -385,13 +387,13 @@ const homeScreen = () => {
         console.log(e);
       });
   };
-  const importFile = async (e) => {
+  const importPersonFile = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
     if (extension == "csv") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
       setLoading(true);
-      Axios.post(API_URL + `/person/import-export-person`, formData)
+      Axios.post(API_URL + `/person/person/import_csv/`, formData)
         .then((response) => {
           setLoading(false);
           message.success("Excel importado correctamente.");
@@ -407,6 +409,7 @@ const homeScreen = () => {
       message.error("Formato incorrecto, suba un archivo .csv");
     }
   };
+
   const getFileExtension = (filename) => {
     return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
   };
@@ -489,7 +492,7 @@ const homeScreen = () => {
               type="primary"
               icon={<DownloadOutlined />}
               size={{ size: "large" }}
-              onClick={() => downloadPersons()}
+              onClick={() => exportPersons()}
             >
               Descargar resultados
             </Button>
@@ -506,14 +509,14 @@ const homeScreen = () => {
               ref={inputFileRef}
               type="file"
               style={{ display: "none" }}
-              onChange={(e) => importFile(e)}
+              onChange={(e) => importPersonFile(e)}
             />
             <Button
               className={"ml-20"}
               type="primary"
               icon={<DownloadOutlined />}
               size={{ size: "large" }}
-              onClick={() => downloadPlantilla()}
+              onClick={() => downLoadPlantilla()}
             >
               Descargar plantilla
             </Button>

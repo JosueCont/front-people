@@ -33,7 +33,7 @@ const Lendingform = (props) => {
   /* Options List */
   const TypeOptions = [
     { value: "EMP", label: "Empresa", key: "type1" },
-    { value: "EPS", label: "E-Pesos", key: "type_2" },
+    // { value: "EPS", label: "E-Pesos", key: "type_2" },
   ];
 
   const periodicityOptions = [
@@ -103,6 +103,7 @@ const Lendingform = (props) => {
         periodicity_amount: props.details.periodicity_amount,
         reason: props.details.reason,
       });
+      getPayment();
       //form.setFieldsValue({ type: props.details.type });
     }
   }, [route]);
@@ -114,6 +115,11 @@ const Lendingform = (props) => {
         }
         setAmount(value);
       }; */
+
+  const ruleRequired = {
+    required: true,
+    message: "Este campo es requerido",
+  };
 
   return (
     <Form form={form} layout="horizontal" onFinish={props.onFinish}>
@@ -129,6 +135,7 @@ const Lendingform = (props) => {
             name="person"
             labelCol={{ span: 10 }}
             labelAlign={"left"}
+            rules={[ruleRequired]}
           >
             <Select
               key="selectPerson"
@@ -162,6 +169,7 @@ const Lendingform = (props) => {
             label="Tipo de préstamo"
             labelCol={{ span: 10 }}
             labelAlign={"left"}
+            rules={[ruleRequired]}
           >
             <Select options={TypeOptions} allowClear />
           </Form.Item>
@@ -170,6 +178,7 @@ const Lendingform = (props) => {
             label="Cantidad solicitada"
             labelCol={{ span: 10 }}
             labelAlign={"left"}
+            rules={[ruleRequired]}
           >
             <InputNumber
               onChange={getPayment}
@@ -186,6 +195,7 @@ const Lendingform = (props) => {
             label="Plazos"
             labelCol={{ span: 10 }}
             labelAlign={"left"}
+            rules={[ruleRequired]}
           >
             <InputNumber onChange={getPayment} style={{ width: "100%" }} />
             {/* <InputNumber style={{ width: '100%' }} onChange={getPayment}/> */}
@@ -195,6 +205,7 @@ const Lendingform = (props) => {
             label="Periodicidad"
             labelCol={{ span: 10 }}
             labelAlign={"left"}
+            rules={[ruleRequired]}
           >
             <Select options={periodicityOptions} />
           </Form.Item>
@@ -207,6 +218,7 @@ const Lendingform = (props) => {
             <InputNumber
               style={{ width: "100%" }}
               readOnly
+              precision={2}
               formatter={(value) =>
                 `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
