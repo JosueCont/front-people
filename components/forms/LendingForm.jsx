@@ -68,7 +68,7 @@ const Lendingform = (props) => {
         /* PARA TOMAR EN CUENTA EL INTERES */
         let paym = 0;
 
-        if (props.interest === 0){
+        if (props.config.interest === 0){
             paym = formAmount/formDeadline;
         }else{
             paym = ( formAmount + ( formAmount *  ( props.config.interest / 100 ) ) ) / formDeadline;

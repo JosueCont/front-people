@@ -25,8 +25,6 @@ import SelectCompany from "../../../components/selects/SelectCompany";
 import FormItemHTMLPlace from '../../../components/draft';
 
 
-
-
 import dynamic from "next/dynamic";
 import { withAuthSync } from "../../../libs/auth";
 
