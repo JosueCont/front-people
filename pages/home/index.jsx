@@ -461,8 +461,8 @@ const homeScreen = () => {
                     </Button>
                   </Form.Item>
                 </Col>
-                <Col lg={2} xs={5} offset={2}>
-                  <Button onClick={() => resetFilter()}>reset filter</Button>
+                <Col lg={2} xs={5} offset={1}>
+                  <Button onClick={() => resetFilter()}>Limpiar filtros</Button>
                 </Col>
               </Row>
             </Form>
