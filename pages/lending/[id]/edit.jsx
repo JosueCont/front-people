@@ -119,6 +119,8 @@ const HolidaysNew = () => {
 
   const onFinish = async (values) => {
     setSending(true);
+    if (values.periodicity_amount.toString().includes("."))
+      values.periodicity_amount = values.periodicity_amount.toFixed(2);
     try {
       let response = await Axios.patch(
         API_URL + `/payroll/loan/${id}/`,
