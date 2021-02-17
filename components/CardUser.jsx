@@ -15,13 +15,13 @@ const cardUser = (props) => {
       <Card
         key="card_user"
         hoverable={true}
-        style={{ width: 250 }}
+        style={{ width: 180 }}
         cover={
           <Image
             key="img_user"
             alt="example"
             src={props.person.photo}
-            height={250}
+            height={180}
           />
         }
         actions={[
@@ -36,7 +36,11 @@ const cardUser = (props) => {
           </Button>,
         ]}
       >
-        <Meta title={props.person.fullName} description={props.person.email} />
+        <Meta
+          style={{ fontSize: "10px" }}
+          title={props.person.fullName}
+          description={props.person.email}
+        />
       </Card>
     </>
   );
