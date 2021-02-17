@@ -189,7 +189,7 @@ const headerCustom = (props) => {
               key="7.1"
               onClick={() => router.push({ pathname: "/lending" })}
             >
-              Prestamos
+              Préstamos
             </Menu.Item>
             <Menu.Item
               key="7.2"
