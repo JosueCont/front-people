@@ -367,9 +367,10 @@ const homeScreen = () => {
   };
   const downLoadPlantilla = () => {
     setLoading(true);
-    filter();
-    filters.format = "plantilla";
-    Axios.post(API_URL + `/person/person/export_csv/`, filters)
+    Axios.post(API_URL + `/person/person/export_csv/`, {
+      format: "plantilla",
+      is_active: "true",
+    })
       .then((response) => {
         const type = response.headers["content-type"];
         const blob = new Blob([response.data], {

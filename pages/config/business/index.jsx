@@ -42,6 +42,7 @@ const configBusiness = () => {
   const [id, setId] = useState("");
   const urls = [
     "/business/department/",
+    "/business/job-department/",
     "/person/person-type/",
     "/setup/relationship/",
     "/setup/document-type/",
@@ -59,11 +60,12 @@ const configBusiness = () => {
   }, []);
 
   const getCatalog = (url) => {
+    console.log("GET URL-->>> ", url);
     Axios.get(API_URL + url)
       .then((response) => {
         if (url == "/business/department/")
           setDepartments(response.data.results);
-        if (url == "jobs") setJobs(response.data.results);
+        if (url == "/business/job-department/") setJobs(response.data.results);
         if (url == "/person/person-type/")
           setTypesPerson(response.data.results);
         if (url == "/setup/relationship/")
@@ -80,8 +82,14 @@ const configBusiness = () => {
   };
 
   const onFinishForm = (value, url) => {
-    if (id != "") updateRegister(url, value);
-    else saveRegister(url, value);
+    if (id != "") {
+      if (url == "/business/job-department/create_job_for_department/") {
+        url = "/business/job-department/update_job_for_department/";
+        value.job_id = id;
+        console.log("ID->> ", id, " URL-->> ", url);
+        updateRegister(url, value);
+      } else updateRegister(url, value);
+    } else saveRegister(url, value);
   };
 
   const getDepartments = () => {
@@ -102,8 +110,11 @@ const configBusiness = () => {
 
   const saveRegister = (url, data) => {
     setLoadingTable(true);
+    console.log("DATA-->>> ", data);
     Axios.post(API_URL + url, data)
       .then((response) => {
+        if (url == "/business/job-department/create_job_for_department/")
+          url = "/business/job-department/";
         setId("");
         resetForm();
         if (response.data) getCatalog(url);
@@ -116,8 +127,15 @@ const configBusiness = () => {
       });
   };
   const updateRegister = (url, value) => {
-    Axios.put(API_URL + url + `${id}/`, value)
+    let newurl = url;
+    if (url != "/business/job-department/update_job_for_department/") {
+      newurl = url + `${id}/`;
+    }
+    Axios.put(API_URL + newurl, value)
       .then((response) => {
+        console.log("url--AAA ", url);
+        if (url == "/business/job-department/update_job_for_department/")
+          url = "/business/job-department/";
         setId("");
         resetForm();
         setLoadingTable(true);
@@ -142,8 +160,9 @@ const configBusiness = () => {
     if (param == "job") {
       setId(item.id);
       formJob.setFieldsValue({
-        name: item.name,
-        code: item.code,
+        name: item.job.name,
+        code: item.job.code,
+        department: item.department.id,
       });
     }
     if (param == "tp") {
@@ -222,16 +241,22 @@ const configBusiness = () => {
   const colJob = [
     {
       title: "Nombre",
-      dataIndex: "name",
+      render: (item) => {
+        return <>{item.job.name}</>;
+      },
       key: "key",
     },
     {
       title: "Departamento",
-      dataIndex: "name",
+      render: (item) => {
+        return <>{item.department.name}</>;
+      },
     },
     {
       title: "Código",
-      dataIndex: "code",
+      render: (item) => {
+        return <>{item.job.code}</>;
+      },
     },
     {
       title: "Acciones",
@@ -457,7 +482,7 @@ const configBusiness = () => {
 
   return (
     <>
-      <MainLayout currentKey="3.2">
+      <MainLayout currentKey="3.1">
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
           <Breadcrumb.Item>Configuración general</Breadcrumb.Item>
@@ -521,7 +546,10 @@ const configBusiness = () => {
                 layout={"vertical"}
                 form={formJob}
                 onFinish={(values) =>
-                  onFinishForm(values, "/business/department/")
+                  onFinishForm(
+                    values,
+                    "/business/job-department/create_job_for_department/"
+                  )
                 }
               >
                 <Row>
