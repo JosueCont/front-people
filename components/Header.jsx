@@ -111,10 +111,15 @@ const headerCustom = (props) => {
             Empresas
           </Menu.Item>
           <SubMenu key="3" title="Configuración">
-            <Menu.Item key="3.1">Configuración general</Menu.Item>
+            <Menu.Item
+              key="3.1"
+              onClick={() => router.push({ pathname: "/config/business" })}
+            >
+              Configuración general
+            </Menu.Item>
             <Menu.Item
               key="3.2"
-              onClick={() => router.push({ pathname: "/groups" })}
+              onClick={() => router.push({ pathname: "/config/groups" })}
             >
               Perfiles de seguridad
             </Menu.Item>
