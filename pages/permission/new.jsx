@@ -44,7 +44,7 @@ const PermissionNew = () => {
   const [antiquity, setAntiquity] = useState(null);
 
   const onCancel = () => {
-    route.push("/Permission");
+    route.push("/permission");
   };
 
   const changePerson = (value) => {
