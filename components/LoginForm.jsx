@@ -65,6 +65,8 @@ const LoginForm = () => {
     }
   };
 
+  const ruleRequired = { required: true, message: "Este campo es requerido" };
+
   return (
     <>
       <Spin tip="Loading..." spinning={loading}>
@@ -76,21 +78,18 @@ const LoginForm = () => {
           onFinish={onFinish}
         >
           <Text className="font-color-khor">Correo electrónico</Text>
-          <Form.Item
-            name="email"
-            rules={[{ required: true, message: "Please input your Email!" }]}
-          >
-            <Input style={{ marginTop: "5px" }} placeholder="Email" />
+          <Form.Item name="email" rules={[ruleRequired]}>
+            <Input
+              style={{ marginTop: "5px" }}
+              placeholder="Correo electrónico"
+            />
           </Form.Item>
           <Text className="font-color-khor">Contraseña</Text>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: "Please input your Password!" }]}
-          >
+          <Form.Item name="password" rules={[ruleRequired]}>
             <Input
               style={{ marginTop: "5px" }}
               type="password"
-              placeholder="Password"
+              placeholder="Contraseña"
             />
           </Form.Item>
           <Form.Item>
@@ -105,10 +104,11 @@ const LoginForm = () => {
           </Form.Item>
           {errorLogin && (
             <Alert
-              message="Error iniciar sesión"
-              description="La contraseña y/o correo no son correctos"
+              message="Error al iniciar sesión,"
+              description="la contraseña y/o correo electrónico son incorrectos"
               type="error"
-              style={{ textAlign: "center" }}
+              style={{ textAlign: "center", marginBottom: "10px" }}
+              closable
             />
           )}
 
