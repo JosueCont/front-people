@@ -49,9 +49,11 @@ const configBusiness = () => {
   ];
   const [modal, setModal] = useState(false);
   const [deleted, setDeleted] = useState({});
+  const [selectDep, setSelectDep] = useState([]);
 
   useEffect(() => {
     urls.map((a) => {
+      getDepartments();
       getCatalog(a);
     });
   }, []);
@@ -82,6 +84,22 @@ const configBusiness = () => {
     else saveRegister(url, value);
   };
 
+  const getDepartments = () => {
+    Axios.get(API_URL + `/business/department/`)
+      .then((response) => {
+        if (response.status === 200) {
+          let dep = response.data.results;
+          dep = dep.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setSelectDep(dep);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   const saveRegister = (url, data) => {
     setLoadingTable(true);
     Axios.post(API_URL + url, data)
@@ -101,7 +119,7 @@ const configBusiness = () => {
     Axios.put(API_URL + url + `${id}/`, value)
       .then((response) => {
         setId("");
-        resetForm;
+        resetForm();
         setLoadingTable(true);
         getCatalog(url);
       })
@@ -513,7 +531,7 @@ const configBusiness = () => {
                       label="Departamento"
                       rules={[ruleRequired]}
                     >
-                      <Select />
+                      <Select options={selectDep} />
                     </Form.Item>
                   </Col>
                   <Col lg={6} xs={22} offset={1}>

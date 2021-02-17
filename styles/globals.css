@@ -204,6 +204,14 @@ li.ant-menu-submenu-selected{
     margin-top: auto;
 }
 
+.backLogin{
+    background-image: url('../public/images/login.jpg');
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+}
+
 /* .formFilter{
 
 } */
