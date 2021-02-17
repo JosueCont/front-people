@@ -5,6 +5,7 @@ import Axios from 'axios';
 import {API_URL} from '../../config/config'
 import moment from 'moment'
 import {DownloadOutlined} from '@ant-design/icons'
+import Link from "next/link";
 
 const CollaboratorsReport = (props) => {
     const route = useRouter();
@@ -59,12 +60,60 @@ const CollaboratorsReport = (props) => {
             title: "Acciones",
             dataIndex: "actions",
             key: "actions",
-            render: (item) => {
-                return (<DownloadOutlined />)
+            render: (record, item) => {
+                return (<DownloadOutlined onClick={() => download(item)} />)
             }
         },
     ];
 
+    const download = async (item = null) => {
+        
+        let dataId = {}
+        console.log(item);
+        if(item){
+            dataId = {
+                "id" : item.id
+            }
+        }else{
+            let collaborator = form.getFieldValue("collaborator");
+            let department = form.getFieldValue("department");
+            let job = form.getFieldValue("job");
+            let date_of_admission = form.getFieldValue("date_of_admission");
+            
+            console.log('name', collaborator);
+            if(collaborator){
+                dataId.collaborator = collaborator;
+            }
+            if(department){
+                dataId.department = department;
+            }
+            if(job){
+                dataId.job = job;
+            }
+            if(date_of_admission){
+                dataId.date_of_admission = date_of_admission;
+            }
+        }
+        console.log(dataId);
+        try {
+            let response = await Axios.post(API_URL+`/person/employee-report-export`,dataId);
+            console.log(response);
+
+            const type = response.headers["content-type"];
+            const blob = new Blob([response.data], {
+            type: type,
+            encoding: "UTF-8",
+            });
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = item ? item.name+".csv" : "Reporte_de_colaboradores.csv";
+            link.click();
+          } catch (e) {
+            console.log(e);
+          }
+    }
+
+    
     const getAllPersons = async () => {
         try {
           let response = await Axios.get(API_URL+`/person/person/`);
@@ -181,6 +230,7 @@ const CollaboratorsReport = (props) => {
                 <Col>
                     <Form
                         name="filter"
+                        form={form}
                         layout="vertical"
                         key="formFilter"
                         className="formFilterReports"
@@ -266,7 +316,7 @@ const CollaboratorsReport = (props) => {
                             fontWeight: "bold",
                             color: "white",
                         }}
-                        onClick={() => route.push("holidays/new")}
+                        onClick={() => download()}
                         key="btn_new"
                     >
                         Descargar
