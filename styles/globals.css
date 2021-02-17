@@ -211,6 +211,12 @@ li.ant-menu-submenu-selected{
     background-size: cover;
     height: 100%;
 }
+.tabReports .ant-tabs-tab{
+    padding: 8px 15px !important;
+}
+.tabReports .ant-tabs-tab .anticon{
+    margin-right: 5px !important;
+}
 
 /* .formFilter{
 
