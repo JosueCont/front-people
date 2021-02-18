@@ -25,7 +25,6 @@ import {
     PlusOutlined,
     EyeOutlined,
 } from "@ant-design/icons";
-import SelectPerson from '../../components/selects/SelectPerson';
 
 
 import CollaboratorsReport from "../../components/reports/Collaborators";
@@ -33,6 +32,7 @@ import PayrollReport from '../../components/reports/Payroll';
 import LoanReport from '../../components/reports/Loan';
 import HolidaysReport from '../../components/reports/Holidays';
 import InabilityReport from '../../components/reports/Inability';
+import PermissionsReport from '../../components/reports/Permissions';
 
 
 import { withAuthSync } from "../../libs/auth";
@@ -48,7 +48,7 @@ import PermissionIcon from '../../components/icons/Permissions';
 const Reports = () => {
     const route = useRouter();
     const { TabPane } = Tabs;
-    
+
 
 
     return (
@@ -64,13 +64,13 @@ const Reports = () => {
                             <TabPane 
                                 tab={<UsersIcon />} 
                                 key="1">
-                                <CollaboratorsReport selectCollaborator={<SelectPerson/>} />
+                                <CollaboratorsReport />
                             </TabPane>
                             <TabPane tab={<NominaIcon />} key="2">
                                 <PayrollReport/>
                             </TabPane>
                             <TabPane tab={<LoanIcon />} key="3">
-                                <LoanReport selectCollaborator={<SelectPerson/>}/>
+                                <LoanReport/>
                             </TabPane>
                             <TabPane tab={<HolidayIcon />} key="4">
                                 <HolidaysReport/>
@@ -79,7 +79,7 @@ const Reports = () => {
                                 <InabilityReport/>
                             </TabPane>
                             <TabPane tab={<PermissionIcon/>} key="6">
-                                <InabilityReport/>
+                                <PermissionsReport/>
                             </TabPane>
                         </Tabs>
                     </Col>
