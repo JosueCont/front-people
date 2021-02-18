@@ -61,6 +61,7 @@ const configBusiness = () => {
 
   const getCatalog = (url) => {
     console.log("GET URL-->>> ", url);
+    if (url == "/person/job/") url = "/business/job-department/";
     Axios.get(API_URL + url)
       .then((response) => {
         if (url == "/business/department/")
@@ -117,7 +118,7 @@ const configBusiness = () => {
           url = "/business/job-department/";
         setId("");
         resetForm();
-        if (response.data) getCatalog(url);
+        getCatalog(url);
       })
       .catch((error) => {
         resetForm();
@@ -158,7 +159,7 @@ const configBusiness = () => {
       });
     }
     if (param == "job") {
-      setId(item.id);
+      setId(item.job.id);
       formJob.setFieldsValue({
         name: item.job.name,
         code: item.job.code,
@@ -275,8 +276,8 @@ const configBusiness = () => {
                   style={{ fontSize: "25px" }}
                   onClick={() => {
                     setDeleteRegister({
-                      id: item.id,
-                      url: "/business/department/",
+                      id: item.job.id,
+                      url: "/person/job/",
                     });
                   }}
                 />
@@ -448,6 +449,7 @@ const configBusiness = () => {
     modal ? setModal(false) : setModal(true);
   };
   const setDeleteRegister = (props) => {
+    console.log("ITEM-->>> ", props);
     setDeleted(props);
     showModal();
   };
