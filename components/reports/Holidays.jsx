@@ -25,7 +25,7 @@ const HolidaysReport = (props) => {
 
     const [loading, setLoading] = useState(false);
     const [holidayList, setHolidayList] = useState([]);
-    
+
 
     /* Columnas de tabla */
     const columns = [
@@ -33,13 +33,13 @@ const HolidaysReport = (props) => {
             title: "Colaborador",
             dataIndex: "collaborator",
             key: "collaborator",
-            render: (collaborator) =>{
-                return( 
+            render: (collaborator) => {
+                return (
                     <>
-                    {collaborator.first_name ? collaborator.first_name : null}
-                    {collaborator.flast_name ? collaborator.flast_name : null }
+                        {collaborator.first_name ? collaborator.first_name : null}
+                        {collaborator.flast_name ? collaborator.flast_name : null}
                     </>
-                    )
+                )
             }
         },
         {
@@ -61,14 +61,14 @@ const HolidaysReport = (props) => {
             title: "Días disponibles",
             dataIndex: "collaborator",
             key: "available_days",
-            render: (collaborator) =>{
-                return( 
+            render: (collaborator) => {
+                return (
                     <>
-                    {collaborator
-                    ? collaborator.Available_days_vacation
-                    : null}
+                        {collaborator
+                            ? collaborator.Available_days_vacation
+                            : null}
                     </>
-                    )
+                )
             }
         },
         {
@@ -86,63 +86,63 @@ const HolidaysReport = (props) => {
         setColaborator(values.collaborator);
         setCompanyId(values.company)
         setDepartmentId(values.department)
-        
+
         getAllHolidays(
-          values.collaborator,
-          values.company,
-          values.department
+            values.collaborator,
+            values.company,
+            values.department
         );
-      };
+    };
 
     const getAllHolidays = async (
         collaborator = null,
         company = null,
         department = null,
         status = null
-      ) => {
+    ) => {
         setLoading(true);
         try {
-          let url = `/person/vacation/?`;
-          if (collaborator) {
-            url += `person__id=${collaborator}&`;
-          }
-          if (status) {
-            url += `status=${status}&`;
-          }
-          if (company) {
-            url += `person__job_department__job__unit__id=${company}&`;
-          }
-          if (department) {
-            url += `person__job_department__department__id=${department}&`;
-          }
-    
-          let response = await Axios.get(API_URL+url);
-          console.log('response', response)
-          let data = response.data.results;
-          data.map((item, index) => {
-            item.key = index;
-            console.log(item);
-            return item;
-          });
-    
-          console.log(data);
-    
-          setHolidayList(data);
+            let url = `/person/vacation/?`;
+            if (collaborator) {
+                url += `person__id=${collaborator}&`;
+            }
+            if (status) {
+                url += `status=${status}&`;
+            }
+            if (company) {
+                url += `person__job_department__job__unit__id=${company}&`;
+            }
+            if (department) {
+                url += `person__job_department__department__id=${department}&`;
+            }
+
+            let response = await Axios.get(API_URL + url);
+            console.log('response', response)
+            let data = response.data.results;
+            data.map((item, index) => {
+                item.key = index;
+                console.log(item);
+                return item;
+            });
+
+            console.log(data);
+
+            setHolidayList(data);
         } catch (e) {
-          console.log('error',e );
-        }finally{
+            console.log('error', e);
+        } finally {
             setLoading(false);
 
         }
-      };
+    };
 
     const download = async (item = null) => {
         let dataId = {}
-        
+
         if (item) {
             dataId = {
                 "vacation_id": item.id,
-	            "collaborator": item.collaborator.id
+                "collaborator": item.collaborator.id
             }
         } else {
             if (colaborator) {
@@ -155,7 +155,7 @@ const HolidaysReport = (props) => {
                 dataId.department = departmentId;
             }
         }
-        
+
         try {
             let response = await Axios.post(API_URL + `/person/vacation-report-export`, dataId);
             const type = response.headers["content-type"];
@@ -165,7 +165,7 @@ const HolidaysReport = (props) => {
             });
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = item ? item.collaborator.first_name+item.collaborator.flast_name+ ".csv" : "Reporte_de_Vacaciones.csv";
+            link.download = item ? item.collaborator.first_name + item.collaborator.flast_name + ".csv" : "Reporte_de_Vacaciones.csv";
             link.click();
         } catch (e) {
             console.log(e);
@@ -174,14 +174,14 @@ const HolidaysReport = (props) => {
 
     const onChangeCompany = (val) => {
         form.setFieldsValue({
-          department: null,
+            department: null,
         });
         setCompanyId(val);
-      };
+    };
 
-      useEffect(()=>{
+    useEffect(() => {
         getAllHolidays();
-      },[])
+    }, [])
 
     return (
         <>
@@ -211,11 +211,11 @@ const HolidaysReport = (props) => {
                                 </Form.Item>
                             </Col>
                             <Col>
-                            <SelectDepartment
-                                name="department"
-                                companyId={companyId}
-                                key="selectDepartament"
-                            />
+                                <SelectDepartment
+                                    name="department"
+                                    companyId={companyId}
+                                    key="selectDepartament"
+                                />
                             </Col>
                             <Col style={{ display: "flex" }}>
                                 <Button
@@ -227,6 +227,7 @@ const HolidaysReport = (props) => {
                                     }}
                                     key="buttonFilter"
                                     htmlType="submit"
+                                    loading={loading}
                                 >
                                     Filtrar
                 </Button>
@@ -241,8 +242,9 @@ const HolidaysReport = (props) => {
                             fontWeight: "bold",
                             color: "white",
                         }}
-                        onClick={() =>download()}
+                        onClick={() => download()}
                         key="btn_new"
+                        disabled={loading}
                     >
                         Descargar
           </Button>
@@ -251,6 +253,7 @@ const HolidaysReport = (props) => {
             <Row style={{ padding: "10px 20px 10px 0px" }}>
                 <Col span={24}>
                     <Table
+                        loading={loading}
                         dataSource={holidayList}
                         key="tableHolidays"
                         columns={columns}

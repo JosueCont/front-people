@@ -18,6 +18,7 @@ const LoanReport = (props) => {
     const [loading, setLoading] = useState(false);
     const [personList, setPersonList] = useState([]);
     const [lendingList, setLendingList] = useState([]);
+
     /* PAra la descarga */
     const [person_id, setPerson_id] = useState(null);
     const [type, setType] = useState(null);
@@ -29,8 +30,6 @@ const LoanReport = (props) => {
             title: "Colaborador",
             dataIndex: "periodicity",
             key: "Colaborador",
-            width: 200,
-            fixed: "left",
             render: (person, item) => {
                 return (<>
                     {item.person.first_name} {item.person.mlast_name ? item.person.mlast_name : null}
@@ -140,16 +139,16 @@ const LoanReport = (props) => {
     }
 
     const download = async (item = null) => {
-
+        console.log(item);
         let dataId = {}
         
         if (item) {
             dataId = {
-                "id": item.id
+                "loan_id": item.id
             }
         } else {
             if (person_id) {
-                dataId.person = person_id;
+                dataId.person__id = person_id;
             }
             if (type) {
                 dataId.type = type;
@@ -157,10 +156,11 @@ const LoanReport = (props) => {
             if (periodicity) {
                 dataId.periodicity = periodicity;
             }
-            /* if (dateLoan) {
-                dataId.time = date_of_admission;
-            } */
+            if (dateLoan) {
+                dataId.perioditimestampcity = dateLoan;
+            }
         }
+        console.log('dataID', dataId);
         
         try {
             let response = await Axios.post(API_URL + `/payroll/loan/download_data/`, dataId);
@@ -172,7 +172,7 @@ const LoanReport = (props) => {
             });
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = item ? item.name + ".csv" : "Reporte_de_prestamos.csv";
+            link.download = item ? item.person.first_name+'_'+item.person.mlast_name + ".csv" : "Reporte_de_prestamos.csv";
             link.click();
         } catch (e) {
             console.log(e);
@@ -317,7 +317,6 @@ const LoanReport = (props) => {
                 <Col span={24}>
                     <Table
                         loading={loading}
-                        scroll={{ x: 1500 }}
                         dataSource={lendingList}
                         key="tableHolidays"
                         columns={columns}
