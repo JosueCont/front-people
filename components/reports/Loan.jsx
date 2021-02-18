@@ -18,10 +18,13 @@ const LoanReport = (props) => {
     const [loading, setLoading] = useState(false);
     const [personList, setPersonList] = useState([]);
     const [lendingList, setLendingList] = useState([]);
+
     /* PAra la descarga */
     const [person_id, setPerson_id] = useState(null);
     const [type, setType] = useState(null);
     const [periodicity, setPeriodicity] = useState(null);
+    const [timestampGte, setTimestampGte] = useState(null);
+    const [timestampLte, setTimestampLte] = useState(null);
 
     /* Columnas de tabla */
     const columns = [
@@ -29,8 +32,6 @@ const LoanReport = (props) => {
             title: "Colaborador",
             dataIndex: "periodicity",
             key: "Colaborador",
-            width: 200,
-            fixed: "left",
             render: (person, item) => {
                 return (<>
                     {item.person.first_name} {item.person.mlast_name ? item.person.mlast_name : null}
@@ -102,7 +103,7 @@ const LoanReport = (props) => {
     /* Options for select */
     const optionsType = [
         {
-            label: 'Empresa' ,
+            label: 'Empresa',
             value: 'EMP',
             key: 'EMP',
         },
@@ -114,42 +115,42 @@ const LoanReport = (props) => {
     ]
     const optionPeriodicity = [
         {
-            label: 'Semanal' ,
+            label: 'Semanal',
             value: '1',
             key: 'Semanal',
         },
         {
-            label: 'Catorcenal' ,
+            label: 'Catorcenal',
             value: '2',
             key: 'Catorcenal',
         },
         {
-            label: 'Quincenal' ,
+            label: 'Quincenal',
             value: '3',
             key: 'Quincenal',
         },
         {
-            label: 'Mensual' ,
+            label: 'Mensual',
             value: '4',
             key: 'Mensual',
         }
     ]
 
-    const changeDate = (date, strDate) =>{
+    const changeDate = (date, strDate) => {
         setDateLoan(strDate);
     }
 
     const download = async (item = null) => {
-
+        console.log(item);
         let dataId = {}
-        
+
         if (item) {
             dataId = {
-                "id": item.id
+                "loan_id": item.id
             }
         } else {
             if (person_id) {
-                dataId.person = person_id;
+                dataId.person__id = person_id;
             }
             if (type) {
                 dataId.type = type;
@@ -157,14 +158,16 @@ const LoanReport = (props) => {
             if (periodicity) {
                 dataId.periodicity = periodicity;
             }
-            /* if (dateLoan) {
-                dataId.time = date_of_admission;
-            } */
+            if (timestampGte && timestampLte) {
+                dataId.timestamp__gte = timestampGte;
+                dataId.timestamp__lte = timestampLte;
+            }
         }
-        
+        console.log('dataID', dataId);
+
         try {
             let response = await Axios.post(API_URL + `/payroll/loan/download_data/`, dataId);
-            
+
             const type = response.headers["content-type"];
             const blob = new Blob([response.data], {
                 type: type,
@@ -172,7 +175,7 @@ const LoanReport = (props) => {
             });
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = item ? item.name + ".csv" : "Reporte_de_prestamos.csv";
+            link.download = item ? item.person.first_name + '_' + item.person.mlast_name + ".csv" : "Reporte_de_prestamos.csv";
             link.click();
         } catch (e) {
             console.log(e);
@@ -198,7 +201,7 @@ const LoanReport = (props) => {
         }
     };
 
-    const getLending = async (personID = null, type = null, periodicity = null, date = null) => {
+    const getLending = async (personID = null, type = null, periodicity = null, timestamp__gte = null, timestamp__lte = null) => {
         setLoading(true);
         try {
             let url = API_URL + `/payroll/loan/?`;
@@ -211,14 +214,13 @@ const LoanReport = (props) => {
             if (periodicity) {
                 url += `periodicity=${periodicity}`
             }
-            if (date) {
-                date = moment(`${date} 00:00:01`).tz("America/Merida").format();
-                url += `timestamp=${date}`
+            if (timestamp__gte && timestamp__lte) {
+                url += `timestamp__gte=${timestamp__gte}&timestamp__lte=${timestamp__lte}`;
             }
 
             let response = await Axios.get(url);
             let data = response.data.results;
-            
+
             setLendingList(data);
         } catch (e) {
             console.log(e);
@@ -227,11 +229,20 @@ const LoanReport = (props) => {
         }
     };
 
-    const filterReport =  (values) => {
+    const filterReport = (values) => {
         setPerson_id(values.person__id);
         setType(values.type);
         setPeriodicity(values.periodicity);
-        getLending( values.person__id, values.type, values.periodicity, dateLoan);
+        
+        let d1 = null;
+        let d2 = null;
+        if (dateLoan) {
+            d1 = moment(`${dateLoan} 00:00:01`).tz("America/Merida").format();
+            d2 = moment(`${dateLoan} 23:59:00`).tz("America/Merida").format();
+            setTimestampGte(d1);
+            setTimestampLte(d2);
+        }
+        getLending(values.person__id, values.type, values.periodicity, d1, d2);
     }
 
     useEffect(() => {
@@ -249,7 +260,7 @@ const LoanReport = (props) => {
                 </Col>
                 <Col>
                     <Form
-                    form={form}
+                        form={form}
                         name="filter"
                         layout="vertical"
                         key="formFilter"
@@ -258,7 +269,7 @@ const LoanReport = (props) => {
                     >
                         <Row gutter={[24, 8]}>
                             <Col>
-                            <SelectCollaborator name="person__id" />
+                                <SelectCollaborator name="person__id" />
                             </Col>
                             <Col>
                                 <Form.Item key="type" name="type" label="Tipo">
@@ -317,7 +328,6 @@ const LoanReport = (props) => {
                 <Col span={24}>
                     <Table
                         loading={loading}
-                        scroll={{ x: 1500 }}
                         dataSource={lendingList}
                         key="tableHolidays"
                         columns={columns}
