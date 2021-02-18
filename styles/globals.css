@@ -195,6 +195,10 @@ li.ant-menu-submenu-selected{
     margin-bottom: 0% !important;
 }
 
+.formFilterReports  .ant-form-item{
+    margin-bottom: 0% !important;
+}
+
 .columnRightFilter{
     display:flex;
 }

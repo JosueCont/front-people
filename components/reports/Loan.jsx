@@ -6,6 +6,7 @@ import { API_URL } from '../../config/config'
 import { DownloadOutlined } from '@ant-design/icons'
 import Link from "next/link";
 import moment from "moment-timezone";
+import SelectCollaborator from '../selects/SelectCollaboratorItemForm'
 
 const LoanReport = (props) => {
     const route = useRouter();
@@ -13,9 +14,14 @@ const LoanReport = (props) => {
     const [form] = Form.useForm();
     const { Title } = Typography;
 
+    const [dateLoan, setDateLoan] = useState(null);
     const [loading, setLoading] = useState(false);
     const [personList, setPersonList] = useState([]);
     const [lendingList, setLendingList] = useState([]);
+    /* PAra la descarga */
+    const [person_id, setPerson_id] = useState(null);
+    const [type, setType] = useState(null);
+    const [periodicity, setPeriodicity] = useState(null);
 
     /* Columnas de tabla */
     const columns = [
@@ -93,37 +99,72 @@ const LoanReport = (props) => {
         },
     ];
 
+    /* Options for select */
+    const optionsType = [
+        {
+            label: 'Empresa' ,
+            value: 'EMP',
+            key: 'EMP',
+        },
+        /* {
+            label: 'E-Pesos' ,
+            value: 'EPS',
+            key: 'EPS',
+        } */
+    ]
+    const optionPeriodicity = [
+        {
+            label: 'Semanal' ,
+            value: '1',
+            key: 'Semanal',
+        },
+        {
+            label: 'Catorcenal' ,
+            value: '2',
+            key: 'Catorcenal',
+        },
+        {
+            label: 'Quincenal' ,
+            value: '3',
+            key: 'Quincenal',
+        },
+        {
+            label: 'Mensual' ,
+            value: '4',
+            key: 'Mensual',
+        }
+    ]
+
+    const changeDate = (date, strDate) =>{
+        setDateLoan(strDate);
+    }
+
     const download = async (item = null) => {
 
         let dataId = {}
-        console.log(item);
-        /* if (item) {
+        
+        if (item) {
             dataId = {
                 "id": item.id
             }
         } else {
-            let collaborator = form.getFieldValue("collaborator");
-            let department = form.getFieldValue("department");
-            let job = form.getFieldValue("job");
-            let date_of_admission = form.getFieldValue("date_of_admission");
-
-            console.log('name', collaborator);
-            if (collaborator) {
-                dataId.collaborator = collaborator;
+            if (person_id) {
+                dataId.person = person_id;
             }
-            if (department) {
-                dataId.department = department;
+            if (type) {
+                dataId.type = type;
             }
-            if (job) {
-                dataId.job = job;
+            if (periodicity) {
+                dataId.periodicity = periodicity;
             }
-            if (date_of_admission) {
-                dataId.date_of_admission = date_of_admission;
-            }
-        } */
-        console.log(dataId);
+            /* if (dateLoan) {
+                dataId.time = date_of_admission;
+            } */
+        }
+        
         try {
             let response = await Axios.post(API_URL + `/payroll/loan/download_data/`, dataId);
+            
             const type = response.headers["content-type"];
             const blob = new Blob([response.data], {
                 type: type,
@@ -131,7 +172,7 @@ const LoanReport = (props) => {
             });
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = item.name ? item.name + ".csv" : "Reporte_de_prestamos.csv";
+            link.download = item ? item.name + ".csv" : "Reporte_de_prestamos.csv";
             link.click();
         } catch (e) {
             console.log(e);
@@ -162,7 +203,7 @@ const LoanReport = (props) => {
         try {
             let url = API_URL + `/payroll/loan/?`;
             if (personID) {
-                url += `  =${personID}&`
+                url += `person__id=${personID}&`
             }
             if (type) {
                 url += `type=${type}&`;
@@ -177,7 +218,7 @@ const LoanReport = (props) => {
 
             let response = await Axios.get(url);
             let data = response.data.results;
-            console.log(data);
+            
             setLendingList(data);
         } catch (e) {
             console.log(e);
@@ -187,8 +228,10 @@ const LoanReport = (props) => {
     };
 
     const filterReport =  (values) => {
-        console.log(values);
-        /* getLending(values.person, values.type) */
+        setPerson_id(values.person__id);
+        setType(values.type);
+        setPeriodicity(values.periodicity);
+        getLending( values.person__id, values.type, values.periodicity, dateLoan);
     }
 
     useEffect(() => {
@@ -206,6 +249,7 @@ const LoanReport = (props) => {
                 </Col>
                 <Col>
                     <Form
+                    form={form}
                         name="filter"
                         layout="vertical"
                         key="formFilter"
@@ -214,19 +258,11 @@ const LoanReport = (props) => {
                     >
                         <Row gutter={[24, 8]}>
                             <Col>
-                                <Form.Item
-                                    key="collaborator"
-                                    name="person__id"
-                                    label="Colaborador"
-                                >
-                                    {props.selectCollaborator}
-
-                                    
-                                </Form.Item>
+                            <SelectCollaborator name="person__id" />
                             </Col>
                             <Col>
                                 <Form.Item key="type" name="type" label="Tipo">
-                                    <Select style={{ width: 150 }}></Select>
+                                    <Select style={{ width: 150 }} options={optionsType} allowClear />
                                 </Form.Item>
                             </Col>
                             <Col>
@@ -235,12 +271,12 @@ const LoanReport = (props) => {
                                     name="periodicity"
                                     label="Periodicidad"
                                 >
-                                    <Select style={{ width: 150 }}></Select>
+                                    <Select style={{ width: 150 }} options={optionPeriodicity} allowClear />
                                 </Form.Item>
                             </Col>
                             <Col>
                                 <Form.Item key="timestamp" name="timestamp" label="Fecha">
-                                    <DatePicker format={"YYYY/MM/DD"} />
+                                    <DatePicker format={"YYYY/MM/DD"} onChange={changeDate} />
                                 </Form.Item>
                             </Col>
                             <Col style={{ display: "flex" }}>
@@ -253,6 +289,7 @@ const LoanReport = (props) => {
                                     }}
                                     key="buttonFilter"
                                     htmlType="submit"
+                                    loading={loading}
                                 >
                                     Filtrar
                                 </Button>
@@ -267,8 +304,10 @@ const LoanReport = (props) => {
                             fontWeight: "bold",
                             color: "white",
                         }}
-                        onClick={() => route.push("holidays/new")}
+                        onClick={() => download()}
                         key="btn_new"
+                        disabled={loading}
+
                     >
                         Descargar
           </Button>
