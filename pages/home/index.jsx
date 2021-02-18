@@ -137,6 +137,7 @@ const homeScreen = () => {
 
   ////SEARCH FILTER
   const filter = (value) => {
+    console.log("Valuer-->>> ", value);
     if (value && value.name !== undefined && value.name !== "") {
       filters.first_name = value.name;
     }
@@ -345,7 +346,8 @@ const homeScreen = () => {
   ////IMPORT/EXPORT PERSON
   const exportPersons = () => {
     setLoading(true);
-    filter();
+    filter(formFilter.getFieldsValue());
+    console.log("FILTERS-->> ", filters);
     filters.format = "data";
     Axios.post(API_URL + `/person/person/export_csv/`, filters)
       .then((response) => {
