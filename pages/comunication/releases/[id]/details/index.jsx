@@ -12,7 +12,19 @@ import {
   Layout,
   Menu,
   Breadcrumb,
+  Table,
 } from "antd";
+import {
+  WarningOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ArrowLeftOutlined,
+  InboxOutlined,
+  UploadOutlined,
+  PlusOutlined,
+  FileTextOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import MainLayout from "../../../../../layout/MainLayout";
 import { Global, css } from "@emotion/core";
 import { useRouter } from "next/router";
@@ -29,14 +41,18 @@ const Details = () => {
   const { id } = route.query;
   const [details, setDetails] = useState({});
   const [loading, setLoading] = useState(false);
+  const [files, setFiles] = useState([]);
 
   const getDetails = async () => {
     setLoading(true);
     try {
-      let response = await Axios.get(API_URL+`/noticenter/notification/${id}`);
+      let response = await Axios.get(
+        API_URL + `/noticenter/notification/${id}`
+      );
       let data = response.data;
       console.log("data", data);
       setDetails(data);
+      setFiles(data.files);
       setLoading(false);
       //setList(data.results)
     } catch (e) {
@@ -62,6 +78,25 @@ const Details = () => {
       getDetails();
     }
   }, [route]);
+
+  const colFile = [
+    {
+      title: "Adjunto",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <a href={item.file}>
+                  <FileTextOutlined style={{ fontSize: "30px" }} />
+                </a>
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
+  ];
 
   return (
     <>
@@ -164,7 +199,9 @@ const Details = () => {
                         </Row>
                       </Col>
                     </Row>
+                    <Table columns={colFile} dataSource={files} />
                   </Col>
+
                   <Col span={24} style={{ textAlign: "right" }}>
                     <Button
                       onClick={() => route.push("/comunication/releases")}

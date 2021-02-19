@@ -20,6 +20,7 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Title from "antd/lib/typography/Title";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
+import SelectCompany from "../../../components/selects/SelectCompany";
 
 const { Content } = Layout;
 
@@ -39,10 +40,11 @@ const configBusiness = () => {
   const [relationsShip, setRelationsShip] = useState([]);
   const [typesDocument, setTypesDocuments] = useState([]);
   const [banks, setBanks] = useState([]);
+  const [selectCompany, setselectCompany] = useState([]);
   const [id, setId] = useState("");
   const urls = [
     "/business/department/",
-    "/business/job-department/",
+    "/person/job/",
     "/person/person-type/",
     "/setup/relationship/",
     "/setup/document-type/",
@@ -59,14 +61,35 @@ const configBusiness = () => {
     });
   }, []);
 
+  const getCompanies = async () => {
+    try {
+      let response = await Axios.get(API_URL + `/business/node/`);
+      let data = response.data.results;
+      let options = [];
+      data.map((item) => {
+        options.push({
+          value: item.id,
+          label: item.name,
+          key: item.name + item.id,
+        });
+      });
+      setselectCompany(options);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   const getCatalog = (url) => {
-    console.log("GET URL-->>> ", url);
-    if (url == "/person/job/") url = "/business/job-department/";
     Axios.get(API_URL + url)
       .then((response) => {
-        if (url == "/business/department/")
+        if (url == "/business/department/") {
+          console.log("DEP-->> ", response.data.results);
           setDepartments(response.data.results);
-        if (url == "/business/job-department/") setJobs(response.data.results);
+        }
+        if (url == "/person/job/") {
+          console.log("Job-->> ", response.data.results);
+          setJobs(response.data.results);
+        }
         if (url == "/person/person-type/")
           setTypesPerson(response.data.results);
         if (url == "/setup/relationship/")
@@ -74,6 +97,7 @@ const configBusiness = () => {
         if (url == "/setup/document-type/")
           setTypesDocuments(response.data.results);
         if (url == "/setup/banks/") setBanks(response.data.results);
+        getCompanies();
         setLoadingTable(false);
       })
       .catch((error) => {
@@ -84,12 +108,8 @@ const configBusiness = () => {
 
   const onFinishForm = (value, url) => {
     if (id != "") {
-      if (url == "/business/job-department/create_job_for_department/") {
-        url = "/business/job-department/update_job_for_department/";
-        value.job_id = id;
-        console.log("ID->> ", id, " URL-->> ", url);
-        updateRegister(url, value);
-      } else updateRegister(url, value);
+      value.id = id;
+      updateRegister(url, value);
     } else saveRegister(url, value);
   };
 
@@ -111,11 +131,8 @@ const configBusiness = () => {
 
   const saveRegister = (url, data) => {
     setLoadingTable(true);
-    console.log("DATA-->>> ", data);
     Axios.post(API_URL + url, data)
       .then((response) => {
-        if (url == "/business/job-department/create_job_for_department/")
-          url = "/business/job-department/";
         setId("");
         resetForm();
         getCatalog(url);
@@ -128,15 +145,8 @@ const configBusiness = () => {
       });
   };
   const updateRegister = (url, value) => {
-    let newurl = url;
-    if (url != "/business/job-department/update_job_for_department/") {
-      newurl = url + `${id}/`;
-    }
-    Axios.put(API_URL + newurl, value)
+    Axios.put(API_URL + url + `${value.id}/`, value)
       .then((response) => {
-        console.log("url--AAA ", url);
-        if (url == "/business/job-department/update_job_for_department/")
-          url = "/business/job-department/";
         setId("");
         resetForm();
         setLoadingTable(true);
@@ -153,16 +163,18 @@ const configBusiness = () => {
     if (param == "dep") {
       setId(item.id);
       formDepartment.setFieldsValue({
+        node: item.node.id,
         name: item.name,
         description: item.description,
         code: item.code,
       });
     }
     if (param == "job") {
-      setId(item.job.id);
+      setId(item.id);
       formJob.setFieldsValue({
-        name: item.job.name,
-        code: item.job.code,
+        node: item.department.node.id,
+        name: item.name,
+        code: item.code,
         department: item.department.id,
       });
     }
@@ -197,6 +209,12 @@ const configBusiness = () => {
   };
 
   const colDepartment = [
+    {
+      title: "Empresa",
+      render: (item) => {
+        return <>{item.node.name}</>;
+      },
+    },
     {
       title: "Nombre",
       dataIndex: "name",
@@ -241,12 +259,12 @@ const configBusiness = () => {
   ];
   const colJob = [
     {
-      title: "Nombre",
+      title: "Empresa",
       render: (item) => {
-        return <>{item.job.name}</>;
+        return <>{item.department.name}</>;
       },
-      key: "key",
     },
+
     {
       title: "Departamento",
       render: (item) => {
@@ -254,9 +272,16 @@ const configBusiness = () => {
       },
     },
     {
+      title: "Nombre",
+      render: (item) => {
+        return <>{item.name}</>;
+      },
+      key: "key",
+    },
+    {
       title: "Código",
       render: (item) => {
-        return <>{item.job.code}</>;
+        return <>{item.code}</>;
       },
     },
     {
@@ -276,7 +301,7 @@ const configBusiness = () => {
                   style={{ fontSize: "25px" }}
                   onClick={() => {
                     setDeleteRegister({
-                      id: item.job.id,
+                      id: item.id,
                       url: "/person/job/",
                     });
                   }}
@@ -449,12 +474,10 @@ const configBusiness = () => {
     modal ? setModal(false) : setModal(true);
   };
   const setDeleteRegister = (props) => {
-    console.log("ITEM-->>> ", props);
     setDeleted(props);
     showModal();
   };
   const deleteRegister = () => {
-    console.log("Delete-->>> ", deleted);
     Axios.delete(API_URL + deleted.url + `${deleted.id}/`)
       .then((response) => {
         resetForm();
@@ -482,6 +505,21 @@ const configBusiness = () => {
     formBank.resetFields();
   };
 
+  const changeNode = (value) => {
+    Axios.get(API_URL + `/business/department/?node=${value}`)
+      .then((response) => {
+        let data = response.data.results;
+        console.log("data", data);
+        data = data.map((a) => {
+          return { label: a.name, value: a.id, key: a.name + a.id };
+        });
+        setSelectDep(data);
+      })
+      .catch((error) => {
+        setSelectDep([]);
+      });
+  };
+
   return (
     <>
       <MainLayout currentKey="3.1">
@@ -507,6 +545,15 @@ const configBusiness = () => {
                 }
               >
                 <Row>
+                  <Col lg={6} xs={22} offset={1}>
+                    <Form.Item
+                      name="node"
+                      label="Empresa"
+                      rules={[ruleRequired]}
+                    >
+                      <Select options={selectCompany} />
+                    </Form.Item>
+                  </Col>
                   <Col lg={6} xs={22} offset={1}>
                     <Form.Item
                       name="name"
@@ -547,14 +594,18 @@ const configBusiness = () => {
               <Form
                 layout={"vertical"}
                 form={formJob}
-                onFinish={(values) =>
-                  onFinishForm(
-                    values,
-                    "/business/job-department/create_job_for_department/"
-                  )
-                }
+                onFinish={(values) => onFinishForm(values, "/person/job/")}
               >
                 <Row>
+                  <Col lg={6} xs={22} offset={1}>
+                    <Form.Item
+                      node="node"
+                      label="Empresa"
+                      rules={[ruleRequired]}
+                    >
+                      <Select options={selectCompany} onChange={changeNode} />
+                    </Form.Item>
+                  </Col>
                   <Col lg={6} xs={22} offset={1}>
                     <Form.Item
                       name="department"
