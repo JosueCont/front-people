@@ -35,7 +35,7 @@ const Incapacityform = (props) => {
 
     const { Option } = Select;
     const { TextArea } = Input;
-    const [loading, setLoading] = useState(props.loading ? props.loading : true);
+    
 
     const [fileList, setFileList] = useState([]);
     const [allPersons, setAllPersons] = useState(null);
@@ -54,13 +54,18 @@ const Incapacityform = (props) => {
     /* const [availableDays, setAvailableDays] = useState(null); */
 
     const changePerson = (value) => {
-        console.log(value);
+
+        
         if (value) {
             let index = allPersons.find((data) => data.khonnect_id === value);
             console.log(index);
-            if (index.job_department) {
+            if(index && index.job[0] &&  index.job[0].department){
                 form.setFieldsValue({
-                    job: index.job_department.department.name,
+                    job: index.job[0].department.name
+                });
+            }else{
+                form.setFieldsValue({
+                    job: null
                 });
             }
             setUrlPhoto(index.photo ? index.photo : null);
@@ -178,7 +183,7 @@ const Incapacityform = (props) => {
                         labelAlign={"left"}
                     >
                         <Select
-                            disabled={props.readOnly}
+                            disabled={props.readOnly || props.sending}
                             /* options={personList} */
                             key="selectPerson"
                             onChange={changePerson}
@@ -223,7 +228,7 @@ const Incapacityform = (props) => {
                     >
 
                         <Upload
-                            disabled={props.readOnly}
+                            disabled={props.readOnly || props.sending}
                             listType="picture-card"
                             fileList={fileList}
                             onChange={onchangeFile}
@@ -246,7 +251,7 @@ const Incapacityform = (props) => {
                         labelAlign={"left"}
                     >
                         <DatePicker
-                            disabled={props.readOnly}
+                            disabled={props.readOnly || props.sending}
                             key="departure_date"
                             style={{ width: "100%" }}
                             onChange={props.onChangeDepartureDate}
@@ -259,7 +264,7 @@ const Incapacityform = (props) => {
                         labelAlign={"left"}
                     >
                         <DatePicker
-                            disabled={props.readOnly}
+                            disabled={props.readOnly || props.sending}
                             key="return_date"
                             style={{ width: "100%" }}
                             onChange={props.onChangeReturnDate}
@@ -301,6 +306,7 @@ const Incapacityform = (props) => {
                             key="save"
                             htmlType="submit"
                             style={{ padding: "0 50px", marginLeft: 15 }}
+                            loading={props.sending}
                         >
                             {props.edit ? "Actualizar datos" : "Guardar"}
                         </Button>

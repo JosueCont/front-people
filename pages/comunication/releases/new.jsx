@@ -48,6 +48,7 @@ const Newrelease = () => {
   const [bussinessList, setBusinessList] = useState(null);
   const [messageAlert, setMessageAlert] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const [companyRequired, setCompanyRequired] = useState(true);
 
   /* For input file */
   const [disabled, setDisabled] = useState(true);
@@ -294,6 +295,11 @@ const Newrelease = () => {
     } catch (error) {}
   };
 
+  const changeSendToAll = (e) => {
+      console.log(e)
+    setCompanyRequired(!e);
+  };
+
   const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
@@ -375,7 +381,7 @@ const Newrelease = () => {
                     label="Enviar a todos"
                     labelAlign="left"
                   >
-                    <Switch value={false} />
+                    <Switch value={false} onChange={changeSendToAll} />
                   </Form.Item>
                 </Col>
 
@@ -386,7 +392,12 @@ const Newrelease = () => {
                         name={"target_company"}
                         label="Empresa"
                         labelCol={{ span: 10 }}
-                        rules={[ruleRequired]}
+                        rules={[
+                            {
+                              required: companyRequired,
+                              message: 'Este campo es requerido',
+                            },
+                          ]}
                       >
                         <SelectCompany onChange={onChangecompany} />
                       </Form.Item>

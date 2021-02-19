@@ -85,6 +85,11 @@ const Incapacity = () => {
         let response = await Axios.get(API_URL+url);
         let data = response.data.results;
         console.log('data',data);
+        data = data.map((item) => {
+            item.key = item.id
+            return item;
+        });
+
         setIncapacityList(data);
 
     } catch (e) {
@@ -133,7 +138,7 @@ const Incapacity = () => {
   return (
     <MainLayout currentKey="7.4">
       <Breadcrumb className={"mainBreadcrumb"}>
-        <BreadcrumbHome />
+        <Breadcrumb.Item className="pointer" onClick={() => route.push('/home') }>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Incapacidad</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
@@ -216,9 +221,9 @@ const Incapacity = () => {
                   </>
                 )}
               />
-              <Column title="Empresa" dataIndex="business" key="business"
+              <Column title="Empresa" dataIndex="collaborator" key="business"
               render={(collaborator, record) => (
-                collaborator && collaborator.job && collaborator.job.department && collaborator.job.department.node ? collaborator.job.department.node.name : null
+                collaborator && collaborator.job[0] &&  collaborator.job[0].department && collaborator.job[0].department.node ? collaborator.job[0].department.node.name : null
             )}
                />
               <Column
@@ -226,7 +231,7 @@ const Incapacity = () => {
                 dataIndex="collaborator"
                 key="department"
                 render={(collaborator, record) => (
-                    collaborator && collaborator.job && collaborator.job.department ? collaborator.job.department.name : null
+                    collaborator && collaborator.job[0] && collaborator.job[0].department ? collaborator.job[0].department.name : null
                 )}
               />
               <Column
