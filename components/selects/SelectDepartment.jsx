@@ -40,7 +40,7 @@ export default function SelectDepartment (props) {
     }) */
 
     useEffect(()=>{
-        
+        setOptions([])
         if(props.companyId){
             console.log('companyId',props.companyId)
             getDepartament();

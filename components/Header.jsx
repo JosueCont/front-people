@@ -203,6 +203,12 @@ const headerCustom = (props) => {
             >
               Permisos
             </Menu.Item>
+            <Menu.Item
+              key="7.4"
+              onClick={() => router.push({ pathname: "/incapacity" })}
+            >
+              Incapacidad
+            </Menu.Item>
           </SubMenu>
           <Menu.Item
             key="9"

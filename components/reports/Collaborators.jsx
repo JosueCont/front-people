@@ -21,6 +21,12 @@ const CollaboratorsReport = (props) => {
     const [collaboratorList, setCollaboratorList] = useState([]);
     const [jobList, SetJobList] = useState([]);
 
+    /* To filter */
+    const [collaborator, setCollaborator] = useState(null);
+    const [department, setDepartment] = useState(null);
+    const [job, setJob] = useState(null);
+
+
     /* Columnas de tabla */
     const columns = [
         {
@@ -69,17 +75,11 @@ const CollaboratorsReport = (props) => {
     const download = async (item = null) => {
         
         let dataId = {}
-        console.log(item);
         if(item){
             dataId = {
                 "id" : item.id
             }
         }else{
-            let collaborator = form.getFieldValue("collaborator");
-            let department = form.getFieldValue("department");
-            let job = form.getFieldValue("job");
-            let date_of_admission = form.getFieldValue("date_of_admission");
-            
             console.log('name', collaborator);
             if(collaborator){
                 dataId.collaborator = collaborator;
@@ -90,8 +90,8 @@ const CollaboratorsReport = (props) => {
             if(job){
                 dataId.job = job;
             }
-            if(date_of_admission){
-                dataId.date_of_admission = date_of_admission;
+            if(dateOfAdmission){
+                dataId.date_of_admission = dateOfAdmission;
             }
         }
         console.log(dataId);
@@ -205,6 +205,9 @@ const CollaboratorsReport = (props) => {
     const filterReport = async (values) => {
         values['date_of_admission'] = dateOfAdmission;
         console.log(values);
+        setCollaborator(values.collaborator);
+        setDepartment(values.department);
+        setJob(values.job);
         getCollaborators(values);
     }
 

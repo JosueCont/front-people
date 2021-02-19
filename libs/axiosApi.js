@@ -17,8 +17,10 @@ const axiosApi = axios.create(config);
 
 axiosApi.interceptors.request.use(
   async function (config) {
-    let token = cookie.get("token") ? cookie.get("token") : "";
-    if (token) config.headers.Authorization = `JWT ${token}`;
+    let token = JSON.parse(cookie.get("token"));
+    config.headers.khonnect_id = token.user_id;
+    const ct = "content-type"
+    
     return config;
   },
   function (error) {

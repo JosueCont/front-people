@@ -126,22 +126,20 @@ const PermissionsReport = (props) => {
 
     const download = async (item = null) => {
         let dataId = {}
-
         if (item) {
             dataId = {
-                "id": item.id,
-                "collaborator": item.collaborator.id
+                "permit_id": item.id
             }
         } else {
-            /* if (colaborator) {
-                dataId.person = colaborator;
-            } */
-            if (companyId) {
-                dataId.node = companyId;
+            if (colaborator) {
+                dataId.person__id = colaborator;
             }
-            /* if (departmentId) {
-                dataId.department = departmentId;
-            } */
+            if (companyId) {
+                dataId.business_id = companyId;
+            }
+            if (departmentId) {
+                dataId.department_id = departmentId;
+            }
         }
 
         try {
