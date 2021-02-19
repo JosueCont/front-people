@@ -112,6 +112,7 @@ const UploadPayroll = () => {
         <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
       </Breadcrumb>
+
       <Content className="site-layout">
         <div style={{ padding: "1%", float: "right" }}>
           <Button
@@ -126,10 +127,7 @@ const UploadPayroll = () => {
             Agregar
           </Button>
         </div>
-        <div
-          className="site-layout-background"
-          style={{ padding: 24, minHeight: 380, height: "100%" }}
-        >
+        <div style={{ padding: 24, minHeight: 380, height: "100%" }}>
           <Table
             size="small"
             columns={columns}
