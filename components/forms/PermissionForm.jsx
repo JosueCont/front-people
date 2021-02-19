@@ -44,10 +44,10 @@ const Permissionform = (props) => {
     console.log(value);
     if (value) {
       let index = allPersons.find((data) => data.id === value);
-      console.log(index);
-      if (index.job_department) {
+      console.log("PERSONA-->>> ", index);
+      if (index.job) {
         formPermission.setFieldsValue({
-          job: index.job_department.department.name,
+          job: index.job[0].department.name,
         });
       }
       setUrlPhoto(index.photo ? index.photo : null);
@@ -280,6 +280,7 @@ const Permissionform = (props) => {
               key="save"
               htmlType="submit"
               style={{ padding: "0 50px", marginLeft: 15 }}
+              type="primary"
             >
               {props.edit ? "Actualizar datos" : "Guardar"}
             </Button>
