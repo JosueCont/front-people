@@ -116,6 +116,7 @@ const personDetailForm = () => {
   const [experienceType, setExperienceType] = useState([]);
   const [reasonSeparation, setReasonSeparation] = useState([]);
   const [laborRelationship, setLaborRelationship] = useState([]);
+  const [selectCompany, setselectCompany] = useState([]);
 
   ////STATE TABLES
   const [phones, setPhones] = useState([]);
@@ -396,21 +397,6 @@ const personDetailForm = () => {
         console.log(e);
       });
 
-    /////DEPARTMENTS
-    Axios.get(API_URL + `/business/department/`)
-      .then((response) => {
-        if (response.status === 200) {
-          let dep = response.data.results;
-          dep = dep.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setDepartments(dep);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-
     ////GET PERSONS
     Axios.get(API_URL + `/person/person/`)
       .then((response) => {
@@ -426,14 +412,37 @@ const personDetailForm = () => {
       .catch((e) => {
         console.log(e);
       });
+
+    Axios.get(API_URL + `/business/node/`)
+      .then((response) => {
+        let data = response.data.results;
+        let options = [];
+        data.map((item) => {
+          options.push({
+            value: item.id,
+            label: item.name,
+            key: item.name + item.id,
+          });
+        });
+        setselectCompany(options);
+      })
+      .catch((error) => {
+        console.log(error);
+        setselectCompany([]);
+      });
   };
 
   ////PERSON
   const onFinishPerson = (value) => {
-    value.birth_date = birthDate;
-    value.date_of_admission = dateAdmission;
+    if (birthDate) value.birth_date = birthDate;
+    else delete value["birth_date"];
+    if (dateAdmission) value.date_of_admission = dateAdmission;
+    else delete value["date_of_admission"];
     value.id = router.query.id;
     value.is_active = isActive;
+    if (value.node) delete value["node"];
+    if (value.department) delete value["department"];
+    if (value.groups) delete value["groups"];
     updatePerson(value);
   };
 
@@ -454,6 +463,7 @@ const personDetailForm = () => {
           photo: response.data.photo,
           civil_status: response.data.civil_status,
           report_to: response.data.report_to,
+          periodicity: response.data.periodicity,
         });
         if (response.data.person_type)
           formPerson.setFieldsValue({
@@ -468,6 +478,16 @@ const personDetailForm = () => {
         if (response.data.birth_date)
           formPerson.setFieldsValue({
             birth_date: moment(response.data.birth_date),
+          });
+        if (response.data.job)
+          formPerson.setFieldsValue({
+            node: job[0].department.node.id,
+            department: job[0].department.id,
+            job: job[0].id,
+          });
+        if (response.data.node)
+          formPerson.setFieldsValue({
+            node: node[0].id,
           });
         setDateAdmission(response.data.date_of_admission);
         setBirthDate(response.data.birth_date);
@@ -502,6 +522,7 @@ const personDetailForm = () => {
           is_active: response.data.is_active,
           civil_status: response.data.civil_status,
           report_to: response.data.report_to,
+          periodicity: response.data.periodicity,
         });
         if (response.data.person_type)
           formPerson.setFieldsValue({
@@ -515,6 +536,13 @@ const personDetailForm = () => {
           formPerson.setFieldsValue({
             birth_date: moment(response.data.birth_date),
           });
+        // if (response.data.job)
+        //   formPerson.setFieldsValue({
+        //     node: job[0].department.node.id,
+        //     department: job[0].department.id,
+        //     job: job[0].id,
+        //   });
+
         setBirthDate(response.data.birth_date);
         setIsActive(response.data.is_active);
         if (response.data.photo) setPhoto(response.data.photo);
@@ -1550,23 +1578,6 @@ const personDetailForm = () => {
     modal ? setModal(false) : setModal(true);
   };
 
-  /////GET JOBS
-  const onChangeDepartment = (value) => {
-    Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
-      .then((response) => {
-        if (response.status === 200) {
-          let job = response.data;
-          job = job.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setJobs(job);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const uploadButton = (
     <div>
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -1682,6 +1693,51 @@ const personDetailForm = () => {
     },
   ];
 
+  const changeNode = (value) => {
+    formPerson.setFieldsValue({
+      job: null,
+      department: null,
+    });
+    setDepartments([]);
+    setJobs([]);
+    Axios.get(API_URL + `/business/department/?node=${value}`)
+      .then((response) => {
+        if (response.status === 200) {
+          let dep = response.data.results;
+          dep = dep.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setDepartments(dep);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const onChangeDepartment = (value) => {
+    ////JOBS
+    formPerson.setFieldsValue({
+      job: null,
+    });
+    setJobs([]);
+    console.log("DEPA-->> ", value);
+    Axios.get(API_URL + `/person/job/?department=${value}`)
+      .then((response) => {
+        console.log("JOB-->> ", response);
+        if (response.status === 200) {
+          let job = response.data.results;
+          job = job.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setJobs(job);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   return (
     <MainLayout currentKey="1">
       <Content className="site-layout">
@@ -1736,15 +1792,44 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="node">
+                          <Select
+                            placeholder="Empresa"
+                            options={selectCompany}
+                            onChange={changeNode}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="department">
+                          <Select
+                            options={departments}
+                            onChange={onChangeDepartment}
+                            placeholder="Departamento"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="job">
+                          <Select
+                            options={jobs}
+                            placeholder="Puesto de trabajo"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="report_to" label="Reporta a ">
                           <Select options={people} />
                         </Form.Item>
                       </Col>
-                      <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="periodicity" label="Periodicidad">
+                      <Col lg={15} xs={22} offset={1}>
+                        <Form.Item name="groups" label="Perfil de seguridad">
                           <Select
-                            options={periodicity}
-                            placeholder="Selecciona una opción"
+                            mode="multiple"
+                            options={groups}
+                            showArrow
+                            style={{ width: "100%" }}
+                            placeholder="Perfiles de seguridad"
                           />
                         </Form.Item>
                       </Col>
@@ -1801,6 +1886,14 @@ const personDetailForm = () => {
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="imss" label="IMSS">
                           <Input maxLength={11} />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="periodicity" label="Periodicidad">
+                          <Select
+                            options={periodicity}
+                            placeholder="Selecciona una opción"
+                          />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -1889,49 +1982,6 @@ const personDetailForm = () => {
               </Form>
               <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
               <Tabs tabPosition={"left"}>
-                <TabPane tab="Asignar empresa " key="tab_0">
-                  <Form
-                    layout={"vertical"}
-                    form={formNode}
-                    onFinish={formPersonNode}
-                  >
-                    <Row>
-                      <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="node" label="Unidad organizacional">
-                          <SelectCompany />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="department" label="Departamento">
-                          <Select
-                            options={departments}
-                            onChange={onChangeDepartment}
-                            placeholder="Departamento"
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="job" label="Puesto">
-                          <Select
-                            options={jobs}
-                            placeholder="Selecciona un puesto"
-                          />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row justify={"end"}>
-                      <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                          Guardar
-                        </Button>
-                      </Form.Item>
-                    </Row>
-                  </Form>
-                  <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colNode} dataSource={nodesPerson} />
-                  </Spin>
-                </TabPane>
-
                 <TabPane tab="Datos generales" key="tab_1">
                   <Form
                     layout={"vertical"}
