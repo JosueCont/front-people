@@ -102,6 +102,7 @@ const Incapacity = () => {
 
   const filter = async (values) => {
     setSending(true);
+    setIncapacityList([])
     console.log(values)
     getIncapacity(
       values.collaborator,
@@ -215,13 +216,17 @@ const Incapacity = () => {
                   </>
                 )}
               />
-              <Column title="Empresa" dataIndex="business" key="business" />
+              <Column title="Empresa" dataIndex="business" key="business"
+              render={(collaborator, record) => (
+                collaborator && collaborator.job && collaborator.job.department && collaborator.job.department.node ? collaborator.job.department.node.name : null
+            )}
+               />
               <Column
                 title="Departamento"
                 dataIndex="collaborator"
                 key="department"
                 render={(collaborator, record) => (
-                    collaborator ? collaborator.job_department.department.name : null
+                    collaborator && collaborator.job && collaborator.job.department ? collaborator.job.department.name : null
                 )}
               />
               <Column

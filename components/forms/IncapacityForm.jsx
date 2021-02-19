@@ -113,14 +113,14 @@ const Incapacityform = (props) => {
                     ? moment(props.details.return_date, "YYYY-MM-DD")
                     : null
             });
-            if (
+            /* if (
                 props.details.collaborator &&
                 props.details.collaborator.job_department.job
             ) {
                 form.setFieldsValue({
                     job: props.details.collaborator.job_department.job.name,
                 });
-            }
+            } */
 
             setUrlPhoto(
                 props.details.collaborator && props.details.collaborator.photo
