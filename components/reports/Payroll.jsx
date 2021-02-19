@@ -4,6 +4,7 @@ import { Table, Row, Col, Select, Form, DatePicker, Button, Input, Typography } 
 import { API_URL } from "../../config/config";
 import Axios from 'axios';
 import moment from 'moment';
+import { DownloadOutlined } from '@ant-design/icons'
 import SelectCompany from '../selects/SelectCompany';
 import SelectDepartment from '../selects/SelectDepartment';
 import SelectCollaborator from '../selects/SelectCollaboratorItemForm';
@@ -99,6 +100,9 @@ const PayrollReport = (props) => {
             title: "Acciones",
             dataIndex: "actions",
             key: "actions",
+            render: (record, item) => {
+                return (<DownloadOutlined onClick={() => download(item)} />)
+            }
         },
     ];
     
@@ -196,8 +200,7 @@ const PayrollReport = (props) => {
 
         if (item) {
             dataId = {
-                "vacation_id": item.id,
-                "collaborator": item.collaborator.id
+                "id": item.id,
             }
         } else {
             if (collaborator) {
@@ -226,7 +229,8 @@ const PayrollReport = (props) => {
             });
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = item ? item.collaborator.first_name + item.collaborator.flast_name + ".csv" : "Reporte_de_Vacaciones.csv";
+            /* link.download = item ? item.collaborator.first_name + item.collaborator.flast_name + ".csv" : "Reporte_de_Vacaciones.csv"; */
+            link.download = "Reporte_de_nomina.csv";
             link.click();
         } catch (e) {
             console.log(e);
