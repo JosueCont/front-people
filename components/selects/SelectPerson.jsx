@@ -68,7 +68,7 @@ export default function SelectPerson (props) {
 
     useEffect(()=>{
         getPersons();
-    },[route])
+    },[route]);
 
 
 

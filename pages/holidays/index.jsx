@@ -9,7 +9,6 @@ import { API_URL } from "../../config/config";
 
 import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
-import BreadcrumbHome from "../../components/BreadcrumbHome";
 
 import {
   DeleteOutlined,
@@ -135,7 +134,7 @@ const Holidays = () => {
   return (
     <MainLayout currentKey="5">
       <Breadcrumb className={"mainBreadcrumb"}>
-        <BreadcrumbHome />
+        <Breadcrumb.Item key="bHome" className="pointer" onClick={() => route.push({pathname: "/home"}) }>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

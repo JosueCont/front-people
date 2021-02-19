@@ -79,9 +79,12 @@ const IncapacityEdit = () => {
         data.append("departure_date", departure_date)
         data.append("return_date", return_date)
         data.append("khonnect_id", values.khonnect_id);
-        data.append("document", file['originFileObj'])
+        if(file){
+            data.append("document", file['originFileObj'])
+        }
+        
         try {
-            let response = await Axios.post(API_URL + `/person/incapacity/${id}/`, data);
+            let response = await Axios.patch(API_URL + `/person/incapacity/${id}/`, data);
             let resData = response.data;
             route.push("/incapacity");
             notification["success"]({
