@@ -56,9 +56,9 @@ const Incapacityform = (props) => {
     if (value) {
       let index = allPersons.find((data) => data.khonnect_id === value);
       console.log(index);
-      if (index && index.job[0] && index.job[0].department) {
+      if (index && index.job[0]) {
         form.setFieldsValue({
-          job: index.job[0].department.name,
+          job: index.job[0].name,
         });
       } else {
         form.setFieldsValue({
