@@ -239,7 +239,6 @@ const Lendingform = (props) => {
           </Form.Item>
           <Button
             onClick={() => route.push("/lending")}
-            type="dashed"
             key="cancel"
             style={{ padding: "0 50px" }}
           >
@@ -273,6 +272,7 @@ const Lendingform = (props) => {
             loading={props.sending}
             key="save"
             htmlType="submit"
+            type="primary"
             style={{ padding: "0 50px", marginLeft: 15 }}
           >
             {props.edit ? "Actualizar datos" : "Guardar"}

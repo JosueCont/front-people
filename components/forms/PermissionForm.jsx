@@ -184,8 +184,9 @@ const Permissionform = (props) => {
             name="job"
             labelCol={{ span: 9 }}
             labelAlign={"left"}
+            readOnly
           >
-            <Input disabled={props.readOnly} />
+            <Input readOnly />
           </Form.Item>
           <Form.Item
             name="requested_days"
@@ -248,7 +249,6 @@ const Permissionform = (props) => {
           </Form.Item>
           <Button
             onClick={props.onCancel}
-            type="dashed"
             key="cancel"
             style={{ padding: "0 50px" }}
           >

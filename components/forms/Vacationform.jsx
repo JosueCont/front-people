@@ -196,6 +196,7 @@ const Vacationform = (props) => {
             name="job"
             labelCol={{ span: 9 }}
             labelAlign={"left"}
+            readOnly
           >
             <Input readOnly />
           </Form.Item>
