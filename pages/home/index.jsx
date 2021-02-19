@@ -436,7 +436,7 @@ const homeScreen = () => {
               <Row>
                 <Col lg={7} xs={22} offset={1}>
                   <Form.Item name="name">
-                    <Input placeholder="Nombre" />
+                    <Input placeholder="Nombre, Apellido" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} xs={22} offset={1}>
@@ -459,11 +459,14 @@ const homeScreen = () => {
                 <Col lg={2} xs={2} offset={1}>
                   <Form.Item>
                     <Button
-                      icon={<SearchOutlined />}
-                      type="primary"
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                      }}
                       htmlType="submit"
                     >
-                      Buscar
+                      Filtrar
                     </Button>
                   </Form.Item>
                 </Col>
@@ -543,14 +546,9 @@ const homeScreen = () => {
         okText="Si, Eliminar"
         cancelText="Cancelar"
       >
-        <Alert
-          message="Warning"
-          description="Al eliminar este registro perderá todos los datos
-                    relacionados a el de manera permanente.
-                    ¿Está seguro de querer eliminarlo?"
-          type="warning"
-          showIcon
-        />
+        Al eliminar este registro perderá todos los datos relacionados a el de
+        manera permanente. ¿Está seguro de querer eliminarlo
+        <br />
         <ListElementsToDelete personsDelete={personsToDelete} />
       </Modal>
     </MainLayout>

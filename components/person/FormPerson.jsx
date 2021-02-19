@@ -37,7 +37,10 @@ const FormPerson = (props) => {
     if (value.department) delete value["department"];
     if (value.password != value.passwordTwo)
       message.error("Las contraseñas no coinsiden.");
-    else createPerson(value);
+    else {
+      delete value["passwordTwo"];
+      createPerson(value);
+    }
   };
 
   const getValueSelects = async (id) => {
