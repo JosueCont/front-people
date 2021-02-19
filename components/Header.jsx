@@ -240,12 +240,7 @@ const headerCustom = (props) => {
         onOk={() => logoutAuth()}
         onCancel={() => setModalLogOut(false)}
       >
-        <Alert
-          message="Cerrar sesión"
-          description="¿Está seguro de cerrar sesión?"
-          type="warning"
-          showIcon
-        />
+        ¿Está seguro de cerrar sesión?
       </Modal>
     </>
   );
