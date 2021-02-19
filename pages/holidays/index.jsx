@@ -77,10 +77,10 @@ const Holidays = () => {
         url += `status=${status}&`;
       }
       if (company) {
-        url += `person__job_department__job__unit__id=${company}&`;
+        url += `person__job__department__node__id=${company}&`;
       }
       if (department) {
-        url += `person__job_department__department__id=${department}&`;
+        url += `person__job__department__id=${department}&`;
       }
 
       let response = await Axios.get(API_URL+url);
