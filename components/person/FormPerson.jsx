@@ -22,19 +22,22 @@ const FormPerson = (props) => {
   const [jobs, setJobs] = useState([]);
   const [date, setDate] = useState("");
   const [departments, setDepartments] = useState("");
+  const [selectCompany, setselectCompany] = useState([]);
 
   useEffect(() => {
     const company_id = "5f417a53c37f6275fb614104";
-    if (company_id !== undefined) {
-      getValueSelects(company_id);
-    }
+    getValueSelects(company_id);
   }, []);
 
   const onFinish = (value) => {
     if (date !== "") {
       value.birth_date = date;
     }
-    createPerson(value);
+    if (value.node) delete value["node"];
+    if (value.department) delete value["department"];
+    if (value.password != value.passwordTwo)
+      message.error("Las contraseñas no coinsiden.");
+    else createPerson(value);
   };
 
   const getValueSelects = async (id) => {
@@ -75,19 +78,22 @@ const FormPerson = (props) => {
         console.log(e);
       });
 
-    /////DEPARTMENTS
-    Axios.get(API_URL + `/business/department/`)
+    Axios.get(API_URL + `/business/node/`)
       .then((response) => {
-        if (response.status === 200) {
-          let dep = response.data.results;
-          dep = dep.map((a) => {
-            return { label: a.name, value: a.id };
+        let data = response.data.results;
+        let options = [];
+        data.map((item) => {
+          options.push({
+            value: item.id,
+            label: item.name,
+            key: item.name + item.id,
           });
-          setDepartments(dep);
-        }
+        });
+        setselectCompany(options);
       })
-      .catch((e) => {
-        console.log(e);
+      .catch((error) => {
+        console.log(error);
+        setselectCompany([]);
       });
   };
 
@@ -127,12 +133,44 @@ const FormPerson = (props) => {
     setDate(dateString);
   }
 
-  const onChangeDepartment = (value) => {
-    ////JOBS
-    Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
+  const closeDialog = () => {
+    props.close(false);
+    form.resetFields();
+  };
+  const ruleRequired = { required: true, message: "Este campo es requerido" };
+
+  const changeNode = (value) => {
+    form.setFieldsValue({
+      job: null,
+      department: null,
+    });
+    setDepartments([]);
+    Axios.get(API_URL + `/business/department/?node=${value}`)
       .then((response) => {
         if (response.status === 200) {
-          let job = response.data;
+          let dep = response.data.results;
+          dep = dep.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setDepartments(dep);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const onChangeDepartment = (value) => {
+    ////JOBS
+    form.setFieldsValue({
+      job: null,
+    });
+    console.log("DEPA-->> ", value);
+    Axios.get(API_URL + `/person/job/?department=${value}`)
+      .then((response) => {
+        console.log("JOB-->> ", response);
+        if (response.status === 200) {
+          let job = response.data.results;
           job = job.map((a) => {
             return { label: a.name, value: a.id };
           });
@@ -143,12 +181,6 @@ const FormPerson = (props) => {
         console.log(e);
       });
   };
-
-  const closeDialog = () => {
-    props.close(false);
-    form.resetFields();
-  };
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
     <>
@@ -167,6 +199,15 @@ const FormPerson = (props) => {
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item name="person_type">
                   <Select options={personType} placeholder="Tipo de persona" />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item name="node">
+                  <Select
+                    placeholder="Empresa"
+                    options={selectCompany}
+                    onChange={changeNode}
+                  />
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
@@ -223,7 +264,12 @@ const FormPerson = (props) => {
                   <Input.Password type="text" placeholder="Contraseña" />
                 </Form.Item>
               </Col>
-              <Col lg={15} xs={22} offset={1}>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item rules={[ruleRequired]} name="passwordTwo">
+                  <Input.Password type="text" placeholder="Contraseña" />
+                </Form.Item>
+              </Col>
+              <Col lg={23} xs={22} offset={1}>
                 <Form.Item name="groups">
                   <Select
                     mode="multiple"

@@ -45,6 +45,9 @@ import moment from "moment";
 import TextArea from "antd/lib/input/TextArea";
 import DropdownTreeSelect from "react-dropdown-tree-select";
 import "react-dropdown-tree-select/dist/styles.css";
+import { LOGIN_URL, APP_ID } from "../../config/config";
+import Cookies from "js-cookie";
+import SelectCompany from "../selects/SelectCompany";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -64,6 +67,8 @@ const personDetailForm = () => {
   const [people, setPeople] = useState([]);
   const [dataTree, setDataTree] = useState([]);
   const [nodesPerson, setNodesPerson] = useState([]);
+  const [messageAlert, setMessageAlert] = useState(false);
+  const [password, setPassword] = useState(false);
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -97,6 +102,8 @@ const personDetailForm = () => {
   const [formTraining] = Form.useForm();
   const [formExperiencejob] = Form.useForm();
   const [formBank] = Form.useForm();
+  const [formPassword] = Form.useForm();
+  const [formNode] = Form.useForm();
 
   ////STATE SELECTS
   const [jobs, setJobs] = useState([]);
@@ -109,6 +116,7 @@ const personDetailForm = () => {
   const [experienceType, setExperienceType] = useState([]);
   const [reasonSeparation, setReasonSeparation] = useState([]);
   const [laborRelationship, setLaborRelationship] = useState([]);
+  const [selectCompany, setselectCompany] = useState([]);
 
   ////STATE TABLES
   const [phones, setPhones] = useState([]);
@@ -389,21 +397,6 @@ const personDetailForm = () => {
         console.log(e);
       });
 
-    /////DEPARTMENTS
-    Axios.get(API_URL + `/business/department/`)
-      .then((response) => {
-        if (response.status === 200) {
-          let dep = response.data.results;
-          dep = dep.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setDepartments(dep);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-
     ////GET PERSONS
     Axios.get(API_URL + `/person/person/`)
       .then((response) => {
@@ -419,27 +412,44 @@ const personDetailForm = () => {
       .catch((e) => {
         console.log(e);
       });
+
+    Axios.get(API_URL + `/business/node/`)
+      .then((response) => {
+        let data = response.data.results;
+        let options = [];
+        data.map((item) => {
+          options.push({
+            value: item.id,
+            label: item.name,
+            key: item.name + item.id,
+          });
+        });
+        setselectCompany(options);
+      })
+      .catch((error) => {
+        console.log(error);
+        setselectCompany([]);
+      });
   };
 
   ////PERSON
   const onFinishPerson = (value) => {
-    value.birth_date = birthDate;
-    value.date_of_admission = dateAdmission;
+    if (birthDate) value.birth_date = birthDate;
+    else delete value["birth_date"];
+    if (dateAdmission) value.date_of_admission = dateAdmission;
+    else delete value["date_of_admission"];
     value.id = router.query.id;
     value.is_active = isActive;
-    if (nodesPerson && nodesPerson.length > 0) {
-      let np = [];
-      nodesPerson.map((n) => {
-        np.push(n.value);
-      });
-      value.nodes = np;
-    }
+    if (value.node) delete value["node"];
+    if (value.department) delete value["department"];
+    if (value.groups) delete value["groups"];
     updatePerson(value);
   };
 
   const getPerson = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}`)
       .then((response) => {
+        console.log("Person-->> ", response.data);
         formPerson.setFieldsValue({
           first_name: response.data.first_name,
           flast_name: response.data.flast_name,
@@ -453,36 +463,12 @@ const personDetailForm = () => {
           photo: response.data.photo,
           civil_status: response.data.civil_status,
           report_to: response.data.report_to,
+          periodicity: response.data.periodicity,
         });
         if (response.data.person_type)
           formPerson.setFieldsValue({
             person_type: response.data.person_type.id,
           });
-        if (response.data.job_department.department) {
-          formPerson.setFieldsValue({
-            department: response.data.job_department.department.id,
-          });
-          Axios.get(
-            API_URL +
-              `/business/department/${response.data.job_department.department.id}/job_for_department/`
-          )
-            .then((resp) => {
-              if (resp.status === 200) {
-                let job = resp.data;
-                job = job.map((a) => {
-                  return { label: a.name, value: a.id };
-                });
-                setJobs(job);
-                if (response.data.job_department.job)
-                  formPerson.setFieldsValue({
-                    job: response.data.job_department.job.id,
-                  });
-              }
-            })
-            .catch((e) => {
-              console.log(e);
-            });
-        }
 
         if (response.data.date_of_admission)
           formPerson.setFieldsValue({
@@ -492,6 +478,16 @@ const personDetailForm = () => {
         if (response.data.birth_date)
           formPerson.setFieldsValue({
             birth_date: moment(response.data.birth_date),
+          });
+        if (response.data.job)
+          formPerson.setFieldsValue({
+            node: job[0].department.node.id,
+            department: job[0].department.id,
+            job: job[0].id,
+          });
+        if (response.data.node)
+          formPerson.setFieldsValue({
+            node: node[0].id,
           });
         setDateAdmission(response.data.date_of_admission);
         setBirthDate(response.data.birth_date);
@@ -509,7 +505,6 @@ const personDetailForm = () => {
         setLoading(false);
       });
   };
-
   const updatePerson = (value) => {
     setLoading(true);
     Axios.put(API_URL + `/person/person/${router.query.id}/`, value)
@@ -527,39 +522,11 @@ const personDetailForm = () => {
           is_active: response.data.is_active,
           civil_status: response.data.civil_status,
           report_to: response.data.report_to,
+          periodicity: response.data.periodicity,
         });
         if (response.data.person_type)
           formPerson.setFieldsValue({
             person_type: response.data.person_type.id,
-          });
-        if (response.data.job_department.department) {
-          formPerson.setFieldsValue({
-            department: response.data.job_department.department.id,
-          });
-          Axios.get(
-            API_URL +
-              `/business/department/${response.data.job_department.department.id}/job_for_department/`
-          )
-            .then((resp) => {
-              if (resp.status === 200) {
-                let job = resp.data;
-                job = job.map((a) => {
-                  return { label: a.name, value: a.id };
-                });
-                setJobs(job);
-                if (response.data.job_department.job)
-                  formPerson.setFieldsValue({
-                    job: response.data.job_department.job.id,
-                  });
-              }
-            })
-            .catch((e) => {
-              console.log(e);
-            });
-        }
-        if (response.data.job_department.job)
-          formPerson.setFieldsValue({
-            job: response.data.job_department.job.id,
           });
         if (response.data.date_of_admission)
           formPerson.setFieldsValue({
@@ -569,6 +536,13 @@ const personDetailForm = () => {
           formPerson.setFieldsValue({
             birth_date: moment(response.data.birth_date),
           });
+        // if (response.data.job)
+        //   formPerson.setFieldsValue({
+        //     node: job[0].department.node.id,
+        //     department: job[0].department.id,
+        //     job: job[0].id,
+        //   });
+
         setBirthDate(response.data.birth_date);
         setIsActive(response.data.is_active);
         if (response.data.photo) setPhoto(response.data.photo);
@@ -584,7 +558,6 @@ const personDetailForm = () => {
         console.log(e);
       });
   };
-
   const deletePerson = (data) => {
     Axios.post(API_URL + `/person/person/delete_by_ids/`, {
       persons_id: router.query.id,
@@ -634,6 +607,7 @@ const personDetailForm = () => {
   const getGeneralData = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}/general_person/`)
       .then((response) => {
+        console.log("GENERAL-->> ", response.data);
         formGeneralTab.setFieldsValue({
           place_birth: response.data.place_birth,
           nationality: response.data.nationality,
@@ -1604,23 +1578,6 @@ const personDetailForm = () => {
     modal ? setModal(false) : setModal(true);
   };
 
-  /////GET JOBS
-  const onChangeDepartment = (value) => {
-    Axios.get(API_URL + `/business/department/${value}/job_for_department/`)
-      .then((response) => {
-        if (response.status === 200) {
-          let job = response.data;
-          job = job.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setJobs(job);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const uploadButton = (
     <div>
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -1673,6 +1630,113 @@ const personDetailForm = () => {
   };
 
   const ruleRequired = { required: true, message: "Este campo es requerido" };
+
+  const changePassword = (value) => {
+    if (value.new_password == value.newPassword) {
+      let k_id = JSON.parse(Cookies.get("token"));
+      value.user_id = k_id.user_id;
+      delete value["newPassword"];
+      const headers = {
+        "client-id": APP_ID,
+        "Content-Type": "application/json",
+      };
+      Axios.post(LOGIN_URL + "/password/change/direct/", value, {
+        headers: headers,
+      })
+        .then((response) => {
+          console.log("Response Change-->> ", response);
+        })
+        .catch((error) => {
+          console.log("ERROR-->>> ", error);
+        });
+    } else {
+      message.error("Las contraseñas no coinsiden.");
+    }
+  };
+
+  //////NODOS PERSON
+  const formPersonNode = (value) => {};
+  const colNode = [
+    {
+      title: "Empresa",
+    },
+    {
+      title: "Departamento",
+    },
+    {
+      title: "Puesto",
+    },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => updateFormbankAcc(item)}
+                />
+              </Col>
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deleteBankAcc" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const changeNode = (value) => {
+    formPerson.setFieldsValue({
+      job: null,
+      department: null,
+    });
+    setDepartments([]);
+    setJobs([]);
+    Axios.get(API_URL + `/business/department/?node=${value}`)
+      .then((response) => {
+        if (response.status === 200) {
+          let dep = response.data.results;
+          dep = dep.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setDepartments(dep);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const onChangeDepartment = (value) => {
+    ////JOBS
+    formPerson.setFieldsValue({
+      job: null,
+    });
+    setJobs([]);
+    console.log("DEPA-->> ", value);
+    Axios.get(API_URL + `/person/job/?department=${value}`)
+      .then((response) => {
+        console.log("JOB-->> ", response);
+        if (response.status === 200) {
+          let job = response.data.results;
+          job = job.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setJobs(job);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   return (
     <MainLayout currentKey="1">
@@ -1728,24 +1792,16 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="nodes" label="Unidad organizacional">
-                          <>
-                            <DropdownTreeSelect
-                              data={dataTree}
-                              onChange={onChangeTree}
-                              onAction={onActionTree}
-                              onNodeToggle={onNodeToggleTree}
-                            />
-                          </>
+                        <Form.Item name="node">
+                          <Select
+                            placeholder="Empresa"
+                            options={selectCompany}
+                            onChange={changeNode}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="report_to" label="Reporta a ">
-                          <Select options={people} />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="department" label="Departamento">
+                        <Form.Item name="department">
                           <Select
                             options={departments}
                             onChange={onChangeDepartment}
@@ -1754,18 +1810,26 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="job" label="Puesto">
+                        <Form.Item name="job">
                           <Select
                             options={jobs}
-                            placeholder="Selecciona un puesto"
+                            placeholder="Puesto de trabajo"
                           />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="periodicity" label="Periodicidad">
+                        <Form.Item name="report_to" label="Reporta a ">
+                          <Select options={people} />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={15} xs={22} offset={1}>
+                        <Form.Item name="groups" label="Perfil de seguridad">
                           <Select
-                            options={periodicity}
-                            placeholder="Selecciona una opción"
+                            mode="multiple"
+                            options={groups}
+                            showArrow
+                            style={{ width: "100%" }}
+                            placeholder="Perfiles de seguridad"
                           />
                         </Form.Item>
                       </Col>
@@ -1822,6 +1886,14 @@ const personDetailForm = () => {
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="imss" label="IMSS">
                           <Input maxLength={11} />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="periodicity" label="Periodicidad">
+                          <Select
+                            options={periodicity}
+                            placeholder="Selecciona una opción"
+                          />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -2454,7 +2526,39 @@ const personDetailForm = () => {
                     <Table columns={colDoc} dataSource={documents} />
                   </Spin>
                 </TabPane>
-                <TabPane tab="Eliminar persona" key="tab_9">
+                <TabPane tab="Cambiar contraseña" key="tab_9">
+                  <Row style={{ padding: "2%" }}>
+                    <Form form={formPassword} onFinish={changePassword}>
+                      <Form.Item
+                        name="old_password"
+                        label="Contraseña actual"
+                        rules={[ruleRequired]}
+                      >
+                        <Input type="password" />
+                      </Form.Item>
+                      <Form.Item
+                        name="newPassword"
+                        label="Contraseña actual"
+                        rules={[ruleRequired]}
+                      >
+                        <Input type="password" />
+                      </Form.Item>
+                      <Form.Item
+                        name="new_password"
+                        label="Contraseña actual"
+                        rules={[ruleRequired]}
+                      >
+                        <Input type="password" />
+                      </Form.Item>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Cambiar contraseña
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </Row>
+                </TabPane>
+                <TabPane tab="Eliminar persona" key="tab_10">
                   <Alert
                     message="Warning"
                     description="Al eliminar a una persona perderá todos los datos
