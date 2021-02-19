@@ -44,10 +44,10 @@ const Permissionform = (props) => {
     console.log(value);
     if (value) {
       let index = allPersons.find((data) => data.id === value);
-      console.log(index);
-      if (index.job_department) {
+      console.log("PERSONA-->>> ", index);
+      if (index.job) {
         formPermission.setFieldsValue({
-          job: index.job_department.department.name,
+          job: index.job[0].name,
         });
       }
       setUrlPhoto(index.photo ? index.photo : null);
@@ -96,12 +96,9 @@ const Permissionform = (props) => {
         reason: props.details.reason,
         requested_days: props.details.requested_days,
       });
-      if (
-        props.details.collaborator &&
-        props.details.collaborator.job_department.job
-      ) {
+      if (props.details.collaborator && props.details.collaborator.job) {
         formPermission.setFieldsValue({
-          job: props.details.collaborator.job_department.job.name,
+          job: props.details.collaborator.job[0].name,
         });
       }
 
@@ -184,8 +181,9 @@ const Permissionform = (props) => {
             name="job"
             labelCol={{ span: 9 }}
             labelAlign={"left"}
+            readOnly
           >
-            <Input disabled={props.readOnly} />
+            <Input readOnly />
           </Form.Item>
           <Form.Item
             name="requested_days"
@@ -248,7 +246,6 @@ const Permissionform = (props) => {
           </Form.Item>
           <Button
             onClick={props.onCancel}
-            type="dashed"
             key="cancel"
             style={{ padding: "0 50px" }}
           >
@@ -280,6 +277,7 @@ const Permissionform = (props) => {
               key="save"
               htmlType="submit"
               style={{ padding: "0 50px", marginLeft: 15 }}
+              type="primary"
             >
               {props.edit ? "Actualizar datos" : "Guardar"}
             </Button>

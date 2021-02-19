@@ -593,12 +593,10 @@ const configBusiness = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row>
+                <Row justify={"end"}>
                   <Col lg={2} xs={2} offset={1}>
                     <Form.Item label=" ">
-                      <Button type="primary" danger onClick={resetForm}>
-                        Cancelar
-                      </Button>
+                      <Button onClick={resetForm}>Cancelar</Button>
                     </Form.Item>
                   </Col>
                   <Col lg={2} xs={2} offset={2}>
@@ -663,12 +661,10 @@ const configBusiness = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row>
+                <Row justify={"end"}>
                   <Col lg={2} xs={2} offset={1}>
                     <Form.Item label=" ">
-                      <Button type="primary" danger onClick={resetForm}>
-                        Cancelar
-                      </Button>
+                      <Button onClick={resetForm}>Cancelar</Button>
                     </Form.Item>
                   </Col>
                   <Col lg={2} xs={2} offset={2}>
@@ -717,12 +713,10 @@ const configBusiness = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row>
+                <Row justify={"end"}>
                   <Col lg={2} xs={2} offset={1}>
                     <Form.Item label=" ">
-                      <Button type="primary" danger onClick={resetForm}>
-                        Cancelar
-                      </Button>
+                      <Button onClick={resetForm}>Cancelar</Button>
                     </Form.Item>
                   </Col>
                   <Col lg={2} xs={2} offset={2}>
@@ -771,12 +765,10 @@ const configBusiness = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row>
+                <Row justify={"end"}>
                   <Col lg={2} xs={2} offset={1}>
                     <Form.Item label=" ">
-                      <Button type="primary" danger onClick={resetForm}>
-                        Cancelar
-                      </Button>
+                      <Button onClick={resetForm}>Cancelar</Button>
                     </Form.Item>
                   </Col>
                   <Col lg={2} xs={2} offset={2}>
@@ -825,12 +817,10 @@ const configBusiness = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row>
+                <Row justify={"end"}>
                   <Col lg={2} xs={2} offset={1}>
                     <Form.Item label=" ">
-                      <Button type="primary" danger onClick={resetForm}>
-                        Cancelar
-                      </Button>
+                      <Button onClick={resetForm}>Cancelar</Button>
                     </Form.Item>
                   </Col>
                   <Col lg={2} xs={2} offset={2}>
@@ -877,12 +867,10 @@ const configBusiness = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row>
+                <Row justify={"end"}>
                   <Col lg={2} xs={2} offset={1}>
                     <Form.Item label=" ">
-                      <Button type="primary" danger onClick={resetForm}>
-                        Cancelar
-                      </Button>
+                      <Button onClick={resetForm}>Cancelar</Button>
                     </Form.Item>
                   </Col>
                   <Col lg={2} xs={2} offset={2}>
