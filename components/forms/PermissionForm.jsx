@@ -47,7 +47,7 @@ const Permissionform = (props) => {
       console.log("PERSONA-->>> ", index);
       if (index.job) {
         formPermission.setFieldsValue({
-          job: index.job[0].department.name,
+          job: index.job[0].name,
         });
       }
       setUrlPhoto(index.photo ? index.photo : null);
@@ -96,12 +96,9 @@ const Permissionform = (props) => {
         reason: props.details.reason,
         requested_days: props.details.requested_days,
       });
-      if (
-        props.details.collaborator &&
-        props.details.collaborator.job_department.job
-      ) {
+      if (props.details.collaborator && props.details.collaborator.job) {
         formPermission.setFieldsValue({
-          job: props.details.collaborator.job_department.job.name,
+          job: props.details.collaborator.job[0].name,
         });
       }
 
