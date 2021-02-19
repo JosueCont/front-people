@@ -29,6 +29,7 @@ import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
+import Cookies from "js-cookie";
 
 const Releases = () => {
   /* React */
@@ -69,6 +70,18 @@ const Releases = () => {
       url += `timestamp__gte=${d1}&timestamp__lte=${d2}&`;
     }
     try {
+      const token = JSON.parse(Cookies.get("token", token));
+      let k_id = "";
+      console.log("Token->> ", token);
+      if (token) k_id = token.user_id;
+      console.log(k_id);
+      const header = {
+        "content-type": "application/json",
+        khonnect_id: k_id,
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "https://www.example.com",
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+      };
       let response = await Axios.get(API_URL + url);
       let data = response.data;
       setList(data.results);

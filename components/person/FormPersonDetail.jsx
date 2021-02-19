@@ -45,6 +45,9 @@ import moment from "moment";
 import TextArea from "antd/lib/input/TextArea";
 import DropdownTreeSelect from "react-dropdown-tree-select";
 import "react-dropdown-tree-select/dist/styles.css";
+import { LOGIN_URL, APP_ID } from "../../config/config";
+import Cookies from "js-cookie";
+import SelectCompany from "../selects/SelectCompany";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -64,6 +67,8 @@ const personDetailForm = () => {
   const [people, setPeople] = useState([]);
   const [dataTree, setDataTree] = useState([]);
   const [nodesPerson, setNodesPerson] = useState([]);
+  const [messageAlert, setMessageAlert] = useState(false);
+  const [password, setPassword] = useState(false);
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -97,6 +102,8 @@ const personDetailForm = () => {
   const [formTraining] = Form.useForm();
   const [formExperiencejob] = Form.useForm();
   const [formBank] = Form.useForm();
+  const [formPassword] = Form.useForm();
+  const [formNode] = Form.useForm();
 
   ////STATE SELECTS
   const [jobs, setJobs] = useState([]);
@@ -427,19 +434,13 @@ const personDetailForm = () => {
     value.date_of_admission = dateAdmission;
     value.id = router.query.id;
     value.is_active = isActive;
-    if (nodesPerson && nodesPerson.length > 0) {
-      let np = [];
-      nodesPerson.map((n) => {
-        np.push(n.value);
-      });
-      value.nodes = np;
-    }
     updatePerson(value);
   };
 
   const getPerson = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}`)
       .then((response) => {
+        console.log("Person-->> ", response.data);
         formPerson.setFieldsValue({
           first_name: response.data.first_name,
           flast_name: response.data.flast_name,
@@ -458,31 +459,6 @@ const personDetailForm = () => {
           formPerson.setFieldsValue({
             person_type: response.data.person_type.id,
           });
-        if (response.data.job_department.department) {
-          formPerson.setFieldsValue({
-            department: response.data.job_department.department.id,
-          });
-          Axios.get(
-            API_URL +
-              `/business/department/${response.data.job_department.department.id}/job_for_department/`
-          )
-            .then((resp) => {
-              if (resp.status === 200) {
-                let job = resp.data;
-                job = job.map((a) => {
-                  return { label: a.name, value: a.id };
-                });
-                setJobs(job);
-                if (response.data.job_department.job)
-                  formPerson.setFieldsValue({
-                    job: response.data.job_department.job.id,
-                  });
-              }
-            })
-            .catch((e) => {
-              console.log(e);
-            });
-        }
 
         if (response.data.date_of_admission)
           formPerson.setFieldsValue({
@@ -509,7 +485,6 @@ const personDetailForm = () => {
         setLoading(false);
       });
   };
-
   const updatePerson = (value) => {
     setLoading(true);
     Axios.put(API_URL + `/person/person/${router.query.id}/`, value)
@@ -531,35 +506,6 @@ const personDetailForm = () => {
         if (response.data.person_type)
           formPerson.setFieldsValue({
             person_type: response.data.person_type.id,
-          });
-        if (response.data.job_department.department) {
-          formPerson.setFieldsValue({
-            department: response.data.job_department.department.id,
-          });
-          Axios.get(
-            API_URL +
-              `/business/department/${response.data.job_department.department.id}/job_for_department/`
-          )
-            .then((resp) => {
-              if (resp.status === 200) {
-                let job = resp.data;
-                job = job.map((a) => {
-                  return { label: a.name, value: a.id };
-                });
-                setJobs(job);
-                if (response.data.job_department.job)
-                  formPerson.setFieldsValue({
-                    job: response.data.job_department.job.id,
-                  });
-              }
-            })
-            .catch((e) => {
-              console.log(e);
-            });
-        }
-        if (response.data.job_department.job)
-          formPerson.setFieldsValue({
-            job: response.data.job_department.job.id,
           });
         if (response.data.date_of_admission)
           formPerson.setFieldsValue({
@@ -584,7 +530,6 @@ const personDetailForm = () => {
         console.log(e);
       });
   };
-
   const deletePerson = (data) => {
     Axios.post(API_URL + `/person/person/delete_by_ids/`, {
       persons_id: router.query.id,
@@ -634,6 +579,7 @@ const personDetailForm = () => {
   const getGeneralData = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}/general_person/`)
       .then((response) => {
+        console.log("GENERAL-->> ", response.data);
         formGeneralTab.setFieldsValue({
           place_birth: response.data.place_birth,
           nationality: response.data.nationality,
@@ -1674,6 +1620,68 @@ const personDetailForm = () => {
 
   const ruleRequired = { required: true, message: "Este campo es requerido" };
 
+  const changePassword = (value) => {
+    if (value.new_password == value.newPassword) {
+      let k_id = JSON.parse(Cookies.get("token"));
+      value.user_id = k_id.user_id;
+      delete value["newPassword"];
+      const headers = {
+        "client-id": APP_ID,
+        "Content-Type": "application/json",
+      };
+      Axios.post(LOGIN_URL + "/password/change/direct/", value, {
+        headers: headers,
+      })
+        .then((response) => {
+          console.log("Response Change-->> ", response);
+        })
+        .catch((error) => {
+          console.log("ERROR-->>> ", error);
+        });
+    } else {
+      message.error("Las contraseñas no coinsiden.");
+    }
+  };
+
+  //////NODOS PERSON
+  const formPersonNode = (value) => {};
+  const colNode = [
+    {
+      title: "Empresa",
+    },
+    {
+      title: "Departamento",
+    },
+    {
+      title: "Puesto",
+    },
+    {
+      title: "Opciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => updateFormbankAcc(item)}
+                />
+              </Col>
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  style={{ fontSize: "25px" }}
+                  onClick={() => {
+                    setDeleteRegister({ id: item.id, api: "deleteBankAcc" });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
+  ];
+
   return (
     <MainLayout currentKey="1">
       <Content className="site-layout">
@@ -1728,37 +1736,8 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="nodes" label="Unidad organizacional">
-                          <>
-                            <DropdownTreeSelect
-                              data={dataTree}
-                              onChange={onChangeTree}
-                              onAction={onActionTree}
-                              onNodeToggle={onNodeToggleTree}
-                            />
-                          </>
-                        </Form.Item>
-                      </Col>
-                      <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="report_to" label="Reporta a ">
                           <Select options={people} />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="department" label="Departamento">
-                          <Select
-                            options={departments}
-                            onChange={onChangeDepartment}
-                            placeholder="Departamento"
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="job" label="Puesto">
-                          <Select
-                            options={jobs}
-                            placeholder="Selecciona un puesto"
-                          />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
@@ -1910,6 +1889,49 @@ const personDetailForm = () => {
               </Form>
               <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
               <Tabs tabPosition={"left"}>
+                <TabPane tab="Asignar empresa " key="tab_0">
+                  <Form
+                    layout={"vertical"}
+                    form={formNode}
+                    onFinish={formPersonNode}
+                  >
+                    <Row>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="node" label="Unidad organizacional">
+                          <SelectCompany />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="department" label="Departamento">
+                          <Select
+                            options={departments}
+                            onChange={onChangeDepartment}
+                            placeholder="Departamento"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="job" label="Puesto">
+                          <Select
+                            options={jobs}
+                            placeholder="Selecciona un puesto"
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row justify={"end"}>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Form.Item>
+                    </Row>
+                  </Form>
+                  <Spin tip="Loading..." spinning={loadingTable}>
+                    <Table columns={colNode} dataSource={nodesPerson} />
+                  </Spin>
+                </TabPane>
+
                 <TabPane tab="Datos generales" key="tab_1">
                   <Form
                     layout={"vertical"}
@@ -2454,7 +2476,39 @@ const personDetailForm = () => {
                     <Table columns={colDoc} dataSource={documents} />
                   </Spin>
                 </TabPane>
-                <TabPane tab="Eliminar persona" key="tab_9">
+                <TabPane tab="Cambiar contraseña" key="tab_9">
+                  <Row style={{ padding: "2%" }}>
+                    <Form form={formPassword} onFinish={changePassword}>
+                      <Form.Item
+                        name="old_password"
+                        label="Contraseña actual"
+                        rules={[ruleRequired]}
+                      >
+                        <Input type="password" />
+                      </Form.Item>
+                      <Form.Item
+                        name="newPassword"
+                        label="Contraseña actual"
+                        rules={[ruleRequired]}
+                      >
+                        <Input type="password" />
+                      </Form.Item>
+                      <Form.Item
+                        name="new_password"
+                        label="Contraseña actual"
+                        rules={[ruleRequired]}
+                      >
+                        <Input type="password" />
+                      </Form.Item>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Cambiar contraseña
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </Row>
+                </TabPane>
+                <TabPane tab="Eliminar persona" key="tab_10">
                   <Alert
                     message="Warning"
                     description="Al eliminar a una persona perderá todos los datos
