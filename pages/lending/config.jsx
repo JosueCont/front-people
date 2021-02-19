@@ -42,10 +42,10 @@ const HolidaysNew = () => {
     setLoading(true);
     try {
       let repsonse = await Axios.get(API_URL + `/payroll/loan-config/1/`);
-      console.log("response", repsonse);
+      console.log("response config-->>> ", repsonse);
       let data = repsonse.data;
       form.setFieldsValue({
-        min_amount: parseInt(data.max_amount),
+        min_amount: parseInt(data.min_amount),
         max_amount: parseInt(data.max_amount),
         min_deadline: data.min_deadline,
         max_deadline: data.max_deadline,
@@ -142,7 +142,7 @@ const HolidaysNew = () => {
                   </Form.Item>
                 </Col>
               </Row>
-              <Row style={{ paddingTop: 20 }}>
+              <Row style={{ paddingTop: 20 }} justify={"end"}>
                 <Col span={10} style={{ textAlign: "right" }}>
                   <Button style={{ padding: "0 40px", margin: "0 10px" }}>
                     Cancelar
