@@ -1,12 +1,31 @@
-import {Layout, Breadcrumb, Table, Row, Col, Input, Select, Switch, Button, Modal, Form } from "antd";
+import {
+  Layout,
+  Breadcrumb,
+  Table,
+  Row,
+  Col,
+  Input,
+  Select,
+  Switch,
+  Button,
+  Modal,
+  Form,
+} from "antd";
 import Axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { DeleteOutlined, EditOutlined, InfoCircleOutlined, SearchOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  InfoCircleOutlined,
+  SearchOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import HeaderCustom from "../../components/Header";
 import { API_URL } from "../../config/config";
 import Router from "next/router";
 import MainLayout from "../../layout/MainLayout";
-import BreadcrumbHome from '../../components/BreadcrumbHome'
+import BreadcrumbHome from "../../components/BreadcrumbHome";
+import { set } from "js-cookie";
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -40,6 +59,7 @@ const businessForm = () => {
     }
   };
   const deleteBusiness = async (id, name, description) => {
+    setLoading(true);
     Axios.delete(API_URL + "/business/node/" + id + "/")
       .then(function (response) {
         if (response.status === 200) {
@@ -62,6 +82,7 @@ const businessForm = () => {
       parent: fNode ? fNode : null,
       is_active: is_active,
     };
+    setLoading(true);
     Axios.put(API_URL + "/business/node/" + id + "/", data)
       .then(function (response) {
         if (response.status === 200) {
@@ -83,6 +104,7 @@ const businessForm = () => {
       description: description,
       parent: fNode ? fNode : null,
     };
+    setLoading(true);
     Axios.post(API_URL + "/business/node/", data)
       .then(function (response) {
         if (response.status === 200) {
@@ -207,7 +229,7 @@ const businessForm = () => {
   return (
     <MainLayout currentKey="2">
       <Breadcrumb>
-        <BreadcrumbHome/>
+        <BreadcrumbHome />
         <Breadcrumb.Item>Empresa</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
