@@ -146,7 +146,7 @@ const HolidaysReport = (props) => {
             }
         } else {
             if (colaborator) {
-                dataId.colaborator = colaborator;
+                dataId.collaborator = colaborator;
             }
             if (companyId) {
                 dataId.node = companyId;
