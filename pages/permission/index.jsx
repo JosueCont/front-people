@@ -4,11 +4,8 @@ import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Table, Breadcrumb, Button, Form, Input, Select } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
-import Axios from 'axios';
-import {API_URL} from '../../config/config'
-
-
-
+import Axios from "axios";
+import { API_URL } from "../../config/config";
 
 import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
@@ -48,7 +45,7 @@ const Permission = () => {
 
   const getAllPersons = async () => {
     try {
-      let response = await Axios.get(API_URL+`/person/person/`);
+      let response = await Axios.get(API_URL + `/person/person/`);
       let data = response.data.results;
       let list = [];
       data = data.map((a, index) => {
@@ -65,16 +62,21 @@ const Permission = () => {
     }
   };
 
-  const getPermissions = async (collaborator = null, company = null, department = null, status = null) => {
+  const getPermissions = async (
+    collaborator = null,
+    company = null,
+    department = null,
+    status = null
+  ) => {
     setLoading(true);
     try {
-        let url = `/person/permit/?`;
-        if(collaborator){
-            url+=`person__id=${collaborator}&`;
-        }
-        if(status){
-            url+=`status=${status}&`;
-        }
+      let url = `/person/permit/?`;
+      if (collaborator) {
+        url += `person__id=${collaborator}&`;
+      }
+      if (status) {
+        url += `status=${status}&`;
+      }
 
       if (company) {
         url += `person__job__department__node__id=${company}&`;
@@ -83,16 +85,15 @@ const Permission = () => {
       if (department) {
         url += `person__job__department__id=${department}&`;
       }
-        let response = await Axios.get(API_URL+url);
-        let data = response.data.results;
-        console.log('permissions',data);
-        setPermissionsList(data);
-
+      let response = await Axios.get(API_URL + url);
+      let data = response.data.results;
+      console.log("permissions", data);
+      setPermissionsList(data);
     } catch (e) {
       console.log(e);
-    }finally {
-        setLoading(false);
-        setSending(false);
+    } finally {
+      setLoading(false);
+      setSending(false);
     }
   };
 
@@ -124,11 +125,10 @@ const Permission = () => {
     setDepartamentId(val);
   };
 
-    useEffect(() => {
-        getPermissions();
-        getAllPersons();
-    }, [route]);
-
+  useEffect(() => {
+    getPermissions();
+    getAllPersons();
+  }, [route]);
 
   return (
     <MainLayout currentKey="9">
@@ -139,48 +139,78 @@ const Permission = () => {
       <div className="container" style={{ width: "100%" }}>
         <Row justify="space-between" style={{ paddingBottom: 20 }}>
           <Col>
-              <Form name="filter" onFinish={filterPermission} layout="inline" key="formFilter">
-                <Form.Item key="collaborator" name="collaborator" label="Colaborador">
-                    <Select 
-                        key="selectPerson"
-                        showSearch
-                        /* options={personList} */
-                        style={{ width:150 }}
-                        allowClear 
-                        optionFilterProp="children"
-                        filterOption={(input, option) =>
-                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                        filterSort={(optionA, optionB) =>
-                        optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
-                        }
-                    >
-                        {
-                                personList ? personList.map((item) => {
-                                return (<Option key={item.key} value={item.value}>{item.label}</Option>)
-                            }) : null
-                        }
-                    </Select>
-                </Form.Item>
-                <Form.Item key="company" name="company" label="Empresa">
-                    <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width:150 }} />
-                </Form.Item>
-                <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment"/>
-                <Form.Item key="estatus_filter" name="status" label="Estatus">
-                    <Select style={{ width: 100 }} key="select" options={optionStatus} allowClear />
-                </Form.Item>
-                    <Button
-                    style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                    }}
-                    key="buttonFilter"
-                    htmlType="submit"
-                    loading={sending}
-                    >
-                    Filtrar
-                    </Button>
+            <Form
+              name="filter"
+              onFinish={filterPermission}
+              layout="inline"
+              key="formFilter"
+            >
+              <Form.Item
+                key="collaborator"
+                name="collaborator"
+                label="Colaborador"
+              >
+                <Select
+                  key="selectPerson"
+                  showSearch
+                  /* options={personList} */
+                  style={{ width: 150 }}
+                  allowClear
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  filterSort={(optionA, optionB) =>
+                    optionA.children
+                      .toLowerCase()
+                      .localeCompare(optionB.children.toLowerCase())
+                  }
+                >
+                  {personList
+                    ? personList.map((item) => {
+                        return (
+                          <Option key={item.key} value={item.value}>
+                            {item.label}
+                          </Option>
+                        );
+                      })
+                    : null}
+                </Select>
+              </Form.Item>
+              <Form.Item key="company" name="company" label="Empresa">
+                <SelectCompany
+                  onChange={onChangeCompany}
+                  key="SelectCompany"
+                  style={{ width: 150 }}
+                />
+              </Form.Item>
+              <SelectDepartment
+                companyId={companyId}
+                onChange={changeDepartament}
+                key="SelectDepartment"
+              />
+              <Form.Item key="estatus_filter" name="status" label="Estatus">
+                <Select
+                  style={{ width: 100 }}
+                  key="select"
+                  options={optionStatus}
+                  allowClear
+                />
+              </Form.Item>
+              <Button
+                style={{
+                  background: "#fa8c16",
+                  fontWeight: "bold",
+                  color: "white",
+                }}
+                key="buttonFilter"
+                htmlType="submit"
+                loading={sending}
+              >
+                Filtrar
+              </Button>
             </Form>
           </Col>
           <Col>
@@ -200,7 +230,11 @@ const Permission = () => {
         </Row>
         <Row justify="end">
           <Col span={24}>
-            <Table dataSource={permissionsList} key="tableHolidays" loading={loading}>
+            <Table
+              dataSource={permissionsList}
+              key="tableHolidays"
+              loading={loading}
+            >
               <Column
                 title="Colaborador"
                 dataIndex="collaborator"
@@ -219,7 +253,10 @@ const Permission = () => {
               <Column title="Empresa" dataIndex="business" key="business" />
               <Column
                 title="Departamentos"
-                dataIndex="department"
+                dataIndex="collaborator"
+                render={(collaborator, record) => (
+                  <>{collaborator.job[0].department.name}</>
+                )}
                 key="department"
               />
               <Column
