@@ -97,7 +97,7 @@ const Incapacity = () => {
 
   const GotoDetails = (data) => {
     console.log(data);
-    route.push("permission/" + data.id + "/details");
+    route.push("incapacity/" + data.id + "/details");
   };
 
   const filter = async (values) => {
@@ -130,10 +130,10 @@ const Incapacity = () => {
 
 
   return (
-    <MainLayout currentKey="9">
+    <MainLayout currentKey="7.4">
       <Breadcrumb className={"mainBreadcrumb"}>
         <BreadcrumbHome />
-        <Breadcrumb.Item>Permisos</Breadcrumb.Item>
+        <Breadcrumb.Item>Incapacidad</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row justify="space-between" style={{ paddingBottom: 20 }}>
@@ -221,13 +221,8 @@ const Incapacity = () => {
                 dataIndex="collaborator"
                 key="department"
                 render={(collaborator, record) => (
-                    collaborator.job_department.department.name
+                    collaborator ? collaborator.job_department.department.name : null
                 )}
-              />
-              <Column
-                title="Días solicitados"
-                dataIndex=""
-                key="requested_days"
               />
               <Column
                 title="Fecha inicio de incapacidad"
@@ -242,7 +237,7 @@ const Incapacity = () => {
                 dataIndex="document"
                 key="docs"
                 render={(document, render) => (
-                    <a href={document} target="_blank" >
+                    <a href={document}  target="_blank" download >
                         <FileDoneOutlined /> <small>Ver documento</small>
                     </a>
                 )}
@@ -273,7 +268,7 @@ const Incapacity = () => {
                       className="icon_actions"
                       key={"edit_" + record.id}
                       onClick={() =>
-                        route.push("permission/" + record.id + "/edit")
+                        route.push("incapacity/" + record.id + "/edit")
                       }
                     />
                   </>
