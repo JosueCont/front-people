@@ -54,7 +54,7 @@ const Vacationform = (props) => {
       });
       if (index.job) {
         formVacation.setFieldsValue({
-          job: index.job[0].department.name,
+          job: index.job[0].name,
         });
       }
       setUrlPhoto(index.photo ? index.photo : null);
@@ -115,12 +115,9 @@ const Vacationform = (props) => {
           ? moment(props.details.return_date, "YYYY-MM-DD")
           : null,
       });
-      if (
-        props.details.collaborator &&
-        props.details.collaborator.job_department.job
-      ) {
+      if (props.details.collaborator && props.details.collaborator.job) {
         formVacation.setFieldsValue({
-          job: props.details.collaborator.job_department.job.name,
+          job: props.details.collaborator.job[0].name,
         });
       }
       setUrlPhoto(
