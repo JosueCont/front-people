@@ -15,6 +15,7 @@ import {
   Table,
   Modal,
   Alert,
+  message,
 } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Title from "antd/lib/typography/Title";
@@ -42,6 +43,7 @@ const configBusiness = () => {
   const [banks, setBanks] = useState([]);
   const [selectCompany, setselectCompany] = useState([]);
   const [id, setId] = useState("");
+  const [edit, setEdit] = useState(false);
   const urls = [
     "/business/department/",
     "/person/job/",
@@ -136,12 +138,14 @@ const configBusiness = () => {
         setId("");
         resetForm();
         getCatalog(url);
+        message.success("Agregado correctamente.");
       })
       .catch((error) => {
         resetForm();
         setId("");
         setLoadingTable(false);
         console.log(error);
+        message.success("Ocurrio un error intente de nuevo.");
       });
   };
   const updateRegister = (url, value) => {
@@ -151,15 +155,20 @@ const configBusiness = () => {
         resetForm();
         setLoadingTable(true);
         getCatalog(url);
+        setEdit(false);
+        message.success("Actualizado correctamente.");
       })
       .catch((error) => {
+        setEdit(false);
         setId("");
         setLoadingTable(false);
         resetForm();
+        message.success("Ocurrio un error intente de nuevo.");
       });
   };
 
   const editRegister = (item, param) => {
+    setEdit(true);
     if (param == "dep") {
       setId(item.id);
       formDepartment.setFieldsValue({
@@ -503,6 +512,7 @@ const configBusiness = () => {
     formRelationship.resetFields();
     formTypeDocument.resetFields();
     formBank.resetFields();
+    setEdit(false);
   };
 
   const changeNode = (value) => {
@@ -534,9 +544,14 @@ const configBusiness = () => {
           className="site-layout-background"
           style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
-          <Title>Catálogos</Title>
+          <Title style={{ fontSize: "25px" }}>Catálogos</Title>
           <Tabs tabPosition={"left"}>
             <TabPane tab="Departamentos" key="tab_1">
+              {edit ? (
+                <Title style={{ fontSize: "20px" }}>Editar</Title>
+              ) : (
+                <></>
+              )}
               <Form
                 layout={"vertical"}
                 form={formDepartment}
@@ -577,7 +592,16 @@ const configBusiness = () => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col lg={2} xs={22} offset={1}>
+                </Row>
+                <Row>
+                  <Col lg={2} xs={2} offset={1}>
+                    <Form.Item label=" ">
+                      <Button type="primary" danger onClick={resetForm}>
+                        Cancelar
+                      </Button>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={2} xs={2} offset={2}>
                     <Form.Item label=" ">
                       <Button type="primary" htmlType="submit">
                         Guardar
@@ -591,6 +615,11 @@ const configBusiness = () => {
               </Spin>
             </TabPane>
             <TabPane tab="Puestos de trabajo" key="tab_2">
+              {edit ? (
+                <Title style={{ fontSize: "20px" }}>Editar</Title>
+              ) : (
+                <></>
+              )}
               <Form
                 layout={"vertical"}
                 form={formJob}
@@ -633,7 +662,16 @@ const configBusiness = () => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col lg={2} xs={22} offset={1}>
+                </Row>
+                <Row>
+                  <Col lg={2} xs={2} offset={1}>
+                    <Form.Item label=" ">
+                      <Button type="primary" danger onClick={resetForm}>
+                        Cancelar
+                      </Button>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={2} xs={2} offset={2}>
                     <Form.Item label=" ">
                       <Button type="primary" htmlType="submit">
                         Guardar
@@ -647,6 +685,11 @@ const configBusiness = () => {
               </Spin>
             </TabPane>
             <TabPane tab="Tipos de persona" key="tab_3">
+              {edit ? (
+                <Title style={{ fontSize: "20px" }}>Editar</Title>
+              ) : (
+                <></>
+              )}
               <Form
                 layout={"vertical"}
                 form={formTypePerson}
@@ -673,7 +716,16 @@ const configBusiness = () => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col lg={2} xs={22} offset={1}>
+                </Row>
+                <Row>
+                  <Col lg={2} xs={2} offset={1}>
+                    <Form.Item label=" ">
+                      <Button type="primary" danger onClick={resetForm}>
+                        Cancelar
+                      </Button>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={2} xs={2} offset={2}>
                     <Form.Item label=" ">
                       <Button type="primary" htmlType="submit">
                         Guardar
@@ -687,6 +739,11 @@ const configBusiness = () => {
               </Spin>
             </TabPane>
             <TabPane tab="Parentescos" key="tab_4">
+              {edit ? (
+                <Title style={{ fontSize: "20px" }}>Editar</Title>
+              ) : (
+                <></>
+              )}
               <Form
                 layout={"vertical"}
                 form={formRelationship}
@@ -713,7 +770,16 @@ const configBusiness = () => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col lg={2} xs={22} offset={1}>
+                </Row>
+                <Row>
+                  <Col lg={2} xs={2} offset={1}>
+                    <Form.Item label=" ">
+                      <Button type="primary" danger onClick={resetForm}>
+                        Cancelar
+                      </Button>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={2} xs={2} offset={2}>
                     <Form.Item label=" ">
                       <Button type="primary" htmlType="submit">
                         Guardar
@@ -727,6 +793,11 @@ const configBusiness = () => {
               </Spin>
             </TabPane>
             <TabPane tab="Tipos de documento" key="tab_5">
+              {edit ? (
+                <Title style={{ fontSize: "20px" }}>Editar</Title>
+              ) : (
+                <></>
+              )}
               <Form
                 layout={"vertical"}
                 form={formTypeDocument}
@@ -753,7 +824,16 @@ const configBusiness = () => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col lg={2} xs={22} offset={1}>
+                </Row>
+                <Row>
+                  <Col lg={2} xs={2} offset={1}>
+                    <Form.Item label=" ">
+                      <Button type="primary" danger onClick={resetForm}>
+                        Cancelar
+                      </Button>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={2} xs={2} offset={2}>
                     <Form.Item label=" ">
                       <Button type="primary" htmlType="submit">
                         Guardar
@@ -767,6 +847,11 @@ const configBusiness = () => {
               </Spin>
             </TabPane>
             <TabPane tab="Bancos" key="tab_6">
+              {edit ? (
+                <Title style={{ fontSize: "20px" }}>Editar</Title>
+              ) : (
+                <></>
+              )}
               <Form
                 layout={"vertical"}
                 form={formBank}
@@ -791,7 +876,16 @@ const configBusiness = () => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col lg={2} xs={22} offset={1}>
+                </Row>
+                <Row>
+                  <Col lg={2} xs={2} offset={1}>
+                    <Form.Item label=" ">
+                      <Button type="primary" danger onClick={resetForm}>
+                        Cancelar
+                      </Button>
+                    </Form.Item>
+                  </Col>
+                  <Col lg={2} xs={2} offset={2}>
                     <Form.Item label=" ">
                       <Button type="primary" htmlType="submit">
                         Guardar
@@ -808,21 +902,15 @@ const configBusiness = () => {
         </div>
       </MainLayout>
       <Modal
-        title="Modal"
+        title="Eliminar"
         visible={modal}
         onOk={deleteRegister}
         onCancel={showModal}
         okText="Si, Eliminar"
         cancelText="Cancelar"
       >
-        <Alert
-          message="Warning"
-          description="Al eliminar este registro perderá todos los datos
-                    relacionados a el de manera permanente.
-                    ¿Está seguro de querer eliminarlo?"
-          type="warning"
-          showIcon
-        />
+        Al eliminar este registro perderá todos los datos relacionados a el de
+        manera permanente. ¿Está seguro de querer eliminarlo?
       </Modal>
     </>
   );

@@ -171,11 +171,14 @@ const Events = () => {
                   <Col lg={2} xs={5} offset={1}>
                     <Form.Item>
                       <Button
-                        icon={<SearchOutlined />}
-                        type="primary"
+                        style={{
+                          background: "#fa8c16",
+                          fontWeight: "bold",
+                          color: "white",
+                        }}
                         htmlType="submit"
                       >
-                        Buscar
+                        Filtrar
                       </Button>
                     </Form.Item>
                   </Col>

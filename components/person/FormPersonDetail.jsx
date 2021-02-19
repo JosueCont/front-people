@@ -2594,13 +2594,8 @@ const personDetailForm = () => {
                   </Row>
                 </TabPane>
                 <TabPane tab="Eliminar persona" key="tab_10">
-                  <Alert
-                    message="Warning"
-                    description="Al eliminar a una persona perderá todos los datos
-                                        relacionados a ella de manera permanente."
-                    type="warning"
-                    showIcon
-                  />
+                  Al eliminar a una persona perderá todos los datos relacionados
+                  a ella de manera permanente.
                   <Row style={{ padding: "2%" }}>
                     <Col>
                       <Button
@@ -2636,21 +2631,15 @@ const personDetailForm = () => {
         </Spin>
       </Content>
       <Modal
-        title="Modal"
+        title="Eliminar"
         visible={modal}
         onOk={deleteRegister}
         onCancel={showModal}
         okText="Si, Eliminar"
         cancelText="Cancelar"
       >
-        <Alert
-          message="Warning"
-          description="Al eliminar este registro perderá todos los datos
-                    relacionados a el de manera permanente.
-                    ¿Está seguro de querer eliminarlo?"
-          type="warning"
-          showIcon
-        />
+        Al eliminar este registro perderá todos los datos relacionados a el de
+        manera permanente. ¿Está seguro de querer eliminarlo?
       </Modal>
       <DocumentModal
         close={getModalDoc}
