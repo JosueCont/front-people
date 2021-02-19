@@ -4,7 +4,7 @@ import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Table, Breadcrumb, Button, Form, Input, Select } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
-import SelectPerson from '../../components/selects/SelectPerson'
+import SelectCollaborator from '../../components/selects/SelectCollaboratorItemForm'
 
 
 import Axios from 'axios';
@@ -95,9 +95,7 @@ const Lending = () => {
         <Row justify="space-between" key="row1" style={{ paddingBottom: 20 }}>
           <Col>
             <Form name="filter" onFinish={filter} layout="inline" key="form">
-              <Form.Item key="person" name="person" label="Colaborador">
-                <SelectPerson style={{ width:150 }}  />
-              </Form.Item>
+                <SelectCollaborator  name="person" style={{ width:150 }} />              
               <Form.Item key="type" name="type" label="Tipo">
                 <Select placeholder="Todos" style={{ width: 150 }} key="select_type" options={typeOptions} allowClear/>
               </Form.Item>
