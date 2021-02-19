@@ -46,7 +46,7 @@ import TextArea from "antd/lib/input/TextArea";
 import DropdownTreeSelect from "react-dropdown-tree-select";
 import "react-dropdown-tree-select/dist/styles.css";
 import { LOGIN_URL, APP_ID } from "../../config/config";
-import Cookies from "js-cookie";
+import Cookies, { set } from "js-cookie";
 import SelectCompany from "../selects/SelectCompany";
 
 const { Content } = Layout;
@@ -69,6 +69,7 @@ const personDetailForm = () => {
   const [nodesPerson, setNodesPerson] = useState([]);
   const [messageAlert, setMessageAlert] = useState(false);
   const [password, setPassword] = useState(false);
+  const [nodePerson, setNodePerson] = useState();
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -280,6 +281,7 @@ const personDetailForm = () => {
       getBankAccount();
       getDocument();
       getTreeNode();
+      console.log("NODE-->>> ", nodePerson);
     }
   }, [router.query.id]);
 
@@ -479,16 +481,48 @@ const personDetailForm = () => {
           formPerson.setFieldsValue({
             birth_date: moment(response.data.birth_date),
           });
-        if (response.data.job)
+        setNodePerson(response.data.job[0].department.node.id);
+
+        if (response.data.job) {
+          Axios.get(
+            API_URL +
+              `/business/department/?node=${response.data.job[0].department.node.id}`
+          )
+            .then((response) => {
+              if (response.status === 200) {
+                let dep = response.data.results;
+                dep = dep.map((a) => {
+                  return { label: a.name, value: a.id };
+                });
+                setDepartments(dep);
+              }
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+          Axios.get(
+            API_URL +
+              `/person/job/?department=${response.data.job[0].department.id}`
+          )
+            .then((response) => {
+              console.log("JOB-->> ", response);
+              if (response.status === 200) {
+                let job = response.data.results;
+                job = job.map((a) => {
+                  return { label: a.name, value: a.id };
+                });
+                setJobs(job);
+              }
+            })
+            .catch((e) => {
+              console.log(e);
+            });
           formPerson.setFieldsValue({
-            node: job[0].department.node.id,
-            department: job[0].department.id,
-            job: job[0].id,
+            job: response.data.job[0].id,
+            department: response.data.job[0].department.id,
+            node: response.data.job[0].department.node.id,
           });
-        if (response.data.node)
-          formPerson.setFieldsValue({
-            node: node[0].id,
-          });
+        }
         setDateAdmission(response.data.date_of_admission);
         setBirthDate(response.data.birth_date);
         setIsActive(response.data.is_active);
@@ -1797,6 +1831,7 @@ const personDetailForm = () => {
                             placeholder="Empresa"
                             options={selectCompany}
                             onChange={changeNode}
+                            defaultValue={nodePerson}
                           />
                         </Form.Item>
                       </Col>
