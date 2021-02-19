@@ -174,7 +174,7 @@ const PermissionsReport = (props) => {
             <Row justify="space-between" style={{ paddingRight: 20 }}>
                 <Col span={24}>
                     <Title level={5}>
-                        Pérmisos
+                        Permisos
                     </Title>
                     <hr />
                 </Col>
@@ -189,7 +189,7 @@ const PermissionsReport = (props) => {
                     >
                         <Row gutter={[24, 8]}>
                             <Col>
-                                < SelectCollaborator name="collaborator" />
+                                < SelectCollaborator name="collaborator" style={{ width: 150 }} />
                             </Col>
                             <Col>
                                 <Form.Item key="company" name="company" label="Empresa">
