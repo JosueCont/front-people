@@ -54,19 +54,19 @@ const IncapacityEdit = () => {
     const getDetails = async () => {
         setLoading(true);
         try {
-          let response = await Axios.get(API_URL+`/person/incapacity/${id}/`);
-          let data = response.data;
-          console.log('get_details',data);
-          setDetails(data);
-          setDepartureDate(data.departure_date);
-          setReturnDate(data.return_date);
-    
-          setLoading(false);
+            let response = await Axios.get(API_URL + `/person/incapacity/${id}/`);
+            let data = response.data;
+            console.log('get_details', data);
+            setDetails(data);
+            setDepartureDate(data.departure_date);
+            setReturnDate(data.return_date);
+
+            setLoading(false);
         } catch (e) {
-          console.log("error", e);
-          setLoading(false);
+            console.log("error", e);
+            setLoading(false);
         }
-      };
+    };
 
     const saveRequest = async (values) => {
         setSending(true)
@@ -79,10 +79,10 @@ const IncapacityEdit = () => {
         data.append("departure_date", departure_date)
         data.append("return_date", return_date)
         data.append("khonnect_id", values.khonnect_id);
-        if(file){
+        if (file) {
             data.append("document", file['originFileObj'])
         }
-        
+
         try {
             let response = await Axios.patch(API_URL + `/person/incapacity/${id}/`, data);
             let resData = response.data;
@@ -112,12 +112,12 @@ const IncapacityEdit = () => {
         if (id) {
             getDetails();
         }
-      }, [route]);
+    }, [route]);
 
     return (
         <MainLayout currentKey="5">
             <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+                <Breadcrumb.Item className={'pointer'} onClick={() => route.push({ pathname: "/home" })}>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item href="./">Incapacidad</Breadcrumb.Item>
                 <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
             </Breadcrumb>

@@ -54,32 +54,32 @@ const Reports = () => {
     return (
         <MainLayout currentKey="8.5">
             <Breadcrumb className={"mainBreadcrumb"}>
-                <Breadcrumb.Item onClick={() => route.push('/home')}>Inicio</Breadcrumb.Item>
+                <Breadcrumb.Item className={'pointer'} onClick={() => route.push({ pathname: "/home" })}>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item>Reportes</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container back-white" style={{ width: "100%", padding: '20px 0' }} >
                 <Row>
                     <Col span={24}>
                         <Tabs defaultActiveKey="1" tabPosition="left" className="tabReports">
-                            <TabPane 
-                                tab={<UsersIcon />} 
+                            <TabPane
+                                tab={<UsersIcon />}
                                 key="1">
                                 <CollaboratorsReport />
                             </TabPane>
                             <TabPane tab={<NominaIcon />} key="2">
-                                <PayrollReport/>
+                                <PayrollReport />
                             </TabPane>
                             <TabPane tab={<LoanIcon />} key="3">
-                                <LoanReport/>
+                                <LoanReport />
                             </TabPane>
                             <TabPane tab={<HolidayIcon />} key="4">
-                                <HolidaysReport/>
+                                <HolidaysReport />
                             </TabPane>
-                            <TabPane tab={<HealthIcon/>} key="5">
-                                <InabilityReport/>
+                            <TabPane tab={<HealthIcon />} key="5">
+                                <InabilityReport />
                             </TabPane>
-                            <TabPane tab={<PermissionIcon/>} key="6">
-                                <PermissionsReport/>
+                            <TabPane tab={<PermissionIcon />} key="6">
+                                <PermissionsReport />
                             </TabPane>
                         </Tabs>
                     </Col>
