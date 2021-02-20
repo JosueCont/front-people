@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Table, Row, Col, Select, Form, DatePicker, Button } from "antd";
+import { Table, Row, Col, Select, Form, DatePicker, Button, Typography } from "antd";
 import SelectCollaborator from '../selects/SelectCollaboratorItemForm'
 import SelectCompany from '../selects/SelectCompany'
 import SelectDepartment from '../selects/SelectDepartment';
@@ -16,6 +16,7 @@ const InabilityReport = (props) => {
     const { Option } = Select;
     const [form] = Form.useForm();
     const { RangePicker } = DatePicker;
+    const {Title, Text} = Typography;
 
     const [incapacityList, setIncapacityList] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -40,7 +41,7 @@ const InabilityReport = (props) => {
             render: (collaborator) => {
                 return (
                     <>
-                        {collaborator.first_name ? collaborator.first_name+' ' : null}
+                        {collaborator.first_name ? collaborator.first_name + ' ' : null}
                         {collaborator.flast_name ? collaborator.flast_name : null}
                     </>
                 )
@@ -238,6 +239,12 @@ const InabilityReport = (props) => {
     return (
         <>
             <Row justify="space-between" style={{ padding: "10px 20px 10px 0px" }}>
+                <Col span={24}>
+                    <Title level={5}>
+                        Incapacidades
+                    </Title>
+                    <hr />
+                </Col>
                 <Col>
                     <Form
                         form={form}
