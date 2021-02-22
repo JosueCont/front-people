@@ -192,7 +192,21 @@ const GroupAdd = () => {
   const views = [
     { name: "Personas", value: "people.person" },
     { name: "Empresas", value: "people.company" },
-    { name: "Comunicación", value: "people.comunication" },
+    /*Catalaogos */
+    { name: "Departamentos", value: "people.department" },
+    { name: "Puestos de trabajo", value: "people.job" },
+    { name: "Tipos de personas", value: "people.person_type" },
+    { name: "Parentescos", value: "people.relationship" },
+    { name: "Tipos de documentos", value: "people.document_type" },
+    { name: "Bancos", value: "people.bank" },
+    /*Comunicacion */
+    { name: "Comunicados", value: "people.comunication" },
+    { name: "Eventos", value: "people.event" },
+    /*Solicitudes */
+    { name: "Préstamos", value: "people.loan" },
+    { name: "Vacaciones", value: "people.vacation" },
+    { name: "Permisos", value: "people.permit" },
+    { name: "Incapacidad", value: "people.incapacity" },
   ];
 
   const checkPerms = (perms) => {
