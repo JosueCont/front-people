@@ -42,7 +42,6 @@ const headerCustom = (props) => {
   }, []);
 
   const actionEvent = (data) => {
-    console.log("Data-->> ", data);
     setModalLogOut(data);
   };
 

@@ -94,15 +94,12 @@ const Incapacityform = (props) => {
   };
 
   const onchangeFile = (file) => {
-    console.log("file", file);
     setFileList(file.fileList);
     props.setFile(file.file);
   };
 
   useEffect(() => {
-    console.log("get");
     if (props.details) {
-      console.log("details", props.details);
       form.setFieldsValue({
         khonnect_id: props.details.collaborator
           ? props.details.collaborator.khonnect_id
