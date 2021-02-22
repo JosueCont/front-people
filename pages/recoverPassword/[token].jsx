@@ -1,11 +1,11 @@
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-import LoginForm from "../components/LoginForm";
-import PasswordRecover from '../components/PasswordRecover';
+import LoginForm from "../../components/LoginForm";
+import RecoveryPasswordForm from '../../components/RecoveryPaswwordForm';
 import { Row, Col, Card } from "antd";
 
 
-const Home = () => {
+const PasswordRecovery = () => {
     const [recoverPasswordShow, setRecoverPasswordShow] = useState(false);
     /* const [loginFormShow, SetLoginFormShow] = useState(true); */
 
@@ -23,7 +23,6 @@ const Home = () => {
             xs={24}
             className="loginContainer"
           >
-            
             <div style={{textAlign:'center' ,width: '100%', margin: 'auto' }}>
               <Row justify={'center'}>
                   <Col xs={43} sm={23} md={12} lg={12} xl={12}>
@@ -34,8 +33,8 @@ const Home = () => {
                         }
                         alt=""
                     />
-                    { recoverPasswordShow ? <PasswordRecover setRecoverPasswordShow={setRecoverPasswordShow} /> : <LoginForm  setRecoverPasswordShow={setRecoverPasswordShow}/> }
-                    {/* <PasswordRecover/> */}
+                    <RecoveryPasswordForm />
+                    
                   </Col>
               </Row>
             </div>
@@ -47,4 +46,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default PasswordRecovery;

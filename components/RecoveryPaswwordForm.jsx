@@ -16,7 +16,7 @@ import Axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
-const LoginForm = (props) => {
+const RecoveryPasswordForm = (props) => {
     const router = useRouter();
     const [loading, setLoading] = useState(null);
     const [errorLogin, setErrorLogin] = useState(false);
@@ -67,6 +67,18 @@ const LoginForm = (props) => {
 
     const ruleRequired = { required: true, message: "Este campo es requerido" };
 
+    const validatePassword = ({ getFieldValue }) => ({
+        validator(rule, value) {
+        if (!value || getFieldValue('passwordOne') === value) {
+            return Promise.resolve();
+        }
+            return Promise.reject(
+                "Las contraseñas no coinciden"
+            );  
+        },
+    
+    })
+
     return (
         <>
             <Spin tip="Loading..." spinning={loading}>
@@ -77,14 +89,15 @@ const LoginForm = (props) => {
                     initialValues={{ remember: true }}
                     onFinish={onFinish}
                 >
-                     <Form.Item name="email" rules={[ruleRequired]} label={'Correo electrónico'} labelAlign={'left'} className="font-color-khor">
+                    <Form.Item name="passwordOne" rules={[ruleRequired]} label={'Nueva contraseña'} labelAlign={'left'} className="font-color-khor">
                         <Input
                             style={{ marginTop: "5px" }}
+                            type="password"
                             placeholder="Correo electrónico"
                         />
                     </Form.Item>
-                    <Text className="font-color-khor"></Text>
-                    <Form.Item name="password" rules={[ruleRequired]} label={'Contraseña'} labelAlign={'left'} className="font-color-khor">
+                    <Form.Item name="passwordTwo" rules={[ruleRequired, validatePassword]} label={'Confirmar contraseña'} labelAlign={'left'} className="font-color-khor"
+                    >
                         <Input
                             style={{ marginTop: "5px" }}
                             type="password"
@@ -101,9 +114,6 @@ const LoginForm = (props) => {
                             closable
                         />
                     )}
-                    <Form.Item className={'font-color-khor'}>
-                        <b>¿Olvidaste tu contraseña?  </b> <span onClick={() => props.setRecoverPasswordShow(true)} className={'pointer'} style={{ fontWeight:'500', textDecoration: 'underline' }}>  haz click aqui </span>
-                    </Form.Item>
                     <Form.Item>
                         <Button
                             style={{ width: "100%" }}
@@ -111,7 +121,7 @@ const LoginForm = (props) => {
                             htmlType="submit"
                             className="login-form-button"
                         >
-                            Iniciar sesión
+                            Cambiar contraseña
             </Button>
                     </Form.Item>
                 </Form>
@@ -120,4 +130,4 @@ const LoginForm = (props) => {
     );
 };
 
-export default LoginForm;
+export default RecoveryPasswordForm;

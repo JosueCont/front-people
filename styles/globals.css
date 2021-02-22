@@ -24,57 +24,15 @@ a {
 .loginContainer {
   height: 100vh;
   background: white;
-  padding-top: 5%;
-  padding-bottom: 13%;
-  padding-left: 13%;
-  padding-right: 13%;
+  display: flex;
 }
 /* .card-login {
  height: 100vh;
  width: 100%;
 } */
 
-@media (max-width: 1015px) {
-  .loginContainer {
-    padding-top: 12%;
-    padding-bottom: 12%;
-    padding-left: 12%;
-    padding-right: 12%;
-  }
-}
 
-@media (max-width: 950px) {
-  .loginContainer {
-    padding-top: 13%;
-    padding-bottom: 11%;
-    padding-left: 11%;
-    padding-right: 11%;
-  }
-}
-@media (max-width: 720px) {
-  .loginContainer {
-    padding-top: 13%;
-    padding-bottom: 11%;
-    padding-left: 11%;
-    padding-right: 11%;
-  }
-}
-@media (max-width: 660px) {
-  .loginContainer {
-    padding-top: 20%;
-    padding-bottom: 11%;
-    padding-left: 11%;
-    padding-right: 11%;
-  }
-}
 @media (max-width: 577px) {
-  .loginContainer {
-    padding-top: 30%;
-    padding-bottom: 11%;
-    padding-left: 11%;
-    padding-right: 11%;
-    height: 100vh;
-  }
   .card-login {
     display: none;
   }
@@ -85,9 +43,18 @@ a {
 }
 
 .font-color-khor {
-  color: #252593;
+  color: #252593 !important;
   font-weight: bold;
 }
+
+.font-color-khor label{
+    color: #252593;
+    font-weight: bold;
+  }
+  .font-color-khor label{
+    color: #252593;
+    font-weight: bold;
+  }
 
 /* styles dash*/
 .components-layout-demo-fixed .logo {
