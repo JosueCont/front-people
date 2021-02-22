@@ -2,12 +2,56 @@ import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import LoginForm from "../../components/LoginForm";
 import RecoveryPasswordForm from '../../components/RecoveryPaswwordForm';
-import { Row, Col, Card } from "antd";
+import { Row, Col, Card, Typography } from "antd";
+import { useRouter } from "next/router";
+import {ArrowLeftOutlined} from '@ant-design/icons'
+
+
+import { LOGIN_URL, APP_ID } from "../../config/config";
+import Axios from 'axios'
 
 
 const PasswordRecovery = () => {
+    const router = useRouter();
+    const { token } = router.query;
+    const {Text, Title} = Typography;
+
+    const [loading, setLoading] = useState(false);
     const [recoverPasswordShow, setRecoverPasswordShow] = useState(false);
-    /* const [loginFormShow, SetLoginFormShow] = useState(true); */
+    const [responseSuccess, setResponseSuccess] = useState(false);
+    const [responseError, setResponseError] = useState(false);
+
+    const onFinish = (values) => {
+        setResponseError(false)
+        RecoveryPassword(values.passwordOne);
+    };
+
+    const RecoveryPassword = async (newPassword =null ) => {
+        try {
+            setLoading(true);
+            const headers = {
+                "client-id": APP_ID,
+                "Content-Type": "application/json",
+            };
+            const data = {
+                new_password: newPassword,
+                token: token,
+            };
+            let response = await Axios.post(LOGIN_URL + "/user/password/change/", data, { headers: headers });
+
+            /* console.log(promise) */
+            if(response.data.level == 'success'){
+                setResponseSuccess(true);
+            }else{
+                setResponseError(true);
+            }
+        } catch (e) {
+            setResponseError(true);
+            console.log(e);
+        } finally {
+            setLoading(false);
+        }
+    };
 
   return (
     <>
@@ -33,8 +77,17 @@ const PasswordRecovery = () => {
                         }
                         alt=""
                     />
-                    <RecoveryPasswordForm />
-                    
+                    { responseSuccess ? 
+                    <>
+                        <Title level={3} className={'font-color-khor'}>contraseña actualizada correctamente</Title> 
+                        <p className={'font-color-khor pointer'} onClick={() => router.push({ pathname: '/home'})}>
+                            <ArrowLeftOutlined />
+                            <Text className={'font-color-khor'}> Regresar al login</Text>
+                        </p>
+                    </>
+                    : 
+                    <RecoveryPasswordForm onFinish={onFinish} loading={loading} /> }
+                    {responseError ? <Text type="danger">Ocurrio un error al actualizar la contraseña</Text> : null}
                   </Col>
               </Row>
             </div>
