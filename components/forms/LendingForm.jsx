@@ -58,7 +58,7 @@ const Lendingform = (props) => {
       });
       setPersonList(list);
     } catch (error) {
-      console.log("error", error);
+      console.log(error);
     }
   };
 
@@ -93,7 +93,6 @@ const Lendingform = (props) => {
   useEffect(() => {
     getPersons();
     if (props.details) {
-      console.log("details", props.details);
       form.setFieldsValue({
         person: props.details.person.id,
         type: props.details.type,

@@ -91,7 +91,6 @@ const Vacationform = (props) => {
 
   useEffect(() => {
     if (props.details) {
-      console.log("details", props.details);
       formVacation.setFieldsValue({
         khonnect_id: props.details.collaborator
           ? props.details.collaborator.khonnect_id

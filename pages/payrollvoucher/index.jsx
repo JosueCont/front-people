@@ -33,7 +33,6 @@ const UploadPayroll = () => {
 
     Axios.get(API_URL + `/payroll/payroll-voucher/`)
       .then((response) => {
-        console.log("Reponse-->>> ", response.data);
         response.data.results.forEach((element, i) => {
           element.key = i;
           element.timestamp = moment(element.timestamp).format("DD-MM-YYYY");
@@ -109,7 +108,12 @@ const UploadPayroll = () => {
   return (
     <MainLayout currentKey="9">
       <Breadcrumb style={{ margin: "16px 0" }}>
-      <Breadcrumb.Item className={'pointer'} onClick={() => route.push({ pathname: "/home" })}>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
       </Breadcrumb>
 
