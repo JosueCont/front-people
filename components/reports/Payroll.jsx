@@ -35,8 +35,8 @@ const PayrollReport = (props) => {
     const columns = [
         {
             title: "Núm. de trabajador",
-            dataIndex: "Colaborador",
-            key: "Colaborador",
+            dataIndex: "code",
+            key: "code",
             
         },
         {
@@ -47,8 +47,8 @@ const PayrollReport = (props) => {
         },
         {
             title: "Departamento",
-            dataIndex: "Ddepartment",
-            key: "Departamento",
+            dataIndex: "department",
+            key: "department",
         },
         {
             title: "Puesto",

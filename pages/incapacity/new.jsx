@@ -101,7 +101,7 @@ const IncapacityNew = () => {
     return (
         <MainLayout currentKey="5">
             <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+                <Breadcrumb.Item className={'pointer'} onClick={() => route.push({ pathname: "/home" })}>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item href="./">Incapacidad</Breadcrumb.Item>
                 <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
             </Breadcrumb>
