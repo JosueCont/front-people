@@ -19,12 +19,12 @@ axiosApi.interceptors.request.use(
   async function (config) {
     let token = JSON.parse(cookie.get("token"));
     config.headers.khonnect_id = token.user_id;
-    const ct = "content-type"
-    
+    const ct = "content-type";
+
     return config;
   },
   function (error) {
-    console.log("error-axios", error.response);
+    console.log(error.response);
     return Promise.reject(error);
   }
 );
