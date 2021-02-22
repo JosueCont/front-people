@@ -45,6 +45,8 @@ const AddUploadPayroll = () => {
           setLoading(false);
           message.error("Error al agregar, intente de nuevo");
         });
+    } else {
+      message.error("Debe cargar al menos 1 xml");
     }
   };
 

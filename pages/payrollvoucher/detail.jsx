@@ -10,6 +10,7 @@ import {
   Upload,
   Descriptions,
   Badge,
+  Card,
 } from "antd";
 import { PlusOutlined, InboxOutlined } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
@@ -26,8 +27,14 @@ const { Dragger } = Upload;
 const AddUploadPayroll = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  /* Payrol Person data */
+  const [numEmployee, setNumEmployee] = useState("");
   const [namePerson, setNamePerson] = useState("");
+  const [curp, setCurp] = useState("");
   const [rfc, setRfc] = useState("");
+  const [imss, setImss] = useState("");
+  const [department, setDepartment] = useState("");
+  const [job, setJob] = useState("");
   const [payment_start_date, setPayment_start_date] = useState("");
   const [payment_end_date, setPayment_end_date] = useState("");
   const [payment_date, setPayment_date] = useState("");
@@ -37,6 +44,10 @@ const AddUploadPayroll = () => {
   const [number_of_days_paid, setNumber_of_days_paid] = useState("");
   const [movement, setMovement] = useState([]);
   const [detailMov, setDetailMov] = useState([]);
+  const [nameUnit, setNameUnit] = useState("");
+  const [total_other_payment, setTotal_other_paymen] = useState("");
+  const [concept_other_payment, setConcept_other_paymen] = useState("");
+  const [code_other_payment, setCode_other_payment] = useState("");
 
   useEffect(() => {
     Axios.get(
@@ -48,10 +59,16 @@ const AddUploadPayroll = () => {
             " " +
             response.data.person.flast_name
         );
+        setNameUnit(response.data.person.job[0].department.node.name);
+        setNumEmployee(response.data.person.code);
+        setCurp(response.data.person.curp);
         setRfc(response.data.person.rfc);
-        setPayment_start_date(response.data.payroll_voucher.rfc);
-        setPayment_end_date(response.data.payroll_voucher.payment_start_date);
-        setPayment_date(response.data.payroll_voucher.payment_end_date);
+        setImss(response.data.person.imss);
+        setDepartment(response.data.person.job[0].department.name);
+        setJob(response.data.person.job[0].name);
+        setPayment_start_date(response.data.payroll_voucher.payment_start_date);
+        setPayment_end_date(response.data.payroll_voucher.payment_end_date);
+        setPayment_date(response.data.payroll_voucher.payment_date);
         setTotal_perceptions(response.data.payroll_voucher.total_perceptions);
         setTotal_deductions(response.data.payroll_voucher.total_deductions);
         setAmount(response.data.payroll_voucher.amount);
@@ -60,6 +77,14 @@ const AddUploadPayroll = () => {
         );
         setMovement(response.data.payroll_movements);
         setDetailMov(response.data.detail_payroll_movements);
+        response.data.payroll_movements.forEach((element) => {
+          if (element.movement_type === 3) {
+            setTotal_other_paymen(element.amount);
+            setConcept_other_paymen(element.concept);
+            setCode_other_payment(element.code);
+          }
+        });
+        console.log("res", response.data);
         setLoading(false);
       })
       .catch((response) => {
@@ -78,128 +103,201 @@ const AddUploadPayroll = () => {
     if (movement.length > 0) {
       return (
         <>
-          <Descriptions title="Recibo de nómina" layout="vertical" bordered>
-            <Descriptions.Item label="Colaborador:">
-              {namePerson}
-            </Descriptions.Item>
-            <Descriptions.Item label="RFC:"> {rfc}</Descriptions.Item>
-            <Descriptions.Item label="Numero de días pagados:">
-              {number_of_days_paid}
-            </Descriptions.Item>
-            <Descriptions.Item label="Fecha inicial de pago:">
-              {payment_start_date}
-            </Descriptions.Item>
-            <Descriptions.Item label="Fecha final de pago:">
-              {payment_end_date}
-            </Descriptions.Item>
-            <Descriptions.Item label="Fecha de pago:">
-              {payment_date}
-            </Descriptions.Item>
-            <Descriptions.Item label="Total percepciones:">
-              ${total_perceptions}
-            </Descriptions.Item>
-            <Descriptions.Item label="Total deducciones:">
-              ${total_deductions}
-            </Descriptions.Item>
-            <Descriptions.Item label="Importe:">${amount}</Descriptions.Item>
+          <Card title={nameUnit}>
+            <Row>
+              <Col xl={12} md={12} sm={12} xs={24}>
+                <p>
+                  <strong>No. Trabajador:</strong> {numEmployee}
+                </p>
+                <p>
+                  <strong>Nombre:</strong> {namePerson}
+                </p>
+                <p>
+                  <strong>CURP:</strong>
+                  {curp}
+                </p>
+                <p>
+                  <strong>RFC:</strong>
+                  {rfc}
+                </p>
+                <p>
+                  <strong>IMSS:</strong>
+                  {imss}
+                </p>
+              </Col>
+              <Col xl={12} md={12} sm={12} xs={24}>
+                <p>
+                  <strong>Departamento:</strong> {department}
+                </p>
+                <p>
+                  <strong>Puesto:</strong> {job}
+                </p>
+                <p>
+                  <strong>Perido:</strong> {payment_start_date} -{" "}
+                  {payment_end_date}
+                </p>
+                <p>
+                  <strong>Dias trabajados:</strong> {number_of_days_paid}
+                </p>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24} style={{ marginTop: "10px" }}>
+                <Row>
+                  <Col xl={12} md={12} sm={24} xs={20}>
+                    <div
+                      style={{
+                        backgroundColor: "#3d78b9",
+                        textAlign: "center",
+                        color: "#fff",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Percepciones
+                    </div>
+                    {detailMov.map((det, i) => (
+                      <Row>
+                        {det.movement_type === 1 && (
+                          <Col span={24}>
+                            <Row>
+                              <Col xl={5} md={5} xs={4}>
+                                {det.key_code}
+                              </Col>
+                              <Col xl={10} md={14} xs={16}>
+                                {det.concept}
+                              </Col>
+                              <Col xl={5} md={5} xs={4}>
+                                ${det.taxed_amount}
+                              </Col>
+                            </Row>
+                          </Col>
+                        )}
+                      </Row>
+                    ))}
+                  </Col>
+                  <Col xl={12} md={12} sm={24} xs={20}>
+                    <div
+                      style={{
+                        backgroundColor: "#3d78b9",
+                        textAlign: "center",
+                        color: "#fff",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Deducciones
+                    </div>
+                    {detailMov.map((det, i) => (
+                      <Row>
+                        {det.movement_type === 2 && (
+                          <Col span={24}>
+                            <Row>
+                              <Col xl={5} md={5} xs={4}>
+                                {det.key_code}
+                              </Col>
+                              <Col xl={10} md={14} xs={16}>
+                                {det.concept}
+                              </Col>
+                              <Col xl={5} md={5} xs={4}>
+                                ${det.amount}
+                              </Col>
+                            </Row>
+                          </Col>
+                        )}
+                      </Row>
+                    ))}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            <Row>
+              <Col
+                span={24}
+                style={{
+                  marginTop: "20px",
+                }}
+              >
+                <div
+                  style={{
+                    backgroundColor: "#3d78b9",
+                    textAlign: "center",
+                    color: "#fff",
+                    marginBottom: "10px",
+                  }}
+                >
+                  Otros Pagos
+                </div>
 
-            <Descriptions.Item label="Percepciones:" span={3}>
-              {movement.map((mov, i) => (
-                <div span={3}>
-                  {mov.movement_type === 1 && (
-                    <div>
-                      <Row>
-                        <Col xl={8} md={12} xs={24}>
-                          Total de pago: ${mov.total_salaries}
-                        </Col>
-                        <Col xl={8} md={12} xs={24}>
-                          Total gravada: ${mov.total_taxed}
-                        </Col>
-                        <Col xl={8} md={12} xs={24}>
-                          Total exento: ${mov.total_exent}
-                        </Col>
-                      </Row>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </Descriptions.Item>
-            <Descriptions.Item label="Detalle de percepción:" span={3}>
-              {detailMov.map((det, i) => (
-                <div>
-                  {det.movement_type === 1 && (
+                <Row>
+                  <Col span={24}>
                     <Row>
-                      <Col span={24}>
-                        <Row>
-                          <Col xl={8} md={8} xs={24}>
-                            Tipo de percepción: {det.perception_type}
-                          </Col>
-                          <Col xl={8} md={8} xs={24}>
-                            Concepto: {det.concept}
-                          </Col>
-                          <Col xl={8} md={8} xs={24}>
-                            Clave: {det.key_code}
-                          </Col>
-                          <Col xl={8} md={8} xs={24}>
-                            Importe gravado: ${det.taxed_amount}
-                          </Col>
-                          <Col xl={8} md={8} xs={24}>
-                            Importe exento: ${det.amount_exent}
-                          </Col>
-                        </Row>
-                        <br />
+                      <Col xl={5} md={5} xs={4}>
+                        {code_other_payment}
+                      </Col>
+                      <Col xl={10} md={14} xs={16}>
+                        {concept_other_payment}
+                      </Col>
+                      <Col xl={5} md={5} xs={4}>
+                        ${total_other_payment}
                       </Col>
                     </Row>
-                  )}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col
+                span={24}
+                style={{
+                  marginTop: "20px",
+                }}
+              >
+                <div
+                  style={{
+                    backgroundColor: "#3d78b9",
+                    textAlign: "center",
+                    color: "#fff",
+                    marginBottom: "10px",
+                  }}
+                >
+                  Totales
                 </div>
-              ))}
-            </Descriptions.Item>
-            <Descriptions.Item label="Deducciones totales:" span={3}>
-              {movement.map((mov, i) => (
-                <div span={3}>
-                  {mov.movement_type === 2 && (
-                    <div>
-                      <Row>
-                        <Col xl={12} md={12} xs={24}>
-                          Total de pago: {mov.total_other_deductions}
-                        </Col>
-                        <Col xl={12} md={12} xs={24}>
-                          Total gravada: {mov.total_taxes_withheld}
-                        </Col>
-                      </Row>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </Descriptions.Item>
-            <Descriptions.Item label="Detalle de deducciones:" span={3}>
-              {detailMov.map((det, i) => (
-                <div>
-                  {det.movement_type === 2 && (
+                <Row>
+                  <Col xl={12} md={12} xs={24}>
                     <Row>
-                      <Col span={24}>
-                        <Row>
-                          <Col xl={6} md={6} xs={24}>
-                            Tipo de deducción: {det.deduction_type}
-                          </Col>
-                          <Col xl={6} md={6} xs={24}>
-                            Concepto: {det.concept}
-                          </Col>
-                          <Col xl={6} md={6} xs={24}>
-                            Clave: {det.key_code}
-                          </Col>
-                          <Col xl={6} md={6} xs={24}>
-                            Cantidad: ${det.amount}
-                          </Col>
-                        </Row>
-                        <br />
+                      <Col span={12}>
+                        <strong>Total decucciones:</strong>
+                      </Col>
+                      <Col span={12}>
+                        <strong>{total_deductions}</strong>
                       </Col>
                     </Row>
-                  )}
-                </div>
-              ))}
-            </Descriptions.Item>
-          </Descriptions>
+                  </Col>
+                  <Col xl={12} md={12} xs={24}>
+                    <Row>
+                      <Col span={12}>
+                        <strong>Total Percepciones:</strong>
+                      </Col>
+                      <Col span={12}>
+                        <strong>{total_perceptions}</strong>
+                      </Col>
+                    </Row>
+                  </Col>
+
+                  <Col xl={12} md={12} xs={24}>
+                    <Row>
+                      <Col span={12}>
+                        <strong>Total pagado:</strong>
+                      </Col>
+                      <Col span={12}>
+                        <strong>{amount}</strong>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Card>
         </>
       );
     } else {
