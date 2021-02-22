@@ -14,12 +14,10 @@ import {
   Select,
   DatePicker,
   Button,
-  Image,
   Switch,
   Collapse,
   message,
   Checkbox,
-  Alert,
   Table,
   Upload,
 } from "antd";
@@ -28,8 +26,6 @@ import {
   EditOutlined,
   DeleteOutlined,
   ArrowLeftOutlined,
-  InboxOutlined,
-  UploadOutlined,
   PlusOutlined,
   FileTextOutlined,
   LoadingOutlined,
@@ -42,12 +38,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Router from "next/router";
 import moment from "moment";
-import TextArea from "antd/lib/input/TextArea";
-import DropdownTreeSelect from "react-dropdown-tree-select";
 import "react-dropdown-tree-select/dist/styles.css";
 import { LOGIN_URL, APP_ID } from "../../config/config";
-import Cookies, { set } from "js-cookie";
-import SelectCompany from "../selects/SelectCompany";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -65,11 +58,8 @@ const personDetailForm = () => {
   const [modalDoc, setModalDoc] = useState(false);
   const [deleted, setDeleted] = useState({});
   const [people, setPeople] = useState([]);
-  const [dataTree, setDataTree] = useState([]);
-  const [nodesPerson, setNodesPerson] = useState([]);
-  const [messageAlert, setMessageAlert] = useState(false);
-  const [password, setPassword] = useState(false);
   const [nodePerson, setNodePerson] = useState();
+  const [loadImge, setLoadImage] = useState(false);
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -104,7 +94,6 @@ const personDetailForm = () => {
   const [formExperiencejob] = Form.useForm();
   const [formBank] = Form.useForm();
   const [formPassword] = Form.useForm();
-  const [formNode] = Form.useForm();
 
   ////STATE SELECTS
   const [jobs, setJobs] = useState([]);
@@ -280,8 +269,6 @@ const personDetailForm = () => {
       getJobExperience();
       getBankAccount();
       getDocument();
-      getTreeNode();
-      console.log("NODE-->>> ", nodePerson);
     }
   }, [router.query.id]);
 
@@ -447,11 +434,9 @@ const personDetailForm = () => {
     if (value.groups) delete value["groups"];
     updatePerson(value);
   };
-
   const getPerson = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}`)
       .then((response) => {
-        console.log("Person-->> ", response.data);
         formPerson.setFieldsValue({
           first_name: response.data.first_name,
           flast_name: response.data.flast_name,
@@ -505,7 +490,6 @@ const personDetailForm = () => {
               `/person/job/?department=${response.data.job[0].department.id}`
           )
             .then((response) => {
-              console.log("JOB-->> ", response);
               if (response.status === 200) {
                 let job = response.data.results;
                 job = job.map((a) => {
@@ -621,7 +605,6 @@ const personDetailForm = () => {
       saveGeneralData(value);
     }
   };
-
   const saveGeneralData = (data) => {
     setLoading(true);
     Axios.post(API_URL + `/person/general-person/`, data)
@@ -637,11 +620,9 @@ const personDetailForm = () => {
         console.log(error);
       });
   };
-
   const getGeneralData = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}/general_person/`)
       .then((response) => {
-        console.log("GENERAL-->> ", response.data);
         formGeneralTab.setFieldsValue({
           place_birth: response.data.place_birth,
           nationality: response.data.nationality,
@@ -664,7 +645,6 @@ const personDetailForm = () => {
         setLoading(false);
       });
   };
-
   const updateGeneralData = (data) => {
     setLoading(true);
     Axios.put(API_URL + `/person/general-person/${idGeneralP}/`, data)
@@ -1586,26 +1566,6 @@ const personDetailForm = () => {
     if (deleted.api == "deleteFamily") deleteFamily(deleted.id);
     if (deleted.api == "deleteDocument") deleteDocument(deleted.id);
   };
-  ////TREENODE
-  const getTreeNode = () => {
-    Axios.post(API_URL + "/business/node/node_in_cascade/")
-      .then((response) => {
-        setDataTree(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  const onChangeTree = (currentNode, selectedNodes) => {
-    console.log("onChange::", currentNode, selectedNodes);
-    setNodesPerson(selectedNodes);
-  };
-  const onActionTree = (node, action) => {
-    console.log("onAction::", action, node);
-  };
-  const onNodeToggleTree = (currentNode) => {
-    console.log("onNodeToggle::", currentNode);
-  };
 
   //////SHOW MODAL DELETE
   const showModal = () => {
@@ -1633,7 +1593,6 @@ const personDetailForm = () => {
 
   let numberPhoto = 0;
   const upImage = (info) => {
-    console.log("INFO-->> ", info);
     if (photo && photo.includes(info.file.name)) {
     } else {
       numberPhoto = numberPhoto + 1;
@@ -1647,6 +1606,7 @@ const personDetailForm = () => {
 
   const upImageProfile = (data, img) => {
     if (numberPhoto === 1) {
+      setLoadImage(true);
       Axios.post(API_URL + `/person/person/update_pthoto_person/`, data)
         .then((response) => {
           getPerson();
@@ -1655,15 +1615,26 @@ const personDetailForm = () => {
             className: "custom-class",
           });
           numberPhoto = 0;
+          setLoadImage(false);
         })
         .catch((error) => {
           console.log(error);
+          setLoadImage(false);
           setPhoto(null);
         });
     }
   };
 
   const ruleRequired = { required: true, message: "Este campo es requerido" };
+  const rulePassword = ({ getFieldValue }) => ({
+    validator() {
+      if (getFieldValue("newPassword") == getFieldValue("new_password")) {
+        return Promise.resolve();
+      } else {
+        return Promise.reject("Las contraseñas no coinciden");
+      }
+    },
+  });
 
   const changePassword = (value) => {
     if (value.new_password == value.newPassword) {
@@ -1678,54 +1649,17 @@ const personDetailForm = () => {
         headers: headers,
       })
         .then((response) => {
-          console.log("Response Change-->> ", response);
+          message.success("Actualizado correctamente!!");
+          formPassword.resetFields();
         })
         .catch((error) => {
-          console.log("ERROR-->>> ", error);
+          message.error("Error al actualizar, intente de nuevo");
+          formPassword.resetFields();
         });
     } else {
-      message.error("Las contraseñas no coinsiden.");
+      message.error("Las contraseñas no coinciden.");
     }
   };
-
-  //////NODOS PERSON
-  const formPersonNode = (value) => {};
-  const colNode = [
-    {
-      title: "Empresa",
-    },
-    {
-      title: "Departamento",
-    },
-    {
-      title: "Puesto",
-    },
-    {
-      title: "Opciones",
-      render: (item) => {
-        return (
-          <div>
-            <Row gutter={16}>
-              <Col className="gutter-row" offset={1}>
-                <EditOutlined
-                  style={{ fontSize: "25px" }}
-                  onClick={() => updateFormbankAcc(item)}
-                />
-              </Col>
-              <Col className="gutter-row" offset={1}>
-                <DeleteOutlined
-                  style={{ fontSize: "25px" }}
-                  onClick={() => {
-                    setDeleteRegister({ id: item.id, api: "deleteBankAcc" });
-                  }}
-                />
-              </Col>
-            </Row>
-          </div>
-        );
-      },
-    },
-  ];
 
   const changeNode = (value) => {
     formPerson.setFieldsValue({
@@ -1755,10 +1689,8 @@ const personDetailForm = () => {
       job: null,
     });
     setJobs([]);
-    console.log("DEPA-->> ", value);
     Axios.get(API_URL + `/person/job/?department=${value}`)
       .then((response) => {
-        console.log("JOB-->> ", response);
         if (response.status === 200) {
           let job = response.data.results;
           job = job.map((a) => {
@@ -1936,56 +1868,58 @@ const personDetailForm = () => {
                   <Col span={6}>
                     <Row justify="center" align="top">
                       <Row>
-                        <div
-                          style={
-                            photo
-                              ? {
-                                  width: "190px",
-                                  height: "190px",
-                                  display: "flex",
-                                  flexWrap: "wrap",
-                                  alignContent: "center",
-                                  textAlign: "center",
-                                }
-                              : {}
-                          }
-                        >
-                          <Upload
-                            name="avatar"
-                            listType="picture-card"
-                            showUploadList={false}
-                            onChange={upImage}
+                        <Spin spinning={loadImge}>
+                          <div
+                            style={
+                              photo
+                                ? {
+                                    width: "190px",
+                                    height: "190px",
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    alignContent: "center",
+                                    textAlign: "center",
+                                  }
+                                : {}
+                            }
                           >
-                            {photo ? (
-                              <div
-                                className="frontImage"
-                                style={
-                                  photo
-                                    ? {
-                                        width: "190px",
-                                        height: "190px",
-                                        display: "flex",
-                                        flexWrap: "wrap",
-                                        alignContent: "center",
-                                        textAlign: "center",
-                                        alignContent: "center",
-                                      }
-                                    : {}
-                                }
-                              >
-                                <img
-                                  className="img"
-                                  src={photo}
-                                  alt="avatar"
-                                  preview={false}
-                                  style={{ width: "200px", height: "200px" }}
-                                />
-                              </div>
-                            ) : (
-                              uploadButton
-                            )}
-                          </Upload>
-                        </div>
+                            <Upload
+                              name="avatar"
+                              listType="picture-card"
+                              showUploadList={false}
+                              onChange={upImage}
+                            >
+                              {photo ? (
+                                <div
+                                  className="frontImage"
+                                  style={
+                                    photo
+                                      ? {
+                                          width: "190px",
+                                          height: "190px",
+                                          display: "flex",
+                                          flexWrap: "wrap",
+                                          alignContent: "center",
+                                          textAlign: "center",
+                                          alignContent: "center",
+                                        }
+                                      : {}
+                                  }
+                                >
+                                  <img
+                                    className="img"
+                                    src={photo}
+                                    alt="avatar"
+                                    preview={false}
+                                    style={{ width: "200px", height: "200px" }}
+                                  />
+                                </div>
+                              ) : (
+                                uploadButton
+                              )}
+                            </Upload>
+                          </div>
+                        </Spin>
                       </Row>
                       <Col>
                         <Form.Item
@@ -2018,6 +1952,9 @@ const personDetailForm = () => {
               <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
               <Tabs tabPosition={"left"}>
                 <TabPane tab="Datos generales" key="tab_1">
+                  <Row>
+                    <Title style={{ fontSize: "20px" }}>Datos generales</Title>
+                  </Row>
                   <Form
                     layout={"vertical"}
                     form={formGeneralTab}
@@ -2086,6 +2023,9 @@ const personDetailForm = () => {
                   </Form>
                 </TabPane>
                 <TabPane tab="Teléfono" key="tab_2">
+                  <Row>
+                    <Title style={{ fontSize: "20px" }}>Teléfono</Title>
+                  </Row>
                   <Form
                     layout={"vertical"}
                     form={formPhone}
@@ -2160,6 +2100,9 @@ const personDetailForm = () => {
                   </Spin>
                 </TabPane>
                 <TabPane tab="Dirección" key="tab_3">
+                  <Row>
+                    <Title style={{ fontSize: "20px" }}>Dirección</Title>
+                  </Row>
                   <Form
                     layout={"vertical"}
                     form={formAddress}
@@ -2246,6 +2189,9 @@ const personDetailForm = () => {
                   </Form>
                 </TabPane>
                 <TabPane tab="Familia" key="tab_4">
+                  <Row>
+                    <Title style={{ fontSize: "20px" }}>Familia</Title>
+                  </Row>
                   <Form
                     layout={"vertical"}
                     form={formFamily}
@@ -2364,6 +2310,11 @@ const personDetailForm = () => {
                   </Spin>
                 </TabPane>
                 <TabPane tab="Contactos de emergencia" key="tab_5">
+                  <Row>
+                    <Title style={{ fontSize: "20px" }}>
+                      Contactos de emergencia
+                    </Title>
+                  </Row>
                   <Form
                     layout="vertical"
                     form={formContactEmergency}
@@ -2429,6 +2380,11 @@ const personDetailForm = () => {
                   </Spin>
                 </TabPane>
                 <TabPane tab="Formación/Habilidades" key="tab_6">
+                  <Row>
+                    <Title style={{ fontSize: "20px" }}>
+                      Formación/Habilidades
+                    </Title>
+                  </Row>
                   <Form
                     layout="vertical"
                     form={formTraining}
@@ -2500,6 +2456,11 @@ const personDetailForm = () => {
                   </Spin>
                 </TabPane>
                 <TabPane tab="Cuentas bancarias" key="tab_7">
+                  <Row>
+                    <Title style={{ fontSize: "20px" }}>
+                      Cuentas bancarias
+                    </Title>
+                  </Row>
                   <Form
                     layout="vertical"
                     form={formBank}
@@ -2547,6 +2508,9 @@ const personDetailForm = () => {
                 </TabPane>
                 <TabPane tab="Documentos" key="tab_8">
                   <Row>
+                    <Title style={{ fontSize: "20px" }}>Documentos</Title>
+                  </Row>
+                  <Row>
                     <Col style={{ padding: "2%" }}>
                       <Button
                         icon={<PlusOutlined />}
@@ -2562,36 +2526,47 @@ const personDetailForm = () => {
                   </Spin>
                 </TabPane>
                 <TabPane tab="Cambiar contraseña" key="tab_9">
-                  <Row style={{ padding: "2%" }}>
-                    <Form form={formPassword} onFinish={changePassword}>
-                      <Form.Item
-                        name="old_password"
-                        label="Contraseña actual"
-                        rules={[ruleRequired]}
-                      >
-                        <Input type="password" />
-                      </Form.Item>
-                      <Form.Item
-                        name="newPassword"
-                        label="Contraseña actual"
-                        rules={[ruleRequired]}
-                      >
-                        <Input type="password" />
-                      </Form.Item>
-                      <Form.Item
-                        name="new_password"
-                        label="Contraseña actual"
-                        rules={[ruleRequired]}
-                      >
-                        <Input type="password" />
-                      </Form.Item>
+                  <Row>
+                    <Title style={{ fontSize: "20px" }}>
+                      Cambiar contraseña
+                    </Title>
+                  </Row>
+                  <Form
+                    labelCol={{ span: 6 }}
+                    wrapperCol={{ span: 10 }}
+                    layout="horizontal"
+                    form={formPassword}
+                    onFinish={changePassword}
+                  >
+                    <Form.Item
+                      name="old_password"
+                      label="Contraseña actual"
+                      rules={[ruleRequired]}
+                    >
+                      <Input type="password" />
+                    </Form.Item>
+                    <Form.Item
+                      name="newPassword"
+                      label="Nueva contraseña"
+                      rules={[ruleRequired]}
+                    >
+                      <Input.Password type="password" />
+                    </Form.Item>
+                    <Form.Item
+                      name="new_password"
+                      label="Confirmar contraseña"
+                      rules={[ruleRequired, rulePassword]}
+                    >
+                      <Input.Password type="password" />
+                    </Form.Item>
+                    <Row justify={"end"}>
                       <Form.Item>
                         <Button type="primary" htmlType="submit">
                           Cambiar contraseña
                         </Button>
                       </Form.Item>
-                    </Form>
-                  </Row>
+                    </Row>
+                  </Form>
                 </TabPane>
                 <TabPane tab="Eliminar persona" key="tab_10">
                   Al eliminar a una persona perderá todos los datos relacionados

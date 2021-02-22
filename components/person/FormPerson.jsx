@@ -36,7 +36,7 @@ const FormPerson = (props) => {
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
     if (value.password != value.passwordTwo)
-      message.error("Las contraseñas no coinsiden.");
+      message.error("Las contraseñas no coinciden.");
     else {
       delete value["passwordTwo"];
       createPerson(value);
@@ -168,10 +168,8 @@ const FormPerson = (props) => {
     form.setFieldsValue({
       job: null,
     });
-    console.log("DEPA-->> ", value);
     Axios.get(API_URL + `/person/job/?department=${value}`)
       .then((response) => {
-        console.log("JOB-->> ", response);
         if (response.status === 200) {
           let job = response.data.results;
           job = job.map((a) => {
@@ -268,7 +266,24 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="passwordTwo">
+                <Form.Item
+                  rules={[
+                    ruleRequired,
+                    ({ getFieldValue }) => ({
+                      validator() {
+                        if (
+                          getFieldValue("password") ==
+                          getFieldValue("passwordTwo")
+                        ) {
+                          return Promise.resolve();
+                        } else {
+                          return Promise.reject("Las contraseñas no coinciden");
+                        }
+                      },
+                    }),
+                  ]}
+                  name="passwordTwo"
+                >
                   <Input.Password type="text" placeholder="Contraseña" />
                 </Form.Item>
               </Col>

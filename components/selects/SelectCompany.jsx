@@ -24,7 +24,7 @@ export default function SelectCompany(props) {
       });
       setOptions(options);
     } catch (error) {
-      console.log("error", error);
+      console.log(error);
     }
   };
 
