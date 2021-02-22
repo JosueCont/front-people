@@ -49,7 +49,7 @@ export default function SelectDepartment (props) {
 
     return (
         <Form.Item key="department_select" name={props.name ? props.name : 'department'} label="Departamento">
-            <Select key="SelectDepartament" style={{ width:150 }} options={options} allowClear onChange={props.onChange ? props.onChange : null} />
+            <Select key="SelectDepartament" style={ props.style ? props.style : { width:150 } } options={options} allowClear onChange={props.onChange ? props.onChange : null} />
         </Form.Item>
     )
     /* return (

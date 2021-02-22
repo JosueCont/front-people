@@ -142,11 +142,11 @@ const IncapacityDetails = () => {
                     icon: <CheckCircleOutlined />,
                     okText: "Aceptar y notificar",
                     onOk() {
-                      /* console.log('OK'); */
-                      /* route.push('/holidays'); */
-                      route.push("/incapacity");
+                        /* console.log('OK'); */
+                        /* route.push('/holidays'); */
+                        route.push("/incapacity");
                     }
-                  });
+                });
             } catch (e) {
                 console.log("error", e);
             }
@@ -200,7 +200,7 @@ const IncapacityDetails = () => {
     return (
         <MainLayout currentKey="5">
             <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+                <Breadcrumb.Item className={'pointer'} onClick={() => route.push({ pathname: "/home" })}>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item onClick={() => { route.push('/incapacity') }}>Incapacidad</Breadcrumb.Item>
                 <Breadcrumb.Item>Detalles de solicitud</Breadcrumb.Item>
             </Breadcrumb>
