@@ -18,50 +18,33 @@ import jwt_decode from "jwt-decode";
 
 const RecoveryPasswordForm = (props) => {
     const router = useRouter();
-    const [loading, setLoading] = useState(null);
-    const [errorLogin, setErrorLogin] = useState(false);
+    const { token } = router.query;
+
+    const [loading, setLoading] = useState(false);
     const onFinish = (values) => {
-        login(values.email, values.password);
+        RecoveryPassword(values.passwordOne);
     };
 
-    const login = async (email, password) => {
+    const RecoveryPassword = async (newPassword =null ) => {
         try {
-            setErrorLogin(false);
             setLoading(true);
             const headers = {
                 "client-id": APP_ID,
                 "Content-Type": "application/json",
             };
             const data = {
-                email: email,
-                password: password,
+                new_password: newPassword,
+                token: token,
             };
-            Axios.post(LOGIN_URL + "/login/", data, { headers: headers })
-                .then(function (response) {
-                    if (response.status === 200) {
-                        let token = jwt_decode(response.data.token);
-                        if (token) {
-                            message.success("Acceso correcto.");
-                            Cookies.set("token", token);
-                            setLoading(false);
-                            router.push({ pathname: "/home" });
-                        }
-                    } else {
-                        setLoading(false);
-                        setErrorLogin(true);
-                    }
-                })
-                .catch(function (error) {
-                    setLoading(false);
-                    setErrorLogin(true);
-                    console.log(error);
-                });
+            let response = Axios.post(LOGIN_URL + "/user/password/change/", data, { headers: headers });
+            console.log(response);
         } catch (e) {
             alert(
                 "Hubo un  problema al iniciar sesión, por favor verifica tus credenciales"
             );
             console.log(e);
         } finally {
+            setLoading(false);
         }
     };
 
@@ -83,10 +66,8 @@ const RecoveryPasswordForm = (props) => {
         <>
             <Spin tip="Loading..." spinning={loading}>
                 <Form
-                    name="normal_login"
-                    className="login-form"
+                    name="recoverPasswordform"
                     layout="vertical"
-                    initialValues={{ remember: true }}
                     onFinish={onFinish}
                 >
                     <Form.Item name="passwordOne" rules={[ruleRequired]} label={'Nueva contraseña'} labelAlign={'left'} className="font-color-khor">
@@ -96,8 +77,7 @@ const RecoveryPasswordForm = (props) => {
                             placeholder="Correo electrónico"
                         />
                     </Form.Item>
-                    <Form.Item name="passwordTwo" rules={[ruleRequired, validatePassword]} label={'Confirmar contraseña'} labelAlign={'left'} className="font-color-khor"
-                    >
+                    <Form.Item name="passwordTwo" rules={[ruleRequired, validatePassword]} label={'Confirmar contraseña'} labelAlign={'left'} className="font-color-khor">
                         <Input
                             style={{ marginTop: "5px" }}
                             type="password"
@@ -105,7 +85,7 @@ const RecoveryPasswordForm = (props) => {
                         />
                     </Form.Item>
 
-                    {errorLogin && (
+                    {/* {errorLogin && (
                         <Alert
                             message="Error al iniciar sesión,"
                             description="la contraseña y/o correo electrónico son incorrectos"
@@ -113,13 +93,14 @@ const RecoveryPasswordForm = (props) => {
                             style={{ textAlign: "center", marginBottom: "10px" }}
                             closable
                         />
-                    )}
+                    )} */}
                     <Form.Item>
                         <Button
                             style={{ width: "100%" }}
                             type="primary"
                             htmlType="submit"
                             className="login-form-button"
+                            loading={loading}
                         >
                             Cambiar contraseña
             </Button>
