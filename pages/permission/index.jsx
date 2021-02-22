@@ -87,7 +87,6 @@ const Permission = () => {
       }
       let response = await Axios.get(API_URL + url);
       let data = response.data.results;
-      console.log("permissions", data);
       setPermissionsList(data);
     } catch (e) {
       console.log(e);
@@ -133,7 +132,12 @@ const Permission = () => {
   return (
     <MainLayout currentKey="9">
       <Breadcrumb className={"mainBreadcrumb"}>
-        <BreadcrumbHome />
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item>Permisos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

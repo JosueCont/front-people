@@ -38,7 +38,6 @@ const HolidaysNew = () => {
   };
 
   const saveRequest = async (values) => {
-    console.log("Values-->> ", values);
     if (values.periodicity_amount.toString().includes("."))
       values.periodicity_amount = values.periodicity_amount.toFixed(2);
     setSending(true);
@@ -81,7 +80,12 @@ const HolidaysNew = () => {
   return (
     <MainLayout currentKey="7.1">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item href="./">Préstamos</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>

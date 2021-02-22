@@ -42,7 +42,6 @@ const HolidaysNew = () => {
     setLoading(true);
     try {
       let repsonse = await Axios.get(API_URL + `/payroll/loan-config/1/`);
-      console.log("response config-->>> ", repsonse);
       let data = repsonse.data;
       form.setFieldsValue({
         min_amount: parseInt(data.min_amount),
@@ -70,7 +69,7 @@ const HolidaysNew = () => {
         description: "Información guardada correctamente.",
       });
     } catch (error) {
-      console.log("error", error);
+      console.log(error);
     } finally {
       setSending(false);
     }
@@ -83,7 +82,12 @@ const HolidaysNew = () => {
   return (
     <MainLayout currentKey="7.1">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item href="./">Préstamos</Breadcrumb.Item>
         <Breadcrumb.Item>Configuración</Breadcrumb.Item>
       </Breadcrumb>

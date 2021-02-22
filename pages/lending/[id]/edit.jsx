@@ -78,7 +78,6 @@ const HolidaysNew = () => {
   };
 
   const reject = async () => {
-    console.log("Reject");
     console.log(message);
     let values = {
       id: id,
@@ -158,12 +157,11 @@ const HolidaysNew = () => {
     try {
       let response = await Axios.get(API_URL + `/payroll/loan/${id}`);
       let data = response.data;
-      console.log("data", data);
       setDetails(data);
       /* setDepartureDate(data.departure_date);
-      setReturnDate(data.return_date); */
+            setReturnDate(data.return_date); */
     } catch (e) {
-      console.log("error", e);
+      console.log(e);
     } finally {
       setLoading(false);
     }
@@ -179,7 +177,12 @@ const HolidaysNew = () => {
   return (
     <MainLayout currentKey="7.1">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item href="/lending">Prestamos</Breadcrumb.Item>
         <Breadcrumb.Item>Editar Solicitud</Breadcrumb.Item>
       </Breadcrumb>

@@ -77,7 +77,7 @@ const configBusiness = () => {
       });
       setselectCompany(options);
     } catch (error) {
-      console.log("error", error);
+      console.log(error);
     }
   };
 
@@ -85,11 +85,9 @@ const configBusiness = () => {
     Axios.get(API_URL + url)
       .then((response) => {
         if (url == "/business/department/") {
-          console.log("DEP-->> ", response.data.results);
           setDepartments(response.data.results);
         }
         if (url == "/person/job/") {
-          console.log("Job-->> ", response.data.results);
           setJobs(response.data.results);
         }
         if (url == "/person/person-type/")
@@ -519,7 +517,6 @@ const configBusiness = () => {
     Axios.get(API_URL + `/business/department/?node=${value}`)
       .then((response) => {
         let data = response.data.results;
-        console.log("data", data);
         data = data.map((a) => {
           return { label: a.name, value: a.id, key: a.name + a.id };
         });
@@ -534,7 +531,12 @@ const configBusiness = () => {
     <>
       <MainLayout currentKey="3.1">
         <Breadcrumb style={{ margin: "16px 0" }}>
-          <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
+          <Breadcrumb.Item
+            className={"pointer"}
+            onClick={() => route.push({ pathname: "/home" })}
+          >
+            Inicio
+          </Breadcrumb.Item>
           <Breadcrumb.Item>Configuración general</Breadcrumb.Item>
         </Breadcrumb>
         <Content className="site-layout">

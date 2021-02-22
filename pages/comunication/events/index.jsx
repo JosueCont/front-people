@@ -42,11 +42,9 @@ const Events = () => {
   const getAllEvents = (filter) => {
     setLoading(true);
     if (filter === undefined) {
-      console.log("SI");
       axios
         .get(API_URL + `/person/event/`)
         .then((response) => {
-          console.log("Reponse-->>> ", response.data);
           response.data.results.forEach((element) => {
             element.date = moment(element.date).format("DD-MM-YYYY");
           });
@@ -60,11 +58,9 @@ const Events = () => {
           console.log(e);
         });
     } else {
-      console.log("NO");
       axios
         .post(API_URL + `/person/event/event_filter/`, filter)
         .then((response) => {
-          console.log("Resultados", response);
           response.data.forEach((element) => {
             element.date = moment(element.date).format("DD-MM-YYYY");
           });
@@ -95,7 +91,6 @@ const Events = () => {
               marginTop: "20vh",
             },
           });
-          console.log("Elemento Eliminado", id);
           getAllEvents();
         }
         console.log(response);
@@ -145,7 +140,12 @@ const Events = () => {
   return (
     <MainLayout currentKey="4.2">
       <Breadcrumb>
-        <Breadcrumb.Item href={"/home"}>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item>Eventos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

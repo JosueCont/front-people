@@ -54,7 +54,6 @@ const AddUploadPayroll = () => {
       API_URL + `/payroll/payroll-voucher/${router.query.id}/detail_movements`
     )
       .then((response) => {
-        console.log("Person-->> ", response.data.person);
         setNamePerson(
           response.data.person.first_name +
             " " +
@@ -101,7 +100,6 @@ const AddUploadPayroll = () => {
   };
 
   const Movements = () => {
-    console.log("movimientos", movement);
     if (movement.length > 0) {
       return (
         <>
@@ -310,7 +308,12 @@ const AddUploadPayroll = () => {
   return (
     <MainLayout currentKey="9">
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
         <Breadcrumb.Item>Detalle de recibos de nómina</Breadcrumb.Item>
       </Breadcrumb>

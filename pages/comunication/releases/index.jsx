@@ -72,7 +72,6 @@ const Releases = () => {
     try {
       const token = JSON.parse(Cookies.get("token", token));
       let k_id = "";
-      console.log("Token->> ", token);
       if (token) k_id = token.user_id;
       console.log(k_id);
       const header = {
@@ -111,7 +110,6 @@ const Releases = () => {
   };
 
   const GotoDetails = (details) => {
-    console.log("details", details);
     route.push("./releases/" + details.id + "/details");
   };
 
@@ -149,9 +147,8 @@ const Releases = () => {
     <MainLayout currentKey="4.1">
       <Breadcrumb key="Breadcrumb">
         <Breadcrumb.Item
-          key=""
-          className="pointer"
-          onClick={() => route.push("/home")}
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
         >
           Inicio
         </Breadcrumb.Item>

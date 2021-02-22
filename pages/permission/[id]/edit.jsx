@@ -21,10 +21,8 @@ import moment from "moment";
 import PermissionForm from "../../../components/forms/PermissionForm";
 import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
-import Axios from 'axios';
-import {API_URL} from '../../../config/config'
-
-
+import Axios from "axios";
+import { API_URL } from "../../../config/config";
 
 const PermissionEdit = () => {
   const route = useRouter();
@@ -58,7 +56,7 @@ const PermissionEdit = () => {
   const getDetails = async () => {
     setLoading(true);
     try {
-      let response = await Axios.get(API_URL+`/person/permit/${id}/`);
+      let response = await Axios.get(API_URL + `/person/permit/${id}/`);
       let data = response.data;
       setDetails(data);
       setDepartureDate(data.departure_date);
@@ -66,45 +64,55 @@ const PermissionEdit = () => {
 
       setLoading(false);
     } catch (e) {
-      console.log("error", e);
+      console.log(e);
       setLoading(false);
     }
   };
 
   const saveRequest = async (values) => {
-        values["departure_date"] = departure_date;
-        values["return_date"] = return_date;
-        console.log(values);
-        try {
-            let response = await Axios.patch(API_URL+`/person/permit/${id}/`, values);
-            let data = response.data;
-            route.push("/permission");
-            notification["success"]({
-              message: "Aviso",
-              description: "Información actualizada correctamente.",
-            });
-            console.log("res", response.data);
-          } catch (error) {
-            console.log("error", error);
-          } finally {
-            setSending(false);
-          }
+    values["departure_date"] = departure_date;
+    values["return_date"] = return_date;
+    console.log(values);
+    try {
+      let response = await Axios.patch(
+        API_URL + `/person/permit/${id}/`,
+        values
+      );
+      let data = response.data;
+      route.push("/permission");
+      notification["success"]({
+        message: "Aviso",
+        description: "Información actualizada correctamente.",
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSending(false);
+    }
   };
 
   useEffect(() => {
     if (id) {
-        getDetails();
+      getDetails();
     }
   }, [route]);
 
   return (
     <MainLayout currentKey="5">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
-        <BreadcrumbHome />
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item href="/permission">Permisos</Breadcrumb.Item>
         <Breadcrumb.Item>Editar solicitud</Breadcrumb.Item>
       </Breadcrumb>
-      <div className="container back-white" style={{ width: "100%", padding: "20px 0" }} >
+      <div
+        className="container back-white"
+        style={{ width: "100%", padding: "20px 0" }}
+      >
         <Row justify={"center"}>
           <Col span={23}>
             <PermissionForm

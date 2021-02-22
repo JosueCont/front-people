@@ -46,7 +46,6 @@ const GroupAdd = () => {
   let data = {};
 
   const onFinish = (values) => {
-    // console.log("Received values of form: ", values);
     data = values;
     data.perms = perms;
     if (!edit) {
@@ -153,7 +152,6 @@ const GroupAdd = () => {
             setGetperms(true);
             checkPerms(group.perms);
           }
-          // console.log("Perms", perms);
         }
       })
       .catch((e) => {
@@ -292,7 +290,12 @@ const GroupAdd = () => {
   return (
     <MainLayout currentKey="3.2">
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item href="/config/groups">
           Perfiles de seguridad
         </Breadcrumb.Item>

@@ -106,7 +106,6 @@ const addEvent = () => {
       .then((response) => {
         message.success("Agregado correctamente");
         router.push("/comunication/events");
-        console.log("res", response.data);
         setLoading(false);
       })
       .catch((response) => {
@@ -123,7 +122,12 @@ const addEvent = () => {
   return (
     <MainLayout currentKey="4.2">
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item href={"/home"}>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item href={"/comunication/events"}>Eventos</Breadcrumb.Item>
         <Breadcrumb.Item>Crear evento</Breadcrumb.Item>
       </Breadcrumb>

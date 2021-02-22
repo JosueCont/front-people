@@ -17,18 +17,17 @@ import {
 import MainLayout from "../../../layout/MainLayout";
 import { render } from "react-dom";
 import {
-    ExclamationCircleOutlined,
-    CheckCircleOutlined,
-  } from "@ant-design/icons";
+  ExclamationCircleOutlined,
+  CheckCircleOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/router";
 import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
 import PermissionForm from "../../../components/forms/PermissionForm";
 import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
-import Axios from 'axios';
-import {API_URL} from '../../../config/config'
-
+import Axios from "axios";
+import { API_URL } from "../../../config/config";
 
 const PermissionDetails = () => {
   const route = useRouter();
@@ -68,7 +67,7 @@ const PermissionDetails = () => {
   const getDetails = async () => {
     setLoading(true);
     try {
-      let response = await Axios.get(API_URL+`/person/permit/${id}/`);
+      let response = await Axios.get(API_URL + `/person/permit/${id}/`);
       let data = response.data;
       setDetails(data);
       setDepartureDate(data.departure_date);
@@ -76,7 +75,7 @@ const PermissionDetails = () => {
 
       setLoading(false);
     } catch (e) {
-      console.log("error", e);
+      console.log(e);
       setLoading(false);
     }
   };
@@ -92,58 +91,64 @@ const PermissionDetails = () => {
 
   const onReject = () => {
     /* changeStatus(3) */
-    setVisibleModalReject(true)
+    setVisibleModalReject(true);
   };
 
   const onApprove = () => {
-    changeStatus(2)
+    changeStatus(2);
   };
 
   const changeStatus = async (statusID) => {
     let values = {
-        id: id,
-        status: statusID
-    }
+      id: id,
+      status: statusID,
+    };
     let msg = "Solicitud de permiso aprobada";
-    if(statusID === 3){
-        msg = "Solicitud de permiso rechazada";
+    if (statusID === 3) {
+      msg = "Solicitud de permiso rechazada";
     }
     try {
-        let response = await Axios.post(API_URL+`/person/permit/change_status/`, values);
+      let response = await Axios.post(
+        API_URL + `/person/permit/change_status/`,
+        values
+      );
 
-        confirm({
-            title: msg,
-            icon: <CheckCircleOutlined />,
-            okText: "Aceptar y notificar",
-            cancelText: "Cancelar",
-            onOk() {
-              /* console.log('OK'); */
-              /* route.push('/holidays'); */
-              route.push("/permission");
-            },
-            onCancel() {
-              console.log("Cancel");
-            },
-          });
-
-        console.log("res", response.data);
+      confirm({
+        title: msg,
+        icon: <CheckCircleOutlined />,
+        okText: "Aceptar y notificar",
+        cancelText: "Cancelar",
+        onOk() {
+          /* console.log('OK'); */
+          /* route.push('/holidays'); */
+          route.push("/permission");
+        },
+        onCancel() {
+          console.log("Cancel");
+        },
+      });
     } catch (error) {
-            console.log("error", error);
+      console.log(error);
     } finally {
-            setSending(false);
+      setSending(false);
     }
-  }
+  };
 
   useEffect(() => {
-        if (id) {
-            getDetails();
-        }
+    if (id) {
+      getDetails();
+    }
   }, [route]);
 
   return (
     <MainLayout currentKey="5">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
-        <BreadcrumbHome />
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item href="/permission">Permisos</Breadcrumb.Item>
         <Breadcrumb.Item>Editar solicitud</Breadcrumb.Item>
       </Breadcrumb>
@@ -172,11 +177,11 @@ const PermissionDetails = () => {
       <Modal
         title="Rechazar solicitud de permisos"
         visible={visibleModalReject}
-        onOk={() => changeStatus(3) }
+        onOk={() => changeStatus(3)}
         onCancel={rejectCancel}
       >
         <Text>Comentarios</Text>
-        <TextArea rows="4"  onChange={onChangeMessage} />
+        <TextArea rows="4" onChange={onChangeMessage} />
       </Modal>
     </MainLayout>
   );

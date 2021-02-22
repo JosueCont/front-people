@@ -85,8 +85,6 @@ const Newrelease = () => {
       setUserId(json.user_id);
       /* getBussiness(); */
       getValueSelects();
-    } else {
-      console.log("no json");
     }
   }, []);
 
@@ -110,7 +108,6 @@ const Newrelease = () => {
     console.log(file);
 
     if (!message || (message && message.length <= 8)) {
-      console.log("Requerido");
       setMessageAlert(true);
       return;
     }
@@ -158,9 +155,8 @@ const Newrelease = () => {
         description: "Información enviada correctamente.",
       });
       route.push("/comunication/releases");
-      console.log("res", response.data);
     } catch (error) {
-      console.log("error", error);
+      console.log(error);
     } finally {
       setSending(false);
     }
@@ -180,7 +176,6 @@ const Newrelease = () => {
     try {
       let response = await Axios.get(API_URL + `/business/node/`);
       let data = response.data.results;
-      console.log("data", data);
       let options = [];
       data.map((item) => {
         options.push({ id: item.id, name: item.name });
@@ -194,7 +189,7 @@ const Newrelease = () => {
       //         });
       //         route.push('/comunication/releases');
     } catch (error) {
-      console.log("error", error);
+      console.log(error);
     }
   };
 
@@ -251,7 +246,7 @@ const Newrelease = () => {
         }
       })
       .catch((e) => {
-        console.log("error_tipo_personas", e);
+        console.log(e);
       });
   };
 
@@ -267,13 +262,12 @@ const Newrelease = () => {
         API_URL + `/business/node/${value}/department_for_node/`
       );
       let data = response.data;
-      console.log("data", data);
       data = data.map((a) => {
         return { label: a.name, value: a.id, key: a.name + a.id };
       });
       setDepartments(data);
     } catch (error) {
-      console.log("error", error);
+      console.log(error);
     }
   };
 
@@ -287,7 +281,6 @@ const Newrelease = () => {
         API_URL + `/business/department/${value}/job_for_department/`
       );
       let data_jobs = response.data;
-      console.log("data_jobs", data_jobs);
       data_jobs = data_jobs.map((a, index) => {
         return { label: a.name, value: a.id, key: a.name + index };
       });
@@ -296,7 +289,7 @@ const Newrelease = () => {
   };
 
   const changeSendToAll = (e) => {
-      console.log(e)
+    console.log(e);
     setCompanyRequired(!e);
   };
 
@@ -305,7 +298,12 @@ const Newrelease = () => {
   return (
     <MainLayout currentKey="4.1">
       <Breadcrumb key="Breadcrumb">
-        <BreadcrumbHome />
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item href="./">Comunicados</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>
@@ -393,11 +391,11 @@ const Newrelease = () => {
                         label="Empresa"
                         labelCol={{ span: 10 }}
                         rules={[
-                            {
-                              required: companyRequired,
-                              message: 'Este campo es requerido',
-                            },
-                          ]}
+                          {
+                            required: companyRequired,
+                            message: "Este campo es requerido",
+                          },
+                        ]}
                       >
                         <SelectCompany onChange={onChangecompany} />
                       </Form.Item>

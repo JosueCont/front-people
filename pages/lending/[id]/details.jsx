@@ -8,24 +8,24 @@ import {
   Breadcrumb,
   Descriptions,
   Button,
-  Spin
+  Spin,
 } from "antd";
 import { useRouter } from "next/router";
 import moment from "moment";
 import { withAuthSync } from "../../../libs/auth";
-import {API_URL} from '../../../config/config'
-import Axios from 'axios';
+import { API_URL } from "../../../config/config";
+import Axios from "axios";
 
 const HolidaysNew = () => {
-    const route = useRouter();
-    const { id } = route.query;
-    const [loading, setLoading] = useState(false);
-    const [details, setDetails] = useState({});
-    const [strStatus, SetStrStatus] = useState(null)
-  
-    const onCancel = () => {
-        route.push("/lending");
-    };
+  const route = useRouter();
+  const { id } = route.query;
+  const [loading, setLoading] = useState(false);
+  const [details, setDetails] = useState({});
+  const [strStatus, SetStrStatus] = useState(null);
+
+  const onCancel = () => {
+    route.push("/lending");
+  };
 
   const columns = [
     {
@@ -58,18 +58,22 @@ const HolidaysNew = () => {
   const getDetails = async () => {
     setLoading(true);
     try {
-      let response = await Axios.get(API_URL+`/payroll/loan/${id}`);
+      let response = await Axios.get(API_URL + `/payroll/loan/${id}`);
       let data = response.data;
-      console.log("data", data);
       setDetails(data);
-      SetStrStatus( data.status === 1 ? 'Pendiente' : data.status === 2 ? 'Aprobado' : 'Rechazado' )
+      SetStrStatus(
+        data.status === 1
+          ? "Pendiente"
+          : data.status === 2
+          ? "Aprobado"
+          : "Rechazado"
+      );
     } catch (e) {
-      console.log("error", e);
-    }finally{
-        setLoading(false);
+      console.log(e);
+    } finally {
+      setLoading(false);
     }
   };
-
 
   useEffect(() => {
     if (id) {
@@ -79,73 +83,103 @@ const HolidaysNew = () => {
 
   return (
     <MainLayout currentKey="7.1">
-        <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
-            <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-            <Breadcrumb.Item href="/lending/">Préstamos</Breadcrumb.Item>
-            <Breadcrumb.Item>Detalles</Breadcrumb.Item>
-        </Breadcrumb>
-        <div className="container back-white" style={{ width: "100%", padding: "20px 0" }} >
-            <Spin spinning={loading}>
-                <Row>
-                    <Col span={16} offset={1}>
-                        <Descriptions
-                        title="Detalles del préstamo"
-                        column={2}
-                        labelStyle={{ width: 180, fontWeight: 700 }}
-                        >
-                            <Descriptions.Item label="Estatus"> { strStatus }  </Descriptions.Item>
-                            <Descriptions.Item label="Fecha de solicitud">
-                                { details.timestamp ? moment(details.timestamp).format("DD/MMM/YYYY") : null }
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Colaborador">
-                                { details.person ? details.person.first_name+' '+details.person.flast_name : null }
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Fecha autorizada">
-                                {details.date_confirm ? moment(details.date_confirm).format("DD/MMM/YYYY") : null }
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Plazos">{details.deadline ? details.deadline : null }</Descriptions.Item>
-                            <Descriptions.Item label="Cantidad autorizada">
-                                {details.amount ? '$ '+details.amount : null }
-                            </Descriptions.Item>
-                            
-                            
-                            <Descriptions.Item label="Periodicidad">
-                                {
-                                details.periodicity && details.periodicity === 1 ? 'Semanal' 
-                                : details.periodicity && details.periodicity === 2 ? 'Catorcenal'
-                                : details.periodicity && details.periodicity === 3 ? 'Quincenal'
-                                : details.periodicity && details.periodicity === 4 ? 'Mensual'
-                                : null
-                            }
-                            
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Pago"> {details.periodicity_amount ? '$ '+details.periodicity_amount : 0}</Descriptions.Item>
-                            <Descriptions.Item label="Tipo de préstamo">
-                                { details.type && details.type === 'EMP' ? 'Empresa' : details.type && details.type === 'EPS' ? 'E-Pesos' : null }
-                            </Descriptions.Item>
-                            
-                            <br/>
-                            <Descriptions.Item
-                                label="Motivo"
-                                span={3}
-                                contentStyle={{ textAlign: "justify" }}
-                            >
-                                { details.reason ? details.reason : null }
-                            </Descriptions.Item>
-                        </Descriptions>
-                        <Table columns={columns} />
-                    </Col>
-                    <Col
-                    span={16}
-                    offset={1}
-                    style={{ textAlign: "right", padding: "30px 0" }}
+      <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
+        <Breadcrumb.Item href="/lending/">Préstamos</Breadcrumb.Item>
+        <Breadcrumb.Item>Detalles</Breadcrumb.Item>
+      </Breadcrumb>
+      <div
+        className="container back-white"
+        style={{ width: "100%", padding: "20px 0" }}
+      >
+        <Spin spinning={loading}>
+          <Row>
+            <Col span={16} offset={1}>
+              <Descriptions
+                title="Detalles del préstamo"
+                column={2}
+                labelStyle={{ width: 180, fontWeight: 700 }}
+              >
+                <Descriptions.Item label="Estatus">
+                  {" "}
+                  {strStatus}{" "}
+                </Descriptions.Item>
+                <Descriptions.Item label="Fecha de solicitud">
+                  {details.timestamp
+                    ? moment(details.timestamp).format("DD/MMM/YYYY")
+                    : null}
+                </Descriptions.Item>
+                <Descriptions.Item label="Colaborador">
+                  {details.person
+                    ? details.person.first_name +
+                      " " +
+                      details.person.flast_name
+                    : null}
+                </Descriptions.Item>
+                <Descriptions.Item label="Fecha autorizada">
+                  {details.date_confirm
+                    ? moment(details.date_confirm).format("DD/MMM/YYYY")
+                    : null}
+                </Descriptions.Item>
+                <Descriptions.Item label="Plazos">
+                  {details.deadline ? details.deadline : null}
+                </Descriptions.Item>
+                <Descriptions.Item label="Cantidad autorizada">
+                  {details.amount ? "$ " + details.amount : null}
+                </Descriptions.Item>
+
+                <Descriptions.Item label="Periodicidad">
+                  {details.periodicity && details.periodicity === 1
+                    ? "Semanal"
+                    : details.periodicity && details.periodicity === 2
+                    ? "Catorcenal"
+                    : details.periodicity && details.periodicity === 3
+                    ? "Quincenal"
+                    : details.periodicity && details.periodicity === 4
+                    ? "Mensual"
+                    : null}
+                </Descriptions.Item>
+                <Descriptions.Item label="Pago">
+                  {" "}
+                  {details.periodicity_amount
+                    ? "$ " + details.periodicity_amount
+                    : 0}
+                </Descriptions.Item>
+                <Descriptions.Item label="Tipo de préstamo">
+                  {details.type && details.type === "EMP"
+                    ? "Empresa"
+                    : details.type && details.type === "EPS"
+                    ? "E-Pesos"
+                    : null}
+                </Descriptions.Item>
+
+                <br />
+                <Descriptions.Item
+                  label="Motivo"
+                  span={3}
+                  contentStyle={{ textAlign: "justify" }}
                 >
-                    <Button onClick={onCancel} style={{ padding: "0 40px" }}>
-                    Regresar
-                    </Button>
-                </Col>
-                </Row>
-            </Spin>
+                  {details.reason ? details.reason : null}
+                </Descriptions.Item>
+              </Descriptions>
+              <Table columns={columns} />
+            </Col>
+            <Col
+              span={16}
+              offset={1}
+              style={{ textAlign: "right", padding: "30px 0" }}
+            >
+              <Button onClick={onCancel} style={{ padding: "0 40px" }}>
+                Regresar
+              </Button>
+            </Col>
+          </Row>
+        </Spin>
       </div>
     </MainLayout>
   );

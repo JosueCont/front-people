@@ -50,13 +50,12 @@ const Details = () => {
         API_URL + `/noticenter/notification/${id}`
       );
       let data = response.data;
-      console.log("data", data);
       setDetails(data);
       setFiles(data.files);
       setLoading(false);
       //setList(data.results)
     } catch (e) {
-      console.log("error", e);
+      console.log(e);
       /* setLoading(false); */
     }
   };
@@ -109,7 +108,13 @@ const Details = () => {
       />
       <MainLayout currentKey="4.1">
         <Breadcrumb>
-          <BreadcrumbHome />
+          <Breadcrumb.Item
+            className={"pointer"}
+            onClick={() => route.push({ pathname: "/home" })}
+          >
+            Inicio
+          </Breadcrumb.Item>
+          z
           <Breadcrumb.Item key="releases" href="/comunication/releases">
             Comunicados
           </Breadcrumb.Item>

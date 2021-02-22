@@ -22,11 +22,8 @@ import axiosApi from "../../libs/axiosApi";
 import moment from "moment";
 import Permissionform from "../../components/forms/PermissionForm";
 import { withAuthSync } from "../../libs/auth";
-import Axios from 'axios';
-import {API_URL} from '../../config/config';
-
-
-
+import Axios from "axios";
+import { API_URL } from "../../config/config";
 
 const PermissionNew = () => {
   const route = useRouter();
@@ -64,21 +61,19 @@ const PermissionNew = () => {
     values["return_date"] = return_date;
     console.log(values);
     setSending(true);
-        try {
-        let response = await Axios.post(API_URL+`/person/permit/`, values);
-        let data = response.data;
-        route.push("/permission");
-        notification["success"]({
-            message: "Aviso",
-            description: "Información enviada correctamente.",
-        });
-        
-        console.log("res", response.data);
-        } catch (error) {
-        console.log("error", error);
-        } finally {
-        setSending(false);
-        }
+    try {
+      let response = await Axios.post(API_URL + `/person/permit/`, values);
+      let data = response.data;
+      route.push("/permission");
+      notification["success"]({
+        message: "Aviso",
+        description: "Información enviada correctamente.",
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSending(false);
+    }
   };
 
   const onChangeDepartureDate = (date, dateString) => {
@@ -88,23 +83,38 @@ const PermissionNew = () => {
   const onChangeReturnDate = (date, dateString) => {
     setReturnDate(dateString);
   };
-  
-    return (
-        <MainLayout currentKey="5">
-            <Breadcrumb key="Breadcrumb" className={'mainBreadcrumb'}>
-                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-                <Breadcrumb.Item href="./">Permisos</Breadcrumb.Item>
-                <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className="container back-white" style={{ width: "100%", padding: '20px 0' }}>
-                <Row justify={'center'}>
-                    <Col span={23}>
-                        <Permissionform details={null} onFinish={saveRequest} sending={sending}  onChangeDepartureDate={onChangeDepartureDate} onChangeReturnDate={onChangeReturnDate} onCancel={onCancel} />
-                    </Col>
-                </Row>
-            </div>
-        </MainLayout>
-    )
-}
+
+  return (
+    <MainLayout currentKey="5">
+      <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
+        <Breadcrumb.Item href="./">Permisos</Breadcrumb.Item>
+        <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
+      </Breadcrumb>
+      <div
+        className="container back-white"
+        style={{ width: "100%", padding: "20px 0" }}
+      >
+        <Row justify={"center"}>
+          <Col span={23}>
+            <Permissionform
+              details={null}
+              onFinish={saveRequest}
+              sending={sending}
+              onChangeDepartureDate={onChangeDepartureDate}
+              onChangeReturnDate={onChangeReturnDate}
+              onCancel={onCancel}
+            />
+          </Col>
+        </Row>
+      </div>
+    </MainLayout>
+  );
+};
 
 export default withAuthSync(PermissionNew);

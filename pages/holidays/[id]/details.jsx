@@ -26,8 +26,8 @@ import BreadcrumbHome from "../../../components/BreadcrumbHome";
 
 import cookie from "js-cookie";
 import { withAuthSync } from "../../../libs/auth";
-import Axios from 'axios';
-import {API_URL} from '../../../config/config'
+import Axios from "axios";
+import { API_URL } from "../../../config/config";
 
 const HolidaysDetails = () => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
@@ -65,9 +65,8 @@ const HolidaysDetails = () => {
 
   const getDetails = async () => {
     try {
-      let response = await Axios.get(API_URL+`/person/vacation/${id}/`);
+      let response = await Axios.get(API_URL + `/person/vacation/${id}/`);
       let data = response.data;
-      console.log("data", data);
       setDaysRequested(data.days_requested);
       setDepartureDate(moment(data.departure_date).format("DD/MM/YYYY"));
       setReturnDate(moment(data.return_date).format("DD/MM/YYYY"));
@@ -89,7 +88,7 @@ const HolidaysDetails = () => {
       /* setLoading(false); */
       //setList(data.results)
     } catch (e) {
-      console.log("error", e);
+      console.log(e);
       /* setLoading(false); */
     }
   };
@@ -105,7 +104,7 @@ const HolidaysDetails = () => {
         };
         console.log(values);
         let response = await Axios.post(
-          API_URL+`/person/vacation/reject_request/`,
+          API_URL + `/person/vacation/reject_request/`,
           values
         );
         if (response.status == 200) {
@@ -114,10 +113,10 @@ const HolidaysDetails = () => {
             description: "Solicitud rechazada.",
           });
           setMessage(null);
-          route.push('/holidays');
+          route.push("/holidays");
         }
       } catch (e) {
-        console.log("error", e);
+        console.log(e);
       }
     }
   };
@@ -132,7 +131,7 @@ const HolidaysDetails = () => {
           id: id,
         };
         let response = await Axios.post(
-          API_URL+`/person/vacation/approve_request/`,
+          API_URL + `/person/vacation/approve_request/`,
           values
         );
         if (response.status == 200) {
@@ -152,15 +151,15 @@ const HolidaysDetails = () => {
           });
 
           /* notification["success"]({
-                        message: "Notification Title",
-                        description: "Solicitud aprobada.",
-                    });
-                    route.push('/holidays') */
+                                  message: "Notification Title",
+                                  description: "Solicitud aprobada.",
+                              });
+                              route.push('/holidays') */
         }
       } catch (e) {
-        console.log("error", e);
-      }finally{
-          setSending(false)
+        console.log(e);
+      } finally {
+        setSending(false);
       }
     }
   };
@@ -172,7 +171,12 @@ const HolidaysDetails = () => {
   return (
     <MainLayout currentKey="5">
       <Breadcrumb className={"mainBreadcrumb"}>
-        <BreadcrumbHome />
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item href="/holidays">Vacaciones</Breadcrumb.Item>
         <Breadcrumb.Item>Detalles</Breadcrumb.Item>
       </Breadcrumb>
@@ -265,7 +269,7 @@ const HolidaysDetails = () => {
         onCancel={rejectCancel}
       >
         <Text>Comentarios</Text>
-        <TextArea rows="4"  onChange={onChangeMessage} />
+        <TextArea rows="4" onChange={onChangeMessage} />
       </Modal>
     </MainLayout>
   );

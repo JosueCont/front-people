@@ -1,188 +1,337 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Table, Row, Col, Select, Form, DatePicker, Button } from "antd";
+import { Table, Row, Col, Select, Form, DatePicker, Button, Typography } from "antd";
+import SelectCollaborator from '../selects/SelectCollaboratorItemForm'
+import SelectCompany from '../selects/SelectCompany'
+import SelectDepartment from '../selects/SelectDepartment';
+import Axios from 'axios';
+import { DownloadOutlined } from '@ant-design/icons'
+import { API_URL } from '../../config/config'
+import moment from 'moment'
+
+
 
 const InabilityReport = (props) => {
-  const route = useRouter();
-  const { Option } = Select;
-  const [form] = Form.useForm();
-  const { RangePicker } = DatePicker;
+    const route = useRouter();
+    const { Option } = Select;
+    const [form] = Form.useForm();
+    const { RangePicker } = DatePicker;
+    const {Title, Text} = Typography;
 
-  const [personList, setPersonList] = useState([]);
-  const [collaboratorList, setCollaboratorList] = useState([]);
+    const [incapacityList, setIncapacityList] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-  /* Columnas de tabla */
-  const columns = [
-    {
-      title: "Colaborador",
-      dataIndex: "Colaborador",
-      key: "Colaborador",
-    },
-    {
-      title: "Empresa",
-      dataIndex: "Empresa",
-      key: "Empresa",
-    },
-    {
-      title: "Departamento",
-      dataIndex: "Departamento",
-      key: "Departamento",
-    },
-    {
-      title: "Fecha inicio de incapacidad",
-      dataIndex: "Fecha inicio de incapacidad",
-      key: "Fecha inicio de incapacidad",
-    },
-    {
-      title: "Fecha fin de incapacidad",
-      dataIndex: "Fecha fin de incapacidad",
-      key: "Fecha fin de incapacidad",
-    },
-    {
-      title: "Estatus",
-      dataIndex: "Estatus",
-      key: "Estatus",
-    },
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      key: "actions",
-    },
-  ];
+    const [collaborator, setCollaborator] = useState(null);
+    const [companyId, setCompanyId] = useState(null);
+    const [departmentId, setDepartmentId] = useState(null);
+    const [status, setStatus] = useState(null);
 
-  const getAllPersons = async () => {
-    try {
-      let response = await axiosApi.get(`/person/person/`);
-      let data = response.data.results;
-      let list = [];
-      data = data.map((a, index) => {
-        let item = {
-          label: a.first_name + " " + a.flast_name,
-          value: a.id,
-          key: a.id + index,
-        };
-        list.push(item);
-      });
-      setPersonList(list);
-    } catch (e) {
-      console.log(e);
+    const [personList, setPersonList] = useState([]);
+    const [collaboratorList, setCollaboratorList] = useState([]);
+
+    const [dateOne, setDateOne] = useState(null);
+    const [dateTwo, setDateTwo] = useState(null);
+
+    /* Columnas de tabla */
+    const columns = [
+        {
+            title: "Colaborador",
+            dataIndex: "collaborator",
+            key: "collaborator",
+            render: (collaborator) => {
+                return (
+                    <>
+                        {collaborator.first_name ? collaborator.first_name + ' ' : null}
+                        {collaborator.flast_name ? collaborator.flast_name : null}
+                    </>
+                )
+            }
+        },
+        {
+            title: "Empresa",
+            dataIndex: "collaborator",
+            key: "company",
+            render: (collaborator) => {
+                return (
+                    <>
+                        {collaborator && collaborator.job[0] && collaborator.job[0].department && collaborator.job[0].department.node ? collaborator.job[0].department.node.name : null}
+                    </>
+                )
+            }
+
+        },
+        {
+            title: "Departamento",
+            dataIndex: "collaborator",
+            key: "department",
+            render: (collaborator) => {
+                return (
+                    <>
+                        {collaborator && collaborator.job[0] && collaborator.job[0].department ? collaborator.job[0].department.name : null}
+                    </>
+                )
+            }
+        },
+        {
+            title: "Fecha inicio de incapacidad",
+            dataIndex: "departure_date",
+            key: "departure_date",
+            render: (departure_date) => {
+                return (
+                    moment(departure_date).format("DD/MMM/YYYY")
+                )
+            }
+        },
+        {
+            title: "Fecha fin de incapacidad",
+            dataIndex: "return_date",
+            key: "return_date",
+            render: (return_date) => {
+                return (
+                    moment(return_date).format("DD/MMM/YYYY")
+                )
+            }
+        },
+        {
+            title: "Estatus",
+            dataIndex: "status",
+            key: "status",
+            render: (status) => {
+                return (
+                    status === 1
+                        ? "Pendiente"
+                        : status === 2
+                            ? "Aprobado"
+                            : "Rechazado"
+                )
+            }
+        },
+        {
+            title: "Acciones",
+            key: "actions",
+            render: (record, item) => {
+                return (<DownloadOutlined onClick={() => download(item)} />)
+            }
+        },
+    ];
+
+    /* Select status */
+    const optionStatus = [
+        { value: 1, label: "Pendiente", key: "opt_1" },
+        { value: 2, label: "Aprobado", key: "opt_2" },
+        { value: 3, label: "Rechazado", key: "opt_3" },
+    ];
+
+    const download = async (item = null) => {
+        let dataId = {}
+
+        if (item) {
+            dataId = {
+                "vacation_id": item.id,
+                "collaborator": item.collaborator.id
+            }
+        } else {
+            if (colaborator) {
+                dataId.collaborator = colaborator;
+            }
+            if (companyId) {
+                dataId.node = companyId;
+            }
+            if (departmentId) {
+                dataId.department = departmentId;
+            }
+        }
+
+        try {
+            let response = await Axios.post(API_URL + `/person/vacation-report-export`, dataId);
+            const type = response.headers["content-type"];
+            const blob = new Blob([response.data], {
+                type: type,
+                encoding: "UTF-8",
+            });
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = item ? item.collaborator.first_name + item.collaborator.flast_name + ".csv" : "Reporte_de_Vacaciones.csv";
+            link.click();
+        } catch (e) {
+            console.log(e);
+        }
     }
-  };
 
-  return (
-    <>
-      <Row justify="space-between" style={{ padding: "10px 20px 10px 0px" }}>
-        <Col>
-          <Form
-            name="filter"
-            layout="vertical"
-            key="formFilter"
-            className="formFilterReports"
-          >
-            <Row gutter={[24, 8]}>
-              <Col>
-                <Form.Item
-                  key="collaborator"
-                  name="collaborator"
-                  label="Colaborador"
-                >
-                  <Select
-                    key="selectPerson"
-                    showSearch
-                    /* options={personList} */
-                    style={{ width: 150 }}
-                    allowClear
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      option.children
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
-                    }
-                    filterSort={(optionA, optionB) =>
-                      optionA.children
-                        .toLowerCase()
-                        .localeCompare(optionB.children.toLowerCase())
-                    }
-                  >
-                    {personList
-                      ? personList.map((item) => {
-                          return (
-                            <Option key={item.key} value={item.value}>
-                              {item.label}
-                            </Option>
-                          );
-                        })
-                      : null}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col>
-                <Form.Item key="company" name="company" label="Empresa">
-                  <Select style={{ width: 150 }}></Select>
-                </Form.Item>
-              </Col>
-              <Col>
-                <Form.Item
-                  key="department_select"
-                  name="department"
-                  label="Departamento"
-                >
-                  <Select style={{ width: 150 }}></Select>
-                </Form.Item>
-              </Col>
-              <Col>
-                <Form.Item
-                  name="send_date"
-                  label="Fecha de envio"
-                  key="send_date"
-                  labelCol={24}
-                >
-                  <RangePicker /* onChange={onchangeRange} */ />
-                </Form.Item>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                <Button
-                  style={{
-                    background: "#fa8c16",
-                    fontWeight: "bold",
-                    color: "white",
-                    marginTop: "auto",
-                  }}
-                  key="buttonFilter"
-                  htmlType="submit"
-                >
-                  Filtrar
+    const onchangeRange = (date, dateString) => {
+        console.log(date);
+        console.log(dateString);
+        setDateOne(dateString[0]);
+        setDateTwo(dateString[1]);
+    };
+
+    const getIncapacity = async (collaborator = null, company = null, department = null, status = null, date1 = null, date2 = null) => {
+        setLoading(true);
+        try {
+            setLoading(true);
+            let url = `/person/incapacity/?`;
+            if (collaborator) {
+                url += `person__id=${collaborator}&`;
+            }
+            if (status) {
+                url += `status=${status}&`;
+            }
+
+            if (company) {
+                url += `person__job__department__node__id=${company}&`;
+            }
+
+            if (department) {
+                url += `person__job__department__id=${department}&`;
+            }
+
+            if (date1 && date2) {
+                let d1 = moment(dateOne).format("YYYY-MM-DD");
+                let d2 = moment(dateTwo).format("YYYY-MM-DD");
+                console.log(d1);
+                console.log(d2);
+                url += `departure_date__gte=${d1}&departure_date__lte=${d2}&`;
+            }
+
+            let response = await Axios.get(API_URL + url);
+            let data = response.data.results;
+            console.log('data', data);
+            data = data.map((item) => {
+                item.key = item.id
+                return item;
+            });
+            console.log(data);
+            setIncapacityList(data);
+
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setLoading(false);
+
+        }
+    };
+
+    const filter = async (values) => {
+        setIncapacityList([])
+        console.log(values)
+        getIncapacity(
+            values.collaborator,
+            values.company,
+            values.department,
+            values.status,
+            dateOne,
+            dateTwo
+        );
+    };
+
+
+    const onChangeCompany = (val) => {
+        form.setFieldsValue({
+            department: null,
+        });
+        setCompanyId(val);
+    };
+
+    useEffect(() => {
+        getIncapacity();
+    }, [])
+
+    return (
+        <>
+            <Row justify="space-between" style={{ padding: "10px 20px 10px 0px" }}>
+                <Col span={24}>
+                    <Title level={5}>
+                        Incapacidades
+                    </Title>
+                    <hr />
+                </Col>
+                <Col>
+                    <Form
+                        form={form}
+                        name="filter"
+                        layout="vertical"
+                        key="formFilter"
+                        className="formFilterReports"
+                        onFinish={filter}
+                    >
+                        <Row gutter={[24, 8]}>
+                            <Col>
+                                < SelectCollaborator name="collaborator" style={{ width: 150 }} />
+                            </Col>
+                            <Col>
+                                <Form.Item key="company" name="company" label="Empresa">
+                                    <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
+                                </Form.Item>
+                            </Col>
+                            <Col>
+                                <SelectDepartment style={{ width: 100 }}
+                                    name="department"
+                                    companyId={companyId}
+                                    key="selectDepartament"
+                                />
+                            </Col>
+                            <Col>
+                                <Form.Item
+                                    key="status"
+                                    name="status"
+                                    label="Estatus"
+                                >
+                                    <Select style={{ width: 100 }} key="select" options={optionStatus} allowClear />
+                                </Form.Item>
+                            </Col>
+                            <Col>
+                                <Form.Item
+                                    name="send_date"
+                                    label="Fecha de envio"
+                                    key="send_date"
+                                    labelCol={24}
+                                >
+                                    <RangePicker onChange={onchangeRange} />
+                                </Form.Item>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                                <Button
+                                    style={{
+                                        background: "#fa8c16",
+                                        fontWeight: "bold",
+                                        color: "white",
+                                        marginTop: "auto",
+                                    }}
+                                    key="buttonFilter"
+                                    htmlType="submit"
+                                >
+                                    Filtrar
                 </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Col>
-        <Col className="columnRightFilter">
-          <Button
-            style={{
-              background: "#fa8c16",
-              fontWeight: "bold",
-              color: "white",
-            }}
-            onClick={() => route.push("holidays/new")}
-            key="btn_new"
-          >
-            Descargar
+                            </Col>
+                        </Row>
+                    </Form>
+                </Col>
+                <Col className="columnRightFilter">
+                    <Button
+                        style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                        }}
+                        onClick={() => route.push("holidays/new")}
+                        key="btn_new"
+                    >
+                        Descargar
           </Button>
-        </Col>
-      </Row>
-      <Row style={{ padding: "10px 20px 10px 0px" }}>
-        <Col span={24}>
-          <Table
-            scroll={{ x: 1500 }}
-            dataSource={collaboratorList}
-            key="tableHolidays"
-            columns={columns}
-          ></Table>
-        </Col>
-      </Row>
-    </>
-  );
+                </Col>
+            </Row>
+            <Row style={{ padding: "10px 20px 10px 0px" }}>
+                <Col span={24}>
+                    <Table
+                        dataSource={incapacityList}
+                        key="tableHolidays"
+                        loading={loading}
+                        columns={columns}
+                    ></Table>
+                </Col>
+            </Row>
+        </>
+    );
 };
 
 export default InabilityReport;

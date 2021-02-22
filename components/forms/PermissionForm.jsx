@@ -44,7 +44,6 @@ const Permissionform = (props) => {
     console.log(value);
     if (value) {
       let index = allPersons.find((data) => data.id === value);
-      console.log("PERSONA-->>> ", index);
       if (index.job) {
         formPermission.setFieldsValue({
           job: index.job[0].name,
@@ -81,7 +80,6 @@ const Permissionform = (props) => {
 
   useEffect(() => {
     if (props.details) {
-      console.log("details", props.details);
       formPermission.setFieldsValue({
         person: props.details.collaborator
           ? props.details.collaborator.id

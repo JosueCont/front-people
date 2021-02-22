@@ -73,7 +73,6 @@ const Groups = () => {
               marginTop: "20vh",
             },
           });
-          // console.log("Elemento Eliminado", id);
           getGroups();
         }
       })
@@ -151,7 +150,12 @@ const Groups = () => {
   return (
     <MainLayout currentKey="3.2">
       <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
         <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
