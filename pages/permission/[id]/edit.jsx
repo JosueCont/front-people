@@ -118,6 +118,7 @@ const PermissionEdit = () => {
             <PermissionForm
               details={details}
               onFinish={saveRequest}
+              edit={true}
               loading={loading}
               sending={sending}
               onChangeDepartureDate={onChangeDepartureDate}

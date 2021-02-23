@@ -1,370 +1,480 @@
 import {
-    Layout,
-    Breadcrumb,
-    Table,
-    Row,
-    Col,
-    Input,
-    Select,
-    Switch,
-    Button,
-    Modal,
-    Form,
+  Layout,
+  Breadcrumb,
+  Table,
+  Row,
+  Col,
+  Input,
+  Select,
+  Switch,
+  Button,
+  Modal,
+  Form,
+  message,
+  Tree,
 } from "antd";
 import Axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import {
-    DeleteOutlined,
-    EditOutlined,
-    InfoCircleOutlined,
-    SearchOutlined,
-    PlusOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  TableOutlined,
+  NodeExpandOutlined,
+  PlusOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
-import HeaderCustom from "../../components/Header";
 import { API_URL } from "../../config/config";
 import Router from "next/router";
 import MainLayout from "../../layout/MainLayout";
-import BreadcrumbHome from "../../components/BreadcrumbHome";
-import { set } from "js-cookie";
 
 const { TextArea } = Input;
 const { Content } = Layout;
 const { Option } = Select;
 
 const businessForm = () => {
-    const [business, setBusiness] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isEdit, setIsEdit] = useState(false);
-    const [formBusiness] = Form.useForm();
-    const [isModalDeleteVisible, setIsModalDeleteVisible] = useState(false);
-    const [isDeleted, setIsDeleted] = useState(false);
-    const [businessName, setBusinessName] = useState("");
-    const [isActive, setIsActive] = useState(true);
-    const onFinish = (values) => {
-        if (isDeleted) {
-            deleteBusiness(values.id);
-        } else {
-            if (!isEdit) {
-                addBusiness(values.name, values.description, values.FNode);
-            } else {
-                updateBusiness(
-                    values.id,
-                    values.name,
-                    values.description,
-                    values.FNode,
-                    values.is_active
-                );
-            }
+  const [business, setBusiness] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [formBusiness] = Form.useForm();
+  const [isModalDeleteVisible, setIsModalDeleteVisible] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [businessName, setBusinessName] = useState("");
+  const [treeTable, setTreeTable] = useState(true);
+  const [nodesTree, setNodesTree] = useState([]);
+  const [updateModal, setUpdateModal] = useState(false);
+  const [businessUpdate, setBusinessUpdate] = useState({});
+
+  const onFinish = (values) => {
+    if (isDeleted) {
+      deleteBusiness(values.id);
+    } else {
+      if (!isEdit) {
+        addBusiness(values.name, values.description, values.FNode);
+      } else {
+        updateBusiness(values);
+      }
+    }
+  };
+  const deleteBusiness = async (id, name, description) => {
+    setLoading(true);
+    Axios.delete(API_URL + "/business/node/" + id + "/")
+      .then(function (response) {
+        if (response.status === 200) {
+          Router.push("/business");
         }
-    };
-    const deleteBusiness = async (id, name, description) => {
-        setLoading(true);
-        Axios.delete(API_URL + "/business/node/" + id + "/")
-            .then(function (response) {
-                if (response.status === 200) {
-                    Router.push("/business");
-                }
-                getBusiness();
-                setIsModalVisible(false);
-                setIsModalDeleteVisible(false);
-                setLoading(false);
-            })
-            .catch(function (error) {
-                setLoading(false);
-                console.log(error);
-            });
-    };
-    const updateBusiness = async (id, name, description, fNode, is_active) => {
-        const data = {
-            name: name,
-            description: description,
-            parent: fNode ? fNode : null,
-            is_active: is_active,
-        };
-        setLoading(true);
-        Axios.put(API_URL + "/business/node/" + id + "/", data)
-            .then(function (response) {
-                if (response.status === 200) {
-                    Router.push("/business");
-                }
-                getBusiness();
-                setIsModalVisible(false);
-                setLoading(false);
-            })
-            .catch(function (error) {
-                setLoading(false);
-                console.log(error);
-            });
-    };
-
-    const addBusiness = async (name, description, fNode) => {
-        const data = {
-            name: name,
-            description: description,
-            parent: fNode ? fNode : null,
-        };
-        setLoading(true);
-        Axios.post(API_URL + "/business/node/", data)
-            .then(function (response) {
-                if (response.status === 200) {
-                    Router.push("/business");
-                }
-                getBusiness();
-                setIsModalVisible(false);
-                setLoading(false);
-            })
-            .catch(function (error) {
-                setLoading(false);
-                console.log(error);
-            });
-    };
-
-    const showModal = (type, item) => {
-        if (type === "add") {
-            setIsDeleted(false);
-            setIsEdit(false);
-            formBusiness.resetFields();
-            setIsModalVisible(true);
-        } else if (type === "edit") {
-            setIsDeleted(false);
-            setIsEdit(true);
-            formBusiness.setFieldsValue({
-                name: item.name,
-                description: item.description,
-                FNode: item.parent ? item.parent.id : null,
-                id: item.id,
-            });
-            setIsModalVisible(true);
-        } else {
-            setIsDeleted(true);
-            setIsModalDeleteVisible(true);
-            setBusinessName(item.name);
-            formBusiness.setFieldsValue({
-                id: item.id,
-            });
-        }
-    };
-
-    const handleOk = () => {
-        setIsModalVisible(false);
-    };
-
-    const handleCancel = () => {
+        getBusiness();
         setIsModalVisible(false);
         setIsModalDeleteVisible(false);
-    };
-
-    const getBusiness = () => {
-        setLoading(true);
-        Axios.get(API_URL + "/business/node/")
-            .then((response) => {
-                setBusiness(response.data.results);
-                setLoading(false);
-            })
-            .catch((e) => {
-                console.log(e);
-                setLoading(false);
-            });
-    };
-
-    useEffect(() => {
+        setLoading(false);
+      })
+      .catch(function (error) {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+  const updateBusiness = async (data) => {
+    setLoading(true);
+    Axios.put(API_URL + "/business/node/" + data.id + "/", data)
+      .then(function (response) {
+        if (response.status === 200) {
+          Router.push("/business");
+        }
         getBusiness();
-    }, []);
-
-    const columns = [
-        {
-            title: "Nombre",
-            dataIndex: "name",
-            key: "name",
-        },
-        {
-            title: "Nodo padre",
-            dataIndex: "parent",
-            key: "parent",
-            render: (parent) => {
-                return parent ? parent.name : null;
-            },
-        },
-        {
-            title: "Estatus",
-            dataIndex: "active",
-            key: "active",
-            render: (item) => {
-                return (
-                    <>
-                        <Switch
-                            defaultChecked={item}
-                            checkedChildren="Activo"
-                            unCheckedChildren="Inactivo"
-                        //   onChange={() => onchangeStatus(item)}
-                        />
-                    </>
-                );
-            },
-        },
-        {
-            title: "Acciones",
-            render: (item) => {
-                return (
-                    <div>
-                        <Row gutter={16}>
-                            <Col className="gutter-row" span={6}>
-                                <EditOutlined onClick={() => showModal("edit", item)} />
-                            </Col>
-                            <Col className="gutter-row" span={6}>
-                                <DeleteOutlined onClick={() => showModal("delete", item)} />
-                            </Col>
-                        </Row>
-                    </div>
-                );
-            },
-        },
-    ];
-
-    const changeStatus = (value) => {
-        isActive ? setIsActive(false) : setIsActive(true);
+        setIsModalVisible(false);
+        setLoading(false);
+      })
+      .catch(function (error) {
+        getBusiness();
+        setLoading(false);
+        console.log(error);
+      });
+  };
+  const addBusiness = async (name, description, fNode) => {
+    const data = {
+      name: name,
+      description: description,
+      parent: fNode ? fNode : null,
     };
+    setLoading(true);
+    Axios.post(API_URL + "/business/node/", data)
+      .then(function (response) {
+        if (response.status === 200) {
+          Router.push("/business");
+        }
+        getBusiness();
+        setIsModalVisible(false);
+        setLoading(false);
+      })
+      .catch(function (error) {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+  const showModal = (type, item) => {
+    if (type === "add") {
+      setIsDeleted(false);
+      setIsEdit(false);
+      formBusiness.resetFields();
+      setIsModalVisible(true);
+    } else if (type === "edit") {
+      setIsDeleted(false);
+      setIsEdit(true);
+      formBusiness.setFieldsValue({
+        name: item.name,
+        description: item.description,
+        FNode: item.parent ? item.parent.id : null,
+        id: item.id,
+      });
+      setIsModalVisible(true);
+    } else {
+      setIsDeleted(true);
+      setIsModalDeleteVisible(true);
+      setBusinessName(item.name);
+      formBusiness.setFieldsValue({
+        id: item.id,
+      });
+    }
+  };
 
-    return (
-        <MainLayout currentKey="2">
-            <Breadcrumb>
-                <Breadcrumb.Item className={'pointer'} onClick={() => route.push({ pathname: "/home" })}>Inicio</Breadcrumb.Item>
-                <Breadcrumb.Item>Empresa</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className="container" style={{ width: "100%" }}>
-                <Row justify={"end"}>
-                    <Col>
-                        <Button
-                            style={{
-                                background: "#fa8c16",
-                                fontWeight: "bold",
-                                color: "white",
-                            }}
-                            onClick={() => showModal("add")}
-                        >
-                            <PlusOutlined />
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setIsModalDeleteVisible(false);
+  };
+
+  const getBusiness = () => {
+    setLoading(true);
+    Axios.get(API_URL + "/business/node/")
+      .then((response) => {
+        setBusiness([]);
+        setBusiness(response.data.results);
+        setLoading(false);
+      })
+      .catch((e) => {
+        setBusiness([]);
+        console.log(e);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    getBusiness();
+    getNodesTree();
+  }, []);
+
+  const getNodesTree = () => {
+    Axios.post(API_URL + `/business/node/node_in_cascade/`)
+      .then((response) => {
+        setNodesTree(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const columns = [
+    {
+      title: "Nombre",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Nodo padre",
+      dataIndex: "parent",
+      key: "parent",
+      render: (parent) => {
+        return parent ? parent.name : null;
+      },
+    },
+    {
+      title: "Estatus",
+      key: "active",
+      render: (item) => {
+        return (
+          <>
+            <Switch
+              defaultChecked={item.active}
+              checkedChildren="Activo"
+              unCheckedChildren="Inactivo"
+              onChange={() => modalUpdate(item)}
+            />
+          </>
+        );
+      },
+    },
+    {
+      title: "Acciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined onClick={() => showModal("edit", item)} />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined onClick={() => showModal("delete", item)} />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const changeView = () => {
+    treeTable ? setTreeTable(false) : setTreeTable(true);
+  };
+
+  const dataTree = [
+    {
+      title: "parent 1",
+      key: "0-0",
+      children: [
+        {
+          title: "parent 1-0",
+          key: "0-0-0",
+          children: [
+            {
+              title: "leaf",
+              key: "0-0-0-0",
+            },
+            {
+              title: "leaf",
+              key: "0-0-0-1",
+            },
+            {
+              title: "leaf",
+              key: "0-0-0-2",
+            },
+          ],
+        },
+        {
+          title: "parent 1-1",
+          key: "0-0-1",
+          children: [
+            {
+              title: "leaf",
+              key: "0-0-1-0",
+            },
+          ],
+        },
+        {
+          title: "parent 1-2",
+          key: "0-0-2",
+          children: [
+            {
+              title: "leaf",
+              key: "0-0-2-0",
+            },
+            {
+              title: "leaf",
+              key: "0-0-2-1",
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const modalUpdate = (value) => {
+    setBusinessUpdate(value);
+    updateModal ? setUpdateModal(false) : setUpdateModal(true);
+    if (!value.id) {
+      getBusiness();
+    }
+  };
+
+  const updateStatus = () => {
+    setIsEdit(true);
+    businessUpdate.active = businessUpdate.active ? false : true;
+    delete businessUpdate["parent"];
+    changeStatusBusiness();
+  };
+
+  const changeStatusBusiness = async () => {
+    console.log("Business-->>> ", businessUpdate);
+    Axios.put(API_URL + `/business/node/${businessUpdate.id}/`, businessUpdate)
+      .then(function (response) {
+        modalUpdate({});
+      })
+      .catch(function (error) {
+        message.error("Error al actualizar, intente de nuevo");
+        console.log(error);
+      });
+  };
+
+  return (
+    <MainLayout currentKey="2">
+      <Breadcrumb>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/home" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Empresas</Breadcrumb.Item>
+      </Breadcrumb>
+      <div className="container" style={{ width: "100%" }}>
+        <Row justify={"end"}>
+          <Col>
+            <Button
+              style={{
+                background: "#fa8c16",
+                fontWeight: "bold",
+                color: "white",
+              }}
+              onClick={() => showModal("add")}
+            >
+              <PlusOutlined />
               Agregar empresa
             </Button>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={24}>
-                        <Table
-                            className={"mainTable"}
-                            size="small"
-                            columns={columns}
-                            dataSource={business}
-                            loading={loading}
-                        />
-                    </Col>
-                </Row>
-            </div>
+          </Col>
+        </Row>
+        <Row justify={"end"}>
+          <Col style={{ margin: "1%" }}>
+            {treeTable ? (
+              <Button onClick={changeView}>
+                <NodeExpandOutlined />
+                Arbol
+              </Button>
+            ) : (
+              <Button onClick={changeView}>
+                <TableOutlined />
+                Tabla
+              </Button>
+            )}
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            {treeTable ? (
+              <Table
+                className={"mainTable"}
+                size="small"
+                columns={columns}
+                dataSource={business}
+                loading={loading}
+              />
+            ) : (
+              <Tree
+                showLine
+                style={{ fontSize: "20px" }}
+                // onSelect={this.onSelect}
+                treeData={nodesTree}
+              />
+            )}
+          </Col>
+        </Row>
+      </div>
 
-            <Modal
-                title={isEdit ? "Actualizar empresa" : "Agregar empresa"}
-                visible={isModalVisible}
-                onCancel={() => handleOk()}
-                footer={[
-                    <Button key="back" onClick={handleCancel}>
-                        Regresar
+      <Modal
+        title={isEdit ? "Actualizar empresa" : "Agregar empresa"}
+        visible={isModalVisible}
+        onCancel={() => handleOk()}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Regresar
           </Button>,
-                    <Button
-                        form="addBusinessForm"
-                        type="primary"
-                        key="submit"
-                        htmlType="submit"
-                    >
-                        {isEdit ? "Actualizar" : "Agregar"}
-                    </Button>,
-                ]}
+          <Button
+            form="addBusinessForm"
+            type="primary"
+            key="submit"
+            htmlType="submit"
+          >
+            {isEdit ? "Actualizar" : "Agregar"}
+          </Button>,
+        ]}
+      >
+        <Form
+          id="addBusinessForm"
+          name="normal_login"
+          onFinish={onFinish}
+          layout={"vertical"}
+          form={formBusiness}
+        >
+          <Form.Item name="id" label="id" style={{ display: "none" }}>
+            <Input type="text" />
+          </Form.Item>
+          <Form.Item
+            name="name"
+            label="Nombre"
+            rules={[{ required: true, message: "Ingresa un nombre" }]}
+          >
+            <Input placeholder="Nombre de la empresa" />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Descripción"
+            rules={[{ required: true, message: "Ingresa una descripción" }]}
+          >
+            <TextArea rows={4} />
+          </Form.Item>
+          <Form.Item name="FNode" label="Nodo padre">
+            <Select
+              showSearch
+              placeholder="Select a person"
+              optionFilterProp="children"
+              name={"fNode"}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
             >
-                <Form
-                    id="addBusinessForm"
-                    name="normal_login"
-                    onFinish={onFinish}
-                    layout={"vertical"}
-                    form={formBusiness}
-                >
-                    <Form.Item name="id" label="id" style={{ display: "none" }}>
-                        <Input type="text" />
-                    </Form.Item>
-                    <Form.Item
-                        name="name"
-                        label="Nombre"
-                        rules={[{ required: true, message: "Ingresa un nombre" }]}
-                    >
-                        <Input placeholder="Nombre de la empresa" />
-                    </Form.Item>
-                    <Form.Item
-                        name="description"
-                        label="Descripción"
-                        rules={[{ required: true, message: "Ingresa una descripción" }]}
-                    >
-                        <TextArea rows={4} />
-                    </Form.Item>
-                    <Form.Item name="FNode" label="Nodo padre">
-                        <Select
-                            showSearch
-                            placeholder="Select a person"
-                            optionFilterProp="children"
-                            name={"fNode"}
-                            filterOption={(input, option) =>
-                                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                            }
-                        >
-                            {business.map((bus) => (
-                                <Option value={bus.id}>{bus.name}</Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    {isEdit ? (
-                        <Form.Item name="is_active">
-                            <Switch
-                                checked={isActive}
-                                onClick={changeStatus}
-                                checkedChildren="Activo"
-                                unCheckedChildren="Inactivo"
-                            />
-                        </Form.Item>
-                    ) : (
-                            <></>
-                        )}
-                </Form>
-            </Modal>
-            <Modal
-                title={"Eliminar empresa " + businessName}
-                visible={isModalDeleteVisible}
-                footer={[
-                    <Button key="back" onClick={handleCancel}>
-                        Regresar
+              {business.map((bus) => (
+                <Option value={bus.id}>{bus.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title={"Eliminar empresa " + businessName}
+        visible={isModalDeleteVisible}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Cancelar
           </Button>,
-                    <Button
-                        form="deleteBusinessForm"
-                        type="primary"
-                        key="submit"
-                        htmlType="submit"
-                    >
-                        Eliminar
+          <Button
+            form="deleteBusinessForm"
+            type="primary"
+            key="submit"
+            htmlType="submit"
+          >
+            Si, Eliminar
           </Button>,
-                ]}
-            >
-                <Form
-                    id="deleteBusinessForm"
-                    name="normal_login"
-                    onFinish={onFinish}
-                    layout={"vertical"}
-                    form={formBusiness}
-                >
-                    <div className="float-label">
-                        <label>¿Está seguro de eliminar esta empresa?</label>
-                    </div>
-                    <Form.Item name="id" label="id" style={{ display: "none" }}>
-                        <Input type="text" />
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </MainLayout>
-    );
+        ]}
+      >
+        <Form
+          id="deleteBusinessForm"
+          name="normal_login"
+          onFinish={onFinish}
+          layout={"vertical"}
+          form={formBusiness}
+        >
+          <div className="float-label">
+            <label>¿Está seguro de eliminar esta empresa?</label>
+          </div>
+          <Form.Item name="id" label="id" style={{ display: "none" }}>
+            <Input type="text" />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="Desactivar empresa"
+        visible={updateModal}
+        onOk={updateStatus}
+        onCancel={() => modalUpdate({})}
+        okText="Si, Desactivar"
+        cancelText="Cancelar"
+      >
+        Al desactivar esta empresa los usuarios colaboradores que estén
+        asociados a ésta no podrán acceder en la aplicación móvil
+      </Modal>
+    </MainLayout>
+  );
 };
 export default businessForm;

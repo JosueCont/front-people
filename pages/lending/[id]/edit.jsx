@@ -38,7 +38,7 @@ const HolidaysNew = () => {
   const { id } = route.query;
   let userToken = cookie.get("token") ? cookie.get("token") : null;
   const [config, setConfig] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [details, setDetails] = useState(null);
   const [message, setMessage] = useState(null);
@@ -143,12 +143,15 @@ const HolidaysNew = () => {
   };
 
   const getConfig = async () => {
+      
     try {
       let response = await Axios.get(API_URL + `/payroll/loan-config/`);
       setConfig(response.data.results[0]);
       console.log(response.data.results[0]);
     } catch (error) {
       console.log("error");
+    }finally{
+        /* setLoading(false); */
     }
   };
 
@@ -169,8 +172,8 @@ const HolidaysNew = () => {
 
   useEffect(() => {
     if (id) {
-      getDetails();
-      getConfig();
+        getConfig();
+        getDetails();
     }
   }, [route]);
 
