@@ -266,6 +266,7 @@ const Lendingform = (props) => {
                             disabled={props.sending}
                             onClick={props.onApprove}
                             type="primary"
+                            className={'btn-success'}
                             key="aprove"
                             style={{ padding: "0 50px", marginLeft: 15 }}
                         >
@@ -280,7 +281,7 @@ const Lendingform = (props) => {
                         type="primary"
                         style={{ padding: "0 50px", marginLeft: 15 }}
                     >
-                        {props.edit ? "Actualizar datos" : "Guardar"}
+                        {props.edit ? "Actualizar" : "Guardar"}
                     </Button>
                 </Col>
             </Row>

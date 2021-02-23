@@ -1,23 +1,23 @@
 import {
-  Form,
-  Input,
-  Layout,
-  Table,
-  Breadcrumb,
-  Tabs,
-  Button,
-  Row,
-  Col,
-  Modal,
-  message,
+    Form,
+    Input,
+    Layout,
+    Table,
+    Breadcrumb,
+    Tabs,
+    Button,
+    Row,
+    Col,
+    Modal,
+    message,
 } from "antd";
 import {
-  SearchOutlined,
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  EllipsisOutlined,
-  ExclamationCircleOutlined,
+    SearchOutlined,
+    PlusOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    EllipsisOutlined,
+    ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 const { Content } = Layout;
@@ -31,159 +31,157 @@ import moment from "moment";
 import { withAuthSync } from "../../../libs/auth";
 
 const Groups = () => {
-  const router = useRouter();
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const [groups, setGroups] = useState([]);
+    const router = useRouter();
+    const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+    const [groups, setGroups] = useState([]);
 
-  const headers = {
-    "client-id": "5f417a53c37f6275fb614104",
-    "Content-Type": "application/json",
-  };
+    const headers = {
+        "client-id": "5f417a53c37f6275fb614104",
+        "Content-Type": "application/json",
+    };
 
-  const getGroups = (text) => {
-    setLoading(true);
+    const getGroups = (text) => {
+        setLoading(true);
 
-    Axios.get(LOGIN_URL + `/group/list/`, { headers: headers })
-      .then((response) => {
-        response.data.data.map((item) => {
-          item["key"] = item.id;
-          item.timestamp = moment(item.timestamp).format("DD/MM/YYYY");
-        });
-        setGroups(response.data.data);
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+        Axios.get(LOGIN_URL + `/group/list/`, { headers: headers })
+            .then((response) => {
+                response.data.data.map((item) => {
+                    item["key"] = item.id;
+                    item.timestamp = moment(item.timestamp).format("DD/MM/YYYY");
+                });
+                setGroups(response.data.data);
+                setLoading(false);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    };
 
-  const deleteGroup = async (id) => {
-    let data = { id: id };
+    const deleteGroup = async (id) => {
+        let data = { id: id };
 
-    Axios.post(LOGIN_URL + `/group/delete/`, data, {
-      headers: headers,
-    })
-      .then(function (response) {
-        if (response.status === 200) {
-          message.success({
-            content: "Grupo eliminado exitosamente",
-            className: "custom-class",
-            style: {
-              marginTop: "20vh",
+        Axios.post(LOGIN_URL + `/group/delete/`, data, {
+            headers: headers,
+        })
+            .then(function (response) {
+                if (response.status === 200) {
+                    message.success({
+                        content: "Grupo eliminado exitosamente",
+                        className: "custom-class",
+                        style: {
+                            marginTop: "20vh",
+                        },
+                    });
+                    getGroups();
+                }
+            })
+            .catch(function (error) {
+                message.error({
+                    content: "Ocurrió un error",
+                    className: "custom-class",
+                    style: {
+                        marginTop: "20vh",
+                    },
+                });
+                console.log(error);
+            });
+    };
+
+    const confirmDelete = (id) => {
+        confirm({
+            title: "Esta seguro de eliminar el elemento?",
+            icon: <ExclamationCircleOutlined />,
+            content: "Si elimina el elemento no podrá recuperarlo",
+            onOk() {
+                deleteGroup(id);
             },
-          });
-          getGroups();
-        }
-      })
-      .catch(function (error) {
-        message.error({
-          content: "Ocurrió un error",
-          className: "custom-class",
-          style: {
-            marginTop: "20vh",
-          },
+            onCancel() { },
         });
-        console.log(error);
-      });
-  };
+    };
 
-  const confirmDelete = (id) => {
-    confirm({
-      title: "Esta seguro de eliminar el elemento?",
-      icon: <ExclamationCircleOutlined />,
-      content: "Si elimina el elemento no podrá recuperarlo",
-      onOk() {
-        deleteGroup(id);
-      },
-      onCancel() {},
-    });
-  };
+    useEffect(() => {
+        getGroups();
+    }, []);
 
-  useEffect(() => {
-    getGroups();
-  }, []);
+    const filter = () => { };
 
-  const filter = () => {};
+    const columns = [
+        {
+            title: "Nombre",
+            dataIndex: "name",
+            key: "name",
+        },
+        {
+            title: "Fecha de creación",
+            render: (item) => {
+                return <div>{item.timestamp}</div>;
+            },
+        },
+        {
+            title: "Acciones",
+            key: "id",
+            render: (text, record) => {
+                return (
+                    <div>
+                        <Row gutter={16}>
+                            <Col className="gutter-row" span={6}>
+                                <a
+                                    onClick={() =>
+                                        router.push({
+                                            pathname: "/config/groups/add",
+                                            query: { type: "edit", id: record.id },
+                                        })
+                                    }
+                                >
+                                    <EditOutlined />
+                                </a>
+                            </Col>
+                            <Col className="gutter-row" span={6}>
+                                <DeleteOutlined onClick={() => confirmDelete(record.id)} />
+                            </Col>
+                        </Row>
+                    </div>
+                );
+            },
+        },
+    ];
 
-  const columns = [
-    {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Fecha de creación",
-      render: (item) => {
-        return <div>{item.timestamp}</div>;
-      },
-    },
-    {
-      title: "Acciones",
-      key: "id",
-      render: (text, record) => {
-        return (
-          <div>
-            <Row gutter={16}>
-              <Col className="gutter-row" span={6}>
-                <a
-                  onClick={() =>
-                    router.push({
-                      pathname: "/config/groups/add",
-                      query: { type: "edit", id: record.id },
-                    })
-                  }
+    return (
+        <MainLayout currentKey="3.2">
+            <Breadcrumb style={{ margin: "16px 0" }}>
+                <Breadcrumb.Item
+                    className={"pointer"}
+                    onClick={() => route.push({ pathname: "/home" })}
                 >
-                  <EditOutlined />
-                </a>
-              </Col>
-              <Col className="gutter-row" span={6}>
-                <DeleteOutlined onClick={() => confirmDelete(record.id)} />
-              </Col>
-            </Row>
-          </div>
-        );
-      },
-    },
-  ];
-
-  return (
-    <MainLayout currentKey="3.2">
-      <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
-        >
-          Inicio
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
-      </Breadcrumb>
-      <Content className="site-layout">
-        <div style={{ padding: "1%", float: "right" }}>
-          <Button
-            style={{
-              background: "#fa8c16",
-              fontWeight: "bold",
-              color: "white",
-            }}
-            onClick={() => router.push({ pathname: "/config/groups/add" })}
-          >
-            <PlusOutlined />
-            Agregar perfil
-          </Button>
+                    Inicio
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
+            </Breadcrumb>
+            <div className="container" style={{ width: "100%" }}>
+                <Row justify="end" style={{ paddingBottom: 20 }}>
+                    <Button
+                        style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                        }}
+                        onClick={() => router.push({ pathname: "/config/groups/add" })}
+                    >
+                        <PlusOutlined />
+                        Agregar perfil
+                    </Button>
+                </Row>
+                <Row>
+                    <Col span={24}>
+                        <Table
+                            columns={columns}
+                            dataSource={groups}
+                            loading={loading}
+                        />
+                    </Col>
+                </Row>
         </div>
-        <div
-          className="site-layout-background"
-          style={{ padding: 24, minHeight: 380, height: "100%" }}
-        >
-          <Table
-            size="small"
-            columns={columns}
-            dataSource={groups}
-            loading={loading}
-          />
-        </div>
-      </Content>
     </MainLayout>
   );
 };

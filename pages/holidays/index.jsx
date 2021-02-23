@@ -132,7 +132,7 @@ const Holidays = () => {
     }, [route]);
 
     return (
-        <MainLayout currentKey="5">
+        <MainLayout currentKey="7.2">
             <Breadcrumb className={"mainBreadcrumb"}>
                 <Breadcrumb.Item className={'pointer'} onClick={() => route.push({ pathname: "/home" })}>Inicio</Breadcrumb.Item>
                 <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
@@ -144,91 +144,106 @@ const Holidays = () => {
                             name="filter"
                             form={form}
                             onFinish={filterHolidays}
-                            layout="inline"
+                            layout="vertical"
                             key="formFilter"
+                            className={'formFilter'}
                         >
-                            <Form.Item
-                                key="collaborator"
-                                name="collaborator"
-                                label="Colaborador"
-                            >
-                                <Select
-                                    key="selectPerson"
-                                    showSearch
-                                    /* options={personList} */
-                                    style={{ width: 150 }}
-                                    allowClear
-                                    optionFilterProp="children"
-                                    filterOption={(input, option) =>
-                                        option.children
-                                            .toLowerCase()
-                                            .indexOf(input.toLowerCase()) >= 0
-                                    }
-                                    filterSort={(optionA, optionB) =>
-                                        optionA.children
-                                            .toLowerCase()
-                                            .localeCompare(optionB.children.toLowerCase())
-                                    }
-                                >
-                                    {personList
-                                        ? personList.map((item) => {
-                                            return (
-                                                <Option key={item.key} value={item.value}>
-                                                    {item.label}
-                                                </Option>
-                                            );
-                                        })
-                                        : null}
-                                </Select>
-                            </Form.Item>
-                            <Form.Item key="company_select" name="company" label="Empresa">
-                                <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
-                            </Form.Item>
+                            <Row gutter={[24, 8]}>
+                                <Col>
+                                    <Form.Item
+                                        key="collaborator"
+                                        name="collaborator"
+                                        label="Colaborador"
+                                    >
+                                        <Select
+                                            key="selectPerson"
+                                            showSearch
+                                            /* options={personList} */
+                                            style={{ width: 150 }}
+                                            allowClear
+                                            optionFilterProp="children"
+                                            filterOption={(input, option) =>
+                                                option.children
+                                                    .toLowerCase()
+                                                    .indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            filterSort={(optionA, optionB) =>
+                                                optionA.children
+                                                    .toLowerCase()
+                                                    .localeCompare(optionB.children.toLowerCase())
+                                            }
+                                        >
+                                            {personList
+                                                ? personList.map((item) => {
+                                                    return (
+                                                        <Option key={item.key} value={item.value}>
+                                                            {item.label}
+                                                        </Option>
+                                                    );
+                                                })
+                                                : null}
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+                                <Col>
+                                    <Form.Item key="company_select" name="company" label="Empresa">
+                                        <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
+                                    </Form.Item>
+                                </Col>
+                                <Col>
+                                    <SelectDepartment
+                                        name="department"
+                                        companyId={companyId}
+                                        key="selectDepartament"
+                                    />
+                                </Col>
+                                <Col>
+                                    <Form.Item key="estatus_filter" name="status" label="Estatus">
+                                        <Select
+                                            style={{ width: 150 }}
+                                            key="select"
+                                            options={optionStatus}
+                                            allowClear
+                                        />
+                                    </Form.Item>
+                                </Col>
+                                <Col style={{ display:'flex' }}>
+                                    <Button
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: 'auto'
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                        loading={searching}
+                                    >
+                                        <SearchOutlined/> Filtrar
+                                    </Button>
+                                </Col>
+                            </Row>
                             {/* <Form.Item key="company_select_new" name="company_new" label="Empresa">
                     <SelectCompany  key="SelectCompany" />
                 </Form.Item> */}
-
-                            <SelectDepartment
-                                name="department"
-                                companyId={companyId}
-                                key="selectDepartament"
-                            />
-                            <Form.Item key="estatus_filter" name="status" label="Estatus">
-                                <Select
-                                    style={{ width: 100 }}
-                                    key="select"
-                                    options={optionStatus}
-                                    allowClear
-                                />
-                            </Form.Item>
-                            <Button
-                                style={{
-                                    background: "#fa8c16",
-                                    fontWeight: "bold",
-                                    color: "white",
-                                }}
-                                key="buttonFilter"
-                                htmlType="submit"
-                                loading={searching}
-                            >
-                                Filtrar
-              </Button>
                         </Form>
 
                         {/*  */}
                     </Col>
-                    <Col>
+                    <Col style={{ display: 'flex' }}>
                         <Button
                             style={{
                                 background: "#fa8c16",
                                 fontWeight: "bold",
                                 color: "white",
+                                marginTop:'auto'
                             }}
                             onClick={() => route.push("holidays/new")}
                             key="btn_new"
                         >
                             <PlusOutlined />
-              Nuevo
+              
+              Agregar vacaciones
             </Button>
                     </Col>
                 </Row>

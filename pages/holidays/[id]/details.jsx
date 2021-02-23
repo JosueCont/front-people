@@ -12,6 +12,8 @@ import {
   Input,
   Modal,
   notification,
+  Divider,
+  Space,
 } from "antd";
 import MainLayout from "../../../layout/MainLayout";
 import { render } from "react-dom";
@@ -235,9 +237,16 @@ const HolidaysDetails = () => {
                       </Form.Item>
                     </Form>
                   </Col>
-                  <Col offset={4} span={10}>
+                  <Col  span={24} style={{ textAlign: 'center' }}>
                     <Button
-                      key="cancel"
+                        key="cancel"
+                        onClick={() => route.push({ pathname: '/holidays' })}
+                        style={{ padding: "0 50px", margin: "0 10px" }}
+                        >
+                        Regresar
+                    </Button>
+                    <Button
+                      key="reject"
                       type="primary"
                       danger
                       onClick={() => setVisibleModalReject(true)}
