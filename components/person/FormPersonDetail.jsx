@@ -1638,8 +1638,7 @@ const personDetailForm = () => {
 
   const changePassword = (value) => {
     if (value.new_password == value.newPassword) {
-      let k_id = JSON.parse(Cookies.get("token"));
-      value.user_id = k_id.user_id;
+      value.user_id = router.query.id;
       delete value["newPassword"];
       const headers = {
         "client-id": APP_ID,
