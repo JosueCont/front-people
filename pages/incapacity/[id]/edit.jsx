@@ -123,8 +123,13 @@ const IncapacityEdit = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Incapacidad</Breadcrumb.Item>
-        <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => route.push({ pathname: "/incapacity" })}
+        >
+          Incapacidad
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Editar solicitud</Breadcrumb.Item>
       </Breadcrumb>
       <div
         className="container back-white"
@@ -135,6 +140,7 @@ const IncapacityEdit = () => {
             <Incapacityform
               details={details}
               file={file}
+              edit={true}
               setFile={setFile}
               onFinish={saveRequest}
               sending={sending}

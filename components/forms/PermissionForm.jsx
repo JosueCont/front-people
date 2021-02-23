@@ -277,7 +277,7 @@ const Permissionform = (props) => {
               style={{ padding: "0 50px", marginLeft: 15 }}
               type="primary"
             >
-              {props.edit ? "Actualizar datos" : "Guardar"}
+              {props.edit ? "Actualizar" : "Guardar"}
             </Button>
           ) : null}
         </Col>

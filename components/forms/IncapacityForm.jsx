@@ -301,7 +301,7 @@ const Incapacityform = (props) => {
               style={{ padding: "0 50px", marginLeft: 15 }}
               loading={props.sending}
             >
-              {props.edit ? "Actualizar datos" : "Guardar"}
+              {props.edit ? "Actualizar" : "Guardar"}
             </Button>
           ) : null}
         </Col>

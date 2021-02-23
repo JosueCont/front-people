@@ -284,7 +284,7 @@ const Vacationform = (props) => {
             type="primary"
             style={{ padding: "0 50px", margin: "0 10px" }}
           >
-            Guardar
+              {props.edit ? 'Actualizar' : 'Guardar'}
           </Button>
         </Col>
       </Row>
