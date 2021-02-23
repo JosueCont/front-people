@@ -166,6 +166,15 @@ li.ant-menu-submenu-selected{
     margin-bottom: 0% !important;
 }
 
+.formFilter .ant-col .ant-form-item{
+    margin-bottom: 0% !important;
+}
+
+.formFilter .ant-form-item{
+    margin-bottom: 0% !important;
+}
+
+
 .columnRightFilter{
     display:flex;
 }

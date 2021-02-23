@@ -152,8 +152,8 @@ const Events = () => {
                 <Spin tip="Cargando..." spinning={loading}>
                     <Row justify={'space-between'}>
                         <Col>
-                            <Form onFinish={filter} form={formFilter}>
-                                <Row>
+                            <Form onFinish={filter} form={formFilter} layout="vertical" className={'formFilter'}>
+                                <Row gutter={[24, 8]}>
                                     <Col lg={10} xs={22}>
                                         <Form.Item name="title" label="Título">
                                             <Input placeholder="Título" />
@@ -168,29 +168,31 @@ const Events = () => {
                                             />
                                         </Form.Item>
                                     </Col>
-                                    <Col lg={2} xs={5} offset={1}>
-                                        <Form.Item>
+                                    <Col lg={2} xs={5} offset={1} style={{ display: "flex" }}>
+                                        
                                             <Button
                                                 style={{
                                                     background: "#fa8c16",
                                                     fontWeight: "bold",
                                                     color: "white",
+                                                    marginTop: 'auto'
                                                 }}
                                                 htmlType="submit"
                                             >
                                                 Filtrar
-                      </Button>
-                                        </Form.Item>
+                                            </Button>
+                                        
                                     </Col>
                                 </Row>
                             </Form>
                         </Col>
-                        <Col>
+                        <Col style={{ display: 'flex' }}>
                             <Button
                                 style={{
                                     background: "#fa8c16",
                                     fontWeight: "bold",
                                     color: "white",
+                                    marginTop:'auto'
                                 }}
                                 onClick={() => route.push("events/add")}
                             >
@@ -201,7 +203,7 @@ const Events = () => {
                     </Row>
                     <Row>
                         <Col span={24}>
-                            <Table dataSource={evenstList} key="table_events" loading={loading}>
+                            <Table className={'mainTable'} dataSource={evenstList} key="table_events" loading={loading}>
                                 <Column title="ID" dataIndex="id" key="id"></Column>
                                 <Column title="Título" dataIndex="title" key="title"></Column>
                                 <Column title="Fecha" dataIndex="date" key="date"></Column>

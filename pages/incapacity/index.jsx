@@ -144,56 +144,72 @@ const Incapacity = () => {
             <div className="container" style={{ width: "100%" }}>
                 <Row justify="space-between" style={{ paddingBottom: 20 }}>
                     <Col>
-                        <Form name="filter" onFinish={filter} layout="inline" key="formFilter">
-                            <Form.Item key="collaborator" name="collaborator" label="Colaborador">
-                                <Select
-                                    key="selectPerson"
-                                    showSearch
-                                    /* options={personList} */
-                                    style={{ width: 150 }}
-                                    allowClear
-                                    optionFilterProp="children"
-                                    filterOption={(input, option) =>
-                                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                    }
-                                    filterSort={(optionA, optionB) =>
-                                        optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
-                                    }
+                        <Form name="filter" onFinish={filter} layout="vertical" key="formFilter" className={'formFilter'}>
+                            
+                            <Row gutter={[24, 8]}>
+                                <Col>
+                                    <Form.Item key="collaborator" name="collaborator" label="Colaborador">
+                                        <Select
+                                            key="selectPerson"
+                                            showSearch
+                                            /* options={personList} */
+                                            style={{ width: 150 }}
+                                            allowClear
+                                            optionFilterProp="children"
+                                            filterOption={(input, option) =>
+                                                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            filterSort={(optionA, optionB) =>
+                                                optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
+                                            }
+                                        >
+                                            {
+                                                personList ? personList.map((item) => {
+                                                    return (<Option key={item.key} value={item.value}>{item.label}</Option>)
+                                                }) : null
+                                            }
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+                                <Col>
+                                    <Form.Item key="company" name="company" label="Empresa">
+                                        <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
+                                    </Form.Item>
+                                </Col>
+                                <Col>
+                                    <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment" />
+                                </Col>
+                                <Col>
+                                    <Form.Item key="estatus_filter" name="status" label="Estatus">
+                                        <Select style={{ width: 100 }} key="select" options={optionStatus} allowClear />
+                                    </Form.Item>
+                                </Col>
+                                <Col style={{ display: 'flex' }}>
+                                    <Button
+                                    style={{
+                                        background: "#fa8c16",
+                                        fontWeight: "bold",
+                                        color: "white",
+                                        marginTop:'auto'
+                                    }}
+                                    key="buttonFilter"
+                                    htmlType="submit"
+                                    loading={loading}
                                 >
-                                    {
-                                        personList ? personList.map((item) => {
-                                            return (<Option key={item.key} value={item.value}>{item.label}</Option>)
-                                        }) : null
-                                    }
-                                </Select>
-                            </Form.Item>
-                            <Form.Item key="company" name="company" label="Empresa">
-                                <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
-                            </Form.Item>
-                            <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment" />
-                            <Form.Item key="estatus_filter" name="status" label="Estatus">
-                                <Select style={{ width: 100 }} key="select" options={optionStatus} allowClear />
-                            </Form.Item>
-                            <Button
-                                style={{
-                                    background: "#fa8c16",
-                                    fontWeight: "bold",
-                                    color: "white",
-                                }}
-                                key="buttonFilter"
-                                htmlType="submit"
-                                loading={loading}
-                            >
-                                Filtrar
-                    </Button>
+                                    <SearchOutlined/>
+                                    Filtrar
+                                </Button>
+                                </Col>
+                            </Row>
                         </Form>
                     </Col>
-                    <Col>
+                    <Col style={{ display: 'flex' }}>
                         <Button
                             style={{
                                 background: "#fa8c16",
                                 fontWeight: "bold",
                                 color: "white",
+                                marginTop: 'auto'
                             }}
                             onClick={() => route.push("/incapacity/new")}
                             key="btn_new"

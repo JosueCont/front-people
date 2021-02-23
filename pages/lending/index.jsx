@@ -94,37 +94,48 @@ const Lending = () => {
             <div className="container" style={{ width: "100%" }}>
                 <Row justify="space-between" key="row1" style={{ paddingBottom: 20 }}>
                     <Col>
-                        <Form name="filter" onFinish={filter} layout="inline" key="form">
-                            <SelectCollaborator name="person" style={{ width: 150 }} />
-                            <Form.Item key="type" name="type" label="Tipo">
-                                <Select placeholder="Todos" style={{ width: 150 }} key="select_type" options={typeOptions} allowClear />
-                            </Form.Item>
-                            <Form.Item key="estatus_filter" name="status" label="Estatus">
-                                <Select
-                                    style={{ width: 150 }}
-                                    key="select_status"
-                                    options={optionStatus}
-                                    placeholder="Todos"
-                                    allowClear
-                                />
-                            </Form.Item>
-                            <Button loading={loading} htmlType="submit" key="filter" style={{ background: "#fa8c16", fontWeight: "bold", color: "white", }}>
-                                Filtrar
-              </Button>
+                        <Form className={'formFilter'} name="filter" onFinish={filter} layout="vertical" key="form">
+                            <Row gutter={[24, 8]}>
+                                <Col>
+                                    <SelectCollaborator name="person" style={{ width: 150 }} />
+                                </Col>
+                                <Col>
+                                    <Form.Item key="type" name="type" label="Tipo">
+                                        <Select placeholder="Todos" style={{ width: 150 }} key="select_type" options={typeOptions} allowClear />
+                                    </Form.Item>
+                                </Col>
+                                <Col>
+                                    <Form.Item key="estatus_filter" name="status" label="Estatus">
+                                        <Select
+                                            style={{ width: 150 }}
+                                            key="select_status"
+                                            options={optionStatus}
+                                            placeholder="Todos"
+                                            allowClear
+                                        />
+                                    </Form.Item>
+                                </Col>
+                                <Col style={{ display: 'flex' }}>
+                                    <Button loading={loading} htmlType="submit" key="filter" style={{ background: "#fa8c16", fontWeight: "bold", color: "white", marginTop: 'auto' }}>
+                                        <SearchOutlined/> Filtrar
+                                    </Button>
+                                </Col>
+                            </Row>
                         </Form>
                     </Col>
-                    <Col>
+                    <Col style={{ display: 'flex' }}>
                         <Button
                             key="config"
                             style={{
                                 background: "#fa8c16",
                                 fontWeight: "bold",
                                 color: "white",
+                                marginTop: 'auto'
                             }}
                             onClick={() => route.push("lending/config")}
                         >
                             Configuración
-            </Button>
+                        </Button>
                         <Button
                             key="btnnvo"
                             style={{
@@ -132,11 +143,12 @@ const Lending = () => {
                                 fontWeight: "bold",
                                 color: "white",
                                 marginLeft: 20,
+                                marginTop: 'auto'
                             }}
                             onClick={() => route.push("lending/new")}
                         >
                             <PlusOutlined />
-              Agregar Préstamo
+              Agregar préstamo
             </Button>
                     </Col>
                 </Row>
