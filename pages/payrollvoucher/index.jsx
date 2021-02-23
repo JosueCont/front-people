@@ -45,7 +45,7 @@ const UploadPayroll = () => {
     collaborator = null,
     company = null,
     department = null,
-    status = null
+    rfc = null
   ) => {
     setLoading(true);
     try {
@@ -53,8 +53,8 @@ const UploadPayroll = () => {
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
-      if (status) {
-        url += `status=${status}&`;
+      if (rfc) {
+        url += `rfc=${rfc}&`;
       }
 
       if (company) {
@@ -102,12 +102,7 @@ const UploadPayroll = () => {
   const filter = async (values) => {
     console.log(values);
     setLoading(true);
-    getVouchers(
-      values.collaborator,
-      values.company,
-      departamentId,
-      values.status
-    );
+    getVouchers(values.collaborator, values.company, departamentId, values.rfc);
   };
 
   /* Eventos de componentes */
@@ -231,6 +226,9 @@ const UploadPayroll = () => {
                     })
                   : null}
               </Select>
+            </Form.Item>
+            <Form.Item key="rfc" name="rfc" label="Rfc">
+              <Input placeholder="Rfc" />
             </Form.Item>
             <Form.Item key="company" name="company" label="Empresa">
               <SelectCompany

@@ -247,7 +247,7 @@ const Permissionform = (props) => {
             key="cancel"
             style={{ padding: "0 50px" }}
           >
-            {props.toApprove ? "Regresar" : "Cancelar"}
+            Regresar
           </Button>
           {props.toApprove ? (
             <Button
