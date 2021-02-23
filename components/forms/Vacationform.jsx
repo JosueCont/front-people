@@ -268,7 +268,7 @@ const Vacationform = (props) => {
             <Input readOnly />
           </Form.Item>
         </Col>
-        <Col span={24} style={{ textAlign: "right" }}>
+        <Col span={21} style={{ textAlign: "right" }}>
           <Button
             key="cancel"
             onClick={props.onCancel}
@@ -282,7 +282,7 @@ const Vacationform = (props) => {
             htmlType="submit"
             loading={props.sending}
             type="primary"
-            style={{ padding: "0 50px", margin: "0 10px" }}
+            style={{ padding: "0 50px", margin: "0 0 0 10px" }}
           >
               {props.edit ? 'Actualizar' : 'Guardar'}
           </Button>
