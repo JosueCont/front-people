@@ -236,24 +236,24 @@ const HolidaysDetails = () => {
                     </Form>
                   </Col>
                   <Col offset={4} span={10}>
-                    <p htmlFor="">
-                      <strong>Cambiar estatus de la solicitud</strong>
-                    </p>
                     <Button
                       key="cancel"
+                      type="primary"
+                      danger
                       onClick={() => setVisibleModalReject(true)}
                       style={{ padding: "0 50px", margin: "0 10px" }}
                     >
                       Rechazar
                     </Button>
                     <Button
+                    className={'btn-success'}
                       key="save"
                       onClick={approveRequest}
                       type="primary"
                       style={{ padding: "0 50px", margin: "0 10px" }}
                       loading={sending}
                     >
-                      Aceptar
+                      Aprobar
                     </Button>
                   </Col>
                 </Row>
