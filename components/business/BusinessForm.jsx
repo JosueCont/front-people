@@ -42,6 +42,8 @@ const businessForm = () => {
   const [businessName, setBusinessName] = useState("");
   const [treeTable, setTreeTable] = useState(true);
   const [nodesTree, setNodesTree] = useState([]);
+  const [updateModal, setUpdateModal] = useState(false);
+  const [businessUpdate, setBusinessUpdate] = useState({});
 
   const onFinish = (values) => {
     if (isDeleted) {
@@ -85,14 +87,6 @@ const businessForm = () => {
       .catch(function (error) {
         getBusiness();
         setLoading(false);
-        console.log(error);
-      });
-  };
-  const changeStatusBusiness = async (data) => {
-    Axios.put(API_URL + "/business/node/" + data.id + "/", data)
-      .then(function (response) {})
-      .catch(function (error) {
-        message.error("Error al actualizar, intente de nuevo");
         console.log(error);
       });
   };
@@ -156,6 +150,7 @@ const businessForm = () => {
     setLoading(true);
     Axios.get(API_URL + "/business/node/")
       .then((response) => {
+        setBusiness([]);
         setBusiness(response.data.results);
         setLoading(false);
       })
@@ -171,17 +166,9 @@ const businessForm = () => {
     getNodesTree();
   }, []);
 
-  const updateStatus = (value) => {
-    setIsEdit(true);
-    value.active = value.active ? false : true;
-    delete value["parent"];
-    changeStatusBusiness(value);
-  };
-
   const getNodesTree = () => {
     Axios.post(API_URL + `/business/node/node_in_cascade/`)
       .then((response) => {
-        console.log("NOdes-->> ", response.data);
         setNodesTree(response.data);
       })
       .catch((error) => {
@@ -213,7 +200,7 @@ const businessForm = () => {
               defaultChecked={item.active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
-              onChange={() => updateStatus(item)}
+              onChange={() => modalUpdate(item)}
             />
           </>
         );
@@ -292,6 +279,33 @@ const businessForm = () => {
       ],
     },
   ];
+
+  const modalUpdate = (value) => {
+    setBusinessUpdate(value);
+    updateModal ? setUpdateModal(false) : setUpdateModal(true);
+    if (!value.id) {
+      getBusiness();
+    }
+  };
+
+  const updateStatus = () => {
+    setIsEdit(true);
+    businessUpdate.active = businessUpdate.active ? false : true;
+    delete businessUpdate["parent"];
+    changeStatusBusiness();
+  };
+
+  const changeStatusBusiness = async () => {
+    console.log("Business-->>> ", businessUpdate);
+    Axios.put(API_URL + `/business/node/${businessUpdate.id}/`, businessUpdate)
+      .then(function (response) {
+        modalUpdate({});
+      })
+      .catch(function (error) {
+        message.error("Error al actualizar, intente de nuevo");
+        console.log(error);
+      });
+  };
 
   return (
     <MainLayout currentKey="2">
@@ -421,7 +435,7 @@ const businessForm = () => {
         visible={isModalDeleteVisible}
         footer={[
           <Button key="back" onClick={handleCancel}>
-            Regresar
+            Cancelar
           </Button>,
           <Button
             form="deleteBusinessForm"
@@ -429,7 +443,7 @@ const businessForm = () => {
             key="submit"
             htmlType="submit"
           >
-            Eliminar
+            Si, Eliminar
           </Button>,
         ]}
       >
@@ -447,6 +461,18 @@ const businessForm = () => {
             <Input type="text" />
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title="Desactivar empresa"
+        visible={updateModal}
+        onOk={updateStatus}
+        onCancel={() => modalUpdate({})}
+        okText="Si, Desactivar"
+        cancelText="Cancelar"
+      >
+        Al desactivar esta empresa los usuarios colaboradores que estén
+        asociados a ésta no podrán acceder en la aplicación móvil
       </Modal>
     </MainLayout>
   );
