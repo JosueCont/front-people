@@ -213,7 +213,7 @@ const Releases = () => {
               }}
             >
               <PlusOutlined />
-              Agregar nuevo
+              Agregar comunicado
             </Button>
           </Col>
         </Row>

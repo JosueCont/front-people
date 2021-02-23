@@ -199,7 +199,7 @@ const Incapacity = () => {
                             key="btn_new"
                         >
                             <PlusOutlined />
-              Nuevo
+              Agregar incapacidad
             </Button>
                     </Col>
                 </Row>

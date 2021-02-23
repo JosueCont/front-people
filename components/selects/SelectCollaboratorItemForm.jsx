@@ -40,7 +40,7 @@ export default function SelectCollaborator(props) {
     <Form.Item
       label="Colaborador"
       name={props.name ? props.name : "collaborator"}
-      labelCol={{ span: 24 }}
+      /* labelCol={{ span: 24 }} */
       labelAlign={"left"}
     >
       <Select

@@ -228,7 +228,7 @@ const Permission = () => {
               key="btn_new"
             >
               <PlusOutlined />
-              Nuevo
+              Agregar Permiso
             </Button>
           </Col>
         </Row>

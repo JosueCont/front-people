@@ -228,7 +228,7 @@ const Holidays = () => {
                             key="btn_new"
                         >
                             <PlusOutlined />
-              Nuevo
+              Agregar vacaciones
             </Button>
                     </Col>
                 </Row>

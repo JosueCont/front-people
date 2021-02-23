@@ -136,13 +136,13 @@ const Lending = () => {
                             onClick={() => route.push("lending/new")}
                         >
                             <PlusOutlined />
-              Nuevo
+              Agregar Préstamo
             </Button>
                     </Col>
                 </Row>
                 <Row justify={"end"}>
                     <Col span={24}>
-                        <Table dataSource={lendingList} key="table_holidays">
+                        <Table dataSource={lendingList} key="table_holidays" loading={loading}>
                             <Column
                                 title="Colaborador"
                                 dataIndex="person"
