@@ -17,11 +17,10 @@ import {
   notification,
   Space,
   Switch,
+  Modal,
+  message,
 } from "antd";
 import { useRouter } from "next/router";
-import axiosApi from "../../libs/axiosApi";
-import moduleName from "../../components/forms/LendingForm";
-import moment from "moment";
 import Lendingform from "../../components/forms/LendingForm";
 import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
@@ -32,16 +31,33 @@ const HolidaysNew = () => {
   const [sending, setSending] = useState(false);
   const [ready, setReady] = useState(false);
   const [config, setConfig] = useState(null);
+  const [modal, setModal] = useState(false);
 
-  const onCancel = () => {
-    route.push("/lending");
+  useEffect(() => {
+    getConfig();
+  }, []);
+
+  const getConfig = async () => {
+    setReady(false);
+    try {
+      let response = await Axios.get(API_URL + `/payroll/loan-config/`);
+      if (response.data.results.length > 0) setConfig(response.data.results[0]);
+      else openModal();
+    } catch (error) {
+      message.error("Ocurrio un error, intente de nuevo.");
+    } finally {
+      setReady(true);
+    }
+  };
+
+  const openModal = () => {
+    modal ? setModal(false) : setModal(true);
   };
 
   const saveRequest = async (values) => {
     if (values.periodicity_amount.toString().includes("."))
       values.periodicity_amount = values.periodicity_amount.toFixed(2);
     setSending(true);
-    console.log(values);
     try {
       let response = await Axios.post(API_URL + `/payroll/loan/`, values);
       route.push("/lending");
@@ -56,26 +72,10 @@ const HolidaysNew = () => {
     }
   };
 
-  const getConfig = async () => {
-    setReady(false);
-    try {
-      let response = await Axios.get(API_URL + `/payroll/loan-config/`);
-      setConfig(response.data.results[0]);
-      console.log(response.data.results[0]);
-    } catch (error) {
-      console.log("error");
-    } finally {
-      setReady(true);
-    }
+  const returnConfig = () => {
+    openModal();
+    route.push("/lending/config");
   };
-
-  useEffect(() => {
-    getConfig();
-  }, []);
-
-  useEffect(() => {
-    console.log(config);
-  }, [config]);
 
   return (
     <MainLayout currentKey="7.1">
@@ -107,6 +107,21 @@ const HolidaysNew = () => {
           </Row>
         </Spin>
       </div>
+      <Modal
+        visible={modal}
+        title="Importante"
+        style={{ top: "30%" }}
+        footer={[
+          <Button type="primary" onClick={returnConfig}>
+            Ok, Configurar
+          </Button>,
+        ]}
+      >
+        <p>
+          Para poder generar préstamos debe configurar los montos y plazos
+          máximos y mínimos.
+        </p>
+      </Modal>
     </MainLayout>
   );
 };
