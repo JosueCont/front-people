@@ -65,7 +65,7 @@ const HolidaysNew = () => {
         keyboard: false,
         maskClosable: false,
         content: "Préstamo autorizado",
-        okText: "Aceptar y notificar",
+        okText: "Aceptar",
         onOk() {
           route.push("/lending");
         },
@@ -229,7 +229,7 @@ const HolidaysNew = () => {
             onClick={reject}
             style={{ padding: "0 50px", marginLeft: 15 }}
           >
-            Aceptar
+            Aceptar y notificar
           </Button>,
         ]}
       >
