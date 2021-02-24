@@ -122,11 +122,11 @@ const Lendingform = (props) => {
       } else {
         if (getFieldValue("amount") < props.config.min_amount)
           return Promise.reject(
-            `Lacantidad no puede ser menor a ${props.config.min_amount}`
+            `La cantidad no puede ser menor a ${props.config.min_amount}`
           );
         if (getFieldValue("amount") > props.config.max_amount)
           return Promise.reject(
-            `Lacantidad no puede ser mayor a ${props.config.max_amount}`
+            `La cantidad no puede ser mayor a ${props.config.max_amount}`
           );
       }
     },
@@ -141,7 +141,7 @@ const Lendingform = (props) => {
       } else {
         if (getFieldValue("deadline") < props.config.min_deadline)
           return Promise.reject(
-            `El palzo no puede ser menor a ${props.config.min_deadline}`
+            `El plazo no puede ser menor a ${props.config.min_deadline}`
           );
         if (getFieldValue("deadline") > props.config.max_deadline)
           return Promise.reject(
