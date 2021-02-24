@@ -110,18 +110,36 @@ const HolidaysDetails = () => {
           values
         );
         if (response.status == 200) {
-          notification["success"]({
-            message: "Aviso",
-            description: "Solicitud rechazada.",
-          });
+            setVisibleModalReject(false)
+            Modal.success({
+                keyboard: false,
+                maskClosable: false,
+                content: "Vacaciones rechazadas",
+                okText: "Aceptar",
+                onOk() {
+                  route.push("/holidays");
+                },
+              });
           setMessage(null);
-          route.push("/holidays");
         }
       } catch (e) {
         console.log(e);
       }
     }
   };
+
+  const showMoalapprove = () => {
+    /* props.onApprove */
+    confirm({
+        title: '¿Está seguro de aprobar la siguiente solicitud de vacaciones?',
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Aceptar y notificar',
+        cancelText: 'Cancelar',
+        onOk() {
+            approveRequest()
+          },
+      });
+}
 
   const approveRequest = async () => {
     if (json) {
@@ -137,20 +155,15 @@ const HolidaysDetails = () => {
           values
         );
         if (response.status == 200) {
-          confirm({
-            title: "Su solicitud de vacaciones anuales ha sido aceptada",
-            icon: <CheckCircleOutlined />,
-            okText: "Aceptar y notificar",
-            cancelText: "Cancelar",
-            onOk() {
-              /* console.log('OK'); */
-              /* route.push('/holidays'); */
-              route.push("/holidays");
-            },
-            onCancel() {
-              console.log("Cancel");
-            },
-          });
+            Modal.success({
+                keyboard: false,
+                maskClosable: false,
+                content: "Vacaciones autorizadas",
+                okText: "Aceptar",
+                onOk() {
+                  route.push("/holidays");
+                },
+              });
 
           /* notification["success"]({
                                   message: "Notification Title",
@@ -257,7 +270,7 @@ const HolidaysDetails = () => {
                     <Button
                     className={'btn-success'}
                       key="save"
-                      onClick={approveRequest}
+                      onClick={showMoalapprove}
                       type="primary"
                       style={{ padding: "0 50px", margin: "0 10px" }}
                       loading={sending}
@@ -274,6 +287,25 @@ const HolidaysDetails = () => {
       <Modal
         title="Rechazar solicitud de vacaciones"
         visible={visibleModalReject}
+        footer={[
+            <Button
+              key="back"
+              onClick={rejectCancel}
+              style={{ padding: "0 50px", marginLeft: 15 }}
+            >
+              Cancelar
+            </Button>,
+            <Button
+              key="submit_modal"
+              type="primary"
+              loading={sending}
+              onClick={rejectRequest}
+              style={{ padding: "0 50px", marginLeft: 15 }}
+            >
+              Aceptar y notificar
+            </Button>,
+          ]}
+
         onOk={rejectRequest}
         onCancel={rejectCancel}
       >

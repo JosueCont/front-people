@@ -18,7 +18,7 @@ import {
   Space,
   Switch,
 } from "antd";
-import { CheckCircleOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
@@ -141,20 +141,21 @@ const IncapacityDetails = () => {
         setVisibleModalReject(false);
         setMessage(null);
         success({
-          title: "Su solicitud de incapacidad  ha sido rechazada",
-          icon: <CheckCircleOutlined />,
-          okText: "Aceptar y notificar",
-          onOk() {
-            /* console.log('OK'); */
-            /* route.push('/holidays'); */
-            route.push("/incapacity");
-          },
+            keyboard: false,
+            maskClosable: false,
+            content: "incapacidad rechazada",
+            okText: "Aceptar",
+            onOk() {
+              route.push("/incapacity");
+            },
         });
       } catch (e) {
         console.log(e);
       }
     }
   };
+
+
 
   const approveRequest = async () => {
     if (json) {
@@ -170,20 +171,15 @@ const IncapacityDetails = () => {
           values
         );
         if (response.status == 200) {
-          confirm({
-            title: "Su solicitud de incapacidad  ha sido aceptada",
-            icon: <CheckCircleOutlined />,
-            okText: "Aceptar y notificar",
-            cancelText: "Cancelar",
-            onOk() {
-              /* console.log('OK'); */
-              /* route.push('/holidays'); */
-              route.push("/incapacity");
-            },
-            onCancel() {
-              console.log("Cancel");
-            },
-          });
+            Modal.success({
+                keyboard: false,
+                maskClosable: false,
+                content: "Su solicitud de incapacidad  ha sido aceptada",
+                okText: "Aceptar",
+                onOk() {
+                    route.push("/incapacity");
+                },
+            });
         }
       } catch (e) {
         console.log(e);
@@ -245,6 +241,24 @@ const IncapacityDetails = () => {
         visible={visibleModalReject}
         onOk={rejectRequest}
         onCancel={rejectCancel}
+        footer={[
+            <Button
+              key="back"
+              onClick={rejectCancel}
+              style={{ padding: "0 50px", marginLeft: 15 }}
+            >
+              Cancelar
+            </Button>,
+            <Button
+              key="submit_modal"
+              type="primary"
+              loading={sending}
+              onClick={rejectRequest}
+              style={{ padding: "0 50px", marginLeft: 15 }}
+            >
+              Aceptar y notificar
+            </Button>,
+          ]}
       >
         <Text>Comentarios</Text>
         <TextArea rows="4" onChange={onChangeMessage} />

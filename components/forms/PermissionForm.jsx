@@ -264,6 +264,7 @@ const Permissionform = (props) => {
             <Button
               onClick={props.onApprove}
               type="primary"
+              className={'btn-success'}
               key="aprove"
               style={{ padding: "0 50px", marginLeft: 15 }}
             >
