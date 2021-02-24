@@ -37,8 +37,14 @@ const AddUploadPayroll = () => {
 
       Axios.post(API_URL + `/payroll/import-xml-payroll`, data)
         .then((response) => {
-          message.success("Agregado correctamente");
-          router.push("/payrollvoucher");
+          if (response.data.message === "not_uuid") {
+            message.error("El recibo no ha sido timbrado");
+          }
+          if (response.data.message === "success") {
+            message.success(response.data.data.message);
+            router.push("/payrollvoucher");
+          }
+
           setLoading(false);
         })
         .catch((response) => {
