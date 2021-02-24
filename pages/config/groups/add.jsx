@@ -578,6 +578,7 @@ const GroupAdd = () => {
                         <Row>
                           <Col xl={12} md={12} sm={24} xs={24}>
                             <Table
+                              pagination={false}
                               className={"mainTable"}
                               id="tableperms"
                               key="2"
@@ -589,6 +590,7 @@ const GroupAdd = () => {
                           <Col xl={12} md={12} sm={24} xs={24}>
                             {view_functions.length > 0 ? (
                               <Table
+                                pagination={false}
                                 className={"mainTable"}
                                 id="tableperms"
                                 key="2"
