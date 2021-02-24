@@ -536,7 +536,7 @@ const homeScreen = () => {
                                     </Form.Item>
                                 </Col>
                                 <Col>
-                                    <Form.Item name="gender" label="Genero">
+                                    <Form.Item name="gender" label="Género">
                                         <Select options={genders} placeholder="Todos" />
                                     </Form.Item>
                                 </Col>
