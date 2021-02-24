@@ -49,48 +49,51 @@ const homeScreen = () => {
   const [idsDelete, setIdsDelete] = useState("");
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
+  const [nodes, setNodes] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
     getPerson();
+    getNodes();
   }, []);
 
   /////PEOPLE
-  const getPerson = (text) => {
+  const getPerson = () => {
     setLoading(true);
-    if (text == undefined) {
-      Axios.get(API_URL + `/person/person/`)
-        .then((response) => {
-          setPerson([]);
-          response.data.results.map((item, i) => {
-            item.key = i;
-            if (!item.photo) item.photo = defaulPhoto;
-          });
-          setPerson(response.data.results);
-          setLoading(false);
-        })
-        .catch((e) => {
-          console.log(e);
+    Axios.get(API_URL + `/person/person/`)
+      .then((response) => {
+        setPerson([]);
+        response.data.results.map((item, i) => {
+          item.key = i;
+          if (!item.photo) item.photo = defaulPhoto;
         });
-    } else {
-      if (filters.gender == 0) {
-        delete filters["gender"];
-      }
-      Axios.post(API_URL + `/person/person/get_list_persons/ `, filters)
-        .then((response) => {
-          setPerson([]);
-          response.data.map((item, i) => {
-            item.key = i;
-            if (!item.photo) item.photo = defaulPhoto;
-          });
-          setPerson(response.data);
-          setLoading(false);
-        })
-        .catch((e) => {
-          setPerson([]);
-          setLoading(false);
-          console.log(e);
+        setPerson(response.data.results);
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const filterPersonName = (data) => {
+    // let data = { name: name, is_active: false };
+    console.log("Filter name->> ", data);
+    Axios.post(API_URL + `/person/person/get_list_persons/ `, data)
+      .then((response) => {
+        setPerson([]);
+        response.data.map((item, i) => {
+          item.key = i;
+          if (!item.photo) item.photo = defaulPhoto;
         });
-    }
+        setPerson(response.data);
+        setLoading(false);
+      })
+      .catch((e) => {
+        setPerson([]);
+        setLoading(false);
+        console.log(e);
+      });
   };
 
   const deletePerson = () => {
@@ -133,20 +136,6 @@ const homeScreen = () => {
         console.log(e);
         setLoading(false);
       });
-  };
-
-  ////SEARCH FILTER
-  const filter = (value) => {
-    if (value && value.name !== undefined && value.name !== "") {
-      filters.first_name = value.name;
-    }
-    if (value && value.gender !== undefined) {
-      filters.gender = value.gender;
-    }
-    if (status !== undefined) {
-      filters.is_active = status == false ? 0 : 1;
-    }
-    getPerson("filter");
   };
 
   ////STYLE
@@ -194,6 +183,24 @@ const homeScreen = () => {
       title: "Fecha de ingreso",
       render: (item) => {
         return <div>{item.date_of_admission}</div>;
+      },
+    },
+    {
+      title: "Empresa",
+      render: (item) => {
+        return <div>{item.job[0] ? item.job[0].department.node.name : ""}</div>;
+      },
+    },
+    {
+      title: "Departamento",
+      render: (item) => {
+        return <div>{item.job[0] ? item.job[0].department.name : ""}</div>;
+      },
+    },
+    {
+      title: "Puesto",
+      render: (item) => {
+        return <div>{item.job[0] ? item.job[0].name : ""}</div>;
       },
     },
     {
@@ -296,6 +303,20 @@ const homeScreen = () => {
     {
       label: "Otro",
       value: 3,
+    },
+  ];
+  const statusSelect = [
+    {
+      label: "Todos",
+      value: 0,
+    },
+    {
+      label: "Activos",
+      value: true,
+    },
+    {
+      label: "Inactivos",
+      value: false,
     },
   ];
 
@@ -410,15 +431,92 @@ const homeScreen = () => {
       message.error("Formato incorrecto, suba un archivo .csv");
     }
   };
-
   const getFileExtension = (filename) => {
     return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
   };
 
+  ////SEARCH FILTER
+  const filter = (value) => {
+    console.log("FILTROS enviar-->>>> ", value);
+
+    if (value && value.gender !== undefined) filters.gender = value.gender;
+
+    if (value && value.is_active !== undefined && value.is_active != "todos")
+      filters.is_active = value.is_active;
+
+    if (value && value.node !== undefined) filters.node = value.node;
+
+    if (value && value.department !== undefined)
+      filters.department = value.department;
+
+    if (value && value.job !== undefined) filters.job = value.job;
+
+    if (value && value.name !== undefined && value.name !== "") {
+      filters.name = value.name;
+      filters.is_active = value.is_active;
+      filterPersonName();
+    }
+    console.log("FILTROS ARMADOS-->>>> ", filters);
+  };
   const resetFilter = () => {
     formFilter.resetFields();
     setStatus(true);
     getPerson();
+  };
+
+  const getNodes = () => {
+    Axios.get(API_URL + `/business/node/`)
+      .then((response) => {
+        let data = response.data.results;
+        let options = [];
+        data.map((item) => {
+          options.push({
+            value: item.id,
+            label: item.name,
+            key: item.name + item.id,
+          });
+        });
+        setNodes(options);
+      })
+      .catch((error) => {
+        console.log(error);
+        setNodes([]);
+      });
+  };
+
+  const changeNode = (value) => {
+    setDepartments([]);
+    setJobs([]);
+    Axios.get(API_URL + `/business/department/?node=${value}`)
+      .then((response) => {
+        if (response.status === 200) {
+          let dep = response.data.results;
+          dep = dep.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setDepartments(dep);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const changeDepartment = (value) => {
+    setJobs([]);
+    Axios.get(API_URL + `/person/job/?department=${value}`)
+      .then((response) => {
+        if (response.status === 200) {
+          let job = response.data.results;
+          job = job.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setJobs(job);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   return (
@@ -428,33 +526,63 @@ const homeScreen = () => {
         <Breadcrumb.Item>Personas</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
+        <Row justify={"end"}>
+          <Button
+            style={{
+              background: "#fa8c16",
+              fontWeight: "bold",
+              color: "white",
+              margin: "1%",
+            }}
+            onClick={() => getModalPerson(true)}
+          >
+            <PlusOutlined />
+            Agregar persona
+          </Button>
+        </Row>
         <Row justify={"space-between"} className={"formFilter"}>
           <Col xs={24} sm={24} md={20} lg={20} xl={20}>
             <Form onFinish={filter} layout={"vertical"} form={formFilter}>
-              <Row>
-                <Col lg={7} xs={22} offset={1}>
+              <Row gutter={[24, 8]}>
+                <Col>
                   <Form.Item name="name">
-                    <Input placeholder="Nombre, Apellido" />
+                    <Input allowClear={true} placeholder="Nombre, Apellido" />
                   </Form.Item>
                 </Col>
-                <Col lg={4} xs={22} offset={1}>
+                <Col>
                   <Form.Item name="gender">
                     <Select options={genders} placeholder="Género" />
                   </Form.Item>
                 </Col>
-                <Col lg={3} xs={5} offset={1}>
-                  <Form.Item name="is_active">
-                    <label>
-                      <span style={{ fontWeight: "bold" }}>Activos:</span>
-                    </label>
-                    <Switch
-                      style={{ marginLeft: "10%" }}
-                      defaultChecked
-                      onChange={statusPeron}
+                <Col>
+                  <Form.Item name="node">
+                    <Select
+                      onChange={changeNode}
+                      options={nodes}
+                      placeholder="Empresa"
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={2} xs={2} offset={1}>
+                <Col>
+                  <Form.Item name="department">
+                    <Select
+                      onChange={changeDepartment}
+                      options={departments}
+                      placeholder="Departamento"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item name="job">
+                    <Select options={jobs} placeholder="Puesto" />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item name="is_active">
+                    <Select options={statusSelect} placeholder="Estatus" />
+                  </Form.Item>
+                </Col>
+                <Col>
                   <Form.Item>
                     <Button
                       style={{
@@ -468,63 +596,51 @@ const homeScreen = () => {
                     </Button>
                   </Form.Item>
                 </Col>
-                <Col lg={2} xs={5} offset={1}>
-                  <Button onClick={() => resetFilter()}>Limpiar filtros</Button>
+                <Col>
+                  <Form.Item>
+                    <Button onClick={() => resetFilter()}>
+                      Limpiar filtros
+                    </Button>
+                  </Form.Item>
                 </Col>
               </Row>
             </Form>
           </Col>
-          <Col>
-            <Button
-              style={{
-                background: "#fa8c16",
-                fontWeight: "bold",
-                color: "white",
-                marginLeft: "5px",
-              }}
-              onClick={() => getModalPerson(true)}
-            >
-              <PlusOutlined />
-              Agregar persona
-            </Button>
-          </Col>
         </Row>
-        <Row justify={"end"}>
-          <Col>
-            <Button
-              className={"ml-20"}
-              type="primary"
-              icon={<DownloadOutlined />}
-              size={{ size: "large" }}
-              onClick={() => exportPersons()}
-            >
-              Descargar resultados
-            </Button>
-            <Button
-              className={"ml-20"}
-              icon={<UploadOutlined />}
-              onClick={() => {
-                inputFileRef.current.click();
-              }}
-            >
-              Importar personas
-            </Button>
-            <input
-              ref={inputFileRef}
-              type="file"
-              style={{ display: "none" }}
-              onChange={(e) => importPersonFile(e)}
-            />
-            <Button
-              className={"ml-20"}
-              type="primary"
-              icon={<DownloadOutlined />}
-              size={{ size: "large" }}
-              onClick={() => downLoadPlantilla()}
-            >
-              Descargar plantilla
-            </Button>
-          </Col>
+        <Row justify={"end"} style={{ padding: "1%" }}>
+          <Button
+            className={"ml-20"}
+            type="primary"
+            icon={<DownloadOutlined />}
+            size={{ size: "large" }}
+            onClick={() => exportPersons()}
+          >
+            Descargar resultados
+          </Button>
+          <Button
+            className={"ml-20"}
+            icon={<UploadOutlined />}
+            onClick={() => {
+              inputFileRef.current.click();
+            }}
+          >
+            Importar personas
+          </Button>
+          <input
+            ref={inputFileRef}
+            type="file"
+            style={{ display: "none" }}
+            onChange={(e) => importPersonFile(e)}
+          />
+          <Button
+            className={"ml-20"}
+            type="primary"
+            icon={<DownloadOutlined />}
+            size={{ size: "large" }}
+            onClick={() => downLoadPlantilla()}
+          >
+            Descargar plantilla
+          </Button>
         </Row>
         <Table
           className={"mainTable"}
