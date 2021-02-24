@@ -16,6 +16,7 @@ import {
   notification,
   Space,
   Switch,
+  message,
 } from "antd";
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
@@ -34,15 +35,12 @@ const HolidaysNew = () => {
   const [loading, setLoading] = useState(false);
   const [config, setConfig] = useState(null);
 
-  const onCancel = () => {
-    route.push("/lending");
-  };
-
   const getConfig = async () => {
     setLoading(true);
     try {
       let repsonse = await Axios.get(API_URL + `/payroll/loan-config/1/`);
       let data = repsonse.data;
+      setConfig(data);
       form.setFieldsValue({
         min_amount: parseInt(data.min_amount),
         max_amount: parseInt(data.max_amount),
@@ -55,23 +53,37 @@ const HolidaysNew = () => {
   };
 
   const saveConfig = async (values) => {
-    console.log(values);
     setSending(true);
-    try {
-      let response = await Axios.patch(
-        API_URL + `/payroll/loan-config/1/`,
-        values
-      );
-      console.log(values);
-      route.push("/lending");
-      notification["success"]({
-        message: "Aviso",
-        description: "Información guardada correctamente.",
-      });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setSending(false);
+    if (config && config.id) {
+      try {
+        let response = await Axios.patch(
+          API_URL + `/payroll/loan-config/1/`,
+          values
+        );
+        console.log(values);
+        route.push("/lending");
+        notification["success"]({
+          message: "Aviso",
+          description: "Información guardada correctamente.",
+        });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setSending(false);
+      }
+    } else {
+      Axios.post(API_URL + `/payroll/loan-config/`, values)
+        .then((response) => {
+          route.push("/lending");
+          notification["success"]({
+            message: "Aviso",
+            description: "Información guardada correctamente.",
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          message.error("Ocurrio un error, intente de nuevo.");
+        });
     }
   };
 
@@ -148,7 +160,10 @@ const HolidaysNew = () => {
               </Row>
               <Row style={{ paddingTop: 20 }} justify={"end"}>
                 <Col span={10} style={{ textAlign: "right" }}>
-                  <Button style={{ padding: "0 40px", margin: "0 10px" }}>
+                  <Button
+                    onClick={() => route.push("/lending")}
+                    style={{ padding: "0 40px", margin: "0 10px" }}
+                  >
                     Cancelar
                   </Button>
                   <Button
