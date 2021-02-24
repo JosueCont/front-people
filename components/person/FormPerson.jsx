@@ -108,6 +108,7 @@ const FormPerson = (props) => {
         props.close(false);
       })
       .catch((error) => {
+        console.log("Error-->>>", error.response);
         if (error.response.data && error.response.data.message === "exist")
           message.error("El correo se encuentra registrado.");
         else message.error("Error al agregar, intente de nuevo");
