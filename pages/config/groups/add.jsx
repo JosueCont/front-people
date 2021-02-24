@@ -39,187 +39,12 @@ const GroupAdd = () => {
   const [perms, setPerms] = useState([]);
   const [getperms, setGetperms] = useState(false);
   const [permsFunction, setPermsFunction] = useState([]);
+  const [arrayFunctions, setarrayFunctios] = useState([]);
 
   const headers = {
     "client-id": APP_ID,
     "Content-Type": "application/json",
   };
-  let data = {};
-
-  const onFinish = (values) => {
-    data = values;
-    data.perms = perms;
-    let lst = perms.concat(permsFunction);
-    data.perms = lst;
-    console.log("permisos seleccionados>>", data.perms);
-    if (!edit) {
-      saveGroup();
-    } else {
-      editGroup();
-    }
-  };
-
-  const saveGroup = async () => {
-    setLoading(true);
-
-    Axios.post(LOGIN_URL + "/group/create/", data, {
-      headers: headers,
-    })
-      .then(function (response) {
-        if (response.status === 200) {
-          setLoading(false);
-          form.setFieldsValue({
-            name: "",
-            perms: [],
-          });
-          setPerms([]);
-          router.push({ pathname: "/config/groups" });
-          message.success({
-            content: "Grupo guardado exitosamente!",
-            className: "custom-class",
-            style: {
-              marginTop: "20vh",
-            },
-          });
-        }
-      })
-      .catch(function (error) {
-        message.error({
-          content: "An error occurred",
-          className: "custom-class",
-          style: {
-            marginTop: "20vh",
-          },
-        });
-        console.log(error);
-      });
-  };
-
-  const editGroup = async () => {
-    setLoading(true);
-
-    Axios.post(LOGIN_URL + "/group/edit/", data, {
-      headers: headers,
-    })
-      .then(function (response) {
-        if (response.status === 200) {
-          setLoading(false);
-          form.setFieldsValue({
-            id: "",
-            name: "",
-            perms: [],
-          });
-          setPerms([]);
-          router.push({ pathname: "/config/groups" });
-          message.success({
-            content: "Grupo editado exitosamente",
-            className: "custom-class",
-            style: {
-              marginTop: "20vh",
-            },
-          });
-        }
-      })
-      .catch(function (error) {
-        message.error({
-          content: "Ocurrió un error",
-          className: "custom-class",
-          style: {
-            marginTop: "20vh",
-          },
-        });
-        console.log(error);
-      });
-  };
-
-  const getGroup = async (id) => {
-    setLoading(true);
-    data = {
-      id: id,
-    };
-
-    Axios.post(LOGIN_URL + "/group/get/", data, {
-      headers: headers,
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          let group = response.data.data;
-          form.setFieldsValue({
-            id: group._id.$oid.toString(),
-            name: group.name,
-            perms: group.perms,
-          });
-          let arrayperms = [];
-          let arrayfunctions = [];
-          group.perms.forEach(function (elem) {
-            var e = elem.indexOf("can");
-            if (e > -1) {
-              arrayperms.push(elem);
-            } else {
-              arrayfunctions.push(elem);
-            }
-          });
-          //setPerms(arrayperms);
-          setPermsFunction(arrayfunctions);
-          console.log("Permisos", perms);
-          console.log("Functions", permsFunction);
-          setPerms(arrayperms);
-          setLoading(false);
-          if (perms >= 0) {
-            // setMostrar(true);
-            setGetperms(true);
-            checkPerms(group.perms);
-          }
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  useEffect(() => {
-    const { id } = router.query;
-    if (id !== undefined) {
-      getGroup(id);
-      setEdit(true);
-    } else {
-      setEdit(false);
-      //   setMostrar(true);
-    }
-  }, []);
-
-  function handleClick(e) {
-    if (getperms == false) {
-      let index = perms.indexOf(e.target.name);
-      if (index > -1) {
-        if (e.target.checked) {
-          setPerms([...perms, e.target.name]);
-        } else {
-          perms.splice(index, 1);
-        }
-      } else {
-        if (e.target.checked) {
-          setPerms([...perms, e.target.name]);
-        }
-      }
-    }
-  }
-  function handleClickFunct(e) {
-    if (getperms == false) {
-      let index = permsFunction.indexOf(e.target.name);
-      if (index > -1) {
-        if (e.target.checked) {
-          setPermsFunction([...permsFunction, e.target.name]);
-        } else {
-          permsFunction.splice(index, 1);
-        }
-      } else {
-        if (e.target.checked) {
-          setPermsFunction([...permsFunction, e.target.name]);
-        }
-      }
-    }
-  }
 
   const views = [
     { name: "Personas", module: "Personas", value: "people.person" },
@@ -370,25 +195,222 @@ const GroupAdd = () => {
       value: "people.payrollvoucher.function.import_payrollvoucher",
     },
   ];
+  let data = {};
+
+  const onFinish = (values) => {
+    data = values;
+    data.perms = perms;
+    let lst = perms.concat(permsFunction);
+    data.perms = lst;
+    if (!edit) {
+      saveGroup();
+    } else {
+      editGroup();
+    }
+  };
+
+  const saveGroup = async () => {
+    setLoading(true);
+
+    Axios.post(LOGIN_URL + "/group/create/", data, {
+      headers: headers,
+    })
+      .then(function (response) {
+        if (response.status === 200) {
+          setLoading(false);
+          form.setFieldsValue({
+            name: "",
+            perms: [],
+          });
+          setPerms([]);
+          router.push({ pathname: "/config/groups" });
+          message.success({
+            content: "Grupo guardado exitosamente!",
+            className: "custom-class",
+            style: {
+              marginTop: "20vh",
+            },
+          });
+        }
+      })
+      .catch(function (error) {
+        message.error({
+          content: "An error occurred",
+          className: "custom-class",
+          style: {
+            marginTop: "20vh",
+          },
+        });
+        console.log(error);
+      });
+  };
+
+  const editGroup = async () => {
+    setLoading(true);
+
+    Axios.post(LOGIN_URL + "/group/edit/", data, {
+      headers: headers,
+    })
+      .then(function (response) {
+        if (response.status === 200) {
+          setLoading(false);
+          form.setFieldsValue({
+            id: "",
+            name: "",
+            perms: [],
+          });
+          setPerms([]);
+          router.push({ pathname: "/config/groups" });
+          message.success({
+            content: "Grupo editado exitosamente",
+            className: "custom-class",
+            style: {
+              marginTop: "20vh",
+            },
+          });
+        }
+      })
+      .catch(function (error) {
+        message.error({
+          content: "Ocurrió un error",
+          className: "custom-class",
+          style: {
+            marginTop: "20vh",
+          },
+        });
+        console.log(error);
+      });
+  };
+
+  const getGroup = async (id) => {
+    setLoading(true);
+    data = {
+      id: id,
+    };
+
+    Axios.post(LOGIN_URL + "/group/get/", data, {
+      headers: headers,
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          let group = response.data.data;
+          form.setFieldsValue({
+            id: group._id.$oid.toString(),
+            name: group.name,
+            perms: group.perms,
+          });
+          let arrayperms = [];
+          let arrayfunctions = [];
+          group.perms.forEach(function (elem) {
+            var e = elem.indexOf("can");
+            if (e > -1) {
+              arrayperms.push(elem);
+            } else {
+              arrayfunctions.push(elem);
+            }
+          });
+          setarrayFunctios(arrayfunctions);
+          setLoading(false);
+          setGetperms(true);
+          if (perms >= 0) {
+            checkPerms(arrayperms);
+          }
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  useEffect(() => {
+    const { id } = router.query;
+    if (id !== undefined) {
+      getGroup(id);
+      setEdit(true);
+    } else {
+      setEdit(false);
+      //   setMostrar(true);
+    }
+  }, []);
+
+  function handleClick(e) {
+    // if (getperms == false) {
+    let index = perms.indexOf(e.target.name);
+    if (index > -1) {
+      if (e.target.checked) {
+        setPerms([...perms, e.target.name]);
+      } else {
+        perms.splice(index, 1);
+      }
+    } else {
+      if (e.target.checked) {
+        setPerms([...perms, e.target.name]);
+      }
+    }
+    // }
+  }
+  function handleClickFunct(e) {
+    if (getperms == false) {
+      let index = permsFunction.indexOf(e.target.name);
+      if (index > -1) {
+        if (e.target.checked) {
+          setPermsFunction([...permsFunction, e.target.name]);
+        } else {
+          permsFunction.splice(index, 1);
+        }
+      } else {
+        if (e.target.checked) {
+          setPermsFunction([...permsFunction, e.target.name]);
+        }
+      }
+    }
+  }
 
   const checkPerms = (perms) => {
     if (perms.length > 0) {
       perms.forEach((element) => {
         var chkBox = document.getElementById(element);
-        if (chkBox != "undefined") {
+        if (chkBox != "undefined" && chkBox !== null) {
           if (chkBox.checked == false) {
             chkBox.click();
           }
         }
       });
-      setGetperms(false);
+    }
+  };
+
+  const checkFunctions = () => {
+    if (arrayFunctions.length > 0) {
+      arrayFunctions.forEach((element) => {
+        var chkBox = document.getElementById(element);
+        if (chkBox != "undefined" && chkBox !== null) {
+          if (chkBox.checked == false) {
+            chkBox.click();
+          }
+        }
+      });
+    }
+  };
+
+  const handleChangeTab = (activeKey) => {
+    if (activeKey === "2") {
+      if (getperms === true) {
+        setLoading(true);
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            checkFunctions();
+            setGetperms(false);
+            setLoading(false);
+          }, 0);
+        });
+      }
     }
   };
 
   const columns = [
     {
-      title: "Módulo",
-      id: "modulo",
+      title: "Permiso",
+      id: "permiso",
       render: (item) => {
         return <div>{item.name}</div>;
       },
@@ -453,8 +475,8 @@ const GroupAdd = () => {
 
   const columns_functions = [
     {
-      title: "Funciones",
-      id: "modulo",
+      title: "Funcion",
+      id: "funcion",
       render: (item) => {
         return <div>{item.name}</div>;
       },
@@ -567,11 +589,11 @@ const GroupAdd = () => {
               </Row>
               <Row>
                 <Col span={24}>
-                  <Tabs type="card">
+                  <Tabs type="card" onChange={handleChangeTab}>
                     <TabPane
-                      tab="People"
-                      id="tabPeople"
-                      name="tabPeople"
+                      tab="Permisos"
+                      id="tabPermit"
+                      name="tabPermit"
                       key="1"
                     >
                       <Col span={24}>
@@ -581,24 +603,71 @@ const GroupAdd = () => {
                               pagination={false}
                               className={"mainTable"}
                               id="tableperms"
-                              key="2"
+                              key="1"
                               size="small"
                               columns={columns}
-                              dataSource={views}
+                              dataSource={views.filter(
+                                (perm) => perm.module !== "Catalogos"
+                              )}
                             />
                           </Col>
                           <Col xl={12} md={12} sm={24} xs={24}>
-                            {view_functions.length > 0 ? (
-                              <Table
-                                pagination={false}
-                                className={"mainTable"}
-                                id="tableperms"
-                                key="2"
-                                size="small"
-                                columns={columns_functions}
-                                dataSource={view_functions}
-                              />
-                            ) : null}
+                            <Table
+                              pagination={false}
+                              className={"mainTable"}
+                              id="tableperms"
+                              key="2"
+                              size="small"
+                              columns={columns}
+                              dataSource={views.filter(
+                                (perm) => perm.module === "Catalogos"
+                              )}
+                            />
+                          </Col>
+                        </Row>
+                      </Col>
+                    </TabPane>
+                    <TabPane
+                      tab="Funciones"
+                      id="tabFunction"
+                      name="tabFunction"
+                      key="2"
+                    >
+                      <Col span={24}>
+                        <Row>
+                          <Col xl={12} md={12} sm={24} xs={24}>
+                            <Table
+                              pagination={false}
+                              className={"mainTable"}
+                              id="tableperms"
+                              key="3"
+                              size="small"
+                              columns={columns_functions}
+                              dataSource={view_functions.filter(
+                                (perm) =>
+                                  perm.module === "Personas" ||
+                                  perm.module === "Empresas" ||
+                                  perm.module === "Prestamos" ||
+                                  perm.module === "Vacaciones" ||
+                                  perm.module === "Nomina"
+                              )}
+                            />
+                          </Col>
+                          <Col xl={12} md={12} sm={24} xs={24}>
+                            <Table
+                              pagination={false}
+                              className={"mainTable"}
+                              id="tableperms"
+                              key="4"
+                              size="small"
+                              columns={columns_functions}
+                              dataSource={view_functions.filter(
+                                (perm) =>
+                                  perm.module === "Reportes" ||
+                                  perm.module === "Incapacidad" ||
+                                  perm.module === "Permisos"
+                              )}
+                            />
                           </Col>
                         </Row>
                       </Col>
