@@ -309,7 +309,7 @@ const Lendingform = (props) => {
                 {props.edit ? (
                     <Button
                         disabled={props.sending}
-                        onClick={props.onApprove}
+                        onClick={showMoalapprove}
                         type="primary"
                         className={"btn-success"}
                         key="aprove"
