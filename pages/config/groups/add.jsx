@@ -38,6 +38,7 @@ const GroupAdd = () => {
   const [edit, setEdit] = useState(false);
   const [perms, setPerms] = useState([]);
   const [getperms, setGetperms] = useState(false);
+  const [permsFunction, setPermsFunction] = useState([]);
 
   const headers = {
     "client-id": APP_ID,
@@ -48,6 +49,9 @@ const GroupAdd = () => {
   const onFinish = (values) => {
     data = values;
     data.perms = perms;
+    let lst = perms.concat(permsFunction);
+    data.perms = lst;
+    console.log("permisos seleccionados>>", data.perms);
     if (!edit) {
       saveGroup();
     } else {
@@ -145,7 +149,21 @@ const GroupAdd = () => {
             name: group.name,
             perms: group.perms,
           });
-          setPerms(group.perms);
+          let arrayperms = [];
+          let arrayfunctions = [];
+          group.perms.forEach(function (elem) {
+            var e = elem.indexOf("can");
+            if (e > -1) {
+              arrayperms.push(elem);
+            } else {
+              arrayfunctions.push(elem);
+            }
+          });
+          //setPerms(arrayperms);
+          setPermsFunction(arrayfunctions);
+          console.log("Permisos", perms);
+          console.log("Functions", permsFunction);
+          setPerms(arrayperms);
           setLoading(false);
           if (perms >= 0) {
             // setMostrar(true);
@@ -186,25 +204,171 @@ const GroupAdd = () => {
       }
     }
   }
+  function handleClickFunct(e) {
+    if (getperms == false) {
+      let index = permsFunction.indexOf(e.target.name);
+      if (index > -1) {
+        if (e.target.checked) {
+          setPermsFunction([...permsFunction, e.target.name]);
+        } else {
+          permsFunction.splice(index, 1);
+        }
+      } else {
+        if (e.target.checked) {
+          setPermsFunction([...permsFunction, e.target.name]);
+        }
+      }
+    }
+  }
 
   const views = [
-    { name: "Personas", value: "people.person" },
-    { name: "Empresas", value: "people.company" },
+    { name: "Personas", module: "Personas", value: "people.person" },
+    { name: "Empresas", module: "Empresas", value: "people.company" },
     /*Catalaogos */
-    { name: "Departamentos", value: "people.department" },
-    { name: "Puestos de trabajo", value: "people.job" },
-    { name: "Tipos de personas", value: "people.person_type" },
-    { name: "Parentescos", value: "people.relationship" },
-    { name: "Tipos de documentos", value: "people.document_type" },
-    { name: "Bancos", value: "people.bank" },
+    { name: "Departamentos", module: "Catalogos", value: "people.department" },
+    { name: "Puestos de trabajo", module: "Catalogos", value: "people.job" },
+    {
+      name: "Tipos de personas",
+      module: "Catalogos",
+      value: "people.person_type",
+    },
+    { name: "Parentescos", module: "Catalogos", value: "people.relationship" },
+    {
+      name: "Tipos de documentos",
+      module: "Catalogos",
+      value: "people.document_type",
+    },
+    { name: "Bancos", module: "Catalogos", value: "people.bank" },
     /*Comunicacion */
-    { name: "Comunicados", value: "people.comunication" },
-    { name: "Eventos", value: "people.event" },
+    {
+      name: "Comunicados",
+      module: "Comunicacion",
+      value: "people.comunication",
+    },
+    { name: "Eventos", module: "Comunicacion", value: "people.event" },
     /*Solicitudes */
-    { name: "Préstamos", value: "people.loan" },
-    { name: "Vacaciones", value: "people.vacation" },
-    { name: "Permisos", value: "people.permit" },
-    { name: "Incapacidad", value: "people.incapacity" },
+    { name: "Préstamos", module: "Solicitudes", value: "people.loan" },
+    { name: "Vacaciones", module: "Solicitudes", value: "people.vacation" },
+    { name: "Permisos", module: "Solicitudes", value: "people.permit" },
+    { name: "Incapacidad", module: "Solicitudes", value: "people.incapacity" },
+    /*Recibos de Nomina */
+    {
+      name: "Recibos de nómina",
+      module: "Nomina",
+      value: "people.payrollvoucher",
+    },
+  ];
+
+  const view_functions = [
+    /*Personas */
+    {
+      name: "Activar/ desactivar personas",
+      module: "Personas",
+      value: "people.person.function.change_is_active",
+    },
+    {
+      name: "Descargar resultados .CSV personas",
+      module: "Personas",
+      value: "people.person.function.export_csv_person",
+    },
+    {
+      name: "Importar .CSV personas",
+      module: "Personas",
+      value: "people.person.function.import_csv_person",
+    },
+    /*Empresa */
+    {
+      name: "Activar/desactivar empresa",
+      module: "Empresas",
+      value: "people.company.function.change_is_active",
+    },
+    /*Solicitudes */
+    //Prestamos
+    {
+      name: "Configuración de préstamos",
+      module: "Prestamos",
+      value: "people.loan.function.configure_loan",
+    },
+    {
+      name: "Aprobar préstamo",
+      module: "Prestamos",
+      value: "people.loan.function.approve_loan",
+    },
+    {
+      name: "Rechazar préstamo",
+      module: "Prestamos",
+      value: "people.loan.function.reject_loan",
+    },
+    //Vacaciones
+    {
+      name: "Aprobar vacaciones",
+      module: "Vacaciones",
+      value: "people.vacation.function.approve_vacation",
+    },
+    {
+      name: "Rechazar vacaciones",
+      module: "Vacaciones",
+      value: "people.vacation.function.reject_vacation",
+    },
+    //Permisos
+    {
+      name: "Aprobar permisos",
+      module: "Permisos",
+      value: "people.permit.function.approve_permit",
+    },
+    {
+      name: "Rechazar permisos",
+      module: "Permisos",
+      value: "people.permit.function.reject_permit",
+    },
+    //Incapacidad
+    {
+      name: "Aprobar incapacidad",
+      module: "Incapacidad",
+      value: "people.incapacity.function.approve_incapacity",
+    },
+    {
+      name: "Rechazar incapacidad",
+      module: "Incapacidad",
+      value: "people.incapacity.function.reject_incapacity",
+    },
+    /*Reportes */
+    {
+      name: "Descargar reporte de colaboradores",
+      module: "Reportes",
+      value: "people.report.function.export_collaborators",
+    },
+    {
+      name: "Descargar reporte de nómina",
+      module: "Reportes",
+      value: "people.report.function.export_payrolls",
+    },
+    {
+      name: "Descargar reporte de préstamos",
+      module: "Reportes",
+      value: "people.report.function.export_loans",
+    },
+    {
+      name: "Descargar reporte de vacaciones",
+      module: "Reportes",
+      value: "people.report.function.export_vacations",
+    },
+    {
+      name: "Descargar reporte de incapacidad",
+      module: "Reportes",
+      value: "people.report.function.export_inabilitys",
+    },
+    {
+      name: "Descargar reporte de permisos",
+      module: "Reportes",
+      value: "people.report.function.export_permits",
+    },
+    /* Recibos de nomina */
+    {
+      name: "Importar .xml",
+      module: "Nomina",
+      value: "people.payrollvoucher.function.import_payrollvoucher",
+    },
   ];
 
   const checkPerms = (perms) => {
@@ -280,6 +444,30 @@ const GroupAdd = () => {
               name={item.value + ".can.delete"}
               id={item.value + ".can.delete"}
               onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+  ];
+
+  const columns_functions = [
+    {
+      title: "Funciones",
+      id: "modulo",
+      render: (item) => {
+        return <div>{item.name}</div>;
+      },
+    },
+    {
+      title: "Seleccionar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value}
+              id={item.value}
+              onClick={handleClickFunct}
             ></Checkbox>
           </>
         );
@@ -386,14 +574,34 @@ const GroupAdd = () => {
                       name="tabPeople"
                       key="1"
                     >
-                      <Table
-                        className={"mainTable"}
-                        id="tableperms"
-                        key="2"
-                        size="small"
-                        columns={columns}
-                        dataSource={views}
-                      />
+                      <Col span={24}>
+                        <Row>
+                          <Col xl={12} md={12} sm={24} xs={24}>
+                            <Table
+                              pagination={false}
+                              className={"mainTable"}
+                              id="tableperms"
+                              key="2"
+                              size="small"
+                              columns={columns}
+                              dataSource={views}
+                            />
+                          </Col>
+                          <Col xl={12} md={12} sm={24} xs={24}>
+                            {view_functions.length > 0 ? (
+                              <Table
+                                pagination={false}
+                                className={"mainTable"}
+                                id="tableperms"
+                                key="2"
+                                size="small"
+                                columns={columns_functions}
+                                dataSource={view_functions}
+                              />
+                            ) : null}
+                          </Col>
+                        </Row>
+                      </Col>
                     </TabPane>
                   </Tabs>
                 </Col>
