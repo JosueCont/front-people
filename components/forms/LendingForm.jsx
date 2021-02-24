@@ -8,6 +8,7 @@ import {
     Input,
     Image,
     Select,
+    Modal,
     InputNumber,
     DatePicker,
 } from "antd";
@@ -17,12 +18,15 @@ import SelectPerson from "../selects/SelectPerson";
 import details from "../../pages/holidays/[id]/details";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+
 
 const Lendingform = (props) => {
     const [form] = Form.useForm();
     const { Title } = Typography;
     const { TextArea } = Input;
     const { Option } = Select;
+    const { confirm } = Modal;
 
     const route = useRouter();
 
@@ -89,6 +93,19 @@ const Lendingform = (props) => {
             periodicity_amount: paym,
         });
     };
+
+    const showMoalapprove = () => {
+        /* props.onApprove */
+        confirm({
+            title: '¿Está seguro de aprobar la siguiente solicitud de préstamo?',
+            icon: <ExclamationCircleOutlined />,
+            okText: 'Aceptar y notificar',
+            cancelText: 'Cancelar',
+            onOk() {
+                props.onApprove()
+              },
+          });
+    }
 
     useEffect(() => {
         getPersons();
@@ -264,7 +281,7 @@ const Lendingform = (props) => {
                     {props.edit ? (
                         <Button
                             disabled={props.sending}
-                            onClick={props.onApprove}
+                            onClick={showMoalapprove}
                             type="primary"
                             className={'btn-success'}
                             key="aprove"

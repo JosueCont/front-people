@@ -102,7 +102,7 @@ const LoginForm = (props) => {
                         />
                     )}
                     <Form.Item className={'font-color-khor'}>
-                        <b>¿Olvidaste tu contraseña?  </b> <span onClick={() => props.setRecoverPasswordShow(true)} className={'pointer'} style={{ fontWeight:'500', textDecoration: 'underline' }}>  haz click aqui </span>
+                        <b>¿Olvidaste tu contraseña?  </b> <span onClick={() => props.setRecoverPasswordShow(true)} className={'pointer'} style={{ fontWeight:'500', textDecoration: 'underline' }}>  haz click aquí </span>
                     </Form.Item>
                     <Form.Item>
                         <Button

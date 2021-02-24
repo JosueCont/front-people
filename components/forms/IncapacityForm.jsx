@@ -11,6 +11,7 @@ import {
   Select,
   InputNumber,
   DatePicker,
+  Modal
 } from "antd";
 import moment from "moment";
 import {
@@ -18,6 +19,7 @@ import {
   InboxOutlined,
   CloseCircleOutlined,
   PlusOutlined,
+  ExclamationCircleOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
@@ -97,6 +99,19 @@ const Incapacityform = (props) => {
     setFileList(file.fileList);
     props.setFile(file.file);
   };
+
+  const showMoalapprove = () => {
+    /* props.onApprove */
+    Modal.confirm({
+        title: '¿Está seguro de aprobar la siguiente solicitud de incapacidad?',
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Aceptar y notificar',
+        cancelText: 'Cancelar',
+        onOk() {
+            props.onApprove()
+          },
+      });
+}
 
   useEffect(() => {
     if (props.details) {
@@ -285,9 +300,10 @@ const Incapacityform = (props) => {
           ) : null}
           {props.toApprove ? (
             <Button
-              onClick={props.onApprove}
+              onClick={showMoalapprove}
               type="primary"
               key="aprove"
+              className={'btn-success'}
               style={{ padding: "0 50px", marginLeft: 15 }}
             >
               Aprobar permiso

@@ -64,7 +64,7 @@ import {
             onFinish={onFinish}
           >
             { sendSuccess ? 
-                <Title level={3} className={'font-color-khor'}>
+                <Title level={4} className={'font-color-khor'}>
                     Correo electrónico enviado correctamente
                 </Title>
                 :
@@ -100,7 +100,7 @@ import {
             )}
   
             <Form.Item style={{ textAlign: 'right' }}>
-                <Text className={'font-color-khor pointer'} onClick={() => props.setRecoverPasswordShow(false)} >Regresar al login</Text>
+                <Text className={'font-color-khor pointer'} onClick={() => props.setRecoverPasswordShow(false)} >Regresar al Login</Text>
             </Form.Item>
           </Form>
         </Spin>
