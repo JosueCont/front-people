@@ -107,8 +107,10 @@ const FormPerson = (props) => {
         form.resetFields();
         props.close(false);
       })
-      .catch((response) => {
-        message.error("Error al agregar, intente de nuevo");
+      .catch((error) => {
+        if (error.response.data && error.response.data.message === "exist")
+          message.error("El correo se encuentra registrado.");
+        else message.error("Error al agregar, intente de nuevo");
       });
   };
 
