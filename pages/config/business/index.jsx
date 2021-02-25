@@ -21,6 +21,7 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Title from "antd/lib/typography/Title";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
+import Router from "next/router";
 import SelectCompany from "../../../components/selects/SelectCompany";
 
 const { Content } = Layout;
@@ -533,7 +534,7 @@ const configBusiness = () => {
                 <Breadcrumb style={{ margin: "16px 0" }}>
                     <Breadcrumb.Item
                         className={"pointer"}
-                        onClick={() => route.push({ pathname: "/home" })}
+                        onClick={() => Router.push({ pathname: "/home" })}
                     >
                         Inicio
           </Breadcrumb.Item>

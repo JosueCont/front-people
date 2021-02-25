@@ -205,6 +205,7 @@ const IncapacityDetails = () => {
                     Inicio
         </Breadcrumb.Item>
                 <Breadcrumb.Item
+                    className={"pointer"}
                     onClick={() => {
                         route.push("/incapacity");
                     }}
