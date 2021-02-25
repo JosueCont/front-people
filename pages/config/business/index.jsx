@@ -17,7 +17,7 @@ import {
     Alert,
     message,
 } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import Title from "antd/lib/typography/Title";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
@@ -250,7 +250,6 @@ const configBusiness = () => {
                             </Col>
                             <Col className="gutter-row" offset={1}>
                                 <DeleteOutlined
-
                                     onClick={() => {
                                         setDeleteRegister({
                                             id: item.id,
@@ -483,9 +482,21 @@ const configBusiness = () => {
     };
     const setDeleteRegister = (props) => {
         setDeleted(props);
-        showModal();
+
+        /* showModal(); */
     };
-    const deleteRegister = () => {
+    const deleteRegister = async () => {
+        console.log("delete");
+        console.log(deleted);
+        /* try {
+            let response = await Axios.delete(API_URL + deleted.url + `${deleted.id}/`);
+            console.log(response.data);
+        } catch (error) {
+            console.log(error);
+        } */
+        /* let response = await Axios.delete(API_URL + deleted.url + `${deleted.id}/`);
+        console.log(response.data); */
+
         Axios.delete(API_URL + deleted.url + `${deleted.id}/`)
             .then((response) => {
                 resetForm();
@@ -493,12 +504,12 @@ const configBusiness = () => {
                 setLoadingTable(true);
                 getCatalog(deleted.url);
                 setDeleteRegister({});
-                showModal();
+                /* /* showModal(); */
             })
             .catch((error) => {
                 setId("");
                 resetForm();
-                showModal();
+                /* showModal(); */
                 setLoadingTable(false);
                 console.log(error);
             });
@@ -527,6 +538,25 @@ const configBusiness = () => {
                 setSelectDep([]);
             });
     };
+
+    useEffect(() => {
+        /* console.log(deleted); */
+        if (deleted.id) {
+            Modal.confirm({
+                title: '¿Está seguro de eliminar este registro?',
+                content: "Si lo elimina no podrá recuperarlo",
+                icon: <ExclamationCircleOutlined />,
+                okText: 'Si, eliminar',
+                okButtonProps: {
+                    danger: true
+                },
+                cancelText: 'Cancelar',
+                onOk() {
+                    deleteRegister();
+                }
+            });
+        }
+    }, [deleted]);
 
     return (
         <>
@@ -869,7 +899,9 @@ const configBusiness = () => {
                     </Tabs>
                 </div>
             </MainLayout>
-            <Modal
+
+
+            {/* <Modal
                 title="Eliminar"
                 visible={modal}
                 onOk={deleteRegister}
@@ -879,7 +911,7 @@ const configBusiness = () => {
             >
                 Al eliminar este registro perderá todos los datos relacionados a el de
                 manera permanente. ¿Está seguro de querer eliminarlo?
-      </Modal>
+      </Modal> */}
         </>
     );
 };
