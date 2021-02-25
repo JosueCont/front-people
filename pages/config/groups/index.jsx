@@ -90,13 +90,18 @@ const Groups = () => {
 
     const confirmDelete = (id) => {
         confirm({
-            title: "Esta seguro de eliminar el elemento?",
+            title: "¿Está seguro de eliminar este perfil de seguridad?",
             icon: <ExclamationCircleOutlined />,
-            content: "Si elimina el elemento no podrá recuperarlo",
+            content: "Si lo elimina no podrá recuperarlo",
             onOk() {
                 deleteGroup(id);
             },
-            onCancel() { },
+            okType: 'primary',
+            okText: "Eliminar",
+            cancelText: "Cancelar",
+            okButtonProps: {
+                danger: true
+            }
         });
     };
 
@@ -152,7 +157,7 @@ const Groups = () => {
             <Breadcrumb style={{ margin: "16px 0" }}>
                 <Breadcrumb.Item
                     className={"pointer"}
-                    onClick={() => route.push({ pathname: "/home" })}
+                    onClick={() => router.push({ pathname: "/home" })}
                 >
                     Inicio
                 </Breadcrumb.Item>
@@ -181,8 +186,8 @@ const Groups = () => {
                         />
                     </Col>
                 </Row>
-        </div>
-    </MainLayout>
-  );
+            </div>
+        </MainLayout>
+    );
 };
 export default withAuthSync(Groups);
