@@ -578,12 +578,10 @@ const GroupAdd = () => {
           Inicio
         </Breadcrumb.Item>
         <Breadcrumb.Item
+          href="/config/groups"
           className={"pointer"}
           onClick={() => router.push({ pathname: "/config/groups" })}
         >
-          Perfiles de seguridad
-        </Breadcrumb.Item>
-        <Breadcrumb.Item href="/config/groups">
           Perfiles de seguridad
         </Breadcrumb.Item>
         {edit ? (
