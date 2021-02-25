@@ -197,17 +197,19 @@ const GroupAdd = () => {
     ];
     let data = {};
 
-    const onFinish = (values) => {
-        data = values;
-        data.perms = perms;
-        let lst = perms.concat(permsFunction);
-        data.perms = lst;
-        if (!edit) {
-            saveGroup();
-        } else {
-            editGroup();
-        }
-    };
+
+  const onFinish = (values) => {
+    data = values;
+    data.perms = perms;
+    let lst = perms.concat(permsFunction);
+    data.perms = lst;
+    // console.log("todos los permisos", data.perms);
+    if (!edit) {
+      saveGroup();
+    } else {
+      editGroup();
+    }
+  };
 
     const saveGroup = async () => {
         setLoading(true);
@@ -407,95 +409,162 @@ const GroupAdd = () => {
         }
     };
 
-    const columns = [
-        {
-            title: "Permiso",
-            id: "permiso",
-            render: (item) => {
-                return <div>{item.name}</div>;
-            },
-        },
-        {
-            title: "Ver",
-            render: (item) => {
-                return (
-                    <>
-                        <Checkbox
-                            name={item.value + ".can.view"}
-                            id={item.value + ".can.view"}
-                            onClick={handleClick}
-                        ></Checkbox>
-                    </>
-                );
-            },
-        },
-        {
-            title: "Crear",
-            render: (item) => {
-                return (
-                    <>
-                        <Checkbox
-                            name={item.value + ".can.create"}
-                            id={item.value + ".can.create"}
-                            onClick={handleClick}
-                        ></Checkbox>
-                    </>
-                );
-            },
-        },
-        {
-            title: "Editar",
-            render: (item) => {
-                return (
-                    <>
-                        <Checkbox
-                            name={item.value + ".can.edit"}
-                            id={item.value + ".can.edit"}
-                            onClick={handleClick}
-                        ></Checkbox>
-                    </>
-                );
-            },
-        },
-        {
-            title: "Eliminar",
-            render: (item) => {
-                return (
-                    <>
-                        <Checkbox
-                            name={item.value + ".can.delete"}
-                            id={item.value + ".can.delete"}
-                            onClick={handleClick}
-                        ></Checkbox>
-                    </>
-                );
-            },
-        },
-    ];
+  const columns_mod = [
+    {
+      title: "Módulos",
+      id: "modulos",
+      render: (item) => {
+        return <div>{item.name}</div>;
+      },
+    },
+    {
+      title: "Ver",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.view"}
+              id={item.value + ".can.view"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Crear",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.create"}
+              id={item.value + ".can.create"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Editar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.edit"}
+              id={item.value + ".can.edit"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Eliminar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.delete"}
+              id={item.value + ".can.delete"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+  ];
 
-    const columns_functions = [
-        {
-            title: "Funcion",
-            id: "funcion",
-            render: (item) => {
-                return <div>{item.name}</div>;
-            },
-        },
-        {
-            title: "Seleccionar",
-            render: (item) => {
-                return (
-                    <>
-                        <Checkbox
-                            name={item.value}
-                            id={item.value}
-                            onClick={handleClickFunct}
-                        ></Checkbox>
-                    </>
-                );
-            },
-        },
-    ];
+  const columns_cat = [
+    {
+      title: "Catálogos",
+      id: "catalogos",
+      render: (item) => {
+        return <div>{item.name}</div>;
+      },
+    },
+    {
+      title: "Ver",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.view"}
+              id={item.value + ".can.view"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Crear",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.create"}
+              id={item.value + ".can.create"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Editar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.edit"}
+              id={item.value + ".can.edit"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Eliminar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.delete"}
+              id={item.value + ".can.delete"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+  ];
+
+  const columns_functions = [
+    {
+      title: "Función",
+      id: "funcion",
+      render: (item) => {
+        return <div>{item.name}</div>;
+      },
+    },
+    {
+      title: "Seleccionar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value}
+              id={item.value}
+              onClick={handleClickFunct}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+  ];
+
 
     return (
         <MainLayout currentKey="3.2">
@@ -513,178 +582,185 @@ const GroupAdd = () => {
                     Perfiles de seguridad
                     
         </Breadcrumb.Item>
-                {edit ? (
-                    <Breadcrumb.Item>Editar perfil</Breadcrumb.Item>
-                ) : (
-                        <Breadcrumb.Item>Crear perfil</Breadcrumb.Item>
-                    )}
-            </Breadcrumb>
-            <Content className="site-layout">
-                <Spin tip="Cargando..." spinning={loading}>
-                    <div
-                        className="site-layout-background"
-                        style={{ padding: 24, minHeight: 380, height: "100%" }}
-                    >
-                        <div style={{ padding: 24 }}>
-                            <Row>
-                                <Col span={24}>
-                                    {edit === true ? (
-                                        <Title level={3}>Editar perfil</Title>
-                                    ) : (
-                                            <Title level={3}>Crear perfil</Title>
-                                        )}
-                                </Col>
-                                <Divider style={{ marginTop: "2px" }} />
-                                <Col span={24}>
-                                    <Form
-                                        form={form}
-                                        onFinish={onFinish}
-                                        layout={"vertical"}
-                                        initialValues={{
-                                            id: "",
-                                            name: "",
-                                            perms: [],
-                                        }}
-                                        scrollToFirstError
-                                    >
-                                        <Row>
-                                            <Col span={24}>
-                                                <div style={{ float: "right", marginBottom: "5px" }}>
-                                                    <Form.Item span={24}>
-                                                        <Button
-                                                            style={{ marginRight: "5px" }}
-                                                            onClick={() =>
-                                                                router.push({
-                                                                    pathname: "/config/groups",
-                                                                })
-                                                            }
-                                                        >
-                                                            Regresar
-                            </Button>
-                                                        <Button type="primary" htmlType="submit">
-                                                            Guardar
-                            </Button>
-                                                    </Form.Item>
-                                                </div>
-                                            </Col>
-                                            <Col lg={18} md={18} xs={24}>
-                                                {edit === true ? (
-                                                    <Form.Item name="id" hidden>
-                                                        <Input placeholder="Nombre" />
-                                                    </Form.Item>
-                                                ) : null}
+        <Breadcrumb.Item href="/config/groups">
+          Perfiles de seguridad
+        </Breadcrumb.Item>
+        {edit ? (
+          <Breadcrumb.Item>Editar perfil</Breadcrumb.Item>
+        ) : (
+          <Breadcrumb.Item>Crear perfil</Breadcrumb.Item>
+        )}
+      </Breadcrumb>
+      <Content className="site-layout">
+        <Spin tip="Cargando..." spinning={loading}>
+          <div
+            className="site-layout-background"
+            style={{ padding: 24, minHeight: 380, height: "100%" }}
+          >
+            <div style={{ padding: 24 }}>
+              <Row>
+                <Col span={24}>
+                  {edit === true ? (
+                    <Title level={3}>Editar perfil</Title>
+                  ) : (
+                    <Title level={3}>Crear perfil</Title>
+                  )}
+                </Col>
+                <Divider style={{ marginTop: "2px" }} />
+                <Col span={24}>
+                  <Form
+                    form={form}
+                    onFinish={onFinish}
+                    layout={"vertical"}
+                    initialValues={{
+                      id: "",
+                      name: "",
+                      perms: [],
+                    }}
+                    scrollToFirstError
+                  >
+                    <Row>
+                      <Col lg={12} md={12} xs={24}>
+                        {edit === true ? (
+                          <Form.Item name="id" hidden>
+                            <Input placeholder="Nombre" />
+                          </Form.Item>
+                        ) : null}
 
-                                                <Form.Item
-                                                    name="name"
-                                                    rules={[
-                                                        {
-                                                            required: true,
-                                                            message: "Por favor ingresa el nombre",
-                                                        },
-                                                    ]}
-                                                    span={24}
-                                                >
-                                                    <Input placeholder="Nombre" />
-                                                </Form.Item>
-                                            </Col>
-                                        </Row>
-                                    </Form>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col span={24}>
-                                    <Tabs type="card" onChange={handleChangeTab}>
-                                        <TabPane
-                                            tab="Permisos"
-                                            id="tabPermit"
-                                            name="tabPermit"
-                                            key="1"
-                                        >
-                                            <Col span={24}>
-                                                <Row>
-                                                    <Col xl={12} md={12} sm={24} xs={24}>
-                                                        <Table
-                                                            pagination={false}
-                                                            className={"mainTable"}
-                                                            id="tableperms"
-                                                            key="1"
-                                                            size="small"
-                                                            columns={columns}
-                                                            dataSource={views.filter(
-                                                                (perm) => perm.module !== "Catalogos"
-                                                            )}
-                                                        />
-                                                    </Col>
-                                                    <Col xl={12} md={12} sm={24} xs={24}>
-                                                        <Table
-                                                            pagination={false}
-                                                            className={"mainTable"}
-                                                            id="tableperms"
-                                                            key="2"
-                                                            size="small"
-                                                            columns={columns}
-                                                            dataSource={views.filter(
-                                                                (perm) => perm.module === "Catalogos"
-                                                            )}
-                                                        />
-                                                    </Col>
-                                                </Row>
-                                            </Col>
-                                        </TabPane>
-                                        <TabPane
-                                            tab="Funciones"
-                                            id="tabFunction"
-                                            name="tabFunction"
-                                            key="2"
-                                        >
-                                            <Col span={24}>
-                                                <Row>
-                                                    <Col xl={12} md={12} sm={24} xs={24}>
-                                                        <Table
-                                                            pagination={false}
-                                                            className={"mainTable"}
-                                                            id="tableperms"
-                                                            key="3"
-                                                            size="small"
-                                                            columns={columns_functions}
-                                                            dataSource={view_functions.filter(
-                                                                (perm) =>
-                                                                    perm.module === "Personas" ||
-                                                                    perm.module === "Empresas" ||
-                                                                    perm.module === "Prestamos" ||
-                                                                    perm.module === "Vacaciones" ||
-                                                                    perm.module === "Nomina"
-                                                            )}
-                                                        />
-                                                    </Col>
-                                                    <Col xl={12} md={12} sm={24} xs={24}>
-                                                        <Table
-                                                            pagination={false}
-                                                            className={"mainTable"}
-                                                            id="tableperms"
-                                                            key="4"
-                                                            size="small"
-                                                            columns={columns_functions}
-                                                            dataSource={view_functions.filter(
-                                                                (perm) =>
-                                                                    perm.module === "Reportes" ||
-                                                                    perm.module === "Incapacidad" ||
-                                                                    perm.module === "Permisos"
-                                                            )}
-                                                        />
-                                                    </Col>
-                                                </Row>
-                                            </Col>
-                                        </TabPane>
-                                    </Tabs>
-                                </Col>
-                            </Row>
+                        <Form.Item
+                          name="name"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Por favor ingresa el nombre",
+                            },
+                          ]}
+                        >
+                          <Input placeholder="Nombre" />
+                        </Form.Item>
+                        <label>
+                          Al seleccionar un permiso para crear, editar o
+                          eliminar, deberá ir acompañado del permiso ver
+                        </label>
+                      </Col>
+                      <Col lg={12} md={12} xs={24}>
+                        <div style={{ float: "right", marginBottom: "5px" }}>
+                          <Form.Item>
+                            <Button
+                              style={{ marginRight: "5px" }}
+                              onClick={() =>
+                                router.push({
+                                  pathname: "/config/groups",
+                                })
+                              }
+                            >
+                              Regresar
+                            </Button>
+                            <Button type="primary" htmlType="submit">
+                              Guardar
+                            </Button>
+                          </Form.Item>
                         </div>
-                    </div>
-                </Spin>
-            </Content>
-        </MainLayout>
-    );
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+              </Row>
+              <Row style={{ marginTop: "15px" }}>
+                <Col span={24}>
+                  <Tabs type="card" onChange={handleChangeTab}>
+                    <TabPane
+                      tab="Permisos"
+                      id="tabPermit"
+                      name="tabPermit"
+                      key="1"
+                    >
+                      <Col span={24}>
+                        <Row>
+                          <Col xl={12} md={12} sm={24} xs={24}>
+                            <Table
+                              pagination={false}
+                              className={"mainTable"}
+                              id="tableperms"
+                              key="1"
+                              size="small"
+                              columns={columns_mod}
+                              dataSource={views.filter(
+                                (perm) => perm.module !== "Catalogos"
+                              )}
+                            />
+                          </Col>
+                          <Col xl={12} md={12} sm={24} xs={24}>
+                            <Table
+                              pagination={false}
+                              className={"mainTable"}
+                              id="tableperms"
+                              key="2"
+                              size="small"
+                              columns={columns_cat}
+                              dataSource={views.filter(
+                                (perm) => perm.module === "Catalogos"
+                              )}
+                            />
+                          </Col>
+                        </Row>
+                      </Col>
+                    </TabPane>
+                    <TabPane
+                      tab="Funciones"
+                      id="tabFunction"
+                      name="tabFunction"
+                      key="2"
+                    >
+                      <Col span={24}>
+                        <Row>
+                          <Col xl={12} md={12} sm={24} xs={24}>
+                            <Table
+                              pagination={false}
+                              className={"mainTable"}
+                              id="tableperms"
+                              key="3"
+                              size="small"
+                              columns={columns_functions}
+                              dataSource={view_functions.filter(
+                                (perm) =>
+                                  perm.module === "Personas" ||
+                                  perm.module === "Empresas" ||
+                                  perm.module === "Prestamos" ||
+                                  perm.module === "Vacaciones" ||
+                                  perm.module === "Nomina"
+                              )}
+                            />
+                          </Col>
+                          <Col xl={12} md={12} sm={24} xs={24}>
+                            <Table
+                              pagination={false}
+                              className={"mainTable"}
+                              id="tableperms"
+                              key="4"
+                              size="small"
+                              columns={columns_functions}
+                              dataSource={view_functions.filter(
+                                (perm) =>
+                                  perm.module === "Reportes" ||
+                                  perm.module === "Incapacidad" ||
+                                  perm.module === "Permisos"
+                              )}
+                            />
+                          </Col>
+                        </Row>
+                      </Col>
+                    </TabPane>
+                  </Tabs>
+                </Col>
+              </Row>
+            </div>
+          </div>
+        </Spin>
+      </Content>
+    </MainLayout>
+  );
+
 };
 
 export default withAuthSync(GroupAdd);
