@@ -698,7 +698,7 @@ const GroupAdd = () => {
                       </Col>
                     </TabPane>
                     <TabPane
-                      tab="Funciones"
+                      tab="Funcionalidades"
                       id="tabFunction"
                       name="tabFunction"
                       key="2"
