@@ -202,6 +202,7 @@ const GroupAdd = () => {
     data.perms = perms;
     let lst = perms.concat(permsFunction);
     data.perms = lst;
+    // console.log("todos los permisos", data.perms);
     if (!edit) {
       saveGroup();
     } else {
@@ -407,10 +408,76 @@ const GroupAdd = () => {
     }
   };
 
-  const columns = [
+  const columns_mod = [
     {
-      title: "Permiso",
-      id: "permiso",
+      title: "Módulos",
+      id: "modulos",
+      render: (item) => {
+        return <div>{item.name}</div>;
+      },
+    },
+    {
+      title: "Ver",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.view"}
+              id={item.value + ".can.view"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Crear",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.create"}
+              id={item.value + ".can.create"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Editar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.edit"}
+              id={item.value + ".can.edit"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Eliminar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.delete"}
+              id={item.value + ".can.delete"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+  ];
+
+  const columns_cat = [
+    {
+      title: "Catálogos",
+      id: "catalogos",
       render: (item) => {
         return <div>{item.name}</div>;
       },
@@ -475,7 +542,7 @@ const GroupAdd = () => {
 
   const columns_functions = [
     {
-      title: "Funcion",
+      title: "Función",
       id: "funcion",
       render: (item) => {
         return <div>{item.name}</div>;
@@ -544,9 +611,32 @@ const GroupAdd = () => {
                     scrollToFirstError
                   >
                     <Row>
-                      <Col span={24}>
+                      <Col lg={12} md={12} xs={24}>
+                        {edit === true ? (
+                          <Form.Item name="id" hidden>
+                            <Input placeholder="Nombre" />
+                          </Form.Item>
+                        ) : null}
+
+                        <Form.Item
+                          name="name"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Por favor ingresa el nombre",
+                            },
+                          ]}
+                        >
+                          <Input placeholder="Nombre" />
+                        </Form.Item>
+                        <label>
+                          Al seleccionar un permiso para crear, editar o
+                          eliminar, deberá ir acompañado del permiso ver
+                        </label>
+                      </Col>
+                      <Col lg={12} md={12} xs={24}>
                         <div style={{ float: "right", marginBottom: "5px" }}>
-                          <Form.Item span={24}>
+                          <Form.Item>
                             <Button
                               style={{ marginRight: "5px" }}
                               onClick={() =>
@@ -563,31 +653,11 @@ const GroupAdd = () => {
                           </Form.Item>
                         </div>
                       </Col>
-                      <Col lg={18} md={18} xs={24}>
-                        {edit === true ? (
-                          <Form.Item name="id" hidden>
-                            <Input placeholder="Nombre" />
-                          </Form.Item>
-                        ) : null}
-
-                        <Form.Item
-                          name="name"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Por favor ingresa el nombre",
-                            },
-                          ]}
-                          span={24}
-                        >
-                          <Input placeholder="Nombre" />
-                        </Form.Item>
-                      </Col>
                     </Row>
                   </Form>
                 </Col>
               </Row>
-              <Row>
+              <Row style={{ marginTop: "15px" }}>
                 <Col span={24}>
                   <Tabs type="card" onChange={handleChangeTab}>
                     <TabPane
@@ -605,7 +675,7 @@ const GroupAdd = () => {
                               id="tableperms"
                               key="1"
                               size="small"
-                              columns={columns}
+                              columns={columns_mod}
                               dataSource={views.filter(
                                 (perm) => perm.module !== "Catalogos"
                               )}
@@ -618,7 +688,7 @@ const GroupAdd = () => {
                               id="tableperms"
                               key="2"
                               size="small"
-                              columns={columns}
+                              columns={columns_cat}
                               dataSource={views.filter(
                                 (perm) => perm.module === "Catalogos"
                               )}
