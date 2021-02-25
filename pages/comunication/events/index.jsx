@@ -102,13 +102,18 @@ const Events = () => {
 
     const confirmDelete = (id) => {
         confirm({
-            title: "Esta seguro de eliminar el elemento?",
+            title: "¿Está seguro de eliminar este evento?",
             icon: <ExclamationCircleOutlined />,
-            content: "Si elimina el elemento no podrá recuperarlo",
+            content: "Si lo elimina no podrá recuperarlo",
             onOk() {
                 deleteEvent(id);
             },
-            onCancel() { },
+            okText: 'Eliminar',
+            okType: 'primary',
+            okButtonProps: {
+                danger: true
+            },
+            cancelText: 'Cancelar'
         });
     };
 
@@ -169,19 +174,19 @@ const Events = () => {
                                         </Form.Item>
                                     </Col>
                                     <Col lg={2} xs={5} offset={1} style={{ display: "flex" }}>
-                                        
-                                            <Button
-                                                style={{
-                                                    background: "#fa8c16",
-                                                    fontWeight: "bold",
-                                                    color: "white",
-                                                    marginTop: 'auto'
-                                                }}
-                                                htmlType="submit"
-                                            >
-                                                Filtrar
+
+                                        <Button
+                                            style={{
+                                                background: "#fa8c16",
+                                                fontWeight: "bold",
+                                                color: "white",
+                                                marginTop: 'auto'
+                                            }}
+                                            htmlType="submit"
+                                        >
+                                            Filtrar
                                             </Button>
-                                        
+
                                     </Col>
                                 </Row>
                             </Form>
@@ -192,7 +197,7 @@ const Events = () => {
                                     background: "#fa8c16",
                                     fontWeight: "bold",
                                     color: "white",
-                                    marginTop:'auto'
+                                    marginTop: 'auto'
                                 }}
                                 onClick={() => route.push("events/add")}
                             >
