@@ -206,7 +206,13 @@ const GroupAdd = () => {
   const onFinish = (values) => {
     data = values;
     data.perms = perms;
-    let lst = perms.concat(permsFunction);
+    let lst = [];
+    if (getperms === true) {
+      lst = perms.concat(arrayFunctions);
+    } else {
+      lst = perms.concat(permsFunction);
+    }
+
     data.perms = lst;
     // console.log("todos los permisos", data.perms);
     if (!edit) {
