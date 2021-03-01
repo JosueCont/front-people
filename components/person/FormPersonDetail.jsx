@@ -38,7 +38,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Router from "next/router";
 import moment from "moment";
-import "react-dropdown-tree-select/dist/styles.css";
 import { LOGIN_URL, APP_ID } from "../../config/config";
 import Cookies from "js-cookie";
 

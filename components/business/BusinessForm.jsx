@@ -26,6 +26,7 @@ import {
 import { API_URL } from "../../config/config";
 import Router from "next/router";
 import MainLayout from "../../layout/MainLayout";
+import NodeTreeView from "./TreeView/treeview";
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -227,58 +228,8 @@ const businessForm = () => {
 
   const changeView = () => {
     treeTable ? setTreeTable(false) : setTreeTable(true);
+    getBusiness();
   };
-
-  const dataTree = [
-    {
-      title: "parent 1",
-      key: "0-0",
-      children: [
-        {
-          title: "parent 1-0",
-          key: "0-0-0",
-          children: [
-            {
-              title: "leaf",
-              key: "0-0-0-0",
-            },
-            {
-              title: "leaf",
-              key: "0-0-0-1",
-            },
-            {
-              title: "leaf",
-              key: "0-0-0-2",
-            },
-          ],
-        },
-        {
-          title: "parent 1-1",
-          key: "0-0-1",
-          children: [
-            {
-              title: "leaf",
-              key: "0-0-1-0",
-            },
-          ],
-        },
-        {
-          title: "parent 1-2",
-          key: "0-0-2",
-          children: [
-            {
-              title: "leaf",
-              key: "0-0-2-0",
-            },
-            {
-              title: "leaf",
-              key: "0-0-2-1",
-            },
-          ],
-        },
-      ],
-    },
-  ];
 
   const modalUpdate = (value) => {
     setBusinessUpdate(value);
@@ -360,12 +311,7 @@ const businessForm = () => {
                 loading={loading}
               />
             ) : (
-              <Tree
-                showLine
-                style={{ fontSize: "20px" }}
-                // onSelect={this.onSelect}
-                treeData={nodesTree}
-              />
+              <NodeTreeView />
             )}
           </Col>
         </Row>
