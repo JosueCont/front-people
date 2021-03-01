@@ -25,6 +25,7 @@ import {
   DownloadOutlined,
   UploadOutlined,
   EllipsisOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
@@ -33,6 +34,7 @@ import { withAuthSync } from "../../libs/auth";
 
 const { Content } = Layout;
 import Link from "next/link";
+import { render } from "react-dom";
 
 const homeScreen = () => {
   const [person, setPerson] = useState([]);
@@ -102,7 +104,7 @@ const homeScreen = () => {
     })
       .then((response) => {
         setIdsDelete("");
-        showModalDelete();
+        setModalDelete(false);
         getPerson();
         setLoading(false);
         message.success("Eliminado correctamente.");
@@ -331,17 +333,21 @@ const homeScreen = () => {
         );
       }
       setPersonsToDelete(value);
-      console.log(personsToDelete);
       let ids = null;
       value.map((a) => {
         if (ids) ids = ids + "," + a.id;
         else ids = a.id;
       });
       setIdsDelete(ids);
+      /* setModalDelete(true); */
       showModalDelete();
     } else {
       message.error("Selecciona una persona.");
     }
+  };
+
+  const showModalDelete = () => {
+    modalDelete ? setModalDelete(false) : setModalDelete(true);
   };
   const ListElementsToDelete = ({ personsDelete }) => {
     return (
@@ -349,7 +355,7 @@ const homeScreen = () => {
         {personsDelete.map((p) => {
           return (
             <>
-              <Row>
+              <Row style={{ marginBottom: 15 }}>
                 <Avatar src={p.photo} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
@@ -358,9 +364,6 @@ const homeScreen = () => {
         })}
       </div>
     );
-  };
-  const showModalDelete = () => {
-    modalDelete ? setModalDelete(false) : setModalDelete(true);
   };
 
   ////IMPORT/EXPORT PERSON
@@ -519,6 +522,47 @@ const homeScreen = () => {
       });
   };
 
+  const AlertDeletes = () => (
+    <div>
+      Al eliminar este registro perderá todos los datos relacionados a el de
+      manera permanente. ¿Está seguro de querer eliminarlo
+      <br />
+      <br />
+      <ListElementsToDelete personsDelete={personsToDelete} />
+    </div>
+  );
+
+  useEffect(() => {
+    console.log(modalDelete);
+    if (modalDelete) {
+      Modal.confirm({
+        title: stringToDelete,
+        content: <AlertDeletes />,
+        icon: <ExclamationCircleOutlined />,
+        okText: "Si, eliminar",
+        okButtonProps: {
+          danger: true,
+        },
+        onCancel() {
+          setModalDelete();
+        },
+        cancelText: "Cancelar",
+        onOk() {
+          deletePerson();
+        },
+      });
+    }
+    /* title={stringToDelete}
+                visible={modalDelete}
+                onOk={deletePerson}
+                onCancel={showModalDelete}
+                okText="Si, Eliminar"
+                cancelText="Cancelar"
+            >
+                Al eliminar este registro perderá todos los datos relacionados a el de
+                manera permanente. ¿Está seguro de querer eliminarlo */
+  }, [modalDelete]);
+
   return (
     <MainLayout currentKey="1">
       <Breadcrumb>
@@ -664,19 +708,19 @@ const homeScreen = () => {
         />
       </div>
       <FormPerson close={getModalPerson} visible={modalAddPerson} />
-      <Modal
-        title={stringToDelete}
-        visible={modalDelete}
-        onOk={deletePerson}
-        onCancel={showModalDelete}
-        okText="Si, Eliminar"
-        cancelText="Cancelar"
-      >
-        Al eliminar este registro perderá todos los datos relacionados a el de
-        manera permanente. ¿Está seguro de querer eliminarlo
+      {/* <Modal
+                title={stringToDelete}
+                visible={modalDelete}
+                onOk={deletePerson}
+                onCancel={showModalDelete}
+                okText="Si, Eliminar"
+                cancelText="Cancelar"
+            >
+                Al eliminar este registro perderá todos los datos relacionados a el de
+                manera permanente. ¿Está seguro de querer eliminarlo
         <br />
-        <ListElementsToDelete personsDelete={personsToDelete} />
-      </Modal>
+                <ListElementsToDelete personsDelete={personsToDelete} />
+            </Modal> */}
     </MainLayout>
   );
 };

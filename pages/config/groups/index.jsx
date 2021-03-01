@@ -41,10 +41,10 @@ const Groups = () => {
         "Content-Type": "application/json",
     };
 
-    const getGroups = (text) => {
+    const getGroups = (name = "") => {
         setLoading(true);
 
-        Axios.get(LOGIN_URL + `/group/list/`, { headers: headers })
+        Axios.get(LOGIN_URL + `/group/list/${name}`, { headers: headers })
             .then((response) => {
                 response.data.data.map((item) => {
                     item["key"] = item.id;
@@ -90,13 +90,18 @@ const Groups = () => {
 
     const confirmDelete = (id) => {
         confirm({
-            title: "Esta seguro de eliminar el elemento?",
+            title: "¿Está seguro de eliminar este perfil de seguridad?",
             icon: <ExclamationCircleOutlined />,
-            content: "Si elimina el elemento no podrá recuperarlo",
+            content: "Si lo elimina no podrá recuperarlo",
             onOk() {
                 deleteGroup(id);
             },
-            onCancel() { },
+            okType: 'primary',
+            okText: "Eliminar",
+            cancelText: "Cancelar",
+            okButtonProps: {
+                danger: true
+            }
         });
     };
 
@@ -104,7 +109,13 @@ const Groups = () => {
         getGroups();
     }, []);
 
-    const filter = () => { };
+    const filter = (value) => {
+        let filt = "";
+        if (value.name != "" && value.name != undefined) {
+            filt = "?name=" + value.name;
+        }
+        getGroups(filt);
+    };
 
     const columns = [
         {
@@ -152,37 +163,71 @@ const Groups = () => {
             <Breadcrumb style={{ margin: "16px 0" }}>
                 <Breadcrumb.Item
                     className={"pointer"}
-                    onClick={() => route.push({ pathname: "/home" })}
+                    onClick={() => router.push({ pathname: "/home" })}
                 >
                     Inicio
-                </Breadcrumb.Item>
+        </Breadcrumb.Item>
                 <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
-                <Row justify="end" style={{ paddingBottom: 20 }}>
-                    <Button
-                        style={{
-                            background: "#fa8c16",
-                            fontWeight: "bold",
-                            color: "white",
-                        }}
-                        onClick={() => router.push({ pathname: "/config/groups/add" })}
-                    >
-                        <PlusOutlined />
-                        Agregar perfil
-                    </Button>
-                </Row>
+                <Row>
+                    <Col span={20}>
+                        <Form
+                            form={form}
+                            onFinish={filter}
+                            initialValues={{
+                                id: "",
+                                name: "",
+                                perms: [],
+                            }}
+                            scrollToFirstError
+                        >
+                            <Row>
+                                <Col xl={10} md={10} xs={24}>
+                                    <Form.Item name="name" label="Nombre">
+                                        <Input placeholder="Nombre" />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={2}>
+                                    <div style={{ float: "left", marginLeft: "5px" }}>
+                                        <Form.Item>
+                                            <Button
+                                                style={{
+                                                    background: "#fa8c16",
+                                                    fontWeight: "bold",
+                                                    color: "white",
+                                                }}
+                                                htmlType="submit"
+                                            >
+                                                Filtrar
+                      </Button>
+                                        </Form.Item>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Col >
+                    <Col style={{ display: "flex" }}>
+                        <Button
+                            style={{
+                                background: "#fa8c16",
+                                fontWeight: "bold",
+                                color: "white",
+                            }}
+                            onClick={() => router.push({ pathname: "/config/groups/add" })}
+                        >
+                            <PlusOutlined />
+              Agregar
+            </Button>
+                    </Col>
+                </Row >
                 <Row>
                     <Col span={24}>
-                        <Table
-                            columns={columns}
-                            dataSource={groups}
-                            loading={loading}
-                        />
+                        <Table columns={columns} dataSource={groups} loading={loading} />
                     </Col>
                 </Row>
-        </div>
-    </MainLayout>
-  );
+            </div >
+        </MainLayout >
+    );
 };
 export default withAuthSync(Groups);

@@ -149,7 +149,7 @@ const NodeTreeView = () => {
               <StyledTreeItem
                 style={{ margin: "1%" }}
                 nodeId={p.value}
-                label={p.title + " - " + p.value}
+                label={p.title}
                 className="titleFirstLevel"
               >
                 <IconButton className="addButton" color="secondary">
@@ -216,7 +216,13 @@ const NodeTreeView = () => {
         parent: value.parent,
       });
     } else {
-      if (value.parent > 0) {
+      if (value.parent > 0 && value.bool) {
+        formBusiness.setFieldsValue({
+          name: value.edit.title,
+          parent: value.parent,
+        });
+      }
+      if (value.parent == undefined && value.bool) {
         formBusiness.setFieldsValue({
           name: value.edit.title,
           parent: value.parent,

@@ -16,7 +16,7 @@ const InabilityReport = (props) => {
     const { Option } = Select;
     const [form] = Form.useForm();
     const { RangePicker } = DatePicker;
-    const {Title, Text} = Typography;
+    const { Title, Text } = Typography;
 
     const [incapacityList, setIncapacityList] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -25,12 +25,13 @@ const InabilityReport = (props) => {
     const [companyId, setCompanyId] = useState(null);
     const [departmentId, setDepartmentId] = useState(null);
     const [status, setStatus] = useState(null);
+    const [dateOne, setDateOne] = useState(null);
+    const [dateTwo, setDateTwo] = useState(null);
 
     const [personList, setPersonList] = useState([]);
     const [collaboratorList, setCollaboratorList] = useState([]);
 
-    const [dateOne, setDateOne] = useState(null);
-    const [dateTwo, setDateTwo] = useState(null);
+
 
     /* Columnas de tabla */
     const columns = [
@@ -124,26 +125,34 @@ const InabilityReport = (props) => {
 
     const download = async (item = null) => {
         let dataId = {}
-
+        console.log(item);
         if (item) {
             dataId = {
-                "vacation_id": item.id,
-                "collaborator": item.collaborator.id
+                "incapacity_id": item.id,
             }
         } else {
-            if (colaborator) {
-                dataId.collaborator = colaborator;
+            if (collaborator) {
+                dataId.person__id = collaborator;
             }
             if (companyId) {
-                dataId.node = companyId;
+                dataId.business_id = companyId;
             }
+
             if (departmentId) {
-                dataId.department = departmentId;
+                dataId.department_id = departmentId;
+            }
+            if (status) {
+                dataId.status = status;
+            }
+
+            if (dateOne && dateTwo) {
+                dataId.start_date = dateOne;
+                dataId.end_date = dateTwo
             }
         }
 
         try {
-            let response = await Axios.post(API_URL + `/person/vacation-report-export`, dataId);
+            let response = await Axios.post(API_URL + `/person/incapacity/download_data/`, dataId);
             const type = response.headers["content-type"];
             const blob = new Blob([response.data], {
                 type: type,
@@ -151,7 +160,7 @@ const InabilityReport = (props) => {
             });
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = item ? item.collaborator.first_name + item.collaborator.flast_name + ".csv" : "Reporte_de_Vacaciones.csv";
+            link.download = item ? item.collaborator.first_name + item.collaborator.flast_name + item.collaborator.mlast_name + ".csv" : "Reporte_de_Incapacidades.csv";
             link.click();
         } catch (e) {
             console.log(e);
@@ -214,6 +223,10 @@ const InabilityReport = (props) => {
     const filter = async (values) => {
         setIncapacityList([])
         console.log(values)
+        setCollaborator(values.collaborator);
+        setCompanyId(values.company);
+        setDepartmentId(values.department);
+        setStatus(values.status);
         getIncapacity(
             values.collaborator,
             values.company,
@@ -313,7 +326,7 @@ const InabilityReport = (props) => {
                             fontWeight: "bold",
                             color: "white",
                         }}
-                        onClick={() => route.push("holidays/new")}
+                        onClick={() => download()}
                         key="btn_new"
                     >
                         Descargar

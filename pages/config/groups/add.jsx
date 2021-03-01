@@ -40,6 +40,7 @@ const GroupAdd = () => {
   const [getperms, setGetperms] = useState(false);
   const [permsFunction, setPermsFunction] = useState([]);
   const [arrayFunctions, setarrayFunctios] = useState([]);
+  const [instruction, setInstruction] = useState(true);
 
   const headers = {
     "client-id": APP_ID,
@@ -73,6 +74,11 @@ const GroupAdd = () => {
     { name: "Eventos", module: "Comunicacion", value: "people.event" },
     /*Solicitudes */
     { name: "Préstamos", module: "Solicitudes", value: "people.loan" },
+    {
+      name: "Configurar Préstamos",
+      module: "Solicitudes",
+      value: "people.loanconfigure",
+    },
     { name: "Vacaciones", module: "Solicitudes", value: "people.vacation" },
     { name: "Permisos", module: "Solicitudes", value: "people.permit" },
     { name: "Incapacidad", module: "Solicitudes", value: "people.incapacity" },
@@ -109,11 +115,11 @@ const GroupAdd = () => {
     },
     /*Solicitudes */
     //Prestamos
-    {
-      name: "Configuración de préstamos",
-      module: "Prestamos",
-      value: "people.loan.function.configure_loan",
-    },
+    // {
+    //   name: "Configuración de préstamos",
+    //   module: "Prestamos",
+    //   value: "people.loan.function.configure_loan",
+    // },
     {
       name: "Aprobar préstamo",
       module: "Prestamos",
@@ -200,8 +206,15 @@ const GroupAdd = () => {
   const onFinish = (values) => {
     data = values;
     data.perms = perms;
-    let lst = perms.concat(permsFunction);
+    let lst = [];
+    if (getperms === true) {
+      lst = perms.concat(arrayFunctions);
+    } else {
+      lst = perms.concat(permsFunction);
+    }
+
     data.perms = lst;
+    // console.log("todos los permisos", data.perms);
     if (!edit) {
       saveGroup();
     } else {
@@ -394,6 +407,7 @@ const GroupAdd = () => {
 
   const handleChangeTab = (activeKey) => {
     if (activeKey === "2") {
+      setInstruction(false);
       if (getperms === true) {
         setLoading(true);
         return new Promise((resolve) => {
@@ -404,13 +418,81 @@ const GroupAdd = () => {
           }, 0);
         });
       }
+    } else {
+      setInstruction(true);
     }
   };
 
-  const columns = [
+  const columns_mod = [
     {
-      title: "Permiso",
-      id: "permiso",
+      title: "Módulos",
+      id: "modulos",
+      render: (item) => {
+        return <div>{item.name}</div>;
+      },
+    },
+    {
+      title: "Ver",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.view"}
+              id={item.value + ".can.view"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Crear",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.create"}
+              id={item.value + ".can.create"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Editar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.edit"}
+              id={item.value + ".can.edit"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+    {
+      title: "Eliminar",
+      render: (item) => {
+        return (
+          <>
+            <Checkbox
+              name={item.value + ".can.delete"}
+              id={item.value + ".can.delete"}
+              onClick={handleClick}
+            ></Checkbox>
+          </>
+        );
+      },
+    },
+  ];
+
+  const columns_cat = [
+    {
+      title: "Catálogos",
+      id: "catalogos",
       render: (item) => {
         return <div>{item.name}</div>;
       },
@@ -475,7 +557,7 @@ const GroupAdd = () => {
 
   const columns_functions = [
     {
-      title: "Funcion",
+      title: "Función",
       id: "funcion",
       render: (item) => {
         return <div>{item.name}</div>;
@@ -502,11 +584,15 @@ const GroupAdd = () => {
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
+          onClick={() => router.push({ pathname: "/home" })}
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="/config/groups">
+        <Breadcrumb.Item
+          href="/config/groups"
+          className={"pointer"}
+          onClick={() => router.push({ pathname: "/config/groups" })}
+        >
           Perfiles de seguridad
         </Breadcrumb.Item>
         {edit ? (
@@ -544,9 +630,28 @@ const GroupAdd = () => {
                     scrollToFirstError
                   >
                     <Row>
-                      <Col span={24}>
+                      <Col lg={12} md={12} xs={24}>
+                        {edit === true ? (
+                          <Form.Item name="id" hidden>
+                            <Input placeholder="Nombre" />
+                          </Form.Item>
+                        ) : null}
+
+                        <Form.Item
+                          name="name"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Por favor ingresa el nombre",
+                            },
+                          ]}
+                        >
+                          <Input placeholder="Nombre" />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={12} md={12} xs={24}>
                         <div style={{ float: "right", marginBottom: "5px" }}>
-                          <Form.Item span={24}>
+                          <Form.Item>
                             <Button
                               style={{ marginRight: "5px" }}
                               onClick={() =>
@@ -563,31 +668,17 @@ const GroupAdd = () => {
                           </Form.Item>
                         </div>
                       </Col>
-                      <Col lg={18} md={18} xs={24}>
-                        {edit === true ? (
-                          <Form.Item name="id" hidden>
-                            <Input placeholder="Nombre" />
-                          </Form.Item>
-                        ) : null}
-
-                        <Form.Item
-                          name="name"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Por favor ingresa el nombre",
-                            },
-                          ]}
-                          span={24}
-                        >
-                          <Input placeholder="Nombre" />
-                        </Form.Item>
-                      </Col>
                     </Row>
                   </Form>
+                  {instruction === true ? (
+                    <label>
+                      Al seleccionar un permiso para crear, editar o eliminar,
+                      deberá ir acompañado del permiso ver
+                    </label>
+                  ) : null}
                 </Col>
               </Row>
-              <Row>
+              <Row style={{ marginTop: "15px" }}>
                 <Col span={24}>
                   <Tabs type="card" onChange={handleChangeTab}>
                     <TabPane
@@ -605,7 +696,7 @@ const GroupAdd = () => {
                               id="tableperms"
                               key="1"
                               size="small"
-                              columns={columns}
+                              columns={columns_mod}
                               dataSource={views.filter(
                                 (perm) => perm.module !== "Catalogos"
                               )}
@@ -618,7 +709,7 @@ const GroupAdd = () => {
                               id="tableperms"
                               key="2"
                               size="small"
-                              columns={columns}
+                              columns={columns_cat}
                               dataSource={views.filter(
                                 (perm) => perm.module === "Catalogos"
                               )}
@@ -628,7 +719,7 @@ const GroupAdd = () => {
                       </Col>
                     </TabPane>
                     <TabPane
-                      tab="Funciones"
+                      tab="Funcionalidades"
                       id="tabFunction"
                       name="tabFunction"
                       key="2"
