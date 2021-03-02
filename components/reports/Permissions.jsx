@@ -90,14 +90,15 @@ const PermissionsReport = (props) => {
         setDepartmentId(values.department)
 
         getPermissions(
-          values.collaborator,
-          values.company,
-          values.department
+            values.collaborator,
+            values.company,
+            values.department
         );
     };
 
     const getPermissions = async (collaborator = null, company = null, department = null) => {
         setLoading(true);
+        setPermissionsList([])
         try {
             let url = `/person/permit/?`;
             if (collaborator) {
@@ -240,6 +241,7 @@ const PermissionsReport = (props) => {
                         dataSource={permissionsList}
                         key="tableHolidays"
                         columns={columns}
+                        loading={loading}
                     ></Table>
                 </Col>
             </Row>

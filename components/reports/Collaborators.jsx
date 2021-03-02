@@ -2,10 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Table, Row, Col, Select, Form, DatePicker, Button, Typography } from "antd";
 import Axios from 'axios';
-import {API_URL} from '../../config/config'
+import { API_URL } from '../../config/config'
 import moment from 'moment'
-import {DownloadOutlined} from '@ant-design/icons'
+import { DownloadOutlined } from '@ant-design/icons'
 import Link from "next/link";
+import SelectCompany from '../selects/SelectCompany';
+import SelectDepartment from '../selects/SelectDepartment';
+import SelectJob from '../selects/SelectJob';
+import SelectCollaborator from '../selects/SelectCollaboratorItemForm'
+
+
+
 
 const CollaboratorsReport = (props) => {
     const route = useRouter();
@@ -21,10 +28,15 @@ const CollaboratorsReport = (props) => {
     const [collaboratorList, setCollaboratorList] = useState([]);
     const [jobList, SetJobList] = useState([]);
 
-    /* To filter */
+    /* for filter */
     const [collaborator, setCollaborator] = useState(null);
+    const [company, setCompany] = useState(null);
     const [department, setDepartment] = useState(null);
     const [job, setJob] = useState(null);
+
+    /* for selects */
+    const [companyId, setCompanyId] = useState(null);
+    const [departmentId, setDepartmentId] = useState(null);
 
 
     /* Columnas de tabla */
@@ -54,8 +66,8 @@ const CollaboratorsReport = (props) => {
             dataIndex: "date_of_admission",
             key: "date_of_admission",
             render: (date) => {
-                return ( date ? moment(date).format("DD / MM / YYYY") : null );
-              },
+                return (date ? moment(date).format("DD / MM / YYYY") : null);
+            },
         },
         {
             title: "Correo",
@@ -72,126 +84,131 @@ const CollaboratorsReport = (props) => {
         },
     ];
 
+    /* Events for selects  */
+    const onChangeCompany = (val) => {
+        form.setFieldsValue({
+            department: null,
+            job: null
+        });
+        setCompanyId(val);
+    };
+
+    const onChangeDepartment = (val) => {
+        console.log(val);
+        form.setFieldsValue({
+            job: null,
+        });
+        setDepartmentId(val);
+    };
+
+
     const download = async (item = null) => {
-        
+
         let dataId = {}
-        if(item){
+        if (item) {
             dataId = {
-                "id" : item.id
+                "id": item.id
             }
-        }else{
+        } else {
             console.log('name', collaborator);
-            if(collaborator){
+            if (collaborator) {
                 dataId.collaborator = collaborator;
             }
-            if(department){
+            if (department) {
                 dataId.department = department;
             }
-            if(job){
+            if (job) {
                 dataId.job = job;
             }
-            if(dateOfAdmission){
+            if (dateOfAdmission) {
                 dataId.date_of_admission = dateOfAdmission;
             }
         }
         console.log(dataId);
         try {
-            let response = await Axios.post(API_URL+`/person/employee-report-export`,dataId);
+            let response = await Axios.post(API_URL + `/person/employee-report-export`, dataId);
             console.log(response);
 
             const type = response.headers["content-type"];
             const blob = new Blob([response.data], {
-            type: type,
-            encoding: "UTF-8",
+                type: type,
+                encoding: "UTF-8",
             });
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = item ? item.name+".csv" : "Reporte_de_colaboradores.csv";
+            link.download = item ? item.name + ".csv" : "Reporte_de_colaboradores.csv";
             link.click();
-          } catch (e) {
+        } catch (e) {
             console.log(e);
-          }
+        }
     }
 
-    
+
     const getAllPersons = async () => {
         try {
-          let response = await Axios.get(API_URL+`/person/person/`);
-          let data = response.data.results;
-          data = data.map((a,index) => {
-            return {
-              label: a.first_name + " " + a.flast_name,
-              value: a.id,
-              /* value: a.id, */
-              key: a.id+index,
-            };
-          });
-          setPersonList(data);
+            let response = await Axios.get(API_URL + `/person/person/`);
+            let data = response.data.results;
+            data = data.map((a, index) => {
+                return {
+                    label: a.first_name + " " + a.flast_name,
+                    value: a.id,
+                    /* value: a.id, */
+                    key: a.id + index,
+                };
+            });
+            setPersonList(data);
         } catch (e) {
-          console.log(e);
+            console.log(e);
         }
     };
 
 
-    const getCollaborators = async (values = null) =>{
+    const getCollaborators = async (values = null) => {
         setCollaboratorList([])
         setLoading(true);
         let QueryData = {};
-        if(values && values.collaborator){
+        if (values && values.collaborator) {
             QueryData['collaborator'] = values.collaborator
         }
-        if(values && values.department){
+
+        if (values && values.company) {
+            QueryData['node'] = values.company.toString();
+        }
+
+        if (values && values.department) {
             QueryData['department'] = values.department
         }
-        if(values && values.job){
+        if (values && values.job) {
             QueryData['job'] = values.job
         }
-        if(values && values.date_of_admission){
+        if (values && values.date_of_admission) {
             QueryData['date_of_admission'] = values.date_of_admission
         }
         console.log(QueryData)
         try {
-            let response = await Axios.post(API_URL+`/person/employee-report`,QueryData)
+            let response = await Axios.post(API_URL + `/person/employee-report`, QueryData)
             let data = response.data;
             console.log(data.lenght)
-            if(data.lenght === 1){
+            if (data.lenght === 1) {
                 data = [data];
             }
             setCollaboratorList(data);
         } catch (error) {
             console.log(error);
-        }finally{
+        } finally {
             setLoading(false)
-        }
-    }
-
-    const getJobs = async (idDepartment) => {
-        try {
-            let response = await Axios.get(API_URL+`/business/department/${idDepartment}/job_for_department/`)
-            let data = response.data;
-            console.log(data);
-            data = data.map((item,index) => {
-                return {
-                    label: item.name,
-                    value: item.id,
-                    key: item.id+index,
-                  };
-            })
-            SetJobList(data)
-        } catch (error) {
-            console.log(error);
         }
     }
 
     const getDepartaments = async () => {
         try {
-            let response = await Axios.get(API_URL+`/business/department/`)
+            let response = await Axios.get(API_URL + `/business/department/`)
             let data = response.data.results;
             data = data.map((a, index) => {
                 let item = {
                     label: a.name,
                     value: a.id,
-                    key: a.id+index,
+                    key: a.id + index,
                 };
                 return item;
             });
@@ -205,6 +222,7 @@ const CollaboratorsReport = (props) => {
     const filterReport = async (values) => {
         values['date_of_admission'] = dateOfAdmission;
         console.log(values);
+        setCompany(values.company);
         setCollaborator(values.collaborator);
         setDepartment(values.department);
         setJob(values.job);
@@ -213,13 +231,13 @@ const CollaboratorsReport = (props) => {
 
     const changeDate = (date, dateString) => {
         SetDateOfAdmission(dateString);
-      };
+    };
 
-    useEffect(() =>{
+    useEffect(() => {
         getCollaborators();
         getAllPersons();
         getDepartaments();
-    },[route])
+    }, [route])
 
     return (
         <>
@@ -228,7 +246,7 @@ const CollaboratorsReport = (props) => {
                     <Title level={5}>
                         Colaboradores
                     </Title>
-                    <hr/>
+                    <hr />
                 </Col>
                 <Col>
                     <Form
@@ -241,54 +259,28 @@ const CollaboratorsReport = (props) => {
                     >
                         <Row gutter={[24, 8]}>
                             <Col>
-                                <Form.Item
-                                    key="collaborator"
-                                    name="collaborator"
-                                    label="Colaborador"
-                                >
-                                    <Select
-                                        key="selectPerson"
-                                        showSearch
-                                        /* options={personList} */
-                                        style={{ width: 150 }}
-                                        allowClear
-                                        optionFilterProp="children"
-                                        filterOption={(input, option) =>
-                                            option.children
-                                                .toLowerCase()
-                                                .indexOf(input.toLowerCase()) >= 0
-                                        }
-                                        filterSort={(optionA, optionB) =>
-                                            optionA.children
-                                                .toLowerCase()
-                                                .localeCompare(optionB.children.toLowerCase())
-                                        }
-                                    >
-                                        {personList
-                                            ? personList.map((item) => {
-                                                return (
-                                                    <Option key={item.key} value={item.value}>
-                                                        {item.label}
-                                                    </Option>
-                                                );
-                                            })
-                                            : null}
-                                    </Select>
-                                </Form.Item>
+                                <SelectCollaborator style={{ width: 150 }} />
                             </Col>
                             <Col>
-                                <Form.Item key="department" name="department" label="Departamento">
-                                    <Select options={departmentList} style={{ width: 150 }} onChange={getJobs} allowClear />
-                                </Form.Item>
+                                <SelectCompany onChange={onChangeCompany} style={{ width: 150 }}
+                                    name="company"
+                                    label="Empresa"
+                                />
                             </Col>
                             <Col>
-                                <Form.Item
-                                    key="job"
+                                <SelectDepartment
+                                    onChange={onChangeDepartment}
+                                    name="department"
+                                    companyId={companyId}
+                                />
+                            </Col>
+                            <Col>
+                                <SelectJob
+                                    departmentId={departmentId}
                                     name="job"
                                     label="Puesto"
-                                >
-                                    <Select style={{ width: 150 }} options={jobList}  allowClear/>
-                                </Form.Item>
+                                    style={{ maxWidth: 150 }}
+                                />
                             </Col>
                             <Col>
                                 <Form.Item key="date_of_admission" name="date_of_admission" label="Fecha">
@@ -305,6 +297,7 @@ const CollaboratorsReport = (props) => {
                                     }}
                                     key="buttonFilter"
                                     htmlType="submit"
+                                    loading={loading}
                                 >
                                     Filtrar
                                 </Button>
@@ -332,6 +325,7 @@ const CollaboratorsReport = (props) => {
                         dataSource={collaboratorList}
                         key="tableHolidays"
                         columns={columns}
+                        loading={loading}
                     ></Table>
                 </Col>
             </Row>

@@ -46,11 +46,21 @@ const HolidaysReport = (props) => {
             title: "Empresa",
             dataIndex: "business",
             key: "business",
+            render: (bussines) => {
+                return (
+                    bussines == 'N/A' ? '' : bussines
+                )
+            }
         },
         {
             title: "Departamento",
             dataIndex: "department",
             key: "department",
+            render: (department) => {
+                return (
+                    department == 'N/A' ? '' : department
+                )
+            }
         },
         {
             title: "Días solicitados",
@@ -100,6 +110,7 @@ const HolidaysReport = (props) => {
         department = null,
         status = null
     ) => {
+        setHolidayList([]);
         setLoading(true);
         try {
             let url = `/person/vacation/?`;
@@ -110,10 +121,10 @@ const HolidaysReport = (props) => {
                 url += `status=${status}&`;
             }
             if (company) {
-                url += `person__job_department__job__unit__id=${company}&`;
+                url += `person__job__department__node__id=${company}&`;
             }
             if (department) {
-                url += `person__job_department__department__id=${department}&`;
+                url += `person__job__department__id=${department}&`;
             }
 
             let response = await Axios.get(API_URL + url);
@@ -203,12 +214,10 @@ const HolidaysReport = (props) => {
                     >
                         <Row gutter={[24, 8]}>
                             <Col>
-                                < SelectCollaborator name="collaborator" />
+                                < SelectCollaborator name="collaborator" style={{ width: 150 }} />
                             </Col>
                             <Col>
-                                <Form.Item key="company" name="company" label="Empresa">
-                                    <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
-                                </Form.Item>
+                                <SelectCompany name="company" onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
                             </Col>
                             <Col>
                                 <SelectDepartment
