@@ -74,6 +74,11 @@ const GroupAdd = () => {
     { name: "Eventos", module: "Comunicacion", value: "people.event" },
     /*Solicitudes */
     { name: "Préstamos", module: "Solicitudes", value: "people.loan" },
+    {
+      name: "Configurar Préstamos",
+      module: "Solicitudes",
+      value: "people.loanconfigure",
+    },
     { name: "Vacaciones", module: "Solicitudes", value: "people.vacation" },
     { name: "Permisos", module: "Solicitudes", value: "people.permit" },
     { name: "Incapacidad", module: "Solicitudes", value: "people.incapacity" },
@@ -110,11 +115,11 @@ const GroupAdd = () => {
     },
     /*Solicitudes */
     //Prestamos
-    {
-      name: "Configuración de préstamos",
-      module: "Prestamos",
-      value: "people.loan.function.configure_loan",
-    },
+    // {
+    //   name: "Configuración de préstamos",
+    //   module: "Prestamos",
+    //   value: "people.loan.function.configure_loan",
+    // },
     {
       name: "Aprobar préstamo",
       module: "Prestamos",
@@ -201,7 +206,13 @@ const GroupAdd = () => {
   const onFinish = (values) => {
     data = values;
     data.perms = perms;
-    let lst = perms.concat(permsFunction);
+    let lst = [];
+    if (getperms === true) {
+      lst = perms.concat(arrayFunctions);
+    } else {
+      lst = perms.concat(permsFunction);
+    }
+
     data.perms = lst;
     // console.log("todos los permisos", data.perms);
     if (!edit) {
