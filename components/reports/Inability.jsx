@@ -272,9 +272,8 @@ const InabilityReport = (props) => {
                                 < SelectCollaborator name="collaborator" style={{ width: 150 }} />
                             </Col>
                             <Col>
-                                <Form.Item key="company" name="company" label="Empresa">
-                                    <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
-                                </Form.Item>
+
+                                <SelectCompany name="company" label="Empresa" onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
                             </Col>
                             <Col>
                                 <SelectDepartment style={{ width: 100 }}

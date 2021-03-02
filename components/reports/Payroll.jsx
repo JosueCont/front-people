@@ -7,6 +7,7 @@ import moment from 'moment';
 import { DownloadOutlined } from '@ant-design/icons'
 import SelectCompany from '../selects/SelectCompany';
 import SelectDepartment from '../selects/SelectDepartment';
+import SelectJob from '../selects/SelectJob';
 import SelectCollaborator from '../selects/SelectCollaboratorItemForm';
 
 
@@ -14,36 +15,49 @@ import SelectCollaborator from '../selects/SelectCollaboratorItemForm';
 const PayrollReport = (props) => {
     const route = useRouter();
     const { Option } = Select;
-    const {Title, Text} = Typography; 
+    const { Title, Text } = Typography;
     const [form] = Form.useForm();
 
     const [loading, setLoading] = useState(false)
     const [personList, setPersonList] = useState([]);
     const [payrollList, setPayrollList] = useState([]);
     const [jobList, setJobList] = useState([])
-    
+
     /* Variables para el filtro */
     const [collaborator, setCollaborator] = useState(null);
     const [code, setCode] = useState(null);
-    const [companyId ,setCompanyId] = useState(null);
-    
+    const [companyId, setCompanyId] = useState(null);
+
     const [departmentId, setDepartmentId] = useState(null);
     const [job, setJob] = useState(null);
-    
+
 
     /* Columnas de tabla */
     const columns = [
         {
-            title: "Núm. de trabajador",
+            title: "Num. trabajador",
             dataIndex: "code",
             key: "code",
-            
+
         },
         {
-            title: "Nombre",
-            dataIndex: "Empresa",
-            key: "Empresa",
-            
+            title: "Colaborador",
+            dataIndex: "person",
+            key: "collaborator",
+            render: (person) => {
+                return (
+                    <>
+                        {person.first_name ? person.first_name : null}  {person.flast_name ? person.flast_name : null}  {person.mlast_name ? person.mlast_name : null}
+                    </>
+                )
+            }
+
+        },
+        {
+            title: "Empresa",
+            dataIndex: "node",
+            key: "node"
+
         },
         {
             title: "Departamento",
@@ -82,9 +96,14 @@ const PayrollReport = (props) => {
             key: "amount",
         },
         {
-            title: "Descuento",
-            dataIndex: "Dias disponibles",
-            key: "Dias disponibles",
+            title: "Dias trabajados",
+            dataIndex: "number_of_days_paid",
+            key: "number_of_days_paid",
+            render: (number) => {
+                return (
+                    parseInt(number)
+                )
+            }
         },
         {
             title: "IMSS",
@@ -105,38 +124,25 @@ const PayrollReport = (props) => {
             }
         },
     ];
-    
-    const getJobs = async () => {
-        try {
-            let response = await Axios.get(API_URL+`/business/department/${departmentId}/job_for_department/`)
-            let data = response.data;
-            console.log(data);
-            data = data.map((item,index) => {
-                return {
-                    label: item.name,
-                    value: item.id,
-                    key: item.id+index,
-                  };
-            })
-            setJobList(data)
-        } catch (error) {
-            console.log(error);
-        }
-    }
+
 
     const onChangeCompany = (val) => {
         form.setFieldsValue({
             department: null,
-        });
+            job: null
+        })
         setCompanyId(val);
     };
 
     const onChangeDepartment = (val) => {
+        console.log('departament', val);
         form.setFieldsValue({
-            job: null,
+            job: null
         });
         setDepartmentId(val);
     };
+
+
 
     const filterReport = (values) => {
         setCollaborator(values.collaborator);
@@ -175,14 +181,14 @@ const PayrollReport = (props) => {
             if (department) {
                 info['department'] = department;
             }
-            if(job) {
+            if (job) {
                 info['job'] = job;
             }
 
-            let response = await Axios.post(API_URL+`/payroll/payroll-voucher/get_report/`, info);
+            let response = await Axios.post(API_URL + `/payroll/payroll-voucher/get_report/`, info);
             console.log(response);
             let data = response.data;
-            data = data.map((item)=>{
+            data = data.map((item) => {
                 item.key = item.id;
                 return item;
             })
@@ -215,13 +221,13 @@ const PayrollReport = (props) => {
             if (departmentId) {
                 dataId.department = departmentId;
             }
-            if(job) {
+            if (job) {
                 dataId.job = job;
             }
         }
 
         try {
-            let response = await Axios.post(API_URL+`/payroll/payroll-voucher/export_report/`, dataId);
+            let response = await Axios.post(API_URL + `/payroll/payroll-voucher/export_report/`, dataId);
             const type = response.headers["content-type"];
             const blob = new Blob([response.data], {
                 type: type,
@@ -242,9 +248,6 @@ const PayrollReport = (props) => {
         getPatroll()
     }, [])
 
-    useEffect(() => {
-        getJobs()
-    }, [departmentId])
 
     return (
         <>
@@ -258,7 +261,7 @@ const PayrollReport = (props) => {
                 <Col>
                     <Form
                         name="filter"
-                        fomr={form}
+                        form={form}
                         layout="vertical"
                         key="formFilter"
                         className="formFilterReports"
@@ -266,30 +269,33 @@ const PayrollReport = (props) => {
                     >
                         <Row gutter={[24, 8]}>
                             <Col>
-                                < SelectCollaborator name="collaborator" />
+                                <SelectCollaborator name="collaborator" style={{ width: 150 }} />
                             </Col>
                             <Col>
                                 <Form.Item key="numUSer" name="code" label="Num. trabajador">
-                                    <Input style={{ width: 120 }} />
+                                    <Input style={{ width: 120 }} allowClear />
                                 </Form.Item>
                             </Col>
                             <Col>
-                                <Form.Item key="company" name="company" label="Empresa">
-                                    <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
-                                </Form.Item>
+                                <SelectCompany onChange={onChangeCompany} style={{ width: 150 }}
+                                    key="company"
+                                    name="company"
+                                    label="Empresa"
+                                />
                             </Col>
                             <Col>
                                 <SelectDepartment
-                                onChange={onChangeDepartment}
+                                    onChange={onChangeDepartment}
                                     name="department"
                                     companyId={companyId}
                                     key="selectDepartament"
                                 />
                             </Col>
                             <Col>
-                                <Form.Item key="job" name="job" label="Puesto">
-                                    <Select style={{ width: 120 }} options={jobList} allowClear/>
-                                </Form.Item>
+                                <SelectJob name="job" departmentId={departmentId} label="Puesto" style={{ width: 120 }} />
+                                {/* <Form.Item key="job" name="job" label="Puesto">
+                                    <Select style={{ width: 120 }} options={jobList} allowClear />
+                                </Form.Item> */}
                             </Col>
                             <Col style={{ display: "flex" }}>
                                 <Button
@@ -301,6 +307,7 @@ const PayrollReport = (props) => {
                                     }}
                                     key="buttonFilter"
                                     htmlType="submit"
+                                    loading={loading}
                                 >
                                     Filtrar
                 </Button>
@@ -329,6 +336,7 @@ const PayrollReport = (props) => {
                         key="tableHolidays"
                         columns={columns}
                         scroll={{ x: 1300 }}
+                        loading={loading}
                     ></Table>
                 </Col>
             </Row>
