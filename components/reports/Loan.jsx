@@ -212,10 +212,10 @@ const LoanReport = (props) => {
                 url += `type=${type}&`;
             }
             if (periodicity) {
-                url += `periodicity=${periodicity}`
+                url += `periodicity=${periodicity}&`
             }
             if (timestamp__gte && timestamp__lte) {
-                url += `timestamp__gte=${timestamp__gte}&timestamp__lte=${timestamp__lte}`;
+                url += `timestamp__gte=${timestamp__gte}&timestamp__lte=${timestamp__lte}&`;
             }
 
             let response = await Axios.get(url);
@@ -233,7 +233,8 @@ const LoanReport = (props) => {
         setPerson_id(values.person__id);
         setType(values.type);
         setPeriodicity(values.periodicity);
-        
+        setLendingList([]);
+
         let d1 = null;
         let d2 = null;
         if (dateLoan) {
@@ -269,7 +270,7 @@ const LoanReport = (props) => {
                     >
                         <Row gutter={[24, 8]}>
                             <Col>
-                                <SelectCollaborator name="person__id" />
+                                <SelectCollaborator name="person__id" style={{ width: 150 }} />
                             </Col>
                             <Col>
                                 <Form.Item key="type" name="type" label="Tipo">
