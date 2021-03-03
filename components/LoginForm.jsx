@@ -11,7 +11,7 @@ import {
 const { Text } = Typography;
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { LOGIN_URL, APP_ID } from "../config/config";
+import { LOGIN_URL, API_URL, APP_ID } from "../config/config";
 import Axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
@@ -23,6 +23,25 @@ const LoginForm = (props) => {
     const onFinish = (values) => {
         login(values.email, values.password);
     };
+
+    const saveJWT = async (jwt) => {
+        try {
+            let data = {
+                khonnect_id: jwt.user_id,
+                jwt: jwt
+            }
+            let response = await Axios.post(API_URL + "/person/person/save_person_jwt/", data)
+            console.log('login-response', response);
+            if (response.status == 200) {
+                return true
+            } else {
+                return false;
+            }
+        } catch (error) {
+            console.log('login-response-error', error);
+            return false;
+        }
+    }
 
     const login = async (email, password) => {
         try {
@@ -41,10 +60,21 @@ const LoginForm = (props) => {
                     if (response.status === 200) {
                         let token = jwt_decode(response.data.token);
                         if (token) {
-                            message.success("Acceso correcto.");
-                            Cookies.set("token", token);
-                            setLoading(false);
-                            router.push({ pathname: "/home" });
+                            saveJWT(token).then(function (responseJWT) {
+                                if (responseJWT) {
+                                    message.success("Acceso correcto.");
+                                    Cookies.set("token", token);
+                                    setLoading(false);
+                                    router.push({ pathname: "/home" });
+                                } else {
+                                    message.error("Error al guardar guardar Token de usuario");
+                                    setLoading(false);
+                                    router.push({ pathname: "/" });
+                                }
+                            })
+                            /* console.log('responseJWT', responseJWT) */
+
+
                         }
                     } else {
                         setLoading(false);
@@ -77,7 +107,7 @@ const LoginForm = (props) => {
                     initialValues={{ remember: true }}
                     onFinish={onFinish}
                 >
-                     <Form.Item name="email" rules={[ruleRequired]} label={'Correo electrónico'} labelAlign={'left'} className="font-color-khor">
+                    <Form.Item name="email" rules={[ruleRequired]} label={'Correo electrónico'} labelAlign={'left'} className="font-color-khor">
                         <Input
                             style={{ marginTop: "5px" }}
                             placeholder="Correo electrónico"
@@ -102,7 +132,7 @@ const LoginForm = (props) => {
                         />
                     )}
                     <Form.Item className={'font-color-khor'}>
-                        <b>¿Olvidaste tu contraseña?  </b> <span onClick={() => props.setRecoverPasswordShow(true)} className={'pointer'} style={{ fontWeight:'500', textDecoration: 'underline' }}>  haz click aquí </span>
+                        <b>¿Olvidaste tu contraseña?  </b> <span onClick={() => props.setRecoverPasswordShow(true)} className={'pointer'} style={{ fontWeight: '500', textDecoration: 'underline' }}>  haz click aquí </span>
                     </Form.Item>
                     <Form.Item>
                         <Button
