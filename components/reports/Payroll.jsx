@@ -151,7 +151,7 @@ const PayrollReport = (props) => {
         setDepartmentId(values.department);
         setJob(values.job);
         console.log(values);
-        getPatroll(values.collaborator, values.code, values.company, values.department, values.job)
+        getPayroll(values.collaborator, values.code, values.company, values.department, values.job)
         /* let d1 = null;
         let d2 = null;
         if (dateLoan) {
@@ -164,7 +164,7 @@ const PayrollReport = (props) => {
     }
 
 
-    const getPatroll = async (collaborator = null, code = null, company = null, department = null, job = null) => {
+    const getPayroll = async (collaborator = null, code = null, company = null, department = null, job = null) => {
         setLoading(true);
         setPayrollList([])
         try {
@@ -176,7 +176,7 @@ const PayrollReport = (props) => {
                 info['code'] = code;
             }
             if (company) {
-                info['company'] = company;
+                info['node'] = company;
             }
             if (department) {
                 info['department'] = department;
@@ -245,7 +245,7 @@ const PayrollReport = (props) => {
 
     useEffect(() => {
         /* getAllPersons(); */
-        getPatroll()
+        getPayroll()
     }, [])
 
 
