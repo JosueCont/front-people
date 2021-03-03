@@ -74,6 +74,18 @@ const PermissionsReport = (props) => {
             }
         },
         {
+            title: "Estatus",
+            dataIndex: "status",
+            key: "status",
+            render: (status) => {
+                return (
+                    <>
+                        { status && status == 1 ? 'Pendiente' : status && status == 2 ? 'Aprobado' : 'Rechazado'}
+                    </>
+                )
+            }
+        },
+        {
             title: "Acciones",
             dataIndex: "actions",
             key: "actions",
@@ -81,6 +93,7 @@ const PermissionsReport = (props) => {
                 return (<DownloadOutlined onClick={() => download(item)} />)
             }
         },
+
     ];
 
     const filterPermission = async (values) => {
@@ -193,9 +206,7 @@ const PermissionsReport = (props) => {
                                 < SelectCollaborator name="collaborator" style={{ width: 150 }} />
                             </Col>
                             <Col>
-                                <Form.Item key="company" name="company" label="Empresa">
-                                    <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
-                                </Form.Item>
+                                <SelectCompany name="company" label="Empresa" onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
                             </Col>
                             <Col>
                                 <SelectDepartment
