@@ -145,7 +145,7 @@ const Incapacity = () => {
                 <Row justify="space-between" style={{ paddingBottom: 20 }}>
                     <Col>
                         <Form name="filter" onFinish={filter} layout="vertical" key="formFilter" className={'formFilter'}>
-                            
+
                             <Row gutter={[24, 8]}>
                                 <Col>
                                     <Form.Item key="collaborator" name="collaborator" label="Colaborador">
@@ -172,9 +172,7 @@ const Incapacity = () => {
                                     </Form.Item>
                                 </Col>
                                 <Col>
-                                    <Form.Item key="company" name="company" label="Empresa">
-                                        <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
-                                    </Form.Item>
+                                    <SelectCompany name="company" label="Empresa" onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
                                 </Col>
                                 <Col>
                                     <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment" />
@@ -186,17 +184,17 @@ const Incapacity = () => {
                                 </Col>
                                 <Col style={{ display: 'flex' }}>
                                     <Button
-                                    style={{
-                                        background: "#fa8c16",
-                                        fontWeight: "bold",
-                                        color: "white",
-                                        marginTop:'auto'
-                                    }}
-                                    key="buttonFilter"
-                                    htmlType="submit"
-                                    loading={loading}
-                                >
-                                    <SearchOutlined/>
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: 'auto'
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                        loading={loading}
+                                    >
+                                        <SearchOutlined />
                                     Filtrar
                                 </Button>
                                 </Col>

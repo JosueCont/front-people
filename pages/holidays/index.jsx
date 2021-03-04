@@ -186,9 +186,7 @@ const Holidays = () => {
                                     </Form.Item>
                                 </Col>
                                 <Col>
-                                    <Form.Item key="company_select" name="company" label="Empresa">
-                                        <SelectCompany onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
-                                    </Form.Item>
+                                    <SelectCompany name="company" label="Empresa" onChange={onChangeCompany} key="SelectCompany" style={{ width: 150 }} />
                                 </Col>
                                 <Col>
                                     <SelectDepartment
@@ -207,7 +205,7 @@ const Holidays = () => {
                                         />
                                     </Form.Item>
                                 </Col>
-                                <Col style={{ display:'flex' }}>
+                                <Col style={{ display: 'flex' }}>
                                     <Button
                                         style={{
                                             background: "#fa8c16",
@@ -219,7 +217,7 @@ const Holidays = () => {
                                         htmlType="submit"
                                         loading={searching}
                                     >
-                                        <SearchOutlined/> Filtrar
+                                        <SearchOutlined /> Filtrar
                                     </Button>
                                 </Col>
                             </Row>
@@ -236,13 +234,13 @@ const Holidays = () => {
                                 background: "#fa8c16",
                                 fontWeight: "bold",
                                 color: "white",
-                                marginTop:'auto'
+                                marginTop: 'auto'
                             }}
                             onClick={() => route.push("holidays/new")}
                             key="btn_new"
                         >
                             <PlusOutlined />
-              
+
               Agregar vacaciones
             </Button>
                     </Col>
