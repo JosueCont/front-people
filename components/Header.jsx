@@ -146,68 +146,37 @@ const headerCustom = (props) => {
                     >
                         Reportes
           </Menu.Item>
-                    {/* <SubMenu key="8" title="Reportes">
-            <Menu.Item
-              key="8.1"
-              onClick={() => router.push({ pathname: "/reports/collaborator" })}
-            >
-              Empleados
-            </Menu.Item>
-            <Menu.Item key="8.2">Nómina</Menu.Item>
-            <Menu.Item
-              key="8.3"
-              onClick={() =>
-                router.push({ pathname: "/reports/payrollDepartament" })
-              }
-            >
-              Nómina por departamento/área
-            </Menu.Item>
-            <Menu.Item
-              key="8.4"
-              onClick={() =>
-                router.push({ pathname: "/reports/loan_tracking" })
-              }
-            >
-              Seguimiento de préstamos
-            </Menu.Item>
-            <Menu.Item
-              key="8.5"
-              onClick={() => router.push({ pathname: "/reports/holidays" })}
-            >
-              Solicitudes de vacaciones
-            </Menu.Item>
-            <Menu.Item
-              key="8.6"
-              onClick={() => router.push({ pathname: "/reports/inability" })}
-            >
-              Solicitudes de incapacidad
-            </Menu.Item>
-          </SubMenu> */}
                     <SubMenu key="7" title="Solicitudes">
                         <Menu.Item
                             key="7.1"
                             onClick={() => router.push({ pathname: "/lending" })}
                         >
                             Préstamos
-            </Menu.Item>
+                        </Menu.Item>
                         <Menu.Item
                             key="7.2"
                             onClick={() => router.push({ pathname: "/holidays" })}
                         >
                             Vacaciones
-            </Menu.Item>
+                        </Menu.Item>
                         <Menu.Item
                             key="7.3"
                             onClick={() => router.push({ pathname: "/permission" })}
                         >
                             Permisos
-            </Menu.Item>
+                        </Menu.Item>
                         <Menu.Item
                             key="7.4"
                             onClick={() => router.push({ pathname: "/incapacity" })}
                         >
                             Incapacidad
-            </Menu.Item>
+                        </Menu.Item>
+                        <Menu.Item
+                            key="7.5"
+                            onClick={() => router.push({ pathname: "/bank_accounts" })}
+                        >
+                            Cuentas bancarias
+                        </Menu.Item>
                     </SubMenu>
                     <Menu.Item
                         key="9"
