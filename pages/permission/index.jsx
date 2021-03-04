@@ -188,13 +188,13 @@ const Permission = () => {
                                     </Form.Item>
                                 </Col>
                                 <Col>
-                                    <Form.Item key="company" name="company" label="Empresa">
-                                        <SelectCompany
-                                            onChange={onChangeCompany}
-                                            key="SelectCompany"
-                                            style={{ width: 150 }}
-                                        />
-                                    </Form.Item>
+                                    <SelectCompany
+                                        name="company"
+                                        label="Empresa"
+                                        onChange={onChangeCompany}
+                                        key="SelectCompany"
+                                        style={{ width: 150 }}
+                                    />
                                 </Col>
                                 <Col>
                                     <SelectDepartment
@@ -215,17 +215,17 @@ const Permission = () => {
                                 </Col>
                                 <Col style={{ display: 'flex' }}>
                                     <Button
-                                    style={{
-                                        background: "#fa8c16",
-                                        fontWeight: "bold",
-                                        color: "white",
-                                        marginTop: 'auto'
-                                    }}
-                                    key="buttonFilter"
-                                    htmlType="submit"
-                                    loading={sending}
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: 'auto'
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                        loading={sending}
                                     >
-                                        <SearchOutlined/> Filtrar
+                                        <SearchOutlined /> Filtrar
                                     </Button>
                                 </Col>
                             </Row>
@@ -237,7 +237,7 @@ const Permission = () => {
                                 background: "#fa8c16",
                                 fontWeight: "bold",
                                 color: "white",
-                                marginTop:'auto'
+                                marginTop: 'auto'
                             }}
                             onClick={() => route.push("/permission/new")}
                             key="btn_new"
