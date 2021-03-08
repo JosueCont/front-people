@@ -2491,6 +2491,24 @@ const personDetailForm = () => {
                           <Input type="number" />
                         </Form.Item>
                       </Col>
+                      <Col lg={6} xs={22} offset={1}>
+                        <Form.Item
+                          name="interbank_key"
+                          label="Número de tarjeta"
+                          rules={[ruleRequired]}
+                        >
+                          <Input type="number" />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={6} xs={22} offset={1}>
+                        <Form.Item
+                          name="interbank_key"
+                          label="Fecha de vencimiento"
+                          rules={[ruleRequired]}
+                        >
+                          <Input type="number" />
+                        </Form.Item>
+                      </Col>
                     </Row>
                     <Row justify={"end"}>
                       <Form.Item>

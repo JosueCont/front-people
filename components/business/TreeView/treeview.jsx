@@ -16,7 +16,7 @@ import TreeItem from "@material-ui/lab/TreeItem";
 import Collapse from "@material-ui/core/Collapse";
 import { useSpring, animated } from "react-spring/web.cjs"; // web.cjs is required for IE 11 support
 import { TreeViewContent } from "./TreeView.style";
-import ModalCreateBusiness from "../../modal/createBusiness";
+import modalCreateUpdateBusiness from "../../modal/createBusiness";
 import ModalDeleteBusiness from "../../modal/deleteBusiness";
 import IconButton from "./iconbutton";
 import { Tooltip, Modal, Button, Form, Select, Input, message } from "antd";
@@ -32,6 +32,8 @@ const NodeTreeView = () => {
   const [formBusiness] = Form.useForm();
   const [business, setBusiness] = useState([]);
   const [creUp, setCreup] = useState(false);
+  const [nameNode, setNameNode] = useState("");
+  const [idNodeUpdate, setIdNodeUpdate] = useState(0);
 
   useEffect(() => {
     getNodes();
@@ -56,7 +58,6 @@ const NodeTreeView = () => {
           return { label: a.name, value: a.id };
         });
         setBusiness(bus);
-        console.log("Empresas-->>> ", bus);
       })
       .catch((e) => {
         setBusiness([]);
@@ -139,7 +140,6 @@ const NodeTreeView = () => {
   let level = 0;
 
   const NodeTree = ({ nodesArray, parent }) => {
-    console.log("Parent->> ", parent);
     const classes = useStyles();
     return (
       <>
@@ -154,14 +154,12 @@ const NodeTreeView = () => {
               >
                 <IconButton className="addButton" color="secondary">
                   <Tooltip placement="top" title="Eliminar">
-                    <DeleteOutlined
-                      onClick={() => modalDelete(true, p.value)}
-                    />
+                    <DeleteOutlined onClick={() => modalDelete(true, p)} />
                   </Tooltip>
                   <Tooltip placement="top" title="Editar">
                     <EditOutlined
                       onClick={() =>
-                        modalCreate({
+                        modalCreateUpdate({
                           bool: true,
                           edit: p,
                           parent: parent,
@@ -179,7 +177,7 @@ const NodeTreeView = () => {
                       style={{ margin: "1%" }}
                       nodeId={0}
                       onHandleClickItem={() =>
-                        modalCreate({
+                        modalCreateUpdate({
                           bool: false,
                           parent: p.value,
                           level: level + 1,
@@ -195,7 +193,7 @@ const NodeTreeView = () => {
                     nodeId={0}
                     label={"Agregar empresa"}
                     onHandleClickItem={() =>
-                      modalCreate({ bool: false, parent: p.value })
+                      modalCreateUpdate({ bool: false, parent: p.value })
                     }
                   />
                 )}
@@ -207,9 +205,8 @@ const NodeTreeView = () => {
     );
   };
 
-  const modalCreate = (value) => {
+  const modalCreateUpdate = (value) => {
     formBusiness.resetFields();
-    console.log("EDIT-->>> ", value);
     setCreup(value.bool);
     if (value.parent > 0 && value.bool == false) {
       formBusiness.setFieldsValue({
@@ -217,12 +214,16 @@ const NodeTreeView = () => {
       });
     } else {
       if (value.parent > 0 && value.bool) {
+        setIdNodeUpdate(value.edit.value);
+        setNameNode(value.edit.title);
         formBusiness.setFieldsValue({
           name: value.edit.title,
           parent: value.parent,
         });
       }
       if (value.parent == undefined && value.bool) {
+        setIdNodeUpdate(value.edit.value);
+        setNameNode(value.edit.title);
         formBusiness.setFieldsValue({
           name: value.edit.title,
           parent: value.parent,
@@ -231,9 +232,11 @@ const NodeTreeView = () => {
     }
     visibleCreate ? setVisibleCreate(false) : setVisibleCreate(true);
   };
+
   const modalDelete = (value, item) => {
-    setNodeId(item);
+    if (item != undefined && item != "") setNodeId(item.value);
     setVisibleDelete(value);
+    if (item != undefined && item != "") setNameNode(item.title);
     if (!value) {
       getNodes();
     }
@@ -244,18 +247,37 @@ const NodeTreeView = () => {
   };
 
   const createBusiness = (value) => {
-    Axios.post(API_URL + "/business/node/", value)
-      .then(function (response) {
-        Nodos();
-        getNodes();
-        setVisibleCreate(false);
-        formBusiness.resetFields();
-        message.success("Guardado correctamente.");
-      })
-      .catch(function (error) {
-        message.success("Ocurrio un error, intente de nuevo.");
-        console.log(error);
-      });
+    if (idNodeUpdate > 0) {
+      Axios.put(API_URL + "/business/node/" + idNodeUpdate + "/", value)
+        .then(function (response) {
+          Nodos();
+          getNodes();
+          setVisibleCreate(false);
+          formBusiness.resetFields();
+          message.success("Actualizado correctamente.");
+          setIdNodeUpdate(0);
+        })
+        .catch(function (error) {
+          message.success("Ocurrio un error, intente de nuevo.");
+          setIdNodeUpdate(0);
+          console.log(error);
+        });
+    } else {
+      Axios.post(API_URL + "/business/node/", value)
+        .then(function (response) {
+          Nodos();
+          getNodes();
+          setVisibleCreate(false);
+          formBusiness.resetFields();
+          message.success("Guardado correctamente.");
+          setIdNodeUpdate(0);
+        })
+        .catch(function (error) {
+          message.success("Ocurrio un error, intente de nuevo.");
+          setIdNodeUpdate(0);
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -276,7 +298,7 @@ const NodeTreeView = () => {
                 nodeId={0}
                 label="Agregar empresa"
                 onHandleClickItem={() =>
-                  modalCreate({ bool: false, parent: 0 })
+                  modalCreateUpdate({ bool: false, parent: 0 })
                 }
               />
             </>
@@ -286,13 +308,15 @@ const NodeTreeView = () => {
               style={{ margin: "1%" }}
               nodeId={0}
               label="Agregar empresa"
-              onHandleClickItem={() => modalCreate({ bool: false, parent: 0 })}
+              onHandleClickItem={() =>
+                modalCreateUpdate({ bool: false, parent: 0 })
+              }
             />
           )}
         </TreeView>
       </TreeViewContent>
       <Modal
-        title={creUp ? "Actualizar empresa" : "Agregar empresa"}
+        title={creUp ? `Actualizar ${nameNode}` : "Agregar empresa"}
         visible={visibleCreate}
         onCancel={() => closeDialogCreate()}
         footer={[
@@ -327,7 +351,7 @@ const NodeTreeView = () => {
             label="Descripción"
             rules={[{ required: true, message: "Ingresa una descripción" }]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} showCount maxLength={200} />
           </Form.Item>
           <Form.Item name="parent" label="Nodo padre">
             <Select showSearch placeholder="Empresa" options={business} />
@@ -338,6 +362,7 @@ const NodeTreeView = () => {
         close={modalDelete}
         node={nodeId}
         visible={visibleDelete}
+        name={nameNode}
       />
     </div>
   );

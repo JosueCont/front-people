@@ -267,7 +267,12 @@ const businessForm = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Empresas</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => (treeTable ? "" : setTreeTable(true))}
+        >
+          Empresas
+        </Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row justify={"end"}>
@@ -290,7 +295,7 @@ const businessForm = () => {
             {treeTable ? (
               <Button onClick={changeView}>
                 <NodeExpandOutlined />
-                Arbol
+                Vista de árbol
               </Button>
             ) : (
               <Button onClick={changeView}>
