@@ -239,13 +239,12 @@ const UploadPayroll = () => {
                                     </Form.Item>
                                 </Col>
                                 <Col>
-                                    <Form.Item key="company" name="company" label="Empresa">
-                                        <SelectCompany
-                                            onChange={onChangeCompany}
-                                            key="SelectCompany"
-                                            style={{ width: 150 }}
-                                        />
-                                    </Form.Item>
+                                    <SelectCompany
+                                        name="company" label="Empresa"
+                                        onChange={onChangeCompany}
+                                        key="SelectCompany"
+                                        style={{ width: 150 }}
+                                    />
                                 </Col>
                                 <Col>
                                     <SelectDepartment
