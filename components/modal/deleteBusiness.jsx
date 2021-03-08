@@ -24,7 +24,7 @@ const modalDeleteBusiness = (props) => {
 
   return (
     <Modal
-      title="Eliminar empresa "
+      title={`Eliminar ${props.name}`}
       visible={props.visible}
       footer={[
         <Button key="back" onClick={closeDialog}>

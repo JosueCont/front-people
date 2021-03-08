@@ -15,7 +15,6 @@ const TreeViewContent = styled.div`
     > div {
       > div {
         font-size: 14px;
-        font-weight: 700;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
