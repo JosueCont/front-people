@@ -430,12 +430,13 @@ const personDetailForm = () => {
     value.is_active = isActive;
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
-    if (value.groups) delete value["groups"];
+    // if (value.groups) delete value["groups"];
     updatePerson(value);
   };
   const getPerson = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}`)
       .then((response) => {
+        console.log("PERSONA-->>>> ", response.data);
         formPerson.setFieldsValue({
           first_name: response.data.first_name,
           flast_name: response.data.flast_name,
@@ -514,7 +515,7 @@ const personDetailForm = () => {
         let personName =
           response.data.first_name + " " + response.data.flast_name;
         if (response.data.mlast_name)
-          personName = person + " " + response.data.mlast_name;
+          personName = personName + " " + response.data.mlast_name;
         setPersonFullName(personName);
       })
       .catch((e) => {

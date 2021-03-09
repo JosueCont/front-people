@@ -30,6 +30,7 @@ import cookie from "js-cookie";
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
+import jsCookie from "js-cookie";
 
 const HolidaysDetails = () => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
@@ -53,6 +54,7 @@ const HolidaysDetails = () => {
   const [firstName, setFisrtName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
+  const [permissions, setPermissions] = useState({});
 
   let json = JSON.parse(userToken);
 
@@ -110,16 +112,16 @@ const HolidaysDetails = () => {
           values
         );
         if (response.status == 200) {
-            setVisibleModalReject(false)
-            Modal.success({
-                keyboard: false,
-                maskClosable: false,
-                content: "Vacaciones rechazadas",
-                okText: "Aceptar",
-                onOk() {
-                  route.push("/holidays");
-                },
-              });
+          setVisibleModalReject(false);
+          Modal.success({
+            keyboard: false,
+            maskClosable: false,
+            content: "Vacaciones rechazadas",
+            okText: "Aceptar",
+            onOk() {
+              route.push("/holidays");
+            },
+          });
           setMessage(null);
         }
       } catch (e) {
@@ -131,15 +133,15 @@ const HolidaysDetails = () => {
   const showMoalapprove = () => {
     /* props.onApprove */
     confirm({
-        title: '¿Está seguro de aprobar la siguiente solicitud de vacaciones?',
-        icon: <ExclamationCircleOutlined />,
-        okText: 'Aceptar y notificar',
-        cancelText: 'Cancelar',
-        onOk() {
-            approveRequest()
-          },
-      });
-}
+      title: "¿Está seguro de aprobar la siguiente solicitud de vacaciones?",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Aceptar y notificar",
+      cancelText: "Cancelar",
+      onOk() {
+        approveRequest();
+      },
+    });
+  };
 
   const approveRequest = async () => {
     if (json) {
@@ -155,15 +157,15 @@ const HolidaysDetails = () => {
           values
         );
         if (response.status == 200) {
-            Modal.success({
-                keyboard: false,
-                maskClosable: false,
-                content: "Vacaciones autorizadas",
-                okText: "Aceptar",
-                onOk() {
-                  route.push("/holidays");
-                },
-              });
+          Modal.success({
+            keyboard: false,
+            maskClosable: false,
+            content: "Vacaciones autorizadas",
+            okText: "Aceptar",
+            onOk() {
+              route.push("/holidays");
+            },
+          });
 
           /* notification["success"]({
                                   message: "Notification Title",
@@ -180,8 +182,26 @@ const HolidaysDetails = () => {
   };
 
   useEffect(() => {
+    const jwt = JSON.parse(jsCookie.get("token"));
+    searchPermissions(jwt.perms);
+
     getDetails();
   }, [route]);
+
+  const searchPermissions = (data) => {
+    const perms = {};
+    data.map((a) => {
+      if (a.includes("people.vacation.can.view")) perms.view = true;
+      if (a.includes("people.vacation.can.create")) perms.create = true;
+      if (a.includes("people.vacation.can.edit")) perms.edit = true;
+      if (a.includes("people.vacation.can.delete")) perms.delete = true;
+      if (a.includes("people.vacation.function.reject_vacation"))
+        perms.reject = true;
+      if (a.includes("people.vacation.function.approve_vacation"))
+        perms.approve = true;
+    });
+    setPermissions(perms);
+  };
 
   return (
     <MainLayout currentKey="5">
@@ -250,33 +270,37 @@ const HolidaysDetails = () => {
                       </Form.Item>
                     </Form>
                   </Col>
-                  <Col  span={24} style={{ textAlign: 'center' }}>
+                  <Col span={24} style={{ textAlign: "center" }}>
                     <Button
-                        key="cancel"
-                        onClick={() => route.push({ pathname: '/holidays' })}
+                      key="cancel"
+                      onClick={() => route.push({ pathname: "/holidays" })}
+                      style={{ padding: "0 50px", margin: "0 10px" }}
+                    >
+                      Regresar
+                    </Button>
+                    {permissions.reject && (
+                      <Button
+                        key="reject"
+                        type="primary"
+                        danger
+                        onClick={() => setVisibleModalReject(true)}
                         style={{ padding: "0 50px", margin: "0 10px" }}
-                        >
-                        Regresar
-                    </Button>
-                    <Button
-                      key="reject"
-                      type="primary"
-                      danger
-                      onClick={() => setVisibleModalReject(true)}
-                      style={{ padding: "0 50px", margin: "0 10px" }}
-                    >
-                      Rechazar
-                    </Button>
-                    <Button
-                    className={'btn-success'}
-                      key="save"
-                      onClick={showMoalapprove}
-                      type="primary"
-                      style={{ padding: "0 50px", margin: "0 10px" }}
-                      loading={sending}
-                    >
-                      Aprobar
-                    </Button>
+                      >
+                        Rechazar
+                      </Button>
+                    )}
+                    {permissions.approve && (
+                      <Button
+                        className={"btn-success"}
+                        key="save"
+                        onClick={showMoalapprove}
+                        type="primary"
+                        style={{ padding: "0 50px", margin: "0 10px" }}
+                        loading={sending}
+                      >
+                        Aprobar
+                      </Button>
+                    )}
                   </Col>
                 </Row>
               </Col>
@@ -288,24 +312,23 @@ const HolidaysDetails = () => {
         title="Rechazar solicitud de vacaciones"
         visible={visibleModalReject}
         footer={[
-            <Button
-              key="back"
-              onClick={rejectCancel}
-              style={{ padding: "0 50px", marginLeft: 15 }}
-            >
-              Cancelar
-            </Button>,
-            <Button
-              key="submit_modal"
-              type="primary"
-              loading={sending}
-              onClick={rejectRequest}
-              style={{ padding: "0 50px", marginLeft: 15 }}
-            >
-              Aceptar y notificar
-            </Button>,
-          ]}
-
+          <Button
+            key="back"
+            onClick={rejectCancel}
+            style={{ padding: "0 50px", marginLeft: 15 }}
+          >
+            Cancelar
+          </Button>,
+          <Button
+            key="submit_modal"
+            type="primary"
+            loading={sending}
+            onClick={rejectRequest}
+            style={{ padding: "0 50px", marginLeft: 15 }}
+          >
+            Aceptar y notificar
+          </Button>,
+        ]}
         onOk={rejectRequest}
         onCancel={rejectCancel}
       >

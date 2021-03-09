@@ -21,6 +21,7 @@ import ModalDeleteBusiness from "../../modal/deleteBusiness";
 import IconButton from "./iconbutton";
 import { Tooltip, Modal, Button, Form, Select, Input, message } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import jsCookie from "js-cookie";
 
 const NodeTreeView = () => {
   const [nodes, setNodes] = useState([]);
@@ -35,10 +36,27 @@ const NodeTreeView = () => {
   const [nameNode, setNameNode] = useState("");
   const [idNodeUpdate, setIdNodeUpdate] = useState(0);
 
+  const [permissions, setPermissions] = useState({});
+
   useEffect(() => {
+    const jwt = JSON.parse(jsCookie.get("token"));
+    searchPermissions(jwt.perms);
     getNodes();
     Nodos();
   }, []);
+
+  const searchPermissions = (data) => {
+    const perms = {};
+    data.map((a) => {
+      if (a.includes("people.company.can.view")) perms.view = true;
+      if (a.includes("people.company.can.create")) perms.create = true;
+      if (a.includes("people.company.can.edit")) perms.edit = true;
+      if (a.includes("people.company.can.delete")) perms.delete = true;
+      if (a.includes("people.company.function.change_is_active"))
+        perms.change_status;
+    });
+    setPermissions(perms);
+  };
 
   const getNodes = () => {
     Axios.post(API_URL + `/business/node/node_in_cascade/`)
@@ -153,49 +171,59 @@ const NodeTreeView = () => {
                 className="titleFirstLevel"
               >
                 <IconButton className="addButton" color="secondary">
-                  <Tooltip placement="top" title="Eliminar">
-                    <DeleteOutlined onClick={() => modalDelete(true, p)} />
-                  </Tooltip>
-                  <Tooltip placement="top" title="Editar">
-                    <EditOutlined
-                      onClick={() =>
-                        modalCreateUpdate({
-                          bool: true,
-                          edit: p,
-                          parent: parent,
-                        })
-                      }
-                    />
-                  </Tooltip>
+                  {permissions.delete && (
+                    <Tooltip placement="top" title="Eliminar">
+                      <DeleteOutlined onClick={() => modalDelete(true, p)} />
+                    </Tooltip>
+                  )}
+                  {permissions.edit && (
+                    <Tooltip placement="top" title="Editar">
+                      <EditOutlined
+                        onClick={() =>
+                          modalCreateUpdate({
+                            bool: true,
+                            edit: p,
+                            parent: parent,
+                          })
+                        }
+                      />
+                    </Tooltip>
+                  )}
                 </IconButton>
 
                 {p.children && p.children.length > 0 ? (
                   <>
                     <NodeTree nodesArray={p.children} parent={p.value} />
-                    <StyledTreeItem
-                      className="titleFirstLevel"
-                      style={{ margin: "1%" }}
-                      nodeId={0}
-                      onHandleClickItem={() =>
-                        modalCreateUpdate({
-                          bool: false,
-                          parent: p.value,
-                          level: level + 1,
-                        })
-                      }
-                      label={"Agregar empresa"}
-                    />
+                    {permissions.create && (
+                      <StyledTreeItem
+                        className="titleFirstLevel"
+                        style={{ margin: "1%" }}
+                        nodeId={0}
+                        onHandleClickItem={() =>
+                          modalCreateUpdate({
+                            bool: false,
+                            parent: p.value,
+                            level: level + 1,
+                          })
+                        }
+                        label={"Agregar empresa"}
+                      />
+                    )}
                   </>
                 ) : (
-                  <StyledTreeItem
-                    className="titleFirstLevel"
-                    style={{ margin: "1%" }}
-                    nodeId={0}
-                    label={"Agregar empresa"}
-                    onHandleClickItem={() =>
-                      modalCreateUpdate({ bool: false, parent: p.value })
-                    }
-                  />
+                  <>
+                    {permissions.create && (
+                      <StyledTreeItem
+                        className="titleFirstLevel"
+                        style={{ margin: "1%" }}
+                        nodeId={0}
+                        label={"Agregar empresa"}
+                        onHandleClickItem={() =>
+                          modalCreateUpdate({ bool: false, parent: p.value })
+                        }
+                      />
+                    )}
+                  </>
                 )}
               </StyledTreeItem>
             </>
@@ -292,26 +320,32 @@ const NodeTreeView = () => {
           {nodes.length > 0 ? (
             <>
               <NodeTree nodesArray={nodes} />
-              <StyledTreeItem
-                className="titleFirstLevel"
-                style={{ margin: "1%" }}
-                nodeId={0}
-                label="Agregar empresa"
-                onHandleClickItem={() =>
-                  modalCreateUpdate({ bool: false, parent: 0 })
-                }
-              />
+              {permissions.create && (
+                <StyledTreeItem
+                  className="titleFirstLevel"
+                  style={{ margin: "1%" }}
+                  nodeId={0}
+                  label="Agregar empresa"
+                  onHandleClickItem={() =>
+                    modalCreateUpdate({ bool: false, parent: 0 })
+                  }
+                />
+              )}
             </>
           ) : (
-            <StyledTreeItem
-              className="titleFirstLevel"
-              style={{ margin: "1%" }}
-              nodeId={0}
-              label="Agregar empresa"
-              onHandleClickItem={() =>
-                modalCreateUpdate({ bool: false, parent: 0 })
-              }
-            />
+            <>
+              {permissions.create && (
+                <StyledTreeItem
+                  className="titleFirstLevel"
+                  style={{ margin: "1%" }}
+                  nodeId={0}
+                  label="Agregar empresa"
+                  onHandleClickItem={() =>
+                    modalCreateUpdate({ bool: false, parent: 0 })
+                  }
+                />
+              )}
+            </>
           )}
         </TreeView>
       </TreeViewContent>
