@@ -16,11 +16,12 @@ import TreeItem from "@material-ui/lab/TreeItem";
 import Collapse from "@material-ui/core/Collapse";
 import { useSpring, animated } from "react-spring/web.cjs"; // web.cjs is required for IE 11 support
 import { TreeViewContent } from "./TreeView.style";
-import ModalCreateBusiness from "../../modal/createBusiness";
+import modalCreateUpdateBusiness from "../../modal/createBusiness";
 import ModalDeleteBusiness from "../../modal/deleteBusiness";
 import IconButton from "./iconbutton";
 import { Tooltip, Modal, Button, Form, Select, Input, message } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import jsCookie from "js-cookie";
 
 const NodeTreeView = () => {
   const [nodes, setNodes] = useState([]);
@@ -32,11 +33,30 @@ const NodeTreeView = () => {
   const [formBusiness] = Form.useForm();
   const [business, setBusiness] = useState([]);
   const [creUp, setCreup] = useState(false);
+  const [nameNode, setNameNode] = useState("");
+  const [idNodeUpdate, setIdNodeUpdate] = useState(0);
+
+  const [permissions, setPermissions] = useState({});
 
   useEffect(() => {
+    const jwt = JSON.parse(jsCookie.get("token"));
+    searchPermissions(jwt.perms);
     getNodes();
     Nodos();
   }, []);
+
+  const searchPermissions = (data) => {
+    const perms = {};
+    data.map((a) => {
+      if (a.includes("people.company.can.view")) perms.view = true;
+      if (a.includes("people.company.can.create")) perms.create = true;
+      if (a.includes("people.company.can.edit")) perms.edit = true;
+      if (a.includes("people.company.can.delete")) perms.delete = true;
+      if (a.includes("people.company.function.change_is_active"))
+        perms.change_status;
+    });
+    setPermissions(perms);
+  };
 
   const getNodes = () => {
     Axios.post(API_URL + `/business/node/node_in_cascade/`)
@@ -56,7 +76,6 @@ const NodeTreeView = () => {
           return { label: a.name, value: a.id };
         });
         setBusiness(bus);
-        console.log("Empresas-->>> ", bus);
       })
       .catch((e) => {
         setBusiness([]);
@@ -139,7 +158,6 @@ const NodeTreeView = () => {
   let level = 0;
 
   const NodeTree = ({ nodesArray, parent }) => {
-    console.log("Parent->> ", parent);
     const classes = useStyles();
     return (
       <>
@@ -153,51 +171,59 @@ const NodeTreeView = () => {
                 className="titleFirstLevel"
               >
                 <IconButton className="addButton" color="secondary">
-                  <Tooltip placement="top" title="Eliminar">
-                    <DeleteOutlined
-                      onClick={() => modalDelete(true, p.value)}
-                    />
-                  </Tooltip>
-                  <Tooltip placement="top" title="Editar">
-                    <EditOutlined
-                      onClick={() =>
-                        modalCreate({
-                          bool: true,
-                          edit: p,
-                          parent: parent,
-                        })
-                      }
-                    />
-                  </Tooltip>
+                  {permissions.delete && (
+                    <Tooltip placement="top" title="Eliminar">
+                      <DeleteOutlined onClick={() => modalDelete(true, p)} />
+                    </Tooltip>
+                  )}
+                  {permissions.edit && (
+                    <Tooltip placement="top" title="Editar">
+                      <EditOutlined
+                        onClick={() =>
+                          modalCreateUpdate({
+                            bool: true,
+                            edit: p,
+                            parent: parent,
+                          })
+                        }
+                      />
+                    </Tooltip>
+                  )}
                 </IconButton>
 
                 {p.children && p.children.length > 0 ? (
                   <>
                     <NodeTree nodesArray={p.children} parent={p.value} />
-                    <StyledTreeItem
-                      className="titleFirstLevel"
-                      style={{ margin: "1%" }}
-                      nodeId={0}
-                      onHandleClickItem={() =>
-                        modalCreate({
-                          bool: false,
-                          parent: p.value,
-                          level: level + 1,
-                        })
-                      }
-                      label={"Agregar empresa"}
-                    />
+                    {permissions.create && (
+                      <StyledTreeItem
+                        className="titleFirstLevel"
+                        style={{ margin: "1%" }}
+                        nodeId={0}
+                        onHandleClickItem={() =>
+                          modalCreateUpdate({
+                            bool: false,
+                            parent: p.value,
+                            level: level + 1,
+                          })
+                        }
+                        label={"Agregar empresa"}
+                      />
+                    )}
                   </>
                 ) : (
-                  <StyledTreeItem
-                    className="titleFirstLevel"
-                    style={{ margin: "1%" }}
-                    nodeId={0}
-                    label={"Agregar empresa"}
-                    onHandleClickItem={() =>
-                      modalCreate({ bool: false, parent: p.value })
-                    }
-                  />
+                  <>
+                    {permissions.create && (
+                      <StyledTreeItem
+                        className="titleFirstLevel"
+                        style={{ margin: "1%" }}
+                        nodeId={0}
+                        label={"Agregar empresa"}
+                        onHandleClickItem={() =>
+                          modalCreateUpdate({ bool: false, parent: p.value })
+                        }
+                      />
+                    )}
+                  </>
                 )}
               </StyledTreeItem>
             </>
@@ -207,9 +233,8 @@ const NodeTreeView = () => {
     );
   };
 
-  const modalCreate = (value) => {
+  const modalCreateUpdate = (value) => {
     formBusiness.resetFields();
-    console.log("EDIT-->>> ", value);
     setCreup(value.bool);
     if (value.parent > 0 && value.bool == false) {
       formBusiness.setFieldsValue({
@@ -217,12 +242,16 @@ const NodeTreeView = () => {
       });
     } else {
       if (value.parent > 0 && value.bool) {
+        setIdNodeUpdate(value.edit.value);
+        setNameNode(value.edit.title);
         formBusiness.setFieldsValue({
           name: value.edit.title,
           parent: value.parent,
         });
       }
       if (value.parent == undefined && value.bool) {
+        setIdNodeUpdate(value.edit.value);
+        setNameNode(value.edit.title);
         formBusiness.setFieldsValue({
           name: value.edit.title,
           parent: value.parent,
@@ -231,9 +260,11 @@ const NodeTreeView = () => {
     }
     visibleCreate ? setVisibleCreate(false) : setVisibleCreate(true);
   };
+
   const modalDelete = (value, item) => {
-    setNodeId(item);
+    if (item != undefined && item != "") setNodeId(item.value);
     setVisibleDelete(value);
+    if (item != undefined && item != "") setNameNode(item.title);
     if (!value) {
       getNodes();
     }
@@ -244,18 +275,37 @@ const NodeTreeView = () => {
   };
 
   const createBusiness = (value) => {
-    Axios.post(API_URL + "/business/node/", value)
-      .then(function (response) {
-        Nodos();
-        getNodes();
-        setVisibleCreate(false);
-        formBusiness.resetFields();
-        message.success("Guardado correctamente.");
-      })
-      .catch(function (error) {
-        message.success("Ocurrio un error, intente de nuevo.");
-        console.log(error);
-      });
+    if (idNodeUpdate > 0) {
+      Axios.put(API_URL + "/business/node/" + idNodeUpdate + "/", value)
+        .then(function (response) {
+          Nodos();
+          getNodes();
+          setVisibleCreate(false);
+          formBusiness.resetFields();
+          message.success("Actualizado correctamente.");
+          setIdNodeUpdate(0);
+        })
+        .catch(function (error) {
+          message.success("Ocurrio un error, intente de nuevo.");
+          setIdNodeUpdate(0);
+          console.log(error);
+        });
+    } else {
+      Axios.post(API_URL + "/business/node/", value)
+        .then(function (response) {
+          Nodos();
+          getNodes();
+          setVisibleCreate(false);
+          formBusiness.resetFields();
+          message.success("Guardado correctamente.");
+          setIdNodeUpdate(0);
+        })
+        .catch(function (error) {
+          message.success("Ocurrio un error, intente de nuevo.");
+          setIdNodeUpdate(0);
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -270,29 +320,37 @@ const NodeTreeView = () => {
           {nodes.length > 0 ? (
             <>
               <NodeTree nodesArray={nodes} />
-              <StyledTreeItem
-                className="titleFirstLevel"
-                style={{ margin: "1%" }}
-                nodeId={0}
-                label="Agregar empresa"
-                onHandleClickItem={() =>
-                  modalCreate({ bool: false, parent: 0 })
-                }
-              />
+              {permissions.create && (
+                <StyledTreeItem
+                  className="titleFirstLevel"
+                  style={{ margin: "1%" }}
+                  nodeId={0}
+                  label="Agregar empresa"
+                  onHandleClickItem={() =>
+                    modalCreateUpdate({ bool: false, parent: 0 })
+                  }
+                />
+              )}
             </>
           ) : (
-            <StyledTreeItem
-              className="titleFirstLevel"
-              style={{ margin: "1%" }}
-              nodeId={0}
-              label="Agregar empresa"
-              onHandleClickItem={() => modalCreate({ bool: false, parent: 0 })}
-            />
+            <>
+              {permissions.create && (
+                <StyledTreeItem
+                  className="titleFirstLevel"
+                  style={{ margin: "1%" }}
+                  nodeId={0}
+                  label="Agregar empresa"
+                  onHandleClickItem={() =>
+                    modalCreateUpdate({ bool: false, parent: 0 })
+                  }
+                />
+              )}
+            </>
           )}
         </TreeView>
       </TreeViewContent>
       <Modal
-        title={creUp ? "Actualizar empresa" : "Agregar empresa"}
+        title={creUp ? `Actualizar ${nameNode}` : "Agregar empresa"}
         visible={visibleCreate}
         onCancel={() => closeDialogCreate()}
         footer={[
@@ -327,7 +385,7 @@ const NodeTreeView = () => {
             label="Descripción"
             rules={[{ required: true, message: "Ingresa una descripción" }]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} showCount maxLength={200} />
           </Form.Item>
           <Form.Item name="parent" label="Nodo padre">
             <Select showSearch placeholder="Empresa" options={business} />
@@ -338,6 +396,7 @@ const NodeTreeView = () => {
         close={modalDelete}
         node={nodeId}
         visible={visibleDelete}
+        name={nameNode}
       />
     </div>
   );

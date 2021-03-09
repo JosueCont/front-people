@@ -430,12 +430,13 @@ const personDetailForm = () => {
     value.is_active = isActive;
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
-    if (value.groups) delete value["groups"];
+    // if (value.groups) delete value["groups"];
     updatePerson(value);
   };
   const getPerson = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}`)
       .then((response) => {
+        console.log("PERSONA-->>>> ", response.data);
         formPerson.setFieldsValue({
           first_name: response.data.first_name,
           flast_name: response.data.flast_name,
@@ -514,7 +515,7 @@ const personDetailForm = () => {
         let personName =
           response.data.first_name + " " + response.data.flast_name;
         if (response.data.mlast_name)
-          personName = person + " " + response.data.mlast_name;
+          personName = personName + " " + response.data.mlast_name;
         setPersonFullName(personName);
       })
       .catch((e) => {
@@ -1343,10 +1344,14 @@ const personDetailForm = () => {
     }
   };
   const updateFormbankAcc = (item) => {
+    console.log("BANCO->> ", item.expiration_year);
     formBank.setFieldsValue({
       bank: item.bank.id,
       account_number: item.account_number,
       interbank_key: item.interbank_key,
+      card_number: item.card_number,
+      expiration_month: item.expiration_month,
+      expiration_year: item.expiration_year,
     });
     setIdBankAcc(item.id);
     setUpBankAcc(true);
@@ -1437,6 +1442,21 @@ const personDetailForm = () => {
       key: "interbank_key",
     },
     {
+      title: "Número de tarjeta",
+      dataIndex: "card_number",
+      key: "card_number",
+    },
+    {
+      title: "Fecha de vencimiento",
+      render: (item) => {
+        return (
+          <>
+            {item.expiration_month}/{item.expiration_year}
+          </>
+        );
+      },
+    },
+    {
       title: "Opciones",
       render: (item) => {
         return (
@@ -1477,7 +1497,6 @@ const personDetailForm = () => {
       })
       .catch((e) => {
         console.log(e);
-        showModal();
         setDocuments([]);
         setLoading(false);
         setTimeout(() => {
@@ -2489,6 +2508,33 @@ const personDetailForm = () => {
                           label="Clabe interbancaria"
                         >
                           <Input type="number" />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={6} xs={22} offset={1}>
+                        <Form.Item
+                          name="card_number"
+                          label="Número de tarjeta"
+                          rules={[ruleRequired]}
+                        >
+                          <Input type="number" maxLength={16} />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={6} xs={22} offset={1}>
+                        <Form.Item
+                          name="expiration_month"
+                          label="Mes de vencimiento"
+                          rules={[ruleRequired]}
+                        >
+                          <Input type="number" maxLength={2} />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={6} xs={22} offset={1}>
+                        <Form.Item
+                          name="expiration_year"
+                          label="Año de vencimiento"
+                          rules={[ruleRequired]}
+                        >
+                          <Input type="number" maxLength={2} />
                         </Form.Item>
                       </Col>
                     </Row>
