@@ -27,6 +27,7 @@ import { API_URL } from "../../config/config";
 import Router from "next/router";
 import MainLayout from "../../layout/MainLayout";
 import NodeTreeView from "./TreeView/treeview";
+import Cookie from "js-cookie";
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -45,6 +46,7 @@ const businessForm = () => {
   const [nodesTree, setNodesTree] = useState([]);
   const [updateModal, setUpdateModal] = useState(false);
   const [businessUpdate, setBusinessUpdate] = useState({});
+  const [permissions, setPermissions] = useState({});
 
   const onFinish = (values) => {
     if (isDeleted) {
@@ -163,9 +165,24 @@ const businessForm = () => {
   };
 
   useEffect(() => {
+    const jwt = JSON.parse(Cookie.get("token"));
+    searchPermissions(jwt.perms);
     getBusiness();
     getNodesTree();
   }, []);
+
+  const searchPermissions = (data) => {
+    const perms = {};
+    data.map((a) => {
+      if (a.includes("people.company.can.view")) perms.view = true;
+      if (a.includes("people.company.can.create")) perms.create = true;
+      if (a.includes("people.company.can.edit")) perms.edit = true;
+      if (a.includes("people.company.can.delete")) perms.delete = true;
+      if (a.includes("people.company.function.change_is_active"))
+        perms.change_status;
+    });
+    setPermissions(perms);
+  };
 
   const getNodesTree = () => {
     Axios.post(API_URL + `/business/node/node_in_cascade/`)
@@ -198,6 +215,7 @@ const businessForm = () => {
         return (
           <>
             <Switch
+              disabled={permissions.change_status ? false : true}
               defaultChecked={item.active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
@@ -213,12 +231,16 @@ const businessForm = () => {
         return (
           <div>
             <Row gutter={16}>
-              <Col className="gutter-row" span={6}>
-                <EditOutlined onClick={() => showModal("edit", item)} />
-              </Col>
-              <Col className="gutter-row" span={6}>
-                <DeleteOutlined onClick={() => showModal("delete", item)} />
-              </Col>
+              {permissions.edit && (
+                <Col className="gutter-row" span={6}>
+                  <EditOutlined onClick={() => showModal("edit", item)} />
+                </Col>
+              )}
+              {permissions.delete && (
+                <Col className="gutter-row" span={6}>
+                  <DeleteOutlined onClick={() => showModal("delete", item)} />
+                </Col>
+              )}
             </Row>
           </div>
         );
@@ -277,17 +299,19 @@ const businessForm = () => {
       <div className="container" style={{ width: "100%" }}>
         <Row justify={"end"}>
           <Col>
-            <Button
-              style={{
-                background: "#fa8c16",
-                fontWeight: "bold",
-                color: "white",
-              }}
-              onClick={() => showModal("add")}
-            >
-              <PlusOutlined />
-              Agregar empresa
-            </Button>
+            {permissions.create && (
+              <Button
+                style={{
+                  background: "#fa8c16",
+                  fontWeight: "bold",
+                  color: "white",
+                }}
+                onClick={() => showModal("add")}
+              >
+                <PlusOutlined />
+                Agregar empresa
+              </Button>
+            )}
           </Col>
         </Row>
         <Row justify={"end"}>

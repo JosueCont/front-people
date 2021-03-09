@@ -31,10 +31,10 @@ import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
 import { withAuthSync } from "../../libs/auth";
+import Cookie from "js-cookie";
 
 const { Content } = Layout;
 import Link from "next/link";
-import { render } from "react-dom";
 
 const homeScreen = () => {
   const [person, setPerson] = useState([]);
@@ -54,11 +54,32 @@ const homeScreen = () => {
   const [nodes, setNodes] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [jobs, setJobs] = useState([]);
+  const [permissions, setPermissions] = useState({});
 
   useEffect(() => {
+    const jwt = JSON.parse(Cookie.get("token"));
+    searchPermissions(jwt.perms);
     getPerson();
     getNodes();
   }, []);
+
+  const searchPermissions = (data) => {
+    const perms = {};
+    data.map((a) => {
+      if (a.includes("people.person.can.view")) perms.view = true;
+      if (a.includes("people.person.can.create")) perms.create = true;
+      if (a.includes("people.person.can.edit")) perms.edit = true;
+      if (a.includes("people.person.can.delete")) perms.delete = true;
+      if (a.includes("people.person.function.change_is_active"))
+        perms.change_status = true;
+      if (a.includes("people.person.function.export_csv_person"))
+        perms.export = true;
+      if (a.includes("people.person.function.import_csv_person"))
+        perms.import = true;
+    });
+    console.log("Permss-->>> ", perms);
+    setPermissions(perms);
+  };
 
   /////PEOPLE
   const getPerson = () => {
@@ -172,6 +193,7 @@ const homeScreen = () => {
         return (
           <>
             <Switch
+              disabled={permissions.change_status ? false : true}
               defaultChecked={item.is_active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
@@ -219,25 +241,31 @@ const homeScreen = () => {
       title: () => {
         return (
           <>
-            <Dropdown overlay={menuGeneric}>
-              <Button style={menuDropDownStyle} size="small">
-                <EllipsisOutlined />
-              </Button>
-            </Dropdown>
+            {permissions.delete && (
+              <Dropdown overlay={menuGeneric}>
+                <Button style={menuDropDownStyle} size="small">
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
           </>
         );
       },
       render: (item) => {
         return (
           <>
-            <Dropdown overlay={() => menuPerson(item)}>
-              <Button
-                style={{ background: "#8c8c8c", color: "withe" }}
-                size="small"
-              >
-                <EllipsisOutlined />
-              </Button>
-            </Dropdown>
+            {permissions.edit || permissions.delete ? (
+              <Dropdown overlay={() => menuPerson(item)}>
+                <Button
+                  style={{ background: "#8c8c8c", color: "withe" }}
+                  size="small"
+                >
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            ) : (
+              ""
+            )}
           </>
         );
       },
@@ -272,18 +300,24 @@ const homeScreen = () => {
 
   const menuGeneric = (
     <Menu>
-      <Menu.Item onClick={() => setDeleteModal(personsToDelete)}>
-        Eliminar
-      </Menu.Item>
+      {permissions.delete && (
+        <Menu.Item onClick={() => setDeleteModal(personsToDelete)}>
+          Eliminar
+        </Menu.Item>
+      )}
     </Menu>
   );
   const menuPerson = (item) => {
     return (
       <Menu>
-        <Menu.Item>
-          <Link href={`/home/${item.id}`}>Editar</Link>
-        </Menu.Item>
-        <Menu.Item onClick={() => setDeleteModal([item])}>Eliminar</Menu.Item>
+        {permissions.edit && (
+          <Menu.Item>
+            <Link href={`/home/${item.id}`}>Editar</Link>
+          </Menu.Item>
+        )}
+        {permissions.delete && (
+          <Menu.Item onClick={() => setDeleteModal([item])}>Eliminar</Menu.Item>
+        )}
       </Menu>
     );
   };
@@ -533,7 +567,6 @@ const homeScreen = () => {
   );
 
   useEffect(() => {
-    console.log(modalDelete);
     if (modalDelete) {
       Modal.confirm({
         title: stringToDelete,
@@ -570,63 +603,88 @@ const homeScreen = () => {
         <Breadcrumb.Item>Personas</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
-        <Row justify={"space-between"} className={"formFilter"}>
-          <Col>
-            <Form onFinish={filter} layout={"vertical"} form={formFilter}>
-              <Row gutter={[24, 8]}>
-                <Col>
-                  <Form.Item name="name" label={"Nombre, apellido"}>
-                    <Input
-                      allowClear={true}
-                      placeholder="Nombre, Apellido"
-                      style={{ width: 150 }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item name="gender" label="Género">
-                    <Select options={genders} placeholder="Todos" />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item name="node" label="Empresa">
-                    <Select
-                      onChange={changeNode}
-                      options={nodes}
-                      placeholder="Todos"
-                      style={{ width: 100 }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item name="department" label="Departamento">
-                    <Select
-                      onChange={changeDepartment}
-                      options={departments}
-                      placeholder="Todos"
-                      style={{ width: 100 }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item name="job" label="Puesto">
-                    <Select
-                      options={jobs}
-                      placeholder="Todos"
-                      style={{ minWidth: 100 }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item name="is_active" label="Estatus">
-                    <Select
-                      options={statusSelect}
-                      placeholder=""
-                      style={{ width: 90 }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col style={{ display: "flex" }}>
+        {permissions.view ? (
+          <>
+            <Row justify={"space-between"} className={"formFilter"}>
+              <Col>
+                <Form onFinish={filter} layout={"vertical"} form={formFilter}>
+                  <Row gutter={[24, 8]}>
+                    <Col>
+                      <Form.Item name="name" label={"Nombre, apellido"}>
+                        <Input
+                          allowClear={true}
+                          placeholder="Nombre, Apellido"
+                          style={{ width: 150 }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Form.Item name="gender" label="Género">
+                        <Select options={genders} placeholder="Todos" />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Form.Item name="node" label="Empresa">
+                        <Select
+                          onChange={changeNode}
+                          options={nodes}
+                          placeholder="Todos"
+                          style={{ width: 100 }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Form.Item name="department" label="Departamento">
+                        <Select
+                          onChange={changeDepartment}
+                          options={departments}
+                          placeholder="Todos"
+                          style={{ width: 100 }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Form.Item name="job" label="Puesto">
+                        <Select
+                          options={jobs}
+                          placeholder="Todos"
+                          style={{ minWidth: 100 }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Form.Item name="is_active" label="Estatus">
+                        <Select
+                          options={statusSelect}
+                          placeholder=""
+                          style={{ width: 90 }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col style={{ display: "flex" }}>
+                      <Button
+                        style={{
+                          background: "#fa8c16",
+                          fontWeight: "bold",
+                          color: "white",
+                          marginTop: "auto",
+                        }}
+                        htmlType="submit"
+                      >
+                        Filtrar
+                      </Button>
+                      <Button
+                        onClick={() => resetFilter()}
+                        style={{ marginTop: "auto", marginLeft: 10 }}
+                      >
+                        Limpiar filtros
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              </Col>
+              <Col style={{ display: "flex" }}>
+                {permissions.create && (
                   <Button
                     style={{
                       background: "#fa8c16",
@@ -634,78 +692,65 @@ const homeScreen = () => {
                       color: "white",
                       marginTop: "auto",
                     }}
-                    htmlType="submit"
+                    onClick={() => getModalPerson(true)}
                   >
-                    Filtrar
+                    <PlusOutlined />
+                    Agregar persona
                   </Button>
-                  <Button
-                    onClick={() => resetFilter()}
-                    style={{ marginTop: "auto", marginLeft: 10 }}
-                  >
-                    Limpiar filtros
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Col>
-          <Col style={{ display: "flex" }}>
-            <Button
-              style={{
-                background: "#fa8c16",
-                fontWeight: "bold",
-                color: "white",
-                marginTop: "auto",
-              }}
-              onClick={() => getModalPerson(true)}
-            >
-              <PlusOutlined />
-              Agregar persona
-            </Button>
-          </Col>
-        </Row>
-        <Row justify={"end"} style={{ padding: "1% 0" }}>
-          <Button
-            className={"ml-20"}
-            type="primary"
-            icon={<DownloadOutlined />}
-            size={{ size: "large" }}
-            onClick={() => exportPersons()}
-          >
-            Descargar resultados
-          </Button>
-          <Button
-            className={"ml-20"}
-            icon={<UploadOutlined />}
-            onClick={() => {
-              inputFileRef.current.click();
-            }}
-          >
-            Importar personas
-          </Button>
-          <input
-            ref={inputFileRef}
-            type="file"
-            style={{ display: "none" }}
-            onChange={(e) => importPersonFile(e)}
-          />
-          <Button
-            className={"ml-20"}
-            type="primary"
-            icon={<DownloadOutlined />}
-            size={{ size: "large" }}
-            onClick={() => downLoadPlantilla()}
-          >
-            Descargar plantilla
-          </Button>
-        </Row>
-        <Table
-          className={"mainTable"}
-          size="small"
-          columns={columns}
-          dataSource={person}
-          loading={loading}
-          rowSelection={rowSelectionPerson}
-        />
+                )}
+              </Col>
+            </Row>
+            <Row justify={"end"} style={{ padding: "1% 0" }}>
+              {permissions.export && (
+                <Button
+                  className={"ml-20"}
+                  type="primary"
+                  icon={<DownloadOutlined />}
+                  size={{ size: "large" }}
+                  onClick={() => exportPersons()}
+                >
+                  Descargar resultados
+                </Button>
+              )}
+              {permissions.import && (
+                <Button
+                  className={"ml-20"}
+                  icon={<UploadOutlined />}
+                  onClick={() => {
+                    inputFileRef.current.click();
+                  }}
+                >
+                  Importar personas
+                </Button>
+              )}
+              <input
+                ref={inputFileRef}
+                type="file"
+                style={{ display: "none" }}
+                onChange={(e) => importPersonFile(e)}
+              />
+              <Button
+                className={"ml-20"}
+                type="primary"
+                icon={<DownloadOutlined />}
+                size={{ size: "large" }}
+                onClick={() => downLoadPlantilla()}
+              >
+                Descargar plantilla
+              </Button>
+            </Row>
+            <Table
+              className={"mainTable"}
+              size="small"
+              columns={columns}
+              dataSource={person}
+              loading={loading}
+              rowSelection={rowSelectionPerson}
+            />
+          </>
+        ) : (
+          "No tienes los permisos suficientes, contacta con un admnistrador"
+        )}
       </div>
       <FormPerson close={getModalPerson} visible={modalAddPerson} />
       {/* <Modal

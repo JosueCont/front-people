@@ -27,6 +27,7 @@ import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import cookie from "js-cookie";
+import jsCookie from "js-cookie";
 
 const HolidaysNew = () => {
   const route = useRouter();
@@ -143,15 +144,14 @@ const HolidaysNew = () => {
   };
 
   const getConfig = async () => {
-      
     try {
       let response = await Axios.get(API_URL + `/payroll/loan-config/`);
       setConfig(response.data.results[0]);
       console.log(response.data.results[0]);
     } catch (error) {
       console.log("error");
-    }finally{
-        /* setLoading(false); */
+    } finally {
+      /* setLoading(false); */
     }
   };
 
@@ -172,8 +172,8 @@ const HolidaysNew = () => {
 
   useEffect(() => {
     if (id) {
-        getConfig();
-        getDetails();
+      getConfig();
+      getDetails();
     }
   }, [route]);
 
