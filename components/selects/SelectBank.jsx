@@ -6,13 +6,13 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { route } from "next/dist/next-server/server/router";
 
-export default function SelectCompany(props) {
+export default function SelectBank(props) {
     const [options, setOptions] = useState(null);
     const route = useRouter();
 
-    const getCompanies = async () => {
+    const getBanks = async () => {
         try {
-            let response = await Axios.get(API_URL + `/business/node/`);
+            let response = await Axios.get(API_URL + `/setup/banks/`);
             let data = response.data.results;
             let options = [];
             data = data.map((item) => {
@@ -29,18 +29,18 @@ export default function SelectCompany(props) {
     };
 
     useEffect(() => {
-        getCompanies();
+        getBanks();
     }, [route]);
 
     return (
         <Form.Item
-            key={'Selectcompany'}
-            name={props.name ? props.name : "company"}
-            label={props.label ? props.label : "Empresa"}
+            key={'SelectBank'}
+            name={props.name ? props.name : "bank"}
+            label={props.label ? props.label : "Baanco"}
         >
             <Select
-                key="SelectCompany"
-                placeholder="Empresa"
+                key="SelectBank"
+                placeholder="Banco"
                 style={props.style ? props.style : null}
                 options={options}
                 onChange={props.onChange ? props.onChange : null}
