@@ -94,16 +94,30 @@ const BankAccountsDetails = () => {
 
     const rejectRequest = async () => {
         setLoading(true);
-        setVisibleModalReject(false);
-        success({
-            keyboard: false,
-            maskClosable: false,
-            content: update ? "Actualización de cuenta bancaria rechazada" : "Cuenta bancaria rechazada",
-            okText: "Aceptar",
-            onOk() {
-                route.push("/bank_accounts");
-            },
-        });
+        try {
+            let data = {
+                id: id,
+                status: 3,
+                comment: message,
+            }
+            let response = await Axios.post(API_URL + `/person/bank-account-request/change_request_status/`, data)
+            let res = response.data;
+            success({
+                keyboard: false,
+                maskClosable: false,
+                content: update ? "Actualización de cuenta bancaria rechazada" : "Cuenta bancaria rechazada",
+                okText: "Aceptar",
+                onOk() {
+                    route.push("/bank_accounts");
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+            setVisibleModalReject(false);
+        }
+
     };
 
     const modalAprobe = () => {
@@ -115,36 +129,43 @@ const BankAccountsDetails = () => {
                 setLoading(true)
                 approveRequest();
             },
-            okText: 'Aceptar y notificar',
+            okText: 'Aprobar',
             okType: 'primary',
             cancelText: 'Cancelar'
         });
     }
+
+    const onChangeMessage = (e) => {
+        console.log(e.target.value);
+        setMessage(e.target.value);
+    };
 
     const approveRequest = async () => {
         setLoading(false);
         try {
             let data = {
                 id: id,
-                status: 2
+                status: 2,
+                comment: ''
             }
-            await Axios.post(API_URL + `/person/bank-account-request/change_request_status/`, data)
+            let response = await Axios.post(API_URL + `/person/bank-account-request/change_request_status/`, data)
             let res = response.data;
-            console.log(res);
+            success({
+                keyboard: false,
+                maskClosable: false,
+                content: update ? "Cuenta bancaria Actualizada" : "Su solicitud de cuenta bancaria ha sido aceptada",
+                okText: "Aceptar",
+                onOk() {
+                    route.push("/bank_accounts");
+                },
+            });
         } catch (error) {
 
-
+        } finally {
+            setLoading(false);
         }
 
-        /* success({
-            keyboard: false,
-            maskClosable: false,
-            content: update ? "Cuenta bancaria Actualizada" : "Su solicitud de cuenta bancaria ha sido aceptada",
-            okText: "Aceptar",
-            onOk() {
-                route.push("/bank_accounts");
-            },
-        }); */
+
     };
 
     useEffect(() => {
@@ -228,7 +249,7 @@ const BankAccountsDetails = () => {
                             type="primary"
                             style={{ padding: "0 50px", marginLeft: 15 }}
                         >
-                            {update ? "Actualizar" : "Guardar"}
+                            {update ? "Actualizar" : "Aprobar"}
                         </Button>
                     </Col>
                 </Row>
@@ -253,12 +274,12 @@ const BankAccountsDetails = () => {
                         onClick={rejectRequest}
                         style={{ padding: "0 50px", marginLeft: 15 }}
                     >
-                        Aceptar y notificar
+                        Rechazar
             </Button>,
                 ]}
             >
                 <Text>Comentarios</Text>
-                <TextArea rows="4" />
+                <TextArea rows="4" onChange={onChangeMessage} />
             </Modal>
         </MainLayout>
     );

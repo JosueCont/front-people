@@ -55,16 +55,22 @@ const BankAccounts = () => {
     const columns = [
         {
             title: "Colaborador",
-            dataIndex: "collaborator",
-            key: "collaborator"
+            dataIndex: "person",
+            key: "person",
+            render: (person) => {
+                return person.first_name + ' ' + person.flast_name
+            }
         },
         {
             title: "Empresa",
-            dataIndex: "business",
-            key: "business"
+            dataIndex: "person",
+            key: "business",
+            render: (person) => {
+                return person.job && person.job[0].department && person.job[0].department.node ? person.job[0].department.node.name : null
+            }
         },
         {
-            title: "Numero de cuenta",
+            title: "Número de cuenta",
             dataIndex: "new_account_number",
             key: "new_account_number",
         },
@@ -210,7 +216,7 @@ const BankAccounts = () => {
                                     <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment" />
                                 </Col> */}
                                 <Col>
-                                    <Form.Item key="account_number_filter" name="account_number" label="Numero de cuenta">
+                                    <Form.Item key="account_number_filter" name="account_number" label="Número de cuenta">
                                         <Input />
                                     </Form.Item>
                                 </Col>
@@ -219,7 +225,7 @@ const BankAccounts = () => {
                                 </Col>
                                 <Col>
                                     <Form.Item key="type_filter" name="type" label="Tipo de solicitud">
-                                        <Select style={{ width: 100 }} key="select_type" options={optionType} allowClear />
+                                        <Select style={{ width: 150 }} key="select_type" options={optionType} allowClear />
                                     </Form.Item>
                                 </Col>
                                 <Col>
