@@ -58,7 +58,6 @@ const Lending = () => {
       if (status) {
         url += `status=${status}`;
       }
-
       let response = await Axios.get(url);
       let data = response.data.results;
 
@@ -284,7 +283,7 @@ const Lending = () => {
                           key={"goDetails_" + record.id}
                           onClick={() => GotoDetails(record)}
                         />
-                        {permissions.edit && (
+                        {permissions.edit && record.status == 1 ? (
                           <EditOutlined
                             className="icon_actions"
                             key={"edit_" + record.id}
@@ -292,7 +291,7 @@ const Lending = () => {
                               route.push("lending/" + record.id + "/edit")
                             }
                           />
-                        )}
+                        ) : null}
                       </>
                     )}
                   ></Column>
