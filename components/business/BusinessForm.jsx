@@ -179,7 +179,7 @@ const businessForm = () => {
       if (a.includes("people.company.can.edit")) perms.edit = true;
       if (a.includes("people.company.can.delete")) perms.delete = true;
       if (a.includes("people.company.function.change_is_active"))
-        perms.change_status;
+        perms.change_status = true;
     });
     setPermissions(perms);
   };
