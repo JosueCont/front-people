@@ -549,6 +549,7 @@ const configBusiness = () => {
             console.log(error);
         } */
     /* let response = await Axios.delete(API_URL + deleted.url + `${deleted.id}/`);
+        console.log(response.data); */
 
     Axios.delete(API_URL + deleted.url + `${deleted.id}/`)
       .then((response) => {
