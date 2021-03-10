@@ -34,14 +34,14 @@ const LoginForm = (props) => {
         API_URL + "/person/person/save_person_jwt/",
         data
       );
-      console.log("login-response", response);
       if (response.status == 200) {
-        return true;
+        if (response.data.is_active) return true;
+        return false;
       } else {
         return false;
       }
     } catch (error) {
-      console.log("login-response-error", error);
+      console.log(error);
       return false;
     }
   };
@@ -65,17 +65,17 @@ const LoginForm = (props) => {
             if (token) {
               saveJWT(token).then(function (responseJWT) {
                 if (responseJWT) {
+                  console.log("JWT-->> ", responseJWT);
                   message.success("Acceso correcto.");
                   Cookies.set("token", token);
                   setLoading(false);
                   router.push({ pathname: "/home" });
                 } else {
-                  message.error("Error al guardar guardar Token de usuario");
+                  message.error("Acceso denegado");
                   setLoading(false);
                   router.push({ pathname: "/" });
                 }
               });
-              /* console.log('responseJWT', responseJWT) */
             }
           } else {
             setLoading(false);

@@ -45,9 +45,7 @@ const PermissionNew = () => {
   };
 
   const changePerson = (value) => {
-    console.log(value);
     let index = allPersons.find((data) => data.khonnect_id === value);
-    console.log(index);
     setDateOfAdmission(moment(index.date_of_admission).format("DD/MM/YYYY"));
     if (index.job_department.job) {
       setJob(index.job_department.job.name);
@@ -59,7 +57,7 @@ const PermissionNew = () => {
   const saveRequest = async (values) => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
-    console.log(values);
+
     setSending(true);
     try {
       let response = await Axios.post(API_URL + `/person/permit/`, values);

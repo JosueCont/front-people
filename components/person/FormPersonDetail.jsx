@@ -437,7 +437,6 @@ const personDetailForm = () => {
   const getPerson = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}`)
       .then((response) => {
-        console.log("PERSONA-->>>> ", response.data);
         formPerson.setFieldsValue({
           first_name: response.data.first_name,
           flast_name: response.data.flast_name,
@@ -533,12 +532,10 @@ const personDetailForm = () => {
         )
           .then((response) => {
             if (response.data.data.groups[0]) {
-              console.log("Response khonnect-->> ", response.data.data.groups);
               let group = response.data.data.groups;
               group = group.map((a) => {
                 return a._id.$oid;
               });
-              console.log("GRUPS-->> ", group);
               formPerson.setFieldsValue({
                 groups: group,
               });
@@ -1376,7 +1373,6 @@ const personDetailForm = () => {
     }
   };
   const updateFormbankAcc = (item) => {
-    console.log("BANCO->> ", item.expiration_year);
     formBank.setFieldsValue({
       bank: item.bank.id,
       account_number: item.account_number,

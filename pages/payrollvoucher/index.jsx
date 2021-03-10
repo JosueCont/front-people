@@ -72,7 +72,6 @@ const UploadPayroll = () => {
         element.timestamp = moment(element.timestamp).format("DD-MM-YYYY");
       });
       let data = response.data.results;
-      console.log("permissions", data);
       setLoading(false);
       setVouchers(data);
     } catch (e) {
@@ -102,7 +101,6 @@ const UploadPayroll = () => {
   };
 
   const filter = async (values) => {
-    console.log(values);
     setLoading(true);
     getVouchers(values.collaborator, values.company, departamentId, values.rfc);
   };

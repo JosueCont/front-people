@@ -59,8 +59,6 @@ const PermissionDetails = () => {
   };
 
   const onChangeDepartureDate = (date, dateString) => {
-    console.log(date);
-    console.log(dateString);
     setDepartureDate(dateString);
   };
 

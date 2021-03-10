@@ -45,7 +45,6 @@ const Permissionform = (props) => {
   const changePerson = (value) => {
     if (value) {
       let index = allPersons.find((data) => data.id === value);
-      console.log(index);
       if (index.job && index.job.length > 0) {
         formPermission.setFieldsValue({
           job: index.job[0].name,
@@ -65,7 +64,7 @@ const Permissionform = (props) => {
       let response = await Axios.get(API_URL + `/person/person/`);
       let data = response.data.results;
       setAllPersons(data);
-      console.log(data);
+
       data = data.map((a, index) => {
         return {
           label: a.first_name + " " + a.flast_name,

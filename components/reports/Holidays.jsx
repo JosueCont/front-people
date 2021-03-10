@@ -98,7 +98,6 @@ const HolidaysReport = (props) => {
   ];
 
   const filterHolidays = async (values) => {
-    console.log(values);
     setColaborator(values.collaborator);
     setCompanyId(values.company);
     setDepartmentId(values.department);
@@ -130,19 +129,15 @@ const HolidaysReport = (props) => {
       }
 
       let response = await Axios.get(API_URL + url);
-      console.log("response", response);
       let data = response.data.results;
       data.map((item, index) => {
         item.key = index;
-        console.log(item);
         return item;
       });
 
-      console.log(data);
-
       setHolidayList(data);
     } catch (e) {
-      console.log("error", e);
+      console.log(e);
     } finally {
       setLoading(false);
     }

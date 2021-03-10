@@ -77,7 +77,6 @@ const homeScreen = () => {
       if (a.includes("people.person.function.import_csv_person"))
         perms.import = true;
     });
-    console.log("Permss-->>> ", perms);
     setPermissions(perms);
   };
 
@@ -101,7 +100,6 @@ const homeScreen = () => {
 
   const filterPersonName = (data) => {
     // let data = { name: name, is_active: false };
-    console.log("Filter name->> ", data);
     Axios.post(API_URL + `/person/person/get_list_persons/ `, data)
       .then((response) => {
         setPerson([]);
@@ -358,7 +356,6 @@ const homeScreen = () => {
 
   /////DELETE MODAL
   const setDeleteModal = async (value) => {
-    console.log(value);
     setStringToDelete("Eliminar usuarios ");
     if (value.length > 0) {
       if (value.length == 1) {
@@ -474,8 +471,6 @@ const homeScreen = () => {
 
   ////SEARCH FILTER
   const filter = (value) => {
-    console.log("FILTROS enviar-->>>> ", value);
-
     if (value && value.gender !== undefined) filters.gender = value.gender;
 
     if (value && value.is_active !== undefined && value.is_active != "todos")
@@ -493,7 +488,6 @@ const homeScreen = () => {
       filters.is_active = value.is_active;
       filterPersonName();
     }
-    console.log("FILTROS ARMADOS-->>>> ", filters);
   };
   const resetFilter = () => {
     formFilter.resetFields();

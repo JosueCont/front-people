@@ -247,6 +247,7 @@ const NodeTreeView = () => {
         formBusiness.setFieldsValue({
           name: value.edit.title,
           parent: value.parent,
+          description: value.edit.description,
         });
       }
       if (value.parent == undefined && value.bool) {
@@ -255,6 +256,7 @@ const NodeTreeView = () => {
         formBusiness.setFieldsValue({
           name: value.edit.title,
           parent: value.parent,
+          description: value.edit.description,
         });
       }
     }

@@ -22,7 +22,6 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import jsCookie from "js-cookie";
 
 const Lendingform = (props) => {
-  console.log("PROPS-->>> ", props.config);
   const [form] = Form.useForm();
   const { Title } = Typography;
   const { TextArea } = Input;
@@ -75,8 +74,6 @@ const Lendingform = (props) => {
     formAmount = formAmount ? parseFloat(formAmount) : 0;
     formDeadline = formDeadline ? parseInt(formDeadline) : 1;
 
-    console.log(formAmount);
-    console.log(formDeadline);
     /* let paym = formAmount/formDeadline; */
 
     /* PARA TOMAR EN CUENTA EL INTERES */

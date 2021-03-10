@@ -269,7 +269,6 @@ const businessForm = () => {
   };
 
   const changeStatusBusiness = async () => {
-    console.log("Business-->>> ", businessUpdate);
     Axios.put(API_URL + `/business/node/${businessUpdate.id}/`, businessUpdate)
       .then(function (response) {
         modalUpdate({});

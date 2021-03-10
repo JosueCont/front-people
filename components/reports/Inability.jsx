@@ -140,7 +140,6 @@ const InabilityReport = (props) => {
 
   const download = async (item = null) => {
     let dataId = {};
-    console.log(item);
     if (item) {
       dataId = {
         incapacity_id: item.id,
@@ -191,8 +190,6 @@ const InabilityReport = (props) => {
   };
 
   const onchangeRange = (date, dateString) => {
-    console.log(date);
-    console.log(dateString);
     setDateOne(dateString[0]);
     setDateTwo(dateString[1]);
   };
@@ -227,19 +224,16 @@ const InabilityReport = (props) => {
       if (date1 && date2) {
         let d1 = moment(dateOne).format("YYYY-MM-DD");
         let d2 = moment(dateTwo).format("YYYY-MM-DD");
-        console.log(d1);
-        console.log(d2);
         url += `departure_date__gte=${d1}&departure_date__lte=${d2}&`;
       }
 
       let response = await Axios.get(API_URL + url);
       let data = response.data.results;
-      console.log("data", data);
       data = data.map((item) => {
         item.key = item.id;
         return item;
       });
-      console.log(data);
+
       setIncapacityList(data);
     } catch (e) {
       console.log(e);
@@ -250,7 +244,7 @@ const InabilityReport = (props) => {
 
   const filter = async (values) => {
     setIncapacityList([]);
-    console.log(values);
+
     setCollaborator(values.collaborator);
     setCompanyId(values.company);
     setDepartmentId(values.department);

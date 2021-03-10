@@ -58,7 +58,6 @@ const Incapacityform = (props) => {
   const changePerson = (value) => {
     if (value) {
       let index = allPersons.find((data) => data.khonnect_id === value);
-      console.log(index);
       if (index && index.job[0]) {
         form.setFieldsValue({
           job: index.job[0].name,
@@ -82,7 +81,7 @@ const Incapacityform = (props) => {
       let response = await Axios.get(API_URL + `/person/person/`);
       let data = response.data.results;
       setAllPersons(data);
-      console.log(data);
+
       data = data.map((a, index) => {
         return {
           label: a.first_name + " " + a.flast_name,

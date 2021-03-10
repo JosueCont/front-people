@@ -214,7 +214,6 @@ const GroupAdd = () => {
     }
 
     data.perms = lst;
-    // console.log("todos los permisos", data.perms);
     if (!edit) {
       saveGroup();
     } else {
