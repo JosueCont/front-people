@@ -36,7 +36,7 @@ export default function SelectBank(props) {
         <Form.Item
             key={'SelectBank'}
             name={props.name ? props.name : "bank"}
-            label={props.label ? props.label : "Baanco"}
+            label={props.label ? props.label : "Banco"}
         >
             <Select
                 key="SelectBank"
