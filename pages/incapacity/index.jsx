@@ -91,7 +91,6 @@ const Incapacity = () => {
             }
             let response = await Axios.get(API_URL + url);
             let data = response.data.results;
-            console.log("data", data);
             data = data.map((item) => {
                 item.key = item.id;
                 return item;
@@ -106,15 +105,15 @@ const Incapacity = () => {
         }
     };
 
+
     const GotoDetails = (data) => {
-        console.log(data);
         route.push("incapacity/" + data.id + "/details");
     };
 
     const filter = async (values) => {
         setSending(true);
         setIncapacityList([]);
-        console.log(values);
+
         getIncapacity(
             values.collaborator,
             values.company,

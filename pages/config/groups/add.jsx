@@ -214,7 +214,6 @@ const GroupAdd = () => {
     }
 
     data.perms = lst;
-    // console.log("todos los permisos", data.perms);
     if (!edit) {
       saveGroup();
     } else {
@@ -414,6 +413,7 @@ const GroupAdd = () => {
           setTimeout(() => {
             checkFunctions();
             setGetperms(false);
+            setPermsFunction(arrayFunctions);
             setLoading(false);
           }, 0);
         });

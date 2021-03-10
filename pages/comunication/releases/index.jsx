@@ -68,15 +68,12 @@ const Releases = () => {
     if (dateOne && dateTwo) {
       let d1 = moment(`${dateOne} 00:00:01`).tz("America/Merida").format();
       let d2 = moment(`${dateTwo} 23:59:00`).tz("America/Merida").format();
-      console.log(d1);
-      console.log(d2);
       url += `timestamp__gte=${d1}&timestamp__lte=${d2}&`;
     }
     try {
       const token = JSON.parse(Cookies.get("token", token));
       let k_id = "";
       if (token) k_id = token.user_id;
-      console.log(k_id);
       const header = {
         "content-type": "application/json",
         khonnect_id: k_id,
@@ -130,8 +127,6 @@ const Releases = () => {
   };
 
   const onchangeRange = (date, dateString) => {
-    console.log(date);
-    console.log(dateString);
     setDateOne(dateString[0]);
     setDateTwo(dateString[1]);
   };

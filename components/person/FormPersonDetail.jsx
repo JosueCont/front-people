@@ -401,6 +401,7 @@ const personDetailForm = () => {
         console.log(e);
       });
 
+    ///////GET NODES
     Axios.get(API_URL + `/business/node/`)
       .then((response) => {
         let data = response.data.results;
@@ -436,7 +437,6 @@ const personDetailForm = () => {
   const getPerson = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}`)
       .then((response) => {
-        console.log("PERSONA-->>>> ", response.data);
         formPerson.setFieldsValue({
           first_name: response.data.first_name,
           flast_name: response.data.flast_name,
@@ -466,9 +466,9 @@ const personDetailForm = () => {
           formPerson.setFieldsValue({
             birth_date: moment(response.data.birth_date),
           });
-        setNodePerson(response.data.job[0].department.node.id);
 
-        if (response.data.job) {
+        if (response.data.job[0]) {
+          setNodePerson(response.data.job[0].department.node.id);
           Axios.get(
             API_URL +
               `/business/department/?node=${response.data.job[0].department.node.id}`
@@ -507,16 +507,45 @@ const personDetailForm = () => {
             node: response.data.job[0].department.node.id,
           });
         }
+
         setDateAdmission(response.data.date_of_admission);
         setBirthDate(response.data.birth_date);
         setIsActive(response.data.is_active);
         if (response.data.photo) setPhoto(response.data.photo);
-        setLoading(false);
         let personName =
           response.data.first_name + " " + response.data.flast_name;
         if (response.data.mlast_name)
           personName = personName + " " + response.data.mlast_name;
         setPersonFullName(personName);
+
+        Axios.post(
+          LOGIN_URL + `/user/get-info/`,
+          {
+            user_id: response.data.khonnect_id,
+          },
+          {
+            headers: {
+              "client-id": APP_ID,
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((response) => {
+            if (response.data.data.groups[0]) {
+              let group = response.data.data.groups;
+              group = group.map((a) => {
+                return a._id.$oid;
+              });
+              formPerson.setFieldsValue({
+                groups: group,
+              });
+            }
+            setLoading(false);
+          })
+          .catch((e) => {
+            console.log(e);
+            setLoading(false);
+          });
       })
       .catch((e) => {
         console.log(e);
@@ -1344,7 +1373,6 @@ const personDetailForm = () => {
     }
   };
   const updateFormbankAcc = (item) => {
-    console.log("BANCO->> ", item.expiration_year);
     formBank.setFieldsValue({
       bank: item.bank.id,
       account_number: item.account_number,

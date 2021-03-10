@@ -95,7 +95,6 @@ const Events = () => {
           });
           getAllEvents();
         }
-        console.log(response);
       })
       .catch((e) => {
         console.log(e);

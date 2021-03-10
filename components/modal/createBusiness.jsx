@@ -10,21 +10,11 @@ const modalCreateBusiness = (props) => {
   const [formBusiness] = Form.useForm();
   const [business, setBusiness] = useState([]);
 
-  // console.log("NODE CREATE-->>> ", props);
   const closeDialog = () => {
     props.close(false);
   };
 
-  useEffect(() => {
-    if (props.parent > 0) {
-      console.log("MAYOR-->> ", props.parent);
-    } else {
-      console.log("MENOR-->> ", props.parent);
-    }
-  }, []);
-
   const createBusiness = (value) => {
-    console.log("SAVE FORM-->> ", value);
     // axios.post(API_URL + "/business/node/", data)
     //   .then(function (response) {
     //     if (response.status === 200) {

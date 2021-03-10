@@ -107,7 +107,6 @@ const CollaboratorsReport = (props) => {
   };
 
   const onChangeDepartment = (val) => {
-    console.log(val);
     form.setFieldsValue({
       job: null,
     });
@@ -121,7 +120,6 @@ const CollaboratorsReport = (props) => {
         id: item.id,
       };
     } else {
-      console.log("name", collaborator);
       if (collaborator) {
         dataId.collaborator = collaborator;
       }
@@ -135,13 +133,12 @@ const CollaboratorsReport = (props) => {
         dataId.date_of_admission = dateOfAdmission;
       }
     }
-    console.log(dataId);
+
     try {
       let response = await Axios.post(
         API_URL + `/person/employee-report-export`,
         dataId
       );
-      console.log(response);
 
       const type = response.headers["content-type"];
       const blob = new Blob([response.data], {
@@ -198,14 +195,12 @@ const CollaboratorsReport = (props) => {
     if (values && values.date_of_admission) {
       QueryData["date_of_admission"] = values.date_of_admission;
     }
-    console.log(QueryData);
     try {
       let response = await Axios.post(
         API_URL + `/person/employee-report`,
         QueryData
       );
       let data = response.data;
-      console.log(data.lenght);
       if (data.lenght === 1) {
         data = [data];
       }
@@ -238,7 +233,7 @@ const CollaboratorsReport = (props) => {
 
   const filterReport = async (values) => {
     values["date_of_admission"] = dateOfAdmission;
-    console.log(values);
+
     setCompany(values.company);
     setCollaborator(values.collaborator);
     setDepartment(values.department);

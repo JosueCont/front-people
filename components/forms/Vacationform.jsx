@@ -41,10 +41,8 @@ const Vacationform = (props) => {
   /* const [availableDays, setAvailableDays] = useState(null); */
 
   const changePerson = (value) => {
-    console.log(value);
     if (value) {
       let index = allPersons.find((data) => data.khonnect_id === value);
-      console.log(index);
       formVacation.setFieldsValue({
         antiquity: index.antiquity,
         availableDays: index.Available_days_vacation,
@@ -74,7 +72,7 @@ const Vacationform = (props) => {
       let response = await Axios.get(API_URL + `/person/person/`);
       let data = response.data.results;
       setAllPersons(data);
-      console.log(data);
+
       data = data.map((a, index) => {
         return {
           label: a.first_name + " " + a.flast_name,
@@ -114,7 +112,6 @@ const Vacationform = (props) => {
           ? moment(props.details.return_date, "YYYY-MM-DD")
           : null,
       });
-      console.log("data", props.details);
       if (
         props.details.collaborator &&
         props.details.collaborator.job &&

@@ -44,8 +44,6 @@ const PermissionEdit = () => {
   };
 
   const onChangeDepartureDate = (date, dateString) => {
-    console.log(date);
-    console.log(dateString);
     setDepartureDate(dateString);
   };
 
@@ -72,7 +70,7 @@ const PermissionEdit = () => {
   const saveRequest = async (values) => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
-    console.log(values);
+
     try {
       let response = await Axios.patch(
         API_URL + `/person/permit/${id}/`,

@@ -58,10 +58,9 @@ const Lending = () => {
             if (status) {
                 url += `status=${status}`;
             }
-
             let response = await Axios.get(url);
             let data = response.data.results;
-            console.log(data);
+
             setLendingList(data);
         } catch (e) {
             console.log(e);
@@ -71,9 +70,9 @@ const Lending = () => {
     };
 
     const filter = async (values) => {
-        console.log(values);
         getLending(values.person, values.type, values.status);
     };
+
 
     const GotoDetails = (item) => {
         route.push(`/lending/${item.id}/details`);
