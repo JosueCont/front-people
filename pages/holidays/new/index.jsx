@@ -45,9 +45,7 @@ const HolidaysNew = () => {
   };
 
   const changePerson = (value) => {
-    console.log(value);
     let index = allPersons.find((data) => data.khonnect_id === value);
-    console.log(index);
     setDateOfAdmission(moment(index.date_of_admission).format("DD/MM/YYYY"));
     if (index.job_department.job) {
       setJob(index.job_department.job.name);

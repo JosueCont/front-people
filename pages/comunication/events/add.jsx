@@ -70,7 +70,6 @@ const addEvent = () => {
           return { label: a.first_name + " " + a.flast_name, value: a.id };
         });
         setPersons(response.data.results);
-        console.log(response.data.results);
       })
       .catch((e) => {
         console.log(e);
@@ -84,7 +83,6 @@ const addEvent = () => {
         return { label: a.name, value: a.id };
       });
       setNodes(data);
-      console.log(data);
     });
   };
   const onFinish = async (values) => {

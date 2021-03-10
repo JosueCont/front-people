@@ -3,7 +3,6 @@ import axios from "axios";
 import { API_URL } from "../../config/config";
 
 const modalDeleteBusiness = (props) => {
-  // console.log("NODE-->> ", props);
   const closeDialog = () => {
     props.close(false);
   };

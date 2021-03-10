@@ -114,7 +114,6 @@ const PermissionsReport = (props) => {
   ];
 
   const filterPermission = async (values) => {
-    console.log(values);
     setColaborator(values.collaborator);
     setCompanyId(values.company);
     setDepartmentId(values.department);
@@ -144,7 +143,6 @@ const PermissionsReport = (props) => {
       }
       let response = await Axios.get(API_URL + url);
       let data = response.data.results;
-      console.log("permissions", data);
       setPermissionsList(data);
     } catch (e) {
       console.log(e);

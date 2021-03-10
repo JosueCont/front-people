@@ -86,19 +86,15 @@ const Holidays = () => {
       }
 
       let response = await Axios.get(API_URL + url);
-      console.log("response", response);
       let data = response.data.results;
       data.map((item, index) => {
         item.key = index;
-        console.log(item);
         return item;
       });
 
-      console.log(data);
-
       setHolidayList(data);
     } catch (e) {
-      console.log("error", e);
+      console.log(e);
     } finally {
       setLoading(false);
       setSearching(false);
@@ -106,7 +102,6 @@ const Holidays = () => {
   };
 
   const GotoDetails = (data) => {
-    console.log(data);
     route.push("holidays/" + data.id + "/details");
   };
 

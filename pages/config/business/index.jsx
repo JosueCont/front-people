@@ -543,16 +543,12 @@ const configBusiness = () => {
     /* showModal(); */
   };
   const deleteRegister = async () => {
-    console.log("delete");
-    console.log(deleted);
     /* try {
             let response = await Axios.delete(API_URL + deleted.url + `${deleted.id}/`);
-            console.log(response.data);
         } catch (error) {
             console.log(error);
         } */
     /* let response = await Axios.delete(API_URL + deleted.url + `${deleted.id}/`);
-        console.log(response.data); */
 
     Axios.delete(API_URL + deleted.url + `${deleted.id}/`)
       .then((response) => {
@@ -597,7 +593,6 @@ const configBusiness = () => {
   };
 
   useEffect(() => {
-    /* console.log(deleted); */
     if (deleted.id) {
       Modal.confirm({
         title: "¿Está seguro de eliminar este registro?",

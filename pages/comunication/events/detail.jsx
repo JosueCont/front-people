@@ -73,7 +73,6 @@ const addEvent = () => {
           return { label: a.first_name + " " + a.flast_name, value: a.id };
         });
         setPersons(data);
-        console.log(data);
       })
 
       .catch((e) => {
@@ -90,7 +89,6 @@ const addEvent = () => {
           return { label: a.name, value: a.id };
         });
         setNodes(data);
-        console.log(data);
       })
       .catch((e) => {
         console.log(e);
@@ -114,7 +112,6 @@ const addEvent = () => {
             return a.id;
           });
           guestsid = guests;
-          console.log(guests);
         } else {
           setValue(1);
           type_select = 2;

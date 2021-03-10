@@ -84,7 +84,6 @@ const AddUploadPayroll = () => {
             setCode_other_payment(element.code);
           }
         });
-        console.log("res", response.data);
         setLoading(false);
       })
       .catch((response) => {
