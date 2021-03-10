@@ -55,6 +55,7 @@ const homeScreen = () => {
   const [departments, setDepartments] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [permissions, setPermissions] = useState({});
+  let urlFilter = "/person/person/?";
 
   useEffect(() => {
     const jwt = JSON.parse(Cookie.get("token"));
@@ -99,15 +100,16 @@ const homeScreen = () => {
   };
 
   const filterPersonName = (data) => {
-    // let data = { name: name, is_active: false };
-    Axios.post(API_URL + `/person/person/get_list_persons/ `, data)
+    console.log("FILTROS-->> ", data);
+    Axios.get(API_URL + `${data}`)
       .then((response) => {
+        console.log("RESPONSE FILTER-->>> ", response.data);
         setPerson([]);
-        response.data.map((item, i) => {
+        response.data.results.map((item, i) => {
           item.key = i;
           if (!item.photo) item.photo = defaulPhoto;
         });
-        setPerson(response.data);
+        setPerson(response.data.results);
         setLoading(false);
       })
       .catch((e) => {
@@ -132,10 +134,6 @@ const homeScreen = () => {
         setLoading(false);
         console.log(error);
       });
-  };
-
-  const statusPeron = () => {
-    setStatus(status ? false : true);
   };
 
   const getModalPerson = (value) => {
@@ -471,24 +469,63 @@ const homeScreen = () => {
 
   ////SEARCH FILTER
   const filter = (value) => {
-    if (value && value.gender !== undefined) filters.gender = value.gender;
-
-    if (value && value.is_active !== undefined && value.is_active != "todos")
-      filters.is_active = value.is_active;
-
-    if (value && value.node !== undefined) filters.node = value.node;
-
-    if (value && value.department !== undefined)
-      filters.department = value.department;
-
-    if (value && value.job !== undefined) filters.job = value.job;
-
-    if (value && value.name !== undefined && value.name !== "") {
-      filters.name = value.name;
-      filters.is_active = value.is_active;
-      filterPersonName();
+    if (value && value.name !== undefined) {
+      urlFilter = urlFilter + "first_name__icontains=" + value.name;
+      // urlFilter = urlFilter + "&flast_name__icontains=" + value.name;
+      // urlFilter = urlFilter + "&mlast_name__icontains=" + value.name;
     }
+    if (value && value.gender !== undefined && value.gender != 0) {
+      let plus = "";
+      if (value && value.name) plus = "&";
+      urlFilter = urlFilter + plus + "gender=" + value.gender;
+    }
+
+    if (value && value.is_active !== undefined && value.is_active != 0) {
+      let plus = "";
+      if (
+        (value && value.name) ||
+        (value.gender !== undefined && value.gender != 0)
+      )
+        plus = "&";
+      urlFilter = urlFilter + plus + "is_active=" + value.is_active;
+    }
+    if (value && value.node !== undefined) {
+      let plus = "";
+      if (
+        (value && value.name) ||
+        (value.gender !== undefined && value.gender != 0) ||
+        (value.is_active !== undefined && value.is_active != 0)
+      )
+        plus = "&";
+      urlFilter = urlFilter + plus + "job__department__node__id=" + value.node;
+    }
+    if (value && value.department !== undefined) {
+      let plus = "";
+      if (
+        (value && value.name) ||
+        (value.gender !== undefined && value.gender != 0) ||
+        (value.is_active !== undefined && value.is_active != 0) ||
+        value.node !== undefined
+      )
+        plus = "&";
+      urlFilter = urlFilter + plus + "job__department__id=" + value.department;
+    }
+    if (value && value.job !== undefined) {
+      console.log("JOB-->>> ", value.job);
+      let plus = "";
+      if (
+        (value && value.name) ||
+        (value.gender !== undefined && value.gender != 0) ||
+        (value.is_active !== undefined && value.is_active != 0) ||
+        value.node !== undefined ||
+        value.department !== undefined
+      )
+        plus = "&";
+      urlFilter = urlFilter + plus + "job__id=" + value.job;
+    }
+    filterPersonName(urlFilter);
   };
+
   const resetFilter = () => {
     formFilter.resetFields();
     setStatus(true);

@@ -82,11 +82,22 @@ const GroupAdd = () => {
     { name: "Vacaciones", module: "Solicitudes", value: "people.vacation" },
     { name: "Permisos", module: "Solicitudes", value: "people.permit" },
     { name: "Incapacidad", module: "Solicitudes", value: "people.incapacity" },
+    {
+      name: "Cuentas bancarias",
+      module: "Solicitudes",
+      value: "people.requestaccount",
+    },
     /*Recibos de Nomina */
     {
       name: "Recibos de nómina",
       module: "Nomina",
       value: "people.payrollvoucher",
+    },
+
+    {
+      name: "Perfiles de seguridad",
+      module: "Configuración",
+      value: "people.groups",
     },
   ];
 
@@ -163,6 +174,17 @@ const GroupAdd = () => {
       module: "Incapacidad",
       value: "people.incapacity.function.reject_incapacity",
     },
+    //Solicitud de cuentas bancarias
+    {
+      name: "Aprobar cuenta bancaria",
+      module: "SolicitudCuentas",
+      value: "people.requestaccount.function.approve_account",
+    },
+    {
+      name: "Rechazar cuenta bancaria",
+      module: "SolicitudCuentas",
+      value: "people.requestaccount.function.reject_account",
+    },
     /*Reportes */
     {
       name: "Descargar reporte de colaboradores",
@@ -193,12 +215,6 @@ const GroupAdd = () => {
       name: "Descargar reporte de permisos",
       module: "Reportes",
       value: "people.report.function.export_permits",
-    },
-    /* Recibos de nomina */
-    {
-      name: "Importar .xml",
-      module: "Nomina",
-      value: "people.payrollvoucher.function.import_payrollvoucher",
     },
   ];
   let data = {};
@@ -740,7 +756,8 @@ const GroupAdd = () => {
                                   perm.module === "Empresas" ||
                                   perm.module === "Prestamos" ||
                                   perm.module === "Vacaciones" ||
-                                  perm.module === "Nomina"
+                                  perm.module === "Nomina" ||
+                                  perm.module === "SolicitudCuentas"
                               )}
                             />
                           </Col>
