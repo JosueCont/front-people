@@ -99,12 +99,10 @@ const Permission = () => {
   };
 
   const GotoDetails = (data) => {
-    console.log(data);
     route.push("permission/" + data.id + "/details");
   };
 
   const filterPermission = async (values) => {
-    console.log(values);
     setSending(true);
     getPermissions(
       values.collaborator,

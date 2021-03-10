@@ -144,7 +144,6 @@ const PayrollReport = (props) => {
   };
 
   const onChangeDepartment = (val) => {
-    console.log("departament", val);
     form.setFieldsValue({
       job: null,
     });
@@ -157,7 +156,7 @@ const PayrollReport = (props) => {
     setCompanyId(values.company);
     setDepartmentId(values.department);
     setJob(values.job);
-    console.log(values);
+
     getPayroll(
       values.collaborator,
       values.code,
@@ -207,7 +206,7 @@ const PayrollReport = (props) => {
         API_URL + `/payroll/payroll-voucher/get_report/`,
         info
       );
-      console.log(response);
+
       let data = response.data;
       data = data.map((item) => {
         item.key = item.id;

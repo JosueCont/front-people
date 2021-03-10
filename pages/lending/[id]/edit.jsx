@@ -79,7 +79,6 @@ const HolidaysNew = () => {
   };
 
   const reject = async () => {
-    console.log(message);
     let values = {
       id: id,
       khonnect_id: json.user_id,
@@ -147,9 +146,8 @@ const HolidaysNew = () => {
     try {
       let response = await Axios.get(API_URL + `/payroll/loan-config/`);
       setConfig(response.data.results[0]);
-      console.log(response.data.results[0]);
     } catch (error) {
-      console.log("error");
+      console.log(error);
     } finally {
       /* setLoading(false); */
     }

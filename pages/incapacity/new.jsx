@@ -47,9 +47,7 @@ const IncapacityNew = () => {
   };
 
   const changePerson = (value) => {
-    console.log(value);
     let index = allPersons.find((data) => data.khonnect_id === value);
-    console.log(index);
     setDateOfAdmission(moment(index.date_of_admission).format("DD/MM/YYYY"));
     if (index.job_department.job) {
       setJob(index.job_department.job.name);
@@ -63,7 +61,6 @@ const IncapacityNew = () => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
     file ? console.log(file["originFileObj"]) : null;
-    console.log(values);
 
     let data = new FormData();
     data.append("departure_date", departure_date);

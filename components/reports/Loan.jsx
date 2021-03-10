@@ -105,9 +105,9 @@ const LoanReport = (props) => {
       key: "amount",
     },
     {
-      title: "Pago realizado",
-      dataIndex: "",
-      key: "",
+      title: "Monto a pagar",
+      dataIndex: "periodicity_amount",
+      key: "periodicity_amount",
     },
     {
       title: "Saldo",
@@ -138,10 +138,10 @@ const LoanReport = (props) => {
       key: "EMP",
     },
     /* {
-            label: 'E-Pesos' ,
-            value: 'EPS',
-            key: 'EPS',
-        } */
+                label: 'E-Pesos' ,
+                value: 'EPS',
+                key: 'EPS',
+            } */
   ];
   const optionPeriodicity = [
     {
@@ -171,7 +171,6 @@ const LoanReport = (props) => {
   };
 
   const download = async (item = null) => {
-    console.log(item);
     let dataId = {};
 
     if (item) {
@@ -193,7 +192,6 @@ const LoanReport = (props) => {
         dataId.timestamp__lte = timestampLte;
       }
     }
-    console.log("dataID", dataId);
 
     try {
       let response = await Axios.post(

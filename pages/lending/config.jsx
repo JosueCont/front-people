@@ -60,7 +60,7 @@ const HolidaysNew = () => {
           API_URL + `/payroll/loan-config/1/`,
           values
         );
-        console.log(values);
+
         route.push("/lending");
         notification["success"]({
           message: "Aviso",

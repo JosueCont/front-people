@@ -104,8 +104,6 @@ const Newrelease = () => {
 
   const saveNotification = async (values) => {
     setMessageAlert(false);
-    console.log(values);
-    console.log(file);
 
     if (!message || (message && message.length <= 8)) {
       setMessageAlert(true);
@@ -163,7 +161,6 @@ const Newrelease = () => {
   };
 
   const onchangeFile = (file) => {
-    console.log(file);
     setFileList(file.fileList);
     setFile(
       file.fileList.map((a) => {
@@ -194,7 +191,6 @@ const Newrelease = () => {
   };
 
   const setHtml = (html) => {
-    console.log(html);
     setMessage(html);
   };
 
@@ -251,7 +247,6 @@ const Newrelease = () => {
   };
 
   const onChangecompany = async (value) => {
-    console.log(value);
     /* Clear form in specific fields */
     form.setFieldsValue({
       target_department: null,
@@ -386,19 +381,18 @@ const Newrelease = () => {
                 <Col xs={24} sm={24} md={14} lg={14} xl={14}>
                   <Row>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                      <Form.Item
+                      <SelectCompany
                         name={"target_company"}
                         label="Empresa"
                         labelCol={{ span: 10 }}
+                        onChange={onChangecompany}
                         rules={[
                           {
                             required: companyRequired,
                             message: "Este campo es requerido",
                           },
                         ]}
-                      >
-                        <SelectCompany onChange={onChangecompany} />
-                      </Form.Item>
+                      />
                       <Form.Item
                         name={"target_department"}
                         label="Departamento"

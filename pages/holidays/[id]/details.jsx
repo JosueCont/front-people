@@ -99,14 +99,13 @@ const HolidaysDetails = () => {
 
   const rejectRequest = async () => {
     if (json) {
-      console.log(json);
       try {
         let values = {
           khonnect_id: json.user_id,
           id: id,
           comment: 1212231,
         };
-        console.log(values);
+
         let response = await Axios.post(
           API_URL + `/person/vacation/reject_request/`,
           values
@@ -145,7 +144,6 @@ const HolidaysDetails = () => {
 
   const approveRequest = async () => {
     if (json) {
-      console.log(json);
       setSending(true);
       try {
         let values = {

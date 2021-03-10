@@ -66,7 +66,7 @@ const HolidaysNew = () => {
         description: "Información enviada correctamente.",
       });
     } catch (error) {
-      console.log("error");
+      console.log(error);
     } finally {
       setSending(false);
     }
