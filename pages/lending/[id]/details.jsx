@@ -51,8 +51,8 @@ const HolidaysNew = () => {
         },
         {
             title: "Saldo",
-            dataIndex: "address",
-            key: "address",
+            dataIndex: "balance",
+            key: "balance",
         },
         {
             title: "Fecha de pago",
@@ -101,7 +101,7 @@ const HolidaysNew = () => {
                 });
                 setPlan(newData);
             }
-
+            getPlan();
             success({
                 keyboard: false,
                 maskClosable: false,
