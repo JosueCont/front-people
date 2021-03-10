@@ -41,7 +41,9 @@ const BankAccountsDetails = () => {
     const [visibleModalReject, setVisibleModalReject] = useState(false);
 
     const [update, setUpdate] = useState(false);
-    const [details, setDetails] = useState(null);
+    const [currentDetails, setCurrentDetails] = useState(null);
+    const [newDetails, setNewDetails] = useState(null);
+
     const { id } = route.query;
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState(null);
@@ -53,13 +55,31 @@ const BankAccountsDetails = () => {
     const getDetails = async () => {
         setLoading(true);
         try {
-            let response = await Axios.get(API_URL + `/person/incapacity/${id}/`);
+            let response = await Axios.get(API_URL + `/person/bank-account-request/${id}/`);
             let data = response.data;
             console.log("get_details", data);
-            setDetails(data);
-            setDepartureDate(data.departure_date);
-            setReturnDate(data.return_date);
 
+            setNewDetails({
+                account_number: data.new_account_number,
+                interbank_key: data.new_interbank_key,
+                bank: data.new_bank.name,
+                expiration_month: data.new_expiration_month,
+                expiration_year: data.new_expiration_year
+            });
+
+            if (data.previous_account_number) {
+                setUpdate(true);
+                setCurrentDetails({
+                    account_number: data.previous_account_number,
+                    interbank_key: data.previous_interbank_key,
+                    bank: data.previous_bank,
+                    expiration_month: data.previous_expiration_month,
+                    expiration_year: data.previous_expiration_year
+                })
+            }
+
+            console.log(currentDetails);
+            console.log('newsDetails', newDetails)
             setLoading(false);
         } catch (e) {
             console.log(e);
@@ -74,43 +94,30 @@ const BankAccountsDetails = () => {
 
     const rejectRequest = async () => {
         setLoading(true);
-        setVisibleModalReject(false);
-        success({
-            keyboard: false,
-            maskClosable: false,
-            content: update ? "Actualización de cuenta bancaria rechazada" : "Cuenta bancaria rechazada",
-            okText: "Aceptar",
-            onOk() {
-                route.push("/bank_accounts");
-            },
-        });
-        /* if (json) {
-            console.log(json);
-            try {
-                let values = {
-                    khonnect_id: json.user_id,
-                    id: id,
-                    comment: message,
-                };
-                let response = await Axios.post(
-                    API_URL + `/person/incapacity/reject_request/`,
-                    values
-                );
-                setVisibleModalReject(false);
-                setMessage(null);
-                success({
-                    keyboard: false,
-                    maskClosable: false,
-                    content: "Incapacidad rechazada",
-                    okText: "Aceptar",
-                    onOk() {
-                        route.push("/incapacity");
-                    },
-                });
-            } catch (e) {
-                console.log(e);
+        try {
+            let data = {
+                id: id,
+                status: 3,
+                comment: message,
             }
-        } */
+            let response = await Axios.post(API_URL + `/person/bank-account-request/change_request_status/`, data)
+            let res = response.data;
+            success({
+                keyboard: false,
+                maskClosable: false,
+                content: update ? "Actualización de cuenta bancaria rechazada" : "Cuenta bancaria rechazada",
+                okText: "Aceptar",
+                onOk() {
+                    route.push("/bank_accounts");
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+            setVisibleModalReject(false);
+        }
+
     };
 
     const modalAprobe = () => {
@@ -122,65 +129,49 @@ const BankAccountsDetails = () => {
                 setLoading(true)
                 approveRequest();
             },
-            okText: 'Aceptar y notificar',
+            okText: 'Aprobar',
             okType: 'primary',
             cancelText: 'Cancelar'
         });
     }
 
+    const onChangeMessage = (e) => {
+        console.log(e.target.value);
+        setMessage(e.target.value);
+    };
+
     const approveRequest = async () => {
         setLoading(false);
-        success({
-            keyboard: false,
-            maskClosable: false,
-            content: update ? "Cuenta bancaria Actualizada" : "Su solicitud de cuenta bancaria ha sido aceptada",
-            okText: "Aceptar",
-            onOk() {
-                route.push("/bank_accounts");
-            },
-        });
-
-
-        /* if (json) {
-            console.log(json);
-            setLoading(true);
-            try {
-                let values = {
-                    khonnect_id: json.user_id,
-                    id: id,
-                };
-                let response = await Axios.post(
-                    API_URL + `/person/incapacity/approve_request/`,
-                    values
-                );
-                if (response.status == 200) {
-                    Modal.success({
-                        keyboard: false,
-                        maskClosable: false,
-                        content: "Su solicitud de incapacidad  ha sido aceptada",
-                        okText: "Aceptar",
-                        onOk() {
-                            route.push("/incapacity");
-                        },
-                    });
-                }
-            } catch (e) {
-                console.log(e);
-            } finally {
-                setLoading(false);
+        try {
+            let data = {
+                id: id,
+                status: 2,
+                comment: ''
             }
-        } */
+            let response = await Axios.post(API_URL + `/person/bank-account-request/change_request_status/`, data)
+            let res = response.data;
+            success({
+                keyboard: false,
+                maskClosable: false,
+                content: update ? "Cuenta bancaria Actualizada" : "Su solicitud de cuenta bancaria ha sido aceptada",
+                okText: "Aceptar",
+                onOk() {
+                    route.push("/bank_accounts");
+                },
+            });
+        } catch (error) {
+
+        } finally {
+            setLoading(false);
+        }
+
+
     };
 
     useEffect(() => {
-        let { update } = route.query
-        if (update) {
-            console.log("update")
-            setUpdate(true);
-        }
-        /* if (id) {
+        if (id) {
             getDetails();
-        } */
+        }
     }, [route]);
 
     return (
@@ -218,15 +209,17 @@ const BankAccountsDetails = () => {
                             className={"formPermission"}
                         >
                             <Row>
-                                <Col span={10}>
-                                    <Title level={5}> Datos actuales </Title>
+                                {update ?
+                                    <Col span={10} >
+                                        <Title level={5}> Datos actuales </Title>
 
-                                    <BankAccountsForm />
-                                </Col>
-                                <Col span={10} offset={1}>
+                                        <BankAccountsForm data={currentDetails} />
+                                    </Col>
+                                    : null}
+                                <Col span={10} offset={update ? 1 : 0}>
                                     <Title level={5}> Nuevos datos </Title>
 
-                                    <BankAccountsForm />
+                                    <BankAccountsForm data={newDetails} />
                                 </Col>
                             </Row>
                         </Form>
@@ -256,7 +249,7 @@ const BankAccountsDetails = () => {
                             type="primary"
                             style={{ padding: "0 50px", marginLeft: 15 }}
                         >
-                            {update ? "Actualizar" : "Guardar"}
+                            {update ? "Actualizar" : "Aprobar"}
                         </Button>
                     </Col>
                 </Row>
@@ -281,12 +274,12 @@ const BankAccountsDetails = () => {
                         onClick={rejectRequest}
                         style={{ padding: "0 50px", marginLeft: 15 }}
                     >
-                        Aceptar y notificar
+                        Rechazar
             </Button>,
                 ]}
             >
                 <Text>Comentarios</Text>
-                <TextArea rows="4" />
+                <TextArea rows="4" onChange={onChangeMessage} />
             </Modal>
         </MainLayout>
     );
