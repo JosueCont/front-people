@@ -14,7 +14,7 @@ import {
   Spin,
   Table,
   Modal,
-  Alert,
+  Switch,
   message,
 } from "antd";
 import {
@@ -272,6 +272,25 @@ const configBusiness = () => {
     }
   };
 
+  const onchangeVisible = (value) => {
+    value.is_visible ? (value.is_visible = false) : (value.is_visible = true);
+    let data = {
+      id: value.id,
+      is_visible: value.is_visible,
+    };
+    Axios.post(API_URL + `/setup/document-type/change_is_visible/`, data)
+      .then((response) => {
+        setLoadingTable(true);
+        getCatalog("/setup/document-type/");
+      })
+      .catch((error) => {
+        message.error("Ocurrio un error intente de nuevo.");
+        setLoadingTable(false);
+        getCatalog("/setup/document-type/");
+        console.log(error);
+      });
+  };
+
   const colDepartment = [
     {
       title: "Empresa",
@@ -466,6 +485,21 @@ const configBusiness = () => {
       dataIndex: "code",
     },
     {
+      title: "Visible",
+      render: (item) => {
+        return (
+          <>
+            <Switch
+              defaultChecked={item.is_visible}
+              checkedChildren="Visible"
+              unCheckedChildren="No visible"
+              onChange={() => onchangeVisible(item)}
+            />
+          </>
+        );
+      },
+    },
+    {
       title: "Acciones",
       render: (item) => {
         return (
@@ -539,17 +573,8 @@ const configBusiness = () => {
   };
   const setDeleteRegister = (props) => {
     setDeleted(props);
-
-    /* showModal(); */
   };
   const deleteRegister = async () => {
-    /* try {
-            let response = await Axios.delete(API_URL + deleted.url + `${deleted.id}/`);
-        } catch (error) {
-            console.log(error);
-        } */
-    /* let response = await Axios.delete(API_URL + deleted.url + `${deleted.id}/`);*/
-
     Axios.delete(API_URL + deleted.url + `${deleted.id}/`)
       .then((response) => {
         resetForm();
@@ -557,12 +582,10 @@ const configBusiness = () => {
         setLoadingTable(true);
         getCatalog(deleted.url);
         setDeleteRegister({});
-        /* /* showModal(); */
       })
       .catch((error) => {
         setId("");
         resetForm();
-        /* showModal(); */
         setLoadingTable(false);
         console.log(error);
       });
