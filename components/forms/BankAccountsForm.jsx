@@ -20,35 +20,35 @@ const BankAccountsForm = (props) => {
                 labelCol={{ span: 7 }}
                 labelAlign={"left"}
             >
-                <Input />
+                <Input value={props.data ? props.data.account_number : null} />
             </Form.Item>
             <Form.Item
                 label="Cuenta clabe"
                 labelCol={{ span: 7 }}
                 labelAlign={"left"}
             >
-                <Input />
+                <Input value={props.data ? props.data.interbank_key : null} />
             </Form.Item>
             <Form.Item
                 label="Banco"
                 labelCol={{ span: 7 }}
                 labelAlign={"left"}
             >
-                <Input />
+                <Input value={props.data ? props.data.bank : null} />
             </Form.Item>
             <Form.Item
                 label="Mes"
                 labelCol={{ span: 7 }}
                 labelAlign={"left"}
             >
-                <Input />
+                <Input value={props.data ? props.data.expiration_month : null} />
             </Form.Item>
             <Form.Item
                 label="Año"
                 labelCol={{ span: 7 }}
                 labelAlign={"left"}
             >
-                <Input />
+                <Input value={props.data ? props.data.expiration_year : null} />
             </Form.Item>
         </>
     )

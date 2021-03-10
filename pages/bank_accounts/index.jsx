@@ -10,7 +10,7 @@ import { API_URL } from '../../config/config'
 
 import SelectCollaborator from '../../components/selects/SelectCollaboratorItemForm';
 import SelectCompany from "../../components/selects/SelectCompany";
-/* import SelectDepartment from "../../components/selects/SelectDepartment"; */
+import SelectBank from '../../components/selects/SelectBank'
 import BreadcrumbHome from "../../components/BreadcrumbHome";
 
 import {
@@ -31,9 +31,8 @@ const BankAccounts = () => {
     const { Option } = Select;
 
     const [loading, setLoading] = useState(false);
-    const [sending, setSending] = useState(false);
-    const [incapacityList, setIncapacityList] = useState([]);
-    const [personList, setPersonList] = useState(null);
+
+    const [backsAccountsList, setBanksAccountsList] = useState([]);
 
     /* Variables */
     const [companyId, setCompanyId] = useState(null);
@@ -56,59 +55,86 @@ const BankAccounts = () => {
     const columns = [
         {
             title: "Colaborador",
-            dataIndex: "collaborator",
-            key: "collaborator"
+            dataIndex: "person",
+            key: "person",
+            render: (person) => {
+                return person.first_name + ' ' + person.flast_name
+            }
         },
         {
             title: "Empresa",
-            dataIndex: "business",
-            key: "business"
+            dataIndex: "person",
+            key: "business",
+            render: (person) => {
+                return person.job && person.job[0].department && person.job[0].department.node ? person.job[0].department.node.name : null
+            }
         },
         {
-            title: "Numero de cuenta",
-            dataIndex: "account",
-            key: "AccountNumber",
+            title: "Número de cuenta",
+            dataIndex: "new_account_number",
+            key: "new_account_number",
         },
         {
             title: "Banco",
-            dataIndex: "bank",
-            key: "bank",
+            dataIndex: "new_bank",
+            key: "new_bank",
+            render: (new_bank) => {
+                return new_bank.name
+            }
         },
         {
             title: "Tipo",
-            dataIndex: "type",
-            key: "type",
+            dataIndex: "previous_account_number",
+            key: "previous_account_number",
+            render: (previous_account_number) => {
+                return !previous_account_number ? "Verificación" : "Actualización"
+            }
         },
         {
             title: "Estatus",
-            dataIndex: "status",
-            key: "status",
+            dataIndex: "request_status",
+            key: "request_status",
+            render: (request_status) => {
+                return request_status == 1 ? "Pendiente" : request_status == 2 ? "Aprobado" : "Rechazado"
+            }
         },
         {
             title: "Acciones",
-            key: "actions"
+            key: "actions",
+            render: (row) => {
+                return <EyeOutlined
+                    className="icon_actions"
+                    key={"goDetails_" + row.id}
+                    onClick={() => GotoDetails(row)} />
+
+            }
         }
 
     ]
 
-    const getIncapacity = async (collaborator = null, company = null, department = null, status = null) => {
+    const getBanksAccountRequest = async (collaborator = null, company = null, account_number = null, bank = null, type = null, status = null) => {
         setLoading(true);
         try {
-            let url = `/person/incapacity/?`;
+            let url = `/person/bank-account-request/?`;
             if (collaborator) {
                 url += `person__id=${collaborator}&`;
             }
-            if (status) {
-                url += `status=${status}&`;
-            }
-
             if (company) {
                 url += `person__job__department__node__id=${company}&`;
             }
-
-            if (department) {
-                url += `person__job__department__id=${department}&`;
+            if (account_number) {
+                url += `new_account_number=${account_number}&`;
             }
+            if (bank) {
+                url += `bank=${bank}&`;
+            }
+            if (type) {
+                url += `type=${type}&`;
+            }
+            if (status) {
+                url += `request_status=${status}&`;
+            }
+
             let response = await Axios.get(API_URL + url);
             let data = response.data.results;
             console.log('data', data);
@@ -117,25 +143,32 @@ const BankAccounts = () => {
                 return item;
             });
 
-            setIncapacityList(data);
+            setBanksAccountsList(data);
 
         } catch (e) {
             console.log(e);
         } finally {
             setLoading(false);
-            setSending(false);
         }
     };
 
     const GotoDetails = (data) => {
         console.log(data);
-        route.push("incapacity/" + data.id + "/details");
+        route.push("bank_accounts/" + data.id + "/details");
     };
 
     const filter = async (values) => {
-        setSending(true);
-        setIncapacityList([])
+
+        setBanksAccountsList([])
         console.log(values)
+        getBanksAccountRequest(
+            values.collaborator,
+            values.company,
+            values.account_number,
+            values.bank,
+            values.type,
+            values.status
+        );
         /* getIncapacity(
             values.collaborator,
             values.company,
@@ -146,18 +179,18 @@ const BankAccounts = () => {
 
     /* Eventos de componentes */
     const onChangeCompany = (val) => {
-        form.setFieldsValue({
+        /* form.setFieldsValue({
             department: null,
-        });
+        }); */
         setCompanyId(val);
     };
 
-    const changeDepartament = (val) => {
+    /* const changeDepartament = (val) => {
         setDepartamentId(val);
-    };
+    }; */
 
     useEffect(() => {
-        /* getIncapacity(); */
+        getBanksAccountRequest();
     }, [route]);
 
 
@@ -183,18 +216,16 @@ const BankAccounts = () => {
                                     <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment" />
                                 </Col> */}
                                 <Col>
-                                    <Form.Item key="account_number_filter" name="account_number" label="Numero de cuenta">
+                                    <Form.Item key="account_number_filter" name="account_number" label="Número de cuenta">
                                         <Input />
                                     </Form.Item>
                                 </Col>
                                 <Col>
-                                    <Form.Item key="bank_filter" name="bank" label="Banco">
-                                        <Input />
-                                    </Form.Item>
+                                    <SelectBank name="bank" style={{ width: 140 }} />
                                 </Col>
                                 <Col>
                                     <Form.Item key="type_filter" name="type" label="Tipo de solicitud">
-                                        <Select style={{ width: 100 }} key="select_type" options={optionType} allowClear />
+                                        <Select style={{ width: 150 }} key="select_type" options={optionType} allowClear />
                                     </Form.Item>
                                 </Col>
                                 <Col>
@@ -224,7 +255,7 @@ const BankAccounts = () => {
                 </Row>
                 <Row justify="end">
                     <Col span={24}>
-                        <Table dataSource={incapacityList} key="tableHolidays" loading={loading} columns={columns}>
+                        <Table dataSource={backsAccountsList} key="tableHolidays" loading={loading} columns={columns}>
                         </Table>
                     </Col>
                 </Row>
