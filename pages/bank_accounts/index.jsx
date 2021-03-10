@@ -126,7 +126,7 @@ const BankAccounts = () => {
                 url += `new_account_number=${account_number}&`;
             }
             if (bank) {
-                url += `bank=${bank}&`;
+                url += `new_bank=${bank}&`;
             }
             if (type) {
                 url += `type=${type}&`;
@@ -198,7 +198,7 @@ const BankAccounts = () => {
         <MainLayout currentKey="7.5">
             <Breadcrumb className={"mainBreadcrumb"}>
                 <Breadcrumb.Item className={'pointer'} onClick={() => route.push({ pathname: "/home" })}>Inicio</Breadcrumb.Item>
-                <Breadcrumb.Item>Incapacidad</Breadcrumb.Item>
+                <Breadcrumb.Item>Cuentas bancarias</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
                 <Row justify="space-between" style={{ paddingBottom: 20 }}>

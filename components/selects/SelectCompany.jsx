@@ -37,6 +37,8 @@ export default function SelectCompany(props) {
             key={'Selectcompany'}
             name={props.name ? props.name : "company"}
             label={props.label ? props.label : "Empresa"}
+            labelCol={props.labelCol ? props.labelCol : null}
+            rules={props.rules ? props.rules : null}
         >
             <Select
                 key="SelectCompany"

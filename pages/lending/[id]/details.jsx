@@ -55,7 +55,7 @@ const HolidaysNew = () => {
             key: "address",
         },
         {
-            title: "Fecho de pago",
+            title: "Fecha de pago",
             dataIndex: "payment_date",
             key: "payment_date",
             render: (date) => {
@@ -108,7 +108,7 @@ const HolidaysNew = () => {
     const paid = (event, row) => {
         if (event) {
             confirm({
-                title: '¿Está seguro de aprobar la siguiente solicitud de permisos?',
+                title: '¿Está seguro de aprobar el siguiente pagó?',
                 icon: <ExclamationCircleOutlined />,
                 okText: 'Marcar como pagado',
                 cancelText: 'Cancelar',
