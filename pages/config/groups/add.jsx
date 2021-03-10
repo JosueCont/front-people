@@ -414,6 +414,7 @@ const GroupAdd = () => {
           setTimeout(() => {
             checkFunctions();
             setGetperms(false);
+            setPermsFunction(arrayFunctions);
             setLoading(false);
           }, 0);
         });
