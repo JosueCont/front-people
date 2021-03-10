@@ -26,6 +26,7 @@ import Lendingform from "../../components/forms/LendingForm";
 import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import jsCookie from "js-cookie";
 
 const HolidaysNew = () => {
   const route = useRouter();
@@ -34,6 +35,7 @@ const HolidaysNew = () => {
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(false);
   const [config, setConfig] = useState(null);
+  const [permissions, setPermissions] = useState({});
 
   const getConfig = async () => {
     setLoading(true);
@@ -88,8 +90,21 @@ const HolidaysNew = () => {
   };
 
   useEffect(() => {
+    const jwt = JSON.parse(jsCookie.get("token"));
+    searchPermissions(jwt.perms);
     getConfig();
   }, []);
+
+  const searchPermissions = (data) => {
+    const perms = {};
+    data.map((a) => {
+      if (a.includes("people.loanconfigure.can.create")) perms.create = true;
+      if (a.includes("people.loanconfigure.can.edit")) perms.edit = true;
+      if (a.includes("people.loanconfigure.can.delete")) perms.delete = true;
+      if (a.includes("people.loanconfigure.can.view")) perms.view = true;
+    });
+    setPermissions(perms);
+  };
 
   return (
     <MainLayout currentKey="7.1">
@@ -107,78 +122,98 @@ const HolidaysNew = () => {
         className="container back-white"
         style={{ width: "100%", padding: "20px 0" }}
       >
-        <Row justify={"center"}>
-          <Col span={23}>
-            <Form layout="horizontal" onFinish={saveConfig} form={form}>
-              <Row justify={"start"}>
-                <Col span={24}>
-                  <Title key="dats_gnrl" level={4}>
-                    Cantidad
-                  </Title>
-                </Col>
-                <Col span="8">
-                  <Form.Item
-                    name="min_amount"
-                    label="Mínimo"
-                    labelCol={{ span: 10 }}
-                    labelAlign={"left"}
-                  >
-                    <InputNumber style={{ width: "150px" }} />
-                  </Form.Item>
-                  <Form.Item
-                    label="Máximo"
-                    name="max_amount"
-                    labelCol={{ span: 10 }}
-                    labelAlign={"left"}
-                  >
-                    <InputNumber style={{ width: "150px" }} />
-                  </Form.Item>
-                </Col>
-                <Col span={24}>
-                  <Title key="dats_gnrl" level={4}>
-                    Plazos
-                  </Title>
-                </Col>
-                <Col span="8">
-                  <Form.Item
-                    label="Mínimo"
-                    name="min_deadline"
-                    labelCol={{ span: 10 }}
-                    labelAlign={"left"}
-                  >
-                    <InputNumber style={{ width: "150px" }} />
-                  </Form.Item>
-                  <Form.Item
-                    label="Máximo"
-                    name="max_deadline"
-                    labelCol={{ span: 10 }}
-                    labelAlign={"left"}
-                  >
-                    <InputNumber style={{ width: "150px" }} />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row style={{ paddingTop: 20 }} justify={"end"}>
-                <Col span={10} style={{ textAlign: "right" }}>
-                  <Button
-                    onClick={() => route.push("/lending")}
-                    style={{ padding: "0 40px", margin: "0 10px" }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    loading={sending}
-                    htmlType="submit"
-                    type={"primary"}
-                    style={{ padding: "0 40px", margin: "0 10px" }}
-                  >
-                    Guardar
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Col>
-        </Row>
+        {permissions.view && (
+          <Row justify={"center"}>
+            <Col span={23}>
+              <Form layout="horizontal" onFinish={saveConfig} form={form}>
+                <Row justify={"start"}>
+                  <Col span={24}>
+                    <Title key="dats_gnrl" level={4}>
+                      Cantidad
+                    </Title>
+                  </Col>
+                  <Col span="8">
+                    <Form.Item
+                      name="min_amount"
+                      label="Mínimo"
+                      labelCol={{ span: 10 }}
+                      labelAlign={"left"}
+                    >
+                      <InputNumber style={{ width: "150px" }} />
+                    </Form.Item>
+                    <Form.Item
+                      label="Máximo"
+                      name="max_amount"
+                      labelCol={{ span: 10 }}
+                      labelAlign={"left"}
+                    >
+                      <InputNumber style={{ width: "150px" }} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Title key="dats_gnrl" level={4}>
+                      Plazos
+                    </Title>
+                  </Col>
+                  <Col span="8">
+                    <Form.Item
+                      label="Mínimo"
+                      name="min_deadline"
+                      labelCol={{ span: 10 }}
+                      labelAlign={"left"}
+                    >
+                      <InputNumber style={{ width: "150px" }} />
+                    </Form.Item>
+                    <Form.Item
+                      label="Máximo"
+                      name="max_deadline"
+                      labelCol={{ span: 10 }}
+                      labelAlign={"left"}
+                    >
+                      <InputNumber style={{ width: "150px" }} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row style={{ paddingTop: 20 }} justify={"end"}>
+                  <Col span={10} style={{ textAlign: "right" }}>
+                    <Button
+                      onClick={() => route.push("/lending")}
+                      style={{ padding: "0 40px", margin: "0 10px" }}
+                    >
+                      Cancelar
+                    </Button>
+
+                    {config &&
+                    config.id != 0 &&
+                    config.id != "" &&
+                    config.id != undefined &&
+                    permissions.edit ? (
+                      <Button
+                        loading={sending}
+                        htmlType="submit"
+                        type={"primary"}
+                        style={{ padding: "0 40px", margin: "0 10px" }}
+                      >
+                        Guardar
+                      </Button>
+                    ) : (
+                      permissions.create && (
+                        <Button
+                          loading={sending}
+                          htmlType="submit"
+                          type={"primary"}
+                          style={{ padding: "0 40px", margin: "0 10px" }}
+                        >
+                          Guardar
+                        </Button>
+                      )
+                    )}
+                  </Col>
+                </Row>
+              </Form>
+            </Col>
+          </Row>
+        )}
       </div>
     </MainLayout>
   );

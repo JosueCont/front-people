@@ -91,8 +91,7 @@ const Lending = () => {
       if (a.includes("people.loan.can.create")) perms.create = true;
       if (a.includes("people.loan.can.edit")) perms.edit = true;
       if (a.includes("people.loan.can.delete")) perms.delete = true;
-      if (a.includes("people.loan.function.configure_loan"))
-        perms.config = true;
+      if (a.includes("people.loanconfigure.can.view")) perms.config = true;
       if (a.includes("people.loan.function.approve_loan")) perms.approve = true;
       if (a.includes("people.loan.function.reject_loan")) perms.reject = true;
     });

@@ -65,7 +65,6 @@ const LoginForm = (props) => {
             if (token) {
               saveJWT(token).then(function (responseJWT) {
                 if (responseJWT) {
-                  console.log("JWT-->> ", responseJWT);
                   message.success("Acceso correcto.");
                   Cookies.set("token", token);
                   setLoading(false);

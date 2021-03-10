@@ -153,7 +153,6 @@ const BankAccounts = () => {
 
       let response = await Axios.get(API_URL + url);
       let data = response.data.results;
-      console.log("data", data);
       data = data.map((item) => {
         item.key = item.id;
         return item;
