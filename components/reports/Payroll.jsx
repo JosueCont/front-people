@@ -10,7 +10,16 @@ import {
     Button,
     Input,
     Typography,
+    Tooltip
 } from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    InfoCircleOutlined,
+    SyncOutlined,
+    SearchOutlined,
+    PlusOutlined,
+} from "@ant-design/icons";
 import { API_URL } from "../../config/config";
 import Axios from "axios";
 import moment from "moment";
@@ -149,6 +158,17 @@ const PayrollReport = (props) => {
         });
         setDepartmentId(val);
     };
+
+    const clearFilter = () => {
+        form.setFieldsValue({
+            collaborator: null,
+            code: null,
+            company: null,
+            department: null,
+            job: null,
+        });
+        getPayroll();
+    }
 
     const filterReport = (values) => {
         setCollaborator(values.collaborator);
@@ -303,7 +323,7 @@ const PayrollReport = (props) => {
                         className="formFilterReports"
                         onFinish={filterReport}
                     >
-                        <Row gutter={[24, 8]}>
+                        <Row gutter={[10]}>
                             <Col>
                                 <SelectCollaborator
                                     name="collaborator"
@@ -344,19 +364,43 @@ const PayrollReport = (props) => {
                                 </Form.Item> */}
                             </Col>
                             <Col style={{ display: "flex" }}>
-                                <Button
-                                    style={{
-                                        background: "#fa8c16",
-                                        fontWeight: "bold",
-                                        color: "white",
-                                        marginTop: "auto",
-                                    }}
-                                    key="buttonFilter"
-                                    htmlType="submit"
-                                    loading={loading}
+                                <Tooltip
+                                    title="Filtrar"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
                                 >
-                                    Filtrar
-                </Button>
+                                    <Button
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: "auto",
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                        loading={loading}
+                                    >
+                                        <SearchOutlined />
+                                    </Button>
+                                </Tooltip>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                                <Tooltip
+                                    title="Limpiar filtro"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
+                                >
+                                    <Button
+                                        onClick={clearFilter}
+                                        style={{
+                                            fontWeight: "bold",
+                                            marginTop: "auto"
+                                        }}
+                                        key="buttonClearFilter"
+                                    >
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
                             </Col>
                         </Row>
                     </Form>

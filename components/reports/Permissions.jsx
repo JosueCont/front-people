@@ -7,9 +7,19 @@ import {
     Select,
     Form,
     DatePicker,
+    Tooltip,
     Button,
     Typography,
+    InputNumber
 } from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    InfoCircleOutlined,
+    SyncOutlined,
+    SearchOutlined,
+    PlusOutlined,
+} from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
@@ -119,6 +129,16 @@ const PermissionsReport = (props) => {
         { value: 2, label: "Aprobado", key: "opt_2" },
         { value: 3, label: "Rechazado", key: "opt_3" }
     ];
+
+    const clearFilter = () => {
+        form.setFieldsValue({
+            collaborator: null,
+            company: null,
+            department: null,
+            status: null
+        });
+        getPermissions();
+    }
 
     const filterPermission = async (values) => {
         setColaborator(values.collaborator);
@@ -237,7 +257,7 @@ const PermissionsReport = (props) => {
                         className="formFilterReports"
                         onFinish={filterPermission}
                     >
-                        <Row gutter={[24, 8]}>
+                        <Row gutter={[10]}>
                             <Col>
                                 <SelectCollaborator
                                     name="collaborator"
@@ -261,6 +281,7 @@ const PermissionsReport = (props) => {
                                 />
                             </Col>
                             <Col>
+
                                 <Form.Item key="status" name="status" label="Estatus">
                                     <Select
                                         style={{ width: 150 }}
@@ -271,18 +292,42 @@ const PermissionsReport = (props) => {
                                 </Form.Item>
                             </Col>
                             <Col style={{ display: "flex" }}>
-                                <Button
-                                    style={{
-                                        background: "#fa8c16",
-                                        fontWeight: "bold",
-                                        color: "white",
-                                        marginTop: "auto",
-                                    }}
-                                    key="buttonFilter"
-                                    htmlType="submit"
+                                <Tooltip
+                                    title="Filtrar"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
                                 >
-                                    Filtrar
-                </Button>
+                                    <Button
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: "auto",
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                    >
+                                        <SearchOutlined />
+                                    </Button>
+                                </Tooltip>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                                <Tooltip
+                                    title="Limpiar filtro"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
+                                >
+                                    <Button
+                                        onClick={clearFilter}
+                                        style={{
+                                            fontWeight: "bold",
+                                            marginTop: "auto"
+                                        }}
+                                        key="buttonClearFilter"
+                                    >
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
                             </Col>
                         </Row>
                     </Form>
