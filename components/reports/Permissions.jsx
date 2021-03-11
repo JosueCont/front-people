@@ -113,6 +113,13 @@ const PermissionsReport = (props) => {
         },
     ];
 
+    /* Select status */
+    const optionStatus = [
+        { value: 1, label: "Pendiente", key: "opt_1" },
+        { value: 2, label: "Aprobado", key: "opt_2" },
+        { value: 3, label: "Rechazado", key: "opt_3" }
+    ];
+
     const filterPermission = async (values) => {
         setColaborator(values.collaborator);
         setCompanyId(values.company);
@@ -252,6 +259,16 @@ const PermissionsReport = (props) => {
                                     companyId={companyId}
                                     key="selectDepartament"
                                 />
+                            </Col>
+                            <Col>
+                                <Form.Item key="status" name="status" label="Estatus">
+                                    <Select
+                                        style={{ width: 150 }}
+                                        key="select"
+                                        options={optionStatus}
+                                        allowClear
+                                    />
+                                </Form.Item>
                             </Col>
                             <Col style={{ display: "flex" }}>
                                 <Button

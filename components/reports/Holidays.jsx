@@ -82,6 +82,16 @@ const HolidaysReport = (props) => {
             },
         },
         {
+            title: "Estatus",
+            dataIndex: "status",
+            key: "status",
+            render: (status) => {
+                return (
+                    status === 1 ? "Pendiente" : status === 2 ? "Aprobado" : "Rechazado"
+                );
+            },
+        },
+        {
             title: "Acciones",
             dataIndex: "actions",
             key: "actions",
@@ -95,6 +105,13 @@ const HolidaysReport = (props) => {
                 );
             },
         },
+    ];
+
+    /* Select status */
+    const optionStatus = [
+        { value: 1, label: "Pendiente", key: "opt_1" },
+        { value: 2, label: "Aprobado", key: "opt_2" },
+        { value: 3, label: "Rechazado", key: "opt_3" }
     ];
 
     const filterHolidays = async (values) => {
@@ -244,6 +261,16 @@ const HolidaysReport = (props) => {
                                     companyId={companyId}
                                     key="selectDepartament"
                                 />
+                            </Col>
+                            <Col>
+                                <Form.Item key="status" name="status" label="Estatus">
+                                    <Select
+                                        style={{ width: 150 }}
+                                        key="select"
+                                        options={optionStatus}
+                                        allowClear
+                                    />
+                                </Form.Item>
                             </Col>
                             <Col style={{ display: "flex" }}>
                                 <Button
