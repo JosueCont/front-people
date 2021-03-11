@@ -23,6 +23,7 @@ import {
   FileDoneOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
+import jsCookie from "js-cookie";
 
 const BankAccounts = () => {
   const { Column } = Table;
@@ -33,6 +34,7 @@ const BankAccounts = () => {
   const [loading, setLoading] = useState(false);
 
   const [backsAccountsList, setBanksAccountsList] = useState([]);
+  const [permissions, setPermissions] = useState({});
 
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
@@ -202,8 +204,21 @@ const BankAccounts = () => {
     }; */
 
   useEffect(() => {
+    const jwt = JSON.parse(jsCookie.get("token"));
+    searchPermissions(jwt.perms);
     getBanksAccountRequest();
   }, [route]);
+
+  const searchPermissions = (data) => {
+    const perms = {};
+    data.map((a) => {
+      if (a.includes("people.requestaccount.can.view")) perms.view = true;
+      if (a.includes("people.requestaccount.can.create")) perms.create = true;
+      if (a.includes("people.requestaccount.can.edit")) perms.edit = true;
+      if (a.includes("people.requestaccount.can.delete")) perms.delete = true;
+    });
+    setPermissions(perms);
+  };
 
   return (
     <MainLayout currentKey="7.5">
