@@ -102,7 +102,7 @@ const PayrollReport = (props) => {
             key: "amount",
         },
         {
-            title: "Dias trabajados",
+            title: "Días trabajados",
             dataIndex: "number_of_days_paid",
             key: "number_of_days_paid",
             render: (number) => {
@@ -291,7 +291,7 @@ const PayrollReport = (props) => {
         <>
             <Row justify="space-between" style={{ padding: "10px 20px 10px 0px" }}>
                 <Col span={24}>
-                    <Title level={5}>Nominas</Title>
+                    <Title level={5}>Nóminas</Title>
                     <hr />
                 </Col>
                 <Col>

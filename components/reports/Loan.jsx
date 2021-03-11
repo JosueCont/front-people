@@ -108,11 +108,28 @@ const LoanReport = (props) => {
             title: "Monto a pagar",
             dataIndex: "periodicity_amount",
             key: "periodicity_amount",
+            render: (periodicity_amount, row) => {
+                return row.balance === 0 ? 0 : periodicity_amount
+            }
         },
         {
             title: "Saldo",
             dataIndex: "balance",
-            key: "balance",
+            key: "balance"
+        },
+        {
+            title: "Estatus",
+            dataIndex: "status",
+            key: "status",
+            render: (status) => {
+                return status === 1
+                    ? "Pendiente"
+                    : status === 2
+                        ? "Aprobado"
+                        : status === 3
+                            ? "Rechazado" : "Pagado"
+                    ;
+            },
         },
         {
             title: "Acciones",
@@ -143,6 +160,15 @@ const LoanReport = (props) => {
                     key: 'EPS',
                 } */
     ];
+
+    /* Select status */
+    const optionStatus = [
+        { value: 1, label: "Pendiente", key: "opt_1" },
+        { value: 2, label: "Aprobado", key: "opt_2" },
+        { value: 3, label: "Rechazado", key: "opt_3" },
+        { value: 4, label: "Pagado", key: "opt_4" },
+    ];
+
     const optionPeriodicity = [
         {
             label: "Semanal",
@@ -348,6 +374,16 @@ const LoanReport = (props) => {
                                     <DatePicker format={"YYYY/MM/DD"} onChange={changeDate} />
                                 </Form.Item>
                             </Col>
+                            <Col>
+                                <Form.Item key="status" name="status" label="Estatus">
+                                    <Select
+                                        style={{ width: 100 }}
+                                        key="select"
+                                        options={optionStatus}
+                                        allowClear
+                                    />
+                                </Form.Item>
+                            </Col>
                             <Col style={{ display: "flex" }}>
                                 <Button
                                     style={{
@@ -386,6 +422,7 @@ const LoanReport = (props) => {
             <Row style={{ padding: "10px 20px 10px 0px" }}>
                 <Col span={24}>
                     <Table
+                        scroll={{ x: 1300 }}
                         loading={loading}
                         dataSource={lendingList}
                         key="tableHolidays"
