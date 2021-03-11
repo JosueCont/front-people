@@ -39,7 +39,7 @@ import { useRouter } from "next/router";
 import Router from "next/router";
 import moment from "moment";
 import { LOGIN_URL, APP_ID } from "../../config/config";
-import Cookies from "js-cookie";
+import jsCookie from "js-cookie";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -59,6 +59,7 @@ const personDetailForm = () => {
   const [people, setPeople] = useState([]);
   const [nodePerson, setNodePerson] = useState();
   const [loadImge, setLoadImage] = useState(false);
+  const [permissions, setPermissions] = useState({});
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -256,6 +257,8 @@ const personDetailForm = () => {
 
   ////LOAD PAGE
   useEffect(() => {
+    const jwt = JSON.parse(jsCookie.get("token"));
+    searchPermissions(jwt.perms);
     getValueSelects();
     if (router.query.id) {
       getPerson();
@@ -270,6 +273,23 @@ const personDetailForm = () => {
       getDocument();
     }
   }, [router.query.id]);
+
+  const searchPermissions = (data) => {
+    const perms = {};
+    data.map((a) => {
+      if (a.includes("people.person.can.view")) perms.view = true;
+      if (a.includes("people.person.can.create")) perms.create = true;
+      if (a.includes("people.person.can.edit")) perms.edit = true;
+      if (a.includes("people.person.can.delete")) perms.delete = true;
+      if (a.includes("people.person.function.change_is_active"))
+        perms.change_status = true;
+      if (a.includes("people.person.function.export_csv_person"))
+        perms.export = true;
+      if (a.includes("people.person.function.import_csv_person"))
+        perms.import = true;
+    });
+    setPermissions(perms);
+  };
 
   /////GET DATA SELCTS
   const getValueSelects = async (id) => {
@@ -936,6 +956,7 @@ const personDetailForm = () => {
   const updateFormFamily = (item) => {
     formFamily.setFieldsValue({
       relationship: item.relationship.id,
+      job: item.job,
       name: item.name,
       flast_name: item.flast_name,
       mlast_name: item.mlast_name,
@@ -950,10 +971,6 @@ const personDetailForm = () => {
     if (item.birth_date)
       formFamily.setFieldsValue({
         birth_date: moment(item.birth_date),
-      });
-    if (item.job)
-      formFamily.setFieldsValue({
-        job: item.job.id,
       });
     setIdFamily(item.id);
     setUpFamily(true);
@@ -1036,7 +1053,9 @@ const personDetailForm = () => {
     },
     {
       title: "Beneficio",
-      dataIndex: "benefit",
+      render: (item) => {
+        return <>{item.benefit} %</>;
+      },
     },
     {
       title: "Opciones",
@@ -2254,7 +2273,7 @@ const personDetailForm = () => {
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
                         <Form.Item name="job" label="Puesto de trabajo">
-                          <Select options={jobs} />
+                          <Input />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2640,27 +2659,29 @@ const personDetailForm = () => {
                     </Row>
                   </Form>
                 </TabPane>
-                <TabPane tab="Eliminar persona" key="tab_10">
-                  Al eliminar a una persona perderá todos los datos relacionados
-                  a ella de manera permanente.
-                  <Row style={{ padding: "2%" }}>
-                    <Col>
-                      <Button
-                        type="primary"
-                        danger
-                        icon={<WarningOutlined />}
-                        onClick={() =>
-                          setDeleteRegister({
-                            id: "",
-                            api: "deletePerson",
-                          })
-                        }
-                      >
-                        Eliminar persona
-                      </Button>
-                    </Col>
-                  </Row>
-                </TabPane>
+                {permissions.delete && (
+                  <TabPane tab="Eliminar persona" key="tab_10">
+                    Al eliminar a una persona perderá todos los datos
+                    relacionados a ella de manera permanente.
+                    <Row style={{ padding: "2%" }}>
+                      <Col>
+                        <Button
+                          type="primary"
+                          danger
+                          icon={<WarningOutlined />}
+                          onClick={() =>
+                            setDeleteRegister({
+                              id: "",
+                              api: "deletePerson",
+                            })
+                          }
+                        >
+                          Eliminar persona
+                        </Button>
+                      </Col>
+                    </Row>
+                  </TabPane>
+                )}
               </Tabs>
               <Row flex>
                 <Col style={{ paddingTop: "2%", paddingBottom: "4%" }}>

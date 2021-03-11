@@ -27,6 +27,7 @@ import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import cookie from "js-cookie";
+import jsCookie from "js-cookie";
 
 const BankAccountsDetails = () => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
@@ -46,6 +47,7 @@ const BankAccountsDetails = () => {
   const { id } = route.query;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [permissions, setPermissions] = useState({});
 
   const onCancel = () => {
     route.push("/incapacity");
@@ -60,6 +62,12 @@ const BankAccountsDetails = () => {
       let data = response.data;
 
       setNewDetails({
+        employee:
+          data.person.first_name +
+          " " +
+          data.person.flast_name +
+          " " +
+          data.person.mlast_name,
         account_number: data.new_account_number,
         interbank_key: data.new_interbank_key,
         bank: data.new_bank.name,
@@ -175,10 +183,23 @@ const BankAccountsDetails = () => {
   };
 
   useEffect(() => {
+    const jwt = JSON.parse(jsCookie.get("token"));
+    searchPermissions(jwt.perms);
     if (id) {
       getDetails();
     }
   }, [route]);
+
+  const searchPermissions = (data) => {
+    const perms = {};
+    data.map((a) => {
+      if (a.includes("people.requestaccount.function.reject_account"))
+        perms.reject = true;
+      if (a.includes("people.requestaccount.function.approve_account"))
+        perms.approve = true;
+    });
+    setPermissions(perms);
+  };
 
   return (
     <MainLayout currentKey="5">
@@ -232,24 +253,28 @@ const BankAccountsDetails = () => {
               Regresar
             </Button>
 
-            <Button
-              danger
-              key="reject"
-              type="primary"
-              onClick={() => setVisibleModalReject(true)}
-              style={{ padding: "0 50px", marginLeft: 15 }}
-            >
-              Rechazar
-            </Button>
+            {permissions.reject && (
+              <Button
+                danger
+                key="reject"
+                type="primary"
+                onClick={() => setVisibleModalReject(true)}
+                style={{ padding: "0 50px", marginLeft: 15 }}
+              >
+                Rechazar
+              </Button>
+            )}
 
-            <Button
-              key="save"
-              onClick={modalAprobe}
-              type="primary"
-              style={{ padding: "0 50px", marginLeft: 15 }}
-            >
-              {update ? "Actualizar" : "Aprobar"}
-            </Button>
+            {permissions.approve && (
+              <Button
+                key="save"
+                onClick={modalAprobe}
+                type="primary"
+                style={{ padding: "0 50px", marginLeft: 15 }}
+              >
+                {update ? "Actualizar" : "Aprobar"}
+              </Button>
+            )}
           </Col>
         </Row>
       </div>
@@ -270,15 +295,19 @@ const BankAccountsDetails = () => {
           >
             Cancelar
           </Button>,
-          <Button
-            key="submit_modal"
-            type="primary"
-            loading={loading}
-            onClick={rejectRequest}
-            style={{ padding: "0 50px", marginLeft: 15 }}
-          >
-            Rechazar
-          </Button>,
+          <>
+            {permissions.reject && (
+              <Button
+                key="submit_modal"
+                type="primary"
+                loading={loading}
+                onClick={rejectRequest}
+                style={{ padding: "0 50px", marginLeft: 15 }}
+              >
+                Rechazar
+              </Button>
+            )}
+          </>,
         ]}
       >
         <Text>Comentarios</Text>
