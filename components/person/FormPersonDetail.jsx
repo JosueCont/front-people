@@ -60,6 +60,7 @@ const personDetailForm = () => {
   const [nodePerson, setNodePerson] = useState();
   const [loadImge, setLoadImage] = useState(false);
   const [permissions, setPermissions] = useState({});
+  const [khonnectId, setKhonnectId] = useState("");
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -226,6 +227,7 @@ const personDetailForm = () => {
   };
   const onChangeDateTrainig = (date, dateString) => {
     setDateTraining(dateString);
+    formTraining.setFieldsValue({ since: dateString });
   };
   const onChangeDExJ = (date, dateString) => {
     setDateExpjob(dateString);
@@ -457,6 +459,7 @@ const personDetailForm = () => {
   const getPerson = () => {
     Axios.get(API_URL + `/person/person/${router.query.id}`)
       .then((response) => {
+        if (response.data.khonnect_id) setKhonnectId(response.data.khonnect_id);
         formPerson.setFieldsValue({
           first_name: response.data.first_name,
           flast_name: response.data.flast_name,
@@ -1703,7 +1706,7 @@ const personDetailForm = () => {
 
   const changePassword = (value) => {
     if (value.new_password == value.newPassword) {
-      value.user_id = router.query.id;
+      value.user_id = khonnectId;
       delete value["newPassword"];
       const headers = {
         "client-id": APP_ID,

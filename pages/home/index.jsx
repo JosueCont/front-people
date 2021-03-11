@@ -100,16 +100,14 @@ const homeScreen = () => {
   };
 
   const filterPersonName = (data) => {
-    console.log("FILTROS-->> ", data);
-    Axios.get(API_URL + `${data}`)
+    Axios.post(API_URL + `/person/person/get_list_persons/`, filters)
       .then((response) => {
-        console.log("RESPONSE FILTER-->>> ", response.data);
         setPerson([]);
-        response.data.results.map((item, i) => {
+        response.data.map((item, i) => {
           item.key = i;
           if (!item.photo) item.photo = defaulPhoto;
         });
-        setPerson(response.data.results);
+        setPerson(response.data);
         setLoading(false);
       })
       .catch((e) => {
@@ -476,6 +474,10 @@ const homeScreen = () => {
       filters.flast_name = value.name;
       filters.mlast_name = value.name;
     }
+    if (value && value.flast_name !== undefined) {
+      urlFilter = urlFilter + "flast_name=" + value.flast_name + "&";
+      filters.flast_name = value.flast_name;
+    }
     if (value && value.gender !== undefined && value.gender != 0) {
       urlFilter = urlFilter + "gender=" + value.gender + "&";
       filters.gender = value.gender;
@@ -615,10 +617,19 @@ const homeScreen = () => {
                 <Form onFinish={filter} layout={"vertical"} form={formFilter}>
                   <Row gutter={[24, 8]}>
                     <Col>
-                      <Form.Item name="name" label={"Nombre, apellido"}>
+                      <Form.Item name="name" label={"Nombre"}>
                         <Input
                           allowClear={true}
-                          placeholder="Nombre, Apellido"
+                          placeholder="Nombre(s)"
+                          style={{ width: 150 }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Form.Item name="flast_name" label={"Apellido"}>
+                        <Input
+                          allowClear={true}
+                          placeholder="Apellido(s)"
                           style={{ width: 150 }}
                         />
                       </Form.Item>
