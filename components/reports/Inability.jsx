@@ -185,12 +185,15 @@ const InabilityReport = (props) => {
                 encoding: "UTF-8",
             });
             const link = document.createElement("a");
-            console.log(item);
             link.href = window.URL.createObjectURL(blob);
-            link.download = item ? "Reporte_de_Incapacidades(" +
-                (item.collaborator.first_name ? item.collaborator.first_name : null) + "_" +
-                (item.collaborator.flast_name ? item.collaborator.flast_name : null) + "_" +
-                (item.collaborator.mlast_name ? item.collaborator.mlast_name : null) + ").csv"
+            link.download = item
+                ? "Reporte_de_Incapacidades(" +
+                (item.collaborator.first_name ? item.collaborator.first_name : null) +
+                "_" +
+                (item.collaborator.flast_name ? item.collaborator.flast_name : null) +
+                "_" +
+                (item.collaborator.mlast_name ? item.collaborator.mlast_name : null) +
+                ").csv"
                 : "Reporte_de_Incapacidades.csv";
             link.click();
         } catch (e) {
@@ -250,7 +253,6 @@ const InabilityReport = (props) => {
             setLoading(false);
         }
     };
-
     const clearFilter = () => {
         form.setFieldsValue({
             collaborator: null,

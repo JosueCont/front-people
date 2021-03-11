@@ -173,7 +173,6 @@ const addEvent = () => {
     getPersons();
     getNodes();
     const { id } = router.query;
-    console.log(router.query);
     let type = router.query.type;
     if (type === "edit") {
       setEdit(true);

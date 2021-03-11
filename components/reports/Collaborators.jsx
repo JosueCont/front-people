@@ -10,6 +10,7 @@ import {
     DatePicker,
     Button,
     Typography,
+
 } from "antd";
 import {
     DeleteOutlined,
@@ -156,7 +157,6 @@ const CollaboratorsReport = (props) => {
             });
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            console.log(item);
             link.download = item
                 ? "Reporte_de_colaboradores(" + item.name + ").csv"
                 : "Reporte_de_colaboradores.csv";
@@ -241,6 +241,7 @@ const CollaboratorsReport = (props) => {
     };
     /* /business/department/ */
 
+
     const clearFilter = () => {
         form.setFieldsValue({
             collaborator: null,
@@ -254,7 +255,6 @@ const CollaboratorsReport = (props) => {
 
     const filterReport = async (values) => {
         values["date_of_admission"] = dateOfAdmission;
-
         setCompany(values.company);
         setCollaborator(values.collaborator);
         setDepartment(values.department);
@@ -282,7 +282,6 @@ const CollaboratorsReport = (props) => {
         });
         setPermissions(perms);
     };
-
     return (
         <>
             <Row justify="space-between" style={{ paddingRight: 20 }}>
@@ -392,6 +391,7 @@ const CollaboratorsReport = (props) => {
                         </Button>
                     )}
                 </Col>
+
             </Row>
             <Row style={{ paddingRight: 20 }}>
                 <Col span={24} style={{ marginTop: 20 }}>

@@ -11,6 +11,7 @@ import {
     Input,
     Typography,
     Tooltip
+
 } from "antd";
 import {
     DeleteOutlined,
@@ -185,14 +186,14 @@ const PayrollReport = (props) => {
             values.job
         );
         /* let d1 = null;
-            let d2 = null;
-            if (dateLoan) {
-                d1 = moment(`${dateLoan} 00:00:01`).tz("America/Merida").format();
-                d2 = moment(`${dateLoan} 23:59:00`).tz("America/Merida").format();
-                setTimestampGte(d1);
-                setTimestampLte(d2);
-            }
-            getPatroll(values.person__id, values.type, values.periodicity, d1, d2); */
+                let d2 = null;
+                if (dateLoan) {
+                    d1 = moment(`${dateLoan} 00:00:01`).tz("America/Merida").format();
+                    d2 = moment(`${dateLoan} 23:59:00`).tz("America/Merida").format();
+                    setTimestampGte(d1);
+                    setTimestampLte(d2);
+                }
+                getPatroll(values.person__id, values.type, values.periodicity, d1, d2); */
     };
 
     const getPayroll = async (
@@ -256,8 +257,8 @@ const PayrollReport = (props) => {
                 dataId.code = code;
             }
             /* if (company) {
-                      dataId.company = company;
-                  } */
+                            dataId.company = company;
+                        } */
             if (departmentId) {
                 dataId.department = departmentId;
             }
@@ -276,14 +277,16 @@ const PayrollReport = (props) => {
                 type: type,
                 encoding: "UTF-8",
             });
-            console.log('item', item);
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = item ? "Reporte_de_nomina(" +
-                (item.person.first_name ? item.person.first_name : null) + '_' +
-                (item.person.flast_name ? item.person.flast_name : null) + '_' +
+            link.download = item
+                ? "Reporte_de_nomina(" +
+                (item.person.first_name ? item.person.first_name : null) +
+                "_" +
+                (item.person.flast_name ? item.person.flast_name : null) +
+                "_" +
                 (item.person.mlast_name ? item.person.mlast_name : null) +
-                ').csv'
+                ").csv"
                 : "Reporte_de_nomina.csv";
             link.click();
         } catch (e) {
