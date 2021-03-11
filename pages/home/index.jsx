@@ -31,10 +31,10 @@ import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
 import { withAuthSync } from "../../libs/auth";
-import Cookie from "js-cookie";
 
 const { Content } = Layout;
 import Link from "next/link";
+import jsCookie from "js-cookie";
 
 const homeScreen = () => {
   const [person, setPerson] = useState([]);
@@ -58,7 +58,7 @@ const homeScreen = () => {
   let urlFilter = "/person/person/?";
 
   useEffect(() => {
-    const jwt = JSON.parse(Cookie.get("token"));
+    const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
     getPerson();
     getNodes();
@@ -340,7 +340,7 @@ const homeScreen = () => {
   const statusSelect = [
     {
       label: "Todos",
-      value: 0,
+      value: -1,
     },
     {
       label: "Activos",
@@ -470,58 +470,25 @@ const homeScreen = () => {
   ////SEARCH FILTER
   const filter = (value) => {
     if (value && value.name !== undefined) {
-      urlFilter = urlFilter + "first_name__icontains=" + value.name;
-      // urlFilter = urlFilter + "&flast_name__icontains=" + value.name;
-      // urlFilter = urlFilter + "&mlast_name__icontains=" + value.name;
+      urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
+      // urlFilter = urlFilter + "&flast_name__icontains=" + value.name + "&";
+      // urlFilter = urlFilter + "&mlast_name__icontains=" + value.name + "&";
     }
     if (value && value.gender !== undefined && value.gender != 0) {
-      let plus = "";
-      if (value && value.name) plus = "&";
-      urlFilter = urlFilter + plus + "gender=" + value.gender;
+      urlFilter = urlFilter + "gender=" + value.gender + "&";
     }
 
-    if (value && value.is_active !== undefined && value.is_active != 0) {
-      let plus = "";
-      if (
-        (value && value.name) ||
-        (value.gender !== undefined && value.gender != 0)
-      )
-        plus = "&";
-      urlFilter = urlFilter + plus + "is_active=" + value.is_active;
+    if (value && value.is_active !== undefined && value.is_active != -1) {
+      urlFilter = urlFilter + "is_active=" + value.is_active + "&";
     }
     if (value && value.node !== undefined) {
-      let plus = "";
-      if (
-        (value && value.name) ||
-        (value.gender !== undefined && value.gender != 0) ||
-        (value.is_active !== undefined && value.is_active != 0)
-      )
-        plus = "&";
-      urlFilter = urlFilter + plus + "job__department__node__id=" + value.node;
+      urlFilter = urlFilter + "job__department__node__id=" + value.node + "&";
     }
     if (value && value.department !== undefined) {
-      let plus = "";
-      if (
-        (value && value.name) ||
-        (value.gender !== undefined && value.gender != 0) ||
-        (value.is_active !== undefined && value.is_active != 0) ||
-        value.node !== undefined
-      )
-        plus = "&";
-      urlFilter = urlFilter + plus + "job__department__id=" + value.department;
+      urlFilter = urlFilter + "job__department__id=" + value.department + "&";
     }
     if (value && value.job !== undefined) {
-      console.log("JOB-->>> ", value.job);
-      let plus = "";
-      if (
-        (value && value.name) ||
-        (value.gender !== undefined && value.gender != 0) ||
-        (value.is_active !== undefined && value.is_active != 0) ||
-        value.node !== undefined ||
-        value.department !== undefined
-      )
-        plus = "&";
-      urlFilter = urlFilter + plus + "job__id=" + value.job;
+      urlFilter = urlFilter + "job__id=" + value.job + "&";
     }
     filterPersonName(urlFilter);
   };
@@ -687,7 +654,7 @@ const homeScreen = () => {
                       <Form.Item name="is_active" label="Estatus">
                         <Select
                           options={statusSelect}
-                          placeholder=""
+                          placeholder="Estatus"
                           style={{ width: 90 }}
                         />
                       </Form.Item>
