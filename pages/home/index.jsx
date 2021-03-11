@@ -469,26 +469,33 @@ const homeScreen = () => {
 
   ////SEARCH FILTER
   const filter = (value) => {
+    filters = {};
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
-      // urlFilter = urlFilter + "&flast_name__icontains=" + value.name + "&";
-      // urlFilter = urlFilter + "&mlast_name__icontains=" + value.name + "&";
+      filters.first_name = value.name;
+      filters.flast_name = value.name;
+      filters.mlast_name = value.name;
     }
     if (value && value.gender !== undefined && value.gender != 0) {
       urlFilter = urlFilter + "gender=" + value.gender + "&";
+      filters.gender = value.gender;
     }
 
     if (value && value.is_active !== undefined && value.is_active != -1) {
       urlFilter = urlFilter + "is_active=" + value.is_active + "&";
+      filters.is_active = value.is_active;
     }
     if (value && value.node !== undefined) {
       urlFilter = urlFilter + "job__department__node__id=" + value.node + "&";
+      filters.node = value.node;
     }
     if (value && value.department !== undefined) {
       urlFilter = urlFilter + "job__department__id=" + value.department + "&";
+      filters.department = value.department;
     }
     if (value && value.job !== undefined) {
       urlFilter = urlFilter + "job__id=" + value.job + "&";
+      filters.job = value.job;
     }
     filterPersonName(urlFilter);
   };
@@ -747,7 +754,7 @@ const homeScreen = () => {
             />
           </>
         ) : (
-          "No tienes los permisos suficientes, contacta con un admnistrador"
+          "No tienes los permisos suficientes, contacta con un administrador"
         )}
       </div>
       <FormPerson close={getModalPerson} visible={modalAddPerson} />
