@@ -100,10 +100,8 @@ const homeScreen = () => {
   };
 
   const filterPersonName = (data) => {
-    console.log("FILTROS-->> ", data);
     Axios.get(API_URL + `${data}`)
       .then((response) => {
-        console.log("RESPONSE FILTER-->>> ", response.data);
         setPerson([]);
         response.data.results.map((item, i) => {
           item.key = i;
