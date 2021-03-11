@@ -227,6 +227,7 @@ const personDetailForm = () => {
   };
   const onChangeDateTrainig = (date, dateString) => {
     setDateTraining(dateString);
+    formTraining.setFieldsValue({ since: dateString });
   };
   const onChangeDExJ = (date, dateString) => {
     setDateExpjob(dateString);
