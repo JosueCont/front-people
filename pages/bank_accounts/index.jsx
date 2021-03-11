@@ -232,100 +232,110 @@ const BankAccounts = () => {
         <Breadcrumb.Item>Cuentas bancarias</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
-        <Row justify="space-between" style={{ paddingBottom: 20 }}>
-          <Col>
-            <Form
-              name="filter"
-              onFinish={filter}
-              layout="vertical"
-              key="formFilter"
-              className={"formFilter"}
-            >
-              <Row gutter={[24, 8]}>
-                <Col>
-                  <SelectCollaborator
-                    name={"collaborator"}
-                    style={{ width: 150 }}
-                  />
-                </Col>
-                <Col>
-                  <SelectCompany
-                    name="company"
-                    label="Empresa"
-                    onChange={onChangeCompany}
-                    key="SelectCompany"
-                    style={{ width: 150 }}
-                  />
-                </Col>
-                {/* <Col>
+        {permissions.view ? (
+          <>
+            <Row justify="space-between" style={{ paddingBottom: 20 }}>
+              <Col>
+                <Form
+                  name="filter"
+                  onFinish={filter}
+                  layout="vertical"
+                  key="formFilter"
+                  className={"formFilter"}
+                >
+                  <Row gutter={[24, 8]}>
+                    <Col>
+                      <SelectCollaborator
+                        name={"collaborator"}
+                        style={{ width: 150 }}
+                      />
+                    </Col>
+                    <Col>
+                      <SelectCompany
+                        name="company"
+                        label="Empresa"
+                        onChange={onChangeCompany}
+                        key="SelectCompany"
+                        style={{ width: 150 }}
+                      />
+                    </Col>
+                    {/* <Col>
                                     <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment" />
                                 </Col> */}
-                <Col>
-                  <Form.Item
-                    key="account_number_filter"
-                    name="account_number"
-                    label="Número de cuenta"
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <SelectBank name="bank" style={{ width: 140 }} />
-                </Col>
-                <Col>
-                  <Form.Item
-                    key="type_filter"
-                    name="type"
-                    label="Tipo de solicitud"
-                  >
-                    <Select
-                      style={{ width: 150 }}
-                      key="select_type"
-                      options={optionType}
-                      allowClear
-                    />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item key="estatus_filter" name="status" label="Estatus">
-                    <Select
-                      style={{ width: 100 }}
-                      key="select_status"
-                      options={optionStatus}
-                      allowClear
-                    />
-                  </Form.Item>
-                </Col>
-                <Col style={{ display: "flex" }}>
-                  <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    key="buttonFilter"
-                    htmlType="submit"
-                    loading={loading}
-                  >
-                    <SearchOutlined />
-                    Filtrar
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Col>
-        </Row>
-        <Row justify="end">
-          <Col span={24}>
-            <Table
-              dataSource={backsAccountsList}
-              key="tableHolidays"
-              loading={loading}
-              columns={columns}
-            ></Table>
-          </Col>
-        </Row>
+                    <Col>
+                      <Form.Item
+                        key="account_number_filter"
+                        name="account_number"
+                        label="Número de cuenta"
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <SelectBank name="bank" style={{ width: 140 }} />
+                    </Col>
+                    <Col>
+                      <Form.Item
+                        key="type_filter"
+                        name="type"
+                        label="Tipo de solicitud"
+                      >
+                        <Select
+                          style={{ width: 150 }}
+                          key="select_type"
+                          options={optionType}
+                          allowClear
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Form.Item
+                        key="estatus_filter"
+                        name="status"
+                        label="Estatus"
+                      >
+                        <Select
+                          style={{ width: 100 }}
+                          key="select_status"
+                          options={optionStatus}
+                          allowClear
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col style={{ display: "flex" }}>
+                      <Button
+                        style={{
+                          background: "#fa8c16",
+                          fontWeight: "bold",
+                          color: "white",
+                          marginTop: "auto",
+                        }}
+                        key="buttonFilter"
+                        htmlType="submit"
+                        loading={loading}
+                      >
+                        <SearchOutlined />
+                        Filtrar
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              </Col>
+            </Row>
+            <Row justify="end">
+              <Col span={24}>
+                <Table
+                  dataSource={backsAccountsList}
+                  key="tableHolidays"
+                  loading={loading}
+                  columns={columns}
+                ></Table>
+              </Col>
+            </Row>
+          </>
+        ) : (
+          "No tienes los permisos suficientes, contacta con un administrador"
+        )}
       </div>
     </MainLayout>
   );

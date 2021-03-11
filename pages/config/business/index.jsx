@@ -344,7 +344,7 @@ const configBusiness = () => {
     {
       title: "Empresa",
       render: (item) => {
-        return <>{item.department.name}</>;
+        return <>{item.department.node.name}</>;
       },
     },
 
@@ -602,6 +602,9 @@ const configBusiness = () => {
   };
 
   const changeNode = (value) => {
+    formJob.setFieldsValue({
+      department: "",
+    });
     Axios.get(API_URL + `/business/department/?node=${value}`)
       .then((response) => {
         let data = response.data.results;
@@ -652,381 +655,403 @@ const configBusiness = () => {
           className="site-layout-background"
           style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
-          <Title style={{ fontSize: "25px" }}>Catálogos</Title>
-          <Tabs tabPosition={"left"}>
-            {permissions.view_department && (
-              <TabPane tab="Departamentos" key="tab_1">
-                {edit ? (
-                  <Title style={{ fontSize: "20px" }}>Editar</Title>
-                ) : (
-                  <></>
+          {permissions.view_department ||
+          permissions.view_bank ||
+          permissions.view_documenttype ||
+          permissions.view_job ||
+          permissions.view_persontype ||
+          permissions.view_relationship ? (
+            <>
+              <Title style={{ fontSize: "25px" }}>Catálogos</Title>
+              <Tabs tabPosition={"left"}>
+                {permissions.view_department && (
+                  <TabPane tab="Departamentos" key="tab_1">
+                    {edit ? (
+                      <Title style={{ fontSize: "20px" }}>Editar</Title>
+                    ) : (
+                      <></>
+                    )}
+                    {permissions.create_department && (
+                      <Form
+                        layout={"vertical"}
+                        form={formDepartment}
+                        onFinish={(values) =>
+                          onFinishForm(values, "/business/department/")
+                        }
+                      >
+                        <Row>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="node"
+                              label="Empresa"
+                              rules={[ruleRequired]}
+                            >
+                              <Select options={selectCompany} />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="name"
+                              label="Nombre"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="description"
+                              label="Descripción"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item name="code" label="Código">
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row
+                          justify={"end"}
+                          gutter={20}
+                          style={{ marginBottom: 20 }}
+                        >
+                          <Col>
+                            <Button onClick={resetForm}>Cancelar</Button>
+                          </Col>
+                          <Col>
+                            <Button type="primary" htmlType="submit">
+                              Guardar
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form>
+                    )}
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colDepartment} dataSource={departments} />
+                    </Spin>
+                  </TabPane>
                 )}
-                {permissions.create_department && (
-                  <Form
-                    layout={"vertical"}
-                    form={formDepartment}
-                    onFinish={(values) =>
-                      onFinishForm(values, "/business/department/")
-                    }
-                  >
-                    <Row>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="node"
-                          label="Empresa"
-                          rules={[ruleRequired]}
-                        >
-                          <Select options={selectCompany} />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="name"
-                          label="Nombre"
-                          rules={[ruleRequired]}
-                        >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="description"
-                          label="Descripción"
-                          rules={[ruleRequired]}
-                        >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item name="code" label="Código">
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row
-                      justify={"end"}
-                      gutter={20}
-                      style={{ marginBottom: 20 }}
-                    >
-                      <Col>
-                        <Button onClick={resetForm}>Cancelar</Button>
-                      </Col>
-                      <Col>
-                        <Button type="primary" htmlType="submit">
-                          Guardar
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
-                )}
-                <Spin tip="Loading..." spinning={loadingTable}>
-                  <Table columns={colDepartment} dataSource={departments} />
-                </Spin>
-              </TabPane>
-            )}
 
-            {permissions.view_job && (
-              <TabPane tab="Puestos de trabajo" key="tab_2">
-                {edit ? (
-                  <Title style={{ fontSize: "20px" }}>Editar</Title>
-                ) : (
-                  <></>
-                )}
-                {permissions.create_job && (
-                  <Form
-                    layout={"vertical"}
-                    form={formJob}
-                    onFinish={(values) => onFinishForm(values, "/person/job/")}
-                  >
-                    <Row>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          node="node"
-                          label="Empresa"
-                          rules={[ruleRequired]}
-                        >
-                          <Select
-                            options={selectCompany}
-                            onChange={changeNode}
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="department"
-                          label="Departamento"
-                          rules={[ruleRequired]}
-                        >
-                          <Select options={selectDep} />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="name"
-                          label="Nombre"
-                          rules={[ruleRequired]}
-                        >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="code"
-                          label="Código"
-                          rules={[ruleRequired]}
-                        >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row
-                      justify={"end"}
-                      gutter={20}
-                      style={{ marginBottom: 20 }}
-                    >
-                      <Col>
-                        <Button onClick={resetForm}>Cancelar</Button>
-                      </Col>
-                      <Col>
-                        <Button type="primary" htmlType="submit">
-                          Guardar
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
-                )}{" "}
-                <Spin tip="Loading..." spinning={loadingTable}>
-                  <Table columns={colJob} dataSource={jobs} />
-                </Spin>
-              </TabPane>
-            )}
+                {permissions.view_job && (
+                  <TabPane tab="Puestos de trabajo" key="tab_2">
+                    {edit ? (
+                      <Title style={{ fontSize: "20px" }}>Editar</Title>
+                    ) : (
+                      <></>
+                    )}
+                    {permissions.create_job && (
+                      <Form
+                        layout={"vertical"}
+                        form={formJob}
+                        onFinish={(values) =>
+                          onFinishForm(values, "/person/job/")
+                        }
+                      >
+                        <Row>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="node"
+                              label="Empresa"
+                              rules={[ruleRequired]}
+                            >
+                              <Select
+                                options={selectCompany}
+                                onChange={changeNode}
+                              />
+                            </Form.Item>
+                          </Col>
 
-            {permissions.view_persontype && (
-              <TabPane tab="Tipos de persona" key="tab_3">
-                {edit ? (
-                  <Title style={{ fontSize: "20px" }}>Editar</Title>
-                ) : (
-                  <></>
-                )}
-                {permissions.create_persontype && (
-                  <Form
-                    layout={"vertical"}
-                    form={formTypePerson}
-                    onFinish={(values) =>
-                      onFinishForm(values, "/person/person-type/")
-                    }
-                  >
-                    <Row>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="name"
-                          label="Nombre"
-                          rules={[ruleRequired]}
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="department"
+                              label="Departamento"
+                              rules={[ruleRequired]}
+                            >
+                              <Select options={selectDep} />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="name"
+                              label="Nombre"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="code"
+                              label="Código"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row
+                          justify={"end"}
+                          gutter={20}
+                          style={{ marginBottom: 20 }}
                         >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="code"
-                          label="Código"
-                          rules={[ruleRequired]}
-                        >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row
-                      justify={"end"}
-                      gutter={20}
-                      style={{ marginBottom: 20 }}
-                    >
-                      <Col>
-                        <Button onClick={resetForm}>Cancelar</Button>
-                      </Col>
-                      <Col>
-                        <Button type="primary" htmlType="submit">
-                          Guardar
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
+                          <Col>
+                            <Button onClick={resetForm}>Cancelar</Button>
+                          </Col>
+                          <Col>
+                            <Button type="primary" htmlType="submit">
+                              Guardar
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form>
+                    )}{" "}
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colJob} dataSource={jobs} />
+                    </Spin>
+                  </TabPane>
                 )}
-                <Spin tip="Loading..." spinning={loadingTable}>
-                  <Table columns={colTypePerson} dataSource={typesPerson} />
-                </Spin>
-              </TabPane>
-            )}
 
-            {permissions.view_relationship && (
-              <TabPane tab="Parentescos" key="tab_4">
-                {edit ? (
-                  <Title style={{ fontSize: "20px" }}>Editar</Title>
-                ) : (
-                  <></>
-                )}
-                {permissions.create_relationship && (
-                  <Form
-                    layout={"vertical"}
-                    form={formRelationship}
-                    onFinish={(values) =>
-                      onFinishForm(values, "/setup/relationship/")
-                    }
-                  >
-                    <Row>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="name"
-                          label="Nombre"
-                          rules={[ruleRequired]}
+                {permissions.view_persontype && (
+                  <TabPane tab="Tipos de persona" key="tab_3">
+                    {edit ? (
+                      <Title style={{ fontSize: "20px" }}>Editar</Title>
+                    ) : (
+                      <></>
+                    )}
+                    {permissions.create_persontype && (
+                      <Form
+                        layout={"vertical"}
+                        form={formTypePerson}
+                        onFinish={(values) =>
+                          onFinishForm(values, "/person/person-type/")
+                        }
+                      >
+                        <Row>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="name"
+                              label="Nombre"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="code"
+                              label="Código"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row
+                          justify={"end"}
+                          gutter={20}
+                          style={{ marginBottom: 20 }}
                         >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="code"
-                          label="Código"
-                          rules={[ruleRequired]}
-                        >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row
-                      justify={"end"}
-                      gutter={20}
-                      style={{ marginBottom: 20 }}
-                    >
-                      <Col>
-                        <Button onClick={resetForm}>Cancelar</Button>
-                      </Col>
-                      <Col>
-                        <Button type="primary" htmlType="submit">
-                          Guardar
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
+                          <Col>
+                            <Button onClick={resetForm}>Cancelar</Button>
+                          </Col>
+                          <Col>
+                            <Button type="primary" htmlType="submit">
+                              Guardar
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form>
+                    )}
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colTypePerson} dataSource={typesPerson} />
+                    </Spin>
+                  </TabPane>
                 )}
-                <Spin tip="Loading..." spinning={loadingTable}>
-                  <Table columns={colRelationShip} dataSource={relationsShip} />
-                </Spin>
-              </TabPane>
-            )}
 
-            {permissions.view_documenttype && (
-              <TabPane tab="Tipos de documento" key="tab_5">
-                {edit ? (
-                  <Title style={{ fontSize: "20px" }}>Editar</Title>
-                ) : (
-                  <></>
-                )}
-                {permissions.create_documenttype && (
-                  <Form
-                    layout={"vertical"}
-                    form={formTypeDocument}
-                    onFinish={(values) =>
-                      onFinishForm(values, "/setup/document-type/")
-                    }
-                  >
-                    <Row>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="name"
-                          label="Nombre"
-                          rules={[ruleRequired]}
+                {permissions.view_relationship && (
+                  <TabPane tab="Parentescos" key="tab_4">
+                    {edit ? (
+                      <Title style={{ fontSize: "20px" }}>Editar</Title>
+                    ) : (
+                      <></>
+                    )}
+                    {permissions.create_relationship && (
+                      <Form
+                        layout={"vertical"}
+                        form={formRelationship}
+                        onFinish={(values) =>
+                          onFinishForm(values, "/setup/relationship/")
+                        }
+                      >
+                        <Row>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="name"
+                              label="Nombre"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="code"
+                              label="Código"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row
+                          justify={"end"}
+                          gutter={20}
+                          style={{ marginBottom: 20 }}
                         >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="code"
-                          label="Código"
-                          rules={[ruleRequired]}
-                        >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row
-                      justify={"end"}
-                      gutter={20}
-                      style={{ marginBottom: 20 }}
-                    >
-                      <Col>
-                        <Button onClick={resetForm}>Cancelar</Button>
-                      </Col>
-                      <Col>
-                        <Button type="primary" htmlType="submit">
-                          Guardar
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
+                          <Col>
+                            <Button onClick={resetForm}>Cancelar</Button>
+                          </Col>
+                          <Col>
+                            <Button type="primary" htmlType="submit">
+                              Guardar
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form>
+                    )}
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table
+                        columns={colRelationShip}
+                        dataSource={relationsShip}
+                      />
+                    </Spin>
+                  </TabPane>
                 )}
-                <Spin tip="Loading..." spinning={loadingTable}>
-                  <Table columns={colTypeDocument} dataSource={typesDocument} />
-                </Spin>
-              </TabPane>
-            )}
 
-            {permissions.view_bank && (
-              <TabPane tab="Bancos" key="tab_6">
-                {edit ? (
-                  <Title style={{ fontSize: "20px" }}>Editar</Title>
-                ) : (
-                  <></>
-                )}
-                {permissions.create_bank && (
-                  <Form
-                    layout={"vertical"}
-                    form={formBank}
-                    onFinish={(values) => onFinishForm(values, "/setup/banks/")}
-                  >
-                    <Row>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="name"
-                          label="Nombre"
-                          rules={[ruleRequired]}
+                {permissions.view_documenttype && (
+                  <TabPane tab="Tipos de documento" key="tab_5">
+                    {edit ? (
+                      <Title style={{ fontSize: "20px" }}>Editar</Title>
+                    ) : (
+                      <></>
+                    )}
+                    {permissions.create_documenttype && (
+                      <Form
+                        layout={"vertical"}
+                        form={formTypeDocument}
+                        onFinish={(values) =>
+                          onFinishForm(values, "/setup/document-type/")
+                        }
+                      >
+                        <Row>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="name"
+                              label="Nombre"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="code"
+                              label="Código"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row
+                          justify={"end"}
+                          gutter={20}
+                          style={{ marginBottom: 20 }}
                         >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={6} xs={22} offset={1}>
-                        <Form.Item
-                          name="code"
-                          label="Código"
-                          rules={[ruleRequired]}
-                        >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row
-                      justify={"end"}
-                      gutter={20}
-                      style={{ marginBottom: 20 }}
-                    >
-                      <Col>
-                        <Button onClick={resetForm}>Cancelar</Button>
-                      </Col>
-                      <Col>
-                        <Button type="primary" htmlType="submit">
-                          Guardar
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
+                          <Col>
+                            <Button onClick={resetForm}>Cancelar</Button>
+                          </Col>
+                          <Col>
+                            <Button type="primary" htmlType="submit">
+                              Guardar
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form>
+                    )}
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table
+                        columns={colTypeDocument}
+                        dataSource={typesDocument}
+                      />
+                    </Spin>
+                  </TabPane>
                 )}
-                <Spin tip="Loading..." spinning={loadingTable}>
-                  <Table columns={colBank} dataSource={banks} />
-                </Spin>
-              </TabPane>
-            )}
-          </Tabs>
+
+                {permissions.view_bank && (
+                  <TabPane tab="Bancos" key="tab_6">
+                    {edit ? (
+                      <Title style={{ fontSize: "20px" }}>Editar</Title>
+                    ) : (
+                      <></>
+                    )}
+                    {permissions.create_bank && (
+                      <Form
+                        layout={"vertical"}
+                        form={formBank}
+                        onFinish={(values) =>
+                          onFinishForm(values, "/setup/banks/")
+                        }
+                      >
+                        <Row>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="name"
+                              label="Nombre"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col lg={6} xs={22} offset={1}>
+                            <Form.Item
+                              name="code"
+                              label="Código"
+                              rules={[ruleRequired]}
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row
+                          justify={"end"}
+                          gutter={20}
+                          style={{ marginBottom: 20 }}
+                        >
+                          <Col>
+                            <Button onClick={resetForm}>Cancelar</Button>
+                          </Col>
+                          <Col>
+                            <Button type="primary" htmlType="submit">
+                              Guardar
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form>
+                    )}
+                    <Spin tip="Loading..." spinning={loadingTable}>
+                      <Table columns={colBank} dataSource={banks} />
+                    </Spin>
+                  </TabPane>
+                )}
+              </Tabs>
+            </>
+          ) : (
+            "No tienes los permisos suficientes, contacta con un administrador"
+          )}
         </div>
       </MainLayout>
 
