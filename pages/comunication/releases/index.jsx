@@ -218,20 +218,25 @@ const Releases = () => {
                                             </Form.Item>
                                         </Col>
                                         <Col style={{ display: "flex" }}>
-                                            <Button
-                                                style={{
-                                                    background: "#fa8c16",
-                                                    fontWeight: "bold",
-                                                    color: "white",
-                                                    marginTop: "auto",
-                                                }}
-                                                key="submit"
-                                                htmlType="submit"
-                                                loading={searching}
+                                            <Tooltip
+                                                title="Filtrar"
+                                                color={"#3d78b9"}
+                                                key={"#3d78b9"}
                                             >
-                                                <SearchOutlined />
-                        Filtrar
-                      </Button>
+                                                <Button
+                                                    style={{
+                                                        background: "#fa8c16",
+                                                        fontWeight: "bold",
+                                                        color: "white",
+                                                        marginTop: "auto",
+                                                    }}
+                                                    key="submit"
+                                                    htmlType="submit"
+                                                    loading={searching}
+                                                >
+                                                    <SearchOutlined />
+                                                </Button>
+                                            </Tooltip>
                                         </Col>
                                     </Row>
                                 </Form>
@@ -254,8 +259,8 @@ const Releases = () => {
                                             }}
                                         >
                                             <PlusOutlined />
-                      Agregar comunicado
-                    </Button>
+                                        Agregar comunicado
+                                    </Button>
                                     </Tooltip>
                                 )}
                             </Col>

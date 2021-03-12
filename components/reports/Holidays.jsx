@@ -4,12 +4,22 @@ import {
     Table,
     Row,
     Col,
+    Tooltip,
     Select,
     Form,
     DatePicker,
     Button,
+    InputNumber,
     Typography,
 } from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    InfoCircleOutlined,
+    SyncOutlined,
+    SearchOutlined,
+    PlusOutlined,
+} from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
@@ -30,6 +40,7 @@ const HolidaysReport = (props) => {
     const [colaborator, setColaborator] = useState(null);
     const [companyId, setCompanyId] = useState(null);
     const [departmentId, setDepartmentId] = useState(null);
+    const [status, setStatus] = useState(null);
 
     const [loading, setLoading] = useState(false);
     const [holidayList, setHolidayList] = useState([]);
@@ -114,12 +125,24 @@ const HolidaysReport = (props) => {
         { value: 3, label: "Rechazado", key: "opt_3" }
     ];
 
+    const clearFilter = () => {
+        form.setFieldsValue({
+            collaborator: null,
+            company: null,
+            department: null,
+            status: null
+        });
+        getAllHolidays();
+    }
+
     const filterHolidays = async (values) => {
+        console.log(values);
         setColaborator(values.collaborator);
         setCompanyId(values.company);
         setDepartmentId(values.department);
+        setStatus(values.status)
 
-        getAllHolidays(values.collaborator, values.company, values.department);
+        getAllHolidays(values.collaborator, values.company, values.department, values.status);
     };
 
     const getAllHolidays = async (
@@ -240,7 +263,7 @@ const HolidaysReport = (props) => {
                         className="formFilterReports"
                         onFinish={filterHolidays}
                     >
-                        <Row gutter={[24, 8]}>
+                        <Row gutter={[10]}>
                             <Col>
                                 <SelectCollaborator
                                     name="collaborator"
@@ -273,19 +296,43 @@ const HolidaysReport = (props) => {
                                 </Form.Item>
                             </Col>
                             <Col style={{ display: "flex" }}>
-                                <Button
-                                    style={{
-                                        background: "#fa8c16",
-                                        fontWeight: "bold",
-                                        color: "white",
-                                        marginTop: "auto",
-                                    }}
-                                    key="buttonFilter"
-                                    htmlType="submit"
-                                    loading={loading}
+                                <Tooltip
+                                    title="Filtrar"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
                                 >
-                                    Filtrar
-                </Button>
+                                    <Button
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: "auto",
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                        loading={loading}
+                                    >
+                                        <SearchOutlined />
+                                    </Button>
+                                </Tooltip>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                                <Tooltip
+                                    title="Limpiar filtro"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
+                                >
+                                    <Button
+                                        onClick={clearFilter}
+                                        style={{
+                                            fontWeight: "bold",
+                                            marginTop: "auto"
+                                        }}
+                                        key="buttonClearFilter"
+                                    >
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
                             </Col>
                         </Row>
                     </Form>
