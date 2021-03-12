@@ -9,7 +9,16 @@ import {
     DatePicker,
     Button,
     Typography,
+    Tooltip,
 } from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    InfoCircleOutlined,
+    SyncOutlined,
+    SearchOutlined,
+    PlusOutlined,
+} from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { DownloadOutlined } from "@ant-design/icons";
@@ -36,6 +45,7 @@ const LoanReport = (props) => {
     const [timestampGte, setTimestampGte] = useState(null);
     const [timestampLte, setTimestampLte] = useState(null);
     const [permissions, setPermissions] = useState({});
+    const [status, setStatus] = useState(null);
 
     /* Columnas de tabla */
     const columns = [
@@ -267,7 +277,8 @@ const LoanReport = (props) => {
         type = null,
         periodicity = null,
         timestamp__gte = null,
-        timestamp__lte = null
+        timestamp__lte = null,
+        status = null
     ) => {
         setLoading(true);
         try {
@@ -284,6 +295,9 @@ const LoanReport = (props) => {
             if (timestamp__gte && timestamp__lte) {
                 url += `timestamp__gte=${timestamp__gte}&timestamp__lte=${timestamp__lte}&`;
             }
+            if (status) {
+                url += `status=${status}&`;
+            }
 
             let response = await Axios.get(url);
             let data = response.data.results;
@@ -296,10 +310,23 @@ const LoanReport = (props) => {
         }
     };
 
+    const clearFilter = () => {
+        form.setFieldsValue({
+            person__id: null,
+            type: null,
+            periodicity: null,
+            timestamp: null,
+            status: null
+        });
+        getLending();
+    }
+
     const filterReport = (values) => {
+        console.log(values);
         setPerson_id(values.person__id);
         setType(values.type);
         setPeriodicity(values.periodicity);
+        setStatus(values.status)
         setLendingList([]);
 
         let d1 = null;
@@ -310,7 +337,7 @@ const LoanReport = (props) => {
             setTimestampGte(d1);
             setTimestampLte(d2);
         }
-        getLending(values.person__id, values.type, values.periodicity, d1, d2);
+        getLending(values.person__id, values.type, values.periodicity, d1, d2, values.status);
     };
 
     useEffect(() => {
@@ -343,7 +370,7 @@ const LoanReport = (props) => {
                         className="formFilterReports"
                         onFinish={filterReport}
                     >
-                        <Row gutter={[24, 8]}>
+                        <Row gutter={[10]}>
                             <Col>
                                 <SelectCollaborator name="person__id" style={{ width: 150 }} />
                             </Col>
@@ -385,19 +412,44 @@ const LoanReport = (props) => {
                                 </Form.Item>
                             </Col>
                             <Col style={{ display: "flex" }}>
-                                <Button
-                                    style={{
-                                        background: "#fa8c16",
-                                        fontWeight: "bold",
-                                        color: "white",
-                                        marginTop: "auto",
-                                    }}
-                                    key="buttonFilter"
-                                    htmlType="submit"
-                                    loading={loading}
+                                <Tooltip
+                                    title="Filtrar"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
                                 >
-                                    Filtrar
-                </Button>
+                                    <Button
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: "auto",
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                        loading={loading}
+                                    >
+                                        <SearchOutlined />
+                                    </Button>
+                                </Tooltip>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                                <Tooltip
+                                    title="Limpiar filtro"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
+                                >
+                                    <Button
+                                        onClick={clearFilter}
+                                        style={{
+                                            fontWeight: "bold",
+                                            marginTop: "auto"
+                                        }}
+                                        key="buttonClearFilter"
+
+                                    >
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
                             </Col>
                         </Row>
                     </Form>

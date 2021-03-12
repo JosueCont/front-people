@@ -10,7 +10,17 @@ import {
     Button,
     Input,
     Typography,
+    Tooltip
+
 } from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    InfoCircleOutlined,
+    SyncOutlined,
+    SearchOutlined,
+    PlusOutlined,
+} from "@ant-design/icons";
 import { API_URL } from "../../config/config";
 import Axios from "axios";
 import moment from "moment";
@@ -150,6 +160,17 @@ const PayrollReport = (props) => {
         setDepartmentId(val);
     };
 
+    const clearFilter = () => {
+        form.setFieldsValue({
+            collaborator: null,
+            code: null,
+            company: null,
+            department: null,
+            job: null,
+        });
+        getPayroll();
+    }
+
     const filterReport = (values) => {
         setCollaborator(values.collaborator);
         setCode(values.code);
@@ -165,14 +186,14 @@ const PayrollReport = (props) => {
             values.job
         );
         /* let d1 = null;
-            let d2 = null;
-            if (dateLoan) {
-                d1 = moment(`${dateLoan} 00:00:01`).tz("America/Merida").format();
-                d2 = moment(`${dateLoan} 23:59:00`).tz("America/Merida").format();
-                setTimestampGte(d1);
-                setTimestampLte(d2);
-            }
-            getPatroll(values.person__id, values.type, values.periodicity, d1, d2); */
+                let d2 = null;
+                if (dateLoan) {
+                    d1 = moment(`${dateLoan} 00:00:01`).tz("America/Merida").format();
+                    d2 = moment(`${dateLoan} 23:59:00`).tz("America/Merida").format();
+                    setTimestampGte(d1);
+                    setTimestampLte(d2);
+                }
+                getPatroll(values.person__id, values.type, values.periodicity, d1, d2); */
     };
 
     const getPayroll = async (
@@ -236,8 +257,8 @@ const PayrollReport = (props) => {
                 dataId.code = code;
             }
             /* if (company) {
-                      dataId.company = company;
-                  } */
+                            dataId.company = company;
+                        } */
             if (departmentId) {
                 dataId.department = departmentId;
             }
@@ -256,14 +277,16 @@ const PayrollReport = (props) => {
                 type: type,
                 encoding: "UTF-8",
             });
-            console.log('item', item);
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            link.download = item ? "Reporte_de_nomina(" +
-                (item.person.first_name ? item.person.first_name : null) + '_' +
-                (item.person.flast_name ? item.person.flast_name : null) + '_' +
+            link.download = item
+                ? "Reporte_de_nomina(" +
+                (item.person.first_name ? item.person.first_name : null) +
+                "_" +
+                (item.person.flast_name ? item.person.flast_name : null) +
+                "_" +
                 (item.person.mlast_name ? item.person.mlast_name : null) +
-                ').csv'
+                ").csv"
                 : "Reporte_de_nomina.csv";
             link.click();
         } catch (e) {
@@ -303,7 +326,7 @@ const PayrollReport = (props) => {
                         className="formFilterReports"
                         onFinish={filterReport}
                     >
-                        <Row gutter={[24, 8]}>
+                        <Row gutter={[10]}>
                             <Col>
                                 <SelectCollaborator
                                     name="collaborator"
@@ -344,19 +367,43 @@ const PayrollReport = (props) => {
                                 </Form.Item> */}
                             </Col>
                             <Col style={{ display: "flex" }}>
-                                <Button
-                                    style={{
-                                        background: "#fa8c16",
-                                        fontWeight: "bold",
-                                        color: "white",
-                                        marginTop: "auto",
-                                    }}
-                                    key="buttonFilter"
-                                    htmlType="submit"
-                                    loading={loading}
+                                <Tooltip
+                                    title="Filtrar"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
                                 >
-                                    Filtrar
-                </Button>
+                                    <Button
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: "auto",
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                        loading={loading}
+                                    >
+                                        <SearchOutlined />
+                                    </Button>
+                                </Tooltip>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                                <Tooltip
+                                    title="Limpiar filtro"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
+                                >
+                                    <Button
+                                        onClick={clearFilter}
+                                        style={{
+                                            fontWeight: "bold",
+                                            marginTop: "auto"
+                                        }}
+                                        key="buttonClearFilter"
+                                    >
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
                             </Col>
                         </Row>
                     </Form>

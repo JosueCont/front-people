@@ -7,9 +7,19 @@ import {
     Select,
     Form,
     DatePicker,
+    Tooltip,
     Button,
     Typography,
+    InputNumber
 } from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    InfoCircleOutlined,
+    SyncOutlined,
+    SearchOutlined,
+    PlusOutlined,
+} from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
@@ -120,18 +130,30 @@ const PermissionsReport = (props) => {
         { value: 3, label: "Rechazado", key: "opt_3" }
     ];
 
+    const clearFilter = () => {
+        form.setFieldsValue({
+            collaborator: null,
+            company: null,
+            department: null,
+            status: null
+        });
+        getPermissions();
+    }
+
     const filterPermission = async (values) => {
         setColaborator(values.collaborator);
         setCompanyId(values.company);
         setDepartmentId(values.department);
+        console.log(values.status)
 
-        getPermissions(values.collaborator, values.company, values.department);
+        getPermissions(values.collaborator, values.company, values.department, values.status);
     };
 
     const getPermissions = async (
         collaborator = null,
         company = null,
-        department = null
+        department = null,
+        status = null
     ) => {
         setLoading(true);
         setPermissionsList([]);
@@ -147,6 +169,10 @@ const PermissionsReport = (props) => {
 
             if (department) {
                 url += `person__job__department__id=${department}&`;
+            }
+
+            if (status) {
+                url += `status=${status}&`;
             }
             let response = await Axios.get(API_URL + url);
             let data = response.data.results;
@@ -237,7 +263,7 @@ const PermissionsReport = (props) => {
                         className="formFilterReports"
                         onFinish={filterPermission}
                     >
-                        <Row gutter={[24, 8]}>
+                        <Row gutter={[10]}>
                             <Col>
                                 <SelectCollaborator
                                     name="collaborator"
@@ -261,6 +287,7 @@ const PermissionsReport = (props) => {
                                 />
                             </Col>
                             <Col>
+
                                 <Form.Item key="status" name="status" label="Estatus">
                                     <Select
                                         style={{ width: 150 }}
@@ -271,18 +298,42 @@ const PermissionsReport = (props) => {
                                 </Form.Item>
                             </Col>
                             <Col style={{ display: "flex" }}>
-                                <Button
-                                    style={{
-                                        background: "#fa8c16",
-                                        fontWeight: "bold",
-                                        color: "white",
-                                        marginTop: "auto",
-                                    }}
-                                    key="buttonFilter"
-                                    htmlType="submit"
+                                <Tooltip
+                                    title="Filtrar"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
                                 >
-                                    Filtrar
-                </Button>
+                                    <Button
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: "auto",
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                    >
+                                        <SearchOutlined />
+                                    </Button>
+                                </Tooltip>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                                <Tooltip
+                                    title="Limpiar filtro"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
+                                >
+                                    <Button
+                                        onClick={clearFilter}
+                                        style={{
+                                            fontWeight: "bold",
+                                            marginTop: "auto"
+                                        }}
+                                        key="buttonClearFilter"
+                                    >
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
                             </Col>
                         </Row>
                     </Form>

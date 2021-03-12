@@ -9,7 +9,16 @@ import {
     DatePicker,
     Button,
     Typography,
+    Tooltip,
 } from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    InfoCircleOutlined,
+    SyncOutlined,
+    SearchOutlined,
+    PlusOutlined,
+} from "@ant-design/icons";
 import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
 import SelectCompany from "../selects/SelectCompany";
 import SelectDepartment from "../selects/SelectDepartment";
@@ -176,12 +185,15 @@ const InabilityReport = (props) => {
                 encoding: "UTF-8",
             });
             const link = document.createElement("a");
-            console.log(item);
             link.href = window.URL.createObjectURL(blob);
-            link.download = item ? "Reporte_de_Incapacidades(" +
-                (item.collaborator.first_name ? item.collaborator.first_name : null) + "_" +
-                (item.collaborator.flast_name ? item.collaborator.flast_name : null) + "_" +
-                (item.collaborator.mlast_name ? item.collaborator.mlast_name : null) + ").csv"
+            link.download = item
+                ? "Reporte_de_Incapacidades(" +
+                (item.collaborator.first_name ? item.collaborator.first_name : null) +
+                "_" +
+                (item.collaborator.flast_name ? item.collaborator.flast_name : null) +
+                "_" +
+                (item.collaborator.mlast_name ? item.collaborator.mlast_name : null) +
+                ").csv"
                 : "Reporte_de_Incapacidades.csv";
             link.click();
         } catch (e) {
@@ -241,6 +253,16 @@ const InabilityReport = (props) => {
             setLoading(false);
         }
     };
+    const clearFilter = () => {
+        form.setFieldsValue({
+            collaborator: null,
+            company: null,
+            department: null,
+            status: null,
+            send_date: null
+        });
+        getIncapacity();
+    }
 
     const filter = async (values) => {
         setIncapacityList([]);
@@ -296,7 +318,7 @@ const InabilityReport = (props) => {
                         className="formFilterReports"
                         onFinish={filter}
                     >
-                        <Row gutter={[24, 8]}>
+                        <Row gutter={[10]}>
                             <Col>
                                 <SelectCollaborator
                                     name="collaborator"
@@ -341,18 +363,42 @@ const InabilityReport = (props) => {
                                 </Form.Item>
                             </Col>
                             <Col style={{ display: "flex" }}>
-                                <Button
-                                    style={{
-                                        background: "#fa8c16",
-                                        fontWeight: "bold",
-                                        color: "white",
-                                        marginTop: "auto",
-                                    }}
-                                    key="buttonFilter"
-                                    htmlType="submit"
+                                <Tooltip
+                                    title="Filtrar"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
                                 >
-                                    Filtrar
-                </Button>
+                                    <Button
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: "auto",
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                    >
+                                        <SearchOutlined />
+                                    </Button>
+                                </Tooltip>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                                <Tooltip
+                                    title="Limpiar filtro"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
+                                >
+                                    <Button
+                                        onClick={clearFilter}
+                                        style={{
+                                            fontWeight: "bold",
+                                            marginTop: "auto"
+                                        }}
+                                        key="buttonClearFilter"
+                                    >
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
                             </Col>
                         </Row>
                     </Form>

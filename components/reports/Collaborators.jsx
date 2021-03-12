@@ -4,12 +4,22 @@ import {
     Table,
     Row,
     Col,
+    Tooltip,
     Select,
     Form,
     DatePicker,
     Button,
     Typography,
+
 } from "antd";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    InfoCircleOutlined,
+    SyncOutlined,
+    SearchOutlined,
+    PlusOutlined,
+} from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
@@ -147,7 +157,6 @@ const CollaboratorsReport = (props) => {
             });
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
-            console.log(item);
             link.download = item
                 ? "Reporte_de_colaboradores(" + item.name + ").csv"
                 : "Reporte_de_colaboradores.csv";
@@ -232,9 +241,20 @@ const CollaboratorsReport = (props) => {
     };
     /* /business/department/ */
 
+
+    const clearFilter = () => {
+        form.setFieldsValue({
+            collaborator: null,
+            company: null,
+            date_of_admission: null,
+            department: null,
+            job: null,
+        });
+        getCollaborators();
+    }
+
     const filterReport = async (values) => {
         values["date_of_admission"] = dateOfAdmission;
-
         setCompany(values.company);
         setCollaborator(values.collaborator);
         setDepartment(values.department);
@@ -262,7 +282,6 @@ const CollaboratorsReport = (props) => {
         });
         setPermissions(perms);
     };
-
     return (
         <>
             <Row justify="space-between" style={{ paddingRight: 20 }}>
@@ -279,7 +298,7 @@ const CollaboratorsReport = (props) => {
                         className="formFilterReports"
                         onFinish={filterReport}
                     >
-                        <Row gutter={[24, 8]}>
+                        <Row gutter={[10]}>
                             <Col>
                                 <SelectCollaborator style={{ width: 150 }} />
                             </Col>
@@ -316,19 +335,43 @@ const CollaboratorsReport = (props) => {
                                 </Form.Item>
                             </Col>
                             <Col style={{ display: "flex" }}>
-                                <Button
-                                    style={{
-                                        background: "#fa8c16",
-                                        fontWeight: "bold",
-                                        color: "white",
-                                        marginTop: "auto",
-                                    }}
-                                    key="buttonFilter"
-                                    htmlType="submit"
-                                    loading={loading}
+                                <Tooltip
+                                    title="Filtrar"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
                                 >
-                                    Filtrar
-                </Button>
+                                    <Button
+                                        style={{
+                                            background: "#fa8c16",
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            marginTop: "auto",
+                                        }}
+                                        key="buttonFilter"
+                                        htmlType="submit"
+                                        loading={loading}
+                                    >
+                                        <SearchOutlined />
+                                    </Button>
+                                </Tooltip>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                                <Tooltip
+                                    title="Limpiar filtro"
+                                    color={"#3d78b9"}
+                                    key={"#3d78b9"}
+                                >
+                                    <Button
+                                        onClick={clearFilter}
+                                        style={{
+                                            fontWeight: "bold",
+                                            marginTop: "auto"
+                                        }}
+                                        key="buttonClearFilter"
+                                    >
+                                        <SyncOutlined />
+                                    </Button>
+                                </Tooltip>
                             </Col>
                         </Row>
                     </Form>
@@ -348,6 +391,7 @@ const CollaboratorsReport = (props) => {
                         </Button>
                     )}
                 </Col>
+
             </Row>
             <Row style={{ paddingRight: 20 }}>
                 <Col span={24} style={{ marginTop: 20 }}>
