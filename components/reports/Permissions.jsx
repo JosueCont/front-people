@@ -144,14 +144,16 @@ const PermissionsReport = (props) => {
         setColaborator(values.collaborator);
         setCompanyId(values.company);
         setDepartmentId(values.department);
+        console.log(values.status)
 
-        getPermissions(values.collaborator, values.company, values.department);
+        getPermissions(values.collaborator, values.company, values.department, values.status);
     };
 
     const getPermissions = async (
         collaborator = null,
         company = null,
-        department = null
+        department = null,
+        status = null
     ) => {
         setLoading(true);
         setPermissionsList([]);
@@ -167,6 +169,10 @@ const PermissionsReport = (props) => {
 
             if (department) {
                 url += `person__job__department__id=${department}&`;
+            }
+
+            if (status) {
+                url += `status=${status}&`;
             }
             let response = await Axios.get(API_URL + url);
             let data = response.data.results;

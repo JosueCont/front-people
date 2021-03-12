@@ -45,6 +45,7 @@ const LoanReport = (props) => {
     const [timestampGte, setTimestampGte] = useState(null);
     const [timestampLte, setTimestampLte] = useState(null);
     const [permissions, setPermissions] = useState({});
+    const [status, setStatus] = useState(null);
 
     /* Columnas de tabla */
     const columns = [
@@ -276,7 +277,8 @@ const LoanReport = (props) => {
         type = null,
         periodicity = null,
         timestamp__gte = null,
-        timestamp__lte = null
+        timestamp__lte = null,
+        status = null
     ) => {
         setLoading(true);
         try {
@@ -292,6 +294,9 @@ const LoanReport = (props) => {
             }
             if (timestamp__gte && timestamp__lte) {
                 url += `timestamp__gte=${timestamp__gte}&timestamp__lte=${timestamp__lte}&`;
+            }
+            if (status) {
+                url += `status=${status}&`;
             }
 
             let response = await Axios.get(url);
@@ -317,9 +322,11 @@ const LoanReport = (props) => {
     }
 
     const filterReport = (values) => {
+        console.log(values);
         setPerson_id(values.person__id);
         setType(values.type);
         setPeriodicity(values.periodicity);
+        setStatus(values.status)
         setLendingList([]);
 
         let d1 = null;
@@ -330,7 +337,7 @@ const LoanReport = (props) => {
             setTimestampGte(d1);
             setTimestampLte(d2);
         }
-        getLending(values.person__id, values.type, values.periodicity, d1, d2);
+        getLending(values.person__id, values.type, values.periodicity, d1, d2, values.status);
     };
 
     useEffect(() => {

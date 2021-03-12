@@ -40,6 +40,7 @@ const HolidaysReport = (props) => {
     const [colaborator, setColaborator] = useState(null);
     const [companyId, setCompanyId] = useState(null);
     const [departmentId, setDepartmentId] = useState(null);
+    const [status, setStatus] = useState(null);
 
     const [loading, setLoading] = useState(false);
     const [holidayList, setHolidayList] = useState([]);
@@ -135,11 +136,13 @@ const HolidaysReport = (props) => {
     }
 
     const filterHolidays = async (values) => {
+        console.log(values);
         setColaborator(values.collaborator);
         setCompanyId(values.company);
         setDepartmentId(values.department);
+        setStatus(values.status)
 
-        getAllHolidays(values.collaborator, values.company, values.department);
+        getAllHolidays(values.collaborator, values.company, values.department, values.status);
     };
 
     const getAllHolidays = async (
