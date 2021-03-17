@@ -385,7 +385,7 @@ const businessForm = () => {
             label="Descripción"
             rules={[{ required: true, message: "Ingresa una descripción" }]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} showCount maxLength={200} />
           </Form.Item>
           <Form.Item name="FNode" label="Nodo padre">
             <Select
