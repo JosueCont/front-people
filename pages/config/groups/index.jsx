@@ -67,6 +67,7 @@ const Groups = () => {
       headers: headers,
     })
       .then(function (response) {
+        console.log("Response", response);
         if (response.status === 200) {
           if (response.data.level == "associated") {
             message.error({
