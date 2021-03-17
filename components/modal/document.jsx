@@ -132,7 +132,12 @@ const documentModal = (props) => {
               />
             </Form.Item>
             <Form.Item name="description" rules={[ruleRequired]}>
-              <TextArea type="text" placeholder="Descripción" />
+              <TextArea
+                type="text"
+                placeholder="Descripción"
+                showCount
+                maxLength={200}
+              />
             </Form.Item>
 
             <Form.Item labelAlign="right">
