@@ -67,20 +67,31 @@ const Groups = () => {
       headers: headers,
     })
       .then(function (response) {
+        console.log("Response", response);
         if (response.status === 200) {
-          message.success({
-            content: "Grupo eliminado exitosamente",
-            className: "custom-class",
-            style: {
-              marginTop: "20vh",
-            },
-          });
-          getGroups();
+          if (response.data.level == "associated") {
+            message.error({
+              content: "Este perfil tiene usuarios asociados",
+              className: "custom-class",
+              style: {
+                marginTop: "20vh",
+              },
+            });
+          } else {
+            message.success({
+              content: "Grupo eliminado exitosamente",
+              className: "custom-class",
+              style: {
+                marginTop: "20vh",
+              },
+            });
+            getGroups();
+          }
         }
       })
       .catch(function (error) {
         message.error({
-          content: "Ocurrió un error",
+          content: "Ocurrió un error, intente de nuevo",
           className: "custom-class",
           style: {
             marginTop: "20vh",
