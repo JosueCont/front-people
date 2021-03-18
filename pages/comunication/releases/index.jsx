@@ -330,7 +330,7 @@ const Releases = () => {
                         </Row>
                     </>
                 ) : (
-                    "No tiene permisos suficientes, contacte con un administrador"
+                    <div className="notAllowed" />
                 )}
             </div>
             {/* <ModalCreateNotification  reloadData={getNotifications} /> */}

@@ -4,6 +4,7 @@ import {
     Table,
     Tooltip,
     Row,
+    Image,
     Col,
     Input,
     Select,
@@ -33,6 +34,8 @@ import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
 import { withAuthSync } from "../../libs/auth";
+
+
 
 const { Content } = Layout;
 import Link from "next/link";
@@ -165,6 +168,7 @@ const homeScreen = () => {
         background: "#434343",
         color: "#ffff",
     };
+
 
     /////TABLE PERSON
     const columns = [
@@ -782,7 +786,7 @@ const homeScreen = () => {
                         />
                     </>
                 ) : (
-                    "No tienes los permisos suficientes, contacta con un administrador"
+                    <div className="notAllowed" />
                 )}
             </div>
             <FormPerson close={getModalPerson} visible={modalAddPerson} />
