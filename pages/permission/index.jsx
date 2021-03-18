@@ -347,7 +347,7 @@ const Permission = () => {
                         </Row>
                     </>
                 ) : (
-                    "Permisos insuficientes, contacte a un administrador"
+                    <div className="notAllowed" />
                 )}{" "}
             </div>
         </MainLayout>

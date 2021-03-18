@@ -302,7 +302,7 @@ const Lending = () => {
                         </Row>
                     </>
                 ) : (
-                    "No tiene permisos suficientes, contacte con un administrador"
+                    <div className="notAllowed" />
                 )}
             </div>
         </MainLayout>

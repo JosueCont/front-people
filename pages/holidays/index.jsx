@@ -157,7 +157,7 @@ const Holidays = () => {
                 <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
-                {permissions.view && (
+                {permissions.view ?
                     <>
                         <Row justify="space-between" style={{ paddingBottom: 20 }}>
                             <Col>
@@ -356,8 +356,9 @@ const Holidays = () => {
                                 </Table>
                             </Col>
                         </Row>
-                    </>
-                )}
+                    </> :
+                    <div className="notAllowed" />
+                }
             </div>
         </MainLayout>
     );

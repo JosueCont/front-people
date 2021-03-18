@@ -205,6 +205,36 @@ li.ant-menu-submenu-selected{
 .btn-success:hover{
     background-color: #95de64;
 }
+.notAllowed{
+    height: calc(100vh - 100px);
+    background-image: url('../public/images/Recurso3.png');
+    background-position: 'center';
+    background-position-x: center;
+    background-repeat: no-repeat;
+    background-size:contain;
+}
+.Error404{
+    height: calc(100vh);
+    width: 50%;
+    margin-left: 25%;
+    background-image: url('../public/images/404.svg');
+    background-position: 'center';
+    background-position-x: center;
+    background-position-y: center;
+    background-repeat: no-repeat;
+    background-size:50%;
+}
+.Error500{
+    height: calc(100vh);
+    width: 50%;
+    margin-left: 25%;
+    background-image: url('../public/images/500.svg');
+    background-position: 'center';
+    background-position-x: center;
+    background-position-y: center;
+    background-repeat: no-repeat;
+    background-size:50%;
+}
 
 
 /* .formFilter{
