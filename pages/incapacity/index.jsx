@@ -386,7 +386,7 @@ const Incapacity = () => {
                         </Row>
                     </>
                 ) : (
-                    "No tienes permisos suficientes, contacta con un administrador"
+                    <div className="notAllowed" />
                 )}
             </div>
         </MainLayout>
