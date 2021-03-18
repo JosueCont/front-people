@@ -141,6 +141,11 @@ const GroupAdd = () => {
       module: "Prestamos",
       value: "people.loan.function.reject_loan",
     },
+    {
+      name: "Aprobar pago de un préstamo",
+      module: "Prestamos",
+      value: "people.loan.function.approve_loan_pay",
+    },
     //Vacaciones
     {
       name: "Aprobar vacaciones",
