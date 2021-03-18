@@ -36,11 +36,11 @@ const Lending = () => {
         { value: 1, label: "Pendiente", key: "opt_1" },
         { value: 2, label: "Aprobado", key: "opt_2" },
         { value: 3, label: "Rechazado", key: "opt_3" },
+        { value: 4, label: "Pagado", key: "opt_4" },
     ];
 
     const typeOptions = [
-        { value: "EMP", label: "Empresa", key: "type1" },
-        { value: "EPS", label: "E-Pesos", key: "type_2" },
+        { value: "EMP", label: "Empresa", key: "type1" }
     ];
 
     const getLending = async (personID = null, type = null, status = null) => {
