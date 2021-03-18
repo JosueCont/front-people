@@ -67,6 +67,7 @@ const personDetailForm = () => {
   const [checkedTravel, setCheckedTravel] = useState(false);
   const [checkedResidence, setCheckedResidence] = useState(false);
   const [currenlyStuding, setCurrenlyStuding] = useState(false);
+  const [lifeFamily, setLifeFamily] = useState(false);
 
   /////ID UPDATE
   const [idBankAcc, setIdBankAcc] = useState("");
@@ -242,6 +243,9 @@ const personDetailForm = () => {
   };
   const changeCurreStud = () => {
     currenlyStuding ? setCurrenlyStuding(false) : setCurrenlyStuding(true);
+  };
+  const lifeFamilyShip = () => {
+    lifeFamily ? setLifeFamily(false) : setLifeFamily(true);
   };
 
   /////CHANGE SWITCH
@@ -949,10 +953,12 @@ const personDetailForm = () => {
       value.person = router.query.id;
       value.id = idFamily;
       value.birth_date = birthDateFam;
+      setLifeFamily(value.life);
       updateFamily(value);
     } else {
       value.person = router.query.id;
       value.birth_date = birthDateFam;
+      value.life = lifeFamily;
       saveFamily(value);
     }
   };
@@ -964,12 +970,13 @@ const personDetailForm = () => {
       flast_name: item.flast_name,
       mlast_name: item.mlast_name,
       gender: item.gender,
-      life: item.life,
+      life: lifeFamily,
       benefit: item.benefit,
       place_birth: item.place_birth,
       nationality: item.nationality,
       other_nationality: item.other_nationality,
     });
+    setLifeFamily(item.life);
     setBirthDateFam(item.birth_date);
     if (item.birth_date)
       formFamily.setFieldsValue({
@@ -989,6 +996,7 @@ const personDetailForm = () => {
         setLoading(false);
         getFamily();
         formFamily.resetFields();
+        setLifeFamily(false);
       })
       .catch((error) => {
         setLoading(false);
@@ -1008,6 +1016,7 @@ const personDetailForm = () => {
         setUpFamily(false);
         setIdFamily(null);
         formFamily.resetFields();
+        setLifeFamily(false);
         getFamily();
         setTimeout(() => {
           setLoadingTable(false);
@@ -2317,7 +2326,10 @@ const personDetailForm = () => {
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
                         <Form.Item name="liffe" label="¿Vive?">
-                          <Checkbox />
+                          <Checkbox
+                            checked={lifeFamily}
+                            onChange={lifeFamilyShip}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
