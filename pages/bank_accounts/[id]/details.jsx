@@ -248,7 +248,7 @@ const BankAccountsDetails = () => {
                         </Form>
                     </Col>
                     <Col span={17} offset={4}>
-                        <Button key="cancel" style={{ padding: "0 50px" }}>
+                        <Button key="cancel" style={{ padding: "0 50px" }} onClick={() => route.push("/bank_accounts")} >
                             Regresar
             </Button>
 
