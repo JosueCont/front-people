@@ -18,6 +18,7 @@ import {
   DeleteOutlined,
   EllipsisOutlined,
   ExclamationCircleOutlined,
+  SyncOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 const { Content } = Layout;
@@ -56,6 +57,8 @@ const Groups = () => {
         setLoading(false);
       })
       .catch((e) => {
+        setLoading(false);
+        setGroups([]);
         console.log(e);
       });
   };
@@ -188,6 +191,10 @@ const Groups = () => {
     },
   ];
 
+  const resetFilter = () => {
+    form.resetFields();
+    getGroups();
+  };
   return (
     <MainLayout currentKey="3.2">
       <Breadcrumb style={{ margin: "16px 0" }}>
@@ -218,7 +225,7 @@ const Groups = () => {
                     <Input placeholder="Nombre" />
                   </Form.Item>
                 </Col>
-                <Col span={2}>
+                <Col span={4}>
                   <div style={{ float: "left", marginLeft: "5px" }}>
                     <Form.Item>
                       <Button
@@ -229,7 +236,17 @@ const Groups = () => {
                         }}
                         htmlType="submit"
                       >
-                        Filtrar
+                        <SearchOutlined />
+                      </Button>
+                    </Form.Item>
+                  </div>
+                  <div style={{ float: "left", marginLeft: "5px" }}>
+                    <Form.Item>
+                      <Button
+                        onClick={() => resetFilter()}
+                        style={{ marginTop: "auto", marginLeft: 10 }}
+                      >
+                        <SyncOutlined />
                       </Button>
                     </Form.Item>
                   </div>
