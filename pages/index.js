@@ -12,11 +12,7 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <link
-          rel="icon"
-          type="image/png"
-          href="../images/user/logo_gape.svg"
-        ></link>
+        <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
       </Helmet>
       <Col span={24} className="containerPrincipal">
         <Row justify="space-around" align="middle" style={{ height: "100%" }}>
