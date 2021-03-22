@@ -34,7 +34,6 @@ const LoginForm = (props) => {
         API_URL + "/person/person/save_person_jwt/",
         data
       );
-      console.log("RESPONSE SAVE JWT-->> ", response);
       if (response.status == 200) {
         if (response.data.is_active) return true;
         return false;

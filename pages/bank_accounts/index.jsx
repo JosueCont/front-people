@@ -90,10 +90,10 @@ const BankAccounts = () => {
         },
         {
             title: "Tipo",
-            dataIndex: "previous_account_number",
-            key: "previous_account_number",
-            render: (previous_account_number) => {
-                return !previous_account_number ? "Verificación" : "Actualización";
+            dataIndex: "type",
+            key: "type",
+            render: (type) => {
+                return type == 1 ? "Verificación" : "Actualización";
             },
         },
         {
