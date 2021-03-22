@@ -2,226 +2,101 @@ import {
   Layout,
   Breadcrumb,
   Table,
-  Tooltip,
   Row,
-  Image,
   Col,
   Input,
   Select,
   Switch,
   Button,
-  Form,
-  Avatar,
-  message,
-  Modal,
-  Alert,
-  Menu,
-  Dropdown,
 } from "antd";
 import Axios from "axios";
-import { API_URL } from "../../config/config";
-import { useCallback, useEffect, useState, useRef, React } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
-  SyncOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  InfoCircleOutlined,
   SearchOutlined,
   PlusOutlined,
-  DownloadOutlined,
-  UploadOutlined,
-  EllipsisOutlined,
-  ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import MainLayout from "../../layout/MainLayout";
+import HeaderCustom from "../../components/Header";
+import CardUser from "../../components/CardUser";
 import _ from "lodash";
-import FormPerson from "../../components/person/FormPerson";
-import { withAuthSync } from "../../libs/auth";
+import FormPerson from "../../components/FormPerson";
 
 const { Content } = Layout;
-import Link from "next/link";
-import jsCookie from "js-cookie";
 
 const homeScreen = () => {
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(true);
-  const [modalAddPerson, setModalAddPerson] = useState(false);
-  const [formFilter] = Form.useForm();
-  const inputFileRef = useRef(null);
-  let filters = {};
-  const defaulPhoto =
-    "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
+  const [status, setStatus] = useState(false);
+  const [modal, setModal] = useState(false);
 
-  const [modalDelete, setModalDelete] = useState(false);
-  const [idsDelete, setIdsDelete] = useState("");
-  const [personsToDelete, setPersonsToDelete] = useState([]);
-  const [stringToDelete, setStringToDelete] = useState(null);
-  const [nodes, setNodes] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [jobs, setJobs] = useState([]);
-  const [permissions, setPermissions] = useState({});
-  let urlFilter = "/person/person/?";
+  const getPerson = (text = "") => {
+    setLoading(true);
+    if (text) {
+      Axios.get("http://demo.localhost:8000/person/person/")
+        .then((response) => {
+          console.log("RESPONSE-->> ", response);
+          response.data.results.map((item) => {
+            item["fullname"] =
+              item.name + " " + item.flast_name + " " + item.mlast_name;
+            item.timestamp = item.timestamp.substring(0, 10);
+          });
+          setPerson(response.data.results);
+          setLoading(false);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    } else {
+      Axios.get("http://demo.localhost:8000/person/person/")
+        .then((response) => {
+          console.log("RESPONSE-->> ", response);
+          response.data.results.map((item) => {
+            item["key"] = item.id;
+            item["fullname"] =
+              item.name + " " + item.flast_name + " " + item.mlast_name;
+            item.timestamp = item.timestamp.substring(0, 10);
+          });
+          setPerson(response.data.results);
+          setLoading(false);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
+
+  const searchPerson = ({ target: { value } }) => {
+    setLoading(true);
+    search(value);
+  };
+
+  const statusPeron = () => {
+    console.log(status);
+    setStatus(status ? false : true);
+  };
+
+  const search = useCallback(
+    _.debounce((value) => {
+      getPerson(value);
+    }, 600)
+  );
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getPerson();
-    getNodes();
   }, []);
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.person.can.view")) perms.view = true;
-      if (a.includes("people.person.can.create")) perms.create = true;
-      if (a.includes("people.person.can.edit")) perms.edit = true;
-      if (a.includes("people.person.can.delete")) perms.delete = true;
-      if (a.includes("people.person.function.change_is_active"))
-        perms.change_status = true;
-      if (a.includes("people.person.function.export_csv_person"))
-        perms.export = true;
-      if (a.includes("people.person.function.import_csv_person"))
-        perms.import = true;
-    });
-    setPermissions(perms);
-  };
-
-  /////PEOPLE
-  const getPerson = () => {
-    setLoading(true);
-    Axios.get(API_URL + `/person/person/`)
-      .then((response) => {
-        setPerson([]);
-        response.data.results.map((item, i) => {
-          item.key = i;
-          if (!item.photo) item.photo = defaulPhoto;
-        });
-        setPerson(response.data.results);
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-  const filterPersonName = (data) => {
-    Axios.post(API_URL + `/person/person/get_list_persons/`, filters)
-      .then((response) => {
-        setPerson([]);
-        response.data.map((item, i) => {
-          item.key = i;
-          if (!item.photo) item.photo = defaulPhoto;
-        });
-        setPerson(response.data);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setPerson([]);
-        setLoading(false);
-        console.log(e);
-      });
-  };
-
-  const deletePerson = () => {
-    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
-      persons_id: idsDelete,
-    })
-      .then((response) => {
-        setIdsDelete("");
-        setModalDelete(false);
-        getPerson();
-        setLoading(false);
-        message.success("Eliminado correctamente.");
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.log(error);
-      });
-  };
-
-  const getModalPerson = (value) => {
-    setModalAddPerson(value);
-    setLoading(true);
-    Axios.get(API_URL + `/person/person/`)
-      .then((response) => {
-        response.data.results.map((item) => {
-          item["key"] = item.id;
-          item["fullname"] =
-            item.first_name + " " + item.flast_name + " " + item.mlast_name;
-          item.timestamp = item.timestamp.substring(0, 10);
-          if (!item.photo) item.photo = defaulPhoto;
-        });
-        setPerson(response.data.results);
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log(e);
-        setLoading(false);
-      });
-  };
-
-  ////STYLE
-  const menuDropDownStyle = {
-    background: "#434343",
-    color: "#ffff",
-  };
-
-  /////TABLE PERSON
   const columns = [
     {
-      title: "Foto",
-      render: (item) => {
-        return (
-          <div>
-            <Avatar src={item.photo} />
-          </div>
-        );
-      },
-    },
-    {
       title: "Nombre",
-      render: (item) => {
-        let personName = item.first_name + " " + item.flast_name;
-        if (item.mlast_name) personName = personName + " " + item.mlast_name;
-        return <div>{personName}</div>;
-      },
+      dataIndex: "fullname",
+      key: "fullname",
     },
     {
-      title: "Estatus",
-      render: (item) => {
-        return (
-          <>
-            <Switch
-              disabled={permissions.change_status ? false : true}
-              defaultChecked={item.is_active}
-              checkedChildren="Activo"
-              unCheckedChildren="Inactivo"
-              onChange={() => onchangeStatus(item)}
-            />
-          </>
-        );
-      },
-    },
-    {
-      title: "Fecha de ingreso",
-      render: (item) => {
-        return <div>{item.date_of_admission}</div>;
-      },
-    },
-    {
-      title: "Empresa",
-      render: (item) => {
-        return <div>{item.job[0] ? item.job[0].department.node.name : ""}</div>;
-      },
-    },
-    {
-      title: "Departamento",
-      render: (item) => {
-        return <div>{item.job[0] ? item.job[0].department.name : ""}</div>;
-      },
-    },
-    {
-      title: "Puesto",
-      render: (item) => {
-        return <div>{item.job[0] ? item.job[0].name : ""}</div>;
-      },
+      title: "Fecha de registro",
+      dataIndex: "timestamp",
+      key: "timestamp",
     },
     {
       title: "RFC",
@@ -234,567 +109,118 @@ const homeScreen = () => {
       key: "imss",
     },
     {
-      title: () => {
+      title: "Opciones",
+      render: () => {
         return (
-          <>
-            {permissions.delete && (
-              <Dropdown overlay={menuGeneric}>
-                <Button style={menuDropDownStyle} size="small">
-                  <EllipsisOutlined />
-                </Button>
-              </Dropdown>
-            )}
-          </>
-        );
-      },
-      render: (item) => {
-        return (
-          <>
-            {permissions.edit || permissions.delete ? (
-              <Dropdown overlay={() => menuPerson(item)}>
-                <Button
-                  style={{ background: "#8c8c8c", color: "withe" }}
-                  size="small"
-                >
-                  <EllipsisOutlined />
-                </Button>
-              </Dropdown>
-            ) : (
-              ""
-            )}
-          </>
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" span={6}>
+                <DeleteOutlined />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <EditOutlined />
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <InfoCircleOutlined />
+              </Col>
+            </Row>
+          </div>
         );
       },
     },
   ];
-  const rowSelectionPerson = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      setPersonsToDelete(selectedRows);
-    },
-  };
-  const onchangeStatus = (value) => {
-    value.is_active ? (value.is_active = false) : (value.is_active = true);
-    let data = {
-      id: value.id,
-      status: value.is_active,
-    };
-    // Axios.put(API_URL + `/person/person/${value.id}/`, value)
-    Axios.post(API_URL + `/person/person/change_is_active/`, data)
-      .then((response) => {
-        if (!response.data.photo) response.data.photo = defaulPhoto;
-        response.data.key = value.key;
-        person.map((a) => {
-          if (a.id == response.data.id) a = response.data;
-        });
-      })
-      .catch((error) => {
-        message.error("Ocurrio un error intente de nuevo.");
-        getPerson();
-        console.log(error);
-      });
-  };
 
-  const menuGeneric = (
-    <Menu>
-      {permissions.delete && (
-        <Menu.Item onClick={() => setDeleteModal(personsToDelete)}>
-          Eliminar
-        </Menu.Item>
-      )}
-    </Menu>
-  );
-  const menuPerson = (item) => {
-    return (
-      <Menu>
-        {permissions.edit && (
-          <Menu.Item>
-            <Link href={`/home/${item.id}`}>Editar</Link>
-          </Menu.Item>
-        )}
-        {permissions.delete && (
-          <Menu.Item onClick={() => setDeleteModal([item])}>Eliminar</Menu.Item>
-        )}
-      </Menu>
-    );
-  };
+  const { Search } = Input;
 
-  ////DEFAULT SELECT
   const genders = [
     {
-      label: "Todos",
-      value: 0,
-    },
-    {
-      label: "Masculino",
-      value: 1,
+      label: "Maculino",
+      value: "M",
     },
     {
       label: "Femenino",
-      value: 2,
-    },
-    {
-      label: "Otro",
-      value: 3,
-    },
-  ];
-  const statusSelect = [
-    {
-      label: "Todos",
-      value: -1,
-    },
-    {
-      label: "Activos",
-      value: true,
-    },
-    {
-      label: "Inactivos",
-      value: false,
+      value: "F",
     },
   ];
 
-  /////DELETE MODAL
-  const setDeleteModal = async (value) => {
-    setStringToDelete("Eliminar usuarios ");
-    if (value.length > 0) {
-      if (value.length == 1) {
-        setStringToDelete(
-          "Eliminar usuario " + value[0].first_name + " " + value[0].flast_name
-        );
-      }
-      setPersonsToDelete(value);
-      let ids = null;
-      value.map((a) => {
-        if (ids) ids = ids + "," + a.id;
-        else ids = a.id;
-      });
-      setIdsDelete(ids);
-      /* setModalDelete(true); */
-      showModalDelete();
-    } else {
-      message.error("Selecciona una persona.");
-    }
+  const getModal = (value) => {
+    console.log("Open Modal-->> ", modal);
+    setModal(value);
   };
 
-  const showModalDelete = () => {
-    modalDelete ? setModalDelete(false) : setModalDelete(true);
-  };
-  const ListElementsToDelete = ({ personsDelete }) => {
-    return (
-      <div>
-        {personsDelete.map((p) => {
-          return (
-            <>
-              <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo} />
-                <span>{" " + p.first_name + " " + p.flast_name}</span>
-              </Row>
-            </>
-          );
-        })}
-      </div>
-    );
-  };
-
-  ////IMPORT/EXPORT PERSON
-  const exportPersons = () => {
-    setLoading(true);
-    filter(formFilter.getFieldsValue());
-    filters.format = "data";
-    Axios.post(API_URL + `/person/person/export_csv/`, filters)
-      .then((response) => {
-        const type = response.headers["content-type"];
-        const blob = new Blob([response.data], {
-          type: type,
-          encoding: "UTF-8",
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = "Personas.csv";
-        link.click();
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
-  };
-  const downLoadPlantilla = () => {
-    setLoading(true);
-    Axios.post(API_URL + `/person/person/export_csv/`, {
-      format: "plantilla",
-      is_active: "true",
-    })
-      .then((response) => {
-        const type = response.headers["content-type"];
-        const blob = new Blob([response.data], {
-          type: type,
-          encoding: "UTF-8",
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = "PlantillaPersonas.csv";
-        link.click();
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
-  };
-  const importPersonFile = async (e) => {
-    let extension = getFileExtension(e.target.files[0].name);
-    if (extension == "csv") {
-      let formData = new FormData();
-      formData.append("File", e.target.files[0]);
-      setLoading(true);
-      Axios.post(API_URL + `/person/person/import_csv/`, formData)
-        .then((response) => {
-          setLoading(false);
-          message.success("Excel importado correctamente.");
-          getPerson();
-        })
-        .catch((e) => {
-          getPerson();
-          setLoading(false);
-          message.error("Error al importar.");
-          console.log(e);
-        });
-    } else {
-      message.error("Formato incorrecto, suba un archivo .csv");
-    }
-  };
-  const getFileExtension = (filename) => {
-    return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
-  };
-  ////SEARCH FILTER
-  const filter = (value) => {
-    filters = {};
-    if (value && value.name !== undefined) {
-      urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
-      filters.first_name = value.name;
-      filters.flast_name = value.name;
-      filters.mlast_name = value.name;
-    }
-    if (value && value.flast_name !== undefined) {
-      urlFilter = urlFilter + "flast_name=" + value.flast_name + "&";
-      filters.flast_name = value.flast_name;
-    }
-    if (value && value.gender !== undefined && value.gender != 0) {
-      urlFilter = urlFilter + "gender=" + value.gender + "&";
-      filters.gender = value.gender;
-    }
-
-    if (value && value.is_active !== undefined && value.is_active != -1) {
-      urlFilter = urlFilter + "is_active=" + value.is_active + "&";
-      filters.is_active = value.is_active;
-    }
-    if (value && value.node !== undefined) {
-      urlFilter = urlFilter + "job__department__node__id=" + value.node + "&";
-      filters.node = value.node;
-    }
-    if (value && value.department !== undefined) {
-      urlFilter = urlFilter + "job__department__id=" + value.department + "&";
-      filters.department = value.department;
-    }
-    if (value && value.job !== undefined) {
-      urlFilter = urlFilter + "job__id=" + value.job + "&";
-      filters.job = value.job;
-    }
-    filterPersonName(urlFilter);
-  };
-
-  const resetFilter = () => {
-    formFilter.resetFields();
-    setStatus(true);
-    getPerson();
-  };
-
-  const getNodes = () => {
-    Axios.get(API_URL + `/business/node/`)
-      .then((response) => {
-        let data = response.data.results;
-        let options = [];
-        data.map((item) => {
-          options.push({
-            value: item.id,
-            label: item.name,
-            key: item.name + item.id,
-          });
-        });
-        setNodes(options);
-      })
-      .catch((error) => {
-        console.log(error);
-        setNodes([]);
-      });
-  };
-
-  const changeNode = (value) => {
-    setDepartments([]);
-    setJobs([]);
-    Axios.get(API_URL + `/business/department/?node=${value}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let dep = response.data.results;
-          dep = dep.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setDepartments(dep);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const changeDepartment = (value) => {
-    setJobs([]);
-    Axios.get(API_URL + `/person/job/?department=${value}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let job = response.data.results;
-          job = job.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setJobs(job);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const AlertDeletes = () => (
-    <div>
-      Al eliminar este registro perderá todos los datos relacionados a el de
-      manera permanente. ¿Está seguro de querer eliminarlo
-      <br />
-      <br />
-      <ListElementsToDelete personsDelete={personsToDelete} />
-    </div>
-  );
-
-  useEffect(() => {
-    if (modalDelete) {
-      Modal.confirm({
-        title: stringToDelete,
-        content: <AlertDeletes />,
-        icon: <ExclamationCircleOutlined />,
-        okText: "Si, eliminar",
-        okButtonProps: {
-          danger: true,
-        },
-        onCancel() {
-          setModalDelete();
-        },
-        cancelText: "Cancelar",
-        onOk() {
-          deletePerson();
-        },
-      });
-    }
-    /* title={stringToDelete}
-                    visible={modalDelete}
-                    onOk={deletePerson}
-                    onCancel={showModalDelete}
-                    okText="Si, Eliminar"
-                    cancelText="Cancelar"
-                >
-                    Al eliminar este registro perderá todos los datos relacionados a el de
-                    manera permanente. ¿Está seguro de querer eliminarlo */
-  }, [modalDelete]);
   return (
-    <MainLayout currentKey="1">
-      <Breadcrumb>
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Personas</Breadcrumb.Item>
-      </Breadcrumb>
-      <div className="container" style={{ width: "100%" }}>
-        {permissions.view ? (
-          <>
-            <Row justify={"space-between"} className={"formFilter"}>
-              <Col>
-                <Form onFinish={filter} layout={"vertical"} form={formFilter}>
-                  <Row gutter={[10]}>
-                    <Col>
-                      <Form.Item name="name" label={"Nombre"}>
-                        <Input
-                          allowClear={true}
-                          placeholder="Nombre(s)"
-                          style={{ width: 150 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item name="flast_name" label={"Apellido"}>
-                        <Input
-                          allowClear={true}
-                          placeholder="Apellido(s)"
-                          style={{ width: 150 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item name="gender" label="Género">
-                        <Select options={genders} placeholder="Todos" />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item name="node" label="Empresa">
-                        <Select
-                          onChange={changeNode}
-                          options={nodes}
-                          placeholder="Todos"
-                          style={{ width: 100 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item name="department" label="Departamento">
-                        <Select
-                          onChange={changeDepartment}
-                          options={departments}
-                          placeholder="Todos"
-                          style={{ width: 100 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item name="job" label="Puesto">
-                        <Select
-                          options={jobs}
-                          placeholder="Todos"
-                          style={{ minWidth: 100 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item name="is_active" label="Estatus">
-                        <Select
-                          options={statusSelect}
-                          placeholder="Estatus"
-                          style={{ width: 90 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Filtrar"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          style={{
-                            background: "#fa8c16",
-                            fontWeight: "bold",
-                            color: "white",
-                            marginTop: "auto",
-                          }}
-                          htmlType="submit"
-                        >
-                          <SearchOutlined />
-                        </Button>
-                      </Tooltip>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto", marginLeft: 10 }}
-                        >
-                          <SyncOutlined />
-                        </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                {permissions.create && (
-                  <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    onClick={() => getModalPerson(true)}
-                  >
-                    <PlusOutlined />
-                    Agregar persona
-                  </Button>
-                )}
-              </Col>
-            </Row>
-            <Row justify={"end"} style={{ padding: "1% 0" }}>
-              {permissions.export && (
-                <Button
-                  className={"ml-20"}
-                  type="primary"
-                  icon={<DownloadOutlined />}
-                  size={{ size: "large" }}
-                  onClick={() => exportPersons()}
-                >
-                  Descargar resultados
-                </Button>
-              )}
-              {permissions.import && (
-                <Button
-                  className={"ml-20"}
-                  icon={<UploadOutlined />}
-                  onClick={() => {
-                    inputFileRef.current.click();
-                  }}
-                >
-                  Importar personas
-                </Button>
-              )}
-              <input
-                ref={inputFileRef}
-                type="file"
-                style={{ display: "none" }}
-                onChange={(e) => importPersonFile(e)}
-              />
-              <Button
-                className={"ml-20"}
-                type="primary"
-                icon={<DownloadOutlined />}
-                size={{ size: "large" }}
-                onClick={() => downLoadPlantilla()}
-              >
-                Descargar plantilla
-              </Button>
-            </Row>
+    <>
+      <Layout>
+        <HeaderCustom />
+        <Content
+          className="site-layout"
+          style={{ padding: "0 50px", marginTop: 64 }}
+        >
+          <Breadcrumb style={{ margin: "16px 0" }}>
+            <Breadcrumb.Item>Home</Breadcrumb.Item>
+            <Breadcrumb.Item>Person</Breadcrumb.Item>
+          </Breadcrumb>
+          <div style={{ padding: "1%", float: "right" }}>
+            <Button
+              style={{
+                background: "#fa8c16",
+                fontWeight: "bold",
+                color: "white",
+              }}
+              onClick={() => getModal(true)}
+            >
+              <PlusOutlined />
+              Agregar persona
+            </Button>
+          </div>
+          <div
+            className="site-layout-background"
+            style={{ padding: 24, minHeight: 380, height: "100%" }}
+          >
+            <div style={{ padding: 24 }}>
+              <Row>
+                <Col span={18}>
+                  <Search
+                    placeholder="Nombre..."
+                    loading={loading}
+                    onChange={searchPerson}
+                    onSearch={getPerson}
+                    enterButton={((<SearchOutlined />), "Buscar")}
+                  />
+                </Col>
+                <Col span={5}>
+                  <Select
+                    style={{ marginLeft: "10%", width: "100%" }}
+                    options={genders}
+                    placeholder="Género"
+                  />
+                </Col>
+              </Row>
+              <Row style={{ marginTop: "2%" }}>
+                <Col span={4}>
+                  <label>
+                    <span style={{ fontWeight: "bold" }}>Activos:</span>
+                  </label>
+                  <Switch
+                    style={{ marginLeft: "10%" }}
+                    defaultChecked
+                    onChange={statusPeron}
+                  />
+                </Col>
+              </Row>
+            </div>
             <Table
-              className={"mainTable"}
               size="small"
               columns={columns}
               dataSource={person}
               loading={loading}
-              rowSelection={rowSelectionPerson}
             />
-          </>
-        ) : (
-          <div className="notAllowed" />
-        )}
-      </div>
-      <FormPerson close={getModalPerson} visible={modalAddPerson} />
-      {/* <Modal
-                title={stringToDelete}
-                visible={modalDelete}
-                onOk={deletePerson}
-                onCancel={showModalDelete}
-                okText="Si, Eliminar"
-                cancelText="Cancelar"
-            >
-                Al eliminar este registro perderá todos los datos relacionados a el de
-                manera permanente. ¿Está seguro de querer eliminarlo
-        <br />
-                <ListElementsToDelete personsDelete={personsToDelete} />
-            </Modal> */}
-    </MainLayout>
+          </div>
+        </Content>
+        <CardUser />
+        <FormPerson close={getModal} visible={modal} />
+      </Layout>
+    </>
   );
 };
-export default withAuthSync(homeScreen);
+export default homeScreen;
