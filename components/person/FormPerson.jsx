@@ -12,7 +12,7 @@ import {
   Col,
 } from "antd";
 import Axios from "axios";
-import { API_URL } from "../../config/config";
+import { API_URL, APP_ID } from "../../config/config";
 import { useState, useEffect } from "react";
 
 const FormPerson = (props) => {
@@ -45,7 +45,7 @@ const FormPerson = (props) => {
 
   const getValueSelects = async (id) => {
     const headers = {
-      "client-id": "5f417a53c37f6275fb614104",
+      "client-id": APP_ID,
       "Content-Type": "application/json",
     };
 

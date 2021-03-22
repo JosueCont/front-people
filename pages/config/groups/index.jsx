@@ -24,7 +24,7 @@ const { Content } = Layout;
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 import Axios from "axios";
-import { API_URL, LOGIN_URL } from "../../../config/config";
+import { API_URL, APP_ID, LOGIN_URL } from "../../../config/config";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import moment from "moment";
@@ -39,7 +39,7 @@ const Groups = () => {
   const [permissions, setPermissions] = useState({});
 
   const headers = {
-    "client-id": "5f417a53c37f6275fb614104",
+    "client-id": APP_ID,
     "Content-Type": "application/json",
   };
 
