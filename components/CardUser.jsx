@@ -1,49 +1,37 @@
-import { Card, Image, Button, Modal } from "antd";
+import { Card, Avatar } from "antd";
 import {
   EditOutlined,
+  EllipsisOutlined,
   SettingOutlined,
-  PoweroffOutlined,
 } from "@ant-design/icons";
-
-import Router from "next/router";
 
 const { Meta } = Card;
 
-const cardUser = (props) => {
+export default function cardUser() {
   return (
     <>
       <Card
-        key="card_user"
-        hoverable={true}
-        style={{ width: 180 }}
+        style={{ width: 300 }}
         cover={
-          <Image
-            key="img_user"
+          <img
             alt="example"
-            src={props.person.photo}
-            height={180}
+            src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
           />
         }
         actions={[
-          <Button>
-            <SettingOutlined key="setting" />
-          </Button>,
-          <Button onClick={() => Router.push(`/home/${props.person.id}`)}>
-            <EditOutlined key="edit" />
-          </Button>,
-          <Button onClick={() => props.acction(true)}>
-            <PoweroffOutlined key="PoweroffOutlined" />
-          </Button>,
+          <SettingOutlined key="setting" />,
+          <EditOutlined key="edit" />,
+          <EllipsisOutlined key="ellipsis" />,
         ]}
       >
         <Meta
-          style={{ fontSize: "10px" }}
-          title={props.person.fullName}
-          description={props.person.email}
+          avatar={
+            <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+          }
+          title="Card title"
+          description="This is the description"
         />
       </Card>
     </>
   );
-};
-
-export default cardUser;
+}

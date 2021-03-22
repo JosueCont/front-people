@@ -8,31 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
-    "@emotion/babel-preset-css-prop": "^10.0.27",
-    "@emotion/core": "^10.0.28",
-    "@emotion/styled": "^10.0.27",
-    "@material-ui/core": "4.3.2",
-    "@material-ui/icons": "4.2.1",
-    "@material-ui/lab": "4.0.0-alpha.39",
-    "@material-ui/pickers": "^3.2.10",
-    "antd": "^4.12.2",
-    "antd-img-crop": "^3.13.2",
-    "axios": "^0.21.1",
-    "draft-js": "^0.11.7",
-    "draftjs-to-html": "^0.9.1",
-    "js-cookie": "^2.2.1",
-    "jwt-decode": "^3.1.2",
-    "moment": "^2.29.1",
-    "moment-timezone": "^0.5.33",
-    "next": "^10.0.7",
-    "next-cookies": "^2.0.3",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-draft-wysiwyg": "^1.14.5",
-    "react-helmet": "^6.1.0",
-    "react-intl": "^5.12.1",
-    "react-native": "^0.63.4",
-    "react-spring": "^8.0.27",
-    "styled-components": "3.4.9"
+    "antd": "^4.8.0",
+    "axios": "^0.21.0",
+    "next": "10.0.1",
+    "react": "17.0.1",
+    "react-dom": "17.0.1"
   }
 }
