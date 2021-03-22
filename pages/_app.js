@@ -1,11 +1,10 @@
-import Head from 'next/head'
-import 'antd/dist/antd.css';
-import '../styles/globals.css'
+import "antd/dist/antd.css";
+import "../styles/globals.css";
+import "../styles/vars.css";
+import "../styles/person.css";
 
-
-function MyApp({ Component, pageProps }) {
-
-  return <Component {...pageProps} />
+function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
 }
 
-export default MyApp
+export default App;
