@@ -13,10 +13,7 @@ export default function FooterCustom() {
           bottom: 0,
           width: "100%",
         }}
-      >
-        Created by{" Human"}
-        <DingtalkOutlined />
-      </Footer>
+      ></Footer>
     </>
   );
 }
