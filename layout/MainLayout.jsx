@@ -16,11 +16,7 @@ const MainLayout = ({ ...props }) => {
     /* <IntlProvider locale={state.lang} messages={langMessages[state.lang]}> */
     <Layout className="layout">
       <Helmet>
-        <link
-          rel="icon"
-          type="image/png"
-          href="/images/user/logo_gape.svg"
-        ></link>
+        <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
       </Helmet>
       <HeaderCustom key="main_header" currentKey={props.currentKey} />
       <Content className="site-layout">
