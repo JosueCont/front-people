@@ -35,7 +35,7 @@ import {
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
-import { withAuthSync } from "../../libs/auth";
+import { withAuthSync, userCompanyId } from "../../libs/auth";
 
 const { Content } = Layout;
 import Link from "next/link";
@@ -50,7 +50,7 @@ const homeScreen = () => {
   const [modalAddPerson, setModalAddPerson] = useState(false);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
-  let filters = {};
+  let filters = { node: "" };
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -63,12 +63,18 @@ const homeScreen = () => {
   const [jobs, setJobs] = useState([]);
   const [permissions, setPermissions] = useState({});
   let urlFilter = "/person/person/?";
+  let nodeId = userCompanyId();
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
-    getPerson();
-    getNodes();
+    // getPerson();
+    nodeId = userCompanyId();
+    if (nodeId) {
+      filters.node = nodeId;
+      filterPersonName();
+    }
+    getDepartmets();
   }, []);
 
   const searchPermissions = (data) => {
@@ -105,6 +111,7 @@ const homeScreen = () => {
         console.log(e);
       });
   };
+
   const filterPersonName = (data) => {
     Axios.post(API_URL + `/person/person/get_list_persons/`, filters)
       .then((response) => {
@@ -506,7 +513,7 @@ const homeScreen = () => {
   };
   ////SEARCH FILTER
   const filter = (value) => {
-    filters = {};
+    filters = { node: nodeId };
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
@@ -538,13 +545,16 @@ const homeScreen = () => {
       urlFilter = urlFilter + "job__id=" + value.job + "&";
       filters.job = value.job;
     }
+    console.log("FILTER-->> ", filters);
     filterPersonName(urlFilter);
   };
 
   const resetFilter = () => {
     formFilter.resetFields();
     setStatus(true);
-    getPerson();
+    // getPerson();
+    filter();
+    filterPersonName();
   };
 
   const getNodes = () => {
@@ -567,10 +577,10 @@ const homeScreen = () => {
       });
   };
 
-  const changeNode = (value) => {
+  const getDepartmets = (value) => {
     setDepartments([]);
     setJobs([]);
-    Axios.get(API_URL + `/business/department/?node=${value}`)
+    Axios.get(API_URL + `/business/department/?node=${nodeId}`)
       .then((response) => {
         if (response.status === 200) {
           let dep = response.data.results;
@@ -677,7 +687,7 @@ const homeScreen = () => {
                         <Select options={genders} placeholder="Todos" />
                       </Form.Item>
                     </Col>
-                    <Col>
+                    {/* <Col>
                       <Form.Item name="node" label="Empresa">
                         <Select
                           onChange={changeNode}
@@ -686,7 +696,7 @@ const homeScreen = () => {
                           style={{ width: 100 }}
                         />
                       </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col>
                       <Form.Item name="department" label="Departamento">
                         <Select

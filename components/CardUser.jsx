@@ -1,8 +1,9 @@
-import { Card, Image, Button, Modal } from "antd";
+import { Card, Image, Button, Modal, Tooltip } from "antd";
 import {
   EditOutlined,
   SettingOutlined,
   PoweroffOutlined,
+  SwapOutlined,
 } from "@ant-design/icons";
 
 import Router from "next/router";
@@ -25,15 +26,21 @@ const cardUser = (props) => {
           />
         }
         actions={[
-          <Button>
-            <SettingOutlined key="setting" />
-          </Button>,
-          <Button onClick={() => Router.push(`/home/${props.person.id}`)}>
-            <EditOutlined key="edit" />
-          </Button>,
-          <Button onClick={() => props.acction(true)}>
-            <PoweroffOutlined key="PoweroffOutlined" />
-          </Button>,
+          <Tooltip title="Cambiar empresa" color={"#3d78b9"} key={"#3d78b9"}>
+            <Button>
+              <SwapOutlined />
+            </Button>
+          </Tooltip>,
+          <Tooltip title="Editar perfil" color={"#3d78b9"} key={"#3d78b9"}>
+            <Button onClick={() => Router.push(`/home/${props.person.id}`)}>
+              <EditOutlined key="edit" />
+            </Button>
+          </Tooltip>,
+          <Tooltip title="Cerrar sesión" color={"#3d78b9"} key={"#3d78b9"}>
+            <Button onClick={() => props.acction(true)}>
+              <PoweroffOutlined key="PoweroffOutlined" />
+            </Button>
+          </Tooltip>,
         ]}
       >
         <Meta

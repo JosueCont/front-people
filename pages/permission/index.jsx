@@ -30,7 +30,7 @@ import {
   EyeOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { withAuthSync } from "../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
 const Permission = () => {
@@ -48,6 +48,7 @@ const Permission = () => {
   const [companyId, setCompanyId] = useState(null);
   const [departamentId, setDepartamentId] = useState(null);
   const [permissions, setPermissions] = useState({});
+  let nodeId = userCompanyId();
 
   /* Select estatus */
   const optionStatus = [
@@ -83,16 +84,12 @@ const Permission = () => {
   ) => {
     setLoading(true);
     try {
-      let url = `/person/permit/?`;
+      let url = `/person/permit/?person__job__department__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
       if (status) {
         url += `status=${status}&`;
-      }
-
-      if (company) {
-        url += `person__job__department__node__id=${company}&`;
       }
 
       if (department) {
@@ -224,7 +221,7 @@ const Permission = () => {
                         </Select>
                       </Form.Item>
                     </Col>
-                    <Col>
+                    {/* <Col>
                       <SelectCompany
                         name="company"
                         label="Empresa"
@@ -232,10 +229,10 @@ const Permission = () => {
                         key="SelectCompany"
                         style={{ width: 150 }}
                       />
-                    </Col>
+                    </Col> */}
                     <Col>
                       <SelectDepartment
-                        companyId={companyId}
+                        companyId={nodeId}
                         onChange={changeDepartament}
                         key="SelectDepartment"
                       />

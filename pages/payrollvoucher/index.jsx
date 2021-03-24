@@ -25,7 +25,7 @@ const { confirm } = Modal;
 import Axios from "axios";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { withAuthSync } from "../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../libs/auth";
 import { API_URL } from "../../config/config";
 import moment from "moment";
 
@@ -48,25 +48,21 @@ const UploadPayroll = () => {
   const [companyId, setCompanyId] = useState(null);
   const [departamentId, setDepartamentId] = useState(null);
   const [permissions, setPermissions] = useState({});
+  let nodeId = userCompanyId();
 
   const getVouchers = async (
     collaborator = null,
-    company = null,
     department = null,
     rfc = null
   ) => {
     setLoading(true);
     try {
-      let url = `/payroll/payroll-voucher/?`;
+      let url = `/payroll/payroll-voucher/?person__job__department__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
       if (rfc) {
         url += `rfc=${rfc}&`;
-      }
-
-      if (company) {
-        url += `person__job__department__node__id=${company}&`;
       }
 
       if (department) {
@@ -108,7 +104,7 @@ const UploadPayroll = () => {
 
   const filter = async (values) => {
     setLoading(true);
-    getVouchers(values.collaborator, values.company, departamentId, values.rfc);
+    getVouchers(values.collaborator, departamentId, values.rfc);
   };
 
   /* Eventos de componentes */
@@ -269,7 +265,7 @@ const UploadPayroll = () => {
                         <Input placeholder="Rfc" />
                       </Form.Item>
                     </Col>
-                    <Col>
+                    {/* <Col>
                       <SelectCompany
                         name="company"
                         label="Empresa"
@@ -277,10 +273,10 @@ const UploadPayroll = () => {
                         key="SelectCompany"
                         style={{ width: 150 }}
                       />
-                    </Col>
+                    </Col> */}
                     <Col>
                       <SelectDepartment
-                        companyId={companyId}
+                        companyId={nodeId}
                         onChange={changeDepartament}
                         key="SelectDepartment"
                       />
