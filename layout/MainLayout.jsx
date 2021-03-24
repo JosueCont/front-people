@@ -7,7 +7,7 @@ import { Helmet } from "react-helmet";
 
 const { Content } = Layout;
 
-const MainLayout = ({ ...props }) => {
+const MainLayout = ({hideMenu, ...props }) => {
   const router = useRouter();
 
   useEffect(() => {}, []);
@@ -18,7 +18,7 @@ const MainLayout = ({ ...props }) => {
       <Helmet>
         <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
       </Helmet>
-      <HeaderCustom key="main_header" currentKey={props.currentKey} />
+      <HeaderCustom key="main_header" currentKey={props.currentKey} hideMenu={hideMenu} />
       <Content className="site-layout">
         <div style={{ minHeight: "calc(100vh - 134px)", padding: "30px 50px" }}>
           {props.children}
