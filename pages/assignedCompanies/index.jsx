@@ -115,8 +115,11 @@ const SelectCompany = () => {
     },
     {
       title: "Nodo padre",
-      dataIndex: "name",
-      key: "node"
+      dataIndex: "parent",
+      key: "node",
+      render:(parent) => {
+        return parent ? parent.name : null
+      }
     },
     {
       title: "",

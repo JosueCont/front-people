@@ -64,6 +64,7 @@ const homeScreen = () => {
   const [permissions, setPermissions] = useState({});
   let urlFilter = "/person/person/?";
   let nodeId = userCompanyId();
+  const [listUserCompanies, setListUserCompanies] = useState("");
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
@@ -147,28 +148,37 @@ const homeScreen = () => {
       });
   };
 
-  const showModalCompanies = (item) =>{
-    console.log(item);
-    Modal.info({
-        title: "Empresas Asignadas",
-        content: (
-          <List>
-          <List.Item>
-              sdsada
-            </List.Item>
+
+
+  const showModalCompanies = async (item) =>{
+   try {
+      let response = await Axios.get(API_URL + `/business/node-person/?person__id=${item.id}`)
+      let result = response.data.results;
+      let stringList = [];
+      result.map((item) => {
+        stringList.push(item.node.name)
+      })
+      Modal.info({
+      title: "Empresas Asignadas",
+      content: (
+        <List
+          dataSource={stringList}
+          renderItem={item => (
             <List.Item>
-              sdsada
+              {item}
             </List.Item>
-            <List.Item>
-              sdsada
-            </List.Item>
-          </List>
-        ),
-        icon: '',
-        onOk() {
-          
-        },
-      });
+          )}
+        />
+      ),
+      icon: '',
+      onOk() {
+        
+      },
+    });
+    } catch (error) {
+      console.log("Error")
+    }
+
   }
 
   const getModalPerson = (value) => {
