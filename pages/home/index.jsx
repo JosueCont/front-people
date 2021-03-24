@@ -6,10 +6,12 @@ import {
   Row,
   Image,
   Col,
+  List,
   Input,
   Select,
   Switch,
   Button,
+  Typography,
   Form,
   Avatar,
   message,
@@ -40,6 +42,8 @@ import Link from "next/link";
 import jsCookie from "js-cookie";
 
 const homeScreen = () => {
+
+  const {Text} = Typography;
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(true);
@@ -60,6 +64,7 @@ const homeScreen = () => {
   const [permissions, setPermissions] = useState({});
   let urlFilter = "/person/person/?";
   let nodeId = userCompanyId();
+  const [listUserCompanies, setListUserCompanies] = useState("");
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
@@ -142,6 +147,39 @@ const homeScreen = () => {
         console.log(error);
       });
   };
+
+
+
+  const showModalCompanies = async (item) =>{
+   try {
+      let response = await Axios.get(API_URL + `/business/node-person/?person__id=${item.id}`)
+      let result = response.data.results;
+      let stringList = [];
+      result.map((item) => {
+        stringList.push(item.node.name)
+      })
+      Modal.info({
+      title: "Empresas Asignadas",
+      content: (
+        <List
+          dataSource={stringList}
+          renderItem={item => (
+            <List.Item>
+              {item}
+            </List.Item>
+          )}
+        />
+      ),
+      icon: '',
+      onOk() {
+        
+      },
+    });
+    } catch (error) {
+      console.log("Error")
+    }
+
+  }
 
   const getModalPerson = (value) => {
     setModalAddPerson(value);
@@ -239,6 +277,16 @@ const homeScreen = () => {
       title: "IMSS",
       dataIndex: "imss",
       key: "imss",
+    },
+    {
+      title: "Empresas Asignadas",
+      key: "CompaniesAsosigned",
+      align:'center',
+      render: (item) =>{
+        return (
+          <Text className={'text-center pointer'} onClick={() => showModalCompanies(item)} >Ver</Text>
+        )
+      }
     },
     {
       title: () => {

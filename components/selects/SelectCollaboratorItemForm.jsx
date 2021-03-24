@@ -81,6 +81,7 @@ export default function SelectCollaborator(props) {
             .toLowerCase()
             .localeCompare(optionB.children.toLowerCase())
         }
+        onChange={props.onChange? props.onChange : null}
       >
         {personList
           ? personList.map((item) => {

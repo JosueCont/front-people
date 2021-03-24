@@ -14,7 +14,7 @@ const { Header } = Layout;
 
 const { SubMenu } = Menu;
 
-const headerCustom = (props) => {
+const headerCustom = ({hideMenu,...props}) => {
     const router = useRouter();
     const defaulPhoto =
         "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -100,6 +100,9 @@ const headerCustom = (props) => {
                 </Dropdown>
             </div>
         </Menu.Item> */}
+            {!hideMenu ?
+            <>
+
                     <Menu.Item key="1" onClick={() => router.push({ pathname: "/home" })}>
                         Personas
           </Menu.Item>
@@ -183,7 +186,14 @@ const headerCustom = (props) => {
                         onClick={() => router.push({ pathname: "/payrollvoucher" })}
                     >
                         Recibos de nómina
-          </Menu.Item>
+                    </Menu.Item>
+                    <Menu.Item
+                        key="10"
+                        onClick={() => router.push({ pathname: "/assignedCompanies" })}
+                    >
+                        Asignar empresa
+                    </Menu.Item>
+          </> : null}
                     <div
                         className={"pointer"}
                         style={{ float: "right" }}
