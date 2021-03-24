@@ -29,7 +29,7 @@ import {
   EyeOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { withAuthSync } from "../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
 const Holidays = () => {
@@ -44,6 +44,7 @@ const Holidays = () => {
   const [searching, setSearching] = useState(false);
   const [departament, setDepartament] = useState(null);
   const [permissions, setPermissions] = useState({});
+  let nodeId = userCompanyId();
 
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
@@ -76,21 +77,17 @@ const Holidays = () => {
 
   const getAllHolidays = async (
     collaborator = null,
-    company = null,
     department = null,
     status = null
   ) => {
     setLoading(true);
     try {
-      let url = `/person/vacation/?`;
+      let url = `/person/vacation/?person__job__department__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
       if (status) {
         url += `status=${status}&`;
-      }
-      if (company) {
-        url += `person__job__department__node__id=${company}&`;
       }
       if (department) {
         url += `person__job__department__id=${department}&`;
@@ -118,12 +115,7 @@ const Holidays = () => {
 
   const filterHolidays = async (values) => {
     setSearching(true);
-    getAllHolidays(
-      values.collaborator,
-      values.company,
-      values.department,
-      values.status
-    );
+    getAllHolidays(values.collaborator, values.department, values.status);
   };
 
   /* Eventos de componentes */
@@ -223,15 +215,7 @@ const Holidays = () => {
                         </Select>
                       </Form.Item>
                     </Col>
-                    <Col>
-                      <SelectCompany
-                        name="company"
-                        label="Empresa"
-                        onChange={onChangeCompany}
-                        key="SelectCompany"
-                        style={{ width: 150 }}
-                      />
-                    </Col>
+
                     <Col>
                       <SelectDepartment
                         name="department"

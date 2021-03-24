@@ -109,3 +109,14 @@ export const logoutAuth = async () => {
   //console.log("Logout");
   await Router.push("/");
 };
+
+export const userCompanyId = () => {
+  try {
+    let company_id = sessionStorage.getItem("data");
+    if (company_id && company_id != "" && company_id != undefined)
+      return company_id;
+    else null;
+  } catch (error) {
+    return null;
+  }
+};
