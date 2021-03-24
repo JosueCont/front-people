@@ -33,7 +33,7 @@ import {
   FileDoneOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { withAuthSync } from "../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
 const BankAccounts = () => {
@@ -50,6 +50,7 @@ const BankAccounts = () => {
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
   const [departamentId, setDepartamentId] = useState(null);
+  let nodeId = userCompanyId();
 
   /* Select estatus */
   const optionStatus = [
@@ -136,7 +137,6 @@ const BankAccounts = () => {
 
   const getBanksAccountRequest = async (
     collaborator = null,
-    company = null,
     account_number = null,
     bank = null,
     type = null,
@@ -144,12 +144,9 @@ const BankAccounts = () => {
   ) => {
     setLoading(true);
     try {
-      let url = `/person/bank-account-request/?`;
+      let url = `/person/bank-account-request/?person__job__department__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
-      }
-      if (company) {
-        url += `person__job__department__node__id=${company}&`;
       }
       if (account_number) {
         url += `new_account_number=${account_number}&`;
@@ -188,7 +185,6 @@ const BankAccounts = () => {
 
     getBanksAccountRequest(
       values.collaborator,
-      values.company,
       values.account_number,
       values.bank,
       values.type,
@@ -267,7 +263,7 @@ const BankAccounts = () => {
                         style={{ width: 150 }}
                       />
                     </Col>
-                    <Col>
+                    {/* <Col>
                       <SelectCompany
                         name="company"
                         label="Empresa"
@@ -275,7 +271,7 @@ const BankAccounts = () => {
                         key="SelectCompany"
                         style={{ width: 150 }}
                       />
-                    </Col>
+                    </Col> */}
                     {/* <Col>
                                     <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment" />
                                 </Col> */}

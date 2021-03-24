@@ -5,6 +5,7 @@ import axiosApi from "../../libs/axiosApi";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { route } from "next/dist/next-server/server/router";
+import { userCompanyId } from "../../libs/auth";
 
 export default function SelectCollaborator(props) {
   const { Option } = Select;
@@ -12,6 +13,7 @@ export default function SelectCollaborator(props) {
   const route = useRouter();
 
   const [personList, setPersonList] = useState([]);
+  let nodeId = userCompanyId();
 
   const getPersons = async () => {
     try {
@@ -32,8 +34,29 @@ export default function SelectCollaborator(props) {
     }
   };
 
+  const filterPerson = () => {
+    Axios.post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
+      .then((response) => {
+        let list = [];
+        response.data.map((a, i) => {
+          let item = {
+            label: a.first_name + " " + a.flast_name,
+            value: a.id,
+            key: a.id + i,
+          };
+          list.push(item);
+        });
+        console.log("LIST", list);
+        setPersonList(list);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   useEffect(() => {
-    getPersons();
+    // getPersons();
+    filterPerson();
   }, [route]);
 
   return (

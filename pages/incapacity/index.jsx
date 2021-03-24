@@ -32,7 +32,7 @@ import {
   FileDoneOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { withAuthSync } from "../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
 const Incapacity = () => {
@@ -50,6 +50,7 @@ const Incapacity = () => {
   const [companyId, setCompanyId] = useState(null);
   const [departamentId, setDepartamentId] = useState(null);
   const [permissions, setPermissions] = useState({});
+  let nodeId = userCompanyId();
 
   /* Select estatus */
   const optionStatus = [
@@ -79,22 +80,17 @@ const Incapacity = () => {
 
   const getIncapacity = async (
     collaborator = null,
-    company = null,
     department = null,
     status = null
   ) => {
     setLoading(true);
     try {
-      let url = `/person/incapacity/?`;
+      let url = `/person/incapacity/?person__job__department__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
       if (status) {
         url += `status=${status}&`;
-      }
-
-      if (company) {
-        url += `person__job__department__node__id=${company}&`;
       }
 
       if (department) {
@@ -124,12 +120,7 @@ const Incapacity = () => {
     setSending(true);
     setIncapacityList([]);
 
-    getIncapacity(
-      values.collaborator,
-      values.company,
-      values.department,
-      values.status
-    );
+    getIncapacity(values.collaborator, values.department, values.status);
   };
 
   /* Eventos de componentes */
@@ -234,17 +225,8 @@ const Incapacity = () => {
                       </Form.Item>
                     </Col>
                     <Col>
-                      <SelectCompany
-                        name="company"
-                        label="Empresa"
-                        onChange={onChangeCompany}
-                        key="SelectCompany"
-                        style={{ width: 150 }}
-                      />
-                    </Col>
-                    <Col>
                       <SelectDepartment
-                        companyId={companyId}
+                        companyId={nodeId}
                         onChange={changeDepartament}
                         key="SelectDepartment"
                       />

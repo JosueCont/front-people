@@ -29,7 +29,7 @@ import {
   EyeOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { withAuthSync } from "../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
 const Lending = () => {
@@ -42,6 +42,7 @@ const Lending = () => {
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
   const [permissions, setPermissions] = useState({});
+  let nodeId = userCompanyId();
 
   const optionStatus = [
     { value: 1, label: "Pendiente", key: "opt_1" },
@@ -55,7 +56,8 @@ const Lending = () => {
   const getLending = async (personID = null, type = null, status = null) => {
     setLoading(true);
     try {
-      let url = API_URL + `/payroll/loan/?`;
+      let url =
+        API_URL + `/payroll/loan/?person__job__department__node__id=${nodeId}&`;
       if (personID) {
         url += `person__id=${personID}&`;
       }
