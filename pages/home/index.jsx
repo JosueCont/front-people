@@ -6,10 +6,12 @@ import {
   Row,
   Image,
   Col,
+  List,
   Input,
   Select,
   Switch,
   Button,
+  Typography,
   Form,
   Avatar,
   message,
@@ -40,6 +42,8 @@ import Link from "next/link";
 import jsCookie from "js-cookie";
 
 const homeScreen = () => {
+
+  const {Text} = Typography;
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(true);
@@ -135,6 +139,30 @@ const homeScreen = () => {
         console.log(error);
       });
   };
+
+  const showModalCompanies = (item) =>{
+    console.log(item);
+    Modal.info({
+        title: "Empresas Asignadas",
+        content: (
+          <List>
+          <List.Item>
+              sdsada
+            </List.Item>
+            <List.Item>
+              sdsada
+            </List.Item>
+            <List.Item>
+              sdsada
+            </List.Item>
+          </List>
+        ),
+        icon: '',
+        onOk() {
+          
+        },
+      });
+  }
 
   const getModalPerson = (value) => {
     setModalAddPerson(value);
@@ -232,6 +260,16 @@ const homeScreen = () => {
       title: "IMSS",
       dataIndex: "imss",
       key: "imss",
+    },
+    {
+      title: "Empresas Asignadas",
+      key: "CompaniesAsosigned",
+      align:'center',
+      render: (item) =>{
+        return (
+          <Text className={'text-center pointer'} onClick={() => showModalCompanies(item)} >Ver</Text>
+        )
+      }
     },
     {
       title: () => {

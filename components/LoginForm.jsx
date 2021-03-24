@@ -68,7 +68,7 @@ const LoginForm = (props) => {
                   message.success("Acceso correcto.");
                   Cookies.set("token", token);
                   setLoading(false);
-                  router.push({ pathname: "/home" });
+                  router.push({ pathname: "/selectCompany" });
                 } else {
                   message.error("Acceso denegado");
                   setLoading(false);
