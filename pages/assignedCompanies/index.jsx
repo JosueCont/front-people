@@ -82,22 +82,23 @@ const SelectCompany = () => {
   const saveCompaniesUser = async () =>{
       setLoading(true);
     try {
+        let dataPost = {
+          "person_id": collaboratorId,
+          "nodes": []
+        }      
+
         for (let index = 0; index < arrayCompanies.length; index++) {
-            console.log(arrayCompanies[index]); 
-            let data = {
-                "person": collaboratorId,
-                "node": arrayCompanies[index]
-            }
-            console.log(data);
-            let response = await Axios.post(API_URL + `/business/node-person/`, data);
-            let res = response.data;
+          dataPost.nodes.push(arrayCompanies[index])
         }
+        let response = await Axios.post(API_URL + `/business/node-person/create_assignment/`, dataPost);
+        let res = response.data;
         route.push("/home");
         notification["success"]({
             message: "Aviso",
             description: "Información enviada correctamente.",
         });
     } catch (error) {
+      console.log(error);
         notification["error"]({
         message: "Aviso",
         description: "Ocurrio un problema al guardar la información",
