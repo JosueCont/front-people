@@ -11,14 +11,15 @@ import {
   Descriptions,
   Badge,
   Card,
+  Spin,
 } from "antd";
-import { PlusOutlined, InboxOutlined } from "@ant-design/icons";
+import { PlusOutlined, InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 const { Content } = Layout;
 const { confirm } = Modal;
 import Axios from "axios";
 import { useRouter } from "next/router";
-import { useState, useEffect, React } from "react";
+import { useState, useEffect, useRef, React } from "react";
 import { withAuthSync } from "../../libs/auth";
 import { API_URL } from "../../config/config";
 
@@ -27,7 +28,10 @@ const { Dragger } = Upload;
 const AddUploadPayroll = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const inputFileRef = useRef(null);
   /* Payrol Person data */
+  const [id, setId] = useState(0);
+  const [disabledImport, setDisabledImport] = useState(false);
   const [numEmployee, setNumEmployee] = useState("");
   const [namePerson, setNamePerson] = useState("");
   const [curp, setCurp] = useState("");
@@ -50,6 +54,7 @@ const AddUploadPayroll = () => {
   const [code_other_payment, setCode_other_payment] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     Axios.get(
       API_URL + `/payroll/payroll-voucher/${router.query.id}/detail_movements`
     )
@@ -59,6 +64,7 @@ const AddUploadPayroll = () => {
             " " +
             response.data.person.flast_name
         );
+        setId(response.data.payroll_voucher.id);
         setNameUnit(response.data.person.job[0].department.node.name);
         setNumEmployee(response.data.person.code);
         setCurp(response.data.person.curp);
@@ -96,6 +102,36 @@ const AddUploadPayroll = () => {
     if (movement.length > 0 && detailMov.length > 0) {
       return Movements();
     }
+  };
+
+  const importPDF = async (e) => {
+    let extension = getFileExtension(e.target.files[0].name);
+    if (extension == "pdf") {
+      let formData = new FormData();
+      formData.append("pdf", e.target.files[0]);
+      formData.append("id", id);
+      console.log(formData);
+      setLoading(true);
+      Axios.post(
+        API_URL + `/payroll/payroll-voucher/import_pdf_voucher/`,
+        formData
+      )
+        .then((response) => {
+          setDisabledImport(true);
+          setLoading(false);
+          message.success("PDF importado correctamente.");
+        })
+        .catch((e) => {
+          setLoading(false);
+          message.error("Error al importar.");
+          console.log(e);
+        });
+    } else {
+      message.error("Formato incorrecto, suba un archivo .pdf");
+    }
+  };
+  const getFileExtension = (filename) => {
+    return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
   };
 
   const Movements = () => {
@@ -306,40 +342,64 @@ const AddUploadPayroll = () => {
 
   return (
     <MainLayout currentKey="9">
-      <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
-        >
-          Inicio
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
-        <Breadcrumb.Item>Detalle de recibos de nómina</Breadcrumb.Item>
-      </Breadcrumb>
-      <Content className="site-layout">
-        <div style={{ padding: "1%", float: "right" }}>
-          <Button
-            style={{ marginRight: "5px" }}
-            onClick={() => router.push({ pathname: "/payrollvoucher" })}
+      <Spin tip="Cargando..." spinning={loading}>
+        <Breadcrumb style={{ margin: "16px 0" }}>
+          <Breadcrumb.Item
+            className={"pointer"}
+            onClick={() => route.push({ pathname: "/home" })}
           >
-            Regresar
-          </Button>
-        </div>
-        <div
-          className="site-layout-background"
-          style={{
-            padding: 24,
-            minHeight: 380,
-            height: "100%",
-          }}
-        >
-          <Row>
-            <Col span={24}>
-              {movement.length > 0 ? rendermovements() : null}
-            </Col>
-          </Row>
-        </div>
-      </Content>
+            Inicio
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
+          <Breadcrumb.Item>Detalle de recibos de nómina</Breadcrumb.Item>
+        </Breadcrumb>
+        <Row>
+          <Col span={24}>
+            <div style={{ padding: "1%", float: "right" }}>
+              <Button
+                style={{ marginRight: "5px" }}
+                onClick={() => router.push({ pathname: "/payrollvoucher" })}
+              >
+                Regresar
+              </Button>
+              <Button
+                type="primary"
+                className={"ml-20"}
+                icon={<UploadOutlined />}
+                onClick={() => {
+                  inputFileRef.current.click();
+                }}
+                disabled={disabledImport}
+              >
+                Importar PDF
+              </Button>
+              <input
+                ref={inputFileRef}
+                type="file"
+                style={{ display: "none" }}
+                onChange={(e) => importPDF(e)}
+              />
+            </div>
+          </Col>
+        </Row>
+
+        <Content className="site-layout">
+          <div
+            className="site-layout-background"
+            style={{
+              padding: 24,
+              minHeight: 380,
+              height: "100%",
+            }}
+          >
+            <Row>
+              <Col span={24}>
+                {movement.length > 0 ? rendermovements() : null}
+              </Col>
+            </Row>
+          </div>
+        </Content>
+      </Spin>
     </MainLayout>
   );
 };
