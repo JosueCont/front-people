@@ -67,12 +67,12 @@ const StatisticsPayroll = () => {
               ) : (
                 <Card bordered={false} style={centerBG}>
                   <div style={{ textAlign: "right" }}>
-                    <Tooltip title="Nomina total bruta de la empresa.">
+                    <Tooltip title="Nomina total bruta del departamento.">
                       <InfoCircleOutlined style={{ color: "white" }} />
                     </Tooltip>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <Tooltip title="Nomina total bruta de la empresa.">
+                    <Tooltip title="Nomina total bruta del departamento.">
                       <span style={{ fontSize: 20, color: "white" }}>
                         {a.person__job__department__name}
                       </span>
