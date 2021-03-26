@@ -196,7 +196,7 @@ const headerCustom = ({ hideMenu, ...props }) => {
                   Cuentas bancarias
                 </Menu.Item>
               </SubMenu>
-              <SubMenu key="9" title="Nomina">
+              <SubMenu key="9" title="Nómina">
                 <Menu.Item
                   key="9.1"
                   onClick={() =>
@@ -205,7 +205,7 @@ const headerCustom = ({ hideMenu, ...props }) => {
                     })
                   }
                 >
-                  Nomina empresarial
+                  Nómina empresarial
                 </Menu.Item>
                 <Menu.Item
                   key="9.2"
