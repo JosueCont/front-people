@@ -120,3 +120,13 @@ export const userCompanyId = () => {
     return null;
   }
 };
+
+export const userCompanyName = () => {
+  try {
+    let name = sessionStorage.getItem("name");
+    if (name && name != "" && name != undefined) return name;
+    else null;
+  } catch (error) {
+    return null;
+  }
+};
