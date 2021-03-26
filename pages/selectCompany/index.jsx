@@ -13,95 +13,113 @@ import {
   DatePicker,
   Tabs,
   Tooltip,
+  message,
 } from "antd";
-import { useRouter } from "next/router";
+import useRouter from "next/router";
 import Axios from "axios";
-import {API_URL} from '../../config/config'
+import { API_URL } from "../../config/config";
 
-import { withAuthSync } from "../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../libs/auth";
+import jsCookie from "js-cookie";
 
 const SelectCompany = () => {
-  const route = useRouter();
   const [dataList, setDataList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  
+  const [loading, setLoading] = useState(true);
+  const [jwt, setJwt] = useState({});
 
-  
-  useEffect(()=>{
-    getCopaniesList();
-  },[])
-
-  const getCopaniesList = async () => {
+  useEffect(() => {
     try {
-      let response = await Axios.get(API_URL + `/business/node/`);
-      let data = response.data.results;
-      setDataList(data);
-      console.log(data);
+      setJwt(JSON.parse(jsCookie.get("token")));
     } catch (error) {
-      console.log(error);
+      useRouter.push("/");
     }
-  }
+  }, []);
 
-  const setCompanySelect = (companyID) => {
-    localStorage.setItem('companyID', companyID);
-    route.push('home');
-  }
+  useEffect(() => {
+    Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
+      id: jwt.user_id,
+    })
+      .then((response) => {
+        if (response.data.nodes.length > 0) setDataList(response.data.nodes);
+        setLoading(false);
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
+  }, [jwt]);
+
+  const setCompanySelect = (item) => {
+    sessionStorage.setItem("data", item.value);
+    sessionStorage.setItem("name", item.name);
+    let company_id = userCompanyId();
+    if (company_id) useRouter.push("home");
+    else message.error("Ocurrio un error, intente de nuevo.");
+  };
 
   const columns = [
     {
       title: "Empresa",
       dataIndex: "name",
-      key: "name"
+      key: "name",
     },
-    {
-      title: "Nodo padre",
-      dataIndex: "name",
-      key: "node"
-    },
+    // {
+    //   title: "Nodo padre",sessionStorage
+    // },
     {
       title: "",
-      dataIndex: "id",
-      render: (id) => {
-        return <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    onClick={() => route.push("/home")}
-                    key="btn_new"
-                  >
-                    Acceder
-                    </Button>
+      render: (item) => {
+        return (
+          <Button
+            style={{
+              background: "#fa8c16",
+              fontWeight: "bold",
+              color: "white",
+              marginTop: "auto",
+            }}
+            onClick={() => setCompanySelect(item)}
+            key="btn_new"
+          >
+            Acceder
+          </Button>
+        );
       },
     },
-    
   ];
 
   return (
-    <MainLayout currentKey="8.5" hideMenu={true}>
-      <Breadcrumb className={"mainBreadcrumb"}>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
-        >
-          Inicio
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Reportes</Breadcrumb.Item>
-      </Breadcrumb>
-      <div
-        className="container back-white"
-        style={{ width: "100%", padding: "20px 0" }}
-      >
-        <Row>
-          <Col span={24}>
-            <Table dataSource={dataList}  columns={columns} />
-          </Col>
-        </Row>
-      </div>
-    </MainLayout>
+    <>
+      {jwt.user_id ? (
+        <MainLayout currentKey="8.5" hideMenu={true}>
+          <Breadcrumb className={"mainBreadcrumb"}>
+            <Breadcrumb.Item
+              className={"pointer"}
+              onClick={() => useRouter.push({ pathname: "/home" })}
+            >
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>Empresas</Breadcrumb.Item>
+          </Breadcrumb>
+          <div
+            className="container back-white"
+            style={{ width: "100%", padding: "20px 0" }}
+          >
+            <Row>
+              <Col span={24}>
+                <Table
+                  dataSource={dataList}
+                  columns={columns}
+                  loading={loading}
+                />
+              </Col>
+            </Row>
+          </div>
+        </MainLayout>
+      ) : (
+        <div className="notAllowed" />
+      )}
+    </>
   );
 };
 
-export default withAuthSync(SelectCompany);
+export default SelectCompany;

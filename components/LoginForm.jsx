@@ -41,7 +41,6 @@ const LoginForm = (props) => {
         return false;
       }
     } catch (error) {
-      console.log("ERRROR SAVE JWT-->>> ", error);
       return false;
     }
   };
@@ -68,12 +67,10 @@ const LoginForm = (props) => {
                   message.success("Acceso correcto.");
                   Cookies.set("token", token);
                   setLoading(false);
-                  sessionStorage.setItem("data", 2);
-                  router.push({ pathname: "/home" });
+                  router.push({ pathname: "/selectCompany" });
                 } else {
                   message.error("Acceso denegado");
                   setLoading(false);
-                  router.push({ pathname: "/" });
                 }
               });
             }

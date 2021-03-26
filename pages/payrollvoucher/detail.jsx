@@ -31,7 +31,7 @@ const AddUploadPayroll = () => {
   const inputFileRef = useRef(null);
   /* Payrol Person data */
   const [id, setId] = useState(0);
-  const [disabledImport, setDisabledImport] = useState(false);
+  // const [disabledImport, setDisabledImport] = useState(false);
   const [numEmployee, setNumEmployee] = useState("");
   const [namePerson, setNamePerson] = useState("");
   const [curp, setCurp] = useState("");
@@ -117,7 +117,7 @@ const AddUploadPayroll = () => {
         formData
       )
         .then((response) => {
-          setDisabledImport(true);
+          // setDisabledImport(true);
           setLoading(false);
           message.success("PDF importado correctamente.");
         })
@@ -369,7 +369,7 @@ const AddUploadPayroll = () => {
                 onClick={() => {
                   inputFileRef.current.click();
                 }}
-                disabled={disabledImport}
+                // disabled={disabledImport}
               >
                 Importar PDF
               </Button>

@@ -18,13 +18,14 @@ import {
   EyeOutlined,
   SearchOutlined,
   SyncOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 const { Content } = Layout;
 const { confirm } = Modal;
 import Axios from "axios";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import { API_URL } from "../../config/config";
 import moment from "moment";
@@ -43,12 +44,14 @@ const UploadPayroll = () => {
   const [loading, setLoading] = useState(false);
   const [vouchers, setVouchers] = useState([]);
   const [personList, setPersonList] = useState(null);
+  const inputFileRef = useRef(null);
 
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
   const [departamentId, setDepartamentId] = useState(null);
   const [permissions, setPermissions] = useState({});
   let nodeId = userCompanyId();
+  let id_payroll = 0;
 
   const getVouchers = async (
     collaborator = null,
@@ -140,6 +143,35 @@ const UploadPayroll = () => {
     setPermissions(perms);
   };
 
+  const importPDF = async (e) => {
+    let extension = getFileExtension(e.target.files[0].name);
+    if (extension == "pdf") {
+      let formData = new FormData();
+      formData.append("pdf", e.target.files[0]);
+      formData.append("id", id_payroll);
+      setLoading(true);
+      Axios.post(
+        API_URL + `/payroll/payroll-voucher/import_pdf_voucher/`,
+        formData
+      )
+        .then((response) => {
+          // setDisabledImport(true);
+          setLoading(false);
+          message.success("PDF importado correctamente.");
+        })
+        .catch((e) => {
+          setLoading(false);
+          message.error("Error al importar.");
+          console.log(e);
+        });
+    } else {
+      message.error("Formato incorrecto, suba un archivo .pdf");
+    }
+  };
+  const getFileExtension = (filename) => {
+    return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
+  };
+
   const columns = [
     {
       title: "RFC",
@@ -175,16 +207,39 @@ const UploadPayroll = () => {
           <div>
             <Row gutter={16}>
               <Col className="gutter-row" span={6}>
-                <a
-                  onClick={() =>
-                    router.push({
-                      pathname: "/payrollvoucher/detail",
-                      query: { type: "detail", id: record.id },
-                    })
-                  }
-                >
-                  <EyeOutlined />
-                </a>
+                <Tooltip placement="topLeft" title="Ver detalle">
+                  <a
+                    onClick={() =>
+                      router.push({
+                        pathname: "/payrollvoucher/detail",
+                        query: { type: "detail", id: record.id },
+                      })
+                    }
+                  >
+                    <EyeOutlined />
+                  </a>
+                </Tooltip>
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <Tooltip placement="topLeft" title="Importar PDF">
+                  <a
+                    type="primary"
+                    className={"ml-20"}
+                    icon={<UploadOutlined />}
+                    onClick={() => {
+                      inputFileRef.current.click();
+                      id_payroll = record.id;
+                    }}
+                  >
+                    <UploadOutlined />
+                  </a>
+                  <input
+                    ref={inputFileRef}
+                    type="file"
+                    style={{ display: "none" }}
+                    onChange={(e) => importPDF(e)}
+                  />
+                </Tooltip>
               </Col>
             </Row>
           </div>
