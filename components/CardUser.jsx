@@ -27,7 +27,7 @@ const cardUser = (props) => {
         }
         actions={[
           <Tooltip title="Cambiar empresa" color={"#3d78b9"} key={"#3d78b9"}>
-            <Button>
+            <Button onClick={() => Router.push({ pathname: "/selectCompany" })}>
               <SwapOutlined />
             </Button>
           </Tooltip>,
