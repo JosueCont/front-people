@@ -55,57 +55,40 @@ const StatisticsPayroll = () => {
     width: "90%",
   };
 
-  const PayrollDepartment = ({ data }) => {
+  const PayrollDepartment = (props) => {
+    console.log("Props-->> ", props);
     return (
       <>
-        {data.map((d) => {
-          <Col lg={8} xs={24} style={center}>
-            {a.total_perceptions_sum ? (
-              <Skeleton active />
-            ) : (
-              <Card bordered={false} style={centerBG}>
-                <div style={{ textAlign: "right" }}>
-                  <Tooltip title="Nomina total bruta de la empresa.">
-                    <InfoCircleOutlined style={{ color: "white" }} />
-                  </Tooltip>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <Tooltip title="Nomina total bruta de la empresa.">
-                    <span style={{ fontSize: 20, color: "white" }}>
-                      {d.person__job__department_name}
-                    </span>
-                  </Tooltip>
-                </div>
-                <Statistic
-                  style={{ textAlign: "center" }}
-                  prefix={<DollarOutlined />}
-                  valueStyle={{ color: "white" }}
-                  value={a.total_perceptions_sum}
-                  precision={2}
-                />
-                {/* <div style={{ textAlign: "center" }}>
-                        {timeUserViewed > 0 ? (
-                          <FileExcelOutlined
-                            onClick={() =>
-                              downloadCsv({
-                                url: "get_csv_avg_time_minutes_viewed_for_user",
-                                csv:
-                                  "tiempo-promedio-minutos-vistos-usuario.csv",
-                              })
-                            }
-                            style={{
-                              textAlign: "center",
-                              fontSize: "30px",
-                              color: "white",
-                            }}
-                          />
-                        ) : (
-                          ""
-                        )}
-                      </div> */}
-              </Card>
-            )}
-          </Col>;
+        {props.data.map((a) => {
+          return (
+            <Col lg={8} xs={24} style={center}>
+              {!a.total_perceptions_sum ? (
+                <Skeleton active />
+              ) : (
+                <Card bordered={false} style={centerBG}>
+                  <div style={{ textAlign: "right" }}>
+                    <Tooltip title="Nomina total bruta de la empresa.">
+                      <InfoCircleOutlined style={{ color: "white" }} />
+                    </Tooltip>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <Tooltip title="Nomina total bruta de la empresa.">
+                      <span style={{ fontSize: 20, color: "white" }}>
+                        {a.person__job__department__name}
+                      </span>
+                    </Tooltip>
+                  </div>
+                  <Statistic
+                    style={{ textAlign: "center" }}
+                    prefix={<DollarOutlined />}
+                    valueStyle={{ color: "white" }}
+                    value={a.total_perceptions_sum}
+                    precision={2}
+                  />
+                </Card>
+              )}
+            </Col>
+          );
         })}
       </>
     );
@@ -135,7 +118,7 @@ const StatisticsPayroll = () => {
           <Spin spinning={loading}>
             <Row>
               <Col lg={8} xs={24} style={center}>
-                {payroll.total_perceptions_business ? (
+                {!payroll.total_perceptions_business ? (
                   <Skeleton active />
                 ) : (
                   <Card bordered={false} style={centerBG}>
@@ -183,16 +166,16 @@ const StatisticsPayroll = () => {
               </Col>
             </Row>
 
+            {payroll.departments && payroll.departments.length > 0 && (
+              <div style={{ textAlign: "left", padding: 10 }}>
+                <Tooltip title="Nomina total bruta de la empresa.">
+                  <span style={{ fontSize: 20 }}>Nomina por departamento</span>
+                </Tooltip>
+              </div>
+            )}
             <Row>
               {payroll.departments && payroll.departments.length > 0 && (
                 <>
-                  <div style={{ textAlign: "left", padding: 10 }}>
-                    <Tooltip title="Nomina total bruta de la empresa.">
-                      <span style={{ fontSize: 20 }}>
-                        Nomina por departamento
-                      </span>
-                    </Tooltip>
-                  </div>
                   <PayrollDepartment data={payroll.departments} />
                 </>
               )}
