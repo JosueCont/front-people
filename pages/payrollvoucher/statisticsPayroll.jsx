@@ -67,12 +67,12 @@ const StatisticsPayroll = () => {
               ) : (
                 <Card bordered={false} style={centerBG}>
                   <div style={{ textAlign: "right" }}>
-                    <Tooltip title="Nomina total bruta del departamento.">
+                    <Tooltip title="Nómina total bruta del departamento.">
                       <InfoCircleOutlined style={{ color: "white" }} />
                     </Tooltip>
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <Tooltip title="Nomina total bruta del departamento.">
+                    <Tooltip title="Nómina total bruta del departamento.">
                       <span style={{ fontSize: 20, color: "white" }}>
                         {a.person__job__department__name}
                       </span>
@@ -104,15 +104,15 @@ const StatisticsPayroll = () => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Nomina empresarial</Breadcrumb.Item>
+          <Breadcrumb.Item>Nómina empresarial</Breadcrumb.Item>
         </Breadcrumb>
         <div
           className="container back-white"
           style={{ width: "100%", padding: "20px 0" }}
         >
           <div style={{ textAlign: "left", padding: 10 }}>
-            <Tooltip title="Nomina total bruta de la empresa.">
-              <span style={{ fontSize: 20 }}>Nomina empresarial</span>
+            <Tooltip title="Nómina total bruta de la empresa.">
+              <span style={{ fontSize: 20 }}>Nómina empresarial</span>
             </Tooltip>
           </div>
           <Spin spinning={loading}>
@@ -123,12 +123,12 @@ const StatisticsPayroll = () => {
                 ) : (
                   <Card bordered={false} style={centerBG}>
                     <div style={{ textAlign: "right" }}>
-                      <Tooltip title="Nomina total bruta de la empresa.">
+                      <Tooltip title="Nómina total bruta de la empresa.">
                         <InfoCircleOutlined style={{ color: "white" }} />
                       </Tooltip>
                     </div>
                     <div style={{ textAlign: "center" }}>
-                      <Tooltip title="Nomina total bruta de la empresa.">
+                      <Tooltip title="Nómina total bruta de la empresa.">
                         <span style={{ fontSize: 20, color: "white" }}>
                           {companyName && companyName}
                         </span>
@@ -168,8 +168,8 @@ const StatisticsPayroll = () => {
 
             {payroll.departments && payroll.departments.length > 0 && (
               <div style={{ textAlign: "left", padding: 10 }}>
-                <Tooltip title="Nomina total bruta de la empresa.">
-                  <span style={{ fontSize: 20 }}>Nomina por departamento</span>
+                <Tooltip title="Nómina total bruta de la empresa.">
+                  <span style={{ fontSize: 20 }}>Nómina por departamento</span>
                 </Tooltip>
               </div>
             )}
