@@ -65,6 +65,7 @@ const homeScreen = () => {
   let urlFilter = "/person/person/?";
   let nodeId = userCompanyId();
   const [listUserCompanies, setListUserCompanies] = useState("");
+  const [showModalCompanies, setShowModalCompanies] = useState(false);
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
@@ -148,17 +149,46 @@ const homeScreen = () => {
       });
   };
 
+  useEffect(()=>{
+    console.log('showModalCompanies',showModalCompanies);
+    console.log('listUserCompanies',listUserCompanies);
+    if(showModalCompanies && listUserCompanies){
+      console.log("OKOOKOKK")
+      Modal.info({
+      title: "Empresas Asignadas",
+      content: (
+        <List
+        locale={{emptyText: 'No se encontraron datos'}}
+          dataSource={listUserCompanies}
+          renderItem={item => (
+            <List.Item>
+              {item}
+            </List.Item>
+          )}
+        />
+      ),
+      icon: '',
+      onOk() {
+        
+      },
+    });
+    }
+  },[showModalCompanies])
 
 
-  const showModalCompanies = async (item) =>{
+  const getUserCompanies = async (item) =>{
+    setListUserCompanies([])
+    setShowModalCompanies(false); 
    try {
-      let response = await Axios.get(API_URL + `/business/node-person/?person__id=${item.id}`)
-      let result = response.data.results;
+      let response = await Axios.get(API_URL + `/business/node-person/get_assignment/?person__id=${item.id}`)
+      let result = response.data;
       let stringList = [];
       result.map((item) => {
-        stringList.push(item.node.name)
+        stringList.push(item.name)
       })
-      Modal.info({
+      setListUserCompanies(stringList);
+      setShowModalCompanies(true);
+      /* Modal.info({
       title: "Empresas Asignadas",
       content: (
         <List
@@ -174,9 +204,10 @@ const homeScreen = () => {
       onOk() {
         
       },
-    });
+    }); */
     } catch (error) {
-      console.log("Error")
+      setListUserCompanies([]);
+      setShowModalCompanies(true);
     }
 
   }
@@ -284,7 +315,7 @@ const homeScreen = () => {
       align:'center',
       render: (item) =>{
         return (
-          <Text className={'text-center pointer'} onClick={() => showModalCompanies(item)} >Ver</Text>
+          <Text className={'text-center pointer'} onClick={() => getUserCompanies(item)} >Ver</Text>
         )
       }
     },
@@ -739,7 +770,7 @@ const homeScreen = () => {
                       <Tooltip
                         title="Filtrar"
                         color={"#3d78b9"}
-                        key={"#3d78b9"}
+                        key={"#filtrar"}
                       >
                         <Button
                           style={{
