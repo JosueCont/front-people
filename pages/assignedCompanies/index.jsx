@@ -31,10 +31,11 @@ const SelectCompany = () => {
     const route = useRouter();
     const {Title} = Typography
 
+    const [showTable, setShowTable] = useState(false);
     const [dataList, setDataList] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [arrayCompanies, setArrayCompanies] = useState([]);
     const [collaboratorId, setCollaboratorId] = useState(null)
+    const [companiesUser, setCompaniesUser] = useState([]);
   
 
   
@@ -47,37 +48,70 @@ const SelectCompany = () => {
       let response = await Axios.get(API_URL + `/business/node/`);
       let data = response.data.results;
       setDataList(data);
-      console.log(data);
     } catch (error) {
       console.log(error);
+    }finally{
+      setShowTable(true);
     }
   }
 
-  const setcompanyToArray = (checked,companyID) => {
-      console.log(checked)
-      let prev_list = arrayCompanies;
+  const setcompanyToArray  = async (checked,companyID) => {
+      await setShowTable(false);
+      let prev_list = companiesUser;
       if(checked){
           prev_list.push(companyID);
-          setArrayCompanies(prev_list);
       }else{
           let index = prev_list.indexOf(companyID);
           if(index > -1){
               prev_list.splice(index,1)
-              setArrayCompanies(prev_list)
           }
       }
-      console.log(arrayCompanies);
+      setCompaniesUser(prev_list)
+      setShowTable(true);
   }
 
+  /* useEffect(() => {
+    console.log('useeffect',companiesUser);
+    let newDataList = dataList;
+    companiesUser.map((item)=>{
+      const index = newDataList.findIndex((i) => i.id === item);
+      newDataList[index]['checked'] = true;
+    })
+    setDataList(newDataList)
+  },[companiesUser])
+ */
   const setCompanySelect = (companyID) => {
     localStorage.setItem('companyID', companyID);
     route.push('home');
   }
 
   const setCollaborator = (value) => {
-    console.log(value);
     setCollaboratorId(value);
+    getCompaniesUser(value);
   }
+
+  const getCompaniesUser = async (id) => {
+    let companies = [];
+    setShowTable(false);
+    setShowTable(false)
+    try {
+      let response = await Axios.get(API_URL + `/business/node-person/get_assignment/?person__id=${id}`);
+        let res = response.data;
+        res.map((item) => {
+          companies.push(item.id);
+          /* const index = newDataList.findIndex((i) => i.id === item.id);
+          newDataList[index]['checked'] = true; */
+        })
+    } catch (error) {
+      console.log(error);
+    }finally{
+      console.log('finally');
+      setCompaniesUser(companies);
+      setShowTable(true);
+    }
+  }
+
+  
 
   const saveCompaniesUser = async () =>{
       setLoading(true);
@@ -87,8 +121,8 @@ const SelectCompany = () => {
           "nodes": []
         }      
 
-        for (let index = 0; index < arrayCompanies.length; index++) {
-          dataPost.nodes.push(arrayCompanies[index])
+        for (let index = 0; index < companiesUser.length; index++) {
+          dataPost.nodes.push(companiesUser[index])
         }
         let response = await Axios.post(API_URL + `/business/node-person/create_assignment/`, dataPost);
         let res = response.data;
@@ -108,6 +142,11 @@ const SelectCompany = () => {
     }
   }
 
+  const companyCheked = (companyId) =>{
+    console.log(companyId)
+    return companiesUser.includes(companyId);
+  }
+
   const columns = [
     {
       title: "Nombre",
@@ -124,9 +163,8 @@ const SelectCompany = () => {
     },
     {
       title: "",
-      dataIndex: "id",
-      render: (id) => {
-        return <Checkbox key={id} onChange={(e) => setcompanyToArray(e.target.checked,id)} />
+      render: (record) => {
+        return  showTable ?  <Checkbox key={record.id} checked={companiesUser.includes(record.id)} onChange={(e) => setcompanyToArray(e.target.checked,record.id)} /> : null
       },
     },
     
@@ -176,9 +214,7 @@ const SelectCompany = () => {
                             </Button>  
                             </Col>
                             <Col xs={23} md={15}>
-                                <Table columns={columns} dataSource={dataList}>
-
-                                </Table>
+                                <Table columns={columns} dataSource={dataList}/>
                             </Col>
                         </Row>
                     </Col>
