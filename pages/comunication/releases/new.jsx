@@ -32,9 +32,10 @@ import SelectCompany from "../../../components/selects/SelectCompany";
 import FormItemHTMLPlace from "../../../components/draft";
 
 import dynamic from "next/dynamic";
-import { withAuthSync } from "../../../libs/auth";
+import { withAuthSync,userCompanyId } from "../../../libs/auth";
 
 const Newrelease = () => {
+  let nodeId = userCompanyId();
   let userToken = cookie.get("token") ? cookie.get("token") : null;
   const [form] = Form.useForm();
   const { Title } = Typography;
@@ -115,7 +116,7 @@ const Newrelease = () => {
     datos.append("title", values.title);
     datos.append("message", message);
     datos.append("khonnect_id", userId);
-    datos.append("target_company", values.target_company);
+    datos.append("target_company", nodeId )
 
     if (values.send_to_all) {
       datos.append("send_to_all", values.send_to_all);
@@ -381,18 +382,6 @@ const Newrelease = () => {
                 <Col xs={24} sm={24} md={14} lg={14} xl={14}>
                   <Row>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                      <SelectCompany
-                        name={"target_company"}
-                        label="Empresa"
-                        labelCol={{ span: 10 }}
-                        onChange={onChangecompany}
-                        rules={[
-                          {
-                            required: companyRequired,
-                            message: "Este campo es requerido",
-                          },
-                        ]}
-                      />
                       <Form.Item
                         name={"target_department"}
                         label="Departamento"
