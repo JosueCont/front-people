@@ -64,7 +64,9 @@ const HolidaysDetails = () => {
   };
 
   const onChangeMessage = (value) => {
-    setMessage(value);
+    console.log(value.target.value);
+
+    setMessage(value.target.value);
   };
 
   const getDetails = async () => {
@@ -103,7 +105,7 @@ const HolidaysDetails = () => {
         let values = {
           khonnect_id: json.user_id,
           id: id,
-          comment: 1212231,
+          comment: message,
         };
 
         let response = await Axios.post(
