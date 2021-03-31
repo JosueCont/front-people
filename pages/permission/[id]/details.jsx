@@ -88,7 +88,7 @@ const PermissionDetails = () => {
   };
 
   const onChangeMessage = (value) => {
-    setMessage(value);
+    setMessage(value.target.value);
   };
 
   const onReject = () => {
@@ -113,6 +113,7 @@ const PermissionDetails = () => {
       id: id,
       status: statusID,
       khonnect_id: userId,
+      comment: message
     };
     let msg = "Solicitud de permiso aprobada";
     if (statusID === 3) {

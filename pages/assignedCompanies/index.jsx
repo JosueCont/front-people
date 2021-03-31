@@ -93,19 +93,15 @@ const SelectCompany = () => {
   const getCompaniesUser = async (id) => {
     let companies = [];
     setShowTable(false);
-    setShowTable(false)
     try {
       let response = await Axios.get(API_URL + `/business/node-person/get_assignment/?person__id=${id}`);
         let res = response.data;
         res.map((item) => {
           companies.push(item.id);
-          /* const index = newDataList.findIndex((i) => i.id === item.id);
-          newDataList[index]['checked'] = true; */
         })
     } catch (error) {
       console.log(error);
     }finally{
-      console.log('finally');
       setCompaniesUser(companies);
       setShowTable(true);
     }
