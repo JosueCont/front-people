@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import MainLayout from "../../layout/MainLayout";
+import CurrencyFormat from 'react-currency-format';
 import {
   Row,
   Col,
@@ -10,6 +11,8 @@ import {
   Card,
   Statistic,
   Skeleton,
+  Typography,
+  Divider
 } from "antd";
 import useRouter from "next/router";
 import Axios from "axios";
@@ -19,6 +22,7 @@ import { InfoCircleOutlined, DollarOutlined } from "@ant-design/icons";
 import { userCompanyId, userCompanyName, withAuthSync } from "../../libs/auth";
 
 const StatisticsPayroll = () => {
+  const { Title,Text } = Typography
   const [loading, setLoading] = useState(false);
   const [payroll, setPayroll] = useState({});
   let nodeId = userCompanyId();
@@ -52,7 +56,7 @@ const StatisticsPayroll = () => {
     alignContent: "center",
     justifyContent: "center",
     backgroundColor: "#3d78b9",
-    width: "90%",
+    width:'100%'
   };
 
   const PayrollDepartment = (props) => {
@@ -61,30 +65,36 @@ const StatisticsPayroll = () => {
       <>
         {props.data.map((a) => {
           return (
-            <Col lg={8} xs={24} style={center}>
+            <Col lg={6} xs={24} style={center}>
               {!a.total_perceptions_sum ? (
                 <Skeleton active />
               ) : (
                 <Card bordered={false} style={centerBG}>
-                  <div style={{ textAlign: "right" }}>
-                    <Tooltip title="Nómina total bruta del departamento.">
-                      <InfoCircleOutlined style={{ color: "white" }} />
-                    </Tooltip>
-                  </div>
+                  
                   <div style={{ textAlign: "center" }}>
-                    <Tooltip title="Nómina total bruta del departamento.">
-                      <span style={{ fontSize: 20, color: "white" }}>
-                        {a.person__job__department__name}
-                      </span>
-                    </Tooltip>
+                    <Title  level={3} style={{ color: "white", marginBottom:0 }}>
+                      {a.person__job__department__name}
+                    </Title>
+                    <Row justify="space-between">
+                      <Col xs={24} md={11}>
+                        <Title level={5} style={{color:'white', marginTop:10, marginBottom:0}}>
+                          Nomina Bruta
+                      </Title>
+                      <Text style={{ color: "white",fontSize:17  }}>
+                        <CurrencyFormat value={a.total_perceptions_sum} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                      </Text>
+                      </Col>
+                      <Col xs={24} md={11}>
+                        <Title level={5} style={{color:'white', marginTop:10, marginBottom:0}}>
+                          Nomina Neta
+                      </Title>
+                      <Text style={{ color: "white",fontSize:17  }}>
+                        <CurrencyFormat value={a.net_total_sum} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                      </Text>
+                      </Col>
+                    </Row>
                   </div>
-                  <Statistic
-                    style={{ textAlign: "center" }}
-                    prefix={<DollarOutlined />}
-                    valueStyle={{ color: "white" }}
-                    value={a.total_perceptions_sum}
-                    precision={2}
-                  />
+                  
                 </Card>
               )}
             </Col>
@@ -108,12 +118,12 @@ const StatisticsPayroll = () => {
         </Breadcrumb>
         <div
           className="container back-white"
-          style={{ width: "100%", padding: "20px 0" }}
+          style={{ width: "100%", padding: "20px " }}
         >
           <div style={{ textAlign: "left", padding: 10 }}>
-            <Tooltip title="Nómina total bruta de la empresa.">
-              <span style={{ fontSize: 20 }}>Nómina empresarial</span>
-            </Tooltip>
+            <Title level={3} style={{marginBottom:0}}>
+              Nómina empresarial
+            </Title>
           </div>
           <Spin spinning={loading}>
             <Row>
@@ -122,25 +132,34 @@ const StatisticsPayroll = () => {
                   <Skeleton active />
                 ) : (
                   <Card bordered={false} style={centerBG}>
-                    <div style={{ textAlign: "right" }}>
-                      <Tooltip title="Nómina total bruta de la empresa.">
-                        <InfoCircleOutlined style={{ color: "white" }} />
-                      </Tooltip>
-                    </div>
                     <div style={{ textAlign: "center" }}>
-                      <Tooltip title="Nómina total bruta de la empresa.">
-                        <span style={{ fontSize: 20, color: "white" }}>
+                      {/* <Tooltip title="Nómina total bruta de la empresa."> */}
+                        <Title level={3} style={{ color: "white", marginBottom:0 }}>
                           {companyName && companyName}
-                        </span>
-                      </Tooltip>
+                        </Title >
+                      {/* </Tooltip> */}
+                      <Row>
+                        <Col xs={24} md={12}>
+                          <Title level={5} style={{color:'white', marginTop:10, marginBottom:0}}>
+                          Nomina Bruta
+                      </Title>
+                      <Text style={{ color: "white",fontSize:19  }}>
+                        <CurrencyFormat value={payroll.total_perceptions_business} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                      </Text>
+                        </Col>
+                        <Col xs={24} md={12}> 
+                        <Title level={5} style={{color:'white', marginTop:10, marginBottom:0}}>
+                          Nomina Neta
+                      </Title>
+                      <Text style={{ color: "white",fontSize:19  }}>
+                        <CurrencyFormat value={payroll.net_total_business} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                      </Text>
+                      
+                        </Col>
+                      </Row>
                     </div>
-                    <Statistic
-                      style={{ textAlign: "center" }}
-                      prefix={<DollarOutlined />}
-                      valueStyle={{ color: "white" }}
-                      value={payroll.total_perceptions_business}
-                      precision={2}
-                    />
+
+                    
                     {/* <div style={{ textAlign: "center" }}>
                         {timeUserViewed > 0 ? (
                           <FileExcelOutlined
@@ -164,22 +183,22 @@ const StatisticsPayroll = () => {
                   </Card>
                 )}
               </Col>
-            </Row>
-
-            {payroll.departments && payroll.departments.length > 0 && (
-              <div style={{ textAlign: "left", padding: 10 }}>
-                <Tooltip title="Nómina total bruta de la empresa.">
-                  <span style={{ fontSize: 20 }}>Nómina por departamento</span>
-                </Tooltip>
-              </div>
-            )}
-            <Row>
+              <Divider/>
+              <Col span={24}>
+                {payroll.departments && payroll.departments.length > 0 && (
+                  <div style={{ textAlign: "left", padding: 10 }}>
+                    <Title level={3} style={{marginBottom:0}}>
+                      Nómina por departamento
+                    </Title>
+                  </div>
+                )} 
+              </Col>
               {payroll.departments && payroll.departments.length > 0 && (
-                <>
                   <PayrollDepartment data={payroll.departments} />
-                </>
               )}
             </Row>
+
+          
           </Spin>
         </div>
       </MainLayout>
