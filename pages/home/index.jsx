@@ -42,10 +42,9 @@ import Link from "next/link";
 import jsCookie from "js-cookie";
 
 const homeScreen = () => {
-
-  const {Text} = Typography;
+  const { Text } = Typography;
   const [person, setPerson] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(true);
   const [modalAddPerson, setModalAddPerson] = useState(false);
   const [formFilter] = Form.useForm();
@@ -73,7 +72,6 @@ const homeScreen = () => {
     // getPerson();
     nodeId = userCompanyId();
     if (nodeId) {
-      filters.node = nodeId;
       filterPersonName();
     }
     getDepartmets();
@@ -114,7 +112,8 @@ const homeScreen = () => {
       });
   };
 
-  const filterPersonName = (data) => {
+  const filterPersonName = () => {
+    filters.node = nodeId;
     Axios.post(API_URL + `/person/person/get_list_persons/`, filters)
       .then((response) => {
         setPerson([]);
@@ -139,7 +138,7 @@ const homeScreen = () => {
       .then((response) => {
         setIdsDelete("");
         setModalDelete(false);
-        getPerson();
+        filterPersonName();
         setLoading(false);
         message.success("Eliminado correctamente.");
       })
@@ -149,88 +148,50 @@ const homeScreen = () => {
       });
   };
 
-  useEffect(()=>{
-    console.log('showModalCompanies',showModalCompanies);
-    console.log('listUserCompanies',listUserCompanies);
-    if(showModalCompanies && listUserCompanies){
-      console.log("OKOOKOKK")
+  useEffect(() => {
+    console.log("showModalCompanies", showModalCompanies);
+    console.log("listUserCompanies", listUserCompanies);
+    if (showModalCompanies && listUserCompanies) {
+      console.log("OKOOKOKK");
       Modal.info({
-      title: "Empresas Asignadas",
-      content: (
-        <List
-        locale={{emptyText: 'No se encontraron datos'}}
-          dataSource={listUserCompanies}
-          renderItem={item => (
-            <List.Item>
-              {item}
-            </List.Item>
-          )}
-        />
-      ),
-      icon: '',
-      onOk() {
-        
-      },
-    });
+        title: "Empresas Asignadas",
+        content: (
+          <List
+            locale={{ emptyText: "No se encontraron datos" }}
+            dataSource={listUserCompanies}
+            renderItem={(item) => <List.Item>{item}</List.Item>}
+          />
+        ),
+        icon: "",
+        onOk() {},
+      });
     }
-  },[showModalCompanies])
+  }, [showModalCompanies]);
 
-
-  const getUserCompanies = async (item) =>{
-    setListUserCompanies([])
-    setShowModalCompanies(false); 
-   try {
-      let response = await Axios.get(API_URL + `/business/node-person/get_assignment/?person__id=${item.id}`)
+  const getUserCompanies = async (item) => {
+    setListUserCompanies([]);
+    setShowModalCompanies(false);
+    try {
+      let response = await Axios.get(
+        API_URL + `/business/node-person/get_assignment/?person__id=${item.id}`
+      );
       let result = response.data;
       let stringList = [];
       result.map((item) => {
-        stringList.push(item.name)
-      })
+        stringList.push(item.name);
+      });
       setListUserCompanies(stringList);
       setShowModalCompanies(true);
-      /* Modal.info({
-      title: "Empresas Asignadas",
-      content: (
-        <List
-          dataSource={stringList}
-          renderItem={item => (
-            <List.Item>
-              {item}
-            </List.Item>
-          )}
-        />
-      ),
-      icon: '',
-      onOk() {
-        
-      },
-    }); */
     } catch (error) {
       setListUserCompanies([]);
       setShowModalCompanies(true);
     }
-
-  }
+  };
 
   const getModalPerson = (value) => {
     setModalAddPerson(value);
     setLoading(true);
-    Axios.get(API_URL + `/person/person/`)
-      .then((response) => {
-        response.data.results.map((item) => {
-          item["key"] = item.id;
-          item["fullname"] =
-            item.first_name + " " + item.flast_name + " " + item.mlast_name;
-          item.timestamp = item.timestamp.substring(0, 10);
-          if (!item.photo) item.photo = defaulPhoto;
-        });
-        setPerson(response.data.results);
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log(e);
-        setLoading(false);
-      });
+    filterPersonName();
   };
 
   ////STYLE
@@ -312,12 +273,17 @@ const homeScreen = () => {
     {
       title: "Empresas Asignadas",
       key: "CompaniesAsosigned",
-      align:'center',
-      render: (item) =>{
+      align: "center",
+      render: (item) => {
         return (
-          <Text className={'text-center pointer'} onClick={() => getUserCompanies(item)} >Ver</Text>
-        )
-      }
+          <Text
+            className={"text-center pointer"}
+            onClick={() => getUserCompanies(item)}
+          >
+            Ver
+          </Text>
+        );
+      },
     },
     {
       title: () => {
@@ -353,11 +319,13 @@ const homeScreen = () => {
       },
     },
   ];
+
   const rowSelectionPerson = {
     onChange: (selectedRowKeys, selectedRows) => {
       setPersonsToDelete(selectedRows);
     },
   };
+
   const onchangeStatus = (value) => {
     value.is_active ? (value.is_active = false) : (value.is_active = true);
     let data = {
@@ -375,7 +343,7 @@ const homeScreen = () => {
       })
       .catch((error) => {
         message.error("Ocurrio un error intente de nuevo.");
-        getPerson();
+        filterPersonName();
         console.log(error);
       });
   };
@@ -454,7 +422,6 @@ const homeScreen = () => {
         else ids = a.id;
       });
       setIdsDelete(ids);
-      /* setModalDelete(true); */
       showModalDelete();
     } else {
       message.error("Selecciona una persona.");
@@ -464,6 +431,7 @@ const homeScreen = () => {
   const showModalDelete = () => {
     modalDelete ? setModalDelete(false) : setModalDelete(true);
   };
+
   const ListElementsToDelete = ({ personsDelete }) => {
     return (
       <div>
@@ -504,6 +472,7 @@ const homeScreen = () => {
         console.log(e);
       });
   };
+
   const downLoadPlantilla = () => {
     setLoading(true);
     Axios.post(API_URL + `/person/person/export_csv/`, {
@@ -537,10 +506,10 @@ const homeScreen = () => {
         .then((response) => {
           setLoading(false);
           message.success("Excel importado correctamente.");
-          getPerson();
+          filterPersonName();
         })
         .catch((e) => {
-          getPerson();
+          filterPersonName();
           setLoading(false);
           message.error("Error al importar.");
           console.log(e);
@@ -549,12 +518,13 @@ const homeScreen = () => {
       message.error("Formato incorrecto, suba un archivo .csv");
     }
   };
+
   const getFileExtension = (filename) => {
     return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
   };
+
   ////SEARCH FILTER
   const filter = (value) => {
-    filters = { node: nodeId };
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
@@ -593,7 +563,6 @@ const homeScreen = () => {
   const resetFilter = () => {
     formFilter.resetFields();
     setStatus(true);
-    // getPerson();
     filter();
     filterPersonName();
   };
@@ -682,16 +651,8 @@ const homeScreen = () => {
         },
       });
     }
-    /* title={stringToDelete}
-                    visible={modalDelete}
-                    onOk={deletePerson}
-                    onCancel={showModalDelete}
-                    okText="Si, Eliminar"
-                    cancelText="Cancelar"
-                >
-                    Al eliminar este registro perderá todos los datos relacionados a el de
-                    manera permanente. ¿Está seguro de querer eliminarlo */
   }, [modalDelete]);
+
   return (
     <MainLayout currentKey="1">
       <Breadcrumb>
@@ -870,19 +831,6 @@ const homeScreen = () => {
         )}
       </div>
       <FormPerson close={getModalPerson} visible={modalAddPerson} />
-      {/* <Modal
-                title={stringToDelete}
-                visible={modalDelete}
-                onOk={deletePerson}
-                onCancel={showModalDelete}
-                okText="Si, Eliminar"
-                cancelText="Cancelar"
-            >
-                Al eliminar este registro perderá todos los datos relacionados a el de
-                manera permanente. ¿Está seguro de querer eliminarlo
-        <br />
-                <ListElementsToDelete personsDelete={personsToDelete} />
-            </Modal> */}
     </MainLayout>
   );
 };
