@@ -87,10 +87,10 @@ const GroupAdd = () => {
       module: "Solicitudes",
       value: "people.requestaccount",
     },
-    /*Recibos de Nomina */
+    /*Recibos de Nómina */
     {
       name: "Recibos de nómina",
-      module: "Nomina",
+      module: "Nómina",
       value: "people.payrollvoucher",
     },
 
@@ -761,7 +761,7 @@ const GroupAdd = () => {
                                   perm.module === "Empresas" ||
                                   perm.module === "Prestamos" ||
                                   perm.module === "Vacaciones" ||
-                                  perm.module === "Nomina" ||
+                                  perm.module === "Nómina" ||
                                   perm.module === "SolicitudCuentas"
                               )}
                             />
