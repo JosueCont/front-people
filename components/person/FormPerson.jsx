@@ -12,7 +12,7 @@ import {
   Col,
 } from "antd";
 import Axios from "axios";
-import { API_URL, APP_ID } from "../../config/config";
+import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
 import { useState, useEffect } from "react";
 
 const FormPerson = (props) => {
@@ -50,7 +50,7 @@ const FormPerson = (props) => {
     };
 
     /////PERMSS GROUPS
-    Axios.get("https://khonnect.hiumanlab.com/group/list/", {
+    Axios.get(LOGIN_URL + "/group/list/", {
       headers: headers,
     })
       .then((response) => {
@@ -206,7 +206,7 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="node">
+                <Form.Item rules={[ruleRequired]} name="node">
                   <Select
                     placeholder="Empresa"
                     options={selectCompany}
@@ -215,7 +215,7 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="department">
+                <Form.Item rules={[ruleRequired]} name="department">
                   <Select
                     options={departments}
                     onChange={onChangeDepartment}
@@ -224,7 +224,7 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="job">
+                <Form.Item rules={[ruleRequired]} name="job">
                   <Select options={jobs} placeholder="Puesto de trabajo" />
                 </Form.Item>
               </Col>
