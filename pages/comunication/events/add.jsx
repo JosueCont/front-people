@@ -32,6 +32,8 @@ const { RangePicker } = TimePicker;
 const { Option } = Select;
 
 const addEvent = () => {
+
+  const { TextArea } = Input;
   const [form] = Form.useForm();
   const router = useRouter();
   const [loading, setLoading] = useState(null);
@@ -91,6 +93,7 @@ const addEvent = () => {
     datos.date = dateEvent;
     datos.start_time = startTime;
     datos.end_time = endTime;
+    datos.description = values.description
     if (value === 1) {
       datos.node = values.node;
       datos.guests = [];
@@ -249,6 +252,25 @@ const addEvent = () => {
                           </Form.Item>
                         </Col>
                       )}
+                      <Col lg={10} xs={22} offset={1}>
+                        <Form.Item
+                          label="Descripción"
+                          name="description"
+                          /* rules={[
+                            {
+                              required: true,
+                              message: "Por favor selecciona un rango de horas",
+                            },
+                          ]} */
+                        >
+                          <TextArea
+                          rows="4"
+                          style={{ marginLeft: 6 }}
+                          showCount
+                          maxLength={100}
+                        />
+                        </Form.Item>
+                      </Col>
 
                       <Col lg={22} xs={22} offset={1}>
                         <Form.Item labelAlign="right">
