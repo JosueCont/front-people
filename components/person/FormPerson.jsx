@@ -206,7 +206,7 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="node">
+                <Form.Item rules={[ruleRequired]} name="node">
                   <Select
                     placeholder="Empresa"
                     options={selectCompany}
@@ -215,7 +215,7 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="department">
+                <Form.Item rules={[ruleRequired]} name="department">
                   <Select
                     options={departments}
                     onChange={onChangeDepartment}
@@ -224,7 +224,7 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="job">
+                <Form.Item rules={[ruleRequired]} name="job">
                   <Select options={jobs} placeholder="Puesto de trabajo" />
                 </Form.Item>
               </Col>
