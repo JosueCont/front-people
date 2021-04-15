@@ -14,12 +14,13 @@ import {
 } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import SelectPerson from "../selects/SelectPerson";
+import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
 import details from "../../pages/holidays/[id]/details";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import jsCookie from "js-cookie";
+
 
 const Lendingform = (props) => {
   const [form] = Form.useForm();
@@ -192,40 +193,13 @@ const Lendingform = (props) => {
           </Title>
         </Col>
         <Col span="8">
-          <Form.Item
+          <SelectCollaborator
             label="Colaborador"
             name="person"
             labelCol={{ span: 10 }}
             labelAlign={"left"}
             rules={[ruleRequired]}
-          >
-            <Select
-              key="selectPerson"
-              showSearch
-              allowClear
-              optionFilterProp="children"
-              placeholder="Todos"
-              value={props.defaultValue}
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              filterSort={(optionA, optionB) =>
-                optionA.children
-                  .toLowerCase()
-                  .localeCompare(optionB.children.toLowerCase())
-              }
-            >
-              {personList
-                ? personList.map((item) => {
-                    return (
-                      <Option key={item.key} value={item.value}>
-                        {item.label}
-                      </Option>
-                    );
-                  })
-                : null}
-            </Select>
-          </Form.Item>
+          />
           <Form.Item
             name="type"
             label="Tipo de préstamo"

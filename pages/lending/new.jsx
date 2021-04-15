@@ -55,6 +55,7 @@ const HolidaysNew = () => {
   };
 
   const saveRequest = async (values) => {
+    console.log('values',values);
     if (values.periodicity_amount.toString().includes("."))
       values.periodicity_amount = values.periodicity_amount.toFixed(2);
     setSending(true);

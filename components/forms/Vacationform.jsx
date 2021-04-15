@@ -19,7 +19,7 @@ import { route } from "next/dist/next-server/server/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-/* import SelectPerson from '../../components/selects/SelectPerson' */
+import SelectCollaborator from '../../components/selects/SelectCollaboratorItemForm'
 
 const Vacationform = (props) => {
     const { Title } = Typography;
@@ -31,7 +31,6 @@ const Vacationform = (props) => {
     const [loading, setLoading] = useState(props.loading ? props.loading : true);
 
     const [allPersons, setAllPersons] = useState(null);
-    const [personList, setPersonList] = useState(null);
     const [urlPhoto, setUrlPhoto] = useState(null);
 
     /* const [person, setPerson] = useState(null); */
@@ -41,8 +40,10 @@ const Vacationform = (props) => {
     /* const [availableDays, setAvailableDays] = useState(null); */
 
     const changePerson = (value) => {
+        console.log(allPersons);
+        console.log(value);
         if (value) {
-            let index = allPersons.find((data) => data.khonnect_id === value);
+            let index = allPersons.find((data) => data.id === value);
             formVacation.setFieldsValue({
                 antiquity: index.antiquity,
                 availableDays: index.Available_days_vacation,
@@ -55,6 +56,7 @@ const Vacationform = (props) => {
                     job: index.job[0].name,
                 });
             }
+            console.log('index',index);
             setUrlPhoto(index.photo ? index.photo : null);
         } else {
             formVacation.setFieldsValue({
@@ -67,25 +69,7 @@ const Vacationform = (props) => {
         }
     };
 
-    const getAllPersons = async () => {
-        try {
-            let response = await Axios.get(API_URL + `/person/person/`);
-            let data = response.data.results;
-            setAllPersons(data);
-
-            data = data.map((a, index) => {
-                return {
-                    label: a.first_name + " " + a.flast_name,
-                    value: a.khonnect_id,
-                    /* value: a.id, */
-                    key: a.id + index,
-                };
-            });
-            setPersonList(data);
-        } catch (e) {
-            console.log(e);
-        }
-    };
+    
 
     useEffect(() => {
         if (props.details) {
@@ -132,10 +116,6 @@ const Vacationform = (props) => {
         }
     }, [allPersons]);
 
-    useEffect(() => {
-        getAllPersons();
-    }, []);
-
     return (
         <Form form={formVacation} layout="horizontal" onFinish={props.onFinish}>
             <Row>
@@ -157,41 +137,17 @@ const Vacationform = (props) => {
                 </Col>
 
                 <Col span="8">
-                    <Form.Item
+                    <SelectCollaborator
                         label="Empleado"
-                        name="khonnect_id"
+                        name="person"
                         labelCol={{ span: 9 }}
                         labelAlign={"left"}
-                    >
-                        <Select
-                            /* options={personList} */
-                            key="selectPerson"
-                            onChange={changePerson}
-                            showSearch
-                            /* options={personList} */
-                            style={{ width: 150 }}
-                            allowClear
-                            optionFilterProp="children"
-                            filterOption={(input, option) =>
-                                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                            }
-                            filterSort={(optionA, optionB) =>
-                                optionA.children
-                                    .toLowerCase()
-                                    .localeCompare(optionB.children.toLowerCase())
-                            }
-                        >
-                            {personList
-                                ? personList.map((item) => {
-                                    return (
-                                        <Option key={item.key} value={item.value}>
-                                            {item.label}
-                                        </Option>
-                                    );
-                                })
-                                : null}
-                        </Select>
-                    </Form.Item>
+                        onChange={changePerson}
+                        setAllPersons={setAllPersons}
+                    />
+                        
+
+                    
                     <Form.Item
                         label="Puesto"
                         name="job"

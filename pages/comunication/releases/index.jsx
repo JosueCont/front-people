@@ -27,7 +27,8 @@ import moment from "moment-timezone";
 import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import { EyeOutlined } from "@ant-design/icons";
-import BreadcrumbHome from "../../../components/BreadcrumbHome";
+import SelectCollaborator from '../../../components/selects/SelectCollaboratorItemForm'
+
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
@@ -189,7 +190,12 @@ const Releases = () => {
                 >
                   <Row gutter={[24, 8]}>
                     <Col>
-                      <Form.Item
+                    <SelectCollaborator 
+                      name="send_by"
+                      label="Enviado por"
+                      style={{ width: 150 }}
+                    />
+                      {/* <Form.Item  
                         key="send_by"
                         name="send_by"
                         label="Enviado por"
@@ -200,7 +206,7 @@ const Releases = () => {
                           placeholder={"Todos"}
                           allowClear
                         />
-                      </Form.Item>
+                      </Form.Item> */}
                     </Col>
                     <Col>
                       <Form.Item

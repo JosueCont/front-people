@@ -21,6 +21,7 @@ import { API_URL } from "../../config/config";
 import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import BreadcrumbHome from "../../components/BreadcrumbHome";
+import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
 
 import {
   DeleteOutlined,
@@ -189,40 +190,10 @@ const Incapacity = () => {
                 >
                   <Row gutter={[24, 8]}>
                     <Col>
-                      <Form.Item
-                        key="collaborator"
+                    <SelectCollaborator
                         name="collaborator"
-                        label="Colaborador"
-                      >
-                        <Select
-                          key="selectPerson"
-                          showSearch
-                          /* options={personList} */
-                          style={{ width: 150 }}
-                          allowClear
-                          optionFilterProp="children"
-                          filterOption={(input, option) =>
-                            option.children
-                              .toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0
-                          }
-                          filterSort={(optionA, optionB) =>
-                            optionA.children
-                              .toLowerCase()
-                              .localeCompare(optionB.children.toLowerCase())
-                          }
-                        >
-                          {personList
-                            ? personList.map((item) => {
-                                return (
-                                  <Option key={item.key} value={item.value}>
-                                    {item.label}
-                                  </Option>
-                                );
-                              })
-                            : null}
-                        </Select>
-                      </Form.Item>
+                        style={{ width: 150 }}
+                      />
                     </Col>
                     <Col>
                       <SelectDepartment

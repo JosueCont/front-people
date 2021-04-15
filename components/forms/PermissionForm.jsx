@@ -16,7 +16,7 @@ import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 import { set } from "js-cookie";
 import { route } from "next/dist/next-server/server/router";
-/* import SelectPerson from '../../components/selects/SelectPerson' */
+import SelectCollaborator from '../../components/selects/SelectCollaboratorItemForm'
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { withAuthSync } from "../../libs/auth";
@@ -59,25 +59,6 @@ const Permissionform = (props) => {
     }
   };
 
-  const getAllPersons = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/person/person/`);
-      let data = response.data.results;
-      setAllPersons(data);
-
-      data = data.map((a, index) => {
-        return {
-          label: a.first_name + " " + a.flast_name,
-          value: a.id,
-          /* value: a.id, */
-          key: a.id + index,
-        };
-      });
-      setPersonList(data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   useEffect(() => {
     if (props.details) {
@@ -112,7 +93,7 @@ const Permissionform = (props) => {
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
-    getAllPersons();
+    
   }, []);
 
   const searchPermissions = (data) => {
@@ -156,42 +137,15 @@ const Permissionform = (props) => {
         </Col>
 
         <Col span="8">
-          <Form.Item
-            label="Empleado"
-            /* name="khonnect_id" */ name="person"
-            labelCol={{ span: 9 }}
-            labelAlign={"left"}
-          >
-            <Select
+            <SelectCollaborator
+              label="Empleado"
+              name="person"
+              labelCol={{ span: 9 }}
+              labelAlign={"left"}
               disabled={props.readOnly}
-              /* options={personList} */
-              key="selectPerson"
               onChange={changePerson}
-              showSearch
-              /* options={personList} */
-              style={{ width: 150 }}
-              allowClear
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              filterSort={(optionA, optionB) =>
-                optionA.children
-                  .toLowerCase()
-                  .localeCompare(optionB.children.toLowerCase())
-              }
-            >
-              {personList
-                ? personList.map((item) => {
-                    return (
-                      <Option key={item.key} value={item.value}>
-                        {item.label}
-                      </Option>
-                    );
-                  })
-                : null}
-            </Select>
-          </Form.Item>
+              setAllPersons={setAllPersons}
+            />
           <Form.Item
             label="Puesto"
             name="job"

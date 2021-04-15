@@ -31,7 +31,6 @@ a {
  width: 100%;
 } */
 
-
 @media (max-width: 577px) {
   .card-login {
     display: none;
@@ -47,14 +46,14 @@ a {
   font-weight: bold;
 }
 
-.font-color-khor label{
-    color: #252593;
-    font-weight: bold;
-  }
-  .font-color-khor label{
-    color: #252593;
-    font-weight: bold;
-  }
+.font-color-khor label {
+  color: #252593;
+  font-weight: bold;
+}
+.font-color-khor label {
+  color: #252593;
+  font-weight: bold;
+}
 
 /* styles dash*/
 .components-layout-demo-fixed .logo {
@@ -154,89 +153,89 @@ header.ant-layout-header
   color: #000 !important;
 }
 
-li.ant-menu-submenu-selected{
-    background-color: #1d90ff !important;
+li.ant-menu-submenu-selected {
+  background-color: #1d90ff !important;
 }
 
-.formFilterReports .ant-col .ant-form-item{
-    margin-bottom: 0% !important;
+.formFilterReports .ant-col .ant-form-item {
+  margin-bottom: 0% !important;
 }
 
-.formFilterReports  .ant-form-item{
-    margin-bottom: 0% !important;
+.formFilterReports .ant-form-item {
+  margin-bottom: 0% !important;
 }
 
-.formFilter .ant-col .ant-form-item{
-    margin-bottom: 0% !important;
+.formFilter .ant-col .ant-form-item {
+  margin-bottom: 0% !important;
 }
 
-.formFilter .ant-form-item{
-    margin-bottom: 0% !important;
+.formFilter .ant-form-item {
+  margin-bottom: 0% !important;
 }
 
-
-.columnRightFilter{
-    display:flex;
+.columnRightFilter {
+  display: flex;
 }
 
-.columnRightFilter button{
-    
-    margin-top: auto;
+.columnRightFilter button {
+  margin-top: auto;
 }
 
-.backLogin{
-    background-image: url('../public/images/login.jpg');
-    background-position: 50%;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100%;
+.backLogin {
+  background-image: url("../public/images/login.jpg");
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
 }
-.tabReports .ant-tabs-tab{
-    padding: 8px 15px !important;
+.tabReports .ant-tabs-tab {
+  padding: 8px 15px !important;
 }
-.tabReports .ant-tabs-tab .anticon{
-    margin-right: 5px !important;
-}
-
-.btn-success{
-    background-color: #73d13d;
-    border: #73d13d;
-}
-.btn-success:hover{
-    background-color: #95de64;
-}
-.notAllowed{
-    height: calc(100vh - 100px);
-    background-image: url('../public/images/Recurso3.png');
-    background-position: 'center';
-    background-position-x: center;
-    background-repeat: no-repeat;
-    background-size:contain;
-}
-.Error404{
-    height: calc(100vh);
-    width: 50%;
-    margin-left: 25%;
-    background-image: url('../public/images/404.svg');
-    background-position: 'center';
-    background-position-x: center;
-    background-position-y: center;
-    background-repeat: no-repeat;
-    background-size:50%;
-}
-.Error500{
-    height: calc(100vh);
-    width: 50%;
-    margin-left: 25%;
-    background-image: url('../public/images/500.svg');
-    background-position: 'center';
-    background-position-x: center;
-    background-position-y: center;
-    background-repeat: no-repeat;
-    background-size:50%;
+.tabReports .ant-tabs-tab .anticon {
+  margin-right: 5px !important;
 }
 
-
+.btn-success {
+  background-color: #73d13d;
+  border: #73d13d;
+}
+.btn-success:hover {
+  background-color: #95de64;
+}
+.notAllowed {
+  height: calc(100vh - 100px);
+  background-image: url("../public/images/Recurso3.png");
+  background-position: "center";
+  background-position-x: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.Error404 {
+  height: calc(100vh);
+  width: 50%;
+  margin-left: 25%;
+  background-image: url("../public/images/404.svg");
+  background-position: "center";
+  background-position-x: center;
+  background-position-y: center;
+  background-repeat: no-repeat;
+  background-size: 50%;
+}
+.Error500 {
+  height: calc(100vh);
+  width: 50%;
+  margin-left: 25%;
+  background-image: url("../public/images/500.svg");
+  background-position: "center";
+  background-position-x: center;
+  background-position-y: center;
+  background-repeat: no-repeat;
+  background-size: 50%;
+}
+.cardH100 > .ant-card-body {
+  height: 100%;
+  display: flex;
+}
 /* .formFilter{
 
 } */
