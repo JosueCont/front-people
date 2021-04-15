@@ -19,6 +19,7 @@ import { API_URL } from "../../config/config";
 
 import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
+import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
 
 import {
   DeleteOutlined,
@@ -39,7 +40,7 @@ const Holidays = () => {
   const { Option } = Select;
 
   const [holidayList, setHolidayList] = useState([]);
-  const [personList, setPersonList] = useState(null);
+  
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
   const [departament, setDepartament] = useState(null);
@@ -56,24 +57,7 @@ const Holidays = () => {
     { value: 3, label: "Rechazado", key: "opt_3" },
   ];
 
-  const getAllPersons = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/person/person/`);
-      let data = response.data.results;
-      let list = [];
-      data = data.map((a, index) => {
-        let item = {
-          label: a.first_name + " " + a.flast_name,
-          value: a.id,
-          key: a.id + index,
-        };
-        list.push(item);
-      });
-      setPersonList(list);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  
 
   const getAllHolidays = async (
     collaborator = null,
@@ -130,7 +114,6 @@ const Holidays = () => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
     getAllHolidays();
-    getAllPersons();
   }, [route]);
 
   const searchPermissions = (data) => {
@@ -180,40 +163,10 @@ const Holidays = () => {
                 >
                   <Row gutter={[24, 8]}>
                     <Col>
-                      <Form.Item
-                        key="collaborator"
+                      <SelectCollaborator
                         name="collaborator"
-                        label="Colaborador"
-                      >
-                        <Select
-                          key="selectPerson"
-                          showSearch
-                          /* options={personList} */
-                          style={{ width: 150 }}
-                          allowClear
-                          optionFilterProp="children"
-                          filterOption={(input, option) =>
-                            option.children
-                              .toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0
-                          }
-                          filterSort={(optionA, optionB) =>
-                            optionA.children
-                              .toLowerCase()
-                              .localeCompare(optionB.children.toLowerCase())
-                          }
-                        >
-                          {personList
-                            ? personList.map((item) => {
-                                return (
-                                  <Option key={item.key} value={item.value}>
-                                    {item.label}
-                                  </Option>
-                                );
-                              })
-                            : null}
-                        </Select>
-                      </Form.Item>
+                        style={{ width: 150 }}
+                      />
                     </Col>
 
                     <Col>

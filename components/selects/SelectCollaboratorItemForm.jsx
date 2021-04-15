@@ -7,7 +7,7 @@ import { API_URL } from "../../config/config";
 import { route } from "next/dist/next-server/server/router";
 import { userCompanyId } from "../../libs/auth";
 
-export default function SelectCollaborator(props) {
+export default function SelectCollaborator({setAllPersons, ...props}) {
   const { Option } = Select;
 
   const route = useRouter();
@@ -15,29 +15,13 @@ export default function SelectCollaborator(props) {
   const [personList, setPersonList] = useState([]);
   let nodeId = userCompanyId();
 
-  const getPersons = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/person/person/`);
-      let data = response.data.results;
-      let list = [];
-      data = data.map((a, index) => {
-        let item = {
-          label: a.first_name + " " + a.flast_name,
-          value: a.id,
-          key: a.id + index,
-        };
-        list.push(item);
-      });
-      setPersonList(list);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const filterPerson = () => {
     Axios.post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
       .then((response) => {
         let list = [];
+        if(setAllPersons){
+          setAllPersons(response.data)  
+        }
         response.data.map((a, i) => {
           let item = {
             label: a.first_name + " " + a.flast_name,
@@ -48,6 +32,7 @@ export default function SelectCollaborator(props) {
         });
         console.log("LIST", list);
         setPersonList(list);
+        
       })
       .catch((e) => {
         console.log(e);
@@ -55,16 +40,19 @@ export default function SelectCollaborator(props) {
   };
 
   useEffect(() => {
+    console.log('nodeID', nodeId);
     // getPersons();
     filterPerson();
   }, [route]);
 
   return (
     <Form.Item
-      label="Colaborador"
+      label={props.label ? props.label : 'Colaborador'}
       name={props.name ? props.name : "collaborator"}
-      /* labelCol={{ span: 24 }} */
+      labelCol={ props.labelCol ? props.labelCol : {span:24}}
       labelAlign={"left"}
+      rules={props.rules ? props.rules : null}
+
     >
       <Select
         key="selectPerson"

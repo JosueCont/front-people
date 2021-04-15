@@ -14,6 +14,8 @@ import {
   Tabs,
   Tooltip,
   message,
+  Typography,
+  Card,
 } from "antd";
 import useRouter from "next/router";
 import Axios from "axios";
@@ -23,9 +25,10 @@ import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
 const SelectCompany = () => {
+  const {Title} = Typography;
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [jwt, setJwt] = useState({});
+  const [jwt, setJwt] = useState(null);
 
   useEffect(() => {
     try {
@@ -33,20 +36,23 @@ const SelectCompany = () => {
     } catch (error) {
       useRouter.push("/");
     }
+
   }, []);
 
   useEffect(() => {
-    Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
-      id: jwt.user_id,
-    })
-      .then((response) => {
-        if (response.data.nodes.length > 0) setDataList(response.data.nodes);
-        setLoading(false);
+    if(jwt){
+      Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
+        id: jwt.user_id,
       })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
+        .then((response) => {
+          if (response.data.nodes.length > 0) setDataList(response.data.nodes);
+          setLoading(false);
+        })
+        .catch((e) => {
+          setLoading(false);
+          console.log(e);
+        });
+      }
   }, [jwt]);
 
   const setCompanySelect = (item) => {
@@ -57,39 +63,9 @@ const SelectCompany = () => {
     else message.error("Ocurrio un error, intente de nuevo.");
   };
 
-  const columns = [
-    {
-      title: "Empresa",
-      dataIndex: "name",
-      key: "name",
-    },
-    // {
-    //   title: "Nodo padre",sessionStorage
-    // },
-    {
-      title: "",
-      render: (item) => {
-        return (
-          <Button
-            style={{
-              background: "#fa8c16",
-              fontWeight: "bold",
-              color: "white",
-              marginTop: "auto",
-            }}
-            onClick={() => setCompanySelect(item)}
-            key="btn_new"
-          >
-            Acceder
-          </Button>
-        );
-      },
-    },
-  ];
-
   return (
     <>
-      {jwt.user_id ? (
+      { jwt && jwt.user_id ? (
         <MainLayout currentKey="8.5" hideMenu={true}>
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item
@@ -101,17 +77,23 @@ const SelectCompany = () => {
             <Breadcrumb.Item>Empresas</Breadcrumb.Item>
           </Breadcrumb>
           <div
-            className="container back-white"
-            style={{ width: "100%", padding: "20px 0" }}
+            className="container"
+            style={{ width: "100%", padding: 20 }}
           >
-            <Row>
-              <Col span={24}>
-                <Table
-                  dataSource={dataList}
-                  columns={columns}
-                  loading={loading}
-                />
-              </Col>
+            <Row gutter={24}>
+              {
+                dataList.map((item) => (
+                  <Col span={4} style={{display:'grid'}}>
+                    <Card hoverable style={{textAlign:'center'}} className={'cardH100'} onClick={() => setCompanySelect(item)}>
+                      <Title level={4} style={{margin:'auto'}}>
+                        <img alt="example" src="https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png" width="50px" />
+                        <br/>
+                        { item.name }
+                      </Title>
+                    </Card>
+                  </Col>
+                ))
+              }
             </Row>
           </div>
         </MainLayout>

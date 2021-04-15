@@ -25,7 +25,7 @@ import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 import jsCookie from "js-cookie";
 import { route } from "next/dist/next-server/server/router";
-/* import SelectPerson from '../../components/selects/SelectPerson' */
+import SelectCollaborator from '../../components/selects/SelectCollaboratorItemForm'
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { withAuthSync } from "../../libs/auth";
@@ -56,8 +56,10 @@ const Incapacityform = (props) => {
     /* const [availableDays, setAvailableDays] = useState(null); */
 
     const changePerson = (value) => {
+        console.log('allPersons',allPersons);
+
         if (value) {
-            let index = allPersons.find((data) => data.khonnect_id === value);
+            let index = allPersons.find((data) => data.id === value);
             if (index && index.job[0]) {
                 form.setFieldsValue({
                     job: index.job[0].name,
@@ -67,6 +69,7 @@ const Incapacityform = (props) => {
                     job: null,
                 });
             }
+            console.log('index',index);
             setUrlPhoto(index.photo ? index.photo : null);
         } else {
             form.setFieldsValue({
@@ -206,42 +209,16 @@ const Incapacityform = (props) => {
                 </Col>
 
                 <Col span="8">
-                    <Form.Item
+                    <SelectCollaborator
                         label="Empleado"
-                        name="khonnect_id"
+                        name="person"
                         labelCol={{ span: 9 }}
                         labelAlign={"left"}
-                    >
-                        <Select
-                            disabled={props.readOnly || props.sending}
-                            /* options={personList} */
-                            key="selectPerson"
-                            onChange={changePerson}
-                            showSearch
-                            /* options={personList} */
-                            style={{ width: 150 }}
-                            allowClear
-                            optionFilterProp="children"
-                            filterOption={(input, option) =>
-                                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                            }
-                            filterSort={(optionA, optionB) =>
-                                optionA.children
-                                    .toLowerCase()
-                                    .localeCompare(optionB.children.toLowerCase())
-                            }
-                        >
-                            {personList
-                                ? personList.map((item) => {
-                                    return (
-                                        <Option key={item.key} value={item.value}>
-                                            {item.label}
-                                        </Option>
-                                    );
-                                })
-                                : null}
-                        </Select>
-                    </Form.Item>
+                        disabled={props.readOnly || props.sending}
+                        onChange={changePerson}
+                        setAllPersons={setAllPersons}
+                    />
+                    
                     <Form.Item
                         label="Puesto"
                         name="job"
