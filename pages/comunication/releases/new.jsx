@@ -30,6 +30,7 @@ import { API_URL } from "../../../config/config";
 import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import SelectCompany from "../../../components/selects/SelectCompany";
 import FormItemHTMLPlace from "../../../components/draft";
+/* import { userCompanyId } from "../../libs/auth"; */
 
 import dynamic from "next/dynamic";
 import { withAuthSync,userCompanyId } from "../../../libs/auth";
@@ -49,7 +50,7 @@ const Newrelease = () => {
   const [bussinessList, setBusinessList] = useState(null);
   const [messageAlert, setMessageAlert] = useState(false);
   const [fileList, setFileList] = useState([]);
-  const [companyRequired, setCompanyRequired] = useState(true);
+  const [segmentationRequired, setSegmentationRequired] = useState(true);
 
   /* For input file */
   const [disabled, setDisabled] = useState(true);
@@ -84,7 +85,7 @@ const Newrelease = () => {
   useEffect(() => {
     if (json) {
       setUserId(json.user_id);
-      /* getBussiness(); */
+      getDepartments();
       getValueSelects();
     }
   }, []);
@@ -109,8 +110,23 @@ const Newrelease = () => {
     if (!message || (message && message.length <= 8)) {
       setMessageAlert(true);
       return;
-    }
+      }
+    
+      
+      /* form.setFields({
+            target_department: {
+              errors: [new Error('forbid ha')],
+            }
+        }); */
+      /* if(!values.send_to_all){
+          form.setFields({
+            target_department: {
+              errors: [new Error('forbid ha')],
+            },
+        });
+      } */
 
+      return
     let datos = new FormData();
     datos.append("category", values.category);
     datos.append("title", values.title);
@@ -160,6 +176,15 @@ const Newrelease = () => {
       setSending(false);
     }
   };
+
+  const checkSegmentacion= ({getFieldValue}) => ({
+    validator(rule){
+      if( !getFieldValue("send_to_all") && !getFieldValue("target_department") && !getFieldValue("target_job") && !getFieldValue("target_person_type") && !getFieldValue("target_gender") ){
+        return Promise.reject("Selecciona una segmentación");
+      }
+      return Promise.resolve();
+    }
+  })
 
   const onchangeFile = (file) => {
     setFileList(file.fileList);
@@ -247,7 +272,7 @@ const Newrelease = () => {
       });
   };
 
-  const onChangecompany = async (value) => {
+  const getDepartments = async () => {
     /* Clear form in specific fields */
     form.setFieldsValue({
       target_department: null,
@@ -255,7 +280,7 @@ const Newrelease = () => {
     });
     try {
       let response = await Axios.get(
-        API_URL + `/business/node/${value}/department_for_node/`
+        API_URL + `/business/node/${nodeId}/department_for_node/`
       );
       let data = response.data;
       data = data.map((a) => {
@@ -286,7 +311,7 @@ const Newrelease = () => {
 
   const changeSendToAll = (e) => {
     console.log(e);
-    setCompanyRequired(!e);
+    setSegmentationRequired(!e);
   };
 
   const ruleRequired = { required: true, message: "Este campo es requerido" };
@@ -386,18 +411,20 @@ const Newrelease = () => {
                         name={"target_department"}
                         label="Departamento"
                         labelCol={{ span: 10 }}
+                        rules={[checkSegmentacion]}
                       >
                         <Select
                           options={departments}
                           onChange={onChangeDepartment}
                           placeholder="Departamento"
                           key="departament_select"
-                        />
+                        />  
                       </Form.Item>
                       <Form.Item
                         name={"target_job"}
                         label="Puesto de trabajo"
                         labelCol={{ span: 10 }}
+                        rules={[checkSegmentacion]}
                       >
                         <Select options={jobs} key="jobs_select" />
                       </Form.Item>
@@ -407,6 +434,7 @@ const Newrelease = () => {
                         name={"target_person_type"}
                         label="Tipo de persona"
                         labelCol={{ span: 10 }}
+                        rules={[checkSegmentacion]}
                       >
                         <Select options={personType} key="person_select" />
                       </Form.Item>
@@ -414,6 +442,7 @@ const Newrelease = () => {
                         name={"target_gender"}
                         label="Género"
                         labelCol={{ span: 10 }}
+                        rules={[checkSegmentacion]}
                       >
                         <Select options={genders} key="gender_select" />
                       </Form.Item>

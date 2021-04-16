@@ -305,7 +305,7 @@ const personDetailForm = () => {
     };
 
     ///GROUPS
-    Axios.get("https://khonnect.hiumanlab.com/group/list/", {
+    Axios.get(LOGIN_URL + "/group/list/", {
       headers: headers,
     })
       .then((response) => {

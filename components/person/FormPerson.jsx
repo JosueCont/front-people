@@ -12,7 +12,7 @@ import {
   Col,
 } from "antd";
 import Axios from "axios";
-import { API_URL, APP_ID } from "../../config/config";
+import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
 import { useState, useEffect } from "react";
 
 const FormPerson = (props) => {
@@ -50,7 +50,7 @@ const FormPerson = (props) => {
     };
 
     /////PERMSS GROUPS
-    Axios.get("https://khonnect.hiumanlab.com/group/list/", {
+    Axios.get(LOGIN_URL + "/group/list/", {
       headers: headers,
     })
       .then((response) => {

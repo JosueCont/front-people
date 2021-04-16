@@ -8,6 +8,7 @@ import {
   Select,
   Switch,
   Button,
+  Upload,
   Modal,
   Form,
   message,
@@ -22,7 +23,9 @@ import {
   NodeExpandOutlined,
   PlusOutlined,
   DownOutlined,
+  LoadingOutlined
 } from "@ant-design/icons";
+
 import { API_URL } from "../../config/config";
 import Router from "next/router";
 import MainLayout from "../../layout/MainLayout";
@@ -35,7 +38,11 @@ const { Option } = Select;
 
 const businessForm = () => {
   const [business, setBusiness] = useState([]);
+  const [imageUrl,setImageUrl] = useState(null);
+
   const [loading, setLoading] = useState(false);
+  const [loadingLogo, setLoadingLogo] = useState(false);
+  const [logo, setLogo] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [formBusiness] = Form.useForm();
@@ -76,9 +83,17 @@ const businessForm = () => {
         console.log(error);
       });
   };
-  const updateBusiness = async (data) => {
+  const updateBusiness = async (values) => {
+    console.log(values);
     setLoading(true);
-    Axios.put(API_URL + "/business/node/" + data.id + "/", data)
+    
+    let data = new FormData();
+    data.append("id", values.id);
+    data.append("name", values.name);
+    data.append("description", values.description);
+    data.append("parent",values.FNode ? values.FNode : null);
+    data.append("image", logo);
+    Axios.put(API_URL + "/business/node/" + values.id + "/", data)
       .then(function (response) {
         if (response.status === 200) {
           Router.push("/business");
@@ -94,11 +109,11 @@ const businessForm = () => {
       });
   };
   const addBusiness = async (name, description, fNode) => {
-    const data = {
-      name: name,
-      description: description,
-      parent: fNode ? fNode : null,
-    };
+    let data = new FormData();
+    data.append("name", name);
+    data.append("description", description);
+    data.append("parent",fNode ? fNode : null);
+    data.append("image", logo);
     setLoading(true);
     Axios.post(API_URL + "/business/node/", data)
       .then(function (response) {
@@ -120,9 +135,11 @@ const businessForm = () => {
       setIsEdit(false);
       formBusiness.resetFields();
       setIsModalVisible(true);
+      setImageUrl(null);
     } else if (type === "edit") {
       setIsDeleted(false);
       setIsEdit(true);
+      setImageUrl(item.image);
       formBusiness.setFieldsValue({
         name: item.name,
         description: item.description,
@@ -279,6 +296,36 @@ const businessForm = () => {
       });
   };
 
+  function getBase64(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result));
+  reader.readAsDataURL(img);
+}
+
+  const handleChange = (info) => {
+    if (info.file.status === 'uploading') {
+      setLoadingLogo(true);
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      setLogo(info.file.originFileObj);
+      getBase64(info.file.originFileObj, imageUrl =>{
+        setLoadingLogo(false);
+        setImageUrl(imageUrl);
+      }
+        
+      );
+    }
+  };
+
+  const uploadButton = (
+      <div>
+        {loadingLogo ? <LoadingOutlined /> : <PlusOutlined />}
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+    );
+
   return (
     <MainLayout currentKey="2">
       <Breadcrumb>
@@ -372,6 +419,18 @@ const businessForm = () => {
         >
           <Form.Item name="id" label="id" style={{ display: "none" }}>
             <Input type="text" />
+          </Form.Item>
+          <Form.Item label="Logo">
+            <Upload
+            label="Logo"
+            listType="picture-card"
+            className="avatar-uploader"
+            showUploadList={false}
+            /* beforeUpload={beforeUpload} */
+            onChange={handleChange}
+          >
+            {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+          </Upload>
           </Form.Item>
           <Form.Item
             name="name"

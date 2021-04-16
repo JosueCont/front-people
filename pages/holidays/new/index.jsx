@@ -27,32 +27,14 @@ import Axios from "axios";
 
 const HolidaysNew = () => {
   const route = useRouter();
-  const [form] = Form.useForm();
-  const { Title } = Typography;
   const [sending, setSending] = useState(false);
-  const { Option } = Select;
   const [departure_date, setDepartureDate] = useState(null);
   const [return_date, setReturnDate] = useState(null);
-  const [job, setJob] = useState(null);
-  const [dateOfAdmission, setDateOfAdmission] = useState(null);
-  const [availableDays, setAvailableDays] = useState(null);
-  const [personList, setPersonList] = useState(null);
-  const [allPersons, setAllPersons] = useState(null);
-  const [antiquity, setAntiquity] = useState(null);
-
+  
   const onCancel = () => {
     route.push("/holidays");
   };
 
-  const changePerson = (value) => {
-    let index = allPersons.find((data) => data.khonnect_id === value);
-    setDateOfAdmission(moment(index.date_of_admission).format("DD/MM/YYYY"));
-    if (index.job_department.job) {
-      setJob(index.job_department.job.name);
-      setAvailableDays(index.Available_days_vacation);
-      setAntiquity(index.antiquity);
-    }
-  };
 
   const saveRequest = async (values) => {
     values["departure_date"] = departure_date;
