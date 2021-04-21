@@ -14,6 +14,7 @@ import {
 import Axios from "axios";
 import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
 import { useState, useEffect } from "react";
+import { userCompanyId, userCompanyName } from "../../libs/auth";
 
 const FormPerson = (props) => {
   const [form] = Form.useForm();
@@ -23,10 +24,12 @@ const FormPerson = (props) => {
   const [date, setDate] = useState("");
   const [departments, setDepartments] = useState("");
   const [selectCompany, setselectCompany] = useState([]);
+  let nodeId = userCompanyId();
+  let nodePeople = userCompanyName();
 
   useEffect(() => {
-    const company_id = "5f417a53c37f6275fb614104";
-    getValueSelects(company_id);
+    getValueSelects(nodeId);
+    changeNode(nodeId);
   }, []);
 
   const onFinish = (value) => {
@@ -39,6 +42,7 @@ const FormPerson = (props) => {
       message.error("Las contraseñas no coinciden.");
     else {
       delete value["passwordTwo"];
+      value.groups = [value.groups];
       createPerson(value);
     }
   };
@@ -206,12 +210,8 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="node">
-                  <Select
-                    placeholder="Empresa"
-                    options={selectCompany}
-                    onChange={changeNode}
-                  />
+                <Form.Item rules={[ruleRequired]}>
+                  <Input readOnly value={nodePeople} />
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
@@ -293,7 +293,6 @@ const FormPerson = (props) => {
               <Col lg={23} xs={22} offset={1}>
                 <Form.Item name="groups">
                   <Select
-                    mode="multiple"
                     options={groups}
                     showArrow
                     style={{ width: "100%" }}
