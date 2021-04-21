@@ -457,7 +457,7 @@ const personDetailForm = () => {
     value.is_active = isActive;
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
-    // if (value.groups) delete value["groups"];
+    if (value.groups && value.groups != "") value.groups = [value.groups];
     updatePerson(value);
   };
   const getPerson = () => {
@@ -564,7 +564,7 @@ const personDetailForm = () => {
                 return a._id.$oid;
               });
               formPerson.setFieldsValue({
-                groups: group,
+                groups: group[0],
               });
             }
             setLoading(false);
@@ -610,12 +610,6 @@ const personDetailForm = () => {
           formPerson.setFieldsValue({
             birth_date: moment(response.data.birth_date),
           });
-        // if (response.data.job)
-        //   formPerson.setFieldsValue({
-        //     node: job[0].department.node.id,
-        //     department: job[0].department.id,
-        //     job: job[0].id,
-        //   });
 
         setBirthDate(response.data.birth_date);
         setIsActive(response.data.is_active);
@@ -1868,7 +1862,6 @@ const personDetailForm = () => {
                       <Col lg={15} xs={22} offset={1}>
                         <Form.Item name="groups" label="Perfil de seguridad">
                           <Select
-                            mode="multiple"
                             options={groups}
                             showArrow
                             style={{ width: "100%" }}
