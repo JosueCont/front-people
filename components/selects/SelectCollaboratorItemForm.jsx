@@ -7,7 +7,7 @@ import { API_URL } from "../../config/config";
 import { route } from "next/dist/next-server/server/router";
 import { userCompanyId } from "../../libs/auth";
 
-export default function SelectCollaborator({setAllPersons, ...props}) {
+export default function SelectCollaborator({ setAllPersons, ...props }) {
   const { Option } = Select;
 
   const route = useRouter();
@@ -19,8 +19,8 @@ export default function SelectCollaborator({setAllPersons, ...props}) {
     Axios.post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
       .then((response) => {
         let list = [];
-        if(setAllPersons){
-          setAllPersons(response.data)  
+        if (setAllPersons) {
+          setAllPersons(response.data);
         }
         response.data.map((a, i) => {
           let item = {
@@ -30,9 +30,7 @@ export default function SelectCollaborator({setAllPersons, ...props}) {
           };
           list.push(item);
         });
-        console.log("LIST", list);
         setPersonList(list);
-        
       })
       .catch((e) => {
         console.log(e);
@@ -40,19 +38,18 @@ export default function SelectCollaborator({setAllPersons, ...props}) {
   };
 
   useEffect(() => {
-    console.log('nodeID', nodeId);
+    console.log("nodeID", nodeId);
     // getPersons();
     filterPerson();
   }, [route]);
 
   return (
     <Form.Item
-      label={props.label ? props.label : 'Colaborador'}
+      label={props.label ? props.label : "Colaborador"}
       name={props.name ? props.name : "collaborator"}
-      labelCol={ props.labelCol ? props.labelCol : {span:24}}
+      labelCol={props.labelCol ? props.labelCol : { span: 24 }}
       labelAlign={"left"}
       rules={props.rules ? props.rules : null}
-
     >
       <Select
         key="selectPerson"
@@ -69,7 +66,7 @@ export default function SelectCollaborator({setAllPersons, ...props}) {
             .toLowerCase()
             .localeCompare(optionB.children.toLowerCase())
         }
-        onChange={props.onChange? props.onChange : null}
+        onChange={props.onChange ? props.onChange : null}
       >
         {personList
           ? personList.map((item) => {
