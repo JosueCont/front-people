@@ -149,10 +149,7 @@ const homeScreen = () => {
   };
 
   useEffect(() => {
-    console.log("showModalCompanies", showModalCompanies);
-    console.log("listUserCompanies", listUserCompanies);
     if (showModalCompanies && listUserCompanies) {
-      console.log("OKOOKOKK");
       Modal.info({
         title: "Empresas Asignadas",
         content: (
@@ -556,7 +553,6 @@ const homeScreen = () => {
       urlFilter = urlFilter + "job__id=" + value.job + "&";
       filters.job = value.job;
     }
-    console.log("FILTER-->> ", filters);
     filterPersonName(urlFilter);
   };
 

@@ -131,7 +131,6 @@ const UploadPayroll = () => {
 
   const searchPermissions = (data) => {
     const perms = {};
-    console.log("permisos", data);
     data.map((a) => {
       if (a.includes("people.payrollvoucher.can.view")) perms.view = true;
       if (a.includes("people.payrollvoucher.can.create")) perms.create = true;
