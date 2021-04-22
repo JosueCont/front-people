@@ -110,7 +110,9 @@ const Newrelease = () => {
     if (!message || (message && message.length <= 8)) {
       setMessageAlert(true);
       return;
-      }
+    }
+
+    console.log(values);
     
       
       /* form.setFields({
@@ -125,8 +127,6 @@ const Newrelease = () => {
             },
         });
       } */
-
-      return
     let datos = new FormData();
     datos.append("category", values.category);
     datos.append("title", values.title);
