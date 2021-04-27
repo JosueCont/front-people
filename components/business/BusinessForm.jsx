@@ -23,7 +23,7 @@ import {
   NodeExpandOutlined,
   PlusOutlined,
   DownOutlined,
-  LoadingOutlined
+  LoadingOutlined,
 } from "@ant-design/icons";
 
 import { API_URL } from "../../config/config";
@@ -38,7 +38,7 @@ const { Option } = Select;
 
 const businessForm = () => {
   const [business, setBusiness] = useState([]);
-  const [imageUrl,setImageUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [loadingLogo, setLoadingLogo] = useState(false);
@@ -86,12 +86,12 @@ const businessForm = () => {
   const updateBusiness = async (values) => {
     console.log(values);
     setLoading(true);
-    
+
     let data = new FormData();
     data.append("id", values.id);
     data.append("name", values.name);
     data.append("description", values.description);
-    data.append("parent",values.FNode ? values.FNode : null);
+    data.append("parent", values.FNode ? values.FNode : null);
     data.append("image", logo);
     Axios.put(API_URL + "/business/node/" + values.id + "/", data)
       .then(function (response) {
@@ -112,8 +112,8 @@ const businessForm = () => {
     let data = new FormData();
     data.append("name", name);
     data.append("description", description);
-    fNode && (data.append("parent",fNode )); 
-    
+    fNode && data.append("parent", fNode);
+
     data.append("image", logo);
     setLoading(true);
     Axios.post(API_URL + "/business/node/", data)
@@ -273,59 +273,65 @@ const businessForm = () => {
 
   const modalUpdate = (value) => {
     setBusinessUpdate(value);
-    updateModal ? setUpdateModal(false) : setUpdateModal(true);
+    if (value.active)
+      updateModal ? setUpdateModal(false) : setUpdateModal(true);
+    else updateStatus(value);
     if (!value.id) {
       getBusiness();
     }
   };
 
-  const updateStatus = () => {
+  const updateStatus = (value) => {
     setIsEdit(true);
-    businessUpdate.active = businessUpdate.active ? false : true;
-    delete businessUpdate["parent"];
-    changeStatusBusiness();
+    value.active = value.active ? false : true;
+    changeStatusBusiness(value);
   };
 
-  const changeStatusBusiness = async () => {
-    Axios.put(API_URL + `/business/node/${businessUpdate.id}/`, businessUpdate)
-      .then(function (response) {
-        modalUpdate({});
-      })
-      .catch(function (error) {
-        message.error("Error al actualizar, intente de nuevo");
-        console.log(error);
-      });
+  const changeStatusBusiness = async (value) => {
+    if (value.id) {
+      delete value["parent"];
+      delete value["image"];
+      Axios.put(API_URL + `/business/node/${value.id}/`, value)
+        .then((response) => {
+          modalUpdate({});
+          setUpdateModal(false);
+        })
+        .catch((error) => {
+          message.error("Error al actualizar, intente de nuevo");
+          console.log(error);
+          getBusiness();
+          setUpdateModal(false);
+        });
+    }
   };
 
   function getBase64(img, callback) {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result));
-  reader.readAsDataURL(img);
-}
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
 
   const handleChange = (info) => {
-    if (info.file.status === 'uploading') {
+    if (info.file.status === "uploading") {
       setLoadingLogo(true);
       return;
     }
-    if (info.file.status === 'done') {
+    if (info.file.status === "done") {
       // Get this url from response in real world.
       setLogo(info.file.originFileObj);
-      getBase64(info.file.originFileObj, imageUrl =>{
+      getBase64(info.file.originFileObj, (imageUrl) => {
         setLoadingLogo(false);
         setImageUrl(imageUrl);
-      }
-        
-      );
+      });
     }
   };
 
   const uploadButton = (
-      <div>
-        {loadingLogo ? <LoadingOutlined /> : <PlusOutlined />}
-        <div style={{ marginTop: 8 }}>Upload</div>
-      </div>
-    );
+    <div>
+      {loadingLogo ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
 
   return (
     <MainLayout currentKey="2">
@@ -423,15 +429,19 @@ const businessForm = () => {
           </Form.Item>
           <Form.Item label="Logo">
             <Upload
-            label="Logo"
-            listType="picture-card"
-            className="avatar-uploader"
-            showUploadList={false}
-            /* beforeUpload={beforeUpload} */
-            onChange={handleChange}
-          >
-            {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-          </Upload>
+              label="Logo"
+              listType="picture-card"
+              className="avatar-uploader"
+              showUploadList={false}
+              /* beforeUpload={beforeUpload} */
+              onChange={handleChange}
+            >
+              {imageUrl ? (
+                <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />
+              ) : (
+                uploadButton
+              )}
+            </Upload>
           </Form.Item>
           <Form.Item
             name="name"
@@ -500,7 +510,7 @@ const businessForm = () => {
       <Modal
         title="Desactivar empresa"
         visible={updateModal}
-        onOk={updateStatus}
+        onOk={() => updateStatus(businessUpdate)}
         onCancel={() => modalUpdate({})}
         okText="Si, Desactivar"
         cancelText="Cancelar"

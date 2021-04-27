@@ -45,6 +45,7 @@ const SelectCompany = () => {
         id: jwt.user_id,
       })
         .then((response) => {
+          console.log("NODE-->> ", response.data);
           if (response.data.nodes.length > 0) setDataList(response.data.nodes);
           if (response.data.nodes.length == 1)
             setCompanySelect(response.data.nodes[0]);
