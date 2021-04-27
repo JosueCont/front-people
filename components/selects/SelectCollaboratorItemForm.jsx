@@ -38,7 +38,6 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
   };
 
   useEffect(() => {
-    console.log("nodeID", nodeId);
     // getPersons();
     filterPerson();
   }, [route]);

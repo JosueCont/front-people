@@ -16,6 +16,7 @@ import {
   message,
   Typography,
   Card,
+  Spin,
 } from "antd";
 import useRouter from "next/router";
 import Axios from "axios";
@@ -25,7 +26,7 @@ import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
 const SelectCompany = () => {
-  const {Title} = Typography;
+  const { Title } = Typography;
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [jwt, setJwt] = useState(null);
@@ -36,23 +37,24 @@ const SelectCompany = () => {
     } catch (error) {
       useRouter.push("/");
     }
-
   }, []);
 
   useEffect(() => {
-    if(jwt){
+    if (jwt) {
       Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
         id: jwt.user_id,
       })
         .then((response) => {
           if (response.data.nodes.length > 0) setDataList(response.data.nodes);
-          setLoading(false);
+          if (response.data.nodes.length == 1)
+            setCompanySelect(response.data.nodes[0]);
+          else setLoading(false);
         })
         .catch((e) => {
           setLoading(false);
           console.log(e);
         });
-      }
+    }
   }, [jwt]);
 
   const setCompanySelect = (item) => {
@@ -65,7 +67,7 @@ const SelectCompany = () => {
 
   return (
     <>
-      { jwt && jwt.user_id ? (
+      {jwt && jwt.user_id ? (
         <MainLayout currentKey="8.5" hideMenu={true}>
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item
@@ -76,25 +78,31 @@ const SelectCompany = () => {
             </Breadcrumb.Item>
             <Breadcrumb.Item>Empresas</Breadcrumb.Item>
           </Breadcrumb>
-          <div
-            className="container"
-            style={{ width: "100%", padding: 20 }}
-          >
-            <Row gutter={24}>
-              {
-                dataList.map((item) => (
-                  <Col span={4} style={{display:'grid'}}>
-                    <Card hoverable style={{textAlign:'center'}} className={'cardH100'} onClick={() => setCompanySelect(item)}>
-                      <Title level={4} style={{margin:'auto'}}>
-                        <img alt="example" src="https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png" width="50px" />
-                        <br/>
-                        { item.name }
+          <div className="container" style={{ width: "100%", padding: 20 }}>
+            <Spin spinning={loading}>
+              <Row gutter={24}>
+                {dataList.map((item) => (
+                  <Col span={4} style={{ display: "grid" }}>
+                    <Card
+                      hoverable
+                      style={{ textAlign: "center", marginBottom: "10%" }}
+                      className={"cardH100"}
+                      onClick={() => setCompanySelect(item)}
+                    >
+                      <Title level={4} style={{ margin: "auto" }}>
+                        <img
+                          alt="example"
+                          src="https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"
+                          width="50px"
+                        />
+                        <br />
+                        {item.name}
                       </Title>
                     </Card>
                   </Col>
-                ))
-              }
-            </Row>
+                ))}
+              </Row>
+            </Spin>
           </div>
         </MainLayout>
       ) : (
