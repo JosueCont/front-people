@@ -25,6 +25,7 @@ import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
 import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
+import TextArea from "antd/lib/input/TextArea";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -114,7 +115,7 @@ const addEvent = () => {
           guestsid = guests;
         } else {
           setValue(1);
-          type_select = 2;
+          type_select = 1;
           node_id = data.node.id;
           setPersonsSelect([]);
         }
@@ -129,6 +130,7 @@ const addEvent = () => {
           node: node_id,
           guests: guestsid,
           guest_node: type_select,
+          description: data.description
         });
         setStartTime(data.start_time);
         setEndTime(data.end_time);
@@ -330,6 +332,25 @@ const addEvent = () => {
                           </Form.Item>
                         </Col>
                       )}
+                      <Col lg={10} xs={22} offset={1}>
+                        <Form.Item
+                          label="Descripción"
+                          name="description"
+                          /* rules={[
+                            {
+                              required: true,
+                              message: "Por favor selecciona un rango de horas",
+                            },
+                          ]} */
+                        >
+                          <TextArea
+                          rows="4"
+                          style={{ marginLeft: 6 }}
+                          showCount
+                          maxLength={100}
+                        />
+                        </Form.Item>
+                      </Col>
 
                       <Col lg={22} xs={22} offset={1}>
                         <Form.Item labelAlign="right">

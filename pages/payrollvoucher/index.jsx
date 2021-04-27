@@ -33,6 +33,7 @@ import moment from "moment";
 import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import BreadcrumbHome from "../../components/BreadcrumbHome";
+import SelectCollaborator from '../../components/selects/SelectCollaboratorItemForm'
 import jsCookie from "js-cookie";
 
 const { Dragger } = Upload;
@@ -280,40 +281,11 @@ const UploadPayroll = () => {
                 >
                   <Row gutter={[24, 8]}>
                     <Col>
-                      <Form.Item
+                      <SelectCollaborator
+                        style={{width:150}}
                         key="collaborator"
                         name="collaborator"
-                        label="Colaborador"
-                      >
-                        <Select
-                          key="selectPerson"
-                          showSearch
-                          /* options={personList} */
-                          style={{ width: 150 }}
-                          allowClear
-                          optionFilterProp="children"
-                          filterOption={(input, option) =>
-                            option.children
-                              .toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0
-                          }
-                          filterSort={(optionA, optionB) =>
-                            optionA.children
-                              .toLowerCase()
-                              .localeCompare(optionB.children.toLowerCase())
-                          }
-                        >
-                          {personList
-                            ? personList.map((item) => {
-                                return (
-                                  <Option key={item.key} value={item.value}>
-                                    {item.label}
-                                  </Option>
-                                );
-                              })
-                            : null}
-                        </Select>
-                      </Form.Item>
+                        label="Colaborador" />
                     </Col>
                     <Col>
                       <Form.Item key="rfc" name="rfc" label="Rfc">
