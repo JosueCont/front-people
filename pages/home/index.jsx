@@ -498,6 +498,7 @@ const homeScreen = () => {
     if (extension == "csv") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
+      formData.append("node_id", nodeId);
       setLoading(true);
       Axios.post(API_URL + `/person/person/import_csv/`, formData)
         .then((response) => {
