@@ -23,7 +23,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
-import { withAuthSync } from "../../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 
 const { Content } = Layout;
@@ -32,7 +32,6 @@ const { RangePicker } = TimePicker;
 const { Option } = Select;
 
 const addEvent = () => {
-
   const { TextArea } = Input;
   const [form] = Form.useForm();
   const router = useRouter();
@@ -43,6 +42,7 @@ const addEvent = () => {
   const [endTime, setEndTime] = useState(null);
   const [persons, setPersons] = useState([]);
   const [nodes, setNodes] = useState([]);
+  let nodeId = userCompanyId();
 
   const onChangeDate = (value) => {
     setDateEvent(moment(value).format("YYYY-MM-DD"));
@@ -66,12 +66,12 @@ const addEvent = () => {
 
   const getPersons = async () => {
     axios
-      .get(API_URL + `/person/person/`)
+      .post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
       .then((response) => {
-        response.data.results = response.data.results.map((a) => {
+        response.data = response.data.map((a) => {
           return { label: a.first_name + " " + a.flast_name, value: a.id };
         });
-        setPersons(response.data.results);
+        setPersons(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -93,16 +93,17 @@ const addEvent = () => {
     datos.date = dateEvent;
     datos.start_time = startTime;
     datos.end_time = endTime;
-    datos.description = values.description
-    if (value === 1) {
-      datos.node = values.node;
-      datos.guests = [];
-    } else {
-      datos.guests = values.guests;
-      datos.node = null;
-    }
-    setLoading(true);
-
+    datos.description = values.description;
+    datos.node = parseInt(nodeId);
+    if (values.guests) datos.guests = values.guests;
+    // if (value === 1) {
+    //   datos.node = values.node;
+    //   datos.guests = [];
+    // } else {
+    //   datos.guests = values.guests;
+    //   datos.node = null;
+    // }
+    // setLoading(true);
     Axios.post(API_URL + `/person/event/`, datos)
       .then((response) => {
         message.success("Agregado correctamente");
@@ -116,6 +117,7 @@ const addEvent = () => {
   };
 
   useEffect(() => {
+    nodeId = userCompanyId();
     getPersons();
     getNodes();
   }, [router]);
@@ -180,7 +182,7 @@ const addEvent = () => {
                           />
                         </Form.Item>
                       </Col>
-                      <Col lg={10} xs={22} offset={1}>
+                      {/* <Col lg={10} xs={22} offset={1}>
                         <Form.Item name="guest_node" label="Tipo de invitados">
                           <Select
                             showSearch
@@ -192,7 +194,7 @@ const addEvent = () => {
                             <Option value={2}>Personas</Option>
                           </Select>
                         </Form.Item>
-                      </Col>
+                      </Col> */}
                       <Col lg={10} xs={22} offset={1}>
                         <Form.Item
                           label="Hora de inicio y fin"
@@ -210,7 +212,7 @@ const addEvent = () => {
                           />
                         </Form.Item>
                       </Col>
-                      {value === 1 ? (
+                      {/* {value === 1 ? (
                         <Col lg={10} xs={22} offset={1}>
                           <Form.Item
                             label="Organización"
@@ -230,28 +232,28 @@ const addEvent = () => {
                             ></Select>
                           </Form.Item>
                         </Col>
-                      ) : (
-                        <Col lg={10} xs={22} offset={1}>
-                          <Form.Item
-                            label="Personas"
-                            name="guests"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Por favor selecciona invitados",
-                              },
-                            ]}
-                          >
-                            <Select
-                              mode="multiple"
-                              allowClear
-                              placeholder="Selecciona invitados"
-                              defaultValue={[]}
-                              options={persons}
-                            ></Select>
-                          </Form.Item>
-                        </Col>
-                      )}
+                      ) : ( */}
+                      <Col lg={10} xs={22} offset={1}>
+                        <Form.Item
+                          label="Personas"
+                          name="guests"
+                          // rules={[
+                          //   {
+                          //     required: true,
+                          //     message: "Por favor selecciona invitados",
+                          //   },
+                          // ]}
+                        >
+                          <Select
+                            mode="multiple"
+                            allowClear
+                            placeholder="Selecciona invitados"
+                            defaultValue={[]}
+                            options={persons}
+                          ></Select>
+                        </Form.Item>
+                      </Col>
+
                       <Col lg={10} xs={22} offset={1}>
                         <Form.Item
                           label="Descripción"
@@ -264,11 +266,11 @@ const addEvent = () => {
                           ]} */
                         >
                           <TextArea
-                          rows="4"
-                          style={{ marginLeft: 6 }}
-                          showCount
-                          maxLength={100}
-                        />
+                            rows="4"
+                            style={{ marginLeft: 6 }}
+                            showCount
+                            maxLength={100}
+                          />
                         </Form.Item>
                       </Col>
 

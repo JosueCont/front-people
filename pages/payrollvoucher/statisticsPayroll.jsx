@@ -34,6 +34,7 @@ const StatisticsPayroll = () => {
   const getStatistics = () => {
     Axios.get(API_URL + `/business/node/${nodeId}/get_dashboard_data/`)
       .then((response) => {
+        console.log("DATA-->> ", response.data);
         setPayroll(response.data);
         console.log(response.data);
       })
@@ -60,7 +61,6 @@ const StatisticsPayroll = () => {
   };
 
   const PayrollDepartment = (props) => {
-    console.log("Props-->> ", props);
     return (
       <>
         {props.data.map((a) => {
@@ -151,66 +151,67 @@ const StatisticsPayroll = () => {
             </Title>
           </div>
           <Spin spinning={loading}>
-            <Row>
-              <Col lg={8} xs={24} style={center}>
-                {!payroll.total_perceptions_business ? (
-                  <Skeleton active />
-                ) : (
-                  <Card bordered={false} style={centerBG}>
-                    <div style={{ textAlign: "center" }}>
-                      {/* <Tooltip title="Nómina total bruta de la empresa."> */}
-                      <Title
-                        level={3}
-                        style={{ color: "white", marginBottom: 0 }}
-                      >
-                        {companyName && companyName}
-                      </Title>
-                      {/* </Tooltip> */}
-                      <Row>
-                        <Col xs={24} md={12}>
-                          <Title
-                            level={5}
-                            style={{
-                              color: "white",
-                              marginTop: 10,
-                              marginBottom: 0,
-                            }}
-                          >
-                            Nómina Bruta
-                          </Title>
-                          <Text style={{ color: "white", fontSize: 19 }}>
-                            <CurrencyFormat
-                              value={payroll.total_perceptions_business}
-                              displayType={"text"}
-                              thousandSeparator={true}
-                              prefix={"$"}
-                            />
-                          </Text>
-                        </Col>
-                        <Col xs={24} md={12}>
-                          <Title
-                            level={5}
-                            style={{
-                              color: "white",
-                              marginTop: 10,
-                              marginBottom: 0,
-                            }}
-                          >
-                            Nómina Neta
-                          </Title>
-                          <Text style={{ color: "white", fontSize: 19 }}>
-                            <CurrencyFormat
-                              value={payroll.net_total_business}
-                              displayType={"text"}
-                              thousandSeparator={true}
-                              prefix={"$"}
-                            />
-                          </Text>
-                        </Col>
-                      </Row>
-                    </div>
+            {payroll.net_total_business > 0 ? (
+              <Row>
+                <Col lg={8} xs={24} style={center}>
+                  {!payroll.total_perceptions_business ? (
+                    <Skeleton active />
+                  ) : (
+                    <Card bordered={false} style={centerBG}>
+                      <div style={{ textAlign: "center" }}>
+                        {/* <Tooltip title="Nómina total bruta de la empresa."> */}
+                        <Title
+                          level={3}
+                          style={{ color: "white", marginBottom: 0 }}
+                        >
+                          {companyName && companyName}
+                        </Title>
+                        {/* </Tooltip> */}
+                        <Row>
+                          <Col xs={24} md={12}>
+                            <Title
+                              level={5}
+                              style={{
+                                color: "white",
+                                marginTop: 10,
+                                marginBottom: 0,
+                              }}
+                            >
+                              Nómina Bruta
+                            </Title>
+                            <Text style={{ color: "white", fontSize: 19 }}>
+                              <CurrencyFormat
+                                value={payroll.total_perceptions_business}
+                                displayType={"text"}
+                                thousandSeparator={true}
+                                prefix={"$"}
+                              />
+                            </Text>
+                          </Col>
+                          <Col xs={24} md={12}>
+                            <Title
+                              level={5}
+                              style={{
+                                color: "white",
+                                marginTop: 10,
+                                marginBottom: 0,
+                              }}
+                            >
+                              Nómina Neta
+                            </Title>
+                            <Text style={{ color: "white", fontSize: 19 }}>
+                              <CurrencyFormat
+                                value={payroll.net_total_business}
+                                displayType={"text"}
+                                thousandSeparator={true}
+                                prefix={"$"}
+                              />
+                            </Text>
+                          </Col>
+                        </Row>
+                      </div>
 
-                    {/* <div style={{ textAlign: "center" }}>
+                      {/* <div style={{ textAlign: "center" }}>
                         {timeUserViewed > 0 ? (
                           <FileExcelOutlined
                             onClick={() =>
@@ -230,23 +231,26 @@ const StatisticsPayroll = () => {
                           ""
                         )}
                       </div> */}
-                  </Card>
-                )}
-              </Col>
-              <Divider />
-              <Col span={24}>
+                    </Card>
+                  )}
+                </Col>
+                <Divider />
+                <Col span={24}>
+                  {payroll.departments && payroll.departments.length > 0 && (
+                    <div style={{ textAlign: "left", padding: 10 }}>
+                      <Title level={3} style={{ marginBottom: 0 }}>
+                        Nómina por departamento
+                      </Title>
+                    </div>
+                  )}
+                </Col>
                 {payroll.departments && payroll.departments.length > 0 && (
-                  <div style={{ textAlign: "left", padding: 10 }}>
-                    <Title level={3} style={{ marginBottom: 0 }}>
-                      Nómina por departamento
-                    </Title>
-                  </div>
+                  <PayrollDepartment data={payroll.departments} />
                 )}
-              </Col>
-              {payroll.departments && payroll.departments.length > 0 && (
-                <PayrollDepartment data={payroll.departments} />
-              )}
-            </Row>
+              </Row>
+            ) : (
+              "No data"
+            )}
           </Spin>
         </div>
       </MainLayout>
