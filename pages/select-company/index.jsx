@@ -85,7 +85,7 @@ const SelectCompany = () => {
                   <Col span={4} style={{ display: "grid" }}>
                     <Card
                       hoverable
-                      style={{ textAlign: "center", marginBottom: "10%" }}
+                      style={{ textAlign: "center", marginTop: 20 }}
                       className={"cardH100"}
                       onClick={() => setCompanySelect(item)}
                     >
