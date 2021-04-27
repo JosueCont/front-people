@@ -93,7 +93,7 @@ const SelectCompany = () => {
                       <Title level={4} style={{ margin: "auto" }}>
                         <img
                           alt="example"
-                          src="https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"
+                          src={item.image}
                           width="50px"
                         />
                         <br />
