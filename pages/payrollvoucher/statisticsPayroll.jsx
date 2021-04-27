@@ -60,7 +60,6 @@ const StatisticsPayroll = () => {
   };
 
   const PayrollDepartment = (props) => {
-    console.log("Props-->> ", props);
     return (
       <>
         {props.data.map((a) => {

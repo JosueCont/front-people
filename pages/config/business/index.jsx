@@ -54,20 +54,20 @@ const configBusiness = () => {
   const [selectCompany, setselectCompany] = useState([]);
   const [id, setId] = useState("");
   const [edit, setEdit] = useState(false);
-  const urls = [
-    "/business/department/",
-    "/person/job/",
-    "/person/person-type/",
-    "/setup/relationship/",
-    "/setup/document-type/",
-    "/setup/banks/",
-  ];
   const [modal, setModal] = useState(false);
   const [deleted, setDeleted] = useState({});
   const [selectDep, setSelectDep] = useState([]);
   const [permissions, setPermissions] = useState({});
   let nodeId = userCompanyId();
   let nodePeople = userCompanyName();
+  const urls = [
+    `/business/department/?node=${nodeId}`,
+    "/person/job/",
+    "/person/person-type/",
+    "/setup/relationship/",
+    "/setup/document-type/",
+    "/setup/banks/",
+  ];
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
@@ -147,7 +147,7 @@ const configBusiness = () => {
   const getCatalog = (url) => {
     Axios.get(API_URL + url)
       .then((response) => {
-        if (url == "/business/department/") {
+        if (url == `/business/department/?node=${nodeId}`) {
           setDepartments(response.data.results);
         }
         if (url == "/person/job/") {
