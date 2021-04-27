@@ -112,7 +112,8 @@ const businessForm = () => {
     let data = new FormData();
     data.append("name", name);
     data.append("description", description);
-    data.append("parent",fNode ? fNode : null);
+    fNode && (data.append("parent",fNode )); 
+    
     data.append("image", logo);
     setLoading(true);
     Axios.post(API_URL + "/business/node/", data)
