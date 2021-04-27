@@ -84,7 +84,7 @@ const SelectCompany = () => {
               {
                 dataList.map((item) => (
                   <Col span={4} style={{display:'grid'}}>
-                    <Card hoverable style={{textAlign:'center'}} className={'cardH100'} onClick={() => setCompanySelect(item)}>
+                    <Card hoverable style={{textAlign:'center', marginTop:20}} className={'cardH100'} onClick={() => setCompanySelect(item)}>
                       <Title level={4} style={{margin:'auto'}}>
                         <img alt="example" src="https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png" width="50px" />
                         <br/>
