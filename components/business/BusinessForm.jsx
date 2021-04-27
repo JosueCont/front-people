@@ -276,11 +276,12 @@ const businessForm = () => {
     if (value.active)
       updateModal ? setUpdateModal(false) : setUpdateModal(true);
     else updateStatus(value);
-    if (!value.id) {
-      getBusiness();
-    }
   };
 
+  const closeModalUpdate = () => {
+    setUpdateModal(false);
+    getBusiness();
+  };
   const updateStatus = (value) => {
     setIsEdit(true);
     value.active = value.active ? false : true;
@@ -293,14 +294,12 @@ const businessForm = () => {
       delete value["image"];
       Axios.put(API_URL + `/business/node/${value.id}/`, value)
         .then((response) => {
-          modalUpdate({});
-          setUpdateModal(false);
+          closeModalUpdate();
         })
         .catch((error) => {
           message.error("Error al actualizar, intente de nuevo");
           console.log(error);
-          getBusiness();
-          setUpdateModal(false);
+          closeModalUpdate();
         });
     }
   };
@@ -511,7 +510,7 @@ const businessForm = () => {
         title="Desactivar empresa"
         visible={updateModal}
         onOk={() => updateStatus(businessUpdate)}
-        onCancel={() => modalUpdate({})}
+        onCancel={() => closeModalUpdate()}
         okText="Si, Desactivar"
         cancelText="Cancelar"
       >
