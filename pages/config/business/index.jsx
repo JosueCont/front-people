@@ -62,10 +62,10 @@ const configBusiness = () => {
   let nodePeople = userCompanyName();
   const urls = [
     `/business/department/?node=${nodeId}`,
-    "/person/job/",
+    `/person/job/?node=${nodeId}`,
     "/person/person-type/",
     "/setup/relationship/",
-    "/setup/document-type/",
+    `/setup/document-type/?node=${nodeId}`,
     "/setup/banks/",
   ];
 
@@ -147,18 +147,16 @@ const configBusiness = () => {
   const getCatalog = (url) => {
     Axios.get(API_URL + url)
       .then((response) => {
-        if (url == `/business/department/?node=${nodeId}`) {
+        if (url == `/business/department/?node=${nodeId}`)
           setDepartments(response.data.results);
-        }
-        if (url == "/person/job/") {
+        if (url == `/person/job/?node=${nodeId}`)
           setJobs(response.data.results);
-        }
         if (url == "/person/person-type/")
           setTypesPerson(response.data.results);
         if (url == "/setup/relationship/")
           setRelationsShip(response.data.results);
-        if (url == "/setup/document-type/")
-          setTypesDocuments(response.data.results);
+        if (url == `/setup/document-type/?node=${nodeId}`)
+          setTypesDocuments(response.data);
         if (url == "/setup/banks/") setBanks(response.data.results);
         getCompanies();
         setLoadingTable(false);
@@ -172,6 +170,9 @@ const configBusiness = () => {
   const onFinishForm = (value, url) => {
     if (id != "") {
       value.id = id;
+      if (url.includes("document-type")) url = "/setup/document-type/";
+      if (url.includes("job")) url = "/person/job/";
+      if (url.includes("department")) url = "/business/department/";
       updateRegister(url, value);
     } else saveRegister(url, value);
   };
@@ -213,6 +214,11 @@ const configBusiness = () => {
   const updateRegister = (url, value) => {
     Axios.put(API_URL + url + `${value.id}/`, value)
       .then((response) => {
+        if (url.includes("document-type"))
+          url = `/setup/document-type/?node=${nodeId}`;
+        if (url.includes("job")) url = `/person/job/?node=${nodeId}`;
+        if (url.includes("department"))
+          url = `/business/department/?node=${nodeId}`;
         setId("");
         resetForm();
         setLoadingTable(true);
@@ -225,7 +231,7 @@ const configBusiness = () => {
         setId("");
         setLoadingTable(false);
         resetForm();
-        message.success("Ocurrio un error intente de nuevo.");
+        message.error("Ocurrio un error intente de nuevo.");
       });
   };
 
@@ -284,11 +290,12 @@ const configBusiness = () => {
     let data = {
       id: value.id,
       is_visible: value.is_visible,
+      node: nodeId,
     };
     Axios.post(API_URL + `/setup/document-type/change_is_visible/`, data)
       .then((response) => {
         setLoadingTable(true);
-        getCatalog("/setup/document-type/");
+        getCatalog(`/setup/document-type/?node=${nodeId}`);
       })
       .catch((error) => {
         message.error("Ocurrio un error intente de nuevo.");
@@ -582,12 +589,20 @@ const configBusiness = () => {
     setDeleted(props);
   };
   const deleteRegister = async () => {
-    Axios.delete(API_URL + deleted.url + `${deleted.id}/`)
+    let node = "";
+    if (
+      deleted.url.includes("document-type") ||
+      deleted.url.includes("job") ||
+      deleted.url.includes("department")
+    )
+      node = `?node=${nodeId}`;
+
+    Axios.delete(API_URL + deleted.url + `${deleted.id}/${node}`)
       .then((response) => {
         resetForm();
         setId("");
         setLoadingTable(true);
-        getCatalog(deleted.url);
+        getCatalog(deleted.url + node);
         setDeleteRegister({});
       })
       .catch((error) => {
@@ -683,7 +698,10 @@ const configBusiness = () => {
                         layout={"vertical"}
                         form={formDepartment}
                         onFinish={(values) =>
-                          onFinishForm(values, "/business/department/")
+                          onFinishForm(
+                            values,
+                            `/business/department/?node=${nodeId}`
+                          )
                         }
                       >
                         <Row>
@@ -750,7 +768,7 @@ const configBusiness = () => {
                         layout={"vertical"}
                         form={formJob}
                         onFinish={(values) =>
-                          onFinishForm(values, "/person/job/")
+                          onFinishForm(values, `/person/job/?node=${nodeId}`)
                         }
                       >
                         <Row>
@@ -939,7 +957,10 @@ const configBusiness = () => {
                         layout={"vertical"}
                         form={formTypeDocument}
                         onFinish={(values) =>
-                          onFinishForm(values, "/setup/document-type/")
+                          onFinishForm(
+                            values,
+                            `/setup/document-type/?node=${nodeId}`
+                          )
                         }
                       >
                         <Row>
