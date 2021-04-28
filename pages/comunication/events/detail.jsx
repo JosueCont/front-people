@@ -44,6 +44,7 @@ const addEvent = () => {
   const [personsSelect, setPersonsSelect] = useState([]);
   const [nodes, setNodes] = useState([]);
   const [edit, setEdit] = useState(false);
+  const[description,setDescription] = useState(null);
 
   const onChangeDate = (value) => {
     setDateEvent(moment(value).format("YYYY-MM-DD"));
@@ -150,6 +151,7 @@ const addEvent = () => {
     datos.date = dateEvent;
     datos.start_time = startTime;
     datos.end_time = endTime;
+    datos.description = description;
     if (value === 1) {
       datos.node = values.node;
       datos.guests = [];
@@ -346,6 +348,7 @@ const addEvent = () => {
                           <TextArea
                           rows="4"
                           style={{ marginLeft: 6 }}
+                          onChange={(e) => setDescription(e.target.value) }
                           showCount
                           maxLength={100}
                         />

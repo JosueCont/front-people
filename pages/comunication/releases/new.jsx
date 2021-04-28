@@ -411,9 +411,10 @@ const Newrelease = () => {
                         name={"target_department"}
                         label="Departamento"
                         labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         rules={[checkSegmentacion]}
                       >
-                        <Select
+                        <Select 
                           options={departments}
                           onChange={onChangeDepartment}
                           placeholder="Departamento"
@@ -424,6 +425,7 @@ const Newrelease = () => {
                         name={"target_job"}
                         label="Puesto de trabajo"
                         labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         rules={[checkSegmentacion]}
                       >
                         <Select options={jobs} key="jobs_select" />
@@ -434,6 +436,7 @@ const Newrelease = () => {
                         name={"target_person_type"}
                         label="Tipo de persona"
                         labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         rules={[checkSegmentacion]}
                       >
                         <Select options={personType} key="person_select" />
@@ -442,6 +445,7 @@ const Newrelease = () => {
                         name={"target_gender"}
                         label="Género"
                         labelCol={{ span: 10 }}
+                        wrapperCol={{ span: 14 }}
                         rules={[checkSegmentacion]}
                       >
                         <Select options={genders} key="gender_select" />
