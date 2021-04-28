@@ -291,7 +291,7 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={23} xs={22} offset={1}>
-                <Form.Item name="groups">
+                <Form.Item rules={[ruleRequired]} name="groups">
                   <Select
                     options={groups}
                     showArrow

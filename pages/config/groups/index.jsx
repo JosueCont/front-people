@@ -29,7 +29,7 @@ import { API_URL, APP_ID, LOGIN_URL } from "../../../config/config";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import moment from "moment";
-import { withAuthSync } from "../../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../../libs/auth";
 import jsCookie from "js-cookie";
 
 const Groups = () => {
@@ -38,6 +38,7 @@ const Groups = () => {
   const [loading, setLoading] = useState(false);
   const [groups, setGroups] = useState([]);
   const [permissions, setPermissions] = useState({});
+  let nodeId = userCompanyId();
 
   const headers = {
     "client-id": APP_ID,
@@ -46,8 +47,15 @@ const Groups = () => {
 
   const getGroups = (name = "") => {
     setLoading(true);
+    let company = "";
+    console.log("Name-->> ", name);
+    if (name === "") company = `?company=${nodeId}`;
+    else company = `&company=${nodeId}`;
+    console.log("Name-->> ", company);
 
-    Axios.get(LOGIN_URL + `/group/list/${name}`, { headers: headers })
+    Axios.get(LOGIN_URL + `/group/list/${name}` + company, {
+      headers: headers,
+    })
       .then((response) => {
         response.data.data.map((item) => {
           item["key"] = item.id;

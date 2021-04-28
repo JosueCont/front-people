@@ -25,7 +25,7 @@ import {
 import MainLayout from "../../../layout/MainLayout";
 import Axios from "axios";
 import { LOGIN_URL, APP_ID } from "../../../config/config";
-import { withAuthSync } from "../../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../../libs/auth";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -41,6 +41,7 @@ const GroupAdd = () => {
   const [permsFunction, setPermsFunction] = useState([]);
   const [arrayFunctions, setarrayFunctios] = useState([]);
   const [instruction, setInstruction] = useState(true);
+  let nodeId = userCompanyId();
 
   const headers = {
     "client-id": APP_ID,
@@ -245,6 +246,8 @@ const GroupAdd = () => {
   const saveGroup = async () => {
     setLoading(true);
 
+    data.company = nodeId;
+    console.log("Data-->>> ", data);
     Axios.post(LOGIN_URL + "/group/create/", data, {
       headers: headers,
     })
