@@ -209,7 +209,7 @@ const LoanReport = (props) => {
   };
 
   const download = async (item = null) => {
-    let dataId = {};
+    let dataId = { node: nodeId };
 
     if (item) {
       dataId = {
