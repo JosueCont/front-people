@@ -281,14 +281,6 @@ const CollaboratorsReport = (props) => {
               <Col>
                 <SelectCollaborator style={{ width: 150 }} />
               </Col>
-              {/* <Col>
-                <SelectCompany
-                  onChange={onChangeCompany}
-                  style={{ width: 150 }}
-                  name="company"
-                  label="Empresa"
-                />
-              </Col> */}
               <Col>
                 <SelectDepartment
                   onChange={onChangeDepartment}
