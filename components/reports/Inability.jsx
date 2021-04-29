@@ -215,7 +215,7 @@ const InabilityReport = (props) => {
     setLoading(true);
     try {
       setLoading(true);
-      let url = `/person/incapacity/?person__job__department__node__id=${nodeId}&`;
+      let url = `/person/incapacity/?person__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -224,7 +224,7 @@ const InabilityReport = (props) => {
       }
 
       if (department) {
-        url += `person__job__department__id=${department}&`;
+        url += `person__person_department__id=${department}&`;
       }
 
       if (date1 && date2) {

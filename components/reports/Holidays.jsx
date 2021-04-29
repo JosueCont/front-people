@@ -154,7 +154,7 @@ const HolidaysReport = (props) => {
     setHolidayList([]);
     setLoading(true);
     try {
-      let url = `/person/vacation/?person__job__department__node__id=${nodeId}&`;
+      let url = `/person/vacation/?person__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -163,7 +163,7 @@ const HolidaysReport = (props) => {
       }
 
       if (department) {
-        url += `person__job__department__id=${department}&`;
+        url += `person__person_department__id=${department}&`;
       }
 
       let response = await Axios.get(API_URL + url);

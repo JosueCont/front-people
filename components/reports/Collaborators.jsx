@@ -227,7 +227,7 @@ const CollaboratorsReport = (props) => {
   const clearFilter = () => {
     form.resetFields();
     SetDateOfAdmission(null);
-    setDepartmentId(null);
+    // setDepartmentId(null);
     getCollaborators();
   };
 
@@ -249,8 +249,8 @@ const CollaboratorsReport = (props) => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
     getCollaborators();
-    getAllPersons();
-    getDepartaments();
+    // getAllPersons();
+    // getDepartaments();
   }, [route]);
 
   const searchPermissions = (data) => {
@@ -281,14 +281,6 @@ const CollaboratorsReport = (props) => {
               <Col>
                 <SelectCollaborator style={{ width: 150 }} />
               </Col>
-              {/* <Col>
-                <SelectCompany
-                  onChange={onChangeCompany}
-                  style={{ width: 150 }}
-                  name="company"
-                  label="Empresa"
-                />
-              </Col> */}
               <Col>
                 <SelectDepartment
                   onChange={onChangeDepartment}

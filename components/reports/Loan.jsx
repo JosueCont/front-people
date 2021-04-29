@@ -209,7 +209,7 @@ const LoanReport = (props) => {
   };
 
   const download = async (item = null) => {
-    let dataId = { node: nodeId };
+    let dataId = { person__node__id: nodeId };
 
     if (item) {
       dataId = {
@@ -288,8 +288,7 @@ const LoanReport = (props) => {
   ) => {
     setLoading(true);
     try {
-      let url =
-        API_URL + `/payroll/loan/?person__job__department__node__id=${nodeId}&`;
+      let url = API_URL + `/payroll/loan/?person__node__id=${nodeId}&`;
       if (personID) {
         url += `person__id=${personID}&`;
       }

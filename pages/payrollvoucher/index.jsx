@@ -33,7 +33,7 @@ import moment from "moment";
 import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import BreadcrumbHome from "../../components/BreadcrumbHome";
-import SelectCollaborator from '../../components/selects/SelectCollaboratorItemForm'
+import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
 import jsCookie from "js-cookie";
 
 const { Dragger } = Upload;
@@ -61,7 +61,7 @@ const UploadPayroll = () => {
   ) => {
     setLoading(true);
     try {
-      let url = `/payroll/payroll-voucher/?person__job__department__node__id=${nodeId}&`;
+      let url = `/payroll/payroll-voucher/?person__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -70,7 +70,7 @@ const UploadPayroll = () => {
       }
 
       if (department) {
-        url += `person__job__department__id=${department}&`;
+        url += `person__person_department__id=${department}&`;
       }
       let response = await Axios.get(API_URL + url);
       response.data.results.forEach((element, i) => {
@@ -281,10 +281,11 @@ const UploadPayroll = () => {
                   <Row gutter={[24, 8]}>
                     <Col>
                       <SelectCollaborator
-                        style={{width:150}}
+                        style={{ width: 150 }}
                         key="collaborator"
                         name="collaborator"
-                        label="Colaborador" />
+                        label="Colaborador"
+                      />
                     </Col>
                     <Col>
                       <Form.Item key="rfc" name="rfc" label="Rfc">
