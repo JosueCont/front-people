@@ -240,15 +240,9 @@ const homeScreen = () => {
       },
     },
     {
-      title: "Empresa",
-      render: (item) => {
-        return <div>{item.job[0] ? item.job[0].department.node.name : ""}</div>;
-      },
-    },
-    {
       title: "Departamento",
       render: (item) => {
-        return <div>{item.job[0] ? item.job[0].department.name : ""}</div>;
+        return <div>{item.department ? item.department.name : ""}</div>;
       },
     },
     {
@@ -542,12 +536,8 @@ const homeScreen = () => {
       urlFilter = urlFilter + "is_active=" + value.is_active + "&";
       filters.is_active = value.is_active;
     }
-    if (value && value.node !== undefined) {
-      urlFilter = urlFilter + "job__department__node__id=" + value.node + "&";
-      filters.node = value.node;
-    }
     if (value && value.department !== undefined) {
-      urlFilter = urlFilter + "job__department__id=" + value.department + "&";
+      urlFilter = urlFilter + "person_department__id=" + value.department + "&";
       filters.department = value.department;
     }
     if (value && value.job !== undefined) {
