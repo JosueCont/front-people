@@ -119,8 +119,8 @@ const Incapacityform = (props) => {
     useEffect(() => {
         if (props.details) {
             form.setFieldsValue({
-                khonnect_id: props.details.collaborator
-                    ? props.details.collaborator.khonnect_id
+                person: props.details.collaborator
+                    ? props.details.collaborator.id
                     : null,
                 requested_days: props.details.days_requested,
                 departure_date: props.details.departure_date
