@@ -280,7 +280,7 @@ const Incapacity = () => {
                     key="department"
                     render={(collaborator, record) =>
                       collaborator && collaborator.department
-                        ? collaborator.department
+                        ? collaborator.department.name
                         : null
                     }
                   />
