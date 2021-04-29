@@ -86,7 +86,7 @@ const Incapacity = () => {
   ) => {
     setLoading(true);
     try {
-      let url = `/person/incapacity/?person__job__department__node__id=${nodeId}&`;
+      let url = `/person/incapacity/?person__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -95,7 +95,7 @@ const Incapacity = () => {
       }
 
       if (department) {
-        url += `person__job__department__id=${department}&`;
+        url += `person__person_department__id=${department}&`;
       }
       let response = await Axios.get(API_URL + url);
       let data = response.data.results;
@@ -190,7 +190,7 @@ const Incapacity = () => {
                 >
                   <Row gutter={[24, 8]}>
                     <Col>
-                    <SelectCollaborator
+                      <SelectCollaborator
                         name="collaborator"
                         style={{ width: 150 }}
                       />
