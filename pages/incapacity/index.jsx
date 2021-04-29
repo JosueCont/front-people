@@ -17,16 +17,11 @@ import axiosApi from "../../libs/axiosApi";
 import moment from "moment";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-
-import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
-import BreadcrumbHome from "../../components/BreadcrumbHome";
 import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
 
 import {
-  DeleteOutlined,
   EditOutlined,
-  InfoCircleOutlined,
   SearchOutlined,
   PlusOutlined,
   EyeOutlined,
@@ -48,7 +43,6 @@ const Incapacity = () => {
   const [personList, setPersonList] = useState(null);
 
   /* Variables */
-  const [companyId, setCompanyId] = useState(null);
   const [departamentId, setDepartamentId] = useState(null);
   const [permissions, setPermissions] = useState({});
   let nodeId = userCompanyId();
@@ -122,14 +116,6 @@ const Incapacity = () => {
     setIncapacityList([]);
 
     getIncapacity(values.collaborator, values.department, values.status);
-  };
-
-  /* Eventos de componentes */
-  const onChangeCompany = (val) => {
-    form.setFieldsValue({
-      department: null,
-    });
-    setCompanyId(val);
   };
 
   const changeDepartament = (val) => {
@@ -289,27 +275,12 @@ const Incapacity = () => {
                     )}
                   />
                   <Column
-                    title="Empresa"
-                    dataIndex="collaborator"
-                    key="business"
-                    render={(collaborator, record) =>
-                      collaborator &&
-                      collaborator.job[0] &&
-                      collaborator.job[0].department &&
-                      collaborator.job[0].department.node
-                        ? collaborator.job[0].department.node.name
-                        : null
-                    }
-                  />
-                  <Column
                     title="Departamento"
                     dataIndex="collaborator"
                     key="department"
                     render={(collaborator, record) =>
-                      collaborator &&
-                      collaborator.job[0] &&
-                      collaborator.job[0].department
-                        ? collaborator.job[0].department.name
+                      collaborator && collaborator.department
+                        ? collaborator.department
                         : null
                     }
                   />
