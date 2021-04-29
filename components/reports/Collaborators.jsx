@@ -5,26 +5,16 @@ import {
   Row,
   Col,
   Tooltip,
-  Select,
   Form,
   DatePicker,
   Button,
   Typography,
 } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-  SyncOutlined,
-  SearchOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
 import { DownloadOutlined } from "@ant-design/icons";
-import Link from "next/link";
-import SelectCompany from "../selects/SelectCompany";
 import SelectDepartment from "../selects/SelectDepartment";
 import SelectJob from "../selects/SelectJob";
 import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
@@ -33,26 +23,19 @@ import { userCompanyId } from "../../libs/auth";
 
 const CollaboratorsReport = (props) => {
   const route = useRouter();
-  const { Option } = Select;
   const [form] = Form.useForm();
   const { Title } = Typography;
 
   const [loading, setLoading] = useState(false);
-  const [sending, setSending] = useState(false);
   const [dateOfAdmission, SetDateOfAdmission] = useState(null);
-  const [personList, setPersonList] = useState([]);
-  const [departmentList, setDepartmentList] = useState([]);
   const [collaboratorList, setCollaboratorList] = useState([]);
-  const [jobList, SetJobList] = useState([]);
 
   /* for filter */
   const [collaborator, setCollaborator] = useState(null);
-  const [company, setCompany] = useState(null);
   const [department, setDepartment] = useState(null);
   const [job, setJob] = useState(null);
 
   /* for selects */
-  const [companyId, setCompanyId] = useState(null);
   const [departmentId, setDepartmentId] = useState(null);
   const [permissions, setPermissions] = useState({});
   let nodeId = userCompanyId();
@@ -124,7 +107,7 @@ const CollaboratorsReport = (props) => {
   };
 
   const download = async (item = null) => {
-    let dataId = {};
+    let dataId = { node: nodeId };
     if (item) {
       dataId = {
         id: item.id,
