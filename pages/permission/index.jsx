@@ -299,7 +299,7 @@ const Permission = () => {
                     title="Departamentos"
                     dataIndex="collaborator"
                     render={(collaborator, record) => (
-                      <>{collaborator.job[0].department.name}</>
+                      <>{collaborator.department.name}</>
                     )}
                     key="department"
                   />
