@@ -86,13 +86,19 @@ const businessForm = () => {
   const updateBusiness = async (values) => {
     console.log(values);
     setLoading(true);
+    console.log('FNode',values.FNode);
 
     let data = new FormData();
     data.append("id", values.id);
     data.append("name", values.name);
     data.append("description", values.description);
-    data.append("parent", values.FNode ? values.FNode : null);
-    data.append("image", logo);
+    if(values.FNode){
+      data.append("parent", values.FNode ? values.FNode : null);
+    }
+    if(logo){
+      data.append("image", logo);
+    }
+    
     Axios.put(API_URL + "/business/node/" + values.id + "/", data)
       .then(function (response) {
         if (response.status === 200) {
@@ -458,6 +464,7 @@ const businessForm = () => {
           </Form.Item>
           <Form.Item name="FNode" label="Nodo padre">
             <Select
+            allowClear
               showSearch
               placeholder="Select a person"
               optionFilterProp="children"

@@ -88,7 +88,7 @@ const IncapacityDetails = () => {
         let data = new FormData();
         data.append("departure_date", departure_date);
         data.append("return_date", return_date);
-        data.append("khonnect_id", values.khonnect_id);
+        data.append("person", values.id);
         data.append("document", file["originFileObj"]);
         try {
             let response = await Axios.post(
