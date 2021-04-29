@@ -85,7 +85,7 @@ const Permission = () => {
   ) => {
     setLoading(true);
     try {
-      let url = `/person/permit/?person__job__department__node__id=${nodeId}&`;
+      let url = `/person/permit/?person__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -94,7 +94,7 @@ const Permission = () => {
       }
 
       if (department) {
-        url += `person__job__department__id=${department}&`;
+        url += `person__person_department__id=${department}&`;
       }
       let response = await Axios.get(API_URL + url);
       let data = response.data.results;
@@ -188,8 +188,8 @@ const Permission = () => {
                   <Row gutter={[24, 8]}>
                     <Col>
                       <SelectCollaborator
-                      name="collaborator"
-                      style={{ width: 150 }}
+                        name="collaborator"
+                        style={{ width: 150 }}
                       />
                     </Col>
                     {/* <Col>
@@ -299,7 +299,7 @@ const Permission = () => {
                     title="Departamentos"
                     dataIndex="collaborator"
                     render={(collaborator, record) => (
-                      <>{collaborator.job[0].department.name}</>
+                      <>{collaborator.department.name}</>
                     )}
                     key="department"
                   />

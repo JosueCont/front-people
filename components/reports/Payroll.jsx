@@ -232,7 +232,7 @@ const PayrollReport = (props) => {
   };
 
   const download = async (item = null) => {
-    let dataId = { company: nodeId };
+    let dataId = { node: nodeId };
 
     if (item) {
       dataId = {

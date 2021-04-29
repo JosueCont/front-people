@@ -157,13 +157,13 @@ const PermissionsReport = (props) => {
     setLoading(true);
     setPermissionsList([]);
     try {
-      let url = `/person/permit/?person__job__department__node__id=${nodeId}&`;
+      let url = `/person/permit/?person__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
 
       if (department) {
-        url += `person__job__department__id=${department}&`;
+        url += `person__person_department__id=${department}&`;
       }
 
       if (status) {
