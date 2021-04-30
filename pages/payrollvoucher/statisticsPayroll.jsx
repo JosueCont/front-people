@@ -13,6 +13,7 @@ import {
   Skeleton,
   Typography,
   Divider,
+  Image,
 } from "antd";
 import useRouter from "next/router";
 import Axios from "axios";
@@ -249,7 +250,15 @@ const StatisticsPayroll = () => {
                 )}
               </Row>
             ) : (
-              "No data"
+              <>
+                <div
+                  style={{ textAlign: "center", width: "100%", margin: "auto" }}
+                >
+                  {" "}
+                  <h2>No se encontraron resultados</h2>
+                </div>
+                <div className={"NoData"}></div>
+              </>
             )}
           </Spin>
         </div>
