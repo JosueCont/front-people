@@ -240,7 +240,7 @@ li.ant-menu-submenu-selected {
 
 } */
 .NoData {
-  height: calc(50vh);
+  /* height: calc(50vh); */
   width: 50%;
   margin-left: 25%;
   background-image: url("../public/images/imagen_search.png");

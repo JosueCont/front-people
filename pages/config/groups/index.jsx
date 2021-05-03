@@ -48,10 +48,8 @@ const Groups = () => {
   const getGroups = (name = "") => {
     setLoading(true);
     let company = "";
-    console.log("Name-->> ", name);
     if (name === "") company = `?company=${nodeId}`;
     else company = `&company=${nodeId}`;
-    console.log("Name-->> ", company);
 
     Axios.get(LOGIN_URL + `/group/list/${name}` + company, {
       headers: headers,
