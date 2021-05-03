@@ -4,26 +4,15 @@ import {
   Row,
   Col,
   Typography,
-  Table,
   Breadcrumb,
-  Image,
   Button,
   Form,
-  Input,
   InputNumber,
-  Select,
-  DatePicker,
   notification,
-  Space,
-  Switch,
   message,
 } from "antd";
 import { useRouter } from "next/router";
-import axiosApi from "../../libs/axiosApi";
-import moduleName from "../../components/forms/LendingForm";
-import moment from "moment";
-import Lendingform from "../../components/forms/LendingForm";
-import { withAuthSync } from "../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import jsCookie from "js-cookie";
@@ -36,11 +25,14 @@ const HolidaysNew = () => {
   const [loading, setLoading] = useState(false);
   const [config, setConfig] = useState(null);
   const [permissions, setPermissions] = useState({});
+  let nodeId = userCompanyId();
 
   const getConfig = async () => {
     setLoading(true);
     try {
-      let repsonse = await Axios.get(API_URL + `/payroll/loan-config/1/`);
+      let repsonse = await Axios.get(
+        API_URL + `/payroll/loan-config/get_config_for_node/?node=${nodeId}`
+      );
       let data = repsonse.data;
       setConfig(data);
       form.setFieldsValue({
@@ -59,7 +51,7 @@ const HolidaysNew = () => {
     if (config && config.id) {
       try {
         let response = await Axios.patch(
-          API_URL + `/payroll/loan-config/1/`,
+          API_URL + `/payroll/loan-config/${config.id}/`,
           values
         );
 
@@ -74,6 +66,7 @@ const HolidaysNew = () => {
         setSending(false);
       }
     } else {
+      values.node = nodeId;
       Axios.post(API_URL + `/payroll/loan-config/`, values)
         .then((response) => {
           route.push("/lending");
@@ -90,6 +83,7 @@ const HolidaysNew = () => {
   };
 
   useEffect(() => {
+    nodeId = userCompanyId();
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
     getConfig();
