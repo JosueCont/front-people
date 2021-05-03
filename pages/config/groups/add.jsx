@@ -247,7 +247,6 @@ const GroupAdd = () => {
     setLoading(true);
 
     data.company = nodeId;
-    console.log("Data-->>> ", data);
     Axios.post(LOGIN_URL + "/group/create/", data, {
       headers: headers,
     })

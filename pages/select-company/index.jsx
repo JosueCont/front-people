@@ -45,7 +45,6 @@ const SelectCompany = () => {
         id: jwt.user_id,
       })
         .then((response) => {
-          console.log("NODE-->> ", response.data);
           if (response.data.nodes.length > 0) setDataList(response.data.nodes);
           if (response.data.nodes.length == 1)
             setCompanySelect(response.data.nodes[0]);
@@ -91,11 +90,7 @@ const SelectCompany = () => {
                       onClick={() => setCompanySelect(item)}
                     >
                       <Title level={4} style={{ margin: "auto" }}>
-                        <img
-                          alt="example"
-                          src={item.image}
-                          width="50px"
-                        />
+                        <img alt="example" src={item.image} width="50px" />
                         <br />
                         {item.name}
                       </Title>
