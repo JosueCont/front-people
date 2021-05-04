@@ -1512,6 +1512,13 @@ const personDetailForm = () => {
       },
     },
     {
+      title: "Estatus",
+      render: (item) => {
+        return <>{item.status ? "Activo" : "Inactivo"}</>;
+        // <Switch checked={item.status} readOnly />;
+      },
+    },
+    {
       title: "Opciones",
       render: (item) => {
         return (

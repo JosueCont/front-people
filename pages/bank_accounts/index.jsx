@@ -263,18 +263,6 @@ const BankAccounts = () => {
                         style={{ width: 150 }}
                       />
                     </Col>
-                    {/* <Col>
-                      <SelectCompany
-                        name="company"
-                        label="Empresa"
-                        onChange={onChangeCompany}
-                        key="SelectCompany"
-                        style={{ width: 150 }}
-                      />
-                    </Col> */}
-                    {/* <Col>
-                                    <SelectDepartment companyId={companyId} onChange={changeDepartament} key="SelectDepartment" />
-                                </Col> */}
                     <Col>
                       <Form.Item
                         key="account_number_filter"
