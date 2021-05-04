@@ -40,6 +40,7 @@ import Router from "next/router";
 import moment from "moment";
 import { LOGIN_URL, APP_ID } from "../../config/config";
 import jsCookie from "js-cookie";
+import { userCompanyId, userCompanyName } from "../../libs/auth";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -61,6 +62,7 @@ const personDetailForm = () => {
   const [loadImge, setLoadImage] = useState(false);
   const [permissions, setPermissions] = useState({});
   const [khonnectId, setKhonnectId] = useState("");
+  let nodeId = userCompanyId();
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -266,6 +268,7 @@ const personDetailForm = () => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
     getValueSelects();
+    nodeId = userCompanyId();
     if (router.query.id) {
       getPerson();
       getGeneralData();
@@ -277,6 +280,7 @@ const personDetailForm = () => {
       getJobExperience();
       getBankAccount();
       getDocument();
+      changeNode();
     }
   }, [router.query.id]);
 
@@ -1369,11 +1373,9 @@ const personDetailForm = () => {
   /////CUENTAS BANCARIAS
   const getBankAccount = () => {
     setLoadingTable(true);
-    Axios.get(
-      API_URL + `/person/person/${router.query.id}/bank_account_person/`
-    )
+    Axios.get(API_URL + `/person/bank-account/?person=${router.query.id}`)
       .then((response) => {
-        setBankAccounts(response.data);
+        setBankAccounts(response.data.results);
         setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
@@ -1738,7 +1740,7 @@ const personDetailForm = () => {
     });
     setDepartments([]);
     setJobs([]);
-    Axios.get(API_URL + `/business/department/?node=${value}`)
+    Axios.get(API_URL + `/business/department/?node=${nodeId}`)
       .then((response) => {
         if (response.status === 200) {
           let dep = response.data.results;
@@ -1828,13 +1830,8 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="node">
-                          <Select
-                            placeholder="Empresa"
-                            options={selectCompany}
-                            onChange={changeNode}
-                            defaultValue={nodePerson}
-                          />
+                        <Form.Item>
+                          <Input readOnly value={userCompanyName()} />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
