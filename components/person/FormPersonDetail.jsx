@@ -499,11 +499,8 @@ const personDetailForm = () => {
           });
 
         if (response.data.job[0]) {
-          setNodePerson(response.data.job[0].department.node.id);
-          Axios.get(
-            API_URL +
-              `/business/department/?node=${response.data.job[0].department.node.id}`
-          )
+          setNodePerson(nodeId);
+          Axios.get(API_URL + `/business/department/?node=${nodeId}`)
             .then((response) => {
               if (response.status === 200) {
                 let dep = response.data.results;
@@ -534,8 +531,8 @@ const personDetailForm = () => {
             });
           formPerson.setFieldsValue({
             job: response.data.job[0].id,
-            department: response.data.job[0].department.id,
-            node: response.data.job[0].department.node.id,
+            person_department: response.data.person_department,
+            node: nodeId,
           });
         }
 
@@ -1842,7 +1839,7 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="department">
+                        <Form.Item name="person_department">
                           <Select
                             options={departments}
                             onChange={onChangeDepartment}

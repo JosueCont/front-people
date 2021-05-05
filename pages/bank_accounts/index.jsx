@@ -75,18 +75,7 @@ const BankAccounts = () => {
         return person.first_name + " " + person.flast_name;
       },
     },
-    {
-      title: "Empresa",
-      dataIndex: "person",
-      key: "business",
-      render: (person) => {
-        return person.job.lenght > 0 &&
-          person.job[0].department &&
-          person.job[0].department.node
-          ? person.job[0].department.node.name
-          : null;
-      },
-    },
+    ,
     {
       title: "Número de cuenta",
       dataIndex: "new_account_number",

@@ -15,6 +15,7 @@ import { LOGIN_URL, API_URL, APP_ID } from "../config/config";
 import Axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
+import Link from "next/link";
 
 const LoginForm = (props) => {
   const router = useRouter();
@@ -161,6 +162,19 @@ const LoginForm = (props) => {
             >
               Iniciar sesión
             </Button>
+          </Form.Item>
+          <Form.Item>
+            <span
+              style={{
+                fontWeight: "500",
+                textDecoration: "underline",
+                color: "lightskyblue",
+              }}
+            >
+              <Link href="https://www.grupohuman.com/aviso-privacidad">
+                Aviso de privacidad.
+              </Link>
+            </span>
           </Form.Item>
         </Form>
       </Spin>
