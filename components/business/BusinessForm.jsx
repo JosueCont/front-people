@@ -86,19 +86,19 @@ const businessForm = () => {
   const updateBusiness = async (values) => {
     console.log(values);
     setLoading(true);
-    console.log('FNode',values.FNode);
+    console.log("FNode", values.FNode);
 
     let data = new FormData();
     data.append("id", values.id);
     data.append("name", values.name);
     data.append("description", values.description);
-    if(values.FNode){
+    if (values.FNode) {
       data.append("parent", values.FNode ? values.FNode : null);
     }
-    if(logo){
+    if (logo) {
       data.append("image", logo);
     }
-    
+
     Axios.put(API_URL + "/business/node/" + values.id + "/", data)
       .then(function (response) {
         if (response.status === 200) {
@@ -173,12 +173,21 @@ const businessForm = () => {
     setIsModalDeleteVisible(false);
   };
 
-  const getBusiness = () => {
+  useEffect(() => {
+    const jwt = JSON.parse(Cookie.get("token"));
+    searchPermissions(jwt.perms);
+    person();
+    getNodesTree();
+  }, []);
+
+  const getBusiness = (data) => {
     setLoading(true);
-    Axios.get(API_URL + "/business/node/")
+    Axios.get(
+      API_URL + `/business/node-person/get_assignment/?person__id=${data}`
+    )
       .then((response) => {
         setBusiness([]);
-        setBusiness(response.data.results);
+        setBusiness(response.data);
         setLoading(false);
       })
       .catch((e) => {
@@ -188,12 +197,19 @@ const businessForm = () => {
       });
   };
 
-  useEffect(() => {
+  const person = () => {
     const jwt = JSON.parse(Cookie.get("token"));
-    searchPermissions(jwt.perms);
-    getBusiness();
-    getNodesTree();
-  }, []);
+    Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
+      id: jwt.user_id,
+    })
+      .then((response) => {
+        getBusiness(response.data.id);
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
+  };
 
   const searchPermissions = (data) => {
     const perms = {};
@@ -274,7 +290,7 @@ const businessForm = () => {
 
   const changeView = () => {
     treeTable ? setTreeTable(false) : setTreeTable(true);
-    getBusiness();
+    person();
   };
 
   const modalUpdate = (value) => {
@@ -464,7 +480,7 @@ const businessForm = () => {
           </Form.Item>
           <Form.Item name="FNode" label="Nodo padre">
             <Select
-            allowClear
+              allowClear
               showSearch
               placeholder="Select a person"
               optionFilterProp="children"

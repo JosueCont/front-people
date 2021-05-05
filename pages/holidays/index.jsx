@@ -40,7 +40,7 @@ const Holidays = () => {
   const { Option } = Select;
 
   const [holidayList, setHolidayList] = useState([]);
-  
+
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
   const [departament, setDepartament] = useState(null);
@@ -56,8 +56,6 @@ const Holidays = () => {
     { value: 2, label: "Aprobado", key: "opt_2" },
     { value: 3, label: "Rechazado", key: "opt_3" },
   ];
-
-  
 
   const getAllHolidays = async (
     collaborator = null,
@@ -267,7 +265,6 @@ const Holidays = () => {
                       </>
                     )}
                   />
-                  <Column title="Empresa" dataIndex="business" key="business" />
                   <Column
                     title="Departamentos"
                     dataIndex="department"
