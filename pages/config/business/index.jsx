@@ -358,7 +358,7 @@ const configBusiness = () => {
     {
       title: "Empresa",
       render: (item) => {
-        return <>{item.department.node.name}</>;
+        return <>{userCompanyName()}</>;
       },
     },
 

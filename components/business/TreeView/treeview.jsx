@@ -41,7 +41,7 @@ const NodeTreeView = () => {
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
-    getNodes();
+    person();
     Nodos();
   }, []);
 
@@ -58,8 +58,23 @@ const NodeTreeView = () => {
     setPermissions(perms);
   };
 
-  const getNodes = () => {
-    Axios.post(API_URL + `/business/node/node_in_cascade/`)
+  const person = () => {
+    const jwt = JSON.parse(jsCookie.get("token"));
+    Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
+      id: jwt.user_id,
+    })
+      .then((response) => {
+        console.log("Response-->> ", response.data);
+        getNodes(response.data.id);
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
+  };
+
+  const getNodes = (data) => {
+    Axios.post(API_URL + `/business/node/node_in_cascade/`, { person: data })
       .then((response) => {
         setNodes(response.data);
       })

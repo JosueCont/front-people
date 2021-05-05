@@ -43,6 +43,8 @@ const FormPerson = (props) => {
     else {
       delete value["passwordTwo"];
       value.groups = [value.groups];
+      value.node = nodeId;
+      console.log("PErson-->>> ", value);
       createPerson(value);
     }
   };
@@ -215,7 +217,7 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="department">
+                <Form.Item rules={[ruleRequired]} name="person_department">
                   <Select
                     options={departments}
                     onChange={onChangeDepartment}
