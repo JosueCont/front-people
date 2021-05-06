@@ -12,7 +12,7 @@ const BankAccountsForm = (props) => {
         <Input value={props.data ? props.data.employee : null} />
       </Form.Item>
       <Form.Item
-        label="Numero de cuenta"
+        label="Número de cuenta"
         labelCol={{ span: 7 }}
         labelAlign={"left"}
       >

@@ -106,6 +106,7 @@ export const loginAuth = async (token) => {
 
 export const logoutAuth = async () => {
   cookie.remove("token");
+  sessionStorage.clear();
   //console.log("Logout");
   await Router.push("/");
 };
@@ -125,6 +126,16 @@ export const userCompanyName = () => {
   try {
     let name = sessionStorage.getItem("name");
     if (name && name != "" && name != undefined) return name;
+    else null;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const userId = () => {
+  try {
+    let number = sessionStorage.getItem("number");
+    if (number && number != "" && number != undefined) return number;
     else null;
   } catch (error) {
     return null;

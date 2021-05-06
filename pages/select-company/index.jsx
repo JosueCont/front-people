@@ -22,7 +22,7 @@ import useRouter from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-import { userCompanyId, withAuthSync } from "../../libs/auth";
+import { userCompanyId, userId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
 const SelectCompany = () => {
@@ -30,6 +30,8 @@ const SelectCompany = () => {
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [jwt, setJwt] = useState(null);
+  let personId = userId();
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     try {
@@ -45,10 +47,23 @@ const SelectCompany = () => {
         id: jwt.user_id,
       })
         .then((response) => {
-          if (response.data.nodes.length > 0) setDataList(response.data.nodes);
-          if (response.data.nodes.length == 1)
-            setCompanySelect(response.data.nodes[0]);
-          else setLoading(false);
+          setAdmin(response.data.is_admin);
+          if (response.data.is_admin) {
+            getCopaniesList();
+          } else {
+            if (response.data.nodes.length > 0) {
+              if (personId == "" || personId == null || personId == undefined)
+                sessionStorage.setItem("number", response.data.id);
+              setDataList(response.data.nodes);
+            }
+            if (response.data.nodes.length == 1) {
+              if (personId == "" || personId == null || personId == undefined)
+                sessionStorage.setItem("number", response.data.id);
+              setCompanySelect(response.data.nodes[0]);
+            } else {
+              setLoading(false);
+            }
+          }
         })
         .catch((e) => {
           setLoading(false);
@@ -57,8 +72,21 @@ const SelectCompany = () => {
     }
   }, [jwt]);
 
+  const getCopaniesList = async () => {
+    try {
+      let response = await Axios.get(API_URL + `/business/node/`);
+      let data = response.data.results;
+      setDataList(data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
   const setCompanySelect = (item) => {
-    sessionStorage.setItem("data", item.value);
+    if (admin) sessionStorage.setItem("data", item.id);
+    else sessionStorage.setItem("data", item.value);
     sessionStorage.setItem("name", item.name);
     let company_id = userCompanyId();
     if (company_id) useRouter.push("home");

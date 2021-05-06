@@ -44,7 +44,6 @@ const FormPerson = (props) => {
       delete value["passwordTwo"];
       value.groups = [value.groups];
       value.node = nodeId;
-      console.log("PErson-->>> ", value);
       createPerson(value);
     }
   };
@@ -114,7 +113,6 @@ const FormPerson = (props) => {
         props.close(false);
       })
       .catch((error) => {
-        console.log(error.response);
         if (error.response.data && error.response.data.message === "exist")
           message.error("El correo se encuentra registrado.");
         else message.error("Error al agregar, intente de nuevo");

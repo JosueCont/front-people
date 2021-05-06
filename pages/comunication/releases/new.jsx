@@ -33,7 +33,7 @@ import FormItemHTMLPlace from "../../../components/draft";
 /* import { userCompanyId } from "../../libs/auth"; */
 
 import dynamic from "next/dynamic";
-import { withAuthSync,userCompanyId } from "../../../libs/auth";
+import { withAuthSync, userCompanyId } from "../../../libs/auth";
 
 const Newrelease = () => {
   let nodeId = userCompanyId();
@@ -112,27 +112,12 @@ const Newrelease = () => {
       return;
     }
 
-    console.log(values);
-    
-      
-      /* form.setFields({
-            target_department: {
-              errors: [new Error('forbid ha')],
-            }
-        }); */
-      /* if(!values.send_to_all){
-          form.setFields({
-            target_department: {
-              errors: [new Error('forbid ha')],
-            },
-        });
-      } */
     let datos = new FormData();
     datos.append("category", values.category);
     datos.append("title", values.title);
     datos.append("message", message);
     datos.append("khonnect_id", userId);
-    datos.append("target_company", nodeId )
+    datos.append("target_company", nodeId);
 
     if (values.send_to_all) {
       datos.append("send_to_all", values.send_to_all);
@@ -177,14 +162,20 @@ const Newrelease = () => {
     }
   };
 
-  const checkSegmentacion= ({getFieldValue}) => ({
-    validator(rule){
-      if( !getFieldValue("send_to_all") && !getFieldValue("target_department") && !getFieldValue("target_job") && !getFieldValue("target_person_type") && !getFieldValue("target_gender") ){
+  const checkSegmentacion = ({ getFieldValue }) => ({
+    validator(rule) {
+      if (
+        !getFieldValue("send_to_all") &&
+        !getFieldValue("target_department") &&
+        !getFieldValue("target_job") &&
+        !getFieldValue("target_person_type") &&
+        !getFieldValue("target_gender")
+      ) {
         return Promise.reject("Selecciona una segmentación");
       }
       return Promise.resolve();
-    }
-  })
+    },
+  });
 
   const onchangeFile = (file) => {
     setFileList(file.fileList);
@@ -414,12 +405,12 @@ const Newrelease = () => {
                         wrapperCol={{ span: 14 }}
                         rules={[checkSegmentacion]}
                       >
-                        <Select 
+                        <Select
                           options={departments}
                           onChange={onChangeDepartment}
                           placeholder="Departamento"
                           key="departament_select"
-                        />  
+                        />
                       </Form.Item>
                       <Form.Item
                         name={"target_job"}

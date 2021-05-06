@@ -22,7 +22,7 @@ import {
 import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import { withAuthSync } from "../../libs/auth";
+import { userId, withAuthSync } from "../../libs/auth";
 
 /* Select component person */
 import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
@@ -37,6 +37,7 @@ const SelectCompany = () => {
   const [loading, setLoading] = useState(false);
   const [collaboratorId, setCollaboratorId] = useState(null);
   const [companiesUser, setCompaniesUser] = useState([]);
+  const personId = userId();
 
   useEffect(() => {
     person();
@@ -48,7 +49,12 @@ const SelectCompany = () => {
       id: jwt.user_id,
     })
       .then((response) => {
-        getCopaniesList(response.data.id);
+        if (response.data.is_admin) {
+          getCopaniesList();
+        } else {
+          setDataList(response.data.nodes);
+          setShowTable(true);
+        }
       })
       .catch((e) => {
         setLoading(false);
@@ -58,10 +64,8 @@ const SelectCompany = () => {
 
   const getCopaniesList = async (id) => {
     try {
-      let response = await Axios.get(
-        API_URL + `/business/node-person/get_assignment/?person__id=${id}`
-      );
-      let data = response.data;
+      let response = await Axios.get(API_URL + `/business/node/`);
+      let data = response.data.results;
       setDataList(data);
     } catch (error) {
       console.log(error);
@@ -147,7 +151,6 @@ const SelectCompany = () => {
   };
 
   const companyCheked = (companyId) => {
-    console.log(companyId);
     return companiesUser.includes(companyId);
   };
 

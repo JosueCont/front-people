@@ -31,6 +31,7 @@ import Router from "next/router";
 import MainLayout from "../../layout/MainLayout";
 import NodeTreeView from "./TreeView/treeview";
 import Cookie from "js-cookie";
+import { userId } from "../../libs/auth";
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -54,6 +55,7 @@ const businessForm = () => {
   const [updateModal, setUpdateModal] = useState(false);
   const [businessUpdate, setBusinessUpdate] = useState({});
   const [permissions, setPermissions] = useState({});
+  let personId = userId();
 
   const onFinish = (values) => {
     if (isDeleted) {
@@ -84,9 +86,7 @@ const businessForm = () => {
       });
   };
   const updateBusiness = async (values) => {
-    console.log(values);
     setLoading(true);
-    console.log("FNode", values.FNode);
 
     let data = new FormData();
     data.append("id", values.id);
@@ -121,6 +121,7 @@ const businessForm = () => {
     fNode && data.append("parent", fNode);
 
     data.append("image", logo);
+    data.append("person", personId);
     setLoading(true);
     Axios.post(API_URL + "/business/node/", data)
       .then(function (response) {
@@ -174,16 +175,47 @@ const businessForm = () => {
   };
 
   useEffect(() => {
+    personId = userId();
     const jwt = JSON.parse(Cookie.get("token"));
     searchPermissions(jwt.perms);
     person();
     getNodesTree();
   }, []);
 
-  const getBusiness = (data) => {
+  const person = () => {
+    const jwt = JSON.parse(Cookie.get("token"));
+    Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
+      id: jwt.user_id,
+    })
+      .then((response) => {
+        if (response.data.is_admin) {
+          getCopaniesList();
+        } else {
+          getBusiness();
+        }
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
+  };
+
+  const getCopaniesList = async () => {
+    try {
+      let response = await Axios.get(API_URL + `/business/node/`);
+      let data = response.data.results;
+      setDataList(data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
+  const getBusiness = () => {
     setLoading(true);
     Axios.get(
-      API_URL + `/business/node-person/get_assignment/?person__id=${data}`
+      API_URL + `/business/node-person/get_assignment/?person__id=${personId}`
     )
       .then((response) => {
         setBusiness([]);
@@ -194,20 +226,6 @@ const businessForm = () => {
         setBusiness([]);
         console.log(e);
         setLoading(false);
-      });
-  };
-
-  const person = () => {
-    const jwt = JSON.parse(Cookie.get("token"));
-    Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
-      id: jwt.user_id,
-    })
-      .then((response) => {
-        getBusiness(response.data.id);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
       });
   };
 
@@ -290,7 +308,7 @@ const businessForm = () => {
 
   const changeView = () => {
     treeTable ? setTreeTable(false) : setTreeTable(true);
-    person();
+    getBusiness();
   };
 
   const modalUpdate = (value) => {

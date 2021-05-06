@@ -157,7 +157,6 @@ const BankAccountsDetails = () => {
   };
 
   const onChangeMessage = (e) => {
-    console.log(e.target.value);
     setMessage(e.target.value);
   };
 

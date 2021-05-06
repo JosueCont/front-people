@@ -64,8 +64,6 @@ const HolidaysDetails = () => {
   };
 
   const onChangeMessage = (value) => {
-    console.log(value.target.value);
-
     setMessage(value.target.value);
   };
 
