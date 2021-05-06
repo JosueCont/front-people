@@ -57,6 +57,7 @@ const businessForm = () => {
   const [permissions, setPermissions] = useState({});
   let personId = userId();
   const [admin, setAdmin] = useState(false);
+  const [addB, setAddB] = useState(false);
 
   const onFinish = (values) => {
     if (isDeleted) {
@@ -120,10 +121,16 @@ const businessForm = () => {
     data.append("name", name);
     data.append("description", description);
     fNode && data.append("parent", fNode);
+    setAddB(true);
 
     data.append("image", logo);
     data.append("person", personId);
     setLoading(true);
+    if (logo == null || logo == undefined) {
+      message.error("Agregue una imagen");
+      setAddB(false);
+      return;
+    }
     Axios.post(API_URL + "/business/node/", data)
       .then(function (response) {
         if (response.status === 200) {
@@ -132,9 +139,11 @@ const businessForm = () => {
         getBusiness();
         setIsModalVisible(false);
         setLoading(false);
+        setAddB(false);
         message.success("Agregado correctamente.");
       })
       .catch(function (error) {
+        setAddB(false);
         message.error("Ocurrio un error, intente de nuevo");
         setLoading(false);
         console.log(error);
@@ -458,7 +467,7 @@ const businessForm = () => {
             type="primary"
             key="submit"
             htmlType="submit"
-            disabled={loading ? false : true}
+            disabled={addB}
           >
             {isEdit ? "Actualizar" : "Agregar"}
           </Button>,
@@ -474,7 +483,7 @@ const businessForm = () => {
           <Form.Item name="id" label="id" style={{ display: "none" }}>
             <Input type="text" />
           </Form.Item>
-          <Form.Item label="Logo">
+          <Form.Item label="Logo" required>
             <Upload
               label="Logo"
               listType="picture-card"
