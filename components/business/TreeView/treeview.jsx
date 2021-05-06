@@ -71,7 +71,6 @@ const NodeTreeView = () => {
           setBusiness(bus);
         }
         if (response.data.is_admin) Nodos();
-        setBusiness(bus);
         getNodes();
       })
       .catch((e) => {
