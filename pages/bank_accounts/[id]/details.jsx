@@ -62,7 +62,6 @@ const BankAccountsDetails = () => {
       let data = response.data;
       if (data.person.mlast_name == null || data.person.mlast_name == undefined)
         data.person.mlast_name = "";
-
       setNewDetails({
         employee:
           data.person.first_name +
