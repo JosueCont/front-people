@@ -43,7 +43,6 @@ const NodeTreeView = () => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
     person();
-    Nodos();
   }, []);
 
   const searchPermissions = (data) => {
@@ -65,15 +64,21 @@ const NodeTreeView = () => {
       id: jwt.user_id,
     })
       .then((response) => {
-        getNodes(response.data.id);
+        if (response.data.node.length > 0) {
+          let bus = response.data.results.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setBusiness(bus);
+        }
+        if (response.data.is_admin) Nodos();
+        getNodes();
       })
       .catch((e) => {
-        setLoading(false);
         console.log(e);
       });
   };
 
-  const getNodes = (data) => {
+  const getNodes = () => {
     Axios.post(API_URL + `/business/node/node_in_cascade/`, {
       person: personId,
     })
