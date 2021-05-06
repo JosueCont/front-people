@@ -21,7 +21,6 @@ import { API_URL } from "../../config/config";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import jsCookie from "js-cookie";
 
-
 const Lendingform = (props) => {
   const [form] = Form.useForm();
   const { Title } = Typography;
@@ -69,11 +68,13 @@ const Lendingform = (props) => {
   };
 
   const getPayment = () => {
+    console.log("Fomr-->> ", form.getFieldsValue());
     let formAmount = form.getFieldValue("amount");
     let formDeadline = form.getFieldValue("deadline");
 
     formAmount = formAmount ? parseFloat(formAmount) : 0;
     formDeadline = formDeadline ? parseInt(formDeadline) : 1;
+    console.log("Fomr-->> ", form.getFieldsValue());
 
     /* let paym = formAmount/formDeadline; */
 
@@ -115,7 +116,7 @@ const Lendingform = (props) => {
       form.setFieldsValue({
         person: props.details.person.id,
         type: props.details.type,
-        amount: props.details.amount,
+        amount: parseFloat(props.details.amount),
         deadline: parseInt(props.details.deadline),
         periodicity: props.details.periodicity,
         periodicity_amount: props.details.periodicity_amount,

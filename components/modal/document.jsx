@@ -18,6 +18,7 @@ import {
 } from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import { userCompanyId } from "../../libs/auth";
 
 const documentModal = (props) => {
   const [form] = Form.useForm();
@@ -26,6 +27,7 @@ const documentModal = (props) => {
   const [documentType, setDocumentType] = useState([]);
   const inputFileRef = useRef(null);
   const [fileName, setfileName] = useState("");
+  let nodeId = userCompanyId();
 
   const closeDialog = () => {
     props.close(false);
@@ -33,9 +35,11 @@ const documentModal = (props) => {
   };
 
   useEffect(() => {
-    Axios.get(API_URL + "/setup/document-type/")
+    nodeId = userCompanyId();
+    Axios.get(API_URL + `/setup/document-type/?node=${nodeId}`)
       .then((response) => {
-        let dt = response.data.results;
+        console.log("Repos-->> ", response.data);
+        let dt = response.data;
         dt = dt.map((a) => {
           return { label: a.name, value: a.id };
         });
