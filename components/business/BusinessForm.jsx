@@ -456,6 +456,7 @@ const businessForm = () => {
             type="primary"
             key="submit"
             htmlType="submit"
+            disabled={loading ? false : true}
           >
             {isEdit ? "Actualizar" : "Agregar"}
           </Button>,
