@@ -38,7 +38,6 @@ const documentModal = (props) => {
     nodeId = userCompanyId();
     Axios.get(API_URL + `/setup/document-type/?node=${nodeId}`)
       .then((response) => {
-        console.log("Repos-->> ", response.data);
         let dt = response.data;
         dt = dt.map((a) => {
           return { label: a.name, value: a.id };

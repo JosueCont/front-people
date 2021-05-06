@@ -1,7 +1,7 @@
 import Axios from "axios";
 import { useEffect, useState } from "react";
 import { API_URL } from "../../../config/config";
-import { withAuthSync } from "../../../libs/auth";
+import { userId, withAuthSync } from "../../../libs/auth";
 import {
   PlusCircleOutlined,
   EditOutlined,
@@ -35,10 +35,11 @@ const NodeTreeView = () => {
   const [creUp, setCreup] = useState(false);
   const [nameNode, setNameNode] = useState("");
   const [idNodeUpdate, setIdNodeUpdate] = useState(0);
-
   const [permissions, setPermissions] = useState({});
+  let personId = userId();
 
   useEffect(() => {
+    personId = userId();
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
     person();
@@ -64,7 +65,6 @@ const NodeTreeView = () => {
       id: jwt.user_id,
     })
       .then((response) => {
-        console.log("Response-->> ", response.data);
         getNodes(response.data.id);
       })
       .catch((e) => {
@@ -74,7 +74,9 @@ const NodeTreeView = () => {
   };
 
   const getNodes = (data) => {
-    Axios.post(API_URL + `/business/node/node_in_cascade/`, { person: data })
+    Axios.post(API_URL + `/business/node/node_in_cascade/`, {
+      person: personId,
+    })
       .then((response) => {
         setNodes(response.data);
       })
@@ -308,6 +310,7 @@ const NodeTreeView = () => {
           console.log(error);
         });
     } else {
+      value.person = personId;
       Axios.post(API_URL + "/business/node/", value)
         .then(function (response) {
           Nodos();

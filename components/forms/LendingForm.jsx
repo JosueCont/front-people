@@ -68,14 +68,11 @@ const Lendingform = (props) => {
   };
 
   const getPayment = () => {
-    console.log("Fomr-->> ", form.getFieldsValue());
     let formAmount = form.getFieldValue("amount");
     let formDeadline = form.getFieldValue("deadline");
 
     formAmount = formAmount ? parseFloat(formAmount) : 0;
     formDeadline = formDeadline ? parseInt(formDeadline) : 1;
-    console.log("Fomr-->> ", form.getFieldsValue());
-
     /* let paym = formAmount/formDeadline; */
 
     /* PARA TOMAR EN CUENTA EL INTERES */
