@@ -132,8 +132,10 @@ const businessForm = () => {
         getBusiness();
         setIsModalVisible(false);
         setLoading(false);
+        message.success("Agregado correctamente.");
       })
       .catch(function (error) {
+        message.error("Ocurrio un error, intente de nuevo");
         setLoading(false);
         console.log(error);
       });
@@ -456,6 +458,7 @@ const businessForm = () => {
             type="primary"
             key="submit"
             htmlType="submit"
+            disabled={loading ? false : true}
           >
             {isEdit ? "Actualizar" : "Agregar"}
           </Button>,
