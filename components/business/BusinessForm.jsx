@@ -57,6 +57,7 @@ const businessForm = () => {
   const [permissions, setPermissions] = useState({});
   let personId = userId();
   const [admin, setAdmin] = useState(false);
+  const [addB, setAddB] = useState(true);
 
   const onFinish = (values) => {
     if (isDeleted) {
@@ -120,6 +121,7 @@ const businessForm = () => {
     data.append("name", name);
     data.append("description", description);
     fNode && data.append("parent", fNode);
+    setAddB(false);
 
     data.append("image", logo);
     data.append("person", personId);
@@ -458,7 +460,7 @@ const businessForm = () => {
             type="primary"
             key="submit"
             htmlType="submit"
-            disabled={loading ? false : true}
+            disabled={addB}
           >
             {isEdit ? "Actualizar" : "Agregar"}
           </Button>,
