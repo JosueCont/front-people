@@ -28,6 +28,13 @@ const BankAccountsForm = (props) => {
       <Form.Item label="Banco" labelCol={{ span: 7 }} labelAlign={"left"}>
         <Input value={props.data ? props.data.bank : null} />
       </Form.Item>
+      <Form.Item
+        label="Número de tarjeta"
+        labelCol={{ span: 7 }}
+        labelAlign={"left"}
+      >
+        <Input value={props.data ? props.data.card_number : null} />
+      </Form.Item>
       <Form.Item label="Mes" labelCol={{ span: 7 }} labelAlign={"left"}>
         <Input value={props.data ? props.data.expiration_month : null} />
       </Form.Item>
