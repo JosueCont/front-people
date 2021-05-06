@@ -113,8 +113,8 @@ const PermissionDetails = () => {
       id: id,
       status: statusID,
       khonnect_id: userId,
-      comment: message
     };
+    if (statusID == 3) values.comment = message;
     let msg = "Solicitud de permiso aprobada";
     if (statusID === 3) {
       msg = "Solicitud de permiso rechazada";
@@ -203,7 +203,7 @@ const PermissionDetails = () => {
             key="submit_modal"
             type="primary"
             loading={sending}
-            onClick={() => changeStatus(3)}
+            onClick={() => changeStatus(2)}
             style={{ padding: "0 50px", marginLeft: 15 }}
           >
             Aceptar y notificar
