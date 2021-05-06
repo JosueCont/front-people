@@ -56,6 +56,7 @@ const businessForm = () => {
   const [businessUpdate, setBusinessUpdate] = useState({});
   const [permissions, setPermissions] = useState({});
   let personId = userId();
+  const [admin, setAdmin] = useState(false);
 
   const onFinish = (values) => {
     if (isDeleted) {
@@ -188,6 +189,7 @@ const businessForm = () => {
       id: jwt.user_id,
     })
       .then((response) => {
+        setAdmin(response.data.is_admin);
         if (response.data.is_admin) {
           getCopaniesList();
         } else {
@@ -204,7 +206,7 @@ const businessForm = () => {
     try {
       let response = await Axios.get(API_URL + `/business/node/`);
       let data = response.data.results;
-      setDataList(data);
+      setBusiness(data);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -243,7 +245,9 @@ const businessForm = () => {
   };
 
   const getNodesTree = () => {
-    Axios.post(API_URL + `/business/node/node_in_cascade/`)
+    Axios.post(API_URL + `/business/node/node_in_cascade/`, {
+      person: personId,
+    })
       .then((response) => {
         setNodesTree(response.data);
       })
@@ -308,7 +312,8 @@ const businessForm = () => {
 
   const changeView = () => {
     treeTable ? setTreeTable(false) : setTreeTable(true);
-    getBusiness();
+    if (admin) getCopaniesList();
+    else getBusiness();
   };
 
   const modalUpdate = (value) => {

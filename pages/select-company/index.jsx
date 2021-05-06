@@ -49,6 +49,8 @@ const SelectCompany = () => {
         .then((response) => {
           setAdmin(response.data.is_admin);
           if (response.data.is_admin) {
+            if (personId == "" || personId == null || personId == undefined)
+              sessionStorage.setItem("number", response.data.id);
             getCopaniesList();
           } else {
             if (response.data.nodes.length > 0) {
