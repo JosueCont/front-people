@@ -36,7 +36,6 @@ const StatisticsPayroll = () => {
     Axios.get(API_URL + `/business/node/${nodeId}/get_dashboard_data/`)
       .then((response) => {
         setPayroll(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
