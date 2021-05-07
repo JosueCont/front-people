@@ -187,17 +187,12 @@ const BankAccounts = () => {
             ); */
   };
 
-  /* Eventos de componentes */
   const onChangeCompany = (val) => {
     /* form.setFieldsValue({
                 department: null,
             }); */
     setCompanyId(val);
   };
-
-  /* const changeDepartament = (val) => {
-          setDepartamentId(val);
-      }; */
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
