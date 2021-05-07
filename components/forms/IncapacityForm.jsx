@@ -58,9 +58,9 @@ const Incapacityform = (props) => {
   const changePerson = (value) => {
     if (value) {
       let index = allPersons.find((data) => data.id === value);
-      if (index && index.job[0]) {
+      if (index && index.job) {
         form.setFieldsValue({
-          job: index.job[0].name,
+          job: index.job.name,
         });
       } else {
         form.setFieldsValue({
@@ -130,7 +130,7 @@ const Incapacityform = (props) => {
           props.details.collaborator &&
           props.details.collaborator.job &&
           props.details.collaborator.job.length > 0
-            ? props.details.collaborator.job[0].name
+            ? props.details.collaborator.job.name
             : null,
       });
       /* if (

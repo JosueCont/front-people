@@ -16,7 +16,7 @@ import { useRouter } from "next/router";
 import axiosApi from "../../libs/axiosApi";
 import { set } from "js-cookie";
 import { route } from "next/dist/next-server/server/router";
-import SelectCollaborator from '../../components/selects/SelectCollaboratorItemForm'
+import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { withAuthSync } from "../../libs/auth";
@@ -47,7 +47,7 @@ const Permissionform = (props) => {
       let index = allPersons.find((data) => data.id === value);
       if (index.job && index.job.length > 0) {
         formPermission.setFieldsValue({
-          job: index.job[0].name,
+          job: index.job.name,
         });
       }
       setUrlPhoto(index.photo ? index.photo : null);
@@ -58,7 +58,6 @@ const Permissionform = (props) => {
       setUrlPhoto(null);
     }
   };
-
 
   useEffect(() => {
     if (props.details) {
@@ -78,7 +77,7 @@ const Permissionform = (props) => {
       });
       if (props.details.collaborator && props.details.collaborator.job) {
         formPermission.setFieldsValue({
-          job: props.details.collaborator.job[0].name,
+          job: props.details.collaborator.job.name,
         });
       }
 
@@ -93,7 +92,6 @@ const Permissionform = (props) => {
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
-    
   }, []);
 
   const searchPermissions = (data) => {
@@ -137,15 +135,15 @@ const Permissionform = (props) => {
         </Col>
 
         <Col span="8">
-            <SelectCollaborator
-              label="Empleado"
-              name="person"
-              labelCol={{ span: 9 }}
-              labelAlign={"left"}
-              disabled={props.readOnly}
-              onChange={changePerson}
-              setAllPersons={setAllPersons}
-            />
+          <SelectCollaborator
+            label="Empleado"
+            name="person"
+            labelCol={{ span: 9 }}
+            labelAlign={"left"}
+            disabled={props.readOnly}
+            onChange={changePerson}
+            setAllPersons={setAllPersons}
+          />
           <Form.Item
             label="Puesto"
             name="job"
