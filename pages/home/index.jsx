@@ -597,7 +597,7 @@ const homeScreen = () => {
     Axios.get(API_URL + `/person/job/?department=${value}`)
       .then((response) => {
         if (response.status === 200) {
-          let job = response.data.results;
+          let job = response.data;
           job = job.map((a) => {
             return { label: a.name, value: a.id };
           });
