@@ -580,6 +580,7 @@ const personDetailForm = () => {
       });
   };
   const updatePerson = (value) => {
+    console.log("PErson-->> ", value);
     setLoading(true);
     Axios.put(API_URL + `/person/person/${router.query.id}/`, value)
       .then((response) => {

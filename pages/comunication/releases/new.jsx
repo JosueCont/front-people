@@ -290,8 +290,9 @@ const Newrelease = () => {
     });
     try {
       let response = await Axios.get(
-        API_URL + `/business/department/${value}/job_for_department/`
+        API_URL + `/person/job/?department=${value}`
       );
+      console.log("JOBS-->> ", jobs);
       let data_jobs = response.data;
       data_jobs = data_jobs.map((a, index) => {
         return { label: a.name, value: a.id, key: a.name + index };
