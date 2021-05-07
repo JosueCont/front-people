@@ -149,8 +149,7 @@ const configBusiness = () => {
       .then((response) => {
         if (url == `/business/department/?node=${nodeId}`)
           setDepartments(response.data.results);
-        if (url == `/person/job/?node=${nodeId}`)
-          setJobs(response.data.results);
+        if (url == `/person/job/?node=${nodeId}`) setJobs(response.data);
         if (url == "/person/person-type/")
           setTypesPerson(response.data.results);
         if (url == "/setup/relationship/")
