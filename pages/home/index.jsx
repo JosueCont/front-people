@@ -248,7 +248,7 @@ const homeScreen = () => {
     {
       title: "Puesto",
       render: (item) => {
-        return <div>{item.job[0] ? item.job[0].name : ""}</div>;
+        return <div>{item.job ? item.job.name : ""}</div>;
       },
     },
     {

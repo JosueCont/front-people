@@ -498,7 +498,7 @@ const personDetailForm = () => {
             birth_date: moment(response.data.birth_date),
           });
 
-        if (response.data.job[0]) {
+        if (response.data.job) {
           setNodePerson(nodeId);
           Axios.get(API_URL + `/business/department/?node=${nodeId}`)
             .then((response) => {
@@ -514,8 +514,7 @@ const personDetailForm = () => {
               console.log(e);
             });
           Axios.get(
-            API_URL +
-              `/person/job/?department=${response.data.job[0].department.id}`
+            API_URL + `/person/job/?department=${response.data.department.id}`
           )
             .then((response) => {
               if (response.status === 200) {
@@ -530,7 +529,7 @@ const personDetailForm = () => {
               console.log(e);
             });
           formPerson.setFieldsValue({
-            job: response.data.job[0].id,
+            job: response.data.job.id,
             person_department: response.data.person_department,
             node: nodeId,
           });

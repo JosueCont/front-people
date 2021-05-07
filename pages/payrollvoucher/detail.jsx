@@ -20,7 +20,7 @@ const { confirm } = Modal;
 import Axios from "axios";
 import { useRouter } from "next/router";
 import { useState, useEffect, useRef, React } from "react";
-import { withAuthSync } from "../../libs/auth";
+import { userCompanyName, withAuthSync } from "../../libs/auth";
 import { API_URL } from "../../config/config";
 
 const { Dragger } = Upload;
@@ -65,13 +65,13 @@ const AddUploadPayroll = () => {
             response.data.person.flast_name
         );
         setId(response.data.payroll_voucher.id);
-        setNameUnit(response.data.person.job[0].department.node.name);
+        setNameUnit(userCompanyName());
         setNumEmployee(response.data.person.code);
         setCurp(response.data.person.curp);
         setRfc(response.data.person.rfc);
         setImss(response.data.person.imss);
-        setDepartment(response.data.person.job[0].department.name);
-        setJob(response.data.person.job[0].name);
+        setDepartment(response.data.person.department.name);
+        setJob(response.data.person.job.name);
         setPayment_start_date(response.data.payroll_voucher.payment_start_date);
         setPayment_end_date(response.data.payroll_voucher.payment_end_date);
         setPayment_date(response.data.payroll_voucher.payment_date);
