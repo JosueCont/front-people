@@ -27,7 +27,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { API_URL } from "../../config/config";
 import moment from "moment";
 import jsCookie from "js-cookie";
-import { userCompanyId } from "../../libs/auth";
+import { userCompanyId, userCompanyName } from "../../libs/auth";
 
 const InabilityReport = (props) => {
   const route = useRouter();
@@ -71,16 +71,7 @@ const InabilityReport = (props) => {
       dataIndex: "collaborator",
       key: "company",
       render: (collaborator) => {
-        return (
-          <>
-            {collaborator &&
-            collaborator.job[0] &&
-            collaborator.job[0].department &&
-            collaborator.job[0].department.node
-              ? collaborator.job[0].department.node.name
-              : null}
-          </>
-        );
+        return <>{userCompanyName()}</>;
       },
     },
     {
@@ -90,10 +81,8 @@ const InabilityReport = (props) => {
       render: (collaborator) => {
         return (
           <>
-            {collaborator &&
-            collaborator.job[0] &&
-            collaborator.job[0].department
-              ? collaborator.job[0].department.name
+            {collaborator && collaborator.department
+              ? collaborator.department.name
               : null}
           </>
         );
