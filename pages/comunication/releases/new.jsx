@@ -141,7 +141,7 @@ const Newrelease = () => {
         datos.append("files", f.originFileObj);
       });
     }
-
+    console.log("DATA SEND-->> ", datos);
     setSending(true);
     try {
       let response = await Axios.post(
@@ -460,6 +460,7 @@ const Newrelease = () => {
                     loading={sending}
                     type="primary"
                     style={{ padding: "0 50px", margin: "0 10px" }}
+                    disabled={sending}
                   >
                     Enviar
                   </Button>
