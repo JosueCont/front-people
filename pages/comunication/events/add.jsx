@@ -285,7 +285,11 @@ const addEvent = () => {
                             >
                               Cancelar
                             </Button>
-                            <Button type="primary" htmlType="submit">
+                            <Button
+                              disabled={loading}
+                              type="primary"
+                              htmlType="submit"
+                            >
                               Guardar
                             </Button>
                           </Space>
