@@ -249,4 +249,5 @@ li.ant-menu-submenu-selected {
   background-position-y: center;
   background-repeat: no-repeat;
   background-size: 50%;
+  height: 200px;
 }

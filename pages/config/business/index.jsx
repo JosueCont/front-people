@@ -200,6 +200,10 @@ const configBusiness = () => {
         setId("");
         resetForm();
         getCatalog(url);
+        urls.map((a) => {
+          getDepartments();
+          getCatalog(a);
+        });
         message.success("Agregado correctamente.");
       })
       .catch((error) => {
