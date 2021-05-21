@@ -121,8 +121,8 @@ const homeScreen = () => {
           item.key = i;
           if (!item.photo) item.photo = defaulPhoto;
         });
-        setPerson(response.data);
         setLoading(false);
+        setPerson(response.data);
       })
       .catch((e) => {
         setPerson([]);

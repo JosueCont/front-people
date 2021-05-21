@@ -1834,12 +1834,15 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item>
+                        <Form.Item label="Empresa">
                           <Input readOnly value={userCompanyName()} />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="person_department">
+                        <Form.Item
+                          name="person_department"
+                          label="Departamento"
+                        >
                           <Select
                             options={departments}
                             onChange={onChangeDepartment}
@@ -1848,7 +1851,7 @@ const personDetailForm = () => {
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="job">
+                        <Form.Item name="job" label="Puesto de trabajo">
                           <Select
                             options={jobs}
                             placeholder="Puesto de trabajo"
