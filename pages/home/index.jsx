@@ -801,7 +801,7 @@ const homeScreen = () => {
                 type="primary"
                 icon={<DownloadOutlined />}
                 size={{ size: "large" }}
-                href={`${API_URL}/static/PlantillaPersonas.csv`}
+                href={`${API_URL}/static/Plantilla-Personas.csv`}
               >
                 Descargar plantilla
               </Button>
