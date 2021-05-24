@@ -132,12 +132,14 @@ const homeScreen = () => {
   };
 
   const deletePerson = () => {
+    setLoading(true);
     Axios.post(API_URL + `/person/person/delete_by_ids/`, {
       persons_id: idsDelete,
     })
       .then((response) => {
         setIdsDelete("");
         setModalDelete(false);
+        setPersonsToDelete([]);
         filterPersonName();
         setLoading(false);
         message.success("Eliminado correctamente.");
