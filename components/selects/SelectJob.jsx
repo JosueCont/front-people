@@ -15,7 +15,8 @@ export default function SelectJob(props) {
     try {
       let response = await Axios.get(
         API_URL +
-          `/business/department/${props.departmentId}/job_for_department/`
+          // `/business/department/${props.departmentId}/job_for_department/`
+          `/person/job/?department=${props.departmentId}`
       );
       let data = response.data;
 
