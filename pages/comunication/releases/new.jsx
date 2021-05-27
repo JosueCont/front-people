@@ -141,7 +141,6 @@ const Newrelease = () => {
         datos.append("files", f.originFileObj);
       });
     }
-    console.log("DATA SEND-->> ", datos);
     setSending(true);
     try {
       let response = await Axios.post(
@@ -292,7 +291,6 @@ const Newrelease = () => {
       let response = await Axios.get(
         API_URL + `/person/job/?department=${value}`
       );
-      console.log("JOBS-->> ", jobs);
       let data_jobs = response.data;
       data_jobs = data_jobs.map((a, index) => {
         return { label: a.name, value: a.id, key: a.name + index };

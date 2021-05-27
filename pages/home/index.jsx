@@ -491,12 +491,12 @@ const homeScreen = () => {
   };
   const importPersonFile = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
-    if (extension == "csv") {
+    if (extension == "xlsx") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
       formData.append("node_id", nodeId);
       setLoading(true);
-      Axios.post(API_URL + `/person/person/import_csv/`, formData)
+      Axios.post(API_URL + `/person/person/import_xls/`, formData)
         .then((response) => {
           setLoading(false);
           message.success("Excel importado correctamente.");
@@ -801,7 +801,7 @@ const homeScreen = () => {
                 type="primary"
                 icon={<DownloadOutlined />}
                 size={{ size: "large" }}
-                href={`${API_URL}/static/Plantilla-Personas.csv`}
+                href={`${API_URL}/static/plantillaPersonas.xlsx`}
               >
                 Descargar plantilla
               </Button>
