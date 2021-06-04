@@ -19,7 +19,7 @@ import Axios from "axios";
 import { API_URL } from "../config/config";
 import { logoutAuth } from "../libs/auth";
 import { route } from "next/dist/next-server/server/router";
-
+import { FormattedMessage} from 'react-intl'
 const { Header } = Layout;
 
 const { SubMenu } = Menu;
@@ -220,6 +220,12 @@ const headerCustom = ({ hideMenu, ...props }) => {
               >
                 Asignar empresa
               </Menu.Item>
+              <SubMenu key="11" title={<FormattedMessage id="header.intranet" />}>
+                 <Menu.Item key='11.1' onClick={()=> router.push({ pathname: "/intranet/groups" }) }>
+                  <FormattedMessage id="header.groups" />
+                </Menu.Item>
+              </SubMenu>
+             
             </>
           ) : null}
           <div
