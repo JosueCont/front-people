@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FormattedMessage} from 'react-intl'
 import MainLayout from "../../../layout/MainLayout";
+import FormGroup from '../../../components/intranet/FormGroup'
 import {
     Row,
     Col,
@@ -8,6 +9,7 @@ import {
     Breadcrumb,
     Button,
     Form,
+    Modal,
     Input,
     Select,
     Tooltip,
@@ -25,6 +27,20 @@ const GroupView =()=>{
     const { Column } = Table;
     const [groups,setGroups] = useState(null)
     const [loading, setLoading] = useState(false)
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
 
     useEffect(()=>{
 
@@ -67,6 +83,13 @@ const GroupView =()=>{
         <Breadcrumb.Item><FormattedMessage defaultMessage="Grupos"  id="header.groups" /></Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
+      <Button type="primary" onClick={showModal}>
+        + Agregar nuevo
+      </Button>
+
+      <Modal title="Agregar grupo" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+         <FormGroup/>
+      </Modal>
 
         <Table
             dataSource={groups}
