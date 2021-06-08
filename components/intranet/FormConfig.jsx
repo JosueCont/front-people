@@ -48,9 +48,6 @@ const FormConfig = (props) => {
 
     const [autoCompleteResult, setAutoCompleteResult] = useState([]);
 
-    const cols = {
-        padding: 10
-    };
     const getBase64 = (img, callback) => {
         const reader = new FileReader();
         reader.addEventListener('load', () => callback(reader.result));
@@ -77,7 +74,6 @@ const FormConfig = (props) => {
         }
     };
 
-
     useEffect(() => {
         getDataInfo()
     }, [props.config]);
@@ -91,10 +87,12 @@ const FormConfig = (props) => {
                 primaryColor: props.config.intranet_primary_color,
                 secondaryColor: props.config.intranet_secondary_color,
                 intranet_enable_post_reaction: props.config.intranet_enable_post_reaction !== null ? props.config.intranet_enable_post_reaction.map((item) => {
-                    console.log(item.id)
-                    return item.id;
+                    return item;
                 }) : [],
             })
+            if (props.config.intranet_logo) {
+                setPhoto(props.config.intranet_logo)
+            }
         }
     };
 
@@ -120,14 +118,16 @@ const FormConfig = (props) => {
     };
 
     const saveConfig = (data) => {
-        let params = new FormData();
-        params.append("intranet_name", data.nameIntranet);
-        params.append("intranet_enabled", data.accessIntranet === true ? true : false);
-        params.append("intranet_primary_color", data.primaryColor ? data.primaryColor : "#000");
-        params.append("intranet_secondary_color", data.secondaryColor ? data.secondaryColor : "#000");
-        if (data.intranet_enable_post_reaction.length>0){
-            params.append("intranet_enable_post_reaction", data.intranet_enable_post_reaction?data.intranet_enable_post_reaction:null);
+
+
+        let jsoForm={
+            intranet_name:data.nameIntranet,
+            intranet_enabled: data.accessIntranet === true ? true : false,
+            intranet_primary_color:data.primaryColor ? data.primaryColor : "#000",
+            intranet_secondary_color:data.secondaryColor ? data.secondaryColor : "#000",
+            intranet_enable_post_reaction:data.intranet_enable_post_reaction.length>0 ? data.intranet_enable_post_reaction:null,
         }
+        let params = new FormData();
         let image = data.image ? data.image.file.originFileObj : "";
 
         if (image) {
@@ -138,15 +138,25 @@ const FormConfig = (props) => {
 
         if (props.config) {
             //update
-            props.save(params, "update", props.config.id)
+            props.save(jsoForm, "update", props.config.id)
+            if (image) {
+                params.append("intranet_logo", image);
+                props.saveImage(params,  "update", props.config.id)
+            }
         } else {
             //add
-            props.save(params, "add")
+            props.save(jsoForm, "add")
+            if (image) {
+                params.append("intranet_logo", image);
+                props.saveImage(params, "add")
+
+            }
         }
     };
 
     return (<>
         <Layout className="site-layout-background">
+            <Spin spinning={props.loading}>
             <Form
                 layout={"vertical"}
                 form={formConfigIntranet}
@@ -197,40 +207,52 @@ const FormConfig = (props) => {
                     <Col lg={6} xs={22} offset={1}>
                         <Form.Item label="Imagen de intranet" name="image"
                                    labelAlign={"left"}>
-                            <Upload
-                                name="avatar"
-                                listType="picture-card"
-                                showUploadList={false}
-                                beforeUpload={beforeUpload}
-                                onChange={upImage}
-                            >{photo ? (
-                                <div
-                                    className="frontImage"
-                                    style={
-                                        photo
-                                            ? {
-                                                width: "190px",
-                                                height: "190px",
-                                                display: "flex",
-                                                flexWrap: "wrap",
-                                                textAlign: "center",
-                                                alignContent: "center",
+
+
+                                    <Upload
+                                        name="avatar"
+                                        listType="picture-card"
+                                        showUploadList={false}
+                                        beforeUpload={beforeUpload}
+                                        onChange={upImage}
+                                    >{
+
+                                        props.loadingImg ?
+                                            <div>
+                                                {props.loadingImg  && <LoadingOutlined/>}
+                                                <div style={{marginTop: 8}}>Cargar</div>
+                                            </div>
+                                            :
+                                        photo ? (
+                                        <div
+                                            className="frontImage"
+                                            style={
+                                                photo
+                                                    ? {
+                                                        width: "190px",
+                                                        height: "190px",
+                                                        display: "flex",
+                                                        flexWrap: "wrap",
+                                                        textAlign: "center",
+                                                        alignContent: "center",
+                                                    }
+                                                    : {}
                                             }
-                                            : {}
-                                    }
-                                >
-                                    <img
-                                        className="img"
-                                        src={photo}
-                                        alt="avatar"
-                                        preview={false}
-                                        style={{width: 100}}
-                                    />
-                                </div>
-                            ) : (
-                                uploadButton
-                            )}
-                            </Upload>
+                                        >
+                                            <img
+                                                className="img"
+                                                src={photo}
+                                                alt="avatar"
+                                                preview={false}
+                                                style={{width: 100}}
+                                            />
+                                        </div>
+                                    ) : (
+                                        uploadButton
+                                    )}
+                                    </Upload>
+
+
                         </Form.Item>
                     </Col>
                     <Col lg={6} xs={22} offset={1}>
@@ -261,6 +283,7 @@ const FormConfig = (props) => {
                     </Col>
                 </Row>
             </Form>
+            </Spin>
         </Layout>
     </>)
 };

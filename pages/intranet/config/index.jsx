@@ -11,33 +11,67 @@ import {API_URL} from "../../../config/config";
 const configIntranet = () => {
     const router = useRouter();
     const [config, setConfig] = useState(null);
+    const [loading, setLoading] = useState(null);
+    const [loadingImg, setLoadingImg] = useState(null);
 
     useEffect(() => {
         getConfig()
     }, [])
 
 
-    const getConfig = () => {
+
+
+    const getConfig = (image = false) => {
+        setLoading(true)
+        if (image){
+            setLoadingImg(true)
+        }
+        setLoadingImg(true)
         axios.get(API_URL + "/setup/site-configuration/").then(res => {
-                setConfig(res.data.results[0])
+                setConfig(res.data)
+                setLoading(false)
+                if (image) {
+                    setLoadingImg(false)
+                }
             }
         ).catch(e => {
             console.log(e)
+            setLoading(false)
+            setLoadingImg(false)
         })
     }
 
-    const saveData = (data,type,id=0) => {
+    const saveData = (data, type, id = 0) => {
 
-        if (type==="add"){
-            axios.post(API_URL + "/setup/site-configuration/",data).then(res => {
+        if (type === "add") {
+            axios.post(API_URL + "/setup/site-configuration/", data).then(res => {
                     getConfig()
-            }
+                }
             ).catch(e => {
                 console.log(e)
             })
-        }else {
-            axios.put(API_URL + `/setup/site-configuration/${id}/`,data).then(res => {
-                   getConfig()
+        } else {
+            axios.put(API_URL + `/setup/site-configuration/${id}/`, data).then(res => {
+                    getConfig()
+                }
+            ).catch(e => {
+                console.log(e)
+            })
+        }
+
+    }
+
+    const saveImage = (data, type, id = 0) => {
+        if (type === "add") {
+            axios.post(API_URL + "/setup/site-configuration/", data).then(res => {
+                    getConfig(true)
+                }
+            ).catch(e => {
+                console.log(e)
+            })
+        } else {
+            axios.put(API_URL + `/setup/site-configuration/${id}/`, data).then(res => {
+                    getConfig(true)
                 }
             ).catch(e => {
                 console.log(e)
@@ -63,7 +97,7 @@ const configIntranet = () => {
                 className="site-layout-background"
                 style={{padding: 24, minHeight: 380, height: "100%"}}
             >
-                <FormConfig config={config} save={saveData}/>
+                <FormConfig config={config} save={saveData} saveImage={saveImage} loadingImg={loadingImg} loading={loading}/>
             </div>
         </MainLayout>
     )
