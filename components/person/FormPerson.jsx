@@ -54,8 +54,10 @@ const FormPerson = (props) => {
       "Content-Type": "application/json",
     };
 
+    let company = `?company=${nodeId}`;
+
     /////PERMSS GROUPS
-    Axios.get(LOGIN_URL + "/group/list/", {
+    Axios.get(LOGIN_URL + "/group/list/"+company, {
       headers: headers,
     })
       .then((response) => {

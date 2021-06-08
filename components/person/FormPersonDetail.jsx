@@ -301,15 +301,16 @@ const personDetailForm = () => {
     setPermissions(perms);
   };
 
+
   /////GET DATA SELCTS
   const getValueSelects = async (id) => {
     const headers = {
       "client-id": APP_ID,
       "Content-Type": "application/json",
     };
-
+    let company = `?company=${nodeId}`;
     ///GROUPS
-    Axios.get(LOGIN_URL + "/group/list/", {
+    Axios.get(LOGIN_URL + `/group/list/`+ company, {
       headers: headers,
     })
       .then((response) => {
@@ -1971,7 +1972,6 @@ const personDetailForm = () => {
                                           height: "190px",
                                           display: "flex",
                                           flexWrap: "wrap",
-                                          alignContent: "center",
                                           textAlign: "center",
                                           alignContent: "center",
                                         }
