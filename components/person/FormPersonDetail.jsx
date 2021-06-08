@@ -1971,7 +1971,6 @@ const personDetailForm = () => {
                                           height: "190px",
                                           display: "flex",
                                           flexWrap: "wrap",
-                                          alignContent: "center",
                                           textAlign: "center",
                                           alignContent: "center",
                                         }

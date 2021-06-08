@@ -13,33 +13,45 @@ import {
     Input,
     Select,
     Tooltip,
-  } from "antd";
+ Popconfirm, message
+} from "antd";
   import {
     EditOutlined,
     EyeOutlined,
+      DeleteOutlined,
+      QuestionCircleOutlined,
   } from "@ant-design/icons";
   import axiosApi from "../../../libs/axiosApi";
   import Axios from 'axios'
   import { API_URL } from "../../../config/config";
+import DetailGroup from "../../../components/intranet/DetailGroup";
+import {useRouter} from "next/router";
+import {withAuthSync} from "../../../libs/auth";
 
 
 const GroupView =()=>{
+    const router = useRouter();
+
     const { Column } = Table;
     const [groups,setGroups] = useState(null)
     const [loading, setLoading] = useState(false)
 
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [edit, setEdit] = useState(false);
+    const [group,setGroup] = useState({})
+    const [isDetail, setIsDetail] = useState(false);
+
+
 
     const showModal = () => {
+        setEdit(false)
         setIsModalVisible(true);
     };
 
-    const handleOk = () => {
-        setIsModalVisible(false);
-    };
 
     const handleCancel = () => {
         setIsModalVisible(false);
+        getGroups()
     };
 
     useEffect(()=>{
@@ -50,10 +62,24 @@ const GroupView =()=>{
 
     const goToDetails=(group)=>{
         console.log('detail',group)
+        setGroup(group)
+        setIsDetail(true)
     }
 
     const goToEdit=(group)=>{
+        setEdit(true)
+        setGroup(group)
+        setIsModalVisible(true)
         console.log('edit',group)
+    }
+
+    function confirmDelete(group) {
+       Axios.delete(API_URL+`/intranet/group/${group.id}/`) .then(res=>{
+               getGroups()
+               message.success(''+group.name+" fue eliminado");
+       }).catch(e=>{
+
+       })
     }
 
     const getGroups=async()=>{
@@ -76,7 +102,7 @@ const GroupView =()=>{
         <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
+          onClick={() => router.push({ pathname: "/home" })}
         >
           <FormattedMessage defaultMessage="Inicio"  id="web.init" />
         </Breadcrumb.Item>
@@ -87,9 +113,14 @@ const GroupView =()=>{
         + Agregar nuevo
       </Button>
 
-      <Modal title="Agregar grupo" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-         <FormGroup/>
-      </Modal>
+          {
+              isModalVisible &&
+              <FormGroup isEdit={edit} group={group} visible={isModalVisible} close={handleCancel}  />
+          }
+          {
+              isDetail &&
+                  <DetailGroup group={group} visible={isDetail} close={setIsDetail}/>
+          }
 
         <Table
             dataSource={groups}
@@ -103,17 +134,17 @@ const GroupView =()=>{
                 render={(image) =>
                    image?<img src={image} style={{width:100}} />:'N/A'
                 }
-            ></Column>
+            />
             <Column
                     title="Nombre"
                     dataIndex="name"
                     key="name"
-                  ></Column>
+                  />
                   <Column
                     title="Descripción"
                     dataIndex="description"
                     key="description"
-                  ></Column>
+                  />
                   <Column
                     title="Acciones"
                     key="actions"
@@ -129,13 +160,24 @@ const GroupView =()=>{
                             onClick={()=> goToEdit(record)}
                             key={"edit_" + record.id}
                           />
-                        
+
+
+                          <Popconfirm title={"¿Deseas eliminar "+record.name+"?"}
+                                      okText="Aceptar"
+                                      cancelText="Cancelar"
+                                      onConfirm={()=>confirmDelete(record)} icon={<QuestionCircleOutlined style={{ color: 'red' }} />}>
+                              <DeleteOutlined
+                                  className="icon_actions"
+                                  key={"delete_" + record.id}
+                              />
+                          </Popconfirm>
+
+
                       </>
                     )}
-                  ></Column>
+                  />
         </Table>
       </div>
     </MainLayout>
 }
-
-export default GroupView
+export default withAuthSync(GroupView);

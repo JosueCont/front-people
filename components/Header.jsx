@@ -224,6 +224,12 @@ const headerCustom = ({ hideMenu, ...props }) => {
                  <Menu.Item key='11.1' onClick={()=> router.push({ pathname: "/intranet/groups" }) }>
                   <FormattedMessage id="header.groups" />
                 </Menu.Item>
+                  <Menu.Item key='11.2' onClick={()=> router.push({ pathname: "/intranet/reactions" }) }>
+                      <FormattedMessage id="header.reactions" />
+                  </Menu.Item>
+                  <Menu.Item key='11.3' onClick={()=> router.push({ pathname: "/intranet/config" }) }>
+                      <FormattedMessage id="header.config" />
+                  </Menu.Item>
               </SubMenu>
              
             </>
