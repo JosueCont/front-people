@@ -195,7 +195,7 @@ const FormConfig = (props) => {
                     </Col>
 
                     <Col lg={6} xs={22} offset={1}>
-                        <Form.Item label="Imagen de grupo" name="image"
+                        <Form.Item label="Imagen de intranet" name="image"
                                    labelAlign={"left"}>
                             <Upload
                                 name="avatar"
