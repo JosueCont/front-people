@@ -175,14 +175,14 @@ const FormConfig = (props) => {
                     <Col lg={6} xs={22} offset={1}>
                         <Form.Item
                             name="primaryColor"
-                            label="Intranet primary color"
+                            label="Color primario de intranet"
                         >
                             <Input type={"color"}/>
                         </Form.Item>
                     </Col>
                     <Col lg={6} xs={22} offset={1}>
                         <Form.Item
-                            label="Intranet secondary color"
+                            label="Color secundario de intranet"
                             name='secondaryColor'
                         >
                             <Input type={"color"}/>
