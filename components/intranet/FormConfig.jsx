@@ -37,7 +37,9 @@ const beforeUpload = (file) => {
 
 const FormConfig = (props) => {
     const [formConfigIntranet] = Form.useForm();
-    const [photo, setPhoto] = useState(null);
+    const [photo, setPhoto] = useState(props.getImage ? props.getImage+"?"+new Date():null);
+    const [imageUpdate, setImageUpdate] = useState(null);
+
     const [loading, setLoading] = useState(false);
 
 
@@ -69,6 +71,7 @@ const FormConfig = (props) => {
         if (info.file.status === 'done') {
             getBase64(info.file.originFileObj, (imageUrl) => {
                 setPhoto(imageUrl)
+                saveImages(info.file.originFileObj)
                 setLoading(false)
             });
         }
@@ -91,7 +94,7 @@ const FormConfig = (props) => {
                 }) : [],
             })
             if (props.config.intranet_logo) {
-                setPhoto(props.config.intranet_logo)
+                setPhoto(props.config.intranet_logo+"?"+new Date())
             }
         }
     };
@@ -118,8 +121,6 @@ const FormConfig = (props) => {
     };
 
     const saveConfig = (data) => {
-
-
         let jsoForm={
             intranet_name:data.nameIntranet,
             intranet_enabled: data.accessIntranet === true ? true : false,
@@ -139,20 +140,37 @@ const FormConfig = (props) => {
         if (props.config) {
             //update
             props.save(jsoForm, "update", props.config.id)
-            if (image) {
+           /* if (image) {
                 params.append("intranet_logo", image);
                 props.saveImage(params,  "update", props.config.id)
-            }
+            }*/
         } else {
             //add
             props.save(jsoForm, "add")
-            if (image) {
+           /* if (image) {
                 params.append("intranet_logo", image);
                 props.saveImage(params, "add")
 
-            }
+            }*/
         }
     };
+    const saveImages=(image)=>{
+        let params = new FormData();
+        let imageSend = image ?image : "";
+        if (props.config) {
+            //update
+            if (imageSend) {
+                params.append("intranet_logo", imageSend);
+            }
+            props.saveImage(params, "update", props.config.id)
+        } else {
+            //add
+            if (image) {
+                params.append("intranet_logo", imageSend);
+                props.saveImage(params, "add")
+            }
+        }
+    }
 
     return (<>
         <Layout className="site-layout-background">
@@ -207,8 +225,6 @@ const FormConfig = (props) => {
                     <Col lg={6} xs={22} offset={1}>
                         <Form.Item label="Imagen de intranet" name="image"
                                    labelAlign={"left"}>
-
-
                                     <Upload
                                         name="avatar"
                                         listType="picture-card"
@@ -216,13 +232,6 @@ const FormConfig = (props) => {
                                         beforeUpload={beforeUpload}
                                         onChange={upImage}
                                     >{
-
-                                        props.loadingImg ?
-                                            <div>
-                                                {props.loadingImg  && <LoadingOutlined/>}
-                                                <div style={{marginTop: 8}}>Cargar</div>
-                                            </div>
-                                            :
                                         photo ? (
                                         <div
                                             className="frontImage"

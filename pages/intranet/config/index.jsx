@@ -12,27 +12,19 @@ const configIntranet = () => {
     const router = useRouter();
     const [config, setConfig] = useState(null);
     const [loading, setLoading] = useState(null);
-    const [loadingImg, setLoadingImg] = useState(null);
+    const [getImage, setImage] = useState(null);
 
     useEffect(() => {
         getConfig()
     }, [])
 
 
-
-
-    const getConfig = (image = false) => {
+    const getConfig = () => {
         setLoading(true)
-        if (image){
-            setLoadingImg(true)
-        }
-        setLoadingImg(true)
+
         axios.get(API_URL + "/setup/site-configuration/").then(res => {
                 setConfig(res.data)
                 setLoading(false)
-                if (image) {
-                    setLoadingImg(false)
-                }
             }
         ).catch(e => {
             console.log(e)
@@ -64,24 +56,27 @@ const configIntranet = () => {
     const saveImage = (data, type, id = 0) => {
         if (type === "add") {
             axios.post(API_URL + "/setup/site-configuration/", data).then(res => {
-                    getConfig(true)
+                    if (res.data.intranet_logo) {
+                        setImage(res.data.intranet_logo)
+                    }
                 }
             ).catch(e => {
                 console.log(e)
             })
         } else {
             axios.put(API_URL + `/setup/site-configuration/${id}/`, data).then(res => {
-                    getConfig(true)
+                    if (res.data.intranet_logo) {
+                        setImage(res.data.intranet_logo)
+                    }
                 }
             ).catch(e => {
                 console.log(e)
             })
         }
-
     }
 
     return (
-        <MainLayout currentKey="11.3">
+        <MainLayout currentKey="11.2">
             <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
                 <Breadcrumb.Item
                     className={"pointer"}
@@ -97,7 +92,7 @@ const configIntranet = () => {
                 className="site-layout-background"
                 style={{padding: 24, minHeight: 380, height: "100%"}}
             >
-                <FormConfig config={config} save={saveData} saveImage={saveImage} loadingImg={loadingImg} loading={loading}/>
+                <FormConfig config={config} save={saveData} saveImage={saveImage} getImage={getImage} loading={loading}/>
             </div>
         </MainLayout>
     )

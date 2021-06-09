@@ -3,6 +3,5 @@ export const enus = {
     'home.import_people':'Import people',
     'header.intranet':'Intranet',
     'header.groups':'Groups',
-    'header.reactions':'Reactions',
     'header.config':'Configuration'
 }
