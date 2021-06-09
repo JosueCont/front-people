@@ -45,6 +45,7 @@ import { userCompanyId, userCompanyName } from "../../libs/auth";
 const { Content } = Layout;
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
+import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 const personDetailForm = () => {
   const { TabPane } = Tabs;
@@ -123,6 +124,8 @@ const personDetailForm = () => {
 
   /////STATE DATE
   const [birthDate, setBirthDate] = useState("");
+  const [dateIngPlatform, setDateIngPlatform] = useState("");
+
   const [birthDateFam, setBirthDateFam] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
   const [dateTraining, setDateTraining] = useState("");
@@ -222,6 +225,11 @@ const personDetailForm = () => {
   const onChangeBirthDate = (date, dateString) => {
     setBirthDate(dateString);
   };
+
+  const onChangeIngPlatform = (date, dateString) => {
+    setDateIngPlatform(dateString);
+  };
+
   const onChangeDateAdmission = (date, dateString) => {
     setDateAdmission(dateString);
   };
@@ -454,6 +462,8 @@ const personDetailForm = () => {
 
   ////PERSON
   const onFinishPerson = (value) => {
+    if (dateIngPlatform) value.register_date = dateIngPlatform;
+    else delete value["register_date"];
     if (birthDate) value.birth_date = birthDate;
     else delete value["birth_date"];
     if (dateAdmission) value.date_of_admission = dateAdmission;
@@ -483,6 +493,7 @@ const personDetailForm = () => {
           civil_status: response.data.civil_status,
           report_to: response.data.report_to,
           periodicity: response.data.periodicity,
+          intranet_access:response.data.intranet_access
         });
         if (response.data.person_type)
           formPerson.setFieldsValue({
@@ -497,6 +508,11 @@ const personDetailForm = () => {
         if (response.data.birth_date)
           formPerson.setFieldsValue({
             birth_date: moment(response.data.birth_date),
+          });
+
+        if (response.data.register_date)
+          formPerson.setFieldsValue({
+            register_date: moment(response.data.register_date),
           });
 
         if (response.data.job) {
@@ -598,6 +614,7 @@ const personDetailForm = () => {
           civil_status: response.data.civil_status,
           report_to: response.data.report_to,
           periodicity: response.data.periodicity,
+          intranet_access:response.data.intranet_access
         });
         if (response.data.person_type)
           formPerson.setFieldsValue({
@@ -612,7 +629,13 @@ const personDetailForm = () => {
             birth_date: moment(response.data.birth_date),
           });
 
+        if (response.data.register_date)
+          formPerson.setFieldsValue({
+            register_date: moment(response.data.register_date),
+          });
+
         setBirthDate(response.data.birth_date);
+        setDateIngPlatform(response.data.register_date);
         setIsActive(response.data.is_active);
         if (response.data.photo) setPhoto(response.data.photo);
         setLoading(false);
@@ -1858,6 +1881,28 @@ const personDetailForm = () => {
                           />
                         </Form.Item>
                       </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item
+                            name="register_date"
+                            label="Fecha de ingreso a la plataforma"
+                        >
+                          <DatePicker
+                              style={{ width: "100%" }}
+                              onChange={onChangeIngPlatform}
+                              moment={"YYYY-MM-DD"}
+                              placeholder="Fecha de ingreso a la plataforma"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item name="intranet_access" label="Acceso a la intranet" valuePropName="checked">
+                          <Switch
+                              checkedChildren={<CheckOutlined />}
+                              unCheckedChildren={<CloseOutlined />}
+                          />
+                        </Form.Item>
+                      </Col>
+
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="report_to" label="Reporta a ">
                           <Select options={people} />

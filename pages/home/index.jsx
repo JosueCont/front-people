@@ -121,6 +121,7 @@ const homeScreen = () => {
           item.key = i;
           if (!item.photo) item.photo = defaulPhoto;
         });
+        console.log("personas:::",response.data)
         setLoading(false);
         setPerson(response.data);
       })
@@ -235,10 +236,34 @@ const homeScreen = () => {
         );
       },
     },
+
+    {
+      title: "Accesos a intranet",
+      render: (item) => {
+        return (
+            <>
+              <Switch
+                  disabled={ true}
+                  defaultChecked={item.intranet_access}
+                  checkedChildren="Si"
+                  unCheckedChildren="No"
+              />
+            </>
+        );
+      },
+    },
+
     {
       title: "Fecha de ingreso",
       render: (item) => {
         return <div>{item.date_of_admission}</div>;
+      },
+    },
+
+    {
+      title: "Fecha de ingreso a la plataforma",
+      render: (item) => {
+        return <div>{item.register_date}</div>;
       },
     },
     {
