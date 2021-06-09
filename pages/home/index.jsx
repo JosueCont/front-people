@@ -516,7 +516,8 @@ const homeScreen = () => {
   };
   const importPersonFile = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
-    if (extension == "xlsx") {
+    if (extension === "xlsx") {
+      alert(extension)
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
       formData.append("node_id", nodeId);
@@ -534,7 +535,7 @@ const homeScreen = () => {
           console.log(e);
         });
     } else {
-      message.error("Formato incorrecto, suba un archivo .csv");
+      message.error("Formato incorrecto, suba un archivo .xlsx");
     }
   };
 
