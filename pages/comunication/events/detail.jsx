@@ -23,7 +23,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
-import { withAuthSync } from "../../../libs/auth";
+import {userCompanyId, withAuthSync} from "../../../libs/auth";
 import axios from "axios";
 import TextArea from "antd/lib/input/TextArea";
 
@@ -46,6 +46,9 @@ const addEvent = () => {
   const [edit, setEdit] = useState(false);
   const[description,setDescription] = useState(null);
 
+  let nodeId = userCompanyId();
+
+
   const onChangeDate = (value) => {
     setDateEvent(moment(value).format("YYYY-MM-DD"));
   };
@@ -56,8 +59,10 @@ const addEvent = () => {
   const selectNodeGests = (value) => {
     setValue(value);
     if (value === 1) {
+      let data = nodes[0].value
       form.setFieldsValue({
         guests: [],
+        node:data
       });
     } else {
       form.setFieldsValue({
@@ -68,23 +73,21 @@ const addEvent = () => {
 
   const getPersons = async () => {
     axios
-      .get(API_URL + `/person/person/`)
-      .then((response) => {
-        let data = response.data.results;
-        data = data.map((a) => {
-          return { label: a.first_name + " " + a.flast_name, value: a.id };
+        .post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
+        .then((response) => {
+          response.data = response.data.map((a) => {
+            return { label: a.first_name + " " + a.flast_name, value: a.id };
+          });
+          setPersons(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
         });
-        setPersons(data);
-      })
-
-      .catch((e) => {
-        console.log(e);
-      });
   };
 
   const getNodes = async () => {
     axios
-      .get(API_URL + `/business/node/`)
+      .get(API_URL + `/business/node/?id=${nodeId}`)
       .then((response) => {
         let data = response.data.results;
         data = data.map((a) => {

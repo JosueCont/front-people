@@ -121,6 +121,7 @@ const homeScreen = () => {
           item.key = i;
           if (!item.photo) item.photo = defaulPhoto;
         });
+        console.log("personas:::",response.data)
         setLoading(false);
         setPerson(response.data);
       })
@@ -235,10 +236,34 @@ const homeScreen = () => {
         );
       },
     },
+
+    {
+      title: "Accesos a intranet",
+      render: (item) => {
+        return (
+            <>
+              <Switch
+                  disabled={ true}
+                  defaultChecked={item.intranet_access}
+                  checkedChildren="Si"
+                  unCheckedChildren="No"
+              />
+            </>
+        );
+      },
+    },
+
     {
       title: "Fecha de ingreso",
       render: (item) => {
         return <div>{item.date_of_admission}</div>;
+      },
+    },
+
+    {
+      title: "Fecha de ingreso a la plataforma",
+      render: (item) => {
+        return <div>{item.register_date}</div>;
       },
     },
     {
@@ -491,7 +516,8 @@ const homeScreen = () => {
   };
   const importPersonFile = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
-    if (extension == "xlsx") {
+    if (extension === "xlsx") {
+      alert(extension)
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
       formData.append("node_id", nodeId);
@@ -509,7 +535,7 @@ const homeScreen = () => {
           console.log(e);
         });
     } else {
-      message.error("Formato incorrecto, suba un archivo .csv");
+      message.error("Formato incorrecto, suba un archivo .xlsx");
     }
   };
 
