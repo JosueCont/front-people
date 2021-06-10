@@ -35,7 +35,7 @@ import {
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
-import { withAuthSync, userCompanyId } from "../../libs/auth";
+import {withAuthSync, userCompanyId, getAccessIntranet} from "../../libs/auth";
 
 const { Content } = Layout;
 import Link from "next/link";
@@ -43,6 +43,10 @@ import jsCookie from "js-cookie";
 
 const homeScreen = () => {
   const { Text } = Typography;
+
+  const [columns2, setColumns2] = useState([]);
+  const [valRefreshColumns, setValRefreshColumns] = useState(false);
+
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(true);
@@ -63,6 +67,8 @@ const homeScreen = () => {
   const [permissions, setPermissions] = useState({});
   let urlFilter = "/person/person/?";
   let nodeId = userCompanyId();
+  let accessIntranet = getAccessIntranet();
+
   const [listUserCompanies, setListUserCompanies] = useState("");
   const [showModalCompanies, setShowModalCompanies] = useState(false);
 
@@ -201,7 +207,7 @@ const homeScreen = () => {
   };
 
   /////TABLE PERSON
-  const columns = [
+  let columns = [
     {
       title: "Foto",
       render: (item) => {
@@ -236,9 +242,8 @@ const homeScreen = () => {
         );
       },
     },
-
     {
-      title: "Accesos a intranet",
+    title: "Acceso a intranet",
       render: (item) => {
         return (
             <>
@@ -337,6 +342,25 @@ const homeScreen = () => {
       },
     },
   ];
+
+  useEffect(()=>{
+    if (accessIntranet==="false") {
+      columns = removeItemFromArr(columns,"Acceso a intranet")
+      setValRefreshColumns(true)
+    }else {
+      setValRefreshColumns(true)
+    }
+    console.log("::::",columns)
+    setColumns2(columns)
+  },[valRefreshColumns])
+
+  function removeItemFromArr( arr, item ) {
+    return  arr.filter( function( e ) {
+      if (e.title !== item){
+        return e.title
+      }
+    } );
+  };
 
   const rowSelectionPerson = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -670,6 +694,7 @@ const homeScreen = () => {
 
   return (
     <MainLayout currentKey="1">
+
       <Breadcrumb>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Personas</Breadcrumb.Item>
@@ -835,7 +860,7 @@ const homeScreen = () => {
             <Table
               className={"mainTable"}
               size="small"
-              columns={columns}
+              columns={columns2}
               dataSource={person}
               loading={loading}
               rowSelection={rowSelectionPerson}

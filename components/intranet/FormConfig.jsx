@@ -86,7 +86,7 @@ const FormConfig = (props) => {
         if (props.config) {
             formConfigIntranet.setFieldsValue({
                 nameIntranet: props.config.intranet_name,
-                accessIntranet: props.config.intranet_enabled,
+               /// accessIntranet: props.config.intranet_enabled,
                 primaryColor: props.config.intranet_primary_color,
                 secondaryColor: props.config.intranet_secondary_color,
                 intranet_enable_post_reaction: props.config.intranet_enable_post_reaction !== null ? props.config.intranet_enable_post_reaction.map((item) => {
@@ -123,7 +123,7 @@ const FormConfig = (props) => {
     const saveConfig = (data) => {
         let jsoForm={
             intranet_name:data.nameIntranet,
-            intranet_enabled: data.accessIntranet === true ? true : false,
+            ///intranet_enabled: data.accessIntranet === true ? true : false,
             intranet_primary_color:data.primaryColor ? data.primaryColor : "#000",
             intranet_secondary_color:data.secondaryColor ? data.secondaryColor : "#000",
             intranet_enable_post_reaction:data.intranet_enable_post_reaction.length>0 ? data.intranet_enable_post_reaction:null,
@@ -211,11 +211,11 @@ const FormConfig = (props) => {
                             <Input type={"color"}/>
                         </Form.Item>
                     </Col>
-                    <Col lg={6} xs={22} offset={1}>
+                   {/* <Col lg={6} xs={22} offset={1}>
                         <Form.Item name="accessIntranet" label="Acceso a la intranet" valuePropName="checked">
                             <Switch/>
                         </Form.Item>
-                    </Col>
+                    </Col>*/}
 
                     <Col lg={6} xs={22} offset={1}>
                         <Form.Item label="Imagen de intranet" name="image"
