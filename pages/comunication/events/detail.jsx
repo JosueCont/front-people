@@ -154,7 +154,7 @@ const addEvent = () => {
     datos.date = dateEvent;
     datos.start_time = startTime;
     datos.end_time = endTime;
-    datos.description = description;
+    datos.description = values.description;
     if (value === 1) {
       datos.node = values.node;
       datos.guests = [];
