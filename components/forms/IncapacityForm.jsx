@@ -129,7 +129,7 @@ const Incapacityform = (props) => {
         job:
           props.details.collaborator &&
           props.details.collaborator.job &&
-          props.details.collaborator.job.length > 0
+          props.details.collaborator.job
             ? props.details.collaborator.job.name
             : null,
       });

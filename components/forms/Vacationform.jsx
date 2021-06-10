@@ -32,7 +32,6 @@ const Vacationform = (props) => {
 
   const [allPersons, setAllPersons] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
-
   /* const [person, setPerson] = useState(null); */
   /* const [job, setJob] = useState(null); */
   /* const [dateOfAdmission, setDateOfAdmission] = useState(null); */
@@ -68,7 +67,19 @@ const Vacationform = (props) => {
 
   useEffect(() => {
     if (props.details) {
+
+      if (props.details.collaborator.first_name) {
+        setFisrtName(props.details.collaborator.first_name);
+      }
+      if (props.details.collaborator && props.details.collaborator.flast_name) {
+        setLastName(props.details.collaborator.flast_name);
+      }
+
+      console.log(props.details)
       formVacation.setFieldsValue({
+        person: props.details.collaborator
+            ? props.details.collaborator.id
+            : null,
         khonnect_id: props.details.collaborator
           ? props.details.collaborator.khonnect_id
           : null,
@@ -106,6 +117,13 @@ const Vacationform = (props) => {
           job: props.details.collaborator.job.name,
         });
       }
+
+      if (props.details.collaborator && props.details.collaborator.job) {
+        formVacation.setFieldsValue({
+          job: props.details.collaborator.job.name,
+        });
+      }
+
       setUrlPhoto(
         props.details.collaborator && props.details.collaborator.photo
           ? props.details.collaborator.photo
@@ -122,7 +140,7 @@ const Vacationform = (props) => {
             Solicitud
           </Title>
         </Col>
-        <Col span="4">
+        <Col span={4}>
           {urlPhoto ? (
             <Image style={{ width: "80%" }} src={urlPhoto} />
           ) : (
