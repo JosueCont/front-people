@@ -105,9 +105,9 @@ const FormConfig = (props) => {
 
     const onWebsiteChange = (value) => {
         if (!value) {
-            setAutoCompleteResult([]);
+           // setAutoCompleteResult([]);
         } else {
-            setAutoCompleteResult(['.com', '.org', '.net'].map(domain => `${value}${domain}`));
+           /// setAutoCompleteResult(['.com', '.org', '.net'].map(domain => `${value}${domain}`));
         }
     };
 
@@ -187,14 +187,9 @@ const FormConfig = (props) => {
                                 {
                                     required: true,
                                     message: 'Nombre requerido',
-                                }
-                                ,
-                                {
-                                    pattern: /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
-                                    message: 'Nombre de intranet invalida',
                                 }]}
                             name="nameIntranet" label="Nombre de intranet">
-                            <AutoComplete name="nameIntranet" label="Nombre" options={websiteOptions}
+                            <AutoComplete name="nameIntranet" label="Nombre"
                                           onChange={onWebsiteChange}>
                                 <Input/>
                             </AutoComplete>
