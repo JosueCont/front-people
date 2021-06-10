@@ -45,11 +45,13 @@ const Permissionform = (props) => {
   const changePerson = (value) => {
     if (value) {
       let index = allPersons.find((data) => data.id === value);
-      if (index.job && index.job.length > 0) {
+      if (index.job) {
         formPermission.setFieldsValue({
           job: index.job.name,
         });
       }
+      setUrlPhoto(index.photo ? index.photo : null);
+
       setUrlPhoto(index.photo ? index.photo : null);
     } else {
       formPermission.setFieldsValue({
@@ -65,7 +67,6 @@ const Permissionform = (props) => {
         person: props.details.collaborator
           ? props.details.collaborator.id
           : null,
-        requested_days: props.details.days_requested,
         departure_date: props.details.departure_date
           ? moment(props.details.departure_date, "YYYY-MM-DD")
           : null,
@@ -140,7 +141,6 @@ const Permissionform = (props) => {
             name="person"
             labelCol={{ span: 9 }}
             labelAlign={"left"}
-            disabled={props.readOnly}
             onChange={changePerson}
             setAllPersons={setAllPersons}
           />

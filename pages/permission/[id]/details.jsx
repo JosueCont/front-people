@@ -114,7 +114,11 @@ const PermissionDetails = () => {
       status: statusID,
       khonnect_id: userId,
     };
-    if (statusID == 3) values.comment = message;
+    if (statusID === 3) {
+      if (message){
+        values.comment = message? message:"";
+      }
+    }
     let msg = "Solicitud de permiso aprobada";
     if (statusID === 3) {
       msg = "Solicitud de permiso rechazada";
@@ -189,7 +193,6 @@ const PermissionDetails = () => {
       <Modal
         title="Rechazar solicitud de permisos"
         visible={visibleModalReject}
-        onOk={() => changeStatus(3)}
         onCancel={rejectCancel}
         footer={[
           <Button
@@ -203,7 +206,7 @@ const PermissionDetails = () => {
             key="submit_modal"
             type="primary"
             loading={sending}
-            onClick={() => changeStatus(2)}
+            onClick={() => changeStatus(3)}
             style={{ padding: "0 50px", marginLeft: 15 }}
           >
             Aceptar y notificar

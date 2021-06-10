@@ -9,12 +9,13 @@ import {
   Select,
   message,
   Row,
-  Col,
+  Col, Switch,
 } from "antd";
 import Axios from "axios";
 import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
 import { useState, useEffect } from "react";
 import { userCompanyId, userCompanyName } from "../../libs/auth";
+import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 const FormPerson = (props) => {
   const [form] = Form.useForm();
@@ -22,6 +23,8 @@ const FormPerson = (props) => {
   const [personType, setPersonType] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [date, setDate] = useState("");
+  const [dateIngPlatform, setDateIngPlatform] = useState("");
+
   const [departments, setDepartments] = useState("");
   const [selectCompany, setselectCompany] = useState([]);
   let nodeId = userCompanyId();
@@ -35,6 +38,9 @@ const FormPerson = (props) => {
   const onFinish = (value) => {
     if (date !== "") {
       value.birth_date = date;
+    }
+    if (dateIngPlatform !== "") {
+      value.register_date = dateIngPlatform;
     }
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
@@ -54,8 +60,10 @@ const FormPerson = (props) => {
       "Content-Type": "application/json",
     };
 
+    let company = `?company=${nodeId}`;
+
     /////PERMSS GROUPS
-    Axios.get(LOGIN_URL + "/group/list/", {
+    Axios.get(LOGIN_URL + "/group/list/"+company, {
       headers: headers,
     })
       .then((response) => {
@@ -106,6 +114,7 @@ const FormPerson = (props) => {
   };
 
   const createPerson = (value) => {
+    console.log('params::',value)
     Axios.post(API_URL + `/person/person/`, value)
       .then((response) => {
         message.success("Agregado correctamente");
@@ -141,6 +150,10 @@ const FormPerson = (props) => {
 
   function onChange(date, dateString) {
     setDate(dateString);
+  }
+
+  const onChangeIngPlatform=(date, dateString)=> {
+    setDateIngPlatform(dateString);
   }
 
   const closeDialog = () => {
@@ -202,7 +215,11 @@ const FormPerson = (props) => {
           footer={null}
           width={"60%"}
         >
-          <Form onFinish={onFinish} form={form}>
+          <Form
+              initialValues={{
+                'intranet_access':false,
+              }}
+              onFinish={onFinish} form={form}>
             <Row>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item name="person_type">
@@ -290,7 +307,25 @@ const FormPerson = (props) => {
                   <Input.Password type="text" placeholder="Contraseña" />
                 </Form.Item>
               </Col>
-              <Col lg={23} xs={22} offset={1}>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item name="intranet_access" label="Acceso a la intranet" valuePropName="checked">
+                  <Switch
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item>
+                  <DatePicker
+                      style={{ width: "100%" }}
+                      onChange={onChangeIngPlatform}
+                      moment={"YYYY-MM-DD"}
+                      placeholder="Fecha de ingreso a la plataforma"
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleRequired]} name="groups">
                   <Select
                     options={groups}
