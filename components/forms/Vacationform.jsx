@@ -68,13 +68,6 @@ const Vacationform = (props) => {
   useEffect(() => {
     if (props.details) {
 
-      if (props.details.collaborator.first_name) {
-        setFisrtName(props.details.collaborator.first_name);
-      }
-      if (props.details.collaborator && props.details.collaborator.flast_name) {
-        setLastName(props.details.collaborator.flast_name);
-      }
-
       console.log(props.details)
       formVacation.setFieldsValue({
         person: props.details.collaborator
