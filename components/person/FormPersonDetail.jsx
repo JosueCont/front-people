@@ -488,6 +488,7 @@ const personDetailForm = () => {
           curp: response.data.curp,
           rfc: response.data.rfc,
           imss: response.data.imss,
+          code:response.data.code,
           is_active: response.data.is_active,
           photo: response.data.photo,
           civil_status: response.data.civil_status,
@@ -1892,6 +1893,12 @@ const personDetailForm = () => {
                               moment={"YYYY-MM-DD"}
                               placeholder="Fecha de ingreso a la plataforma"
                           />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item
+                            label="Número de empleado" name="code">
+                          <Input type="text" placeholder="Núm. empleado" />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
