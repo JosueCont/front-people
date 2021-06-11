@@ -276,6 +276,11 @@ const FormPerson = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
+                <Form.Item name="code">
+                  <Input type="text" placeholder="Núm. empleado" />
+                </Form.Item>
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
                   <Input type="email" placeholder="E-mail" />
                 </Form.Item>

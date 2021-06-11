@@ -203,6 +203,13 @@ const homeScreen = () => {
   /////TABLE PERSON
   const columns = [
     {
+    title: "Núm. Empleado",
+          render: (item) => {
+        return (
+            <div>{item.code ? item.code:""}</div>);
+      },
+    },
+    {
       title: "Foto",
       render: (item) => {
         return (
@@ -517,7 +524,6 @@ const homeScreen = () => {
   const importPersonFile = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
     if (extension === "xlsx") {
-      alert(extension)
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
       formData.append("node_id", nodeId);
@@ -554,6 +560,10 @@ const homeScreen = () => {
     if (value && value.flast_name !== undefined) {
       urlFilter = urlFilter + "flast_name=" + value.flast_name + "&";
       filters.flast_name = value.flast_name;
+    }
+    if (value && value.code !== undefined) {
+      urlFilter = urlFilter + "code=" + value.code + "&";
+      filters.code = value.code;
     }
     if (value && value.gender !== undefined && value.gender != 0) {
       urlFilter = urlFilter + "gender=" + value.gender + "&";
@@ -699,6 +709,19 @@ const homeScreen = () => {
                         />
                       </Form.Item>
                     </Col>
+
+                    <Col>
+                      <Form.Item name="code" label={"Núm. empleado"}>
+                        <Input
+                            allowClear={true}
+                            placeholder="Núm. empleado"
+                            style={{ width: 100 }}
+                        />
+                      </Form.Item>
+                    </Col>
+
+
+
                     <Col>
                       <Form.Item name="gender" label="Género">
                         <Select options={genders} placeholder="Todos" />
