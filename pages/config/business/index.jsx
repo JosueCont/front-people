@@ -671,7 +671,7 @@ const configBusiness = () => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Configuración general</Breadcrumb.Item>
+          <Breadcrumb.Item>Catálogos</Breadcrumb.Item>
         </Breadcrumb>
         <Content className="site-layout">
           <div style={{ padding: "1%", float: "right" }}></div>
