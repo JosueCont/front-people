@@ -122,6 +122,19 @@ export const userCompanyId = () => {
   }
 };
 
+
+export const getAccessIntranet = () => {
+  try {
+    let accessIntranet = sessionStorage.getItem("accessIntranet");
+    if (accessIntranet && accessIntranet !== "" && accessIntranet !== undefined)
+      return accessIntranet;
+    else null;
+  } catch (error) {
+    return null;
+  }
+};
+
+
 export const userCompanyName = () => {
   try {
     let name = sessionStorage.getItem("name");

@@ -87,6 +87,7 @@ const SelectCompany = () => {
   };
 
   const setCompanySelect = (item) => {
+    getConfig();
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.value);
     sessionStorage.setItem("name", item.name);
@@ -94,6 +95,15 @@ const SelectCompany = () => {
     if (company_id) useRouter.push("home");
     else message.error("Ocurrio un error, intente de nuevo.");
   };
+
+  const getConfig = () => {
+    Axios.get(API_URL + "/setup/site-configuration/").then(res => {
+          sessionStorage.setItem("accessIntranet", res.data.intranet_enabled)
+        }
+    ).catch(e => {
+      console.log(e)
+    })
+  }
 
   return (
     <>
