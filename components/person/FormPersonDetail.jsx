@@ -40,7 +40,7 @@ import Router from "next/router";
 import moment from "moment";
 import { LOGIN_URL, APP_ID } from "../../config/config";
 import jsCookie from "js-cookie";
-import { userCompanyId, userCompanyName } from "../../libs/auth";
+import {getAccessIntranet, userCompanyId, userCompanyName} from "../../libs/auth";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -64,6 +64,8 @@ const personDetailForm = () => {
   const [permissions, setPermissions] = useState({});
   const [khonnectId, setKhonnectId] = useState("");
   let nodeId = userCompanyId();
+  let accessIntranet = getAccessIntranet();
+
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -1804,6 +1806,9 @@ const personDetailForm = () => {
       });
   };
 
+    //accessIntranet = getAccessIntranet();
+
+
   return (
     <MainLayout currentKey="1">
       <Content className="site-layout">
@@ -1901,15 +1906,17 @@ const personDetailForm = () => {
                           <Input type="text" placeholder="Núm. empleado" />
                         </Form.Item>
                       </Col>
-                      <Col lg={7} xs={22} offset={1}>
-                        <Form.Item name="intranet_access" label="Acceso a la intranet" valuePropName="checked">
-                          <Switch
-                              checkedChildren={<CheckOutlined />}
-                              unCheckedChildren={<CloseOutlined />}
-                          />
-                        </Form.Item>
-                      </Col>
-
+                      {
+                        accessIntranet !=="false" &&
+                        <Col lg={7} xs={22} offset={1}>
+                          <Form.Item name="intranet_access" label="Acceso a la intranet" valuePropName="checked">
+                            <Switch
+                                checkedChildren={<CheckOutlined />}
+                                unCheckedChildren={<CloseOutlined />}
+                            />
+                          </Form.Item>
+                        </Col>
+                      }
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="report_to" label="Reporta a ">
                           <Select options={people} />

@@ -14,7 +14,7 @@ import {
 import Axios from "axios";
 import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
 import { useState, useEffect } from "react";
-import { userCompanyId, userCompanyName } from "../../libs/auth";
+import {getAccessIntranet, userCompanyId, userCompanyName} from "../../libs/auth";
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 const FormPerson = (props) => {
@@ -29,6 +29,8 @@ const FormPerson = (props) => {
   const [selectCompany, setselectCompany] = useState([]);
   let nodeId = userCompanyId();
   let nodePeople = userCompanyName();
+  let accessIntranet = getAccessIntranet();
+
 
   useEffect(() => {
     getValueSelects(nodeId);
@@ -312,14 +314,17 @@ const FormPerson = (props) => {
                   <Input.Password type="text" placeholder="Contraseña" />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="intranet_access" label="Acceso a la intranet" valuePropName="checked">
-                  <Switch
-                      checkedChildren={<CheckOutlined />}
-                      unCheckedChildren={<CloseOutlined />}
-                  />
-                </Form.Item>
-              </Col>
+              {
+                accessIntranet!=="false" &&
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item name="intranet_access" label="Acceso a la intranet" valuePropName="checked">
+                    <Switch
+                        checkedChildren={<CheckOutlined />}
+                        unCheckedChildren={<CloseOutlined />}
+                    />
+                  </Form.Item>
+                </Col>
+              }
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item>
                   <DatePicker
