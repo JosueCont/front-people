@@ -36,10 +36,10 @@ const HolidaysNew = () => {
       let data = repsonse.data;
       setConfig(data);
       form.setFieldsValue({
-        min_amount: parseInt(data.min_amount),
-        max_amount: parseInt(data.max_amount),
-        min_deadline: data.min_deadline,
-        max_deadline: data.max_deadline,
+        min_amount: data.min_amount ? parseInt(data.min_amount) : "",
+        max_amount: data.max_amount ? parseInt(data.max_amount) : "",
+        min_deadline: data.min_deadline ? data.min_deadline : "",
+        max_deadline: data.max_deadline ?  data.max_deadline : "",
       });
     } catch (error) {
       console.log(error);

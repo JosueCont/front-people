@@ -249,13 +249,13 @@ const StatisticsPayroll = () => {
               </Row>
             ) : (
               <>
+                <div className={"NoData"}></div>
                 <div
                   style={{ textAlign: "center", width: "100%", margin: "auto" }}
                 >
                   {" "}
-                  <h2>No se encontraron resultados</h2>
+                  <h3>No se encontraron resultados</h3>
                 </div>
-                <div className={"NoData"}></div>
               </>
             )}
           </Spin>

@@ -173,9 +173,11 @@ const SelectCompany = () => {
       render: (record) => {
         return showTable ? (
           <Checkbox
-            key={record.id}
-            checked={companiesUser.includes(record.id)}
-            onChange={(e) => setcompanyToArray(e.target.checked, record.id)}
+            key={record.value}
+            checked={companiesUser.includes(record.value)}
+            onChange={(e) => {
+              setcompanyToArray(e.target.checked, record.value)
+            }}
           />
         ) : null;
       },

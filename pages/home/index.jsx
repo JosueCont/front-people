@@ -35,7 +35,7 @@ import {
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
-import { withAuthSync, userCompanyId } from "../../libs/auth";
+import {withAuthSync, userCompanyId, getAccessIntranet} from "../../libs/auth";
 
 const { Content } = Layout;
 import Link from "next/link";
@@ -43,6 +43,10 @@ import jsCookie from "js-cookie";
 
 const homeScreen = () => {
   const { Text } = Typography;
+
+  const [columns2, setColumns2] = useState([]);
+  const [valRefreshColumns, setValRefreshColumns] = useState(false);
+
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(true);
@@ -63,6 +67,8 @@ const homeScreen = () => {
   const [permissions, setPermissions] = useState({});
   let urlFilter = "/person/person/?";
   let nodeId = userCompanyId();
+  let accessIntranet = getAccessIntranet();
+
   const [listUserCompanies, setListUserCompanies] = useState("");
   const [showModalCompanies, setShowModalCompanies] = useState(false);
 
@@ -121,8 +127,9 @@ const homeScreen = () => {
           item.key = i;
           if (!item.photo) item.photo = defaulPhoto;
         });
-        setPerson(response.data);
+        console.log("personas:::",response.data)
         setLoading(false);
+        setPerson(response.data);
       })
       .catch((e) => {
         setPerson([]);
@@ -132,12 +139,14 @@ const homeScreen = () => {
   };
 
   const deletePerson = () => {
+    setLoading(true);
     Axios.post(API_URL + `/person/person/delete_by_ids/`, {
       persons_id: idsDelete,
     })
       .then((response) => {
         setIdsDelete("");
         setModalDelete(false);
+        setPersonsToDelete([]);
         filterPersonName();
         setLoading(false);
         message.success("Eliminado correctamente.");
@@ -198,7 +207,14 @@ const homeScreen = () => {
   };
 
   /////TABLE PERSON
-  const columns = [
+  let columns = [
+    {
+    title: "Núm. Empleado",
+          render: (item) => {
+        return (
+            <div>{item.code ? item.code:""}</div>);
+      },
+    },
     {
       title: "Foto",
       render: (item) => {
@@ -234,9 +250,32 @@ const homeScreen = () => {
       },
     },
     {
+    title: "Acceso a intranet",
+      render: (item) => {
+        return (
+            <>
+              <Switch
+                  disabled={ true}
+                  defaultChecked={item.intranet_access}
+                  checkedChildren="Si"
+                  unCheckedChildren="No"
+              />
+            </>
+        );
+      },
+    },
+
+    {
       title: "Fecha de ingreso",
       render: (item) => {
         return <div>{item.date_of_admission}</div>;
+      },
+    },
+
+    {
+      title: "Fecha de ingreso a la plataforma",
+      render: (item) => {
+        return <div>{item.register_date}</div>;
       },
     },
     {
@@ -310,6 +349,25 @@ const homeScreen = () => {
       },
     },
   ];
+
+  useEffect(()=>{
+    if (accessIntranet==="false") {
+      columns = removeItemFromArr(columns,"Acceso a intranet")
+      setValRefreshColumns(true)
+    }else {
+      setValRefreshColumns(true)
+    }
+    console.log("::::",columns)
+    setColumns2(columns)
+  },[valRefreshColumns])
+
+  function removeItemFromArr( arr, item ) {
+    return  arr.filter( function( e ) {
+      if (e.title !== item){
+        return e.title
+      }
+    } );
+  };
 
   const rowSelectionPerson = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -489,12 +547,12 @@ const homeScreen = () => {
   };
   const importPersonFile = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
-    if (extension == "csv") {
+    if (extension === "xlsx") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
       formData.append("node_id", nodeId);
       setLoading(true);
-      Axios.post(API_URL + `/person/person/import_csv/`, formData)
+      Axios.post(API_URL + `/person/person/import_xls/`, formData)
         .then((response) => {
           setLoading(false);
           message.success("Excel importado correctamente.");
@@ -507,7 +565,7 @@ const homeScreen = () => {
           console.log(e);
         });
     } else {
-      message.error("Formato incorrecto, suba un archivo .csv");
+      message.error("Formato incorrecto, suba un archivo .xlsx");
     }
   };
 
@@ -526,6 +584,10 @@ const homeScreen = () => {
     if (value && value.flast_name !== undefined) {
       urlFilter = urlFilter + "flast_name=" + value.flast_name + "&";
       filters.flast_name = value.flast_name;
+    }
+    if (value && value.code !== undefined) {
+      urlFilter = urlFilter + "code=" + value.code + "&";
+      filters.code = value.code;
     }
     if (value && value.gender !== undefined && value.gender != 0) {
       urlFilter = urlFilter + "gender=" + value.gender + "&";
@@ -642,6 +704,7 @@ const homeScreen = () => {
 
   return (
     <MainLayout currentKey="1">
+
       <Breadcrumb>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Personas</Breadcrumb.Item>
@@ -671,6 +734,19 @@ const homeScreen = () => {
                         />
                       </Form.Item>
                     </Col>
+
+                    <Col>
+                      <Form.Item name="code" label={"Núm. empleado"}>
+                        <Input
+                            allowClear={true}
+                            placeholder="Núm. empleado"
+                            style={{ width: 100 }}
+                        />
+                      </Form.Item>
+                    </Col>
+
+
+
                     <Col>
                       <Form.Item name="gender" label="Género">
                         <Select options={genders} placeholder="Todos" />
@@ -799,7 +875,7 @@ const homeScreen = () => {
                 type="primary"
                 icon={<DownloadOutlined />}
                 size={{ size: "large" }}
-                href={`${API_URL}/static/PlantillaPersonas.csv`}
+                href={`${API_URL}/static/plantillaPersonas.xlsx`}
               >
                 Descargar plantilla
               </Button>
@@ -807,7 +883,7 @@ const homeScreen = () => {
             <Table
               className={"mainTable"}
               size="small"
-              columns={columns}
+              columns={columns2}
               dataSource={person}
               loading={loading}
               rowSelection={rowSelectionPerson}
