@@ -75,7 +75,6 @@ const SelectCompany = () => {
   };
 
   const setcompanyToArray = async (checked, companyID) => {
-    console.log("Chekc->> ", checked, " - companyId->> ", companyID);
     await setShowTable(false);
     let prev_list = companiesUser;
     if (checked) {
@@ -172,7 +171,6 @@ const SelectCompany = () => {
     {
       title: "",
       render: (record) => {
-        // console.log("Record-->>>> ", record);
         return showTable ? (
           <Checkbox
             key={record.value}
