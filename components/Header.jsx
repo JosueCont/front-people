@@ -17,9 +17,9 @@ import { useEffect, useState } from "react";
 import Cookie from "js-cookie";
 import Axios from "axios";
 import { API_URL } from "../config/config";
-import {getAccessIntranet, logoutAuth} from "../libs/auth";
+import { getAccessIntranet, logoutAuth } from "../libs/auth";
 import { route } from "next/dist/next-server/server/router";
-import { FormattedMessage} from 'react-intl'
+import { FormattedMessage } from "react-intl";
 const { Header } = Layout;
 
 const { SubMenu } = Menu;
@@ -31,9 +31,9 @@ const headerCustom = ({ hideMenu, ...props }) => {
   const [person, setPerson] = useState({});
   const [logOut, setLogOut] = useState(false);
 
-    let accessIntranet = getAccessIntranet();
+  let accessIntranet = getAccessIntranet();
 
-    useEffect(() => {
+  useEffect(() => {
     const user = JSON.parse(Cookie.get("token"));
     Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
       id: user.user_id,
@@ -140,12 +140,14 @@ const headerCustom = ({ hideMenu, ...props }) => {
                 >
                   Perfiles de seguridad
                 </Menu.Item>
-                  <Menu.Item
-                      key="3.3"
-                      onClick={() => router.push({ pathname: "/config/personalization" })}
-                  >
-                      Personalización
-                  </Menu.Item>
+                {/* <Menu.Item
+                  key="3.3"
+                  onClick={() =>
+                    router.push({ pathname: "/config/personalization" })
+                  }
+                >
+                  Personalización
+                </Menu.Item> */}
               </SubMenu>
 
               <SubMenu key="4" title="Comunicación">
@@ -230,20 +232,29 @@ const headerCustom = ({ hideMenu, ...props }) => {
                 Asignar empresa
               </Menu.Item>
 
-                {
-                    accessIntranet !=="false"&&
-                    <SubMenu key="11" title={<FormattedMessage id="header.intranet" />}>
-                        <Menu.Item key='11.1' onClick={()=> router.push({ pathname: "/intranet/groups" }) }>
-                            <FormattedMessage id="header.groups" />
-                        </Menu.Item>
-                        <Menu.Item key='11.2' onClick={()=> router.push({ pathname: "/intranet/config" }) }>
-                            <FormattedMessage id="header.config" />
-                        </Menu.Item>
-                    </SubMenu>
-                }
-
-
-             
+              {accessIntranet !== "false" && (
+                <SubMenu
+                  key="11"
+                  title={<FormattedMessage id="header.intranet" />}
+                >
+                  <Menu.Item
+                    key="11.1"
+                    onClick={() =>
+                      router.push({ pathname: "/intranet/groups" })
+                    }
+                  >
+                    <FormattedMessage id="header.groups" />
+                  </Menu.Item>
+                  <Menu.Item
+                    key="11.2"
+                    onClick={() =>
+                      router.push({ pathname: "/intranet/config" })
+                    }
+                  >
+                    <FormattedMessage id="header.config" />
+                  </Menu.Item>
+                </SubMenu>
+              )}
             </>
           ) : null}
           <div
