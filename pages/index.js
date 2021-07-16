@@ -38,7 +38,8 @@ const Home = () => {
                   <img
                     style={{ width: 130, paddingBottom: 10 }}
                     src={
-                      "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"
+                      "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/167202120565/staff_logo-iu.png"
+                      // "https://khorplus.  s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"
                     }
                     alt=""
                   />
