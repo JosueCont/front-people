@@ -56,7 +56,7 @@ const addEvent = () => {
     if (value === 1) {
       let data = nodes[0].value;
       form.setFieldsValue({
-        node:data,
+        node: data,
         guests: [],
       });
     } else {
@@ -81,18 +81,16 @@ const addEvent = () => {
   };
 
   const getNodes = async () => {
-    axios
-  .get(API_URL + `/business/node/?id=${nodeId}`)
-        .then((response) => {
+    axios.get(API_URL + `/business/node/?id=${nodeId}`).then((response) => {
       let data = response.data.results;
       data = data.map((a) => {
         return { label: a.name, value: a.id };
       });
       setNodes(data);
-          form.setFieldsValue({
-            node:data[0].value,
-            guests: [],
-          });
+      form.setFieldsValue({
+        node: data[0].value,
+        guests: [],
+      });
     });
   };
   const onFinish = async (values) => {
@@ -190,7 +188,7 @@ const addEvent = () => {
                           />
                         </Form.Item>
                       </Col>
-                       <Col lg={10} xs={22} offset={1}>
+                      <Col lg={10} xs={22} offset={1}>
                         <Form.Item name="guest_node" label="Tipo de invitados">
                           <Select
                             showSearch
@@ -241,33 +239,29 @@ const addEvent = () => {
                           </Form.Item>
                         </Col>
                       ) : (
-                      <Col lg={10} xs={22} offset={1}>
-                        <Form.Item
-                          label="Personas"
-                          name="guests"
-                        >
-                          <Select
-                            mode="multiple"
-                            allowClear
-                            placeholder="Selecciona invitados"
-                            defaultValue={[]}
-                            options={persons}
-                          />
-                        </Form.Item>
-                      </Col>
-                      )
-                      }
+                        <Col lg={10} xs={22} offset={1}>
+                          <Form.Item label="Personas" name="guests">
+                            <Select
+                              mode="multiple"
+                              allowClear
+                              placeholder="Selecciona invitados"
+                              defaultValue={[]}
+                              options={persons}
+                            />
+                          </Form.Item>
+                        </Col>
+                      )}
 
                       <Col lg={10} xs={22} offset={1}>
                         <Form.Item
                           label="Descripción"
                           name="description"
-                          /* rules={[
+                          rules={[
                             {
                               required: true,
-                              message: "Por favor selecciona un rango de horas",
+                              message: "Por ingrese una descripción",
                             },
-                          ]} */
+                          ]}
                         >
                           <TextArea
                             rows="4"
