@@ -114,6 +114,7 @@ const SelectCompany = () => {
       console.log(error);
     } finally {
       setCompaniesUser(companies);
+      console.log("BUSPER-->>", companies);
       setShowTable(true);
     }
   };
@@ -129,16 +130,18 @@ const SelectCompany = () => {
       for (let index = 0; index < companiesUser.length; index++) {
         dataPost.nodes.push(companiesUser[index]);
       }
-      let response = await Axios.post(
-        API_URL + `/business/node-person/create_assignment/`,
-        dataPost
-      );
+      let url = `/business/node-person/create_assignment/`;
+
+      if (companiesUser.length > 0)
+        url = `/business/node-person/update_assignment/`;
+      console.log("URL->> ", url);
+      let response = await Axios.post(API_URL + url, dataPost);
       let res = response.data;
-      route.push("/home");
       notification["success"]({
         message: "Aviso",
         description: "Información enviada correctamente.",
       });
+      route.push("/home");
     } catch (error) {
       console.log(error);
       notification["error"]({

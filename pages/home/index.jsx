@@ -35,7 +35,11 @@ import {
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
-import {withAuthSync, userCompanyId, getAccessIntranet} from "../../libs/auth";
+import {
+  withAuthSync,
+  userCompanyId,
+  getAccessIntranet,
+} from "../../libs/auth";
 
 const { Content } = Layout;
 import Link from "next/link";
@@ -127,7 +131,6 @@ const homeScreen = () => {
           item.key = i;
           if (!item.photo) item.photo = defaulPhoto;
         });
-        console.log("personas:::",response.data)
         setLoading(false);
         setPerson(response.data);
       })
@@ -209,10 +212,9 @@ const homeScreen = () => {
   /////TABLE PERSON
   let columns = [
     {
-    title: "Núm. Empleado",
-          render: (item) => {
-        return (
-            <div>{item.code ? item.code:""}</div>);
+      title: "Núm. Empleado",
+      render: (item) => {
+        return <div>{item.code ? item.code : ""}</div>;
       },
     },
     {
@@ -250,17 +252,17 @@ const homeScreen = () => {
       },
     },
     {
-    title: "Acceso a intranet",
+      title: "Acceso a intranet",
       render: (item) => {
         return (
-            <>
-              <Switch
-                  disabled={ true}
-                  defaultChecked={item.intranet_access}
-                  checkedChildren="Si"
-                  unCheckedChildren="No"
-              />
-            </>
+          <>
+            <Switch
+              disabled={true}
+              defaultChecked={item.intranet_access}
+              checkedChildren="Si"
+              unCheckedChildren="No"
+            />
+          </>
         );
       },
     },
@@ -350,24 +352,23 @@ const homeScreen = () => {
     },
   ];
 
-  useEffect(()=>{
-    if (accessIntranet==="false") {
-      columns = removeItemFromArr(columns,"Acceso a intranet")
-      setValRefreshColumns(true)
-    }else {
-      setValRefreshColumns(true)
+  useEffect(() => {
+    if (accessIntranet === "false") {
+      columns = removeItemFromArr(columns, "Acceso a intranet");
+      setValRefreshColumns(true);
+    } else {
+      setValRefreshColumns(true);
     }
-    console.log("::::",columns)
-    setColumns2(columns)
-  },[valRefreshColumns])
+    setColumns2(columns);
+  }, [valRefreshColumns]);
 
-  function removeItemFromArr( arr, item ) {
-    return  arr.filter( function( e ) {
-      if (e.title !== item){
-        return e.title
+  function removeItemFromArr(arr, item) {
+    return arr.filter(function (e) {
+      if (e.title !== item) {
+        return e.title;
       }
-    } );
-  };
+    });
+  }
 
   const rowSelectionPerson = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -704,7 +705,6 @@ const homeScreen = () => {
 
   return (
     <MainLayout currentKey="1">
-
       <Breadcrumb>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Personas</Breadcrumb.Item>
@@ -738,14 +738,12 @@ const homeScreen = () => {
                     <Col>
                       <Form.Item name="code" label={"Núm. empleado"}>
                         <Input
-                            allowClear={true}
-                            placeholder="Núm. empleado"
-                            style={{ width: 100 }}
+                          allowClear={true}
+                          placeholder="Núm. empleado"
+                          style={{ width: 100 }}
                         />
                       </Form.Item>
                     </Col>
-
-
 
                     <Col>
                       <Form.Item name="gender" label="Género">

@@ -1,8 +1,8 @@
 {
-  "react-draft-wysiwyg": [
-    {
-      "id": "owPO",
-      "file": "static/chunks/80.93a92539bd6811fc35ee.js"
-    }
-  ]
+  "../components/draft.jsx -> react-draft-wysiwyg": {
+    "id": 35108,
+    "files": [
+      "static/chunks/2c386607.73ac94b54fbbe7143ec0.js"
+    ]
+  }
 }

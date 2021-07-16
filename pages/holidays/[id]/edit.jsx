@@ -48,7 +48,6 @@ const HolidaysDetails = () => {
     try {
       let response = await Axios.get(API_URL + `/person/vacation/${id}/`);
       let data = response.data;
-      console.log("respuesta:::",data)
       setDetails(data);
       setDepartureDate(data.departure_date);
       setReturnDate(data.return_date);
