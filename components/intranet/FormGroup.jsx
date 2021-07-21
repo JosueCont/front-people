@@ -75,7 +75,7 @@ const FormGroup = (props) => {
     }
     if (props.isEdit) {
       axios
-        .put(API_URL + `/intranet/group/${props.group.id}/`, params)
+        .patch(API_URL + `/intranet/group/${props.group.id}/`, params)
         .then((res) => {
           closeDialog();
         })

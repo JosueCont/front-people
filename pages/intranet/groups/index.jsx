@@ -18,15 +18,16 @@ import {
   import {
     EditOutlined,
     EyeOutlined,
-      DeleteOutlined,
-      QuestionCircleOutlined,
-  } from "@ant-design/icons";
+    DeleteOutlined,
+    QuestionCircleOutlined, UserOutlined,
+} from "@ant-design/icons";
   import axiosApi from "../../../libs/axiosApi";
   import Axios from 'axios'
   import { API_URL } from "../../../config/config";
 import DetailGroup from "../../../components/intranet/DetailGroup";
 import {useRouter} from "next/router";
 import {withAuthSync} from "../../../libs/auth";
+import AddPeopleGroup from "../../../components/intranet/AddPeopleGroup";
 
 
 const GroupView =()=>{
@@ -40,6 +41,8 @@ const GroupView =()=>{
     const [edit, setEdit] = useState(false);
     const [group,setGroup] = useState({})
     const [isDetail, setIsDetail] = useState(false);
+
+    const [modalAddVisible, setModalAddVisible] = useState(false);
 
 
 
@@ -55,7 +58,6 @@ const GroupView =()=>{
     };
 
     useEffect(()=>{
-
         console.log(API_URL)
         getGroups()
     },[])
@@ -65,6 +67,15 @@ const GroupView =()=>{
         setGroup(group)
         setIsDetail(true)
     }
+
+    const goToAddUpdatePerson=(group)=>{
+        setGroup(group)
+        setModalAddVisible(true)
+    }
+    const handleCancelAddUpdatePerson = () => {
+        setModalAddVisible(false);
+        getGroups()
+    };
 
     const goToEdit=(group)=>{
         setEdit(true)
@@ -122,6 +133,11 @@ const GroupView =()=>{
                   <DetailGroup group={group} visible={isDetail} close={setIsDetail}/>
           }
 
+          {
+              modalAddVisible&&
+              <AddPeopleGroup group={group} visible={modalAddVisible} setVisible={handleCancelAddUpdatePerson} />
+          }
+
         <Table
             dataSource={groups}
             key="table_groups"
@@ -150,6 +166,13 @@ const GroupView =()=>{
                     key="actions"
                     render={(text, record) => (
                       <>
+
+                          <UserOutlined
+                              className="icon_actions"
+                              onClick={()=> goToAddUpdatePerson(record)}
+                              key={"goAddPersons_" + record.id}
+                          />
+
                         <EyeOutlined
                           className="icon_actions"
                           onClick={()=> goToDetails(record)}
