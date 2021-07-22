@@ -95,6 +95,7 @@ const GroupView =()=>{
 
     const getGroups=async()=>{
         setLoading(true)
+        setGroups([])
         try{
             const url = API_URL+'/intranet/group/'
             const res = await Axios.get(url);
@@ -102,10 +103,10 @@ const GroupView =()=>{
             if(res.data.count>0){
                 setGroups(res.data.results);
             }
-        }catch(e){
-            console.log(e)
-        }finally{
             setLoading(false)
+        }catch(e){
+            setLoading(false)
+            console.log(e)
         }
     }
 
@@ -142,6 +143,7 @@ const GroupView =()=>{
             dataSource={groups}
             key="table_groups"
             loading={loading}
+            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
         >
             <Column
                 title="Imagen"

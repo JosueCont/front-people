@@ -329,6 +329,7 @@ const InabilityReport = (props) => {
                     key="select"
                     options={optionStatus}
                     allowClear
+                    notFoundContent={"No se encontraron resultado."}
                   />
                 </Form.Item>
               </Col>
@@ -402,6 +403,7 @@ const InabilityReport = (props) => {
             key="tableHolidays"
             loading={loading}
             columns={columns}
+            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
           ></Table>
         </Col>
       </Row>

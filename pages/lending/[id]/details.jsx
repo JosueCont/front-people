@@ -272,7 +272,7 @@ const HolidaysNew = () => {
                   {details.reason ? details.reason : null}
                 </Descriptions.Item>
               </Descriptions>
-              <Table columns={columns} dataSource={plan} />
+              <Table columns={columns} dataSource={plan} locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}} />
             </Col>
             <Col
               span={16}

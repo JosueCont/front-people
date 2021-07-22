@@ -156,6 +156,7 @@ const Lending = () => {
                           key="select_type"
                           options={typeOptions}
                           allowClear
+                          notFoundContent={"No se encontraron resultado."}
                         />
                       </Form.Item>
                     </Col>
@@ -171,6 +172,7 @@ const Lending = () => {
                           options={optionStatus}
                           placeholder="Todos"
                           allowClear
+                          notFoundContent={"No se encontraron resultado."}
                         />
                       </Form.Item>
                     </Col>
@@ -245,6 +247,7 @@ const Lending = () => {
                   dataSource={lendingList}
                   key="table_holidays"
                   loading={loading}
+                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
                 >
                   <Column
                     title="Colaborador"

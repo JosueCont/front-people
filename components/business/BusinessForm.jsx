@@ -446,6 +446,7 @@ const businessForm = () => {
                 columns={columns}
                 dataSource={business}
                 loading={loading}
+                locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
               />
             ) : (
               <NodeTreeView />
@@ -520,6 +521,7 @@ const businessForm = () => {
               placeholder="Select a person"
               optionFilterProp="children"
               name={"fNode"}
+              notFoundContent={"No se encontraron resultado."}
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }

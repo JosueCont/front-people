@@ -67,7 +67,7 @@ const UserNotification = () => {
       <div className="container" style={{ width: "100%" }}>
         <Row justify="space-between" key="row1" style={{ padding: "20px 0" }}>
           <Col span={24}>
-            <Table dataSource={list} key="releases_table">
+            <Table dataSource={list} key="releases_table"    locale={{emptyText:  "No se encontraron resultados."}}  >
               <Column
                 title="Nombre"
                 dataIndex="person"

@@ -205,7 +205,8 @@ const Lendingform = (props) => {
             labelAlign={"left"}
             rules={[ruleRequired]}
           >
-            <Select options={TypeOptions} allowClear />
+            <Select options={TypeOptions} allowClear notFoundContent={"No se encontraron resultado."}
+            />
           </Form.Item>
           <Form.Item
             name="amount"
@@ -241,7 +242,7 @@ const Lendingform = (props) => {
             labelAlign={"left"}
             rules={[ruleRequired]}
           >
-            <Select options={periodicityOptions} />
+            <Select options={periodicityOptions} notFoundContent={"No se encontraron resultado."} />
           </Form.Item>
           <Form.Item
             name="periodicity_amount"

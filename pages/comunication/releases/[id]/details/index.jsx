@@ -203,7 +203,7 @@ const Details = () => {
                                                 </Row>
                                             </Col>
                                         </Row>
-                                        <Table columns={colFile} dataSource={files} />
+                                        <Table columns={colFile} dataSource={files}  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}} />
                                     </Col>
 
                                     <Col span={24} style={{ textAlign: "right" }}>

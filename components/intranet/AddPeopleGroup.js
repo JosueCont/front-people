@@ -92,6 +92,7 @@ const AddPeopleGroup = (props) => {
                                 allowClear
                                 placeholder="Selecciona invitados"
                                 options={persons}
+                                notFoundContent={"No se encontraron resultado."}
                             />
                         </Form.Item>
                     </Col>

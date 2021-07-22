@@ -32,6 +32,7 @@ const documentModal = (props) => {
   const closeDialog = () => {
     props.close(false);
     form.resetFields();
+    ///setFile(null)
   };
 
   useEffect(() => {
@@ -78,6 +79,7 @@ const documentModal = (props) => {
           className: "custom-class",
         });
         closeDialog();
+        deleteFileSelect()
       })
       .catch((e) => {
         console.log(e);
@@ -105,7 +107,7 @@ const documentModal = (props) => {
         >
           <Form onFinish={onFinish} form={form}>
             <Form.Item name="document_type" rules={[ruleRequired]}>
-              <Select options={documentType} placeholder="Tipo de documento" />
+              <Select options={documentType} placeholder="Tipo de documento" notFoundContent={"No se encontraron resultado."} />
             </Form.Item>
             <Form.Item>
               <Button

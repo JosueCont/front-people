@@ -185,6 +185,7 @@ const Holidays = () => {
                           key="select"
                           options={optionStatus}
                           allowClear
+                          notFoundContent={"No se encontraron resultado."}
                         />
                       </Form.Item>
                     </Col>
@@ -249,6 +250,7 @@ const Holidays = () => {
                   dataSource={holidayList}
                   key="tableHolidays"
                   loading={loading}
+                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
                 >
                   <Column
                     title="Colaborador"

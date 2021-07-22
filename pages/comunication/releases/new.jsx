@@ -341,7 +341,7 @@ const Newrelease = () => {
                     labelAlign={"left"}
                     rules={[ruleRequired]}
                   >
-                    <Select style={{ width: 250 }} options={typeMessage} />
+                    <Select style={{ width: 250 }} options={typeMessage} notFoundContent={"No se encontraron resultado."} />
                   </Form.Item>
                   <Form.Item
                     label="Título"
@@ -409,6 +409,7 @@ const Newrelease = () => {
                           onChange={onChangeDepartment}
                           placeholder="Departamento"
                           key="departament_select"
+                          notFoundContent={"No se encontraron resultado."}
                         />
                       </Form.Item>
                       <Form.Item
@@ -418,7 +419,7 @@ const Newrelease = () => {
                         wrapperCol={{ span: 14 }}
                         rules={[checkSegmentacion]}
                       >
-                        <Select options={jobs} key="jobs_select" />
+                        <Select options={jobs} key="jobs_select" notFoundContent={"No se encontraron resultado."} />
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -429,7 +430,7 @@ const Newrelease = () => {
                         wrapperCol={{ span: 14 }}
                         rules={[checkSegmentacion]}
                       >
-                        <Select options={personType} key="person_select" />
+                        <Select options={personType} key="person_select" notFoundContent={"No se encontraron resultado."} />
                       </Form.Item>
                       <Form.Item
                         name={"target_gender"}
@@ -438,7 +439,7 @@ const Newrelease = () => {
                         wrapperCol={{ span: 14 }}
                         rules={[checkSegmentacion]}
                       >
-                        <Select options={genders} key="gender_select" />
+                        <Select options={genders} key="gender_select" notFoundContent={"No se encontraron resultado."}/>
                       </Form.Item>
                     </Col>
                   </Row>

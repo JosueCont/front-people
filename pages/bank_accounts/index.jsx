@@ -270,6 +270,7 @@ const BankAccounts = () => {
                           key="select_type"
                           options={optionType}
                           allowClear
+                          notFoundContent={"No se encontraron resultado."}
                         />
                       </Form.Item>
                     </Col>
@@ -284,6 +285,7 @@ const BankAccounts = () => {
                           key="select_status"
                           options={optionStatus}
                           allowClear
+                          notFoundContent={"No se encontraron resultado."}
                         />
                       </Form.Item>
                     </Col>
@@ -327,6 +329,7 @@ const BankAccounts = () => {
                   key="tableHolidays"
                   loading={loading}
                   columns={columns}
+                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
                 ></Table>
               </Col>
             </Row>
