@@ -228,7 +228,7 @@ const SelectCompany = () => {
                   </Button>
                 </Col>
                 <Col xs={23} md={15}>
-                  <Table columns={columns} dataSource={dataList} />
+                  <Table columns={columns} dataSource={dataList}    locale={{emptyText: "No se encontraron resultados."}} />
                 </Col>
               </Row>
             </Col>

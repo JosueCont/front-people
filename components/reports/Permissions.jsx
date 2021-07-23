@@ -288,6 +288,7 @@ const PermissionsReport = (props) => {
                     key="select"
                     options={optionStatus}
                     allowClear
+                    notFoundContent={"No se encontraron resultado."}
                   />
                 </Form.Item>
               </Col>
@@ -351,6 +352,7 @@ const PermissionsReport = (props) => {
             key="tableHolidays"
             columns={columns}
             loading={loading}
+            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
           ></Table>
         </Col>
       </Row>

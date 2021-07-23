@@ -13,7 +13,7 @@ import {
   Select,
   DatePicker,
   Space,
-  Button,
+  Button, Spin,
 } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -36,6 +36,8 @@ const FormGroup = (props) => {
   const [image_, setImage_] = useState("");
 
   const [loading, setLoading] = useState(false);
+
+  const [loadingGroup, setLoadingGroup] = useState(false);
 
   const { Title } = Typography;
 
@@ -74,23 +76,29 @@ const FormGroup = (props) => {
       params.append("image", data.image.file.originFileObj);
     }
     if (props.isEdit) {
+      setLoadingGroup(true)
       axios
-        .put(API_URL + `/intranet/group/${props.group.id}/`, params)
+        .patch(API_URL + `/intranet/group/${props.group.id}/`, params)
         .then((res) => {
           closeDialog();
+          setLoadingGroup(false)
         })
         .catch((e) => {
+          setLoadingGroup(false)
           console.log("error", e);
           closeDialog();
         });
     } else {
+      setLoadingGroup(true)
       axios
         .post(API_URL + "/intranet/group/", params)
         .then((res) => {
           closeDialog();
+          setLoadingGroup(false)
         })
         .catch((e) => {
           console.log("error", e);
+          setLoadingGroup(false)
           closeDialog();
         });
     }
@@ -141,6 +149,8 @@ const FormGroup = (props) => {
           footer={null}
           width={"50%"}
         >
+          <Spin tip="Cargando..." spinning={loadingGroup}>
+
           <Form onFinish={onFinish} form={forms}>
             <Form.Item
               label="Nombre de grupo"
@@ -206,6 +216,7 @@ const FormGroup = (props) => {
               </Space>
             </Form.Item>
           </Form>
+          </Spin>
         </Modal>
       </Layout>
     </>

@@ -747,7 +747,9 @@ const homeScreen = () => {
 
                     <Col>
                       <Form.Item name="gender" label="Género">
-                        <Select options={genders} placeholder="Todos" />
+                        <Select options={genders}
+                                notFoundContent={"No se encontraron resultado."}
+                                placeholder="Todos"  notFoundContent={"No se encontraron resultado."}/>
                       </Form.Item>
                     </Col>
                     {/* <Col>
@@ -766,6 +768,7 @@ const homeScreen = () => {
                           onChange={changeDepartment}
                           options={departments}
                           placeholder="Todos"
+                          notFoundContent={"No se encontraron resultado."}
                           style={{ width: 100 }}
                         />
                       </Form.Item>
@@ -775,6 +778,7 @@ const homeScreen = () => {
                         <Select
                           options={jobs}
                           placeholder="Todos"
+                          notFoundContent={"No se encontraron resultado."}
                           style={{ minWidth: 100 }}
                         />
                       </Form.Item>
@@ -784,6 +788,7 @@ const homeScreen = () => {
                         <Select
                           options={statusSelect}
                           placeholder="Estatus"
+                          notFoundContent={"No se encontraron resultado."}
                           style={{ width: 90 }}
                         />
                       </Form.Item>
@@ -884,6 +889,7 @@ const homeScreen = () => {
               columns={columns2}
               dataSource={person}
               loading={loading}
+              locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
               rowSelection={rowSelectionPerson}
             />
           </>

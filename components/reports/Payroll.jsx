@@ -417,6 +417,7 @@ const PayrollReport = (props) => {
             columns={columns}
             scroll={{ x: 1300 }}
             loading={loading}
+            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
           ></Table>
         </Col>
       </Row>

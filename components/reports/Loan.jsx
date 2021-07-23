@@ -393,6 +393,7 @@ const LoanReport = (props) => {
                     style={{ width: 150 }}
                     options={optionsType}
                     allowClear
+                    notFoundContent={"No se encontraron resultado."}
                   />
                 </Form.Item>
               </Col>
@@ -406,6 +407,7 @@ const LoanReport = (props) => {
                     style={{ width: 150 }}
                     options={optionPeriodicity}
                     allowClear
+                    notFoundContent={"No se encontraron resultado."}
                   />
                 </Form.Item>
               </Col>
@@ -421,6 +423,7 @@ const LoanReport = (props) => {
                     key="select"
                     options={optionStatus}
                     allowClear
+                    notFoundContent={"No se encontraron resultado."}
                   />
                 </Form.Item>
               </Col>
@@ -487,6 +490,7 @@ const LoanReport = (props) => {
             dataSource={lendingList}
             key="tableHolidays"
             columns={columns}
+            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
           ></Table>
         </Col>
       </Row>

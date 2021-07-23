@@ -107,12 +107,12 @@ const businessForm = () => {
         if (response.status === 200) {
           Router.push("/business");
         }
-        getBusiness();
+        person();
         setIsModalVisible(false);
         setLoading(false);
       })
       .catch(function (error) {
-        getBusiness();
+        person();
         setLoading(false);
         console.log(error);
       });
@@ -137,7 +137,7 @@ const businessForm = () => {
         if (response.status === 200) {
           Router.push("/business");
         }
-        getBusiness();
+        person();
         setIsModalVisible(false);
         setLoading(false);
         setAddB(false);
@@ -233,6 +233,7 @@ const businessForm = () => {
     )
       .then((response) => {
         setBusiness([]);
+        console.log(response.data)
         setBusiness(response.data);
         setLoading(false);
       })
@@ -344,7 +345,7 @@ const businessForm = () => {
 
   const closeModalUpdate = () => {
     setUpdateModal(false);
-    getBusiness();
+    person()
   };
   const updateStatus = (value) => {
     setIsEdit(true);
@@ -454,6 +455,7 @@ const businessForm = () => {
                 columns={columns}
                 dataSource={business}
                 loading={loading}
+                locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
               />
             ) : (
               <NodeTreeView />
@@ -528,6 +530,7 @@ const businessForm = () => {
               placeholder="Select a person"
               optionFilterProp="children"
               name={"fNode"}
+              notFoundContent={"No se encontraron resultado."}
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }

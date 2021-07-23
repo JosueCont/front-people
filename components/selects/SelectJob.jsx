@@ -53,6 +53,7 @@ export default function SelectJob(props) {
         options={options}
         onChange={props.onChange ? props.onChange : null}
         allowClear
+        notFoundContent={"No se encontraron resultado."}
       />
     </Form.Item>
   );

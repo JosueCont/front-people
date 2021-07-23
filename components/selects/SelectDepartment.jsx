@@ -51,6 +51,7 @@ export default function SelectDepartment(props) {
                 options={options}
                 allowClear
                 onChange={props.onChange ? props.onChange : null}
+                notFoundContent={"No se encontraron resultado."}
             />
         </Form.Item>
     );

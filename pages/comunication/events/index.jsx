@@ -258,6 +258,7 @@ const Events = () => {
                   dataSource={evenstList}
                   key="table_events"
                   loading={loading}
+                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
                 >
                   <Column title="ID" dataIndex="id" key="id"></Column>
                   <Column title="Título" dataIndex="title" key="title"></Column>

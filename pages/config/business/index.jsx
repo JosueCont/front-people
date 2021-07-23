@@ -206,12 +206,12 @@ const configBusiness = () => {
         });
         message.success("Agregado correctamente.");
       })
-      .catch((error) => {
+      .catch(error => {
         resetForm();
         setId("");
         setLoadingTable(false);
         console.log(error);
-        message.success("Ocurrio un error intente de nuevo.");
+        message.error(error.response.data.code[0]);
       });
   };
   const updateRegister = (url, value) => {
@@ -754,7 +754,7 @@ const configBusiness = () => {
                       </Form>
                     )}
                     <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colDepartment} dataSource={departments} />
+                      <Table columns={colDepartment} dataSource={departments} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}} />
                     </Spin>
                   </TabPane>
                 )}
@@ -787,7 +787,7 @@ const configBusiness = () => {
                               label="Departamento"
                               rules={[ruleRequired]}
                             >
-                              <Select options={selectDep} />
+                              <Select options={selectDep} notFoundContent={"No se encontraron resultado."} />
                             </Form.Item>
                           </Col>
                           <Col lg={6} xs={22} offset={1}>
@@ -826,7 +826,7 @@ const configBusiness = () => {
                       </Form>
                     )}{" "}
                     <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colJob} dataSource={jobs} />
+                      <Table columns={colJob} dataSource={jobs} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
                     </Spin>
                   </TabPane>
                 )}
@@ -883,7 +883,7 @@ const configBusiness = () => {
                       </Form>
                     )}
                     <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colTypePerson} dataSource={typesPerson} />
+                      <Table columns={colTypePerson} dataSource={typesPerson} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
                     </Spin>
                   </TabPane>
                 )}
@@ -943,6 +943,7 @@ const configBusiness = () => {
                       <Table
                         columns={colRelationShip}
                         dataSource={relationsShip}
+                        locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}
                       />
                     </Spin>
                   </TabPane>
@@ -1006,6 +1007,7 @@ const configBusiness = () => {
                       <Table
                         columns={colTypeDocument}
                         dataSource={typesDocument}
+                        locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}
                       />
                     </Spin>
                   </TabPane>
@@ -1063,7 +1065,7 @@ const configBusiness = () => {
                       </Form>
                     )}
                     <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colBank} dataSource={banks} />
+                      <Table columns={colBank} dataSource={banks} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}  />
                     </Spin>
                   </TabPane>
                 )}

@@ -833,6 +833,10 @@ const personDetailForm = () => {
         setLoading(false);
         showModal();
         getPhone();
+        if (upPhone){
+          formPhone.resetFields();
+          setUpPhone(false)
+        }
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
@@ -1060,6 +1064,10 @@ const personDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
+        if (upFamily){
+          formFamily.resetFields();
+          setUpFamily(false)
+        }
         showModal();
         getFamily();
         setTimeout(() => {
@@ -1119,6 +1127,7 @@ const personDetailForm = () => {
 
   /////CONTACTO DE EMERGENCIA
   const getContactEmergency = () => {
+    setContactEmergency([]);
     Axios.get(
       API_URL + `/person/person/${router.query.id}/contact_emergency_person/`
     )
@@ -1210,8 +1219,12 @@ const personDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
+        if (upContEm){
+          formContactEmergency.resetFields();
+          setUpContEm(false);
+        }
         showModal();
-        getContactEmergency;
+        getContactEmergency();
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
@@ -1486,6 +1499,10 @@ const personDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
+        if (upBankAcc){
+          formBank.resetFields();
+          setUpBankAcc(false)
+        }
         showModal();
         getBankAccount();
         setTimeout(() => {
@@ -1833,8 +1850,17 @@ const personDetailForm = () => {
                 form={formPerson}
               >
                 <Row>
-                  <Col span={17}>
+                  <Col lg={24} xs={24}>
                     <Row>
+                      <Col lg={7} xs={22} offset={1}>
+                        <Form.Item
+                            name="first_name"
+                            label="Nombre(s)"
+                            rules={[{ message: "Ingresa un nombre" }]}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item
                           name="flast_name"
@@ -1844,20 +1870,85 @@ const personDetailForm = () => {
                           <Input />
                         </Form.Item>
                       </Col>
+                      <Col lg={7} xs={22}offset={1}>
+                        <Row justify="center">
+                            <Col lg={12} md={8} xs={24}>
+                            <Spin spinning={loadImge}>
+                              <div
+                                  style={
+                                    photo
+                                        ? {
+                                          width: "120px",
+                                          height: "120px",
+                                          display: "flex",
+                                          flexWrap: "wrap",
+                                          alignContent: "center",
+                                          textAlign: "center",
+                                        }
+                                        : {}
+                                  }
+                              >
+                                <Upload
+                                    name="avatar"
+                                    listType="picture-card"
+                                    showUploadList={false}
+                                    onChange={upImage}
+                                >
+                                  {photo ? (
+                                      <div
+                                          className="frontImage"
+                                          style={
+                                            photo
+                                                ? {
+                                                  width: "120px",
+                                                  height: "120px",
+                                                  display: "flex",
+                                                  flexWrap: "wrap",
+                                                  borderRadius:'10px',
+                                                  textAlign: "center",
+                                                  alignContent: "center",
+                                                }
+                                                : {}
+                                          }
+                                      >
+                                        <img className="img"
+                                             src={photo}
+                                             alt="avatar"
+                                             preview={false}
+                                             style={{width: '120px',height:'120px',borderRadius:'11px'}}
+                                        />
+                                      </div>
+                                  ) : (
+                                      uploadButton
+                                  )}
+                                </Upload>
+                              </div>
+                            </Spin>
+                            </Col>
+                          <Col lg={12} md={16} xs={24}>
+                            <Form.Item
+                                name="date_of_admission"
+                                label="Fecha de ingreso"
+                            >
+                              <DatePicker
+                                  onChange={onChangeDateAdmission}
+                                  moment={"YYYY-MM-DD"}
+                              />
+                            </Form.Item>
+                            <Switch
+                                checked={isActive}
+                                onClick={changeStatus}
+                                checkedChildren="Activo"
+                                unCheckedChildren="Inactivo"
+                            />
+                          </Col>
+                        </Row>
+                      </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item
                           name="mlast_name"
                           label="Apellido Materno"
                           rules={[{ message: "Ingresa un apellido paterno" }]}
-                        >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col lg={7} xs={22} offset={1}>
-                        <Form.Item
-                          name="first_name"
-                          label="Nombre(s)"
-                          rules={[{ message: "Ingresa un nombre" }]}
                         >
                           <Input />
                         </Form.Item>
@@ -1876,6 +1967,7 @@ const personDetailForm = () => {
                             options={departments}
                             onChange={onChangeDepartment}
                             placeholder="Departamento"
+                            notFoundContent={"No se encontraron resultado."}
                           />
                         </Form.Item>
                       </Col>
@@ -1884,6 +1976,7 @@ const personDetailForm = () => {
                           <Select
                             options={jobs}
                             placeholder="Puesto de trabajo"
+                            notFoundContent={"No se encontraron resultado."}
                           />
                         </Form.Item>
                       </Col>
@@ -1919,7 +2012,7 @@ const personDetailForm = () => {
                       }
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="report_to" label="Reporta a ">
-                          <Select options={people} />
+                          <Select options={people} notFoundContent={"No se encontraron resultado."} />
                         </Form.Item>
                       </Col>
                       <Col lg={15} xs={22} offset={1}>
@@ -1929,6 +2022,7 @@ const personDetailForm = () => {
                             showArrow
                             style={{ width: "100%" }}
                             placeholder="Perfiles de seguridad"
+                            notFoundContent={"No se encontraron resultado."}
                           />
                         </Form.Item>
                       </Col>
@@ -1964,12 +2058,12 @@ const personDetailForm = () => {
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="civil_status" label="Estado Civil">
-                          <Select options={civilStatus} />
+                          <Select options={civilStatus} notFoundContent={"No se encontraron resultado."} />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="gender" label="Género">
-                          <Select options={genders} />
+                          <Select options={genders} notFoundContent={"No se encontraron resultado."} />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
@@ -1992,85 +2086,13 @@ const personDetailForm = () => {
                           <Select
                             options={periodicity}
                             placeholder="Selecciona una opción"
+                            notFoundContent={"No se encontraron resultado."}
                           />
                         </Form.Item>
                       </Col>
                     </Row>
                   </Col>
-                  <Col span={6}>
-                    <Row justify="center" align="top">
-                      <Row>
-                        <Spin spinning={loadImge}>
-                          <div
-                            style={
-                              photo
-                                ? {
-                                    width: "190px",
-                                    height: "190px",
-                                    display: "flex",
-                                    flexWrap: "wrap",
-                                    alignContent: "center",
-                                    textAlign: "center",
-                                  }
-                                : {}
-                            }
-                          >
-                            <Upload
-                              name="avatar"
-                              listType="picture-card"
-                              showUploadList={false}
-                              onChange={upImage}
-                            >
-                              {photo ? (
-                                <div
-                                  className="frontImage"
-                                  style={
-                                    photo
-                                      ? {
-                                          width: "190px",
-                                          height: "190px",
-                                          display: "flex",
-                                          flexWrap: "wrap",
-                                          textAlign: "center",
-                                          alignContent: "center",
-                                        }
-                                      : {}
-                                  }
-                                >
-                                  <img
-                                    className="img"
-                                    src={photo}
-                                    alt="avatar"
-                                    preview={false}
-                                    style={{ width: "200px", height: "200px" }}
-                                  />
-                                </div>
-                              ) : (
-                                uploadButton
-                              )}
-                            </Upload>
-                          </div>
-                        </Spin>
-                      </Row>
-                      <Col>
-                        <Form.Item
-                          name="date_of_admission"
-                          label="Fecha de ingreso"
-                        >
-                          <DatePicker
-                            onChange={onChangeDateAdmission}
-                            moment={"YYYY-MM-DD"}
-                          />
-                        </Form.Item>
-                        <Switch
-                          checked={isActive}
-                          onClick={changeStatus}
-                          checkedChildren="Activo"
-                          unCheckedChildren="Inactivo"
-                        />
-                      </Col>
-                    </Row>
-                  </Col>
+
                 </Row>
                 <Row justify={"end"}>
                   <Col>
@@ -2169,7 +2191,7 @@ const personDetailForm = () => {
                           label="Tipo de teléfono"
                           rules={[ruleRequired]}
                         >
-                          <Select options={typePhones} />
+                          <Select options={typePhones} notFoundContent={"No se encontraron resultado."} />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2178,7 +2200,7 @@ const personDetailForm = () => {
                           label="Tipo de línea"
                           rules={[ruleRequired]}
                         >
-                          <Select options={typeLines} />
+                          <Select options={typeLines} notFoundContent={"No se encontraron resultado."} />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2227,7 +2249,7 @@ const personDetailForm = () => {
                     </Row>
                   </Form>
                   <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colPhone} dataSource={phones} />
+                    <Table columns={colPhone}  dataSource={phones} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
                   </Spin>
                 </TabPane>
                 <TabPane tab="Dirección" key="tab_3">
@@ -2246,7 +2268,7 @@ const personDetailForm = () => {
                           label="Tipo de calle"
                           rules={[ruleRequired]}
                         >
-                          <Select options={typeStreet} />
+                          <Select options={typeStreet} notFoundContent={"No se encontraron resultado."} />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2335,7 +2357,7 @@ const personDetailForm = () => {
                           label="Parentesco"
                           rules={[ruleRequired]}
                         >
-                          <Select options={relationship} />
+                          <Select options={relationship} notFoundContent={"No se encontraron resultado."}/>
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2376,7 +2398,7 @@ const personDetailForm = () => {
                           label="Género"
                           rules={[ruleRequired]}
                         >
-                          <Select options={genders} />
+                          <Select options={genders} notFoundContent={"No se encontraron resultado."} />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2440,7 +2462,7 @@ const personDetailForm = () => {
                     </Row>
                   </Form>
                   <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colFamily} dataSource={family} />
+                    <Table columns={colFamily} dataSource={family} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
                   </Spin>
                 </TabPane>
                 <TabPane tab="Contactos de emergencia" key="tab_5">
@@ -2461,7 +2483,7 @@ const personDetailForm = () => {
                           label="Parentesco"
                           rules={[ruleRequired]}
                         >
-                          <Select options={relationship} />
+                          <Select options={relationship} notFoundContent={"No se encontraron resultado."}/>
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2510,7 +2532,7 @@ const personDetailForm = () => {
                     </Row>
                   </Form>
                   <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colContact} dataSource={contactEmergency} />
+                    <Table columns={colContact} dataSource={contactEmergency} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
                   </Spin>
                 </TabPane>
                 <TabPane tab="Formación/Habilidades" key="tab_6">
@@ -2570,10 +2592,10 @@ const personDetailForm = () => {
                       <Col lg={6} xs={22} offset={1}>
                         <Form.Item
                           name="completed_period"
-                          label="Periodo completado"
+                          label="No. Periodo completado"
                           rules={[ruleRequired]}
                         >
-                          <Input />
+                          <Input type="number" />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -2586,7 +2608,7 @@ const personDetailForm = () => {
                     </Row>
                   </Form>
                   <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colTraining} dataSource={training} />
+                    <Table columns={colTraining} dataSource={training} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
                   </Spin>
                 </TabPane>
                 <TabPane tab="Cuentas bancarias" key="tab_7">
@@ -2607,7 +2629,7 @@ const personDetailForm = () => {
                           label="Banco"
                           rules={[ruleRequired]}
                         >
-                          <Select options={banks} />
+                          <Select options={banks} notFoundContent={"No se encontraron resultado."} />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2631,7 +2653,10 @@ const personDetailForm = () => {
                         <Form.Item
                           name="card_number"
                           label="Número de tarjeta"
-                          rules={[ruleRequired]}
+                          rules={[ruleRequired,{
+                            pattern: /^[\d]{0,19}$/,
+                            message: "El no  debe tener más de 19 dígitos",
+                          }]}
                         >
                           <Input type="number" maxLength={16} />
                         </Form.Item>
@@ -2640,7 +2665,14 @@ const personDetailForm = () => {
                         <Form.Item
                           name="expiration_month"
                           label="Mes de vencimiento"
-                          rules={[ruleRequired]}
+                          rules={[
+                            { required: true, message: "Este campo es requerido" },
+                            {
+                              pattern: /^[\d]{0,2}$/,
+                              message: "El campo debe tener 2 dígitos",
+                            },
+                          ]}
+                          validateTrigger="onBlur"
                         >
                           <Input type="number" maxLength={2} />
                         </Form.Item>
@@ -2649,7 +2681,11 @@ const personDetailForm = () => {
                         <Form.Item
                           name="expiration_year"
                           label="Año de vencimiento"
-                          rules={[ruleRequired]}
+                          rules={[ruleRequired,
+                            {
+                              pattern: /^[\d]{0,2}$/,
+                              message: "El campo debe tener 2 dígitos",
+                            },]}
                         >
                           <Input type="number" maxLength={2} />
                         </Form.Item>
@@ -2664,7 +2700,7 @@ const personDetailForm = () => {
                     </Row>
                   </Form>
                   <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colBank} dataSource={bankAccounts} />
+                    <Table columns={colBank} dataSource={bankAccounts} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
                   </Spin>
                 </TabPane>
                 <TabPane tab="Documentos" key="tab_8">
@@ -2683,7 +2719,7 @@ const personDetailForm = () => {
                     </Col>
                   </Row>
                   <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colDoc} dataSource={documents} />
+                    <Table columns={colDoc} dataSource={documents} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
                   </Spin>
                 </TabPane>
                 <TabPane tab="Cambiar contraseña" key="tab_9">

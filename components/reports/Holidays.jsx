@@ -291,6 +291,7 @@ const HolidaysReport = (props) => {
                     key="select"
                     options={optionStatus}
                     allowClear
+                    notFoundContent={"No se encontraron resultado."}
                   />
                 </Form.Item>
               </Col>
@@ -356,6 +357,7 @@ const HolidaysReport = (props) => {
             dataSource={holidayList}
             key="tableHolidays"
             columns={columns}
+            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
           ></Table>
         </Col>
       </Row>
