@@ -206,12 +206,12 @@ const configBusiness = () => {
         });
         message.success("Agregado correctamente.");
       })
-      .catch((error) => {
+      .catch(error => {
         resetForm();
         setId("");
         setLoadingTable(false);
         console.log(error);
-        message.success("Ocurrio un error intente de nuevo.");
+        message.error(error.response.data.code[0]);
       });
   };
   const updateRegister = (url, value) => {
