@@ -12,32 +12,33 @@ import {
   Modal,
   Form,
   message,
-  Tree,
 } from "antd";
 import Axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DeleteOutlined,
   EditOutlined,
   TableOutlined,
   NodeExpandOutlined,
   PlusOutlined,
-  DownOutlined,
   LoadingOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
-
+import Link from "next/link";
 import { API_URL } from "../../config/config";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import MainLayout from "../../layout/MainLayout";
 import NodeTreeView from "./TreeView/treeview";
 import Cookie from "js-cookie";
 import { userId } from "../../libs/auth";
+import { route } from "next/dist/next-server/server/router";
 
 const { TextArea } = Input;
 const { Content } = Layout;
 const { Option } = Select;
 
 const businessForm = () => {
+  let router = useRouter();
   const [business, setBusiness] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
 
@@ -312,6 +313,13 @@ const businessForm = () => {
               {permissions.delete && (
                 <Col className="gutter-row" span={6}>
                   <DeleteOutlined onClick={() => showModal("delete", item)} />
+                </Col>
+              )}
+              {permissions.edit && (
+                <Col className="gutter-row" span={6}>
+                  <Link href={`/pages/business/${item.id}`}>
+                    <SettingOutlined />
+                  </Link>
                 </Col>
               )}
             </Row>
