@@ -106,12 +106,12 @@ const businessForm = () => {
         if (response.status === 200) {
           Router.push("/business");
         }
-        getBusiness();
+        person();
         setIsModalVisible(false);
         setLoading(false);
       })
       .catch(function (error) {
-        getBusiness();
+        person();
         setLoading(false);
         console.log(error);
       });
@@ -136,7 +136,7 @@ const businessForm = () => {
         if (response.status === 200) {
           Router.push("/business");
         }
-        getBusiness();
+        person();
         setIsModalVisible(false);
         setLoading(false);
         setAddB(false);
@@ -232,6 +232,7 @@ const businessForm = () => {
     )
       .then((response) => {
         setBusiness([]);
+        console.log(response.data)
         setBusiness(response.data);
         setLoading(false);
       })
@@ -336,7 +337,7 @@ const businessForm = () => {
 
   const closeModalUpdate = () => {
     setUpdateModal(false);
-    getBusiness();
+    person()
   };
   const updateStatus = (value) => {
     setIsEdit(true);
