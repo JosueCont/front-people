@@ -66,7 +66,14 @@ const headerCustom = ({ hideMenu, ...props }) => {
     <>
       <Header>
         <Row>
-          <Col xl={1} lg={1} md={1} sm={2} xs={2}>
+          <Col
+            xl={1}
+            lg={1}
+            md={1}
+            sm={2}
+            xs={2}
+            style={{ paddingRight: "48px" }}
+          >
             <div
               onClick={() => router.push({ pathname: "/home" })}
               className="logo"
@@ -76,19 +83,18 @@ const headerCustom = ({ hideMenu, ...props }) => {
                 height: "100%",
                 display: "flex",
                 marginLeft: "-2%",
-                marginRight: "2%",
               }}
             >
               <img
                 style={{ float: "left", height: 60, margin: "auto" }}
                 src={
-                  "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/167202120565/staff_logo-iu.png"
+                  "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"
                 }
                 alt=""
               />
             </div>
           </Col>
-          <Col xl={20} lg={21} md={20} sm={18} xs={18}>
+          <Col xl={20} lg={20} md={19} sm={17} xs={17}>
             <Menu
               key="main_menu"
               theme="dark"
@@ -252,7 +258,7 @@ const headerCustom = ({ hideMenu, ...props }) => {
               ) : null}
             </Menu>
           </Col>
-          <Col span={1}>
+          <Col xl={3} lg={2} md={2} sm={1} xs={1}>
             <div
               className={"pointer"}
               style={{ float: "right" }}
