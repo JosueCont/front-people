@@ -40,12 +40,16 @@ import Router from "next/router";
 import moment from "moment";
 import { LOGIN_URL, APP_ID } from "../../config/config";
 import jsCookie from "js-cookie";
-import {getAccessIntranet, userCompanyId, userCompanyName} from "../../libs/auth";
+import {
+  getAccessIntranet,
+  userCompanyId,
+  userCompanyName,
+} from "../../libs/auth";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
-import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 
 const personDetailForm = () => {
   const { TabPane } = Tabs;
@@ -65,7 +69,6 @@ const personDetailForm = () => {
   const [khonnectId, setKhonnectId] = useState("");
   let nodeId = userCompanyId();
   let accessIntranet = getAccessIntranet();
-
 
   ////STATE BOLEAN SWITCH AND CHECKBOX
   const [isActive, setIsActive] = useState(false);
@@ -311,7 +314,6 @@ const personDetailForm = () => {
     setPermissions(perms);
   };
 
-
   /////GET DATA SELCTS
   const getValueSelects = async (id) => {
     const headers = {
@@ -320,7 +322,7 @@ const personDetailForm = () => {
     };
     let company = `?company=${nodeId}`;
     ///GROUPS
-    Axios.get(LOGIN_URL + `/group/list/`+ company, {
+    Axios.get(LOGIN_URL + `/group/list/` + company, {
       headers: headers,
     })
       .then((response) => {
@@ -490,13 +492,13 @@ const personDetailForm = () => {
           curp: response.data.curp,
           rfc: response.data.rfc,
           imss: response.data.imss,
-          code:response.data.code,
+          code: response.data.code,
           is_active: response.data.is_active,
           photo: response.data.photo,
           civil_status: response.data.civil_status,
           report_to: response.data.report_to,
           periodicity: response.data.periodicity,
-          intranet_access:response.data.intranet_access
+          intranet_access: response.data.intranet_access,
         });
         if (response.data.person_type)
           formPerson.setFieldsValue({
@@ -617,7 +619,7 @@ const personDetailForm = () => {
           civil_status: response.data.civil_status,
           report_to: response.data.report_to,
           periodicity: response.data.periodicity,
-          intranet_access:response.data.intranet_access
+          intranet_access: response.data.intranet_access,
         });
         if (response.data.person_type)
           formPerson.setFieldsValue({
@@ -833,9 +835,9 @@ const personDetailForm = () => {
         setLoading(false);
         showModal();
         getPhone();
-        if (upPhone){
+        if (upPhone) {
           formPhone.resetFields();
-          setUpPhone(false)
+          setUpPhone(false);
         }
         setTimeout(() => {
           setLoadingTable(false);
@@ -1064,9 +1066,9 @@ const personDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
-        if (upFamily){
+        if (upFamily) {
           formFamily.resetFields();
-          setUpFamily(false)
+          setUpFamily(false);
         }
         showModal();
         getFamily();
@@ -1219,7 +1221,7 @@ const personDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
-        if (upContEm){
+        if (upContEm) {
           formContactEmergency.resetFields();
           setUpContEm(false);
         }
@@ -1499,9 +1501,9 @@ const personDetailForm = () => {
           className: "custom-class",
         });
         setLoading(false);
-        if (upBankAcc){
+        if (upBankAcc) {
           formBank.resetFields();
-          setUpBankAcc(false)
+          setUpBankAcc(false);
         }
         showModal();
         getBankAccount();
@@ -1823,8 +1825,7 @@ const personDetailForm = () => {
       });
   };
 
-    //accessIntranet = getAccessIntranet();
-
+  //accessIntranet = getAccessIntranet();
 
   return (
     <MainLayout currentKey="1">
@@ -1834,7 +1835,7 @@ const personDetailForm = () => {
           <Breadcrumb.Item href="/home/">Personas</Breadcrumb.Item>
           <Breadcrumb.Item>Expediente de empleado</Breadcrumb.Item>
         </Breadcrumb>
-        <Spin tip="Loading..." spinning={loading}>
+        <Spin tip="Cargando..." spinning={loading}>
           <div
             className="site-layout-background"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
@@ -1854,9 +1855,9 @@ const personDetailForm = () => {
                     <Row>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item
-                            name="first_name"
-                            label="Nombre(s)"
-                            rules={[{ message: "Ingresa un nombre" }]}
+                          name="first_name"
+                          label="Nombre(s)"
+                          rules={[{ message: "Ingresa un nombre" }]}
                         >
                           <Input />
                         </Form.Item>
@@ -1870,76 +1871,81 @@ const personDetailForm = () => {
                           <Input />
                         </Form.Item>
                       </Col>
-                      <Col lg={7} xs={22}offset={1}>
+                      <Col lg={7} xs={22} offset={1}>
                         <Row justify="center">
-                            <Col lg={12} md={8} xs={24}>
+                          <Col lg={12} md={8} xs={24}>
                             <Spin spinning={loadImge}>
                               <div
-                                  style={
-                                    photo
-                                        ? {
-                                          width: "120px",
-                                          height: "120px",
-                                          display: "flex",
-                                          flexWrap: "wrap",
-                                          alignContent: "center",
-                                          textAlign: "center",
-                                        }
-                                        : {}
-                                  }
+                                style={
+                                  photo
+                                    ? {
+                                        width: "120px",
+                                        height: "120px",
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        alignContent: "center",
+                                        textAlign: "center",
+                                      }
+                                    : {}
+                                }
                               >
                                 <Upload
-                                    name="avatar"
-                                    listType="picture-card"
-                                    showUploadList={false}
-                                    onChange={upImage}
+                                  name="avatar"
+                                  listType="picture-card"
+                                  showUploadList={false}
+                                  onChange={upImage}
                                 >
                                   {photo ? (
-                                      <div
-                                          className="frontImage"
-                                          style={
-                                            photo
-                                                ? {
-                                                  width: "120px",
-                                                  height: "120px",
-                                                  display: "flex",
-                                                  flexWrap: "wrap",
-                                                  borderRadius:'10px',
-                                                  textAlign: "center",
-                                                  alignContent: "center",
-                                                }
-                                                : {}
-                                          }
-                                      >
-                                        <img className="img"
-                                             src={photo}
-                                             alt="avatar"
-                                             preview={false}
-                                             style={{width: '120px',height:'120px',borderRadius:'11px'}}
-                                        />
-                                      </div>
+                                    <div
+                                      className="frontImage"
+                                      style={
+                                        photo
+                                          ? {
+                                              width: "120px",
+                                              height: "120px",
+                                              display: "flex",
+                                              flexWrap: "wrap",
+                                              borderRadius: "10px",
+                                              textAlign: "center",
+                                              alignContent: "center",
+                                            }
+                                          : {}
+                                      }
+                                    >
+                                      <img
+                                        className="img"
+                                        src={photo}
+                                        alt="avatar"
+                                        preview={false}
+                                        style={{
+                                          width: "120px",
+                                          height: "120px",
+                                          borderRadius: "11px",
+                                        }}
+                                      />
+                                    </div>
                                   ) : (
-                                      uploadButton
+                                    uploadButton
                                   )}
                                 </Upload>
                               </div>
                             </Spin>
-                            </Col>
+                          </Col>
                           <Col lg={12} md={16} xs={24}>
                             <Form.Item
-                                name="date_of_admission"
-                                label="Fecha de ingreso"
+                              name="date_of_admission"
+                              label="Fecha de ingreso"
                             >
                               <DatePicker
-                                  onChange={onChangeDateAdmission}
-                                  moment={"YYYY-MM-DD"}
+                                onChange={onChangeDateAdmission}
+                                moment={"YYYY-MM-DD"}
                               />
                             </Form.Item>
                             <Switch
-                                checked={isActive}
-                                onClick={changeStatus}
-                                checkedChildren="Activo"
-                                unCheckedChildren="Inactivo"
+                              checked={isActive}
+                              onClick={changeStatus}
+                              checkedChildren="Activo"
+                              unCheckedChildren="Inactivo"
                             />
                           </Col>
                         </Row>
@@ -1982,37 +1988,42 @@ const personDetailForm = () => {
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item
-                            name="register_date"
-                            label="Fecha de ingreso a la plataforma"
+                          name="register_date"
+                          label="Fecha de ingreso a la plataforma"
                         >
                           <DatePicker
-                              style={{ width: "100%" }}
-                              onChange={onChangeIngPlatform}
-                              moment={"YYYY-MM-DD"}
-                              placeholder="Fecha de ingreso a la plataforma"
+                            style={{ width: "100%" }}
+                            onChange={onChangeIngPlatform}
+                            moment={"YYYY-MM-DD"}
+                            placeholder="Fecha de ingreso a la plataforma"
                           />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
-                        <Form.Item
-                            label="Número de empleado" name="code">
+                        <Form.Item label="Número de empleado" name="code">
                           <Input type="text" placeholder="Núm. empleado" />
                         </Form.Item>
                       </Col>
-                      {
-                        accessIntranet !=="false" &&
+                      {accessIntranet !== "false" && (
                         <Col lg={7} xs={22} offset={1}>
-                          <Form.Item name="intranet_access" label="Acceso a la intranet" valuePropName="checked">
+                          <Form.Item
+                            name="intranet_access"
+                            label="Acceso a la intranet"
+                            valuePropName="checked"
+                          >
                             <Switch
-                                checkedChildren={<CheckOutlined />}
-                                unCheckedChildren={<CloseOutlined />}
+                              checkedChildren={<CheckOutlined />}
+                              unCheckedChildren={<CloseOutlined />}
                             />
                           </Form.Item>
                         </Col>
-                      }
+                      )}
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="report_to" label="Reporta a ">
-                          <Select options={people} notFoundContent={"No se encontraron resultado."} />
+                          <Select
+                            options={people}
+                            notFoundContent={"No se encontraron resultado."}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={15} xs={22} offset={1}>
@@ -2058,12 +2069,18 @@ const personDetailForm = () => {
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="civil_status" label="Estado Civil">
-                          <Select options={civilStatus} notFoundContent={"No se encontraron resultado."} />
+                          <Select
+                            options={civilStatus}
+                            notFoundContent={"No se encontraron resultado."}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
                         <Form.Item name="gender" label="Género">
-                          <Select options={genders} notFoundContent={"No se encontraron resultado."} />
+                          <Select
+                            options={genders}
+                            notFoundContent={"No se encontraron resultado."}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={7} xs={22} offset={1}>
@@ -2092,7 +2109,6 @@ const personDetailForm = () => {
                       </Col>
                     </Row>
                   </Col>
-
                 </Row>
                 <Row justify={"end"}>
                   <Col>
@@ -2191,7 +2207,10 @@ const personDetailForm = () => {
                           label="Tipo de teléfono"
                           rules={[ruleRequired]}
                         >
-                          <Select options={typePhones} notFoundContent={"No se encontraron resultado."} />
+                          <Select
+                            options={typePhones}
+                            notFoundContent={"No se encontraron resultado."}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2200,7 +2219,10 @@ const personDetailForm = () => {
                           label="Tipo de línea"
                           rules={[ruleRequired]}
                         >
-                          <Select options={typeLines} notFoundContent={"No se encontraron resultado."} />
+                          <Select
+                            options={typeLines}
+                            notFoundContent={"No se encontraron resultado."}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2248,8 +2270,16 @@ const personDetailForm = () => {
                       </Form.Item>
                     </Row>
                   </Form>
-                  <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colPhone}  dataSource={phones} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
+                  <Spin tip="Cargando..." spinning={loadingTable}>
+                    <Table
+                      columns={colPhone}
+                      dataSource={phones}
+                      locale={{
+                        emptyText: loadingTable
+                          ? "Cargando..."
+                          : "No se encontraron resultados.",
+                      }}
+                    />
                   </Spin>
                 </TabPane>
                 <TabPane tab="Dirección" key="tab_3">
@@ -2268,7 +2298,10 @@ const personDetailForm = () => {
                           label="Tipo de calle"
                           rules={[ruleRequired]}
                         >
-                          <Select options={typeStreet} notFoundContent={"No se encontraron resultado."} />
+                          <Select
+                            options={typeStreet}
+                            notFoundContent={"No se encontraron resultado."}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2357,7 +2390,10 @@ const personDetailForm = () => {
                           label="Parentesco"
                           rules={[ruleRequired]}
                         >
-                          <Select options={relationship} notFoundContent={"No se encontraron resultado."}/>
+                          <Select
+                            options={relationship}
+                            notFoundContent={"No se encontraron resultado."}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2398,7 +2434,10 @@ const personDetailForm = () => {
                           label="Género"
                           rules={[ruleRequired]}
                         >
-                          <Select options={genders} notFoundContent={"No se encontraron resultado."} />
+                          <Select
+                            options={genders}
+                            notFoundContent={"No se encontraron resultado."}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2461,8 +2500,16 @@ const personDetailForm = () => {
                       </Form.Item>
                     </Row>
                   </Form>
-                  <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colFamily} dataSource={family} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
+                  <Spin tip="Cargando..." spinning={loadingTable}>
+                    <Table
+                      columns={colFamily}
+                      dataSource={family}
+                      locale={{
+                        emptyText: loadingTable
+                          ? "Cargando..."
+                          : "No se encontraron resultados.",
+                      }}
+                    />
                   </Spin>
                 </TabPane>
                 <TabPane tab="Contactos de emergencia" key="tab_5">
@@ -2483,7 +2530,10 @@ const personDetailForm = () => {
                           label="Parentesco"
                           rules={[ruleRequired]}
                         >
-                          <Select options={relationship} notFoundContent={"No se encontraron resultado."}/>
+                          <Select
+                            options={relationship}
+                            notFoundContent={"No se encontraron resultado."}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2531,8 +2581,16 @@ const personDetailForm = () => {
                       </Form.Item>
                     </Row>
                   </Form>
-                  <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colContact} dataSource={contactEmergency} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
+                  <Spin tip="Cargando..." spinning={loadingTable}>
+                    <Table
+                      columns={colContact}
+                      dataSource={contactEmergency}
+                      locale={{
+                        emptyText: loadingTable
+                          ? "Cargando..."
+                          : "No se encontraron resultados.",
+                      }}
+                    />
                   </Spin>
                 </TabPane>
                 <TabPane tab="Formación/Habilidades" key="tab_6">
@@ -2607,8 +2665,16 @@ const personDetailForm = () => {
                       </Form.Item>
                     </Row>
                   </Form>
-                  <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colTraining} dataSource={training} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
+                  <Spin tip="Cargando..." spinning={loadingTable}>
+                    <Table
+                      columns={colTraining}
+                      dataSource={training}
+                      locale={{
+                        emptyText: loadingTable
+                          ? "Cargando..."
+                          : "No se encontraron resultados.",
+                      }}
+                    />
                   </Spin>
                 </TabPane>
                 <TabPane tab="Cuentas bancarias" key="tab_7">
@@ -2629,7 +2695,10 @@ const personDetailForm = () => {
                           label="Banco"
                           rules={[ruleRequired]}
                         >
-                          <Select options={banks} notFoundContent={"No se encontraron resultado."} />
+                          <Select
+                            options={banks}
+                            notFoundContent={"No se encontraron resultado."}
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={6} xs={22} offset={1}>
@@ -2653,10 +2722,13 @@ const personDetailForm = () => {
                         <Form.Item
                           name="card_number"
                           label="Número de tarjeta"
-                          rules={[ruleRequired,{
-                            pattern: /^[\d]{0,19}$/,
-                            message: "El no  debe tener más de 19 dígitos",
-                          }]}
+                          rules={[
+                            ruleRequired,
+                            {
+                              pattern: /^[\d]{0,19}$/,
+                              message: "El no  debe tener más de 19 dígitos",
+                            },
+                          ]}
                         >
                           <Input type="number" maxLength={16} />
                         </Form.Item>
@@ -2666,7 +2738,10 @@ const personDetailForm = () => {
                           name="expiration_month"
                           label="Mes de vencimiento"
                           rules={[
-                            { required: true, message: "Este campo es requerido" },
+                            {
+                              required: true,
+                              message: "Este campo es requerido",
+                            },
                             {
                               pattern: /^[\d]{0,2}$/,
                               message: "El campo debe tener 2 dígitos",
@@ -2681,11 +2756,13 @@ const personDetailForm = () => {
                         <Form.Item
                           name="expiration_year"
                           label="Año de vencimiento"
-                          rules={[ruleRequired,
+                          rules={[
+                            ruleRequired,
                             {
                               pattern: /^[\d]{0,2}$/,
                               message: "El campo debe tener 2 dígitos",
-                            },]}
+                            },
+                          ]}
                         >
                           <Input type="number" maxLength={2} />
                         </Form.Item>
@@ -2699,8 +2776,16 @@ const personDetailForm = () => {
                       </Form.Item>
                     </Row>
                   </Form>
-                  <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colBank} dataSource={bankAccounts} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
+                  <Spin tip="Cargando..." spinning={loadingTable}>
+                    <Table
+                      columns={colBank}
+                      dataSource={bankAccounts}
+                      locale={{
+                        emptyText: loadingTable
+                          ? "Cargando..."
+                          : "No se encontraron resultados.",
+                      }}
+                    />
                   </Spin>
                 </TabPane>
                 <TabPane tab="Documentos" key="tab_8">
@@ -2718,8 +2803,16 @@ const personDetailForm = () => {
                       </Button>
                     </Col>
                   </Row>
-                  <Spin tip="Loading..." spinning={loadingTable}>
-                    <Table columns={colDoc} dataSource={documents} locale={{emptyText: loadingTable ? "Cargando..." : "No se encontraron resultados."}}/>
+                  <Spin tip="Cargando..." spinning={loadingTable}>
+                    <Table
+                      columns={colDoc}
+                      dataSource={documents}
+                      locale={{
+                        emptyText: loadingTable
+                          ? "Cargando..."
+                          : "No se encontraron resultados.",
+                      }}
+                    />
                   </Spin>
                 </TabPane>
                 <TabPane tab="Cambiar contraseña" key="tab_9">

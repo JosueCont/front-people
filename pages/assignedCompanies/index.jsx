@@ -114,7 +114,6 @@ const SelectCompany = () => {
       console.log(error);
     } finally {
       setCompaniesUser(companies);
-      console.log("BUSPER-->>", companies);
       setShowTable(true);
     }
   };
@@ -134,7 +133,6 @@ const SelectCompany = () => {
 
       if (companiesUser.length > 0)
         url = `/business/node-person/update_assignment/`;
-      console.log("URL->> ", url);
       let response = await Axios.post(API_URL + url, dataPost);
       let res = response.data;
       notification["success"]({
@@ -202,7 +200,7 @@ const SelectCompany = () => {
         className="container back-white"
         style={{ width: "100%", padding: "20px 0" }}
       >
-        <Spin tip="Loading..." spinning={loading}>
+        <Spin tip="Cargando..." spinning={loading}>
           <Row justify={"center"}>
             <Col span={23}>
               <Title level={3}>Asignar Empresa</Title>
@@ -228,7 +226,11 @@ const SelectCompany = () => {
                   </Button>
                 </Col>
                 <Col xs={23} md={15}>
-                  <Table columns={columns} dataSource={dataList}    locale={{emptyText: "No se encontraron resultados."}} />
+                  <Table
+                    columns={columns}
+                    dataSource={dataList}
+                    locale={{ emptyText: "No se encontraron resultados." }}
+                  />
                 </Col>
               </Row>
             </Col>

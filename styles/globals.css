@@ -97,7 +97,9 @@ div#__next > section.layout{
 }
 
 header.ant-layout-header {
-  background-color: var(--bluePrimary);
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: var(--bluePrimary) !important;
 }
 header.ant-layout-header > ul {
   background-color: var(--bluePrimary) !important;
@@ -250,4 +252,16 @@ li.ant-menu-submenu-selected {
   background-repeat: no-repeat;
   background-size: 50%;
   height: 200px;
+}
+
+.menu-custom {
+  background-color: var(--bluePrimary) !important;
+  height: 64px !important;
+}
+
+.container-items-center {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
 }

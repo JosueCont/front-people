@@ -97,13 +97,14 @@ const SelectCompany = () => {
   };
 
   const getConfig = () => {
-    Axios.get(API_URL + "/setup/site-configuration/").then(res => {
-          sessionStorage.setItem("accessIntranet", res.data.intranet_enabled)
-        }
-    ).catch(e => {
-      console.log(e)
-    })
-  }
+    Axios.get(API_URL + "/setup/site-configuration/")
+      .then((res) => {
+        sessionStorage.setItem("accessIntranet", res.data.intranet_enabled);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   return (
     <>
@@ -120,9 +121,23 @@ const SelectCompany = () => {
           </Breadcrumb>
           <div className="container" style={{ width: "100%", padding: 20 }}>
             <Spin spinning={loading}>
-              <Row gutter={24}>
+              <Row
+                gutter={[16, 16]}
+                style={{
+                  display: "flex",
+                  // justifyContent: "center",
+                  // alignItems: "center",
+                }}
+              >
                 {dataList.map((item) => (
-                  <Col span={4} style={{ display: "grid" }}>
+                  <Col
+                    xl={5}
+                    lg={5}
+                    md={5}
+                    sm={8}
+                    xs={24}
+                    style={{ display: "grid", margin: "10px" }}
+                  >
                     <Card
                       hoverable
                       style={{ textAlign: "center", marginTop: 20 }}
