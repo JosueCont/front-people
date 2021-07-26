@@ -160,16 +160,23 @@ const ConfigCompany = () => {
                 </Form.Item>
               </Col>
             </Row>
-            <Row justify={"end"}>
-              <Col offset={1}>
-                <Button type="danger" onClick={() => router.push("/business")}>
-                  Cancelar
-                </Button>
-              </Col>
-              <Col offset={1}>
-                <Button type="primary" htmlType="submit">
-                  Guardar
-                </Button>
+            <Row justify={"end"} className="container-items-center">
+              <Col lg={20} xs={22} offset={1} justify={"end"}>
+                <Row justify={"end"}>
+                  <Col offset={1}>
+                    <Button
+                      type="danger"
+                      onClick={() => router.push("/business")}
+                    >
+                      Cancelar
+                    </Button>
+                  </Col>
+                  <Col offset={1}>
+                    <Button type="primary" htmlType="submit">
+                      Guardar
+                    </Button>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Form>
