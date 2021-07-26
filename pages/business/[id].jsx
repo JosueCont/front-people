@@ -148,7 +148,7 @@ const ConfigCompany = () => {
             </Row>
             <Row className="container-items-center">
               <Col lg={20} xs={22} offset={1}>
-                <Form.Item name="policies" label="Politicas:">
+                <Form.Item name="policies" label="Políticas:">
                   <TextArea rows={6} />
                 </Form.Item>
               </Col>
