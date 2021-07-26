@@ -413,7 +413,9 @@ const NodeTreeView = () => {
             <TextArea rows={4} showCount maxLength={200} />
           </Form.Item>
           <Form.Item name="parent" label="Nodo padre">
-            <Select showSearch placeholder="Empresa" options={business} />
+            <Select showSearch placeholder="Empresa"
+                    notFoundContent={"No se encontraron resultado."}
+                    options={business} />
           </Form.Item>
         </Form>
       </Modal>

@@ -211,7 +211,7 @@ const configBusiness = () => {
         setId("");
         setLoadingTable(false);
         console.log(error);
-        message.success("Ocurrio un error intente de nuevo.");
+        message.error(error.response.data.code[0]);
       });
   };
   const updateRegister = (url, value) => {
@@ -753,8 +753,16 @@ const configBusiness = () => {
                         </Row>
                       </Form>
                     )}
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colDepartment} dataSource={departments} />
+                    <Spin tip="Cargando..." spinning={loadingTable}>
+                      <Table
+                        columns={colDepartment}
+                        dataSource={departments}
+                        locale={{
+                          emptyText: loadingTable
+                            ? "Cargando..."
+                            : "No se encontraron resultados.",
+                        }}
+                      />
                     </Spin>
                   </TabPane>
                 )}
@@ -787,7 +795,10 @@ const configBusiness = () => {
                               label="Departamento"
                               rules={[ruleRequired]}
                             >
-                              <Select options={selectDep} />
+                              <Select
+                                options={selectDep}
+                                notFoundContent={"No se encontraron resultado."}
+                              />
                             </Form.Item>
                           </Col>
                           <Col lg={6} xs={22} offset={1}>
@@ -825,8 +836,16 @@ const configBusiness = () => {
                         </Row>
                       </Form>
                     )}{" "}
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colJob} dataSource={jobs} />
+                    <Spin tip="Cargando..." spinning={loadingTable}>
+                      <Table
+                        columns={colJob}
+                        dataSource={jobs}
+                        locale={{
+                          emptyText: loadingTable
+                            ? "Cargando..."
+                            : "No se encontraron resultados.",
+                        }}
+                      />
                     </Spin>
                   </TabPane>
                 )}
@@ -882,8 +901,16 @@ const configBusiness = () => {
                         </Row>
                       </Form>
                     )}
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colTypePerson} dataSource={typesPerson} />
+                    <Spin tip="Cargando..." spinning={loadingTable}>
+                      <Table
+                        columns={colTypePerson}
+                        dataSource={typesPerson}
+                        locale={{
+                          emptyText: loadingTable
+                            ? "Cargando..."
+                            : "No se encontraron resultados.",
+                        }}
+                      />
                     </Spin>
                   </TabPane>
                 )}
@@ -939,10 +966,15 @@ const configBusiness = () => {
                         </Row>
                       </Form>
                     )}
-                    <Spin tip="Loading..." spinning={loadingTable}>
+                    <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table
                         columns={colRelationShip}
                         dataSource={relationsShip}
+                        locale={{
+                          emptyText: loadingTable
+                            ? "Cargando..."
+                            : "No se encontraron resultados.",
+                        }}
                       />
                     </Spin>
                   </TabPane>
@@ -1002,10 +1034,15 @@ const configBusiness = () => {
                         </Row>
                       </Form>
                     )}
-                    <Spin tip="Loading..." spinning={loadingTable}>
+                    <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table
                         columns={colTypeDocument}
                         dataSource={typesDocument}
+                        locale={{
+                          emptyText: loadingTable
+                            ? "Cargando..."
+                            : "No se encontraron resultados.",
+                        }}
                       />
                     </Spin>
                   </TabPane>
@@ -1062,8 +1099,16 @@ const configBusiness = () => {
                         </Row>
                       </Form>
                     )}
-                    <Spin tip="Loading..." spinning={loadingTable}>
-                      <Table columns={colBank} dataSource={banks} />
+                    <Spin tip="Cargando..." spinning={loadingTable}>
+                      <Table
+                        columns={colBank}
+                        dataSource={banks}
+                        locale={{
+                          emptyText: loadingTable
+                            ? "Cargando..."
+                            : "No se encontraron resultados.",
+                        }}
+                      />
                     </Spin>
                   </TabPane>
                 )}

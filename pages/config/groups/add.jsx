@@ -723,6 +723,7 @@ const GroupAdd = () => {
                               dataSource={views.filter(
                                 (perm) => perm.module !== "Catalogos"
                               )}
+                              locale={{emptyText:  "No se encontraron resultados."}}
                             />
                           </Col>
                           <Col xl={12} md={12} sm={24} xs={24}>
@@ -736,6 +737,7 @@ const GroupAdd = () => {
                               dataSource={views.filter(
                                 (perm) => perm.module === "Catalogos"
                               )}
+                              locale={{emptyText: "No se encontraron resultados."}}
                             />
                           </Col>
                         </Row>
@@ -766,6 +768,7 @@ const GroupAdd = () => {
                                   perm.module === "Nómina" ||
                                   perm.module === "SolicitudCuentas"
                               )}
+                              locale={{emptyText: "No se encontraron resultados."}}
                             />
                           </Col>
                           <Col xl={12} md={12} sm={24} xs={24}>
@@ -782,6 +785,7 @@ const GroupAdd = () => {
                                   perm.module === "Incapacidad" ||
                                   perm.module === "Permisos"
                               )}
+                              locale={{emptyText: "No se encontraron resultados."}}
                             />
                           </Col>
                         </Row>

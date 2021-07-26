@@ -12,32 +12,33 @@ import {
   Modal,
   Form,
   message,
-  Tree,
 } from "antd";
 import Axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DeleteOutlined,
   EditOutlined,
   TableOutlined,
   NodeExpandOutlined,
   PlusOutlined,
-  DownOutlined,
   LoadingOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
-
+import Link from "next/link";
 import { API_URL } from "../../config/config";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import MainLayout from "../../layout/MainLayout";
 import NodeTreeView from "./TreeView/treeview";
 import Cookie from "js-cookie";
 import { userId } from "../../libs/auth";
+import { route } from "next/dist/next-server/server/router";
 
 const { TextArea } = Input;
 const { Content } = Layout;
 const { Option } = Select;
 
 const businessForm = () => {
+  let router = useRouter();
   const [business, setBusiness] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
 
@@ -106,12 +107,12 @@ const businessForm = () => {
         if (response.status === 200) {
           Router.push("/business");
         }
-        getBusiness();
+        person();
         setIsModalVisible(false);
         setLoading(false);
       })
       .catch(function (error) {
-        getBusiness();
+        person();
         setLoading(false);
         console.log(error);
       });
@@ -136,7 +137,7 @@ const businessForm = () => {
         if (response.status === 200) {
           Router.push("/business");
         }
-        getBusiness();
+        person();
         setIsModalVisible(false);
         setLoading(false);
         setAddB(false);
@@ -232,6 +233,7 @@ const businessForm = () => {
     )
       .then((response) => {
         setBusiness([]);
+        console.log(response.data);
         setBusiness(response.data);
         setLoading(false);
       })
@@ -314,6 +316,13 @@ const businessForm = () => {
                   <DeleteOutlined onClick={() => showModal("delete", item)} />
                 </Col>
               )}
+              {permissions.edit && (
+                <Col className="gutter-row" span={6}>
+                  <Link href={`/business/${item.id}`}>
+                    <SettingOutlined />
+                  </Link>
+                </Col>
+              )}
             </Row>
           </div>
         );
@@ -336,7 +345,7 @@ const businessForm = () => {
 
   const closeModalUpdate = () => {
     setUpdateModal(false);
-    getBusiness();
+    person();
   };
   const updateStatus = (value) => {
     setIsEdit(true);
@@ -446,6 +455,11 @@ const businessForm = () => {
                 columns={columns}
                 dataSource={business}
                 loading={loading}
+                locale={{
+                  emptyText: loading
+                    ? "Cargando..."
+                    : "No se encontraron resultados.",
+                }}
               />
             ) : (
               <NodeTreeView />
@@ -520,6 +534,7 @@ const businessForm = () => {
               placeholder="Select a person"
               optionFilterProp="children"
               name={"fNode"}
+              notFoundContent={"No se encontraron resultado."}
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }

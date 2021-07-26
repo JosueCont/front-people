@@ -199,6 +199,7 @@ const Incapacity = () => {
                           key="select"
                           options={optionStatus}
                           allowClear
+                          notFoundContent={"No se encontraron resultado."}
                         />
                       </Form.Item>
                     </Col>
@@ -258,6 +259,7 @@ const Incapacity = () => {
                   dataSource={incapacityList}
                   key="tableHolidays"
                   loading={loading}
+                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
                 >
                   <Column
                     title="Colaborador"

@@ -93,7 +93,7 @@ const HolidaysNew = () => {
         className="container back-white"
         style={{ width: "100%", padding: "20px 0" }}
       >
-        <Spin tip="Loading..." spinning={!ready}>
+        <Spin tip="Cargando..." spinning={!ready}>
           <Row justify={"center"}>
             <Col span={23}>
               <Lendingform

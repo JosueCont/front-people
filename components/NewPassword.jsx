@@ -71,7 +71,7 @@ const NewPasswordForm = (props) => {
 
   return (
     <>
-      <Spin tip="Loading..." spinning={loading}>
+      <Spin tip="Cargando..." spinning={loading}>
         <Form name="recoverPasswordform" layout="vertical" onFinish={onFinish}>
           <Form.Item
             name="passwordOne"

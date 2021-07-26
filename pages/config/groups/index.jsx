@@ -277,7 +277,7 @@ const Groups = () => {
         </Row>
         <Row>
           <Col span={24}>
-            <Table columns={columns} dataSource={groups} loading={loading} />
+            <Table columns={columns} dataSource={groups} loading={loading} locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}/>
           </Col>
         </Row>
       </div>

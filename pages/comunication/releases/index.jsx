@@ -214,7 +214,7 @@ const Releases = () => {
                         name="category"
                         label="Categoría"
                       >
-                        <Select style={{ width: 150 }} key="select" allowClear>
+                        <Select style={{ width: 150 }} key="select" allowClear notFoundContent={"No se encontraron resultado."}>
                           <Option key="item_1" value="1">
                             Aviso
                           </Option>
@@ -302,6 +302,7 @@ const Releases = () => {
                   key="releases_table"
                   className={"mainTable"}
                   loading={loading}
+                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
                 >
                   <Column title="Categoría" dataIndex="title" key="title" />
                   <Column

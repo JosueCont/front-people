@@ -364,6 +364,7 @@ const UploadPayroll = () => {
                   columns={columns}
                   dataSource={vouchers}
                   loading={loading}
+                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
                   className={"mainTable"}
                 />
               </Col>

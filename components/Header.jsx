@@ -1,24 +1,13 @@
-import {
-  Layout,
-  Menu,
-  Avatar,
-  Dropdown,
-  Modal,
-  Alert,
-  Image,
-  Button,
-} from "antd";
+import { Layout, Menu, Avatar, Dropdown, Modal, Button, Row, Col } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import CardUser from "./CardUser";
 import CardApps from "./CardApps";
-import { Router } from "next/router";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Cookie from "js-cookie";
 import Axios from "axios";
 import { API_URL } from "../config/config";
 import { getAccessIntranet, logoutAuth } from "../libs/auth";
-import { route } from "next/dist/next-server/server/router";
 import { FormattedMessage } from "react-intl";
 const { Header } = Layout;
 
@@ -76,71 +65,69 @@ const headerCustom = ({ hideMenu, ...props }) => {
   return (
     <>
       <Header>
-        <div
-          onClick={() => router.push({ pathname: "/home" })}
-          className="logo"
-          key="content_logo"
-          style={{
-            float: "left",
-            height: "100%",
-            display: "flex",
-            marginLeft: "-2%",
-            marginRight: "2%",
-          }}
-        >
-          <img
-            style={{ float: "left", height: 60, margin: "auto" }}
-            src={
-              "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/167202120565/staff_logo-iu.png"
-            }
-            alt=""
-          />
-        </div>
-        {/* <img className="logo" src="/public/images/logo.png" alt=""/> */}
-
-        <Menu
-          key="main_menu"
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={[props.currentKey]}
-        >
-          {/* <Menu.Item>
-            <div style={{ float: "left" }} key={'app_'+props.currentKey}>
-                <Dropdown overlay={appsCardDisplay} key="drop_icon">
-                    <div key="app_icon_content">
-                        <AppstoreOutlined key="icon_app" style={{ fontSize: "26px", color: "#08c" }} />
-                    </div>
-                </Dropdown>
+        <Row>
+          <Col xl={1} lg={1} md={1} sm={2} xs={2}>
+            <div
+              onClick={() => router.push({ pathname: "/home" })}
+              className="logo"
+              key="content_logo"
+              style={{
+                float: "left",
+                height: "100%",
+                display: "flex",
+                marginLeft: "-2%",
+                marginRight: "2%",
+              }}
+            >
+              <img
+                style={{ float: "left", height: 60, margin: "auto" }}
+                src={
+                  "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/167202120565/staff_logo-iu.png"
+                }
+                alt=""
+              />
             </div>
-        </Menu.Item> */}
-          {!hideMenu ? (
-            <>
-              <Menu.Item
-                key="1"
-                onClick={() => router.push({ pathname: "/home" })}
-              >
-                Personas
-              </Menu.Item>
-              <Menu.Item
-                key="2"
-                onClick={() => router.push({ pathname: "/business" })}
-              >
-                Empresas
-              </Menu.Item>
-              <SubMenu key="3" title="Configuración">
-                <Menu.Item
-                  key="3.1"
-                  onClick={() => router.push({ pathname: "/config/business" })}
-                >
-                  Catálogos
-                </Menu.Item>
-                <Menu.Item
-                  key="3.2"
-                  onClick={() => router.push({ pathname: "/config/groups" })}
-                >
-                  Perfiles de seguridad
-                </Menu.Item>
-                {/* <Menu.Item
+          </Col>
+          <Col xl={20} lg={21} md={20} sm={18} xs={18}>
+            <Menu
+              key="main_menu"
+              theme="dark"
+              mode="horizontal"
+              defaultSelectedKeys={[props.currentKey]}
+              className="menu-custom"
+            >
+              {!hideMenu ? (
+                <>
+                  <Menu.Item
+                    key="1"
+                    onClick={() => router.push({ pathname: "/home" })}
+                  >
+                    Personas
+                  </Menu.Item>
+                  <Menu.Item
+                    key="2"
+                    onClick={() => router.push({ pathname: "/business" })}
+                  >
+                    Empresas
+                  </Menu.Item>
+                  <SubMenu key="3" title="Configuración">
+                    <Menu.Item
+                      key="3.1"
+                      onClick={() =>
+                        router.push({ pathname: "/config/business" })
+                      }
+                    >
+                      Catálogos
+                    </Menu.Item>
+                    <Menu.Item
+                      key="3.2"
+                      onClick={() =>
+                        router.push({ pathname: "/config/groups" })
+                      }
+                    >
+                      Perfiles de seguridad
+                    </Menu.Item>
+                    {/* <Menu.Item
                   key="3.3"
                   onClick={() =>
                     router.push({ pathname: "/config/personalization" })
@@ -148,158 +135,170 @@ const headerCustom = ({ hideMenu, ...props }) => {
                 >
                   Personalización
                 </Menu.Item> */}
-              </SubMenu>
+                  </SubMenu>
 
-              <SubMenu key="4" title="Comunicación">
-                <Menu.Item
-                  key="4.1"
-                  onClick={() =>
-                    router.push({ pathname: "/comunication/releases" })
-                  }
-                >
-                  Comunicados
-                </Menu.Item>
-                <Menu.Item
-                  key="4.2"
-                  onClick={() =>
-                    router.push({ pathname: "/comunication/events" })
-                  }
-                >
-                  Eventos
-                </Menu.Item>
-              </SubMenu>
-              <Menu.Item
-                key="8"
-                onClick={() => router.push({ pathname: "/reports" })}
-              >
-                Reportes
-              </Menu.Item>
-              <SubMenu key="7" title="Solicitudes">
-                <Menu.Item
-                  key="7.1"
-                  onClick={() => router.push({ pathname: "/lending" })}
-                >
-                  Préstamos
-                </Menu.Item>
-                <Menu.Item
-                  key="7.2"
-                  onClick={() => router.push({ pathname: "/holidays" })}
-                >
-                  Vacaciones
-                </Menu.Item>
-                <Menu.Item
-                  key="7.3"
-                  onClick={() => router.push({ pathname: "/permission" })}
-                >
-                  Permisos
-                </Menu.Item>
-                <Menu.Item
-                  key="7.4"
-                  onClick={() => router.push({ pathname: "/incapacity" })}
-                >
-                  Incapacidad
-                </Menu.Item>
-                <Menu.Item
-                  key="7.5"
-                  onClick={() => router.push({ pathname: "/bank_accounts" })}
-                >
-                  Cuentas bancarias
-                </Menu.Item>
-              </SubMenu>
-              <SubMenu key="9" title="Nómina">
-                <Menu.Item
-                  key="9.1"
-                  onClick={() =>
-                    router.push({
-                      pathname: "/payrollvoucher/statisticsPayroll",
-                    })
-                  }
-                >
-                  Nómina empresarial
-                </Menu.Item>
-                <Menu.Item
-                  key="9.2"
-                  onClick={() => router.push({ pathname: "/payrollvoucher" })}
-                >
-                  Recibos de nómina
-                </Menu.Item>
-              </SubMenu>
-
-              <Menu.Item
-                key="10"
-                onClick={() => router.push({ pathname: "/assignedCompanies" })}
-              >
-                Asignar empresa
-              </Menu.Item>
-
-              {accessIntranet !== "false" && (
-                <SubMenu
-                  key="11"
-                  title={<FormattedMessage id="header.intranet" />}
-                >
+                  <SubMenu key="4" title="Comunicación">
+                    <Menu.Item
+                      key="4.1"
+                      onClick={() =>
+                        router.push({ pathname: "/comunication/releases" })
+                      }
+                    >
+                      Comunicados
+                    </Menu.Item>
+                    <Menu.Item
+                      key="4.2"
+                      onClick={() =>
+                        router.push({ pathname: "/comunication/events" })
+                      }
+                    >
+                      Eventos
+                    </Menu.Item>
+                  </SubMenu>
                   <Menu.Item
-                    key="11.1"
+                    key="8"
+                    onClick={() => router.push({ pathname: "/reports" })}
+                  >
+                    Reportes
+                  </Menu.Item>
+                  <SubMenu key="7" title="Solicitudes">
+                    <Menu.Item
+                      key="7.1"
+                      onClick={() => router.push({ pathname: "/lending" })}
+                    >
+                      Préstamos
+                    </Menu.Item>
+                    <Menu.Item
+                      key="7.2"
+                      onClick={() => router.push({ pathname: "/holidays" })}
+                    >
+                      Vacaciones
+                    </Menu.Item>
+                    <Menu.Item
+                      key="7.3"
+                      onClick={() => router.push({ pathname: "/permission" })}
+                    >
+                      Permisos
+                    </Menu.Item>
+                    <Menu.Item
+                      key="7.4"
+                      onClick={() => router.push({ pathname: "/incapacity" })}
+                    >
+                      Incapacidad
+                    </Menu.Item>
+                    <Menu.Item
+                      key="7.5"
+                      onClick={() =>
+                        router.push({ pathname: "/bank_accounts" })
+                      }
+                    >
+                      Cuentas bancarias
+                    </Menu.Item>
+                  </SubMenu>
+                  <SubMenu key="9" title="Nómina">
+                    <Menu.Item
+                      key="9.1"
+                      onClick={() =>
+                        router.push({
+                          pathname: "/payrollvoucher/statisticsPayroll",
+                        })
+                      }
+                    >
+                      Nómina empresarial
+                    </Menu.Item>
+                    <Menu.Item
+                      key="9.2"
+                      onClick={() =>
+                        router.push({ pathname: "/payrollvoucher" })
+                      }
+                    >
+                      Recibos de nómina
+                    </Menu.Item>
+                  </SubMenu>
+
+                  <Menu.Item
+                    key="10"
                     onClick={() =>
-                      router.push({ pathname: "/intranet/groups" })
+                      router.push({ pathname: "/assignedCompanies" })
                     }
                   >
-                    <FormattedMessage id="header.groups" />
+                    Asignar empresa
                   </Menu.Item>
-                  <Menu.Item
-                    key="11.2"
-                    onClick={() =>
-                      router.push({ pathname: "/intranet/config" })
-                    }
-                  >
-                    <FormattedMessage id="header.config" />
-                  </Menu.Item>
-                </SubMenu>
-              )}
-            </>
-          ) : null}
-          <div
-            className={"pointer"}
-            style={{ float: "right" }}
-            key={"menu_user_" + props.currentKey}
-          >
-            <Dropdown overlay={userCardDisplay} key="dropdown_user">
-              <div key="menu_user_content">
-                <Avatar
-                  key="avatar_key"
-                  icon={<UserOutlined />}
-                  src={person.photo}
-                />
-              </div>
-            </Dropdown>
-          </div>
-        </Menu>
+
+                  {accessIntranet !== "false" && (
+                    <SubMenu
+                      key="11"
+                      title={<FormattedMessage id="header.intranet" />}
+                    >
+                      <Menu.Item
+                        key="11.1"
+                        onClick={() =>
+                          router.push({ pathname: "/intranet/groups" })
+                        }
+                      >
+                        <FormattedMessage id="header.groups" />
+                      </Menu.Item>
+                      <Menu.Item
+                        key="11.2"
+                        onClick={() =>
+                          router.push({ pathname: "/intranet/config" })
+                        }
+                      >
+                        <FormattedMessage id="header.config" />
+                      </Menu.Item>
+                    </SubMenu>
+                  )}
+                </>
+              ) : null}
+            </Menu>
+          </Col>
+          <Col span={1}>
+            <div
+              className={"pointer"}
+              style={{ float: "right" }}
+              key={"menu_user_" + props.currentKey}
+            >
+              <Dropdown overlay={userCardDisplay} key="dropdown_user">
+                <div key="menu_user_content">
+                  <Avatar
+                    key="avatar_key"
+                    icon={<UserOutlined />}
+                    src={person.photo}
+                  />
+                </div>
+              </Dropdown>
+            </div>
+          </Col>
+        </Row>
       </Header>
-      <Modal
-        title="Cerrar sesión"
-        centered
-        visible={logOut}
-        onOk={() => logoutAuth()}
-        onCancel={() => setModalLogOut(false)}
-        footer={[
-          <Button
-            key="back"
-            onClick={() => setModalLogOut(false)}
-            style={{ padding: "0 10px", marginLeft: 15 }}
-          >
-            Cancelar
-          </Button>,
-          <Button
-            key="submit_modal"
-            type="primary"
-            onClick={logoutAuth}
-            style={{ padding: "0 10px", marginLeft: 15 }}
-          >
-            Cerrar sesión
-          </Button>,
-        ]}
-      >
-        ¿Está seguro de cerrar sesión?
-      </Modal>
+      {logOut && (
+        <Modal
+          title="Cerrar sesión"
+          centered
+          visible={logOut}
+          onOk={() => logoutAuth()}
+          onCancel={() => setModalLogOut(false)}
+          footer={[
+            <Button
+              key="back"
+              onClick={() => setModalLogOut(false)}
+              style={{ padding: "0 10px", marginLeft: 15 }}
+            >
+              Cancelar
+            </Button>,
+            <Button
+              key="submit_modal"
+              type="primary"
+              onClick={logoutAuth}
+              style={{ padding: "0 10px", marginLeft: 15 }}
+            >
+              Cerrar sesión
+            </Button>,
+          ]}
+        >
+          ¿Está seguro de cerrar sesión?
+        </Modal>
+      )}
     </>
   );
 };
