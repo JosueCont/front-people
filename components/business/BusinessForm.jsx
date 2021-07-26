@@ -233,7 +233,7 @@ const businessForm = () => {
     )
       .then((response) => {
         setBusiness([]);
-        console.log(response.data)
+        console.log(response.data);
         setBusiness(response.data);
         setLoading(false);
       })
@@ -318,7 +318,7 @@ const businessForm = () => {
               )}
               {permissions.edit && (
                 <Col className="gutter-row" span={6}>
-                  <Link href={`/pages/business/${item.id}`}>
+                  <Link href={`/business/${item.id}`}>
                     <SettingOutlined />
                   </Link>
                 </Col>
@@ -345,7 +345,7 @@ const businessForm = () => {
 
   const closeModalUpdate = () => {
     setUpdateModal(false);
-    person()
+    person();
   };
   const updateStatus = (value) => {
     setIsEdit(true);
@@ -455,7 +455,11 @@ const businessForm = () => {
                 columns={columns}
                 dataSource={business}
                 loading={loading}
-                locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+                locale={{
+                  emptyText: loading
+                    ? "Cargando..."
+                    : "No se encontraron resultados.",
+                }}
               />
             ) : (
               <NodeTreeView />

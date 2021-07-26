@@ -58,7 +58,7 @@ const PasswordRecover = (props) => {
 
   return (
     <>
-      <Spin tip="Loading..." spinning={loading}>
+      <Spin tip="Cargando..." spinning={loading}>
         <Form
           name="normal_login"
           className="login-form"
