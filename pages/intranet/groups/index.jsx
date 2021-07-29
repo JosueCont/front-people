@@ -43,12 +43,9 @@ const GroupView = ({...props}) => {
     const [isDetail, setIsDetail] = useState(false);
 
     const [modalAddVisible, setModalAddVisible] = useState(false);
-    const [companyId, setCompanyId] = useState(null);
-
-
-    useEffect(()=>{
-        setCompanyId(localStorage.getItem('company'))
-    },[companyId])
+    const [companyId, setCompanyId] = useState(()=>{
+        return localStorage.getItem('company')
+    });
 
     useEffect(()=>{
        getGroups();
