@@ -44,7 +44,7 @@ const beforeUpload = (file) => {
 const FormConfig = (props) => {
   const [formConfigIntranet] = Form.useForm();
   const [photo, setPhoto] = useState(
-    props.getImage ? props.getImage + "?" + new Date() : null
+      props.getImage ? props.getImage + "?" + new Date() : null
   );
   const [imageUpdate, setImageUpdate] = useState(null);
 
@@ -53,7 +53,7 @@ const FormConfig = (props) => {
   const [interactionsAPI, setInteractionsAPI] = useState(arrayConfigType);
   const [interactionsSelected, setInteractionsSelected] = useState([]);
   const interactionsFilteredOptions = interactionsAPI.filter(
-    (o) => !interactionsSelected.includes(o)
+      (o) => !interactionsSelected.includes(o)
   );
 
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
@@ -65,10 +65,10 @@ const FormConfig = (props) => {
   };
 
   const uploadButton = (
-    <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Cargar</div>
-    </div>
+      <div>
+        {loading ? <LoadingOutlined /> : <PlusOutlined />}
+        <div style={{ marginTop: 8 }}>Cargar</div>
+      </div>
   );
 
   const upImage = (info) => {
@@ -96,12 +96,14 @@ const FormConfig = (props) => {
         /// accessIntranet: props.config.intranet_enabled,
         primaryColor: props.config.intranet_primary_color,
         secondaryColor: props.config.intranet_secondary_color,
+        intranet_menu_font_primary_color:props.config.intranet_menu_font_primary_color,
+        intranet_menu_font_secondary_color:props.config.intranet_menu_font_secondary_color,
         intranet_enable_post_reaction:
-          props.config.intranet_enable_post_reaction !== null
-            ? props.config.intranet_enable_post_reaction.map((item) => {
-                return item;
-              })
-            : [],
+            props.config.intranet_enable_post_reaction !== null
+                ? props.config.intranet_enable_post_reaction.map((item) => {
+                  return item;
+                })
+                : [],
       });
       if (props.config.intranet_logo) {
         setPhoto(props.config.intranet_logo + "?" + new Date());
@@ -135,13 +137,15 @@ const FormConfig = (props) => {
       intranet_name: data.nameIntranet,
       ///intranet_enabled: data.accessIntranet === true ? true : false,
       intranet_primary_color: data.primaryColor ? data.primaryColor : "#000",
+      intranet_menu_font_primary_color:data.intranet_menu_font_primary_color ? data.intranet_menu_font_primary_color : "#000",
+      intranet_menu_font_secondary_color:data.intranet_menu_font_secondary_color ? data.intranet_menu_font_secondary_color : "#000",
       intranet_secondary_color: data.secondaryColor
-        ? data.secondaryColor
-        : "#000",
+          ? data.secondaryColor
+          : "#000",
       intranet_enable_post_reaction:
-        data.intranet_enable_post_reaction.length > 0
-          ? data.intranet_enable_post_reaction
-          : null,
+          data.intranet_enable_post_reaction.length > 0
+              ? data.intranet_enable_post_reaction
+              : null,
     };
     let params = new FormData();
     let image = data.image ? data.image.file.originFileObj : "";
@@ -186,132 +190,147 @@ const FormConfig = (props) => {
   };
 
   return (
-    <>
-      <Layout className="site-layout-background">
-        <Spin spinning={props.loading}>
-          <Form
-            layout={"vertical"}
-            form={formConfigIntranet}
-            onFinish={onFinish}
-          >
-            <Row>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  rules={[
-                    {
-                      required: true,
-                      message: "Nombre requerido",
-                    },
-                  ]}
-                  name="nameIntranet"
-                  label="Nombre de intranet"
-                >
-                  <AutoComplete
-                    name="nameIntranet"
-                    label="Nombre"
-                    onChange={onWebsiteChange}
+      <>
+        <Layout className="site-layout-background">
+          <Spin spinning={props.loading}>
+            <Form
+                layout={"vertical"}
+                form={formConfigIntranet}
+                onFinish={onFinish}
+            >
+              <Row>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                      rules={[
+                        {
+                          required: true,
+                          message: "Nombre requerido",
+                        },
+                      ]}
+                      name="nameIntranet"
+                      label="Nombre de intranet"
                   >
-                    <Input />
-                  </AutoComplete>
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  name="primaryColor"
-                  label="Color primario de intranet"
-                >
-                  <Input type={"color"} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  label="Color secundario de intranet"
-                  name="secondaryColor"
-                >
-                  <Input type={"color"} />
-                </Form.Item>
-              </Col>
-              {/* <Col lg={6} xs={22} offset={1}>
+                    <AutoComplete
+                        name="nameIntranet"
+                        label="Nombre"
+                        onChange={onWebsiteChange}
+                    >
+                      <Input />
+                    </AutoComplete>
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                      name="primaryColor"
+                      label="Color primario de intranet"
+                  >
+                    <Input type={"color"} />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                      label="Color secundario de intranet"
+                      name="secondaryColor"
+                  >
+                    <Input type={"color"} />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                      name="intranet_menu_font_primary_color"
+                      label="Color texto primario del menú intranet">
+                    <Input type={"color"} />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                      name="intranet_menu_font_secondary_color"
+                      label="Color texto del menú intranet">
+                    <Input type={"color"} />
+                  </Form.Item>
+                </Col>
+                {/* <Col lg={6} xs={22} offset={1}>
                         <Form.Item name="accessIntranet" label="Acceso a la intranet" valuePropName="checked">
                             <Switch/>
                         </Form.Item>
                     </Col>*/}
 
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  label="Imagen de intranet"
-                  name="image"
-                  labelAlign={"left"}
-                >
-                  <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    showUploadList={false}
-                    beforeUpload={beforeUpload}
-                    onChange={upImage}
+
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                      name="intranet_enable_post_reaction"
+                      label="Tipo de reacciones"
                   >
-                    {photo ? (
-                      <div
-                        className="frontImage"
-                        style={
-                          photo
-                            ? {
-                                width: "190px",
-                                height: "190px",
-                                display: "flex",
-                                flexWrap: "wrap",
-                                textAlign: "center",
-                                alignContent: "center",
+                    <Select
+                        mode="multiple"
+                        value={interactionsSelected}
+                        onChange={interactionsChange}
+                        placeholder={"Seleccione..."}
+                        notFoundContent={"No se encontraron resultado."}
+                    >
+                      {interactionsFilteredOptions.map((item) => (
+                          <Select.Option key={item.id} value={item.id}>
+                            {item.name} {item.emoji}
+                          </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                      label="Imagen de intranet"
+                      name="image"
+                      labelAlign={"left"}
+                  >
+                    <Upload
+                        name="avatar"
+                        listType="picture-card"
+                        showUploadList={false}
+                        beforeUpload={beforeUpload}
+                        onChange={upImage}
+                    >
+                      {photo ? (
+                          <div
+                              className="frontImage"
+                              style={
+                                photo
+                                    ? {
+                                      width: "190px",
+                                      height: "190px",
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      textAlign: "center",
+                                      alignContent: "center",
+                                    }
+                                    : {}
                               }
-                            : {}
-                        }
-                      >
-                        <img
-                          className="img"
-                          src={photo}
-                          alt="avatar"
-                          preview={false}
-                          style={{ width: 100 }}
-                        />
-                      </div>
-                    ) : (
-                      uploadButton
-                    )}
-                  </Upload>
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  name="intranet_enable_post_reaction"
-                  label="Tipo de reacciones"
-                >
-                  <Select
-                    mode="multiple"
-                    value={interactionsSelected}
-                    onChange={interactionsChange}
-                    placeholder={"Seleccione..."}
-                    notFoundContent={"No se encontraron resultado."}
-                  >
-                    {interactionsFilteredOptions.map((item) => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name} {item.emoji}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
-              <Col>
-                <Button type="primary" htmlType="submit">
-                  Guardar
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Spin>
-      </Layout>
-    </>
+                          >
+                            <img
+                                className="img"
+                                src={photo}
+                                alt="avatar"
+                                preview={false}
+                                style={{ width: 100 }}
+                            />
+                          </div>
+                      ) : (
+                          uploadButton
+                      )}
+                    </Upload>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
+                <Col>
+                  <Button type="primary" htmlType="submit">
+                    Guardar
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Spin>
+        </Layout>
+      </>
   );
 };
 export default FormConfig;

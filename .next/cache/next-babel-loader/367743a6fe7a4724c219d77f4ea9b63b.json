@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const API_URL = false ? process.env.NEXT_PUBLIC_API_BASE_URL : process.env.API_BASE_URL;\nexport const LOGIN_URL = \"https://khonnect.hiumanlab.com\";\n/* export const LOGIN_URL = \"http://demo.localhost:8000\" */","map":null,"metadata":{},"sourceType":"module"}

@@ -308,19 +308,19 @@ const businessForm = () => {
             <Row gutter={16}>
               {permissions.edit && (
                 <Col className="gutter-row" span={6}>
+                  <Link href={`/business/${item.id}`}>
+                    <SettingOutlined />
+                  </Link>
+                </Col>
+              )}
+              {permissions.edit && (
+                <Col className="gutter-row" span={6}>
                   <EditOutlined onClick={() => showModal("edit", item)} />
                 </Col>
               )}
               {permissions.delete && (
                 <Col className="gutter-row" span={6}>
                   <DeleteOutlined onClick={() => showModal("delete", item)} />
-                </Col>
-              )}
-              {permissions.edit && (
-                <Col className="gutter-row" span={6}>
-                  <Link href={`/business/${item.id}`}>
-                    <SettingOutlined />
-                  </Link>
                 </Col>
               )}
             </Row>
