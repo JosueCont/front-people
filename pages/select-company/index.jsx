@@ -53,12 +53,12 @@ const SelectCompany = () => {
               sessionStorage.setItem("number", response.data.id);
             getCopaniesList();
           } else {
-            if (response.data.nodes.length > 0) {
+            if (response.data.nodes.length > 1) {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
-              setDataList(response.data.nodes);
-            }
-            if (response.data.nodes.length == 1) {
+              let data = response.data.nodes.filter((a) => a.active);
+              setDataList(data);
+            } else if (response.data.nodes.length == 1) {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
               setCompanySelect(response.data.nodes[0]);
@@ -77,7 +77,7 @@ const SelectCompany = () => {
   const getCopaniesList = async () => {
     try {
       let response = await Axios.get(API_URL + `/business/node/`);
-      let data = response.data.results;
+      let data = response.data.results.filter((a) => a.active);
       setDataList(data);
       setLoading(false);
     } catch (error) {

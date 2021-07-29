@@ -52,7 +52,8 @@ const SelectCompany = () => {
         if (response.data.is_admin) {
           getCopaniesList();
         } else {
-          setDataList(response.data.nodes);
+          let data = response.data.nodes.filter((a) => a.active);
+          setDataList(data);
           setShowTable(true);
         }
       })
@@ -65,7 +66,7 @@ const SelectCompany = () => {
   const getCopaniesList = async (id) => {
     try {
       let response = await Axios.get(API_URL + `/business/node/`);
-      let data = response.data.results;
+      let data = response.data.results.filter((a) => a.active);
       setDataList(data);
     } catch (error) {
       console.log(error);
