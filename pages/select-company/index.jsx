@@ -62,10 +62,9 @@ const SelectCompany = () => {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
               setCompanySelect(response.data.nodes[0]);
-            } else {
-              setLoading(false);
             }
           }
+          setLoading(false);
         })
         .catch((e) => {
           setLoading(false);
