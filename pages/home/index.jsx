@@ -124,6 +124,7 @@ const homeScreen = () => {
 
   const filterPersonName = () => {
     filters.node = nodeId;
+    setLoading(true);
     Axios.post(API_URL + `/person/person/get_list_persons/`, filters)
       .then((response) => {
         setPerson([]);
@@ -303,6 +304,14 @@ const homeScreen = () => {
       key: "imss",
     },
     {
+      title: "Periocidad",
+      align: "center",
+      render: (item) => {
+        let per = periodicity.filter((a) => a.value === item.periodicity);
+        if (per.length > 0) return per[0].label;
+      },
+    },
+    {
       title: "Empresas Asignadas",
       key: "CompaniesAsosigned",
       align: "center",
@@ -441,6 +450,12 @@ const homeScreen = () => {
       value: 3,
     },
   ];
+  const periodicity = [
+    { label: "Semanal", value: 1 },
+    { label: "Catorcenal", value: 2 },
+    { label: "Quincenal", value: 3 },
+    { label: "Mensual", value: 4 },
+  ];
   const statusSelect = [
     {
       label: "Todos",
@@ -576,6 +591,7 @@ const homeScreen = () => {
 
   ////SEARCH FILTER
   const filter = (value) => {
+    console.log(value);
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
@@ -606,6 +622,10 @@ const homeScreen = () => {
     if (value && value.job !== undefined) {
       urlFilter = urlFilter + "job__id=" + value.job + "&";
       filters.job = value.job;
+    }
+    if (value && value.periodicity !== undefined) {
+      urlFilter = urlFilter + "periodicity=" + value.periodicity + "&";
+      filters.periodicity = value.periodicity;
     }
     filterPersonName(urlFilter);
   };
@@ -747,21 +767,14 @@ const homeScreen = () => {
 
                     <Col>
                       <Form.Item name="gender" label="Género">
-                        <Select options={genders}
-                                notFoundContent={"No se encontraron resultado."}
-                                placeholder="Todos"  notFoundContent={"No se encontraron resultado."}/>
-                      </Form.Item>
-                    </Col>
-                    {/* <Col>
-                      <Form.Item name="node" label="Empresa">
                         <Select
-                          onChange={changeNode}
-                          options={nodes}
+                          options={genders}
+                          notFoundContent={"No se encontraron resultado."}
                           placeholder="Todos"
-                          style={{ width: 100 }}
+                          notFoundContent={"No se encontraron resultado."}
                         />
                       </Form.Item>
-                    </Col> */}
+                    </Col>
                     <Col>
                       <Form.Item name="department" label="Departamento">
                         <Select
@@ -788,6 +801,16 @@ const homeScreen = () => {
                         <Select
                           options={statusSelect}
                           placeholder="Estatus"
+                          notFoundContent={"No se encontraron resultado."}
+                          style={{ width: 90 }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Form.Item name="periodicity" label="Periocidad">
+                        <Select
+                          options={periodicity}
+                          placeholder="Periocidad"
                           notFoundContent={"No se encontraron resultado."}
                           style={{ width: 90 }}
                         />
@@ -889,7 +912,11 @@ const homeScreen = () => {
               columns={columns2}
               dataSource={person}
               loading={loading}
-              locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+              locale={{
+                emptyText: loading
+                  ? "Cargando..."
+                  : "No se encontraron resultados.",
+              }}
               rowSelection={rowSelectionPerson}
             />
           </>
