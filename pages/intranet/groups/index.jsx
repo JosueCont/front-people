@@ -46,7 +46,9 @@ const GroupView = ({...props}) => {
     const [companyId, setCompanyId] = useState();
 
     useEffect(function() {
-        setCompanyId(window.localStorage.getItem('company'));
+        if(process.browser) {
+            setCompanyId(localStorage.getItem('company'));
+        }
     },[companyId]);
 
     useEffect(()=>{
@@ -98,21 +100,22 @@ const GroupView = ({...props}) => {
     }
 
     const getGroups = async () => {
-        setLoading(true)
-        setGroups([])
-        try {
-            const url = API_URL + `/intranet/group/?node=${companyId}`;
-            console.log(url)
-            const res = await Axios.get(url);
-            if (res.data.count > 0) {
-                setGroups(res.data.results);
+        if(companyId) {
+            setLoading(true)
+            setGroups([])
+            try {
+                const url = API_URL + `/intranet/group/?node=${companyId}`;
+                console.log(url)
+                const res = await Axios.get(url);
+                if (res.data.count > 0) {
+                    setGroups(res.data.results);
+                }
+                setLoading(false)
+            } catch (e) {
+                setLoading(false)
+                console.log(e)
             }
-            setLoading(false)
-        } catch (e) {
-            setLoading(false)
-            console.log(e)
         }
-
     }
 
     return <MainLayout currentKey="11.1">
