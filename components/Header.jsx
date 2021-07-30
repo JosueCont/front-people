@@ -52,8 +52,8 @@ const headerCustom = ({hideMenu, ...props}) => {
 
     const getConfig = () => {
         Axios.get(API_URL + "/setup/site-configuration/").then((res) => {
-            setPrimaryColor(res.data.intranet_primary_color)
-            setSecondaryColor(res.data.intranet_secondary_color)
+            setPrimaryColor(res.data.concierge_primary_color)
+            setSecondaryColor(res.data.concierge_primary_color)
 
             //setPrimaryColor('blue')
             //setSecondaryColor('red')
