@@ -89,7 +89,7 @@ const SelectCompany = () => {
   const setCompanySelect = (item) => {
     getConfig();
     if (admin) sessionStorage.setItem("data", item.id);
-    else sessionStorage.setItem("data", item.value);
+    else sessionStorage.setItem("data", item.id);
     sessionStorage.setItem("name", item.name);
     let company_id = userCompanyId();
     if (company_id) useRouter.push("home");
