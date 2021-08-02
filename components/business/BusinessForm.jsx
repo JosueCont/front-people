@@ -376,7 +376,6 @@ const businessForm = () => {
   }
 
   const handleChange = (info) => {
-    console.log('handleChange',info);
     if (info.file.status === "uploading") {
       setLoadingLogo(true);
       return;

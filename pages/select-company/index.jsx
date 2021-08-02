@@ -90,6 +90,7 @@ const SelectCompany = () => {
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
     sessionStorage.setItem("name", item.name);
+    sessionStorage.setItem('image',item.image);
     let company_id = userCompanyId();
     if (company_id) useRouter.push("home");
     else message.error("Ocurrio un error, intente de nuevo.");
