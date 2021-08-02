@@ -163,11 +163,6 @@ const GroupView = ({...props}) => {
                     key="name"
                 />
                 <Column
-                    title="Descripción"
-                    dataIndex="description"
-                    key="description"
-                />
-                <Column
                     title="Acciones"
                     key="actions"
                     render={(text, record) => (

@@ -229,6 +229,13 @@ const FormConfig = (props) => {
                 </Col>
                 <Col lg={6} xs={22} offset={1}>
                   <Form.Item
+                      name="intranet_menu_font_primary_color"
+                      label="Color texto primario de intranet">
+                    <Input type={"color"} />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
                       label="Color secundario de intranet"
                       name="secondaryColor"
                   >
@@ -237,15 +244,8 @@ const FormConfig = (props) => {
                 </Col>
                 <Col lg={6} xs={22} offset={1}>
                   <Form.Item
-                      name="intranet_menu_font_primary_color"
-                      label="Color texto primario del menú intranet">
-                    <Input type={"color"} />
-                  </Form.Item>
-                </Col>
-                <Col lg={6} xs={22} offset={1}>
-                  <Form.Item
                       name="intranet_menu_font_secondary_color"
-                      label="Color texto del menú intranet">
+                      label="Color texto secundario de intranet">
                     <Input type={"color"} />
                   </Form.Item>
                 </Col>

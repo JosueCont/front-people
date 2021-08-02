@@ -45,8 +45,10 @@ const FormGroup = (props) => {
     const onFinish = (values) => {
         if (props.isEdit) {
             saveGroup(values);
+            message.success("Actualizado correctamente.");
         } else {
             saveGroup(values);
+            message.success("guardado correctamente.");
         }
     };
 
@@ -124,12 +126,15 @@ const FormGroup = (props) => {
     );
 
     const upImage = (info) => {
+        
+        console.log('info',info);
         if (info.file.status === "uploading") {
             setLoading(true);
             return;
         }
 
-        if (info.file.status === "done") {
+        /* if (info.file.status === "done") { */
+        if (info.fileList.length >0) {
             getBase64(info.file.originFileObj, (imageUrl) => {
                 setPhoto(imageUrl);
                 setLoading(false);
@@ -158,27 +163,29 @@ const FormGroup = (props) => {
                                 label="Nombre de grupo"
                                 name="name"
                                 rules={[ruleRequired]}
-                                labelAlign={"left"}
+                                labelAlign={"left"} 
+                                help="(Máximo 50 caracteres)"
                             >
-                                <Input type="text"/>
+                                <Input type="text" maxLength={50}/>
                             </Form.Item>
 
-                            <Form.Item
+                            {/* <Form.Item
                                 label="Descripción de grupo"
                                 name="description"
                                 labelAlign={"left"}
+                                style={{marginTop:15}}
                             >
                                 <Input.TextArea/>
-                            </Form.Item>
-
-                            <Form.Item label="Imagen de grupo" name="image" labelAlign={"left"}>
+                            </Form.Item> */}
+                            <Form.Item label="Imagen de grupo" name="image" labelAlign={"left"} style={{marginTop:15}}>
                                 <Upload
-                                    name="avatar"
+                                    label="avatar"
                                     listType="picture-card"
                                     showUploadList={false}
-                                    beforeUpload={beforeUpload}
+                                    /* beforeUpload={beforeUpload} */
                                     onChange={upImage}
                                 >
+
                                     {photo ? (
                                         <div
                                             className="frontImage"
@@ -199,7 +206,6 @@ const FormGroup = (props) => {
                                                 className="img"
                                                 src={photo}
                                                 alt="avatar"
-                                                preview={false}
                                                 style={{width: 100}}
                                             />
                                         </div>
