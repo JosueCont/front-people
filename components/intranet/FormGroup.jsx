@@ -169,14 +169,14 @@ const FormGroup = (props) => {
                                 <Input type="text" maxLength={50}/>
                             </Form.Item>
 
-                            {/* <Form.Item
+                            <Form.Item
                                 label="Descripción de grupo"
                                 name="description"
                                 labelAlign={"left"}
                                 style={{marginTop:15}}
                             >
                                 <Input.TextArea/>
-                            </Form.Item> */}
+                            </Form.Item>
                             <Form.Item label="Imagen de grupo" name="image" labelAlign={"left"} style={{marginTop:15}}>
                                 <Upload
                                     label="avatar"

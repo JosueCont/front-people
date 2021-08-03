@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { Layout, Space } from "antd";
 import { useRouter } from "next/router";
 import HeaderCustom from "../components/Header";
@@ -12,12 +12,22 @@ const { Content } = Layout;
 const MainLayout = ({ hideMenu, ...props }) => {
   const router = useRouter();
   let company = userCompanyName();
+  const [mainLogo, setMainLogo] = useState('');
+  const isBrowser = () => typeof window !== "undefined"
+
 
   useEffect(() => {
     if (company == "" || company == undefined) {
       company = userCompanyName();
     }
   }, []);
+
+  useEffect(()=>{
+    if (isBrowser()){
+      setMainLogo(window.sessionStorage.getItem('image'));
+    }
+    /* setMainLogo(window.sessionStorage.getItem('image')); */
+  },[])
 
   return (
     /* <IntlProvider locale={state.lang} messages={langMessages[state.lang]}> */
@@ -29,6 +39,7 @@ const MainLayout = ({ hideMenu, ...props }) => {
         key="main_header"
         currentKey={props.currentKey}
         hideMenu={hideMenu}
+        mainLogo={mainLogo}
       />
       <div style={{ marginLeft: "50px" }}>
         <h1> {company != undefined && company}</h1>

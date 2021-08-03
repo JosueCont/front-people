@@ -167,8 +167,9 @@ const headerCustom = ({hideMenu, ...props}) => {
                             }}
                         >
                             <img
-                                style={{float: "left", height: 60, margin: "auto"}}
-                                src={sessionStorage.getItem('image') ? sessionStorage.getItem('image') : "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"}
+                                style={{float: "left", height: 60, margin: "auto"}}                                
+                                src={props.mainLogo}
+                                /* src={ process.browser ? window.sessionStorage.getItem('image') : "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"} */
                                 alt=""
                             />
                         </div>

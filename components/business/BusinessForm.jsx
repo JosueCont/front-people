@@ -61,6 +61,9 @@ const businessForm = () => {
   const [addB, setAddB] = useState(false);
 
   const onFinish = (values) => {
+    console.log('isDeleted',isDeleted);
+    console.log('isEdit',isEdit);
+    console.log('values',values);
     if (isDeleted) {
       deleteBusiness(values.id);
     } else {
@@ -166,6 +169,7 @@ const businessForm = () => {
         description: item.description,
         FNode: item.parent ? item.parent.id : null,
         id: item.id,
+        active: item.active
       });
       setIsModalVisible(true);
     } else {
@@ -233,7 +237,7 @@ const businessForm = () => {
     )
       .then((response) => {
         setBusiness([]);
-        console.log(response.data);
+        console.log('getBussines',response.data);
         setBusiness(response.data);
         setLoading(false);
       })
@@ -380,7 +384,7 @@ const businessForm = () => {
       setLoadingLogo(true);
       return;
     }
-    if (info.file.status === "done") {
+    if (info.fileList.length >0) {
       // Get this url from response in real world.
       setLogo(info.file.originFileObj);
       getBase64(info.file.originFileObj, (imageUrl) => {

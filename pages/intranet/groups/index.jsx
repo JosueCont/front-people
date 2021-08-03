@@ -43,12 +43,20 @@ const GroupView = ({...props}) => {
     const [isDetail, setIsDetail] = useState(false);
 
     const [modalAddVisible, setModalAddVisible] = useState(false);
-    const [companyId, setCompanyId] = useState( ()=>{
-        return sessionStorage.getItem("data");
-    });
+    const [companyId, setCompanyId] = useState(null);
 
+    const isBrowser = () => typeof window !== "undefined"
+
+    useEffect(() => {
+        if (isBrowser()){
+            setCompanyId(sessionStorage.getItem("data"));
+        }
+    }, [])
+    
     useEffect(()=>{
-       getGroups();
+        if(companyId){
+            getGroups();
+        }
     },[companyId])
 
     const showModal = () => {
