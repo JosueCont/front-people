@@ -114,6 +114,7 @@ const businessForm = () => {
         setIsModalVisible(false);
         setLoading(false);
         getCopaniesList()
+        
         message.success("Empresa actualizada correctamente");
       })
       .catch(function (error) {
