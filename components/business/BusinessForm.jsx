@@ -107,15 +107,21 @@ const businessForm = () => {
 
     Axios.patch(API_URL + "/business/node/" + values.id + "/", data)
       .then(function (response) {
-        if (response.status === 200) {
-          Router.push("/business");
-        }
+        console.log('response',response);
         person();
         setIsModalVisible(false);
         setLoading(false);
         getCopaniesList()
-        
         message.success("Empresa actualizada correctamente");
+
+        if (response.status === 200) {
+          sessionStorage.setItem('image',response.data.image);
+          setTimeout(function() {
+          Router.reload()
+        }, 1000);
+          
+          /* Router.push("/business"); */
+        }
       })
       .catch(function (error) {
         person();
