@@ -105,7 +105,7 @@ const businessForm = () => {
       data.append("image", logo);
     }
 
-    Axios.put(API_URL + "/business/node/" + values.id + "/", data)
+    Axios.patch(API_URL + "/business/node/" + values.id + "/", data)
       .then(function (response) {
         if (response.status === 200) {
           Router.push("/business");
@@ -113,6 +113,7 @@ const businessForm = () => {
         person();
         setIsModalVisible(false);
         setLoading(false);
+        message.success("Empresa actualizada correctamente");
       })
       .catch(function (error) {
         person();
