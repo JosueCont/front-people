@@ -113,6 +113,7 @@ const businessForm = () => {
         person();
         setIsModalVisible(false);
         setLoading(false);
+        getCopaniesList()
         message.success("Empresa actualizada correctamente");
       })
       .catch(function (error) {
@@ -145,6 +146,7 @@ const businessForm = () => {
         setIsModalVisible(false);
         setLoading(false);
         setAddB(false);
+        getCopaniesList()
         message.success("Agregado correctamente.");
       })
       .catch(function (error) {
