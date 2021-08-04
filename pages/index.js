@@ -4,6 +4,7 @@ import LoginForm from "../components/LoginForm";
 import PasswordRecover from "../components/PasswordRecover";
 import { Row, Col, Card } from "antd";
 import { Helmet } from "react-helmet";
+/* import {logoRoche} from '../public/images/Grupo Industrial Roche-Color.png' */
 
 const Home = () => {
   const [recoverPasswordShow, setRecoverPasswordShow] = useState(false);
@@ -36,10 +37,8 @@ const Home = () => {
               <Row justify={"center"}>
                 <Col xs={43} sm={23} md={12} lg={12} xl={12}>
                   <img
-                    style={{ width: 130, paddingBottom: 10 }}
-                    src={
-                      "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"
-                    }
+                    style={{ width: 130, paddingBottom: 10, marginBottom:20 }}
+                    src={"/images/Grupo Industrial Roche-Color.png"}
                     alt=""
                   />
                   {recoverPasswordShow ? (
