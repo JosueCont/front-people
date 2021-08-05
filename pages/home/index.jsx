@@ -233,7 +233,20 @@ const homeScreen = () => {
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
-        return <div>{personName}</div>;
+        return (
+          <>
+            {
+              permissions.edit || permissions.delete ? (
+                <Dropdown overlay={() => menuPerson(item)}>
+                    <a><div>{personName}</div></a>
+                </Dropdown>
+              ) : (
+                <div>{personName}</div>
+              )
+            }
+          </>
+        )
+        // return <div>{personName}</div>;
       },
     },
     {
