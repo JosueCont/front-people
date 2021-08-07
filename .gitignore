@@ -51,4 +51,4 @@ Thumbs.db
 *.next
 .env.local
 .env
-
+yarn.lock
