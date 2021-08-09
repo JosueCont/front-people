@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { render } from "react-dom";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -8,23 +7,18 @@ import {
   Breadcrumb,
   Button,
   Form,
-  Input,
   Select,
   Tooltip,
 } from "antd";
 import { useRouter } from "next/router";
-import axiosApi from "../../libs/axiosApi";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
 
 import {
-  DeleteOutlined,
   EditOutlined,
-  InfoCircleOutlined,
   SearchOutlined,
   PlusOutlined,
   EyeOutlined,
@@ -250,7 +244,11 @@ const Holidays = () => {
                   dataSource={holidayList}
                   key="tableHolidays"
                   loading={loading}
-                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+                  locale={{
+                    emptyText: loading
+                      ? "Cargando..."
+                      : "No se encontraron resultados.",
+                  }}
                 >
                   <Column
                     title="Colaborador"

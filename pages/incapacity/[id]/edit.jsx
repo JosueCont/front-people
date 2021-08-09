@@ -4,22 +4,12 @@ import {
   Row,
   Col,
   Typography,
-  Table,
   Breadcrumb,
-  Image,
-  Button,
   Form,
-  Input,
-  InputNumber,
   Select,
-  DatePicker,
   notification,
-  Space,
-  Switch,
 } from "antd";
 import { useRouter } from "next/router";
-import axiosApi from "../../../libs/axiosApi";
-import moment from "moment";
 import Incapacityform from "../../../components/forms/IncapacityForm";
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";

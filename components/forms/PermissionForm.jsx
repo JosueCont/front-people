@@ -12,13 +12,7 @@ import {
   DatePicker,
 } from "antd";
 import moment from "moment";
-import { useRouter } from "next/router";
-import axiosApi from "../../libs/axiosApi";
-import { set } from "js-cookie";
-import { route } from "next/dist/next-server/server/router";
 import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
@@ -29,18 +23,11 @@ const Permissionform = (props) => {
 
   const { Option } = Select;
   const { TextArea } = Input;
-  const [loading, setLoading] = useState(props.loading ? props.loading : true);
 
   const [allPersons, setAllPersons] = useState(null);
   const [personList, setPersonList] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
   const [permissions, setPermissions] = useState({});
-
-  /* const [person, setPerson] = useState(null); */
-  /* const [job, setJob] = useState(null); */
-  /* const [dateOfAdmission, setDateOfAdmission] = useState(null); */
-  /* const [antiquity, setAntiquity] = useState(null); */
-  /* const [availableDays, setAvailableDays] = useState(null); */
 
   const changePerson = (value) => {
     if (value) {

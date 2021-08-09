@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
-import { render } from "react-dom";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../../layout/MainLayout";
 import {
   Tooltip,
@@ -9,32 +8,21 @@ import {
   Breadcrumb,
   Button,
   Form,
-  Input,
   Select,
   DatePicker,
-  Space,
 } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-  SearchOutlined,
-  PlusOutlined,
-  SyncOutlined,
-} from "@ant-design/icons";
-import axiosApi from "../../../libs/axiosApi";
+import { SearchOutlined, PlusOutlined, SyncOutlined } from "@ant-design/icons";
 import moment from "moment-timezone";
 import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import { EyeOutlined } from "@ant-design/icons";
-import SelectCollaborator from '../../../components/selects/SelectCollaboratorItemForm'
+import SelectCollaborator from "../../../components/selects/SelectCollaboratorItemForm";
 
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import Cookies from "js-cookie";
 import jsCookie from "js-cookie";
-import { Filter } from "@material-ui/icons";
 
 const Releases = () => {
   /* React */
@@ -190,11 +178,11 @@ const Releases = () => {
                 >
                   <Row gutter={[24, 8]}>
                     <Col>
-                    <SelectCollaborator 
-                      name="send_by"
-                      label="Enviado por"
-                      style={{ width: 150 }}
-                    />
+                      <SelectCollaborator
+                        name="send_by"
+                        label="Enviado por"
+                        style={{ width: 150 }}
+                      />
                       {/* <Form.Item  
                         key="send_by"
                         name="send_by"
@@ -214,7 +202,12 @@ const Releases = () => {
                         name="category"
                         label="Categoría"
                       >
-                        <Select style={{ width: 150 }} key="select" allowClear notFoundContent={"No se encontraron resultado."}>
+                        <Select
+                          style={{ width: 150 }}
+                          key="select"
+                          allowClear
+                          notFoundContent={"No se encontraron resultado."}
+                        >
                           <Option key="item_1" value="1">
                             Aviso
                           </Option>
@@ -302,7 +295,11 @@ const Releases = () => {
                   key="releases_table"
                   className={"mainTable"}
                   loading={loading}
-                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+                  locale={{
+                    emptyText: loading
+                      ? "Cargando..."
+                      : "No se encontraron resultados.",
+                  }}
                 >
                   <Column title="Categoría" dataIndex="title" key="title" />
                   <Column

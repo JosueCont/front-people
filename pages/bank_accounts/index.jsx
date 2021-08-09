@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { render } from "react-dom";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -13,26 +12,13 @@ import {
   Tooltip,
 } from "antd";
 import { useRouter } from "next/router";
-import axiosApi from "../../libs/axiosApi";
-import moment from "moment";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
 import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
-import SelectCompany from "../../components/selects/SelectCompany";
 import SelectBank from "../../components/selects/SelectBank";
-import BreadcrumbHome from "../../components/BreadcrumbHome";
 
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-  SearchOutlined,
-  PlusOutlined,
-  EyeOutlined,
-  FileDoneOutlined,
-  SyncOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined, EyeOutlined, SyncOutlined } from "@ant-design/icons";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
@@ -329,7 +315,11 @@ const BankAccounts = () => {
                   key="tableHolidays"
                   loading={loading}
                   columns={columns}
-                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+                  locale={{
+                    emptyText: loading
+                      ? "Cargando..."
+                      : "No se encontraron resultados.",
+                  }}
                 ></Table>
               </Col>
             </Row>

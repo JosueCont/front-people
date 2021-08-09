@@ -1,25 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import MainLayout from "../../../layout/MainLayout";
-import {
-  Row,
-  Col,
-  Typography,
-  Table,
-  Breadcrumb,
-  Image,
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  DatePicker,
-  notification,
-  Space,
-  Switch,
-} from "antd";
+import { Row, Col, Breadcrumb, notification } from "antd";
 import { useRouter } from "next/router";
-import axiosApi from "../../../libs/axiosApi";
-import moment from "moment";
 import Vacationform from "../../../components/forms/Vacationform";
 import { withAuthSync } from "../../../libs/auth";
 import { API_URL } from "../../../config/config";
@@ -30,11 +12,10 @@ const HolidaysNew = () => {
   const [sending, setSending] = useState(false);
   const [departure_date, setDepartureDate] = useState(null);
   const [return_date, setReturnDate] = useState(null);
-  
+
   const onCancel = () => {
     route.push("/holidays");
   };
-
 
   const saveRequest = async (values) => {
     values["departure_date"] = departure_date;

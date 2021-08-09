@@ -12,12 +12,6 @@ import {
   DatePicker,
 } from "antd";
 import moment from "moment";
-import { useRouter } from "next/router";
-import axiosApi from "../../libs/axiosApi";
-import { set } from "js-cookie";
-import { route } from "next/dist/next-server/server/router";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 
 import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
 
@@ -28,15 +22,8 @@ const Vacationform = (props) => {
 
   const { Option } = Select;
 
-  const [loading, setLoading] = useState(props.loading ? props.loading : true);
-
   const [allPersons, setAllPersons] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
-  /* const [person, setPerson] = useState(null); */
-  /* const [job, setJob] = useState(null); */
-  /* const [dateOfAdmission, setDateOfAdmission] = useState(null); */
-  /* const [antiquity, setAntiquity] = useState(null); */
-  /* const [availableDays, setAvailableDays] = useState(null); */
 
   const changePerson = (value) => {
     if (value) {
@@ -67,12 +54,11 @@ const Vacationform = (props) => {
 
   useEffect(() => {
     if (props.details) {
-
-      console.log(props.details)
+      console.log(props.details);
       formVacation.setFieldsValue({
         person: props.details.collaborator
-            ? props.details.collaborator.id
-            : null,
+          ? props.details.collaborator.id
+          : null,
         khonnect_id: props.details.collaborator
           ? props.details.collaborator.khonnect_id
           : null,

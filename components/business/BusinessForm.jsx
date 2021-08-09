@@ -31,7 +31,6 @@ import MainLayout from "../../layout/MainLayout";
 import NodeTreeView from "./TreeView/treeview";
 import Cookie from "js-cookie";
 import { userId } from "../../libs/auth";
-import { route } from "next/dist/next-server/server/router";
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -61,9 +60,9 @@ const businessForm = () => {
   const [addB, setAddB] = useState(false);
 
   const onFinish = (values) => {
-    console.log('isDeleted',isDeleted);
-    console.log('isEdit',isEdit);
-    console.log('values',values);
+    console.log("isDeleted", isDeleted);
+    console.log("isEdit", isEdit);
+    console.log("values", values);
     if (isDeleted) {
       deleteBusiness(values.id);
     } else {
@@ -107,19 +106,19 @@ const businessForm = () => {
 
     Axios.patch(API_URL + "/business/node/" + values.id + "/", data)
       .then(function (response) {
-        console.log('response',response);
+        console.log("response", response);
         person();
         setIsModalVisible(false);
         setLoading(false);
-        getCopaniesList()
+        getCopaniesList();
         message.success("Empresa actualizada correctamente");
 
         if (response.status === 200) {
-          sessionStorage.setItem('image',response.data.image);
-          setTimeout(function() {
-          Router.reload()
-        }, 1000);
-          
+          sessionStorage.setItem("image", response.data.image);
+          setTimeout(function () {
+            Router.reload();
+          }, 1000);
+
           /* Router.push("/business"); */
         }
       })
@@ -153,7 +152,7 @@ const businessForm = () => {
         setIsModalVisible(false);
         setLoading(false);
         setAddB(false);
-        getCopaniesList()
+        getCopaniesList();
         message.success("Agregado correctamente.");
       })
       .catch(function (error) {
@@ -179,7 +178,7 @@ const businessForm = () => {
         description: item.description,
         FNode: item.parent ? item.parent.id : null,
         id: item.id,
-        active: item.active
+        active: item.active,
       });
       setIsModalVisible(true);
     } else {
@@ -247,7 +246,7 @@ const businessForm = () => {
     )
       .then((response) => {
         setBusiness([]);
-        console.log('getBussines',response.data);
+        console.log("getBussines", response.data);
         setBusiness(response.data);
         setLoading(false);
       })
@@ -394,7 +393,7 @@ const businessForm = () => {
       setLoadingLogo(true);
       return;
     }
-    if (info.fileList.length >0) {
+    if (info.fileList.length > 0) {
       // Get this url from response in real world.
       setLogo(info.file.originFileObj);
       getBase64(info.file.originFileObj, (imageUrl) => {
