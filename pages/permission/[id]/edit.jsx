@@ -14,12 +14,8 @@ import {
   Input,
 } from "antd";
 import MainLayout from "../../../layout/MainLayout";
-import { render } from "react-dom";
 import { useRouter } from "next/router";
-import axiosApi from "../../../libs/axiosApi";
-import moment from "moment";
 import PermissionForm from "../../../components/forms/PermissionForm";
-import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";

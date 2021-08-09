@@ -4,30 +4,20 @@ import {
   Row,
   Col,
   Typography,
-  Table,
   Breadcrumb,
-  Image,
   Button,
   Form,
   Input,
-  InputNumber,
   Select,
-  DatePicker,
   notification,
-  Space,
-  Switch,
   Modal,
 } from "antd";
 import { useRouter } from "next/router";
-import axiosApi from "../../../libs/axiosApi";
-import moduleName from "../../../components/forms/LendingForm";
-import moment from "moment";
 import Lendingform from "../../../components/forms/LendingForm";
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import cookie from "js-cookie";
-import jsCookie from "js-cookie";
 
 const HolidaysNew = () => {
   const route = useRouter();

@@ -18,8 +18,8 @@ class WebApi {
     }
   };
 
-  static login() {
-    return WebApi.ApisType(`/setup/general-config/`, "get");
+  static saveJwt(data) {
+    return WebApi.ApisType(`/person/person/save_person_jwt/`, "post", data);
   }
 }
 

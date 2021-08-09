@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Tabs,
-  Radio,
   Row,
   Col,
   Breadcrumb,
@@ -11,20 +10,11 @@ import {
   Form,
   Input,
   Modal,
-  notification,
-  Divider,
-  Space,
 } from "antd";
 import MainLayout from "../../../layout/MainLayout";
-import { render } from "react-dom";
 import { useRouter } from "next/router";
-import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
-import {
-  ExclamationCircleOutlined,
-  CheckCircleOutlined,
-} from "@ant-design/icons";
-import BreadcrumbHome from "../../../components/BreadcrumbHome";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 import cookie from "js-cookie";
 import { withAuthSync } from "../../../libs/auth";

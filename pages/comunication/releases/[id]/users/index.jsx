@@ -1,25 +1,9 @@
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Row,
-  Col,
-  Input,
-  Button,
-  Typography,
-  notification,
-  Card,
-  Layout,
-  Menu,
-  Table,
-  Breadcrumb,
-} from "antd";
+import { Row, Col, Button, Table, Breadcrumb } from "antd";
 import MainLayout from "../../../../../layout/MainLayout";
-import { Global, css } from "@emotion/core";
 import { useRouter } from "next/router";
-import axiosApi from "../../../../../libs/axiosApi";
 import Moment from "moment";
-import BreadcrumbHome from "../../../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../../../config/config";
@@ -67,7 +51,11 @@ const UserNotification = () => {
       <div className="container" style={{ width: "100%" }}>
         <Row justify="space-between" key="row1" style={{ padding: "20px 0" }}>
           <Col span={24}>
-            <Table dataSource={list} key="releases_table"    locale={{emptyText:  "No se encontraron resultados."}}  >
+            <Table
+              dataSource={list}
+              key="releases_table"
+              locale={{ emptyText: "No se encontraron resultados." }}
+            >
               <Column
                 title="Nombre"
                 dataIndex="person"

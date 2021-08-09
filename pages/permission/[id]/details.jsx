@@ -6,25 +6,15 @@ import {
   Col,
   Breadcrumb,
   Typography,
-  notification,
   Button,
   Modal,
   Select,
-  Form,
-  Image,
   Input,
 } from "antd";
 import MainLayout from "../../../layout/MainLayout";
-import { render } from "react-dom";
-import {
-  ExclamationCircleOutlined,
-  CheckCircleOutlined,
-} from "@ant-design/icons";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
-import axiosApi from "../../../libs/axiosApi";
-import moment from "moment";
 import PermissionForm from "../../../components/forms/PermissionForm";
-import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
@@ -34,7 +24,6 @@ const PermissionDetails = () => {
   const route = useRouter();
   let userToken = cookie.get("token") ? cookie.get("token") : null;
   let json = JSON.parse(userToken);
-  /* const [formVacation] = Form.useForm(); */
 
   const { TabPane } = Tabs;
   const { Title } = Typography;
@@ -115,8 +104,8 @@ const PermissionDetails = () => {
       khonnect_id: userId,
     };
     if (statusID === 3) {
-      if (message){
-        values.comment = message? message:"";
+      if (message) {
+        values.comment = message ? message : "";
       }
     }
     let msg = "Solicitud de permiso aprobada";

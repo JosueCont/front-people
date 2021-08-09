@@ -21,7 +21,6 @@ import {
 import MainLayout from "../../../layout/MainLayout";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
-import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
 import { userCompanyId, withAuthSync } from "../../../libs/auth";
 import axios from "axios";

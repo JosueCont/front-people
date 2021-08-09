@@ -9,22 +9,12 @@ import {
   Input,
   Image,
   Select,
-  InputNumber,
   DatePicker,
   Modal,
 } from "antd";
 import moment from "moment";
-import {
-  UploadOutlined,
-  InboxOutlined,
-  CloseCircleOutlined,
-  PlusOutlined,
-  ExclamationCircleOutlined,
-} from "@ant-design/icons";
-import { useRouter } from "next/router";
-import axiosApi from "../../libs/axiosApi";
+import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import jsCookie from "js-cookie";
-import { route } from "next/dist/next-server/server/router";
 import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
 import Axios from "axios";
 import { API_URL } from "../../config/config";

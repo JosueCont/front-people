@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Layout,
@@ -21,9 +21,8 @@ import {
 import MainLayout from "../../../layout/MainLayout";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
-import axiosApi from "../../../libs/axiosApi";
 import moment from "moment";
-import {userCompanyId, withAuthSync} from "../../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 import TextArea from "antd/lib/input/TextArea";
 
@@ -44,10 +43,9 @@ const addEvent = () => {
   const [personsSelect, setPersonsSelect] = useState([]);
   const [nodes, setNodes] = useState([]);
   const [edit, setEdit] = useState(false);
-  const[description,setDescription] = useState(null);
+  const [description, setDescription] = useState(null);
 
   let nodeId = userCompanyId();
-
 
   const onChangeDate = (value) => {
     setDateEvent(moment(value).format("YYYY-MM-DD"));
@@ -59,10 +57,10 @@ const addEvent = () => {
   const selectNodeGests = (value) => {
     setValue(value);
     if (value === 1) {
-      let data = nodes[0].value
+      let data = nodes[0].value;
       form.setFieldsValue({
         guests: [],
-        node:data
+        node: data,
       });
     } else {
       form.setFieldsValue({
@@ -73,16 +71,16 @@ const addEvent = () => {
 
   const getPersons = async () => {
     axios
-        .post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
-        .then((response) => {
-          response.data = response.data.map((a) => {
-            return { label: a.first_name + " " + a.flast_name, value: a.id };
-          });
-          setPersons(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
+      .post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
+      .then((response) => {
+        response.data = response.data.map((a) => {
+          return { label: a.first_name + " " + a.flast_name, value: a.id };
         });
+        setPersons(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const getNodes = async () => {
@@ -134,7 +132,7 @@ const addEvent = () => {
           node: node_id,
           guests: guestsid,
           guest_node: type_select,
-          description: data.description
+          description: data.description,
         });
         setStartTime(data.start_time);
         setEndTime(data.end_time);
@@ -352,12 +350,12 @@ const addEvent = () => {
                           ]} */
                         >
                           <TextArea
-                          rows="4"
-                          style={{ marginLeft: 6 }}
-                          onChange={(e) => setDescription(e.target.value) }
-                          showCount
-                          maxLength={100}
-                        />
+                            rows="4"
+                            style={{ marginLeft: 6 }}
+                            onChange={(e) => setDescription(e.target.value)}
+                            showCount
+                            maxLength={100}
+                          />
                         </Form.Item>
                       </Col>
 

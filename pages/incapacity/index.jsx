@@ -8,12 +8,10 @@ import {
   Breadcrumb,
   Button,
   Form,
-  Input,
   Select,
   Tooltip,
 } from "antd";
 import { useRouter } from "next/router";
-import axiosApi from "../../libs/axiosApi";
 import moment from "moment";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
@@ -259,7 +257,11 @@ const Incapacity = () => {
                   dataSource={incapacityList}
                   key="tableHolidays"
                   loading={loading}
-                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+                  locale={{
+                    emptyText: loading
+                      ? "Cargando..."
+                      : "No se encontraron resultados.",
+                  }}
                 >
                   <Column
                     title="Colaborador"

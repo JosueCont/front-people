@@ -13,7 +13,6 @@ import {
   Tooltip,
 } from "antd";
 import { useRouter } from "next/router";
-import axiosApi from "../../libs/axiosApi";
 import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
 
 import Axios from "axios";
@@ -21,9 +20,7 @@ import { API_URL } from "./../../config/config";
 import moment from "moment";
 
 import {
-  DeleteOutlined,
   EditOutlined,
-  InfoCircleOutlined,
   SearchOutlined,
   PlusOutlined,
   EyeOutlined,
@@ -247,7 +244,11 @@ const Lending = () => {
                   dataSource={lendingList}
                   key="table_holidays"
                   loading={loading}
-                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+                  locale={{
+                    emptyText: loading
+                      ? "Cargando..."
+                      : "No se encontraron resultados.",
+                  }}
                 >
                   <Column
                     title="Colaborador"
