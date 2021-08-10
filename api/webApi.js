@@ -25,6 +25,10 @@ class WebApi {
   static getCompanys() {
     return WebApi.ApisType(`/business/node/`, "post");
   }
+
+  static getGeneralConfig() {
+    return WebApi.ApisType(`/setup/site-configuration/`, "get");
+  }
 }
 
 export default WebApi;
