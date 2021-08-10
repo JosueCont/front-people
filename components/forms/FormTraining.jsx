@@ -18,13 +18,12 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import { useEffect } from "react";
 import moment from "moment";
 
-const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
+const FormTraining = ({ person_id = null }) => {
   const { Title } = Typography;
   const [formTraining] = Form.useForm();
   const { RangePicker } = DatePicker;
@@ -35,6 +34,7 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
   const [upTraining, setUpTraining] = useState(false);
   const [training, setTraining] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
+  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   useEffect(() => {
     getTraining();
@@ -46,7 +46,6 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
     Axios.get(API_URL + `/person/person/${person_id}/training_person/`)
       .then((response) => {
         setTraining(response.data);
-        setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
@@ -54,21 +53,18 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
       .catch((e) => {
         console.log(e);
         setTraining([]);
-        setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
       });
   };
   const saveTraining = (data) => {
-    setLoading(true);
     Axios.post(API_URL + `/person/training/`, data)
       .then((response) => {
         message.success({
           content: "Guardado correctamente.",
           className: "custom-class",
         });
-        setLoading(false);
         getTraining();
         formTraining.resetFields();
         setTimeout(() => {
@@ -76,7 +72,6 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
         }, 1000);
       })
       .catch((error) => {
-        setLoading(false);
         console.log(error);
         setTimeout(() => {
           setLoadingTable(false);
@@ -84,7 +79,6 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
       });
   };
   const updateTraining = (data) => {
-    setLoading(true);
     setLoadingTable(true);
     Axios.put(API_URL + `/person/training/${data.id}/`, data)
       .then((response) => {
@@ -92,7 +86,6 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
           content: "Actualizado correctamente.",
           className: "custom-class",
         });
-        setLoading(false);
         setUpTraining(false);
         setIdTraining(null);
         getTraining();
@@ -104,7 +97,6 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
         }, 1000);
       })
       .catch((error) => {
-        setLoading(false);
         console.log(error);
         setTimeout(() => {
           setLoadingTable(false);
@@ -112,7 +104,6 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
       });
   };
   const deleteTraining = (id) => {
-    setLoading(true);
     Axios.delete(API_URL + `/person/training/${id}/`)
       .then((response) => {
         message.success({
@@ -124,14 +115,12 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
           setUpTraining(false);
         }
         getTraining();
-        setLoading(false);
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
       })
       .catch((e) => {
         console.log(e);
-        setLoading(false);
       });
   };
 
