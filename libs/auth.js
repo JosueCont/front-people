@@ -2,12 +2,6 @@ import React, { Component } from "react";
 import Router from "next/router";
 import nextCookie from "next-cookies";
 import cookie from "js-cookie";
-import axiosApi, {
-  setConfigAxios,
-  resetConfig,
-  domainApi,
-  typeHttp,
-} from "./axiosApi";
 import _ from "lodash";
 
 export const auth = (ctx) => {
@@ -48,23 +42,6 @@ const setInitialProps = (component) => {
         return;
       }
     };
-
-    try {
-      if (token) {
-        // console.log('INICANDO')
-        // await setConfigAxios(token.token);
-        axiosApi.defaults.headers.common[
-          "Authorization"
-        ] = `JWT ${token.token}`;
-        /*         console.log('FINALIZADO') */
-      } else {
-        axiosApi.defaults.headers.common["Authorization"] = "";
-      }
-    } catch (error) {
-      // Implementation or Network error
-      // console.log('Error en authentificación', error);
-      return await redirectOnError(error);
-    }
   };
 };
 
@@ -122,7 +99,6 @@ export const userCompanyId = () => {
   }
 };
 
-
 export const getAccessIntranet = () => {
   try {
     let accessIntranet = sessionStorage.getItem("accessIntranet");
@@ -133,7 +109,6 @@ export const getAccessIntranet = () => {
     return null;
   }
 };
-
 
 export const userCompanyName = () => {
   try {

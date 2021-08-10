@@ -63,15 +63,6 @@ const RecoveryPasswordForm = (props) => {
             />
           </Form.Item>
 
-          {/* {errorLogin && (
-                        <Alert
-                            message="Error al iniciar sesión,"
-                            description="la contraseña y/o correo electrónico son incorrectos"
-                            type="error"
-                            style={{ textAlign: "center", marginBottom: "10px" }}
-                            closable
-                        />
-                    )} */}
           <Form.Item>
             <Button
               style={{ width: "100%" }}

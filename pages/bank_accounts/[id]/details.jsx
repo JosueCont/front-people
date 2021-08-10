@@ -5,23 +5,13 @@ import {
   Col,
   Typography,
   Breadcrumb,
-  Image,
   Button,
   Form,
   Input,
-  Select,
   Modal,
-  notification,
 } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  PlusOutlined,
-  ExclamationCircleOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
-import axiosApi from "../../../libs/axiosApi";
 import BankAccountsForm from "../../../components/forms/BankAccountsForm";
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";

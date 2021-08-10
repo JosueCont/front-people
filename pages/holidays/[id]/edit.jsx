@@ -1,25 +1,17 @@
 import React, { useEffect, useState } from "react";
 import {
   Tabs,
-  Radio,
   Row,
   Col,
   Breadcrumb,
   Typography,
   notification,
-  Button,
   Select,
   Form,
-  Image,
-  Input,
 } from "antd";
 import MainLayout from "../../../layout/MainLayout";
-import { render } from "react-dom";
 import { useRouter } from "next/router";
-import axiosApi from "../../../libs/axiosApi";
-import moment from "moment";
 import Vacationform from "../../../components/forms/Vacationform";
-import BreadcrumbHome from "../../../components/BreadcrumbHome";
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";

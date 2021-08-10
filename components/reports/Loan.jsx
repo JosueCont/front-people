@@ -11,18 +11,10 @@ import {
   Typography,
   Tooltip,
 } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-  SyncOutlined,
-  SearchOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { DownloadOutlined } from "@ant-design/icons";
-import Link from "next/link";
 import moment from "moment-timezone";
 import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
 import jsCookie from "js-cookie";
@@ -259,25 +251,6 @@ const LoanReport = (props) => {
     }
   };
 
-  const getAllPersons = async () => {
-    try {
-      let response = await axiosApi.get(`/person/person/`);
-      let data = response.data.results;
-      let list = [];
-      data = data.map((a, index) => {
-        let item = {
-          label: a.first_name + " " + a.flast_name,
-          value: a.id,
-          key: a.id + index,
-        };
-        list.push(item);
-      });
-      setPersonList(list);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const getLending = async (
     personID = null,
     type = null,
@@ -328,7 +301,6 @@ const LoanReport = (props) => {
   };
 
   const filterReport = (values) => {
-    console.log(values);
     setPerson_id(values.person__id);
     setType(values.type);
     setPeriodicity(values.periodicity);
@@ -490,7 +462,11 @@ const LoanReport = (props) => {
             dataSource={lendingList}
             key="tableHolidays"
             columns={columns}
-            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+            locale={{
+              emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
           ></Table>
         </Col>
       </Row>

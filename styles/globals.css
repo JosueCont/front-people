@@ -184,7 +184,7 @@ li.ant-menu-submenu-selected {
 }
 
 .backLogin {
-  background-image: url("../public/images/login.jpg");
+  background-image: var(--login_image) ;
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -264,4 +264,9 @@ li.ant-menu-submenu-selected {
   text-align: center;
   align-items: center;
   justify-content: center;
+}
+
+.login-form-button {
+  width: 100%;
+  background-color: var(--primaryColor);
 }

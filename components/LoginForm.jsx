@@ -1,15 +1,6 @@
-import {
-  Form,
-  Input,
-  Button,
-  Checkbox,
-  Spin,
-  Alert,
-  Typography,
-  message,
-} from "antd";
+import { Form, Input, Button, Spin, Alert, Typography, message } from "antd";
 const { Text } = Typography;
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { LOGIN_URL, API_URL, APP_ID } from "../config/config";
 import Axios from "axios";
