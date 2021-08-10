@@ -1,9 +1,9 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-// import webReducer, { doGetGeneralConfig } from "./assessmentDuck";
+import webReducer from "./UserDuck";
 
 const rootReducer = combineReducers({
-  storeAssessment: webReducer,
+  userStore: webReducer,
 });
 
 export const store = createStore(rootReducer, applyMiddleware(thunk));

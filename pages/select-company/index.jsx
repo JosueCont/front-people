@@ -1,31 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { render } from "react-dom";
 import MainLayout from "../../layout/MainLayout";
-import {
-  Row,
-  Col,
-  Table,
-  Breadcrumb,
-  Button,
-  Form,
-  Input,
-  Select,
-  DatePicker,
-  Tabs,
-  Tooltip,
-  message,
-  Typography,
-  Card,
-  Spin,
-} from "antd";
+import { Row, Col, Breadcrumb, message, Typography, Card, Spin } from "antd";
 import useRouter from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-
-import { userCompanyId, userId, withAuthSync } from "../../libs/auth";
+import { userCompanyId, userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from "react-redux";
+import { companySelected } from "../../redux/UserDuck";
 
-const SelectCompany = () => {
+const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -85,14 +69,15 @@ const SelectCompany = () => {
     }
   };
 
-  const setCompanySelect = (item) => {
+  const setCompanySelect = async (item) => {
     getConfig();
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
     sessionStorage.setItem("name", item.name);
-    sessionStorage.setItem('image',item.image);
+    sessionStorage.setItem("image", item.image);
     let company_id = userCompanyId();
-    if (company_id) useRouter.push("home");
+    let response = await props.companySelected(item);
+    if (response) useRouter.push("home");
     else message.error("Ocurrio un error, intente de nuevo.");
   };
 
@@ -163,4 +148,10 @@ const SelectCompany = () => {
   );
 };
 
-export default SelectCompany;
+const mapState = (state) => {
+  return {
+    companyUser: state.userStore.current_company,
+  };
+};
+
+export default connect(mapState, { companySelected })(SelectCompany);

@@ -21,6 +21,10 @@ class WebApi {
   static saveJwt(data) {
     return WebApi.ApisType(`/person/person/save_person_jwt/`, "post", data);
   }
+
+  static getCompanys() {
+    return WebApi.ApisType(`/business/node/`, "post");
+  }
 }
 
 export default WebApi;

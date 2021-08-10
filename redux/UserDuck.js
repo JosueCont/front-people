@@ -6,7 +6,12 @@ const initialData = {
   error: false,
 };
 
-const DEFAULT_WEB = "DEFAULT_WEB";
+const LOADING_WEB = "LOADING_WEB";
+const LOADING_WEB_SUCCESS = "LOADING_WEB_SUCCESS";
+const ERROR = "ERROR";
+const JWT = "JWT";
+const GENERAL_CONFIG = "GENERAL_CONFIG";
+const COMPANY_SELCTED = "COMPANY_SELECTED";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -20,6 +25,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, jwt: action.payload };
     case GENERAL_CONFIG:
       return { ...state, general_config: action.payload };
+    case COMPANY_SELCTED:
+      return { ...state, current_company: action.payload };
     default:
       return state;
   }
@@ -46,4 +53,13 @@ export const showLoading = (data) => async (dispatch, getState) => {
     if (data) dispatch({ type: LOADING_WEB });
     else dispatch({ type: LOADING_WEB_SUCCESS });
   } catch (error) {}
+};
+
+export const companySelected = (data) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: COMPANY_SELCTED, payload: data });
+    return true;
+  } catch (error) {
+    return false;
+  }
 };

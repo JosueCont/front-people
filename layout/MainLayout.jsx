@@ -1,36 +1,48 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Space } from "antd";
 import { useRouter } from "next/router";
 import HeaderCustom from "../components/Header";
 import Footer from "../components/Footer";
 import { Helmet } from "react-helmet";
 import { userCompanyName } from "../libs/auth";
-import Title from "antd/lib/skeleton/Title";
 
 const { Content } = Layout;
 
-const MainLayout = ({ hideMenu, ...props }) => {
+const MainLayout = ({
+  hideMenu,
+  hideProfile,
+  logoNode = null,
+  companyName = null,
+  ...props
+}) => {
   const router = useRouter();
-  let company = userCompanyName();
-  const [mainLogo, setMainLogo] = useState('');
-  const isBrowser = () => typeof window !== "undefined"
-
+  let nodeName = userCompanyName();
+  const [mainLogo, setMainLogo] = useState("");
+  const [company, setCompany] = useState("");
+  const isBrowser = () => typeof window !== "undefined";
 
   useEffect(() => {
     if (company == "" || company == undefined) {
-      company = userCompanyName();
+      setCompany(nodeName);
     }
   }, []);
 
-  useEffect(()=>{
-    if (isBrowser()){
-      setMainLogo(window.sessionStorage.getItem('image'));
+  useEffect(() => {
+    if (isBrowser()) {
+      setMainLogo(window.sessionStorage.getItem("image"));
     }
-    /* setMainLogo(window.sessionStorage.getItem('image')); */
-  },[])
+  }, []);
+
+  useEffect(() => {
+    if (logoNode && logoNode != "") {
+      setMainLogo(logoNode);
+    }
+    if (companyName && companyName != "") {
+      setCompany(companyName);
+    }
+  }, [logoNode, companyName]);
 
   return (
-    /* <IntlProvider locale={state.lang} messages={langMessages[state.lang]}> */
     <Layout className="layout">
       <Helmet>
         <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
@@ -40,6 +52,7 @@ const MainLayout = ({ hideMenu, ...props }) => {
         currentKey={props.currentKey}
         hideMenu={hideMenu}
         mainLogo={mainLogo}
+        hideProfile={hideProfile}
       />
       <div style={{ marginLeft: "50px" }}>
         <h1> {company != undefined && company}</h1>
@@ -57,7 +70,6 @@ const MainLayout = ({ hideMenu, ...props }) => {
       </Content>
       <Footer />
     </Layout>
-    /* </IntlProvider> */
   );
 };
 

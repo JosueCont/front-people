@@ -110,7 +110,6 @@ const AddUploadPayroll = () => {
       let formData = new FormData();
       formData.append("pdf", e.target.files[0]);
       formData.append("id", id);
-      console.log(formData);
       setLoading(true);
       Axios.post(
         API_URL + `/payroll/payroll-voucher/import_pdf_voucher/`,

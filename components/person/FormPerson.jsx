@@ -9,15 +9,24 @@ import {
   Select,
   message,
   Row,
-  Col, Switch,
+  Col,
+  Switch,
 } from "antd";
 import Axios from "axios";
 import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
 import { useState, useEffect } from "react";
-import {getAccessIntranet, userCompanyId, userCompanyName} from "../../libs/auth";
-import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import {
+  getAccessIntranet,
+  userCompanyId,
+  userCompanyName,
+} from "../../libs/auth";
+import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 
-const FormPerson = (props) => {
+const FormPerson = ({
+  hideProfileSecurity = true,
+  intranetAccess = true,
+  ...props
+}) => {
   const [form] = Form.useForm();
   const [groups, setGroups] = useState([]);
   const [personType, setPersonType] = useState([]);
@@ -30,7 +39,6 @@ const FormPerson = (props) => {
   let nodeId = userCompanyId();
   let nodePeople = userCompanyName();
   let accessIntranet = getAccessIntranet();
-
 
   useEffect(() => {
     getValueSelects(nodeId);
@@ -65,7 +73,7 @@ const FormPerson = (props) => {
     let company = `?company=${nodeId}`;
 
     /////PERMSS GROUPS
-    Axios.get(LOGIN_URL + "/group/list/"+company, {
+    Axios.get(LOGIN_URL + "/group/list/" + company, {
       headers: headers,
     })
       .then((response) => {
@@ -116,7 +124,6 @@ const FormPerson = (props) => {
   };
 
   const createPerson = (value) => {
-    console.log('params::',value)
     Axios.post(API_URL + `/person/person/`, value)
       .then((response) => {
         message.success("Agregado correctamente");
@@ -154,9 +161,9 @@ const FormPerson = (props) => {
     setDate(dateString);
   }
 
-  const onChangeIngPlatform=(date, dateString)=> {
+  const onChangeIngPlatform = (date, dateString) => {
     setDateIngPlatform(dateString);
-  }
+  };
 
   const closeDialog = () => {
     props.close(false);
@@ -218,10 +225,12 @@ const FormPerson = (props) => {
           width={"60%"}
         >
           <Form
-              initialValues={{
-                'intranet_access':false,
-              }}
-              onFinish={onFinish} form={form}>
+            initialValues={{
+              intranet_access: false,
+            }}
+            onFinish={onFinish}
+            form={form}
+          >
             <Row>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item name="person_type">
@@ -314,37 +323,42 @@ const FormPerson = (props) => {
                   <Input.Password type="text" placeholder="Contraseña" />
                 </Form.Item>
               </Col>
-              {
-                accessIntranet!=="false" &&
+              {accessIntranet !== "false" && intranetAccess && (
                 <Col lg={7} xs={22} offset={1}>
-                  <Form.Item name="intranet_access" label="Acceso a la intranet" valuePropName="checked">
+                  <Form.Item
+                    name="intranet_access"
+                    label="Acceso a la intranet"
+                    valuePropName="checked"
+                  >
                     <Switch
-                        checkedChildren={<CheckOutlined />}
-                        unCheckedChildren={<CloseOutlined />}
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
                     />
                   </Form.Item>
                 </Col>
-              }
+              )}
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item>
                   <DatePicker
-                      style={{ width: "100%" }}
-                      onChange={onChangeIngPlatform}
-                      moment={"YYYY-MM-DD"}
-                      placeholder="Fecha de ingreso a la plataforma"
+                    style={{ width: "100%" }}
+                    onChange={onChangeIngPlatform}
+                    moment={"YYYY-MM-DD"}
+                    placeholder="Fecha de ingreso a la plataforma"
                   />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="groups">
-                  <Select
-                    options={groups}
-                    showArrow
-                    style={{ width: "100%" }}
-                    placeholder="Perfiles de seguridad"
-                  ></Select>
-                </Form.Item>
-              </Col>
+              {hideProfileSecurity && (
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item rules={[ruleRequired]} name="groups">
+                    <Select
+                      options={groups}
+                      showArrow
+                      style={{ width: "100%" }}
+                      placeholder="Perfiles de seguridad"
+                    ></Select>
+                  </Form.Item>
+                </Col>
+              )}
               <Col lg={22} xs={22} offset={1}>
                 <Form.Item labelAlign="right">
                   <Space style={{ float: "right" }}>

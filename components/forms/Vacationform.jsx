@@ -54,7 +54,6 @@ const Vacationform = (props) => {
 
   useEffect(() => {
     if (props.details) {
-      console.log(props.details);
       formVacation.setFieldsValue({
         person: props.details.collaborator
           ? props.details.collaborator.id
