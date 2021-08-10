@@ -138,7 +138,6 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
   /*Events */
   const formFinishTraining = (value) => {
     if (upTraining) {
-      console.log("Date", dateTraining);
       value.id = idTraining;
       value.since = dateTraining[0];
       value.until = dateTraining[1];
@@ -159,20 +158,17 @@ const FormTraining = ({ person_id = null, ruleRequired, setLoading }) => {
     currenlyStuding ? setCurrenlyStuding(false) : setCurrenlyStuding(true);
   };
   const updateFormTraining = (item) => {
-    console.log("Element training", item);
     formTraining.setFieldsValue({
       school: item.school,
       accreditation_document: item.accreditation_document,
       completed_period: item.completed_period,
       since: [moment(item.since), moment(item.until)],
     });
-    console.log("date", item.since, item.until);
     setCurrenlyStuding(item.currently_studing);
     setIdTraining(item.id);
     setUpTraining(true);
   };
   const showModalDelete = (id) => {
-    console.log("IDTraining", id);
     confirm({
       title: "¿Está seguro de querer eliminarlo?",
       icon: <ExclamationCircleOutlined />,

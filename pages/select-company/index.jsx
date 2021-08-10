@@ -75,8 +75,7 @@ const SelectCompany = ({ ...props }) => {
     else sessionStorage.setItem("data", item.id);
     sessionStorage.setItem("name", item.name);
     sessionStorage.setItem("image", item.image);
-    let company_id = userCompanyId();
-    let response = await props.companySelected(item);
+    let response = await props.companySelected(item.id);
     if (response) useRouter.push("home");
     else message.error("Ocurrio un error, intente de nuevo.");
   };
@@ -149,9 +148,7 @@ const SelectCompany = ({ ...props }) => {
 };
 
 const mapState = (state) => {
-  return {
-    companyUser: state.userStore.current_company,
-  };
+  return {};
 };
 
 export default connect(mapState, { companySelected })(SelectCompany);

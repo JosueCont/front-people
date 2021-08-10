@@ -4,9 +4,12 @@ import nextCookie from "next-cookies";
 import cookie from "js-cookie";
 import _ from "lodash";
 
-export const auth = (ctx) => {
+export const auth = async (ctx) => {
   // console.log('Aqui en al auth', ctx);
   const { token } = nextCookie(ctx);
+
+  let id = await userCompanyId();
+  console.log("CompanyUSer-->> ", id);
 
   if (ctx.req && !token) {
     // console.log('Sin Token!!', token)
@@ -46,8 +49,9 @@ const setInitialProps = (component) => {
 };
 
 // Gets the display name of a JSX component for dev tools
-const getDisplayName = (Component) =>
+const getDisplayName = (Component) => {
   Component.displayName || Component.name || "Component";
+};
 
 // Aqui empieza todo el flujo de sesiones
 export const withAuthSync = (WrappedComponent) =>
