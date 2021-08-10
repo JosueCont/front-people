@@ -1,4 +1,6 @@
+import Axios from "axios";
 import WebApi from "../api/webApi";
+import { API_URL } from "../config/config";
 import { userCompanyId } from "../libs/auth";
 
 const initialData = {
@@ -69,4 +71,20 @@ export const companySelected = (data) => async (dispatch, getState) => {
     console.log(error);
     return false;
   }
+};
+
+export const companySelectedAxios = (data) => async (dispatch, getState) => {
+  console.log("DATA-->>> ", API_URL);
+  let response = await Axios.get(
+    `https://demo.people.hiumanlab.com/business/node/${data}/`
+  )
+    .then((response) => {
+      dispatch({ type: COMPANY_SELCTED, payload: response.data });
+      return true;
+    })
+    .catch((error) => {
+      console.log("ERROR API--Z ", error);
+      return false;
+    });
+  return response;
 };
