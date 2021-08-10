@@ -60,9 +60,6 @@ const businessForm = () => {
   const [addB, setAddB] = useState(false);
 
   const onFinish = (values) => {
-    console.log("isDeleted", isDeleted);
-    console.log("isEdit", isEdit);
-    console.log("values", values);
     if (isDeleted) {
       deleteBusiness(values.id);
     } else {
@@ -106,7 +103,6 @@ const businessForm = () => {
 
     Axios.patch(API_URL + "/business/node/" + values.id + "/", data)
       .then(function (response) {
-        console.log("response", response);
         person();
         setIsModalVisible(false);
         setLoading(false);
@@ -246,7 +242,6 @@ const businessForm = () => {
     )
       .then((response) => {
         setBusiness([]);
-        console.log("getBussines", response.data);
         setBusiness(response.data);
         setLoading(false);
       })

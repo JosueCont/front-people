@@ -144,7 +144,6 @@ const PermissionsReport = (props) => {
   const filterPermission = async (values) => {
     setColaborator(values.collaborator);
     setDepartmentId(values.department);
-    console.log(values.status);
 
     getPermissions(values.collaborator, values.department, values.status);
   };
@@ -352,7 +351,11 @@ const PermissionsReport = (props) => {
             key="tableHolidays"
             columns={columns}
             loading={loading}
-            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+            locale={{
+              emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
           ></Table>
         </Col>
       </Row>

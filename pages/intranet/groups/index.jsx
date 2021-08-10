@@ -57,7 +57,6 @@ const GroupView = ({ ...props }) => {
   };
 
   const goToDetails = (group) => {
-    console.log("detail", group);
     setGroup(group);
     setIsDetail(true);
   };
@@ -75,7 +74,6 @@ const GroupView = ({ ...props }) => {
     setEdit(true);
     setGroup(group);
     setIsModalVisible(true);
-    console.log("edit", group);
   };
 
   function confirmDelete(group) {
@@ -93,7 +91,6 @@ const GroupView = ({ ...props }) => {
       setGroups([]);
       try {
         const url = API_URL + `/intranet/group/?node=${companyId}`;
-        console.log(url);
         const res = await Axios.get(url);
         if (res.data.count > 0) {
           setGroups(res.data.results);

@@ -301,7 +301,6 @@ const LoanReport = (props) => {
   };
 
   const filterReport = (values) => {
-    console.log(values);
     setPerson_id(values.person__id);
     setType(values.type);
     setPeriodicity(values.periodicity);

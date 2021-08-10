@@ -15,7 +15,7 @@ const { Header } = Layout;
 
 const { SubMenu } = Menu;
 
-const headerCustom = ({ hideMenu, ...props }) => {
+const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
   const router = useRouter();
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -31,7 +31,6 @@ const headerCustom = ({ hideMenu, ...props }) => {
       id: user.user_id,
     })
       .then((response) => {
-        console.log(response.data);
         if (!response.data.photo) response.data.photo = defaulPhoto;
         let personName =
           response.data.first_name + " " + response.data.flast_name;
@@ -172,9 +171,8 @@ const headerCustom = ({ hideMenu, ...props }) => {
               }}
             >
               <img
-                style={{ float: "left", height: 60, margin: "auto" }}
+                style={{ float: "left", width: 50, margin: "auto" }}
                 src={props.mainLogo}
-                /* src={ process.browser ? window.sessionStorage.getItem('image') : "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"} */
                 alt=""
               />
             </div>
@@ -343,23 +341,25 @@ const headerCustom = ({ hideMenu, ...props }) => {
               ) : null}
             </Menu>
           </Col>
-          <Col xl={3} lg={2} md={2} sm={1} xs={1}>
-            <div
-              className={"pointer"}
-              style={{ float: "right" }}
-              key={"menu_user_" + props.currentKey}
-            >
-              <Dropdown overlay={userCardDisplay} key="dropdown_user">
-                <div key="menu_user_content">
-                  <Avatar
-                    key="avatar_key"
-                    icon={<UserOutlined />}
-                    src={person.photo}
-                  />
-                </div>
-              </Dropdown>
-            </div>
-          </Col>
+          {hideProfile && (
+            <Col xl={3} lg={2} md={2} sm={1} xs={1}>
+              <div
+                className={"pointer"}
+                style={{ float: "right" }}
+                key={"menu_user_" + props.currentKey}
+              >
+                <Dropdown overlay={userCardDisplay} key="dropdown_user">
+                  <div key="menu_user_content">
+                    <Avatar
+                      key="avatar_key"
+                      icon={<UserOutlined />}
+                      src={person.photo}
+                    />
+                  </div>
+                </Dropdown>
+              </div>
+            </Col>
+          )}
         </Row>
       </Header>
       {logOut && (
