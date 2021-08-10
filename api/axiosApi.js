@@ -16,9 +16,7 @@ if (process.browser) {
 export const typeHttp = process.browser
   ? process.env.NEXT_PUBLIC_USE_HTTPS
   : process.env.USE_HTTPS;
-console.log(tenant, " ", domainApi, " ", typeHttp);
 const domainApiWithTenant = `${tenant}.${domainApi}`;
-console.log(domainApiWithTenant);
 
 export const config = {
   baseURL: `${typeHttp}://${domainApiWithTenant}/`,
