@@ -61,6 +61,13 @@ const homeScreen = () => {
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
+  // Constantes para desactivar.
+  const [modalDeactivate, setModalDeactivate] = useState(false);
+  const [idsDeactivate, setIdsDeactivate] = useState("");
+  const [personsToDeactivate, setPersonsToDeactivate] = useState([]);
+  const [stringToDeactivate, setStringToDeactivate] = useState(null);
+
+  // Constantes para eliminar.
   const [modalDelete, setModalDelete] = useState(false);
   const [idsDelete, setIdsDelete] = useState("");
   const [personsToDelete, setPersonsToDelete] = useState([]);
@@ -141,6 +148,26 @@ const homeScreen = () => {
         console.log(e);
       });
   };
+
+  const deactivatePerson = () => {
+    setLoading(true);
+    Axios.post(API_URL + '/person/person/deactivate_by_ids/', {
+      persons_id: idsDeactivate,
+    })
+    .then((response) => {
+      setIdsDeactivate("");
+      setModalDeactivate(false);
+      setPersonsToDeactivate([]);
+      // Tambien limpiamos la lista de personas a eliminar ya que va de la mano con la seleccion de registros.
+      setPersonsToDelete([]);
+      filterPersonName();
+      setLoading(false);
+      message.success("Desactivado correctamente.");
+    })
+    .catch((error) => {
+      setLoading(false);
+    })
+  }
 
   const deletePerson = () => {
     setLoading(true);
@@ -395,6 +422,7 @@ const homeScreen = () => {
   const rowSelectionPerson = {
     onChange: (selectedRowKeys, selectedRows) => {
       setPersonsToDelete(selectedRows);
+      console.log(personsToDelete)
     },
   };
 
@@ -427,6 +455,9 @@ const homeScreen = () => {
           Eliminar
         </Menu.Item>
       )}
+      <Menu.Item onClick={() => setDeactivateModal(personsToDelete)}>
+            Desactivar
+          </Menu.Item>
     </Menu>
   );
   const menuPerson = (item) => {
@@ -440,6 +471,7 @@ const homeScreen = () => {
         {permissions.delete && (
           <Menu.Item onClick={() => setDeleteModal([item])}>Eliminar</Menu.Item>
         )}
+        <Menu.Item onClick={()=> setDeactivateModal([item])}>Desactivar</Menu.Item>
       </Menu>
     );
   };
@@ -484,8 +516,52 @@ const homeScreen = () => {
     },
   ];
 
+  // DEACTIVATE MODAL
+  const setDeactivateModal = async (value) => {
+    setStringToDeactivate("Desactivar usuarios ");
+    if (value.length > 0 ) {
+      if (value.length == 1 ) {
+        setStringToDeactivate(
+          "Desactivar usuario " + value[0].first_name + " " + value[0].flast_name
+        );
+      }
+      setPersonsToDeactivate(value);
+      let ids = null;
+      value.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+      setIdsDeactivate(ids);
+      showModalDeactivate();
+    } else {
+      message.error("Selecciona una persona.");
+    }
+  };
+
+  const showModalDeactivate = () => {
+    modalDeactivate ? setModalDeactivate(false) : setModalDeactivate(true);
+  };
+
+  const ListElementsToDeactivate = ({ personsDeactivate }) => {
+    return (
+      <div>
+        {personsDeactivate.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
+  };
+
   /////DELETE MODAL
   const setDeleteModal = async (value) => {
+    console.log(value);
     setStringToDelete("Eliminar usuarios ");
     if (value.length > 0) {
       if (value.length == 1) {
@@ -705,10 +781,20 @@ const homeScreen = () => {
       });
   };
 
+  const AlertDeactivate = () => (
+    <div>
+      Al desactivar este registro ya no podra accerder a el hasta
+      que lo vuelva a activar. ¿Está seguro de querer eliminarlo?
+      <br />
+      <br />
+      <ListElementsToDeactivate personsDeactivate={personsToDeactivate} />
+    </div>
+  );
+
   const AlertDeletes = () => (
     <div>
       Al eliminar este registro perderá todos los datos relacionados a el de
-      manera permanente. ¿Está seguro de querer eliminarlo
+      manera permanente. ¿Está seguro de querer eliminarlo?
       <br />
       <br />
       <ListElementsToDelete personsDelete={personsToDelete} />
@@ -735,6 +821,27 @@ const homeScreen = () => {
       });
     }
   }, [modalDelete]);
+
+  useEffect(() => {
+    if (modalDeactivate) {
+      Modal.confirm({
+        title: stringToDeactivate,
+        content: <AlertDeactivate />,
+        icon: <ExclamationCircleOutlined />,
+        okText: "Si, desactivar",
+        okButtonProps: {
+          danger: true,
+        },
+        onCancel() {
+          setModalDeactivate();
+        },
+        cancelText: "Cancelar",
+        onOk() {
+          deactivatePerson();
+        },
+      });
+    }
+  }, [modalDeactivate])
 
   return (
     <MainLayout currentKey="1">
