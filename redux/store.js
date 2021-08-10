@@ -1,6 +1,6 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import webReducer from "./UserDuck";
+import webReducer, { doGetGeneralConfig } from "./UserDuck";
 
 const rootReducer = combineReducers({
   userStore: webReducer,
@@ -9,6 +9,6 @@ const rootReducer = combineReducers({
 export const store = createStore(rootReducer, applyMiddleware(thunk));
 
 export default () => {
-  // doGetGeneralConfig()(store.dispatch);
+  doGetGeneralConfig()(store.dispatch);
   return store;
 };
