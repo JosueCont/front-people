@@ -162,8 +162,6 @@ const homeScreen = ({ ...props }) => {
       setIdsDeactivate("");
       setModalDeactivate(false);
       setPersonsToDeactivate([]);
-      // Tambien limpiamos la lista de personas a eliminar ya que va de la mano con la seleccion de registros.
-      setPersonsToDelete([]);
       filterPersonName();
       setLoading(false);
       message.success("Desactivado correctamente.");
