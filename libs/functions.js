@@ -87,7 +87,6 @@ export const periodicity = [
 
 export const getJobForSelect = async (id) => {
   try {
-    console.log("id-->> ", id);
     let response = await WebApi.getJobSelect(id);
     let job = response.data;
     job = job.map((a) => {

@@ -152,7 +152,6 @@ const GeneralDataPerson = ({
       try {
         setLoadImage(true);
         let response = await WebApi.updatePhotoPerson(data);
-        console.log("FOTO-> ", response);
         formPerson.setFieldsValue({
           photo: response.data.photo,
         });
