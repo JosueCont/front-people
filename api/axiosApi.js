@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export const domainApi = process.browser
-  ? process.env.NEXT_PUBLIC_API_BASE_URL
-  : process.env.API_BASE_URL;
+  ? process.env.NEXT_PUBLIC_API_BASE_URL_TENANT
+  : process.env.API_BASE_URL_TENANT;
 
 let tenant = "demo";
 
@@ -21,8 +21,8 @@ const domainApiWithTenant = `${tenant}.${domainApi}`;
 console.log(domainApiWithTenant);
 
 export const config = {
-  // baseURL: `${typeHttp}://${domainApiWithTenant}/`,
-  baseURL: domainApi,
+  baseURL: `${typeHttp}://${domainApiWithTenant}/`,
+  // baseURL: domainApi,
   headers: { "Content-Type": "application/json" },
 };
 

@@ -10,7 +10,6 @@ import { API_URL } from "../config/config";
 import { getAccessIntranet, logoutAuth } from "../libs/auth";
 import { FormattedMessage } from "react-intl";
 import { css, Global } from "@emotion/core";
-import WebApi from "../api/webApi";
 
 const { Header } = Layout;
 
@@ -52,14 +51,18 @@ const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
     getConfig();
   }, []);
 
-  const getConfig = async () => {
-    try {
-      let response = await WebApi.getGeneralConfig();
-      setPrimaryColor(response.data.concierge_primary_color);
-      setSecondaryColor(response.data.concierge_primary_color);
-    } catch (error) {
-      console.log(error);
-    }
+  const getConfig = () => {
+    Axios.get(API_URL + "/setup/site-configuration/")
+      .then((res) => {
+        setPrimaryColor(res.data.concierge_primary_color);
+        setSecondaryColor(res.data.concierge_primary_color);
+
+        //setPrimaryColor('blue')
+        //setSecondaryColor('red')
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const actionEvent = (data) => {
