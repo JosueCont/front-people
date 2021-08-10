@@ -18,6 +18,10 @@ class WebApi {
     }
   };
 
+  static getGeneralConfig() {
+    return WebApi.ApisType(`/setup/site-configuration/`, "get");
+  }
+
   static saveJwt(data) {
     return WebApi.ApisType(`/person/person/save_person_jwt/`, "post", data);
   }
@@ -26,8 +30,36 @@ class WebApi {
     return WebApi.ApisType(`/business/node/`, "post");
   }
 
-  static getGeneralConfig() {
-    return WebApi.ApisType(`/setup/site-configuration/`, "get");
+  static getCompany(data) {
+    return WebApi.ApisType(`/business/node/${data}/`, "get");
+  }
+
+  static getCompanyPermanentCode(data) {
+    return WebApi.ApisType(`/business/node/?permanent_code=${data}`, "get");
+  }
+
+  static createPerson(data) {
+    return WebApi.ApisType(`/person/person/`, "post", data);
+  }
+
+  static getPerson(data) {
+    return WebApi.ApisType(`/person/person/${data}/`, "get");
+  }
+
+  static updatePerson(data, id) {
+    return WebApi.ApisType(`/person/person/${id}/`, "put", data);
+  }
+
+  static updatePhotoPerson(data) {
+    return WebApi.ApisType(
+      `/person/person/update_pthoto_person/`,
+      "post",
+      data
+    );
+  }
+
+  static getJobSelect(data) {
+    return WebApi.ApisType(`/person/job/?department=${data}`, "get");
   }
 }
 
