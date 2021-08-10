@@ -20,64 +20,82 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-const FormPhone = ({ person_id = null }) => {
+const FormEmergencyContact = ({ person_id = null }) => {
   const { Title } = Typography;
-  const [formPhone] = Form.useForm();
+  const [formContactEmergency] = Form.useForm();
   const { confirm } = Modal;
-  const [idPhone, setIdPhone] = useState("");
-  const [upPhone, setUpPhone] = useState(false);
-  const [phones, setPhones] = useState([]);
+  const [idContEm, setIdContEm] = useState("");
+  const [upContEm, setUpContEm] = useState(false);
+  const [contactEmergency, setContactEmergency] = useState([]);
+  const [relationship, setRelationship] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
   const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   useEffect(() => {
-    getPhone();
+    getContactEmergency();
+    Axios.get(API_URL + "/setup/relationship/")
+      .then((response) => {
+        if (response.status === 200) {
+          let relation = response.data.results;
+          relation = relation.map((a) => {
+            return { label: a.name, value: a.id };
+          });
+          setRelationship(relation);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, []);
 
-  /*Functions CRUD */
-  const getPhone = () => {
-    Axios.get(API_URL + `/person/person/${person_id}/phone_person/`)
+  /* functions CRUD */
+  const getContactEmergency = () => {
+    setContactEmergency([]);
+    Axios.get(API_URL + `/person/person/${person_id}/contact_emergency_person/`)
       .then((response) => {
-        setPhones(response.data);
+        setContactEmergency(response.data);
+
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
       })
       .catch((e) => {
         console.log(e);
-        setPhones([]);
-        setLoadingTable(false);
+        setContactEmergency([]);
+
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
       });
   };
-  const savePhone = (data) => {
-    Axios.post(API_URL + `/person/phone/`, data)
+  const saveContactE = (data) => {
+    Axios.post(API_URL + `/person/contact-emergency/`, data)
       .then((response) => {
         message.success({
           content: "Guardado correctamente.",
           className: "custom-class",
         });
-        getPhone();
-        formPhone.resetFields();
+
+        getContactEmergency();
+        formContactEmergency.resetFields();
       })
       .catch((error) => {
         console.log(error);
       });
   };
-  const updatePhone = (data) => {
+  const updateContEm = (data) => {
     setLoadingTable(true);
-    Axios.put(API_URL + `/person/phone/${data.id}/`, data)
+    Axios.put(API_URL + `/person/contact-emergency/${data.id}/`, data)
       .then((response) => {
         message.success({
           content: "Actualizado correctamente.",
           className: "custom-class",
         });
-        setUpPhone(false);
-        setIdPhone(null);
-        formPhone.resetFields();
-        getPhone();
+
+        setUpContEm(false);
+        setIdContEm(null);
+        getContactEmergency();
+        formContactEmergency.resetFields();
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
@@ -89,19 +107,21 @@ const FormPhone = ({ person_id = null }) => {
         }, 1000);
       });
   };
-  const deletePhone = (id) => {
+  const deleteContEm = (data) => {
     setLoadingTable(true);
-    Axios.delete(API_URL + `/person/phone/${id}/`)
+    Axios.delete(API_URL + `/person/contact-emergency/${data}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado correctamente.",
           className: "custom-class",
         });
-        getPhone();
-        if (upPhone) {
-          formPhone.resetFields();
-          setUpPhone(false);
+
+        if (upContEm) {
+          formContactEmergency.resetFields();
+          setUpContEm(false);
         }
+
+        getContactEmergency();
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
@@ -114,28 +134,26 @@ const FormPhone = ({ person_id = null }) => {
       });
   };
 
-  /*Events */
-  const formFinishPhone = (value) => {
-    if (upPhone) {
-      value.id = idPhone;
-      value.person = person_id;
-      updatePhone(value);
+  /* Events */
+  const formFinishContactE = (value) => {
+    if (upContEm) {
+      value.id = idContEm;
+      updateContEm(value);
     } else {
       value.person = person_id;
-      savePhone(value);
+      saveContactE(value);
     }
   };
-  const updateFormPhone = (item) => {
-    formPhone.setFieldsValue({
-      country_code: item.country_code,
-      international_code: item.international_code,
-      line_type: item.line_type,
-      national_code: item.national_code,
-      phone: item.phone,
-      phone_type: item.phone_type,
+  const updateFormContEm = (item) => {
+    formContactEmergency.setFieldsValue({
+      relationship: item.relationship.id,
+      address: item.address,
+      fullname: item.fullname,
+      phone_one: item.phone_one,
+      phone_two: item.phone_two,
     });
-    setIdPhone(item.id);
-    setUpPhone(true);
+    setIdContEm(item.id);
+    setUpContEm(true);
   };
   const showModalDelete = (id) => {
     confirm({
@@ -147,7 +165,7 @@ const FormPhone = ({ person_id = null }) => {
       okType: "danger",
       cancelText: "Cancelar",
       onOk() {
-        if (id !== undefined) deletePhone(id);
+        if (id !== undefined) deleteContEm(id);
       },
       onCancel() {
         console.log("Cancel");
@@ -155,40 +173,22 @@ const FormPhone = ({ person_id = null }) => {
     });
   };
 
-  const typePhones = [
+  const colContact = [
     {
-      label: "Alterno",
-      value: 1,
+      title: "Nombre",
+      dataIndex: "fullname",
     },
     {
-      label: "Principal",
-      value: 2,
+      title: "Teléfono 1",
+      dataIndex: "phone_one",
     },
     {
-      label: "Recados",
-      value: 3,
-    },
-  ];
-
-  const typeLines = [
-    {
-      label: "Celular",
-      value: 1,
+      title: "Teléfono 2",
+      dataIndex: "phone_two",
     },
     {
-      label: "Fijo",
-      value: 2,
-    },
-  ];
-
-  const colPhone = [
-    {
-      title: "Código de país",
-      dataIndex: "national_code",
-    },
-    {
-      title: "Número",
-      dataIndex: "phone",
+      title: "Dirección",
+      dataIndex: "address",
     },
     {
       title: "Opciones",
@@ -199,7 +199,7 @@ const FormPhone = ({ person_id = null }) => {
               <Col className="gutter-row" offset={1}>
                 <EditOutlined
                   style={{ fontSize: "25px" }}
-                  onClick={() => updateFormPhone(item)}
+                  onClick={() => updateFormContEm(item)}
                 />
               </Col>
               <Col className="gutter-row" offset={1}>
@@ -220,38 +220,39 @@ const FormPhone = ({ person_id = null }) => {
   return (
     <>
       <Row>
-        <Title style={{ fontSize: "20px" }}>Teléfono</Title>
+        <Title style={{ fontSize: "20px" }}>Contactos de emergencia</Title>
       </Row>
-      <Form layout={"vertical"} form={formPhone} onFinish={formFinishPhone}>
+      <Form
+        layout="vertical"
+        form={formContactEmergency}
+        onFinish={formFinishContactE}
+      >
         <Row>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
-              name="phone_type"
-              label="Tipo de teléfono"
+              name="relationship"
+              label="Parentesco"
               rules={[ruleRequired]}
             >
               <Select
-                options={typePhones}
+                options={relationship}
                 notFoundContent={"No se encontraron resultado."}
               />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
-              name="line_type"
-              label="Tipo de línea"
+              name="fullname"
+              label="Nombre completo"
               rules={[ruleRequired]}
             >
-              <Select
-                options={typeLines}
-                notFoundContent={"No se encontraron resultado."}
-              />
+              <Input />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
-              name="international_code"
-              label="Código internacional"
+              name="phone_one"
+              label="Teléfono 1"
               rules={[ruleRequired]}
             >
               <Input type="number" />
@@ -259,29 +260,16 @@ const FormPhone = ({ person_id = null }) => {
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
-              name="national_code"
-              label="Código de país"
+              name="phone_two"
+              label="Teléfono 2"
               rules={[ruleRequired]}
             >
               <Input type="number" />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item
-              name="country_code"
-              label="Código de ciudad"
-              rules={[ruleRequired]}
-            >
-              <Input type="number" />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item
-              name="phone"
-              label="Número telefónico"
-              rules={[ruleRequired]}
-            >
-              <Input type="number" />
+          <Col lg={13} xs={22} offset={1}>
+            <Form.Item name="address" label="Dirección" rules={[ruleRequired]}>
+              <Input />
             </Form.Item>
           </Col>
         </Row>
@@ -295,8 +283,8 @@ const FormPhone = ({ person_id = null }) => {
       </Form>
       <Spin tip="Cargando..." spinning={loadingTable}>
         <Table
-          columns={colPhone}
-          dataSource={phones}
+          columns={colContact}
+          dataSource={contactEmergency}
           locale={{
             emptyText: loadingTable
               ? "Cargando..."
@@ -307,5 +295,4 @@ const FormPhone = ({ person_id = null }) => {
     </>
   );
 };
-
-export default FormPhone;
+export default FormEmergencyContact;
