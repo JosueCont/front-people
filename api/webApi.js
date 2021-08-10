@@ -18,6 +18,10 @@ class WebApi {
     }
   };
 
+  static getGeneralConfig() {
+    return WebApi.ApisType(`/setup/site-configuration/`, "get");
+  }
+
   static saveJwt(data) {
     return WebApi.ApisType(`/person/person/save_person_jwt/`, "post", data);
   }

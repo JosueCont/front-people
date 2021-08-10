@@ -22,7 +22,7 @@ import SelectJob from "../selects/SelectJob";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 import moment from "moment";
-import { civilStatus, genders, periodicity } from "../../libs/functions";
+import { civilStatus, genders, periodicity } from "../../utils/functions";
 import WebApi from "../../api/webApi";
 
 const GeneralDataPerson = ({

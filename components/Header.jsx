@@ -10,6 +10,7 @@ import { API_URL } from "../config/config";
 import { getAccessIntranet, logoutAuth } from "../libs/auth";
 import { FormattedMessage } from "react-intl";
 import { css, Global } from "@emotion/core";
+import WebApi from "../api/webApi";
 
 const { Header } = Layout;
 
@@ -26,41 +27,39 @@ const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
   let accessIntranet = getAccessIntranet();
 
   useEffect(() => {
-    const user = JSON.parse(Cookie.get("token"));
-    Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
-      id: user.user_id,
-    })
-      .then((response) => {
-        if (!response.data.photo) response.data.photo = defaulPhoto;
-        let personName =
-          response.data.first_name + " " + response.data.flast_name;
-        if (response.data.mlast_name)
-          personName = personName + " " + response.data.mlast_name;
-        response.data.fullName = personName;
-        setPerson(response.data);
+    try {
+      const user = JSON.parse(Cookie.get("token"));
+      Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
+        id: user.user_id,
       })
-      .catch((e) => {
-        setPerson({ photo: defaulPhoto });
-        console.log(e);
-      });
+        .then((response) => {
+          if (!response.data.photo) response.data.photo = defaulPhoto;
+          let personName =
+            response.data.first_name + " " + response.data.flast_name;
+          if (response.data.mlast_name)
+            personName = personName + " " + response.data.mlast_name;
+          response.data.fullName = personName;
+          setPerson(response.data);
+        })
+        .catch((e) => {
+          setPerson({ photo: defaulPhoto });
+          console.log(e);
+        });
+    } catch (error) {}
   }, []);
 
   useEffect(() => {
     getConfig();
   }, []);
 
-  const getConfig = () => {
-    Axios.get(API_URL + "/setup/site-configuration/")
-      .then((res) => {
-        setPrimaryColor(res.data.concierge_primary_color);
-        setSecondaryColor(res.data.concierge_primary_color);
-
-        //setPrimaryColor('blue')
-        //setSecondaryColor('red')
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+  const getConfig = async () => {
+    try {
+      let response = await WebApi.getGeneralConfig();
+      setPrimaryColor(response.data.concierge_primary_color);
+      setSecondaryColor(response.data.concierge_primary_color);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const actionEvent = (data) => {
