@@ -82,6 +82,8 @@ const homeScreen = () => {
 
   const [listUserCompanies, setListUserCompanies] = useState("");
   const [showModalCompanies, setShowModalCompanies] = useState(false);
+  const [deleteTrigger, setDeleteTrigger] = useState(false);
+  const [deactivateTrigger, setDeactivateTrigger] = useState(false);
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
@@ -166,6 +168,7 @@ const homeScreen = () => {
     })
     .catch((error) => {
       setLoading(false);
+      message.error("Error al desactivar")
     })
   }
 
@@ -185,6 +188,7 @@ const homeScreen = () => {
       .catch((error) => {
         setLoading(false);
         console.log(error);
+        message.error("Error al eliminar")
       });
   };
 
@@ -422,7 +426,6 @@ const homeScreen = () => {
   const rowSelectionPerson = {
     onChange: (selectedRowKeys, selectedRows) => {
       setPersonsToDelete(selectedRows);
-      console.log(personsToDelete)
     },
   };
 
@@ -451,15 +454,24 @@ const homeScreen = () => {
   const menuGeneric = (
     <Menu>
       {permissions.delete && (
-        <Menu.Item onClick={() => setDeleteModal(personsToDelete)}>
+        <Menu.Item onClick={() => handleDelete()}>
           Eliminar
         </Menu.Item>
       )}
-      <Menu.Item onClick={() => setDeactivateModal(personsToDelete)}>
+      <Menu.Item onClick={() => handleDeactivate()}>
             Desactivar
           </Menu.Item>
     </Menu>
   );
+
+  const handleDelete = () => {
+    setDeleteTrigger(true);
+  }
+
+  const handleDeactivate = () => {
+    setDeactivateTrigger(true);
+  }
+
   const menuPerson = (item) => {
     return (
       <Menu>
@@ -561,7 +573,6 @@ const homeScreen = () => {
 
   /////DELETE MODAL
   const setDeleteModal = async (value) => {
-    console.log(value);
     setStringToDelete("Eliminar usuarios ");
     if (value.length > 0) {
       if (value.length == 1) {
@@ -784,7 +795,7 @@ const homeScreen = () => {
   const AlertDeactivate = () => (
     <div>
       Al desactivar este registro ya no podra accerder a el hasta
-      que lo vuelva a activar. ¿Está seguro de querer eliminarlo?
+      que lo vuelva a activar. ¿Está seguro de querer desactivarlo?
       <br />
       <br />
       <ListElementsToDeactivate personsDeactivate={personsToDeactivate} />
@@ -800,6 +811,20 @@ const homeScreen = () => {
       <ListElementsToDelete personsDelete={personsToDelete} />
     </div>
   );
+
+  useEffect(() => {
+    if (deleteTrigger){
+      setDeleteModal(personsToDelete)
+      setDeleteTrigger(false);
+    }
+  }, [deleteTrigger])
+
+  useEffect(() => {
+    if (deactivateTrigger){
+      setDeactivateModal(personsToDelete)
+      setDeactivateTrigger(false);
+    }
+  }, [deactivateTrigger])
 
   useEffect(() => {
     if (modalDelete) {
