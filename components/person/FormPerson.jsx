@@ -21,10 +21,15 @@ import {
   userCompanyName,
 } from "../../libs/auth";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
+import { connect } from "react-redux";
+import WebApi from "../../api/webApi";
 
 const FormPerson = ({
   hideProfileSecurity = true,
   intranetAccess = true,
+  node = null,
+  nameNode = "",
+  setPerson = null,
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -35,15 +40,15 @@ const FormPerson = ({
   const [dateIngPlatform, setDateIngPlatform] = useState("");
 
   const [departments, setDepartments] = useState("");
-  const [selectCompany, setselectCompany] = useState([]);
   let nodeId = userCompanyId();
-  let nodePeople = userCompanyName();
   let accessIntranet = getAccessIntranet();
 
   useEffect(() => {
-    getValueSelects(nodeId);
-    changeNode(nodeId);
-  }, []);
+    if (node) {
+      changeNode();
+      getValueSelects();
+    }
+  }, [node]);
 
   const onFinish = (value) => {
     if (date !== "") {
@@ -59,7 +64,8 @@ const FormPerson = ({
     else {
       delete value["passwordTwo"];
       value.groups = [value.groups];
-      value.node = nodeId;
+      if (nodeId) value.node = nodeId;
+      else value.node = node;
       createPerson(value);
     }
   };
@@ -70,7 +76,7 @@ const FormPerson = ({
       "Content-Type": "application/json",
     };
 
-    let company = `?company=${nodeId}`;
+    let company = `?company=${node}`;
 
     /////PERMSS GROUPS
     Axios.get(LOGIN_URL + "/group/list/" + company, {
@@ -103,38 +109,27 @@ const FormPerson = ({
       .catch((e) => {
         console.log(e);
       });
-
-    Axios.get(API_URL + `/business/node/`)
-      .then((response) => {
-        let data = response.data.results;
-        let options = [];
-        data.map((item) => {
-          options.push({
-            value: item.id,
-            label: item.name,
-            key: item.name + item.id,
-          });
-        });
-        setselectCompany(options);
-      })
-      .catch((error) => {
-        console.log(error);
-        setselectCompany([]);
-      });
   };
 
-  const createPerson = (value) => {
-    Axios.post(API_URL + `/person/person/`, value)
-      .then((response) => {
-        message.success("Agregado correctamente");
-        form.resetFields();
-        props.close(false);
-      })
-      .catch((error) => {
-        if (error.response.data && error.response.data.message === "exist")
-          message.error("El correo se encuentra registrado.");
-        else message.error("Error al agregar, intente de nuevo");
-      });
+  const createPerson = async (value) => {
+    try {
+      let response = await WebApi.createPerson(value);
+      if (setPerson) {
+        setPerson(response.data.person);
+        sessionStorage.setItem("tok", response.data.person.id);
+      }
+      message.success("Agregado correctamente");
+      form.resetFields();
+      props.close(false);
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "exist"
+      )
+        message.error("El correo se encuentra registrado.");
+      else message.error("Error al agregar, intente de nuevo");
+    }
   };
 
   const genders = [
@@ -171,13 +166,13 @@ const FormPerson = ({
   };
   const ruleRequired = { required: true, message: "Este campo es requerido" };
 
-  const changeNode = (value) => {
+  const changeNode = () => {
     form.setFieldsValue({
       job: null,
       department: null,
     });
     setDepartments([]);
-    Axios.get(API_URL + `/business/department/?node=${value}`)
+    Axios.get(API_URL + `/business/department/?node=${node}`)
       .then((response) => {
         if (response.status === 200) {
           let dep = response.data.results;
@@ -239,7 +234,7 @@ const FormPerson = ({
               </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleRequired]}>
-                  <Input readOnly value={nodePeople} />
+                  <Input readOnly value={nameNode} />
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
@@ -347,18 +342,18 @@ const FormPerson = ({
                   />
                 </Form.Item>
               </Col>
-              {hideProfileSecurity && (
-                <Col lg={7} xs={22} offset={1}>
-                  <Form.Item rules={[ruleRequired]} name="groups">
-                    <Select
-                      options={groups}
-                      showArrow
-                      style={{ width: "100%" }}
-                      placeholder="Perfiles de seguridad"
-                    ></Select>
-                  </Form.Item>
-                </Col>
-              )}
+              {/* {hideProfileSecurity && ( */}
+              <Col lg={7} xs={22} offset={1}>
+                <Form.Item rules={[ruleRequired]} name="groups">
+                  <Select
+                    options={groups}
+                    showArrow
+                    style={{ width: "100%" }}
+                    placeholder="Perfiles de seguridad"
+                  ></Select>
+                </Form.Item>
+              </Col>
+              {/* )} */}
               <Col lg={22} xs={22} offset={1}>
                 <Form.Item labelAlign="right">
                   <Space style={{ float: "right" }}>
@@ -376,4 +371,5 @@ const FormPerson = ({
     </>
   );
 };
+
 export default FormPerson;

@@ -17,10 +17,11 @@ export const typeHttp = process.browser
   ? process.env.NEXT_PUBLIC_USE_HTTPS
   : process.env.USE_HTTPS;
 
-const domainApiWithTenant = `${tenant}.${domainApi}`;
-
+// const domainApiWithTenant = `${tenant}.${domainApi}`;
+const domainApiWithTenant = `${domainApi}`;
 export const config = {
-  baseURL: `${typeHttp}://${domainApiWithTenant}/`,
+  // baseURL: `${typeHttp}://${domainApiWithTenant}/`,
+  baseURL: `${domainApiWithTenant}/`,
   headers: { "Content-Type": "application/json" },
 };
 

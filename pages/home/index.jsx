@@ -39,13 +39,15 @@ import {
   withAuthSync,
   userCompanyId,
   getAccessIntranet,
+  userCompanyName,
 } from "../../libs/auth";
 
 const { Content } = Layout;
 import Link from "next/link";
 import jsCookie from "js-cookie";
+import { connect } from "react-redux";
 
-const homeScreen = () => {
+const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
 
   const [columns2, setColumns2] = useState([]);
@@ -924,8 +926,16 @@ const homeScreen = () => {
           <div className="notAllowed" />
         )}
       </div>
-      <FormPerson close={getModalPerson} visible={modalAddPerson} />
+      {modalAddPerson && (
+        <FormPerson
+          close={getModalPerson}
+          visible={modalAddPerson}
+          nameNode={userCompanyName()}
+          node={userCompanyId()}
+        />
+      )}
     </MainLayout>
   );
 };
+
 export default withAuthSync(homeScreen);

@@ -25,6 +25,38 @@ class WebApi {
   static getCompanys() {
     return WebApi.ApisType(`/business/node/`, "post");
   }
+
+  static getCompany(data) {
+    return WebApi.ApisType(`/business/node/${data}/`, "get");
+  }
+
+  static getCompanyPermanentCode(data) {
+    return WebApi.ApisType(`/business/node/?permanent_code=${data}`, "get");
+  }
+
+  static createPerson(data) {
+    return WebApi.ApisType(`/person/person/`, "post", data);
+  }
+
+  static getPerson(data) {
+    return WebApi.ApisType(`/person/person/${data}/`, "get");
+  }
+
+  static updatePerson(data, id) {
+    return WebApi.ApisType(`/person/person/${id}/`, "put", data);
+  }
+
+  static updatePhotoPerson(data) {
+    return WebApi.ApisType(
+      `/person/person/update_pthoto_person/`,
+      "post",
+      data
+    );
+  }
+
+  static getJobSelect(data) {
+    return WebApi.ApisType(`/person/job/?department=${data}`, "get");
+  }
 }
 
 export default WebApi;
