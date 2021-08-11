@@ -31,6 +31,7 @@ import MainLayout from "../../layout/MainLayout";
 import NodeTreeView from "./TreeView/treeview";
 import Cookie from "js-cookie";
 import { userId } from "../../libs/auth";
+import Clipboard from "../Clipboard";
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -310,10 +311,11 @@ const businessForm = () => {
     },
     {
       title: "Acciones",
+      align: "center",
       render: (item) => {
         return (
           <div>
-            <Row gutter={16}>
+            <Row gutter={24}>
               {permissions.edit && (
                 <Col className="gutter-row" span={6}>
                   <Link href={`/business/${item.id}`}>
@@ -331,6 +333,17 @@ const businessForm = () => {
                   <DeleteOutlined onClick={() => showModal("delete", item)} />
                 </Col>
               )}
+              <Col className="gutter-row" span={6}>
+                <Clipboard
+                  text={
+                    window.location.origin + "/ac/urn/" + item.permanent_code
+                  }
+                  border={false}
+                  type={"button"}
+                  msg={"Copiado en porta papeles"}
+                  tooltipTitle={"Copiar"}
+                />
+              </Col>
             </Row>
           </div>
         );

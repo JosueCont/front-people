@@ -9,34 +9,31 @@ import {
   Switch,
   Typography,
   Upload,
+  Form,
+  message,
 } from "antd";
-import Form from "antd/lib/form/Form";
-import {
-  WarningOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  ArrowLeftOutlined,
-  PlusOutlined,
-  FileTextOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import { getAccessIntranet, userCompanyName } from "../../libs/auth";
+import { getAccessIntranet } from "../../libs/auth";
 import SelectDepartment from "../selects/SelectDepartment";
 import { connect } from "react-redux";
 import SelectJob from "../selects/SelectJob";
 
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
+import { useEffect } from "react";
+import moment from "moment";
+import { civilStatus, genders, periodicity } from "../../utils/functions";
+import WebApi from "../../api/webApi";
 
-const GeneralDataPerson = ({
+const DataPerson = ({
   people,
   groups,
-  civilStatus,
-  genders,
+  person,
+  setLoading,
+  hideProfileSecurity,
   ...props
 }) => {
   const { Title } = Typography;
-  const [loading, setLoading] = useState(true);
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
   const [photo, setPhoto] = useState(null);
@@ -44,7 +41,62 @@ const GeneralDataPerson = ({
   const [departmentId, setDepartmentId] = useState(null);
   const [birthDate, setBirthDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
+  const [dateAdmission, setDateAdmission] = useState("");
+  const [personFullName, setPersonFullName] = useState("");
   let accessIntranet = getAccessIntranet();
+
+  useEffect(() => {
+    setFormPerson(person);
+  }, []);
+
+  const setFormPerson = (person) => {
+    formPerson.setFieldsValue({
+      first_name: person.first_name,
+      flast_name: person.flast_name,
+      mlast_name: person.mlast_name,
+      gender: person.gender,
+      email: person.email,
+      curp: person.curp,
+      rfc: person.rfc,
+      imss: person.imss,
+      code: person.code,
+      is_active: person.is_active,
+      photo: person.photo,
+      civil_status: person.civil_status,
+      report_to: person.report_to,
+      periodicity: person.periodicity,
+      intranet_access: person.intranet_access,
+      department: person.department.id,
+      job: person.job.id,
+    });
+    if (person.person_type)
+      formPerson.setFieldsValue({
+        person_type: person.person_type.id,
+      });
+
+    if (person.date_of_admission)
+      formPerson.setFieldsValue({
+        date_of_admission: moment(person.date_of_admission),
+      });
+
+    if (person.birth_date)
+      formPerson.setFieldsValue({
+        birth_date: moment(person.birth_date),
+      });
+
+    if (person.register_date)
+      formPerson.setFieldsValue({
+        register_date: moment(person.register_date),
+      });
+
+    setDateAdmission(person.date_of_admission);
+    setBirthDate(person.birth_date);
+    setIsActive(person.is_active);
+    if (person.photo) setPhoto(person.photo);
+    let personName = person.first_name + " " + person.flast_name;
+    if (person.mlast_name) personName = personName + " " + person.mlast_name;
+    setPersonFullName(personName);
+  };
 
   const onFinishPerson = (value) => {
     if (dateIngPlatform) value.register_date = dateIngPlatform;
@@ -53,12 +105,28 @@ const GeneralDataPerson = ({
     else delete value["birth_date"];
     if (dateAdmission) value.date_of_admission = dateAdmission;
     else delete value["date_of_admission"];
-    value.id = router.query.id;
+    value.id = person.id;
     value.is_active = isActive;
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
     if (value.groups && value.groups != "") value.groups = [value.groups];
     updatePerson(value);
+  };
+
+  const updatePerson = async (data) => {
+    setLoading(true);
+    try {
+      let response = await WebApi.updatePerson(data, person.id);
+      setFormPerson(response.data);
+      message.success({
+        content: "Actualizado correctamente.",
+        className: "custom-class",
+      });
+      setLoading(false);
+    } catch (error) {
+      message.error("Error al actualizar, intente de nuevo.");
+      setLoading(false);
+    }
   };
 
   let numberPhoto = 0;
@@ -68,36 +136,43 @@ const GeneralDataPerson = ({
       numberPhoto = numberPhoto + 1;
       getBase64(info.file.originFileObj, (imageUrl) => setPhoto(imageUrl));
       let data = new FormData();
-      data.append("id", router.query.id);
+      data.append("id", person.id);
       data.append("photo", info.file.originFileObj);
       upImageProfile(data, info);
     }
   };
 
-  const upImageProfile = (data, img) => {
+  function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
+  const upImageProfile = async (data, img) => {
     if (numberPhoto === 1) {
-      setLoadImage(true);
-      Axios.post(API_URL + `/person/person/update_pthoto_person/`, data)
-        .then((response) => {
-          getPerson();
-          message.success({
-            content: "Foto cargada correctamente.",
-            className: "custom-class",
-          });
-          numberPhoto = 0;
-          setLoadImage(false);
-        })
-        .catch((error) => {
-          console.log(error);
-          setLoadImage(false);
-          setPhoto(null);
+      try {
+        setLoadImage(true);
+        let response = await WebApi.updatePhotoPerson(data);
+        formPerson.setFieldsValue({
+          photo: response.data.photo,
         });
+        message.success({
+          content: "Foto cargada correctamente.",
+          className: "custom-class",
+        });
+        numberPhoto = 0;
+        setLoadImage(false);
+      } catch (error) {
+        console.log(error);
+        setLoadImage(false);
+        setPhoto(null);
+      }
     }
   };
 
   const uploadButton = (
     <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      {loadImge ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Cargar</div>
     </div>
   );
@@ -111,7 +186,7 @@ const GeneralDataPerson = ({
     let p = formPerson.getFieldsValue();
     isActive ? (p.is_active = false) : (p.is_active = true);
     delete p["date_of_admission"], p["node"], p["report_to"], p["department"];
-    Axios.put(API_URL + `/person/person/${router.query.id}/`, p)
+    Axios.put(API_URL + `/person/person/${person.id}/`, p)
       .then((response) => {})
       .catch((error) => {
         console.log(error);
@@ -243,7 +318,7 @@ const GeneralDataPerson = ({
             </Col>
             <Col lg={7} xs={22} offset={1}>
               <Form.Item label="Empresa">
-                <Input readOnly value={userCompanyName()} />
+                <Input readOnly value={props.currentNode.name} />
               </Form.Item>
             </Col>
             <Col lg={7} xs={22} offset={1}>
@@ -257,22 +332,24 @@ const GeneralDataPerson = ({
                 <SelectDepartment
                   onChange={onChangeDepartment}
                   name="department"
-                  companyId={props.id}
+                  companyId={person.node}
+                  item={false}
                 />
               </Form.Item>
             </Col>
             <Col lg={7} xs={22} offset={1}>
               <Form.Item name="job" label="Puesto de trabajo">
                 {/* <Select
-                  options={jobs}
+                  options={getJobForSelect(person.department.id)}
                   placeholder="Puesto de trabajo"
                   notFoundContent={"No se encontraron resultado."}
                 /> */}
                 <SelectJob
-                  departmentId={departmentId}
+                  departmentId={person.department.id}
                   name="job"
                   label="Puesto"
-                  style={{ maxWidth: 150 }}
+                  item={false}
+                  // style={{ maxWidth: 150 }}
                 />
               </Form.Item>
             </Col>
@@ -316,17 +393,19 @@ const GeneralDataPerson = ({
                 />
               </Form.Item>
             </Col>
-            <Col lg={15} xs={22} offset={1}>
-              <Form.Item name="groups" label="Perfil de seguridad">
-                <Select
-                  options={groups}
-                  showArrow
-                  style={{ width: "100%" }}
-                  placeholder="Perfiles de seguridad"
-                  notFoundContent={"No se encontraron resultado."}
-                />
-              </Form.Item>
-            </Col>
+            {hideProfileSecurity && (
+              <Col lg={15} xs={22} offset={1}>
+                <Form.Item name="groups" label="Perfil de seguridad">
+                  <Select
+                    options={groups}
+                    showArrow
+                    style={{ width: "100%" }}
+                    placeholder="Perfiles de seguridad"
+                    notFoundContent={"No se encontraron resultado."}
+                  />
+                </Form.Item>
+              </Col>
+            )}
           </Row>
           <Row>
             <hr />
@@ -410,8 +489,8 @@ const GeneralDataPerson = ({
 
 const mapState = (state) => {
   return {
-    currentCompany: state.userStore.current_company,
+    currentNode: state.userStore.current_node,
   };
 };
 
-export default connect(mapState)(GeneralDataPerson);
+export default connect(mapState)(DataPerson);

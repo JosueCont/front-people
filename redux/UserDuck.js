@@ -1,4 +1,7 @@
+import Axios from "axios";
 import WebApi from "../api/webApi";
+import { API_URL } from "../config/config";
+import { userCompanyId } from "../libs/auth";
 
 const initialData = {
   default: true,
@@ -26,7 +29,7 @@ const webReducer = (state = initialData, action) => {
     case GENERAL_CONFIG:
       return { ...state, general_config: action.payload };
     case COMPANY_SELCTED:
-      return { ...state, current_company: action.payload };
+      return { ...state, current_node: action.payload };
     default:
       return state;
   }
@@ -57,9 +60,29 @@ export const showLoading = (data) => async (dispatch, getState) => {
 
 export const companySelected = (data) => async (dispatch, getState) => {
   try {
-    dispatch({ type: COMPANY_SELCTED, payload: data });
-    return true;
+    if (!data) data = await userCompanyId();
+    if (data) {
+      let response = await WebApi.getCompany(data);
+      dispatch({ type: COMPANY_SELCTED, payload: response.data });
+      return true;
+    }
+    return false;
   } catch (error) {
+    console.log(error);
     return false;
   }
+};
+
+export const companySelectedAxios = (data) => async (dispatch, getState) => {
+  let response = await Axios.get(
+    `https://demo.people.hiumanlab.com/business/node/${data}/`
+  )
+    .then((response) => {
+      dispatch({ type: COMPANY_SELCTED, payload: response.data });
+      return true;
+    })
+    .catch((error) => {
+      return false;
+    });
+  return response;
 };

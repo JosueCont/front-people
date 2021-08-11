@@ -24,7 +24,7 @@ import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
 
-const FormPerson = ({
+const CreatePerson = ({
   hideProfileSecurity = true,
   intranetAccess = true,
   node = null,
@@ -210,14 +210,9 @@ const FormPerson = ({
   return (
     <>
       <Layout>
-        <Modal
-          maskClosable={false}
-          title="Alta de personas"
-          centered
-          visible={props.visible}
-          onCancel={() => closeDialog()}
-          footer={null}
-          width={"60%"}
+        <div
+          className="site-layout-background"
+          style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
           <Form
             initialValues={{
@@ -342,22 +337,21 @@ const FormPerson = ({
                   />
                 </Form.Item>
               </Col>
-              {/* {hideProfileSecurity && ( */}
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="groups">
-                  <Select
-                    options={groups}
-                    showArrow
-                    style={{ width: "100%" }}
-                    placeholder="Perfiles de seguridad"
-                  ></Select>
-                </Form.Item>
-              </Col>
-              {/* )} */}
+              {hideProfileSecurity && (
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item rules={[ruleRequired]} name="groups">
+                    <Select
+                      options={groups}
+                      showArrow
+                      style={{ width: "100%" }}
+                      placeholder="Perfiles de seguridad"
+                    ></Select>
+                  </Form.Item>
+                </Col>
+              )}
               <Col lg={22} xs={22} offset={1}>
                 <Form.Item labelAlign="right">
                   <Space style={{ float: "right" }}>
-                    <Button onClick={() => closeDialog()}>Cancelar</Button>
                     <Button type="primary" htmlType="submit">
                       Guardar
                     </Button>
@@ -366,10 +360,10 @@ const FormPerson = ({
               </Col>
             </Row>
           </Form>
-        </Modal>
+        </div>
       </Layout>
     </>
   );
 };
 
-export default FormPerson;
+export default CreatePerson;

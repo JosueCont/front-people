@@ -39,13 +39,16 @@ import {
   withAuthSync,
   userCompanyId,
   getAccessIntranet,
+  userCompanyName,
 } from "../../libs/auth";
 
 const { Content } = Layout;
 import Link from "next/link";
 import jsCookie from "js-cookie";
+import Clipboard from "../../components/Clipboard";
+import { connect } from "react-redux";
 
-const homeScreen = () => {
+const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
 
   const [columns2, setColumns2] = useState([]);
@@ -409,8 +412,22 @@ const homeScreen = () => {
 
   const menuGeneric = (
     <Menu>
+      {props.currentNode && (
+        <Menu.Item key="1">
+          <Clipboard
+            text={
+              window.location.origin +
+              "/ac/urn/" +
+              props.currentNode.permanent_code
+            }
+            type={"button"}
+            msg={"Copiado en porta papeles"}
+            tooltipTitle={"Copiar"}
+          />
+        </Menu.Item>
+      )}
       {permissions.delete && (
-        <Menu.Item onClick={() => setDeleteModal(personsToDelete)}>
+        <Menu.Item key="2" onClick={() => setDeleteModal(personsToDelete)}>
           Eliminar
         </Menu.Item>
       )}
@@ -924,8 +941,22 @@ const homeScreen = () => {
           <div className="notAllowed" />
         )}
       </div>
-      <FormPerson close={getModalPerson} visible={modalAddPerson} />
+      {modalAddPerson && (
+        <FormPerson
+          close={getModalPerson}
+          visible={modalAddPerson}
+          nameNode={userCompanyName()}
+          node={userCompanyId()}
+        />
+      )}
     </MainLayout>
   );
 };
-export default withAuthSync(homeScreen);
+
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(withAuthSync(homeScreen));

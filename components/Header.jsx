@@ -15,7 +15,12 @@ const { Header } = Layout;
 
 const { SubMenu } = Menu;
 
-const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
+const headerCustom = ({
+  hideMenu,
+  hideProfile = true,
+  onClickImage = true,
+  ...props
+}) => {
   const router = useRouter();
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -26,23 +31,25 @@ const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
   let accessIntranet = getAccessIntranet();
 
   useEffect(() => {
-    const user = JSON.parse(Cookie.get("token"));
-    Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
-      id: user.user_id,
-    })
-      .then((response) => {
-        if (!response.data.photo) response.data.photo = defaulPhoto;
-        let personName =
-          response.data.first_name + " " + response.data.flast_name;
-        if (response.data.mlast_name)
-          personName = personName + " " + response.data.mlast_name;
-        response.data.fullName = personName;
-        setPerson(response.data);
+    try {
+      const user = JSON.parse(Cookie.get("token"));
+      Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
+        id: user.user_id,
       })
-      .catch((e) => {
-        setPerson({ photo: defaulPhoto });
-        console.log(e);
-      });
+        .then((response) => {
+          if (!response.data.photo) response.data.photo = defaulPhoto;
+          let personName =
+            response.data.first_name + " " + response.data.flast_name;
+          if (response.data.mlast_name)
+            personName = personName + " " + response.data.mlast_name;
+          response.data.fullName = personName;
+          setPerson(response.data);
+        })
+        .catch((e) => {
+          setPerson({ photo: defaulPhoto });
+          console.log(e);
+        });
+    } catch (error) {}
   }, []);
 
   useEffect(() => {
@@ -160,7 +167,7 @@ const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
             style={{ paddingRight: "48px" }}
           >
             <div
-              onClick={() => router.push({ pathname: "/home" })}
+              onClick={() => onClickImage && router.push({ pathname: "/home" })}
               className="logo"
               key="content_logo"
               style={{

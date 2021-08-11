@@ -3,7 +3,7 @@ import { Select, Form } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-export default function SelectDepartment(props) {
+export default function SelectDepartment({ item = true, ...props }) {
   const [options, setOptions] = useState([]);
   const [companyId, setCompanyId] = useState(props.companyId);
 
@@ -36,20 +36,33 @@ export default function SelectDepartment(props) {
   }, [props.companyId]);
 
   return (
-    <Form.Item
-      key="ItemDepartment"
-      name={props.name ? props.name : "department"}
-      label="Departamento"
-    >
-      <Select
-        key="SelectDepartament"
-        style={props.style ? props.style : { width: 150 }}
-        options={options}
-        allowClear
-        onChange={props.onChange ? props.onChange : null}
-        notFoundContent={"No se encontraron resultado."}
-      />
-    </Form.Item>
+    <>
+      {item ? (
+        <Form.Item
+          key="ItemDepartment"
+          name={props.name ? props.name : "department"}
+          label="Departamento"
+        >
+          <Select
+            key="SelectDepartament"
+            style={props.style ? props.style : { width: 150 }}
+            options={options}
+            allowClear
+            onChange={props.onChange ? props.onChange : null}
+            notFoundContent={"No se encontraron resultado."}
+          />
+        </Form.Item>
+      ) : (
+        <Select
+          key="SelectDepartament"
+          // style={props.style ? props.style : { width: 150 }}
+          options={options}
+          allowClear
+          onChange={props.onChange ? props.onChange : null}
+          notFoundContent={"No se encontraron resultado."}
+        />
+      )}
+    </>
   );
   /* return (
               <Select key="SelectDepartament" style={{ width:150 }} options={options} onChange={props.onchange ? props.onChange : null} allowClear />
