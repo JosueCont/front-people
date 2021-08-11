@@ -1,5 +1,5 @@
 import { Button, Card, Col, Row, Tabs, Typography } from "antd";
-import GeneralDataPErson from "../../components/forms/GeneralDataPerson";
+// import GeneralDataPErson from "../../components/forms/GeneralDataPerson";
 import FormTraining from "../forms/FormTraining";
 import FormPhone from "../forms/FormPhone";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -16,7 +16,7 @@ const DetailPerson = ({ person, setLoading, ...props }) => {
         Jasson Manuel
       </Title>
       <Card bordered={true}>
-        <GeneralDataPErson person={person} setLoading={setLoading} />
+        {/* <GeneralDataPErson person={person} setLoading={setLoading} /> */}
       </Card>
       <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
       <Tabs tabPosition={"left"}>
