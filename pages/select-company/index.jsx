@@ -8,8 +8,10 @@ import { userCompanyId, userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import { companySelected, companySelectedAxios } from "../../redux/UserDuck";
+import WebApi from "../../api/webApi";
 
 const SelectCompany = ({ ...props }) => {
+  console.log('props', props)
   const { Title } = Typography;
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,35 +27,33 @@ const SelectCompany = ({ ...props }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (jwt) {
-      Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
-        id: jwt.user_id,
-      })
-        .then((response) => {
+  useEffect(async () => {
+    try{
+      if (jwt) {
+        let response = await WebApi.personForKhonnectId({id: jwt.user_id})
           setAdmin(response.data.is_admin);
-          if (response.data.is_admin) {
-            if (personId == "" || personId == null || personId == undefined)
-              sessionStorage.setItem("number", response.data.id);
-            getCopaniesList();
-          } else {
-            if (response.data.nodes.length > 1) {
+            if (response.data.is_admin) {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
-              let data = response.data.nodes.filter((a) => a.active);
-              setDataList(data);
-            } else if (response.data.nodes.length == 1) {
-              if (personId == "" || personId == null || personId == undefined)
-                sessionStorage.setItem("number", response.data.id);
-              setCompanySelect(response.data.nodes[0]);
+              getCopaniesList();
+            } else {
+              if (response.data.nodes.length > 1) {
+                if (personId == "" || personId == null || personId == undefined)
+                  sessionStorage.setItem("number", response.data.id);
+                let data = response.data.nodes.filter((a) => a.active);
+                setDataList(data);
+              } else if (response.data.nodes.length == 1) {
+                if (personId == "" || personId == null || personId == undefined)
+                  sessionStorage.setItem("number", response.data.id);
+                setCompanySelect(response.data.nodes[0]);
+              }
             }
-          }
           setLoading(false);
-        })
-        .catch((e) => {
-          setLoading(false);
-          console.log(e);
-        });
+      }
+    }
+    catch(error){
+      console.log(error)
+      setLoading(false);
     }
   }, [jwt]);
 
@@ -88,16 +88,6 @@ const SelectCompany = ({ ...props }) => {
         message.error("Ocurrio un error, intente de nuevo.");
       }
     }
-  };
-
-  const getConfig = () => {
-    Axios.get(API_URL + "/setup/site-configuration/")
-      .then((res) => {
-        sessionStorage.setItem("accessIntranet", res.data.intranet_enabled);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   };
 
   return (
@@ -158,7 +148,7 @@ const SelectCompany = ({ ...props }) => {
 };
 
 const mapState = (state) => {
-  return {};
+  return {config: state.userStore.general_config};
 };
 
 export default connect(mapState, { companySelected, companySelectedAxios })(

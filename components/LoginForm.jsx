@@ -7,6 +7,7 @@ import Axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import Link from "next/link";
+import WebApi from "../api/webApi";
 
 const LoginForm = (props) => {
   const router = useRouter();
@@ -22,10 +23,9 @@ const LoginForm = (props) => {
         khonnect_id: jwt.user_id,
         jwt: jwt,
       };
-      let response = await Axios.post(
-        API_URL + "/person/person/save_person_jwt/",
-        data
-      );
+
+      let response = await WebApi.saveJwt(data);
+      
       if (response.status == 200) {
         if (response.data.is_active) return true;
         return false;
@@ -59,7 +59,7 @@ const LoginForm = (props) => {
                   message.success("Acceso correcto.");
                   Cookies.set("token", token);
                   setLoading(false);
-                  router.push({ pathname: "/select-company" });
+                  router.push({ pathname: "/select-company", props: { user: 'jc' }});
                 } else {
                   message.error("Acceso denegado");
                   setLoading(false);
@@ -155,13 +155,7 @@ const LoginForm = (props) => {
             </Button>
           </Form.Item>
           <Form.Item>
-            <span
-              style={{
-                fontWeight: "500",
-                textDecoration: "underline",
-                color: "lightskyblue",
-              }}
-            >
+            <span className="title-notice-privacy">
               <Link href="https://www.grupohuman.com/aviso-privacidad">
                 Aviso de privacidad.
               </Link>

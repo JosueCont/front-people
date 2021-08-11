@@ -42,16 +42,12 @@ a {
 }
 
 .font-color-khor {
-  color: #252593 !important;
+  color: var(--primaryColor) !important;
   font-weight: bold;
 }
 
 .font-color-khor label {
-  color: #252593;
-  font-weight: bold;
-}
-.font-color-khor label {
-  color: #252593;
+  color: var(--primaryColor);
   font-weight: bold;
 }
 
@@ -268,5 +264,38 @@ li.ant-menu-submenu-selected {
 
 .login-form-button {
   width: 100%;
+  
+}
+
+.ant-input{
+  border-color: var(--secondaryColor);
+}
+
+.ant-input:hover{
+  border-color: var(--secondaryColor);
+}
+
+
+.ant-btn-primary{
+  background-color: var(--secondaryColor);
+  border-color: var(--secondaryColor);
+}
+
+.ant-btn-primary:hover{
   background-color: var(--primaryColor);
+  border-color: var(--primaryColor);
+}
+
+.title-notice-privacy {
+  font-weight: 500;
+  text-decoration: underline;
+  color: var(--secondaryColor);
+ 
+}
+
+.title-notice-privacy :hover{
+  font-weight: 500;
+  text-decoration: underline;
+  color: var(--primaryColor);
+ 
 }
