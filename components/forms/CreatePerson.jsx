@@ -337,18 +337,18 @@ const CreatePerson = ({
                   />
                 </Form.Item>
               </Col>
-              {/* {hideProfileSecurity && ( */}
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="groups">
-                  <Select
-                    options={groups}
-                    showArrow
-                    style={{ width: "100%" }}
-                    placeholder="Perfiles de seguridad"
-                  ></Select>
-                </Form.Item>
-              </Col>
-              {/* )} */}
+              {hideProfileSecurity && (
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item rules={[ruleRequired]} name="groups">
+                    <Select
+                      options={groups}
+                      showArrow
+                      style={{ width: "100%" }}
+                      placeholder="Perfiles de seguridad"
+                    ></Select>
+                  </Form.Item>
+                </Col>
+              )}
               <Col lg={22} xs={22} offset={1}>
                 <Form.Item labelAlign="right">
                   <Space style={{ float: "right" }}>

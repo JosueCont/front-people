@@ -15,7 +15,12 @@ const { Header } = Layout;
 
 const { SubMenu } = Menu;
 
-const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
+const headerCustom = ({
+  hideMenu,
+  hideProfile = true,
+  onClickImage = true,
+  ...props
+}) => {
   const router = useRouter();
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -162,7 +167,7 @@ const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
             style={{ paddingRight: "48px" }}
           >
             <div
-              onClick={() => router.push({ pathname: "/home" })}
+              onClick={() => onClickImage && router.push({ pathname: "/home" })}
               className="logo"
               key="content_logo"
               style={{

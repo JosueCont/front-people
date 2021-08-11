@@ -152,6 +152,18 @@ class WebApi {
   static deleteBankAccount(data) {
     return WebApi.ApisType(`/person/bank-account/${data}/`, "delete");
   }
+
+  static getGeneralDataPerson(data) {
+    return WebApi.ApisType(`/person/person/${data}/general_person/`, "get");
+  }
+
+  static createGeneralDataPerson(data) {
+    return WebApi.ApisType(`/person/general-person/`, "post", data);
+  }
+
+  static updateGeneralDataPerson(id, data) {
+    return WebApi.ApisType(`/person/general-person/${id}/`, "put", data);
+  }
 }
 
 export default WebApi;

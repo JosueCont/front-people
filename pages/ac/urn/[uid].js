@@ -70,6 +70,7 @@ const userRegister = ({ ...props }) => {
           companyName={props.currentNode.name}
           hideMenu={true}
           hideProfile={false}
+          onClickImage={false}
         >
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item>/Registro</Breadcrumb.Item>
@@ -95,6 +96,7 @@ const userRegister = ({ ...props }) => {
                     person={person}
                     setLoading={setLoading}
                     deletePerson={false}
+                    hideProfileSecurity={false}
                   />
                 </div>
               )

@@ -5,6 +5,8 @@ import HeaderCustom from "../components/Header";
 import Footer from "../components/Footer";
 import { Helmet } from "react-helmet";
 import { userCompanyName } from "../libs/auth";
+import { connect } from "react-redux";
+import { companySelected } from "../redux/UserDuck";
 
 const { Content } = Layout;
 
@@ -13,6 +15,7 @@ const MainLayout = ({
   hideProfile,
   logoNode = null,
   companyName = null,
+  onClickImage,
   ...props
 }) => {
   const router = useRouter();
@@ -36,11 +39,18 @@ const MainLayout = ({
   useEffect(() => {
     if (logoNode && logoNode != "") {
       setMainLogo(logoNode);
-    }
-    if (companyName && companyName != "") {
-      setCompany(companyName);
+    } else if (props.currentNode) {
+      setMainLogo(props.currentNode.image);
     }
   }, [logoNode, companyName]);
+
+  useEffect(() => {
+    if (props.currentNode) {
+      setMainLogo(props.currentNode.image);
+    } else {
+      let response = props.companySelected();
+    }
+  }, [props.currentNode]);
 
   return (
     <Layout className="layout">
@@ -53,6 +63,7 @@ const MainLayout = ({
         hideMenu={hideMenu}
         mainLogo={mainLogo}
         hideProfile={hideProfile}
+        onClickImage={onClickImage}
       />
       <div style={{ marginLeft: "50px" }}>
         <h1> {company != undefined && company}</h1>
@@ -73,4 +84,10 @@ const MainLayout = ({
   );
 };
 
-export default MainLayout;
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState, { companySelected })(MainLayout);

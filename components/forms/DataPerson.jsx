@@ -25,7 +25,14 @@ import moment from "moment";
 import { civilStatus, genders, periodicity } from "../../utils/functions";
 import WebApi from "../../api/webApi";
 
-const DataPerson = ({ people, groups, person, setLoading, ...props }) => {
+const DataPerson = ({
+  people,
+  groups,
+  person,
+  setLoading,
+  hideProfileSecurity,
+  ...props
+}) => {
   const { Title } = Typography;
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
@@ -326,6 +333,7 @@ const DataPerson = ({ people, groups, person, setLoading, ...props }) => {
                   onChange={onChangeDepartment}
                   name="department"
                   companyId={person.node}
+                  item={false}
                 />
               </Form.Item>
             </Col>
@@ -340,7 +348,8 @@ const DataPerson = ({ people, groups, person, setLoading, ...props }) => {
                   departmentId={person.department.id}
                   name="job"
                   label="Puesto"
-                  style={{ maxWidth: 150 }}
+                  item={false}
+                  // style={{ maxWidth: 150 }}
                 />
               </Form.Item>
             </Col>
@@ -384,17 +393,19 @@ const DataPerson = ({ people, groups, person, setLoading, ...props }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={15} xs={22} offset={1}>
-              <Form.Item name="groups" label="Perfil de seguridad">
-                <Select
-                  options={groups}
-                  showArrow
-                  style={{ width: "100%" }}
-                  placeholder="Perfiles de seguridad"
-                  notFoundContent={"No se encontraron resultado."}
-                />
-              </Form.Item>
-            </Col>
+            {hideProfileSecurity && (
+              <Col lg={15} xs={22} offset={1}>
+                <Form.Item name="groups" label="Perfil de seguridad">
+                  <Select
+                    options={groups}
+                    showArrow
+                    style={{ width: "100%" }}
+                    placeholder="Perfiles de seguridad"
+                    notFoundContent={"No se encontraron resultado."}
+                  />
+                </Form.Item>
+              </Col>
+            )}
           </Row>
           <Row>
             <hr />
