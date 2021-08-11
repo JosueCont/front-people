@@ -17,8 +17,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
+import WebApi from "../../api/webApi";
 
 const FormPhone = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -34,84 +33,82 @@ const FormPhone = ({ person_id = null }) => {
     getPhone();
   }, []);
 
-  /*Functions CRUD */
-  const getPhone = () => {
-    Axios.get(API_URL + `/person/person/${person_id}/phone_person/`)
-      .then((response) => {
-        setPhones(response.data);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((e) => {
-        console.log(e);
-        setPhones([]);
+  const getPhone = async () => {
+    try {
+      let response = await WebApi.getPhone(person_id);
+      setPhones(response.data);
+      setTimeout(() => {
         setLoadingTable(false);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setPhones([]);
+      setLoadingTable(false);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
   };
-  const savePhone = (data) => {
-    Axios.post(API_URL + `/person/phone/`, data)
-      .then((response) => {
-        message.success({
-          content: "Guardado correctamente.",
-          className: "custom-class",
-        });
-        getPhone();
+
+  const savePhone = async (data) => {
+    try {
+      let response = await WebApi.createPhone(data);
+      message.success({
+        content: "Guardado correctamente.",
+        className: "custom-class",
+      });
+      formPhone.resetFields();
+      getPhone();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updatePhone = async (data) => {
+    try {
+      setLoadingTable(true);
+      let response = await WebApi.updatePhone(data);
+      message.success({
+        content: "Actualizado correctamente.",
+        className: "custom-class",
+      });
+      formPhone.resetFields();
+      setUpPhone(false);
+      setIdPhone(null);
+      getPhone();
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
+  };
+  const deletePhone = async (id) => {
+    try {
+      let response = await WebApi.deletePhone(id);
+      setLoadingTable(true);
+
+      message.success({
+        content: "Eliminado con exito.",
+        className: "custom-class",
+      });
+      getPhone();
+      if (upPhone) {
         formPhone.resetFields();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  const updatePhone = (data) => {
-    setLoadingTable(true);
-    Axios.put(API_URL + `/person/phone/${data.id}/`, data)
-      .then((response) => {
-        message.success({
-          content: "Actualizado correctamente.",
-          className: "custom-class",
-        });
         setUpPhone(false);
-        setIdPhone(null);
-        formPhone.resetFields();
-        getPhone();
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.log(error);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
-  };
-  const deletePhone = (id) => {
-    setLoadingTable(true);
-    Axios.delete(API_URL + `/person/phone/${id}/`)
-      .then((response) => {
-        message.success({
-          content: "Eliminado con exito.",
-          className: "custom-class",
-        });
-        getPhone();
-        if (upPhone) {
-          formPhone.resetFields();
-          setUpPhone(false);
-        }
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.log(error);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
+      }
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
   };
 
   /*Events */

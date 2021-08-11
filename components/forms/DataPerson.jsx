@@ -25,13 +25,7 @@ import moment from "moment";
 import { civilStatus, genders, periodicity } from "../../utils/functions";
 import WebApi from "../../api/webApi";
 
-const GeneralDataPerson = ({
-  people,
-  groups,
-  person,
-  setLoading,
-  ...props
-}) => {
+const DataPerson = ({ people, groups, person, setLoading, ...props }) => {
   const { Title } = Typography;
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
@@ -488,4 +482,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(GeneralDataPerson);
+export default connect(mapState)(DataPerson);
