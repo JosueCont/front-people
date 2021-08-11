@@ -4,10 +4,11 @@ import { Row, Col, Breadcrumb, message, Typography, Card, Spin } from "antd";
 import useRouter from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import { userCompanyId, userId } from "../../libs/auth";
+import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import { companySelected, companySelectedAxios } from "../../redux/UserDuck";
+import Clipboard from "../../components/Clipboard";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
@@ -76,12 +77,10 @@ const SelectCompany = ({ ...props }) => {
     sessionStorage.setItem("name", item.name);
     sessionStorage.setItem("image", item.image);
     let response = await props.companySelected(item.id);
-    console.log(response);
     if (response) {
       useRouter.push("home");
     } else {
       response = await props.companySelectedAxios(item.id);
-      console.log("Resposne 2->>>> ", response);
       if (response) {
         useRouter.push("home");
       } else {
@@ -119,8 +118,9 @@ const SelectCompany = ({ ...props }) => {
                 gutter={[16, 16]}
                 style={{
                   display: "flex",
-                  // justifyContent: "center",
-                  // alignItems: "center",
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 {dataList.map((item) => (
@@ -134,15 +134,30 @@ const SelectCompany = ({ ...props }) => {
                   >
                     <Card
                       hoverable
-                      style={{ textAlign: "center", marginTop: 20 }}
                       className={"cardH100"}
-                      onClick={() => setCompanySelect(item)}
+                      actions={[
+                        <Clipboard
+                          text={
+                            window.location.origin +
+                            "/ac/urn/" +
+                            item.permanent_code
+                          }
+                          type={"button"}
+                          message={"Copiado en porta papeles"}
+                          tooltipTitle={"Copiar"}
+                        />,
+                      ]}
                     >
-                      <Title level={4} style={{ margin: "auto" }}>
-                        <img alt="example" src={item.image} width="50px" />
-                        <br />
-                        {item.name}
-                      </Title>
+                      <div
+                        className="div-card "
+                        onClick={() => setCompanySelect(item)}
+                      >
+                        <Title level={4} style={{ margin: "auto" }}>
+                          <img alt="example" src={item.image} width="50px" />
+                          <br />
+                          {item.name}
+                        </Title>
+                      </div>
                     </Card>
                   </Col>
                 ))}

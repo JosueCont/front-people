@@ -11,78 +11,61 @@ import {
 import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import { typeStreet } from "../../utils/functions";
+import WebApi from "../../api/webApi";
 
-const FormAddress = ({ person_id = null }) => {
+const FormAddress = ({ person_id }) => {
   const { Title } = Typography;
   const [formAddress] = Form.useForm();
   const [idAddress, setIdAddress] = useState("");
   const ruleRequired = { required: true, message: "Este campo es requerido" };
-
-  const typeStreet = [
-    {
-      label: "Avenida",
-      value: 1,
-    },
-    {
-      label: "Boulevard",
-      value: 2,
-    },
-    {
-      label: "Calle",
-      value: 3,
-    },
-  ];
 
   useEffect(() => {
     getAddress();
   }, []);
 
   /*functions CRUD */
-  const getAddress = () => {
-    Axios.get(API_URL + `/person/person/${person_id}/address_person/`)
-      .then((response) => {
-        formAddress.setFieldsValue({
-          street_type: response.data[0].street_type,
-          street: response.data[0].street,
-          numberOne: response.data[0].numberOne,
-          numberTwo: response.data[0].numberTwo,
-          building: response.data[0].building,
-          postalCode: response.data[0].postalCode,
-          suburb: response.data[0].suburb,
-          location: response.data[0].location,
-          reference: response.data[0].reference,
-        });
-        setIdAddress(response.data[0].id);
-      })
-      .catch((e) => {
-        console.log(e);
+  const getAddress = async () => {
+    try {
+      let response = await WebApi.getAddress(person_id);
+      formAddress.setFieldsValue({
+        street_type: response.data[0].street_type,
+        street: response.data[0].street,
+        numberOne: response.data[0].numberOne,
+        numberTwo: response.data[0].numberTwo,
+        building: response.data[0].building,
+        postalCode: response.data[0].postalCode,
+        suburb: response.data[0].suburb,
+        location: response.data[0].location,
+        reference: response.data[0].reference,
       });
+      setIdAddress(response.data[0].id);
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const saveAddress = (data) => {
-    Axios.post(API_URL + `/person/address/`, data)
-      .then((response) => {
-        message.success({
-          content: "Guardado correctamente.",
-          className: "custom-class",
-        });
-
-        setIdAddress(response.data.id);
-      })
-      .catch((error) => {
-        console.log(error);
+  const saveAddress = async (data) => {
+    try {
+      let response = await WebApi.createAddress(data);
+      message.success({
+        content: "Guardado correctamente.",
+        className: "custom-class",
       });
+      setIdAddress(response.data.id);
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const updateAddress = (data) => {
-    Axios.put(API_URL + `/person/address/${idAddress}/`, data)
-      .then((response) => {
-        message.success({
-          content: "Actualizado correctamente.",
-          className: "custom-class",
-        });
-      })
-      .catch((error) => {
-        console.log(error);
+  const updateAddress = async (data) => {
+    try {
+      let response = await WebApi.updateAddress(idAddress, data);
+      message.success({
+        content: "Actualizado correctamente.",
+        className: "custom-class",
       });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   /* Events */

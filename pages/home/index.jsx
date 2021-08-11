@@ -45,6 +45,7 @@ import {
 const { Content } = Layout;
 import Link from "next/link";
 import jsCookie from "js-cookie";
+import Clipboard from "../../components/Clipboard";
 import { connect } from "react-redux";
 
 const homeScreen = ({ ...props }) => {
@@ -411,8 +412,22 @@ const homeScreen = ({ ...props }) => {
 
   const menuGeneric = (
     <Menu>
+      {props.currentNode && (
+        <Menu.Item key="1">
+          <Clipboard
+            text={
+              window.location.origin +
+              "/ac/urn/" +
+              props.currentNode.permanent_code
+            }
+            type={"button"}
+            msg={"Copiado en porta papeles"}
+            tooltipTitle={"Copiar"}
+          />
+        </Menu.Item>
+      )}
       {permissions.delete && (
-        <Menu.Item onClick={() => setDeleteModal(personsToDelete)}>
+        <Menu.Item key="2" onClick={() => setDeleteModal(personsToDelete)}>
           Eliminar
         </Menu.Item>
       )}
@@ -938,4 +953,10 @@ const homeScreen = ({ ...props }) => {
   );
 };
 
-export default withAuthSync(homeScreen);
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(withAuthSync(homeScreen));

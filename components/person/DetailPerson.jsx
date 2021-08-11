@@ -1,10 +1,21 @@
-import { Button, Card, Col, Row, Tabs, Typography } from "antd";
-// import GeneralDataPErson from "../../components/forms/GeneralDataPerson";
+import { Card, Tabs, Typography } from "antd";
 import FormTraining from "../forms/FormTraining";
 import FormPhone from "../forms/FormPhone";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import FormAddress from "../forms/FormAddress";
+import DataPerson from "../forms/DataPerson";
+import FormFamily from "../forms/FormFamily";
+import FormEmergencyContact from "../forms/FormEmergencyContact";
+import FormBankAccount from "../forms/FormBankAccount";
+import FormGeneralData from "../forms/FormGeneralData";
+import FormChangePassword from "../forms/FormChangePassword";
 
-const DetailPerson = ({ person, setLoading, ...props }) => {
+const DetailPerson = ({
+  person,
+  setLoading,
+  deletePerson,
+  hideProfileSecurity = true,
+  ...props
+}) => {
   const { Title } = Typography;
   const { TabPane } = Tabs;
 
@@ -16,28 +27,40 @@ const DetailPerson = ({ person, setLoading, ...props }) => {
         Jasson Manuel
       </Title>
       <Card bordered={true}>
-        {/* <GeneralDataPErson person={person} setLoading={setLoading} /> */}
+        <DataPerson
+          person={person}
+          setLoading={setLoading}
+          hideProfileSecurity={hideProfileSecurity}
+        />
       </Card>
       <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
       <Tabs tabPosition={"left"}>
+        <TabPane tab="Datos generales" key="tab_1">
+          <FormGeneralData person_id={person.id} />
+        </TabPane>
         <TabPane tab="Teléfono" key="tab_2">
-          <FormPhone setLoading={setLoading} person_id={person.id} />
+          <FormPhone person_id={person.id} />
+        </TabPane>
+        <TabPane tab="Dirección" key="tab_3">
+          <FormAddress person_id={person.id} />
+        </TabPane>
+        <TabPane tab="Familia" key="tab_4">
+          <FormFamily person_id={person.id} />
+        </TabPane>
+        <TabPane tab="Contactos de emergencia" key="tab_5">
+          <FormEmergencyContact person_id={person.id} />
         </TabPane>
         <TabPane tab="Formación/Habilidades" key="tab_6">
-          <FormTraining setLoading={setLoading} person_id={person.id} />
+          <FormTraining person_id={person.id} />
         </TabPane>
+        <TabPane tab="Cuentas bancarias" key="tab_7">
+          <FormBankAccount person_id={person.id} />
+        </TabPane>
+        <TabPane tab="Cambiar contraseña" key="tab_8">
+          <FormChangePassword khonnectId={person.khonnect_id} />
+        </TabPane>
+        {deletePerson && <TabPane tab="Eliminar persona" key="tab_9"></TabPane>}
       </Tabs>
-      <Row flex>
-        <Col style={{ paddingTop: "2%", paddingBottom: "4%" }}>
-          <Button
-            icon={<ArrowLeftOutlined />}
-            type="primary"
-            onClick={() => Router.push("/home")}
-          >
-            Regresar
-          </Button>
-        </Col>
-      </Row>
     </>
   );
 };
