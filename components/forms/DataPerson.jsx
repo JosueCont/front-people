@@ -31,6 +31,7 @@ const DataPerson = ({
   person,
   setLoading,
   hideProfileSecurity,
+  accessIntranet = false,
   ...props
 }) => {
   const { Title } = Typography;
@@ -43,7 +44,6 @@ const DataPerson = ({
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
   const [personFullName, setPersonFullName] = useState("");
-  let accessIntranet = getAccessIntranet();
 
   useEffect(() => {
     setFormPerson(person);
@@ -371,7 +371,7 @@ const DataPerson = ({
                 <Input type="text" placeholder="Núm. empleado" />
               </Form.Item>
             </Col>
-            {accessIntranet !== "false" && (
+            {accessIntranet && (
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item
                   name="intranet_access"

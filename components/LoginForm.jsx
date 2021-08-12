@@ -8,7 +8,12 @@ import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import Link from "next/link";
 
-const LoginForm = (props) => {
+const LoginForm = ({
+  recoveryPsw = true,
+  setPerson = null,
+  setKhonnectId = null,
+  ...props
+}) => {
   const router = useRouter();
   const [loading, setLoading] = useState(null);
   const [errorLogin, setErrorLogin] = useState(false);
@@ -53,6 +58,11 @@ const LoginForm = (props) => {
         .then(function (response) {
           if (response.status === 200) {
             let token = jwt_decode(response.data.token);
+            if (setKhonnectId) {
+              console.log("response-->> ", token);
+              setKhonnectId(token.user_id);
+              return;
+            }
             if (token) {
               saveJWT(token).then(function (responseJWT) {
                 if (responseJWT) {
@@ -133,17 +143,19 @@ const LoginForm = (props) => {
               closable
             />
           )}
-          <Form.Item className={"font-color-khor"}>
-            <b>¿Olvidaste tu contraseña? </b>{" "}
-            <span
-              onClick={() => props.setRecoverPasswordShow(true)}
-              className={"pointer"}
-              style={{ fontWeight: "500", textDecoration: "underline" }}
-            >
-              {" "}
-              haz click aquí{" "}
-            </span>
-          </Form.Item>
+          {recoveryPsw && (
+            <Form.Item className={"font-color-khor"}>
+              <b>¿Olvidaste tu contraseña? </b>{" "}
+              <span
+                onClick={() => props.setRecoverPasswordShow(true)}
+                className={"pointer"}
+                style={{ fontWeight: "500", textDecoration: "underline" }}
+              >
+                {" "}
+                haz click aquí{" "}
+              </span>
+            </Form.Item>
+          )}
           <Form.Item>
             <Button
               style={{ width: "100%" }}
