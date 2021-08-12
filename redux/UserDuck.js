@@ -75,7 +75,6 @@ export const companySelected = (data) => async (dispatch, getState) => {
 };
 
 export const companySelectedAxios = (data) => async (dispatch, getState) => {
-  console.log("DATA-->>> ", API_URL);
   let response = await Axios.get(
     `https://demo.people.hiumanlab.com/business/node/${data}/`
   )
@@ -84,7 +83,6 @@ export const companySelectedAxios = (data) => async (dispatch, getState) => {
       return true;
     })
     .catch((error) => {
-      console.log("ERROR API--Z ", error);
       return false;
     });
   return response;

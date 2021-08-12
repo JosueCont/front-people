@@ -10,12 +10,19 @@ import { API_URL } from "../config/config";
 import { getAccessIntranet, logoutAuth } from "../libs/auth";
 import { FormattedMessage } from "react-intl";
 import { css, Global } from "@emotion/core";
+import { connect } from "react-redux";
+import WebApi from "../api/webApi";
 
 const { Header } = Layout;
 
 const { SubMenu } = Menu;
 
-const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
+const headerCustom = ({
+  hideMenu,
+  hideProfile = true,
+  onClickImage = true,
+  ...props
+}) => {
   const router = useRouter();
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -26,44 +33,31 @@ const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
   let accessIntranet = getAccessIntranet();
 
   useEffect(() => {
+    getPerson()
+  }, []);
+
+  const getPerson = async () => {
     try {
       const user = JSON.parse(Cookie.get("token"));
-      Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
-        id: user.user_id,
-      })
-        .then((response) => {
-          if (!response.data.photo) response.data.photo = defaulPhoto;
-          let personName =
-            response.data.first_name + " " + response.data.flast_name;
-          if (response.data.mlast_name)
-            personName = personName + " " + response.data.mlast_name;
-          response.data.fullName = personName;
-          setPerson(response.data);
-        })
-        .catch((e) => {
-          setPerson({ photo: defaulPhoto });
-          console.log(e);
-        });
-    } catch (error) {}
-  }, []);
+      let response = await WebApi.personForKhonnectId({id: user.user_id})
+      if (!response.data.photo) response.data.photo = defaulPhoto;
+      let personName = response.data.first_name + " " + response.data.flast_name;
+      if (response.data.mlast_name)
+        personName = personName + " " + response.data.mlast_name;
+      response.data.fullName = personName;
+      setPerson(response.data);
+    } catch (error) {
+      setPerson({ photo: defaulPhoto });
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
-    getConfig();
+    if(props.config){
+      setPrimaryColor(props.config.concierge_primary_color);
+      setSecondaryColor(props.config.concierge_primary_color);
+    }
   }, []);
-
-  const getConfig = () => {
-    Axios.get(API_URL + "/setup/site-configuration/")
-      .then((res) => {
-        setPrimaryColor(res.data.concierge_primary_color);
-        setSecondaryColor(res.data.concierge_primary_color);
-
-        //setPrimaryColor('blue')
-        //setSecondaryColor('red')
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
 
   const actionEvent = (data) => {
     setModalLogOut(data);
@@ -162,7 +156,7 @@ const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
             style={{ paddingRight: "48px" }}
           >
             <div
-              onClick={() => router.push({ pathname: "/home" })}
+              onClick={() => onClickImage && router.push({ pathname: "/home" })}
               className="logo"
               key="content_logo"
               style={{
@@ -396,4 +390,8 @@ const headerCustom = ({ hideMenu, hideProfile = true, ...props }) => {
   );
 };
 
-export default headerCustom;
+const mapState = (state) => {
+  return {config: state.userStore.general_config};
+};
+
+export default connect(mapState)(headerCustom);

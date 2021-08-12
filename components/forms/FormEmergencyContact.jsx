@@ -19,6 +19,7 @@ import {
 import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import WebApi from "../../api/webApi";
 
 const FormEmergencyContact = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -33,105 +34,100 @@ const FormEmergencyContact = ({ person_id = null }) => {
 
   useEffect(() => {
     getContactEmergency();
-    Axios.get(API_URL + "/setup/relationship/")
-      .then((response) => {
-        if (response.status === 200) {
-          let relation = response.data.results;
-          relation = relation.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setRelationship(relation);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    getRelationShip();
   }, []);
 
-  /* functions CRUD */
-  const getContactEmergency = () => {
+  const getRelationShip = async () => {
+    try {
+      let response = await WebApi.getRelationShip();
+      let relation = response.data.results;
+      relation = relation.map((a) => {
+        return { label: a.name, value: a.id };
+      });
+      setRelationship(relation);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getContactEmergency = async () => {
     setContactEmergency([]);
-    Axios.get(API_URL + `/person/person/${person_id}/contact_emergency_person/`)
-      .then((response) => {
-        setContactEmergency(response.data);
-
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((e) => {
-        console.log(e);
-        setContactEmergency([]);
-
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
+    try {
+      let response = await WebApi.getContactEmergency(person_id);
+      setContactEmergency(response.data);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setContactEmergency([]);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
   };
-  const saveContactE = (data) => {
-    Axios.post(API_URL + `/person/contact-emergency/`, data)
-      .then((response) => {
-        message.success({
-          content: "Guardado correctamente.",
-          className: "custom-class",
-        });
 
-        getContactEmergency();
-        formContactEmergency.resetFields();
-      })
-      .catch((error) => {
-        console.log(error);
+  const saveContactE = async (data) => {
+    try {
+      let response = await WebApi.createContactEmergency(data);
+      message.success({
+        content: "Guardado correctamente.",
+        className: "custom-class",
       });
+      getContactEmergency();
+      formContactEmergency.resetFields();
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const updateContEm = (data) => {
+
+  const updateContEm = async (data) => {
     setLoadingTable(true);
-    Axios.put(API_URL + `/person/contact-emergency/${data.id}/`, data)
-      .then((response) => {
-        message.success({
-          content: "Actualizado correctamente.",
-          className: "custom-class",
-        });
+    try {
+      let response = await WebApi.updateContactEmergency(data);
+      message.success({
+        content: "Actualizado correctamente.",
+        className: "custom-class",
+      });
+      setUpContEm(false);
+      setIdContEm(null);
+      getContactEmergency();
+      formContactEmergency.resetFields();
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
+  };
 
+  const deleteContEm = async (data) => {
+    setLoadingTable(true);
+    try {
+      let response = await WebApi.deleteContactEmergency(data);
+      message.success({
+        content: "Eliminado correctamente.",
+        className: "custom-class",
+      });
+
+      if (upContEm) {
+        formContactEmergency.resetFields();
         setUpContEm(false);
-        setIdContEm(null);
-        getContactEmergency();
-        formContactEmergency.resetFields();
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.log(error);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
-  };
-  const deleteContEm = (data) => {
-    setLoadingTable(true);
-    Axios.delete(API_URL + `/person/contact-emergency/${data}/`)
-      .then((response) => {
-        message.success({
-          content: "Eliminado correctamente.",
-          className: "custom-class",
-        });
+      }
 
-        if (upContEm) {
-          formContactEmergency.resetFields();
-          setUpContEm(false);
-        }
-
-        getContactEmergency();
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.log(error);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
+      getContactEmergency();
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
   };
 
   /* Events */

@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import WebApi from "../../api/webApi";
 
 const FormGeneralData = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -26,53 +27,50 @@ const FormGeneralData = ({ person_id = null }) => {
   }, [person_id]);
 
   /* functions CRUD */
-  const getGeneralData = () => {
-    Axios.get(API_URL + `/person/person/${person_id}/general_person/`)
-      .then((response) => {
-        formGeneralData.setFieldsValue({
-          place_birth: response.data.place_birth,
-          nationality: response.data.nationality,
-          other_nationality: response.data.other_nationality,
-          availability_travel: response.data.availability_travel,
-          availability_change_residence:
-            response.data.availability_change_residence,
-          allergies: response.data.allergies,
-          blood_type: response.data.blood_type,
-        });
-        if (response.data.availability_travel)
-          setCheckedTravel(response.data.availability_travel);
-        if (response.data.availability_change_residence)
-          setCheckedResidence(response.data.availability_change_residence);
-        setIdGeneralP(response.data.id);
-      })
-      .catch((e) => {
-        console.log(e);
+  const getGeneralData = async () => {
+    try {
+      let response = await WebApi.getGeneralDataPerson(person_id);
+      formGeneralData.setFieldsValue({
+        place_birth: response.data.place_birth,
+        nationality: response.data.nationality,
+        other_nationality: response.data.other_nationality,
+        availability_travel: response.data.availability_travel,
+        availability_change_residence:
+          response.data.availability_change_residence,
+        allergies: response.data.allergies,
+        blood_type: response.data.blood_type,
       });
+      if (response.data.availability_travel)
+        setCheckedTravel(response.data.availability_travel);
+      if (response.data.availability_change_residence)
+        setCheckedResidence(response.data.availability_change_residence);
+      setIdGeneralP(response.data.id);
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const saveGeneralData = (data) => {
-    Axios.post(API_URL + `/person/general-person/`, data)
-      .then((response) => {
-        setIdGeneralP(response.data.id);
-        message.success({
-          content: "Guardado correctamente.",
-          className: "custom-class",
-        });
-      })
-      .catch((error) => {
-        console.log(error);
+  const saveGeneralData = async (data) => {
+    try {
+      let response = await WebApi.createGeneralDataPerson(data);
+      setIdGeneralP(response.data.id);
+      message.success({
+        content: "Guardado correctamente.",
+        className: "custom-class",
       });
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const updateGeneralData = (data) => {
-    Axios.put(API_URL + `/person/general-person/${idGeneralP}/`, data)
-      .then((response) => {
-        message.success({
-          content: "Actualizado correctamente.",
-          className: "custom-class",
-        });
-      })
-      .catch((error) => {
-        console.log(error);
+  const updateGeneralData = async (data) => {
+    try {
+      let response = await WebApi.updateGeneralDataPerson(idGeneralP, data);
+      message.success({
+        content: "Actualizado correctamente.",
+        className: "custom-class",
       });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   /* Events */

@@ -19,6 +19,7 @@ import {
 import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import WebApi from "../../api/webApi";
 
 const FormBanckAccount = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -33,105 +34,101 @@ const FormBanckAccount = ({ person_id = null }) => {
 
   useEffect(() => {
     getBankAccount();
-    Axios.get(API_URL + "/setup/banks/")
-      .then((response) => {
-        if (response.status === 200) {
-          let bank = response.data.results;
-          bank = bank.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setBanks(bank);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    getBank();
   }, []);
 
+  const getBank = async () => {
+    try {
+      let response = await WebApi.getBank();
+      let bank = response.data.results;
+      bank = bank.map((a) => {
+        return { label: a.name, value: a.id };
+      });
+      setBanks(bank);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   /* functions CRUD*/
-  const getBankAccount = () => {
+  const getBankAccount = async () => {
     setLoadingTable(true);
-    Axios.get(API_URL + `/person/bank-account/?person=${person_id}`)
-      .then((response) => {
-        setBankAccounts(response.data.results);
+    try {
+      let response = await WebApi.getBankAccount(person_id);
+      setBankAccounts(response.data.results);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(e);
+      setBankAccounts([]);
 
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((e) => {
-        console.log(e);
-        setBankAccounts([]);
-
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
   };
-  const saveBankAcc = (data) => {
-    Axios.post(API_URL + `/person/bank-account/`, data)
-      .then((response) => {
-        message.success({
-          content: "Guardado correctamente.",
-          className: "custom-class",
-        });
 
-        getBankAccount();
+  const saveBankAcc = async (data) => {
+    try {
+      let response = await WebApi.createBankAccount(data);
+      message.success({
+        content: "Guardado correctamente.",
+        className: "custom-class",
+      });
+      getBankAccount();
+      formBank.resetFields();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateBankAcc = async (data) => {
+    setLoadingTable(true);
+    try {
+      let response = await WebApi.updateBankAccount(data);
+
+      message.success({
+        content: "Actualizado correctamente.",
+        className: "custom-class",
+      });
+
+      setUpBankAcc(false);
+      setIdBankAcc(null);
+      formBank.resetFields();
+      getBankAccount();
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
+  };
+  const deleteBankAcc = async (data) => {
+    setLoadingTable(true);
+    try {
+      let response = await WebApi.deleteBankAccount(data);
+      message.success({
+        content: "Eliminado con exito.",
+        className: "custom-class",
+      });
+      if (upBankAcc) {
         formBank.resetFields();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  const updateBankAcc = (data) => {
-    setLoadingTable(true);
-    Axios.put(API_URL + `/person/bank-account/${data.id}/`, data)
-      .then((response) => {
-        message.success({
-          content: "Actualizado correctamente.",
-          className: "custom-class",
-        });
-
         setUpBankAcc(false);
-        setIdBankAcc(null);
-        formBank.resetFields();
-        getBankAccount();
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.log(error);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
-  };
-  const deleteBankAcc = (data) => {
-    setLoadingTable(true);
-    Axios.delete(API_URL + `/person/bank-account/${data}/`)
-      .then((response) => {
-        message.success({
-          content: "Eliminado con exito.",
-          className: "custom-class",
-        });
-
-        if (upBankAcc) {
-          formBank.resetFields();
-          setUpBankAcc(false);
-        }
-
-        getBankAccount();
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.log(error);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
+      }
+      getBankAccount();
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
   };
 
   /* Events */

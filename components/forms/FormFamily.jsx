@@ -22,6 +22,8 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
+import { genders } from "../../utils/functions";
+import WebApi from "../../api/webApi";
 
 const FormFamily = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -35,21 +37,6 @@ const FormFamily = ({ person_id = null }) => {
   const [relationship, setRelationship] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
   const ruleRequired = { required: true, message: "Este campo es requerido" };
-
-  const genders = [
-    {
-      label: "Masculino",
-      value: 1,
-    },
-    {
-      label: "Femenino",
-      value: 2,
-    },
-    {
-      label: "Otro",
-      value: 3,
-    },
-  ];
 
   useEffect(() => {
     getFamily();
@@ -68,95 +55,84 @@ const FormFamily = ({ person_id = null }) => {
       });
   }, []);
 
-  /**CRUD training */
-  const getFamily = () => {
-    Axios.get(API_URL + `/person/person/${person_id}/family_person/`)
-      .then((response) => {
-        response.data.map((a) => {
-          a.relation = a.relationship.name;
-          a.fullname = a.name + " " + a.flast_name + " " + a.mlast_name;
-        });
-        setFamily(response.data);
-
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((e) => {
-        console.log(e);
-        setFamily([]);
-
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
+  const getFamily = async () => {
+    try {
+      let response = await WebApi.getFamily(person_id);
+      response.data.map((a) => {
+        a.relation = a.relationship.name;
+        a.fullname = a.name + " " + a.flast_name + " " + a.mlast_name;
       });
+      setFamily(response.data);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setFamily([]);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
   };
-  const saveFamily = (data) => {
-    Axios.post(API_URL + `/person/family/`, data)
-      .then((response) => {
-        message.success({
-          content: "Guardado correctamente.",
-          className: "custom-class",
-        });
-
-        getFamily();
+  const saveFamily = async (data) => {
+    try {
+      let response = await WebApi.createFamily(data);
+      message.success({
+        content: "Guardado correctamente.",
+        className: "custom-class",
+      });
+      getFamily();
+      formFamily.resetFields();
+      setLifeFamily(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const updateFamily = async (data) => {
+    try {
+      setLoadingTable(true);
+      let response = await WebApi.updateFamily(data);
+      message.success({
+        content: "Actualizado correctamente.",
+        className: "custom-class",
+      });
+      setUpFamily(false);
+      setIdFamily(null);
+      formFamily.resetFields();
+      setLifeFamily(false);
+      getFamily();
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
+  };
+  const deleteFamily = async (data) => {
+    try {
+      setLoadingTable(true);
+      let response = await WebApi.deleteFamily(data);
+      message.success({
+        content: "Eliminado con exito.",
+        className: "custom-class",
+      });
+      if (upFamily) {
         formFamily.resetFields();
-        setLifeFamily(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  const updateFamily = (data) => {
-    setLoadingTable(true);
-    Axios.put(API_URL + `/person/family/${data.id}/`, data)
-      .then((response) => {
-        message.success({
-          content: "Actualizado correctamente.",
-          className: "custom-class",
-        });
-
         setUpFamily(false);
-        setIdFamily(null);
-        formFamily.resetFields();
-        setLifeFamily(false);
-        getFamily();
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.log(error);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
-  };
-  const deleteFamily = (data) => {
-    setLoadingTable(true);
-    Axios.delete(API_URL + `/person/family/${data}/`)
-      .then((response) => {
-        message.success({
-          content: "Eliminado con exito.",
-          className: "custom-class",
-        });
-
-        if (upFamily) {
-          formFamily.resetFields();
-          setUpFamily(false);
-        }
-
-        getFamily();
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.log(error);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
+      }
+      getFamily();
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
   };
 
   /* Events */

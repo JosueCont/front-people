@@ -8,9 +8,6 @@ export const auth = async (ctx) => {
   // console.log('Aqui en al auth', ctx);
   const { token } = nextCookie(ctx);
 
-  let id = await userCompanyId();
-  console.log("CompanyUSer-->> ", id);
-
   if (ctx.req && !token) {
     // console.log('Sin Token!!', token)
     ctx.res.writeHead(302, { Location: "/" });
