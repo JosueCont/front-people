@@ -5,13 +5,12 @@ import CardApps from "./CardApps";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Cookie from "js-cookie";
-import Axios from "axios";
-import { API_URL } from "../config/config";
 import { getAccessIntranet, logoutAuth } from "../libs/auth";
 import { FormattedMessage } from "react-intl";
 import { css, Global } from "@emotion/core";
 import { connect } from "react-redux";
 import WebApi from "../api/webApi";
+import { companySelected } from "../redux/UserDuck";
 
 const { Header } = Layout;
 
@@ -33,15 +32,17 @@ const headerCustom = ({
   let accessIntranet = getAccessIntranet();
 
   useEffect(() => {
-    getPerson()
+    getPerson();
   }, []);
 
   const getPerson = async () => {
     try {
       const user = JSON.parse(Cookie.get("token"));
-      let response = await WebApi.personForKhonnectId({id: user.user_id})
+      let response = await WebApi.personForKhonnectId({ id: user.user_id });
+      let company = props.companySelected(response.data.node);
       if (!response.data.photo) response.data.photo = defaulPhoto;
-      let personName = response.data.first_name + " " + response.data.flast_name;
+      let personName =
+        response.data.first_name + " " + response.data.flast_name;
       if (response.data.mlast_name)
         personName = personName + " " + response.data.mlast_name;
       response.data.fullName = personName;
@@ -50,10 +51,10 @@ const headerCustom = ({
       setPerson({ photo: defaulPhoto });
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
-    if(props.config){
+    if (props.config) {
       setPrimaryColor(props.config.concierge_primary_color);
       setSecondaryColor(props.config.concierge_primary_color);
     }
@@ -65,7 +66,12 @@ const headerCustom = ({
 
   const userCardDisplay = () => (
     <>
-      <CardUser person={person} visible={logOut} acction={actionEvent} />
+      <CardUser
+        person={person}
+        visible={logOut}
+        currentNode={props.currentNode}
+        acction={actionEvent}
+      />
     </>
   );
 
@@ -391,7 +397,10 @@ const headerCustom = ({
 };
 
 const mapState = (state) => {
-  return {config: state.userStore.general_config};
+  return {
+    config: state.userStore.general_config,
+    currentNode: state.userStore.current_node,
+  };
 };
 
-export default connect(mapState)(headerCustom);
+export default connect(mapState, { companySelected })(headerCustom);

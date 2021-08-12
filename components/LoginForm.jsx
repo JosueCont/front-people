@@ -30,7 +30,7 @@ const LoginForm = ({
       };
 
       let response = await WebApi.saveJwt(data);
-      
+
       if (response.status == 200) {
         if (response.data.is_active) return true;
         return false;
@@ -59,7 +59,6 @@ const LoginForm = ({
           if (response.status === 200) {
             let token = jwt_decode(response.data.token);
             if (setKhonnectId) {
-              console.log("response-->> ", token);
               setKhonnectId(token.user_id);
               return;
             }
@@ -69,7 +68,10 @@ const LoginForm = ({
                   message.success("Acceso correcto.");
                   Cookies.set("token", token);
                   setLoading(false);
-                  router.push({ pathname: "/select-company", props: { user: 'jc' }});
+                  router.push({
+                    pathname: "/select-company",
+                    props: { user: "jc" },
+                  });
                 } else {
                   message.error("Acceso denegado");
                   setLoading(false);

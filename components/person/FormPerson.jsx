@@ -353,7 +353,6 @@ const FormPerson = ({
                   ></Select>
                 </Form.Item>
               </Col>
-              {/* )} */}
               <Col lg={22} xs={22} offset={1}>
                 <Form.Item labelAlign="right">
                   <Space style={{ float: "right" }}>
