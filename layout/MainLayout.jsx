@@ -65,7 +65,11 @@ const MainLayout = ({
               `}
       />
       <Helmet>
-        <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
+      {props.config && props.config.concierge_icon ? (
+          <link rel="icon" type="image/png" href={props.config.concierge_icon}></link>
+        ) :
+          <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
+        }
       </Helmet>
       <HeaderCustom
         key="main_header"

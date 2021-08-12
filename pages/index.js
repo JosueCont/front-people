@@ -49,8 +49,11 @@ const Home = ({ ...props }) => {
           <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
         }
       </Helmet>
+      
       <Spin tip="Cargando..." spinning={loading}>
+      {props.config && (
       <Col span={24} className="containerPrincipal">
+     
         <Row justify="space-around" align="middle" style={{ height: "100%" }}>
           <Col
             xl={12}
@@ -102,6 +105,7 @@ const Home = ({ ...props }) => {
           </Col>
         </Row>
       </Col>
+      )}
       </Spin>
     </>
   );
