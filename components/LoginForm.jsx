@@ -150,8 +150,8 @@ const LoginForm = ({
               <b>¿Olvidaste tu contraseña? </b>{" "}
               <span
                 onClick={() => props.setRecoverPasswordShow(true)}
-                className={"pointer"}
-                style={{ fontWeight: "500", textDecoration: "underline" }}
+                className={"pointer text-link"}
+                
               >
                 {" "}
                 haz click aquí{" "}
@@ -169,7 +169,7 @@ const LoginForm = ({
             </Button>
           </Form.Item>
           <Form.Item>
-            <span className="title-notice-privacy">
+            <span className="text-link">
               <Link href="https://www.grupohuman.com/aviso-privacidad">
                 Aviso de privacidad.
               </Link>

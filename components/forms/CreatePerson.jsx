@@ -358,11 +358,7 @@ const CreatePerson = ({
               <Col lg={20} xs={22} offset={1} className="center-content">
                 <span
                   onClick={() => setModal(true)}
-                  style={{
-                    fontWeight: "500",
-                    textDecoration: "underline",
-                    color: "lightskyblue",
-                  }}
+                  className="text-link"
                 >
                   <Link href="">Ya me he registrado</Link>
                 </span>
