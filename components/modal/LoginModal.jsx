@@ -20,7 +20,7 @@ const LoginModal = ({
         footer={null}
         width={"60%"}
       >
-        <LoginForm recoveryPsw={false} setKhonnectId={setKhonnectId} />;
+        <LoginForm recoveryPsw={false} setKhonnectId={setKhonnectId} />
       </Modal>
     </Layout>
   );

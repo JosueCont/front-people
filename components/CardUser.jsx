@@ -10,7 +10,7 @@ import Router from "next/router";
 
 const { Meta } = Card;
 
-const cardUser = (props) => {
+const cardUser = ({ currentNode, ...props }) => {
   return (
     <>
       <Card
@@ -27,16 +27,23 @@ const cardUser = (props) => {
         }
         actions={[
           <Tooltip title="Cambiar empresa" color={"#3d78b9"} key={"#3d78b9"}>
-            <Button onClick={() => {
-                Router.push({ pathname: "/select-company" })
-                sessionStorage.setItem('image','')
-                }
-            }>
+            <Button
+              onClick={() => {
+                Router.push({ pathname: "/select-company" });
+                sessionStorage.setItem("image", "");
+              }}
+            >
               <SwapOutlined />
             </Button>
           </Tooltip>,
           <Tooltip title="Editar perfil" color={"#3d78b9"} key={"#3d78b9"}>
-            <Button onClick={() => Router.push(`/home/${props.person.id}`)}>
+            <Button
+              onClick={() => {
+                !props.person.nodes && currentNode
+                  ? Router.push(`/ac/urn/${currentNode.permanent_code}`)
+                  : Router.push(`/home/${props.person.id}`);
+              }}
+            >
               <EditOutlined key="edit" />
             </Button>
           </Tooltip>,
