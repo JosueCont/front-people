@@ -11,7 +11,7 @@ import { companySelected, companySelectedAxios } from "../../redux/UserDuck";
 import WebApi from "../../api/webApi";
 import Clipboard from "../../components/Clipboard";
 
-const SelectCompany = ({ ...props }) => { 
+const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,31 +28,32 @@ const SelectCompany = ({ ...props }) => {
   }, []);
 
   useEffect(async () => {
-    try{
+    try {
       if (jwt) {
-        let response = await WebApi.personForKhonnectId({id: jwt.user_id})
-          setAdmin(response.data.is_admin);
-            if (response.data.is_admin) {
+        let response = await WebApi.personForKhonnectId({ id: jwt.user_id });
+        setAdmin(response.data.is_admin);
+        sessionStorage.setItem("tok", response.data.id);
+        if (response.data.is_admin) {
+          if (personId == "" || personId == null || personId == undefined)
+            sessionStorage.setItem("number", response.data.id);
+          getCopaniesList();
+        } else {
+          if (response.data.nodes)
+            if (response.data.nodes.length > 1) {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
-              getCopaniesList();
-            } else {
-              if (response.data.nodes.length > 1) {
-                if (personId == "" || personId == null || personId == undefined)
-                  sessionStorage.setItem("number", response.data.id);
-                let data = response.data.nodes.filter((a) => a.active);
-                setDataList(data);
-              } else if (response.data.nodes.length == 1) {
-                if (personId == "" || personId == null || personId == undefined)
-                  sessionStorage.setItem("number", response.data.id);
-                setCompanySelect(response.data.nodes[0]);
-              }
+              let data = response.data.nodes.filter((a) => a.active);
+              setDataList(data);
+            } else if (response.data.nodes.length == 1) {
+              if (personId == "" || personId == null || personId == undefined)
+                sessionStorage.setItem("number", response.data.id);
+              setCompanySelect(response.data.nodes[0]);
             }
-          setLoading(false);
+        }
+        setLoading(false);
       }
-    }
-    catch(error){
-      console.log(error)
+    } catch (error) {
+      console.log(error);
       setLoading(false);
     }
   }, [jwt]);
@@ -161,7 +162,7 @@ const SelectCompany = ({ ...props }) => {
 };
 
 const mapState = (state) => {
-  return {config: state.userStore.general_config};
+  return { config: state.userStore.general_config };
 };
 
 export default connect(mapState, { companySelected, companySelectedAxios })(
