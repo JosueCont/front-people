@@ -7,6 +7,7 @@ import { Helmet } from "react-helmet";
 import { userCompanyName } from "../libs/auth";
 import { connect } from "react-redux";
 import { companySelected } from "../redux/UserDuck";
+import { css, Global } from "@emotion/core";
 
 const { Content } = Layout;
 
@@ -54,8 +55,21 @@ const MainLayout = ({
 
   return (
     <Layout className="layout">
+       <Global
+        styles={css`
+          :root {
+            --primaryColor: ${props.config ? props.config.concierge_primary_color : '#1890ff'};
+            --secondaryColor: ${props.config ? props.config.concierge_secondary_color : '#1890ff'};
+            --login_image: ${props.config && props.config.concierge_logo_login ? 'url(' + props.config.concierge_logo_login + ')' : 'url("/images/login.jpg")'}; 
+            --logo_login: ${props.config && props.config.concierge_logo ? 'url(' + props.config.concierge_logo + ')' : 'url("/images/Grupo Industrial Roche-Color.png")'}; 
+              `}
+      />
       <Helmet>
-        <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
+      {props.config && props.config.concierge_icon ? (
+          <link rel="icon" type="image/png" href={props.config.concierge_icon}></link>
+        ) :
+          <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
+        }
       </Helmet>
       <HeaderCustom
         key="main_header"
@@ -87,6 +101,7 @@ const MainLayout = ({
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
   };
 };
 

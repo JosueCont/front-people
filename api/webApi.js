@@ -27,7 +27,7 @@ class WebApi {
   }
 
   static getCompanys() {
-    return WebApi.ApisType(`/business/node/`, "post");
+    return WebApi.ApisType(`/business/node/`, "get");
   }
 
   static getCompany(data) {
@@ -36,6 +36,10 @@ class WebApi {
 
   static getCompanyPermanentCode(data) {
     return WebApi.ApisType(`/business/node/?permanent_code=${data}`, "get");
+  }
+
+  static filterDepartmentByNode(data) {
+    return WebApi.ApisType(`/business/department/?node=${data}`, "get");
   }
 
   static createPerson(data) {
@@ -58,8 +62,20 @@ class WebApi {
     );
   }
 
+  static personForKhonnectId(data) {
+    return WebApi.ApisType(
+      `/person/person/person_for_khonnectid/`,
+      "post",
+      data
+    );
+  }
+
   static getJobSelect(data) {
     return WebApi.ApisType(`/person/job/?department=${data}`, "get");
+  }
+  
+  static filterPerson(data) {
+    return WebApi.ApisType(`/person/person/get_list_persons/`, "post", data);
   }
 
   static getPhone(data) {

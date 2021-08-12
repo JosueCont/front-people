@@ -3,7 +3,7 @@ import React, { useEffect, useState, useLayoutEffect } from "react";
 import { connect } from "react-redux";
 import LoginForm from "../components/LoginForm";
 import PasswordRecover from "../components/PasswordRecover";
-import { Row, Col, Card } from "antd";
+import { Row, Col, Card, Spin} from "antd";
 import { Helmet } from "react-helmet";
 import { css, Global } from "@emotion/core";
 import { getRouteFlavor, getFlavor } from "../utils/brand";
@@ -14,6 +14,7 @@ const Home = ({ ...props }) => {
   const [flavor, setFlavor] = useState({})
   const [routeFlavor, setRouteFlavor] = useState({})
   const [configsTenant, setConfigsTenant] = useState({})
+  const [loading, setLoading] = useState(true);
 
   useLayoutEffect(() => {
     const flavor = getFlavor()
@@ -22,6 +23,12 @@ const Home = ({ ...props }) => {
     setFlavor(flavor)
     setRouteFlavor(routeFlavor)
   }, [])
+
+  useLayoutEffect(() => {
+    if(props.config){
+      setLoading(false)
+    }
+  }, [props.config])
   /* const [loginFormShow, SetLoginFormShow] = useState(true); */
 
   return (
@@ -30,6 +37,7 @@ const Home = ({ ...props }) => {
         styles={css`
           :root {
             --primaryColor: ${props.config ? props.config.concierge_primary_color : '#1890ff'};
+            --secondaryColor: ${props.config ? props.config.concierge_secondary_color : '#1890ff'};
             --login_image: ${props.config && props.config.concierge_logo_login ? 'url(' + props.config.concierge_logo_login + ')' : 'url("/images/login.jpg")'}; 
             --logo_login: ${props.config && props.config.concierge_logo ? 'url(' + props.config.concierge_logo + ')' : 'url("/images/Grupo Industrial Roche-Color.png")'}; 
               `}
@@ -41,7 +49,11 @@ const Home = ({ ...props }) => {
           <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
         }
       </Helmet>
+      
+      <Spin tip="Cargando..." spinning={loading}>
+      {props.config && (
       <Col span={24} className="containerPrincipal">
+     
         <Row justify="space-around" align="middle" style={{ height: "100%" }}>
           <Col
             xl={12}
@@ -93,6 +105,8 @@ const Home = ({ ...props }) => {
           </Col>
         </Row>
       </Col>
+      )}
+      </Spin>
     </>
   );
 };

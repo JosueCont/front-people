@@ -18,7 +18,7 @@ a {
 /* Styles  login by Pedro Leon*/
 .containerPrincipal {
   height: 100vh;
-  background: #3d78b9;
+  background: var(--primaryColor);
 }
 
 .loginContainer {
@@ -42,16 +42,12 @@ a {
 }
 
 .font-color-khor {
-  color: #252593 !important;
+  color: var(--primaryColor) !important;
   font-weight: bold;
 }
 
 .font-color-khor label {
-  color: #252593;
-  font-weight: bold;
-}
-.font-color-khor label {
-  color: #252593;
+  color: var(--primaryColor);
   font-weight: bold;
 }
 
@@ -275,7 +271,91 @@ li.ant-menu-submenu-selected {
 
 .login-form-button {
   width: 100%;
+  
+}
+
+.ant-input, .ant-form-item-control-input{
+  border-color: var(--secondaryColor) !important;
+}
+
+.ant-input:hover, .ant-input-focused, .ant-input:focus  {
+  border-color: var(--primaryColor) !important;
+  border-right-width: 1px !important;
+}
+
+.ant-input-password{
+  border-color: var(--secondaryColor);
+}
+
+.ant-inpu-passwordt:hover, .ant-input-password-focused {
+  border-color: var(--primaryColor) !important;
+  border-right-width: 1px !important;
+}
+
+
+.ant-select-selector{
+  border: 1px solid var(--secondaryColor) !important;
+}
+
+.ant-select-selector:hover, .ant-select-selector:focus-within {
+  border: 1px solid var(--primaryColor) !important;
+}
+
+.ant-picker{
+  border: 1px solid var(--secondaryColor) !important;
+}
+
+.ant-picker:hover, .ant-picker-focused {
+  border-color: var(--primaryColor) !important;
+  border-right-width: 1px !important;
+}
+
+.ant-picker-dropdown{
+  border: 1px solid var(--secondaryColor) !important;
+}
+
+.ant-picker-today-btn{
+  color: var(--secondaryColor);
+}
+
+.ant-picker-today-btn:hover{
+  color: var(--primaryColor);
+}
+
+.ant-btn{
+  background-color: var(--secondaryColor);
+  border-color: var(--secondaryColor);
+}
+
+.ant-btn:hover{
+  
   background-color: var(--primaryColor);
+  border-color: var(--primaryColor);
+}
+
+
+.ant-btn-primary {
+  background-color: var(--secondaryColor);
+  border-color: var(--secondaryColor);
+}
+
+.ant-btn-primary:hover{
+  background-color: var(--primaryColor);
+  border-color: var(--primaryColor);
+}
+
+.text-link {
+  font-weight: 500;
+  text-decoration: underline;
+  color: var(--secondaryColor);
+ 
+}
+
+.text-link :hover{
+  font-weight: 500;
+  text-decoration: underline;
+  color: var(--primaryColor);
+ 
 }
 
 .btn-copy-text {
@@ -322,4 +402,19 @@ li.ant-menu-submenu-selected {
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+.center-content {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.ant-spin-dot-item {
+  background-color: var(--secondaryColor);
+}
+
+.ant-spin-text{
+  color: var(--primaryColor);
 }

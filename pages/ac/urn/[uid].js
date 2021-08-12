@@ -8,12 +8,23 @@ import WebApi from "../../../api/webApi";
 import { connect } from "react-redux";
 import { companySelected } from "../../../redux/UserDuck";
 import CreatePerson from "../../../components/forms/CreatePerson";
+import jsCookie from "js-cookie";
 
 const userRegister = ({ ...props }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [visibleForm, setVisibleForm] = useState(false);
   const [person, setPerson] = useState();
+  const [khonnectId, setKhonnectId] = useState();
+  const [modal, setModal] = useState(false);
+  const [hideProfile, setHideProfile] = useState(false);
+
+  useEffect(() => {
+    try {
+      const user = JSON.parse(jsCookie.get("token"));
+      if (user) setHideProfile(true);
+    } catch (error) {}
+  }, []);
 
   useEffect(() => {
     if (router.query.uid) {
@@ -62,6 +73,25 @@ const userRegister = ({ ...props }) => {
     }
   }, [person]);
 
+  useEffect(() => {
+    if (khonnectId) {
+      getPersonKhonnectId();
+    }
+  }, [khonnectId]);
+
+  const getPersonKhonnectId = async () => {
+    try {
+      let response = await WebApi.personForKhonnectId({
+        id: khonnectId,
+      });
+      sessionStorage.setItem("tok", response.data.id);
+      setPerson(response.data);
+      setModal(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       {props.currentNode ? (
@@ -69,7 +99,7 @@ const userRegister = ({ ...props }) => {
           logoNode={props.currentNode.image}
           companyName={props.currentNode.name}
           hideMenu={true}
-          hideProfile={false}
+          hideProfile={hideProfile}
           onClickImage={false}
         >
           <Breadcrumb className={"mainBreadcrumb"}>
@@ -85,6 +115,10 @@ const userRegister = ({ ...props }) => {
                 close={(value) => setVisibleForm(value)}
                 nameNode={props.currentNode.name}
                 setPerson={setPerson}
+                setKhonnectId={setKhonnectId}
+                login={true}
+                modal={modal}
+                setModal={setModal}
               />
             ) : (
               person && (
@@ -104,7 +138,17 @@ const userRegister = ({ ...props }) => {
           </Spin>
         </MainLayout>
       ) : (
-        <Spin spinning={loading} />
+        <div
+          style={{
+            padding: "10%",
+            display: "flex",
+            textAlign: "center",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Spin spinning={loading} />
+        </div>
       )}
     </>
   );

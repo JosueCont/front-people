@@ -5,11 +5,12 @@ import CardApps from "./CardApps";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Cookie from "js-cookie";
-import Axios from "axios";
-import { API_URL } from "../config/config";
 import { getAccessIntranet, logoutAuth } from "../libs/auth";
 import { FormattedMessage } from "react-intl";
 import { css, Global } from "@emotion/core";
+import { connect } from "react-redux";
+import WebApi from "../api/webApi";
+import { companySelected } from "../redux/UserDuck";
 
 const { Header } = Layout;
 
@@ -31,44 +32,33 @@ const headerCustom = ({
   let accessIntranet = getAccessIntranet();
 
   useEffect(() => {
+    getPerson();
+  }, []);
+
+  const getPerson = async () => {
     try {
       const user = JSON.parse(Cookie.get("token"));
-      Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
-        id: user.user_id,
-      })
-        .then((response) => {
-          if (!response.data.photo) response.data.photo = defaulPhoto;
-          let personName =
-            response.data.first_name + " " + response.data.flast_name;
-          if (response.data.mlast_name)
-            personName = personName + " " + response.data.mlast_name;
-          response.data.fullName = personName;
-          setPerson(response.data);
-        })
-        .catch((e) => {
-          setPerson({ photo: defaulPhoto });
-          console.log(e);
-        });
-    } catch (error) {}
-  }, []);
+      let response = await WebApi.personForKhonnectId({ id: user.user_id });
+      let company = props.companySelected(response.data.node);
+      if (!response.data.photo) response.data.photo = defaulPhoto;
+      let personName =
+        response.data.first_name + " " + response.data.flast_name;
+      if (response.data.mlast_name)
+        personName = personName + " " + response.data.mlast_name;
+      response.data.fullName = personName;
+      setPerson(response.data);
+    } catch (error) {
+      setPerson({ photo: defaulPhoto });
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    getConfig();
+    if (props.config) {
+      setPrimaryColor(props.config.concierge_primary_color);
+      setSecondaryColor(props.config.concierge_primary_color);
+    }
   }, []);
-
-  const getConfig = () => {
-    Axios.get(API_URL + "/setup/site-configuration/")
-      .then((res) => {
-        setPrimaryColor(res.data.concierge_primary_color);
-        setSecondaryColor(res.data.concierge_primary_color);
-
-        //setPrimaryColor('blue')
-        //setSecondaryColor('red')
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
 
   const actionEvent = (data) => {
     setModalLogOut(data);
@@ -76,7 +66,12 @@ const headerCustom = ({
 
   const userCardDisplay = () => (
     <>
-      <CardUser person={person} visible={logOut} acction={actionEvent} />
+      <CardUser
+        person={person}
+        visible={logOut}
+        currentNode={props.currentNode}
+        acction={actionEvent}
+      />
     </>
   );
 
@@ -401,4 +396,11 @@ const headerCustom = ({
   );
 };
 
-export default headerCustom;
+const mapState = (state) => {
+  return {
+    config: state.userStore.general_config,
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState, { companySelected })(headerCustom);

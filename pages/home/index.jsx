@@ -47,6 +47,7 @@ import Link from "next/link";
 import jsCookie from "js-cookie";
 import Clipboard from "../../components/Clipboard";
 import { connect } from "react-redux";
+import WebApi from "../../api/webApi";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -125,24 +126,24 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const filterPersonName = () => {
+  const filterPersonName = async () => {
     filters.node = nodeId;
     setLoading(true);
-    Axios.post(API_URL + `/person/person/get_list_persons/`, filters)
-      .then((response) => {
-        setPerson([]);
+    try{
+      let response = await WebApi.filterPerson(filters)
+      setPerson([]);
         response.data.map((item, i) => {
           item.key = i;
           if (!item.photo) item.photo = defaulPhoto;
         });
-        setLoading(false);
-        setPerson(response.data);
-      })
-      .catch((e) => {
-        setPerson([]);
-        setLoading(false);
-        console.log(e);
-      });
+      setLoading(false);
+      setPerson(response.data);
+    }
+    catch(error){
+      setPerson([]);
+      setLoading(false);
+      console.log(error);
+    }
   };
 
   const deletePerson = () => {
@@ -674,22 +675,21 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const getDepartmets = (value) => {
+  const getDepartmets = async (value) => {
     setDepartments([]);
     setJobs([]);
-    Axios.get(API_URL + `/business/department/?node=${nodeId}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let dep = response.data.results;
-          dep = dep.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setDepartments(dep);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
+    try{
+      let response = await WebApi.filterDepartmentByNode(nodeId)
+      let dep = response.data.results;
+      dep = dep.map((a) => {
+        return { label: a.name, value: a.id };
       });
+      setDepartments(dep);
+    }
+    catch(error)
+    {
+      console.log(error);
+    }
   };
 
   const changeDepartment = (value) => {
