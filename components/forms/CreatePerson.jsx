@@ -23,13 +23,19 @@ import {
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
+import Link from "next/link";
+import LoginModal from "../modal/LoginModal";
 
 const CreatePerson = ({
   hideProfileSecurity = true,
   intranetAccess = true,
   node = null,
   nameNode = "",
-  setPerson = null,
+  setPerson,
+  setKhonnectId = null,
+  login = false,
+  modal = false,
+  setModal = null,
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -349,18 +355,34 @@ const CreatePerson = ({
                   </Form.Item>
                 </Col>
               )}
-              <Col lg={22} xs={22} offset={1}>
-                <Form.Item labelAlign="right">
-                  <Space style={{ float: "right" }}>
-                    <Button type="primary" htmlType="submit">
-                      Guardar
-                    </Button>
-                  </Space>
-                </Form.Item>
+              <Col lg={20} xs={22} offset={1} className="center-content">
+                <span
+                  onClick={() => setModal(true)}
+                  style={{
+                    fontWeight: "500",
+                    textDecoration: "underline",
+                    color: "lightskyblue",
+                  }}
+                >
+                  <Link href="">Ya me he registrado</Link>
+                </span>
+              </Col>
+              <Col lg={2} xs={22} offset={1} className="center-content">
+                <Button type="primary" htmlType="submit">
+                  Guardar
+                </Button>
               </Col>
             </Row>
           </Form>
         </div>
+        {modal && (
+          <LoginModal
+            title={"Iniciar sesión"}
+            visible={modal}
+            setModal={setModal}
+            setKhonnectId={setKhonnectId}
+          />
+        )}
       </Layout>
     </>
   );

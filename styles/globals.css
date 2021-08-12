@@ -403,3 +403,10 @@ li.ant-menu-submenu-selected {
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+
+.center-content {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}

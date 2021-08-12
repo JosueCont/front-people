@@ -62,8 +62,17 @@ class WebApi {
     );
   }
 
+<<<<<<< HEAD
   static personForKhonnectId(data){ 
     return WebApi.ApisType(`/person/person/person_for_khonnectid/`, "post", data);
+=======
+  static personForKhonnectId(data) {
+    return WebApi.ApisType(
+      `/person/person/person_for_khonnectid/`,
+      "post",
+      data
+    );
+>>>>>>> 666972b94a0529af8a51280c11457519fd2ded91
   }
 
   static getJobSelect(data) {
