@@ -40,33 +40,21 @@ export default function SelectJob({ item = true, ...props }) {
 
   return (
     <>
-      {item ? (
-        <Form.Item
-          key={"ItemJob"}
-          name={props.name ? props.name : "job"}
-          label={props.label ? props.label : "Empresa"}
-        >
-          <Select
-            key="SelectJob"
-            placeholder="Puesto de trabajo"
-            style={props.style ? props.style : null}
-            options={options}
-            onChange={props.onChange ? props.onChange : null}
-            allowClear
-            notFoundContent={"No se encontraron resultado."}
-          />
-        </Form.Item>
-      ) : (
+      <Form.Item
+        key={"ItemJob"}
+        name={props.name ? props.name : "job"}
+        label={props.label ? props.label : "Empresa"}
+      >
         <Select
           key="SelectJob"
           placeholder="Puesto de trabajo"
-          style={props.style ? props.style : null}
+          style={props.style ? props.style : {}}
           options={options}
           onChange={props.onChange ? props.onChange : null}
           allowClear
           notFoundContent={"No se encontraron resultado."}
         />
-      )}
+      </Form.Item>
     </>
   );
 }

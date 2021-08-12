@@ -23,8 +23,13 @@ const DetailPerson = ({
     <>
       <Title level={3}>Información Personal</Title>
       <Title level={4} style={{ marginTop: 0 }}>
-        {/* {personFullName} */}
-        Jasson Manuel
+        {!person.mlast_name
+          ? person.first_name + " " + person.flast_name
+          : person.first_name +
+            " " +
+            person.flast_name +
+            " " +
+            person.mlast_name}
       </Title>
       <Card bordered={true}>
         <DataPerson
@@ -32,35 +37,37 @@ const DetailPerson = ({
           setLoading={setLoading}
           hideProfileSecurity={hideProfileSecurity}
         />
+        <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
+        <Tabs tabPosition={"left"}>
+          <TabPane tab="Datos generales" key="tab_1">
+            <FormGeneralData person_id={person.id} />
+          </TabPane>
+          <TabPane tab="Teléfono" key="tab_2">
+            <FormPhone person_id={person.id} />
+          </TabPane>
+          <TabPane tab="Dirección" key="tab_3">
+            <FormAddress person_id={person.id} />
+          </TabPane>
+          <TabPane tab="Familia" key="tab_4">
+            <FormFamily person_id={person.id} />
+          </TabPane>
+          <TabPane tab="Contactos de emergencia" key="tab_5">
+            <FormEmergencyContact person_id={person.id} />
+          </TabPane>
+          <TabPane tab="Formación/Habilidades" key="tab_6">
+            <FormTraining person_id={person.id} />
+          </TabPane>
+          <TabPane tab="Cuentas bancarias" key="tab_7">
+            <FormBankAccount person_id={person.id} />
+          </TabPane>
+          <TabPane tab="Cambiar contraseña" key="tab_8">
+            <FormChangePassword khonnectId={person.khonnect_id} />
+          </TabPane>
+          {deletePerson && (
+            <TabPane tab="Eliminar persona" key="tab_9"></TabPane>
+          )}
+        </Tabs>
       </Card>
-      <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
-      <Tabs tabPosition={"left"}>
-        <TabPane tab="Datos generales" key="tab_1">
-          <FormGeneralData person_id={person.id} />
-        </TabPane>
-        <TabPane tab="Teléfono" key="tab_2">
-          <FormPhone person_id={person.id} />
-        </TabPane>
-        <TabPane tab="Dirección" key="tab_3">
-          <FormAddress person_id={person.id} />
-        </TabPane>
-        <TabPane tab="Familia" key="tab_4">
-          <FormFamily person_id={person.id} />
-        </TabPane>
-        <TabPane tab="Contactos de emergencia" key="tab_5">
-          <FormEmergencyContact person_id={person.id} />
-        </TabPane>
-        <TabPane tab="Formación/Habilidades" key="tab_6">
-          <FormTraining person_id={person.id} />
-        </TabPane>
-        <TabPane tab="Cuentas bancarias" key="tab_7">
-          <FormBankAccount person_id={person.id} />
-        </TabPane>
-        <TabPane tab="Cambiar contraseña" key="tab_8">
-          <FormChangePassword khonnectId={person.khonnect_id} />
-        </TabPane>
-        {deletePerson && <TabPane tab="Eliminar persona" key="tab_9"></TabPane>}
-      </Tabs>
     </>
   );
 };

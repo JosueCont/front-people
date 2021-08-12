@@ -131,8 +131,9 @@ const SelectCompany = ({ ...props }) => {
                             "/ac/urn/" +
                             item.permanent_code
                           }
+                          border={false}
                           type={"button"}
-                          message={"Copiado en porta papeles"}
+                          msg={"Copiado en portapapeles"}
                           tooltipTitle={"Copiar"}
                         />,
                       ]}

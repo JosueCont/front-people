@@ -153,10 +153,9 @@ const FormEmergencyContact = ({ person_id = null }) => {
   };
   const showModalDelete = (id) => {
     confirm({
-      title: "¿Está seguro de querer eliminarlo?",
+      title: titleDialogDelete,
       icon: <ExclamationCircleOutlined />,
-      content:
-        "Al eliminar este registro perderá todos los datos relacionados a el de manera permanente",
+      content: messageDialogDelete,
       okText: "Si",
       okType: "danger",
       cancelText: "Cancelar",

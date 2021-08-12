@@ -37,34 +37,21 @@ export default function SelectDepartment({ item = true, ...props }) {
 
   return (
     <>
-      {item ? (
-        <Form.Item
-          key="ItemDepartment"
-          name={props.name ? props.name : "department"}
-          label="Departamento"
-        >
-          <Select
-            key="SelectDepartament"
-            style={props.style ? props.style : { width: 150 }}
-            options={options}
-            allowClear
-            onChange={props.onChange ? props.onChange : null}
-            notFoundContent={"No se encontraron resultado."}
-          />
-        </Form.Item>
-      ) : (
+      <Form.Item
+        key="ItemDepartment"
+        name={props.name ? props.name : "department"}
+        label="Departamento"
+      >
         <Select
           key="SelectDepartament"
-          // style={props.style ? props.style : { width: 150 }}
+          style={props.style ? props.style : {}}
           options={options}
+          placeholder="Departamento"
           allowClear
           onChange={props.onChange ? props.onChange : null}
           notFoundContent={"No se encontraron resultado."}
         />
-      )}
+      </Form.Item>
     </>
   );
-  /* return (
-              <Select key="SelectDepartament" style={{ width:150 }} options={options} onChange={props.onchange ? props.onChange : null} allowClear />
-      ) */
 }
