@@ -271,75 +271,77 @@ li.ant-menu-submenu-selected {
 
 .login-form-button {
   width: 100%;
-  
 }
 
-.ant-input, .ant-form-item-control-input{
+.ant-input,
+.ant-form-item-control-input {
   border-color: var(--secondaryColor) !important;
 }
 
-.ant-input:hover, .ant-input-focused, .ant-input:focus  {
+.ant-input:hover,
+.ant-input-focused,
+.ant-input:focus {
   border-color: var(--primaryColor) !important;
   border-right-width: 1px !important;
 }
 
-.ant-input-password{
+.ant-input-password {
   border-color: var(--secondaryColor);
 }
 
-.ant-inpu-passwordt:hover, .ant-input-password-focused {
+.ant-inpu-passwordt:hover,
+.ant-input-password-focused {
   border-color: var(--primaryColor) !important;
   border-right-width: 1px !important;
 }
 
-
-.ant-select-selector{
+.ant-select-selector {
   border: 1px solid var(--secondaryColor) !important;
 }
 
-.ant-select-selector:hover, .ant-select-selector:focus-within {
+.ant-select-selector:hover,
+.ant-select-selector:focus-within {
   border: 1px solid var(--primaryColor) !important;
 }
 
-.ant-picker{
+.ant-picker {
   border: 1px solid var(--secondaryColor) !important;
 }
 
-.ant-picker:hover, .ant-picker-focused {
+.ant-picker:hover,
+.ant-picker-focused {
   border-color: var(--primaryColor) !important;
   border-right-width: 1px !important;
 }
 
-.ant-picker-dropdown{
+.ant-picker-dropdown {
   border: 1px solid var(--secondaryColor) !important;
 }
 
-.ant-picker-today-btn{
+.ant-picker-today-btn {
   color: var(--secondaryColor);
 }
 
-.ant-picker-today-btn:hover{
+.ant-picker-today-btn:hover {
   color: var(--primaryColor);
 }
 
-.ant-btn{
+.ant-btn {
   background-color: var(--secondaryColor);
   border-color: var(--secondaryColor);
 }
 
-.ant-btn:hover{
-  
+.ant-btn:hover {
   background-color: var(--primaryColor);
   border-color: var(--primaryColor);
 }
-
 
 .ant-btn-primary {
   background-color: var(--secondaryColor);
   border-color: var(--secondaryColor);
 }
 
-.ant-btn-primary:hover{
+.ant-btn-primary:hover {
   background-color: var(--primaryColor);
   border-color: var(--primaryColor);
 }
@@ -348,14 +350,12 @@ li.ant-menu-submenu-selected {
   font-weight: 500;
   text-decoration: underline;
   color: var(--secondaryColor);
- 
 }
 
-.text-link :hover{
+.text-link :hover {
   font-weight: 500;
   text-decoration: underline;
   color: var(--primaryColor);
- 
 }
 
 .btn-copy-text {
@@ -412,9 +412,13 @@ li.ant-menu-submenu-selected {
 }
 
 .ant-spin-dot-item {
-  background-color: var(--secondaryColor);
+  width: 20px;
+  height: 20px;
+}
+.ant-spin-dot {
+  font-size: 40px;
 }
 
-.ant-spin-text{
+.ant-spin-text {
   color: var(--primaryColor);
 }
