@@ -1874,7 +1874,7 @@ const personDetailForm = () => {
                       <Col lg={7} xs={22} offset={1}>
                         <Row justify="center">
                           <Col lg={12} md={8} xs={24}>
-                            <Spin spinning={loadImge}>
+                            <Spin tip="Cargando..." spinning={loadImge}>
                               <div
                                 style={
                                   photo

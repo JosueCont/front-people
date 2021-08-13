@@ -96,7 +96,7 @@ const SelectCompany = ({ ...props }) => {
             <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>
           </Breadcrumb>
           <div className="container" style={{ width: "100%", padding: 20 }}>
-            <Spin spinning={loading}>
+            <Spin tip="Cargando..." spinning={loading}>
               <Row
                 gutter={[16, 16]}
                 style={{
@@ -128,7 +128,7 @@ const SelectCompany = ({ ...props }) => {
                           border={false}
                           type={"button"}
                           msg={"Copiado en portapapeles"}
-                          tooltipTitle={"Copiar"}
+                          tooltipTitle={"Copiar link de auto registro"}
                         />,
                       ]}
                     >

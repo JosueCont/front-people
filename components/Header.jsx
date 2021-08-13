@@ -11,6 +11,7 @@ import { css, Global } from "@emotion/core";
 import { connect } from "react-redux";
 import WebApi from "../api/webApi";
 import { companySelected } from "../redux/UserDuck";
+import { config } from "react-spring";
 
 const { Header } = Layout;
 
@@ -48,7 +49,6 @@ const headerCustom = ({
       setPerson(response.data);
     } catch (error) {
       setPerson({ photo: defaulPhoto });
-      console.log(error);
     }
   };
 
@@ -320,7 +320,7 @@ const headerCustom = ({
                     Asignar empresa
                   </Menu.Item>
 
-                  {accessIntranet !== "false" && (
+                  {config && config.intranet_enabled && (
                     <SubMenu
                       key="11"
                       title={<FormattedMessage id="header.intranet" />}

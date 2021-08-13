@@ -422,7 +422,7 @@ const homeScreen = ({ ...props }) => {
             border={false}
             type={"button"}
             msg={"Copiado en portapapeles"}
-            tooltipTitle={"Copiar"}
+            tooltipTitle={"Copiar link de auto registro"}
           />
         </Menu.Item>
       )}

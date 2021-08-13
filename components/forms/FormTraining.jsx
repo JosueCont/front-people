@@ -280,7 +280,7 @@ const FormTraining = ({ person_id = null }) => {
               name="accreditation_document"
               label="Documento de acreditación"
             >
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>

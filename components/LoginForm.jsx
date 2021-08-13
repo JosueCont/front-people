@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import Link from "next/link";
 import WebApi from "../api/webApi";
+import { ruleEmail } from "../utils/constant";
 
 const LoginForm = ({
   recoveryPsw = true,
@@ -16,6 +17,7 @@ const LoginForm = ({
   ...props
 }) => {
   const router = useRouter();
+  const [loginForm] = Form.useForm();
   const [loading, setLoading] = useState(null);
   const [errorLogin, setErrorLogin] = useState(false);
   const onFinish = (values) => {
@@ -106,12 +108,13 @@ const LoginForm = ({
           name="normal_login"
           className="login-form"
           layout="vertical"
+          form={loginForm}
           initialValues={{ remember: true }}
           onFinish={onFinish}
         >
           <Form.Item
             name="email"
-            rules={[ruleRequired]}
+            rules={[ruleRequired, ruleEmail]}
             label={"Correo electrónico"}
             labelAlign={"left"}
             className="font-color-khor"
@@ -119,6 +122,11 @@ const LoginForm = ({
             <Input
               style={{ marginTop: "5px" }}
               placeholder="Correo electrónico"
+              onBlur={(value) =>
+                loginForm.setFieldsValue({
+                  email: value.target.value.toLowerCase(),
+                })
+              }
             />
           </Form.Item>
           <Text className="font-color-khor"></Text>
@@ -147,14 +155,12 @@ const LoginForm = ({
           )}
           {recoveryPsw && (
             <Form.Item className={"font-color-khor"}>
-              <b>¿Olvidaste tu contraseña? </b>{" "}
+              <b>¿Olvidaste tu contraseña? </b>
               <span
                 onClick={() => props.setRecoverPasswordShow(true)}
                 className={"pointer text-link"}
-                
               >
-                {" "}
-                haz click aquí{" "}
+                haz click aquí
               </span>
             </Form.Item>
           )}

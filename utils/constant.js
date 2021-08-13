@@ -1,3 +1,13 @@
+export const ruleRequired = {
+  required: true,
+  message: "Este campo es requerido",
+};
+
+export const ruleEmail = {
+  type: "email",
+  message: "Ingrese un correo electrónico válido",
+};
+
 export const onlyNumeric = {
   pattern: /^[0-9]*$/,
   message: "Ingrese un valor numérico.",
