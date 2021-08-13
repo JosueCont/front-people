@@ -58,7 +58,7 @@ export default function SelectJob({
           allowClear
           style={props.style ? props.style : {}}
           onChange={props.onChange ? props.onChange : null}
-          notFoundContent={"No se encontraron resultado."}
+          notFoundContent={"No se encontraron resultados."}
         />
       </Form.Item>
     </>

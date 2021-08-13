@@ -233,7 +233,7 @@ const FormPhone = ({ person_id = null }) => {
             >
               <Select
                 options={typePhones}
-                notFoundContent={"No se encontraron resultado."}
+                notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
           </Col>
@@ -245,7 +245,7 @@ const FormPhone = ({ person_id = null }) => {
             >
               <Select
                 options={typeLines}
-                notFoundContent={"No se encontraron resultado."}
+                notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
           </Col>
