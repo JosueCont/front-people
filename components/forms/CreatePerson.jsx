@@ -57,21 +57,21 @@ const CreatePerson = ({
   }, [node]);
 
   const onFinish = (value) => {
+    console.log("FOMR-->> ", value);
     if (date !== "") {
       value.birth_date = date;
     }
     if (dateIngPlatform !== "") {
       value.register_date = dateIngPlatform;
     }
-    if (value.node) delete value["node"];
     if (value.department) delete value["department"];
     if (value.password != value.passwordTwo)
       message.error("Las contraseñas no coinciden.");
     else {
       delete value["passwordTwo"];
-      value.groups = [value.groups];
-      if (nodeId) value.node = nodeId;
-      else value.node = node;
+      if (value.groups) value.groups = [value.groups];
+      else delete value["groups"];
+      value.node = node;
       createPerson(value);
     }
   };
@@ -166,10 +166,6 @@ const CreatePerson = ({
     setDateIngPlatform(dateString);
   };
 
-  const closeDialog = () => {
-    props.close(false);
-    form.resetFields();
-  };
   const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   const changeNode = () => {
@@ -356,10 +352,7 @@ const CreatePerson = ({
                 </Col>
               )}
               <Col lg={20} xs={22} offset={1} className="center-content">
-                <span
-                  onClick={() => setModal(true)}
-                  className="text-link"
-                >
+                <span onClick={() => setModal(true)} className="text-link">
                   <Link href="">Ya me he registrado</Link>
                 </span>
               </Col>
