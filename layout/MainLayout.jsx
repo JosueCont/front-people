@@ -9,7 +9,6 @@ import { connect } from "react-redux";
 import { companySelected } from "../redux/UserDuck";
 import { css, Global } from "@emotion/core";
 import { getFlavor, getRouteFlavor } from "../utils/brand";
-import { createGlobalStyle } from 'styled-components';
 
 const { Content } = Layout;
 
@@ -42,19 +41,7 @@ const MainLayout = ({
   useEffect(() => {
     if (isBrowser()) {
       setMainLogo(window.sessionStorage.getItem("image"));
-      const GlobalStyle = createGlobalStyle`
-      body {
-        @font-face {
-            font-family: 'Lobster';
-            src: ` 
-            url ('' + flavor.font_family + '')` format('woff');
-           font-weight: bold;
-        font-style: normal;
-        font-display: swap;
-        };
-      }`
     }
-    console.log("Globalstyle", GlobalStyle)
   }, []);
 
   useEffect(() => {

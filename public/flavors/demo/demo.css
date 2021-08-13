@@ -1,0 +1,13 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family:"FontPeople";
+}
+
+@font-face {
+  font-family: "FontPeople";
+  src: url("../fonts/HelveticaRoundedLTStd-Bd.ttf");
+  font-weight: 400;
+  
+}

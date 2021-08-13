@@ -15,13 +15,23 @@ const Home = ({ ...props }) => {
   const [routeFlavor, setRouteFlavor] = useState({})
   const [configsTenant, setConfigsTenant] = useState({})
   const [loading, setLoading] = useState(true);
-
+  
   useLayoutEffect(() => {
     const flavor = getFlavor()
     const routeFlavor = getRouteFlavor()
 
     setFlavor(flavor)
     setRouteFlavor(routeFlavor)
+  
+    var head = document.head;
+    var link = document.createElement("link");
+    console.log("stylePath", routeFlavor)
+    link.type = "text/css";
+    link.href = routeFlavor + '/' +  flavor.stylePath;
+    link.rel = "stylesheet";
+    link.async = true;
+
+    head.appendChild(link);
   }, [])
 
   useLayoutEffect(() => {

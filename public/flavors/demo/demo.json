@@ -2,6 +2,7 @@
     "name": "laborlink",
     "font_family_name": "HelveticaRoundedLTStd-Bd",
     "font_family": "url(\"../public/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf\")",
-    "font_style": "woff"  
+    "font_style": "woff" ,
+    "stylePath": "demo.css"  
  
 }
