@@ -70,7 +70,6 @@ const FormDocument = ({ person_id }) => {
   };
 
   const showModalDelete = (id) => {
-    console.log("ID-->> ", id);
     confirm({
       title: titleDialogDelete,
       icon: <ExclamationCircleOutlined />,

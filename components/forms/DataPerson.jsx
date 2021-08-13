@@ -55,7 +55,6 @@ const DataPerson = ({
   }, []);
 
   const setFormPerson = (person) => {
-    console.log("Person-> ", person);
     formPerson.setFieldsValue({
       first_name: person.first_name,
       flast_name: person.flast_name,

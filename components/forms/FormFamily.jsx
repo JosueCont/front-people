@@ -152,7 +152,8 @@ const FormFamily = ({ person_id = null }) => {
       value.person = person_id;
       value.id = idFamily;
       value.birth_date = birthDateFam;
-      setLifeFamily(value.life);
+      // setLifeFamily(value.life);
+      value.life = lifeFamily;
       updateFamily(value);
     } else {
       value.person = person_id;
@@ -161,6 +162,7 @@ const FormFamily = ({ person_id = null }) => {
       saveFamily(value);
     }
   };
+
   const updateFormFamily = (item) => {
     formFamily.setFieldsValue({
       relationship: item.relationship.id,
@@ -299,7 +301,7 @@ const FormFamily = ({ person_id = null }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="liffe" label="¿Vive?">
+            <Form.Item name="life" label="¿Vive?">
               <Checkbox checked={lifeFamily} onChange={lifeFamilyShip} />
             </Form.Item>
           </Col>
