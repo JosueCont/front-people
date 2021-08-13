@@ -230,7 +230,7 @@ const SelectCompany = () => {
                   <Table
                     columns={columns}
                     dataSource={dataList}
-                    locale={{ emptyText: "No se encontraron resultadoss." }}
+                    locale={{ emptyText: "No se encontraron resultados." }}
                   />
                 </Col>
               </Row>

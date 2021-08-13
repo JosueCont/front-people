@@ -367,7 +367,7 @@ const UploadPayroll = () => {
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
-                      : "No se encontraron resultadoss.",
+                      : "No se encontraron resultados.",
                   }}
                   className={"mainTable"}
                 />

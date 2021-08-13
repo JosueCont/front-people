@@ -301,7 +301,7 @@ const FormPhone = ({ person_id = null }) => {
           locale={{
             emptyText: loadingTable
               ? "Cargando..."
-              : "No se encontraron resultadoss.",
+              : "No se encontraron resultados.",
           }}
         />
       </Spin>

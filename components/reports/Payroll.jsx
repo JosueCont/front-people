@@ -420,7 +420,7 @@ const PayrollReport = (props) => {
             locale={{
               emptyText: loading
                 ? "Cargando..."
-                : "No se encontraron resultadoss.",
+                : "No se encontraron resultados.",
             }}
           ></Table>
         </Col>

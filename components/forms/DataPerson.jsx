@@ -506,7 +506,7 @@ const DataPerson = ({ person = null, accessIntranet = false, ...props }) => {
                       showArrow
                       style={{ width: "100%" }}
                       placeholder="Perfiles de seguridad"
-                      notFoundContent={"No se encontraron resultadoss."}
+                      notFoundContent={"No se encontraron resultados."}
                     />
                   </Form.Item>
                 </Col>

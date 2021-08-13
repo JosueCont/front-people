@@ -254,7 +254,7 @@ const StatisticsPayroll = () => {
                   style={{ textAlign: "center", width: "100%", margin: "auto" }}
                 >
                   {" "}
-                  <h3>No se encontraron resultadoss</h3>
+                  <h3>No se encontraron resultados</h3>
                 </div>
               </>
             )}
