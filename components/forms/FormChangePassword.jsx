@@ -15,12 +15,17 @@ const FormChangePassword = ({ khonnectId }) => {
         "client-id": APP_ID,
         "Content-Type": "application/json",
       };
+      console.log("Value->> ", value);
       Axios.post(LOGIN_URL + "/password/change/direct/", value, {
         headers: headers,
       })
         .then((response) => {
-          message.success("Actualizado correctamente!!");
-          formPassword.resetFields();
+          if (response && response.data && response.data.level === "error") {
+            message.error("Error al actualizar, intente de nuevo");
+          } else {
+            message.success("Actualizado correctamente!!");
+            formPassword.resetFields();
+          }
         })
         .catch((error) => {
           message.error("Error al actualizar, intente de nuevo");
