@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Layout, Space } from "antd";
 import { useRouter } from "next/router";
 import HeaderCustom from "../components/Header";
@@ -8,6 +8,7 @@ import { userCompanyName } from "../libs/auth";
 import { connect } from "react-redux";
 import { companySelected } from "../redux/UserDuck";
 import { css, Global } from "@emotion/core";
+import { getFlavor, getRouteFlavor } from "../utils/brand";
 
 const { Content } = Layout;
 
@@ -24,6 +25,28 @@ const MainLayout = ({
   const [mainLogo, setMainLogo] = useState("");
   const [company, setCompany] = useState("");
   const isBrowser = () => typeof window !== "undefined";
+  const [flavor, setFlavor] = useState({})
+  const [routeFlavor, setRouteFlavor] = useState({})
+
+  useLayoutEffect(() => {
+    const flavor = getFlavor();
+    const routeFlavor = getRouteFlavor();
+
+    setFlavor(flavor)
+    setRouteFlavor(routeFlavor)
+
+    var head = document.head;
+    var link = document.createElement("link");
+    console.log("stylePath", routeFlavor)
+    link.type = "text/css";
+    link.href = routeFlavor + '/' + flavor.stylePath;
+    link.rel = "stylesheet";
+    link.async = true;
+
+    head.appendChild(link);
+
+  }, []);
+
 
   useEffect(() => {
     if (company == "" || company == undefined) {
@@ -52,6 +75,11 @@ const MainLayout = ({
       let response = props.companySelected();
     }
   }, [props.currentNode]);
+  console.log('flavor', flavor)
+  console.log('routeFlavor', routeFlavor)
+
+
+
 
   return (
     <Layout className="layout">
@@ -62,6 +90,10 @@ const MainLayout = ({
             --secondaryColor: ${props.config ? props.config.concierge_secondary_color : '#1890ff'};
             --login_image: ${props.config && props.config.concierge_logo_login ? 'url(' + props.config.concierge_logo_login + ')' : 'url("/images/login.jpg")'}; 
             --logo_login: ${props.config && props.config.concierge_logo ? 'url(' + props.config.concierge_logo + ')' : 'url("/images/Grupo Industrial Roche-Color.png")'}; 
+            --fontFamily: ${flavor && flavor.font_family ? flavor.font_family  : ' -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif'}; 
+            --fontStyle: ${flavor && flavor.font_family ? flavor.font_style  : 'normal'}; 
+            --srcFontFamily: ${flavor&& flavor.font_family ? 'url("' + routeFlavor + '/fonts/' + flavor.font_family + '")' : 'url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf")'}; 
+            --fontFormColor: ${props.config ? props.config.concierge_primary_color : '#000'};
               `}
       />
       <Helmet>

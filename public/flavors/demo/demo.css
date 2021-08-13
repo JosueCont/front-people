@@ -2,10 +2,15 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-  Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family:"FontPeople";
 }
 
+@font-face {
+  font-family: "FontPeople";
+  src: url("../public/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf");
+  font-weight: 400;
+  
+}
 
 
 a {
@@ -289,7 +294,7 @@ li.ant-menu-submenu-selected {
   border-color: var(--secondaryColor);
 }
 
-.ant-input-password:hover, .ant-input-password-focused {
+.ant-inpu-passwordt:hover, .ant-input-password-focused {
   border-color: var(--primaryColor) !important;
   border-right-width: 1px !important;
 }
@@ -419,20 +424,4 @@ li.ant-menu-submenu-selected {
 
 .ant-spin-text{
   color: var(--primaryColor);
-}
-
-.title-form-self-register {
-  padding: 1%;
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
-  background-color: var(--primaryColor);
-}
-
-.ant-modal-title{
-  color: var(--primaryColor);
-}
-
-.ant-form-item{
-  color: var(--primaryColor) !important;
 }

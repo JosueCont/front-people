@@ -247,7 +247,7 @@ const FormSelfRegistration = ({
                   lg={19}
                   xs={22}
                   offset={1}
-                  className="center-content"
+                  className="center-content font-color-khor"
                 >
                   ¿Ya tienes una cuenta?
                   <span
