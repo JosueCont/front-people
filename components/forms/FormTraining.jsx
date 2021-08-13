@@ -242,7 +242,7 @@ const FormTraining = ({ person_id = null }) => {
         <Row>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="school" label="Escuela" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -251,9 +251,9 @@ const FormTraining = ({ person_id = null }) => {
               label="Fecha Inicio-Fin"
               rules={[ruleRequired]}
             >
-              <Space direction="vertical" size={12}>
+              <Space direction="vertical" size={13}>
                 <RangePicker
-                  style={{ width: "100%" }}
+                  style={{ width: "100%", border: "1px green solid" }}
                   format={"YYYY-MM-DD"}
                   onChange={onChangeDateTrainig}
                 />

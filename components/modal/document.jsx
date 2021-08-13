@@ -74,6 +74,7 @@ const documentModal = ({ person_id, ...props }) => {
   };
 
   const uploadDocument = (data) => {
+    setDisabled(true);
     Axios.post(API_URL + "/person/document/", data)
       .then((response) => {
         message.success({
@@ -82,6 +83,7 @@ const documentModal = ({ person_id, ...props }) => {
         });
         closeDialog();
         deleteFileSelect();
+        setDisabled(false);
       })
       .catch((e) => {
         console.log(e);

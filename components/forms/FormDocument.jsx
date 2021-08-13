@@ -161,11 +161,13 @@ const FormDocument = ({ person_id }) => {
           }}
         />
       </Spin>
-      <DocumentModal
-        close={getModalDoc}
-        visible={modalDoc}
-        person_id={person_id}
-      />
+      {modalDoc && (
+        <DocumentModal
+          close={getModalDoc}
+          visible={modalDoc}
+          person_id={person_id}
+        />
+      )}
     </>
   );
 };
