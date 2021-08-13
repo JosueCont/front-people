@@ -97,20 +97,20 @@ div#__next > section.layout{
 header.ant-layout-header {
   padding-left: 10px;
   padding-right: 10px;
-  background-color: var(--bluePrimary) !important;
+  background-color: var(--primaryColor) !important;
 }
 header.ant-layout-header > ul {
-  background-color: var(--bluePrimary) !important;
+  background-color: var(--primaryColor) !important;
 }
 header.ant-layout-header > ul > li.ant-menu-item-selected {
-  background-color: var(--blueSecondary) !important;
+  background-color: var(--secondaryColor) !important;
 }
 
 header.ant-layout-header > ul > li.ant-menu-item-active,
 li.ant-menu-submenu-active,
 li.ant-menu-submenu-active::hover,
 li.ant-menu-submenu-active:focus-within {
-  background-color: var(--blueSecondary) !important;
+  background-color: var(--secondaryColor) !important;
   color: white;
 }
 
@@ -325,25 +325,25 @@ li.ant-menu-submenu-selected {
 }
 
 .ant-btn{
-  background-color: var(--primaryColor);
-  border-color: var(--primaryColor);
+  background-color: var(--primaryColor) !important;
+  border-color: var(--primaryColor) !important;
 }
 
 .ant-btn:hover{
   
-  background-color: var(--secondaryColor);
-  border-color: var(--secondaryColor);
+  background-color: var(--secondaryColor) !important;
+  border-color: var(--secondaryColor) !important;
 }
 
 
 .ant-btn-primary {
-  background-color: var(--primaryColor);
-  border-color: var(--primaryColor);
+  background-color: var(--primaryColor) !important;
+  border-color: var(--primaryColor) !important;
 }
 
 .ant-btn-primary:hover{
-  background-color: var(--secondaryColor);
-  border-color: var(--secondaryColor);
+  background-color: var(--secondaryColor) !important;
+  border-color: var(--secondaryColor) !important;
 }
 
 .text-link {
@@ -435,4 +435,63 @@ li.ant-menu-submenu-selected {
 
 .ant-form-item{
   color: var(--primaryColor) !important;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: var(--primaryColor) !important;
+    font-weight: 500;
+}
+
+.ant-tabs-tab:hover {
+     color: var(--primaryColor) !important;
+}
+
+.ant-btn > span {
+    display: inline-block;
+    color: var(--fontSpanColor) !important;
+}
+
+.ant-btn ant-btn-dangerous{
+  color: var(--primaryColor) !important;
+}
+
+.ant-switch-checked {
+  background-color: var(--primaryColor) !important;
+}
+.ant-pagination-item-active a {
+  color: var(--primaryColor) !important;
+}
+.ant-pagination-item-active {  
+  border-color: var(--primaryColor) !important;
+}
+
+header.ant-layout-header {
+    background-color: var(--primaryColor) !important;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+    background-color: var(--primaryColor) !important;
+    border-color: var(--primaryColor) !important;
+}
+
+.btn-add-person{
+  background: var(--primaryColor);
+  font-weight: "bold";
+  color: var(--fontSpanColor);
+  margin-top: auto;
+}
+
+.btn-filter{
+  background: var(--primaryColor);
+  font-weight: "bold";
+  color: var(--fontSpanColor);
+  margin-top: auto;
+}
+
+.ant-tooltip-inner{
+  background: var(--primaryColor) !important;
+}
+
+.ant-tooltip-arrow-content{
+ background: var(--primaryColor) !important;
 }

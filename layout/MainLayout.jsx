@@ -93,7 +93,8 @@ const MainLayout = ({
             --fontFamily: ${flavor && flavor.font_family ? flavor.font_family  : ' -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif'}; 
             --fontStyle: ${flavor && flavor.font_family ? flavor.font_style  : 'normal'}; 
             --srcFontFamily: ${flavor&& flavor.font_family ? 'url("' + routeFlavor + '/fonts/' + flavor.font_family + '")' : 'url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf")'}; 
-            --fontFormColor: ${props.config ? props.config.concierge_primary_color : '#000'};
+            --fontFormColor: ${flavor&& flavor.fontFormColor ? flavor.font_family : '#000'};
+            --fontSpanColor: ${flavor&& flavor.fontSpanColor ? flavor.fontSpanColor : '#000'};
               `}
       />
       <Helmet>
