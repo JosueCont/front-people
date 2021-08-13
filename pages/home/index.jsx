@@ -837,12 +837,7 @@ const homeScreen = ({ ...props }) => {
                         key={"#filtrar"}
                       >
                         <Button
-                          style={{
-                            background: "#fa8c16",
-                            fontWeight: "bold",
-                            color: "white",
-                            marginTop: "auto",
-                          }}
+                          className="btn-filter"
                           htmlType="submit"
                         >
                           <SearchOutlined />
@@ -867,12 +862,7 @@ const homeScreen = ({ ...props }) => {
               <Col style={{ display: "flex" }}>
                 {permissions.create && (
                   <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
+                    className="btn-add-person"
                     onClick={() => getModalPerson(true)}
                   >
                     <PlusOutlined />
