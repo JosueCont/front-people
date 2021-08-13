@@ -6,7 +6,8 @@ import { API_URL } from "../../config/config";
 
 export default function SelectJob({
   item = true,
-  titleLabel = false,
+  titleLabel = true,
+  rules = [],
   ...props
 }) {
   const [options, setOptions] = useState(null);
@@ -48,14 +49,15 @@ export default function SelectJob({
         key={"ItemJob"}
         name={props.name ? props.name : "job"}
         label={titleLabel ? "Puesto de trabajo" : ""}
+        rules={rules}
       >
         <Select
           key="SelectJob"
-          placeholder="Puesto de trabajo"
-          style={props.style ? props.style : {}}
           options={options}
-          onChange={props.onChange ? props.onChange : null}
+          placeholder="Puesto de trabajo"
           allowClear
+          style={props.style ? props.style : {}}
+          onChange={props.onChange ? props.onChange : null}
           notFoundContent={"No se encontraron resultado."}
         />
       </Form.Item>

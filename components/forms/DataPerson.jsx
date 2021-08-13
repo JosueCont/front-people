@@ -165,10 +165,14 @@ const DataPerson = ({ person = null, accessIntranet = false, ...props }) => {
       report_to: person.report_to,
       periodicity: person.periodicity,
       intranet_access: person.intranet_access,
-      person_department: person.department.id,
-      job: person.job.id,
     });
-    if (person.person_department) setDepartmentId(person.person_department);
+    if (person.person_department) {
+      formPerson.setFieldsValue({
+        person_department: person.department.id,
+        job: person.job.id,
+      });
+      setDepartmentId(person.person_department);
+    }
     if (person.person_type)
       formPerson.setFieldsValue({
         person_type: person.person_type,

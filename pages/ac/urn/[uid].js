@@ -94,7 +94,7 @@ const userRegister = ({ ...props }) => {
 
   return (
     <>
-      {props.currentNode ? (
+      {props.currentNode && props.config ? (
         <MainLayout
           logoNode={props.currentNode.image}
           companyName={props.currentNode.name}
@@ -119,6 +119,7 @@ const userRegister = ({ ...props }) => {
                 login={true}
                 modal={modal}
                 setModal={setModal}
+                config={props.config}
               />
             ) : (
               person && (
@@ -157,6 +158,7 @@ const userRegister = ({ ...props }) => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
   };
 };
 
