@@ -254,7 +254,7 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item name="bank" label="Banco" rules={[ruleRequired]}>
               <Select
                 options={banks}
-                notFoundContent={"No se encontraron resultado."}
+                notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
           </Col>
@@ -320,7 +320,7 @@ const FormBanckAccount = ({ person_id = null }) => {
           locale={{
             emptyText: loadingTable
               ? "Cargando..."
-              : "No se encontraron resultados.",
+              : "No se encontraron resultadoss.",
           }}
         />
       </Spin>

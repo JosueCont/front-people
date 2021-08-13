@@ -1973,7 +1973,7 @@ const personDetailForm = () => {
                             options={departments}
                             onChange={onChangeDepartment}
                             placeholder="Departamento"
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -1982,7 +1982,7 @@ const personDetailForm = () => {
                           <Select
                             options={jobs}
                             placeholder="Puesto de trabajo"
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2022,7 +2022,7 @@ const personDetailForm = () => {
                         <Form.Item name="report_to" label="Reporta a ">
                           <Select
                             options={people}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2033,7 +2033,7 @@ const personDetailForm = () => {
                             showArrow
                             style={{ width: "100%" }}
                             placeholder="Perfiles de seguridad"
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2071,7 +2071,7 @@ const personDetailForm = () => {
                         <Form.Item name="civil_status" label="Estado Civil">
                           <Select
                             options={civilStatus}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2079,7 +2079,7 @@ const personDetailForm = () => {
                         <Form.Item name="gender" label="Género">
                           <Select
                             options={genders}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2103,7 +2103,7 @@ const personDetailForm = () => {
                           <Select
                             options={periodicity}
                             placeholder="Selecciona una opción"
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2209,7 +2209,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={typePhones}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2221,7 +2221,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={typeLines}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2277,7 +2277,7 @@ const personDetailForm = () => {
                       locale={{
                         emptyText: loadingTable
                           ? "Cargando..."
-                          : "No se encontraron resultados.",
+                          : "No se encontraron resultadoss.",
                       }}
                     />
                   </Spin>
@@ -2300,7 +2300,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={typeStreet}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2392,7 +2392,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={relationship}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2436,7 +2436,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={genders}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2507,7 +2507,7 @@ const personDetailForm = () => {
                       locale={{
                         emptyText: loadingTable
                           ? "Cargando..."
-                          : "No se encontraron resultados.",
+                          : "No se encontraron resultadoss.",
                       }}
                     />
                   </Spin>
@@ -2532,7 +2532,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={relationship}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2588,7 +2588,7 @@ const personDetailForm = () => {
                       locale={{
                         emptyText: loadingTable
                           ? "Cargando..."
-                          : "No se encontraron resultados.",
+                          : "No se encontraron resultadoss.",
                       }}
                     />
                   </Spin>
@@ -2672,7 +2672,7 @@ const personDetailForm = () => {
                       locale={{
                         emptyText: loadingTable
                           ? "Cargando..."
-                          : "No se encontraron resultados.",
+                          : "No se encontraron resultadoss.",
                       }}
                     />
                   </Spin>
@@ -2697,7 +2697,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={banks}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2783,7 +2783,7 @@ const personDetailForm = () => {
                       locale={{
                         emptyText: loadingTable
                           ? "Cargando..."
-                          : "No se encontraron resultados.",
+                          : "No se encontraron resultadoss.",
                       }}
                     />
                   </Spin>
@@ -2810,7 +2810,7 @@ const personDetailForm = () => {
                       locale={{
                         emptyText: loadingTable
                           ? "Cargando..."
-                          : "No se encontraron resultados.",
+                          : "No se encontraron resultadoss.",
                       }}
                     />
                   </Spin>

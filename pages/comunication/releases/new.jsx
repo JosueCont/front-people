@@ -332,7 +332,7 @@ const Newrelease = () => {
                     <Select
                       style={{ width: 250 }}
                       options={typeMessage}
-                      notFoundContent={"No se encontraron resultado."}
+                      notFoundContent={"No se encontraron resultados."}
                     />
                   </Form.Item>
                   <Form.Item
@@ -401,7 +401,7 @@ const Newrelease = () => {
                           onChange={onChangeDepartment}
                           placeholder="Departamento"
                           key="departament_select"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                       <Form.Item
@@ -414,7 +414,7 @@ const Newrelease = () => {
                         <Select
                           options={jobs}
                           key="jobs_select"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>
@@ -429,7 +429,7 @@ const Newrelease = () => {
                         <Select
                           options={personType}
                           key="person_select"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                       <Form.Item
@@ -442,7 +442,7 @@ const Newrelease = () => {
                         <Select
                           options={genders}
                           key="gender_select"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>

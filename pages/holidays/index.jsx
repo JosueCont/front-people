@@ -179,7 +179,7 @@ const Holidays = () => {
                           key="select"
                           options={optionStatus}
                           allowClear
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>
@@ -247,7 +247,7 @@ const Holidays = () => {
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
-                      : "No se encontraron resultados.",
+                      : "No se encontraron resultadoss.",
                   }}
                 >
                   <Column

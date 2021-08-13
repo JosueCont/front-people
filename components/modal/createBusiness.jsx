@@ -70,7 +70,12 @@ const modalCreateBusiness = (props) => {
           <TextArea rows={4} />
         </Form.Item>
         <Form.Item name="parent" label="Nodo padre">
-          <Select showSearch placeholder="Empresa" options={business} notFoundContent={"No se encontraron resultado."}/>
+          <Select
+            showSearch
+            placeholder="Empresa"
+            options={business}
+            notFoundContent={"No se encontraron resultados."}
+          />
         </Form.Item>
       </Form>
     </Modal>

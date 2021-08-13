@@ -492,7 +492,7 @@ const DataPerson = ({ person = null, accessIntranet = false, ...props }) => {
                   <Form.Item name="report_to" label="Reporta a ">
                     <Select
                       options={people}
-                      notFoundContent={"No se encontraron resultado."}
+                      notFoundContent={"No se encontraron resultados."}
                     />
                   </Form.Item>
                 </Col>
@@ -506,7 +506,7 @@ const DataPerson = ({ person = null, accessIntranet = false, ...props }) => {
                       showArrow
                       style={{ width: "100%" }}
                       placeholder="Perfiles de seguridad"
-                      notFoundContent={"No se encontraron resultados."}
+                      notFoundContent={"No se encontraron resultadoss."}
                     />
                   </Form.Item>
                 </Col>
@@ -542,7 +542,7 @@ const DataPerson = ({ person = null, accessIntranet = false, ...props }) => {
                 <Form.Item name="civil_status" label="Estado Civil">
                   <Select
                     options={civilStatus}
-                    notFoundContent={"No se encontraron resultado."}
+                    notFoundContent={"No se encontraron resultados."}
                   />
                 </Form.Item>
               </Col>
@@ -550,7 +550,7 @@ const DataPerson = ({ person = null, accessIntranet = false, ...props }) => {
                 <Form.Item name="gender" label="Género">
                   <Select
                     options={genders}
-                    notFoundContent={"No se encontraron resultado."}
+                    notFoundContent={"No se encontraron resultados."}
                   />
                 </Form.Item>
               </Col>
@@ -578,7 +578,7 @@ const DataPerson = ({ person = null, accessIntranet = false, ...props }) => {
                   <Select
                     options={periodicity}
                     placeholder="Selecciona una opción"
-                    notFoundContent={"No se encontraron resultado."}
+                    notFoundContent={"No se encontraron resultados."}
                   />
                 </Form.Item>
               </Col>

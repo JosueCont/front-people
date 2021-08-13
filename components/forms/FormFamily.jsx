@@ -260,7 +260,7 @@ const FormFamily = ({ person_id = null }) => {
             >
               <Select
                 options={relationship}
-                notFoundContent={"No se encontraron resultado."}
+                notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
           </Col>
@@ -296,7 +296,7 @@ const FormFamily = ({ person_id = null }) => {
             <Form.Item name="gender" label="Género" rules={[ruleRequired]}>
               <Select
                 options={genders}
-                notFoundContent={"No se encontraron resultado."}
+                notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
           </Col>
@@ -358,7 +358,7 @@ const FormFamily = ({ person_id = null }) => {
           locale={{
             emptyText: loadingTable
               ? "Cargando..."
-              : "No se encontraron resultados.",
+              : "No se encontraron resultadoss.",
           }}
         />
       </Spin>

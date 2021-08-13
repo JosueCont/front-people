@@ -153,7 +153,7 @@ const Lending = () => {
                           key="select_type"
                           options={typeOptions}
                           allowClear
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>
@@ -169,7 +169,7 @@ const Lending = () => {
                           options={optionStatus}
                           placeholder="Todos"
                           allowClear
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>
@@ -247,7 +247,7 @@ const Lending = () => {
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
-                      : "No se encontraron resultados.",
+                      : "No se encontraron resultadoss.",
                   }}
                 >
                   <Column

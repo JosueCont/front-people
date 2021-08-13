@@ -314,7 +314,7 @@ const FormTraining = ({ person_id = null }) => {
           locale={{
             emptyText: loadingTable
               ? "Cargando..."
-              : "No se encontraron resultados.",
+              : "No se encontraron resultadoss.",
           }}
         />
       </Spin>

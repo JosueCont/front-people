@@ -724,7 +724,7 @@ const GroupAdd = () => {
                                 (perm) => perm.module !== "Catalogos"
                               )}
                               locale={{
-                                emptyText: "No se encontraron resultados.",
+                                emptyText: "No se encontraron resultadoss.",
                               }}
                             />
                           </Col>
@@ -740,7 +740,7 @@ const GroupAdd = () => {
                                 (perm) => perm.module === "Catalogos"
                               )}
                               locale={{
-                                emptyText: "No se encontraron resultados.",
+                                emptyText: "No se encontraron resultadoss.",
                               }}
                             />
                           </Col>
@@ -773,7 +773,7 @@ const GroupAdd = () => {
                                   perm.module === "SolicitudCuentas"
                               )}
                               locale={{
-                                emptyText: "No se encontraron resultados.",
+                                emptyText: "No se encontraron resultadoss.",
                               }}
                             />
                           </Col>
@@ -792,7 +792,7 @@ const GroupAdd = () => {
                                   perm.module === "Permisos"
                               )}
                               locale={{
-                                emptyText: "No se encontraron resultados.",
+                                emptyText: "No se encontraron resultadoss.",
                               }}
                             />
                           </Col>

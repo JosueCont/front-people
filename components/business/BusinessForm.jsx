@@ -479,7 +479,7 @@ const businessForm = () => {
                 locale={{
                   emptyText: loading
                     ? "Cargando..."
-                    : "No se encontraron resultados.",
+                    : "No se encontraron resultadoss.",
                 }}
               />
             ) : (
@@ -555,7 +555,7 @@ const businessForm = () => {
               placeholder="Select a person"
               optionFilterProp="children"
               name={"fNode"}
-              notFoundContent={"No se encontraron resultado."}
+              notFoundContent={"No se encontraron resultados."}
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }

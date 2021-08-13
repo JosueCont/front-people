@@ -370,7 +370,7 @@ const CollaboratorsReport = (props) => {
             locale={{
               emptyText: loading
                 ? "Cargando..."
-                : "No se encontraron resultados.",
+                : "No se encontraron resultadoss.",
             }}
           ></Table>
         </Col>

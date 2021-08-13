@@ -149,7 +149,7 @@ const GroupView = ({ ...props }) => {
           locale={{
             emptyText: loading
               ? "Cargando..."
-              : "No se encontraron resultados.",
+              : "No se encontraron resultadoss.",
           }}
         >
           <Column

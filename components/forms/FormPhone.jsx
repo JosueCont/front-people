@@ -233,7 +233,7 @@ const FormPhone = ({ person_id = null }) => {
             >
               <Select
                 options={typePhones}
-                notFoundContent={"No se encontraron resultado."}
+                notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
           </Col>
@@ -245,7 +245,7 @@ const FormPhone = ({ person_id = null }) => {
             >
               <Select
                 options={typeLines}
-                notFoundContent={"No se encontraron resultado."}
+                notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
           </Col>
@@ -301,7 +301,7 @@ const FormPhone = ({ person_id = null }) => {
           locale={{
             emptyText: loadingTable
               ? "Cargando..."
-              : "No se encontraron resultados.",
+              : "No se encontraron resultadoss.",
           }}
         />
       </Spin>

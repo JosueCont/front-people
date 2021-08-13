@@ -287,7 +287,7 @@ const PermissionsReport = (props) => {
                     key="select"
                     options={optionStatus}
                     allowClear
-                    notFoundContent={"No se encontraron resultado."}
+                    notFoundContent={"No se encontraron resultados."}
                   />
                 </Form.Item>
               </Col>
@@ -354,7 +354,7 @@ const PermissionsReport = (props) => {
             locale={{
               emptyText: loading
                 ? "Cargando..."
-                : "No se encontraron resultados.",
+                : "No se encontraron resultadoss.",
             }}
           ></Table>
         </Col>

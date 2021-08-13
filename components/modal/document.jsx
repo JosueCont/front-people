@@ -114,7 +114,7 @@ const documentModal = ({ person_id, ...props }) => {
               <Select
                 options={documentType}
                 placeholder="Tipo de documento"
-                notFoundContent={"No se encontraron resultados."}
+                notFoundContent={"No se encontraron resultadoss."}
               />
             </Form.Item>
             <Form.Item>

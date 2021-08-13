@@ -157,7 +157,7 @@ const FormDocument = ({ person_id }) => {
           locale={{
             emptyText: loadingTable
               ? "Cargando..."
-              : "No se encontraron resultados.",
+              : "No se encontraron resultadoss.",
           }}
         />
       </Spin>

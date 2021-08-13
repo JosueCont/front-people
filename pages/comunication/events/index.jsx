@@ -260,7 +260,7 @@ const Events = () => {
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
-                      : "No se encontraron resultados.",
+                      : "No se encontraron resultadoss.",
                   }}
                 >
                   <Column title="ID" dataIndex="id" key="id"></Column>

@@ -54,7 +54,7 @@ const UserNotification = () => {
             <Table
               dataSource={list}
               key="releases_table"
-              locale={{ emptyText: "No se encontraron resultados." }}
+              locale={{ emptyText: "No se encontraron resultadoss." }}
             >
               <Column
                 title="Nombre"
