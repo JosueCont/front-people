@@ -20,6 +20,7 @@ import { genders, ruleEmail, ruleRequired } from "../../utils/constant";
 import SelectDepartment from "../selects/SelectDepartment";
 import SelectJob from "../selects/SelectJob";
 import { connect } from "react-redux";
+import moment from "moment";
 
 const FormSelfRegistration = ({
   hideProfileSecurity = true,
@@ -38,6 +39,7 @@ const FormSelfRegistration = ({
   const [departmentId, setDepartmentId] = useState(null);
   const [date, setDate] = useState("");
   const [disabled, setDisabled] = useState(false);
+  const toDay = moment().format("YYYY-MM-DD").toString();
 
   useEffect(() => {
     if (node) {
@@ -53,8 +55,10 @@ const FormSelfRegistration = ({
       message.error("Las contraseñas no coinciden.");
     else {
       delete value["passwordTwo"];
+      value.register_date = toDay;
       value.node = node;
       setDisabled(true);
+
       createPerson(value);
     }
   };
@@ -249,7 +253,7 @@ const FormSelfRegistration = ({
                   offset={1}
                   className="center-content"
                 >
-                  ¿Ya tieens una ceunta?
+                  ¿Ya tienes una ceunta?
                   <span
                     style={{ marginLeft: "4px" }}
                     onClick={() => setModal(true)}
