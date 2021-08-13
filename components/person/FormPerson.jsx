@@ -149,7 +149,7 @@ const FormPerson = ({
 
   const ruleEmail = {
     type: "email",
-    message: "Ingrese un correo electronico valido",
+    message: "Ingrese un correo electrónico valido",
   };
 
   function onChange(date, dateString) {

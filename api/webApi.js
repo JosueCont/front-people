@@ -73,7 +73,7 @@ class WebApi {
   static getJobSelect(data) {
     return WebApi.ApisType(`/person/job/?department=${data}`, "get");
   }
-  
+
   static filterPerson(data) {
     return WebApi.ApisType(`/person/person/get_list_persons/`, "post", data);
   }
@@ -150,7 +150,7 @@ class WebApi {
   }
 
   static getBank(data) {
-    return WebApi.ApisType(`/setup/bank/`, "get");
+    return WebApi.ApisType(`/setup/banks/`, "get");
   }
 
   static getBankAccount(data) {

@@ -21,9 +21,11 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import DocumentModal from "../../components/modal/document";
+import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 
 const FormDocument = ({ person_id }) => {
   const { Title } = Typography;
+  const { confirm } = Modal;
   const [documents, setDocuments] = useState([]);
   const [modalDoc, setModalDoc] = useState(false);
   const [loadingTable, setLoadingTable] = useState(true);
@@ -69,10 +71,9 @@ const FormDocument = ({ person_id }) => {
 
   const showModalDelete = (id) => {
     confirm({
-      title: "¿Está seguro de querer eliminarlo?",
+      title: titleDialogDelete,
       icon: <ExclamationCircleOutlined />,
-      content:
-        "Al eliminar este registro perderá todos los datos relacionados a el de manera permanente",
+      content: messageDialogDelete,
       okText: "Si",
       okType: "danger",
       cancelText: "Cancelar",
@@ -163,7 +164,7 @@ const FormDocument = ({ person_id }) => {
       <DocumentModal
         close={getModalDoc}
         visible={modalDoc}
-        person={person_id}
+        person_id={person_id}
       />
     </>
   );

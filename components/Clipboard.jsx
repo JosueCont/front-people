@@ -8,6 +8,7 @@ const Clipboard = ({
   type = "button",
   tooltipTitle = "Tooltip title",
   border = true,
+  title = null,
   ...props
 }) => {
   const copyText = (value) => {
@@ -26,7 +27,7 @@ const Clipboard = ({
         onSuccess={(value) => copyText(value)}
       >
         <span class="tooltiptext">{tooltipTitle}</span>
-        <LinkOutlined />
+        {title ? <span>{title}</span> : <LinkOutlined />}
       </ClipboardButton>
     </>
   );
