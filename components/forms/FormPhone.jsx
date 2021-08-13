@@ -97,7 +97,7 @@ const FormPhone = ({ person_id = null }) => {
       setLoadingTable(true);
 
       message.success({
-        content: "Eliminado con exito.",
+        content: "Eliminado con éxito.",
         className: "custom-class",
       });
       getPhone();

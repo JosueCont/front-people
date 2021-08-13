@@ -87,7 +87,7 @@ const Groups = () => {
             });
           } else {
             message.success({
-              content: "Grupo eliminado exitosamente",
+              content: "Grupo eliminado éxitosamente",
               className: "custom-class",
               style: {
                 marginTop: "20vh",
@@ -277,7 +277,16 @@ const Groups = () => {
         </Row>
         <Row>
           <Col span={24}>
-            <Table columns={columns} dataSource={groups} loading={loading} locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}/>
+            <Table
+              columns={columns}
+              dataSource={groups}
+              loading={loading}
+              locale={{
+                emptyText: loading
+                  ? "Cargando..."
+                  : "No se encontraron resultados.",
+              }}
+            />
           </Col>
         </Row>
       </div>

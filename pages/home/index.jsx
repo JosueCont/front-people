@@ -84,12 +84,10 @@ const homeScreen = ({ ...props }) => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
     // getPerson();
-    nodeId = userCompanyId();
-    if (nodeId) {
-      filterPersonName();
-    }
+
+    if (props.currentNode) filterPersonName();
     getDepartmets();
-  }, []);
+  }, [props.currentNode]);
 
   const searchPermissions = (data) => {
     const perms = {};
@@ -127,7 +125,7 @@ const homeScreen = ({ ...props }) => {
   };
 
   const filterPersonName = async () => {
-    filters.node = nodeId;
+    filters.node = props.currentNode.id;
     setLoading(true);
     try {
       let response = await WebApi.filterPerson(filters);
@@ -585,7 +583,7 @@ const homeScreen = ({ ...props }) => {
     if (extension === "xlsx") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
-      formData.append("node_id", nodeId);
+      formData.append("node_id", props.currentNode.id);
       setLoading(true);
       Axios.post(API_URL + `/person/person/import_xls/`, formData)
         .then((response) => {
@@ -680,7 +678,7 @@ const homeScreen = ({ ...props }) => {
     setDepartments([]);
     setJobs([]);
     try {
-      let response = await WebApi.filterDepartmentByNode(nodeId);
+      let response = await WebApi.filterDepartmentByNode(props.currentNode.id);
       let dep = response.data.results;
       dep = dep.map((a) => {
         return { label: a.name, value: a.id };

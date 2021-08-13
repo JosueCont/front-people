@@ -183,12 +183,16 @@ const FormEmergencyContact = ({ person_id = null }) => {
     {
       title: "Teléfono 1",
       width: 200,
-      dataIndex: "phone_one",
+      render: (item) => {
+        return <div style={{ maxWidth: 200 }}>{item.phone_one}</div>;
+      },
     },
     {
       title: "Teléfono 2",
       width: 200,
-      dataIndex: "phone_two",
+      render: (item) => {
+        return <div style={{ maxWidth: 100 }}>{item.phone_two}</div>;
+      },
     },
     {
       title: "Dirección",

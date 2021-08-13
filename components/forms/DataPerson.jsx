@@ -95,6 +95,7 @@ const DataPerson = ({
         register_date: moment(person.register_date),
       });
 
+    setPhoto(person.photo);
     setDateAdmission(person.date_of_admission);
     setBirthDate(person.birth_date);
     setIsActive(person.is_active);

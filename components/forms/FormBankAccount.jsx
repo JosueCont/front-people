@@ -118,7 +118,7 @@ const FormBanckAccount = ({ person_id = null }) => {
     try {
       let response = await WebApi.deleteBankAccount(data);
       message.success({
-        content: "Eliminado con exito.",
+        content: "Eliminado con éxito.",
         className: "custom-class",
       });
       if (upBankAcc) {
@@ -280,14 +280,7 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="card_number"
               label="Número de tarjeta"
-              rules={[
-                ruleRequired,
-                {
-                  pattern: /^[\d]{0,16}$/,
-                  message: "El no  debe tener más de 16 dígitos",
-                },
-                onlyNumeric,
-              ]}
+              rules={[ruleRequired, onlyNumeric]}
             >
               <Input maxLength={16} />
             </Form.Item>

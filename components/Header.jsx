@@ -39,7 +39,6 @@ const headerCustom = ({
     try {
       const user = JSON.parse(Cookie.get("token"));
       let response = await WebApi.personForKhonnectId({ id: user.user_id });
-      let company = props.companySelected(response.data.node);
       if (!response.data.photo) response.data.photo = defaulPhoto;
       let personName =
         response.data.first_name + " " + response.data.flast_name;
@@ -162,7 +161,12 @@ const headerCustom = ({
             style={{ paddingRight: "48px" }}
           >
             <div
-              onClick={() => onClickImage && router.push({ pathname: "/home" })}
+              onClick={() =>
+                onClickImage &&
+                person.nodes &&
+                props.currentNode &&
+                router.push({ pathname: "/home" })
+              }
               className="logo"
               key="content_logo"
               style={{

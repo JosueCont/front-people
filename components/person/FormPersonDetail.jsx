@@ -829,7 +829,7 @@ const personDetailForm = () => {
     Axios.delete(API_URL + `/person/phone/${data}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         setLoading(false);
@@ -1062,7 +1062,7 @@ const personDetailForm = () => {
     Axios.delete(API_URL + `/person/family/${data}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         setLoading(false);
@@ -1497,7 +1497,7 @@ const personDetailForm = () => {
     Axios.delete(API_URL + `/person/bank-account/${data}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         setLoading(false);
