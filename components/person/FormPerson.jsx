@@ -23,6 +23,8 @@ import {
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
+import { ruleEmail } from "../../utils/constant";
+import moment from "moment";
 
 const FormPerson = ({
   hideProfileSecurity = true,
@@ -146,11 +148,6 @@ const FormPerson = ({
       value: 3,
     },
   ];
-
-  const ruleEmail = {
-    type: "email",
-    message: "Ingrese un correo electrónico valido",
-  };
 
   function onChange(date, dateString) {
     setDate(dateString);
@@ -288,7 +285,15 @@ const FormPerson = ({
               </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
-                  <Input type="email" placeholder="E-mail" />
+                  <Input
+                    type="email"
+                    placeholder="E-mail"
+                    onBlur={(value) =>
+                      form.setFieldsValue({
+                        email: value.target.value.toLowerCase(),
+                      })
+                    }
+                  />
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
@@ -337,6 +342,7 @@ const FormPerson = ({
                   <DatePicker
                     style={{ width: "100%" }}
                     onChange={onChangeIngPlatform}
+                    defaultValue={moment()}
                     moment={"YYYY-MM-DD"}
                     placeholder="Fecha de ingreso a la plataforma"
                   />

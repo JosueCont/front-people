@@ -9,7 +9,6 @@ import FormBankAccount from "../forms/FormBankAccount";
 import FormGeneralData from "../forms/FormGeneralData";
 import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
-import { messageDialogDelete } from "../../utils/constant";
 
 const DetailPerson = ({
   person,

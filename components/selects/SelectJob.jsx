@@ -4,7 +4,11 @@ import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-export default function SelectJob({ item = true, ...props }) {
+export default function SelectJob({
+  item = true,
+  titleLabel = false,
+  ...props
+}) {
   const [options, setOptions] = useState(null);
   const route = useRouter();
   const { Option } = Select;
@@ -43,7 +47,7 @@ export default function SelectJob({ item = true, ...props }) {
       <Form.Item
         key={"ItemJob"}
         name={props.name ? props.name : "job"}
-        label={props.label ? props.label : "Empresa"}
+        label={titleLabel ? "Puesto de trabajo" : ""}
       >
         <Select
           key="SelectJob"

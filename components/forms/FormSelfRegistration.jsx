@@ -2,31 +2,25 @@ import {
   Form,
   Input,
   Layout,
-  Modal,
   DatePicker,
   Button,
-  Space,
   Select,
   message,
   Row,
   Col,
-  Switch,
 } from "antd";
 import Axios from "axios";
 import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
 import { useState, useEffect } from "react";
-import {
-  getAccessIntranet,
-  userCompanyId,
-  userCompanyName,
-} from "../../libs/auth";
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
-import { connect } from "react-redux";
+import { getAccessIntranet, userCompanyId } from "../../libs/auth";
 import WebApi from "../../api/webApi";
 import Link from "next/link";
 import LoginModal from "../modal/LoginModal";
+import { genders, ruleEmail, ruleRequired } from "../../utils/constant";
+import SelectDepartment from "../selects/SelectDepartment";
+import SelectJob from "../selects/SelectJob";
 
-const CreatePerson = ({
+const FormSelfRegistration = ({
   hideProfileSecurity = true,
   intranetAccess = true,
   node = null,
@@ -39,19 +33,13 @@ const CreatePerson = ({
   ...props
 }) => {
   const [form] = Form.useForm();
-  const [groups, setGroups] = useState([]);
   const [personType, setPersonType] = useState([]);
-  const [jobs, setJobs] = useState([]);
+  const [departmentId, setDepartmentId] = useState(null);
   const [date, setDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
 
-  const [departments, setDepartments] = useState("");
-  let nodeId = userCompanyId();
-  let accessIntranet = getAccessIntranet();
-
   useEffect(() => {
     if (node) {
-      changeNode();
       getValueSelects();
     }
   }, [node]);
@@ -76,31 +64,6 @@ const CreatePerson = ({
   };
 
   const getValueSelects = async (id) => {
-    const headers = {
-      "client-id": APP_ID,
-      "Content-Type": "application/json",
-    };
-
-    let company = `?company=${node}`;
-
-    /////PERMSS GROUPS
-    Axios.get(LOGIN_URL + "/group/list/" + company, {
-      headers: headers,
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          let group = response.data.data;
-          group = group.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setGroups(group);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-
-    /////PERSON TYPE
     Axios.get(API_URL + `/person/person-type/`)
       .then((response) => {
         if (response.status === 200) {
@@ -137,75 +100,15 @@ const CreatePerson = ({
     }
   };
 
-  const genders = [
-    {
-      label: "Masculino",
-      value: 1,
-    },
-    {
-      label: "Femenino",
-      value: 2,
-    },
-    {
-      label: "Otro",
-      value: 3,
-    },
-  ];
-
-  const ruleEmail = {
-    type: "email",
-    message: "Ingrese un correo electrónico valido",
-  };
-
   function onChange(date, dateString) {
     setDate(dateString);
   }
 
-  const onChangeIngPlatform = (date, dateString) => {
-    setDateIngPlatform(dateString);
-  };
-
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
-
-  const changeNode = () => {
-    form.setFieldsValue({
-      job: null,
-      department: null,
-    });
-    setDepartments([]);
-    Axios.get(API_URL + `/business/department/?node=${node}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let dep = response.data.results;
-          dep = dep.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setDepartments(dep);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const onChangeDepartment = (value) => {
-    ////JOBS
     form.setFieldsValue({
       job: null,
     });
-    Axios.get(API_URL + `/person/job/?department=${value}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let job = response.data;
-          job = job.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setJobs(job);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    setDepartmentId(value);
   };
 
   return (
@@ -234,18 +137,21 @@ const CreatePerson = ({
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="person_department">
-                  <Select
-                    options={departments}
-                    onChange={onChangeDepartment}
-                    placeholder="Departamento"
-                  />
-                </Form.Item>
+                <SelectDepartment
+                  onChange={onChangeDepartment}
+                  name="person_department"
+                  companyId={node}
+                  style={false}
+                  titleLabel={false}
+                />
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="job">
-                  <Select options={jobs} placeholder="Puesto de trabajo" />
-                </Form.Item>
+                <SelectJob
+                  departmentId={departmentId}
+                  name="job"
+                  style={false}
+                  titleLabel={false}
+                />
               </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleRequired]} name="first_name">
@@ -278,13 +184,17 @@ const CreatePerson = ({
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="code">
-                  <Input type="text" placeholder="Núm. empleado" />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
-                  <Input type="email" placeholder="E-mail" />
+                  <Input
+                    type="email"
+                    placeholder="E-mail"
+                    onBlur={(value) => {
+                      console.log("DATA-> ", value.target.value),
+                        form.setFieldsValue({
+                          email: value.target.value.toLowerCase(),
+                        });
+                    }}
+                  />
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
@@ -314,42 +224,6 @@ const CreatePerson = ({
                   <Input.Password type="text" placeholder="Contraseña" />
                 </Form.Item>
               </Col>
-              {accessIntranet !== "false" && intranetAccess && (
-                <Col lg={7} xs={22} offset={1}>
-                  <Form.Item
-                    name="intranet_access"
-                    label="Acceso a la intranet"
-                    valuePropName="checked"
-                  >
-                    <Switch
-                      checkedChildren={<CheckOutlined />}
-                      unCheckedChildren={<CloseOutlined />}
-                    />
-                  </Form.Item>
-                </Col>
-              )}
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item>
-                  <DatePicker
-                    style={{ width: "100%" }}
-                    onChange={onChangeIngPlatform}
-                    moment={"YYYY-MM-DD"}
-                    placeholder="Fecha de ingreso a la plataforma"
-                  />
-                </Form.Item>
-              </Col>
-              {hideProfileSecurity && (
-                <Col lg={7} xs={22} offset={1}>
-                  <Form.Item rules={[ruleRequired]} name="groups">
-                    <Select
-                      options={groups}
-                      showArrow
-                      style={{ width: "100%" }}
-                      placeholder="Perfiles de seguridad"
-                    ></Select>
-                  </Form.Item>
-                </Col>
-              )}
               <Col lg={20} xs={22} offset={1} className="center-content">
                 <span onClick={() => setModal(true)} className="text-link">
                   <Link href="">Ya me he registrado</Link>
@@ -376,4 +250,4 @@ const CreatePerson = ({
   );
 };
 
-export default CreatePerson;
+export default FormSelfRegistration;

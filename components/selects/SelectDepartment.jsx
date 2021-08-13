@@ -3,7 +3,11 @@ import { Select, Form } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-export default function SelectDepartment({ item = true, ...props }) {
+export default function SelectDepartment({
+  item = true,
+  titleLabel = true,
+  ...props
+}) {
   const [options, setOptions] = useState([]);
   const [companyId, setCompanyId] = useState(props.companyId);
 
@@ -40,7 +44,7 @@ export default function SelectDepartment({ item = true, ...props }) {
       <Form.Item
         key="ItemDepartment"
         name={props.name ? props.name : "department"}
-        label="Departamento"
+        label={titleLabel ? "Departamento" : ""}
       >
         <Select
           key="SelectDepartament"

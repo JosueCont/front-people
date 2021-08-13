@@ -37,7 +37,7 @@ const EmployeeDetailPage = () => {
             <DetailPerson person={person} setLoading={setLoading} />
           ) : (
             <div className="center-content" style={{ padding: "20%" }}>
-              <Spin spinning={true} />
+              <Spin tip="Cargando..." spinning={true} />
             </div>
           )}
         </Content>
