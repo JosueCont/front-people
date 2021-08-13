@@ -112,7 +112,7 @@ const FormTraining = ({ person_id = null }) => {
     Axios.delete(API_URL + `/person/training/${id}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         if (upTraining) {

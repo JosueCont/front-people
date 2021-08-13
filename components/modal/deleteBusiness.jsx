@@ -11,7 +11,7 @@ const modalDeleteBusiness = (props) => {
     axios
       .delete(API_URL + "/business/node/" + props.node + "/")
       .then(function (response) {
-        message.success("Eliminado con exito.");
+        message.success("Eliminado con éxito.");
         closeDialog();
       })
       .catch(function (error) {

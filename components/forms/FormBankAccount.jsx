@@ -118,7 +118,7 @@ const FormBanckAccount = ({ person_id = null }) => {
     try {
       let response = await WebApi.deleteBankAccount(data);
       message.success({
-        content: "Eliminado con exito.",
+        content: "Eliminado con éxito.",
         className: "custom-class",
       });
       if (upBankAcc) {

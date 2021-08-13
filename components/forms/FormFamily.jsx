@@ -121,7 +121,7 @@ const FormFamily = ({ person_id = null }) => {
       setLoadingTable(true);
       let response = await WebApi.deleteFamily(data);
       message.success({
-        content: "Eliminado con exito.",
+        content: "Eliminado con éxito.",
         className: "custom-class",
       });
       if (upFamily) {
