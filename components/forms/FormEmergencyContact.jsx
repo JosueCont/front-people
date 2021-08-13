@@ -20,6 +20,11 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import WebApi from "../../api/webApi";
+import {
+  messageDialogDelete,
+  onlyNumeric,
+  titleDialogDelete,
+} from "../../utils/constant";
 
 const FormEmergencyContact = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -171,22 +176,30 @@ const FormEmergencyContact = ({ person_id = null }) => {
   const colContact = [
     {
       title: "Nombre",
-      dataIndex: "fullname",
+      render: (item) => {
+        return <div style={{ maxWidth: 150 }}>{item.address}</div>;
+      },
     },
     {
       title: "Teléfono 1",
+      width: 200,
       dataIndex: "phone_one",
     },
     {
       title: "Teléfono 2",
+      width: 200,
       dataIndex: "phone_two",
     },
     {
       title: "Dirección",
-      dataIndex: "address",
+      width: 200,
+      render: (item) => {
+        return <div style={{ maxWidth: 200 }}>{item.address}</div>;
+      },
     },
     {
       title: "Opciones",
+      width: 200,
       render: (item) => {
         return (
           <div>
@@ -241,30 +254,30 @@ const FormEmergencyContact = ({ person_id = null }) => {
               label="Nombre completo"
               rules={[ruleRequired]}
             >
-              <Input />
+              <Input maxLength={100} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="phone_one"
               label="Teléfono 1"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="phone_two"
               label="Teléfono 2"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={13} xs={22} offset={1}>
             <Form.Item name="address" label="Dirección" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={100} />
             </Form.Item>
           </Col>
         </Row>
@@ -278,6 +291,8 @@ const FormEmergencyContact = ({ person_id = null }) => {
       </Form>
       <Spin tip="Cargando..." spinning={loadingTable}>
         <Table
+          className={"mainTable"}
+          size="small"
           columns={colContact}
           dataSource={contactEmergency}
           locale={{

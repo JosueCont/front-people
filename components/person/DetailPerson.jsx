@@ -8,11 +8,13 @@ import FormEmergencyContact from "../forms/FormEmergencyContact";
 import FormBankAccount from "../forms/FormBankAccount";
 import FormGeneralData from "../forms/FormGeneralData";
 import FormChangePassword from "../forms/FormChangePassword";
+import FormDocument from "../forms/FormDocument";
+import { messageDialogDelete } from "../../utils/constant";
 
 const DetailPerson = ({
   person,
   setLoading,
-  deletePerson,
+  deletePerson = true,
   hideProfileSecurity = true,
   ...props
 }) => {
@@ -60,11 +62,14 @@ const DetailPerson = ({
           <TabPane tab="Cuentas bancarias" key="tab_7">
             <FormBankAccount person_id={person.id} />
           </TabPane>
-          <TabPane tab="Cambiar contraseña" key="tab_8">
-            <FormChangePassword khonnectId={person.khonnect_id} />
+          <TabPane tab="Documentos" key="tab_8">
+            <FormDocument person_id={person.id} />
+          </TabPane>
+          <TabPane tab="Cambiar contraseña" key="tab_9">
+            <FormChangePassword khonnectId={person.id} />
           </TabPane>
           {deletePerson && (
-            <TabPane tab="Eliminar persona" key="tab_9"></TabPane>
+            <TabPane tab="Eliminar persona" key="tab_10"></TabPane>
           )}
         </Tabs>
       </Card>

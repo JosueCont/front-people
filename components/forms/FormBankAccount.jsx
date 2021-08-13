@@ -20,6 +20,12 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import WebApi from "../../api/webApi";
+import {
+  messageDialogDelete,
+  onlyNumeric,
+  titleDialogDelete,
+  twoDigit,
+} from "../../utils/constant";
 
 const FormBanckAccount = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -256,14 +262,18 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="account_number"
               label="Número de cuenta"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="interbank_key" label="Clabe interbancaria">
-              <Input type="number" />
+            <Form.Item
+              name="interbank_key"
+              label="Clabe interbancaria"
+              rules={[onlyNumeric]}
+            >
+              <Input maxLength={19} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -273,46 +283,32 @@ const FormBanckAccount = ({ person_id = null }) => {
               rules={[
                 ruleRequired,
                 {
-                  pattern: /^[\d]{0,19}$/,
-                  message: "El no  debe tener más de 19 dígitos",
+                  pattern: /^[\d]{0,16}$/,
+                  message: "El no  debe tener más de 16 dígitos",
                 },
+                onlyNumeric,
               ]}
             >
-              <Input type="number" maxLength={16} />
+              <Input maxLength={16} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="expiration_month"
               label="Mes de vencimiento"
-              rules={[
-                {
-                  required: true,
-                  message: "Este campo es requerido",
-                },
-                {
-                  pattern: /^[\d]{0,2}$/,
-                  message: "El campo debe tener 2 dígitos",
-                },
-              ]}
+              rules={[ruleRequired, twoDigit]}
               validateTrigger="onBlur"
             >
-              <Input type="number" maxLength={2} />
+              <Input maxLength={2} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="expiration_year"
               label="Año de vencimiento"
-              rules={[
-                ruleRequired,
-                {
-                  pattern: /^[\d]{0,2}$/,
-                  message: "El campo debe tener 2 dígitos",
-                },
-              ]}
+              rules={[ruleRequired, twoDigit]}
             >
-              <Input type="number" maxLength={2} />
+              <Input maxLength={2} />
             </Form.Item>
           </Col>
         </Row>

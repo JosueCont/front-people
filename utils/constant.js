@@ -1,7 +1,14 @@
 export const onlyNumeric = {
-  pattern: /^[0-9]$/,
-  message: "Ingrese un valor numerico",
+  pattern: /^[0-9]*$/,
+  message: "Ingrese un valor numérico.",
 };
+
+export const twoDigit = {
+  pattern: /^[0-9]{0,2}$/,
+  message: "El campo debe tener 2 dígitos numéricos",
+};
+
+// {pattern: /^[\d]{0,16}$/, message: "El no  debe tener más de 16 dígitos" }, numero menor  a 16 digitos
 
 export const curpFormat = {
   pattern:
@@ -11,19 +18,18 @@ export const curpFormat = {
 export const rfcFormat = {
   pattern:
     /^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/,
-  message: "RFC no válido",
+  message: "RFC no válido.",
 };
 
-export const minLengthNumber = ({ getFieldValue }) => ({
-  validator() {
-    console.log(getFieldValue);
-  },
-});
+export const minLengthNumber = {
+  pattern: /^[0-9]{11}$/,
+  message: "El valor ingresado no puede ser menor a 11 caracteres.",
+};
 
 export const titleDialogDelete = "¿Está seguro de eliminarlo?";
 
 export const messageDialogDelete =
-  "Al eliminar este registro se perderán todos los datos relacionados de manera permanente";
+  "Al eliminar este registro se perderán todos los datos relacionados de manera permanente.";
 
 export const genders = [
   {
