@@ -30,7 +30,7 @@ const Home = ({ ...props }) => {
     }
   }, [props.config])
   /* const [loginFormShow, SetLoginFormShow] = useState(true); */
-
+  console.log(flavor)
   return (
     <>
       <Global
@@ -40,6 +40,9 @@ const Home = ({ ...props }) => {
             --secondaryColor: ${props.config ? props.config.concierge_secondary_color : '#1890ff'};
             --login_image: ${props.config && props.config.concierge_logo_login ? 'url(' + props.config.concierge_logo_login + ')' : 'url("/images/login.jpg")'}; 
             --logo_login: ${props.config && props.config.concierge_logo ? 'url(' + props.config.concierge_logo + ')' : 'url("/images/Grupo Industrial Roche-Color.png")'}; 
+            --fontFamily: ${flavor && flavor.font_family ? flavor.font_family  : ' -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif'}; 
+            --fontStyle: ${flavor && flavor.font_family ? flavor.font_style  : 'normal'}; 
+            --srcFontFamily: ${flavor&& flavor.font_family ? 'url(/' + routeFlavor + '/fonts/' + flavor.font_family + ')' : 'url("/fonts/sans-serif")'}; 
               `}
       />
       <Helmet>
