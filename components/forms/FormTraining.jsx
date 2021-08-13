@@ -138,6 +138,7 @@ const FormTraining = ({ person_id = null }) => {
       value.id = idTraining;
       value.since = dateTraining[0];
       value.until = dateTraining[1];
+      value.currently_studing = currenlyStuding;
       updateTraining(value);
       setDateRange("");
     } else {
