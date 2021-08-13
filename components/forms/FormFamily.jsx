@@ -226,13 +226,13 @@ const FormFamily = ({ person_id = null }) => {
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
                 <EditOutlined
-                  style={{ fontSize: "25px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => updateFormFamily(item)}
                 />
               </Col>
               <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
-                  style={{ fontSize: "25px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => {
                     showModalDelete(item.id);
                   }}

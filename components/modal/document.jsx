@@ -21,7 +21,7 @@ import { API_URL } from "../../config/config";
 import { userCompanyId } from "../../libs/auth";
 import { connect } from "react-redux";
 
-const documentModal = ({ person_id, ...props }) => {
+const documentModal = ({ person_id, node, ...props }) => {
   const [form] = Form.useForm();
   const [file, setFile] = useState();
   const [disabled, setDisabled] = useState(true);
@@ -38,7 +38,7 @@ const documentModal = ({ person_id, ...props }) => {
 
   useEffect(() => {
     nodeId = userCompanyId();
-    Axios.get(API_URL + `/setup/document-type/?node=${nodeId}`)
+    Axios.get(API_URL + `/setup/document-type/?node=${node}`)
       .then((response) => {
         let dt = response.data;
         dt = dt.map((a) => {

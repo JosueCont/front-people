@@ -23,7 +23,7 @@ import { API_URL } from "../../config/config";
 import DocumentModal from "../../components/modal/document";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 
-const FormDocument = ({ person_id }) => {
+const FormDocument = ({ person_id, node }) => {
   const { Title } = Typography;
   const { confirm } = Modal;
   const [documents, setDocuments] = useState([]);
@@ -122,7 +122,7 @@ const FormDocument = ({ person_id }) => {
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
-                  style={{ fontSize: "25px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => {
                     showModalDelete(item.id);
                   }}
@@ -166,6 +166,7 @@ const FormDocument = ({ person_id }) => {
           close={getModalDoc}
           visible={modalDoc}
           person_id={person_id}
+          node={node}
         />
       )}
     </>

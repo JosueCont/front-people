@@ -62,7 +62,7 @@ const DetailPerson = ({
             <FormBankAccount person_id={person.id} />
           </TabPane>
           <TabPane tab="Documentos" key="tab_8">
-            <FormDocument person_id={person.id} />
+            <FormDocument person_id={person.id} node={person.node} />
           </TabPane>
           <TabPane tab="Cambiar contraseña" key="tab_9">
             <FormChangePassword khonnectId={person.id} />

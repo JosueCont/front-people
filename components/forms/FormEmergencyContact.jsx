@@ -176,20 +176,21 @@ const FormEmergencyContact = ({ person_id = null }) => {
   const colContact = [
     {
       title: "Nombre",
+      width: 300,
       render: (item) => {
-        return <div style={{ maxWidth: 150 }}>{item.address}</div>;
+        return <div style={{ maxWidth: 300 }}>{item.fullname}</div>;
       },
     },
     {
       title: "Teléfono 1",
-      width: 200,
+      width: 100,
       render: (item) => {
-        return <div style={{ maxWidth: 200 }}>{item.phone_one}</div>;
+        return <div style={{ maxWidth: 100 }}>{item.phone_one}</div>;
       },
     },
     {
       title: "Teléfono 2",
-      width: 200,
+      width: 100,
       render: (item) => {
         return <div style={{ maxWidth: 100 }}>{item.phone_two}</div>;
       },
@@ -203,20 +204,20 @@ const FormEmergencyContact = ({ person_id = null }) => {
     },
     {
       title: "Opciones",
-      width: 200,
+      width: 100,
       render: (item) => {
         return (
           <div>
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
                 <EditOutlined
-                  style={{ fontSize: "25px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => updateFormContEm(item)}
                 />
               </Col>
               <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
-                  style={{ fontSize: "25px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => {
                     showModalDelete(item.id);
                   }}
