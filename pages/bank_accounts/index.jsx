@@ -256,7 +256,7 @@ const BankAccounts = () => {
                           key="select_type"
                           options={optionType}
                           allowClear
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>
@@ -271,7 +271,7 @@ const BankAccounts = () => {
                           key="select_status"
                           options={optionStatus}
                           allowClear
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>

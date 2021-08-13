@@ -797,7 +797,9 @@ const configBusiness = () => {
                             >
                               <Select
                                 options={selectDep}
-                                notFoundContent={"No se encontraron resultado."}
+                                notFoundContent={
+                                  "No se encontraron resultados."
+                                }
                               />
                             </Form.Item>
                           </Col>

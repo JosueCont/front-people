@@ -2,10 +2,15 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-  Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family:"FontPeople";
 }
 
+@font-face {
+  font-family: "FontPeople";
+  src: url("../public/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf");
+  font-weight: 400;
+  
+}
 
 
 a {

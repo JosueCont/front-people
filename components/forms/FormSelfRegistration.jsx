@@ -10,16 +10,13 @@ import {
   Col,
 } from "antd";
 import Axios from "axios";
-import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
+import { API_URL } from "../../config/config";
 import { useState, useEffect } from "react";
-import { getAccessIntranet, userCompanyId } from "../../libs/auth";
 import WebApi from "../../api/webApi";
 import Link from "next/link";
 import LoginModal from "../modal/LoginModal";
 import { genders, ruleEmail, ruleRequired } from "../../utils/constant";
-import SelectDepartment from "../selects/SelectDepartment";
-import SelectJob from "../selects/SelectJob";
-import { connect } from "react-redux";
+
 import moment from "moment";
 
 const FormSelfRegistration = ({
@@ -251,9 +248,9 @@ const FormSelfRegistration = ({
                   lg={19}
                   xs={22}
                   offset={1}
-                  className="center-content"
+                  className="center-content font-color-khor"
                 >
-                  ¿Ya tienes una ceunta?
+                  ¿Ya tienes una cuenta?
                   <span
                     style={{ marginLeft: "4px" }}
                     onClick={() => setModal(true)}

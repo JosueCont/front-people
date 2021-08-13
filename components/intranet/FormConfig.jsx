@@ -274,7 +274,7 @@ const FormConfig = (props) => {
                     value={interactionsSelected}
                     onChange={interactionsChange}
                     placeholder={"Seleccione..."}
-                    notFoundContent={"No se encontraron resultado."}
+                    notFoundContent={"No se encontraron resultados."}
                   >
                     {interactionsFilteredOptions.map((item) => (
                       <Select.Option key={item.id} value={item.id}>

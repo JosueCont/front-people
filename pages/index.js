@@ -20,8 +20,19 @@ const Home = ({ ...props }) => {
     const flavor = getFlavor();
     const routeFlavor = getRouteFlavor();
 
-    setFlavor(flavor);
-    setRouteFlavor(routeFlavor);
+    setFlavor(flavor)
+    setRouteFlavor(routeFlavor)
+
+    var head = document.head;
+    var link = document.createElement("link");
+    console.log("stylePath", routeFlavor)
+    link.type = "text/css";
+    link.href = routeFlavor + '/' + flavor.stylePath;
+    link.rel = "stylesheet";
+    link.async = true;
+
+    head.appendChild(link);
+
   }, []);
 
   useLayoutEffect(() => {
@@ -30,28 +41,20 @@ const Home = ({ ...props }) => {
     }
   }, [props.config]);
   /* const [loginFormShow, SetLoginFormShow] = useState(true); */
-
+  console.log(flavor)
   return (
     <>
       <Global
         styles={css`
           :root {
-            --primaryColor: ${
-              props.config ? props.config.concierge_primary_color : "#1890ff"
-            };
-            --secondaryColor: ${
-              props.config ? props.config.concierge_secondary_color : "#1890ff"
-            };
-            --login_image: ${
-              props.config && props.config.concierge_logo_login
-                ? "url(" + props.config.concierge_logo_login + ")"
-                : 'url("/images/login.jpg")'
-            }; 
-            --logo_login: ${
-              props.config && props.config.concierge_logo
-                ? "url(" + props.config.concierge_logo + ")"
-                : 'url("/images/Grupo Industrial Roche-Color.png")'
-            }; 
+            --primaryColor: ${props.config ? props.config.concierge_primary_color : '#1890ff'};
+            --secondaryColor: ${props.config ? props.config.concierge_secondary_color : '#1890ff'};
+            --login_image: ${props.config && props.config.concierge_logo_login ? 'url(' + props.config.concierge_logo_login + ')' : 'url("/images/login.jpg")'}; 
+            --logo_login: ${props.config && props.config.concierge_logo ? 'url(' + props.config.concierge_logo + ')' : 'url("/images/Grupo Industrial Roche-Color.png")'}; 
+            --fontFamily: ${flavor && flavor.font_family ? flavor.font_family : ' -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif'}; 
+            --fontStyle: ${flavor && flavor.font_family ? flavor.font_style : 'normal'}; 
+            --fontFormColor: ${props.config ? props.config.concierge_primary_color : '#000'};
+            --srcFontFamily: ${flavor && flavor.font_family ? 'url(/' + routeFlavor + '/fonts/' + flavor.font_family + ')' : 'url("/fonts/sans-serif")'}; 
               `}
       />
       <Helmet>

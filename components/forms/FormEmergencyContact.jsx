@@ -248,7 +248,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
             >
               <Select
                 options={relationship}
-                notFoundContent={"No se encontraron resultado."}
+                notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
           </Col>

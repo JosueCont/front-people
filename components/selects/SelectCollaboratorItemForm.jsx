@@ -55,7 +55,7 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
         allowClear
         optionFilterProp="children"
         placeholder="Todos"
-        notFoundContent={"No se encontraron resultado."}
+        notFoundContent={"No se encontraron resultados."}
         filterOption={(input, option) =>
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }
