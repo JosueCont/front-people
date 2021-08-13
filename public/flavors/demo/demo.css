@@ -282,20 +282,20 @@ li.ant-menu-submenu-selected {
 }
 
 .ant-input, .ant-form-item-control-input{
-  border-color: var(--secondaryColor) !important;
+  border-color: var(--primaryColor) !important;
 }
 
 .ant-input:hover, .ant-input-focused, .ant-input:focus  {
-  border-color: var(--primaryColor) !important;
+  border-color: var(--secondaryColor) !important;
   border-right-width: 1px !important;
 }
 
 .ant-input-password{
-  border-color: var(--secondaryColor);
+  border-color: var(--primaryColor);
 }
 
-.ant-inpu-passwordt:hover, .ant-input-password-focused {
-  border-color: var(--primaryColor) !important;
+.ant-input-password:hover, .ant-input-password-focused {
+  border-color: var(--secondaryColor) !important;
   border-right-width: 1px !important;
 }
 
@@ -305,24 +305,24 @@ li.ant-menu-submenu-selected {
 }
 
 .ant-select-selector:hover, .ant-select-selector:focus-within {
-  border: 1px solid var(--primaryColor) !important;
-}
-
-.ant-picker{
   border: 1px solid var(--secondaryColor) !important;
 }
 
+.ant-picker{
+  border: 1px solid var(--primaryColor) !important;
+}
+
 .ant-picker:hover, .ant-picker-focused {
-  border-color: var(--primaryColor) !important;
+  border-color: var(--secondaryColor) !important;
   border-right-width: 1px !important;
 }
 
 .ant-picker-dropdown{
-  border: 1px solid var(--secondaryColor) !important;
+  border: 1px solid var(--primaryColor) !important;
 }
 
 .ant-picker-today-btn{
-  color: var(--secondaryColor);
+  color: var(--primaryColor);
 }
 
 .ant-picker-today-btn:hover{
@@ -330,25 +330,25 @@ li.ant-menu-submenu-selected {
 }
 
 .ant-btn{
-  background-color: var(--secondaryColor);
-  border-color: var(--secondaryColor);
+  background-color: var(--primaryColor);
+  border-color: var(--primaryColor);
 }
 
 .ant-btn:hover{
   
-  background-color: var(--primaryColor);
-  border-color: var(--primaryColor);
-}
-
-
-.ant-btn-primary {
   background-color: var(--secondaryColor);
   border-color: var(--secondaryColor);
 }
 
-.ant-btn-primary:hover{
+
+.ant-btn-primary {
   background-color: var(--primaryColor);
   border-color: var(--primaryColor);
+}
+
+.ant-btn-primary:hover{
+  background-color: var(--secondaryColor);
+  border-color: var(--secondaryColor);
 }
 
 .text-link {
@@ -424,4 +424,20 @@ li.ant-menu-submenu-selected {
 
 .ant-spin-text{
   color: var(--primaryColor);
+}
+
+.title-form-self-register {
+  padding: 1%;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  background-color: var(--primaryColor);
+}
+
+.ant-modal-title{
+  color: var(--primaryColor);
+}
+
+.ant-form-item{
+  color: var(--primaryColor) !important;
 }
