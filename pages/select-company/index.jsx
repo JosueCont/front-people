@@ -93,16 +93,10 @@ const SelectCompany = ({ ...props }) => {
       {jwt && jwt.user_id ? (
         <MainLayout currentKey="8.5" hideMenu={true}>
           <Breadcrumb className={"mainBreadcrumb"}>
-            <Breadcrumb.Item
-              className={"pointer"}
-              onClick={() => useRouter.push({ pathname: "/home" })}
-            >
-              Inicio
-            </Breadcrumb.Item>
-            <Breadcrumb.Item>Empresas</Breadcrumb.Item>
+            <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>
           </Breadcrumb>
           <div className="container" style={{ width: "100%", padding: 20 }}>
-            <Spin spinning={loading}>
+            <Spin tip="Cargando..." spinning={loading}>
               <Row
                 gutter={[16, 16]}
                 style={{
@@ -131,9 +125,10 @@ const SelectCompany = ({ ...props }) => {
                             "/ac/urn/" +
                             item.permanent_code
                           }
+                          border={false}
                           type={"button"}
-                          message={"Copiado en porta papeles"}
-                          tooltipTitle={"Copiar"}
+                          msg={"Copiado en portapapeles"}
+                          tooltipTitle={"Copiar link de auto registro"}
                         />,
                       ]}
                     >

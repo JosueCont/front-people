@@ -18,6 +18,11 @@ import {
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import WebApi from "../../api/webApi";
+import {
+  messageDialogDelete,
+  onlyNumeric,
+  titleDialogDelete,
+} from "../../utils/constant";
 
 const FormPhone = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -92,7 +97,7 @@ const FormPhone = ({ person_id = null }) => {
       setLoadingTable(true);
 
       message.success({
-        content: "Eliminado con exito.",
+        content: "Eliminado con éxito.",
         className: "custom-class",
       });
       getPhone();
@@ -136,10 +141,9 @@ const FormPhone = ({ person_id = null }) => {
   };
   const showModalDelete = (id) => {
     confirm({
-      title: "¿Está seguro de querer eliminarlo?",
+      title: titleDialogDelete,
       icon: <ExclamationCircleOutlined />,
-      content:
-        "Al eliminar este registro perderá todos los datos relacionados a el de manera permanente",
+      content: messageDialogDelete,
       okText: "Si",
       okType: "danger",
       cancelText: "Cancelar",
@@ -249,36 +253,36 @@ const FormPhone = ({ person_id = null }) => {
             <Form.Item
               name="international_code"
               label="Código internacional"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="national_code"
               label="Código de país"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="country_code"
               label="Código de ciudad"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="phone"
               label="Número telefónico"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
         </Row>

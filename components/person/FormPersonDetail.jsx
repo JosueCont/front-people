@@ -829,7 +829,7 @@ const personDetailForm = () => {
     Axios.delete(API_URL + `/person/phone/${data}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         setLoading(false);
@@ -1062,7 +1062,7 @@ const personDetailForm = () => {
     Axios.delete(API_URL + `/person/family/${data}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         setLoading(false);
@@ -1497,7 +1497,7 @@ const personDetailForm = () => {
     Axios.delete(API_URL + `/person/bank-account/${data}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         setLoading(false);
@@ -1874,7 +1874,7 @@ const personDetailForm = () => {
                       <Col lg={7} xs={22} offset={1}>
                         <Row justify="center">
                           <Col lg={12} md={8} xs={24}>
-                            <Spin spinning={loadImge}>
+                            <Spin tip="Cargando..." spinning={loadImge}>
                               <div
                                 style={
                                   photo

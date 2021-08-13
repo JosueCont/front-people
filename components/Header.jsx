@@ -11,6 +11,7 @@ import { css, Global } from "@emotion/core";
 import { connect } from "react-redux";
 import WebApi from "../api/webApi";
 import { companySelected } from "../redux/UserDuck";
+import { config } from "react-spring";
 
 const { Header } = Layout;
 
@@ -39,7 +40,6 @@ const headerCustom = ({
     try {
       const user = JSON.parse(Cookie.get("token"));
       let response = await WebApi.personForKhonnectId({ id: user.user_id });
-      let company = props.companySelected(response.data.node);
       if (!response.data.photo) response.data.photo = defaulPhoto;
       let personName =
         response.data.first_name + " " + response.data.flast_name;
@@ -49,7 +49,6 @@ const headerCustom = ({
       setPerson(response.data);
     } catch (error) {
       setPerson({ photo: defaulPhoto });
-      console.log(error);
     }
   };
 
@@ -162,7 +161,12 @@ const headerCustom = ({
             style={{ paddingRight: "48px" }}
           >
             <div
-              onClick={() => onClickImage && router.push({ pathname: "/home" })}
+              onClick={() =>
+                onClickImage &&
+                person.nodes &&
+                props.currentNode &&
+                router.push({ pathname: "/home" })
+              }
               className="logo"
               key="content_logo"
               style={{
@@ -316,7 +320,7 @@ const headerCustom = ({
                     Asignar empresa
                   </Menu.Item>
 
-                  {accessIntranet !== "false" && (
+                  {config && config.intranet_enabled && (
                     <SubMenu
                       key="11"
                       title={<FormattedMessage id="header.intranet" />}

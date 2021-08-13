@@ -24,6 +24,12 @@ import { useEffect } from "react";
 import moment from "moment";
 import { civilStatus, genders, periodicity } from "../../utils/functions";
 import WebApi from "../../api/webApi";
+import {
+  curpFormat,
+  minLengthNumber,
+  onlyNumeric,
+  rfcFormat,
+} from "../../utils/constant";
 
 const DataPerson = ({
   people,
@@ -43,7 +49,6 @@ const DataPerson = ({
   const [birthDate, setBirthDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
-  const [personFullName, setPersonFullName] = useState("");
 
   useEffect(() => {
     setFormPerson(person);
@@ -66,9 +71,14 @@ const DataPerson = ({
       report_to: person.report_to,
       periodicity: person.periodicity,
       intranet_access: person.intranet_access,
-      department: person.department.id,
-      job: person.job.id,
     });
+    if (person.person_department) {
+      formPerson.setFieldsValue({
+        person_department: person.department.id,
+        job: person.job.id,
+      });
+      setDepartmentId(person.person_department);
+    }
     if (person.person_type)
       formPerson.setFieldsValue({
         person_type: person.person_type.id,
@@ -89,13 +99,10 @@ const DataPerson = ({
         register_date: moment(person.register_date),
       });
 
+    setPhoto(person.photo);
     setDateAdmission(person.date_of_admission);
     setBirthDate(person.birth_date);
     setIsActive(person.is_active);
-    if (person.photo) setPhoto(person.photo);
-    let personName = person.first_name + " " + person.flast_name;
-    if (person.mlast_name) personName = personName + " " + person.mlast_name;
-    setPersonFullName(personName);
   };
 
   const onFinishPerson = (value) => {
@@ -194,9 +201,7 @@ const DataPerson = ({
   };
 
   const onChangeDepartment = (val) => {
-    form.setFieldsValue({
-      job: null,
-    });
+    formPerson.setFieldsValue({ job: null });
     setDepartmentId(val);
   };
 
@@ -234,7 +239,7 @@ const DataPerson = ({
             <Col lg={7} xs={22} offset={1}>
               <Row justify="center">
                 <Col lg={12} md={8} xs={24}>
-                  <Spin spinning={loadImge}>
+                  <Spin tip="Cargando..." spinning={loadImge}>
                     <div
                       style={
                         photo
@@ -322,36 +327,15 @@ const DataPerson = ({
               </Form.Item>
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <Form.Item name="person_department" label="Departamento">
-                {/* <SelectD
-                  options={departments}
-                  onChange={onChangeDepartment}
-                  placeholder="Departamento"
-                  notFoundContent={"No se encontraron resultado."}
-                /> */}
-                <SelectDepartment
-                  onChange={onChangeDepartment}
-                  name="department"
-                  companyId={person.node}
-                  item={false}
-                />
-              </Form.Item>
+              <SelectDepartment
+                onChange={onChangeDepartment}
+                name="person_department"
+                companyId={person.node}
+                style={false}
+              />
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <Form.Item name="job" label="Puesto de trabajo">
-                {/* <Select
-                  options={getJobForSelect(person.department.id)}
-                  placeholder="Puesto de trabajo"
-                  notFoundContent={"No se encontraron resultado."}
-                /> */}
-                <SelectJob
-                  departmentId={person.department.id}
-                  name="job"
-                  label="Puesto"
-                  item={false}
-                  // style={{ maxWidth: 150 }}
-                />
-              </Form.Item>
+              <SelectJob departmentId={departmentId} name="job" style={false} />
             </Col>
             <Col lg={7} xs={22} offset={1}>
               <Form.Item
@@ -450,17 +434,21 @@ const DataPerson = ({
               </Form.Item>
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <Form.Item name="curp" label="CURP">
+              <Form.Item name="curp" label="CURP" rules={[curpFormat]}>
                 <Input maxLength={18} />
               </Form.Item>
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <Form.Item name="rfc" label="RFC">
+              <Form.Item name="rfc" label="RFC" rules={[rfcFormat]}>
                 <Input maxLength={13} />
               </Form.Item>
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <Form.Item name="imss" label="IMSS">
+              <Form.Item
+                name="imss"
+                label="IMSS"
+                rules={[onlyNumeric, minLengthNumber]}
+              >
                 <Input maxLength={11} />
               </Form.Item>
             </Col>

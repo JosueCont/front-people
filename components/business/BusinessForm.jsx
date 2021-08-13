@@ -340,8 +340,8 @@ const businessForm = () => {
                   }
                   border={false}
                   type={"button"}
-                  msg={"Copiado en porta papeles"}
-                  tooltipTitle={"Copiar"}
+                  msg={"Copiado en portapapeles"}
+                  tooltipTitle={"Copiar link de auto registro"}
                 />
               </Col>
             </Row>

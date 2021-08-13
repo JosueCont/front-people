@@ -84,12 +84,10 @@ const homeScreen = ({ ...props }) => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
     // getPerson();
-    nodeId = userCompanyId();
-    if (nodeId) {
-      filterPersonName();
-    }
+
+    if (props.currentNode) filterPersonName();
     getDepartmets();
-  }, []);
+  }, [props.currentNode]);
 
   const searchPermissions = (data) => {
     const perms = {};
@@ -127,19 +125,18 @@ const homeScreen = ({ ...props }) => {
   };
 
   const filterPersonName = async () => {
-    filters.node = nodeId;
+    filters.node = props.currentNode.id;
     setLoading(true);
-    try{
-      let response = await WebApi.filterPerson(filters)
+    try {
+      let response = await WebApi.filterPerson(filters);
       setPerson([]);
-        response.data.map((item, i) => {
-          item.key = i;
-          if (!item.photo) item.photo = defaulPhoto;
-        });
+      response.data.map((item, i) => {
+        item.key = i;
+        if (!item.photo) item.photo = defaulPhoto;
+      });
       setLoading(false);
       setPerson(response.data);
-    }
-    catch(error){
+    } catch (error) {
       setPerson([]);
       setLoading(false);
       console.log(error);
@@ -421,9 +418,11 @@ const homeScreen = ({ ...props }) => {
               "/ac/urn/" +
               props.currentNode.permanent_code
             }
+            title={"Link de empresa"}
+            border={false}
             type={"button"}
-            msg={"Copiado en porta papeles"}
-            tooltipTitle={"Copiar"}
+            msg={"Copiado en portapapeles"}
+            tooltipTitle={"Copiar link de auto registro"}
           />
         </Menu.Item>
       )}
@@ -584,7 +583,7 @@ const homeScreen = ({ ...props }) => {
     if (extension === "xlsx") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
-      formData.append("node_id", nodeId);
+      formData.append("node_id", props.currentNode.id);
       setLoading(true);
       Axios.post(API_URL + `/person/person/import_xls/`, formData)
         .then((response) => {
@@ -678,16 +677,14 @@ const homeScreen = ({ ...props }) => {
   const getDepartmets = async (value) => {
     setDepartments([]);
     setJobs([]);
-    try{
-      let response = await WebApi.filterDepartmentByNode(nodeId)
+    try {
+      let response = await WebApi.filterDepartmentByNode(props.currentNode.id);
       let dep = response.data.results;
       dep = dep.map((a) => {
         return { label: a.name, value: a.id };
       });
       setDepartments(dep);
-    }
-    catch(error)
-    {
+    } catch (error) {
       console.log(error);
     }
   };

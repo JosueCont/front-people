@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Layout, Space } from "antd";
 import { useRouter } from "next/router";
 import HeaderCustom from "../components/Header";
@@ -28,14 +28,30 @@ const MainLayout = ({
   const [flavor, setFlavor] = useState({})
   const [routeFlavor, setRouteFlavor] = useState({})
 
+  useLayoutEffect(() => {
+    const flavor = getFlavor();
+    const routeFlavor = getRouteFlavor();
+
+    setFlavor(flavor)
+    setRouteFlavor(routeFlavor)
+
+    var head = document.head;
+    var link = document.createElement("link");
+    console.log("stylePath", routeFlavor)
+    link.type = "text/css";
+    link.href = routeFlavor + '/' + flavor.stylePath;
+    link.rel = "stylesheet";
+    link.async = true;
+
+    head.appendChild(link);
+
+  }, []);
+
+
   useEffect(() => {
     if (company == "" || company == undefined) {
       setCompany(nodeName);
     }
-    const flavor = getFlavor()
-    const routeFlavor = getRouteFlavor()
-    setFlavor(flavor)
-    setRouteFlavor(routeFlavor)
   }, []);
 
   useEffect(() => {
@@ -77,6 +93,7 @@ const MainLayout = ({
             --fontFamily: ${flavor && flavor.font_family ? flavor.font_family  : ' -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif'}; 
             --fontStyle: ${flavor && flavor.font_family ? flavor.font_style  : 'normal'}; 
             --srcFontFamily: ${flavor&& flavor.font_family ? 'url("' + routeFlavor + '/fonts/' + flavor.font_family + '")' : 'url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf")'}; 
+            --fontFormColor: ${props.config ? props.config.concierge_primary_color : '#000'};
               `}
       />
       <Helmet>

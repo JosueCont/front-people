@@ -24,6 +24,11 @@ import { API_URL } from "../../config/config";
 import moment from "moment";
 import { genders } from "../../utils/functions";
 import WebApi from "../../api/webApi";
+import {
+  messageDialogDelete,
+  onlyNumeric,
+  titleDialogDelete,
+} from "../../utils/constant";
 
 const FormFamily = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -116,7 +121,7 @@ const FormFamily = ({ person_id = null }) => {
       setLoadingTable(true);
       let response = await WebApi.deleteFamily(data);
       message.success({
-        content: "Eliminado con exito.",
+        content: "Eliminado con éxito.",
         className: "custom-class",
       });
       if (upFamily) {
@@ -147,7 +152,8 @@ const FormFamily = ({ person_id = null }) => {
       value.person = person_id;
       value.id = idFamily;
       value.birth_date = birthDateFam;
-      setLifeFamily(value.life);
+      // setLifeFamily(value.life);
+      value.life = lifeFamily;
       updateFamily(value);
     } else {
       value.person = person_id;
@@ -156,6 +162,7 @@ const FormFamily = ({ person_id = null }) => {
       saveFamily(value);
     }
   };
+
   const updateFormFamily = (item) => {
     formFamily.setFieldsValue({
       relationship: item.relationship.id,
@@ -181,10 +188,9 @@ const FormFamily = ({ person_id = null }) => {
   };
   const showModalDelete = (id) => {
     confirm({
-      title: "¿Está seguro de querer eliminarlo?",
+      title: titleDialogDelete,
       icon: <ExclamationCircleOutlined />,
-      content:
-        "Al eliminar este registro perderá todos los datos relacionados a el de manera permanente",
+      content: messageDialogDelete,
       okText: "Si",
       okType: "danger",
       cancelText: "Cancelar",
@@ -260,12 +266,12 @@ const FormFamily = ({ person_id = null }) => {
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="job" label="Puesto de trabajo">
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -274,7 +280,7 @@ const FormFamily = ({ person_id = null }) => {
               label="Apellido paterno"
               rules={[ruleRequired]}
             >
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -283,7 +289,7 @@ const FormFamily = ({ person_id = null }) => {
               label="Apellido materno"
               rules={[ruleRequired]}
             >
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -295,7 +301,7 @@ const FormFamily = ({ person_id = null }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="liffe" label="¿Vive?">
+            <Form.Item name="life" label="¿Vive?">
               <Checkbox checked={lifeFamily} onChange={lifeFamilyShip} />
             </Form.Item>
           </Col>
@@ -314,26 +320,26 @@ const FormFamily = ({ person_id = null }) => {
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="place_birth" label="Lugar de nacimiento">
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="nationality" label="Nacionalidad">
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="other_nationality" label="Otra nacionalidad">
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="benefit"
               label="% Beneficio"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
         </Row>
