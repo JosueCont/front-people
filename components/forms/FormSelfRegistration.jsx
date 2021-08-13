@@ -19,6 +19,7 @@ import LoginModal from "../modal/LoginModal";
 import { genders, ruleEmail, ruleRequired } from "../../utils/constant";
 import SelectDepartment from "../selects/SelectDepartment";
 import SelectJob from "../selects/SelectJob";
+import { connect } from "react-redux";
 
 const FormSelfRegistration = ({
   hideProfileSecurity = true,
@@ -36,7 +37,7 @@ const FormSelfRegistration = ({
   const [personType, setPersonType] = useState([]);
   const [departmentId, setDepartmentId] = useState(null);
   const [date, setDate] = useState("");
-  const [dateIngPlatform, setDateIngPlatform] = useState("");
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
     if (node) {
@@ -48,17 +49,12 @@ const FormSelfRegistration = ({
     if (date !== "") {
       value.birth_date = date;
     }
-    if (dateIngPlatform !== "") {
-      value.register_date = dateIngPlatform;
-    }
-    if (value.department) delete value["department"];
     if (value.password != value.passwordTwo)
       message.error("Las contraseñas no coinciden.");
     else {
       delete value["passwordTwo"];
-      if (value.groups) value.groups = [value.groups];
-      else delete value["groups"];
       value.node = node;
+      setDisabled(true);
       createPerson(value);
     }
   };
@@ -89,7 +85,9 @@ const FormSelfRegistration = ({
       message.success("Agregado correctamente");
       form.resetFields();
       props.close(false);
+      setDisabled(false);
     } catch (error) {
+      setDisabled(false);
       if (
         error.response &&
         error.response.data &&
@@ -113,129 +111,167 @@ const FormSelfRegistration = ({
 
   return (
     <>
-      <Layout>
+      <Layout className="center-content">
         <div
           className="site-layout-background"
-          style={{ padding: 24, minHeight: 380, height: "100%" }}
+          style={{ width: "70%", minHeight: 380, height: "100%" }}
         >
-          <Form
-            initialValues={{
-              intranet_access: false,
-            }}
-            onFinish={onFinish}
-            form={form}
-          >
-            <Row>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="person_type">
-                  <Select options={personType} placeholder="Tipo de persona" />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]}>
-                  <Input disabled readOnly value={nameNode} />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <SelectDepartment
-                  onChange={onChangeDepartment}
-                  name="person_department"
-                  companyId={node}
-                  style={false}
-                  titleLabel={false}
-                />
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <SelectJob
-                  departmentId={departmentId}
-                  name="job"
-                  style={false}
-                  titleLabel={false}
-                />
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="first_name">
-                  <Input type="text" placeholder="Nombre" />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="flast_name">
-                  <Input type="text" placeholder="Apellido paterno" />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="mlast_name">
-                  <Input type="text" placeholder="Apellido materno" />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="gender">
-                  <Select options={genders} placeholder="Género" />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item>
-                  <DatePicker
-                    style={{ width: "100%" }}
-                    onChange={onChange}
-                    moment={"YYYY-MM-DD"}
-                    placeholder="Fecha de nacimiento"
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
-                  <Input
-                    type="email"
-                    placeholder="E-mail"
-                    onBlur={(value) => {
-                      console.log("DATA-> ", value.target.value),
+          <div className="center-content title-form-self-register">
+            Formulario de registro
+          </div>
+          <div style={{ padding: "1%" }}>
+            <Form
+              initialValues={{
+                intranet_access: false,
+              }}
+              onFinish={onFinish}
+              form={form}
+              layout={"vertical"}
+            >
+              <Row>
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item name="person_type" label="Tipo de persona">
+                    <Select
+                      style={{ textAlign: "left" }}
+                      options={personType}
+                      placeholder="Tipo de persona"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={14} xs={22} offset={1}>
+                  <Form.Item rules={[ruleRequired]} label="Empresa">
+                    <Input disabled readOnly value={nameNode} />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
+              <Row>
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item
+                    rules={[ruleRequired]}
+                    name="first_name"
+                    label="Nombre(s)"
+                  >
+                    <Input type="text" placeholder="Nombre(s)" />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item
+                    rules={[ruleRequired]}
+                    name="flast_name"
+                    label="Apellido paterno"
+                  >
+                    <Input type="text" placeholder="Apellido paterno" />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item name="mlast_name" label="Apellido materno">
+                    <Input type="text" placeholder="Apellido materno" />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item name="gender" label="Género">
+                    <Select
+                      style={{ textAlign: "left" }}
+                      options={genders}
+                      placeholder="Género"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item label="Fecha de nacimiento">
+                    <DatePicker
+                      style={{ width: "100%" }}
+                      onChange={onChange}
+                      moment={"YYYY-MM-DD"}
+                      placeholder="Fecha de nacimiento"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <hr style={{ border: "solid 1px #efe9e9", margin: 20 }} />
+              <Row>
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item
+                    rules={[ruleEmail, ruleRequired]}
+                    name="email"
+                    label="E-mail"
+                  >
+                    <Input
+                      type="email"
+                      placeholder="E-mail"
+                      onBlur={(value) => {
                         form.setFieldsValue({
                           email: value.target.value.toLowerCase(),
                         });
-                    }}
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="password">
-                  <Input.Password type="text" placeholder="Contraseña" />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item
-                  rules={[
-                    ruleRequired,
-                    ({ getFieldValue }) => ({
-                      validator() {
-                        if (
-                          getFieldValue("password") ==
-                          getFieldValue("passwordTwo")
-                        ) {
-                          return Promise.resolve();
-                        } else {
-                          return Promise.reject("Las contraseñas no coinciden");
-                        }
-                      },
-                    }),
-                  ]}
-                  name="passwordTwo"
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={22} offset={1}>
+                  <Form.Item
+                    rules={[ruleRequired]}
+                    name="password"
+                    label="Contraseña"
+                  >
+                    <Input.Password type="text" placeholder="Contraseña" />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} offset={1}>
+                  <Form.Item
+                    label="Repita la contraseña"
+                    rules={[
+                      ruleRequired,
+                      ({ getFieldValue }) => ({
+                        validator() {
+                          if (
+                            getFieldValue("password") ==
+                            getFieldValue("passwordTwo")
+                          ) {
+                            return Promise.resolve();
+                          } else {
+                            return Promise.reject(
+                              "Las contraseñas no coinciden"
+                            );
+                          }
+                        },
+                      }),
+                    ]}
+                    name="passwordTwo"
+                  >
+                    <Input.Password type="text" placeholder="Contraseña" />
+                  </Form.Item>
+                </Col>
+                <Col
+                  style={{ paddingTop: "20px" }}
+                  lg={19}
+                  xs={22}
+                  offset={1}
+                  className="center-content"
                 >
-                  <Input.Password type="text" placeholder="Contraseña" />
-                </Form.Item>
-              </Col>
-              <Col lg={20} xs={22} offset={1} className="center-content">
-                <span onClick={() => setModal(true)} className="text-link">
-                  <Link href="">Ya me he registrado</Link>
-                </span>
-              </Col>
-              <Col lg={2} xs={22} offset={1} className="center-content">
-                <Button type="primary" htmlType="submit">
-                  Guardar
-                </Button>
-              </Col>
-            </Row>
-          </Form>
+                  ¿Ya tieens una ceunta?
+                  <span
+                    style={{ marginLeft: "4px" }}
+                    onClick={() => setModal(true)}
+                    className="text-link"
+                  >
+                    <Link href="">haz click aquí</Link>
+                  </span>
+                </Col>
+                <Col
+                  style={{ paddingTop: "20px" }}
+                  lg={2}
+                  xs={22}
+                  offset={1}
+                  className="center-content"
+                >
+                  <Button disabled={disabled} type="primary" htmlType="submit">
+                    Guardar
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </div>
         </div>
         {modal && (
           <LoginModal

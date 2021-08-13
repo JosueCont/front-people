@@ -6,10 +6,10 @@ import { API_URL } from "../../config/config";
 export default function SelectDepartment({
   item = true,
   titleLabel = true,
+  rules = [],
   ...props
 }) {
   const [options, setOptions] = useState([]);
-  const [companyId, setCompanyId] = useState(props.companyId);
 
   const { Option } = Select;
 
@@ -45,13 +45,14 @@ export default function SelectDepartment({
         key="ItemDepartment"
         name={props.name ? props.name : "department"}
         label={titleLabel ? "Departamento" : ""}
+        rules={rules}
       >
         <Select
           key="SelectDepartament"
-          style={props.style ? props.style : {}}
           options={options}
           placeholder="Departamento"
           allowClear
+          style={props.style ? props.style : {}}
           onChange={props.onChange ? props.onChange : null}
           notFoundContent={"No se encontraron resultado."}
         />

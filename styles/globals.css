@@ -422,3 +422,11 @@ li.ant-menu-submenu-selected {
 .ant-spin-text {
   color: var(--primaryColor);
 }
+
+.title-form-self-register {
+  padding: 1%;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  background-color: var(--primaryColor);
+}
