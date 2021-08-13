@@ -40,6 +40,7 @@ const FormTraining = ({ person_id = null }) => {
   const [training, setTraining] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
   const ruleRequired = { required: true, message: "Este campo es requerido" };
+  const [dateRange, setDateRange] = useState(null);
 
   useEffect(() => {
     getTraining();
@@ -72,6 +73,7 @@ const FormTraining = ({ person_id = null }) => {
         });
         getTraining();
         formTraining.resetFields();
+        setCurrenlyStuding(false);
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
@@ -97,6 +99,7 @@ const FormTraining = ({ person_id = null }) => {
         formTraining.resetFields();
         setCurrenlyStuding(false);
         setDateTraining("");
+        setCurrenlyStuding(false);
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
@@ -136,28 +139,39 @@ const FormTraining = ({ person_id = null }) => {
       value.since = dateTraining[0];
       value.until = dateTraining[1];
       updateTraining(value);
+      setDateRange("");
     } else {
       value.since = dateTraining[0];
       value.until = dateTraining[1];
       value.currently_studing = currenlyStuding;
       value.person = person_id;
       saveTraining(value);
+      setDateRange("");
     }
   };
   const onChangeDateTrainig = (date, dateString) => {
     setDateTraining(dateString);
+    setDateRange([
+      moment(dateString[0], "YYYY-MM-DD"),
+      moment(dateString[1], "YYYY-MM-DD"),
+    ]);
     formTraining.setFieldsValue({ since: dateString });
   };
   const changeCurreStud = () => {
     currenlyStuding ? setCurrenlyStuding(false) : setCurrenlyStuding(true);
   };
   const updateFormTraining = (item) => {
+    setDateRange([
+      moment(item.since, "YYYY-MM-DD"),
+      moment(item.until, "YYYY-MM-DD"),
+    ]);
     formTraining.setFieldsValue({
       school: item.school,
       accreditation_document: item.accreditation_document,
       completed_period: item.completed_period,
       since: [moment(item.since), moment(item.until)],
     });
+    setDateTraining([item.since, item.until]);
     setCurrenlyStuding(item.currently_studing);
     setIdTraining(item.id);
     setUpTraining(true);
@@ -255,6 +269,7 @@ const FormTraining = ({ person_id = null }) => {
                 <RangePicker
                   style={{ width: "100%" }}
                   format={"YYYY-MM-DD"}
+                  value={dateRange}
                   onChange={onChangeDateTrainig}
                 />
               </Space>
