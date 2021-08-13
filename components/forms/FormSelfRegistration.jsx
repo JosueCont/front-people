@@ -10,16 +10,14 @@ import {
   Col,
 } from "antd";
 import Axios from "axios";
-import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
+import { API_URL } from "../../config/config";
 import { useState, useEffect } from "react";
-import { getAccessIntranet, userCompanyId } from "../../libs/auth";
 import WebApi from "../../api/webApi";
 import Link from "next/link";
 import LoginModal from "../modal/LoginModal";
 import { genders, ruleEmail, ruleRequired } from "../../utils/constant";
-import SelectDepartment from "../selects/SelectDepartment";
-import SelectJob from "../selects/SelectJob";
-import { connect } from "react-redux";
+
+import moment from "moment";
 
 const FormSelfRegistration = ({
   hideProfileSecurity = true,
@@ -38,6 +36,7 @@ const FormSelfRegistration = ({
   const [departmentId, setDepartmentId] = useState(null);
   const [date, setDate] = useState("");
   const [disabled, setDisabled] = useState(false);
+  const toDay = moment().format("YYYY-MM-DD").toString();
 
   useEffect(() => {
     if (node) {
@@ -53,8 +52,10 @@ const FormSelfRegistration = ({
       message.error("Las contraseñas no coinciden.");
     else {
       delete value["passwordTwo"];
+      value.register_date = toDay;
       value.node = node;
       setDisabled(true);
+
       createPerson(value);
     }
   };
