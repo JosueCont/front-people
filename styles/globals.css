@@ -296,7 +296,7 @@ li.ant-menu-submenu-selected {
 
 
 .ant-select-selector{
-  border: 1px solid var(--secondaryColor) !important;
+  border: 1px solid var(--primaryColor) !important;
 }
 
 .ant-select-selector:hover, .ant-select-selector:focus-within {
