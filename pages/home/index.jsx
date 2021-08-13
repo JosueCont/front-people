@@ -783,9 +783,9 @@ const homeScreen = ({ ...props }) => {
                       <Form.Item name="gender" label="Género">
                         <Select
                           options={genders}
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           placeholder="Todos"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>
@@ -795,7 +795,7 @@ const homeScreen = ({ ...props }) => {
                           onChange={changeDepartment}
                           options={departments}
                           placeholder="Todos"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           style={{ width: 100 }}
                         />
                       </Form.Item>
@@ -805,7 +805,7 @@ const homeScreen = ({ ...props }) => {
                         <Select
                           options={jobs}
                           placeholder="Todos"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           style={{ minWidth: 100 }}
                         />
                       </Form.Item>
@@ -815,7 +815,7 @@ const homeScreen = ({ ...props }) => {
                         <Select
                           options={statusSelect}
                           placeholder="Estatus"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           style={{ width: 90 }}
                         />
                       </Form.Item>
@@ -825,7 +825,7 @@ const homeScreen = ({ ...props }) => {
                         <Select
                           options={periodicity}
                           placeholder="Periocidad"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           style={{ width: 90 }}
                         />
                       </Form.Item>

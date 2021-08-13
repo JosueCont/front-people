@@ -249,7 +249,7 @@ const FormSelfRegistration = ({
                   offset={1}
                   className="center-content"
                 >
-                  ¿Ya tieens una ceunta?
+                  ¿Ya tienes una cuenta?
                   <span
                     style={{ marginLeft: "4px" }}
                     onClick={() => setModal(true)}

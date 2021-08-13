@@ -271,7 +271,7 @@ const addEvent = () => {
                             defaultValue={value}
                             placeholder="Tipo de invitados"
                             onChange={selectNodeGests}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           >
                             <Option value={1}>Organización</Option>
                             <Option value={2}>Personas</Option>
@@ -312,7 +312,7 @@ const addEvent = () => {
                               showSearch
                               placeholder="Selecciona una organizacion"
                               options={nodes}
-                              notFoundContent={"No se encontraron resultado."}
+                              notFoundContent={"No se encontraron resultados."}
                             ></Select>
                           </Form.Item>
                         </Col>
@@ -333,7 +333,7 @@ const addEvent = () => {
                               allowClear
                               placeholder="Selecciona invitados"
                               options={persons}
-                              notFoundContent={"No se encontraron resultado."}
+                              notFoundContent={"No se encontraron resultados."}
                             ></Select>
                           </Form.Item>
                         </Col>
