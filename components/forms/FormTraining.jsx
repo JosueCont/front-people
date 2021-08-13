@@ -197,25 +197,40 @@ const FormTraining = ({ person_id = null }) => {
     {
       key: "school",
       title: "Escuela",
-      dataIndex: "school",
+      width: 200,
+      render: (item) => {
+        return <div style={{ maxWidth: 200 }}>{item.school}</div>;
+      },
     },
     {
       key: "since",
+      width: 100,
       title: "Fecha inicio",
-      dataIndex: "since",
+      render: (item) => {
+        return <div style={{ maxWidth: 100 }}>{item.since}</div>;
+      },
     },
     {
       key: "until",
+      width: 100,
       title: "Fecha fin",
-      dataIndex: "until",
+      render: (item) => {
+        return <div style={{ maxWidth: 100 }}>{item.until}</div>;
+      },
     },
     {
       key: "accreditation_document",
+      width: 100,
       title: "Documento",
-      dataIndex: "accreditation_document",
+      render: (item) => {
+        return (
+          <div style={{ maxWidth: 100 }}>{item.accreditation_document}</div>
+        );
+      },
     },
     {
       key: "options",
+      width: 100,
       title: "Opciones",
       render: (item) => {
         return (
@@ -223,13 +238,13 @@ const FormTraining = ({ person_id = null }) => {
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
                 <EditOutlined
-                  style={{ fontSize: "25px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => updateFormTraining(item)}
                 />
               </Col>
               <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
-                  style={{ fontSize: "25px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => {
                     showModalDelete(item.id);
                   }}
