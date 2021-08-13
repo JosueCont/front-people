@@ -57,7 +57,6 @@ const CreatePerson = ({
   }, [node]);
 
   const onFinish = (value) => {
-    console.log("FOMR-->> ", value);
     if (date !== "") {
       value.birth_date = date;
     }
@@ -155,7 +154,7 @@ const CreatePerson = ({
 
   const ruleEmail = {
     type: "email",
-    message: "Ingrese un correo electronico valido",
+    message: "Ingrese un correo electrónico valido",
   };
 
   function onChange(date, dateString) {
@@ -231,7 +230,7 @@ const CreatePerson = ({
               </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleRequired]}>
-                  <Input readOnly value={nameNode} />
+                  <Input disabled readOnly value={nameNode} />
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>

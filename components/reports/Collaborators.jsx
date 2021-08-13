@@ -286,6 +286,7 @@ const CollaboratorsReport = (props) => {
                   onChange={onChangeDepartment}
                   name="department"
                   companyId={nodeId}
+                  style={{ maxWidth: 150 }}
                 />
               </Col>
               <Col>
@@ -366,7 +367,11 @@ const CollaboratorsReport = (props) => {
             key="tableHolidays"
             columns={columns}
             loading={loading}
-            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+            locale={{
+              emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
           ></Table>
         </Col>
       </Row>

@@ -13,6 +13,7 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { typeStreet } from "../../utils/functions";
 import WebApi from "../../api/webApi";
+import { onlyNumeric } from "../../utils/constant";
 
 const FormAddress = ({ person_id }) => {
   const { Title } = Typography;
@@ -99,7 +100,7 @@ const FormAddress = ({ person_id }) => {
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="street" label="Calle" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -108,17 +109,17 @@ const FormAddress = ({ person_id }) => {
               label="Número exterior"
               rules={[ruleRequired]}
             >
-              <Input />
+              <Input maxLength={20} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="numberTwo" label="Número interior">
-              <Input />
+              <Input maxLength={20} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="building" label="Edificio">
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -127,22 +128,22 @@ const FormAddress = ({ person_id }) => {
               label="Código postal"
               rules={[ruleRequired]}
             >
-              <Input />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="suburb" label="Suburbio" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="location" label="Ubicación" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="reference" label="Referencia">
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
         </Row>

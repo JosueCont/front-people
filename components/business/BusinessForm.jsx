@@ -340,7 +340,7 @@ const businessForm = () => {
                   }
                   border={false}
                   type={"button"}
-                  msg={"Copiado en porta papeles"}
+                  msg={"Copiado en portapapeles"}
                   tooltipTitle={"Copiar"}
                 />
               </Col>

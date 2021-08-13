@@ -24,6 +24,11 @@ import { API_URL } from "../../config/config";
 import moment from "moment";
 import { genders } from "../../utils/functions";
 import WebApi from "../../api/webApi";
+import {
+  messageDialogDelete,
+  onlyNumeric,
+  titleDialogDelete,
+} from "../../utils/constant";
 
 const FormFamily = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -181,10 +186,9 @@ const FormFamily = ({ person_id = null }) => {
   };
   const showModalDelete = (id) => {
     confirm({
-      title: "¿Está seguro de querer eliminarlo?",
+      title: titleDialogDelete,
       icon: <ExclamationCircleOutlined />,
-      content:
-        "Al eliminar este registro perderá todos los datos relacionados a el de manera permanente",
+      content: messageDialogDelete,
       okText: "Si",
       okType: "danger",
       cancelText: "Cancelar",
@@ -260,12 +264,12 @@ const FormFamily = ({ person_id = null }) => {
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="job" label="Puesto de trabajo">
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -274,7 +278,7 @@ const FormFamily = ({ person_id = null }) => {
               label="Apellido paterno"
               rules={[ruleRequired]}
             >
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -283,7 +287,7 @@ const FormFamily = ({ person_id = null }) => {
               label="Apellido materno"
               rules={[ruleRequired]}
             >
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -314,26 +318,26 @@ const FormFamily = ({ person_id = null }) => {
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="place_birth" label="Lugar de nacimiento">
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="nationality" label="Nacionalidad">
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="other_nationality" label="Otra nacionalidad">
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="benefit"
               label="% Beneficio"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
         </Row>

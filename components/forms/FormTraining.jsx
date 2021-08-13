@@ -22,6 +22,11 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
+import {
+  messageDialogDelete,
+  onlyNumeric,
+  titleDialogDelete,
+} from "../../utils/constant";
 
 const FormTraining = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -159,10 +164,9 @@ const FormTraining = ({ person_id = null }) => {
   };
   const showModalDelete = (id) => {
     confirm({
-      title: "¿Está seguro de querer eliminarlo?",
+      title: titleDialogDelete,
       icon: <ExclamationCircleOutlined />,
-      content:
-        "Al eliminar este registro perderá todos los datos relacionados a el de manera permanente",
+      content: messageDialogDelete,
       okText: "Si",
       okType: "danger",
       cancelText: "Cancelar",
@@ -273,9 +277,9 @@ const FormTraining = ({ person_id = null }) => {
             <Form.Item
               name="completed_period"
               label="No. Periodo completado"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={3} />
             </Form.Item>
           </Col>
         </Row>

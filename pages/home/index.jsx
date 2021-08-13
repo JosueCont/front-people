@@ -129,17 +129,16 @@ const homeScreen = ({ ...props }) => {
   const filterPersonName = async () => {
     filters.node = nodeId;
     setLoading(true);
-    try{
-      let response = await WebApi.filterPerson(filters)
+    try {
+      let response = await WebApi.filterPerson(filters);
       setPerson([]);
-        response.data.map((item, i) => {
-          item.key = i;
-          if (!item.photo) item.photo = defaulPhoto;
-        });
+      response.data.map((item, i) => {
+        item.key = i;
+        if (!item.photo) item.photo = defaulPhoto;
+      });
       setLoading(false);
       setPerson(response.data);
-    }
-    catch(error){
+    } catch (error) {
       setPerson([]);
       setLoading(false);
       console.log(error);
@@ -421,8 +420,10 @@ const homeScreen = ({ ...props }) => {
               "/ac/urn/" +
               props.currentNode.permanent_code
             }
+            title={"Link de empresa"}
+            border={false}
             type={"button"}
-            msg={"Copiado en porta papeles"}
+            msg={"Copiado en portapapeles"}
             tooltipTitle={"Copiar"}
           />
         </Menu.Item>
@@ -678,16 +679,14 @@ const homeScreen = ({ ...props }) => {
   const getDepartmets = async (value) => {
     setDepartments([]);
     setJobs([]);
-    try{
-      let response = await WebApi.filterDepartmentByNode(nodeId)
+    try {
+      let response = await WebApi.filterDepartmentByNode(nodeId);
       let dep = response.data.results;
       dep = dep.map((a) => {
         return { label: a.name, value: a.id };
       });
       setDepartments(dep);
-    }
-    catch(error)
-    {
+    } catch (error) {
       console.log(error);
     }
   };
