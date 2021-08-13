@@ -71,10 +71,14 @@ const DataPerson = ({
       report_to: person.report_to,
       periodicity: person.periodicity,
       intranet_access: person.intranet_access,
-      person_department: person.department.id,
-      job: person.job.id,
     });
-    if (person.person_department) setDepartmentId(person.person_department);
+    if (person.person_department) {
+      formPerson.setFieldsValue({
+        person_department: person.department.id,
+        job: person.job.id,
+      });
+      setDepartmentId(person.person_department);
+    }
     if (person.person_type)
       formPerson.setFieldsValue({
         person_type: person.person_type.id,
@@ -331,12 +335,7 @@ const DataPerson = ({
               />
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <SelectJob
-                departmentId={departmentId}
-                name="job"
-                label="Puesto"
-                style={false}
-              />
+              <SelectJob departmentId={departmentId} name="job" style={false} />
             </Col>
             <Col lg={7} xs={22} offset={1}>
               <Form.Item
