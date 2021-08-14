@@ -65,7 +65,7 @@ const DetailPerson = ({
             <FormDocument person_id={person.id} node={person.node} />
           </TabPane>
           <TabPane tab="Cambiar contraseña" key="tab_9">
-            <FormChangePassword khonnectId={person.id} />
+            <FormChangePassword khonnectId={person.khonnect_id} />
           </TabPane>
           {deletePerson && (
             <TabPane tab="Eliminar persona" key="tab_10"></TabPane>
