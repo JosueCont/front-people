@@ -160,7 +160,7 @@ const LoginForm = ({
                 onClick={() => props.setRecoverPasswordShow(true)}
                 className={"pointer text-link"}
               >
-                haz click aquí
+                haz clic aquí
               </span>
             </Form.Item>
           )}

@@ -256,7 +256,7 @@ const FormSelfRegistration = ({
                     onClick={() => setModal(true)}
                     className="text-link"
                   >
-                    <Link href="">haz click aquí</Link>
+                    <Link href="">haz clic aquí</Link>
                   </span>
                 </Col>
                 <Col
