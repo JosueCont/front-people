@@ -1645,7 +1645,7 @@ const personDetailForm = () => {
           <div>
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
-                <a href={item.document}>
+                <a href={item.document} target="_blank">
                   <FileTextOutlined style={{ fontSize: "30px" }} />
                 </a>
               </Col>

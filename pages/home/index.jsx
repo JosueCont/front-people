@@ -65,6 +65,13 @@ const homeScreen = ({ ...props }) => {
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
+  // Constantes para desactivar.
+  const [modalDeactivate, setModalDeactivate] = useState(false);
+  const [idsDeactivate, setIdsDeactivate] = useState("");
+  const [personsToDeactivate, setPersonsToDeactivate] = useState([]);
+  const [stringToDeactivate, setStringToDeactivate] = useState(null);
+
+  // Constantes para eliminar.
   const [modalDelete, setModalDelete] = useState(false);
   const [idsDelete, setIdsDelete] = useState("");
   const [personsToDelete, setPersonsToDelete] = useState([]);
@@ -79,6 +86,8 @@ const homeScreen = ({ ...props }) => {
 
   const [listUserCompanies, setListUserCompanies] = useState("");
   const [showModalCompanies, setShowModalCompanies] = useState(false);
+  const [deleteTrigger, setDeleteTrigger] = useState(false);
+  const [deactivateTrigger, setDeactivateTrigger] = useState(false);
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
@@ -143,6 +152,25 @@ const homeScreen = ({ ...props }) => {
     }
   };
 
+  const deactivatePerson = () => {
+    setLoading(true);
+    Axios.post(API_URL + '/person/person/deactivate_by_ids/', {
+      persons_id: idsDeactivate,
+    })
+    .then((response) => {
+      setIdsDeactivate("");
+      setModalDeactivate(false);
+      setPersonsToDeactivate([]);
+      filterPersonName();
+      setLoading(false);
+      message.success("Desactivado correctamente.");
+    })
+    .catch((error) => {
+      setLoading(false);
+      message.error("Error al desactivar")
+    })
+  }
+
   const deletePerson = () => {
     setLoading(true);
     Axios.post(API_URL + `/person/person/delete_by_ids/`, {
@@ -159,6 +187,7 @@ const homeScreen = ({ ...props }) => {
       .catch((error) => {
         setLoading(false);
         console.log(error);
+        message.error("Error al eliminar")
       });
   };
 
@@ -234,7 +263,20 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
-        return <div>{personName}</div>;
+        return (
+          <>
+            {
+              permissions.edit || permissions.delete ? (
+                <Dropdown overlay={() => menuPerson(item)}>
+                    <a><div>{personName}</div></a>
+                </Dropdown>
+              ) : (
+                <div>{personName}</div>
+              )
+            }
+          </>
+        )
+        // return <div>{personName}</div>;
       },
     },
     {
@@ -431,8 +473,20 @@ const homeScreen = ({ ...props }) => {
           Eliminar
         </Menu.Item>
       )}
+      <Menu.Item onClick={() => handleDeactivate()}>
+            Desactivar
+          </Menu.Item>
     </Menu>
   );
+
+  const handleDelete = () => {
+    setDeleteTrigger(true);
+  }
+
+  const handleDeactivate = () => {
+    setDeactivateTrigger(true);
+  }
+
   const menuPerson = (item) => {
     return (
       <Menu>
@@ -444,6 +498,7 @@ const homeScreen = ({ ...props }) => {
         {permissions.delete && (
           <Menu.Item onClick={() => setDeleteModal([item])}>Eliminar</Menu.Item>
         )}
+        <Menu.Item onClick={()=> setDeactivateModal([item])}>Desactivar</Menu.Item>
       </Menu>
     );
   };
@@ -487,6 +542,49 @@ const homeScreen = ({ ...props }) => {
       value: false,
     },
   ];
+
+  // DEACTIVATE MODAL
+  const setDeactivateModal = async (value) => {
+    setStringToDeactivate("Desactivar usuarios ");
+    if (value.length > 0 ) {
+      if (value.length == 1 ) {
+        setStringToDeactivate(
+          "Desactivar usuario " + value[0].first_name + " " + value[0].flast_name
+        );
+      }
+      setPersonsToDeactivate(value);
+      let ids = null;
+      value.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+      setIdsDeactivate(ids);
+      showModalDeactivate();
+    } else {
+      message.error("Selecciona una persona.");
+    }
+  };
+
+  const showModalDeactivate = () => {
+    modalDeactivate ? setModalDeactivate(false) : setModalDeactivate(true);
+  };
+
+  const ListElementsToDeactivate = ({ personsDeactivate }) => {
+    return (
+      <div>
+        {personsDeactivate.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
+  };
 
   /////DELETE MODAL
   const setDeleteModal = async (value) => {
@@ -706,15 +804,39 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
+  const AlertDeactivate = () => (
+    <div>
+      Al desactivar este registro ya no podra accerder a el hasta
+      que lo vuelva a activar. ¿Está seguro de querer desactivarlo?
+      <br />
+      <br />
+      <ListElementsToDeactivate personsDeactivate={personsToDeactivate} />
+    </div>
+  );
+
   const AlertDeletes = () => (
     <div>
       Al eliminar este registro perderá todos los datos relacionados a el de
-      manera permanente. ¿Está seguro de querer eliminarlo
+      manera permanente. ¿Está seguro de querer eliminarlo?
       <br />
       <br />
       <ListElementsToDelete personsDelete={personsToDelete} />
     </div>
   );
+
+  useEffect(() => {
+    if (deleteTrigger){
+      setDeleteModal(personsToDelete)
+      setDeleteTrigger(false);
+    }
+  }, [deleteTrigger])
+
+  useEffect(() => {
+    if (deactivateTrigger){
+      setDeactivateModal(personsToDelete)
+      setDeactivateTrigger(false);
+    }
+  }, [deactivateTrigger])
 
   useEffect(() => {
     if (modalDelete) {
@@ -736,6 +858,27 @@ const homeScreen = ({ ...props }) => {
       });
     }
   }, [modalDelete]);
+
+  useEffect(() => {
+    if (modalDeactivate) {
+      Modal.confirm({
+        title: stringToDeactivate,
+        content: <AlertDeactivate />,
+        icon: <ExclamationCircleOutlined />,
+        okText: "Si, desactivar",
+        okButtonProps: {
+          danger: true,
+        },
+        onCancel() {
+          setModalDeactivate();
+        },
+        cancelText: "Cancelar",
+        onOk() {
+          deactivatePerson();
+        },
+      });
+    }
+  }, [modalDeactivate])
 
   return (
     <MainLayout currentKey="1">
