@@ -31,6 +31,7 @@ import MainLayout from "../../layout/MainLayout";
 import NodeTreeView from "./TreeView/treeview";
 import Cookie from "js-cookie";
 import { userId } from "../../libs/auth";
+import Clipboard from "../Clipboard";
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -310,10 +311,11 @@ const businessForm = () => {
     },
     {
       title: "Acciones",
+      align: "center",
       render: (item) => {
         return (
           <div>
-            <Row gutter={16}>
+            <Row gutter={24}>
               {permissions.edit && (
                 <Col className="gutter-row" span={6}>
                   <Link href={`/business/${item.id}`}>
@@ -331,6 +333,17 @@ const businessForm = () => {
                   <DeleteOutlined onClick={() => showModal("delete", item)} />
                 </Col>
               )}
+              <Col className="gutter-row" span={6}>
+                <Clipboard
+                  text={
+                    window.location.origin + "/ac/urn/" + item.permanent_code
+                  }
+                  border={false}
+                  type={"button"}
+                  msg={"Copiado en portapapeles"}
+                  tooltipTitle={"Copiar link de auto registro"}
+                />
+              </Col>
             </Row>
           </div>
         );
@@ -542,7 +555,7 @@ const businessForm = () => {
               placeholder="Select a person"
               optionFilterProp="children"
               name={"fNode"}
-              notFoundContent={"No se encontraron resultado."}
+              notFoundContent={"No se encontraron resultados."}
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }

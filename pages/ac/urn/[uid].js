@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import FormPerson from "../../../components/person/FormPerson";
 import MainLayout from "../../../layout/MainLayout";
 import { Breadcrumb, Spin } from "antd";
 import { useState } from "react";
@@ -8,12 +7,24 @@ import DetailPerson from "../../../components/person/DetailPerson";
 import WebApi from "../../../api/webApi";
 import { connect } from "react-redux";
 import { companySelected } from "../../../redux/UserDuck";
+import FormSelfRegistration from "../../../components/forms/FormSelfRegistration";
+import jsCookie from "js-cookie";
 
 const userRegister = ({ ...props }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [visibleForm, setVisibleForm] = useState(false);
   const [person, setPerson] = useState();
+  const [khonnectId, setKhonnectId] = useState();
+  const [modal, setModal] = useState(false);
+  const [hideProfile, setHideProfile] = useState(false);
+
+  useEffect(() => {
+    try {
+      const user = JSON.parse(jsCookie.get("token"));
+      if (user) setHideProfile(true);
+    } catch (error) {}
+  }, []);
 
   useEffect(() => {
     if (router.query.uid) {
@@ -62,23 +73,41 @@ const userRegister = ({ ...props }) => {
     }
   }, [person]);
 
+  useEffect(() => {
+    if (khonnectId) {
+      getPersonKhonnectId();
+    }
+  }, [khonnectId]);
+
+  const getPersonKhonnectId = async () => {
+    try {
+      let response = await WebApi.personForKhonnectId({
+        id: khonnectId,
+      });
+      sessionStorage.setItem("tok", response.data.id);
+      setPerson(response.data);
+      setModal(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
-      {props.currentNode ? (
+      {props.currentNode && props.config ? (
         <MainLayout
-          logoNode={
-            "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/12220210623/staff_1-1.png"
-          }
+          logoNode={props.currentNode.image}
           companyName={props.currentNode.name}
           hideMenu={true}
-          hideProfile={false}
+          hideProfile={hideProfile}
+          onClickImage={false}
         >
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item>/Registro</Breadcrumb.Item>
           </Breadcrumb>
-          <Spin spinning={loading}>
-            {visibleForm ? (
-              <FormPerson
+          <Spin tip="Cargando..." spinning={loading}>
+            {props.currentNode && !person ? (
+              <FormSelfRegistration
                 node={props.currentNode.id}
                 visible={visibleForm}
                 hideProfileSecurity={false}
@@ -86,22 +115,41 @@ const userRegister = ({ ...props }) => {
                 close={(value) => setVisibleForm(value)}
                 nameNode={props.currentNode.name}
                 setPerson={setPerson}
+                setKhonnectId={setKhonnectId}
+                login={true}
+                modal={modal}
+                setModal={setModal}
+                config={props.config}
               />
             ) : (
-              props.currentNode &&
               person && (
                 <div
                   className="site-layout-background"
                   style={{ padding: 24, minHeight: 380, height: "100%" }}
                 >
-                  <DetailPerson person={person} setLoading={setLoading} />
+                  <DetailPerson
+                    person={person}
+                    setLoading={setLoading}
+                    deletePerson={false}
+                    hideProfileSecurity={false}
+                  />
                 </div>
               )
             )}
           </Spin>
         </MainLayout>
       ) : (
-        <Spin spinning={loading} />
+        <div
+          style={{
+            padding: "10%",
+            display: "flex",
+            textAlign: "center",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Spin tip="Cargando..." spinning={loading} />
+        </div>
       )}
     </>
   );
@@ -110,6 +158,7 @@ const userRegister = ({ ...props }) => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
   };
 };
 

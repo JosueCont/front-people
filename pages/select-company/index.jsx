@@ -4,10 +4,12 @@ import { Row, Col, Breadcrumb, message, Typography, Card, Spin } from "antd";
 import useRouter from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import { userCompanyId, userId } from "../../libs/auth";
+import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import { companySelected, companySelectedAxios } from "../../redux/UserDuck";
+import WebApi from "../../api/webApi";
+import Clipboard from "../../components/Clipboard";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
@@ -25,18 +27,18 @@ const SelectCompany = ({ ...props }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (jwt) {
-      Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
-        id: jwt.user_id,
-      })
-        .then((response) => {
-          setAdmin(response.data.is_admin);
-          if (response.data.is_admin) {
-            if (personId == "" || personId == null || personId == undefined)
-              sessionStorage.setItem("number", response.data.id);
-            getCopaniesList();
-          } else {
+  useEffect(async () => {
+    try {
+      if (jwt) {
+        let response = await WebApi.personForKhonnectId({ id: jwt.user_id });
+        setAdmin(response.data.is_admin);
+        sessionStorage.setItem("tok", response.data.id);
+        if (response.data.is_admin) {
+          if (personId == "" || personId == null || personId == undefined)
+            sessionStorage.setItem("number", response.data.id);
+          getCopaniesList();
+        } else {
+          if (response.data.nodes)
             if (response.data.nodes.length > 1) {
               if (personId == "" || personId == null || personId == undefined)
                 sessionStorage.setItem("number", response.data.id);
@@ -47,19 +49,18 @@ const SelectCompany = ({ ...props }) => {
                 sessionStorage.setItem("number", response.data.id);
               setCompanySelect(response.data.nodes[0]);
             }
-          }
-          setLoading(false);
-        })
-        .catch((e) => {
-          setLoading(false);
-          console.log(e);
-        });
+        }
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
   }, [jwt]);
 
   const getCopaniesList = async () => {
     try {
-      let response = await Axios.get(API_URL + `/business/node/`);
+      let response = await WebApi.getCompanys();
       let data = response.data.results.filter((a) => a.active);
       setDataList(data);
       setLoading(false);
@@ -70,18 +71,15 @@ const SelectCompany = ({ ...props }) => {
   };
 
   const setCompanySelect = async (item) => {
-    getConfig();
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
     sessionStorage.setItem("name", item.name);
     sessionStorage.setItem("image", item.image);
     let response = await props.companySelected(item.id);
-    console.log(response);
     if (response) {
       useRouter.push("home");
     } else {
       response = await props.companySelectedAxios(item.id);
-      console.log("Resposne 2->>>> ", response);
       if (response) {
         useRouter.push("home");
       } else {
@@ -90,37 +88,22 @@ const SelectCompany = ({ ...props }) => {
     }
   };
 
-  const getConfig = () => {
-    Axios.get(API_URL + "/setup/site-configuration/")
-      .then((res) => {
-        sessionStorage.setItem("accessIntranet", res.data.intranet_enabled);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   return (
     <>
       {jwt && jwt.user_id ? (
         <MainLayout currentKey="8.5" hideMenu={true}>
           <Breadcrumb className={"mainBreadcrumb"}>
-            <Breadcrumb.Item
-              className={"pointer"}
-              onClick={() => useRouter.push({ pathname: "/home" })}
-            >
-              Inicio
-            </Breadcrumb.Item>
-            <Breadcrumb.Item>Empresas</Breadcrumb.Item>
+            <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>
           </Breadcrumb>
           <div className="container" style={{ width: "100%", padding: 20 }}>
-            <Spin spinning={loading}>
+            <Spin tip="Cargando..." spinning={loading}>
               <Row
                 gutter={[16, 16]}
                 style={{
                   display: "flex",
-                  // justifyContent: "center",
-                  // alignItems: "center",
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 {dataList.map((item) => (
@@ -134,15 +117,31 @@ const SelectCompany = ({ ...props }) => {
                   >
                     <Card
                       hoverable
-                      style={{ textAlign: "center", marginTop: 20 }}
                       className={"cardH100"}
-                      onClick={() => setCompanySelect(item)}
+                      actions={[
+                        <Clipboard
+                          text={
+                            window.location.origin +
+                            "/ac/urn/" +
+                            item.permanent_code
+                          }
+                          border={false}
+                          type={"button"}
+                          msg={"Copiado en portapapeles"}
+                          tooltipTitle={"Copiar link de auto registro"}
+                        />,
+                      ]}
                     >
-                      <Title level={4} style={{ margin: "auto" }}>
-                        <img alt="example" src={item.image} width="50px" />
-                        <br />
-                        {item.name}
-                      </Title>
+                      <div
+                        className="div-card "
+                        onClick={() => setCompanySelect(item)}
+                      >
+                        <Title level={4} style={{ margin: "auto" }}>
+                          <img alt="example" src={item.image} width="50px" />
+                          <br />
+                          {item.name}
+                        </Title>
+                      </div>
                     </Card>
                   </Col>
                 ))}
@@ -158,7 +157,7 @@ const SelectCompany = ({ ...props }) => {
 };
 
 const mapState = (state) => {
-  return {};
+  return { config: state.userStore.general_config };
 };
 
 export default connect(mapState, { companySelected, companySelectedAxios })(

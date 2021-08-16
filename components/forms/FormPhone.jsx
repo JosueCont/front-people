@@ -16,12 +16,15 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import WebApi from "../../api/webApi";
+import {
+  messageDialogDelete,
+  onlyNumeric,
+  titleDialogDelete,
+} from "../../utils/constant";
 
-const FormPhone = ({ person_id = null, ruleRequired, setLoading }) => {
+const FormPhone = ({ person_id = null }) => {
   const { Title } = Typography;
   const [formPhone] = Form.useForm();
   const { confirm } = Modal;
@@ -29,99 +32,88 @@ const FormPhone = ({ person_id = null, ruleRequired, setLoading }) => {
   const [upPhone, setUpPhone] = useState(false);
   const [phones, setPhones] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
+  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   useEffect(() => {
     getPhone();
   }, []);
 
-  /*Functions CRUD */
-  const getPhone = () => {
-    Axios.get(API_URL + `/person/person/${person_id}/phone_person/`)
-      .then((response) => {
-        setPhones(response.data);
-        setLoading(false);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((e) => {
-        console.log(e);
-        setPhones([]);
-        setLoading(false);
+  const getPhone = async () => {
+    try {
+      let response = await WebApi.getPhone(person_id);
+      setPhones(response.data);
+      setTimeout(() => {
         setLoadingTable(false);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setPhones([]);
+      setLoadingTable(false);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
   };
-  const savePhone = (data) => {
-    Axios.post(API_URL + `/person/phone/`, data)
-      .then((response) => {
-        message.success({
-          content: "Guardado correctamente.",
-          className: "custom-class",
-        });
-        setLoading(false);
-        getPhone();
-        formPhone.resetFields();
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  };
-  const updatePhone = (data) => {
-    setLoading(true);
-    setLoadingTable(true);
-    Axios.put(API_URL + `/person/phone/${data.id}/`, data)
-      .then((response) => {
-        message.success({
-          content: "Actualizado correctamente.",
-          className: "custom-class",
-        });
-        setLoading(false);
-        setUpPhone(false);
-        setIdPhone(null);
-        formPhone.resetFields();
-        getPhone();
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.log(error);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      });
-  };
-  const deletePhone = (id) => {
-    setLoadingTable(true);
-    Axios.delete(API_URL + `/person/phone/${id}/`)
-      .then((response) => {
-        message.success({
-          content: "Eliminado con exito.",
-          className: "custom-class",
-        });
-        setLoading(false);
 
-        getPhone();
-        if (upPhone) {
-          formPhone.resetFields();
-          setUpPhone(false);
-        }
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.log(error);
-        setTimeout(() => {
-          setLoadingTable(false);
-        }, 1000);
+  const savePhone = async (data) => {
+    try {
+      let response = await WebApi.createPhone(data);
+      message.success({
+        content: "Guardado correctamente.",
+        className: "custom-class",
       });
+      formPhone.resetFields();
+      getPhone();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updatePhone = async (data) => {
+    try {
+      setLoadingTable(true);
+      let response = await WebApi.updatePhone(data);
+      message.success({
+        content: "Actualizado correctamente.",
+        className: "custom-class",
+      });
+      formPhone.resetFields();
+      setUpPhone(false);
+      setIdPhone(null);
+      getPhone();
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
+  };
+  const deletePhone = async (id) => {
+    try {
+      let response = await WebApi.deletePhone(id);
+      setLoadingTable(true);
+
+      message.success({
+        content: "Eliminado con éxito.",
+        className: "custom-class",
+      });
+      getPhone();
+      if (upPhone) {
+        formPhone.resetFields();
+        setUpPhone(false);
+      }
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setLoadingTable(false);
+      }, 1000);
+    }
   };
 
   /*Events */
@@ -149,10 +141,9 @@ const FormPhone = ({ person_id = null, ruleRequired, setLoading }) => {
   };
   const showModalDelete = (id) => {
     confirm({
-      title: "¿Está seguro de querer eliminarlo?",
+      title: titleDialogDelete,
       icon: <ExclamationCircleOutlined />,
-      content:
-        "Al eliminar este registro perderá todos los datos relacionados a el de manera permanente",
+      content: messageDialogDelete,
       okText: "Si",
       okType: "danger",
       cancelText: "Cancelar",
@@ -242,7 +233,7 @@ const FormPhone = ({ person_id = null, ruleRequired, setLoading }) => {
             >
               <Select
                 options={typePhones}
-                notFoundContent={"No se encontraron resultado."}
+                notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
           </Col>
@@ -254,7 +245,7 @@ const FormPhone = ({ person_id = null, ruleRequired, setLoading }) => {
             >
               <Select
                 options={typeLines}
-                notFoundContent={"No se encontraron resultado."}
+                notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
           </Col>
@@ -262,36 +253,36 @@ const FormPhone = ({ person_id = null, ruleRequired, setLoading }) => {
             <Form.Item
               name="international_code"
               label="Código internacional"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="national_code"
               label="Código de país"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="country_code"
               label="Código de ciudad"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="phone"
               label="Número telefónico"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={10} />
             </Form.Item>
           </Col>
         </Row>

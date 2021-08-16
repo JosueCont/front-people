@@ -45,7 +45,9 @@ import {
 const { Content } = Layout;
 import Link from "next/link";
 import jsCookie from "js-cookie";
+import Clipboard from "../../components/Clipboard";
 import { connect } from "react-redux";
+import WebApi from "../../api/webApi";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -91,12 +93,10 @@ const homeScreen = ({ ...props }) => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
     // getPerson();
-    nodeId = userCompanyId();
-    if (nodeId) {
-      filterPersonName();
-    }
+
+    if (props.currentNode) filterPersonName();
     getDepartmets();
-  }, []);
+  }, [props.currentNode]);
 
   const searchPermissions = (data) => {
     const perms = {};
@@ -133,24 +133,23 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const filterPersonName = () => {
-    filters.node = nodeId;
+  const filterPersonName = async () => {
+    filters.node = props.currentNode.id;
     setLoading(true);
-    Axios.post(API_URL + `/person/person/get_list_persons/`, filters)
-      .then((response) => {
-        setPerson([]);
-        response.data.map((item, i) => {
-          item.key = i;
-          if (!item.photo) item.photo = defaulPhoto;
-        });
-        setLoading(false);
-        setPerson(response.data);
-      })
-      .catch((e) => {
-        setPerson([]);
-        setLoading(false);
-        console.log(e);
+    try {
+      let response = await WebApi.filterPerson(filters);
+      setPerson([]);
+      response.data.map((item, i) => {
+        item.key = i;
+        if (!item.photo) item.photo = defaulPhoto;
       });
+      setLoading(false);
+      setPerson(response.data);
+    } catch (error) {
+      setPerson([]);
+      setLoading(false);
+      console.log(error);
+    }
   };
 
   const deactivatePerson = () => {
@@ -453,8 +452,24 @@ const homeScreen = ({ ...props }) => {
 
   const menuGeneric = (
     <Menu>
+      {props.currentNode && (
+        <Menu.Item key="1">
+          <Clipboard
+            text={
+              window.location.origin +
+              "/ac/urn/" +
+              props.currentNode.permanent_code
+            }
+            title={"Link de empresa"}
+            border={false}
+            type={"button"}
+            msg={"Copiado en portapapeles"}
+            tooltipTitle={"Copiar link de auto registro"}
+          />
+        </Menu.Item>
+      )}
       {permissions.delete && (
-        <Menu.Item onClick={() => handleDelete()}>
+        <Menu.Item key="2" onClick={() => setDeleteModal(personsToDelete)}>
           Eliminar
         </Menu.Item>
       )}
@@ -666,7 +681,7 @@ const homeScreen = ({ ...props }) => {
     if (extension === "xlsx") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
-      formData.append("node_id", nodeId);
+      formData.append("node_id", props.currentNode.id);
       setLoading(true);
       Axios.post(API_URL + `/person/person/import_xls/`, formData)
         .then((response) => {
@@ -757,22 +772,19 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const getDepartmets = (value) => {
+  const getDepartmets = async (value) => {
     setDepartments([]);
     setJobs([]);
-    Axios.get(API_URL + `/business/department/?node=${nodeId}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let dep = response.data.results;
-          dep = dep.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setDepartments(dep);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
+    try {
+      let response = await WebApi.filterDepartmentByNode(props.currentNode.id);
+      let dep = response.data.results;
+      dep = dep.map((a) => {
+        return { label: a.name, value: a.id };
       });
+      setDepartments(dep);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const changeDepartment = (value) => {
@@ -914,9 +926,9 @@ const homeScreen = ({ ...props }) => {
                       <Form.Item name="gender" label="Género">
                         <Select
                           options={genders}
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           placeholder="Todos"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>
@@ -926,7 +938,7 @@ const homeScreen = ({ ...props }) => {
                           onChange={changeDepartment}
                           options={departments}
                           placeholder="Todos"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           style={{ width: 100 }}
                         />
                       </Form.Item>
@@ -936,7 +948,7 @@ const homeScreen = ({ ...props }) => {
                         <Select
                           options={jobs}
                           placeholder="Todos"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           style={{ minWidth: 100 }}
                         />
                       </Form.Item>
@@ -946,7 +958,7 @@ const homeScreen = ({ ...props }) => {
                         <Select
                           options={statusSelect}
                           placeholder="Estatus"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           style={{ width: 90 }}
                         />
                       </Form.Item>
@@ -956,7 +968,7 @@ const homeScreen = ({ ...props }) => {
                         <Select
                           options={periodicity}
                           placeholder="Periocidad"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           style={{ width: 90 }}
                         />
                       </Form.Item>
@@ -968,12 +980,7 @@ const homeScreen = ({ ...props }) => {
                         key={"#filtrar"}
                       >
                         <Button
-                          style={{
-                            background: "#fa8c16",
-                            fontWeight: "bold",
-                            color: "white",
-                            marginTop: "auto",
-                          }}
+                          className="btn-filter"
                           htmlType="submit"
                         >
                           <SearchOutlined />
@@ -998,12 +1005,7 @@ const homeScreen = ({ ...props }) => {
               <Col style={{ display: "flex" }}>
                 {permissions.create && (
                   <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
+                    className="btn-add-person"
                     onClick={() => getModalPerson(true)}
                   >
                     <PlusOutlined />
@@ -1081,4 +1083,10 @@ const homeScreen = ({ ...props }) => {
   );
 };
 
-export default withAuthSync(homeScreen);
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(withAuthSync(homeScreen));

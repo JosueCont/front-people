@@ -172,7 +172,7 @@ const PersonalizationForm = (props) => {
   return (
     <>
       <Layout className="site-layout-background">
-        <Spin spinning={props.loading}>
+        <Spin tip="Cargando..." spinning={props.loading}>
           <Form
             layout={"vertical"}
             form={formConfigIntranet}

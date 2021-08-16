@@ -149,7 +149,7 @@ const StatisticsPayroll = () => {
               Nómina empresarial
             </Title>
           </div>
-          <Spin spinning={loading}>
+          <Spin tip="Cargando..." spinning={loading}>
             {payroll.net_total_business > 0 ? (
               <Row>
                 <Col lg={8} xs={24} style={center}>

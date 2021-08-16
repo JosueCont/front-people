@@ -4,7 +4,12 @@ import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-export default function SelectJob(props) {
+export default function SelectJob({
+  item = true,
+  titleLabel = true,
+  rules = [],
+  ...props
+}) {
   const [options, setOptions] = useState(null);
   const route = useRouter();
   const { Option } = Select;
@@ -39,20 +44,23 @@ export default function SelectJob(props) {
   }, [props.departmentId]);
 
   return (
-    <Form.Item
-      key={"ItemJob"}
-      name={props.name ? props.name : "job"}
-      label={props.label ? props.label : "Empresa"}
-    >
-      <Select
-        key="SelectJob"
-        placeholder="Puesto de trabajo"
-        style={props.style ? props.style : null}
-        options={options}
-        onChange={props.onChange ? props.onChange : null}
-        allowClear
-        notFoundContent={"No se encontraron resultado."}
-      />
-    </Form.Item>
+    <>
+      <Form.Item
+        key={"ItemJob"}
+        name={props.name ? props.name : "job"}
+        label={titleLabel ? "Puesto de trabajo" : ""}
+        rules={rules}
+      >
+        <Select
+          key="SelectJob"
+          options={options}
+          placeholder="Puesto de trabajo"
+          allowClear
+          style={props.style ? props.style : {}}
+          onChange={props.onChange ? props.onChange : null}
+          notFoundContent={"No se encontraron resultados."}
+        />
+      </Form.Item>
+    </>
   );
 }

@@ -39,6 +39,7 @@ export default webReducer;
 export const doGetGeneralConfig = () => async (dispatch, getState) => {
   try {
     let response = await WebApi.getGeneralConfig();
+    sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
     dispatch({ type: GENERAL_CONFIG, payload: response.data });
   } catch (error) {}
 };
@@ -74,7 +75,6 @@ export const companySelected = (data) => async (dispatch, getState) => {
 };
 
 export const companySelectedAxios = (data) => async (dispatch, getState) => {
-  console.log("DATA-->>> ", API_URL);
   let response = await Axios.get(
     `https://demo.people.hiumanlab.com/business/node/${data}/`
   )
@@ -83,7 +83,6 @@ export const companySelectedAxios = (data) => async (dispatch, getState) => {
       return true;
     })
     .catch((error) => {
-      console.log("ERROR API--Z ", error);
       return false;
     });
   return response;
