@@ -125,3 +125,17 @@ export const periodicity = [
     value: 4,
   },
 ];
+export const statusSelect = [
+  {
+    label: "Todos",
+    value: -1,
+  },
+  {
+    label: "Activos",
+    value: true,
+  },
+  {
+    label: "Inactivos",
+    value: false,
+  },
+];

@@ -7,7 +7,7 @@ import { API_URL } from "../../config/config";
 import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
-import { companySelected, companySelectedAxios } from "../../redux/UserDuck";
+import { companySelected } from "../../redux/UserDuck";
 import WebApi from "../../api/webApi";
 import Clipboard from "../../components/Clipboard";
 
@@ -79,12 +79,7 @@ const SelectCompany = ({ ...props }) => {
     if (response) {
       useRouter.push("home");
     } else {
-      response = await props.companySelectedAxios(item.id);
-      if (response) {
-        useRouter.push("home");
-      } else {
-        message.error("Ocurrio un error, intente de nuevo.");
-      }
+      message.error("Ocurrio un error, intente de nuevo.");
     }
   };
 
@@ -160,6 +155,4 @@ const mapState = (state) => {
   return { config: state.userStore.general_config };
 };
 
-export default connect(mapState, { companySelected, companySelectedAxios })(
-  SelectCompany
-);
+export default connect(mapState, { companySelected })(SelectCompany);

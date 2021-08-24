@@ -5,9 +5,9 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 
 export default function SelectJob({
-  item = true,
   titleLabel = true,
   rules = [],
+  departmentId,
   ...props
 }) {
   const [options, setOptions] = useState(null);
@@ -17,9 +17,7 @@ export default function SelectJob({
   const getJobs = async () => {
     try {
       let response = await Axios.get(
-        API_URL +
-          // `/business/department/${props.departmentId}/job_for_department/`
-          `/person/job/?department=${props.departmentId}`
+        API_URL + `/person/job/?department=${departmentId}`
       );
       let data = response.data;
 
@@ -38,10 +36,10 @@ export default function SelectJob({
 
   useEffect(() => {
     setOptions([]);
-    if (props.departmentId) {
+    if (departmentId) {
       getJobs();
     }
-  }, [props.departmentId]);
+  }, [departmentId]);
 
   return (
     <>

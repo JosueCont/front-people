@@ -4,9 +4,9 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 
 export default function SelectDepartment({
-  item = true,
   titleLabel = true,
   rules = [],
+  companyId,
   ...props
 }) {
   const [options, setOptions] = useState([]);
@@ -16,7 +16,7 @@ export default function SelectDepartment({
   const getDepartament = async () => {
     try {
       let response = await Axios.get(
-        API_URL + `/business/node/${props.companyId}/department_for_node/`
+        API_URL + `/business/node/${companyId}/department_for_node/`
       );
       let data = response.data;
       data = data.map((item) => {
@@ -34,10 +34,11 @@ export default function SelectDepartment({
 
   useEffect(() => {
     setOptions([]);
-    if (props.companyId) {
+    if (companyId) {
+      console.log("ID-> ", companyId);
       getDepartament();
     }
-  }, [props.companyId]);
+  }, [companyId]);
 
   return (
     <>
