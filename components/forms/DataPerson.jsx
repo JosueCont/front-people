@@ -25,7 +25,7 @@ import moment from "moment";
 import { civilStatus, genders, periodicity } from "../../utils/functions";
 import WebApi from "../../api/webApi";
 import Axios from "axios";
-import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
+import { API_URL } from "../../config/config";
 import {
   curpFormat,
   minLengthNumber,
@@ -33,7 +33,8 @@ import {
   rfcFormat,
 } from "../../utils/constant";
 
-const DataPerson = ({ person = null, accessIntranet = false, ...props }) => {
+const DataPerson = ({ config, person = null, accessIntranet = false, ...props }) => {
+  
   const { Title } = Typography;
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
@@ -56,14 +57,14 @@ const DataPerson = ({ person = null, accessIntranet = false, ...props }) => {
   const getValueSelects = async () => {
     setLoading(true);
     const headers = {
-      "client-id": APP_ID,
+      "client-id": config.client_khonnect_id,
       "Content-Type": "application/json",
     };
 
     let company = `?company=${person.node}`;
 
     /////PERMSS GROUPS
-    Axios.get(LOGIN_URL + "/group/list/" + company, {
+    Axios.get(config.url_server_khonnect + "/group/list/" + company, {
       headers: headers,
     })
       .then((response) => {
@@ -95,13 +96,13 @@ const DataPerson = ({ person = null, accessIntranet = false, ...props }) => {
       });
 
     Axios.post(
-      LOGIN_URL + `/user/get-info/`,
+      config.url_server_khonnect + `/user/get-info/`,
       {
         user_id: person.khonnect_id,
       },
       {
         headers: {
-          "client-id": APP_ID,
+          "client-id": config.client_khonnect_id,
           "Content-Type": "application/json",
         },
       }

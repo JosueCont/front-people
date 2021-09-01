@@ -6,8 +6,9 @@ import { Breadcrumb, Spin } from "antd";
 import WebApi from "../../api/webApi";
 import MainLayout from "../../layout/MainLayout";
 import { Content } from "antd/lib/layout/layout";
+import { connect } from "react-redux";
 
-const EmployeeDetailPage = () => {
+const EmployeeDetailPage = ( ...props) => {
   const router = useRouter();
   const [person, setPerson] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -34,7 +35,7 @@ const EmployeeDetailPage = () => {
             <Breadcrumb.Item>Expediente de empleado</Breadcrumb.Item>
           </Breadcrumb>
           {person ? (
-            <DetailPerson person={person} setLoading={setLoading} />
+            <DetailPerson config={props[0].config} person={person} setLoading={setLoading} />
           ) : (
             <div className="center-content" style={{ padding: "20%" }}>
               <Spin tip="Cargando..." spinning={true} />
@@ -46,4 +47,11 @@ const EmployeeDetailPage = () => {
   );
 };
 
-export default withAuthSync(EmployeeDetailPage);
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
+  };
+};
+
+export default connect(mapState)(withAuthSync(EmployeeDetailPage));

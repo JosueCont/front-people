@@ -50,6 +50,7 @@ import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
 
 const homeScreen = ({ ...props }) => {
+  console.log('props in home screen', props.config)
   const { Text } = Typography;
 
   const [columns2, setColumns2] = useState([]);
@@ -706,7 +707,7 @@ const homeScreen = ({ ...props }) => {
 
   ////SEARCH FILTER
   const filter = (value) => {
-    console.log(value);
+
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
@@ -1073,6 +1074,7 @@ const homeScreen = ({ ...props }) => {
       </div>
       {modalAddPerson && (
         <FormPerson
+          config={props.config}
           close={getModalPerson}
           visible={modalAddPerson}
           nameNode={userCompanyName()}
@@ -1086,6 +1088,7 @@ const homeScreen = ({ ...props }) => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
   };
 };
 

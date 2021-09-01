@@ -11,7 +11,6 @@ import {
 const { Text } = Typography;
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { LOGIN_URL, APP_ID } from "../config/config";
 import Axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";

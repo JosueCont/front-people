@@ -25,7 +25,6 @@ const Home = ({ ...props }) => {
 
     var head = document.head;
     var link = document.createElement("link");
-    console.log("stylePath", routeFlavor)
     link.type = "text/css";
     link.href = routeFlavor + '/' + flavor.stylePath;
     link.rel = "stylesheet";
@@ -41,7 +40,6 @@ const Home = ({ ...props }) => {
     }
   }, [props.config]);
   /* const [loginFormShow, SetLoginFormShow] = useState(true); */
-  console.log(flavor)
   return (
     <>
       <Global
@@ -117,10 +115,12 @@ const Home = ({ ...props }) => {
 
                     {recoverPasswordShow ? (
                       <PasswordRecover
+                        generalConfig={props.config}
                         setRecoverPasswordShow={setRecoverPasswordShow}
                       />
                     ) : (
                       <LoginForm
+                        generalConfig={props.config}
                         setRecoverPasswordShow={setRecoverPasswordShow}
                       />
                     )}

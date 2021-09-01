@@ -11,6 +11,7 @@ import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
 
 const DetailPerson = ({
+  config,
   person,
   setLoading,
   deletePerson = true,
@@ -34,6 +35,7 @@ const DetailPerson = ({
       </Title>
       <Card bordered={true}>
         <DataPerson
+          config={config}
           person={person}
           setLoading={setLoading}
           hideProfileSecurity={hideProfileSecurity}
@@ -65,7 +67,7 @@ const DetailPerson = ({
             <FormDocument person_id={person.id} node={person.node} />
           </TabPane>
           <TabPane tab="Cambiar contraseña" key="tab_9">
-            <FormChangePassword khonnectId={person.khonnect_id} />
+            <FormChangePassword config={config} khonnectId={person.khonnect_id} />
           </TabPane>
           {deletePerson && (
             <TabPane tab="Eliminar persona" key="tab_10"></TabPane>

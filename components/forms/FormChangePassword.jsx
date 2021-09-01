@@ -1,8 +1,8 @@
 import { Form, Input, Button, message, Row, Typography } from "antd";
 import Axios from "axios";
-import { LOGIN_URL, APP_ID } from "../../config/config";
 
-const FormChangePassword = ({ khonnectId }) => {
+const FormChangePassword = ({ config, khonnectId }) => {
+  
   const { Title } = Typography;
   const [formPassword] = Form.useForm();
   const ruleRequired = { required: true, message: "Este campo es requerido" };
@@ -12,11 +12,11 @@ const FormChangePassword = ({ khonnectId }) => {
       value.user_id = khonnectId;
       delete value["newPassword"];
       const headers = {
-        "client-id": APP_ID,
+        "client-id": config.client_khonnect_id ,
         "Content-Type": "application/json",
       };
       console.log("Value->> ", value);
-      Axios.post(LOGIN_URL + "/password/change/direct/", value, {
+      Axios.post(config.url_server_khonnect + "/password/change/direct/", value, {
         headers: headers,
       })
         .then((response) => {
