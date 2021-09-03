@@ -343,6 +343,12 @@ const headerCustom = ({
                       </Menu.Item>
                     </SubMenu>
                   )}
+                  <Menu.Item
+                    key="12"
+                    onClick={() => router.push({ pathname: "/bulk_upload" })}
+                  >
+                    Registro de cargas
+                  </Menu.Item>
                 </>
               ) : null}
             </Menu>
