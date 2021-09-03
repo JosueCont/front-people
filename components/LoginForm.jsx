@@ -2,7 +2,6 @@ import { Form, Input, Button, Spin, Alert, Typography, message } from "antd";
 const { Text } = Typography;
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { LOGIN_URL, API_URL, APP_ID } from "../config/config";
 import Axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
@@ -49,14 +48,14 @@ const LoginForm = ({
       setErrorLogin(false);
       setLoading(true);
       const headers = {
-        "client-id": APP_ID,
+        "client-id": props.generalConfig.client_khonnect_id,
         "Content-Type": "application/json",
       };
       const data = {
         email: email,
         password: password,
       };
-      Axios.post(LOGIN_URL + "/login/", data, { headers: headers })
+      Axios.post(props.generalConfig.url_server_khonnect + "/login/", data, { headers: headers })
         .then(function (response) {
           if (response.status === 200) {
             let token = jwt_decode(response.data.token);

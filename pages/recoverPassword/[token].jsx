@@ -5,11 +5,12 @@ import RecoveryPasswordForm from "../../components/RecoveryPaswwordForm";
 import { Row, Col, Card, Typography } from "antd";
 import { useRouter } from "next/router";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-
-import { LOGIN_URL, APP_ID } from "../../config/config";
 import Axios from "axios";
+import { connect } from "react-redux";
 
-const PasswordRecovery = () => {
+
+const PasswordRecovery = (...props) => {
+  
   const router = useRouter();
   const { token } = router.query;
   const { Text, Title } = Typography;
@@ -28,7 +29,7 @@ const PasswordRecovery = () => {
     try {
       setLoading(true);
       const headers = {
-        "client-id": APP_ID,
+        "client-id": props[0].config.client_khonnect_id,
         "Content-Type": "application/json",
       };
       const data = {
@@ -36,7 +37,7 @@ const PasswordRecovery = () => {
         token: token,
       };
       let response = await Axios.post(
-        LOGIN_URL + "/user/password/change/",
+        props[0].config.url_server_khonnect + "/user/password/change/",
         data,
         { headers: headers }
       );
@@ -122,4 +123,10 @@ const PasswordRecovery = () => {
   );
 };
 
-export default PasswordRecovery;
+const mapState = (state) => {
+  return {
+    config: state.userStore.general_config,
+  };
+};
+
+export default connect(mapState)(PasswordRecovery);

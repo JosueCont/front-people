@@ -37,7 +37,6 @@ const MainLayout = ({
 
     var head = document.head;
     var link = document.createElement("link");
-    console.log("stylePath", routeFlavor)
     link.type = "text/css";
     link.href = routeFlavor + '/' + flavor.stylePath;
     link.rel = "stylesheet";
@@ -75,12 +74,7 @@ const MainLayout = ({
       let response = props.companySelected();
     }
   }, [props.currentNode]);
-  console.log('flavor', flavor)
-  console.log('routeFlavor', routeFlavor)
-
-
-
-
+  
   return (
     <Layout className="layout">
        <Global

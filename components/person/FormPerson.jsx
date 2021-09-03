@@ -13,7 +13,7 @@ import {
   Switch,
 } from "antd";
 import Axios from "axios";
-import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
+import { API_URL } from "../../config/config";
 import { useState, useEffect } from "react";
 import {
   getAccessIntranet,
@@ -27,6 +27,7 @@ import { ruleEmail } from "../../utils/constant";
 import moment from "moment";
 
 const FormPerson = ({
+  config=null,
   hideProfileSecurity = true,
   intranetAccess = true,
   node = null,
@@ -74,14 +75,14 @@ const FormPerson = ({
 
   const getValueSelects = async (id) => {
     const headers = {
-      "client-id": APP_ID,
+      "client-id": config.client_khonnect_id,
       "Content-Type": "application/json",
     };
 
     let company = `?company=${node}`;
 
     /////PERMSS GROUPS
-    Axios.get(LOGIN_URL + "/group/list/" + company, {
+    Axios.get(config.url_server_khonnect + "/group/list/" + company, {
       headers: headers,
     })
       .then((response) => {
