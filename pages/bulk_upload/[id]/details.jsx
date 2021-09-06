@@ -61,7 +61,7 @@ const DetailsBulkUpload = () => {
       title: "Estatus",
       key: "status_log",
       render: (row) => {
-        return row.status_log != "" ? (
+        return row.errors != "" ? (
           <CloseCircleTwoTone twoToneColor="#eb2f96" />
         ) : (
           <CheckCircleTwoTone twoToneColor="#52c41a" />
