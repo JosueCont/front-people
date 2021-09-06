@@ -15,6 +15,7 @@ const ERROR = "ERROR";
 const JWT = "JWT";
 const GENERAL_CONFIG = "GENERAL_CONFIG";
 const COMPANY_SELCTED = "COMPANY_SELECTED";
+const DATA_UPLOAD = "DATA_UPLOAD";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -30,6 +31,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, general_config: action.payload };
     case COMPANY_SELCTED:
       return { ...state, current_node: action.payload };
+    case DATA_UPLOAD:
+      return { ...state, data_upload: action.payload };
     default:
       return state;
   }
@@ -86,4 +89,13 @@ export const companySelectedAxios = (data) => async (dispatch, getState) => {
       return false;
     });
   return response;
+};
+
+export const setDataUpload = (data) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: DATA_UPLOAD, payload: data });
+    return true;
+  } catch (error) {
+    return false;
+  }
 };

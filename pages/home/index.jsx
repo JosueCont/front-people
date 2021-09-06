@@ -31,6 +31,7 @@ import {
   UploadOutlined,
   EllipsisOutlined,
   ExclamationCircleOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
@@ -41,6 +42,7 @@ import {
   getAccessIntranet,
   userCompanyName,
 } from "../../libs/auth";
+import { setDataUpload } from "../../redux/UserDuck";
 
 const { Content } = Layout;
 import Link from "next/link";
@@ -48,10 +50,12 @@ import jsCookie from "js-cookie";
 import Clipboard from "../../components/Clipboard";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
+import { useRouter } from "next/router";
 
 const homeScreen = ({ ...props }) => {
   console.log('props in home screen', props.config)
   const { Text } = Typography;
+  const route = useRouter();
 
   const [columns2, setColumns2] = useState([]);
   const [valRefreshColumns, setValRefreshColumns] = useState(false);
@@ -62,6 +66,7 @@ const homeScreen = ({ ...props }) => {
   const [modalAddPerson, setModalAddPerson] = useState(false);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
+  const inputFileRef2 = useRef(null);
   let filters = { node: "" };
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -89,10 +94,12 @@ const homeScreen = ({ ...props }) => {
   const [showModalCompanies, setShowModalCompanies] = useState(false);
   const [deleteTrigger, setDeleteTrigger] = useState(false);
   const [deactivateTrigger, setDeactivateTrigger] = useState(false);
+  const [userSession, setUserSession] = useState({});
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
+    setUserSession(jwt);
     // getPerson();
 
     if (props.currentNode) filterPersonName();
@@ -155,22 +162,22 @@ const homeScreen = ({ ...props }) => {
 
   const deactivatePerson = () => {
     setLoading(true);
-    Axios.post(API_URL + '/person/person/deactivate_by_ids/', {
+    Axios.post(API_URL + "/person/person/deactivate_by_ids/", {
       persons_id: idsDeactivate,
     })
-    .then((response) => {
-      setIdsDeactivate("");
-      setModalDeactivate(false);
-      setPersonsToDeactivate([]);
-      filterPersonName();
-      setLoading(false);
-      message.success("Desactivado correctamente.");
-    })
-    .catch((error) => {
-      setLoading(false);
-      message.error("Error al desactivar")
-    })
-  }
+      .then((response) => {
+        setIdsDeactivate("");
+        setModalDeactivate(false);
+        setPersonsToDeactivate([]);
+        filterPersonName();
+        setLoading(false);
+        message.success("Desactivado correctamente.");
+      })
+      .catch((error) => {
+        setLoading(false);
+        message.error("Error al desactivar");
+      });
+  };
 
   const deletePerson = () => {
     setLoading(true);
@@ -188,7 +195,7 @@ const homeScreen = ({ ...props }) => {
       .catch((error) => {
         setLoading(false);
         console.log(error);
-        message.error("Error al eliminar")
+        message.error("Error al eliminar");
       });
   };
 
@@ -266,17 +273,17 @@ const homeScreen = ({ ...props }) => {
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
         return (
           <>
-            {
-              permissions.edit || permissions.delete ? (
-                <Dropdown overlay={() => menuPerson(item)}>
-                    <a><div>{personName}</div></a>
-                </Dropdown>
-              ) : (
-                <div>{personName}</div>
-              )
-            }
+            {permissions.edit || permissions.delete ? (
+              <Dropdown overlay={() => menuPerson(item)}>
+                <a>
+                  <div>{personName}</div>
+                </a>
+              </Dropdown>
+            ) : (
+              <div>{personName}</div>
+            )}
           </>
-        )
+        );
         // return <div>{personName}</div>;
       },
     },
@@ -474,19 +481,17 @@ const homeScreen = ({ ...props }) => {
           Eliminar
         </Menu.Item>
       )}
-      <Menu.Item onClick={() => handleDeactivate()}>
-            Desactivar
-          </Menu.Item>
+      <Menu.Item onClick={() => handleDeactivate()}>Desactivar</Menu.Item>
     </Menu>
   );
 
   const handleDelete = () => {
     setDeleteTrigger(true);
-  }
+  };
 
   const handleDeactivate = () => {
     setDeactivateTrigger(true);
-  }
+  };
 
   const menuPerson = (item) => {
     return (
@@ -499,7 +504,9 @@ const homeScreen = ({ ...props }) => {
         {permissions.delete && (
           <Menu.Item onClick={() => setDeleteModal([item])}>Eliminar</Menu.Item>
         )}
-        <Menu.Item onClick={()=> setDeactivateModal([item])}>Desactivar</Menu.Item>
+        <Menu.Item onClick={() => setDeactivateModal([item])}>
+          Desactivar
+        </Menu.Item>
       </Menu>
     );
   };
@@ -547,10 +554,13 @@ const homeScreen = ({ ...props }) => {
   // DEACTIVATE MODAL
   const setDeactivateModal = async (value) => {
     setStringToDeactivate("Desactivar usuarios ");
-    if (value.length > 0 ) {
-      if (value.length == 1 ) {
+    if (value.length > 0) {
+      if (value.length == 1) {
         setStringToDeactivate(
-          "Desactivar usuario " + value[0].first_name + " " + value[0].flast_name
+          "Desactivar usuario " +
+            value[0].first_name +
+            " " +
+            value[0].flast_name
         );
       }
       setPersonsToDeactivate(value);
@@ -700,6 +710,33 @@ const homeScreen = ({ ...props }) => {
       message.error("Formato incorrecto, suba un archivo .xlsx");
     }
   };
+  const importPersonFileExtend = async (e) => {
+    let extension = getFileExtension(e.target.files[0].name);
+    if (extension === "xlsx") {
+      let formData = new FormData();
+      formData.append("File", e.target.files[0]);
+      formData.append("node_id", props.currentNode.id);
+      formData.append(
+        "saved_by",
+        userSession.first_name + " " + userSession.last_name
+      );
+      setLoading(true);
+      props
+        .setDataUpload(formData)
+        .then((response) => {
+          if (response) {
+            route.push({ pathname: "/bulk_upload/preview" });
+          } else {
+            message.error("Ocurrió un error ");
+          }
+        })
+        .catch((error) => {
+          message.error("Ocurrió un error ");
+        });
+    } else {
+      message.error("Formato incorrecto, suba un archivo .xlsx");
+    }
+  };
 
   const getFileExtension = (filename) => {
     return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
@@ -807,8 +844,8 @@ const homeScreen = ({ ...props }) => {
 
   const AlertDeactivate = () => (
     <div>
-      Al desactivar este registro ya no podra accerder a el hasta
-      que lo vuelva a activar. ¿Está seguro de querer desactivarlo?
+      Al desactivar este registro ya no podra accerder a el hasta que lo vuelva
+      a activar. ¿Está seguro de querer desactivarlo?
       <br />
       <br />
       <ListElementsToDeactivate personsDeactivate={personsToDeactivate} />
@@ -826,18 +863,18 @@ const homeScreen = ({ ...props }) => {
   );
 
   useEffect(() => {
-    if (deleteTrigger){
-      setDeleteModal(personsToDelete)
+    if (deleteTrigger) {
+      setDeleteModal(personsToDelete);
       setDeleteTrigger(false);
     }
-  }, [deleteTrigger])
+  }, [deleteTrigger]);
 
   useEffect(() => {
-    if (deactivateTrigger){
-      setDeactivateModal(personsToDelete)
+    if (deactivateTrigger) {
+      setDeactivateModal(personsToDelete);
       setDeactivateTrigger(false);
     }
-  }, [deactivateTrigger])
+  }, [deactivateTrigger]);
 
   useEffect(() => {
     if (modalDelete) {
@@ -879,7 +916,61 @@ const homeScreen = ({ ...props }) => {
         },
       });
     }
-  }, [modalDeactivate])
+  }, [modalDeactivate]);
+
+  const menuExportTemplate = (
+    <Menu>
+      <Menu.Item key="1">
+        <a href={`${API_URL}/static/plantillaPersonas.xlsx`}>
+          Plantilla básica
+        </a>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <a href={`${API_URL}/static/plantillaExtendidaPersonas.xlsx`}>
+          Plantilla Extendida
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
+
+  const menuImportPerson = (
+    <Menu>
+      <Menu.Item key="1">
+        <a
+          className={"ml-20"}
+          icon={<UploadOutlined />}
+          onClick={() => {
+            inputFileRef.current.click();
+          }}
+        >
+          Datos basicos
+        </a>
+        <input
+          ref={inputFileRef}
+          type="file"
+          style={{ display: "none" }}
+          onChange={(e) => importPersonFile(e)}
+        />
+      </Menu.Item>
+      <Menu.Item key="2">
+        <a
+          className={"ml-20"}
+          icon={<UploadOutlined />}
+          onClick={() => {
+            inputFileRef2.current.click();
+          }}
+        >
+          Datos Extendidos
+        </a>
+        <input
+          ref={inputFileRef2}
+          type="file"
+          style={{ display: "none" }}
+          onChange={(e) => importPersonFileExtend(e)}
+        />
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <MainLayout currentKey="1">
@@ -980,10 +1071,7 @@ const homeScreen = ({ ...props }) => {
                         color={"#3d78b9"}
                         key={"#filtrar"}
                       >
-                        <Button
-                          className="btn-filter"
-                          htmlType="submit"
-                        >
+                        <Button className="btn-filter" htmlType="submit">
                           <SearchOutlined />
                         </Button>
                       </Tooltip>
@@ -1028,23 +1116,17 @@ const homeScreen = ({ ...props }) => {
                 </Button>
               )}
               {permissions.import && (
-                <Button
+                <Dropdown
+                  overlay={menuImportPerson}
+                  placement="bottomLeft"
+                  arrow
                   className={"ml-20"}
-                  icon={<UploadOutlined />}
-                  onClick={() => {
-                    inputFileRef.current.click();
-                  }}
                 >
-                  Importar personas
-                </Button>
+                  <Button icon={<DownloadOutlined />}>Importar personas</Button>
+                </Dropdown>
               )}
-              <input
-                ref={inputFileRef}
-                type="file"
-                style={{ display: "none" }}
-                onChange={(e) => importPersonFile(e)}
-              />
-              <Button
+
+              {/* <Button
                 className={"ml-20"}
                 type="primary"
                 icon={<DownloadOutlined />}
@@ -1052,7 +1134,15 @@ const homeScreen = ({ ...props }) => {
                 href={`${API_URL}/static/plantillaPersonas.xlsx`}
               >
                 Descargar plantilla
-              </Button>
+              </Button> */}
+              <Dropdown
+                overlay={menuExportTemplate}
+                placement="bottomLeft"
+                arrow
+                className={"ml-20"}
+              >
+                <Button icon={<DownloadOutlined />}>Descargar plantilla</Button>
+              </Dropdown>
             </Row>
             <Table
               className={"mainTable"}
@@ -1092,4 +1182,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(withAuthSync(homeScreen));
+export default connect(mapState, { setDataUpload })(withAuthSync(homeScreen));
