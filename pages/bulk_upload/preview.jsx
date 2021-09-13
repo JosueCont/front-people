@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { withAuthSync } from "../../libs/auth";
+import jsCookie from "js-cookie";
 import {
   EyeOutlined,
   SaveOutlined,
@@ -126,10 +127,17 @@ const PreviewBulkUpload = ({ ...props }) => {
 
   const savePersons = () => {
     if (dataUpload && dataUpload.length > 0) {
+      const user_session = JSON.parse(jsCookie.get("token"));
       setLoading(true);
-      Axios.post(API_URL + `/person/person/massive_save_person/`, {
+      const data = {
         persons: dataUpload,
-      })
+        credentials: {
+          user: user_session.email,
+          password: "",
+        },
+      };
+
+      Axios.post(API_URL + "/person/person/massive_save_person/", data)
         .then((response) => {
           if (response.data.persons.length > 0) {
             setDataUpload(response.data.persons);
