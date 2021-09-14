@@ -343,12 +343,22 @@ const headerCustom = ({
                       </Menu.Item>
                     </SubMenu>
                   )}
-                  <Menu.Item
-                    key="12"
-                    onClick={() => router.push({ pathname: "/bulk_upload" })}
-                  >
-                    Registro de cargas
-                  </Menu.Item>
+                  <SubMenu key="12" title="Registro de errores">
+                    <Menu.Item
+                      key="12.1"
+                      onClick={() => router.push({ pathname: "/bulk_upload" })}
+                    >
+                      Carga masiva de personas
+                    </Menu.Item>
+                    <Menu.Item
+                      key="12.2"
+                      onClick={() =>
+                        router.push({ pathname: "/log/documentsLog" })
+                      }
+                    >
+                      Carga de documentos
+                    </Menu.Item>
+                  </SubMenu>
                 </>
               ) : null}
             </Menu>

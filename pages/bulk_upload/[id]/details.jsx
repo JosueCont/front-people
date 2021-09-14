@@ -110,7 +110,7 @@ const DetailsBulkUpload = () => {
   ];
 
   return (
-    <MainLayout currentKey="det-bulk">
+    <MainLayout currentKey="12.1">
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
