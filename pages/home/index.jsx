@@ -53,7 +53,7 @@ import WebApi from "../../api/webApi";
 import { useRouter } from "next/router";
 
 const homeScreen = ({ ...props }) => {
-  console.log('props in home screen', props.config)
+  console.log("props in home screen", props.config);
   const { Text } = Typography;
   const route = useRouter();
 
@@ -744,7 +744,6 @@ const homeScreen = ({ ...props }) => {
 
   ////SEARCH FILTER
   const filter = (value) => {
-
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
@@ -927,7 +926,7 @@ const homeScreen = ({ ...props }) => {
       </Menu.Item>
       <Menu.Item key="2">
         <a href={`${API_URL}/static/plantillaExtendidaPersonas.xlsx`}>
-          Plantilla Extendida
+          Plantilla Extensa
         </a>
       </Menu.Item>
     </Menu>
@@ -949,7 +948,8 @@ const homeScreen = ({ ...props }) => {
           ref={inputFileRef}
           type="file"
           style={{ display: "none" }}
-          onChange={(e) => importPersonFile(e)}
+          // onChange={(e) => importPersonFile(e)}
+          onChange={(e) => importPersonFileExtend(e)}
         />
       </Menu.Item>
       <Menu.Item key="2">
@@ -960,7 +960,7 @@ const homeScreen = ({ ...props }) => {
             inputFileRef2.current.click();
           }}
         >
-          Datos Extendidos
+          Datos Extensos
         </a>
         <input
           ref={inputFileRef2}

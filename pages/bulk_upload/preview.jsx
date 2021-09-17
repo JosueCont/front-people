@@ -13,6 +13,7 @@ import {
   ArrowLeftOutlined,
   CloseCircleTwoTone,
   CheckCircleTwoTone,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 const PreviewBulkUpload = ({ ...props }) => {
   const route = useRouter();
@@ -20,6 +21,7 @@ const PreviewBulkUpload = ({ ...props }) => {
   const [dataUpload, setDataUpload] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [errors, setErrors] = useState([]);
+  const [disabledButton, setDisabledButton] = useState(false);
 
   /* Columns */
   const columns = [
@@ -126,32 +128,47 @@ const PreviewBulkUpload = ({ ...props }) => {
   };
 
   const savePersons = () => {
-    if (dataUpload && dataUpload.length > 0) {
-      const user_session = JSON.parse(jsCookie.get("token"));
-      setLoading(true);
-      const data = {
-        persons: dataUpload,
-        credentials: {
-          user: user_session.email,
-          password: "",
-        },
-      };
+    Modal.confirm({
+      title: "¿Está seguro de guardar?",
+      content:
+        "Los datos importados correctos se guardarán, los que contengan errores serán omitidos ",
+      icon: <ExclamationCircleOutlined />,
+      okText: "Si, guardar",
+      okButtonProps: {
+        danger: true,
+      },
+      onCancel() {},
+      cancelText: "Cancelar",
+      onOk() {
+        if (dataUpload && dataUpload.length > 0) {
+          const user_session = JSON.parse(jsCookie.get("token"));
+          setLoading(true);
+          setDisabledButton(true);
+          const data = {
+            persons: dataUpload,
+            credentials: {
+              user: user_session.email,
+              password: "",
+            },
+          };
 
-      Axios.post(API_URL + "/person/person/massive_save_person/", data)
-        .then((response) => {
-          if (response.data.persons.length > 0) {
-            setDataUpload(response.data.persons);
-          }
-          message.success("Guardado correctamente");
-          setLoading(false);
-        })
-        .catch((response) => {
-          setLoading(false);
-          message.error("Error al agregar, intente de nuevo");
-        });
-    } else {
-      message.error("No se encontraron datos.");
-    }
+          Axios.post(API_URL + "/person/person/massive_save_person/", data)
+            .then((response) => {
+              if (response.data.persons.length > 0) {
+                setDataUpload(response.data.persons);
+              }
+              message.success("Guardado correctamente");
+              setLoading(false);
+            })
+            .catch((response) => {
+              setLoading(false);
+              message.error("Error al agregar, intente de nuevo");
+            });
+        } else {
+          message.error("No se encontraron datos.");
+        }
+      },
+    });
   };
 
   return (
@@ -173,6 +190,7 @@ const PreviewBulkUpload = ({ ...props }) => {
             type="primary"
             size={{ size: "large" }}
             icon={<SaveOutlined />}
+            disabled={disabledButton}
           >
             Guardar
           </Button>
