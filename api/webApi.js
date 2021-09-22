@@ -180,6 +180,34 @@ class WebApi {
   static updateGeneralDataPerson(id, data) {
     return WebApi.ApisType(`/person/general-person/${id}/`, "put", data);
   }
+
+  static getPersontype(data) {
+    return WebApi.ApisType(`/person/person-type/?node=${data}`, "get");
+  }
+
+  static getJobs(data) {
+    return WebApi.ApisType(`/person/job/?node=${data}`, "get");
+  }
+
+  static getCatalogs(model, data) {
+    return WebApi.ApisType(`/setup/${model}/?node=${data}`, "get");
+  }
+
+  static updateRegisterCatalogs(url, data) {
+    return WebApi.ApisType(url, "put", data);
+  }
+
+  static createRegisterCatalogs(url, data) {
+    return WebApi.ApisType(url, "post", data);
+  }
+
+  static deleteRegisterCatalogs(url, data) {
+    return WebApi.ApisType(url, "delete");
+  }
+
+  static getCfdi(data) {
+    return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
+  }
 }
 
 export default WebApi;
