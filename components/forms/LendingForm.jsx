@@ -14,7 +14,7 @@ import {
 } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../selects/SelectCollaborator";
 import details from "../../pages/holidays/[id]/details";
 import Axios from "axios";
 import { API_URL } from "../../config/config";

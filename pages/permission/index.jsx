@@ -15,7 +15,7 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 
 import SelectDepartment from "../../components/selects/SelectDepartment";
-import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 
 import {
   EditOutlined,

@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectBank from "../../components/selects/SelectBank";
 
 import { SearchOutlined, EyeOutlined, SyncOutlined } from "@ant-design/icons";

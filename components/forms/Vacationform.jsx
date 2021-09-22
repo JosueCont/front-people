@@ -13,7 +13,7 @@ import {
 } from "antd";
 import moment from "moment";
 
-import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 
 const Vacationform = (props) => {
   const { Title } = Typography;

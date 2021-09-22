@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from "antd";
 import { useRouter } from "next/router";
-import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 
 import Axios from "axios";
 import { API_URL } from "./../../config/config";

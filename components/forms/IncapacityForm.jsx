@@ -15,7 +15,7 @@ import {
 import moment from "moment";
 import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import jsCookie from "js-cookie";
-import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { withAuthSync } from "../../libs/auth";

@@ -25,7 +25,7 @@ import { API_URL } from "../../config/config";
 import moment from "moment";
 import { DownloadOutlined } from "@ant-design/icons";
 import Link from "next/link";
-import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import jsCookie from "js-cookie";
