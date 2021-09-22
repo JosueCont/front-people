@@ -22,6 +22,7 @@ const PreviewBulkUpload = ({ ...props }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [errors, setErrors] = useState([]);
   const [disabledButton, setDisabledButton] = useState(false);
+  const [arrColumns, setArrColumns] = useState([]);
 
   /* Columns */
   const columns = [
@@ -109,6 +110,18 @@ const PreviewBulkUpload = ({ ...props }) => {
         props.formData
       )
         .then((response) => {
+          if (response.data.data[0].issync == false) {
+            let cols = [];
+            columns.map((c) => {
+              if (c.key !== "bulk_load_person") {
+                cols.push(c);
+              }
+            });
+            setArrColumns(cols);
+          } else {
+            setArrColumns(columns);
+          }
+
           setDataUpload(response.data.data);
           setLoading(false);
           message.success("Excel importado correctamente.");
@@ -211,7 +224,7 @@ const PreviewBulkUpload = ({ ...props }) => {
               dataSource={dataUpload}
               key="tableLog"
               loading={loading}
-              columns={columns}
+              columns={arrColumns}
               locale={{
                 emptyText: loading
                   ? "Cargando..."
