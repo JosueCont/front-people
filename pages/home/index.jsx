@@ -50,6 +50,9 @@ import jsCookie from "js-cookie";
 import Clipboard from "../../components/Clipboard";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
+import { genders, periodicity, statusSelect } from "../../utils/constant";
+import SelectDepartment from "../../components/selects/SelectDepartment";
+import SelectJob from "../../components/selects/SelectJob";
 import { useRouter } from "next/router";
 
 const homeScreen = ({ ...props }) => {
@@ -82,12 +85,9 @@ const homeScreen = ({ ...props }) => {
   const [idsDelete, setIdsDelete] = useState("");
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
-  const [nodes, setNodes] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [jobs, setJobs] = useState([]);
+  const [departmentId, setDepartmentId] = useState(null);
   const [permissions, setPermissions] = useState({});
   let urlFilter = "/person/person/?";
-  let nodeId = userCompanyId();
   let accessIntranet = getAccessIntranet();
 
   const [listUserCompanies, setListUserCompanies] = useState("");
@@ -103,7 +103,7 @@ const homeScreen = ({ ...props }) => {
     // getPerson();
 
     if (props.currentNode) filterPersonName();
-    getDepartmets();
+    // getDepartmets();
   }, [props.currentNode]);
 
   const searchPermissions = (data) => {
@@ -123,34 +123,12 @@ const homeScreen = ({ ...props }) => {
     setPermissions(perms);
   };
 
-  /////PEOPLE
-  const getPerson = () => {
-    setLoading(true);
-    Axios.get(API_URL + `/person/person/`)
-      .then((response) => {
-        setPerson([]);
-        response.data.results.map((item, i) => {
-          item.key = i;
-          if (!item.photo) item.photo = defaulPhoto;
-        });
-        setPerson(response.data.results);
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const filterPersonName = async () => {
     filters.node = props.currentNode.id;
     setLoading(true);
     try {
       let response = await WebApi.filterPerson(filters);
       setPerson([]);
-      response.data.map((item, i) => {
-        item.key = i;
-        if (!item.photo) item.photo = defaulPhoto;
-      });
       setLoading(false);
       setPerson(response.data);
     } catch (error) {
@@ -252,22 +230,28 @@ const homeScreen = ({ ...props }) => {
   let columns = [
     {
       title: "Núm. Empleado",
+      width: 74,
+      fixed: "left",
       render: (item) => {
         return <div>{item.code ? item.code : ""}</div>;
       },
     },
     {
       title: "Foto",
+      width: 42,
+      fixed: "left",
       render: (item) => {
         return (
           <div>
-            <Avatar src={item.photo} />
+            <Avatar src={item.photo ? item.photo : defaulPhoto} />
           </div>
         );
       },
     },
     {
       title: "Nombre",
+      width: 120,
+      fixed: "left",
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
@@ -289,6 +273,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Estatus",
+      width: 70,
       render: (item) => {
         return (
           <>
@@ -305,6 +290,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Acceso a intranet",
+      width: 70,
       render: (item) => {
         return (
           <>
@@ -321,6 +307,8 @@ const homeScreen = ({ ...props }) => {
 
     {
       title: "Fecha de ingreso",
+      width: 82,
+      align: "center",
       render: (item) => {
         return <div>{item.date_of_admission}</div>;
       },
@@ -328,34 +316,43 @@ const homeScreen = ({ ...props }) => {
 
     {
       title: "Fecha de ingreso a la plataforma",
+      width: 82,
+      align: "center",
       render: (item) => {
         return <div>{item.register_date}</div>;
       },
     },
     {
       title: "Departamento",
+      width: 100,
       render: (item) => {
         return <div>{item.department ? item.department.name : ""}</div>;
       },
     },
     {
       title: "Puesto",
+      width: 100,
       render: (item) => {
         return <div>{item.job ? item.job.name : ""}</div>;
       },
     },
     {
       title: "RFC",
+      width: 121,
+      align: "center",
       dataIndex: "rfc",
       key: "rfc",
     },
     {
       title: "IMSS",
+      width: 100,
+      align: "center",
       dataIndex: "imss",
       key: "imss",
     },
     {
       title: "Periocidad",
+      width: 80,
       align: "center",
       render: (item) => {
         let per = periodicity.filter((a) => a.value === item.periodicity);
@@ -364,6 +361,8 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Empresas Asignadas",
+      width: 75,
+      align: "center",
       key: "CompaniesAsosigned",
       align: "center",
       render: (item) => {
@@ -391,6 +390,8 @@ const homeScreen = ({ ...props }) => {
           </>
         );
       },
+      width: 44,
+      // align: "center",
       render: (item) => {
         return (
           <>
@@ -511,46 +512,6 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
-  ////DEFAULT SELECT
-  const genders = [
-    {
-      label: "Todos",
-      value: 0,
-    },
-    {
-      label: "Masculino",
-      value: 1,
-    },
-    {
-      label: "Femenino",
-      value: 2,
-    },
-    {
-      label: "Otro",
-      value: 3,
-    },
-  ];
-  const periodicity = [
-    { label: "Semanal", value: 1 },
-    { label: "Catorcenal", value: 2 },
-    { label: "Quincenal", value: 3 },
-    { label: "Mensual", value: 4 },
-  ];
-  const statusSelect = [
-    {
-      label: "Todos",
-      value: -1,
-    },
-    {
-      label: "Activos",
-      value: true,
-    },
-    {
-      label: "Inactivos",
-      value: false,
-    },
-  ];
-
   // DEACTIVATE MODAL
   const setDeactivateModal = async (value) => {
     setStringToDeactivate("Desactivar usuarios ");
@@ -664,29 +625,6 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const downLoadPlantilla = () => {
-    setLoading(true);
-    Axios.post(API_URL + `/person/person/export_csv/`, {
-      format: "plantilla",
-      is_active: "true",
-    })
-      .then((response) => {
-        const type = response.headers["content-type"];
-        const blob = new Blob([response.data], {
-          type: type,
-          encoding: "UTF-8",
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = "PlantillaPersonas.csv";
-        link.click();
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
-  };
   const importPersonFile = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
     if (extension === "xlsx") {
@@ -771,7 +709,7 @@ const homeScreen = ({ ...props }) => {
       urlFilter = urlFilter + "person_department__id=" + value.department + "&";
       filters.department = value.department;
     }
-    if (value && value.job !== undefined) {
+    if (value && value.job && value.job !== undefined) {
       urlFilter = urlFilter + "job__id=" + value.job + "&";
       filters.job = value.job;
     }
@@ -809,36 +747,9 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const getDepartmets = async (value) => {
-    setDepartments([]);
-    setJobs([]);
-    try {
-      let response = await WebApi.filterDepartmentByNode(props.currentNode.id);
-      let dep = response.data.results;
-      dep = dep.map((a) => {
-        return { label: a.name, value: a.id };
-      });
-      setDepartments(dep);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const changeDepartment = (value) => {
-    setJobs([]);
-    Axios.get(API_URL + `/person/job/?department=${value}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let job = response.data;
-          job = job.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setJobs(job);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    formFilter.setFieldsValue({ job: null });
+    setDepartmentId(value);
   };
 
   const AlertDeactivate = () => (
@@ -1003,7 +914,6 @@ const homeScreen = ({ ...props }) => {
                         />
                       </Form.Item>
                     </Col>
-
                     <Col>
                       <Form.Item name="code" label={"Núm. empleado"}>
                         <Input
@@ -1013,7 +923,6 @@ const homeScreen = ({ ...props }) => {
                         />
                       </Form.Item>
                     </Col>
-
                     <Col>
                       <Form.Item name="gender" label="Género">
                         <Select
@@ -1025,25 +934,13 @@ const homeScreen = ({ ...props }) => {
                       </Form.Item>
                     </Col>
                     <Col>
-                      <Form.Item name="department" label="Departamento">
-                        <Select
-                          onChange={changeDepartment}
-                          options={departments}
-                          placeholder="Todos"
-                          notFoundContent={"No se encontraron resultados."}
-                          style={{ width: 100 }}
-                        />
-                      </Form.Item>
+                      <SelectDepartment
+                        companyId={props.currentNode && props.currentNode.id}
+                        onChange={changeDepartment}
+                      />
                     </Col>
                     <Col>
-                      <Form.Item name="job" label="Puesto">
-                        <Select
-                          options={jobs}
-                          placeholder="Todos"
-                          notFoundContent={"No se encontraron resultados."}
-                          style={{ minWidth: 100 }}
-                        />
-                      </Form.Item>
+                      <SelectJob departmentId={departmentId} />
                     </Col>
                     <Col>
                       <Form.Item name="is_active" label="Estatus">
@@ -1065,7 +962,10 @@ const homeScreen = ({ ...props }) => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col style={{ display: "flex" }}>
+                    <Col
+                      className="button-filter-person"
+                      style={{ display: "flex" }}
+                    >
                       <Tooltip
                         title="Filtrar"
                         color={"#3d78b9"}
@@ -1091,7 +991,7 @@ const homeScreen = ({ ...props }) => {
                   </Row>
                 </Form>
               </Col>
-              <Col style={{ display: "flex" }}>
+              <Col className="button-filter-person" style={{ display: "flex" }}>
                 {permissions.create && (
                   <Button
                     className="btn-add-person"
@@ -1106,7 +1006,6 @@ const homeScreen = ({ ...props }) => {
             <Row justify={"end"} style={{ padding: "1% 0" }}>
               {permissions.export && (
                 <Button
-                  className={"ml-20"}
                   type="primary"
                   icon={<DownloadOutlined />}
                   size={{ size: "large" }}
@@ -1150,6 +1049,7 @@ const homeScreen = ({ ...props }) => {
               columns={columns2}
               dataSource={person}
               loading={loading}
+              scroll={{ x: 300 }}
               locale={{
                 emptyText: loading
                   ? "Cargando..."

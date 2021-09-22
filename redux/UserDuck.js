@@ -1,4 +1,5 @@
 import Axios from "axios";
+import { getGroups } from "../api/apiKhonnect";
 import WebApi from "../api/webApi";
 import { API_URL } from "../config/config";
 import { userCompanyId } from "../libs/auth";
@@ -7,6 +8,7 @@ const initialData = {
   default: true,
   fetching: true,
   error: false,
+  people_company: [],
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -15,6 +17,7 @@ const ERROR = "ERROR";
 const JWT = "JWT";
 const GENERAL_CONFIG = "GENERAL_CONFIG";
 const COMPANY_SELCTED = "COMPANY_SELECTED";
+const PEOPLE_COMPANY = "PEOPLE_COMPANY";
 const DATA_UPLOAD = "DATA_UPLOAD";
 
 const webReducer = (state = initialData, action) => {
@@ -31,6 +34,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, general_config: action.payload };
     case COMPANY_SELCTED:
       return { ...state, current_node: action.payload };
+    case PEOPLE_COMPANY:
+      return { ...state, people_company: action.payload };
     case DATA_UPLOAD:
       return { ...state, data_upload: action.payload };
     default:
@@ -68,6 +73,7 @@ export const companySelected = (data) => async (dispatch, getState) => {
     if (data) {
       let response = await WebApi.getCompany(data);
       dispatch({ type: COMPANY_SELCTED, payload: response.data });
+      dispatch(getPeopleCompany(data));
       return true;
     }
     return false;
@@ -77,18 +83,20 @@ export const companySelected = (data) => async (dispatch, getState) => {
   }
 };
 
-export const companySelectedAxios = (data) => async (dispatch, getState) => {
-  let response = await Axios.get(
-    `https://demo.people.hiumanlab.com/business/node/${data}/`
-  )
-    .then((response) => {
-      dispatch({ type: COMPANY_SELCTED, payload: response.data });
-      return true;
-    })
-    .catch((error) => {
-      return false;
+export const getPeopleCompany = (data) => async (dispatch, getState) => {
+  try {
+    let response = await WebApi.filterPerson({ node: data });
+    let people = response.data.map((a, i) => {
+      return {
+        label: a.first_name + " " + a.flast_name,
+        value: a.id,
+        key: a.id + i,
+      };
     });
-  return response;
+    dispatch({ type: PEOPLE_COMPANY, payload: people });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const setDataUpload = (data) => async (dispatch, getState) => {

@@ -4,41 +4,10 @@ import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { userCompanyId } from "../../libs/auth";
+import { connect } from "react-redux";
 
-export default function SelectCollaborator({ setAllPersons, ...props }) {
+const SelectCollaborator = ({ setAllPersons, ...props }) => {
   const { Option } = Select;
-
-  const route = useRouter();
-
-  const [personList, setPersonList] = useState([]);
-  let nodeId = userCompanyId();
-
-  const filterPerson = () => {
-    Axios.post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
-      .then((response) => {
-        let list = [];
-        if (setAllPersons) {
-          setAllPersons(response.data);
-        }
-        response.data.map((a, i) => {
-          let item = {
-            label: a.first_name + " " + a.flast_name,
-            value: a.id,
-            key: a.id + i,
-          };
-          list.push(item);
-        });
-        setPersonList(list);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  useEffect(() => {
-    // getPersons();
-    filterPerson();
-  }, [route]);
 
   return (
     <Form.Item
@@ -54,7 +23,7 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
         style={props.style ? props.style : null}
         allowClear
         optionFilterProp="children"
-        placeholder="Todos"
+        placeholder={props.placeholder ? props.placeholder : "Todos"}
         notFoundContent={"No se encontraron resultados."}
         filterOption={(input, option) =>
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -66,8 +35,8 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
         }
         onChange={props.onChange ? props.onChange : null}
       >
-        {personList
-          ? personList.map((item) => {
+        {props.peopleCompany
+          ? props.peopleCompany.map((item) => {
               return (
                 <Option key={item.key} value={item.value}>
                   {item.label}
@@ -78,4 +47,12 @@ export default function SelectCollaborator({ setAllPersons, ...props }) {
       </Select>
     </Form.Item>
   );
-}
+};
+
+const mapState = (state) => {
+  return {
+    peopleCompany: state.catalogStore.people_company,
+  };
+};
+
+export default connect(mapState)(SelectCollaborator);

@@ -25,6 +25,7 @@ import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
 import { ruleEmail } from "../../utils/constant";
 import moment from "moment";
+import { getPeopleCompany } from "../../redux/UserDuck";
 
 const FormPerson = ({
   config=null,
@@ -121,6 +122,7 @@ const FormPerson = ({
         setPerson(response.data.person);
         sessionStorage.setItem("tok", response.data.person.id);
       }
+      props.getPeopleCompany(node);
       message.success("Agregado correctamente");
       form.resetFields();
       props.close(false);
@@ -378,4 +380,8 @@ const FormPerson = ({
   );
 };
 
-export default FormPerson;
+const mapState = (state) => {
+  return {};
+};
+
+export default connect(mapState, { getPeopleCompany })(FormPerson);

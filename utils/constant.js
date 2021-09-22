@@ -1,3 +1,5 @@
+import { APP_ID } from "../config/config";
+
 export const ruleRequired = {
   required: true,
   message: "Este campo es requerido",
@@ -125,3 +127,71 @@ export const periodicity = [
     value: 4,
   },
 ];
+export const statusSelect = [
+  {
+    label: "Todos",
+    value: -1,
+  },
+  {
+    label: "Activos",
+    value: true,
+  },
+  {
+    label: "Inactivos",
+    value: false,
+  },
+];
+
+export const periodicityNom = [
+  {
+    label: "Diaria",
+    value: 1,
+  },
+  {
+    label: "Semanal",
+    value: 2,
+  },
+  {
+    label: "Decenal",
+    value: 3,
+  },
+  {
+    label: "Catorcenal",
+    value: 4,
+  },
+  {
+    label: "Quincenal",
+    value: 5,
+  },
+  {
+    label: "Mensual",
+    value: 6,
+  },
+  {
+    label: "Anual",
+    value: 7,
+  },
+];
+
+export const generateYear = () => {
+  let yearsArray = [];
+  let currentYear = new Date().getFullYear();
+  let startYear = currentYear - 10;
+  while (startYear < currentYear) {
+    startYear++;
+    yearsArray.push({ label: `${startYear}`, value: startYear });
+  }
+  return yearsArray.reverse();
+};
+
+export const headersApi = () => {
+  return {
+    "client-id": APP_ID,
+    "Content-Type": "application/json",
+  };
+};
+
+export const messageSaveSuccess = "Agregado correctamente.";
+export const messageUpdateSuccess = "Actualizado correctamente.";
+export const messageDeleteSuccess = "Eliminado correctamente.";
+export const messageError = "Ocurrio un error, intente de nuevo.";

@@ -7,17 +7,11 @@ import {
   Table,
   Breadcrumb,
   Button,
-  Form,
   notification,
   Checkbox,
   Typography,
-  Input,
-  Select,
-  DatePicker,
-  Tabs,
   Spin,
   Divider,
-  Tooltip,
 } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
@@ -25,7 +19,7 @@ import { API_URL } from "../../config/config";
 import { userId, withAuthSync } from "../../libs/auth";
 
 /* Select component person */
-import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 
 const SelectCompany = () => {
