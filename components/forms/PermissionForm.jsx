@@ -12,7 +12,7 @@ import {
   DatePicker,
 } from "antd";
 import moment from "moment";
-import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 

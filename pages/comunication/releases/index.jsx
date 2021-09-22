@@ -16,7 +16,7 @@ import moment from "moment-timezone";
 import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import { EyeOutlined } from "@ant-design/icons";
-import SelectCollaborator from "../../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../../components/selects/SelectCollaborator";
 
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";

@@ -19,7 +19,7 @@ import {
   SearchOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../selects/SelectCollaborator";
 import SelectCompany from "../selects/SelectCompany";
 import SelectDepartment from "../selects/SelectDepartment";
 import Axios from "axios";

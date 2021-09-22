@@ -17,7 +17,7 @@ import moment from "moment";
 import { DownloadOutlined } from "@ant-design/icons";
 import SelectDepartment from "../selects/SelectDepartment";
 import SelectJob from "../selects/SelectJob";
-import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
 
