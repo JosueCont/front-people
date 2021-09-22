@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Breadcrumb, message, Typography, Card, Spin } from "antd";
 import useRouter from "next/router";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import { companySelected } from "../../redux/UserDuck";
+import { doCompanySelectedCatalog } from "../../redux/catalogCompany";
 import WebApi from "../../api/webApi";
 import Clipboard from "../../components/Clipboard";
 
@@ -77,6 +76,7 @@ const SelectCompany = ({ ...props }) => {
     sessionStorage.setItem("image", item.image);
     let response = await props.companySelected(item.id);
     if (response) {
+      props.doCompanySelectedCatalog();
       useRouter.push("home");
     } else {
       message.error("Ocurrio un error, intente de nuevo.");
@@ -155,4 +155,6 @@ const mapState = (state) => {
   return { config: state.userStore.general_config };
 };
 
-export default connect(mapState, { companySelected })(SelectCompany);
+export default connect(mapState, { companySelected, doCompanySelectedCatalog })(
+  SelectCompany
+);

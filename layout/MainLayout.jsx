@@ -29,20 +29,22 @@ const MainLayout = ({
   const [routeFlavor, setRouteFlavor] = useState({});
 
   useLayoutEffect(() => {
-    const flavor = getFlavor();
-    const routeFlavor = getRouteFlavor();
+    try {
+      const flavor = getFlavor();
+      const routeFlavor = getRouteFlavor();
 
-    setFlavor(flavor);
-    setRouteFlavor(routeFlavor);
+      setFlavor(flavor);
+      setRouteFlavor(routeFlavor);
 
-    var head = document.head;
-    var link = document.createElement("link");
-    link.type = "text/css";
-    link.href = routeFlavor + "/" + flavor.stylePath;
-    link.rel = "stylesheet";
-    link.async = true;
+      var head = document.head;
+      var link = document.createElement("link");
+      link.type = "text/css";
+      link.href = routeFlavor + "/" + flavor.stylePath;
+      link.rel = "stylesheet";
+      link.async = true;
 
-    head.appendChild(link);
+      head.appendChild(link);
+    } catch (error) {}
   }, []);
 
   useEffect(() => {

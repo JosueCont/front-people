@@ -23,7 +23,7 @@ const SelectCollaborator = ({ setAllPersons, ...props }) => {
         style={props.style ? props.style : null}
         allowClear
         optionFilterProp="children"
-        placeholder="Todos"
+        placeholder={props.placeholder ? props.placeholder : "Todos"}
         notFoundContent={"No se encontraron resultados."}
         filterOption={(input, option) =>
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -51,7 +51,7 @@ const SelectCollaborator = ({ setAllPersons, ...props }) => {
 
 const mapState = (state) => {
   return {
-    peopleCompany: state.userStore.people_company,
+    peopleCompany: state.catalogStore.people_company,
   };
 };
 
