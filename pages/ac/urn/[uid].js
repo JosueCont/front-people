@@ -128,6 +128,7 @@ const userRegister = ({ ...props }) => {
                   style={{ padding: 24, minHeight: 380, height: "100%" }}
                 >
                   <DetailPerson
+                    config={props.config}
                     person={person}
                     setLoading={setLoading}
                     deletePerson={false}

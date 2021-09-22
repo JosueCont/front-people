@@ -25,14 +25,15 @@ const { Content } = Layout;
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 import Axios from "axios";
-import { API_URL, APP_ID, LOGIN_URL } from "../../../config/config";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import { userCompanyId, withAuthSync } from "../../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from "react-redux";
 
-const Groups = () => {
+const Groups = (...props) => {
+  console.log('porps in groups', props)
   const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -41,7 +42,7 @@ const Groups = () => {
   let nodeId = userCompanyId();
 
   const headers = {
-    "client-id": APP_ID,
+    "client-id": props[0].client_khonnect_id,
     "Content-Type": "application/json",
   };
 
@@ -51,7 +52,7 @@ const Groups = () => {
     if (name === "") company = `?company=${nodeId}`;
     else company = `&company=${nodeId}`;
 
-    Axios.get(LOGIN_URL + `/group/list/${name}` + company, {
+    Axios.get(props[0].url_server_khonnect + `/group/list/${name}` + company, {
       headers: headers,
     })
       .then((response) => {
@@ -72,7 +73,7 @@ const Groups = () => {
   const deleteGroup = async (id) => {
     let data = { id: id };
 
-    Axios.post(LOGIN_URL + `/group/delete/`, data, {
+    Axios.post(props[0].url_server_khonnect + `/group/delete/`, data, {
       headers: headers,
     })
       .then(function (response) {
@@ -293,4 +294,12 @@ const Groups = () => {
     </MainLayout>
   );
 };
-export default withAuthSync(Groups);
+
+const mapState = (state) => {
+  return {
+    config: state.userStore.general_config,
+  };
+};
+
+export default connect(mapState)(withAuthSync(Groups));
+

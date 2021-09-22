@@ -17,6 +17,7 @@ const JWT = "JWT";
 const GENERAL_CONFIG = "GENERAL_CONFIG";
 const COMPANY_SELCTED = "COMPANY_SELECTED";
 const PEOPLE_COMPANY = "PEOPLE_COMPANY";
+const DATA_UPLOAD = "DATA_UPLOAD";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -34,6 +35,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, current_node: action.payload };
     case PEOPLE_COMPANY:
       return { ...state, people_company: action.payload };
+    case DATA_UPLOAD:
+      return { ...state, data_upload: action.payload };
     default:
       return state;
   }
@@ -92,5 +95,14 @@ export const getPeopleCompany = (data) => async (dispatch, getState) => {
     dispatch({ type: PEOPLE_COMPANY, payload: people });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const setDataUpload = (data) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: DATA_UPLOAD, payload: data });
+    return true;
+  } catch (error) {
+    return false;
   }
 };

@@ -24,14 +24,15 @@ import {
 } from "antd";
 import MainLayout from "../../../layout/MainLayout";
 import Axios from "axios";
-import { LOGIN_URL, APP_ID } from "../../../config/config";
 import { userCompanyId, withAuthSync } from "../../../libs/auth";
+import { connect } from "react-redux";
 
 const { Content } = Layout;
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
-const GroupAdd = () => {
+const GroupAdd = (...props) => {
+  
   const [form] = Form.useForm();
   const router = useRouter();
   const [loading, setLoading] = useState(null);
@@ -44,7 +45,7 @@ const GroupAdd = () => {
   let nodeId = userCompanyId();
 
   const headers = {
-    "client-id": APP_ID,
+    "client-id": props[0].config.client_khonnect_id,
     "Content-Type": "application/json",
   };
 
@@ -247,7 +248,7 @@ const GroupAdd = () => {
     setLoading(true);
 
     data.company = nodeId;
-    Axios.post(LOGIN_URL + "/group/create/", data, {
+    Axios.post(props[0].config.url_server_khonnect + "/group/create/", data, {
       headers: headers,
     })
       .then(function (response) {
@@ -283,7 +284,7 @@ const GroupAdd = () => {
   const editGroup = async () => {
     setLoading(true);
 
-    Axios.post(LOGIN_URL + "/group/edit/", data, {
+    Axios.post(props[0].config.url_server_khonnect + "/group/edit/", data, {
       headers: headers,
     })
       .then(function (response) {
@@ -323,7 +324,7 @@ const GroupAdd = () => {
       id: id,
     };
 
-    Axios.post(LOGIN_URL + "/group/get/", data, {
+    Axios.post(props[0].config.url_server_khonnect + "/group/get/", data, {
       headers: headers,
     })
       .then((response) => {
@@ -810,4 +811,10 @@ const GroupAdd = () => {
   );
 };
 
-export default withAuthSync(GroupAdd);
+const mapState = (state) => {
+  return {
+    config: state.userStore.general_config,
+  };
+};
+
+export default connect(mapState)(withAuthSync(GroupAdd));

@@ -31,6 +31,7 @@ import {
   UploadOutlined,
   EllipsisOutlined,
   ExclamationCircleOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
@@ -41,6 +42,7 @@ import {
   getAccessIntranet,
   userCompanyName,
 } from "../../libs/auth";
+import { setDataUpload } from "../../redux/UserDuck";
 
 const { Content } = Layout;
 import Link from "next/link";
@@ -51,9 +53,12 @@ import WebApi from "../../api/webApi";
 import { genders, periodicity, statusSelect } from "../../utils/constant";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
+import { useRouter } from "next/router";
 
 const homeScreen = ({ ...props }) => {
+  console.log("props in home screen", props.config);
   const { Text } = Typography;
+  const route = useRouter();
 
   const [columns2, setColumns2] = useState([]);
   const [valRefreshColumns, setValRefreshColumns] = useState(false);
@@ -64,6 +69,7 @@ const homeScreen = ({ ...props }) => {
   const [modalAddPerson, setModalAddPerson] = useState(false);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
+  const inputFileRef2 = useRef(null);
   let filters = { node: "" };
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -88,10 +94,12 @@ const homeScreen = ({ ...props }) => {
   const [showModalCompanies, setShowModalCompanies] = useState(false);
   const [deleteTrigger, setDeleteTrigger] = useState(false);
   const [deactivateTrigger, setDeactivateTrigger] = useState(false);
+  const [userSession, setUserSession] = useState({});
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
+    setUserSession(jwt);
     // getPerson();
 
     if (props.currentNode) filterPersonName();
@@ -640,6 +648,33 @@ const homeScreen = ({ ...props }) => {
       message.error("Formato incorrecto, suba un archivo .xlsx");
     }
   };
+  const importPersonFileExtend = async (e) => {
+    let extension = getFileExtension(e.target.files[0].name);
+    if (extension === "xlsx") {
+      let formData = new FormData();
+      formData.append("File", e.target.files[0]);
+      formData.append("node_id", props.currentNode.id);
+      formData.append(
+        "saved_by",
+        userSession.first_name + " " + userSession.last_name
+      );
+      setLoading(true);
+      props
+        .setDataUpload(formData)
+        .then((response) => {
+          if (response) {
+            route.push({ pathname: "/bulk_upload/preview" });
+          } else {
+            message.error("Ocurrió un error ");
+          }
+        })
+        .catch((error) => {
+          message.error("Ocurrió un error ");
+        });
+    } else {
+      message.error("Formato incorrecto, suba un archivo .xlsx");
+    }
+  };
 
   const getFileExtension = (filename) => {
     return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
@@ -647,7 +682,6 @@ const homeScreen = ({ ...props }) => {
 
   ////SEARCH FILTER
   const filter = (value) => {
-    console.log(value);
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
@@ -794,6 +828,61 @@ const homeScreen = ({ ...props }) => {
     }
   }, [modalDeactivate]);
 
+  const menuExportTemplate = (
+    <Menu>
+      <Menu.Item key="1">
+        <a href={`${API_URL}/static/plantillaPersonas.xlsx`}>
+          Plantilla básica
+        </a>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <a href={`${API_URL}/static/plantillaExtendidaPersonas.xlsx`}>
+          Plantilla Extensa
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
+
+  const menuImportPerson = (
+    <Menu>
+      <Menu.Item key="1">
+        <a
+          className={"ml-20"}
+          icon={<UploadOutlined />}
+          onClick={() => {
+            inputFileRef.current.click();
+          }}
+        >
+          Datos basicos
+        </a>
+        <input
+          ref={inputFileRef}
+          type="file"
+          style={{ display: "none" }}
+          // onChange={(e) => importPersonFile(e)}
+          onChange={(e) => importPersonFileExtend(e)}
+        />
+      </Menu.Item>
+      <Menu.Item key="2">
+        <a
+          className={"ml-20"}
+          icon={<UploadOutlined />}
+          onClick={() => {
+            inputFileRef2.current.click();
+          }}
+        >
+          Datos Extensos
+        </a>
+        <input
+          ref={inputFileRef2}
+          type="file"
+          style={{ display: "none" }}
+          onChange={(e) => importPersonFileExtend(e)}
+        />
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <MainLayout currentKey="1">
       <Breadcrumb>
@@ -926,31 +1015,33 @@ const homeScreen = ({ ...props }) => {
                 </Button>
               )}
               {permissions.import && (
-                <Button
-                  className={"ml-20 margin-buton-search"}
-                  icon={<UploadOutlined />}
-                  onClick={() => {
-                    inputFileRef.current.click();
-                  }}
+                <Dropdown
+                  overlay={menuImportPerson}
+                  placement="bottomLeft"
+                  arrow
+                  className={"ml-20"}
                 >
-                  Importar personas
-                </Button>
+                  <Button icon={<DownloadOutlined />}>Importar personas</Button>
+                </Dropdown>
               )}
-              <input
-                ref={inputFileRef}
-                type="file"
-                style={{ display: "none" }}
-                onChange={(e) => importPersonFile(e)}
-              />
-              <Button
-                className={"ml-20 margin-buton-search"}
+
+              {/* <Button
+                className={"ml-20"}
                 type="primary"
                 icon={<DownloadOutlined />}
                 size={{ size: "large" }}
                 href={`${API_URL}/static/plantillaPersonas.xlsx`}
               >
                 Descargar plantilla
-              </Button>
+              </Button> */}
+              <Dropdown
+                overlay={menuExportTemplate}
+                placement="bottomLeft"
+                arrow
+                className={"ml-20"}
+              >
+                <Button icon={<DownloadOutlined />}>Descargar plantilla</Button>
+              </Dropdown>
             </Row>
             <Table
               className={"mainTable"}
@@ -973,6 +1064,7 @@ const homeScreen = ({ ...props }) => {
       </div>
       {modalAddPerson && (
         <FormPerson
+          config={props.config}
           close={getModalPerson}
           visible={modalAddPerson}
           nameNode={userCompanyName()}
@@ -986,7 +1078,8 @@ const homeScreen = ({ ...props }) => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
   };
 };
 
-export default connect(mapState)(withAuthSync(homeScreen));
+export default connect(mapState, { setDataUpload })(withAuthSync(homeScreen));

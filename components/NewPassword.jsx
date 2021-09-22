@@ -17,6 +17,8 @@ import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
 const NewPasswordForm = (props) => {
+  
+  consoe.log('newpasswordform')
   const router = useRouter();
   const { token } = router.query;
 

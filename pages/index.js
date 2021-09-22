@@ -139,10 +139,12 @@ const Home = ({ ...props }) => {
 
                     {recoverPasswordShow ? (
                       <PasswordRecover
+                        generalConfig={props.config}
                         setRecoverPasswordShow={setRecoverPasswordShow}
                       />
                     ) : (
                       <LoginForm
+                        generalConfig={props.config}
                         setRecoverPasswordShow={setRecoverPasswordShow}
                       />
                     )}
