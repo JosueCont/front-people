@@ -379,12 +379,12 @@ const configBusiness = ({ ...props }) => {
       },
     },
 
-    {
-      title: "Departamento",
-      render: (item) => {
-        return <>{item.department.name}</>;
-      },
-    },
+    // {
+    //   title: "Departamento",
+    //   render: (item) => {
+    //     return <>{item.department.name}</>;
+    //   },
+    // },
     {
       title: "Nombre",
       render: (item) => {
