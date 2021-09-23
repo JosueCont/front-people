@@ -32,29 +32,29 @@ import { userCompanyId, withAuthSync } from "../../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 
-const Groups = (...props) => {
-  console.log('porps in groups', props)
+const Groups = ({ ...props }) => {
   const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [groups, setGroups] = useState([]);
   const [permissions, setPermissions] = useState({});
-  let nodeId = userCompanyId();
-
-  const headers = {
-    "client-id": props[0].client_khonnect_id,
-    "Content-Type": "application/json",
-  };
 
   const getGroups = (name = "") => {
+    const headers = {
+      "client-id": props.config.client_khonnect_id,
+      "Content-Type": "application/json",
+    };
     setLoading(true);
     let company = "";
-    if (name === "") company = `?company=${nodeId}`;
-    else company = `&company=${nodeId}`;
+    if (name === "") company = `?company=${props.currentNode.id}`;
+    else company = `&company=${props.currentNode.id}`;
 
-    Axios.get(props[0].url_server_khonnect + `/group/list/${name}` + company, {
-      headers: headers,
-    })
+    Axios.get(
+      props.config.url_server_khonnect + `group/list/` + name + company,
+      {
+        headers: headers,
+      }
+    )
       .then((response) => {
         response.data.data.map((item) => {
           item["key"] = item.id;
@@ -73,7 +73,7 @@ const Groups = (...props) => {
   const deleteGroup = async (id) => {
     let data = { id: id };
 
-    Axios.post(props[0].url_server_khonnect + `/group/delete/`, data, {
+    Axios.post(props.url_server_khonnect + `/group/delete/`, data, {
       headers: headers,
     })
       .then(function (response) {
@@ -128,10 +128,13 @@ const Groups = (...props) => {
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
-    getGroups();
-  }, []);
+    console.log("Props-> ", props);
+    if (props.currentNode && props.config) {
+      const jwt = JSON.parse(jsCookie.get("token"));
+      searchPermissions(jwt.perms);
+      getGroups();
+    }
+  }, [props.config, props.currentNode]);
 
   const searchPermissions = (data) => {
     const perms = {};
@@ -298,8 +301,8 @@ const Groups = (...props) => {
 const mapState = (state) => {
   return {
     config: state.userStore.general_config,
+    currentNode: state.userStore.current_node,
   };
 };
 
 export default connect(mapState)(withAuthSync(Groups));
-

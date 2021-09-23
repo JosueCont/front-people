@@ -26,9 +26,13 @@ import WebApi from "../../api/webApi";
 import { ruleEmail } from "../../utils/constant";
 import moment from "moment";
 import { getPeopleCompany } from "../../redux/UserDuck";
+import SelectGroup from "../selects/SelectGroup";
+import SelectJob from "../selects/SelectJob";
+import SelectDepartment from "../selects/SelectDepartment";
+import SelectPersonType from "../selects/SelectPersonType";
 
 const FormPerson = ({
-  config=null,
+  config = null,
   hideProfileSecurity = true,
   intranetAccess = true,
   node = null,
@@ -228,9 +232,7 @@ const FormPerson = ({
           >
             <Row>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="person_type">
-                  <Select options={personType} placeholder="Tipo de persona" />
-                </Form.Item>
+                <SelectPersonType />
               </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleRequired]}>
@@ -238,18 +240,15 @@ const FormPerson = ({
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="person_department">
-                  <Select
-                    options={departments}
-                    onChange={onChangeDepartment}
-                    placeholder="Departamento"
-                  />
-                </Form.Item>
+                <SelectDepartment
+                  titleLabel={false}
+                  onChange={onChangeDepartment}
+                  name="person_department"
+                  style={false}
+                />
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="job">
-                  <Select options={jobs} placeholder="Puesto de trabajo" />
-                </Form.Item>
+                <SelectJob titleLabel={false} name="job" style={false} />
               </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleRequired]} name="first_name">
@@ -353,14 +352,7 @@ const FormPerson = ({
               </Col>
               {/* {hideProfileSecurity && ( */}
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="groups">
-                  <Select
-                    options={groups}
-                    showArrow
-                    style={{ width: "100%" }}
-                    placeholder="Perfiles de seguridad"
-                  ></Select>
-                </Form.Item>
+                <SelectGroup />
               </Col>
               <Col lg={22} xs={22} offset={1}>
                 <Form.Item labelAlign="right">

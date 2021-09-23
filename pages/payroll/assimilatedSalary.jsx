@@ -45,7 +45,6 @@ const assimilatedSalary = () => {
         value
       )
       .then((response) => {
-        console.log("Respo-> ", response.data);
         setTimeout(() => {
           setSalary(response.data);
           setLoading(false);

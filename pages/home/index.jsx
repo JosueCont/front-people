@@ -56,7 +56,6 @@ import SelectJob from "../../components/selects/SelectJob";
 import { useRouter } from "next/router";
 
 const homeScreen = ({ ...props }) => {
-  console.log("props in home screen", props.config);
   const { Text } = Typography;
   const route = useRouter();
 
@@ -934,13 +933,10 @@ const homeScreen = ({ ...props }) => {
                       </Form.Item>
                     </Col>
                     <Col>
-                      <SelectDepartment
-                        companyId={props.currentNode && props.currentNode.id}
-                        onChange={changeDepartment}
-                      />
+                      <SelectDepartment />
                     </Col>
                     <Col>
-                      <SelectJob departmentId={departmentId} />
+                      <SelectJob />
                     </Col>
                     <Col>
                       <Form.Item name="is_active" label="Estatus">

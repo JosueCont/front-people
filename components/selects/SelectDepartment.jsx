@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import { connect } from "react-redux";
 
-export default function SelectDepartment({
+const SelectDepartment = ({
   titleLabel = true,
   rules = [],
   companyId,
   ...props
-}) {
+}) => {
   const [options, setOptions] = useState([]);
 
   const { Option } = Select;
@@ -34,11 +35,17 @@ export default function SelectDepartment({
 
   useEffect(() => {
     setOptions([]);
-    if (companyId) {
-      console.log("ID-> ", companyId);
-      getDepartament();
+    if (props.cat_departments) {
+      let data = props.cat_departments.map((item) => {
+        return {
+          value: item.id,
+          label: item.name,
+          key: item.name + item.id,
+        };
+      });
+      setOptions(data);
     }
-  }, [companyId]);
+  }, [props.cat_departments]);
 
   return (
     <>
@@ -60,4 +67,12 @@ export default function SelectDepartment({
       </Form.Item>
     </>
   );
-}
+};
+
+const mapState = (state) => {
+  return {
+    cat_departments: state.catalogStore.cat_departments,
+  };
+};
+
+export default connect(mapState)(SelectDepartment);

@@ -195,7 +195,6 @@ const configBusiness = ({ ...props }) => {
     setLoadingTable(true);
     try {
       let response = await WebApi.createRegisterCatalogs(url, data);
-      console.log("Save job-> ", response, " - ", url);
       props
         .doCompanySelectedCatalog(props.currentNode.data)
         .then((response) => {
@@ -807,7 +806,7 @@ const configBusiness = ({ ...props }) => {
                             </Form.Item>
                           </Col>
 
-                          <Col lg={6} xs={22} offset={1}>
+                          {/* <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="department"
                               label="Departamento"
@@ -820,7 +819,7 @@ const configBusiness = ({ ...props }) => {
                                 }
                               />
                             </Form.Item>
-                          </Col>
+                          </Col> */}
                           <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="name"

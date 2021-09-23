@@ -171,7 +171,10 @@ export const getJobs = (data) => async (dispatch, getState) => {
 export const getPersonType = (data) => async (dispatch, getState) => {
   try {
     let response = await WebApi.getPersontype(data);
-    dispatch({ type: PERSON_TYPE, payload: response.data.results });
+    let typesPerson = response.data.results.map((a) => {
+      return { label: a.name, value: a.id };
+    });
+    dispatch({ type: PERSON_TYPE, payload: typesPerson });
   } catch (error) {
     console.log(error);
   }
