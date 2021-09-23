@@ -162,7 +162,7 @@ export const getDepartmets = (data) => async (dispatch, getState) => {
 export const getJobs = (data) => async (dispatch, getState) => {
   try {
     let response = await WebApi.getJobs(data);
-    dispatch({ type: JOB, payload: response.data });
+    dispatch({ type: JOB, payload: response.data.results });
   } catch (error) {
     console.log(error);
   }
