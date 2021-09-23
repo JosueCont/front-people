@@ -33,8 +33,12 @@ import {
   rfcFormat,
 } from "../../utils/constant";
 
-const DataPerson = ({ config, person = null, accessIntranet = false, ...props }) => {
-  
+const DataPerson = ({
+  config,
+  person = null,
+  accessIntranet = false,
+  ...props
+}) => {
   const { Title } = Typography;
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
@@ -51,7 +55,7 @@ const DataPerson = ({ config, person = null, accessIntranet = false, ...props })
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getValueSelects();
+    // getValueSelects();
   }, []);
 
   const getValueSelects = async () => {
@@ -143,11 +147,11 @@ const DataPerson = ({ config, person = null, accessIntranet = false, ...props })
   };
 
   useEffect(() => {
-    if (people) {
-      setFormPerson(person);
-      setLoading(false);
-    }
-  }, [people]);
+    // if (people) {
+    setFormPerson(person);
+    setLoading(false);
+    // }
+  }, []);
 
   const setFormPerson = (person) => {
     formPerson.setFieldsValue({
@@ -317,7 +321,10 @@ const DataPerson = ({ config, person = null, accessIntranet = false, ...props })
             <Row>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item name="person_type" label="Tipo de persona">
-                  <Select options={personType} placeholder="Tipo de persona" />
+                  <Select
+                    options={props.cat_person_type}
+                    placeholder="Tipo de persona"
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -439,7 +446,7 @@ const DataPerson = ({ config, person = null, accessIntranet = false, ...props })
                   <SelectDepartment
                     onChange={onChangeDepartment}
                     name="person_department"
-                    companyId={person.node}
+                    // companyId={person.node}
                     style={false}
                   />
                 </Col>
@@ -447,7 +454,7 @@ const DataPerson = ({ config, person = null, accessIntranet = false, ...props })
               {person.nodes && (
                 <Col lg={7} xs={22} offset={1}>
                   <SelectJob
-                    departmentId={departmentId}
+                    // departmentId={departmentId}
                     name="job"
                     style={false}
                   />
@@ -492,7 +499,7 @@ const DataPerson = ({ config, person = null, accessIntranet = false, ...props })
                 <Col lg={7} xs={22} offset={1}>
                   <Form.Item name="report_to" label="Reporta a ">
                     <Select
-                      options={people}
+                      options={props.people_company}
                       notFoundContent={"No se encontraron resultados."}
                     />
                   </Form.Item>
@@ -503,7 +510,7 @@ const DataPerson = ({ config, person = null, accessIntranet = false, ...props })
                 <Col lg={15} xs={22} offset={1}>
                   <Form.Item name="groups" label="Perfil de seguridad">
                     <Select
-                      options={groups}
+                      options={props.cat_groups}
                       showArrow
                       style={{ width: "100%" }}
                       placeholder="Perfiles de seguridad"
@@ -601,6 +608,9 @@ const DataPerson = ({ config, person = null, accessIntranet = false, ...props })
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    cat_person_type: state.catalogStore.cat_person_type,
+    cat_groups: state.catalogStore.cat_groups,
+    people_company: state.catalogStore.people_company,
   };
 };
 

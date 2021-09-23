@@ -74,7 +74,6 @@ const MainLayout = ({
       let response = props.companySelected();
     }
   }, [props.currentNode]);
-  // console.log("flavor", flavor);
 
   return (
     <Layout className="layout">

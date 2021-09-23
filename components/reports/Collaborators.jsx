@@ -283,7 +283,6 @@ const CollaboratorsReport = (props) => {
               </Col>
               <Col>
                 <SelectDepartment
-                  onChange={onChangeDepartment}
                   name="department"
                   companyId={nodeId}
                   style={{ maxWidth: 150 }}
@@ -291,7 +290,6 @@ const CollaboratorsReport = (props) => {
               </Col>
               <Col>
                 <SelectJob
-                  departmentId={departmentId}
                   name="job"
                   label="Puesto"
                   style={{ maxWidth: 150 }}

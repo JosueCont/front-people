@@ -2,7 +2,6 @@ import { Form, Input, Button, message, Row, Typography } from "antd";
 import Axios from "axios";
 
 const FormChangePassword = ({ config, khonnectId }) => {
-  
   const { Title } = Typography;
   const [formPassword] = Form.useForm();
   const ruleRequired = { required: true, message: "Este campo es requerido" };
@@ -12,13 +11,16 @@ const FormChangePassword = ({ config, khonnectId }) => {
       value.user_id = khonnectId;
       delete value["newPassword"];
       const headers = {
-        "client-id": config.client_khonnect_id ,
+        "client-id": config.client_khonnect_id,
         "Content-Type": "application/json",
       };
-      console.log("Value->> ", value);
-      Axios.post(config.url_server_khonnect + "/password/change/direct/", value, {
-        headers: headers,
-      })
+      Axios.post(
+        config.url_server_khonnect + "/password/change/direct/",
+        value,
+        {
+          headers: headers,
+        }
+      )
         .then((response) => {
           if (response && response.data && response.data.level === "error") {
             message.error("Error al actualizar, intente de nuevo");

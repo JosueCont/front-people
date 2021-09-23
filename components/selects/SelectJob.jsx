@@ -3,13 +3,14 @@ import { Select, Form } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import { connect } from "react-redux";
 
-export default function SelectJob({
+const SelectJob = ({
   titleLabel = true,
   rules = [],
   departmentId,
   ...props
-}) {
+}) => {
   const [options, setOptions] = useState(null);
   const route = useRouter();
   const { Option } = Select;
@@ -36,10 +37,17 @@ export default function SelectJob({
 
   useEffect(() => {
     setOptions([]);
-    if (departmentId) {
-      getJobs();
+    if (props.cat_job) {
+      let data = props.cat_job.map((item, index) => {
+        return {
+          label: item.name,
+          value: item.id,
+          key: item.id + index,
+        };
+      });
+      setOptions(data);
     }
-  }, [departmentId]);
+  }, [props.cat_job]);
 
   return (
     <>
@@ -61,4 +69,12 @@ export default function SelectJob({
       </Form.Item>
     </>
   );
-}
+};
+
+const mapState = (state) => {
+  return {
+    cat_job: state.catalogStore.cat_job,
+  };
+};
+
+export default connect(mapState)(SelectJob);
