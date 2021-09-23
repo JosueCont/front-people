@@ -443,21 +443,12 @@ const DataPerson = ({
               </Col>
               {person.nodes && (
                 <Col lg={7} xs={22} offset={1}>
-                  <SelectDepartment
-                    onChange={onChangeDepartment}
-                    name="person_department"
-                    // companyId={person.node}
-                    style={false}
-                  />
+                  <SelectDepartment name="person_department" style={false} />
                 </Col>
               )}
               {person.nodes && (
                 <Col lg={7} xs={22} offset={1}>
-                  <SelectJob
-                    // departmentId={departmentId}
-                    name="job"
-                    style={false}
-                  />
+                  <SelectJob name="job" style={false} />
                 </Col>
               )}
               <Col lg={7} xs={22} offset={1}>

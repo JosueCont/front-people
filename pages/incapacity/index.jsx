@@ -182,7 +182,6 @@ const Incapacity = () => {
                     <Col>
                       <SelectDepartment
                         companyId={nodeId}
-                        onChange={changeDepartament}
                         key="SelectDepartment"
                       />
                     </Col>

@@ -242,7 +242,6 @@ const FormPerson = ({
               <Col lg={7} xs={22} offset={1}>
                 <SelectDepartment
                   titleLabel={false}
-                  onChange={onChangeDepartment}
                   name="person_department"
                   style={false}
                 />
