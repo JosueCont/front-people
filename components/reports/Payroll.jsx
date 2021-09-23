@@ -338,7 +338,6 @@ const PayrollReport = (props) => {
                             </Col> */}
               <Col>
                 <SelectDepartment
-                  onChange={onChangeDepartment}
                   name="department"
                   companyId={nodeId}
                   key="selectDepartament"

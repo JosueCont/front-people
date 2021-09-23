@@ -197,7 +197,6 @@ const Permission = () => {
                     <Col>
                       <SelectDepartment
                         companyId={nodeId}
-                        onChange={changeDepartament}
                         key="SelectDepartment"
                       />
                     </Col>
