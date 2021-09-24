@@ -11,7 +11,6 @@ import { css, Global } from "@emotion/core";
 import { connect } from "react-redux";
 import WebApi from "../api/webApi";
 import { companySelected } from "../redux/UserDuck";
-import { config } from "react-spring";
 
 const { Header } = Layout;
 
@@ -30,11 +29,17 @@ const headerCustom = ({
   const [logOut, setLogOut] = useState(false);
   const [primaryColor, setPrimaryColor] = useState(null);
   const [secondaryColor, setSecondaryColor] = useState(null);
-  let accessIntranet = getAccessIntranet();
+  const [intranet_access, setintanetAccess] = useState(null);
 
   useEffect(() => {
     getPerson();
   }, []);
+
+  useEffect(() => {
+    if (props.config) {
+      setintanetAccess(true);
+    }
+  }, [props.config]);
 
   const getPerson = async () => {
     try {
@@ -57,7 +62,7 @@ const headerCustom = ({
       setPrimaryColor(props.config.concierge_primary_color);
       setSecondaryColor(props.config.concierge_primary_color);
     }
-  }, []);
+  }, [props.config]);
 
   const actionEvent = (data) => {
     setModalLogOut(data);
@@ -328,7 +333,7 @@ const headerCustom = ({
                     Asignar empresa
                   </Menu.Item>
 
-                  {config && config.intranet_enabled && (
+                  {intranet_access && (
                     <SubMenu
                       key="11"
                       title={<FormattedMessage id="header.intranet" />}

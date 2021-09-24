@@ -33,12 +33,7 @@ import {
   rfcFormat,
 } from "../../utils/constant";
 
-const DataPerson = ({
-  config,
-  person = null,
-  accessIntranet = false,
-  ...props
-}) => {
+const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
@@ -472,7 +467,7 @@ const DataPerson = ({
                 </Col>
               )}
 
-              {accessIntranet && (
+              {config.intranet_enabled && (
                 <Col lg={7} xs={22} offset={1}>
                   <Form.Item
                     name="intranet_access"
