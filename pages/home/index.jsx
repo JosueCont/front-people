@@ -413,7 +413,7 @@ const homeScreen = ({ ...props }) => {
   ];
 
   useEffect(() => {
-    if (accessIntranet === "false") {
+    if (props.config.intranet_enabled === "false") {
       columns = removeItemFromArr(columns, "Acceso a intranet");
       setValRefreshColumns(true);
     } else {
