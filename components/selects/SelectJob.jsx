@@ -38,7 +38,6 @@ const SelectJob = ({
   useEffect(() => {
     setOptions([]);
     if (props.cat_job) {
-      console.log("jobs-> ", props.cat_job);
       let data = props.cat_job.map((item, index) => {
         return {
           label: item.name,
