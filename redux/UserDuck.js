@@ -76,7 +76,7 @@ export const companySelected = (data) => async (dispatch, getState) => {
 
 export const companySelectedAxios = (data) => async (dispatch, getState) => {
   let response = await Axios.get(
-    `https://demo.people.hiumanlab.com/business/node/${data}/`
+    `https://isysa.people-api.khorplus.com/business/node/${data}/`
   )
     .then((response) => {
       dispatch({ type: COMPANY_SELCTED, payload: response.data });

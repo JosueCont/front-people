@@ -343,6 +343,22 @@ const headerCustom = ({
                       </Menu.Item>
                     </SubMenu>
                   )}
+                {   
+                props.config.kuiz_enabled &&
+                <SubMenu
+                      key="12"
+                      title="Cuestionarios"
+                    >
+                      <Menu.Item
+                        key="12.1"
+                        onClick={() =>
+                          router.push({ pathname: "/assessment" })
+                        }
+                      >
+                        Cuestionarios
+                      </Menu.Item>
+                  </SubMenu>
+                }
                 </>
               ) : null}
             </Menu>
