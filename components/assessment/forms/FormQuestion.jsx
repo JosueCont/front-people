@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Modal, message, } from "antd";
-import {useDispatch} from "react-redux";
-import {userCompanyId} from "../../../libs/auth";
+import {connect, useDispatch} from "react-redux";
+import {withAuthSync, userCompanyId} from "../../../libs/auth";
 import { ruleRequired } from "../../../utils/constant";
 import FormItemHTML from "./FormItemHtml";
 import {questionCreateAction, questionUpdateAction} from "../../../redux/assessmentDuck";
 
-const FormQuestion = (props) => {
+const FormQuestion = ({assessmentStore, ...props}) => {
 
     const dispatch = useDispatch();
     const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 }, };
@@ -19,8 +19,7 @@ const FormQuestion = (props) => {
         if (props.loadData){
             console.log("DATOS::", props.loadData);
             formQuestions.setFieldsValue({
-                code: props.loadData.code,
-                name: props.loadData.name,
+                title: props.loadData.title,
             });
         } else {
             onReset();
@@ -30,16 +29,21 @@ const FormQuestion = (props) => {
 
     const onFinish = (values) => {
         values.description_es = descripcion;
-        // values.answer_set = [];
-        console.log("VALUES:",values);
         if(props.loadData){
-            dispatch(questionUpdateAction(questionId, values));
-            console.log("VALORES ACTUALIZAR:", questionId + " " + values);
-            props.close(false);
+            props.questionUpdateAction(questionId, values).then(response =>{
+                response ? message.success("Actualizado correctamente") : message.error("Hubo un error"), props.close();
+            }).catch( e => {
+                message.error("Hubo un error");
+                props.close();
+            });
         } else {
-            dispatch(questionCreateAction(values));
-            console.log("VALORES CREAR:", values);
-            props.close(false);
+            values.section= props.idSection;
+            props.questionCreateAction(values).then((response) => {
+                response ? message.success("Agregado correctamente") : message.error("Hubo un error"), props.close();
+            }).catch( e => {
+                message.error("Hubo un error");
+                props.close();
+            });
         }  
     };
 
@@ -48,10 +52,10 @@ const FormQuestion = (props) => {
     };
 
     return (
-        <Modal title={props.title} visible={props.visible} footer={null} onCancel={() => props.close(false) } 
+        <Modal title={props.title} visible={props.visible} footer={null} onCancel={() => props.close() } 
             width={ window.innerWidth > 1000 ? "60%" : "80%"}
             footer={[
-                <Button key="back" onClick={() => props.close(false)}> Cancelar </Button>,
+                <Button key="back" onClick={() => props.close()}> Cancelar </Button>,
                 <Button form="formQuestions" type="primary" key="submit" htmlType="submit">Guardar</Button>,
             ]}>
             <Form {...layout} onFinish={onFinish} id="formQuestions" form={formQuestions}>
@@ -72,4 +76,10 @@ const FormQuestion = (props) => {
     )
 }
 
-export default FormQuestion;
+const mapState = (state) => {
+    return {
+      assessmentStore: state.assessmentStore,
+    }
+  }
+  
+export default connect(mapState,{questionCreateAction, questionUpdateAction})(withAuthSync(FormQuestion));

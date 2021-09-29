@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import MainLayout from "../../layout/MainLayout";
-import {Breadcrumb, Button, Row, Col, Modal, Collapse} from "antd";
+import {Breadcrumb, Button, Row, Col, Modal, Collapse, message} from "antd";
 import {PlusOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
 import {connect, useDispatch} from "react-redux";
@@ -36,6 +36,9 @@ const Detail = ({assessmentStore, ...props}) => {
     const [questionData, setQuestionData] = useState(false);
     const [answerData, setAnswerData] = useState(false);
 
+    const [sectionSelected, setSectionSelected] = useState('');
+    const [questionSelected, setQuestionSelected] = useState('');
+
     useEffect(() => {
         router.query.id && dispatch(assessmentDetailsAction(router.query.id));
     }, [router.query.id]);
@@ -58,7 +61,7 @@ const Detail = ({assessmentStore, ...props}) => {
         setQuestions(assessmentStore.questions);
     }, [assessmentStore.questions]);
 
-    const HandleCreateSection = () => {
+    const HandleCreateSection = (id='') => {
         setSectionData(false);
         dispatch(assessmentModalAction(types.CREATE_SECTIONS));
     };
@@ -74,7 +77,9 @@ const Detail = ({assessmentStore, ...props}) => {
             icon: <ExclamationCircleOutlined />,
             content: "Si lo elimina no podrá recuperarlo",
             onOk() {
-            dispatch(sectionDeleteAction(id))
+                props.sectionDeleteAction(id).then(response => {
+                    response ? message.success("Eliminado correctamente") : message.error("Hubo un error");
+                }).catch(e => message.error("Hubo un error"));
             },
             okType: "primary",
             okText: "Eliminar",
@@ -85,7 +90,8 @@ const Detail = ({assessmentStore, ...props}) => {
         });
     };
 
-    const HandleCreateQuestion = () => {
+    const HandleCreateQuestion = (id='') => {
+        setQuestionData(false);
         dispatch(assessmentModalAction(types.CREATE_QUESTIONS));
     };
 
@@ -101,7 +107,11 @@ const Detail = ({assessmentStore, ...props}) => {
             icon: <ExclamationCircleOutlined />,
             content: "Si lo elimina no podrá recuperarlo",
             onOk() {
-            dispatch(questionDeleteAction(id))
+                props.questionDeleteAction(id).then(response =>{
+                    response ? message.success("Eliminado correctamente") : message.error("Hubo un error");
+                }).catch(e => {
+                    message.error("Hubo un error");
+                });
             },
             okType: "primary",
             okText: "Eliminar",
@@ -112,7 +122,7 @@ const Detail = ({assessmentStore, ...props}) => {
         });
     };
 
-    const HandleCreateAnswer = () => {
+    const HandleCreateAnswer = (id='') => {
         setAnswerData(false);
         dispatch(assessmentModalAction(types.CREATE_ANSWERS));
     };
@@ -128,7 +138,11 @@ const Detail = ({assessmentStore, ...props}) => {
             icon: <ExclamationCircleOutlined />,
             content: "Si lo elimina no podrá recuperarlo",
             onOk() {
-            dispatch(answerDeleteAction(id))
+                props.answerDeleteAction(id).then(response =>{
+                    response ? message.success("Eliminado correctamente") : message.error("Hubo un error");
+                }).catch(e => {
+                    message.error("Hubo un error");
+                });
             },
             okType: "primary",
             okText: "Eliminar",
@@ -138,6 +152,10 @@ const Detail = ({assessmentStore, ...props}) => {
             },
         });
     };
+
+    const HandleCloseModal = () => {
+        dispatch(assessmentModalAction(''));
+    }
 
     return (
         <MainLayout currentKey="2">
@@ -149,7 +167,7 @@ const Detail = ({assessmentStore, ...props}) => {
             <div className="container" style={{ width: "100%" }}>
                 <Row> 
                     <Col span={24} style={{display: "flex", justifyContent: "flex-end"}}>
-                        <Button style={{ background: "#fa8c16", fontWeight: "bold", color: "white", }} onClick={() => HandleCreateSection(true)} >
+                        <Button style={{ background: "#fa8c16", fontWeight: "bold", color: "white", }} loading={loading} onClick={() => HandleCreateSection(true)} >
                             <PlusOutlined /> Agregar nueva sección
                         </Button>
                     </Col>
@@ -161,7 +179,7 @@ const Detail = ({assessmentStore, ...props}) => {
                             sections.map(seccion => {
                                 return (
                                     <Panel 
-                                    header={seccion.name} 
+                                    header={seccion.name}
                                     key={seccion.id} 
                                     extra={
                                         <Options 
@@ -169,6 +187,7 @@ const Detail = ({assessmentStore, ...props}) => {
                                             onUpdate={HandleUpdateSection} 
                                             onDelete={HandleDeleteSection} 
                                             onCreate={HandleCreateQuestion} 
+                                            setSection={setSectionSelected}
                                             buttonName="Agregar pregunta"
                                         /> 
                                     }>
@@ -176,14 +195,16 @@ const Detail = ({assessmentStore, ...props}) => {
                                             {
                                                 questions.map(pregunta => (seccion.id === pregunta.section.id) &&
                                                     <Panel 
-                                                        header={pregunta.title} 
+                                                        header={pregunta.title}
+                                                        // header={pregunta.title} 
                                                         key={pregunta.id}  
                                                         extra={
                                                             <Options 
-                                                                item={seccion}
+                                                                item={pregunta}
                                                                 onUpdate={HandleUpdateQuestion} 
                                                                 onDelete={HandleDeleteQuestion} 
-                                                                onCreate={HandleCreateAnswer} 
+                                                                onCreate={HandleCreateAnswer}
+                                                                setQuestion={setQuestionSelected}  
                                                                 buttonName="Agregar respuesta"
                                                             /> 
                                                         } 
@@ -220,7 +241,7 @@ const Detail = ({assessmentStore, ...props}) => {
                 <FormSection
                     title="Agregar nueva sección"
                     visible= {showCreateSection}
-                    close = {setShowCreateSection}
+                    close = {HandleCloseModal}
                     loadData = {false}
                 />
             )}
@@ -228,7 +249,7 @@ const Detail = ({assessmentStore, ...props}) => {
                 <FormSection
                     title="Modificar sección"
                     visible= {showUpdateSection}
-                    close = {setShowUpdateSection}
+                    close = {HandleCloseModal}
                     loadData = {sectionData}
                 />
             )}
@@ -236,16 +257,16 @@ const Detail = ({assessmentStore, ...props}) => {
                 <FormQuestion
                     title="Agregar nueva pregunta"
                     visible={showCreateQuestion}
-                    close = {setShowCreateQuestion}
+                    close = {HandleCloseModal}
                     loadData = {false}
-                    idData = {false}
+                    idSection = {sectionSelected}
                 />
             )}
             { showUpdateQuestion && (
                 <FormQuestion
                     title="Modificar pregunta"
                     visible={showUpdateQuestion}
-                    close = {setShowUpdateQuestion}
+                    close = {HandleCloseModal}
                     loadData = {questionData}
                 />
             )}
@@ -253,15 +274,16 @@ const Detail = ({assessmentStore, ...props}) => {
                 <FormAnswer
                     title="Crear nueva respuesta"
                     visible={showCreateAnswer}
-                    close = {setShowCreateAnswer}
+                    close = {HandleCloseModal}
                     loadData = {false}
+                    idQuestion = {questionSelected}
                 />
             )} 
             { showUpdateAnswer && (
                 <FormAnswer
                     title="Modificar respuesta"
                     visible={showUpdateAnswer}
-                    close = {setShowUpdateAnswer}
+                    close = {HandleCloseModal}
                     loadData = {answerData}
                 />
             )}
@@ -275,4 +297,4 @@ const mapState = (state) => {
     }
 }
   
-export default connect(mapState)(withAuthSync(Detail));
+export default connect(mapState, {sectionDeleteAction, questionDeleteAction, answerDeleteAction})(withAuthSync(Detail));

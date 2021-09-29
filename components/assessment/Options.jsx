@@ -2,7 +2,12 @@ import React, {useEffect} from 'react'
 import {Button} from "antd";
 import {EditOutlined, DeleteOutlined, PlusOutlined} from '@ant-design/icons';
                                                
-const Options = ({item, onUpdate, onDelete, onCreate, buttonName}) => {
+const Options = ({item, onUpdate, onDelete, onCreate, buttonName, setSection, setQuestion}) => {
+
+    useEffect(() => {
+        setSection && setSection(item.id);
+        setQuestion && setQuestion(item.id);
+    }, [])
 
     return (
         <div style={{ display: 'flex', alignItems: 'center'}} key={1}>
@@ -32,7 +37,7 @@ const Options = ({item, onUpdate, onDelete, onCreate, buttonName}) => {
                 style={{marginRight: 10}} 
                 onClick={ event => { 
                     event.stopPropagation();
-                    onCreate();
+                    onCreate(item.id);
                 }}>
                     <PlusOutlined /> {buttonName}
                 </Button>
