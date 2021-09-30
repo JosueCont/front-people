@@ -8,6 +8,7 @@ import {
   Form,
   Button,
   message,
+  Tabs,
 } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ import MainLayout from "../../layout/MainLayout";
 import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import TaxInformationForm from "../../components/business/TaxInformationForm";
 
 const ConfigCompany = () => {
   let router = useRouter();
@@ -25,6 +27,7 @@ const ConfigCompany = () => {
   const [form] = Form.useForm();
   const { Title } = Typography;
   const { TextArea } = Input;
+  const { TabPane } = Tabs;
 
   useEffect(() => {
     {
@@ -121,65 +124,75 @@ const ConfigCompany = () => {
         >
           {company && <Title level={3}>{company.name}</Title>}
 
-          <Form onFinish={onFinish} layout={"vertical"} form={form}>
-            <Row className="container-items-center">
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item name="address" label="Dirección:" form={form}>
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item name="contact_email" label="Email:">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item name="contact_phone" label="Teléfono:">
-                  <Input />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row className="container-items-center">
-              <Col lg={20} xs={22} offset={1}>
-                <Form.Item name="about_us" label="Descripción:">
-                  <TextArea rows={6} />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row className="container-items-center">
-              <Col lg={20} xs={22} offset={1}>
-                <Form.Item name="policies" label="Políticas:">
-                  <TextArea rows={6} />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row className="container-items-center">
-              <Col lg={20} xs={22} offset={1}>
-                <Form.Item name="business_rules" label="Reglas del negocio:">
-                  <TextArea rows={6} />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row justify={"end"} className="container-items-center">
-              <Col lg={20} xs={22} offset={1} justify={"end"}>
-                <Row justify={"end"}>
-                  <Col offset={1}>
-                    <Button
-                      type="danger"
-                      onClick={() => router.push("/business")}
-                    >
-                      Cancelar
-                    </Button>
+          <Tabs tabPosition={"left"}>
+            <TabPane tab="General" key="tab_1">
+              <Form onFinish={onFinish} layout={"vertical"} form={form}>
+                <Row className="container-items-center">
+                  <Col lg={6} xs={22} offset={1}>
+                    <Form.Item name="address" label="Dirección:" form={form}>
+                      <Input />
+                    </Form.Item>
                   </Col>
-                  <Col offset={1}>
-                    <Button type="primary" htmlType="submit">
-                      Guardar
-                    </Button>
+                  <Col lg={6} xs={22} offset={1}>
+                    <Form.Item name="contact_email" label="Email:">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={6} xs={22} offset={1}>
+                    <Form.Item name="contact_phone" label="Teléfono:">
+                      <Input />
+                    </Form.Item>
                   </Col>
                 </Row>
-              </Col>
-            </Row>
-          </Form>
+                <Row className="container-items-center">
+                  <Col lg={20} xs={22} offset={1}>
+                    <Form.Item name="about_us" label="Descripción:">
+                      <TextArea rows={6} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row className="container-items-center">
+                  <Col lg={20} xs={22} offset={1}>
+                    <Form.Item name="policies" label="Políticas:">
+                      <TextArea rows={6} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row className="container-items-center">
+                  <Col lg={20} xs={22} offset={1}>
+                    <Form.Item
+                      name="business_rules"
+                      label="Reglas del negocio:"
+                    >
+                      <TextArea rows={6} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row justify={"end"} className="container-items-center">
+                  <Col lg={20} xs={22} offset={1} justify={"end"}>
+                    <Row justify={"end"}>
+                      <Col offset={1}>
+                        <Button
+                          type="danger"
+                          onClick={() => router.push("/business")}
+                        >
+                          Cancelar
+                        </Button>
+                      </Col>
+                      <Col offset={1}>
+                        <Button type="primary" htmlType="submit">
+                          Guardar
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+              </Form>
+            </TabPane>
+            <TabPane tab="Fiscal" key="tab_2">
+              <TaxInformationForm node_id={router.query.id} />
+            </TabPane>
+          </Tabs>
         </div>
       </Spin>
     </MainLayout>
