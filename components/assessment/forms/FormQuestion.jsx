@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Modal, message } from "antd";
-import { useDispatch } from "react-redux";
-import { userCompanyId } from "../../../libs/auth";
+import { Form, Input, Button, Modal, message, Select } from "antd";
+import { connect, useDispatch } from "react-redux";
+import { withAuthSync, userCompanyId } from "../../../libs/auth";
 import { ruleRequired } from "../../../utils/constant";
 import FormItemHTML from "./FormItemHtml";
 import {
@@ -9,7 +9,7 @@ import {
   questionUpdateAction,
 } from "../../../redux/assessmentDuck";
 
-const FormQuestion = (props) => {
+const FormQuestion = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();
   const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 } };
   const [formQuestions] = Form.useForm();
@@ -18,12 +18,15 @@ const FormQuestion = (props) => {
   const [descripcion, setDescripcion] = useState(
     props.loadData.description_es ? props.loadData.description_es : ""
   );
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("ID SECTION", props.idSection);
     if (props.loadData) {
+      console.log("DATOS::", props.loadData);
       formQuestions.setFieldsValue({
-        code: props.loadData.code,
-        name: props.loadData.name,
+        title: props.loadData.title,
+        type: props.loadData.type,
       });
     } else {
       onReset();
@@ -31,15 +34,39 @@ const FormQuestion = (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    setLoading(assessmentStore.fetching);
+  }, [assessmentStore]);
+
   const onFinish = (values) => {
     values.description_es = descripcion;
-    // values.answer_set = [];
     if (props.loadData) {
-      dispatch(questionUpdateAction(questionId, values));
-      props.close(false);
+      props
+        .questionUpdateAction(questionId, values)
+        .then((response) => {
+          response
+            ? message.success("Actualizado correctamente")
+            : message.error("Hubo un error"),
+            props.close();
+        })
+        .catch((e) => {
+          message.error("Hubo un error");
+          props.close();
+        });
     } else {
-      dispatch(questionCreateAction(values));
-      props.close(false);
+      values.section = props.idSection;
+      props
+        .questionCreateAction(values)
+        .then((response) => {
+          response
+            ? message.success("Agregado correctamente")
+            : message.error("Hubo un error"),
+            props.close();
+        })
+        .catch((e) => {
+          message.error("Hubo un error");
+          props.close();
+        });
     }
   };
 
@@ -52,10 +79,10 @@ const FormQuestion = (props) => {
       title={props.title}
       visible={props.visible}
       footer={null}
-      onCancel={() => props.close(false)}
+      onCancel={() => props.close()}
       width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[
-        <Button key="back" onClick={() => props.close(false)}>
+        <Button key="back" onClick={() => props.close()}>
           {" "}
           Cancelar{" "}
         </Button>,
@@ -64,6 +91,7 @@ const FormQuestion = (props) => {
           type="primary"
           key="submit"
           htmlType="submit"
+          loading={loading}
         >
           Guardar
         </Button>,
@@ -78,6 +106,12 @@ const FormQuestion = (props) => {
         <Form.Item name="title" label={"Título"} rules={[ruleRequired]}>
           <Input allowClear={true} placeholder="Título" />
         </Form.Item>
+        <Form.Item name="type" label="Tipo de pregunta:" rules={[ruleRequired]}>
+          <Select placeholder="Selecciona una tipo" className="select-kuiz">
+            <Option value="MULTI">Opción Múltiple</Option>
+            <Option value="TXT-LG">Texto largo</Option>
+          </Select>
+        </Form.Item>
         <FormItemHTML
           html={descripcion}
           setHTML={setDescripcion}
@@ -89,4 +123,13 @@ const FormQuestion = (props) => {
   );
 };
 
-export default FormQuestion;
+const mapState = (state) => {
+  return {
+    assessmentStore: state.assessmentStore,
+  };
+};
+
+export default connect(mapState, {
+  questionCreateAction,
+  questionUpdateAction,
+})(withAuthSync(FormQuestion));

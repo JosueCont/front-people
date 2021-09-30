@@ -22,17 +22,17 @@ const Options = ({item, onUpdate, onDelete, onCreate, buttonName}) => {
                 style={{marginRight: 24}}
                 onClick={event => {
                     event.stopPropagation();
-                    onDelete(item.id);
+                    onDelete(item);
                 }}
                 />
             }
             {
-                onCreate &&
+                onCreate && item.type !== "TXT-LG" &&
                 <Button 
                 style={{marginRight: 10}} 
                 onClick={ event => { 
                     event.stopPropagation();
-                    onCreate();
+                    onCreate(item.id);
                 }}>
                     <PlusOutlined /> {buttonName}
                 </Button>

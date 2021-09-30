@@ -378,7 +378,7 @@ const headerCustom = ({
                         key="12.1"
                         onClick={() => router.push({ pathname: "/assessment" })}
                       >
-                        Cuestionarios
+                        Encuestas
                       </Menu.Item>
                     </SubMenu>
                   )}

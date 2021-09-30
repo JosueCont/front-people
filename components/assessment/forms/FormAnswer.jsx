@@ -1,55 +1,78 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Modal, message } from "antd";
-import { useDispatch } from "react-redux";
-import { userCompanyId } from "../../../libs/auth";
+import { connect, useDispatch } from "react-redux";
+import { withAuthSync, userCompanyId } from "../../../libs/auth";
 import { ruleRequired } from "../../../utils/constant";
 import FormItemHTML from "./FormItemHtml";
 import {
-  assessmentCreateAction,
-  assessmentUpdateAction,
+  answerCreateAction,
+  answerUpdateAction,
 } from "../../../redux/assessmentDuck";
 
-const FormAnswer = (props) => {
+const FormAnswer = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();
   const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 } };
-  const [formAssessment] = Form.useForm();
+  const [formAnswers] = Form.useForm();
   const nodeId = Number.parseInt(userCompanyId());
-  const assessmentId = props.loadData ? props.loadData.id : "";
+  const answerId = props.loadData ? props.loadData.id : "";
   const [descripcion, setDescripcion] = useState(
     props.loadData.description_es ? props.loadData.description_es : ""
   );
-  const [instruccions, setInstruccions] = useState(
-    props.loadData.instructions_es ? props.loadData.instructions_es : ""
-  );
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("ID QUESTION", props.idQuestion);
     if (props.loadData) {
-      formAssessment.setFieldsValue({
-        code: props.loadData.code,
-        name: props.loadData.name,
+      console.log("DATOS::", props.loadData);
+      formAnswers.setFieldsValue({
+        title: props.loadData.title,
+        value: props.loadData.value,
       });
     } else {
       onReset();
       setDescripcion("");
-      setInstruccions("");
     }
   }, []);
 
+  useEffect(() => {
+    setLoading(assessmentStore.fetching);
+  }, [assessmentStore]);
+
   const onFinish = (values) => {
-    values.companies = [nodeId];
     values.description_es = descripcion;
-    values.instructions_es = instruccions;
     if (props.loadData) {
-      dispatch(assessmentUpdateAction(assessmentId, values));
-      props.close(false);
+      props
+        .answerUpdateAction(answerId, values)
+        .then((response) => {
+          response
+            ? message.success("Actualizado correctamente")
+            : message.error("Hubo un error"),
+            props.close();
+        })
+        .catch((e) => {
+          message.error("Hubo un error");
+          props.close();
+        });
     } else {
-      dispatch(assessmentCreateAction(values));
-      props.close(false);
+      values.question = props.idQuestion;
+      console.log("VALORES ANSWERS", values);
+      props
+        .answerCreateAction(values)
+        .then((response) => {
+          response
+            ? message.success("Agregado correctamente")
+            : message.error("Hubo un error"),
+            props.close();
+        })
+        .catch((e) => {
+          message.error("Hubo un error");
+          props.close();
+        });
     }
   };
 
   const onReset = () => {
-    formAssessment.resetFields();
+    formAnswers.resetFields();
   };
 
   return (
@@ -57,35 +80,30 @@ const FormAnswer = (props) => {
       title={props.title}
       visible={props.visible}
       footer={null}
-      onCancel={() => props.close(false)}
+      onCancel={() => props.close()}
       width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[
-        <Button key="back" onClick={() => props.close(false)}>
+        <Button key="back" onClick={() => props.close()}>
           {" "}
           Cancelar{" "}
         </Button>,
         <Button
-          form="formAssessment"
+          form="formAnswers"
           type="primary"
           key="submit"
           htmlType="submit"
+          loading={loading}
         >
           Guardar
         </Button>,
       ]}
     >
-      <Form
-        {...layout}
-        initialValues={{ intranet_access: false }}
-        onFinish={onFinish}
-        id="formAssessment"
-        form={formAssessment}
-      >
-        <Form.Item name="code" label={"Código"} rules={[ruleRequired]}>
-          <Input allowClear={true} placeholder="Código" />
+      <Form {...layout} onFinish={onFinish} id="formAnswers" form={formAnswers}>
+        <Form.Item name="title" label={"Título"} rules={[ruleRequired]}>
+          <Input allowClear={true} placeholder="Título" />
         </Form.Item>
-        <Form.Item name="name" label={"Nombre"} rules={[ruleRequired]}>
-          <Input allowClear={true} placeholder="Nombre" />
+        <Form.Item name="value" label={"Valor"} rules={[ruleRequired]}>
+          <Input allowClear={true} placeholder="value" />
         </Form.Item>
         <FormItemHTML
           html={descripcion}
@@ -93,15 +111,17 @@ const FormAnswer = (props) => {
           getLabel="Descripción"
           getName="description_es"
         />
-        <FormItemHTML
-          html={instruccions}
-          setHTML={setInstruccions}
-          getLabel="Instrucciones"
-          getName="instructions_es"
-        />
       </Form>
     </Modal>
   );
 };
 
-export default FormAnswer;
+const mapState = (state) => {
+  return {
+    assessmentStore: state.assessmentStore,
+  };
+};
+
+export default connect(mapState, { answerCreateAction, answerUpdateAction })(
+  withAuthSync(FormAnswer)
+);
