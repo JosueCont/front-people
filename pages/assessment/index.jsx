@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import MainLayout from "../../layout/MainLayout";
 import {useRouter} from "next/router";
-import {Form, Input, Table, Breadcrumb, Button, Row, Col, Modal } from "antd";
+import {Form, Input, Table, Breadcrumb, Button, Row, Col, Modal, message} from "antd";
 import {SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SyncOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import {withAuthSync} from "../../libs/auth";
 import jsCookie from "js-cookie";
@@ -48,7 +48,11 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
       icon: <ExclamationCircleOutlined />,
       content: "Si lo elimina no podrá recuperarlo",
       onOk() {
-        dispatch(assessmentDeleteAction(id))
+        props.assessmentDeleteAction(id).then(response =>{
+          response ? message.success("Eliminado correctamente") : message.error("Hubo un error");
+        }).catch(e => {
+          message.error("Hubo un error");
+        });
       },
       okType: "primary",
       okText: "Eliminar",
@@ -58,6 +62,10 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
       },
     });
   };
+
+  const HandleCloseModal = () => {
+    dispatch(assessmentModalAction(''));
+  }
 
   const columns = [
     {
@@ -149,8 +157,8 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
             </Col>
             <Col span={6} style={{display: "flex", justifyContent: "flex-end"}}>
               {permissions.create && (
-                <Button style={{ background: "#fa8c16", fontWeight: "bold", color: "white", }} onClick={() => HandleCreateAssessment()} >
-                  <PlusOutlined /> Agregar Evaluación
+                <Button style={{ background: "#fa8c16", fontWeight: "bold", color: "white", }} loading={loading} onClick={() => HandleCreateAssessment()} >
+                  <PlusOutlined /> Agregar Encuesta
                 </Button>
               )}
             </Col>
@@ -174,7 +182,7 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
           <FormAssessment
             title="Agregar nueva encuesta"
             visible= {showCreateAssessment}
-            close = {setShowCreateAssessment}
+            close = {HandleCloseModal}
             loadData = {assessmentData}
           />
         )}
@@ -182,7 +190,7 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
           <FormAssessment
             title="Modificar encuesta"
             visible={showUpdateAssessment}
-            close = {setShowUpdateAssessment}
+            close = {HandleCloseModal}
             loadData = {assessmentData}
           />
         )}
@@ -197,4 +205,4 @@ const mapState = (state) => {
   }
 }
 
-export default connect(mapState)(withAuthSync(AssessmentScreen));
+export default connect(mapState,{assessmentDeleteAction})(withAuthSync(AssessmentScreen));

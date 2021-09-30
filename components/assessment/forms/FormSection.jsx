@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Modal, message } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { userCompanyId } from "../../../libs/auth";
+import { connect, useDispatch } from "react-redux";
+import { withAuthSync, userCompanyId } from "../../../libs/auth";
 import { ruleRequired } from "../../../utils/constant";
 import FormItemHTML from "./FormItemHtml";
 import {
@@ -9,13 +9,13 @@ import {
   sectionUpdateAction,
 } from "../../../redux/assessmentDuck";
 
-const FormSections = (props) => {
+const FormSections = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();
   const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 } };
   const [formSections] = Form.useForm();
   const nodeId = Number.parseInt(userCompanyId());
   const sectionId = props.loadData ? props.loadData.id : "";
-  const { assessment_selected } = useSelector((state) => state.assessmentStore);
+  const { assessment_selected } = assessmentStore;
   const [instruccionCorta, setInstruccionCorta] = useState(
     props.loadData.short_instructions_es
       ? props.loadData.short_instructions_es
@@ -24,30 +24,55 @@ const FormSections = (props) => {
   const [instruccions, setInstruccions] = useState(
     props.loadData.instructions_es ? props.loadData.instructions_es : ""
   );
+  const [loading, setLoading] = useState(true);
+
+  // const onFinish = (values) => {
+  //   values.instructions_es = instruccions;
+  //   values.short_instructions_es = instruccionCorta;
+  //   values.assessment = assessment_selected;
+  //   if (props.loadData) {
+  //     dispatch(sectionUpdateAction(sectionId, values));
+  //     props.close(false);
+  //   } else {
+  //     dispatch(sectionCreateAction(values));
+  //     props.close(false);
+  //   }
+  // };
 
   useEffect(() => {
-    if (props.loadData) {
-      formSections.setFieldsValue({
-        code: props.loadData.code,
-        name: props.loadData.name,
-      });
-    } else {
-      onReset();
-      setInstruccionCorta("");
-      setInstruccions("");
-    }
-  }, []);
+    setLoading(assessmentStore.fetching);
+  }, [assessmentStore]);
 
   const onFinish = (values) => {
     values.instructions_es = instruccions;
     values.short_instructions_es = instruccionCorta;
     values.assessment = assessment_selected;
     if (props.loadData) {
-      dispatch(sectionUpdateAction(sectionId, values));
-      props.close(false);
+      props
+        .sectionUpdateAction(sectionId, values)
+        .then((response) => {
+          response
+            ? message.success("Actualizado correctamente")
+            : message.error("Hubo un error"),
+            props.close();
+        })
+        .catch((e) => {
+          message.error("Hubo un error");
+          props.close();
+        });
     } else {
-      dispatch(sectionCreateAction(values));
-      props.close(false);
+      props
+        .sectionCreateAction(values)
+        .then((response) => {
+          response
+            ? message.success("Creado correctamente")
+            : message.error("Hubo un error"),
+            props.close();
+        })
+        .catch((e) => {
+          message.error("Hubo un error");
+          props.close();
+        });
     }
   };
 
@@ -60,10 +85,10 @@ const FormSections = (props) => {
       title={props.title}
       visible={props.visible}
       footer={null}
-      onCancel={() => props.close(false)}
+      onCancel={() => props.close()}
       width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[
-        <Button key="back" onClick={() => props.close(false)}>
+        <Button key="back" onClick={() => props.close()}>
           {" "}
           Cancelar{" "}
         </Button>,
@@ -72,6 +97,7 @@ const FormSections = (props) => {
           type="primary"
           key="submit"
           htmlType="submit"
+          loading={loading}
         >
           Guardar
         </Button>,
@@ -106,4 +132,13 @@ const FormSections = (props) => {
   );
 };
 
-export default FormSections;
+const mapState = (state) => {
+  return {
+    config: state.userStore.general_config,
+    assessmentStore: state.assessmentStore,
+  };
+};
+
+export default connect(mapState, { sectionCreateAction, sectionUpdateAction })(
+  withAuthSync(FormSections)
+);
