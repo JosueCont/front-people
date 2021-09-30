@@ -9,3 +9,7 @@ export const LOGIN_URL = process.browser
 export const APP_ID = process.browser
   ? process.env.NEXT_PUBLIC_APP_ID_BASE
   : process.env.NEXT_PUBLIC_APP_ID_BASE;
+
+export const API_ASSESSMENT = process.browser
+? process.env.NEXT_PUBLIC_APP_ASSESSMENT_BASE
+: process.env.NEXT_PUBLIC_APP_ASSESSMENT_BASE;

@@ -5,10 +5,12 @@ import webReducerUser, {
   doGetGeneralConfig,
 } from "./UserDuck";
 import webReducerCatalog, { doCompanySelectedCatalog } from "./catalogCompany";
+import assessmentReducer, { assessmentLoadAction } from "./assessmentDuck";
 
 const rootReducer = combineReducers({
   userStore: webReducerUser,
   catalogStore: webReducerCatalog,
+  assessmentStore: assessmentReducer,
 });
 
 export const store = createStore(rootReducer, applyMiddleware(thunk));
@@ -17,5 +19,6 @@ export default () => {
   companySelected()(store.dispatch);
   doGetGeneralConfig()(store.dispatch);
   doCompanySelectedCatalog()(store.dispatch);
+  assessmentLoadAction()(store.dispatch);
   return store;
 };

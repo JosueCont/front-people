@@ -4,7 +4,7 @@ export const domainApi = process.browser
   ? process.env.NEXT_PUBLIC_API_BASE_URL_TENANT
   : process.env.API_BASE_URL_TENANT;
 
-let tenant = "demo";
+let tenant = "isysa";
 
 if (process.browser) {
   let splitDomain = window.location.hostname.split(".");
