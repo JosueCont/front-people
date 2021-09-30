@@ -11,7 +11,9 @@ import FormSection from "../../components/assessment/forms/FormSection";
 import FormQuestion from "../../components/assessment/forms/FormQuestion";
 import FormAnswer from "../../components/assessment/forms/FormAnswer";
 import Options from '../../components/assessment/Options';
+import Section from '../../components/assessment/Section';
 import Question from '../../components/assessment/Question';
+import { ReactSortable } from "react-sortablejs";
 import {assessmentModalAction, assessmentDetailsAction, sectionDeleteAction, questionDeleteAction, answerDeleteAction} from "../../redux/assessmentDuck";
 
 const Detail = ({assessmentStore, ...props}) => {
@@ -178,8 +180,7 @@ const Detail = ({assessmentStore, ...props}) => {
                 <Row  style={{marginTop:20}}>
                     <Col span={24}>
                         <Collapse>
-                            {
-                            sections.map(seccion => {
+                            { sections.map(seccion => {sections
                                 return (
                                     <Panel 
                                     header={seccion.name}
@@ -193,12 +194,11 @@ const Detail = ({assessmentStore, ...props}) => {
                                             buttonName="Agregar pregunta"
                                         /> 
                                     }>
-                                        <Collapse>
+                                        {/* <Collapse>
                                             {
                                                 questions.map( pregunta => seccion.id === pregunta.section.id &&
                                                     <Panel 
                                                         header={pregunta.title}
-                                                        // header={pregunta.title} 
                                                         key={pregunta.id}  
                                                         extra={
                                                             <Options 
@@ -215,6 +215,7 @@ const Detail = ({assessmentStore, ...props}) => {
                                                                 pregunta.answer_set.map(respuesta =>
                                                                     <Panel 
                                                                         header={respuesta.title} 
+                                                                        key={respuesta.id}
                                                                         extra={
                                                                             <Options 
                                                                                 item={respuesta}
@@ -229,7 +230,7 @@ const Detail = ({assessmentStore, ...props}) => {
                                                     </Panel>
                                                 )
                                             }
-                                        </Collapse>
+                                        </Collapse> */}
                                     </Panel> 
                                     )
                                 })
