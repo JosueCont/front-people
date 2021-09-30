@@ -165,7 +165,7 @@ const Detail = ({assessmentStore, ...props}) => {
             <Breadcrumb>
                 <Breadcrumb.Item className={"pointer"} onClick={() => router.push({ pathname: "/home" })} > Inicio </Breadcrumb.Item>
                 <Breadcrumb.Item className={"pointer"} onClick={() => router.push({ pathname: "/assessment" })}> Encuestas </Breadcrumb.Item>
-                <Breadcrumb.Item> Detalle </Breadcrumb.Item>
+                <Breadcrumb.Item>{assessmentStore.assessment_selected.name}</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
                 <Row> 
@@ -194,7 +194,7 @@ const Detail = ({assessmentStore, ...props}) => {
                                     /> 
                                 }>
                                     <Collapse>
-                                    {   questions.length > 0 ? 
+                                    {   questions.filter(questions=> seccion.id === questions.section.id).length > 0 ? 
                                         questions.map( pregunta => seccion.id === pregunta.section.id &&
                                         <Panel 
                                             className={pregunta.type === "TXT-LG" ? "no-content-kuiz" : "content-kuiz"}

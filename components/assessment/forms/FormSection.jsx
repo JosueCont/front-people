@@ -19,7 +19,6 @@ const FormSections = ({assessmentStore, ...props}) => {
     const [loading, setLoading] = useState(true);
 
     useEffect( () => {
-        console.log("ACTUAL:", assessment_selected);
         if (props.loadData){
             console.log("DATOS::", props.loadData);
             formSections.setFieldsValue({
@@ -40,7 +39,7 @@ const FormSections = ({assessmentStore, ...props}) => {
     const onFinish = (values) => {
         values.instructions_es = instruccions;
         values.short_instructions_es = instruccionCorta;
-        values.assessment = assessment_selected;
+        values.assessment = assessment_selected.id;
         if(props.loadData){
             props.sectionUpdateAction(sectionId, values).then( response => {
                 response ? message.success("Actualizado correctamente") : message.error("Hubo un error"), props.close();

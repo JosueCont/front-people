@@ -8,7 +8,7 @@ const nodeId = Number.parseInt(userCompanyId());
 
 const initialData = {
     assessments: [], 
-    assessment_selected: '', 
+    assessment_selected: {}, 
     sections: [], 
     questions: [], 
     active_modal: '', 
@@ -47,18 +47,12 @@ const assessmentReducer = (state = initialData, action) => {
       return {...state, questions: state.questions.map( e => ( e.id === action.payload.id ) ? action.payload : e ), active_modal: '', fetching: false};
     case types.DELETE_QUESTIONS:
       return {...state, questions: state.questions.filter( e => (e.id !== action.payload) ), active_modal: '', fetching: false}
-    case types.CREATE_ANSWERS:
-      return {...state, questions: [action.payload, ...state.questions], active_modal: '', fetching: false};
-    case types.UPDATE_ANSWERS:
-      return {...state, questions: state.questions.map( e => ( e.id === action.payload.id ) ? action.payload : e ), active_modal: '', fetching: false};
-    case types.DELETE_ANSWERS:
-      return {...state, questions: state.questions.filter( e => (e.id !== action.payload) ), fetching: false}
     default:
       return state;
   }
 };
 
-//ASSESSMENT LOAD
+//ASSESSMENT LOAD ASSESSMENTS
 export const assessmentLoadAction = () => {
   return async (dispatch) => {
     dispatch({type: types.FETCHING, payload: true});
@@ -86,7 +80,7 @@ export const assessmentDetailsAction = (id) => {
         let questions = _.orderBy(questions_.data.results, ['order'], ['desc']);
         dispatch({type: types.LOAD_QUESTIONS, payload: questions});
       });
-      dispatch({type: types.SELECTED_ASSESSMENT, payload: id});
+      dispatch(assessmentGetAction(id));
     } catch (e) {
       dispatch({type: types.FETCHING, payload: false});
       console.error(e.name + ': ' + e.message);
@@ -94,15 +88,26 @@ export const assessmentDetailsAction = (id) => {
   }
 }
 
-//ASSESSMENT FILTER
-// export const assessmentFilterAction = (name) => {
-//   return async (dispatch, getState) => {
-//     name = name.toLowerCase();
-//     let registros = await getState().assessmentStore.assessments;
-//     let filtradas = await registros.filter( filtro => filtro.name.toLowerCase().includes( name ) );
-//     name === '' ? dispatch({type: types.FILTER_ASSESSMENTS, payload: []}) : dispatch({type: types.UPDATE_ASSESSMENTS, payload: filtradas});
-//   }
-// }
+//GET ACTIVE MODAL
+export const assessmentModalAction = (modal) => {
+  return async (dispatch) => {
+    dispatch({type: types.ACTIVE_MODAL, payload: modal});
+  }
+}
+
+//GET ASSESSMENT
+export const assessmentGetAction = (id) => {
+  return async (dispatch) => {
+    dispatch({type: types.FETCHING, payload: true});
+    try {
+      let {data} = await Axios.get(`${API_ASSESSMENT}/assessments/assessment/${id}/`);
+      dispatch({type: types.SELECTED_ASSESSMENT, payload: data});
+    } catch (e) {
+      dispatch({type: types.FETCHING, payload: false});
+      console.error(e.name + ': ' + e.message);
+    }
+  }
+}
 
 //ASSESSMENT CREATE
 export const assessmentCreateAction = (data) => {
@@ -172,13 +177,6 @@ export const assessmentStatusAction = (id, status) => {
 
 //ASSESSMENT ORDER
 
-
-//GET ACTIVE MODAL
-export const assessmentModalAction = (modal) => {
-  return async (dispatch) => {
-    dispatch({type: types.ACTIVE_MODAL, payload: modal});
-  }
-}
 
 //SECTION CREATE
 export const sectionCreateAction = (data) => {
