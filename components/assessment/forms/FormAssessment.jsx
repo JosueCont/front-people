@@ -126,12 +126,14 @@ const FormAssessment = ({...props}) => {
                 </Form.Item>
                 <Form.Item name="code" label={"Código"} rules={[ruleRequired]}>
                     <Input
+                    maxLength={200}
                     allowClear={true}
                     placeholder="Código"
                     />
                 </Form.Item>
                 <Form.Item name="name" label={"Nombre"} rules={[ruleRequired]}>
                     <Input
+                    maxLength={200}
                     allowClear={true}
                     placeholder="Nombre"
                     />

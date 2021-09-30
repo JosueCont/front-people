@@ -68,6 +68,7 @@ const FormQuestion = ({assessmentStore, ...props}) => {
             <Form {...layout} onFinish={onFinish} id="formQuestions" form={formQuestions}>
                 <Form.Item name="title" label={"Título"} rules={[ruleRequired]}>
                     <Input
+                    maxLength={200}
                     allowClear={true}
                     placeholder="Título"
                     />

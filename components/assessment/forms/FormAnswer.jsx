@@ -68,12 +68,14 @@ const FormAnswer = ({assessmentStore, ...props}) => {
             <Form {...layout} onFinish={onFinish} id="formAnswers" form={formAnswers}>
                 <Form.Item name="title" label={"Título"} rules={[ruleRequired]}>
                     <Input
+                    maxLength={200}
                     allowClear={true}
                     placeholder="Título"
                     />
                 </Form.Item>
                 <Form.Item name="value" label={"Valor"} rules={[ruleRequired]}>
                     <Input
+                    maxLength={200}
                     allowClear={true}
                     placeholder="value"
                     />

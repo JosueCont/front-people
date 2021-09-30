@@ -133,7 +133,7 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
                 <Row>
                   <Col span={16}>
                     <Form.Item name="Filter" label="Filter">
-                      <Input placeholder="Filtro" onChange={onFilterChange}/>
+                      <Input placeholder="Filtra las encuestas" maxLength={200} onChange={onFilterChange}/>
                     </Form.Item>
                   </Col>
                   <Col span={8}>

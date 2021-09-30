@@ -11,6 +11,7 @@ import FormSection from "../../components/assessment/forms/FormSection";
 import FormQuestion from "../../components/assessment/forms/FormQuestion";
 import FormAnswer from "../../components/assessment/forms/FormAnswer";
 import Options from '../../components/assessment/Options';
+import NoCollapseContent from '../../components/assessment/NoCollapseContent';
 import {assessmentModalAction, assessmentDetailsAction, sectionDeleteAction, questionDeleteAction, answerDeleteAction} from "../../redux/assessmentDuck";
 
 const Detail = ({assessmentStore, ...props}) => {
@@ -177,77 +178,64 @@ const Detail = ({assessmentStore, ...props}) => {
                 <Row  style={{marginTop:20}}>
                     <Col span={24}>
                         <Collapse>
-                            { sections.map(seccion => {sections
+                        { sections.length > 0 ? 
+                            sections.map(seccion => {
                                 return (
                                 <Panel 
-                                    header={seccion.name}
-                                    key={seccion.id} 
-                                    extra={
-                                        <Options 
-                                            item={seccion}
-                                            onUpdate={HandleUpdateSection} 
-                                            onDelete={HandleDeleteSection} 
-                                            onCreate={HandleCreateQuestion} 
-                                            buttonName="Agregar pregunta"
-                                        /> 
-                                    }>
-                                        <Collapse>
-                                            {
-                                                questions.map( pregunta => seccion.id === pregunta.section.id &&
-                                                    pregunta.type !== "TXT-LG" ?
-                                                    <Panel 
-                                                        header={pregunta.title}
-                                                        key={pregunta.id}  
-                                                        extra={
-                                                            <Options 
-                                                                item={pregunta}
-                                                                onUpdate={HandleUpdateQuestion} 
-                                                                onDelete={HandleDeleteQuestion} 
-                                                                onCreate={HandleCreateAnswer}
-                                                                buttonName="Agregar respuesta"
-                                                            /> 
-                                                        } 
-                                                    > 
-                                                        <div className="ant-collapse">
-                                                            {
-                                                                pregunta.answer_set.map(respuesta =>
-                                                                    <Panel 
-                                                                        header={respuesta.title} 
-                                                                        key={respuesta.id}
-                                                                        extra={
-                                                                            <Options 
-                                                                                item={respuesta}
-                                                                                onUpdate={HandleUpdateAnswer} 
-                                                                                onDelete={HandleDeleteAnswer} 
-                                                                            /> 
-                                                                        }>
-                                                                    </Panel>
-                                                                )
-                                                            }
-                                                        </div>
-                                                    </Panel>
-                                                    :  
-                                                    <Panel 
-                                                    showArrow={false}
-                                                    header={pregunta.title}
-                                                    key={pregunta.id}  
-                                                    extra={
-                                                        <Options 
-                                                            item={pregunta}
-                                                            onUpdate={HandleUpdateQuestion} 
-                                                            onDelete={HandleDeleteQuestion} 
-                                                            onCreate={HandleCreateAnswer}
-                                                            buttonName="Agregar respuesta"
-                                                        /> 
-                                                    } 
-                                                    > </Panel>
+                                header={seccion.name}
+                                key={seccion.id} 
+                                extra={
+                                    <Options 
+                                        item={seccion}
+                                        onUpdate={HandleUpdateSection} 
+                                        onDelete={HandleDeleteSection} 
+                                        onCreate={HandleCreateQuestion} 
+                                        buttonName="Agregar pregunta"
+                                    /> 
+                                }>
+                                    <Collapse>
+                                    {   questions.length > 0 ? 
+                                        questions.map( pregunta => seccion.id === pregunta.section.id &&
+                                        <Panel 
+                                            className={pregunta.type === "TXT-LG" ? "no-content-kuiz" : "content-kuiz"}
+                                            showArrow={pregunta.type === "TXT-LG" ? false : true }
+                                            header={pregunta.title}
+                                            key={pregunta.id}  
+                                            extra={
+                                                <Options 
+                                                    item={pregunta}
+                                                    onUpdate={HandleUpdateQuestion} 
+                                                    onDelete={HandleDeleteQuestion} 
+                                                    onCreate={HandleCreateAnswer}
+                                                    buttonName="Agregar respuesta"
+                                                /> 
+                                            } 
+                                        > 
+                                            <div className="ant-collapse">
+                                            {   pregunta.answer_set.length > 0 ?
+                                                pregunta.answer_set.map( respuesta =>
+                                                <Panel 
+                                                header={respuesta.title} 
+                                                key={respuesta.id}
+                                                extra={
+                                                    <Options 
+                                                        item={respuesta}
+                                                        onUpdate={HandleUpdateAnswer} 
+                                                        onDelete={HandleDeleteAnswer} 
+                                                    /> 
+                                                }>
+                                                </Panel>
                                                 )
-                                            }
-                                        </Collapse>
-                                    </Panel> 
-                                    )
-                                })
-                            }
+                                            : <NoCollapseContent contentTitle="pregunta" itemTitle="respuestas"/> } 
+                                            </div>
+                                        </Panel> 
+                                        )
+                                        : <NoCollapseContent contentTitle="sección" itemTitle="preguntas"/> } 
+                                    </Collapse>
+                                </Panel> 
+                                )
+                            } ) 
+                        : <NoCollapseContent contentTitle="encuesta" itemTitle="secciones"/> }
                         </Collapse>
                     </Col>
                 </Row>
