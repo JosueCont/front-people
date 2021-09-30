@@ -7,13 +7,12 @@ import { API_ASSESSMENT } from "../config/config"; //"https://humand.kuiz.hiuman
 const nodeId = Number.parseInt(userCompanyId());
 
 const initialData = {
-    assessments: [], /*Encuestas*/
-    assessments_filter: [], /*Encuestas filtradas*/
-    assessment_selected: '', /*Encuesta seleccionada*/
-    sections: [], /*Secciones filtradas*/
-    questions: [], /*Preguntas y respuestas filtradas*/
-    active_modal: '', /*Modal Activo*/
-    fetching: true, /*Loading*/
+    assessments: [], 
+    assessment_selected: '', 
+    sections: [], 
+    questions: [], 
+    active_modal: '', 
+    fetching: true, 
 };
 
 const assessmentReducer = (state = initialData, action) => {
@@ -24,8 +23,6 @@ const assessmentReducer = (state = initialData, action) => {
       return {...state, fetching: action.payload};
     case types.LOAD_ASSESSMENTS:
       return {...state, assessments: action.payload, fetching: false};
-    case types.FILTER_ASSESSMENTS:
-      return {...state, assessments_filter: action.payload, fetching: false};
     case types.SELECTED_ASSESSMENT:
       return {...state, assessment_selected: action.payload};
     case types.CREATE_ASSESSMENTS:
@@ -97,15 +94,15 @@ export const assessmentDetailsAction = (id) => {
   }
 }
 
-//ASSESSMENT FILTER *
-export const assessmentFilterAction = (name) => {
-  return async (dispatch, getState) => {
-    name = name.toLowerCase();
-    let registros = await getState().assessmentStore.assessments;
-    let filtradas = await registros.filter( filtro => filtro.name.toLowerCase().includes( name ) );
-    name === '' ? dispatch({type: types.FILTER_ASSESSMENTS, payload: []}) : dispatch({type: types.UPDATE_ASSESSMENTS, payload: filtradas});
-  }
-}
+//ASSESSMENT FILTER
+// export const assessmentFilterAction = (name) => {
+//   return async (dispatch, getState) => {
+//     name = name.toLowerCase();
+//     let registros = await getState().assessmentStore.assessments;
+//     let filtradas = await registros.filter( filtro => filtro.name.toLowerCase().includes( name ) );
+//     name === '' ? dispatch({type: types.FILTER_ASSESSMENTS, payload: []}) : dispatch({type: types.UPDATE_ASSESSMENTS, payload: filtradas});
+//   }
+// }
 
 //ASSESSMENT CREATE
 export const assessmentCreateAction = (data) => {

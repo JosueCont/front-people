@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import MainLayout from "../../layout/MainLayout";
-import {Breadcrumb, Button, Row, Col, Modal, Collapse, message} from "antd";
+import {Breadcrumb, Button, Row, Col, Modal, Collapse, message, Upload} from "antd";
 import {PlusOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import {useRouter} from "next/router";
 import {connect, useDispatch} from "react-redux";
@@ -11,9 +11,6 @@ import FormSection from "../../components/assessment/forms/FormSection";
 import FormQuestion from "../../components/assessment/forms/FormQuestion";
 import FormAnswer from "../../components/assessment/forms/FormAnswer";
 import Options from '../../components/assessment/Options';
-import Section from '../../components/assessment/Section';
-import Question from '../../components/assessment/Question';
-import { ReactSortable } from "react-sortablejs";
 import {assessmentModalAction, assessmentDetailsAction, sectionDeleteAction, questionDeleteAction, answerDeleteAction} from "../../redux/assessmentDuck";
 
 const Detail = ({assessmentStore, ...props}) => {
@@ -166,7 +163,7 @@ const Detail = ({assessmentStore, ...props}) => {
         <MainLayout currentKey="2">
             <Breadcrumb>
                 <Breadcrumb.Item className={"pointer"} onClick={() => router.push({ pathname: "/home" })} > Inicio </Breadcrumb.Item>
-                <Breadcrumb.Item> Encuestas </Breadcrumb.Item>
+                <Breadcrumb.Item className={"pointer"} onClick={() => router.push({ pathname: "/assessment" })}> Encuestas </Breadcrumb.Item>
                 <Breadcrumb.Item> Detalle </Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
@@ -182,7 +179,7 @@ const Detail = ({assessmentStore, ...props}) => {
                         <Collapse>
                             { sections.map(seccion => {sections
                                 return (
-                                    <Panel 
+                                <Panel 
                                     header={seccion.name}
                                     key={seccion.id} 
                                     extra={
@@ -194,9 +191,10 @@ const Detail = ({assessmentStore, ...props}) => {
                                             buttonName="Agregar pregunta"
                                         /> 
                                     }>
-                                        {/* <Collapse>
+                                        <Collapse>
                                             {
                                                 questions.map( pregunta => seccion.id === pregunta.section.id &&
+                                                    pregunta.type !== "TXT-LG" ?
                                                     <Panel 
                                                         header={pregunta.title}
                                                         key={pregunta.id}  
@@ -228,9 +226,24 @@ const Detail = ({assessmentStore, ...props}) => {
                                                             }
                                                         </div>
                                                     </Panel>
+                                                    :  
+                                                    <Panel 
+                                                    showArrow={false}
+                                                    header={pregunta.title}
+                                                    key={pregunta.id}  
+                                                    extra={
+                                                        <Options 
+                                                            item={pregunta}
+                                                            onUpdate={HandleUpdateQuestion} 
+                                                            onDelete={HandleDeleteQuestion} 
+                                                            onCreate={HandleCreateAnswer}
+                                                            buttonName="Agregar respuesta"
+                                                        /> 
+                                                    } 
+                                                    > </Panel>
                                                 )
                                             }
-                                        </Collapse> */}
+                                        </Collapse>
                                     </Panel> 
                                     )
                                 })

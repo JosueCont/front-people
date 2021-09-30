@@ -10,10 +10,10 @@ import {connect, useDispatch} from "react-redux";
 const {confirm} = Modal;
 import {types} from "../../types/assessments";
 import {assessmentModalAction, assessmentDeleteAction} from "../../redux/assessmentDuck"
-
-//MENSAJES, PERMISOS, FILTROS, ORDEN Y LOADERS
+import {useFilter} from "../../components/assessment/useFilter";
 
 const AssessmentScreen = ({assessmentStore, ...props}) => {
+
   const dispatch = useDispatch();
   const router = useRouter();
   const [form] = Form.useForm();
@@ -24,7 +24,8 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
   const [showCreateAssessment, setShowCreateAssessment] = useState(false);
   const [showUpdateAssessment, setShowUpdateAssessment] = useState(false);
   const [assessmentData, setAssessmentData] = useState(false);
-
+  const [filterValues, filterActive, filterString, onFilterChange, onFilterActive, onFilterReset] = useFilter();
+  
   useEffect(() => {
     setAssessments(assessmentStore.assessments);
     setLoading(assessmentStore.fetching);
@@ -63,8 +64,9 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
     });
   };
 
-  const HandleCloseModal = () => {
-    dispatch(assessmentModalAction(''));
+  const HandleFilterReset = (assessments) => {
+    form.resetFields();
+    onFilterReset(assessments)
   }
 
   const columns = [
@@ -126,27 +128,25 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
             <Col span={18}>
               <Form
                 form={form}
-                onFinish={()=> console.log(filter)}
-                initialValues={{ id: "", name: "", perms: [],}}
                 scrollToFirstError
               >
                 <Row>
                   <Col span={16}>
-                    <Form.Item name="name" label="Nombre">
-                      <Input placeholder="Nombre" />
+                    <Form.Item name="Filter" label="Filter">
+                      <Input placeholder="Filtro" onChange={onFilterChange}/>
                     </Form.Item>
                   </Col>
                   <Col span={8}>
                     <div style={{ float: "left", marginLeft: "5px" }}>
                       <Form.Item>
-                        <Button style={{ background: "#fa8c16", fontWeight: "bold", color: "white", }} htmlType="submit" >
+                        <Button onClick={() => onFilterActive(assessments)} style={{ background: "#fa8c16", fontWeight: "bold", color: "white", }} htmlType="submit" >
                           <SearchOutlined />
                         </Button>
                       </Form.Item>
                     </div>
                     <div style={{ float: "left", marginLeft: "5px" }}>
                       <Form.Item>
-                        <Button onClick={() => resetFilter()} style={{ marginTop: "auto", marginLeft: 10 }}>
+                        <Button onClick={() => HandleFilterReset(assessments)} style={{ marginTop: "auto", marginLeft: 10 }}>
                           <SyncOutlined />
                         </Button>
                       </Form.Item>
@@ -167,7 +167,7 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
             <Col span={24}>
               <Table
                 columns={columns}
-                dataSource={assessments}
+                dataSource={filterActive ? filterValues : assessments}
                 loading={loading}
                 locale={{
                   emptyText: loading
