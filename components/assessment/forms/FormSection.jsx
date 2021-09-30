@@ -16,6 +16,7 @@ const FormSections = ({assessmentStore, ...props}) => {
     const {assessment_selected} = assessmentStore;
     const [instruccionCorta, setInstruccionCorta] = useState(props.loadData.short_instructions_es ? props.loadData.short_instructions_es : '');
     const [instruccions, setInstruccions] = useState(props.loadData.instructions_es ?  props.loadData.instructions_es : '');
+    const [loading, setLoading] = useState(true);
 
     useEffect( () => {
         console.log("ACTUAL:", assessment_selected);
@@ -31,6 +32,10 @@ const FormSections = ({assessmentStore, ...props}) => {
             setInstruccions('');
         }
     }, []);
+
+    useEffect(() => {
+        setLoading(assessmentStore.fetching);
+    }, [assessmentStore]);
 
     const onFinish = (values) => {
         values.instructions_es = instruccions;
@@ -62,7 +67,7 @@ const FormSections = ({assessmentStore, ...props}) => {
             width={ window.innerWidth > 1000 ? "60%" : "80%"}
             footer={[
                 <Button key="back" onClick={() => props.close()}> Cancelar </Button>,
-                <Button form="formSections" type="primary" key="submit" htmlType="submit">Guardar</Button>,
+                <Button form="formSections" type="primary" key="submit" htmlType="submit" loading={loading}>Guardar</Button>,
             ]}>
             <Form {...layout} onFinish={onFinish}  id="formSections" form={formSections}>
                 <Form.Item name="code" label={"Código"} rules={[ruleRequired]}>

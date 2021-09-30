@@ -50,8 +50,6 @@ const assessmentReducer = (state = initialData, action) => {
       return {...state, questions: state.questions.map( e => ( e.id === action.payload.id ) ? action.payload : e ), active_modal: '', fetching: false};
     case types.DELETE_QUESTIONS:
       return {...state, questions: state.questions.filter( e => (e.id !== action.payload) ), active_modal: '', fetching: false}
-    case types.LOAD_ANSWERS:
-      return {...state, questions: [...state.questions, ...action.payload], active_modal: '', fetching: false};
     case types.CREATE_ANSWERS:
       return {...state, questions: [action.payload, ...state.questions], active_modal: '', fetching: false};
     case types.UPDATE_ANSWERS:
@@ -70,6 +68,7 @@ export const assessmentLoadAction = () => {
     try {
       let response = await Axios.get(`${API_ASSESSMENT}/assessments/assessment/?companies=${nodeId}`);
       dispatch({type: types.LOAD_ASSESSMENTS, payload: response.data});
+      console.log("RESONSE::", response);
     } catch (e) {
       dispatch({type: types.FETCHING, payload: false});
       console.error(e.name + ': ' + e.message);
@@ -89,7 +88,6 @@ export const assessmentDetailsAction = (id) => {
         let questions_ = await Axios.get(`${API_ASSESSMENT}/assessments/question/?section=${element.id}`);
         let questions = _.orderBy(questions_.data.results, ['order'], ['desc']);
         dispatch({type: types.LOAD_QUESTIONS, payload: questions});
-        console.log("QUESTIONS::", questions);
       });
       dispatch({type: types.SELECTED_ASSESSMENT, payload: id});
     } catch (e) {
@@ -147,7 +145,7 @@ export const assessmentDeleteAction = (id) => {
   return async (dispatch) => {
     dispatch({type: types.FETCHING, payload: true});
     try {
-      let response = await Axios.delete(`${API_ASSESSMENT}/assessments/assessment/${id}`);
+      await Axios.delete(`${API_ASSESSMENT}/assessments/assessment/${id}`);
       dispatch({type: types.DELETE_ASSESSMENTS, payload: id});
       return true;
     } catch (e) {
@@ -184,19 +182,6 @@ export const assessmentModalAction = (modal) => {
     dispatch({type: types.ACTIVE_MODAL, payload: modal});
   }
 }
-
-// //GET ASSESSMENT
-// export const getAssessmentAction = (id) => {
-//   return async (dispatch) => {
-//     try {
-//       let response = await Axios.get(API_ASSESSMENT+'/assessments/assessment/'+id);
-//       console.log(response);
-//       dispatch({type: types.SELECTED_ASSESSMENT, payload: response.data});
-//     } catch (e) {
-//       console.error(e.name + ': ' + e.message);
-//     }
-//   }
-// }
 
 //SECTION CREATE
 export const sectionCreateAction = (data) => {
@@ -236,7 +221,7 @@ export const sectionDeleteAction = (id) => {
   return async (dispatch) => {
     dispatch({type: types.FETCHING, payload: true});
     try {
-      let response = await Axios.delete(`${API_ASSESSMENT}/assessments/section/${id}`);
+      await Axios.delete(`${API_ASSESSMENT}/assessments/section/${id}`);
       dispatch({type: types.DELETE_SECTIONS, payload: id});
       return true;
     } catch (e) {
@@ -288,9 +273,8 @@ export const questionDeleteAction = (id) => {
   return async (dispatch) => {
     dispatch({type: types.FETCHING, payload: true});
     try {
-      let response = await Axios.delete(`${API_ASSESSMENT}/assessments/question/${id}`);
+      await Axios.delete(`${API_ASSESSMENT}/assessments/question/${id}`);
       dispatch({type: types.DELETE_QUESTIONS, payload: id});
-      console.log("RESPONSE DELETE::", response);
       return true;
     } catch (e) {
       dispatch({type: types.FETCHING, payload: false});
@@ -303,45 +287,52 @@ export const questionDeleteAction = (id) => {
 //QUESTION ORDER
 
 //ANSWER ADD
-export const answerCreateAction = (question, data) => { 
+export const answerCreateAction = (values) => { 
   return async (dispatch) => {
     dispatch({type: types.FETCHING, payload: true});
     try {
-      let response = await Axios.post(API_ASSESSMENT+'/assessments/answer/', data);
-      dispatch({type: types.CREATE_ANSWERS, payload: response.data});
+      let response = await Axios.post(API_ASSESSMENT+'/assessments/answer/', values);
+      let {data} = await Axios.get(`${API_ASSESSMENT}/assessments/question/${response.data.question}/`);
+      dispatch({type: types.UPDATE_QUESTIONS, payload: data});
+      return true;
     } catch (e) {
       dispatch({type: types.FETCHING, payload: false})
       console.error(e.name + ': ' + e.message);
+      return false;
     }
   }
 }
 
 //ANSWER UPDATE
-export const answerUpdateAction = (id, data) => {
+export const answerUpdateAction = (id, values) => {
   return async (dispatch) => {
     dispatch({type: types.FETCHING, payload: true});
     try {
-        let response = await Axios.patch(API_ASSESSMENT+'/assessments/answer/'+id, data);
-        dispatch({type: types.UPDATE_ANSWERS, payload: response.data});
-        console.log("RESPONSE UPDATE::", response);
+      let response = await Axios.patch(`${API_ASSESSMENT}/assessments/answer/${id}/`, values);
+      let {data} = await Axios.get(`${API_ASSESSMENT}/assessments/question/${response.data.question}/`);
+      dispatch({type: types.UPDATE_QUESTIONS, payload: data});
+      return true;
     } catch (e) {
-      dispatch({type: types.FETCHING, payload: false});
+      dispatch({type: types.FETCHING, payload: false})
       console.error(e.name + ': ' + e.message);
+      return false;
     }
   }
 }
 
 //ANSWER DELETE
-export const answerDeleteAction = (id) => {
-  return async (dispatch, getState) => {
+export const answerDeleteAction = (item) => {
+  return async (dispatch) => {
     dispatch({type: types.FETCHING, payload: true});
     try {
-        let response = await Axios.delete(API_ASSESSMENT+'/assessments/assessment/'+id);
-        dispatch({type: types.DELETE_QUESTIONS, payload: response.data});
-        console.log("RESPONSE DELETE::", response);
+      await Axios.delete(`${API_ASSESSMENT}/assessments/answer/${item.id}/`);
+      let {data} = await Axios.get(`${API_ASSESSMENT}/assessments/question/${item.question}/`);
+      dispatch({type: types.UPDATE_QUESTIONS, payload: data});
+      return true;
     } catch (e) {
-      dispatch({type: types.FETCHING, payload: false});
+      dispatch({type: types.FETCHING, payload: false})
       console.error(e.name + ': ' + e.message);
+      return false;
     }
   }
 }

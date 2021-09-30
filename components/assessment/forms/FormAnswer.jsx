@@ -7,25 +7,31 @@ import FormItemHTML from "./FormItemHtml";
 import {answerCreateAction, answerUpdateAction} from "../../../redux/assessmentDuck";
 
 const FormAnswer = ({assessmentStore, ...props}) => {
-
     const dispatch = useDispatch();
     const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 }, };
     const [formAnswers] = Form.useForm();
     const nodeId = Number.parseInt(userCompanyId());
     const answerId = props.loadData ? props.loadData.id : "";
     const [descripcion, setDescripcion] = useState(props.loadData.description_es ? props.loadData.description_es : '');
+    const [loading, setLoading] = useState(true);
 
     useEffect( () => {
+        console.log("ID QUESTION", props.idQuestion);
         if (props.loadData){
             console.log("DATOS::", props.loadData);
             formAnswers.setFieldsValue({
                 title: props.loadData.title,
+                value: props.loadData.value
             });
         } else {
             onReset();
             setDescripcion('');
         }
     }, []);
+
+    useEffect(() => {
+        setLoading(assessmentStore.fetching);
+    }, [assessmentStore]);
 
     const onFinish = (values) => {
         values.description_es = descripcion;
@@ -37,7 +43,8 @@ const FormAnswer = ({assessmentStore, ...props}) => {
                 props.close();
             });
         } else {
-            values.question= props.idQuestion;
+            values.question= props.idQuestion;;
+            console.log("VALORES ANSWERS", values);
             props.answerCreateAction(values).then((response) => {
                 response ? message.success("Agregado correctamente") : message.error("Hubo un error"), props.close();
             }).catch( e => {
@@ -56,13 +63,19 @@ const FormAnswer = ({assessmentStore, ...props}) => {
             width={ window.innerWidth > 1000 ? "60%" : "80%"}
             footer={[
                 <Button key="back" onClick={() => props.close()}> Cancelar </Button>,
-                <Button form="formAnswers" type="primary" key="submit" htmlType="submit">Guardar</Button>,
+                <Button form="formAnswers" type="primary" key="submit" htmlType="submit" loading={loading}>Guardar</Button>,
             ]}>
             <Form {...layout} onFinish={onFinish} id="formAnswers" form={formAnswers}>
                 <Form.Item name="title" label={"Título"} rules={[ruleRequired]}>
                     <Input
                     allowClear={true}
                     placeholder="Título"
+                    />
+                </Form.Item>
+                <Form.Item name="value" label={"Valor"} rules={[ruleRequired]}>
+                    <Input
+                    allowClear={true}
+                    placeholder="value"
                     />
                 </Form.Item>
                 <FormItemHTML

@@ -495,3 +495,11 @@ header.ant-layout-header {
 .ant-tooltip-arrow-content{
  background: var(--primaryColor) !important;
 }
+
+.large-uploader .ant-upload.ant-upload-select-picture-card {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.select-kuiz .ant-select-selector { border-color: #d9d9d9!important; }

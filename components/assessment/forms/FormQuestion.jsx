@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Modal, message, } from "antd";
+import { Form, Input, Button, Modal, message, Select} from "antd";
 import {connect, useDispatch} from "react-redux";
 import {withAuthSync, userCompanyId} from "../../../libs/auth";
 import { ruleRequired } from "../../../utils/constant";
@@ -14,18 +14,25 @@ const FormQuestion = ({assessmentStore, ...props}) => {
     const nodeId = Number.parseInt(userCompanyId());
     const questionId = props.loadData ? props.loadData.id : "";
     const [descripcion, setDescripcion] = useState(props.loadData.description_es ? props.loadData.description_es : '');
+    const [loading, setLoading] = useState(true);
 
     useEffect( () => {
+        console.log("ID SECTION", props.idSection);
         if (props.loadData){
             console.log("DATOS::", props.loadData);
             formQuestions.setFieldsValue({
                 title: props.loadData.title,
+                type: props.loadData.type,
             });
         } else {
             onReset();
             setDescripcion('');
         }
     }, []);
+
+    useEffect(() => {
+        setLoading(assessmentStore.fetching);
+    }, [assessmentStore]);
 
     const onFinish = (values) => {
         values.description_es = descripcion;
@@ -56,7 +63,7 @@ const FormQuestion = ({assessmentStore, ...props}) => {
             width={ window.innerWidth > 1000 ? "60%" : "80%"}
             footer={[
                 <Button key="back" onClick={() => props.close()}> Cancelar </Button>,
-                <Button form="formQuestions" type="primary" key="submit" htmlType="submit">Guardar</Button>,
+                <Button form="formQuestions" type="primary" key="submit" htmlType="submit" loading={loading}>Guardar</Button>,
             ]}>
             <Form {...layout} onFinish={onFinish} id="formQuestions" form={formQuestions}>
                 <Form.Item name="title" label={"Título"} rules={[ruleRequired]}>
@@ -64,6 +71,12 @@ const FormQuestion = ({assessmentStore, ...props}) => {
                     allowClear={true}
                     placeholder="Título"
                     />
+                </Form.Item>
+                <Form.Item name="type" label="Tipo de pregunta:" rules={[ruleRequired]}>
+                    <Select placeholder="Selecciona una tipo" className="select-kuiz">
+                        <Option value="MULTI">Opción Múltiple</Option>
+                        <Option value="TXT-LG">Texto largo</Option>
+                    </Select>
                 </Form.Item>
                 <FormItemHTML
                     html = {descripcion}

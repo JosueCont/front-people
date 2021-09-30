@@ -44,6 +44,7 @@ const Detail = ({assessmentStore, ...props}) => {
     }, [router.query.id]);
 
     useEffect(() => {
+        console.log("STORE::", assessmentStore);
         setLoading(assessmentStore.fetching);
         assessmentStore.active_modal === types.CREATE_SECTIONS ? setShowCreateSection(true) : setShowCreateSection(false);
         assessmentStore.active_modal === types.UPDATE_SECTIONS ? setShowUpdateSection(true) : setShowUpdateSection(false);
@@ -71,13 +72,13 @@ const Detail = ({assessmentStore, ...props}) => {
         dispatch(assessmentModalAction(types.UPDATE_SECTIONS));
     };
     
-    const HandleDeleteSection = (id) => {
+    const HandleDeleteSection = (item) => {
         confirm({
             title: "¿Está seguro de eliminar esta sección",
             icon: <ExclamationCircleOutlined />,
             content: "Si lo elimina no podrá recuperarlo",
             onOk() {
-                props.sectionDeleteAction(id).then(response => {
+                props.sectionDeleteAction(item.id).then(response => {
                     response ? message.success("Eliminado correctamente") : message.error("Hubo un error");
                 }).catch(e => message.error("Hubo un error"));
             },
@@ -90,8 +91,9 @@ const Detail = ({assessmentStore, ...props}) => {
         });
     };
 
-    const HandleCreateQuestion = (id='') => {
+    const HandleCreateQuestion = (id) => {
         setQuestionData(false);
+        setSectionSelected(id);
         dispatch(assessmentModalAction(types.CREATE_QUESTIONS));
     };
 
@@ -101,13 +103,13 @@ const Detail = ({assessmentStore, ...props}) => {
         dispatch(assessmentModalAction(types.UPDATE_QUESTIONS));
     };
 
-    const HandleDeleteQuestion = (id) => {
+    const HandleDeleteQuestion = (item) => {
         confirm({
             title: "¿Está seguro de eliminar esta sección",
             icon: <ExclamationCircleOutlined />,
             content: "Si lo elimina no podrá recuperarlo",
             onOk() {
-                props.questionDeleteAction(id).then(response =>{
+                props.questionDeleteAction(item.id).then(response =>{
                     response ? message.success("Eliminado correctamente") : message.error("Hubo un error");
                 }).catch(e => {
                     message.error("Hubo un error");
@@ -122,8 +124,9 @@ const Detail = ({assessmentStore, ...props}) => {
         });
     };
 
-    const HandleCreateAnswer = (id='') => {
+    const HandleCreateAnswer = (id) => {
         setAnswerData(false);
+        setQuestionSelected(id);
         dispatch(assessmentModalAction(types.CREATE_ANSWERS));
     };
     
@@ -132,13 +135,13 @@ const Detail = ({assessmentStore, ...props}) => {
         dispatch(assessmentModalAction(types.UPDATE_ANSWERS));
     };
 
-    const HandleDeleteAnswer = (id) => {
+    const HandleDeleteAnswer = (item) => {
         confirm({
             title: "¿Está seguro de eliminar esta sección",
             icon: <ExclamationCircleOutlined />,
             content: "Si lo elimina no podrá recuperarlo",
             onOk() {
-                props.answerDeleteAction(id).then(response =>{
+                props.answerDeleteAction(item).then(response =>{
                     response ? message.success("Eliminado correctamente") : message.error("Hubo un error");
                 }).catch(e => {
                     message.error("Hubo un error");
@@ -187,13 +190,12 @@ const Detail = ({assessmentStore, ...props}) => {
                                             onUpdate={HandleUpdateSection} 
                                             onDelete={HandleDeleteSection} 
                                             onCreate={HandleCreateQuestion} 
-                                            setSection={setSectionSelected}
                                             buttonName="Agregar pregunta"
                                         /> 
                                     }>
                                         <Collapse>
                                             {
-                                                questions.map(pregunta => (seccion.id === pregunta.section.id) &&
+                                                questions.map( pregunta => seccion.id === pregunta.section.id &&
                                                     <Panel 
                                                         header={pregunta.title}
                                                         // header={pregunta.title} 
@@ -204,7 +206,6 @@ const Detail = ({assessmentStore, ...props}) => {
                                                                 onUpdate={HandleUpdateQuestion} 
                                                                 onDelete={HandleDeleteQuestion} 
                                                                 onCreate={HandleCreateAnswer}
-                                                                setQuestion={setQuestionSelected}  
                                                                 buttonName="Agregar respuesta"
                                                             /> 
                                                         } 
