@@ -9,6 +9,7 @@ import FormBankAccount from "../forms/FormBankAccount";
 import FormGeneralData from "../forms/FormGeneralData";
 import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
+import FormPayrollPerson from "../forms/FormPayrollPerson";
 
 const DetailPerson = ({
   config,
@@ -67,11 +68,17 @@ const DetailPerson = ({
             <FormDocument person_id={person.id} node={person.node} />
           </TabPane>
           <TabPane tab="Cambiar contraseña" key="tab_9">
-            <FormChangePassword config={config} khonnectId={person.khonnect_id} />
+            <FormChangePassword
+              config={config}
+              khonnectId={person.khonnect_id}
+            />
           </TabPane>
           {deletePerson && (
             <TabPane tab="Eliminar persona" key="tab_10"></TabPane>
           )}
+          <TabPane tab="Nomina" key="tab_11">
+            <FormPayrollPerson person_id={person.id} />
+          </TabPane>
         </Tabs>
       </Card>
     </>
