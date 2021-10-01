@@ -21,6 +21,7 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import DocumentModal from "../../components/modal/document";
+import DocumentSelectModal from "../../components/modal/selectDocument";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 
 const FormDocument = ({ person_id, node }) => {
@@ -29,6 +30,7 @@ const FormDocument = ({ person_id, node }) => {
   const [documents, setDocuments] = useState([]);
   const [modalDoc, setModalDoc] = useState(false);
   const [loadingTable, setLoadingTable] = useState(true);
+  const [showModalSelectDoc, setShowModalSelectDoc] = useState(false);
 
   useEffect(() => {
     getDocument();
@@ -57,6 +59,11 @@ const FormDocument = ({ person_id, node }) => {
     setModalDoc(value);
     getDocument();
   };
+
+  const getModalSelectDoc = (value) => {
+    setShowModalSelectDoc(value);
+  };
+
   const deleteDocument = (value) => {
     Axios.delete(API_URL + `/person/document/${value}/`)
       .then((response) => {
@@ -149,6 +156,15 @@ const FormDocument = ({ person_id, node }) => {
             Agregar
           </Button>
         </Col>
+        <Col style={{ padding: "2%" }}>
+          <Button
+            icon={<PlusOutlined />}
+            type="primary"
+            onClick={() => getModalSelectDoc(true)}
+          >
+            Seleccionar y cargar
+          </Button>
+        </Col>
       </Row>
       <Spin tip="Cargando..." spinning={loadingTable}>
         <Table
@@ -165,6 +181,14 @@ const FormDocument = ({ person_id, node }) => {
         <DocumentModal
           close={getModalDoc}
           visible={modalDoc}
+          person_id={person_id}
+          node={node}
+        />
+      )}
+      {showModalSelectDoc && (
+        <DocumentSelectModal
+          close={getModalSelectDoc}
+          visible={showModalSelectDoc}
           person_id={person_id}
           node={node}
         />

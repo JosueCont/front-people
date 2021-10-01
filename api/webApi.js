@@ -208,6 +208,14 @@ class WebApi {
   static getCfdi(data) {
     return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
   }
+
+  /*Payroll Person */
+  static createPayrollPerson(data) {
+    return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
+  }
+  static updatePayrollPerson(data) {
+    return WebApi.ApisType(`/payroll/payroll-person/${data.id}/`, "put", data);
+  }
 }
 
 export default WebApi;
