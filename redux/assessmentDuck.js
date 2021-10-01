@@ -158,14 +158,13 @@ export const assessmentDeleteAction = (id) => {
   }
 }
 
-//ASSESSMENT STATUS *
+//ASSESSMENT STATUS
 export const assessmentStatusAction = (id, status) => {
   return async (dispatch) => {
     dispatch({type: types.FETCHING, payload: true})
     try {
-      let response = await Axios.patch(API_ASSESSMENT+'/assessments/assessment/'+id, {"is_active": status});
-      dispatch({type: types.UPDATE_ASSESSMENTS, payload: response.data})
-      console.log("RESPONSE STATUS::", response);
+      let {data} = await Axios.patch(`${API_ASSESSMENT}/assessments/assessment/${id}/`, {"is_active": status});
+      dispatch({type: types.UPDATE_ASSESSMENTS, payload: data})
       return true;
     } catch (error) {
       dispatch({type: types.FETCHING, payload: false});

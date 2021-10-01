@@ -20,7 +20,7 @@ const Detail = ({assessmentStore, ...props}) => {
     const dispatch = useDispatch();
     const router = useRouter();
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const [sections, setSections] = useState([]);
     const [questions, setQuestions] = useState([]);
@@ -163,8 +163,8 @@ const Detail = ({assessmentStore, ...props}) => {
     return (
         <MainLayout currentKey="2">
             <Breadcrumb>
-                <Breadcrumb.Item className={"pointer"} onClick={() => router.push({ pathname: "/home" })} > Inicio </Breadcrumb.Item>
-                <Breadcrumb.Item className={"pointer"} onClick={() => router.push({ pathname: "/assessment" })}> Encuestas </Breadcrumb.Item>
+                <Breadcrumb.Item className={"pointer"} href="/home/"> Inicio </Breadcrumb.Item>
+                <Breadcrumb.Item className={"pointer"} href="/assessment/"> Encuestas </Breadcrumb.Item>
                 <Breadcrumb.Item>{assessmentStore.assessment_selected.name}</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>

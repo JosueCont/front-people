@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import MainLayout from "../../layout/MainLayout";
 import {useRouter} from "next/router";
-import {Form, Input, Table, Breadcrumb, Button, Row, Col, Modal, message} from "antd";
+import {Form, Input, Table, Breadcrumb, Button, Row, Col, Modal, message, Switch} from "antd";
 import {SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SyncOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import {withAuthSync} from "../../libs/auth";
 import jsCookie from "js-cookie";
@@ -9,7 +9,7 @@ import FormAssessment from "../../components/assessment/forms/FormAssessment";
 import {connect, useDispatch} from "react-redux";
 const {confirm} = Modal;
 import {types} from "../../types/assessments";
-import {assessmentModalAction, assessmentDeleteAction} from "../../redux/assessmentDuck"
+import {assessmentModalAction, assessmentDeleteAction, assessmentStatusAction} from "../../redux/assessmentDuck"
 import {useFilter} from "../../components/assessment/useFilter";
 
 const AssessmentScreen = ({assessmentStore, ...props}) => {
@@ -20,13 +20,14 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
   
   const [permissions, setPermissions] = useState({ view: true, create: true, edit: true, delete: true });
   const [assessments, setAssessments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showCreateAssessment, setShowCreateAssessment] = useState(false);
   const [showUpdateAssessment, setShowUpdateAssessment] = useState(false);
   const [assessmentData, setAssessmentData] = useState(false);
   const [filterValues, filterActive, filterString, onFilterChange, onFilterActive, onFilterReset] = useFilter();
   
   useEffect(() => {
+    console.log("ENCUESTAS::", assessmentStore.assessments);
     setAssessments(assessmentStore.assessments);
     setLoading(assessmentStore.fetching);
     assessmentStore.active_modal === types.CREATE_ASSESSMENTS ? setShowCreateAssessment(true) : setShowCreateAssessment(false);
@@ -69,6 +70,15 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
     onFilterReset(assessments)
   }
 
+  const HandleChangeStatus = (value) => {
+    value.is_active ? (value.is_active = false) : (value.is_active = true);
+    props.assessmentStatusAction(value.id, value.is_active).then( response => {
+      response ? message.success("Estatus Actualizado") : message.error("Ocurrio un error intente de nuevo.");
+    }).catch( e => {
+      message.error("Hubo un error");
+    });
+  };
+
   const columns = [
     {
       title: "Nombre",
@@ -92,6 +102,21 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
       title: "Categoría",
       render: (item) => {
         return <div key= {"category-" + item.id}>{ item.category === "A" ? "Assessment" : "Quiz"}</div>;
+      },
+    },
+    {
+      title: "Estatus",
+      render: (item) => {
+        return (
+          <>
+            <Switch
+              defaultChecked={item.is_active}
+              checkedChildren="Activo"
+              unCheckedChildren="Inactivo"
+              onChange={() => HandleChangeStatus(item)}
+            />
+          </>
+        );
       },
     },
     {
@@ -205,4 +230,5 @@ const mapState = (state) => {
   }
 }
 
-export default connect(mapState,{assessmentDeleteAction})(withAuthSync(AssessmentScreen));
+
+export default connect(mapState,{assessmentDeleteAction, assessmentStatusAction})(withAuthSync(AssessmentScreen));
