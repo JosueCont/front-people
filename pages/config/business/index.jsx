@@ -266,10 +266,9 @@ const configBusiness = ({ ...props }) => {
     if (param == "job") {
       setId(item.id);
       formJob.setFieldsValue({
-        node: item.department.node.id,
+        node: item.node.id,
         name: item.name,
         code: item.code,
-        department: item.department.id,
       });
     }
     if (param == "tp") {
