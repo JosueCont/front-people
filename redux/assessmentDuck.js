@@ -2,6 +2,7 @@ import { userCompanyId } from "../libs/auth";
 import Axios from "axios";
 import { types} from "../types/assessments";
 import _ from 'lodash';
+import { asyncForEach } from "../utils/functions";
 import { API_ASSESSMENT } from "../config/config"; //"https://humand.kuiz.hiumanlab.com"
 
 const nodeId = Number.parseInt(userCompanyId());
@@ -10,7 +11,8 @@ const initialData = {
     assessments: [], 
     assessment_selected: {}, 
     sections: [], 
-    questions: [], 
+    questions: [],
+    temp:[], 
     active_modal: '', 
     fetching: true, 
 };
@@ -19,6 +21,8 @@ const assessmentReducer = (state = initialData, action) => {
   switch (action.type) {
     case types.ACTIVE_MODAL:
       return {...state, active_modal: action.payload};
+    case types.TEPORAL_STATE:
+      return {...state, temp: action.payload};
     case types.FETCHING:
       return {...state, fetching: action.payload};
     case types.LOAD_ASSESSMENTS:
@@ -174,7 +178,44 @@ export const assessmentStatusAction = (id, status) => {
   }
 }
 
-//ASSESSMENT ORDER
+//ORDER SECTIONS
+export const sectionOrderAction = (data) => {
+  return async (dispatch) => {
+    console.log("DATA:", data);
+    dispatch({type: types.FETCHING, payload: true})
+    console.log("orden que debe tener el objeto1", data.order1)
+    console.log("orden que debe tener el objeto2", data.order2)
+    try {
+      let seccion1 = await Axios.patch(`${API_ASSESSMENT}/assessments/section/${data.id1}/`, {"order": data.order1});
+      dispatch({type: types.UPDATE_ASSESSMENTS, payload: seccion1.data})
+      console.log("response1", seccion1.data)
+      let seccion2 = await Axios.patch(`${API_ASSESSMENT}/assessments/section/${data.id2}/`, {"order": data.order2});
+      console.log("response2", seccion2.data)
+      dispatch({type: types.UPDATE_ASSESSMENTS, payload: seccion2.data})
+      return true;
+    } catch (error) {
+      dispatch({type: types.FETCHING, payload: false});
+      console.error(e.name + ': ' + e.message);
+      return false;
+    }
+  }
+}
+
+//SECTION LOAD
+export const sectionLoadAction = (id) => {
+  return async (dispatch) => {
+    dispatch({type: types.FETCHING, payload: true});
+    try {
+      let sections_ = await Axios.get(`${API_ASSESSMENT}/assessments/section/?assessment=${id}`);
+      let sections = _.orderBy(sections_.data.results, ['order'], ['desc']);
+      dispatch({type: types.LOAD_SECTIONS, payload: sections});
+    } catch (e) {
+      dispatch({type: types.FETCHING, payload: false});
+      console.error(e.name + ': ' + e.message);
+    }
+  }
+}
+
 
 
 //SECTION CREATE
@@ -226,9 +267,6 @@ export const sectionDeleteAction = (id) => {
   }
 }
 
-//SECTION ORDER
-
-
 //QUESTION CREATE
 export const questionCreateAction = (data) => {
   return async (dispatch) => {
@@ -278,9 +316,7 @@ export const questionDeleteAction = (id) => {
   }
 }
 
-//QUESTION ORDER
-
-//ANSWER ADD
+//ANSWER CREATE
 export const answerCreateAction = (values) => { 
   return async (dispatch) => {
     dispatch({type: types.FETCHING, payload: true});
@@ -330,7 +366,5 @@ export const answerDeleteAction = (item) => {
     }
   }
 }
-
-//ANSWER ORDER
 
 export default assessmentReducer;

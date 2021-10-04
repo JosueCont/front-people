@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
+import ReactDOM from "react-dom";
 import MainLayout from "../../layout/MainLayout";
 import {Breadcrumb, Button, Row, Col, Modal, Collapse, message, Upload} from "antd";
 import {PlusOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
@@ -12,7 +13,14 @@ import FormQuestion from "../../components/assessment/forms/FormQuestion";
 import FormAnswer from "../../components/assessment/forms/FormAnswer";
 import Options from '../../components/assessment/Options';
 import NoCollapseContent from '../../components/assessment/NoCollapseContent';
-import {assessmentModalAction, assessmentDetailsAction, sectionDeleteAction, questionDeleteAction, answerDeleteAction} from "../../redux/assessmentDuck";
+import {
+    assessmentModalAction, 
+    assessmentDetailsAction, 
+    sectionDeleteAction, 
+    questionDeleteAction, 
+    answerDeleteAction,
+    sectionOrderAction
+} from "../../redux/assessmentDuck";
 
 const Detail = ({assessmentStore, ...props}) => {
 
@@ -97,7 +105,6 @@ const Detail = ({assessmentStore, ...props}) => {
         dispatch(assessmentModalAction(types.CREATE_QUESTIONS));
     };
 
-    
     const HandleUpdateQuestion = (item) => {
         setQuestionData(item);
         dispatch(assessmentModalAction(types.UPDATE_QUESTIONS));
@@ -160,6 +167,39 @@ const Detail = ({assessmentStore, ...props}) => {
         dispatch(assessmentModalAction(''));
     }
 
+    const HandleOrder = (from, direction, item1) => {
+        console.log("ordenando...");
+        if (from === types.FROM_SECTIONS) {
+            let stateSections = assessmentStore.sections;
+            let fistIndex = _.findIndex(stateSections, ['id', item1.id]);
+            let secondIndex = getSecondIndex(direction, fistIndex);
+            let item2 = stateSections[Object.keys(stateSections)[secondIndex]];
+            console.log("item1", item1)
+            console.log("item2", item2)
+            let data = { 
+                id1: item1.id, 
+                name1: item1.name, 
+                order1: item2.order, 
+                id2: item2.id,
+                name2: item2.name, 
+                order2: item1.order, 
+            }
+            props.sectionOrderAction(data).then(response =>{
+                response ? message.success("Orden actualizado") : message.error("Hubo un error, por favor inténtalo de nuevo");
+            }).catch( e => {
+                message.error("Hubo un error");
+            });
+        } 
+    }
+
+    const getSecondIndex = (direction, index) => {
+        if (direction === "down" ){
+            return index + 1
+        } else {
+           return index - 1 
+        }
+    } 
+
     return (
         <MainLayout currentKey="2">
             <Breadcrumb>
@@ -177,16 +217,19 @@ const Detail = ({assessmentStore, ...props}) => {
                 </Row>
                 <Row  style={{marginTop:20}}>
                     <Col span={24}>
-                        <Collapse>
+                        <Collapse id="content-sections">
                         { sections.length > 0 ? 
                             sections.map(seccion => {
                                 return (
                                 <Panel 
+                                className="item-content"
                                 header={seccion.name}
                                 key={seccion.id} 
                                 extra={
                                     <Options 
                                         item={seccion}
+                                        from={types.FROM_SECTIONS}
+                                        onOrder={HandleOrder}
                                         onUpdate={HandleUpdateSection} 
                                         onDelete={HandleDeleteSection} 
                                         onCreate={HandleCreateQuestion} 
@@ -204,6 +247,8 @@ const Detail = ({assessmentStore, ...props}) => {
                                             extra={
                                                 <Options 
                                                     item={pregunta}
+                                                    from={types.FROM_QUESTIONS}
+                                                    onOrder={HandleOrder}
                                                     onUpdate={HandleUpdateQuestion} 
                                                     onDelete={HandleDeleteQuestion} 
                                                     onCreate={HandleCreateAnswer}
@@ -212,7 +257,8 @@ const Detail = ({assessmentStore, ...props}) => {
                                             } 
                                         > 
                                             <div className="ant-collapse">
-                                            {   pregunta.answer_set.length > 0 ?
+                                            {   
+                                                pregunta.answer_set.length > 0 ?
                                                 pregunta.answer_set.map( respuesta =>
                                                 <Panel 
                                                 header={respuesta.title} 
@@ -220,6 +266,8 @@ const Detail = ({assessmentStore, ...props}) => {
                                                 extra={
                                                     <Options 
                                                         item={respuesta}
+                                                        from={types.FROM_ANSWERS}
+                                                        onOrder={HandleOrder}
                                                         onUpdate={HandleUpdateAnswer} 
                                                         onDelete={HandleDeleteAnswer} 
                                                     /> 
@@ -300,4 +348,4 @@ const mapState = (state) => {
     }
 }
   
-export default connect(mapState, {sectionDeleteAction, questionDeleteAction, answerDeleteAction})(withAuthSync(Detail));
+export default connect(mapState, {sectionDeleteAction, questionDeleteAction, answerDeleteAction, sectionOrderAction})(withAuthSync(Detail));

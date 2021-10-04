@@ -110,6 +110,7 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
         return (
           <>
             <Switch
+              key={"status-"+item.id}
               defaultChecked={item.is_active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
