@@ -77,7 +77,7 @@ const DetailPerson = ({
             <TabPane tab="Eliminar persona" key="tab_10"></TabPane>
           )}
           <TabPane tab="Nomina" key="tab_11">
-            <FormPayrollPerson person_id={person.id} />
+            <FormPayrollPerson person_id={person.id} node={person.node} />
           </TabPane>
         </Tabs>
       </Card>
