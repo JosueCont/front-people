@@ -21,9 +21,7 @@ const FormQuestion = ({ assessmentStore, ...props }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("ID SECTION", props.idSection);
     if (props.loadData) {
-      console.log("DATOS::", props.loadData);
       formQuestions.setFieldsValue({
         title: props.loadData.title,
         type: props.loadData.type,

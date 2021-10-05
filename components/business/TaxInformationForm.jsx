@@ -122,7 +122,6 @@ const TaxInformationForm = ({ node_id }) => {
                 tax_regime_physical.push({ value: a.id, label: a.description });
               }
             });
-            console.log("Fisica", tax_regime_physical);
             setTaxRegimePhysical(tax_regime_physical);
 
             let tax_regime_moral = [];
@@ -131,7 +130,6 @@ const TaxInformationForm = ({ node_id }) => {
                 tax_regime_moral.push({ value: a.id, label: a.description });
               }
             });
-            console.log("Moral", tax_regime_moral);
             setTaxRegimeMoral(tax_regime_moral);
           }
         }

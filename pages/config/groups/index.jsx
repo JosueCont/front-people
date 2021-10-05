@@ -128,7 +128,6 @@ const Groups = ({ ...props }) => {
   };
 
   useEffect(() => {
-    console.log("Props-> ", props);
     if (props.currentNode && props.config) {
       const jwt = JSON.parse(jsCookie.get("token"));
       searchPermissions(jwt.perms);

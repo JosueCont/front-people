@@ -5,7 +5,7 @@ import CardApps from "./CardApps";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Cookie from "js-cookie";
-import { getAccessIntranet, logoutAuth } from "../libs/auth";
+import { logoutAuth } from "../libs/auth";
 import { FormattedMessage } from "react-intl";
 import { css, Global } from "@emotion/core";
 import { connect } from "react-redux";
@@ -37,7 +37,7 @@ const headerCustom = ({
 
   useEffect(() => {
     if (props.config) {
-      setintanetAccess(true);
+      setintanetAccess(props.config.intranet_enabled);
     }
   }, [props.config]);
 

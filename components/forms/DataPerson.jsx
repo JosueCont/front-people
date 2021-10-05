@@ -14,7 +14,6 @@ import {
 } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import { getAccessIntranet } from "../../libs/auth";
 import SelectDepartment from "../selects/SelectDepartment";
 import { connect } from "react-redux";
 import SelectJob from "../selects/SelectJob";
