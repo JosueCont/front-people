@@ -216,6 +216,30 @@ class WebApi {
   static updatePayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/${data.id}/`, "put", data);
   }
+
+  static getContractTypes() {
+    return WebApi.ApisType(`/fiscal/contract-type/`, "get");
+  }
+
+  static getHiringRegimes() {
+    return WebApi.ApisType(`/fiscal/hiring-regime/`, "get");
+  }
+
+  static getTypeTax() {
+    return WebApi.ApisType(`/fiscal/type-tax/`, "get");
+  }
+
+  static getBanks() {
+    return WebApi.ApisType(`/fiscal/bank/`, "get");
+  }
+
+  static getPaymentCalendar(data) {
+    return WebApi.ApisType(`/payroll/payment-calendar/?node=${data}`, "get");
+  }
+
+  static getPaymentPeriodicity() {
+    return WebApi.ApisType(`/fiscal/periodicity/`, "get");
+  }
 }
 
 export default WebApi;
