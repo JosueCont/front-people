@@ -65,13 +65,10 @@ const ModalSelectDocument = ({ person_id, node, ...props }) => {
   };
 
   const onFinish = (value) => {
-    console.log("Person-> ", person_id);
-
     let data = new FormData();
     data.append("document", file);
     data.append("person", person_id);
     data.append("document_type", value.document_type);
-    // console.log("Documento", getDescription(value.document));
     data.append("description", getDescription(value.document));
     uploadDocument(data);
   };
@@ -91,7 +88,6 @@ const ModalSelectDocument = ({ person_id, node, ...props }) => {
   };
 
   const getDocuments = async (value) => {
-    console.log("VAlue", value);
     Axios.get(API_URL + `/person/document-details/?document_type=${value}`)
       .then((response) => {
         let docs = response.data.results;

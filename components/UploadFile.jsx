@@ -44,7 +44,6 @@ const UploadFile = ({
 
   useEffect(() => {
     if (file_name) {
-      console.log("fileNAme", file_name);
       setfileName(file_name);
     }
   }, [file_name]);

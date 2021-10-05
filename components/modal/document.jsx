@@ -64,7 +64,6 @@ const documentModal = ({ person_id, node, ...props }) => {
   };
 
   const onFinish = (value) => {
-    console.log("Person-> ", person_id);
     let data = new FormData();
     data.append("document", file);
     data.append("person", person_id);

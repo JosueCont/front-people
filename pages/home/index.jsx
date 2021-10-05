@@ -36,12 +36,7 @@ import {
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
-import {
-  withAuthSync,
-  userCompanyId,
-  getAccessIntranet,
-  userCompanyName,
-} from "../../libs/auth";
+import { withAuthSync, userCompanyId, userCompanyName } from "../../libs/auth";
 import { setDataUpload } from "../../redux/UserDuck";
 
 const { Content } = Layout;
@@ -87,7 +82,6 @@ const homeScreen = ({ ...props }) => {
   const [departmentId, setDepartmentId] = useState(null);
   const [permissions, setPermissions] = useState({});
   let urlFilter = "/person/person/?";
-  let accessIntranet = getAccessIntranet();
 
   const [listUserCompanies, setListUserCompanies] = useState("");
   const [showModalCompanies, setShowModalCompanies] = useState(false);
@@ -413,7 +407,7 @@ const homeScreen = ({ ...props }) => {
   ];
 
   useEffect(() => {
-    if (props.config && props.config.intranet_enabled === "false") {
+    if (props.config && !props.config.intranet_enabled) {
       columns = removeItemFromArr(columns, "Acceso a intranet");
       setValRefreshColumns(true);
     } else {

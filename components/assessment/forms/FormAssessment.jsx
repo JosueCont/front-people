@@ -29,7 +29,6 @@ const FormAssessment = ({ ...props }) => {
 
   useEffect(() => {
     if (props.loadData) {
-      console.log("DATOS::", props.loadData);
       formAssessment.setFieldsValue({
         code: props.loadData.code,
         name: props.loadData.name,
@@ -68,7 +67,6 @@ const FormAssessment = ({ ...props }) => {
           message.error("Hubo un error");
           props.close();
         });
-      console.log("VALUES::", values);
     } else {
       data.append("companies", [nodeId]);
       props
