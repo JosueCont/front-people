@@ -149,7 +149,6 @@ const Detail = ({assessmentStore, ...props}) => {
             direction === "up" 
             ? await props.questionOrderAction(types.UP_ORDER_QUESTION, item) 
             : await props.questionOrderAction(types.DOWN_ORDER_QUESTION, item)
-            message.success("Orden actualizado");
         } catch (e) {
             message.error("Error, por favor inténtalo de nuevo");
             console.error(e.name + ': ' + e.message);
@@ -192,9 +191,8 @@ const Detail = ({assessmentStore, ...props}) => {
     const HandleOrderAnswer = async(direction, item) => {
         try {
             direction === "up" ? 
-            await props.assessmentOrderAction(types.UP_ORDER_ANSWER, { "answer_id": item.id }) 
-            : await props.assessmentOrderAction(types.DOWN_ORDER_ANSWER, item.id)
-            message.success("Orden actualizado");
+            await props.questionOrderAction(types.UP_ORDER_ANSWER, item) 
+            : await props.questionOrderAction(types.DOWN_ORDER_ANSWER, item)
         } catch (e) {
             message.error("Error, por favor inténtalo de nuevo");
             console.error(e.name + ': ' + e.message);
@@ -204,14 +202,6 @@ const Detail = ({assessmentStore, ...props}) => {
     const HandleCloseModal = () => {
         dispatch(assessmentModalAction(''));
     }
-
-    const getSecondIndex = (direction, index) => {
-        if (direction === "down" ){
-            return index + 1
-        } else {
-           return index - 1 
-        }
-    } 
 
     return (
         <MainLayout currentKey="2">

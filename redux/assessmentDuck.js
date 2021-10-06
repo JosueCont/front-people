@@ -46,7 +46,7 @@ const assessmentReducer = (state = initialData, action) => {
     case types.LOAD_QUESTIONS:
       return {...state, questions: [...state.questions, ...action.payload], fetching: false};
     case types.LOAD_NEW_QUESTIONS:
-      return {...state, questions: state.questions, fetching: false};
+      return {...state, sections: state.sections, questions: state.questions, fetching: false};
     case types.CREATE_QUESTIONS:
       return {...state, questions: [...state.questions, action.payload], active_modal: '', fetching: false};
     case types.UPDATE_QUESTIONS:
@@ -142,13 +142,11 @@ export const sectionOrderAction = (method, item) => {
 
 //ASSESSMENT QUESTION ORDER 
 export const questionOrderAction = (method, item) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     try {
       await getOrderApi(method, item.id);
-      let sections = getState().assessmentStore.sections;
       let questions_ = [];
-      sections.length > 0 &&
-      await asyncForEach(sections, async(element) => {
+      await asyncForEach(initialData.sections, async(element) => {
         let { data } = await Axios.get(`${API_ASSESSMENT}/assessments/question/?section=${element.id}`);
         data.results.answer_set = _.orderBy(data.results.answer_set, ['order'], ['asc']);
         questions_.push(data.results);
@@ -181,7 +179,7 @@ export const getOrderApi = (method, id) => {
       return Axios.post(`${API_ASSESSMENT}/assessments/answer/move_answer_up/`, {'answer_id': id});
       break;
     case types.DOWN_ORDER_ANSWER:
-      return Axios.post(`${API_ASSESSMENT}/assessments/answer/move_answer_up/`, {'answer_id': data});
+      return Axios.post(`${API_ASSESSMENT}/assessments/answer/move_answer_down/`, {'answer_id': id});
       break;
     default:
       return;
