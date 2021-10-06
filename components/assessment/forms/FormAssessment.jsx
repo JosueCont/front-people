@@ -159,6 +159,6 @@ const mapState = (state) => {
     return {
       assessmentStore: state.assessmentStore,
     }
-  }
+}
   
 export default connect(mapState,{assessmentCreateAction, assessmentUpdateAction})(withAuthSync(FormAssessment));

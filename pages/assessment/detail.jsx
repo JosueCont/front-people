@@ -19,7 +19,8 @@ import {
     sectionDeleteAction, 
     questionDeleteAction, 
     answerDeleteAction,
-    sectionOrderAction
+    sectionOrderAction,
+    questionOrderAction
 } from "../../redux/assessmentDuck";
 
 const Detail = ({assessmentStore, ...props}) => {
@@ -99,6 +100,17 @@ const Detail = ({assessmentStore, ...props}) => {
         });
     };
 
+    const HandleOrderSection = async(direction, item) => {
+        try {
+            direction === "up" 
+            ? await props.sectionOrderAction(types.UP_ORDER_SECTION, item) 
+            : await props.sectionOrderAction(types.DOWN_ORDER_SECTION, item)
+        } catch (e) {
+            message.error("Error, por favor inténtalo de nuevo");
+            console.error(e.name + ': ' + e.message);
+        }
+    } 
+
     const HandleCreateQuestion = (id) => {
         setQuestionData(false);
         setSectionSelected(id);
@@ -119,6 +131,7 @@ const Detail = ({assessmentStore, ...props}) => {
                 props.questionDeleteAction(item.id).then(response =>{
                     response ? message.success("Eliminado correctamente") : message.error("Hubo un error");
                 }).catch(e => {
+                    console.error(e.name + ': ' + e.message);
                     message.error("Hubo un error");
                 });
             },
@@ -130,6 +143,18 @@ const Detail = ({assessmentStore, ...props}) => {
             },
         });
     };
+
+    const HandleOrderQuestion = async(direction, item) => {
+        try {
+            direction === "up" 
+            ? await props.questionOrderAction(types.UP_ORDER_QUESTION, item) 
+            : await props.questionOrderAction(types.DOWN_ORDER_QUESTION, item)
+            message.success("Orden actualizado");
+        } catch (e) {
+            message.error("Error, por favor inténtalo de nuevo");
+            console.error(e.name + ': ' + e.message);
+        }
+    } 
 
     const HandleCreateAnswer = (id) => {
         setAnswerData(false);
@@ -151,6 +176,7 @@ const Detail = ({assessmentStore, ...props}) => {
                 props.answerDeleteAction(item).then(response =>{
                     response ? message.success("Eliminado correctamente") : message.error("Hubo un error");
                 }).catch(e => {
+                    console.error(e.name + ': ' + e.message);
                     message.error("Hubo un error");
                 });
             },
@@ -163,33 +189,20 @@ const Detail = ({assessmentStore, ...props}) => {
         });
     };
 
+    const HandleOrderAnswer = async(direction, item) => {
+        try {
+            direction === "up" ? 
+            await props.assessmentOrderAction(types.UP_ORDER_ANSWER, { "answer_id": item.id }) 
+            : await props.assessmentOrderAction(types.DOWN_ORDER_ANSWER, item.id)
+            message.success("Orden actualizado");
+        } catch (e) {
+            message.error("Error, por favor inténtalo de nuevo");
+            console.error(e.name + ': ' + e.message);
+        }
+    } 
+
     const HandleCloseModal = () => {
         dispatch(assessmentModalAction(''));
-    }
-
-    const HandleOrder = (from, direction, item1) => {
-        console.log("ordenando...");
-        if (from === types.FROM_SECTIONS) {
-            let stateSections = assessmentStore.sections;
-            let fistIndex = _.findIndex(stateSections, ['id', item1.id]);
-            let secondIndex = getSecondIndex(direction, fistIndex);
-            let item2 = stateSections[Object.keys(stateSections)[secondIndex]];
-            console.log("item1", item1)
-            console.log("item2", item2)
-            let data = { 
-                id1: item1.id, 
-                name1: item1.name, 
-                order1: item2.order, 
-                id2: item2.id,
-                name2: item2.name, 
-                order2: item1.order, 
-            }
-            props.sectionOrderAction(data).then(response =>{
-                response ? message.success("Orden actualizado") : message.error("Hubo un error, por favor inténtalo de nuevo");
-            }).catch( e => {
-                message.error("Hubo un error");
-            });
-        } 
     }
 
     const getSecondIndex = (direction, index) => {
@@ -219,17 +232,18 @@ const Detail = ({assessmentStore, ...props}) => {
                     <Col span={24}>
                         <Collapse id="content-sections">
                         { sections.length > 0 ? 
-                            sections.map(seccion => {
+                            sections.map( (seccion, index, array) => {
                                 return (
                                 <Panel 
                                 className="item-content"
-                                header={seccion.name}
+                                header={seccion.name + " " + seccion.order}
                                 key={seccion.id} 
                                 extra={
                                     <Options 
                                         item={seccion}
-                                        from={types.FROM_SECTIONS}
-                                        onOrder={HandleOrder}
+                                        index={index}
+                                        array={array}
+                                        onOrder={HandleOrderSection}
                                         onUpdate={HandleUpdateSection} 
                                         onDelete={HandleDeleteSection} 
                                         onCreate={HandleCreateQuestion} 
@@ -238,7 +252,7 @@ const Detail = ({assessmentStore, ...props}) => {
                                 }>
                                     <Collapse>
                                     {   questions.filter(questions=> seccion.id === questions.section.id).length > 0 ? 
-                                        questions.map( pregunta => seccion.id === pregunta.section.id &&
+                                        questions.map( (pregunta, index, array) => seccion.id === pregunta.section.id &&
                                         <Panel 
                                             className={pregunta.type === "TXT-LG" ? "no-content-kuiz" : "content-kuiz"}
                                             showArrow={pregunta.type === "TXT-LG" ? false : true }
@@ -246,30 +260,32 @@ const Detail = ({assessmentStore, ...props}) => {
                                             key={pregunta.id}  
                                             extra={
                                                 <Options 
-                                                    item={pregunta}
-                                                    from={types.FROM_QUESTIONS}
-                                                    onOrder={HandleOrder}
-                                                    onUpdate={HandleUpdateQuestion} 
-                                                    onDelete={HandleDeleteQuestion} 
-                                                    onCreate={HandleCreateAnswer}
-                                                    buttonName="Agregar respuesta"
+                                                item={pregunta}
+                                                index={index}
+                                                array={array}
+                                                onOrder={HandleOrderQuestion}
+                                                onUpdate={HandleUpdateQuestion} 
+                                                onDelete={HandleDeleteQuestion} 
+                                                onCreate={HandleCreateAnswer}
+                                                buttonName="Agregar respuesta"
                                                 /> 
                                             } 
                                         > 
                                             <div className="ant-collapse">
                                             {   
                                                 pregunta.answer_set.length > 0 ?
-                                                pregunta.answer_set.map( respuesta =>
+                                                pregunta.answer_set.map( (respuesta, index, array) =>
                                                 <Panel 
                                                 header={respuesta.title} 
                                                 key={respuesta.id}
                                                 extra={
                                                     <Options 
-                                                        item={respuesta}
-                                                        from={types.FROM_ANSWERS}
-                                                        onOrder={HandleOrder}
-                                                        onUpdate={HandleUpdateAnswer} 
-                                                        onDelete={HandleDeleteAnswer} 
+                                                    item={respuesta}
+                                                    index={index}
+                                                    array={array}
+                                                    onOrder={HandleOrderAnswer}
+                                                    onUpdate={HandleUpdateAnswer} 
+                                                    onDelete={HandleDeleteAnswer} 
                                                     /> 
                                                 }>
                                                 </Panel>
@@ -348,4 +364,4 @@ const mapState = (state) => {
     }
 }
   
-export default connect(mapState, {sectionDeleteAction, questionDeleteAction, answerDeleteAction, sectionOrderAction})(withAuthSync(Detail));
+export default connect(mapState, {sectionDeleteAction, questionDeleteAction, answerDeleteAction, sectionOrderAction, questionOrderAction})(withAuthSync(Detail));

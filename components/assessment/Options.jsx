@@ -1,28 +1,28 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Button} from "antd";
 import {EditOutlined, DeleteOutlined, PlusOutlined, DownOutlined, UpOutlined} from '@ant-design/icons';
 
-const Options = ({item, from, onOrder, onUpdate, onDelete, onCreate, buttonName}) => {
+const Options = ({item, index, array, onOrder, onUpdate, onDelete, onCreate, buttonName}) => {
+
     return (
         <div style={{ display: 'flex', alignItems: 'center'}} key={`item-${item.id}`}>
             {
-                false &&
                 <DownOutlined 
                 className="handle-content" 
                 style={{marginRight: 24, fontSize: 18}} 
                 onClick={event => {
                     event.stopPropagation();
-                    onOrder(from, "down", item);
+                    console.log("datos", index, array.length);
+                    onOrder("down", item);
                 }} />
             }
             {
-                false && 
                 <UpOutlined 
                 className="handle-content" 
                 style={{marginRight: 24, fontSize: 18}} 
                 onClick={event => {
                     event.stopPropagation();
-                    onOrder(from, "up", item);
+                    onOrder("up", item);
                 }} />
             }
             {
@@ -56,4 +56,4 @@ const Options = ({item, from, onOrder, onUpdate, onDelete, onCreate, buttonName}
     )
 }
 
-export default Options
+export default Options;

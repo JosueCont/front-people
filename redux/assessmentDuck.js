@@ -30,7 +30,7 @@ const assessmentReducer = (state = initialData, action) => {
     case types.SELECTED_ASSESSMENT:
       return {...state, assessment_selected: action.payload};
     case types.CREATE_ASSESSMENTS:
-      return {...state, assessments: [action.payload, ...state.assessments], active_modal: '', fetching: false};
+      return {...state, assessments: [...state.assessments, action.payload], active_modal: '', fetching: false};
     case types.UPDATE_ASSESSMENTS:
       return {...state, assessments: state.assessments.map( e => ( e.id === action.payload.id ) ? action.payload : e ), active_modal: '', fetching: false};
     case types.DELETE_ASSESSMENTS:
@@ -38,15 +38,17 @@ const assessmentReducer = (state = initialData, action) => {
     case types.LOAD_SECTIONS:
       return {...state, sections: action.payload, fetching: false};
     case types.CREATE_SECTIONS:
-      return {...state, sections: [action.payload, ...state.sections], active_modal: '', fetching: false};
+      return {...state, sections: [...state.sections, action.payload], active_modal: '', fetching: false};
     case types.UPDATE_SECTIONS:
       return {...state, sections: state.sections.map( e => ( e.id === action.payload.id ) ? action.payload : e ), active_modal: '', fetching: false};
     case types.DELETE_SECTIONS:
       return {...state, sections: state.sections.filter( e => (e.id !== action.payload) ), active_modal: '', fetching: false}
     case types.LOAD_QUESTIONS:
       return {...state, questions: [...state.questions, ...action.payload], fetching: false};
+    case types.LOAD_NEW_QUESTIONS:
+      return {...state, questions: state.questions, fetching: false};
     case types.CREATE_QUESTIONS:
-      return {...state, questions: [action.payload, ...state.questions], active_modal: '', fetching: false};
+      return {...state, questions: [...state.questions, action.payload], active_modal: '', fetching: false};
     case types.UPDATE_QUESTIONS:
       return {...state, questions: state.questions.map( e => ( e.id === action.payload.id ) ? action.payload : e ), active_modal: '', fetching: false};
     case types.DELETE_QUESTIONS:
@@ -77,11 +79,13 @@ export const assessmentDetailsAction = (id) => {
     dispatch({type: types.FETCHING, payload: true});
     try {
       let sections_ = await Axios.get(`${API_ASSESSMENT}/assessments/section/?assessment=${id}`);
-      let sections = _.orderBy(sections_.data.results, ['order'], ['desc']);
+      let sections = _.orderBy(sections_.data.results, ['order'], ['asc']);
       dispatch({type: types.LOAD_SECTIONS, payload: sections});
+      sections.length > 0 &&
       sections.forEach(async(element) => {
         let questions_ = await Axios.get(`${API_ASSESSMENT}/assessments/question/?section=${element.id}`);
-        let questions = _.orderBy(questions_.data.results, ['order'], ['desc']);
+        let questions = _.orderBy(questions_.data.results, ['order'], ['asc']);
+        questions.answer_set = _.orderBy(questions.answer_set, ['order'], ['asc']);
         dispatch({type: types.LOAD_QUESTIONS, payload: questions});
       });
       dispatch(assessmentGetAction(id));
@@ -102,14 +106,85 @@ export const assessmentModalAction = (modal) => {
 //GET ASSESSMENT
 export const assessmentGetAction = (id) => {
   return async (dispatch) => {
-    dispatch({type: types.FETCHING, payload: true});
     try {
       let {data} = await Axios.get(`${API_ASSESSMENT}/assessments/assessment/${id}/`);
       dispatch({type: types.SELECTED_ASSESSMENT, payload: data});
     } catch (e) {
-      dispatch({type: types.FETCHING, payload: false});
       console.error(e.name + ': ' + e.message);
     }
+  }
+}
+
+//ASSESSMENT SECTION ORDER 
+export const sectionOrderAction = (method, item) => {
+  return async (dispatch) => {
+    try {
+      await getOrderApi(method, item.id);
+      let sections_ = await Axios.get(`${API_ASSESSMENT}/assessments/section/?assessment=${item.assessment.id}`);
+      let sections = _.orderBy(sections_.data.results, ['order'], ['asc']);
+      dispatch({type: types.LOAD_SECTIONS, payload: sections});
+      let questions_ = [];
+      sections.length > 0 &&
+      await asyncForEach(sections, async(element) => {
+        let { data } = await Axios.get(`${API_ASSESSMENT}/assessments/question/?section=${element.id}`);
+        data.results.answer_set = _.orderBy(data.results.answer_set, ['order'], ['asc']);
+        questions_.push(data.results);
+      });
+      let questions = _.orderBy(questions_, ['order'], ['asc']);
+      dispatch({type: types.LOAD_NEW_QUESTIONS, payload: questions});
+      return true;
+    } catch (e) {
+      console.error(e.name + ': ' + e.message);
+      return false;
+    }
+  }
+}
+
+//ASSESSMENT QUESTION ORDER 
+export const questionOrderAction = (method, item) => {
+  return async (dispatch) => {
+    try {
+      await getOrderApi(method, item.id);
+      let sections = getState().assessmentStore.sections;
+      let questions_ = [];
+      sections.length > 0 &&
+      await asyncForEach(sections, async(element) => {
+        let { data } = await Axios.get(`${API_ASSESSMENT}/assessments/question/?section=${element.id}`);
+        data.results.answer_set = _.orderBy(data.results.answer_set, ['order'], ['asc']);
+        questions_.push(data.results);
+      });
+      let questions = _.orderBy(questions_, ['order'], ['asc']);
+      dispatch({type: types.LOAD_NEW_QUESTIONS, payload: questions});
+      return true;
+    } catch (e) {
+      console.error(e.name + ': ' + e.message);
+      return false;
+    }
+  }
+}
+
+export const getOrderApi = (method, id) => {
+  switch (method) {
+    case types.UP_ORDER_SECTION:
+      return Axios.post(`${API_ASSESSMENT}/assessments/section/move_section_up/`, {'section_id': id});
+      break;
+      case types.DOWN_ORDER_SECTION:
+      return Axios.post(`${API_ASSESSMENT}/assessments/section/move_section_down/`, {'section_id': id});
+      break;
+    case types.UP_ORDER_QUESTION:
+      return Axios.post(`${API_ASSESSMENT}/assessments/question/move_question_up/`, {'question_id': id});
+      break;
+    case types.DOWN_ORDER_QUESTION:
+      return Axios.post(`${API_ASSESSMENT}/assessments/question/move_question_down/`, {'question_id': id});
+      break;
+    case types.UP_ORDER_ANSWER:
+      return Axios.post(`${API_ASSESSMENT}/assessments/answer/move_answer_up/`, {'answer_id': id});
+      break;
+    case types.DOWN_ORDER_ANSWER:
+      return Axios.post(`${API_ASSESSMENT}/assessments/answer/move_answer_up/`, {'answer_id': data});
+      break;
+    default:
+      return;
   }
 }
 
@@ -177,46 +252,6 @@ export const assessmentStatusAction = (id, status) => {
     }
   }
 }
-
-//ORDER SECTIONS
-export const sectionOrderAction = (data) => {
-  return async (dispatch) => {
-    console.log("DATA:", data);
-    dispatch({type: types.FETCHING, payload: true})
-    console.log("orden que debe tener el objeto1", data.order1)
-    console.log("orden que debe tener el objeto2", data.order2)
-    try {
-      let seccion1 = await Axios.patch(`${API_ASSESSMENT}/assessments/section/${data.id1}/`, {"order": data.order1});
-      dispatch({type: types.UPDATE_ASSESSMENTS, payload: seccion1.data})
-      console.log("response1", seccion1.data)
-      let seccion2 = await Axios.patch(`${API_ASSESSMENT}/assessments/section/${data.id2}/`, {"order": data.order2});
-      console.log("response2", seccion2.data)
-      dispatch({type: types.UPDATE_ASSESSMENTS, payload: seccion2.data})
-      return true;
-    } catch (error) {
-      dispatch({type: types.FETCHING, payload: false});
-      console.error(e.name + ': ' + e.message);
-      return false;
-    }
-  }
-}
-
-//SECTION LOAD
-export const sectionLoadAction = (id) => {
-  return async (dispatch) => {
-    dispatch({type: types.FETCHING, payload: true});
-    try {
-      let sections_ = await Axios.get(`${API_ASSESSMENT}/assessments/section/?assessment=${id}`);
-      let sections = _.orderBy(sections_.data.results, ['order'], ['desc']);
-      dispatch({type: types.LOAD_SECTIONS, payload: sections});
-    } catch (e) {
-      dispatch({type: types.FETCHING, payload: false});
-      console.error(e.name + ': ' + e.message);
-    }
-  }
-}
-
-
 
 //SECTION CREATE
 export const sectionCreateAction = (data) => {

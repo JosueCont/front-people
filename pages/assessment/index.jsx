@@ -79,15 +79,19 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
     });
   };
 
+  
+  const HandleCloseModal = () => {
+    dispatch(assessmentModalAction(''));
+  }
+  
   const columns = [
     {
       title: "Nombre",
       render: (item) => {
         return (
-        <div>
            <div
             className={"pointer"}
-            key= {"name-" + item.id}
+            key= {"name_"+item.id+item.order_position}
             onClick={() => {
               router.push({
                 pathname: "/assessment/detail",
@@ -95,7 +99,7 @@ const AssessmentScreen = ({assessmentStore, ...props}) => {
               }) 
             }}
           > {item.name} </div> 
-        </div>);
+        );
       },
     },
     {
