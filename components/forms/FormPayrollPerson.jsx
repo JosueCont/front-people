@@ -20,7 +20,7 @@ import moment from "moment";
 import WebApi from "../../api/webApi";
 import { onlyNumeric } from "../../utils/constant";
 
-const FormPayrollPerson = ({ person_id = null }) => {
+const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const { Title } = Typography;
   const [formPayrollPerson] = Form.useForm();
   const { confirm } = Modal;
@@ -30,9 +30,9 @@ const FormPayrollPerson = ({ person_id = null }) => {
   const [typeTax, setTypeTax] = useState([]);
   const [banks, setBanks] = useState([]);
   const [paymentCalendars, setPaymentCalendars] = useState([]);
-  const [paymentPeriods, setPaymentPeriods] = useState([]);
-  const [perceptionTypes, setPerceptionTypes] = useState([]);
-  const [unionized, setUnionized] = useState(false);
+  const [paymentPeriods, setPaymentPeriodicity] = useState([]);
+  // const [perceptionTypes, setPerceptionTypes] = useState([]);
+  // const [unionized, setUnionized] = useState(false);
   const [lastDayPaid, setLastDayPaid] = useState("");
   const PaymentTypes = [
     { value: 1, label: "Efectivo" },
@@ -44,9 +44,16 @@ const FormPayrollPerson = ({ person_id = null }) => {
   const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [idPayroll, setIdPayroll] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [payrollPerson, setPayrolPerson] = useState(null);
 
   useEffect(() => {
     getPayrollPerson();
+    getContractTypes();
+    getHiringRegimes();
+    getTypeTax();
+    getBanks();
+    getPaymentCalendar();
+    getPaymentPeriodicity();
   }, []);
 
   const getPayrollPerson = async () => {
@@ -54,8 +61,25 @@ const FormPayrollPerson = ({ person_id = null }) => {
     Axios.get(API_URL + `/payroll/payroll-person/?person__id=${person_id}`)
       .then((response) => {
         if (response.data.results.length > 0) {
-          console.log("Response", response);
-          //   setFormValues("Objeto");
+          let item = response.data.results[0];
+          formPayrollPerson.setFieldsValue({
+            daily_salary: item.daily_salary,
+            contract_type: item.contract_type,
+            hiring_regime_type: item.hiring_regime_type,
+            type_tax: item.type_tax,
+            unionized: item.unionized ? item.unionized : false,
+            payment_type: item.payment_type,
+            bank: item.bank,
+            apply_annual_adjustment: item.apply_annual_adjustment
+              ? item.apply_annual_adjustment
+              : false,
+            payment_calendar: item.payment_calendar,
+            payment_period: item.payment_period,
+            perception_type: item.perception_type,
+            last_day_paid: item.last_day_paid ? moment(item.last_day_paid) : "",
+          });
+          setLastDayPaid(item.last_day_paid);
+          if (item.id) setIdPayroll(item.id);
         }
         setLoading(false);
       })
@@ -64,6 +88,79 @@ const FormPayrollPerson = ({ person_id = null }) => {
         console.log(e);
       });
   };
+
+  const getContractTypes = async () => {
+    try {
+      let response = await WebApi.getContractTypes();
+      let contract_types = response.data.results.map((a) => {
+        return { value: a.id, label: a.description };
+      });
+      setContractsType(contract_types);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getHiringRegimes = async () => {
+    try {
+      let response = await WebApi.getHiringRegimes();
+      let hiring_regime_types = response.data.results.map((a) => {
+        return { value: a.id, label: a.description };
+      });
+      setHiringRegimeType(hiring_regime_types);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getTypeTax = async () => {
+    try {
+      let response = await WebApi.getTypeTax();
+      let tax_types = response.data.results.map((a) => {
+        return { value: a.id, label: a.name };
+      });
+      setTypeTax(tax_types);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getBanks = async () => {
+    try {
+      let response = await WebApi.getBanks();
+      let banks = response.data.results.map((a) => {
+        return { value: a.id, label: a.description };
+      });
+      setBanks(banks);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getPaymentCalendar = async () => {
+    try {
+      let response = await WebApi.getPaymentCalendar(node);
+      let payment_calendar = response.data.results.map((a) => {
+        return { value: a.id, label: a.name };
+      });
+      setPaymentCalendars(payment_calendar);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getPaymentPeriodicity = async () => {
+    try {
+      let response = await WebApi.getPaymentPeriodicity();
+      let payment_periodicity = response.data.results.map((a) => {
+        return { value: a.id, label: a.description };
+      });
+      setPaymentPeriodicity(payment_periodicity);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const savePayrollPerson = async (data) => {
     try {
       let response = await WebApi.createPayrollPerson(data);
@@ -71,18 +168,21 @@ const FormPayrollPerson = ({ person_id = null }) => {
         content: "Guardado correctamente.",
         className: "custom-class",
       });
+      getPayrollPerson();
     } catch (error) {
       console.log(error);
     }
   };
+
   const updatePayrollPerson = async (data) => {
     try {
-      setLoadingTable(true);
+      setLoading(true);
       let response = await WebApi.updatePayrollPerson(data);
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",
       });
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -104,27 +204,7 @@ const FormPayrollPerson = ({ person_id = null }) => {
       savePayrollPerson(value);
     }
   };
-  const setFormValues = (item) => {
-    formPayrollPerson.setFieldsValue({
-      daily_salary: item.daily_salary,
-      contract_type: item.contract_type,
-      hiring_regime_type: item.hiring_regime_type,
-      type_tax: item.type_tax,
-      unionized: item.unionized,
-      payment_type: payment_type,
-      bank: item.bank,
-      apply_annual_adjustment: item.apply_annual_adjustment,
-      payment_calendar: item.payment_calendar,
-      payment_period: item.payment_period,
-      perception_type: item.perception_type,
-    });
-    setBirthDateFam(item.last_day_paid);
-    if (item.last_day_paid)
-      formFamily.setFieldsValue({
-        last_day_paid: moment(item.last_day_paid),
-      });
-    setIdPayroll(item.id);
-  };
+  const setFormValues = (item) => {};
 
   return (
     <>
@@ -249,14 +329,14 @@ const FormPayrollPerson = ({ person_id = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            {/* <Col lg={6} xs={22} offset={1}>
               <Form.Item name="perception_type" label="Tipo de percepción">
                 <Select
                   options={perceptionTypes}
                   notFoundContent={"No se encontraron resultados."}
                 />
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
           <Row justify={"end"}>
             <Form.Item>
