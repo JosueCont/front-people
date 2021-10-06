@@ -46,7 +46,7 @@ const assessmentReducer = (state = initialData, action) => {
     case types.LOAD_QUESTIONS:
       return {...state, questions: [...state.questions, ...action.payload], fetching: false};
     case types.LOAD_NEW_QUESTIONS:
-      return {...state, sections: state.sections, questions: state.questions, fetching: false};
+      return {...state, sections: state.sections, questions: action.payload, fetching: false};
     case types.CREATE_QUESTIONS:
       return {...state, questions: [...state.questions, action.payload], active_modal: '', fetching: false};
     case types.UPDATE_QUESTIONS:
@@ -146,12 +146,13 @@ export const questionOrderAction = (method, item) => {
     try {
       await getOrderApi(method, item.id);
       let questions_ = [];
-      await asyncForEach(initialData.sections, async(element) => {
+      await asyncForEach(getState().assessmentStore.sections, async(element) => {
         let { data } = await Axios.get(`${API_ASSESSMENT}/assessments/question/?section=${element.id}`);
         data.results.answer_set = _.orderBy(data.results.answer_set, ['order'], ['asc']);
-        questions_.push(data.results);
+        questions_.push(...data.results);
       });
       let questions = _.orderBy(questions_, ['order'], ['asc']);
+      console.log("QUESTIONS::", questions)
       dispatch({type: types.LOAD_NEW_QUESTIONS, payload: questions});
       return true;
     } catch (e) {
