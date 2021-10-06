@@ -54,12 +54,7 @@ const configBusiness = ({ ...props }) => {
   const [formTypeDocument] = Form.useForm();
   const [formBank] = Form.useForm();
   const [loadingTable, setLoadingTable] = useState(false);
-  const [departments, setDepartments] = useState([]);
   const [jobs, setJobs] = useState([]);
-  const [typesPerson, setTypesPerson] = useState([]);
-  const [relationsShip, setRelationsShip] = useState([]);
-  const [typesDocument, setTypesDocuments] = useState([]);
-  const [banks, setBanks] = useState([]);
   const [selectCompany, setselectCompany] = useState([]);
   const [id, setId] = useState("");
   const [edit, setEdit] = useState(false);
@@ -77,11 +72,6 @@ const configBusiness = ({ ...props }) => {
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
-
-    urls.map((a) => {
-      // getDepartments();
-      // getCatalog(a);
-    });
   }, []);
 
   const searchPermissions = (data) => {
@@ -174,22 +164,6 @@ const configBusiness = ({ ...props }) => {
     } else saveRegister(url, value);
   };
 
-  const getDepartments = () => {
-    Axios.get(API_URL + `/business/department/?node=${nodeId}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let dep = response.data.results;
-          dep = dep.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setSelectDep(dep);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const saveRegister = async (url, data) => {
     data.node = props.currentNode.id;
     setLoadingTable(true);
@@ -200,12 +174,8 @@ const configBusiness = ({ ...props }) => {
         .then((response) => {
           setId("");
           resetForm();
-          getCatalog(url);
-          urls.map((a) => {
-            getDepartments();
-            getCatalog(a);
-          });
           message.success(messageSaveSuccess);
+          setLoadingTable(false);
         })
         .catch((error) => {
           setId("");
@@ -230,12 +200,8 @@ const configBusiness = ({ ...props }) => {
         .then((response) => {
           setId("");
           resetForm();
-          getCatalog(url);
-          urls.map((a) => {
-            getDepartments();
-            getCatalog(a);
-          });
           message.success(messageUpdateSuccess);
+          setLoadingTable(false);
         })
         .catch((error) => {
           setId("");
@@ -614,11 +580,6 @@ const configBusiness = ({ ...props }) => {
         .then((response) => {
           setId("");
           resetForm();
-          getCatalog(url);
-          urls.map((a) => {
-            getDepartments();
-            getCatalog(a);
-          });
           message.success(messageDeleteSuccess);
         })
         .catch((error) => {
@@ -922,7 +883,7 @@ const configBusiness = ({ ...props }) => {
                     <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table
                         columns={colTypePerson}
-                        dataSource={props.cat_person_type}
+                        dataSource={props.person_type_table}
                         locale={{
                           emptyText: loadingTable
                             ? "Cargando..."
@@ -1166,6 +1127,7 @@ const mapState = (state) => {
     cat_departments: state.catalogStore.cat_departments,
     cat_job: state.catalogStore.cat_job,
     cat_person_type: state.catalogStore.cat_person_type,
+    person_type_table: state.catalogStore.person_type_table,
   };
 };
 

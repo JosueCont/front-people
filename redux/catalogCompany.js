@@ -13,6 +13,7 @@ const initialData = {
   cat_job: [],
   cat_departments: [],
   cat_person_type: [],
+  person_type_table: [],
   cat_groups: [],
   people_company: [],
 };
@@ -52,7 +53,11 @@ const webReducer = (state = initialData, action) => {
     case DEPARTMENT:
       return { ...state, cat_departments: action.payload };
     case PERSON_TYPE:
-      return { ...state, cat_person_type: action.payload };
+      return {
+        ...state,
+        cat_person_type: action.payload,
+        person_type_table: action.table,
+      };
     case PROFILE_GROUP:
       return { ...state, cat_groups: action.payload };
     case PEOPLE_COMPANY:
@@ -174,7 +179,11 @@ export const getPersonType = (data) => async (dispatch, getState) => {
     let typesPerson = response.data.results.map((a) => {
       return { label: a.name, value: a.id };
     });
-    dispatch({ type: PERSON_TYPE, payload: typesPerson });
+    dispatch({
+      type: PERSON_TYPE,
+      payload: typesPerson,
+      table: response.data.results,
+    });
   } catch (error) {
     console.log(error);
   }

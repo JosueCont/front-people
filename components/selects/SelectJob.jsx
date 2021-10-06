@@ -6,34 +6,13 @@ import { API_URL } from "../../config/config";
 import { connect } from "react-redux";
 
 const SelectJob = ({
+  disabled,
   titleLabel = true,
   rules = [],
   departmentId,
   ...props
 }) => {
   const [options, setOptions] = useState(null);
-  const route = useRouter();
-  const { Option } = Select;
-
-  const getJobs = async () => {
-    try {
-      let response = await Axios.get(
-        API_URL + `/person/job/?department=${departmentId}`
-      );
-      let data = response.data;
-
-      data = data.map((item, index) => {
-        return {
-          label: item.name,
-          value: item.id,
-          key: item.id + index,
-        };
-      });
-      setOptions(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     setOptions([]);
@@ -58,6 +37,7 @@ const SelectJob = ({
         rules={rules}
       >
         <Select
+          disabled={disabled}
           key="SelectJob"
           options={options}
           placeholder="Puesto de trabajo"
