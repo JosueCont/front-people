@@ -5,6 +5,7 @@ import { API_URL } from "../../config/config";
 import { connect } from "react-redux";
 
 const SelectDepartment = ({
+  disabled,
   titleLabel = true,
   rules = [],
   companyId,
@@ -13,25 +14,6 @@ const SelectDepartment = ({
   const [options, setOptions] = useState([]);
 
   const { Option } = Select;
-
-  const getDepartament = async () => {
-    try {
-      let response = await Axios.get(
-        API_URL + `/business/node/${companyId}/department_for_node/`
-      );
-      let data = response.data;
-      data = data.map((item) => {
-        return {
-          value: item.id,
-          label: item.name,
-          key: item.name + item.id,
-        };
-      });
-      setOptions(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     setOptions([]);
@@ -56,6 +38,7 @@ const SelectDepartment = ({
         rules={rules}
       >
         <Select
+          disabled={disabled}
           key="SelectDepartament"
           options={options}
           placeholder="Departamento"

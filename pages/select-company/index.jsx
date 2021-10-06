@@ -5,7 +5,7 @@ import useRouter from "next/router";
 import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
-import { companySelected } from "../../redux/UserDuck";
+import { companySelected, setUser } from "../../redux/UserDuck";
 import { doCompanySelectedCatalog } from "../../redux/catalogCompany";
 import WebApi from "../../api/webApi";
 import Clipboard from "../../components/Clipboard";
@@ -30,6 +30,14 @@ const SelectCompany = ({ ...props }) => {
     try {
       if (jwt) {
         let response = await WebApi.personForKhonnectId({ id: jwt.user_id });
+        props
+          .setUser()
+          .then((response) => {
+            if (!response) return;
+          })
+          .catch((error) => {
+            return;
+          });
         setAdmin(response.data.is_admin);
         sessionStorage.setItem("tok", response.data.id);
         if (response.data.is_admin) {
@@ -155,6 +163,8 @@ const mapState = (state) => {
   return { config: state.userStore.general_config };
 };
 
-export default connect(mapState, { companySelected, doCompanySelectedCatalog })(
-  SelectCompany
-);
+export default connect(mapState, {
+  companySelected,
+  doCompanySelectedCatalog,
+  setUser,
+})(SelectCompany);

@@ -12,6 +12,7 @@ import {
   Modal,
   Form,
   message,
+  Tooltip,
 } from "antd";
 import Axios from "axios";
 import { useEffect, useState } from "react";
@@ -319,18 +320,24 @@ const businessForm = () => {
               {permissions.edit && (
                 <Col className="gutter-row" span={6}>
                   <Link href={`/business/${item.id}`}>
-                    <SettingOutlined />
+                    <Tooltip title="Configuración">
+                      <SettingOutlined />
+                    </Tooltip>
                   </Link>
                 </Col>
               )}
               {permissions.edit && (
                 <Col className="gutter-row" span={6}>
-                  <EditOutlined onClick={() => showModal("edit", item)} />
+                  <Tooltip title="Editar">
+                    <EditOutlined onClick={() => showModal("edit", item)} />
+                  </Tooltip>
                 </Col>
               )}
               {permissions.delete && (
                 <Col className="gutter-row" span={6}>
-                  <DeleteOutlined onClick={() => showModal("delete", item)} />
+                  <Tooltip title="Eliminar">
+                    <DeleteOutlined onClick={() => showModal("delete", item)} />
+                  </Tooltip>
                 </Col>
               )}
               <Col className="gutter-row" span={6}>

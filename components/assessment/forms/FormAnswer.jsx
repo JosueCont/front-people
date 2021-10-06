@@ -53,7 +53,6 @@ const FormAnswer = ({ assessmentStore, ...props }) => {
         });
     } else {
       values.question = props.idQuestion;
-      console.log("VALORES ANSWERS", values);
       props
         .answerCreateAction(values)
         .then((response) => {

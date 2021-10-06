@@ -1,7 +1,5 @@
-import Axios from "axios";
-import { getGroups } from "../api/apiKhonnect";
 import WebApi from "../api/webApi";
-import { API_URL } from "../config/config";
+import jsCookie from "js-cookie";
 import { userCompanyId } from "../libs/auth";
 
 const initialData = {
@@ -9,6 +7,7 @@ const initialData = {
   fetching: true,
   error: false,
   people_company: [],
+  user: null,
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -19,6 +18,7 @@ const GENERAL_CONFIG = "GENERAL_CONFIG";
 const COMPANY_SELCTED = "COMPANY_SELECTED";
 const PEOPLE_COMPANY = "PEOPLE_COMPANY";
 const DATA_UPLOAD = "DATA_UPLOAD";
+const USER = "USER";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -38,6 +38,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, people_company: action.payload };
     case DATA_UPLOAD:
       return { ...state, data_upload: action.payload };
+    case USER:
+      return { ...state, user: action.payload };
     default:
       return state;
   }
@@ -49,6 +51,7 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
     let response = await WebApi.getGeneralConfig();
     sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
     dispatch({ type: GENERAL_CONFIG, payload: response.data });
+    dispatch(setUser());
   } catch (error) {}
 };
 
@@ -102,6 +105,17 @@ export const getPeopleCompany = (data) => async (dispatch, getState) => {
 export const setDataUpload = (data) => async (dispatch, getState) => {
   try {
     dispatch({ type: DATA_UPLOAD, payload: data });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const setUser = () => async (dispatch, getState) => {
+  try {
+    let jwt = JSON.parse(jsCookie.get("token"));
+    let response = await WebApi.personForKhonnectId({ id: jwt.user_id });
+    dispatch({ type: USER, payload: response.data });
     return true;
   } catch (error) {
     return false;

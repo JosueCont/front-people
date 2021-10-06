@@ -1,5 +1,5 @@
 import axios from "axios";
-import { APP_ID, LOGIN_URL } from "../config/config";
+import { APP_ID, LOGIN_URL, client_khonnect_id } from "../config/config";
 import { headersApi } from "../utils/constant";
 
 export const getGroups = async (node) => {
@@ -20,4 +20,33 @@ export const getGroups = async (node) => {
       return false;
     });
   return group;
+};
+
+export const getGroupPerson = async (config, khonnect_id) => {
+  let groups = [];
+  await axios
+    .post(
+      config.url_server_khonnect + `/user/get-info/`,
+      {
+        user_id: khonnect_id,
+      },
+      {
+        headers: {
+          "client-id": config.client_khonnect_id,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((response) => {
+      if (response.data.data.groups[0]) {
+        let array_group = response.data.data.groups;
+        groups = array_group.map((a) => {
+          return a._id.$oid;
+        });
+      }
+    })
+    .catch((e) => {
+      return [];
+    });
+  return groups;
 };

@@ -17,6 +17,8 @@ import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import TaxInformationForm from "../../components/business/TaxInformationForm";
+import { connect } from "react-redux";
+import { config } from "../../api/axiosApi";
 
 const ConfigCompany = () => {
   let router = useRouter();
@@ -189,9 +191,11 @@ const ConfigCompany = () => {
                 </Row>
               </Form>
             </TabPane>
-            <TabPane tab="Fiscal" key="tab_2">
-              <TaxInformationForm node_id={router.query.id} />
-            </TabPane>
+            {config && config.nomina_enabled && (
+              <TabPane tab="Fiscal" key="tab_2">
+                <TaxInformationForm node_id={router.query.id} />
+              </TabPane>
+            )}
           </Tabs>
         </div>
       </Spin>
@@ -199,4 +203,10 @@ const ConfigCompany = () => {
   );
 };
 
-export default withAuthSync(ConfigCompany);
+const mapState = (state) => {
+  return {
+    config: state.userStore.config,
+  };
+};
+
+export default connect(mapState)(withAuthSync(ConfigCompany));

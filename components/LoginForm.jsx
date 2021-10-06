@@ -55,7 +55,9 @@ const LoginForm = ({
         email: email,
         password: password,
       };
-      Axios.post(props.generalConfig.url_server_khonnect + "/login/", data, { headers: headers })
+      Axios.post(props.generalConfig.url_server_khonnect + "/login/", data, {
+        headers: headers,
+      })
         .then(function (response) {
           if (response.status === 200) {
             let token = jwt_decode(response.data.token);
