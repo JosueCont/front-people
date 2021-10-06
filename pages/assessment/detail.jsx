@@ -13,7 +13,6 @@ import FormAnswer from "../../components/assessment/forms/FormAnswer";
 import Options from "../../components/assessment/Options";
 import Section from "../../components/assessment/Section";
 import Question from "../../components/assessment/Question";
-import { ReactSortable } from "react-sortablejs";
 import {
   assessmentModalAction,
   assessmentDetailsAction,
