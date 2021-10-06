@@ -12,7 +12,6 @@ const Options = ({item, index, array, onOrder, onUpdate, onDelete, onCreate, but
                 style={{marginRight: 24, fontSize: 18}} 
                 onClick={event => {
                     event.stopPropagation();
-                    console.log("datos", index, array.length);
                     onOrder("down", item);
                 }} />
             }
