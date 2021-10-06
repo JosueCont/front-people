@@ -53,7 +53,7 @@ const Detail = ({assessmentStore, ...props}) => {
     }, [router.query.id]);
 
     useEffect(() => {
-        console.log("STORE::", assessmentStore);
+        // console.log("STORE::", assessmentStore);
         setLoading(assessmentStore.fetching);
         assessmentStore.active_modal === types.CREATE_SECTIONS ? setShowCreateSection(true) : setShowCreateSection(false);
         assessmentStore.active_modal === types.UPDATE_SECTIONS ? setShowUpdateSection(true) : setShowUpdateSection(false);
@@ -226,7 +226,7 @@ const Detail = ({assessmentStore, ...props}) => {
                                 return (
                                 <Panel 
                                 className="item-content"
-                                header={seccion.name + " " + seccion.order}
+                                header={seccion.name}
                                 key={seccion.id} 
                                 extra={
                                     <Options 
