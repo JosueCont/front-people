@@ -50,7 +50,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("register_date->", person);
     setFormPerson(person);
     getGroupPerson(config, person.khonnect_id)
       .then((response) => {
