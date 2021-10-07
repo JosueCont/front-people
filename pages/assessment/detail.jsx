@@ -1,6 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import MainLayout from "../../layout/MainLayout";
-import { Breadcrumb, Button, Row, Col, Modal, Collapse, message } from "antd";
+import {
+  Breadcrumb,
+  Button,
+  Row,
+  Col,
+  Modal,
+  Collapse,
+  message,
+  Upload,
+} from "antd";
 import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { connect, useDispatch } from "react-redux";
@@ -11,15 +21,15 @@ import FormSection from "../../components/assessment/forms/FormSection";
 import FormQuestion from "../../components/assessment/forms/FormQuestion";
 import FormAnswer from "../../components/assessment/forms/FormAnswer";
 import Options from "../../components/assessment/Options";
-import Section from "../../components/assessment/Section";
-import Question from "../../components/assessment/Question";
-import { ReactSortable } from "react-sortablejs";
+import NoCollapseContent from "../../components/assessment/NoCollapseContent";
 import {
   assessmentModalAction,
   assessmentDetailsAction,
   sectionDeleteAction,
   questionDeleteAction,
   answerDeleteAction,
+  sectionOrderAction,
+  questionOrderAction,
 } from "../../redux/assessmentDuck";
 
 const Detail = ({ assessmentStore, ...props }) => {
@@ -27,7 +37,7 @@ const Detail = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [sections, setSections] = useState([]);
   const [questions, setQuestions] = useState([]);
@@ -51,6 +61,7 @@ const Detail = ({ assessmentStore, ...props }) => {
   }, [router.query.id]);
 
   useEffect(() => {
+    // console.log("STORE::", assessmentStore);
     setLoading(assessmentStore.fetching);
     assessmentStore.active_modal === types.CREATE_SECTIONS
       ? setShowCreateSection(true)
@@ -114,6 +125,17 @@ const Detail = ({ assessmentStore, ...props }) => {
     });
   };
 
+  const HandleOrderSection = async (direction, item) => {
+    try {
+      direction === "up"
+        ? await props.sectionOrderAction(types.UP_ORDER_SECTION, item)
+        : await props.sectionOrderAction(types.DOWN_ORDER_SECTION, item);
+    } catch (e) {
+      message.error("Error, por favor inténtalo de nuevo");
+      console.error(e.name + ": " + e.message);
+    }
+  };
+
   const HandleCreateQuestion = (id) => {
     setQuestionData(false);
     setSectionSelected(id);
@@ -139,6 +161,7 @@ const Detail = ({ assessmentStore, ...props }) => {
               : message.error("Hubo un error");
           })
           .catch((e) => {
+            console.error(e.name + ": " + e.message);
             message.error("Hubo un error");
           });
       },
@@ -149,6 +172,17 @@ const Detail = ({ assessmentStore, ...props }) => {
         danger: true,
       },
     });
+  };
+
+  const HandleOrderQuestion = async (direction, item) => {
+    try {
+      direction === "up"
+        ? await props.questionOrderAction(types.UP_ORDER_QUESTION, item)
+        : await props.questionOrderAction(types.DOWN_ORDER_QUESTION, item);
+    } catch (e) {
+      message.error("Error, por favor inténtalo de nuevo");
+      console.error(e.name + ": " + e.message);
+    }
   };
 
   const HandleCreateAnswer = (id) => {
@@ -176,6 +210,7 @@ const Detail = ({ assessmentStore, ...props }) => {
               : message.error("Hubo un error");
           })
           .catch((e) => {
+            console.error(e.name + ": " + e.message);
             message.error("Hubo un error");
           });
       },
@@ -188,6 +223,17 @@ const Detail = ({ assessmentStore, ...props }) => {
     });
   };
 
+  const HandleOrderAnswer = async (direction, item) => {
+    try {
+      direction === "up"
+        ? await props.questionOrderAction(types.UP_ORDER_ANSWER, item)
+        : await props.questionOrderAction(types.DOWN_ORDER_ANSWER, item);
+    } catch (e) {
+      message.error("Error, por favor inténtalo de nuevo");
+      console.error(e.name + ": " + e.message);
+    }
+  };
+
   const HandleCloseModal = () => {
     dispatch(assessmentModalAction(""));
   };
@@ -195,15 +241,17 @@ const Detail = ({ assessmentStore, ...props }) => {
   return (
     <MainLayout currentKey="2">
       <Breadcrumb>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => router.push({ pathname: "/home" })}
-        >
+        <Breadcrumb.Item className={"pointer"} href="/home/">
           {" "}
           Inicio{" "}
         </Breadcrumb.Item>
-        <Breadcrumb.Item> Encuestas </Breadcrumb.Item>
-        <Breadcrumb.Item> Detalle </Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"} href="/assessment/">
+          {" "}
+          Encuestas{" "}
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          {assessmentStore.assessment_selected.name}
+        </Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row>
@@ -226,63 +274,104 @@ const Detail = ({ assessmentStore, ...props }) => {
         </Row>
         <Row style={{ marginTop: 20 }}>
           <Col span={24}>
-            <Collapse>
-              {sections.map((seccion) => {
-                sections;
-                return (
-                  <Panel
-                    header={seccion.name}
-                    key={seccion.id}
-                    extra={
-                      <Options
-                        item={seccion}
-                        onUpdate={HandleUpdateSection}
-                        onDelete={HandleDeleteSection}
-                        onCreate={HandleCreateQuestion}
-                        buttonName="Agregar pregunta"
-                      />
-                    }
-                  >
-                    {/* <Collapse>
-                                            {
-                                                questions.map( pregunta => seccion.id === pregunta.section.id &&
-                                                    <Panel 
-                                                        header={pregunta.title}
-                                                        key={pregunta.id}  
-                                                        extra={
-                                                            <Options 
-                                                                item={pregunta}
-                                                                onUpdate={HandleUpdateQuestion} 
-                                                                onDelete={HandleDeleteQuestion} 
-                                                                onCreate={HandleCreateAnswer}
-                                                                buttonName="Agregar respuesta"
-                                                            /> 
-                                                        } 
-                                                    > 
-                                                        <div className="ant-collapse">
-                                                            {
-                                                                pregunta.answer_set.map(respuesta =>
-                                                                    <Panel 
-                                                                        header={respuesta.title} 
-                                                                        key={respuesta.id}
-                                                                        extra={
-                                                                            <Options 
-                                                                                item={respuesta}
-                                                                                onUpdate={HandleUpdateAnswer} 
-                                                                                onDelete={HandleDeleteAnswer} 
-                                                                            /> 
-                                                                        }>
-                                                                    </Panel>
-                                                                )
-                                                            }
-                                                        </div>
-                                                    </Panel>
-                                                )
+            <Collapse id="content-sections">
+              {sections.length > 0 ? (
+                sections.map((seccion, index, array) => {
+                  return (
+                    <Panel
+                      className="item-content"
+                      header={seccion.name}
+                      key={seccion.id}
+                      extra={
+                        <Options
+                          item={seccion}
+                          index={index}
+                          array={array}
+                          onOrder={HandleOrderSection}
+                          onUpdate={HandleUpdateSection}
+                          onDelete={HandleDeleteSection}
+                          onCreate={HandleCreateQuestion}
+                          buttonName="Agregar pregunta"
+                        />
+                      }
+                    >
+                      <Collapse>
+                        {questions.filter(
+                          (questions) => seccion.id === questions.section.id
+                        ).length > 0 ? (
+                          questions.map(
+                            (pregunta, index, array) =>
+                              seccion.id === pregunta.section.id && (
+                                <Panel
+                                  className={
+                                    pregunta.type === "TXT-LG"
+                                      ? "no-content-kuiz"
+                                      : "content-kuiz"
+                                  }
+                                  showArrow={
+                                    pregunta.type === "TXT-LG" ? false : true
+                                  }
+                                  header={pregunta.title}
+                                  key={pregunta.id}
+                                  extra={
+                                    <Options
+                                      item={pregunta}
+                                      index={index}
+                                      array={array}
+                                      onOrder={HandleOrderQuestion}
+                                      onUpdate={HandleUpdateQuestion}
+                                      onDelete={HandleDeleteQuestion}
+                                      onCreate={HandleCreateAnswer}
+                                      buttonName="Agregar respuesta"
+                                    />
+                                  }
+                                >
+                                  <div className="ant-collapse">
+                                    {pregunta.answer_set.length > 0 ? (
+                                      pregunta.answer_set.map(
+                                        (respuesta, index, array) => (
+                                          <Panel
+                                            header={respuesta.title}
+                                            key={respuesta.id}
+                                            extra={
+                                              <Options
+                                                item={respuesta}
+                                                index={index}
+                                                array={array}
+                                                onOrder={HandleOrderAnswer}
+                                                onUpdate={HandleUpdateAnswer}
+                                                onDelete={HandleDeleteAnswer}
+                                              />
                                             }
-                                        </Collapse> */}
-                  </Panel>
-                );
-              })}
+                                          ></Panel>
+                                        )
+                                      )
+                                    ) : (
+                                      <NoCollapseContent
+                                        contentTitle="pregunta"
+                                        itemTitle="respuestas"
+                                      />
+                                    )}
+                                  </div>
+                                </Panel>
+                              )
+                          )
+                        ) : (
+                          <NoCollapseContent
+                            contentTitle="sección"
+                            itemTitle="preguntas"
+                          />
+                        )}
+                      </Collapse>
+                    </Panel>
+                  );
+                })
+              ) : (
+                <NoCollapseContent
+                  contentTitle="encuesta"
+                  itemTitle="secciones"
+                />
+              )}
             </Collapse>
           </Col>
         </Row>
@@ -351,4 +440,6 @@ export default connect(mapState, {
   sectionDeleteAction,
   questionDeleteAction,
   answerDeleteAction,
+  sectionOrderAction,
+  questionOrderAction,
 })(withAuthSync(Detail));

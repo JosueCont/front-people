@@ -31,6 +31,7 @@ import {
   onlyNumeric,
   rfcFormat,
 } from "../../utils/constant";
+import { getGroupPerson } from "../../api/apiKhonnect";
 
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
@@ -49,102 +50,19 @@ const DataPerson = ({ config, person = null, ...props }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // getValueSelects();
-  }, []);
-
-  const getValueSelects = async () => {
-    setLoading(true);
-    const headers = {
-      "client-id": config.client_khonnect_id,
-      "Content-Type": "application/json",
-    };
-
-    let company = `?company=${person.node}`;
-
-    /////PERMSS GROUPS
-    Axios.get(config.url_server_khonnect + "/group/list/" + company, {
-      headers: headers,
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          let group = response.data.data;
-          group = group.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setGroups(group);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-
-    /////PERSON TYPE
-    Axios.get(API_URL + `/person/person-type/`)
-      .then((response) => {
-        if (response.status === 200) {
-          let typesPerson = response.data.results;
-          typesPerson = typesPerson.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setPersonType(typesPerson);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-
-    Axios.post(
-      config.url_server_khonnect + `/user/get-info/`,
-      {
-        user_id: person.khonnect_id,
-      },
-      {
-        headers: {
-          "client-id": config.client_khonnect_id,
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((response) => {
-        if (response.data.data.groups[0]) {
-          let array_group = response.data.data.groups;
-          let group = array_group.map((a) => {
-            return a._id.$oid;
-          });
-          formPerson.setFieldsValue({
-            groups: group[0],
-          });
-          let profile = array_group.find((a) => a._id.$oid == group[0]);
-          if (profile.name == "Guest") setHideProfileSecrity(false);
-        }
-        // setLoading(false);
-      })
-      .catch((e) => {
-        console.log(e);
-        setLoading(false);
-      });
-
-    ////GET PERSONS
-    Axios.get(API_URL + `/person/person/`)
-      .then((response) => {
-        let persons = response.data.results;
-        persons = persons.map((a) => {
-          a.name = a.first_name + " " + a.flast_name;
-          if (a.mlast_name) a.name = a.name + " " + a.mlast_name;
-          return { label: a.name, value: a.id };
-        });
-        setPeople(persons);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  useEffect(() => {
-    // if (people) {
     setFormPerson(person);
+    getGroupPerson(config, person.khonnect_id)
+      .then((response) => {
+        formPerson.setFieldsValue({
+          groups: response,
+        });
+      })
+      .catch((error) => {
+        formPerson.setFieldsValue({
+          groups: [],
+        });
+      });
     setLoading(false);
-    // }
   }, []);
 
   const setFormPerson = (person) => {
@@ -432,19 +350,36 @@ const DataPerson = ({ config, person = null, ...props }) => {
               </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item label="Empresa">
-                  <Input readOnly value={props.currentNode.name} />
+                  <Input
+                    readOnly
+                    value={props.currentNode && props.currentNode.name}
+                  />
                 </Form.Item>
               </Col>
-              {person.nodes && (
-                <Col lg={7} xs={22} offset={1}>
-                  <SelectDepartment name="person_department" style={false} />
-                </Col>
-              )}
-              {person.nodes && (
-                <Col lg={7} xs={22} offset={1}>
-                  <SelectJob name="job" style={false} />
-                </Col>
-              )}
+              <Col lg={7} xs={22} offset={1}>
+                <SelectDepartment
+                  disabled={
+                    (props.user && props.user.nodes) ||
+                    (props.user && props.user.is_admin)
+                      ? false
+                      : true
+                  }
+                  name="person_department"
+                  style={false}
+                />
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <SelectJob
+                  disabled={
+                    (props.user && props.user.nodes) ||
+                    (props.user && props.user.is_admin)
+                      ? false
+                      : true
+                  }
+                  name="job"
+                  style={false}
+                />
+              </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item
                   name="register_date"
@@ -458,7 +393,8 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              {person.nodes && (
+              {((props.user && props.user.nodes) ||
+                (props.user && props.user.is_admin)) && (
                 <Col lg={7} xs={22} offset={1}>
                   <Form.Item label="Número de empleado" name="code">
                     <Input type="text" placeholder="Núm. empleado" />
@@ -466,7 +402,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                 </Col>
               )}
 
-              {config.intranet_enabled && (
+              {props.config && config.intranet_enabled && (
                 <Col lg={7} xs={22} offset={1}>
                   <Form.Item
                     name="intranet_access"
@@ -480,7 +416,8 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   </Form.Item>
                 </Col>
               )}
-              {person.nodes && (
+              {((props.user && props.user.nodes) ||
+                (props.user && props.user.is_admin)) && (
                 <Col lg={7} xs={22} offset={1}>
                   <Form.Item name="report_to" label="Reporta a ">
                     <Select
@@ -596,6 +533,7 @@ const mapState = (state) => {
     cat_person_type: state.catalogStore.cat_person_type,
     cat_groups: state.catalogStore.cat_groups,
     people_company: state.catalogStore.people_company,
+    user: state.userStore.user,
   };
 };
 

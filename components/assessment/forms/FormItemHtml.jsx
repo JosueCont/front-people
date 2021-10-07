@@ -32,9 +32,13 @@ const FormItemHTML = ({ html = "", setHTML, getLabel,  getName, getRule, ...prop
     }, []);
 
     const onEditorStateChange = (editorState) => {
-        setEditorState(editorState)
-        let val = draftToHtml(convertToRaw(editorState.getCurrentContent()))
-        setHTML(val);
+        const MAX_LENGTH = 1000; 
+        const lenght = editorState.getCurrentContent().getPlainText().length;
+        if ( lenght < MAX_LENGTH){
+            setEditorState(editorState)
+            let val = draftToHtml(convertToRaw(editorState.getCurrentContent()))
+            setHTML(val);
+        }
     };
 
     const styeDefault = {
