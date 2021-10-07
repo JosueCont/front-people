@@ -15,10 +15,10 @@ import {
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import Axios from "axios";
-import { API_URL } from "../../config/config";
+import { API_URL } from "../../../config/config";
 import moment from "moment";
-import WebApi from "../../api/webApi";
-import { onlyNumeric } from "../../utils/constant";
+import WebApiPayroll from "../../../api/webApiPayroll";
+import { treeDecimal } from "../../../utils/constant";
 
 const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const { Title } = Typography;
@@ -91,7 +91,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getContractTypes = async () => {
     try {
-      let response = await WebApi.getContractTypes();
+      let response = await WebApiPayroll.getContractTypes();
       let contract_types = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -103,7 +103,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getHiringRegimes = async () => {
     try {
-      let response = await WebApi.getHiringRegimes();
+      let response = await WebApiPayroll.getHiringRegimes();
       let hiring_regime_types = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -115,9 +115,9 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getTypeTax = async () => {
     try {
-      let response = await WebApi.getTypeTax();
+      let response = await WebApiPayroll.getTypeTax();
       let tax_types = response.data.results.map((a) => {
-        return { value: a.id, label: a.name };
+        return { value: a.id, label: a.description };
       });
       setTypeTax(tax_types);
     } catch (error) {
@@ -127,7 +127,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getBanks = async () => {
     try {
-      let response = await WebApi.getBanks();
+      let response = await WebApiPayroll.getBanks();
       let banks = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -139,7 +139,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getPaymentCalendar = async () => {
     try {
-      let response = await WebApi.getPaymentCalendar(node);
+      let response = await WebApiPayroll.getPaymentCalendar(node);
       let payment_calendar = response.data.results.map((a) => {
         return { value: a.id, label: a.name };
       });
@@ -151,7 +151,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getPaymentPeriodicity = async () => {
     try {
-      let response = await WebApi.getPaymentPeriodicity();
+      let response = await WebApiPayroll.getPaymentPeriodicity();
       let payment_periodicity = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -163,7 +163,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const savePayrollPerson = async (data) => {
     try {
-      let response = await WebApi.createPayrollPerson(data);
+      let response = await WebApiPayroll.createPayrollPerson(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
@@ -177,7 +177,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const updatePayrollPerson = async (data) => {
     try {
       setLoading(true);
-      let response = await WebApi.updatePayrollPerson(data);
+      let response = await WebApiPayroll.updatePayrollPerson(data);
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",
@@ -223,7 +223,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 name="daily_salary"
                 label="Salario diario"
                 maxLength={13}
-                rules={[onlyNumeric]}
+                rules={[treeDecimal]}
               >
                 <Input maxLength={10} />
               </Form.Item>

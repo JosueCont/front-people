@@ -20,6 +20,11 @@ export const twoDigit = {
   message: "El campo debe tener 2 dígitos numéricos",
 };
 
+export const treeDecimal = {
+  pattern: /^\d+(?:\.\d{1,3})?$/,
+  message: "El campo no puede tener más de tres decimales",
+};
+
 // {pattern: /^[\d]{0,16}$/, message: "El no  debe tener más de 16 dígitos" }, numero menor  a 16 digitos
 
 export const curpFormat = {

@@ -322,6 +322,14 @@ const headerCustom = ({
                     >
                       Salario asimilado
                     </Menu.Item> */}
+                    <Menu.Item
+                      key="9.4"
+                      onClick={() =>
+                        router.push({ pathname: "/payroll/paymentCalendar" })
+                      }
+                    >
+                      Calendario de pagos
+                    </Menu.Item>
                   </SubMenu>
 
                   <Menu.Item

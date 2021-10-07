@@ -16,7 +16,7 @@ import MainLayout from "../../layout/MainLayout";
 import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import TaxInformationForm from "../../components/business/TaxInformationForm";
+import TaxInformationForm from "../../components/payroll/forms/TaxInformationForm";
 
 const ConfigCompany = () => {
   let router = useRouter();

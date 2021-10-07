@@ -240,6 +240,23 @@ class WebApi {
   static getPaymentPeriodicity() {
     return WebApi.ApisType(`/fiscal/periodicity/`, "get");
   }
+
+  /** PaymentCalendar */
+  static createPaymentCalendar(data) {
+    return WebApi.ApisType(`/payroll/payment-calendar`, "post", data);
+  }
+
+  static updatePaymentCalendar(data) {
+    return WebApi.ApisType(
+      `/payroll/payment-calendar/${data.id}/`,
+      "put",
+      data
+    );
+  }
+
+  static getDetailPaymentCalendar(id) {
+    return WebApi.ApisType(`/payroll/payment-calendar/${id}`, "get");
+  }
 }
 
 export default WebApi;
