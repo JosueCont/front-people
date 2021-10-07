@@ -71,6 +71,10 @@ const FormPaymentCalendar = ({
           type_tax: item.type_tax,
           start_date: item.start_date ? moment(item.start_date) : "",
           period: item.period ? moment().year(item.period) : "",
+          start_incidence: item.start_incidence,
+          end_incidence: item.end_incidence,
+          adjustment: item.adjustment ? item.adjustment : false,
+          active: item.active ? item.active : false,
         });
         setStartDate(item.start_date);
         setPeriod(item.period);
@@ -88,6 +92,7 @@ const FormPaymentCalendar = ({
         content: messageSaveSuccess,
         className: "custom-class",
       });
+      route.push({ pathname: "/payroll/paymentCalendar" });
     } catch (error) {
       console.log(error);
     }
@@ -100,6 +105,7 @@ const FormPaymentCalendar = ({
         content: "Guardado correctamente.",
         className: "custom-class",
       });
+      route.push({ pathname: "/payroll/paymentCalendar" });
     } catch (error) {
       console.log(error);
     }
