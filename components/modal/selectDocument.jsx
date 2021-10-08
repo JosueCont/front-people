@@ -69,7 +69,9 @@ const ModalSelectDocument = ({ person_id, node, ...props }) => {
     data.append("document", file);
     data.append("person", person_id);
     data.append("document_type", value.document_type);
-    data.append("description", getDescription(value.document));
+    let doc = getDescription(value.document);
+    data.append("description", doc.label);
+    data.append("id_document", doc.value);
     uploadDocument(data);
   };
 
@@ -83,7 +85,7 @@ const ModalSelectDocument = ({ person_id, node, ...props }) => {
   const getDescription = (value) => {
     let doc = documents.find((element) => element.value == value);
     if (doc) {
-      return doc.label;
+      return doc;
     }
   };
 

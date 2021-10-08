@@ -16,11 +16,11 @@ import MainLayout from "../../layout/MainLayout";
 import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import TaxInformationForm from "../../components/business/TaxInformationForm";
+import TaxInformationForm from "../../components/payroll/forms/TaxInformationForm";
 import { connect } from "react-redux";
-import { config } from "../../api/axiosApi";
+// import { config } from "../../api/axiosApi";
 
-const ConfigCompany = () => {
+const ConfigCompany = (...props) => {
   let router = useRouter();
   const [loading, setLoading] = useState(false);
   const [update, setUpdate] = useState(false);
@@ -191,7 +191,7 @@ const ConfigCompany = () => {
                 </Row>
               </Form>
             </TabPane>
-            {config && config.nomina_enabled && (
+            {props[0].config && props[0].config.nomina_enabled && (
               <TabPane tab="Fiscal" key="tab_2">
                 <TaxInformationForm node_id={router.query.id} />
               </TabPane>
@@ -205,7 +205,7 @@ const ConfigCompany = () => {
 
 const mapState = (state) => {
   return {
-    config: state.userStore.config,
+    config: state.userStore.general_config,
   };
 };
 

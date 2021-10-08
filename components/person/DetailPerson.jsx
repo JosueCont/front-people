@@ -9,7 +9,7 @@ import FormBankAccount from "../forms/FormBankAccount";
 import FormGeneralData from "../forms/FormGeneralData";
 import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
-import FormPayrollPerson from "../forms/FormPayrollPerson";
+import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
 
 const DetailPerson = ({
   config,

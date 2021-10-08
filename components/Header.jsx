@@ -315,16 +315,28 @@ const headerCustom = ({
                       Recibos de nómina
                     </Menu.Item>
                     {props.config && props.config.nomina_enabled && (
-                      <Menu.Item
-                        key="9.3"
-                        onClick={() =>
-                          router.push({
-                            pathname: "/payroll/assimilatedSalary",
-                          })
-                        }
-                      >
-                        Salario asimilado
-                      </Menu.Item>
+                      <>
+                        <Menu.Item
+                          key="9.3"
+                          onClick={() =>
+                            router.push({
+                              pathname: "/payroll/assimilatedSalary",
+                            })
+                          }
+                        >
+                          Salario asimilado
+                        </Menu.Item>
+                        <Menu.Item
+                          key="9.4"
+                          onClick={() =>
+                            router.push({
+                              pathname: "/payroll/paymentCalendar",
+                            })
+                          }
+                        >
+                          Calendario de pagos
+                        </Menu.Item>
+                      </>
                     )}
                   </SubMenu>
 
