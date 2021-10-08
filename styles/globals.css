@@ -505,3 +505,10 @@ header.ant-layout-header {
 .select-kuiz .ant-select-selector { border-color: #d9d9d9!important; }
 .no-content-kuiz .ant-collapse-content { display: none!important; }
 .collapse-no-content { padding: 10px; border-bottom: 1px solid #d9d9d9; font-size: 16px; text-align: center; }
+.calendar .months-container .month-container {
+  float: left;
+  text-align: center;
+  height: 200px;
+  padding: 0px;
+  margin-bottom: 25px;
+}

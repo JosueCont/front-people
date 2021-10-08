@@ -29,6 +29,7 @@
     "moment-timezone": "^0.5.33",
     "next": "^10.0.7",
     "next-cookies": "^2.0.3",
+    "rc-year-calendar": "^1.0.2",
     "react": "^17.0.1",
     "react-clipboard.js": "^2.0.16",
     "react-currency-format": "^1.0.0",

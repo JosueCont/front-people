@@ -4,7 +4,12 @@ import { Row, Col, Table, Breadcrumb, Button, Tooltip } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  PlusOutlined,
+  EyeOutlined,
+  CalendarOutlined,
+} from "@ant-design/icons";
 import { userCompanyId } from "../../../libs/auth";
 // import jsCookie from "js-cookie";
 
@@ -35,6 +40,9 @@ const PaymentCalendars = () => {
 
   const GotoEdit = (data) => {
     route.push("paymentCalendar/" + data.id + "/edit");
+  };
+  const GotoCalendar = (data) => {
+    route.push("paymentCalendar/" + data.id + "/calendar");
   };
 
   useEffect(() => {
@@ -129,6 +137,11 @@ const PaymentCalendars = () => {
                         className="icon_actions"
                         key={"goEdit" + record.id}
                         onClick={() => GotoEdit(record)}
+                      />
+                      <CalendarOutlined
+                        className="icon_actions"
+                        key={"goCalendar" + record.id}
+                        onClick={() => GotoCalendar(record)}
                       />
                     </>
                   )}

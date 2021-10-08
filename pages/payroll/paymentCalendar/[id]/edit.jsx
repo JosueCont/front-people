@@ -9,7 +9,7 @@ const EditPaymentCalendar = () => {
   const { id } = route.query;
   let nodeId = userCompanyId();
 
-  useEffect(() => {}, [id]);
+  useEffect(() => {}, [route.query.id]);
 
   return (
     <>
