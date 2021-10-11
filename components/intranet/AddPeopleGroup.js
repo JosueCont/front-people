@@ -85,12 +85,15 @@ const AddPeopleGroup = (props) => {
                   ]}
                 >
                   <Select
+                    showSearch
+                    optionFilterProp="children"
                     mode="multiple"
                     allowClear
                     placeholder="Selecciona invitados"
-                    options={persons}
-                    notFoundContent={"No se encontraron resultados."}
-                  />
+                    notFoundContent={"No se encontraron resultado."}
+                  >
+                    {persons.map(person => <Option key={person.value} value={person.value}>{person.label}</Option>)}
+                  </Select>
                 </Form.Item>
               </Col>
             </Row>
