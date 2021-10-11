@@ -21,7 +21,13 @@ import { API_URL } from "../../config/config";
 import { userCompanyId } from "../../libs/auth";
 import { connect } from "react-redux";
 
-const ModalSelectDocument = ({ person_id, node, ...props }) => {
+const ModalSelectDocument = ({
+  person_id,
+  node,
+  title = null,
+  idDoc = null,
+  ...props
+}) => {
   const [form] = Form.useForm();
   const [file, setFile] = useState();
   const [disabled, setDisabled] = useState(true);
@@ -52,6 +58,12 @@ const ModalSelectDocument = ({ person_id, node, ...props }) => {
       });
   }, []);
 
+  useEffect(() => {
+    if (idDoc) {
+      getInfoDocument();
+    }
+  }, [idDoc]);
+
   const selectedFile = (file) => {
     if (file.target.files.length > 0) {
       setDisabled(false);
@@ -66,13 +78,26 @@ const ModalSelectDocument = ({ person_id, node, ...props }) => {
 
   const onFinish = (value) => {
     let data = new FormData();
-    data.append("document", file);
-    data.append("person", person_id);
-    data.append("document_type", value.document_type);
     let doc = getDescription(value.document);
     data.append("description", doc.label);
     data.append("id_document", doc.value);
-    uploadDocument(data);
+    data.append("person", person_id);
+    data.append("document_type", value.document_type);
+    if (idDoc) {
+      if (file) {
+        data.append("document", file);
+        updateDocument(data);
+      } else {
+        message.warning({
+          content: "Debe seleccionar un archivo diferente.",
+          className: "custom-class",
+        });
+      }
+    } else {
+      data.append("document", file);
+
+      uploadDocument(data);
+    }
   };
 
   const onChangeType = (value) => {
@@ -120,10 +145,46 @@ const ModalSelectDocument = ({ person_id, node, ...props }) => {
       });
   };
 
+  const updateDocument = (data) => {
+    setDisabled(true);
+    Axios.put(API_URL + `/person/document/${idDoc}/`, data)
+      .then((response) => {
+        message.success({
+          content: "Cargado correctamente.",
+          className: "custom-class",
+        });
+        closeDialog();
+        deleteFileSelect();
+        setDisabled(false);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   const deleteFileSelect = () => {
     setFile(null);
     setDisabled(true);
     setfileName(null);
+  };
+
+  const getInfoDocument = async () => {
+    Axios.get(API_URL + `/person/document/${idDoc}/`)
+      .then((response) => {
+        let doc = response.data;
+        getDocuments(doc.document_type.id);
+        setfileName(doc.document);
+        setDisabled(false);
+        form.setFieldsValue({
+          document_type: doc.document_type.id,
+          document: doc.document_detail,
+        });
+        getDocuments(doc.document_type.id);
+        console.log("Documento", response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const ruleRequired = { required: true, message: "Este campo es requerido" };
@@ -133,7 +194,7 @@ const ModalSelectDocument = ({ person_id, node, ...props }) => {
       <Layout>
         <Modal
           maskClosable={false}
-          title="Cargar documento"
+          title={title}
           centered
           visible={props.visible}
           onCancel={() => closeDialog()}
