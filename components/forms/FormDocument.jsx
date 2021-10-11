@@ -16,6 +16,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
   PlusOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import Axios from "axios";
@@ -31,6 +32,7 @@ const FormDocument = ({ person_id, node }) => {
   const [modalDoc, setModalDoc] = useState(false);
   const [loadingTable, setLoadingTable] = useState(true);
   const [showModalSelectDoc, setShowModalSelectDoc] = useState(false);
+  const [idDoc, setIdDoc] = useState(null);
 
   useEffect(() => {
     getDocument();
@@ -60,7 +62,11 @@ const FormDocument = ({ person_id, node }) => {
     getDocument();
   };
 
-  const getModalSelectDoc = (value) => {
+  const getModalSelectDoc = (value, id) => {
+    console.log("mostrando modal");
+    if (id) {
+      setIdDoc(id);
+    }
     setShowModalSelectDoc(value);
   };
 
@@ -135,6 +141,14 @@ const FormDocument = ({ person_id, node }) => {
                   }}
                 />
               </Col>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined
+                  style={{ fontSize: "20px" }}
+                  onClick={() => {
+                    getModalSelectDoc(true, item.id);
+                  }}
+                />
+              </Col>
             </Row>
           </div>
         );
@@ -185,13 +199,26 @@ const FormDocument = ({ person_id, node }) => {
           node={node}
         />
       )}
-      {showModalSelectDoc && (
+      {showModalSelectDoc == true && idDoc == null ? (
         <DocumentSelectModal
           close={getModalSelectDoc}
           visible={showModalSelectDoc}
           person_id={person_id}
           node={node}
+          title={"Cargar documento"}
         />
+      ) : (
+        showModalSelectDoc &&
+        idDoc && (
+          <DocumentSelectModal
+            close={getModalSelectDoc}
+            visible={showModalSelectDoc}
+            person_id={person_id}
+            node={node}
+            title={"Reemplazar documento"}
+            idDoc={idDoc}
+          />
+        )
       )}
     </>
   );
