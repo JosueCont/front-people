@@ -21,12 +21,16 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import DocumentModal from "../../components/modal/document";
+import DocumentSelectModal from "../../components/modal/selectDocument";
+import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 
-const FormDocument = ({ person_id }) => {
+const FormDocument = ({ person_id, node }) => {
   const { Title } = Typography;
+  const { confirm } = Modal;
   const [documents, setDocuments] = useState([]);
   const [modalDoc, setModalDoc] = useState(false);
   const [loadingTable, setLoadingTable] = useState(true);
+  const [showModalSelectDoc, setShowModalSelectDoc] = useState(false);
 
   useEffect(() => {
     getDocument();
@@ -55,6 +59,11 @@ const FormDocument = ({ person_id }) => {
     setModalDoc(value);
     getDocument();
   };
+
+  const getModalSelectDoc = (value) => {
+    setShowModalSelectDoc(value);
+  };
+
   const deleteDocument = (value) => {
     Axios.delete(API_URL + `/person/document/${value}/`)
       .then((response) => {
@@ -69,10 +78,9 @@ const FormDocument = ({ person_id }) => {
 
   const showModalDelete = (id) => {
     confirm({
-      title: "¿Está seguro de querer eliminarlo?",
+      title: titleDialogDelete,
       icon: <ExclamationCircleOutlined />,
-      content:
-        "Al eliminar este registro perderá todos los datos relacionados a el de manera permanente",
+      content: messageDialogDelete,
       okText: "Si",
       okType: "danger",
       cancelText: "Cancelar",
@@ -104,7 +112,7 @@ const FormDocument = ({ person_id }) => {
           <div>
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
-                <a href={item.document}>
+                <a href={item.document} target="_blank">
                   <FileTextOutlined style={{ fontSize: "30px" }} />
                 </a>
               </Col>
@@ -121,7 +129,7 @@ const FormDocument = ({ person_id }) => {
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
-                  style={{ fontSize: "25px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => {
                     showModalDelete(item.id);
                   }}
@@ -148,6 +156,15 @@ const FormDocument = ({ person_id }) => {
             Agregar
           </Button>
         </Col>
+        <Col style={{ padding: "2%" }}>
+          <Button
+            icon={<PlusOutlined />}
+            type="primary"
+            onClick={() => getModalSelectDoc(true)}
+          >
+            Seleccionar y cargar
+          </Button>
+        </Col>
       </Row>
       <Spin tip="Cargando..." spinning={loadingTable}>
         <Table
@@ -160,11 +177,22 @@ const FormDocument = ({ person_id }) => {
           }}
         />
       </Spin>
-      <DocumentModal
-        close={getModalDoc}
-        visible={modalDoc}
-        person={person_id}
-      />
+      {modalDoc && (
+        <DocumentModal
+          close={getModalDoc}
+          visible={modalDoc}
+          person_id={person_id}
+          node={node}
+        />
+      )}
+      {showModalSelectDoc && (
+        <DocumentSelectModal
+          close={getModalSelectDoc}
+          visible={showModalSelectDoc}
+          person_id={person_id}
+          node={node}
+        />
+      )}
     </>
   );
 };

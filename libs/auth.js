@@ -105,9 +105,9 @@ export const getAccessIntranet = () => {
     let accessIntranet = sessionStorage.getItem("accessIntranet");
     if (accessIntranet && accessIntranet !== "" && accessIntranet !== undefined)
       return accessIntranet;
-    else null;
+    else return false;
   } catch (error) {
-    return null;
+    return false;
   }
 };
 

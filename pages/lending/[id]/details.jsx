@@ -202,7 +202,7 @@ const HolidaysNew = () => {
         className="container back-white"
         style={{ width: "100%", padding: "20px 0" }}
       >
-        <Spin spinning={loading}>
+        <Spin tip="Cargando..." spinning={loading}>
           <Row>
             <Col span={16} offset={1}>
               <Descriptions
@@ -272,7 +272,15 @@ const HolidaysNew = () => {
                   {details.reason ? details.reason : null}
                 </Descriptions.Item>
               </Descriptions>
-              <Table columns={columns} dataSource={plan} locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}} />
+              <Table
+                columns={columns}
+                dataSource={plan}
+                locale={{
+                  emptyText: loading
+                    ? "Cargando..."
+                    : "No se encontraron resultados.",
+                }}
+              />
             </Col>
             <Col
               span={16}

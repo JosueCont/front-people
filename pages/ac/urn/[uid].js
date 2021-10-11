@@ -7,7 +7,7 @@ import DetailPerson from "../../../components/person/DetailPerson";
 import WebApi from "../../../api/webApi";
 import { connect } from "react-redux";
 import { companySelected } from "../../../redux/UserDuck";
-import CreatePerson from "../../../components/forms/CreatePerson";
+import FormSelfRegistration from "../../../components/forms/FormSelfRegistration";
 import jsCookie from "js-cookie";
 
 const userRegister = ({ ...props }) => {
@@ -94,7 +94,7 @@ const userRegister = ({ ...props }) => {
 
   return (
     <>
-      {props.currentNode ? (
+      {props.currentNode && props.config ? (
         <MainLayout
           logoNode={props.currentNode.image}
           companyName={props.currentNode.name}
@@ -105,9 +105,9 @@ const userRegister = ({ ...props }) => {
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item>/Registro</Breadcrumb.Item>
           </Breadcrumb>
-          <Spin spinning={loading}>
+          <Spin tip="Cargando..." spinning={loading}>
             {props.currentNode && !person ? (
-              <CreatePerson
+              <FormSelfRegistration
                 node={props.currentNode.id}
                 visible={visibleForm}
                 hideProfileSecurity={false}
@@ -119,6 +119,7 @@ const userRegister = ({ ...props }) => {
                 login={true}
                 modal={modal}
                 setModal={setModal}
+                config={props.config}
               />
             ) : (
               person && (
@@ -127,6 +128,7 @@ const userRegister = ({ ...props }) => {
                   style={{ padding: 24, minHeight: 380, height: "100%" }}
                 >
                   <DetailPerson
+                    config={props.config}
                     person={person}
                     setLoading={setLoading}
                     deletePerson={false}
@@ -147,7 +149,7 @@ const userRegister = ({ ...props }) => {
             justifyContent: "center",
           }}
         >
-          <Spin spinning={loading} />
+          <Spin tip="Cargando..." spinning={loading} />
         </div>
       )}
     </>
@@ -157,6 +159,7 @@ const userRegister = ({ ...props }) => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
   };
 };
 

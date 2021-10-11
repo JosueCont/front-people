@@ -22,6 +22,11 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
+import {
+  messageDialogDelete,
+  onlyNumeric,
+  titleDialogDelete,
+} from "../../utils/constant";
 
 const FormTraining = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -35,6 +40,7 @@ const FormTraining = ({ person_id = null }) => {
   const [training, setTraining] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
   const ruleRequired = { required: true, message: "Este campo es requerido" };
+  const [dateRange, setDateRange] = useState(null);
 
   useEffect(() => {
     getTraining();
@@ -67,6 +73,7 @@ const FormTraining = ({ person_id = null }) => {
         });
         getTraining();
         formTraining.resetFields();
+        setCurrenlyStuding(false);
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
@@ -92,6 +99,7 @@ const FormTraining = ({ person_id = null }) => {
         formTraining.resetFields();
         setCurrenlyStuding(false);
         setDateTraining("");
+        setCurrenlyStuding(false);
         setTimeout(() => {
           setLoadingTable(false);
         }, 1000);
@@ -107,7 +115,7 @@ const FormTraining = ({ person_id = null }) => {
     Axios.delete(API_URL + `/person/training/${id}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         if (upTraining) {
@@ -130,39 +138,50 @@ const FormTraining = ({ person_id = null }) => {
       value.id = idTraining;
       value.since = dateTraining[0];
       value.until = dateTraining[1];
+      value.currently_studing = currenlyStuding;
       updateTraining(value);
+      setDateRange("");
     } else {
       value.since = dateTraining[0];
       value.until = dateTraining[1];
       value.currently_studing = currenlyStuding;
       value.person = person_id;
       saveTraining(value);
+      setDateRange("");
     }
   };
   const onChangeDateTrainig = (date, dateString) => {
     setDateTraining(dateString);
+    setDateRange([
+      moment(dateString[0], "YYYY-MM-DD"),
+      moment(dateString[1], "YYYY-MM-DD"),
+    ]);
     formTraining.setFieldsValue({ since: dateString });
   };
   const changeCurreStud = () => {
     currenlyStuding ? setCurrenlyStuding(false) : setCurrenlyStuding(true);
   };
   const updateFormTraining = (item) => {
+    setDateRange([
+      moment(item.since, "YYYY-MM-DD"),
+      moment(item.until, "YYYY-MM-DD"),
+    ]);
     formTraining.setFieldsValue({
       school: item.school,
       accreditation_document: item.accreditation_document,
       completed_period: item.completed_period,
       since: [moment(item.since), moment(item.until)],
     });
+    setDateTraining([item.since, item.until]);
     setCurrenlyStuding(item.currently_studing);
     setIdTraining(item.id);
     setUpTraining(true);
   };
   const showModalDelete = (id) => {
     confirm({
-      title: "¿Está seguro de querer eliminarlo?",
+      title: titleDialogDelete,
       icon: <ExclamationCircleOutlined />,
-      content:
-        "Al eliminar este registro perderá todos los datos relacionados a el de manera permanente",
+      content: messageDialogDelete,
       okText: "Si",
       okType: "danger",
       cancelText: "Cancelar",
@@ -179,25 +198,40 @@ const FormTraining = ({ person_id = null }) => {
     {
       key: "school",
       title: "Escuela",
-      dataIndex: "school",
+      width: 200,
+      render: (item) => {
+        return <div style={{ maxWidth: 200 }}>{item.school}</div>;
+      },
     },
     {
       key: "since",
+      width: 100,
       title: "Fecha inicio",
-      dataIndex: "since",
+      render: (item) => {
+        return <div style={{ maxWidth: 100 }}>{item.since}</div>;
+      },
     },
     {
       key: "until",
+      width: 100,
       title: "Fecha fin",
-      dataIndex: "until",
+      render: (item) => {
+        return <div style={{ maxWidth: 100 }}>{item.until}</div>;
+      },
     },
     {
       key: "accreditation_document",
+      width: 100,
       title: "Documento",
-      dataIndex: "accreditation_document",
+      render: (item) => {
+        return (
+          <div style={{ maxWidth: 100 }}>{item.accreditation_document}</div>
+        );
+      },
     },
     {
       key: "options",
+      width: 100,
       title: "Opciones",
       render: (item) => {
         return (
@@ -205,13 +239,13 @@ const FormTraining = ({ person_id = null }) => {
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
                 <EditOutlined
-                  style={{ fontSize: "25px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => updateFormTraining(item)}
                 />
               </Col>
               <Col className="gutter-row" offset={1}>
                 <DeleteOutlined
-                  style={{ fontSize: "25px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => {
                     showModalDelete(item.id);
                   }}
@@ -238,7 +272,7 @@ const FormTraining = ({ person_id = null }) => {
         <Row>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="school" label="Escuela" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -247,10 +281,11 @@ const FormTraining = ({ person_id = null }) => {
               label="Fecha Inicio-Fin"
               rules={[ruleRequired]}
             >
-              <Space direction="vertical" size={12}>
+              <Space direction="vertical" size={13}>
                 <RangePicker
-                  style={{ width: "100%" }}
+                  style={{ width: "100%", border: "1px green solid" }}
                   format={"YYYY-MM-DD"}
+                  value={dateRange}
                   onChange={onChangeDateTrainig}
                 />
               </Space>
@@ -261,7 +296,7 @@ const FormTraining = ({ person_id = null }) => {
               name="accreditation_document"
               label="Documento de acreditación"
             >
-              <Input />
+              <Input maxLength={50} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
@@ -273,9 +308,9 @@ const FormTraining = ({ person_id = null }) => {
             <Form.Item
               name="completed_period"
               label="No. Periodo completado"
-              rules={[ruleRequired]}
+              rules={[ruleRequired, onlyNumeric]}
             >
-              <Input type="number" />
+              <Input maxLength={3} />
             </Form.Item>
           </Col>
         </Row>

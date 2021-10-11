@@ -1,3 +1,8 @@
 {
-    "name": "laborlink"
+    "name": "laborlink",
+    "font_family_name": "HelveticaRoundedLTStd-Bd",
+    "font_family": "url(\"../public/flavors/laborlink/fonts/HelveticaRoundedLTStd-Bd.ttf\")",
+    "font_style": "woff",
+    "stylePath": "laborlink.css",
+    "fontSpanColor": "#ffffff"
 }

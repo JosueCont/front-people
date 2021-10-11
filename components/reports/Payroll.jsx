@@ -27,7 +27,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import SelectCompany from "../selects/SelectCompany";
 import SelectDepartment from "../selects/SelectDepartment";
 import SelectJob from "../selects/SelectJob";
-import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
 
@@ -338,7 +338,6 @@ const PayrollReport = (props) => {
                             </Col> */}
               <Col>
                 <SelectDepartment
-                  onChange={onChangeDepartment}
                   name="department"
                   companyId={nodeId}
                   key="selectDepartament"
@@ -417,7 +416,11 @@ const PayrollReport = (props) => {
             columns={columns}
             scroll={{ x: 1300 }}
             loading={loading}
-            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+            locale={{
+              emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
           ></Table>
         </Col>
       </Row>

@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectBank from "../../components/selects/SelectBank";
 
 import { SearchOutlined, EyeOutlined, SyncOutlined } from "@ant-design/icons";
@@ -256,7 +256,7 @@ const BankAccounts = () => {
                           key="select_type"
                           options={optionType}
                           allowClear
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>
@@ -271,7 +271,7 @@ const BankAccounts = () => {
                           key="select_status"
                           options={optionStatus}
                           allowClear
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>

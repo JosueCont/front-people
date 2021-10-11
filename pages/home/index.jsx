@@ -31,16 +31,13 @@ import {
   UploadOutlined,
   EllipsisOutlined,
   ExclamationCircleOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
 import FormPerson from "../../components/person/FormPerson";
-import {
-  withAuthSync,
-  userCompanyId,
-  getAccessIntranet,
-  userCompanyName,
-} from "../../libs/auth";
+import { withAuthSync, userCompanyId, userCompanyName } from "../../libs/auth";
+import { setDataUpload } from "../../redux/UserDuck";
 
 const { Content } = Layout;
 import Link from "next/link";
@@ -48,9 +45,14 @@ import jsCookie from "js-cookie";
 import Clipboard from "../../components/Clipboard";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
+import { genders, periodicity, statusSelect } from "../../utils/constant";
+import SelectDepartment from "../../components/selects/SelectDepartment";
+import SelectJob from "../../components/selects/SelectJob";
+import { useRouter } from "next/router";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
+  const route = useRouter();
 
   const [columns2, setColumns2] = useState([]);
   const [valRefreshColumns, setValRefreshColumns] = useState(false);
@@ -61,35 +63,41 @@ const homeScreen = ({ ...props }) => {
   const [modalAddPerson, setModalAddPerson] = useState(false);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
+  const inputFileRef2 = useRef(null);
   let filters = { node: "" };
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
+  // Constantes para desactivar.
+  const [modalDeactivate, setModalDeactivate] = useState(false);
+  const [idsDeactivate, setIdsDeactivate] = useState("");
+  const [personsToDeactivate, setPersonsToDeactivate] = useState([]);
+  const [stringToDeactivate, setStringToDeactivate] = useState(null);
+
+  // Constantes para eliminar.
   const [modalDelete, setModalDelete] = useState(false);
   const [idsDelete, setIdsDelete] = useState("");
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
-  const [nodes, setNodes] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [jobs, setJobs] = useState([]);
+  const [departmentId, setDepartmentId] = useState(null);
   const [permissions, setPermissions] = useState({});
   let urlFilter = "/person/person/?";
-  let nodeId = userCompanyId();
-  let accessIntranet = getAccessIntranet();
 
   const [listUserCompanies, setListUserCompanies] = useState("");
   const [showModalCompanies, setShowModalCompanies] = useState(false);
+  const [deleteTrigger, setDeleteTrigger] = useState(false);
+  const [deactivateTrigger, setDeactivateTrigger] = useState(false);
+  const [userSession, setUserSession] = useState({});
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
+    setUserSession(jwt);
     // getPerson();
-    nodeId = userCompanyId();
-    if (nodeId) {
-      filterPersonName();
-    }
-    getDepartmets();
-  }, []);
+
+    if (props.currentNode) filterPersonName();
+    // getDepartmets();
+  }, [props.currentNode]);
 
   const searchPermissions = (data) => {
     const perms = {};
@@ -108,42 +116,38 @@ const homeScreen = ({ ...props }) => {
     setPermissions(perms);
   };
 
-  /////PEOPLE
-  const getPerson = () => {
-    setLoading(true);
-    Axios.get(API_URL + `/person/person/`)
-      .then((response) => {
-        setPerson([]);
-        response.data.results.map((item, i) => {
-          item.key = i;
-          if (!item.photo) item.photo = defaulPhoto;
-        });
-        setPerson(response.data.results);
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const filterPersonName = async () => {
-    filters.node = nodeId;
+    filters.node = props.currentNode.id;
     setLoading(true);
-    try{
-      let response = await WebApi.filterPerson(filters)
+    try {
+      let response = await WebApi.filterPerson(filters);
       setPerson([]);
-        response.data.map((item, i) => {
-          item.key = i;
-          if (!item.photo) item.photo = defaulPhoto;
-        });
       setLoading(false);
       setPerson(response.data);
-    }
-    catch(error){
+    } catch (error) {
       setPerson([]);
       setLoading(false);
       console.log(error);
     }
+  };
+
+  const deactivatePerson = () => {
+    setLoading(true);
+    Axios.post(API_URL + "/person/person/deactivate_by_ids/", {
+      persons_id: idsDeactivate,
+    })
+      .then((response) => {
+        setIdsDeactivate("");
+        setModalDeactivate(false);
+        setPersonsToDeactivate([]);
+        filterPersonName();
+        setLoading(false);
+        message.success("Desactivado correctamente.");
+      })
+      .catch((error) => {
+        setLoading(false);
+        message.error("Error al desactivar");
+      });
   };
 
   const deletePerson = () => {
@@ -162,6 +166,7 @@ const homeScreen = ({ ...props }) => {
       .catch((error) => {
         setLoading(false);
         console.log(error);
+        message.error("Error al eliminar");
       });
   };
 
@@ -218,30 +223,50 @@ const homeScreen = ({ ...props }) => {
   let columns = [
     {
       title: "Núm. Empleado",
+      width: 74,
+      fixed: "left",
       render: (item) => {
         return <div>{item.code ? item.code : ""}</div>;
       },
     },
     {
       title: "Foto",
+      width: 42,
+      fixed: "left",
       render: (item) => {
         return (
           <div>
-            <Avatar src={item.photo} />
+            <Avatar src={item.photo ? item.photo : defaulPhoto} />
           </div>
         );
       },
     },
     {
       title: "Nombre",
+      width: 120,
+      fixed: "left",
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
-        return <div>{personName}</div>;
+        return (
+          <>
+            {permissions.edit || permissions.delete ? (
+              <Dropdown overlay={() => menuPerson(item)}>
+                <a>
+                  <div>{personName}</div>
+                </a>
+              </Dropdown>
+            ) : (
+              <div>{personName}</div>
+            )}
+          </>
+        );
+        // return <div>{personName}</div>;
       },
     },
     {
       title: "Estatus",
+      width: 70,
       render: (item) => {
         return (
           <>
@@ -258,6 +283,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Acceso a intranet",
+      width: 70,
       render: (item) => {
         return (
           <>
@@ -274,6 +300,8 @@ const homeScreen = ({ ...props }) => {
 
     {
       title: "Fecha de ingreso",
+      width: 82,
+      align: "center",
       render: (item) => {
         return <div>{item.date_of_admission}</div>;
       },
@@ -281,34 +309,43 @@ const homeScreen = ({ ...props }) => {
 
     {
       title: "Fecha de ingreso a la plataforma",
+      width: 82,
+      align: "center",
       render: (item) => {
         return <div>{item.register_date}</div>;
       },
     },
     {
       title: "Departamento",
+      width: 100,
       render: (item) => {
         return <div>{item.department ? item.department.name : ""}</div>;
       },
     },
     {
       title: "Puesto",
+      width: 100,
       render: (item) => {
         return <div>{item.job ? item.job.name : ""}</div>;
       },
     },
     {
       title: "RFC",
+      width: 121,
+      align: "center",
       dataIndex: "rfc",
       key: "rfc",
     },
     {
       title: "IMSS",
+      width: 100,
+      align: "center",
       dataIndex: "imss",
       key: "imss",
     },
     {
       title: "Periocidad",
+      width: 80,
       align: "center",
       render: (item) => {
         let per = periodicity.filter((a) => a.value === item.periodicity);
@@ -317,6 +354,8 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Empresas Asignadas",
+      width: 75,
+      align: "center",
       key: "CompaniesAsosigned",
       align: "center",
       render: (item) => {
@@ -344,6 +383,8 @@ const homeScreen = ({ ...props }) => {
           </>
         );
       },
+      width: 44,
+      // align: "center",
       render: (item) => {
         return (
           <>
@@ -366,14 +407,14 @@ const homeScreen = ({ ...props }) => {
   ];
 
   useEffect(() => {
-    if (accessIntranet === "false") {
+    if (props.config && !props.config.intranet_enabled) {
       columns = removeItemFromArr(columns, "Acceso a intranet");
       setValRefreshColumns(true);
     } else {
       setValRefreshColumns(true);
     }
     setColumns2(columns);
-  }, [valRefreshColumns]);
+  }, [valRefreshColumns, props.config]);
 
   function removeItemFromArr(arr, item) {
     return arr.filter(function (e) {
@@ -421,9 +462,11 @@ const homeScreen = ({ ...props }) => {
               "/ac/urn/" +
               props.currentNode.permanent_code
             }
+            title={"Link de empresa"}
+            border={false}
             type={"button"}
-            msg={"Copiado en porta papeles"}
-            tooltipTitle={"Copiar"}
+            msg={"Copiado en portapapeles"}
+            tooltipTitle={"Copiar link de auto registro"}
           />
         </Menu.Item>
       )}
@@ -432,8 +475,18 @@ const homeScreen = ({ ...props }) => {
           Eliminar
         </Menu.Item>
       )}
+      <Menu.Item onClick={() => handleDeactivate()}>Desactivar</Menu.Item>
     </Menu>
   );
+
+  const handleDelete = () => {
+    setDeleteTrigger(true);
+  };
+
+  const handleDeactivate = () => {
+    setDeactivateTrigger(true);
+  };
+
   const menuPerson = (item) => {
     return (
       <Menu>
@@ -445,49 +498,58 @@ const homeScreen = ({ ...props }) => {
         {permissions.delete && (
           <Menu.Item onClick={() => setDeleteModal([item])}>Eliminar</Menu.Item>
         )}
+        <Menu.Item onClick={() => setDeactivateModal([item])}>
+          Desactivar
+        </Menu.Item>
       </Menu>
     );
   };
 
-  ////DEFAULT SELECT
-  const genders = [
-    {
-      label: "Todos",
-      value: 0,
-    },
-    {
-      label: "Masculino",
-      value: 1,
-    },
-    {
-      label: "Femenino",
-      value: 2,
-    },
-    {
-      label: "Otro",
-      value: 3,
-    },
-  ];
-  const periodicity = [
-    { label: "Semanal", value: 1 },
-    { label: "Catorcenal", value: 2 },
-    { label: "Quincenal", value: 3 },
-    { label: "Mensual", value: 4 },
-  ];
-  const statusSelect = [
-    {
-      label: "Todos",
-      value: -1,
-    },
-    {
-      label: "Activos",
-      value: true,
-    },
-    {
-      label: "Inactivos",
-      value: false,
-    },
-  ];
+  // DEACTIVATE MODAL
+  const setDeactivateModal = async (value) => {
+    setStringToDeactivate("Desactivar usuarios ");
+    if (value.length > 0) {
+      if (value.length == 1) {
+        setStringToDeactivate(
+          "Desactivar usuario " +
+            value[0].first_name +
+            " " +
+            value[0].flast_name
+        );
+      }
+      setPersonsToDeactivate(value);
+      let ids = null;
+      value.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+      setIdsDeactivate(ids);
+      showModalDeactivate();
+    } else {
+      message.error("Selecciona una persona.");
+    }
+  };
+
+  const showModalDeactivate = () => {
+    modalDeactivate ? setModalDeactivate(false) : setModalDeactivate(true);
+  };
+
+  const ListElementsToDeactivate = ({ personsDeactivate }) => {
+    return (
+      <div>
+        {personsDeactivate.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
+  };
 
   /////DELETE MODAL
   const setDeleteModal = async (value) => {
@@ -556,35 +618,12 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const downLoadPlantilla = () => {
-    setLoading(true);
-    Axios.post(API_URL + `/person/person/export_csv/`, {
-      format: "plantilla",
-      is_active: "true",
-    })
-      .then((response) => {
-        const type = response.headers["content-type"];
-        const blob = new Blob([response.data], {
-          type: type,
-          encoding: "UTF-8",
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = "PlantillaPersonas.csv";
-        link.click();
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
-  };
   const importPersonFile = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
     if (extension === "xlsx") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
-      formData.append("node_id", nodeId);
+      formData.append("node_id", props.currentNode.id);
       setLoading(true);
       Axios.post(API_URL + `/person/person/import_xls/`, formData)
         .then((response) => {
@@ -602,6 +641,33 @@ const homeScreen = ({ ...props }) => {
       message.error("Formato incorrecto, suba un archivo .xlsx");
     }
   };
+  const importPersonFileExtend = async (e) => {
+    let extension = getFileExtension(e.target.files[0].name);
+    if (extension === "xlsx") {
+      let formData = new FormData();
+      formData.append("File", e.target.files[0]);
+      formData.append("node_id", props.currentNode.id);
+      formData.append(
+        "saved_by",
+        userSession.first_name + " " + userSession.last_name
+      );
+      setLoading(true);
+      props
+        .setDataUpload(formData)
+        .then((response) => {
+          if (response) {
+            route.push({ pathname: "/bulk_upload/preview" });
+          } else {
+            message.error("Ocurrió un error ");
+          }
+        })
+        .catch((error) => {
+          message.error("Ocurrió un error ");
+        });
+    } else {
+      message.error("Formato incorrecto, suba un archivo .xlsx");
+    }
+  };
 
   const getFileExtension = (filename) => {
     return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
@@ -609,7 +675,6 @@ const homeScreen = ({ ...props }) => {
 
   ////SEARCH FILTER
   const filter = (value) => {
-    console.log(value);
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
@@ -637,7 +702,7 @@ const homeScreen = ({ ...props }) => {
       urlFilter = urlFilter + "person_department__id=" + value.department + "&";
       filters.department = value.department;
     }
-    if (value && value.job !== undefined) {
+    if (value && value.job && value.job !== undefined) {
       urlFilter = urlFilter + "job__id=" + value.job + "&";
       filters.job = value.job;
     }
@@ -675,49 +740,44 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const getDepartmets = async (value) => {
-    setDepartments([]);
-    setJobs([]);
-    try{
-      let response = await WebApi.filterDepartmentByNode(nodeId)
-      let dep = response.data.results;
-      dep = dep.map((a) => {
-        return { label: a.name, value: a.id };
-      });
-      setDepartments(dep);
-    }
-    catch(error)
-    {
-      console.log(error);
-    }
+  const changeDepartment = (value) => {
+    formFilter.setFieldsValue({ job: null });
+    setDepartmentId(value);
   };
 
-  const changeDepartment = (value) => {
-    setJobs([]);
-    Axios.get(API_URL + `/person/job/?department=${value}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let job = response.data;
-          job = job.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setJobs(job);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+  const AlertDeactivate = () => (
+    <div>
+      Al desactivar este registro ya no podra accerder a el hasta que lo vuelva
+      a activar. ¿Está seguro de querer desactivarlo?
+      <br />
+      <br />
+      <ListElementsToDeactivate personsDeactivate={personsToDeactivate} />
+    </div>
+  );
 
   const AlertDeletes = () => (
     <div>
       Al eliminar este registro perderá todos los datos relacionados a el de
-      manera permanente. ¿Está seguro de querer eliminarlo
+      manera permanente. ¿Está seguro de querer eliminarlo?
       <br />
       <br />
       <ListElementsToDelete personsDelete={personsToDelete} />
     </div>
   );
+
+  useEffect(() => {
+    if (deleteTrigger) {
+      setDeleteModal(personsToDelete);
+      setDeleteTrigger(false);
+    }
+  }, [deleteTrigger]);
+
+  useEffect(() => {
+    if (deactivateTrigger) {
+      setDeactivateModal(personsToDelete);
+      setDeactivateTrigger(false);
+    }
+  }, [deactivateTrigger]);
 
   useEffect(() => {
     if (modalDelete) {
@@ -739,6 +799,82 @@ const homeScreen = ({ ...props }) => {
       });
     }
   }, [modalDelete]);
+
+  useEffect(() => {
+    if (modalDeactivate) {
+      Modal.confirm({
+        title: stringToDeactivate,
+        content: <AlertDeactivate />,
+        icon: <ExclamationCircleOutlined />,
+        okText: "Si, desactivar",
+        okButtonProps: {
+          danger: true,
+        },
+        onCancel() {
+          setModalDeactivate();
+        },
+        cancelText: "Cancelar",
+        onOk() {
+          deactivatePerson();
+        },
+      });
+    }
+  }, [modalDeactivate]);
+
+  const menuExportTemplate = (
+    <Menu>
+      <Menu.Item key="1">
+        <a href={`${API_URL}/static/plantillaPersonas.xlsx`}>
+          Plantilla básica
+        </a>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <a href={`${API_URL}/static/plantillaExtendidaPersonas.xlsx`}>
+          Plantilla Extensa
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
+
+  const menuImportPerson = (
+    <Menu>
+      <Menu.Item key="1">
+        <a
+          className={"ml-20"}
+          icon={<UploadOutlined />}
+          onClick={() => {
+            inputFileRef.current.click();
+          }}
+        >
+          Datos basicos
+        </a>
+        <input
+          ref={inputFileRef}
+          type="file"
+          style={{ display: "none" }}
+          // onChange={(e) => importPersonFile(e)}
+          onChange={(e) => importPersonFileExtend(e)}
+        />
+      </Menu.Item>
+      <Menu.Item key="2">
+        <a
+          className={"ml-20"}
+          icon={<UploadOutlined />}
+          onClick={() => {
+            inputFileRef2.current.click();
+          }}
+        >
+          Datos Extensos
+        </a>
+        <input
+          ref={inputFileRef2}
+          type="file"
+          style={{ display: "none" }}
+          onChange={(e) => importPersonFileExtend(e)}
+        />
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <MainLayout currentKey="1">
@@ -771,7 +907,6 @@ const homeScreen = ({ ...props }) => {
                         />
                       </Form.Item>
                     </Col>
-
                     <Col>
                       <Form.Item name="code" label={"Núm. empleado"}>
                         <Input
@@ -781,44 +916,28 @@ const homeScreen = ({ ...props }) => {
                         />
                       </Form.Item>
                     </Col>
-
                     <Col>
                       <Form.Item name="gender" label="Género">
                         <Select
                           options={genders}
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           placeholder="Todos"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>
                     <Col>
-                      <Form.Item name="department" label="Departamento">
-                        <Select
-                          onChange={changeDepartment}
-                          options={departments}
-                          placeholder="Todos"
-                          notFoundContent={"No se encontraron resultado."}
-                          style={{ width: 100 }}
-                        />
-                      </Form.Item>
+                      <SelectDepartment />
                     </Col>
                     <Col>
-                      <Form.Item name="job" label="Puesto">
-                        <Select
-                          options={jobs}
-                          placeholder="Todos"
-                          notFoundContent={"No se encontraron resultado."}
-                          style={{ minWidth: 100 }}
-                        />
-                      </Form.Item>
+                      <SelectJob />
                     </Col>
                     <Col>
                       <Form.Item name="is_active" label="Estatus">
                         <Select
                           options={statusSelect}
                           placeholder="Estatus"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           style={{ width: 90 }}
                         />
                       </Form.Item>
@@ -828,26 +947,21 @@ const homeScreen = ({ ...props }) => {
                         <Select
                           options={periodicity}
                           placeholder="Periocidad"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                           style={{ width: 90 }}
                         />
                       </Form.Item>
                     </Col>
-                    <Col style={{ display: "flex" }}>
+                    <Col
+                      className="button-filter-person"
+                      style={{ display: "flex" }}
+                    >
                       <Tooltip
                         title="Filtrar"
                         color={"#3d78b9"}
                         key={"#filtrar"}
                       >
-                        <Button
-                          style={{
-                            background: "#fa8c16",
-                            fontWeight: "bold",
-                            color: "white",
-                            marginTop: "auto",
-                          }}
-                          htmlType="submit"
-                        >
+                        <Button className="btn-filter" htmlType="submit">
                           <SearchOutlined />
                         </Button>
                       </Tooltip>
@@ -867,15 +981,10 @@ const homeScreen = ({ ...props }) => {
                   </Row>
                 </Form>
               </Col>
-              <Col style={{ display: "flex" }}>
+              <Col className="button-filter-person" style={{ display: "flex" }}>
                 {permissions.create && (
                   <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
+                    className="btn-add-person"
                     onClick={() => getModalPerson(true)}
                   >
                     <PlusOutlined />
@@ -887,7 +996,6 @@ const homeScreen = ({ ...props }) => {
             <Row justify={"end"} style={{ padding: "1% 0" }}>
               {permissions.export && (
                 <Button
-                  className={"ml-20"}
                   type="primary"
                   icon={<DownloadOutlined />}
                   size={{ size: "large" }}
@@ -897,23 +1005,17 @@ const homeScreen = ({ ...props }) => {
                 </Button>
               )}
               {permissions.import && (
-                <Button
+                <Dropdown
+                  overlay={menuImportPerson}
+                  placement="bottomLeft"
+                  arrow
                   className={"ml-20"}
-                  icon={<UploadOutlined />}
-                  onClick={() => {
-                    inputFileRef.current.click();
-                  }}
                 >
-                  Importar personas
-                </Button>
+                  <Button icon={<DownloadOutlined />}>Importar personas</Button>
+                </Dropdown>
               )}
-              <input
-                ref={inputFileRef}
-                type="file"
-                style={{ display: "none" }}
-                onChange={(e) => importPersonFile(e)}
-              />
-              <Button
+
+              {/* <Button
                 className={"ml-20"}
                 type="primary"
                 icon={<DownloadOutlined />}
@@ -921,7 +1023,15 @@ const homeScreen = ({ ...props }) => {
                 href={`${API_URL}/static/plantillaPersonas.xlsx`}
               >
                 Descargar plantilla
-              </Button>
+              </Button> */}
+              <Dropdown
+                overlay={menuExportTemplate}
+                placement="bottomLeft"
+                arrow
+                className={"ml-20"}
+              >
+                <Button icon={<DownloadOutlined />}>Descargar plantilla</Button>
+              </Dropdown>
             </Row>
             <Table
               className={"mainTable"}
@@ -929,6 +1039,7 @@ const homeScreen = ({ ...props }) => {
               columns={columns2}
               dataSource={person}
               loading={loading}
+              scroll={{ x: 300 }}
               locale={{
                 emptyText: loading
                   ? "Cargando..."
@@ -943,6 +1054,7 @@ const homeScreen = ({ ...props }) => {
       </div>
       {modalAddPerson && (
         <FormPerson
+          config={props.config}
           close={getModalPerson}
           visible={modalAddPerson}
           nameNode={userCompanyName()}
@@ -956,7 +1068,8 @@ const homeScreen = ({ ...props }) => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
   };
 };
 
-export default connect(mapState)(withAuthSync(homeScreen));
+export default connect(mapState, { setDataUpload })(withAuthSync(homeScreen));

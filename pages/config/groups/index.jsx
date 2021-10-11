@@ -25,35 +25,36 @@ const { Content } = Layout;
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 import Axios from "axios";
-import { API_URL, APP_ID, LOGIN_URL } from "../../../config/config";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import { userCompanyId, withAuthSync } from "../../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from "react-redux";
 
-const Groups = () => {
+const Groups = ({ ...props }) => {
   const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [groups, setGroups] = useState([]);
   const [permissions, setPermissions] = useState({});
-  let nodeId = userCompanyId();
-
-  const headers = {
-    "client-id": APP_ID,
-    "Content-Type": "application/json",
-  };
 
   const getGroups = (name = "") => {
+    const headers = {
+      "client-id": props.config.client_khonnect_id,
+      "Content-Type": "application/json",
+    };
     setLoading(true);
     let company = "";
-    if (name === "") company = `?company=${nodeId}`;
-    else company = `&company=${nodeId}`;
+    if (name === "") company = `?company=${props.currentNode.id}`;
+    else company = `&company=${props.currentNode.id}`;
 
-    Axios.get(LOGIN_URL + `/group/list/${name}` + company, {
-      headers: headers,
-    })
+    Axios.get(
+      props.config.url_server_khonnect + `group/list/` + name + company,
+      {
+        headers: headers,
+      }
+    )
       .then((response) => {
         response.data.data.map((item) => {
           item["key"] = item.id;
@@ -72,7 +73,7 @@ const Groups = () => {
   const deleteGroup = async (id) => {
     let data = { id: id };
 
-    Axios.post(LOGIN_URL + `/group/delete/`, data, {
+    Axios.post(props.url_server_khonnect + `/group/delete/`, data, {
       headers: headers,
     })
       .then(function (response) {
@@ -87,7 +88,7 @@ const Groups = () => {
             });
           } else {
             message.success({
-              content: "Grupo eliminado exitosamente",
+              content: "Grupo eliminado éxitosamente",
               className: "custom-class",
               style: {
                 marginTop: "20vh",
@@ -127,10 +128,12 @@ const Groups = () => {
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
-    getGroups();
-  }, []);
+    if (props.currentNode && props.config) {
+      const jwt = JSON.parse(jsCookie.get("token"));
+      searchPermissions(jwt.perms);
+      getGroups();
+    }
+  }, [props.config, props.currentNode]);
 
   const searchPermissions = (data) => {
     const perms = {};
@@ -277,11 +280,28 @@ const Groups = () => {
         </Row>
         <Row>
           <Col span={24}>
-            <Table columns={columns} dataSource={groups} loading={loading} locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}/>
+            <Table
+              columns={columns}
+              dataSource={groups}
+              loading={loading}
+              locale={{
+                emptyText: loading
+                  ? "Cargando..."
+                  : "No se encontraron resultados.",
+              }}
+            />
           </Col>
         </Row>
       </div>
     </MainLayout>
   );
 };
-export default withAuthSync(Groups);
+
+const mapState = (state) => {
+  return {
+    config: state.userStore.general_config,
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(withAuthSync(Groups));

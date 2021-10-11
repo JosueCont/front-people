@@ -22,6 +22,8 @@ import FormItemHTMLPlace from "../../../components/draft";
 /* import { userCompanyId } from "../../libs/auth"; */
 
 import { withAuthSync, userCompanyId } from "../../../libs/auth";
+import SelectJob from "../../../components/selects/SelectJob";
+import SelectDepartment from "../../../components/selects/SelectDepartment";
 
 const Newrelease = () => {
   let nodeId = userCompanyId();
@@ -332,7 +334,7 @@ const Newrelease = () => {
                     <Select
                       style={{ width: 250 }}
                       options={typeMessage}
-                      notFoundContent={"No se encontraron resultado."}
+                      notFoundContent={"No se encontraron resultados."}
                     />
                   </Form.Item>
                   <Form.Item
@@ -389,34 +391,20 @@ const Newrelease = () => {
                 <Col xs={24} sm={24} md={14} lg={14} xl={14}>
                   <Row>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                      <Form.Item
+                      {/* <Form.Item
                         name={"target_department"}
                         label="Departamento"
                         labelCol={{ span: 10 }}
                         wrapperCol={{ span: 14 }}
                         rules={[checkSegmentacion]}
-                      >
-                        <Select
-                          options={departments}
-                          onChange={onChangeDepartment}
-                          placeholder="Departamento"
-                          key="departament_select"
-                          notFoundContent={"No se encontraron resultado."}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name={"target_job"}
-                        label="Puesto de trabajo"
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        rules={[checkSegmentacion]}
-                      >
-                        <Select
-                          options={jobs}
-                          key="jobs_select"
-                          notFoundContent={"No se encontraron resultado."}
-                        />
-                      </Form.Item>
+                      > */}
+                      <SelectDepartment
+                        name={"target_department"}
+                        titleLabel={false}
+                      />
+                      {/* </Form.Item> */}
+
+                      <SelectJob name={"target_job"} titleLabel={false} />
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                       <Form.Item
@@ -429,7 +417,7 @@ const Newrelease = () => {
                         <Select
                           options={personType}
                           key="person_select"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                       <Form.Item
@@ -442,7 +430,7 @@ const Newrelease = () => {
                         <Select
                           options={genders}
                           key="gender_select"
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
                     </Col>

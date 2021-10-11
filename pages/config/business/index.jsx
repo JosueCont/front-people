@@ -32,10 +32,19 @@ import { API_URL } from "../../../config/config";
 import Router from "next/router";
 import SelectCompany from "../../../components/selects/SelectCompany";
 import jsCookie from "js-cookie";
+import { connect } from "react-redux";
+import WebApi from "../../../api/webApi";
+import { doCompanySelectedCatalog } from "../../../redux/catalogCompany";
+import {
+  messageDeleteSuccess,
+  messageError,
+  messageSaveSuccess,
+  messageUpdateSuccess,
+} from "../../../utils/constant";
 
 const { Content } = Layout;
 
-const configBusiness = () => {
+const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
   const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [formDepartment] = Form.useForm();
@@ -45,12 +54,7 @@ const configBusiness = () => {
   const [formTypeDocument] = Form.useForm();
   const [formBank] = Form.useForm();
   const [loadingTable, setLoadingTable] = useState(false);
-  const [departments, setDepartments] = useState([]);
   const [jobs, setJobs] = useState([]);
-  const [typesPerson, setTypesPerson] = useState([]);
-  const [relationsShip, setRelationsShip] = useState([]);
-  const [typesDocument, setTypesDocuments] = useState([]);
-  const [banks, setBanks] = useState([]);
   const [selectCompany, setselectCompany] = useState([]);
   const [id, setId] = useState("");
   const [edit, setEdit] = useState(false);
@@ -63,20 +67,11 @@ const configBusiness = () => {
   const urls = [
     `/business/department/?node=${nodeId}`,
     `/person/job/?node=${nodeId}`,
-    "/person/person-type/",
-    "/setup/relationship/",
-    `/setup/document-type/?node=${nodeId}`,
-    "/setup/banks/",
   ];
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
-
-    urls.map((a) => {
-      getDepartments();
-      getCatalog(a);
-    });
   }, []);
 
   const searchPermissions = (data) => {
@@ -150,13 +145,6 @@ const configBusiness = () => {
         if (url == `/business/department/?node=${nodeId}`)
           setDepartments(response.data.results);
         if (url == `/person/job/?node=${nodeId}`) setJobs(response.data);
-        if (url == "/person/person-type/")
-          setTypesPerson(response.data.results);
-        if (url == "/setup/relationship/")
-          setRelationsShip(response.data.results);
-        if (url == `/setup/document-type/?node=${nodeId}`)
-          setTypesDocuments(response.data);
-        if (url == "/setup/banks/") setBanks(response.data.results);
         getCompanies();
         setLoadingTable(false);
       })
@@ -176,66 +164,58 @@ const configBusiness = () => {
     } else saveRegister(url, value);
   };
 
-  const getDepartments = () => {
-    Axios.get(API_URL + `/business/department/?node=${nodeId}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let dep = response.data.results;
-          dep = dep.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setSelectDep(dep);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+  const saveRegister = async (url, data) => {
+    data.node = props.currentNode.id;
+    setLoadingTable(true);
+    try {
+      let response = await WebApi.createRegisterCatalogs(url, data);
+      props
+        .doCompanySelectedCatalog(props.currentNode.data)
+        .then((response) => {
+          setId("");
+          resetForm();
+          message.success(messageSaveSuccess);
+          setLoadingTable(false);
+        })
+        .catch((error) => {
+          setId("");
+          setLoadingTable(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      setId("");
+      setLoadingTable(false);
+      console.log(error);
+      message.error(messageError);
+    }
   };
 
-  const saveRegister = (url, data) => {
-    data.node = nodeId;
-    setLoadingTable(true);
-    Axios.post(API_URL + url, data)
-      .then((response) => {
-        setId("");
-        resetForm();
-        getCatalog(url);
-        urls.map((a) => {
-          getDepartments();
-          getCatalog(a);
+  const updateRegister = async (url, value) => {
+    try {
+      let urlApi = url + `${value.id}/`;
+      let response = await WebApi.updateRegisterCatalogs(urlApi, value);
+      props
+        .doCompanySelectedCatalog(props.currentNode.data)
+        .then((response) => {
+          setId("");
+          resetForm();
+          message.success(messageUpdateSuccess);
+          setLoadingTable(false);
+        })
+        .catch((error) => {
+          setId("");
+          setLoadingTable(false);
+          console.log(error);
+          message.error(messageError);
         });
-        message.success("Agregado correctamente.");
-      })
-      .catch((error) => {
-        resetForm();
-        setId("");
-        setLoadingTable(false);
-        console.log(error);
-        message.error(error.response.data.code[0]);
-      });
-  };
-  const updateRegister = (url, value) => {
-    Axios.put(API_URL + url + `${value.id}/`, value)
-      .then((response) => {
-        if (url.includes("document-type"))
-          url = `/setup/document-type/?node=${nodeId}`;
-        if (url.includes("job")) url = `/person/job/?node=${nodeId}`;
-        if (url.includes("department"))
-          url = `/business/department/?node=${nodeId}`;
-        setId("");
-        resetForm();
-        setLoadingTable(true);
-        getCatalog(url);
-        setEdit(false);
-        message.success("Actualizado correctamente.");
-      })
-      .catch((error) => {
-        setEdit(false);
-        setId("");
-        setLoadingTable(false);
-        resetForm();
-        message.error("Ocurrio un error intente de nuevo.");
-      });
+    } catch (error) {
+      setEdit(false);
+      setId("");
+      setLoadingTable(false);
+      resetForm();
+      message.error("Ocurrio un error intente de nuevo.");
+    }
   };
 
   const editRegister = (item, param) => {
@@ -252,10 +232,9 @@ const configBusiness = () => {
     if (param == "job") {
       setId(item.id);
       formJob.setFieldsValue({
-        node: item.department.node.id,
+        node: item.node.id,
         name: item.name,
         code: item.code,
-        department: item.department.id,
       });
     }
     if (param == "tp") {
@@ -365,12 +344,12 @@ const configBusiness = () => {
       },
     },
 
-    {
-      title: "Departamento",
-      render: (item) => {
-        return <>{item.department.name}</>;
-      },
-    },
+    // {
+    //   title: "Departamento",
+    //   render: (item) => {
+    //     return <>{item.department.name}</>;
+    //   },
+    // },
     {
       title: "Nombre",
       render: (item) => {
@@ -592,28 +571,26 @@ const configBusiness = () => {
     setDeleted(props);
   };
   const deleteRegister = async () => {
-    let node = "";
-    if (
-      deleted.url.includes("document-type") ||
-      deleted.url.includes("job") ||
-      deleted.url.includes("department")
-    )
-      node = `?node=${nodeId}`;
-
-    Axios.delete(API_URL + deleted.url + `${deleted.id}/${node}`)
-      .then((response) => {
-        resetForm();
-        setId("");
-        setLoadingTable(true);
-        getCatalog(deleted.url + node);
-        setDeleteRegister({});
-      })
-      .catch((error) => {
-        setId("");
-        resetForm();
-        setLoadingTable(false);
-        console.log(error);
-      });
+    try {
+      let response = await WebApi.deleteRegisterCatalogs(
+        deleted.url + `${deleted.id}/`
+      );
+      props
+        .doCompanySelectedCatalog(props.currentNode.data)
+        .then((response) => {
+          setId("");
+          resetForm();
+          message.success(messageDeleteSuccess);
+        })
+        .catch((error) => {
+          setId("");
+          setLoadingTable(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      console.log("Error de-> ", error);
+    }
   };
 
   const resetForm = () => {
@@ -756,7 +733,7 @@ const configBusiness = () => {
                     <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table
                         columns={colDepartment}
-                        dataSource={departments}
+                        dataSource={props.cat_departments}
                         locale={{
                           emptyText: loadingTable
                             ? "Cargando..."
@@ -789,7 +766,7 @@ const configBusiness = () => {
                             </Form.Item>
                           </Col>
 
-                          <Col lg={6} xs={22} offset={1}>
+                          {/* <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="department"
                               label="Departamento"
@@ -797,10 +774,12 @@ const configBusiness = () => {
                             >
                               <Select
                                 options={selectDep}
-                                notFoundContent={"No se encontraron resultado."}
+                                notFoundContent={
+                                  "No se encontraron resultados."
+                                }
                               />
                             </Form.Item>
-                          </Col>
+                          </Col> */}
                           <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="name"
@@ -839,7 +818,7 @@ const configBusiness = () => {
                     <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table
                         columns={colJob}
-                        dataSource={jobs}
+                        dataSource={props.cat_job}
                         locale={{
                           emptyText: loadingTable
                             ? "Cargando..."
@@ -904,7 +883,7 @@ const configBusiness = () => {
                     <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table
                         columns={colTypePerson}
-                        dataSource={typesPerson}
+                        dataSource={props.person_type_table}
                         locale={{
                           emptyText: loadingTable
                             ? "Cargando..."
@@ -969,7 +948,7 @@ const configBusiness = () => {
                     <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table
                         columns={colRelationShip}
-                        dataSource={relationsShip}
+                        dataSource={props.cat_relationship}
                         locale={{
                           emptyText: loadingTable
                             ? "Cargando..."
@@ -1037,7 +1016,7 @@ const configBusiness = () => {
                     <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table
                         columns={colTypeDocument}
-                        dataSource={typesDocument}
+                        dataSource={props.cat_document_type}
                         locale={{
                           emptyText: loadingTable
                             ? "Cargando..."
@@ -1102,7 +1081,7 @@ const configBusiness = () => {
                     <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table
                         columns={colBank}
-                        dataSource={banks}
+                        dataSource={props.cat_bank}
                         locale={{
                           emptyText: loadingTable
                             ? "Cargando..."
@@ -1135,4 +1114,23 @@ const configBusiness = () => {
   );
 };
 
-export default withAuthSync(configBusiness);
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+    cat_relationship: state.catalogStore.cat_relationship,
+    cat_bank: state.catalogStore.cat_bank,
+    cat_experience_type: state.catalogStore.cat_experience_type,
+    cat_reason_separation: state.catalogStore.cat_reason_separation,
+    cat_labor_relation: state.catalogStore.cat_labor_relation,
+    cat_treatment: state.catalogStore.cat_treatment,
+    cat_document_type: state.catalogStore.cat_document_type,
+    cat_departments: state.catalogStore.cat_departments,
+    cat_job: state.catalogStore.cat_job,
+    cat_person_type: state.catalogStore.cat_person_type,
+    person_type_table: state.catalogStore.person_type_table,
+  };
+};
+
+export default connect(mapState, { doCompanySelectedCatalog })(
+  withAuthSync(configBusiness)
+);

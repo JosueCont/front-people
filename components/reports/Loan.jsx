@@ -16,7 +16,7 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { DownloadOutlined } from "@ant-design/icons";
 import moment from "moment-timezone";
-import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
 
@@ -365,7 +365,7 @@ const LoanReport = (props) => {
                     style={{ width: 150 }}
                     options={optionsType}
                     allowClear
-                    notFoundContent={"No se encontraron resultado."}
+                    notFoundContent={"No se encontraron resultados."}
                   />
                 </Form.Item>
               </Col>
@@ -379,7 +379,7 @@ const LoanReport = (props) => {
                     style={{ width: 150 }}
                     options={optionPeriodicity}
                     allowClear
-                    notFoundContent={"No se encontraron resultado."}
+                    notFoundContent={"No se encontraron resultados."}
                   />
                 </Form.Item>
               </Col>
@@ -395,7 +395,7 @@ const LoanReport = (props) => {
                     key="select"
                     options={optionStatus}
                     allowClear
-                    notFoundContent={"No se encontraron resultado."}
+                    notFoundContent={"No se encontraron resultados."}
                   />
                 </Form.Item>
               </Col>

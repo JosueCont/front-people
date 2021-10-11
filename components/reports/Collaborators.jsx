@@ -17,7 +17,7 @@ import moment from "moment";
 import { DownloadOutlined } from "@ant-design/icons";
 import SelectDepartment from "../selects/SelectDepartment";
 import SelectJob from "../selects/SelectJob";
-import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
 
@@ -283,14 +283,13 @@ const CollaboratorsReport = (props) => {
               </Col>
               <Col>
                 <SelectDepartment
-                  onChange={onChangeDepartment}
                   name="department"
                   companyId={nodeId}
+                  style={{ maxWidth: 150 }}
                 />
               </Col>
               <Col>
                 <SelectJob
-                  departmentId={departmentId}
                   name="job"
                   label="Puesto"
                   style={{ maxWidth: 150 }}
@@ -366,7 +365,11 @@ const CollaboratorsReport = (props) => {
             key="tableHolidays"
             columns={columns}
             loading={loading}
-            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+            locale={{
+              emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
           ></Table>
         </Col>
       </Row>

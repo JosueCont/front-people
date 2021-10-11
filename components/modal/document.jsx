@@ -19,8 +19,9 @@ import {
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { userCompanyId } from "../../libs/auth";
+import { connect } from "react-redux";
 
-const documentModal = (props) => {
+const documentModal = ({ person_id, node, ...props }) => {
   const [form] = Form.useForm();
   const [file, setFile] = useState();
   const [disabled, setDisabled] = useState(true);
@@ -37,7 +38,7 @@ const documentModal = (props) => {
 
   useEffect(() => {
     nodeId = userCompanyId();
-    Axios.get(API_URL + `/setup/document-type/?node=${nodeId}`)
+    Axios.get(API_URL + `/setup/document-type/?node=${node}`)
       .then((response) => {
         let dt = response.data;
         dt = dt.map((a) => {
@@ -65,13 +66,14 @@ const documentModal = (props) => {
   const onFinish = (value) => {
     let data = new FormData();
     data.append("document", file);
-    data.append("person", props.person);
+    data.append("person", person_id);
     data.append("document_type", value.document_type);
     data.append("description", value.description);
     uploadDocument(data);
   };
 
   const uploadDocument = (data) => {
+    setDisabled(true);
     Axios.post(API_URL + "/person/document/", data)
       .then((response) => {
         message.success({
@@ -79,7 +81,8 @@ const documentModal = (props) => {
           className: "custom-class",
         });
         closeDialog();
-        deleteFileSelect()
+        deleteFileSelect();
+        setDisabled(false);
       })
       .catch((e) => {
         console.log(e);
@@ -99,7 +102,7 @@ const documentModal = (props) => {
       <Layout>
         <Modal
           maskClosable={false}
-          title="Subir documemnto"
+          title="Subir documento"
           centered
           visible={props.visible}
           onCancel={() => closeDialog()}
@@ -107,7 +110,11 @@ const documentModal = (props) => {
         >
           <Form onFinish={onFinish} form={form}>
             <Form.Item name="document_type" rules={[ruleRequired]}>
-              <Select options={documentType} placeholder="Tipo de documento" notFoundContent={"No se encontraron resultado."} />
+              <Select
+                options={documentType}
+                placeholder="Tipo de documento"
+                notFoundContent={"No se encontraron resultados."}
+              />
             </Form.Item>
             <Form.Item>
               <Button

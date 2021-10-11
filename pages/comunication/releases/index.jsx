@@ -16,7 +16,7 @@ import moment from "moment-timezone";
 import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import { EyeOutlined } from "@ant-design/icons";
-import SelectCollaborator from "../../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../../components/selects/SelectCollaborator";
 
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
@@ -206,7 +206,7 @@ const Releases = () => {
                           style={{ width: 150 }}
                           key="select"
                           allowClear
-                          notFoundContent={"No se encontraron resultado."}
+                          notFoundContent={"No se encontraron resultados."}
                         >
                           <Option key="item_1" value="1">
                             Aviso

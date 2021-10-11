@@ -2,12 +2,12 @@ import { Form, Input, Button, Spin, Alert, Typography, message } from "antd";
 const { Text } = Typography;
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { LOGIN_URL, API_URL, APP_ID } from "../config/config";
 import Axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import Link from "next/link";
 import WebApi from "../api/webApi";
+import { ruleEmail } from "../utils/constant";
 
 const LoginForm = ({
   recoveryPsw = true,
@@ -16,6 +16,7 @@ const LoginForm = ({
   ...props
 }) => {
   const router = useRouter();
+  const [loginForm] = Form.useForm();
   const [loading, setLoading] = useState(null);
   const [errorLogin, setErrorLogin] = useState(false);
   const onFinish = (values) => {
@@ -47,14 +48,16 @@ const LoginForm = ({
       setErrorLogin(false);
       setLoading(true);
       const headers = {
-        "client-id": APP_ID,
+        "client-id": props.generalConfig.client_khonnect_id,
         "Content-Type": "application/json",
       };
       const data = {
         email: email,
         password: password,
       };
-      Axios.post(LOGIN_URL + "/login/", data, { headers: headers })
+      Axios.post(props.generalConfig.url_server_khonnect + "/login/", data, {
+        headers: headers,
+      })
         .then(function (response) {
           if (response.status === 200) {
             let token = jwt_decode(response.data.token);
@@ -106,12 +109,13 @@ const LoginForm = ({
           name="normal_login"
           className="login-form"
           layout="vertical"
+          form={loginForm}
           initialValues={{ remember: true }}
           onFinish={onFinish}
         >
           <Form.Item
             name="email"
-            rules={[ruleRequired]}
+            rules={[ruleRequired, ruleEmail]}
             label={"Correo electrónico"}
             labelAlign={"left"}
             className="font-color-khor"
@@ -119,6 +123,11 @@ const LoginForm = ({
             <Input
               style={{ marginTop: "5px" }}
               placeholder="Correo electrónico"
+              onBlur={(value) =>
+                loginForm.setFieldsValue({
+                  email: value.target.value.toLowerCase(),
+                })
+              }
             />
           </Form.Item>
           <Text className="font-color-khor"></Text>
@@ -147,14 +156,12 @@ const LoginForm = ({
           )}
           {recoveryPsw && (
             <Form.Item className={"font-color-khor"}>
-              <b>¿Olvidaste tu contraseña? </b>{" "}
+              <b>¿Olvidaste tu contraseña? </b>
               <span
                 onClick={() => props.setRecoverPasswordShow(true)}
                 className={"pointer text-link"}
-                
               >
-                {" "}
-                haz click aquí{" "}
+                haz clic aquí
               </span>
             </Form.Item>
           )}

@@ -40,7 +40,7 @@ export default function SelectPerson(props) {
         optionFilterProp="children"
         placeholder="Todos"
         value={props.defaultValue}
-        notFoundContent={"No se encontraron resultado."}
+        notFoundContent={"No se encontraron resultados."}
         filterOption={(input, option) =>
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }

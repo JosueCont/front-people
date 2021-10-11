@@ -73,7 +73,7 @@ class WebApi {
   static getJobSelect(data) {
     return WebApi.ApisType(`/person/job/?department=${data}`, "get");
   }
-  
+
   static filterPerson(data) {
     return WebApi.ApisType(`/person/person/get_list_persons/`, "post", data);
   }
@@ -150,7 +150,7 @@ class WebApi {
   }
 
   static getBank(data) {
-    return WebApi.ApisType(`/setup/bank/`, "get");
+    return WebApi.ApisType(`/setup/banks/`, "get");
   }
 
   static getBankAccount(data) {
@@ -179,6 +179,83 @@ class WebApi {
 
   static updateGeneralDataPerson(id, data) {
     return WebApi.ApisType(`/person/general-person/${id}/`, "put", data);
+  }
+
+  static getPersontype(data) {
+    return WebApi.ApisType(`/person/person-type/?node=${data}`, "get");
+  }
+
+  static getJobs(data) {
+    return WebApi.ApisType(`/person/job/?node=${data}`, "get");
+  }
+
+  static getCatalogs(model, data) {
+    return WebApi.ApisType(`/setup/${model}/?node=${data}`, "get");
+  }
+
+  static updateRegisterCatalogs(url, data) {
+    return WebApi.ApisType(url, "put", data);
+  }
+
+  static createRegisterCatalogs(url, data) {
+    return WebApi.ApisType(url, "post", data);
+  }
+
+  static deleteRegisterCatalogs(url, data) {
+    return WebApi.ApisType(url, "delete");
+  }
+
+  static getCfdi(data) {
+    return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
+  }
+
+  /*Payroll Person */
+  static createPayrollPerson(data) {
+    return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
+  }
+  static updatePayrollPerson(data) {
+    return WebApi.ApisType(`/payroll/payroll-person/${data.id}/`, "put", data);
+  }
+
+  static getContractTypes() {
+    return WebApi.ApisType(`/fiscal/contract-type/`, "get");
+  }
+
+  static getHiringRegimes() {
+    return WebApi.ApisType(`/fiscal/hiring-regime/`, "get");
+  }
+
+  static getTypeTax() {
+    return WebApi.ApisType(`/fiscal/type-tax/`, "get");
+  }
+
+  static getBanks() {
+    return WebApi.ApisType(`/fiscal/bank/`, "get");
+  }
+
+  static getPaymentCalendar(data) {
+    return WebApi.ApisType(`/payroll/payment-calendar/?node=${data}`, "get");
+  }
+
+  static getPaymentPeriodicity() {
+    return WebApi.ApisType(`/fiscal/periodicity/`, "get");
+  }
+
+  /** PaymentCalendar */
+  static createPaymentCalendar(data) {
+    return WebApi.ApisType(`/payroll/payment-calendar`, "post", data);
+  }
+
+  static updatePaymentCalendar(data) {
+    return WebApi.ApisType(
+      `/payroll/payment-calendar/${data.id}/`,
+      "put",
+      data
+    );
+  }
+
+  static getDetailPaymentCalendar(id) {
+    return WebApi.ApisType(`/payroll/payment-calendar/${id}`, "get");
   }
 }
 

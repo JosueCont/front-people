@@ -829,7 +829,7 @@ const personDetailForm = () => {
     Axios.delete(API_URL + `/person/phone/${data}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         setLoading(false);
@@ -1062,7 +1062,7 @@ const personDetailForm = () => {
     Axios.delete(API_URL + `/person/family/${data}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         setLoading(false);
@@ -1497,7 +1497,7 @@ const personDetailForm = () => {
     Axios.delete(API_URL + `/person/bank-account/${data}/`)
       .then((response) => {
         message.success({
-          content: "Eliminado con exito.",
+          content: "Eliminado con éxito.",
           className: "custom-class",
         });
         setLoading(false);
@@ -1645,7 +1645,7 @@ const personDetailForm = () => {
           <div>
             <Row gutter={16}>
               <Col className="gutter-row" offset={1}>
-                <a href={item.document}>
+                <a href={item.document} target="_blank">
                   <FileTextOutlined style={{ fontSize: "30px" }} />
                 </a>
               </Col>
@@ -1874,7 +1874,7 @@ const personDetailForm = () => {
                       <Col lg={7} xs={22} offset={1}>
                         <Row justify="center">
                           <Col lg={12} md={8} xs={24}>
-                            <Spin spinning={loadImge}>
+                            <Spin tip="Cargando..." spinning={loadImge}>
                               <div
                                 style={
                                   photo
@@ -1973,7 +1973,7 @@ const personDetailForm = () => {
                             options={departments}
                             onChange={onChangeDepartment}
                             placeholder="Departamento"
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -1982,7 +1982,7 @@ const personDetailForm = () => {
                           <Select
                             options={jobs}
                             placeholder="Puesto de trabajo"
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2022,7 +2022,7 @@ const personDetailForm = () => {
                         <Form.Item name="report_to" label="Reporta a ">
                           <Select
                             options={people}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2033,7 +2033,7 @@ const personDetailForm = () => {
                             showArrow
                             style={{ width: "100%" }}
                             placeholder="Perfiles de seguridad"
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2071,7 +2071,7 @@ const personDetailForm = () => {
                         <Form.Item name="civil_status" label="Estado Civil">
                           <Select
                             options={civilStatus}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2079,7 +2079,7 @@ const personDetailForm = () => {
                         <Form.Item name="gender" label="Género">
                           <Select
                             options={genders}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2103,7 +2103,7 @@ const personDetailForm = () => {
                           <Select
                             options={periodicity}
                             placeholder="Selecciona una opción"
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2209,7 +2209,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={typePhones}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2221,7 +2221,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={typeLines}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2300,7 +2300,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={typeStreet}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2392,7 +2392,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={relationship}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2436,7 +2436,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={genders}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2532,7 +2532,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={relationship}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>
@@ -2697,7 +2697,7 @@ const personDetailForm = () => {
                         >
                           <Select
                             options={banks}
-                            notFoundContent={"No se encontraron resultado."}
+                            notFoundContent={"No se encontraron resultados."}
                           />
                         </Form.Item>
                       </Col>

@@ -11,14 +11,13 @@ import {
 const { Text, Title } = Typography;
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { LOGIN_URL, APP_ID } from "../config/config";
 import Axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 
 const PasswordRecover = (props) => {
+  
   const router = useRouter();
-
   const [errorResponse, setErrorResponse] = useState(false);
   const [loading, setLoading] = useState(null);
   const [sendSuccess, setSendSuccess] = useState(false);
@@ -31,7 +30,7 @@ const PasswordRecover = (props) => {
     try {
       setLoading(true);
       const headers = {
-        "client-id": APP_ID,
+        "client-id": props.generalConfig.client_khonnect_id,
         "Content-Type": "application/json",
       };
       const data = {
@@ -40,7 +39,7 @@ const PasswordRecover = (props) => {
       };
       /* router.push({ pathname: "/home" }); */
       let response = await Axios.post(
-        LOGIN_URL + "/password/reset/token/",
+        props.generalConfig.url_server_khonnect + "/password/reset/token/",
         data,
         { headers: headers }
       );

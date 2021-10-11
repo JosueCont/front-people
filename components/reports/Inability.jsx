@@ -19,7 +19,7 @@ import {
   SearchOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../selects/SelectCollaborator";
 import SelectCompany from "../selects/SelectCompany";
 import SelectDepartment from "../selects/SelectDepartment";
 import Axios from "axios";
@@ -329,7 +329,7 @@ const InabilityReport = (props) => {
                     key="select"
                     options={optionStatus}
                     allowClear
-                    notFoundContent={"No se encontraron resultado."}
+                    notFoundContent={"No se encontraron resultados."}
                   />
                 </Form.Item>
               </Col>
@@ -403,7 +403,11 @@ const InabilityReport = (props) => {
             key="tableHolidays"
             loading={loading}
             columns={columns}
-            locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+            locale={{
+              emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
           ></Table>
         </Col>
       </Row>

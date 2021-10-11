@@ -14,7 +14,7 @@ import {
 } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import SelectCollaborator from "../selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../selects/SelectCollaborator";
 import details from "../../pages/holidays/[id]/details";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
@@ -205,7 +205,10 @@ const Lendingform = (props) => {
             labelAlign={"left"}
             rules={[ruleRequired]}
           >
-            <Select options={TypeOptions} allowClear notFoundContent={"No se encontraron resultado."}
+            <Select
+              options={TypeOptions}
+              allowClear
+              notFoundContent={"No se encontraron resultados."}
             />
           </Form.Item>
           <Form.Item
@@ -242,7 +245,10 @@ const Lendingform = (props) => {
             labelAlign={"left"}
             rules={[ruleRequired]}
           >
-            <Select options={periodicityOptions} notFoundContent={"No se encontraron resultado."} />
+            <Select
+              options={periodicityOptions}
+              notFoundContent={"No se encontraron resultados."}
+            />
           </Form.Item>
           <Form.Item
             name="periodicity_amount"

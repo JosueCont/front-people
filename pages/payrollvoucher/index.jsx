@@ -33,7 +33,7 @@ import moment from "moment";
 import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import BreadcrumbHome from "../../components/BreadcrumbHome";
-import SelectCollaborator from "../../components/selects/SelectCollaboratorItemForm";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 
 const { Dragger } = Upload;
@@ -304,7 +304,6 @@ const UploadPayroll = () => {
                     <Col>
                       <SelectDepartment
                         companyId={nodeId}
-                        onChange={changeDepartament}
                         key="SelectDepartment"
                       />
                     </Col>
@@ -364,7 +363,11 @@ const UploadPayroll = () => {
                   columns={columns}
                   dataSource={vouchers}
                   loading={loading}
-                  locale={{emptyText: loading ? "Cargando..." : "No se encontraron resultados."}}
+                  locale={{
+                    emptyText: loading
+                      ? "Cargando..."
+                      : "No se encontraron resultados.",
+                  }}
                   className={"mainTable"}
                 />
               </Col>

@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Breadcrumb, message, Typography, Card, Spin } from "antd";
 import useRouter from "next/router";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
-import { companySelected, companySelectedAxios } from "../../redux/UserDuck";
+import { companySelected, setUser } from "../../redux/UserDuck";
+import { doCompanySelectedCatalog } from "../../redux/catalogCompany";
 import WebApi from "../../api/webApi";
 import Clipboard from "../../components/Clipboard";
 
@@ -31,6 +30,14 @@ const SelectCompany = ({ ...props }) => {
     try {
       if (jwt) {
         let response = await WebApi.personForKhonnectId({ id: jwt.user_id });
+        props
+          .setUser()
+          .then((response) => {
+            if (!response) return;
+          })
+          .catch((error) => {
+            return;
+          });
         setAdmin(response.data.is_admin);
         sessionStorage.setItem("tok", response.data.id);
         if (response.data.is_admin) {
@@ -77,14 +84,10 @@ const SelectCompany = ({ ...props }) => {
     sessionStorage.setItem("image", item.image);
     let response = await props.companySelected(item.id);
     if (response) {
+      props.doCompanySelectedCatalog();
       useRouter.push("home");
     } else {
-      response = await props.companySelectedAxios(item.id);
-      if (response) {
-        useRouter.push("home");
-      } else {
-        message.error("Ocurrio un error, intente de nuevo.");
-      }
+      message.error("Ocurrio un error, intente de nuevo.");
     }
   };
 
@@ -93,16 +96,10 @@ const SelectCompany = ({ ...props }) => {
       {jwt && jwt.user_id ? (
         <MainLayout currentKey="8.5" hideMenu={true}>
           <Breadcrumb className={"mainBreadcrumb"}>
-            <Breadcrumb.Item
-              className={"pointer"}
-              onClick={() => useRouter.push({ pathname: "/home" })}
-            >
-              Inicio
-            </Breadcrumb.Item>
-            <Breadcrumb.Item>Empresas</Breadcrumb.Item>
+            <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>
           </Breadcrumb>
           <div className="container" style={{ width: "100%", padding: 20 }}>
-            <Spin spinning={loading}>
+            <Spin tip="Cargando..." spinning={loading}>
               <Row
                 gutter={[16, 16]}
                 style={{
@@ -131,9 +128,10 @@ const SelectCompany = ({ ...props }) => {
                             "/ac/urn/" +
                             item.permanent_code
                           }
+                          border={false}
                           type={"button"}
-                          message={"Copiado en porta papeles"}
-                          tooltipTitle={"Copiar"}
+                          msg={"Copiado en portapapeles"}
+                          tooltipTitle={"Copiar link de auto registro"}
                         />,
                       ]}
                     >
@@ -165,6 +163,8 @@ const mapState = (state) => {
   return { config: state.userStore.general_config };
 };
 
-export default connect(mapState, { companySelected, companySelectedAxios })(
-  SelectCompany
-);
+export default connect(mapState, {
+  companySelected,
+  doCompanySelectedCatalog,
+  setUser,
+})(SelectCompany);

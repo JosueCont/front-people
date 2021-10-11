@@ -13,7 +13,7 @@ import {
   Switch,
 } from "antd";
 import Axios from "axios";
-import { API_URL, APP_ID, LOGIN_URL } from "../../config/config";
+import { API_URL } from "../../config/config";
 import { useState, useEffect } from "react";
 import {
   getAccessIntranet,
@@ -23,8 +23,16 @@ import {
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
+import { ruleEmail } from "../../utils/constant";
+import moment from "moment";
+import { getPeopleCompany } from "../../redux/UserDuck";
+import SelectGroup from "../selects/SelectGroup";
+import SelectJob from "../selects/SelectJob";
+import SelectDepartment from "../selects/SelectDepartment";
+import SelectPersonType from "../selects/SelectPersonType";
 
 const FormPerson = ({
+  config = null,
   hideProfileSecurity = true,
   intranetAccess = true,
   node = null,
@@ -72,14 +80,14 @@ const FormPerson = ({
 
   const getValueSelects = async (id) => {
     const headers = {
-      "client-id": APP_ID,
+      "client-id": config.client_khonnect_id,
       "Content-Type": "application/json",
     };
 
     let company = `?company=${node}`;
 
     /////PERMSS GROUPS
-    Axios.get(LOGIN_URL + "/group/list/" + company, {
+    Axios.get(config.url_server_khonnect + "/group/list/" + company, {
       headers: headers,
     })
       .then((response) => {
@@ -118,6 +126,7 @@ const FormPerson = ({
         setPerson(response.data.person);
         sessionStorage.setItem("tok", response.data.person.id);
       }
+      props.getPeopleCompany(node);
       message.success("Agregado correctamente");
       form.resetFields();
       props.close(false);
@@ -146,11 +155,6 @@ const FormPerson = ({
       value: 3,
     },
   ];
-
-  const ruleEmail = {
-    type: "email",
-    message: "Ingrese un correo electronico valido",
-  };
 
   function onChange(date, dateString) {
     setDate(dateString);
@@ -228,9 +232,7 @@ const FormPerson = ({
           >
             <Row>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="person_type">
-                  <Select options={personType} placeholder="Tipo de persona" />
-                </Form.Item>
+                <SelectPersonType />
               </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleRequired]}>
@@ -238,18 +240,14 @@ const FormPerson = ({
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="person_department">
-                  <Select
-                    options={departments}
-                    onChange={onChangeDepartment}
-                    placeholder="Departamento"
-                  />
-                </Form.Item>
+                <SelectDepartment
+                  titleLabel={false}
+                  name="person_department"
+                  style={false}
+                />
               </Col>
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="job">
-                  <Select options={jobs} placeholder="Puesto de trabajo" />
-                </Form.Item>
+                <SelectJob titleLabel={false} name="job" style={false} />
               </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleRequired]} name="first_name">
@@ -288,7 +286,15 @@ const FormPerson = ({
               </Col>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
-                  <Input type="email" placeholder="E-mail" />
+                  <Input
+                    type="email"
+                    placeholder="E-mail"
+                    onBlur={(value) =>
+                      form.setFieldsValue({
+                        email: value.target.value.toLowerCase(),
+                      })
+                    }
+                  />
                 </Form.Item>
               </Col>
               <Col lg={7} xs={22} offset={1}>
@@ -337,6 +343,7 @@ const FormPerson = ({
                   <DatePicker
                     style={{ width: "100%" }}
                     onChange={onChangeIngPlatform}
+                    defaultValue={moment()}
                     moment={"YYYY-MM-DD"}
                     placeholder="Fecha de ingreso a la plataforma"
                   />
@@ -344,14 +351,7 @@ const FormPerson = ({
               </Col>
               {/* {hideProfileSecurity && ( */}
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item rules={[ruleRequired]} name="groups">
-                  <Select
-                    options={groups}
-                    showArrow
-                    style={{ width: "100%" }}
-                    placeholder="Perfiles de seguridad"
-                  ></Select>
-                </Form.Item>
+                <SelectGroup />
               </Col>
               <Col lg={22} xs={22} offset={1}>
                 <Form.Item labelAlign="right">
@@ -371,4 +371,8 @@ const FormPerson = ({
   );
 };
 
-export default FormPerson;
+const mapState = (state) => {
+  return {};
+};
+
+export default connect(mapState, { getPeopleCompany })(FormPerson);

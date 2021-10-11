@@ -2,20 +2,23 @@ import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import { connect } from "react-redux";
 
-export default function SelectDepartment({ item = true, ...props }) {
+const SelectDepartment = ({
+  disabled,
+  titleLabel = true,
+  rules = [],
+  companyId,
+  ...props
+}) => {
   const [options, setOptions] = useState([]);
-  const [companyId, setCompanyId] = useState(props.companyId);
 
   const { Option } = Select;
 
-  const getDepartament = async () => {
-    try {
-      let response = await Axios.get(
-        API_URL + `/business/node/${props.companyId}/department_for_node/`
-      );
-      let data = response.data;
-      data = data.map((item) => {
+  useEffect(() => {
+    setOptions([]);
+    if (props.cat_departments) {
+      let data = props.cat_departments.map((item) => {
         return {
           value: item.id,
           label: item.name,
@@ -23,48 +26,36 @@ export default function SelectDepartment({ item = true, ...props }) {
         };
       });
       setOptions(data);
-    } catch (error) {
-      console.log(error);
     }
-  };
-
-  useEffect(() => {
-    setOptions([]);
-    if (props.companyId) {
-      getDepartament();
-    }
-  }, [props.companyId]);
+  }, [props.cat_departments]);
 
   return (
     <>
-      {item ? (
-        <Form.Item
-          key="ItemDepartment"
-          name={props.name ? props.name : "department"}
-          label="Departamento"
-        >
-          <Select
-            key="SelectDepartament"
-            style={props.style ? props.style : { width: 150 }}
-            options={options}
-            allowClear
-            onChange={props.onChange ? props.onChange : null}
-            notFoundContent={"No se encontraron resultado."}
-          />
-        </Form.Item>
-      ) : (
+      <Form.Item
+        key="ItemDepartment"
+        name={props.name ? props.name : "department"}
+        label={titleLabel ? "Departamento" : ""}
+        rules={rules}
+      >
         <Select
+          disabled={disabled}
           key="SelectDepartament"
-          // style={props.style ? props.style : { width: 150 }}
           options={options}
+          placeholder="Departamento"
           allowClear
+          style={props.style ? props.style : {}}
           onChange={props.onChange ? props.onChange : null}
-          notFoundContent={"No se encontraron resultado."}
+          notFoundContent={"No se encontraron resultados."}
         />
-      )}
+      </Form.Item>
     </>
   );
-  /* return (
-              <Select key="SelectDepartament" style={{ width:150 }} options={options} onChange={props.onchange ? props.onChange : null} allowClear />
-      ) */
-}
+};
+
+const mapState = (state) => {
+  return {
+    cat_departments: state.catalogStore.cat_departments,
+  };
+};
+
+export default connect(mapState)(SelectDepartment);

@@ -5,7 +5,7 @@ import CardApps from "./CardApps";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Cookie from "js-cookie";
-import { getAccessIntranet, logoutAuth } from "../libs/auth";
+import { logoutAuth } from "../libs/auth";
 import { FormattedMessage } from "react-intl";
 import { css, Global } from "@emotion/core";
 import { connect } from "react-redux";
@@ -29,17 +29,22 @@ const headerCustom = ({
   const [logOut, setLogOut] = useState(false);
   const [primaryColor, setPrimaryColor] = useState(null);
   const [secondaryColor, setSecondaryColor] = useState(null);
-  let accessIntranet = getAccessIntranet();
+  const [intranet_access, setintanetAccess] = useState(null);
 
   useEffect(() => {
     getPerson();
   }, []);
 
+  useEffect(() => {
+    if (props.config) {
+      setintanetAccess(props.config.intranet_enabled);
+    }
+  }, [props.config]);
+
   const getPerson = async () => {
     try {
       const user = JSON.parse(Cookie.get("token"));
       let response = await WebApi.personForKhonnectId({ id: user.user_id });
-      let company = props.companySelected(response.data.node);
       if (!response.data.photo) response.data.photo = defaulPhoto;
       let personName =
         response.data.first_name + " " + response.data.flast_name;
@@ -49,7 +54,6 @@ const headerCustom = ({
       setPerson(response.data);
     } catch (error) {
       setPerson({ photo: defaulPhoto });
-      console.log(error);
     }
   };
 
@@ -58,7 +62,7 @@ const headerCustom = ({
       setPrimaryColor(props.config.concierge_primary_color);
       setSecondaryColor(props.config.concierge_primary_color);
     }
-  }, []);
+  }, [props.config]);
 
   const actionEvent = (data) => {
     setModalLogOut(data);
@@ -162,7 +166,12 @@ const headerCustom = ({
             style={{ paddingRight: "48px" }}
           >
             <div
-              onClick={() => onClickImage && router.push({ pathname: "/home" })}
+              onClick={() =>
+                onClickImage &&
+                person.nodes &&
+                props.currentNode &&
+                router.push({ pathname: "/home" })
+              }
               className="logo"
               key="content_logo"
               style={{
@@ -305,6 +314,30 @@ const headerCustom = ({
                     >
                       Recibos de nómina
                     </Menu.Item>
+                    {props.config && props.config.nomina_enabled && (
+                      <>
+                        <Menu.Item
+                          key="9.3"
+                          onClick={() =>
+                            router.push({
+                              pathname: "/payroll/assimilatedSalary",
+                            })
+                          }
+                        >
+                          Salario asimilado
+                        </Menu.Item>
+                        <Menu.Item
+                          key="9.4"
+                          onClick={() =>
+                            router.push({
+                              pathname: "/payroll/paymentCalendar",
+                            })
+                          }
+                        >
+                          Calendario de pagos
+                        </Menu.Item>
+                      </>
+                    )}
                   </SubMenu>
 
                   <Menu.Item
@@ -316,7 +349,7 @@ const headerCustom = ({
                     Asignar empresa
                   </Menu.Item>
 
-                  {accessIntranet !== "false" && (
+                  {intranet_access && (
                     <SubMenu
                       key="11"
                       title={<FormattedMessage id="header.intranet" />}
@@ -338,6 +371,30 @@ const headerCustom = ({
                         <FormattedMessage id="header.config" />
                       </Menu.Item>
                     </SubMenu>
+                  )}
+                  <SubMenu key="12" title="Registro de errores">
+                    <Menu.Item
+                      key="12.1"
+                      onClick={() => router.push({ pathname: "/bulk_upload" })}
+                    >
+                      Carga masiva de personas
+                    </Menu.Item>
+                    <Menu.Item
+                      key="12.2"
+                      onClick={() =>
+                        router.push({ pathname: "/log/documentsLog" })
+                      }
+                    >
+                      Carga de documentos
+                    </Menu.Item>
+                  </SubMenu>
+                  {props.config && props.config.kuiz_enabled && (
+                    <Menu.Item
+                      key="13"
+                      onClick={() => router.push({ pathname: "/assessment" })}
+                    >
+                      Encuestas
+                    </Menu.Item>
                   )}
                 </>
               ) : null}

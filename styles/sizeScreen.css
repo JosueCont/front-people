@@ -1,0 +1,22 @@
+/* style={{
+            marginTop: "-30px",
+            minHeight: "calc(100vh - 134px)",
+            padding: "30px 50px",
+          }} */
+.div-main-layout {
+  margin-top: -30px;
+  min-height: calc(100vh - 134px);
+  padding: 30px 50px;
+}
+
+@media screen and (min-width: 300px) and (max-width: 400px) {
+  .div-main-layout {
+    padding: 5px 5px;
+  }
+  .button-filter-person {
+    padding: 5px;
+  }
+  .margin-buton-search {
+    margin: 5px;
+  }
+}
