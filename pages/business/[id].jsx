@@ -60,6 +60,8 @@ const ConfigCompany = (...props) => {
     }
   }, [router.query.id]);
 
+  useEffect(() => {}, [props[0].config]);
+
   const onFinish = (data) => {
     data.node = company.id;
     setLoading(true);

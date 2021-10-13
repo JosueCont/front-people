@@ -44,7 +44,7 @@ const TaxInformationForm = ({ node_id }) => {
     getCountries();
     getTaxRegime();
     getFiscalInfotmation(node_id);
-  }, []);
+  }, [node_id]);
 
   useEffect(() => {
     if (pTypeSelected == 1) {
@@ -189,6 +189,7 @@ const TaxInformationForm = ({ node_id }) => {
     Axios.get(API_URL + `/business/fiscal-information/?node__id=${node_id}`)
       .then((response) => {
         if (response.status === 200) {
+          console.log("Data", response.data);
           if (response.data) {
             let info = response.data;
             getStates(info.country);
@@ -354,12 +355,12 @@ const TaxInformationForm = ({ node_id }) => {
               </Col>
               <Col lg={6} xs={22} offset={1}>
                 <Form.Item name="suburb" label="Suburbio">
-                  <Input maxLength={10} />
+                  <Input maxLength={100} />
                 </Form.Item>
               </Col>
               <Col lg={6} xs={22} offset={1}>
                 <Form.Item name="street" label="Calle" rules={[ruleRequired]}>
-                  <Input maxLength={10} />
+                  <Input maxLength={35} />
                 </Form.Item>
               </Col>
               <Col lg={6} xs={22} offset={1}>

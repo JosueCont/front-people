@@ -42,10 +42,10 @@ const FormPaymentCalendar = ({
 
   useEffect(() => {
     getTypeTax();
-    if (title === "Editar") {
+    if (idPaymentCalendar) {
       getPaymentCalendar();
     }
-  }, [title]);
+  }, [idPaymentCalendar]);
 
   const getTypeTax = async () => {
     try {
@@ -75,6 +75,11 @@ const FormPaymentCalendar = ({
           end_incidence: item.end_incidence,
           adjustment: item.adjustment ? item.adjustment : false,
           active: item.active ? item.active : false,
+          pay_before: item.pay_before ? item.pay_before : 0,
+          payment_saturday: item.payment_saturday
+            ? item.payment_saturday
+            : false,
+          payment_sunday: item.payment_sunday ? item.payment_sunday : false,
         });
         setStartDate(item.start_date);
         setPeriod(item.period);
@@ -121,6 +126,13 @@ const FormPaymentCalendar = ({
   };
   const formFinish = (value) => {
     value.node = parseInt(nodeId);
+    value.active = value.active ? value.active : false;
+    value.adjustment = value.adjustment ? value.adjustment : false;
+    value.pay_before = value.pay_before ? value.pay_before : 0;
+    value.payment_saturday = value.payment_saturday
+      ? value.payment_saturday
+      : false;
+    value.payment_sunday = value.payment_sunday ? value.payment_sunday : false;
     if (startDate) {
       value.start_date = startDate;
     }
@@ -129,18 +141,22 @@ const FormPaymentCalendar = ({
     }
     if (value.start_incidence) {
       value.start_incidence = parseInt(value.start_incidence);
+    } else {
+      value.start_incidence = 0;
     }
     if (value.end_incidence) {
       value.end_incidence = parseInt(value.end_incidence);
+    } else {
+      value.end_incidence = 0;
     }
 
     if (idPaymentCalendar) {
       value.id = idPaymentCalendar;
       updatePaymentCalendar(value);
     } else {
-      console.log("Values form", value);
       savePaymentCalendar(value);
     }
+    // console.log("Values form", value);
   };
 
   return (
@@ -204,7 +220,20 @@ const FormPaymentCalendar = ({
             <Col lg={6} xs={22} offset={1}>
               <Form.Item
                 name="start_date"
-                label="Inicio de fecha de pago"
+                label="Inicio de calendario"
+                rules={[ruleRequired]}
+              >
+                <DatePicker
+                  style={{ width: "100%" }}
+                  onChange={onChangeLastDayPaid}
+                  moment={"YYYY-MM-DD"}
+                />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="activation_date"
+                label="Fecha de activación"
                 rules={[ruleRequired]}
               >
                 <DatePicker
@@ -249,6 +278,39 @@ const FormPaymentCalendar = ({
             </Col>
             <Col lg={6} xs={22} offset={1}>
               <Form.Item name="active" label="¿Activo?" valuePropName="checked">
+                <Switch
+                  checkedChildren={<CheckOutlined />}
+                  unCheckedChildren={<CloseOutlined />}
+                />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="pay_before"
+                label="Pagar antes?"
+                rules={[onlyNumeric]}
+              >
+                <Input maxLength={10} />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="payment_saturday"
+                label="Pago en sábado?"
+                valuePropName="checked"
+              >
+                <Switch
+                  checkedChildren={<CheckOutlined />}
+                  unCheckedChildren={<CloseOutlined />}
+                />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="payment_sunday"
+                label="Pago en domingo?"
+                valuePropName="checked"
+              >
                 <Switch
                   checkedChildren={<CheckOutlined />}
                   unCheckedChildren={<CloseOutlined />}
