@@ -65,8 +65,8 @@ class WebApi {
 
   static updatePaymentCalendar(data) {
     return WebApi.ApisType(
-      `/payroll/payment-calendar/${data.id}/`,
-      "put",
+      `/payroll/payment-calendar/payment_calendar/`,
+      "post",
       data
     );
   }

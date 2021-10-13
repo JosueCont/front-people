@@ -1,0 +1,13 @@
+/*Estilos calendario*/
+.calendar_custom .rdrDateDisplayWrapper {
+    display: none;
+  }
+  .calendar_custom .rdrDefinedRangesWrapper {
+    display: none;
+  }
+  .calendar_custom .rdrMonths {
+    flex-wrap: wrap;
+  }
+  .calendar_custom .rdrNextPrevButton {
+    display: none;
+  }
