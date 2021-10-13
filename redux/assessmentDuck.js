@@ -122,7 +122,6 @@ export const assessmentLoadAction = () => {
         `${API_ASSESSMENT}/assessments/assessment/?companies=${nodeId}`
       );
       dispatch({ type: types.LOAD_ASSESSMENTS, payload: response.data });
-      console.log("RESONSE::", response);
     } catch (e) {
       dispatch({ type: types.FETCHING, payload: false });
       console.error(e.name + ": " + e.message);
@@ -240,7 +239,6 @@ export const questionOrderAction = (method, item) => {
         }
       );
       let questions = _.orderBy(questions_, ["order"], ["asc"]);
-      console.log("QUESTIONS::", questions);
       dispatch({ type: types.LOAD_NEW_QUESTIONS, payload: questions });
       return true;
     } catch (e) {
@@ -303,7 +301,6 @@ export const assessmentCreateAction = (data) => {
         data
       );
       dispatch({ type: types.CREATE_ASSESSMENTS, payload: response.data });
-      console.log("RESONSE::", response);
       return true;
     } catch (e) {
       dispatch({ type: types.FETCHING, payload: false });
@@ -377,7 +374,6 @@ export const sectionCreateAction = (data) => {
         data
       );
       dispatch({ type: types.CREATE_SECTIONS, payload: response.data });
-      console.log("RESONSE::", response);
       return true;
     } catch (e) {
       dispatch({ type: types.FETCHING, payload: false });
@@ -451,7 +447,6 @@ export const questionUpdateAction = (id, data) => {
         data
       );
       dispatch({ type: types.UPDATE_QUESTIONS, payload: response.data });
-      console.log("RESPONSE UPDATE::", response);
       return true;
     } catch (e) {
       dispatch({ type: types.FETCHING, payload: false });
