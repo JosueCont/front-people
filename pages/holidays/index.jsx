@@ -59,7 +59,7 @@ const Holidays = ({ ...props }) => {
   ) => {
     setLoading(true);
     try {
-      let url = `person__node__id1  =${props.currentNode.id}`;
+      let url = `person__node__id=${props.currentNode.id}`;
       if (collaborator) {
         url += `&person__id=${collaborator}`;
       }
@@ -67,7 +67,7 @@ const Holidays = ({ ...props }) => {
         url += `&status=${status}&`;
       }
       if (department) {
-        url += `&person__department=${department}`;
+        url += `&person__person_department__id=${department}`;
       }
 
       let response = await WebApi.getVacationRequest(url);
@@ -173,6 +173,7 @@ const Holidays = ({ ...props }) => {
                           key="select"
                           options={optionStatus}
                           allowClear
+                          placeholder="Estatus"
                           notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
