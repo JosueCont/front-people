@@ -257,6 +257,10 @@ class WebApi {
   static getDetailPaymentCalendar(id) {
     return WebApi.ApisType(`/payroll/payment-calendar/${id}`, "get");
   }
+
+  static getVacationRequest(data) {
+    return WebApi.ApisType(`/person/vacation/?${data}`, "get");
+  }
 }
 
 export default WebApi;

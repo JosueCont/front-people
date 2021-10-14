@@ -26,8 +26,10 @@ import {
 } from "@ant-design/icons";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from "react-redux";
+import WebApi from "../../api/webApi";
 
-const Holidays = () => {
+const Holidays = ({ ...props }) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -37,7 +39,6 @@ const Holidays = () => {
 
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [departament, setDepartament] = useState(null);
   const [permissions, setPermissions] = useState({});
   let nodeId = userCompanyId();
 
@@ -58,18 +59,18 @@ const Holidays = () => {
   ) => {
     setLoading(true);
     try {
-      let url = `/person/vacation/?person__job__department__node__id=${nodeId}&`;
+      let url = `person__node__id=${props.currentNode.id}`;
       if (collaborator) {
-        url += `person__id=${collaborator}&`;
+        url += `&person__id=${collaborator}`;
       }
       if (status) {
-        url += `status=${status}&`;
+        url += `&status=${status}&`;
       }
       if (department) {
-        url += `person__job__department__id=${department}&`;
+        url += `&person__person_department__id=${department}`;
       }
 
-      let response = await Axios.get(API_URL + url);
+      let response = await WebApi.getVacationRequest(url);
       let data = response.data.results;
       data.map((item, index) => {
         item.key = index;
@@ -94,19 +95,13 @@ const Holidays = () => {
     getAllHolidays(values.collaborator, values.department, values.status);
   };
 
-  /* Eventos de componentes */
-  const onChangeCompany = (val) => {
-    form.setFieldsValue({
-      department: null,
-    });
-    setCompanyId(val);
-  };
-
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
-    getAllHolidays();
-  }, [route]);
+    if (props.currentNode) {
+      getAllHolidays();
+    }
+  }, [route, props.currentNode]);
 
   const searchPermissions = (data) => {
     const perms = {};
@@ -126,7 +121,6 @@ const Holidays = () => {
   const resetFilter = () => {
     form.resetFields();
     getAllHolidays();
-    getAllPersons();
   };
 
   return (
@@ -179,6 +173,7 @@ const Holidays = () => {
                           key="select"
                           options={optionStatus}
                           allowClear
+                          placeholder="Estatus"
                           notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
@@ -331,4 +326,10 @@ const Holidays = () => {
   );
 };
 
-export default withAuthSync(Holidays);
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(withAuthSync(Holidays));
