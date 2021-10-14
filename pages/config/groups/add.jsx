@@ -32,7 +32,6 @@ const { Title } = Typography;
 const { TabPane } = Tabs;
 
 const GroupAdd = (...props) => {
-  
   const [form] = Form.useForm();
   const router = useRouter();
   const [loading, setLoading] = useState(null);
@@ -44,8 +43,8 @@ const GroupAdd = (...props) => {
   const [instruction, setInstruction] = useState(true);
   let nodeId = userCompanyId();
 
-  const headers = {
-    "client-id": props[0].config.client_khonnect_id,
+  let headers = {
+    "client-id": "",
     "Content-Type": "application/json",
   };
 
@@ -360,14 +359,30 @@ const GroupAdd = (...props) => {
 
   useEffect(() => {
     const { id } = router.query;
-    if (id !== undefined) {
+    if (id !== undefined && props[0].config && edit == false) {
       getGroup(id);
       setEdit(true);
     } else {
       setEdit(false);
       //   setMostrar(true);
     }
-  }, []);
+  }, [router.query.id]);
+
+  useEffect(() => {
+    console.log("Props", props);
+    if (props[0].config) {
+      headers["client-id"] = props[0].config.client_khonnect_id;
+    }
+    const { id } = router.query;
+    if (id !== undefined && props[0].config && edit == false) {
+      getGroup(id);
+      setEdit(true);
+    } else {
+      setEdit(false);
+      //   setMostrar(true);
+    }
+    console.log("HEaders", headers);
+  }, [props[0].config]);
 
   function handleClick(e) {
     // if (getperms == false) {

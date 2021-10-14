@@ -156,7 +156,10 @@ const TaxInformationForm = ({ node_id }) => {
     data.append("person_type", value.person_type);
     data.append("curp", value.curp);
     data.append("rfc", value.rfc);
-    data.append("assimilated_pay", value.assimilated_pay);
+    data.append(
+      "assimilated_pay",
+      value.assimilated_pay ? value.assimilated_pay : false
+    );
     data.append("suburb", value.suburb);
     data.append("street", value.street);
     data.append("interior_number", value.interior_number);
