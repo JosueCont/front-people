@@ -43,10 +43,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
   const [birthDate, setBirthDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
-  const [groups, setGroups] = useState([]);
   const [hideProfileSecurity, setHideProfileSecrity] = useState(true);
-  const [people, setPeople] = useState(null);
-  const [personType, setPersonType] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -128,7 +125,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
     value.is_active = isActive;
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
-    if (value.groups && value.groups != "") value.groups = [value.groups];
+    if (value.groups && value.groups != "") value.groups = value.groups;
     updatePerson(value);
   };
 
