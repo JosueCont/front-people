@@ -50,6 +50,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
     setFormPerson(person);
     getGroupPerson(config, person.khonnect_id)
       .then((response) => {
+        console.log("Perfil", response);
         formPerson.setFieldsValue({
           groups: response,
         });

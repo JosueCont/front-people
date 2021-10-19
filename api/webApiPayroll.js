@@ -74,6 +74,29 @@ class WebApi {
   static getDetailPaymentCalendar(id) {
     return WebApi.ApisType(`/payroll/payment-calendar/${id}`, "get");
   }
+
+  static getPersonsCalendar(id) {
+    return WebApi.ApisType(
+      `/payroll/payment-calendar/${id}/person_calendar/`,
+      "get"
+    );
+  }
+
+  static getPerseptions() {
+    return WebApi.ApisType(`/fiscal/perception-type/`, "get");
+  }
+
+  static getDeductions() {
+    return WebApi.ApisType(`/fiscal/deduction-type/`, "get");
+  }
+
+  static getOtherPayments() {
+    return WebApi.ApisType(`/fiscal/other-payment-type/`, "get");
+  }
+
+  static payrollFacturama(data) {
+    return WebApi.ApisType(`/payroll/payrrol-facturama`, "post", data);
+  }
 }
 
 export default WebApi;

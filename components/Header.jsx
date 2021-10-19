@@ -336,6 +336,16 @@ const headerCustom = ({
                         >
                           Calendario de pagos
                         </Menu.Item>
+                        <Menu.Item
+                          key="9.5"
+                          onClick={() =>
+                            router.push({
+                              pathname: "/payroll/stampPayroll",
+                            })
+                          }
+                        >
+                          Timbrar nomina
+                        </Menu.Item>
                       </>
                     )}
                   </SubMenu>

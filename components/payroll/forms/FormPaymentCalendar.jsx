@@ -38,6 +38,7 @@ const FormPaymentCalendar = ({
   const [typeTax, setTypeTax] = useState([]);
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState("");
+  const [activationDate, setActivationtDate] = useState("");
   const [period, setPeriod] = useState("");
 
   useEffect(() => {
@@ -80,6 +81,7 @@ const FormPaymentCalendar = ({
             ? item.payment_saturday
             : false,
           payment_sunday: item.payment_sunday ? item.payment_sunday : false,
+          activation_date: item.activation_date,
         });
         setStartDate(item.start_date);
         setPeriod(item.period);
@@ -120,6 +122,9 @@ const FormPaymentCalendar = ({
   const onChangeLastDayPaid = (date, dateString) => {
     setStartDate(dateString);
   };
+  const onChangeActivationDate = (date, dateString) => {
+    setActivationtDate(dateString);
+  };
 
   const onChangePeriod = (date, dateString) => {
     setPeriod(dateString);
@@ -136,6 +141,7 @@ const FormPaymentCalendar = ({
     if (startDate) {
       value.start_date = startDate;
     }
+    value.activation_date = activationDate !== "" ? activationDate : "";
     if (period) {
       value.period = parseInt(period);
     }
@@ -172,13 +178,8 @@ const FormPaymentCalendar = ({
         >
           <Row style={{ marginBottom: 20 }}>
             <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="name"
-                label="Nombre"
-                maxLength={13}
-                rules={[ruleRequired]}
-              >
-                <Input maxLength={10} />
+              <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
+                <Input />
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
@@ -231,11 +232,7 @@ const FormPaymentCalendar = ({
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="activation_date"
-                label="Fecha de activación"
-                rules={[ruleRequired]}
-              >
+              <Form.Item name="activation_date" label="Fecha de activación">
                 <DatePicker
                   style={{ width: "100%" }}
                   onChange={onChangeLastDayPaid}
