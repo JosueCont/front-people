@@ -32,6 +32,8 @@ const { Title } = Typography;
 const { TabPane } = Tabs;
 
 const GroupAdd = (...props) => {
+
+  console.log("props de add ->>>>>>>>>", props[0].config);
   
   const [form] = Form.useForm();
   const router = useRouter();
@@ -42,7 +44,15 @@ const GroupAdd = (...props) => {
   const [permsFunction, setPermsFunction] = useState([]);
   const [arrayFunctions, setarrayFunctios] = useState([]);
   const [instruction, setInstruction] = useState(true);
+  const [intranet_access, setintanetAccess] = useState(null);
   let nodeId = userCompanyId();
+
+  // Obtener estado de acceso a intranet
+  useEffect(() => {
+    if(props && props[0] && props[0].config){
+      setintanetAccess(props[0].config.intranet_enabled);
+    }
+  },[props])
 
   const headers = {
     "client-id": props[0].config.client_khonnect_id,
@@ -222,6 +232,12 @@ const GroupAdd = (...props) => {
       name: "Descargar reporte de permisos",
       module: "Reportes",
       value: "people.report.function.export_permits",
+    },
+    // Acceso a dashboard
+    {
+      name:"Acceso estadísticas intranet",
+      module: "Dashboard",
+      value: "intranet.dashboard.function.statistics"
     },
   ];
   let data = {};
@@ -779,23 +795,44 @@ const GroupAdd = (...props) => {
                             />
                           </Col>
                           <Col xl={12} md={12} sm={24} xs={24}>
-                            <Table
-                              pagination={false}
-                              className={"mainTable"}
-                              id="tableperms"
-                              key="4"
-                              size="small"
-                              columns={columns_functions}
-                              dataSource={view_functions.filter(
-                                (perm) =>
-                                  perm.module === "Reportes" ||
-                                  perm.module === "Incapacidad" ||
-                                  perm.module === "Permisos"
+                            {intranet_access ? (
+                              <Table
+                                pagination={false}
+                                className={"mainTable"}
+                                id="tableperms"
+                                key="4"
+                                size="small"
+                                columns={columns_functions}
+                                dataSource={view_functions.filter(
+                                  (perm) =>
+                                    perm.module === "Reportes" ||
+                                    perm.module === "Incapacidad" ||
+                                    perm.module === "Permisos" || 
+                                    perm.module === "Dashboard"
+                                )}
+                                locale={{
+                                  emptyText: "No se encontraron resultados.",
+                                }}
+                              />
+                              ) : (
+                                <Table
+                                  pagination={false}
+                                  className={"mainTable"}
+                                  id="tableperms"
+                                  key="4"
+                                  size="small"
+                                  columns={columns_functions}
+                                  dataSource={view_functions.filter(
+                                    (perm) =>
+                                      perm.module === "Reportes" ||
+                                      perm.module === "Incapacidad" ||
+                                      perm.module === "Permisos"
+                                  )}
+                                  locale={{
+                                    emptyText: "No se encontraron resultados.",
+                                  }}
+                                />
                               )}
-                              locale={{
-                                emptyText: "No se encontraron resultados.",
-                              }}
-                            />
                           </Col>
                         </Row>
                       </Col>
