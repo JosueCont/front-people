@@ -72,6 +72,7 @@ export const doCompanySelectedCatalog =
   (data) => async (dispatch, getState) => {
     try {
       if (!data) data = userCompanyId();
+      console.log("DATA--> ", data);
       if (data) {
         dispatch(getRelationship(data));
         dispatch(getBanks(data));
@@ -192,15 +193,16 @@ export const getPersonType = (data) => async (dispatch, getState) => {
 export const getProfileGroups = (data) => async (dispatch, getState) => {
   try {
     let response = await getGroups(data);
+    console.log("Groups--<> ", response);
     if (response) dispatch({ type: PROFILE_GROUP, payload: response });
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getPeopleCompany = () => async (dispatch, getState) => {
+export const getPeopleCompany = (data) => async (dispatch, getState) => {
   try {
-    let data = await userCompanyId();
+    console.log(data);
     let response = await WebApi.filterPerson({ node: data });
     let people = response.data.map((a, i) => {
       return {
