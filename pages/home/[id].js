@@ -8,7 +8,7 @@ import MainLayout from "../../layout/MainLayout";
 import { Content } from "antd/lib/layout/layout";
 import { connect } from "react-redux";
 
-const EmployeeDetailPage = ( ...props) => {
+const EmployeeDetailPage = (...props) => {
   const router = useRouter();
   const [person, setPerson] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,11 @@ const EmployeeDetailPage = ( ...props) => {
             <Breadcrumb.Item>Expediente de empleado</Breadcrumb.Item>
           </Breadcrumb>
           {person ? (
-            <DetailPerson config={props[0].config} person={person} setLoading={setLoading} />
+            <DetailPerson
+              config={props[0].config}
+              person={person}
+              setLoading={setLoading}
+            />
           ) : (
             <div className="center-content" style={{ padding: "20%" }}>
               <Spin tip="Cargando..." spinning={true} />

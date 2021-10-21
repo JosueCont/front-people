@@ -589,7 +589,7 @@ const configBusiness = ({ ...props }) => {
           message.error(messageError);
         });
     } catch (error) {
-      console.log("Error de-> ", error);
+      console.log(error);
     }
   };
 

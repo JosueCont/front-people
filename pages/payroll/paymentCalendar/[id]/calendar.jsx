@@ -71,12 +71,9 @@ const Calendars = () => {
           color: "red",
         });
       });
-      console.log("Data source", dataSource);
       setDataSource(dataSource);
-      console.log("Data", data);
     } catch (e) {
       console.log(e);
-    } finally {
     }
   };
 

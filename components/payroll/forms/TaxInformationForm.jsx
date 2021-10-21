@@ -192,7 +192,6 @@ const TaxInformationForm = ({ node_id }) => {
     Axios.get(API_URL + `/business/fiscal-information/?node__id=${node_id}`)
       .then((response) => {
         if (response.status === 200) {
-          console.log("Data", response.data);
           if (response.data) {
             let info = response.data;
             getStates(info.country);
