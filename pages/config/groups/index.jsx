@@ -50,7 +50,7 @@ const Groups = ({ ...props }) => {
     else company = `&company=${props.currentNode.id}`;
 
     Axios.get(
-      props.config.url_server_khonnect + `group/list/` + name + company,
+      props.config.url_server_khonnect + `/group/list/` + name + company,
       {
         headers: headers,
       }

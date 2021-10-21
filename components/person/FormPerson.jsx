@@ -64,6 +64,8 @@ const FormPerson = ({
     }
     if (dateIngPlatform !== "") {
       value.register_date = dateIngPlatform;
+    } else {
+      value.register_date = moment().format("YYYY-MM-DD");
     }
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
@@ -339,7 +341,7 @@ const FormPerson = ({
                 </Col>
               )}
               <Col lg={7} xs={22} offset={1}>
-                <Form.Item>
+                <Form.Item name="register_date">
                   <DatePicker
                     style={{ width: "100%" }}
                     onChange={onChangeIngPlatform}
