@@ -3,7 +3,6 @@ import MainLayout from "../../layout/MainLayout";
 import {
   Row,
   Col,
-  Table,
   Breadcrumb,
   Button,
   Select,
@@ -12,16 +11,12 @@ import {
   Modal,
   message,
   Spin,
-  Statistic,
 } from "antd";
 import { useRouter } from "next/router";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { PlusOutlined } from "@ant-design/icons";
 import { userCompanyId } from "../../libs/auth";
 import { periodicityNom } from "../../utils/constant";
 import webApiPayroll from "../../api/webApiPayroll";
-import { Label } from "@material-ui/icons";
 import FormPerceptionsDeductions from "../../components/payroll/forms/FormPerceptionsDeductions";
 
 const StampPayroll = () => {
@@ -37,10 +32,11 @@ const StampPayroll = () => {
   const [insidencePeriod, setInsidencePeriod] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
   const [persons, setPersons] = useState([]);
-  const [objectStamp, setObjectStamp] = useState({});
-
+  const [payroll, setPayroll] = useState([]);
+  const [objectStamp, setObjectStamp] = useState(null);
   let nodeId = userCompanyId();
 
+  /* functions */
   const getPaymentCalendars = async () => {
     let response = await webApiPayroll.getPaymentCalendar(nodeId);
     let data = response.data.results;
@@ -55,6 +51,47 @@ const StampPayroll = () => {
     }
   };
 
+  const getPersonCalendar = async (calendar_id) => {
+    setLoading(true);
+    let response = await webApiPayroll.getPersonsCalendar(calendar_id);
+    if (response.data.length > 0) {
+      setPersons(response.data);
+    } else {
+      setPersons([]);
+      message.error("No se encontraron resultados");
+    }
+    setLoading(false);
+  };
+
+  const sendStampPayroll = async () => {
+    let data = {
+      node: nodeId,
+      period: period,
+      payroll: payroll,
+    };
+    setLoading(true);
+    let response = await webApiPayroll.payrollFacturama(data);
+    if (response.data.payrolls.length > 0) {
+      let payrolls = response.data.payrolls;
+      if (persons.length > 0) {
+        let arrayPersons = persons;
+        arrayPersons.map((p) => {
+          let payroll_person = payrolls.find(
+            (elem) =>
+              elem.Complemento.Payroll.Employee.EmployeeNumber == p.person.code
+          );
+          if (payroll_person) {
+            p.payroll = payroll_person;
+          }
+        });
+
+        setPersons(arrayPersons);
+        setLoading(false);
+      }
+    }
+  };
+
+  /* Events */
   const changePaymentCalendar = (value) => {
     if (value) {
       let calendar = paymentCalendars.find((elm) => elm.id == value);
@@ -88,54 +125,6 @@ const StampPayroll = () => {
     }
   };
 
-  const getPersonCalendar = async (calendar_id) => {
-    setLoading(true);
-    let response = await webApiPayroll.getPersonsCalendar(calendar_id);
-    if (response.data.length > 0) {
-      console.log("Response Persons", response);
-      setPersons(response.data);
-    } else {
-      setPersons([]);
-      message.error("No se encontraron resultados");
-    }
-    setLoading(false);
-  };
-
-  const callback = (key) => {
-    console.log(key);
-  };
-
-  const sendStampPayroll = async () => {
-    let payroll = [];
-    payroll.push(objectStamp);
-    let data = {
-      node: nodeId,
-      period: period,
-      payroll: payroll,
-    };
-
-    let response = await webApiPayroll.payrollFacturama(data);
-    if (response.data.payrolls.length > 0) {
-      let payrolls = response.data.payrolls;
-      if (persons.length > 0) {
-        let arrayPersons = persons;
-        arrayPersons.map((p) => {
-          let payroll_person = payrolls.find(
-            (elem) =>
-              elem.Complemento.Payroll.Employee.EmployeeNumber == p.person.code
-          );
-          if (payroll_person) {
-            p.payroll = payroll_person;
-          }
-        });
-        console.log("Personas", arrayPersons);
-        setPersons([]);
-        setPersons(arrayPersons);
-      }
-    }
-    console.log("Respuesta", response);
-  };
-
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -145,22 +134,174 @@ const StampPayroll = () => {
   }, [nodeId]);
 
   useEffect(() => {
-    console.log("Pre IF", persons);
     if (persons.length > 0) {
-      console.log("StatePersonas=>", persons);
     }
   }, [persons]);
 
-  useEffect(() => {
-    if (optionspPaymentCalendars)
-      console.log("Calendarios", optionspPaymentCalendars);
-  }, [optionspPaymentCalendars]);
+  useEffect(() => {}, [optionspPaymentCalendars]);
 
   useEffect(() => {
     if (objectStamp) {
-      console.log("Enviando objeto", objectStamp);
+      let array_payroll = payroll.slice();
+      let elem_payroll = array_payroll.find(
+        (elem) => elem.person_id == objectStamp.person_id
+      );
+      if (elem_payroll) {
+        let array = array_payroll.filter(
+          (elem) => elem.person_id !== objectStamp.person_id
+        );
+        array.push(objectStamp);
+        setPayroll(array);
+      } else {
+        array_payroll.push(objectStamp);
+        setPayroll(array_payroll);
+      }
+      setLoading(false);
     }
   }, [objectStamp]);
+
+  const PanelInfo = ({ data, setObjectStamp, payroll, setLoading }) => {
+    return (
+      <Row>
+        <Col span={24}>
+          <Button
+            style={{ float: "right" }}
+            type="primary"
+            shape="circle"
+            onClick={() => showModal(data.person.person_id)}
+            icon={<PlusOutlined />}
+            size={"middle"}
+          />
+        </Col>
+        <Col
+          span={24}
+          style={{
+            marginBottom: "10px",
+            marginTop: "10px",
+          }}
+        >
+          <Row>
+            <Col xl={12} md={12} sm={24} xs={24}>
+              {data.payroll &&
+                data.payroll.Complemento.Payroll.Perceptions.Details && (
+                  <Row className="header-tabe">
+                    <Col span={12}>Percepciones</Col>
+                    <Col span={12}>Importe</Col>
+                  </Row>
+                )}
+              {data.payroll &&
+                data.payroll.Complemento.Payroll.Perceptions &&
+                data.payroll.Complemento.Payroll.Perceptions.Details.map(
+                  (a) => {
+                    return (
+                      <Row className="body-table" key={a.code + "P"}>
+                        {a.Code !== "046" && (
+                          <>
+                            <Col span={12}>{a.Description}</Col>
+                            <Col span={12}>
+                              ${+(a.ExemptAmount ? a.ExemptAmount : 0)}
+                            </Col>
+                          </>
+                        )}
+                        {a.Code === "046" && (
+                          <>
+                            <Col span={12}>Asimilados</Col>
+                            <Col span={12}>${a.ExemptAmount}</Col>
+                          </>
+                        )}
+                      </Row>
+                    );
+                  }
+                )}
+              {data.payroll &&
+                data.payroll.Complemento.Payroll.OtherPayments &&
+                data.payroll.Complemento.Payroll.OtherPayments.map((a) => {
+                  return (
+                    <Row className="body-table" key={a.code + "O"}>
+                      <Col span={12}>{a.Description}</Col>
+                      <Col span={12}>${+(a.Amount ? a.Amount : "0")}</Col>
+                    </Row>
+                  );
+                })}
+            </Col>
+            <Col xl={12} md={12} sm={24} xs={24}>
+              {/**Deducciones */}
+              {data.payroll &&
+                data.payroll.Complemento.Payroll.Deductions.Details && (
+                  <Row className="header-tabe">
+                    <Col span={12}>Deducciones</Col>
+                    <Col span={12}>Importe</Col>
+                  </Row>
+                )}
+              {data.payroll &&
+                data.payroll.Complemento.Payroll.Deductions.Details.map((a) => {
+                  return (
+                    <Row className="body-table" key={a.code + "D"}>
+                      <Col span={12}>{a.Description}</Col>
+                      <Col span={12}>${+(a.Amount ? a.Amount : "0")}</Col>
+                    </Row>
+                  );
+                })}
+            </Col>
+          </Row>
+          <Row>
+            <Col xl={12} md={12} sm={24} xs={24}>
+              {data.payroll && data.payroll.Complemento.Payroll && (
+                <Row
+                  className="body-table"
+                  style={{ fontWeight: "bold", borderStyle: "groove" }}
+                >
+                  <Col span={12}>Total percepciones</Col>
+                  <Col span={12}>
+                    ${data.payroll.Complemento.Payroll.Totales.Perceptions}
+                  </Col>
+                </Row>
+              )}
+            </Col>
+            <Col xl={12} md={12} sm={24} xs={24}>
+              {data.payroll && data.payroll.Complemento.Payroll && (
+                <Row
+                  className="body-table"
+                  style={{ fontWeight: "bold", borderStyle: "groove" }}
+                >
+                  <Col span={12}>Total decucciones</Col>
+                  <Col span={12}>
+                    ${data.payroll.Complemento.Payroll.Totales.Deductions}
+                  </Col>
+                </Row>
+              )}
+            </Col>
+
+            {data.payroll && data.payroll.Complemento.Payroll && (
+              <Col span={24} style={{ float: "rigth", borderStyle: "groove" }}>
+                <Row className="body-table" style={{ fontWeight: "bold" }}>
+                  <Col span={12}>Total a pagar</Col>
+                  <Col span={12}>
+                    ${data.payroll.Complemento.Payroll.Totales.Payment}
+                  </Col>
+                </Row>
+              </Col>
+            )}
+          </Row>
+        </Col>
+        <Modal
+          title="Agregar"
+          closable={false}
+          visible={isModalVisible}
+          footer={null}
+        >
+          <FormPerceptionsDeductions
+            setIsModalVisible={setIsModalVisible}
+            person_id={data.person.id}
+            setObjectStamp={setObjectStamp}
+            payroll={payroll}
+            setLoading={setLoading}
+            key={"form-" + data.person.person_id}
+          />
+        </Modal>
+      </Row>
+    );
+  };
 
   return (
     <MainLayout currentKey="9.5">
@@ -220,118 +361,50 @@ const StampPayroll = () => {
                   />
                 </Col>
               </Row>
+              <Row>
+                <Col span={24}>
+                  <Button
+                    htmlType="button"
+                    style={{ float: "right", marginTop: "10px" }}
+                    onClick={() => sendStampPayroll()}
+                  >
+                    Enviar
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <Row justify="end">
             <Col span={24}>
               <Spin tip="Cargando..." spinning={loading}>
-                <Collapse defaultActiveKey={["1"]} onChange={callback}>
+                <Collapse defaultActiveKey={["1"]}>
                   {persons &&
-                    persons.map((p) => {
-                      return (
-                        <Panel
-                          header={
-                            p.person.first_name +
-                            " " +
-                            p.person.flast_name +
-                            " " +
-                            p.person.mlast_name +
-                            "  " +
-                            "    -  Salario diario: $" +
-                            p.daily_salary
-                          }
-                          key={p.person.id}
-                        >
-                          <Row>
-                            <Col span={24}>
-                              <Button
-                                style={{ float: "right" }}
-                                type="primary"
-                                shape="circle"
-                                onClick={showModal}
-                                icon={<PlusOutlined />}
-                                size={"middle"}
-                              />
-                            </Col>
-                            <Col span={24}>
-                              <Row gutter={16}>
-                                <Col xs={24} sm={12} md={8} xl={8}>
-                                  <p
-                                    style={{
-                                      marginBottom: "5px",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    Percepciones:
-                                  </p>
-                                  {p.payroll &&
-                                    p.payroll.Complemento.Payroll.Perceptions
-                                      .Details &&
-                                    p.payroll.Complemento.Payroll.Perceptions.Details.map(
-                                      (a) => {
-                                        console.log("Elemento=>>", a);
-                                        return (
-                                          <>
-                                            <p>{a.Description}</p>
-                                            <p>
-                                              {"Excento: " + a.ExemptAmount}
-                                            </p>
-                                            <p>{"Grabado: " + a.TaxedAmount}</p>
-                                          </>
-                                        );
-                                      }
-                                    )}
-                                </Col>
-                                <Col xs={24} sm={12} md={8} xl={8}>
-                                  <p
-                                    style={{
-                                      marginBottom: "5px",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    Deducciones:
-                                  </p>
-                                  {p.payroll &&
-                                    p.payroll.Complemento.Payroll.Perceptions}
-                                  <p></p>
-                                </Col>
-                                <Col xs={24} sm={12} md={8} xl={8}>
-                                  <p
-                                    style={{
-                                      marginBottom: "5px",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    Otros pagos:
-                                  </p>
-                                  <p></p>
-                                </Col>
-                              </Row>
-                            </Col>
-                            <Col span={24}>
-                              <Button
-                                htmlType="button"
-                                style={{ marginRight: 10 }}
-                                onClick={() => sendStampPayroll()}
-                              >
-                                Enviar
-                              </Button>
-                            </Col>
-                            <Modal
-                              title="Basic Modal"
-                              closable={false}
-                              visible={isModalVisible}
-                              footer={null}
-                            >
-                              <FormPerceptionsDeductions
-                                setIsModalVisible={setIsModalVisible}
-                                person_id={p.person.id}
-                                setObjectStamp={setObjectStamp}
-                              />
-                            </Modal>
-                          </Row>
-                        </Panel>
-                      );
+                    persons.map((p, i) => {
+                      if (p.person) {
+                        return (
+                          <Panel
+                            header={
+                              p.person.first_name +
+                              " " +
+                              p.person.flast_name +
+                              " " +
+                              p.person.mlast_name +
+                              "  " +
+                              "    -  Salario diario: $" +
+                              p.daily_salary
+                            }
+                            key={i + 1}
+                          >
+                            <PanelInfo
+                              data={p}
+                              setObjectStamp={setObjectStamp}
+                              payroll={payroll}
+                              setLoading={setLoading}
+                              key={p.person.person_id}
+                            />
+                          </Panel>
+                        );
+                      }
                     })}
                 </Collapse>
               </Spin>
