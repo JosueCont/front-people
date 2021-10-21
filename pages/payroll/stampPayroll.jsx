@@ -92,12 +92,17 @@ const StampPayroll = () => {
     setLoading(true);
     let response = await webApiPayroll.getPersonsCalendar(calendar_id);
     if (response.data.length > 0) {
+      console.log("Response Persons", response);
       setPersons(response.data);
     } else {
       setPersons([]);
       message.error("No se encontraron resultados");
     }
     setLoading(false);
+  };
+
+  const callback = (key) => {
+    console.log(key);
   };
 
   const sendStampPayroll = async () => {
@@ -123,10 +128,12 @@ const StampPayroll = () => {
             p.payroll = payroll_person;
           }
         });
+        console.log("Personas", arrayPersons);
         setPersons([]);
         setPersons(arrayPersons);
       }
     }
+    console.log("Respuesta", response);
   };
 
   const showModal = () => {
@@ -136,6 +143,24 @@ const StampPayroll = () => {
   useEffect(() => {
     getPaymentCalendars();
   }, [nodeId]);
+
+  useEffect(() => {
+    console.log("Pre IF", persons);
+    if (persons.length > 0) {
+      console.log("StatePersonas=>", persons);
+    }
+  }, [persons]);
+
+  useEffect(() => {
+    if (optionspPaymentCalendars)
+      console.log("Calendarios", optionspPaymentCalendars);
+  }, [optionspPaymentCalendars]);
+
+  useEffect(() => {
+    if (objectStamp) {
+      console.log("Enviando objeto", objectStamp);
+    }
+  }, [objectStamp]);
 
   return (
     <MainLayout currentKey="9.5">
@@ -244,6 +269,7 @@ const StampPayroll = () => {
                                       .Details &&
                                     p.payroll.Complemento.Payroll.Perceptions.Details.map(
                                       (a) => {
+                                        console.log("Elemento=>>", a);
                                         return (
                                           <>
                                             <p>{a.Description}</p>
