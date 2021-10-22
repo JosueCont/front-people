@@ -192,7 +192,7 @@ const FormPerceptionsDeductions = ({
       getDeductions();
       getOtherPayments();
     }
-  }, [person_id]);
+  }, []);
 
   useEffect(() => {
     if (concept) {
@@ -237,10 +237,12 @@ const FormPerceptionsDeductions = ({
             }
           });
         }
+        setDataSource(array_data);
       }
-      setDataSource(array_data);
     }
   }, [payroll]);
+
+  useEffect(() => {}, [dataSource]);
 
   return (
     <>

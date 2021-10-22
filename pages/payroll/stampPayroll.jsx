@@ -22,7 +22,6 @@ import FormPerceptionsDeductions from "../../components/payroll/forms/FormPercep
 const StampPayroll = () => {
   const { Panel } = Collapse;
   const route = useRouter();
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [optionspPaymentCalendars, setOptionsPaymentCalendars] = useState([]);
@@ -55,6 +54,18 @@ const StampPayroll = () => {
     setLoading(true);
     let response = await webApiPayroll.getPersonsCalendar(calendar_id);
     if (response.data.length > 0) {
+      let arrar_payroll = [];
+      response.data.map((a) => {
+        if (a.person) {
+          arrar_payroll.push({
+            person_id: a.person.id,
+            perceptions: [],
+            deductions: [],
+            others_payments: [],
+          });
+        }
+      });
+      setPayroll(arrar_payroll);
       setPersons(response.data);
     } else {
       setPersons([]);
@@ -67,8 +78,24 @@ const StampPayroll = () => {
     let data = {
       node: nodeId,
       period: period,
-      payroll: payroll,
+      payroll: [],
     };
+    if (payroll.length === 0) {
+      let arrar_payroll = [];
+      persons.map((a) => {
+        if (a.person) {
+          arrar_payroll.push({
+            person_id: a.person.id,
+            perceptions: [],
+            deductions: [],
+            others_payments: [],
+          });
+        }
+      });
+      data.payroll = arrar_payroll;
+    } else {
+      data.payroll = payroll;
+    }
     setLoading(true);
     let response = await webApiPayroll.payrollFacturama(data);
     if (response.data.payrolls.length > 0) {
@@ -125,10 +152,6 @@ const StampPayroll = () => {
     }
   };
 
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
   useEffect(() => {
     getPaymentCalendars();
   }, [nodeId]);
@@ -161,6 +184,10 @@ const StampPayroll = () => {
   }, [objectStamp]);
 
   const PanelInfo = ({ data, setObjectStamp, payroll, setLoading }) => {
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
     return (
       <Row>
         <Col span={24}>
@@ -289,6 +316,7 @@ const StampPayroll = () => {
           closable={false}
           visible={isModalVisible}
           footer={null}
+          key={"modal-" + data.person.id}
         >
           <FormPerceptionsDeductions
             setIsModalVisible={setIsModalVisible}
@@ -296,7 +324,7 @@ const StampPayroll = () => {
             setObjectStamp={setObjectStamp}
             payroll={payroll}
             setLoading={setLoading}
-            key={"form-" + data.person.person_id}
+            key={"form-" + data.person.id}
           />
         </Modal>
       </Row>
@@ -400,7 +428,7 @@ const StampPayroll = () => {
                               setObjectStamp={setObjectStamp}
                               payroll={payroll}
                               setLoading={setLoading}
-                              key={p.person.person_id}
+                              key={p.person.id}
                             />
                           </Panel>
                         );
