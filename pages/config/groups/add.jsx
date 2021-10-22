@@ -383,7 +383,6 @@ const GroupAdd = (...props) => {
   }, [router.query.id]);
 
   useEffect(() => {
-    console.log("Props", props);
     if (props[0].config) {
       headers["client-id"] = props[0].config.client_khonnect_id;
     }
@@ -395,7 +394,6 @@ const GroupAdd = (...props) => {
       setEdit(false);
       //   setMostrar(true);
     }
-    console.log("HEaders", headers);
   }, [props[0].config]);
 
   function handleClick(e) {

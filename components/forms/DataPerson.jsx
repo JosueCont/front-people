@@ -47,6 +47,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("Person-->> ", person);
     setFormPerson(person);
     getGroupPerson(config, person.khonnect_id)
       .then((response) => {
@@ -126,7 +127,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
     value.is_active = isActive;
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
-    if (value.groups && value.groups != "") value.groups = value.groups;
+    if (value.groups && value.groups != "") value.groups = [value.groups];
     updatePerson(value);
   };
 

@@ -51,7 +51,7 @@ const assimilatedSalary = () => {
         }, 500);
       })
       .catch((error) => {
-        console.log("Error-> ", error);
+        console.log(error);
         message.error("Ocurrio un error intente de nuevo");
         setSalary(null);
         setLoading(false);
@@ -70,7 +70,6 @@ const assimilatedSalary = () => {
 
   const generateCfdi = () => {
     try {
-      console.log(form.getFieldValue("person_id"));
       if (form.getFieldValue("person_id")) return;
       else message.error("Seleccione un colaborador.");
       // let response = WebApi.getCfdi()

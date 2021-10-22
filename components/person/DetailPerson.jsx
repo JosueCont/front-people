@@ -10,6 +10,7 @@ import FormGeneralData from "../forms/FormGeneralData";
 import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
+import { useEffect } from "react";
 
 const DetailPerson = ({
   config,
@@ -21,6 +22,10 @@ const DetailPerson = ({
 }) => {
   const { Title } = Typography;
   const { TabPane } = Tabs;
+
+  useEffect(() => {
+    console.log("Persona-->> ", person);
+  }, []);
 
   return (
     <>
