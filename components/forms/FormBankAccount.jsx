@@ -20,6 +20,7 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import WebApi from "../../api/webApi";
+import WebApiPayroll from "../../api/webApiPayroll";
 import {
   messageDialogDelete,
   onlyNumeric,
@@ -45,7 +46,7 @@ const FormBanckAccount = ({ person_id = null }) => {
 
   const getBank = async () => {
     try {
-      let response = await WebApi.getBank();
+      let response = await WebApiPayroll.getBanks();
       let bank = response.data.results;
       bank = bank.map((a) => {
         return { label: a.name, value: a.id };
@@ -273,7 +274,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               label="Clabe interbancaria"
               rules={[onlyNumeric]}
             >
-              <Input maxLength={19} />
+              <Input maxLength={18} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
