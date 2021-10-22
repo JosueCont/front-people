@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import { useRouter } from "next/router";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
+import { withAuthSync } from "../../libs/auth";
+import { connect } from "react-redux";
 
-export default function SelectBank(props) {
+const SelectBank = (props) => {
   const [options, setOptions] = useState(null);
   const route = useRouter();
 
-  const getBanks = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/setup/banks/`);
-      let data = response.data.results;
-      let options = [];
-      data = data.map((item) => {
+  useEffect(() => {}, [route]);
+
+  useEffect(() => {
+    if (props.banks) {
+      let data = props.banks.map((item) => {
         return {
           value: item.id,
           label: item.name,
@@ -21,14 +20,8 @@ export default function SelectBank(props) {
         };
       });
       setOptions(data);
-    } catch (error) {
-      console.log(error);
     }
-  };
-
-  useEffect(() => {
-    getBanks();
-  }, [route]);
+  }, [props.banks]);
 
   return (
     <Form.Item
@@ -47,4 +40,11 @@ export default function SelectBank(props) {
       />
     </Form.Item>
   );
-}
+};
+
+const mapState = (state) => {
+  return {
+    banks: state.fiscalStore.banks,
+  };
+};
+export default connect(mapState)(withAuthSync(SelectBank));

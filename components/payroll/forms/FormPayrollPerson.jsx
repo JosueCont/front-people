@@ -18,6 +18,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import moment from "moment";
 import WebApiPayroll from "../../../api/webApiPayroll";
+import WebApiFiscal from "../../../api/WebApiFiscal";
 import { treeDecimal } from "../../../utils/constant";
 
 const FormPayrollPerson = ({ person_id = null, node = null }) => {
@@ -92,7 +93,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getContractTypes = async () => {
     try {
-      let response = await WebApiPayroll.getContractTypes();
+      let response = await WebApiFiscal.getContractTypes();
       let contract_types = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -104,7 +105,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getHiringRegimes = async () => {
     try {
-      let response = await WebApiPayroll.getHiringRegimes();
+      let response = await WebApiFiscal.getHiringRegimes();
       let hiring_regime_types = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -116,7 +117,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getTypeTax = async () => {
     try {
-      let response = await WebApiPayroll.getTypeTax();
+      let response = await WebApiFiscal.getTypeTax();
       let tax_types = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -128,7 +129,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getBanks = async () => {
     try {
-      let response = await WebApiPayroll.getBanks();
+      let response = await WebApiFiscal.getBanks();
       let banks = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -152,7 +153,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getPaymentPeriodicity = async () => {
     try {
-      let response = await WebApiPayroll.getPaymentPeriodicity();
+      let response = await WebApiFiscal.getPaymentPeriodicity();
       let payment_periodicity = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });

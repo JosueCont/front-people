@@ -15,6 +15,7 @@ import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WebApi from "../../../api/webApiPayroll";
+import WebApiFiscal from "../../../api/WebApiFiscal";
 import { useRouter } from "next/router";
 import { messageSaveSuccess, onlyNumeric } from "../../../utils/constant";
 const FormPaymentCalendar = ({
@@ -50,7 +51,7 @@ const FormPaymentCalendar = ({
 
   const getTypeTax = async () => {
     try {
-      let response = await WebApi.getTypeTax();
+      let response = await WebApiFiscal.getTypeTax();
       let tax_types = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });

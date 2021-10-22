@@ -30,29 +30,29 @@ class WebApi {
     return WebApi.ApisType(`/payroll/payroll-person/${data.id}/`, "put", data);
   }
 
-  static getContractTypes() {
-    return WebApi.ApisType(`/fiscal/contract-type/`, "get");
-  }
+  // static getContractTypes() {
+  //   return WebApi.ApisType(`/fiscal/contract-type/`, "get");
+  // }
 
-  static getHiringRegimes() {
-    return WebApi.ApisType(`/fiscal/hiring-regime/`, "get");
-  }
+  // static getHiringRegimes() {
+  //   return WebApi.ApisType(`/fiscal/hiring-regime/`, "get");
+  // }
 
-  static getTypeTax() {
-    return WebApi.ApisType(`/fiscal/type-tax/`, "get");
-  }
+  // static getTypeTax() {
+  //   return WebApi.ApisType(`/fiscal/type-tax/`, "get");
+  // }
 
-  static getBanks() {
-    return WebApi.ApisType(`/fiscal/bank/`, "get");
-  }
+  // static getBanks() {
+  //   return WebApi.ApisType(`/fiscal/bank/`, "get");
+  // }
 
   static getPaymentCalendar(data) {
     return WebApi.ApisType(`/payroll/payment-calendar/?node=${data}`, "get");
   }
 
-  static getPaymentPeriodicity() {
-    return WebApi.ApisType(`/fiscal/periodicity/`, "get");
-  }
+  // static getPaymentPeriodicity() {
+  //   return WebApi.ApisType(`/fiscal/periodicity/`, "get");
+  // }
 
   /** PaymentCalendar */
   static createPaymentCalendar(data) {
@@ -82,17 +82,17 @@ class WebApi {
     );
   }
 
-  static getPerseptions() {
-    return WebApi.ApisType(`/fiscal/perception-type/`, "get");
-  }
+  // static getPerseptions() {
+  //   return WebApi.ApisType(`/fiscal/perception-type/`, "get");
+  // }
 
-  static getDeductions() {
-    return WebApi.ApisType(`/fiscal/deduction-type/`, "get");
-  }
+  // static getDeductions() {
+  //   return WebApi.ApisType(`/fiscal/deduction-type/`, "get");
+  // }
 
-  static getOtherPayments() {
-    return WebApi.ApisType(`/fiscal/other-payment-type/`, "get");
-  }
+  // static getOtherPayments() {
+  //   return WebApi.ApisType(`/fiscal/other-payment-type/`, "get");
+  // }
 
   static payrollFacturama(data) {
     return WebApi.ApisType(`/payroll/payrrol-facturama`, "post", data);
