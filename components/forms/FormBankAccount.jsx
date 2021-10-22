@@ -20,13 +20,14 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import WebApi from "../../api/webApi";
-import WebApiPayroll from "../../api/webApiPayroll";
+
 import {
   messageDialogDelete,
   onlyNumeric,
   titleDialogDelete,
   twoDigit,
 } from "../../utils/constant";
+import SelectBank from "../selects/SelectBank";
 
 const FormBanckAccount = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -41,21 +42,7 @@ const FormBanckAccount = ({ person_id = null }) => {
 
   useEffect(() => {
     getBankAccount();
-    getBank();
   }, []);
-
-  const getBank = async () => {
-    try {
-      let response = await WebApiPayroll.getBanks();
-      let bank = response.data.results;
-      bank = bank.map((a) => {
-        return { label: a.name, value: a.id };
-      });
-      setBanks(bank);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   /* functions CRUD*/
   const getBankAccount = async () => {
@@ -252,12 +239,13 @@ const FormBanckAccount = ({ person_id = null }) => {
       <Form layout="vertical" form={formBank} onFinish={formBankAcc}>
         <Row>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="bank" label="Banco" rules={[ruleRequired]}>
-              <Select
+            {/* <Form.Item name="bank" label="Banco" rules={[ruleRequired]}> */}
+            <SelectBank name="bank" style={{ width: 140 }} />
+            {/* <Select
                 options={banks}
                 notFoundContent={"No se encontraron resultados."}
-              />
-            </Form.Item>
+              /> */}
+            {/* </Form.Item> */}
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item

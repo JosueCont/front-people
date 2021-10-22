@@ -5,6 +5,7 @@ import { API_URL } from "../../../config/config";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { userCompanyId } from "../../../libs/auth";
 import webApiPayroll from "../../../api/webApiPayroll";
+import webApiFiscal from "../../../api/WebApiFiscal";
 import { StepContent } from "@material-ui/core";
 import { Receipt, Reorder } from "@material-ui/icons";
 import { treeDecimal } from "../../../utils/constant";
@@ -35,7 +36,7 @@ const FormPerceptionsDeductions = ({
 
   /** Get initial values */
   const getPerceptions = async () => {
-    let response = await webApiPayroll.getPerseptions();
+    let response = await webApiFiscal.getPerseptions();
     if (response.data.results.length > 0) {
       let perceptions = response.data.results.map((a) => {
         return { value: a.code, label: a.description };
@@ -44,7 +45,7 @@ const FormPerceptionsDeductions = ({
     }
   };
   const getDeductions = async () => {
-    let response = await webApiPayroll.getDeductions();
+    let response = await webApiFiscal.getDeductions();
     if (response.data.results.length > 0) {
       let deductions = response.data.results.map((a) => {
         return { value: a.code, label: a.description };
@@ -53,7 +54,7 @@ const FormPerceptionsDeductions = ({
     }
   };
   const getOtherPayments = async () => {
-    let response = await webApiPayroll.getOtherPayments();
+    let response = await webApiFiscal.getOtherPayments();
     if (response.data.results.length > 0) {
       let other_payments = response.data.results.map((a) => {
         return { value: a.code, label: a.description };
