@@ -18,6 +18,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import moment from "moment";
 import WebApiPayroll from "../../../api/webApiPayroll";
+import WebApiFiscal from "../../../api/WebApiFiscal";
 import { treeDecimal } from "../../../utils/constant";
 
 const FormPayrollPerson = ({ person_id = null, node = null }) => {
@@ -60,13 +61,14 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     setLoading(true);
     Axios.get(API_URL + `/payroll/payroll-person/?person__id=${person_id}`)
       .then((response) => {
+        console.log("Response -->", response);
         if (response.data.results.length > 0) {
           let item = response.data.results[0];
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
-            contract_type: item.contract_type,
-            hiring_regime_type: item.hiring_regime_type,
-            type_tax: item.type_tax,
+            contract_type: item.contract_type.id,
+            hiring_regime_type: item.hiring_regime_type.id,
+            type_tax: item.type_tax.id,
             unionized: item.unionized ? item.unionized : false,
             payment_type: item.payment_type,
             bank: item.bank,
@@ -91,7 +93,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getContractTypes = async () => {
     try {
-      let response = await WebApiPayroll.getContractTypes();
+      let response = await WebApiFiscal.getContractTypes();
       let contract_types = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -103,7 +105,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getHiringRegimes = async () => {
     try {
-      let response = await WebApiPayroll.getHiringRegimes();
+      let response = await WebApiFiscal.getHiringRegimes();
       let hiring_regime_types = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -115,7 +117,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getTypeTax = async () => {
     try {
-      let response = await WebApiPayroll.getTypeTax();
+      let response = await WebApiFiscal.getTypeTax();
       let tax_types = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -127,7 +129,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getBanks = async () => {
     try {
-      let response = await WebApiPayroll.getBanks();
+      let response = await WebApiFiscal.getBanks();
       let banks = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -151,7 +153,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getPaymentPeriodicity = async () => {
     try {
-      let response = await WebApiPayroll.getPaymentPeriodicity();
+      let response = await WebApiFiscal.getPaymentPeriodicity();
       let payment_periodicity = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });

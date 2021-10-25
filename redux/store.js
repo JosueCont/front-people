@@ -6,11 +6,13 @@ import webReducerUser, {
 } from "./UserDuck";
 import webReducerCatalog, { doCompanySelectedCatalog } from "./catalogCompany";
 import assessmentReducer, { assessmentLoadAction } from "./assessmentDuck";
+import fiscalDuck, { doFiscalSelectedData } from "./fiscalDuck";
 
 const rootReducer = combineReducers({
   userStore: webReducerUser,
   catalogStore: webReducerCatalog,
   assessmentStore: assessmentReducer,
+  fiscalStore: fiscalDuck,
 });
 
 export const store = createStore(rootReducer, applyMiddleware(thunk));
@@ -20,5 +22,6 @@ export default () => {
   doGetGeneralConfig()(store.dispatch);
   doCompanySelectedCatalog()(store.dispatch);
   assessmentLoadAction()(store.dispatch);
+  doFiscalSelectedData()(store.dispatch);
   return store;
 };
