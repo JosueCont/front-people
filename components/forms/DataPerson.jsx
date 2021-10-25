@@ -32,6 +32,7 @@ import {
   rfcFormat,
 } from "../../utils/constant";
 import { getGroupPerson } from "../../api/apiKhonnect";
+import SelectGroup from "../selects/SelectGroup";
 
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
@@ -47,11 +48,9 @@ const DataPerson = ({ config, person = null, ...props }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("Person-->> ", person);
     setFormPerson(person);
     getGroupPerson(config, person.khonnect_id)
       .then((response) => {
-        console.log("Perfil", response);
         formPerson.setFieldsValue({
           groups: response,
         });
@@ -127,7 +126,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
     value.is_active = isActive;
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
-    if (value.groups && value.groups != "") value.groups = [value.groups];
+    if (value.groups && value.groups != "") value.groups = value.groups;
     updatePerson(value);
   };
 
@@ -429,6 +428,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
 
               {hideProfileSecurity && (
                 <Col lg={15} xs={22} offset={1}>
+                  {/* <SelectGroup titleLabel={true} /> */}
                   <Form.Item name="groups" label="Perfil de seguridad">
                     <Select
                       options={props.cat_groups}

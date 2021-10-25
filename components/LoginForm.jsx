@@ -73,7 +73,6 @@ const LoginForm = ({
                   setLoading(false);
                   router.push({
                     pathname: "/select-company",
-                    props: { user: "jc" },
                   });
                 } else {
                   message.error("Acceso denegado");

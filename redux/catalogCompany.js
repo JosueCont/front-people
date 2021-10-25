@@ -191,7 +191,9 @@ export const getPersonType = (data) => async (dispatch, getState) => {
 
 export const getProfileGroups = (data) => async (dispatch, getState) => {
   try {
+    console.log("ID COM-->> ", data);
     let response = await getGroups(data);
+    console.log("Grupos-->> ", response);
     if (response) dispatch({ type: PROFILE_GROUP, payload: response });
   } catch (error) {
     console.log(error);

@@ -23,10 +23,6 @@ const DetailPerson = ({
   const { Title } = Typography;
   const { TabPane } = Tabs;
 
-  useEffect(() => {
-    console.log("Persona-->> ", person);
-  }, []);
-
   return (
     <>
       <Title level={3}>Información Personal</Title>

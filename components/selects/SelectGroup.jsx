@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ruleRequired } from "../../utils/constant";
 
-const SelectGroup = ({ ...props }) => {
+const SelectGroup = ({ titleLabel, ...props }) => {
   const [groups, setGroups] = useState([]);
 
   useEffect(() => {
@@ -13,7 +13,12 @@ const SelectGroup = ({ ...props }) => {
   }, [props.cat_groups]);
 
   return (
-    <Form.Item rules={[ruleRequired]} name="groups">
+    <Form.Item
+      rules={[ruleRequired]}
+      name="groups"
+      label="Perfil de seguridad"
+      label={titleLabel ? "Perfil de seguridad" : ""}
+    >
       <Select
         options={groups}
         showArrow
