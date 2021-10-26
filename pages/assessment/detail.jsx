@@ -61,7 +61,6 @@ const Detail = ({ assessmentStore, ...props }) => {
   }, [router.query.id]);
 
   useEffect(() => {
-    // console.log("STORE::", assessmentStore);
     setLoading(assessmentStore.fetching);
     assessmentStore.active_modal === types.CREATE_SECTIONS
       ? setShowCreateSection(true)

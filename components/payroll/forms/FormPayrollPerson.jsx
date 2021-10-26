@@ -61,7 +61,6 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     setLoading(true);
     Axios.get(API_URL + `/payroll/payroll-person/?person__id=${person_id}`)
       .then((response) => {
-        console.log("Response -->", response);
         if (response.data.results.length > 0) {
           let item = response.data.results[0];
           formPayrollPerson.setFieldsValue({

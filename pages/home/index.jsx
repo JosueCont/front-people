@@ -123,7 +123,11 @@ const homeScreen = ({ ...props }) => {
       let response = await WebApi.filterPerson(filters);
       setPerson([]);
       setLoading(false);
-      setPerson(response.data);
+      let persons = response.data.map((a) => {
+        a.key = a.khonnect_id;
+        return a;
+      });
+      setPerson(persons);
     } catch (error) {
       setPerson([]);
       setLoading(false);
@@ -566,7 +570,7 @@ const homeScreen = ({ ...props }) => {
         if (ids) ids = ids + "," + a.id;
         else ids = a.id;
       });
-      setIdsDelete(ids);
+      setIdsDelete([ids]);
       showModalDelete();
     } else {
       message.error("Selecciona una persona.");

@@ -180,7 +180,6 @@ const ModalSelectDocument = ({
           document: doc.document_detail,
         });
         getDocuments(doc.document_type.id);
-        console.log("Documento", response.data);
       })
       .catch((error) => {
         console.log(error);

@@ -191,9 +191,7 @@ export const getPersonType = (data) => async (dispatch, getState) => {
 
 export const getProfileGroups = (data) => async (dispatch, getState) => {
   try {
-    console.log("ID COM-->> ", data);
     let response = await getGroups(data);
-    console.log("Grupos-->> ", response);
     if (response) dispatch({ type: PROFILE_GROUP, payload: response });
   } catch (error) {
     console.log(error);
@@ -207,7 +205,7 @@ export const getPeopleCompany = (data) => async (dispatch, getState) => {
       return {
         label: a.first_name + " " + a.flast_name,
         value: a.id,
-        key: a.id + i,
+        key: a.khonnect_id + i,
       };
     });
     dispatch({ type: PEOPLE_COMPANY, payload: people });

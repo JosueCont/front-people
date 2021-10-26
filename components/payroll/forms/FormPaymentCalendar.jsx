@@ -163,7 +163,6 @@ const FormPaymentCalendar = ({
     } else {
       savePaymentCalendar(value);
     }
-    // console.log("Values form", value);
   };
 
   return (

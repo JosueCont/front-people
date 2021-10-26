@@ -127,7 +127,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
     if (value.groups && value.groups != "") value.groups = [value.groups];
-    console.log("VALUE-> ", value);
     updatePerson(value);
   };
 

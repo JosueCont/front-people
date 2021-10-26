@@ -63,7 +63,6 @@ const FormDocument = ({ person_id, node }) => {
   };
 
   const getModalSelectDoc = (value, id) => {
-    console.log("mostrando modal");
     if (id) {
       setIdDoc(id);
     }
