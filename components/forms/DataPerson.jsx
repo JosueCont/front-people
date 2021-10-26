@@ -32,7 +32,7 @@ import {
   rfcFormat,
 } from "../../utils/constant";
 import { getGroupPerson } from "../../api/apiKhonnect";
-import SelectGroup from "../selects/SelectGroup";
+import SelectGroup from "../../components/selects/SelectGroup";
 
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
@@ -52,7 +52,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
     getGroupPerson(config, person.khonnect_id)
       .then((response) => {
         formPerson.setFieldsValue({
-          groups: response,
+          groups: response[0],
         });
       })
       .catch((error) => {
@@ -126,7 +126,8 @@ const DataPerson = ({ config, person = null, ...props }) => {
     value.is_active = isActive;
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
-    if (value.groups && value.groups != "") value.groups = value.groups;
+    if (value.groups && value.groups != "") value.groups = [value.groups];
+    console.log("VALUE-> ", value);
     updatePerson(value);
   };
 
@@ -428,8 +429,8 @@ const DataPerson = ({ config, person = null, ...props }) => {
 
               {hideProfileSecurity && (
                 <Col lg={15} xs={22} offset={1}>
-                  {/* <SelectGroup titleLabel={true} /> */}
-                  <Form.Item name="groups" label="Perfil de seguridad">
+                  <SelectGroup titleLabel={true} />
+                  {/* <Form.Item name="groups" label="Perfil de seguridad">
                     <Select
                       options={props.cat_groups}
                       showArrow
@@ -437,7 +438,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                       placeholder="Perfiles de seguridad"
                       notFoundContent={"No se encontraron resultados."}
                     />
-                  </Form.Item>
+                  </Form.Item> */}
                 </Col>
               )}
             </Row>

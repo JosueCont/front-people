@@ -28,7 +28,6 @@ export const doFiscalSelectedData = () => async (dispatch, getState) => {
 export const getFiscalBanks = () => async (dispatch, getState) => {
   try {
     let response = await WebApiFiscal.getBanks();
-    console.log("Bancos", response.data.results);
     dispatch({ type: BANKS, payload: response.data.results });
   } catch (error) {
     console.log(error);
