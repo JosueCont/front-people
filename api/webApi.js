@@ -261,6 +261,17 @@ class WebApi {
   static getVacationRequest(data) {
     return WebApi.ApisType(`/person/vacation/?${data}`, "get");
   }
+
+  static saveMassiveDepartments(data) {
+    return WebApi.ApisType(
+      `/business/department/import_departments_xls/`,
+      "post",
+      data
+    );
+  }
+  static saveMassiveJobs(data) {
+    return WebApi.ApisType(`/person/job/import_jobs_xls/`, "post", data);
+  }
 }
 
 export default WebApi;
