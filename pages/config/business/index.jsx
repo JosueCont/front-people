@@ -25,6 +25,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import Title from "antd/lib/typography/Title";
 import Axios from "axios";
@@ -41,6 +42,8 @@ import {
   messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../../utils/constant";
+import MassiveImportDepartments from "../../../components/business/MassiveImportDepartments";
+import MassiveImportJobs from "../../../components/MassiveImportJobs";
 
 const { Content } = Layout;
 
@@ -674,61 +677,82 @@ const configBusiness = ({ ...props }) => {
                       <></>
                     )}
                     {permissions.create_department && (
-                      <Form
-                        layout={"vertical"}
-                        form={formDepartment}
-                        onFinish={(values) =>
-                          onFinishForm(
-                            values,
-                            `/business/department/?node=${nodeId}`
-                          )
-                        }
-                      >
-                        <Row>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item label="Empresa" rules={[ruleRequired]}>
-                              <Input readOnly value={nodePeople} />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="name"
-                              label="Nombre"
-                              rules={[ruleRequired]}
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="description"
-                              label="Descripción"
-                              rules={[ruleRequired]}
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item name="code" label="Código">
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                        <Row
-                          justify={"end"}
-                          gutter={20}
-                          style={{ marginBottom: 20 }}
+                      <Tabs tabPosition={"top"}>
+                        <TabPane
+                          tab="Individual"
+                          key="tab_1_1"
+                          style={{ paddingTop: "15px" }}
                         >
-                          <Col>
-                            <Button onClick={resetForm}>Cancelar</Button>
-                          </Col>
-                          <Col>
-                            <Button type="primary" htmlType="submit">
-                              Guardar
-                            </Button>
-                          </Col>
-                        </Row>
-                      </Form>
+                          <Form
+                            layout={"vertical"}
+                            form={formDepartment}
+                            onFinish={(values) =>
+                              onFinishForm(
+                                values,
+                                `/business/department/?node=${nodeId}`
+                              )
+                            }
+                          >
+                            <Row>
+                              <Col lg={6} xs={22} offset={1}>
+                                <Form.Item
+                                  label="Empresa"
+                                  rules={[ruleRequired]}
+                                >
+                                  <Input readOnly value={nodePeople} />
+                                </Form.Item>
+                              </Col>
+                              <Col lg={6} xs={22} offset={1}>
+                                <Form.Item
+                                  name="name"
+                                  label="Nombre"
+                                  rules={[ruleRequired]}
+                                >
+                                  <Input />
+                                </Form.Item>
+                              </Col>
+                              <Col lg={6} xs={22} offset={1}>
+                                <Form.Item
+                                  name="description"
+                                  label="Descripción"
+                                  rules={[ruleRequired]}
+                                >
+                                  <Input />
+                                </Form.Item>
+                              </Col>
+                              <Col lg={6} xs={22} offset={1}>
+                                <Form.Item name="code" label="Código">
+                                  <Input />
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                            <Row
+                              justify={"end"}
+                              gutter={20}
+                              style={{ marginBottom: 20 }}
+                            >
+                              <Col>
+                                <Button onClick={resetForm}>Cancelar</Button>
+                              </Col>
+                              <Col>
+                                <Button type="primary" htmlType="submit">
+                                  Guardar
+                                </Button>
+                              </Col>
+                            </Row>
+                          </Form>
+                        </TabPane>
+                        <TabPane
+                          tab="Carga masiva"
+                          key="tab_1_2"
+                          style={{ paddingTop: "15px" }}
+                        >
+                          <MassiveImportDepartments
+                            nodePeople={nodePeople}
+                            setLoadingTable={setLoadingTable}
+                          />
+                        </TabPane>
+                      </Tabs>
                     )}
                     <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table
@@ -752,21 +776,33 @@ const configBusiness = ({ ...props }) => {
                       <></>
                     )}
                     {permissions.create_job && (
-                      <Form
-                        layout={"vertical"}
-                        form={formJob}
-                        onFinish={(values) =>
-                          onFinishForm(values, `/person/job/?node=${nodeId}`)
-                        }
-                      >
-                        <Row>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item label="Empresa" rules={[ruleRequired]}>
-                              <Input readOnly value={nodePeople} />
-                            </Form.Item>
-                          </Col>
+                      <Tabs tabPosition={"top"}>
+                        <TabPane
+                          tab="Individual"
+                          key="tab_2_1"
+                          style={{ paddingTop: "15px" }}
+                        >
+                          <Form
+                            layout={"vertical"}
+                            form={formJob}
+                            onFinish={(values) =>
+                              onFinishForm(
+                                values,
+                                `/person/job/?node=${nodeId}`
+                              )
+                            }
+                          >
+                            <Row>
+                              <Col lg={6} xs={22} offset={1}>
+                                <Form.Item
+                                  label="Empresa"
+                                  rules={[ruleRequired]}
+                                >
+                                  <Input readOnly value={nodePeople} />
+                                </Form.Item>
+                              </Col>
 
-                          {/* <Col lg={6} xs={22} offset={1}>
+                              {/* <Col lg={6} xs={22} offset={1}>
                             <Form.Item
                               name="department"
                               label="Departamento"
@@ -780,40 +816,52 @@ const configBusiness = ({ ...props }) => {
                               />
                             </Form.Item>
                           </Col> */}
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="name"
-                              label="Nombre"
-                              rules={[ruleRequired]}
+                              <Col lg={6} xs={22} offset={1}>
+                                <Form.Item
+                                  name="name"
+                                  label="Nombre"
+                                  rules={[ruleRequired]}
+                                >
+                                  <Input />
+                                </Form.Item>
+                              </Col>
+                              <Col lg={6} xs={22} offset={1}>
+                                <Form.Item
+                                  name="code"
+                                  label="Código"
+                                  rules={[ruleRequired]}
+                                >
+                                  <Input />
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                            <Row
+                              justify={"end"}
+                              gutter={20}
+                              style={{ marginBottom: 20 }}
                             >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                          <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="code"
-                              label="Código"
-                              rules={[ruleRequired]}
-                            >
-                              <Input />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                        <Row
-                          justify={"end"}
-                          gutter={20}
-                          style={{ marginBottom: 20 }}
+                              <Col>
+                                <Button onClick={resetForm}>Cancelar</Button>
+                              </Col>
+                              <Col>
+                                <Button type="primary" htmlType="submit">
+                                  Guardar
+                                </Button>
+                              </Col>
+                            </Row>
+                          </Form>
+                        </TabPane>
+                        <TabPane
+                          tab="Carga masiva"
+                          key="tab_2_2"
+                          style={{ paddingTop: "15px" }}
                         >
-                          <Col>
-                            <Button onClick={resetForm}>Cancelar</Button>
-                          </Col>
-                          <Col>
-                            <Button type="primary" htmlType="submit">
-                              Guardar
-                            </Button>
-                          </Col>
-                        </Row>
-                      </Form>
+                          <MassiveImportJobs
+                            nodePeople={nodePeople}
+                            setLoadingTable={setLoadingTable}
+                          />
+                        </TabPane>
+                      </Tabs>
                     )}{" "}
                     <Spin tip="Cargando..." spinning={loadingTable}>
                       <Table

@@ -570,7 +570,7 @@ const homeScreen = ({ ...props }) => {
         if (ids) ids = ids + "," + a.id;
         else ids = a.id;
       });
-      setIdsDelete([ids]);
+      setIdsDelete(ids); /*Debe ser un string, no un array*/
       showModalDelete();
     } else {
       message.error("Selecciona una persona.");
