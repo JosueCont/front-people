@@ -179,6 +179,7 @@ const FormGroup = (props) => {
                 name="image"
                 labelAlign={"left"}
                 style={{ marginTop: 15 }}
+                rules={[ruleRequired]}
               >
                 <Upload
                   label="avatar"
@@ -219,7 +220,11 @@ const FormGroup = (props) => {
               <Form.Item labelAlign="right">
                 <Space style={{ float: "right" }}>
                   <Button onClick={() => closeDialog()}>Cancelar</Button>
-                  <Button type="primary" htmlType="submit">
+                  <Button 
+                    type="primary" 
+                    htmlType="submit"
+                    disabled = {photo ? false : true}
+                  >
                     {props.isEdit ? "Editar" : "Guardar"}
                   </Button>
                 </Space>
