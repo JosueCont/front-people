@@ -273,20 +273,21 @@ const StampPayroll = () => {
           </Row>
           <Row>
             <Col xl={12} md={12} sm={24} xs={24}>
-              {data.payroll && data.payroll.Complemento.Payroll && (
+              {data.payroll && data.payroll.Complemento.Payroll.Totales && (
                 <Row
                   className="body-table"
                   style={{ fontWeight: "bold", borderStyle: "groove" }}
                 >
                   <Col span={12}>Total percepciones</Col>
                   <Col span={12}>
-                    ${data.payroll.Complemento.Payroll.Totales.Perceptions}
+                    {console.log("Datos", data.payroll.Complemento)}$
+                    {data.payroll.Complemento.Payroll.Totales.Perceptions}
                   </Col>
                 </Row>
               )}
             </Col>
             <Col xl={12} md={12} sm={24} xs={24}>
-              {data.payroll && data.payroll.Complemento.Payroll && (
+              {data.payroll && data.payroll.Complemento.Payroll.Totales && (
                 <Row
                   className="body-table"
                   style={{ fontWeight: "bold", borderStyle: "groove" }}
@@ -299,7 +300,7 @@ const StampPayroll = () => {
               )}
             </Col>
 
-            {data.payroll && data.payroll.Complemento.Payroll && (
+            {data.payroll && data.payroll.Complemento.Payroll.Totales && (
               <Col span={24} style={{ float: "rigth", borderStyle: "groove" }}>
                 <Row className="body-table" style={{ fontWeight: "bold" }}>
                   <Col span={12}>Total a pagar</Col>
