@@ -235,7 +235,7 @@ const FormPaymentCalendar = ({
               <Form.Item name="activation_date" label="Fecha de activación">
                 <DatePicker
                   style={{ width: "100%" }}
-                  onChange={onChangeLastDayPaid}
+                  onChange={onChangeActivationDate}
                   moment={"YYYY-MM-DD"}
                 />
               </Form.Item>
