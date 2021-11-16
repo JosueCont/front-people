@@ -109,8 +109,10 @@ const SelectCompany = ({ ...props }) => {
                   alignItems: "center",
                 }}
               >
+                {console.log('dataList',dataList)}
                 {dataList.map((item) => (
                   <Col
+                    key={item.permanent_code}
                     xl={5}
                     lg={5}
                     md={5}

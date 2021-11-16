@@ -7,7 +7,7 @@ body {
 
 @font-face {
   font-family: "FontPeople";
-  src: url("../public/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf");
+  src: url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf");
   font-weight: 400;
   
 }
@@ -219,7 +219,7 @@ li.ant-menu-submenu-selected {
   height: calc(100vh);
   width: 50%;
   margin-left: 25%;
-  background-image: url("../public/images/404.svg");
+  background-image: url("../../public/images/404.svg");
   background-position: "center";
   background-position-x: center;
   background-position-y: center;

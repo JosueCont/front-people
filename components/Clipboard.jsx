@@ -26,7 +26,7 @@ const Clipboard = ({
         data-clipboard-text={text}
         onSuccess={(value) => copyText(value)}
       >
-        <span class="tooltiptext">{tooltipTitle}</span>
+        <span className="tooltiptext">{tooltipTitle}</span>
         {title ? <span>{title}</span> : <LinkOutlined />}
       </ClipboardButton>
     </>
