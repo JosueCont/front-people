@@ -22,14 +22,20 @@ import {
 const { Header, Content, Sider } = Layout;
 
 const MainLayout = ({
+  currentKey,
   hideMenu,
   hideProfile,
   logoNode = null,
   companyName = null,
   onClickImage,
+  hideSearch,
+  hideLogo = false,
   ...props
 }) => {
   const router = useRouter();
+  const defaulPhoto =
+    "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
+
   let nodeName = userCompanyName();
   const [mainLogo, setMainLogo] = useState("");
   const [company, setCompany] = useState("");
@@ -99,17 +105,13 @@ const MainLayout = ({
       <Global
         styles={css`
           :root {
-            /* --primaryColor: ${
-              props.config ? props.config.concierge_primary_color : "#1890ff"
-            }; */
-            --primaryColor: #252837;
-            --secondaryColor: #1C1B2B;
+            --primaryColor: ${
+              props.config ? props.config.concierge_primary_color : "#252837"
+            };
 
-            /* --secondaryColor: ${
-              props.config ? props.config.concierge_secondary_color : "#1890ff"
-            }; */
-
-            
+            --secondaryColor: ${
+              props.config ? props.config.concierge_secondary_color : "#1C1B2B"
+            };
 
             --login_image: ${
               props.config && props.config.concierge_logo_login
@@ -141,15 +143,25 @@ const MainLayout = ({
               flavor && flavor.fontSpanColor ? flavor.fontSpanColor : "#000"
             };
 
-            .ant-layout-content{
+            /* .ant-layout-content{
               background: #2E303C;
-            }
-            .ant-form-item-label label{
+            } */
+            /* .ant-form-item-label label{
               color: #ffffff99;
-            }
-            .ant-table-small .ant-table-thead > tr > th{
+            } */
+            /* .ant-table-small .ant-table-thead > tr > th{
               background: var(--primaryColor);
               color: #ffffff99;
+            } */
+
+            .ant-breadcrumb span{
+              color: var(--fontSpanColor);
+            }
+            .ant-menu-item, .ant-menu-submenu{
+              color: var(--fontSpanColor);
+            }
+            label{
+              color: var(--fontSpanColor);
             }
 
               `}
@@ -166,9 +178,9 @@ const MainLayout = ({
         )}
       </Helmet>
         <Layout>
-          <NewHeader />
+          <NewHeader key="main_header" hideMenu={hideMenu} mainLogo={mainLogo} hideProfile={hideProfile} onClickImage={onClickImage} hideSearch={hideSearch} hideLogo={hideLogo} />
           <Layout>
-            <MainSider />
+            {! hideMenu && <MainSider  currentKey={currentKey} />}
               <Content >
                 <div className="div-main-layout">{props.children}</div>
               </Content>

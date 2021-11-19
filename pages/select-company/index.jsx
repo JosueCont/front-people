@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
-import { Row, Col, Breadcrumb, message, Typography, Card, Spin } from "antd";
+import { Row, Col, Breadcrumb, message, Typography, Card, Spin, Button } from "antd";
 import useRouter from "next/router";
 import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
@@ -9,6 +9,8 @@ import { companySelected, setUser } from "../../redux/UserDuck";
 import { doCompanySelectedCatalog } from "../../redux/catalogCompany";
 import WebApi from "../../api/webApi";
 import Clipboard from "../../components/Clipboard";
+import { Global, css } from "@emotion/core";
+import { EditOutlined } from "@ant-design/icons";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
@@ -17,6 +19,9 @@ const SelectCompany = ({ ...props }) => {
   const [jwt, setJwt] = useState(null);
   let personId = userId();
   const [admin, setAdmin] = useState(false);
+  const { Meta } = Card;
+  const isBrowser = () => typeof window !== "undefined";
+
 
   useEffect(() => {
     try {
@@ -24,7 +29,13 @@ const SelectCompany = ({ ...props }) => {
     } catch (error) {
       useRouter.push("/");
     }
+
+    if (isBrowser()) {
+      window.sessionStorage.setItem("image",null)
+    }
+
   }, []);
+
 
   useEffect(async () => {
     try {
@@ -93,23 +104,69 @@ const SelectCompany = ({ ...props }) => {
 
   return (
     <>
+    <Global 
+      styles={css`
+        .ant-breadcrumb-link, .ant-breadcrumb-separator{
+          color: white;
+        }
+        .cardCompany{
+          border-radius: 15px;
+          border: none;
+          position: relative;
+        }
+        .ant-card-cover{
+          display: flex;
+          height: 190px;  
+        }
+
+        .ant-card-cover img{
+          margin:auto;
+        }
+
+        .ant-card-body{
+          background: #252837;
+          border-bottom-right-radius: 13px;
+          border-bottom-left-radius: 13px;
+        }
+        .ant-card-meta-title, .ant-card-meta-description{
+          color: white;
+        }
+        .buttonEditCompany{
+          padding: 2px 6px;
+          position: absolute;
+          top: 5px;
+          right: 5px;
+          border: none;
+          border-radius: 10px;
+          color: black;
+          background-color: #F6F8FD;
+        }
+
+        .buttonEditCompany span{
+          color: black !important;
+        }
+        .ant-btn-icon-only{
+          background-color:red !important;
+        }
+      `}
+    />
       {jwt && jwt.user_id ? (
-        <MainLayout currentKey="8.5" hideMenu={true}>
+        <MainLayout currentKey="8.5" hideMenu={true} hideSearch={true} hideLogo={true}>
           <Breadcrumb className={"mainBreadcrumb"}>
-            <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>
+            <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+            <Breadcrumb.Item>Empresas</Breadcrumb.Item>
           </Breadcrumb>
           <div className="container" style={{ width: "100%", padding: 20 }}>
             <Spin tip="Cargando..." spinning={loading}>
               <Row
-                gutter={[16, 16]}
-                style={{
-                  display: "flex",
-                  textAlign: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
+                gutter={[36, 26]}
+                justify="center"
               >
-                {console.log('dataList',dataList)}
+                <Col span={24} style={{textAlign:'center'}} >
+                  <Title level={4} style={{color:'white', marginTop:50}}>
+                    Elige la empresa donde colaboras
+                  </Title>
+                </Col>
                 {dataList.map((item) => (
                   <Col
                     key={item.permanent_code}
@@ -118,9 +175,21 @@ const SelectCompany = ({ ...props }) => {
                     md={5}
                     sm={8}
                     xs={24}
-                    style={{ display: "grid", margin: "10px" }}
                   >
                     <Card
+                    className="cardCompany"
+                      hoverable
+                      cover={<img alt="example" src={item.image} style={{width:'50%'}} />}
+                      style={{backgroundColor: `#${Math.floor(Math.random()*16777215).toString(16)}` }}
+                      onClick={() => setCompanySelect(item)}
+                    >
+                      <span className="buttonEditCompany" style={{position:'absolute' }}>
+                        <EditOutlined />
+                      </span>
+                      {/* <Button type="primary" className="buttonEditCompany" icon={<EditOutlined />} style={{position:'absolute' }} /> */}
+                      <Meta className="meta_company" title={item.name} description="Ultima vez: Hace 2 Hrs" />
+                    </Card>
+                    {/* <Card
                       hoverable
                       className={"cardH100"}
                       actions={[
@@ -147,7 +216,7 @@ const SelectCompany = ({ ...props }) => {
                           {item.name}
                         </Title>
                       </div>
-                    </Card>
+                    </Card> */}
                   </Col>
                 ))}
               </Row>
