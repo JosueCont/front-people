@@ -11,9 +11,16 @@ import {
   Modal,
   message,
   Spin,
+  Table,
+  Tooltip,
 } from "antd";
 import { useRouter } from "next/router";
-import { PlusOutlined } from "@ant-design/icons";
+import {
+  FilePdfOutlined,
+  PlusOutlined,
+  FileOutlined,
+  Html5Outlined,
+} from "@ant-design/icons";
 import { userCompanyId } from "../../libs/auth";
 import { periodicityNom } from "../../utils/constant";
 import webApiPayroll from "../../api/webApiPayroll";
@@ -22,7 +29,6 @@ import FormPerceptionsDeductions from "../../components/payroll/forms/FormPercep
 const StampPayroll = () => {
   const { Panel } = Collapse;
   const route = useRouter();
-
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [optionspPaymentCalendars, setOptionsPaymentCalendars] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,6 +39,8 @@ const StampPayroll = () => {
   const [persons, setPersons] = useState([]);
   const [payroll, setPayroll] = useState([]);
   const [objectStamp, setObjectStamp] = useState(null);
+  const [stamped, setStamped] = useState(false);
+  const [stampedInvoices, setStampedInvoices] = useState([]);
   let nodeId = userCompanyId();
 
   /* functions */
@@ -79,6 +87,7 @@ const StampPayroll = () => {
       node: nodeId,
       period: period,
       payroll: [],
+      invoice: true,
     };
     if (payroll.length === 0) {
       let arrar_payroll = [];
@@ -98,24 +107,28 @@ const StampPayroll = () => {
     }
     setLoading(true);
     let response = await webApiPayroll.payrollFacturama(data);
-    if (response.data.payrolls.length > 0) {
-      let payrolls = response.data.payrolls;
-      if (persons.length > 0) {
-        let arrayPersons = persons;
-        arrayPersons.map((p) => {
-          let payroll_person = payrolls.find(
-            (elem) =>
-              elem.Complemento.Payroll.Employee.EmployeeNumber == p.person.code
-          );
-          if (payroll_person) {
-            p.payroll = payroll_person;
-          }
-        });
-
-        setPersons(arrayPersons);
-        setLoading(false);
-      }
+    if (response.data.length > 0) {
+      setStamped(true);
+      setStampedInvoices(response.data);
+      setLoading(false);
     }
+    //   let payrolls = response.data.payrolls;
+    //   if (persons.length > 0) {
+    //     let arrayPersons = persons;
+    //     arrayPersons.map((p) => {
+    //       let payroll_person = payrolls.find(
+    //         (elem) =>
+    //           elem.Complemento.Payroll.Employee.EmployeeNumber == p.person.code
+    //       );
+    //       if (payroll_person) {
+    //         p.payroll = payroll_person;
+    //       }
+    //     });
+
+    //     setPersons(arrayPersons);
+    //     setLoading(false);
+    //   }
+    // }
   };
 
   /* Events */
@@ -200,118 +213,7 @@ const StampPayroll = () => {
             size={"middle"}
           />
         </Col>
-        <Col
-          span={24}
-          style={{
-            marginBottom: "10px",
-            marginTop: "10px",
-          }}
-        >
-          <Row>
-            <Col xl={12} md={12} sm={24} xs={24}>
-              {data.payroll &&
-                data.payroll.Complemento.Payroll.Perceptions.Details && (
-                  <Row className="header-tabe">
-                    <Col span={12}>Percepciones</Col>
-                    <Col span={12}>Importe</Col>
-                  </Row>
-                )}
-              {data.payroll &&
-                data.payroll.Complemento.Payroll.Perceptions &&
-                data.payroll.Complemento.Payroll.Perceptions.Details.map(
-                  (a) => {
-                    return (
-                      <Row className="body-table" key={a.code + "P"}>
-                        {a.Code !== "046" && (
-                          <>
-                            <Col span={12}>{a.Description}</Col>
-                            <Col span={12}>
-                              ${+(a.ExemptAmount ? a.ExemptAmount : 0)}
-                            </Col>
-                          </>
-                        )}
-                        {a.Code === "046" && (
-                          <>
-                            <Col span={12}>Asimilados</Col>
-                            <Col span={12}>${a.ExemptAmount}</Col>
-                          </>
-                        )}
-                      </Row>
-                    );
-                  }
-                )}
-              {data.payroll &&
-                data.payroll.Complemento.Payroll.OtherPayments &&
-                data.payroll.Complemento.Payroll.OtherPayments.map((a) => {
-                  return (
-                    <Row className="body-table" key={a.code + "O"}>
-                      <Col span={12}>{a.Description}</Col>
-                      <Col span={12}>${+(a.Amount ? a.Amount : "0")}</Col>
-                    </Row>
-                  );
-                })}
-            </Col>
-            <Col xl={12} md={12} sm={24} xs={24}>
-              {/**Deducciones */}
-              {data.payroll &&
-                data.payroll.Complemento.Payroll.Deductions.Details && (
-                  <Row className="header-tabe">
-                    <Col span={12}>Deducciones</Col>
-                    <Col span={12}>Importe</Col>
-                  </Row>
-                )}
-              {data.payroll &&
-                data.payroll.Complemento.Payroll.Deductions.Details.map((a) => {
-                  return (
-                    <Row className="body-table" key={a.code + "D"}>
-                      <Col span={12}>{a.Description}</Col>
-                      <Col span={12}>${+(a.Amount ? a.Amount : "0")}</Col>
-                    </Row>
-                  );
-                })}
-            </Col>
-          </Row>
-          <Row>
-            <Col xl={12} md={12} sm={24} xs={24}>
-              {data.payroll && data.payroll.Complemento.Payroll.Totales && (
-                <Row
-                  className="body-table"
-                  style={{ fontWeight: "bold", borderStyle: "groove" }}
-                >
-                  <Col span={12}>Total percepciones</Col>
-                  <Col span={12}>
-                    {console.log("Datos", data.payroll.Complemento)}$
-                    {data.payroll.Complemento.Payroll.Totales.Perceptions}
-                  </Col>
-                </Row>
-              )}
-            </Col>
-            <Col xl={12} md={12} sm={24} xs={24}>
-              {data.payroll && data.payroll.Complemento.Payroll.Totales && (
-                <Row
-                  className="body-table"
-                  style={{ fontWeight: "bold", borderStyle: "groove" }}
-                >
-                  <Col span={12}>Total decucciones</Col>
-                  <Col span={12}>
-                    ${data.payroll.Complemento.Payroll.Totales.Deductions}
-                  </Col>
-                </Row>
-              )}
-            </Col>
 
-            {data.payroll && data.payroll.Complemento.Payroll.Totales && (
-              <Col span={24} style={{ float: "rigth", borderStyle: "groove" }}>
-                <Row className="body-table" style={{ fontWeight: "bold" }}>
-                  <Col span={12}>Total a pagar</Col>
-                  <Col span={12}>
-                    ${data.payroll.Complemento.Payroll.Totales.Payment}
-                  </Col>
-                </Row>
-              </Col>
-            )}
-          </Row>
-        </Col>
         <Modal
           title="Agregar"
           closable={false}
@@ -330,6 +232,81 @@ const StampPayroll = () => {
         </Modal>
       </Row>
     );
+  };
+
+  const columns = [
+    {
+      title: "Persona",
+      dataIndex: "person",
+      key: "person",
+    },
+    {
+      title: "Estatus",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => {
+        return <>{status ? "Timbrado" : "Error al timbrar"}</>;
+      },
+    },
+    {
+      title: "Acciones",
+      align: "center",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={24}>
+              <Col className="gutter-row" span={8}>
+                <Tooltip title="Descargar XML">
+                  <FileOutlined onClick={() => downloadFile(item, 1)} />
+                </Tooltip>
+              </Col>
+              <Col className="gutter-row" span={8}>
+                <Tooltip title="Descargar PDF">
+                  <FilePdfOutlined onClick={() => downloadFile(item, 2)} />
+                </Tooltip>
+              </Col>
+              <Col className="gutter-row" span={8}>
+                <Tooltip title="Descargar HTML">
+                  <Html5Outlined onClick={() => downloadFile(item, 3)} />
+                </Tooltip>
+              </Col>
+            </Row>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const downloadFile = (item, type_file) => {
+    if (item) {
+      let data = {
+        type_request: 3,
+        type_file: type_file,
+        id_facturama: item.id_facturama,
+      };
+      webApiPayroll.cfdiMultiEmitter(data).then((response) => {
+        if (type_file == 2) {
+          const linkSource = `data:application/pdf;base64,${response.data}`;
+          const downloadLink = document.createElement("a");
+          const fileName = item.person + ".pdf";
+
+          downloadLink.href = linkSource;
+          downloadLink.download = fileName;
+          downloadLink.click();
+        } else {
+          const type = response.headers["content-type"];
+          const blob = new Blob([response.data], {
+            type: type,
+          });
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download =
+            type_file == 1 ? item.person + ".xml" : item.person + ".html";
+
+          link.click();
+        }
+      });
+    }
   };
 
   return (
@@ -406,36 +383,53 @@ const StampPayroll = () => {
           <Row justify="end">
             <Col span={24}>
               <Spin tip="Cargando..." spinning={loading}>
-                <Collapse defaultActiveKey={["1"]}>
-                  {persons &&
-                    persons.map((p, i) => {
-                      if (p.person) {
-                        return (
-                          <Panel
-                            header={
-                              p.person.first_name +
-                              " " +
-                              p.person.flast_name +
-                              " " +
-                              p.person.mlast_name +
-                              "  " +
-                              "    -  Salario diario: $" +
-                              p.daily_salary
-                            }
-                            key={i + 1}
-                          >
-                            <PanelInfo
-                              data={p}
-                              setObjectStamp={setObjectStamp}
-                              payroll={payroll}
-                              setLoading={setLoading}
-                              key={p.person.id}
-                            />
-                          </Panel>
-                        );
-                      }
-                    })}
-                </Collapse>
+                {!stamped && (
+                  <Collapse defaultActiveKey={["1"]}>
+                    {persons &&
+                      persons.map((p, i) => {
+                        if (p.person) {
+                          return (
+                            <Panel
+                              header={
+                                p.person.first_name +
+                                " " +
+                                p.person.flast_name +
+                                " " +
+                                p.person.mlast_name +
+                                "  " +
+                                "    -  Salario diario: $" +
+                                p.daily_salary
+                              }
+                              key={i + 1}
+                            >
+                              <PanelInfo
+                                data={p}
+                                setObjectStamp={setObjectStamp}
+                                payroll={payroll}
+                                setLoading={setLoading}
+                                key={p.person.id}
+                              />
+                            </Panel>
+                          );
+                        }
+                      })}
+                  </Collapse>
+                )}
+
+                {stampedInvoices && stampedInvoices.length > 0 && stamped && (
+                  <Table
+                    className={"mainTable"}
+                    size="small"
+                    columns={columns}
+                    dataSource={stampedInvoices}
+                    loading={loading}
+                    locale={{
+                      emptyText: loading
+                        ? "Cargando..."
+                        : "No se encontraron resultados.",
+                    }}
+                  />
+                )}
               </Spin>
             </Col>
           </Row>
