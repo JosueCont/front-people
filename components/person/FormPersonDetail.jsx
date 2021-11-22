@@ -2726,7 +2726,7 @@ const personDetailForm = () => {
                             ruleRequired,
                             {
                               pattern: /^[\d]{0,19}$/,
-                              message: "El no  debe tener más de 19 dígitos",
+                              message: "El número debe tener más de 19 dígitos",
                             },
                           ]}
                         >

@@ -49,6 +49,10 @@ class WebApi {
   static getOtherPayments() {
     return WebApi.ApisType(`/fiscal/other-payment-type/`, "get");
   }
+
+  static validateAccountNumber(data) {
+    return WebApi.ApisType(`/fiscal/validate-account-number/`, "post", data);
+  }
 }
 
 export default WebApi;
