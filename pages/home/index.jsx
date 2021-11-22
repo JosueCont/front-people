@@ -881,7 +881,7 @@ const homeScreen = ({ ...props }) => {
   );
 
   return (
-    <MainLayout currentKey="1">
+    <MainLayout currentKey="persons">
       <Breadcrumb>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Personas</Breadcrumb.Item>

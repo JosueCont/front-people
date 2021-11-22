@@ -7,7 +7,7 @@ body {
 
 @font-face {
   font-family: "FontPeople";
-  src: url("../public/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf");
+  src: url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf");
   font-weight: 400;
   
 }
@@ -99,11 +99,6 @@ div#__next > section.layout{
   margin: 0 10px;
 }
 
-header.ant-layout-header {
-  padding-left: 10px;
-  padding-right: 10px;
-  background-color: var(--primaryColor) !important;
-}
 header.ant-layout-header > ul {
   background-color: var(--primaryColor) !important;
 }
@@ -219,7 +214,7 @@ li.ant-menu-submenu-selected {
   height: calc(100vh);
   width: 50%;
   margin-left: 25%;
-  background-image: url("../public/images/404.svg");
+  background-image: url("../../public/images/404.svg");
   background-position: "center";
   background-position-x: center;
   background-position-y: center;
@@ -468,10 +463,6 @@ li.ant-menu-submenu-selected {
 }
 .ant-pagination-item-active {  
   border-color: var(--primaryColor) !important;
-}
-
-header.ant-layout-header {
-    background-color: var(--primaryColor) !important;
 }
 
 .ant-checkbox-checked .ant-checkbox-inner {
