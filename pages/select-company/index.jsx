@@ -123,7 +123,7 @@ const SelectCompany = ({ ...props }) => {
           margin:auto;
         }
 
-        .ant-card-body{
+        .cardCompany .ant-card-body{
           background: #252837;
           border-bottom-right-radius: 13px;
           border-bottom-left-radius: 13px;

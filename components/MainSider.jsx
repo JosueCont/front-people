@@ -48,8 +48,8 @@ const MainSider = ({hideMenu, currentKey,
         <>
         <Global 
             styles={`
-                .mainSideMenu{
-                    border-right: solid 1px #8070F2;
+                .mainSideMenu, .ant-menu-inline-collapsed{
+                    border-right: solid 1px #8070F2 !important;
                 }
                 .mainSideMenu ul  li.ant-menu-item, li.ant-menu-submenu{
                     padding: ${collapsed?"auto": "0px 50px !important;"}
@@ -68,9 +68,6 @@ const MainSider = ({hideMenu, currentKey,
                 }
                 .subMainMenu .ant-menu .ant-menu-item{
                     padding: 0px 0px 0px 20px !important;
-                }
-                .ant-layout-content{
-                    background: var(--primaryColor) !important;
                 }
                 .mainMenu li:hover{
                     background: var(--secondaryColor) !important;

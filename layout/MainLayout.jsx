@@ -142,6 +142,9 @@ const MainLayout = ({
             --fontSpanColor: ${
               flavor && flavor.fontSpanColor ? flavor.fontSpanColor : "#000"
             };
+            .ant-layout-content{
+                background: var(--primaryColor) !important;
+            }
 
             /* .ant-layout-content{
               background: #2E303C;
@@ -162,6 +165,10 @@ const MainLayout = ({
             }
             label{
               color: var(--fontSpanColor);
+            }
+            .divider-primary{
+              border-bottom: solid 1px var(--primaryColor);
+              opacity: 0.5;
             }
 
               `}
