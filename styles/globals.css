@@ -81,6 +81,7 @@ div#__next > section.layout{
 
 .mainBreadcrumb {
   margin-bottom: 20px;
+  padding-left: 50px;
 }
 
 .ant-tabs-content-holder {
@@ -94,11 +95,7 @@ div#__next > section.layout{
   margin: 0 10px;
 }
 
-header.ant-layout-header {
-  padding-left: 10px;
-  padding-right: 10px;
-  background-color: var(--primaryColor) !important;
-}
+
 header.ant-layout-header > ul {
   background-color: var(--primaryColor) !important;
 }
@@ -466,7 +463,7 @@ li.ant-menu-submenu-selected {
 }
 
 header.ant-layout-header {
-    background-color: var(--primaryColor) !important;
+    background-color: transparent !important;
 }
 
 .ant-checkbox-checked .ant-checkbox-inner {
@@ -511,4 +508,29 @@ header.ant-layout-header {
   height: 200px;
   padding: 0px;
   margin-bottom: 25px;
+}
+
+
+.search_header{
+  background-color: transparent;
+  width: 300px;
+  border: 1px solid #878787;
+  border-radius: 11px;
+  color: #878787;
+  font-weight: 100;
+}
+.ant-input-affix-wrapper-focused{
+  border: 1px solid #878787 !important;
+}
+.search_header input{
+  background-color: transparent;
+  color: #878787;
+  font-size: 14px;
+}
+.search_header .ant-input-prefix span{
+    color: #878787 !important;
+}
+
+.ant-breadcrumb span{
+  color: var(--primaryColor)
 }
