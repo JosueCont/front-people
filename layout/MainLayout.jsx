@@ -176,6 +176,38 @@ const MainLayout = ({
               border-bottom: solid 1px var(--primaryColor);
               opacity: 0.5;
             }
+            /* .ant-form-item  label {
+              color: var(--fontColorSecondary) !important;
+            }
+
+            button, button {
+              color: var(--fontColorSecondary) !important;
+            } */
+
+            /* .ant-table, table.ant-table td, table th,
+            table.ant-table td.ant-table-cell-fix-left{
+              background: transparent !important;
+            }
+            table.ant-table tr:hover td{
+              background: transparent;
+            }
+
+            && tbody > tr:hover > td {
+              background: var(--secondaryColor) !important;
+              color: var(--fontColorSecondary) !important;
+            }
+            && tbody > tr:hover > td {
+              background: var(--secondaryColor) !important;
+            } */
+
+            /* .ant-table-body > tr.ant-table-row:hover > td,
+            .ant-table-body > tr.ant-table-row > td:hover{
+              background-color: red !important;
+            } */
+            /* th, td{
+              background: transparent;
+            } */
+
 
               `}
       />
