@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import {Layout, Row, Col, Avatar, Menu, Space } from 'antd'
+import { Layout, Row, Col, Avatar, Menu, Space } from "antd";
 import { useRouter } from "next/router";
 import HeaderCustom from "../components/Header";
 import Footer from "../components/Footer";
@@ -9,15 +9,15 @@ import { connect } from "react-redux";
 import { companySelected } from "../redux/UserDuck";
 import { css, Global } from "@emotion/core";
 import { getFlavor, getRouteFlavor } from "../utils/brand";
-import NewHeader from '../components/NewHeader'
-import MainSider from '../components/MainSider';
+import NewHeader from "../components/NewHeader";
+import MainSider from "../components/MainSider";
 import {
   DesktopOutlined,
   PieChartOutlined,
   FileOutlined,
   TeamOutlined,
   UserOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 
 const { Header, Content, Sider } = Layout;
 
@@ -44,14 +44,12 @@ const MainLayout = ({
   const [routeFlavor, setRouteFlavor] = useState({});
 
   /* Variable del side menu */
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(false);
   const { SubMenu } = Menu;
-  const onCollapse = collapsed => {
+  const onCollapse = (collapsed) => {
     console.log(collapsed);
-    setCollapsed(collapsed)
+    setCollapsed(collapsed);
   };
-
-
 
   useLayoutEffect(() => {
     try {
@@ -67,7 +65,7 @@ const MainLayout = ({
       link.href = routeFlavor + "/" + vflavor.stylePath;
       link.rel = "stylesheet";
       link.async = true;
-      
+
       head.appendChild(link);
     } catch (error) {}
   }, []);
@@ -113,6 +111,16 @@ const MainLayout = ({
               props.config ? props.config.concierge_secondary_color : "#1C1B2B"
             };
 
+            --fontPrimaryColor: ${
+              props.config ? props.config.concierge_font_primary_color : "#ffff"
+            };
+
+            --fontSecondaryColor: ${
+              props.config
+                ? props.config.concierge_font_secondary_color
+                : "#ffff"
+            };
+
             --login_image: ${
               props.config && props.config.concierge_logo_login
                 ? "url(" + props.config.concierge_logo_login + ")"
@@ -132,7 +140,7 @@ const MainLayout = ({
               flavor && flavor.font_family ? flavor.font_style : "normal"
             }; 
             --srcFontFamily: ${
-              flavor && flavor.font_family  
+              flavor && flavor.font_family
                 ? flavor.font_family
                 : 'url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf")'
             }; 
@@ -143,7 +151,8 @@ const MainLayout = ({
               flavor && flavor.fontSpanColor ? flavor.fontSpanColor : "#000"
             };
             .ant-layout-content{
-                background: var(--primaryColor) !important;
+                // background: var(--primaryColor) !important;
+                backGround: #F0F0F0 !important
             }
 
             /* .ant-layout-content{
@@ -158,7 +167,8 @@ const MainLayout = ({
             } */
 
             .ant-breadcrumb span{
-              color: var(--fontSpanColor);
+              // color: var(--fontSpanColor);
+              color: #000
             }
             .ant-menu-item, .ant-menu-submenu{
               color: var(--fontSpanColor);
@@ -184,17 +194,25 @@ const MainLayout = ({
           <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
         )}
       </Helmet>
+      <Layout>
+        <NewHeader
+          key="main_header"
+          hideMenu={hideMenu}
+          mainLogo={mainLogo}
+          hideProfile={hideProfile}
+          onClickImage={onClickImage}
+          hideSearch={hideSearch}
+          hideLogo={hideLogo}
+        />
         <Layout>
-          <NewHeader key="main_header" hideMenu={hideMenu} mainLogo={mainLogo} hideProfile={hideProfile} onClickImage={onClickImage} hideSearch={hideSearch} hideLogo={hideLogo} />
-          <Layout>
-            {! hideMenu && <MainSider  currentKey={currentKey} />}
-              <Content >
-                <div className="div-main-layout">{props.children}</div>
-              </Content>
-            {/*  */}
-            {/*  */}
-          </Layout>
+          {!hideMenu && <MainSider currentKey={currentKey} />}
+          <Content>
+            <div className="div-main-layout">{props.children}</div>
+          </Content>
+          {/*  */}
+          {/*  */}
         </Layout>
+      </Layout>
 
       {/* <HeaderCustom
         key="main_header"
@@ -204,7 +222,7 @@ const MainLayout = ({
         hideProfile={hideProfile}
         onClickImage={onClickImage}
       /> */}
-      
+
       {/* <div style={{ marginLeft: "50px" }}>
         <h1> {company != undefined && company}</h1>
       </div> */}

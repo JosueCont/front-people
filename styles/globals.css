@@ -532,5 +532,6 @@ header.ant-layout-header {
 }
 
 .ant-breadcrumb span{
-  color: var(--primaryColor)
+  /* color: var(--primaryColor) */
+  color: #000
 }

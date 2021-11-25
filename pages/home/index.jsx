@@ -889,137 +889,143 @@ const homeScreen = ({ ...props }) => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <>
-            <Row justify={"space-between"} className={"formFilter"}>
-              <Col>
-                <Form onFinish={filter} layout={"vertical"} form={formFilter}>
-                  <Row gutter={[10]}>
-                    <Col>
-                      <Form.Item name="name" label={"Nombre"}>
-                        <Input
-                          allowClear={true}
-                          placeholder="Nombre(s)"
-                          style={{ width: 150 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item name="flast_name" label={"Apellido"}>
-                        <Input
-                          allowClear={true}
-                          placeholder="Apellido(s)"
-                          style={{ width: 150 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item name="code" label={"Núm. empleado"}>
-                        <Input
-                          allowClear={true}
-                          placeholder="Núm. empleado"
-                          style={{ width: 100 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item name="gender" label="Género">
-                        <Select
-                          options={genders}
-                          notFoundContent={"No se encontraron resultados."}
-                          placeholder="Todos"
-                          notFoundContent={"No se encontraron resultados."}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <SelectDepartment />
-                    </Col>
-                    <Col>
-                      <SelectJob />
-                    </Col>
-                    <Col>
-                      <Form.Item name="is_active" label="Estatus">
-                        <Select
-                          options={statusSelect}
-                          placeholder="Estatus"
-                          notFoundContent={"No se encontraron resultados."}
-                          style={{ width: 90 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item name="periodicity" label="Periocidad">
-                        <Select
-                          options={periodicity}
-                          placeholder="Periocidad"
-                          notFoundContent={"No se encontraron resultados."}
-                          style={{ width: 90 }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col
-                      className="button-filter-person"
-                      style={{ display: "flex" }}
-                    >
-                      <Tooltip
-                        title="Filtrar"
-                        color={"#3d78b9"}
-                        key={"#filtrar"}
+            <div className="top-container-border-radius">
+              <Row justify={"space-between"} className={"formFilter"}>
+                <Col>
+                  <Form onFinish={filter} layout={"vertical"} form={formFilter}>
+                    <Row gutter={[10]}>
+                      <Col>
+                        <Form.Item name="name" label={"Nombre"}>
+                          <Input
+                            allowClear={true}
+                            placeholder="Nombre(s)"
+                            style={{ width: 150 }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item name="flast_name" label={"Apellido"}>
+                          <Input
+                            allowClear={true}
+                            placeholder="Apellido(s)"
+                            style={{ width: 150 }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item name="code" label={"Núm. empleado"}>
+                          <Input
+                            allowClear={true}
+                            placeholder="Núm. empleado"
+                            style={{ width: 100 }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item name="gender" label="Género">
+                          <Select
+                            options={genders}
+                            notFoundContent={"No se encontraron resultados."}
+                            placeholder="Todos"
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <SelectDepartment />
+                      </Col>
+                      <Col>
+                        <SelectJob />
+                      </Col>
+                      <Col>
+                        <Form.Item name="is_active" label="Estatus">
+                          <Select
+                            options={statusSelect}
+                            placeholder="Estatus"
+                            notFoundContent={"No se encontraron resultados."}
+                            style={{ width: 90 }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item name="periodicity" label="Periocidad">
+                          <Select
+                            options={periodicity}
+                            placeholder="Periocidad"
+                            notFoundContent={"No se encontraron resultados."}
+                            style={{ width: 90 }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col
+                        className="button-filter-person"
+                        style={{ display: "flex" }}
                       >
-                        <Button className="btn-filter" htmlType="submit">
-                          <SearchOutlined />
-                        </Button>
-                      </Tooltip>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto", marginLeft: 10 }}
+                        <Tooltip
+                          title="Filtrar"
+                          color={"#3d78b9"}
+                          key={"#filtrar"}
                         >
-                          <SyncOutlined />
-                        </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col className="button-filter-person" style={{ display: "flex" }}>
-                {permissions.create && (
+                          <Button className="btn-filter" htmlType="submit">
+                            <SearchOutlined />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto", marginLeft: 10 }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+                <Col
+                  className="button-filter-person"
+                  style={{ display: "flex" }}
+                >
+                  {permissions.create && (
+                    <Button
+                      className="btn-add-person"
+                      onClick={() => getModalPerson(true)}
+                    >
+                      <PlusOutlined />
+                      Agregar persona
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+              <Row justify={"end"} style={{ padding: "1% 0" }}>
+                {permissions.export && (
                   <Button
-                    className="btn-add-person"
-                    onClick={() => getModalPerson(true)}
+                    type="primary"
+                    icon={<DownloadOutlined />}
+                    size={{ size: "large" }}
+                    onClick={() => exportPersons()}
                   >
-                    <PlusOutlined />
-                    Agregar persona
+                    Descargar resultados
                   </Button>
                 )}
-              </Col>
-            </Row>
-            <Row justify={"end"} style={{ padding: "1% 0" }}>
-              {permissions.export && (
-                <Button
-                  type="primary"
-                  icon={<DownloadOutlined />}
-                  size={{ size: "large" }}
-                  onClick={() => exportPersons()}
-                >
-                  Descargar resultados
-                </Button>
-              )}
-              {permissions.import && (
-                <Dropdown
-                  overlay={menuImportPerson}
-                  placement="bottomLeft"
-                  arrow
-                  className={"ml-20"}
-                >
-                  <Button icon={<DownloadOutlined />}>Importar personas</Button>
-                </Dropdown>
-              )}
+                {permissions.import && (
+                  <Dropdown
+                    overlay={menuImportPerson}
+                    placement="bottomLeft"
+                    arrow
+                    className={"ml-20"}
+                  >
+                    <Button icon={<DownloadOutlined />}>
+                      Importar personas
+                    </Button>
+                  </Dropdown>
+                )}
 
-              {/* <Button
+                {/* <Button
                 className={"ml-20"}
                 type="primary"
                 icon={<DownloadOutlined />}
@@ -1028,29 +1034,34 @@ const homeScreen = ({ ...props }) => {
               >
                 Descargar plantilla
               </Button> */}
-              <Dropdown
-                overlay={menuExportTemplate}
-                placement="bottomLeft"
-                arrow
-                className={"ml-20"}
-              >
-                <Button icon={<DownloadOutlined />}>Descargar plantilla</Button>
-              </Dropdown>
-            </Row>
-            <Table
-              className={"mainTable"}
-              size="small"
-              columns={columns2}
-              dataSource={person}
-              loading={loading}
-              scroll={{ x: 300 }}
-              locale={{
-                emptyText: loading
-                  ? "Cargando..."
-                  : "No se encontraron resultados.",
-              }}
-              rowSelection={rowSelectionPerson}
-            />
+                <Dropdown
+                  overlay={menuExportTemplate}
+                  placement="bottomLeft"
+                  arrow
+                  className={"ml-20"}
+                >
+                  <Button icon={<DownloadOutlined />}>
+                    Descargar plantilla
+                  </Button>
+                </Dropdown>
+              </Row>
+            </div>
+            <div className="container-border-radius">
+              <Table
+                className={"mainTable"}
+                size="small"
+                columns={columns2}
+                dataSource={person}
+                loading={loading}
+                scroll={{ x: 300 }}
+                locale={{
+                  emptyText: loading
+                    ? "Cargando..."
+                    : "No se encontraron resultados.",
+                }}
+                rowSelection={rowSelectionPerson}
+              />
+            </div>
           </>
         ) : (
           <div className="notAllowed" />
