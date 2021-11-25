@@ -1,4 +1,4 @@
-import { Card, Tabs, Typography } from "antd";
+import { Card, Tabs, Typography, Modal, Row, Col, Button, message} from "antd";
 import FormTraining from "../forms/FormTraining";
 import FormPhone from "../forms/FormPhone";
 import FormAddress from "../forms/FormAddress";
@@ -10,7 +10,12 @@ import FormGeneralData from "../forms/FormGeneralData";
 import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import {WarningOutlined} from "@ant-design/icons";
+import { API_URL } from "../../config/config";
+import Axios from "axios";
+import { useRouter } from "next/router";
+import Router from "next/router";
 
 const DetailPerson = ({
   config,
@@ -22,6 +27,44 @@ const DetailPerson = ({
 }) => {
   const { Title } = Typography;
   const { TabPane } = Tabs;
+  const [deleted, setDeleted] = useState({});
+  const [modal, setModal] = useState(false);
+  const router = useRouter();
+
+  const showModal = () => {
+    modal ? setModal(false) : setModal(true);
+  };
+
+  const setDeleteRegister = (props) => {
+    setDeleted(props);
+    showModal();
+  };
+
+  const deletePersons = (data) => {
+    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
+      persons_id: router.query.id,
+    })
+      .then((response) => {
+        setLoading(false);
+        showModal();
+        message.success("Eliminado correctamente.");
+        Router.push("/home");
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+
+  const deleteRegister = () => {
+    if (deleted.api == "deleteBankAcc") deleteBankAcc(deleted.id);
+    if (deleted.api == "deletePerson") deletePersons();
+    if (deleted.api == "deletePhone") deletePhone(deleted.id);
+    if (deleted.api == "deleteContEm") deleteContEm(deleted.id);
+    if (deleted.api == "deleteFamily") deleteFamily(deleted.id);
+    if (deleted.api == "deleteDocument") deleteDocument(deleted.id);
+  };
+
 
   return (
     <>
@@ -75,7 +118,27 @@ const DetailPerson = ({
             />
           </TabPane>
           {deletePerson && (
-            <TabPane tab="Eliminar persona" key="tab_10"></TabPane>
+            <TabPane tab="Eliminar persona" key="tab_10">
+              Al eliminar a una persona perderá todos los datos
+              relacionados a ella de manera permanente.
+              <Row style={{ padding: "2%" }}>
+                <Col>
+                  <Button
+                    type="primary"
+                    danger
+                    icon={<WarningOutlined />}
+                    onClick={() =>
+                      setDeleteRegister({
+                        id: "",
+                        api: "deletePerson",
+                      })
+                    }
+                  >
+                    Eliminar persona
+                  </Button>
+                </Col>
+              </Row>
+            </TabPane>
           )}
           {config.nomina_enabled && (
             <TabPane tab="Nomina" key="tab_11">
@@ -84,6 +147,17 @@ const DetailPerson = ({
           )}
         </Tabs>
       </Card>
+       <Modal
+        title="Eliminar"
+        visible={modal}
+        onOk={deleteRegister}
+        onCancel={showModal}
+        okText="Si, Eliminar"
+        cancelText="Cancelar"
+      >
+        Al eliminar este registro perderá todos los datos relacionados a el de
+        manera permanente. ¿Está seguro de querer eliminarlo?
+      </Modal>
     </>
   );
 };
