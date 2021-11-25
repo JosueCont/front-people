@@ -111,7 +111,7 @@ const Lending = () => {
   };
 
   return (
-    <MainLayout currentKey="7.1">
+    <MainLayout currentKey={["prestamos"]} defaultOpenKeys={["solicitudes"]}>
       <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
         <Breadcrumb.Item
           className={"pointer"}

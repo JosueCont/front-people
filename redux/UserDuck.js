@@ -49,6 +49,7 @@ export default webReducer;
 export const doGetGeneralConfig = () => async (dispatch, getState) => {
   try {
     let response = await WebApi.getGeneralConfig();
+    console.log("response.config", response);
     sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
     dispatch({ type: GENERAL_CONFIG, payload: response.data });
     dispatch(setUser());
