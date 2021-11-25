@@ -255,7 +255,7 @@ const UploadPayroll = () => {
   };
 
   return (
-    <MainLayout currentKey="9">
+    <MainLayout currentKey={["recibos_nomina"]} defaultOpenKeys={["nomina"]}>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}

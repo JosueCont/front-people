@@ -16,7 +16,7 @@ import {
 
 const {  Sider } = Layout;
 
-const MainSider = ({hideMenu, currentKey, 
+const MainSider = ({hideMenu, currentKey, defaultOpenKeys = null, 
   hideProfile = true,
   onClickImage = true,
   ...props}) => {
@@ -64,35 +64,81 @@ const MainSider = ({hideMenu, currentKey,
                     background: var(--primaryColor) !important;
                 }
                 .ant-layout-sider .ant-menu {
-                background: var(--primaryColor) !important;
+                    background: var(--primaryColor) !important;
+                    color: varl(--fontSpanColor) !important
                 }
+                
+                .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
+                .mainMenu li:hover > div.ant-menu-submenu-title > i::after{
+                    background: var(--fontSpanColor) !important;
+                }
+
                 .subMainMenu .ant-menu .ant-menu-item{
                     padding: 0px 0px 0px 20px !important;
                 }
                 .mainMenu li:hover{
                     background: var(--secondaryColor) !important;
                     opacity: 0.7;
+                    color: var(--fontColorSecondary) !important;
                 }
-                .mainMenu li.ant-menu-item-selected{
+                .mainMenu li:hover > div.ant-menu-submenu-title{
+                    color: var(--fontColorSecondary) !important;
+                }
+
+                .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
+                .mainMenu li:hover > div.ant-menu-submenu-title > i::after{
+                    background: var(--fontColorSecondary) !important;
+                }
+
+                .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item{
+                    color: var(--fontColorSecondary) !important;
+                }
+                .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item:hover{
+                    color: var(--fontColorSecondary) !important;
+                    opacity: 0.5
+                }
+
+                .mainMenu li ul.ant-menu-sub{
+                    background: transparent !important;
+
+                }
+                .ant-menu-submenu-open ul.ant-menu-sub li.ant-menu-item-selected{
+                    text-decoration: underline;
+                    font-weight:500;
+                }
+
+                /* .mainMenu li:hover{
+                    color: var(--fontColorSecondary) !important;
+                } */
+                
+
+                .mainMenu li.ant-menu-item-selected, 
+                .mainMenu li.ant-menu-submenu-selected  {
                     background: var(--secondaryColor) !important;
                     opacity: 1;
                 }
+                .mainMenu li.ant-menu-item-selected span,
+                .mainMenu li.ant-menu-submenu-selected  > div,
+                .mainMenu li.ant-menu-submenu-selected  > ul li {
+                    color: var(--fontColorSecondary) !important;
+                }
+                
 
             `}
         />
         <Sider className="mainSideMenu" width="250" collapsible collapsed={collapsed} onCollapse={onCollapse}>
               <div className="logo" />
-                <Menu theme="dark" className="mainMenu" defaultSelectedKeys={[currentKey]} mode="inline">
+                <Menu theme="dark" className="mainMenu" defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys?defaultOpenKeys:['']} mode="inline">
                     {/* <Menu.Item key="applications" icon={<UserOutlined style={{opacity:0}} />} >
                         Aplicaciones
                     </Menu.Item> */}
                     <Menu.Item key="persons" icon={<UserOutlined/> } onClick={() => router.push({ pathname: "/home" })} >
                         Personas
                     </Menu.Item>
-                    <Menu.Item key="companies" icon={<UserOutlined /> } onClick={() => router.push({ pathname: "/business" })} >
+                    <Menu.Item key="business" icon={<UserOutlined /> } onClick={() => router.push({ pathname: "/business" })} >
                         Empresas
                     </Menu.Item>
-                    <SubMenu key="3" title="Configuración" className="subMainMenu">
+                    <SubMenu key="config" title="Configuración" className="subMainMenu">
                         <Menu.Item key="catalogos" onClick={() => router.push({ pathname: "/config/business" })} >
                             Catálogos
                         </Menu.Item>
@@ -100,7 +146,7 @@ const MainSider = ({hideMenu, currentKey,
                             Perfiles de seguridad
                         </Menu.Item>
                     </SubMenu>
-                    <SubMenu key="4" title="Comunicación" className="subMainMenu">
+                    <SubMenu key="comuniction" title="Comunicación" className="subMainMenu">
                         <Menu.Item key="comunicados" onClick={() => router.push({ pathname: "/comunication/releases" }) } >
                             Comunicados
                         </Menu.Item>
@@ -111,7 +157,7 @@ const MainSider = ({hideMenu, currentKey,
                     <Menu.Item icon={<ProfileOutlined />} key="reportes" onClick={() => router.push({ pathname: "/reports" })} >
                         Reportes
                     </Menu.Item>
-                    <SubMenu key="7" title="Solicitudes" className="subMainMenu">
+                    <SubMenu key="solicitudes" title="Solicitudes" className="subMainMenu">
                         <Menu.Item key="prestamos" onClick={() => router.push({ pathname: "/lending" })} >
                             Préstamos
                         </Menu.Item>
@@ -128,7 +174,7 @@ const MainSider = ({hideMenu, currentKey,
                             Cuentas bancarias
                         </Menu.Item>
                     </SubMenu>
-                    <SubMenu key="9" title="Nómina" className="subMainMenu">
+                    <SubMenu key="nomina" title="Nómina" className="subMainMenu">
                         <Menu.Item key="nomina_empresarial" onClick={() => router.push({ pathname: "/payrollvoucher/statisticsPayroll", }) } >
                             Nómina empresarial
                         </Menu.Item>
@@ -163,11 +209,11 @@ const MainSider = ({hideMenu, currentKey,
                         </SubMenu>
                     )}
 
-                    <SubMenu key="12" title="Registro de errores" className="subMainMenu">
-                        <Menu.Item key="12.1" onClick={() => router.push({ pathname: "/bulk_upload" })} >
+                    <SubMenu key="uploads" title="Registro de errores" className="subMainMenu">
+                        <Menu.Item key="persons_upload" onClick={() => router.push({ pathname: "/bulk_upload" })} >
                             Carga masiva de personas
                         </Menu.Item>
-                        <Menu.Item key="12.2" onClick={() => router.push({ pathname: "/log/documentsLog" }) } >
+                        <Menu.Item key="documents" onClick={() => router.push({ pathname: "/log/documentsLog" }) } >
                             Carga de documentos
                         </Menu.Item>
                     </SubMenu>

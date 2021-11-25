@@ -310,7 +310,7 @@ const StampPayroll = () => {
   };
 
   return (
-    <MainLayout currentKey="9.5">
+    <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["nomina"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

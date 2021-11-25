@@ -79,7 +79,7 @@ const assimilatedSalary = () => {
   };
 
   return (
-    <MainLayout currentKey="1">
+    <MainLayout currentKey={["asimilado"]} defaultOpenKeys={["nomina"]}>
       <Content className="site-layout">
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>

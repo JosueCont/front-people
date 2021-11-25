@@ -69,7 +69,7 @@ const ListBulkUpload = ({ ...props }) => {
       });
   }, []);
   return (
-    <MainLayout currentKey="12.1">
+    <MainLayout currentKey={["persons_upload"]} defaultOpenKeys={["uploads"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
