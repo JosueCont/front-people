@@ -643,7 +643,7 @@ const configBusiness = ({ ...props }) => {
 
   return (
     <>
-      <MainLayout currentKey="3.1">
+      <MainLayout currentKey={["catalogos"]} defaultOpenKeys={["config"]}>
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item
             className={"pointer"}

@@ -104,7 +104,7 @@ const GroupView = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey="11.1">
+    <MainLayout currentKey={["groups"]} defaultOpenKeys={["intranet"]}>
       <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
         <Breadcrumb.Item
           className={"pointer"}

@@ -204,7 +204,7 @@ const Groups = ({ ...props }) => {
     getGroups();
   };
   return (
-    <MainLayout currentKey="3.2">
+    <MainLayout currentKey={["perfiles"]} defaultOpenKeys={["config"]}>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}

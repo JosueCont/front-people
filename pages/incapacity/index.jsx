@@ -149,7 +149,7 @@ const Incapacity = () => {
   };
 
   return (
-    <MainLayout currentKey="7.4">
+    <MainLayout currentKey={["incapacidad"]} defaultOpenKeys={["solicitudes"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

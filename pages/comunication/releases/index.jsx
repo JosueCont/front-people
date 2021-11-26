@@ -153,7 +153,7 @@ const Releases = () => {
   };
 
   return (
-    <MainLayout currentKey="4.1">
+    <MainLayout currentKey={["comunicados"]} defaultOpenKeys={["comuniction"]}>
       <Breadcrumb key="Breadcrumb">
         <Breadcrumb.Item
           className={"pointer"}

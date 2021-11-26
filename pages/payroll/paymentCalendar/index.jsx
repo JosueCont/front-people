@@ -52,7 +52,7 @@ const PaymentCalendars = () => {
   }, [route]);
 
   return (
-    <MainLayout currentKey="9.4">
+    <MainLayout currentKey={["calendario"]} defaultOpenKeys={["nomina"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
