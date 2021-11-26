@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import {Layout, Row, Col, Avatar, Menu, Space } from 'antd'
 import { css, Global } from "@emotion/core";
 import { useRouter } from "next/router";
+import { connect } from "react-redux";
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -13,6 +14,7 @@ import {
   ProfileOutlined,
   DeploymentUnitOutlined
 } from '@ant-design/icons';
+import { FormattedMessage } from "react-intl";
 
 const {  Sider } = Layout;
 
@@ -28,20 +30,19 @@ const MainSider = ({hideMenu, currentKey, defaultOpenKeys = null,
   const [logOut, setLogOut] = useState(false);
   const [primaryColor, setPrimaryColor] = useState(null);
   const [secondaryColor, setSecondaryColor] = useState(null);
-  const [intranetAccess, setintanetAccess] = useState(null);
+  const [intranetAccess, setintanetAccess] = useState(false);
 
     const { SubMenu } = Menu;
 
     const [collapsed, setCollapsed] = useState(false)
     const onCollapse = collapsed => {
-        console.log(collapsed);
         setCollapsed(collapsed)
     };
 
-    useEffect(() => {
-    if (props.config) {
-      setintanetAccess(props.config.intranet_enabled);
-    }
+    useLayoutEffect(() => {
+        if (props.config) {
+            setintanetAccess(props.config.intranet_enabled);
+        }
   }, [props.config]);
 
     return (
@@ -138,7 +139,7 @@ const MainSider = ({hideMenu, currentKey, defaultOpenKeys = null,
                     <Menu.Item key="business" icon={<UserOutlined /> } onClick={() => router.push({ pathname: "/business" })} >
                         Empresas
                     </Menu.Item>
-                    <SubMenu key="config" title="Configuración" className="subMainMenu">
+                    <SubMenu icon={<ProfileOutlined />} key="config" title="Configuración" className="subMainMenu">
                         <Menu.Item key="catalogos" onClick={() => router.push({ pathname: "/config/business" })} >
                             Catálogos
                         </Menu.Item>
@@ -199,7 +200,8 @@ const MainSider = ({hideMenu, currentKey, defaultOpenKeys = null,
                         Asignar empresa
                     </Menu.Item>
                     {intranetAccess && (
-                        <SubMenu key="intranet" title={<FormattedMessage id="header.intranet" />} className="subMainMenu">
+                        <>
+                        <SubMenu key="intranet" title="Intranet" className="subMainMenu">
                             <Menu.Item key="groups" onClick={() => router.push({ pathname: "/intranet/groups" }) } >
                                 <FormattedMessage id="header.groups" />
                             </Menu.Item>
@@ -207,7 +209,10 @@ const MainSider = ({hideMenu, currentKey, defaultOpenKeys = null,
                                 <FormattedMessage id="header.config" />
                             </Menu.Item>
                         </SubMenu>
-                    )}
+                        </>
+                     )
+                    }
+
 
                     <SubMenu key="uploads" title="Registro de errores" className="subMainMenu">
                         <Menu.Item key="persons_upload" onClick={() => router.push({ pathname: "/bulk_upload" })} >
@@ -231,4 +236,10 @@ const MainSider = ({hideMenu, currentKey, defaultOpenKeys = null,
     )
 }
 
-export default MainSider
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
+  };
+};
+export default connect(mapState)(MainSider); 

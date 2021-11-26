@@ -47,7 +47,6 @@ const MainLayout = ({
   const [collapsed, setCollapsed] = useState(false)
   const { SubMenu } = Menu;
   const onCollapse = collapsed => {
-    console.log(collapsed);
     setCollapsed(collapsed)
   };
 
@@ -57,7 +56,6 @@ const MainLayout = ({
     try {
       const vflavor = getFlavor();
       const routeFlavor = getRouteFlavor();
-      console.log('vflavor',vflavor);
       setFlavor(vflavor);
       setRouteFlavor(routeFlavor);
 
@@ -76,7 +74,6 @@ const MainLayout = ({
     if (company == "" || company == undefined) {
       setCompany(nodeName);
     }
-    console.log('config',props.config);
   }, []);
 
   useEffect(() => {

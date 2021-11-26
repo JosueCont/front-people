@@ -141,14 +141,14 @@ const NewHeader = ({hideSearch, mainLogo, hideLogo, ...props}) => {
                     }
                     .ant-menu{
                         width: 100%;
-                        text-align: center;
+                        text-align: left;
                     }
                     .ant-menu .ant-menu-item{
                         margin:0px !important;
                         padding: 0px !important;
                     }
                     .text-menu{
-                        text-align:center;
+                        text-align:left;
                         padding-bottom:5px;
                         padding-top:5px;
                         margin:0px;
