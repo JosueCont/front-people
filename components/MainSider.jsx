@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Layout, Row, Col, Avatar, Menu, Space } from "antd";
 import { css, Global } from "@emotion/core";
 import { useRouter } from "next/router";
+import { connect } from "react-redux";
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -41,20 +42,19 @@ const MainSider = ({
   const [logOut, setLogOut] = useState(false);
   const [primaryColor, setPrimaryColor] = useState(null);
   const [secondaryColor, setSecondaryColor] = useState(null);
-  const [intranet_access, setintanetAccess] = useState(null);
+  const [intranetAccess, setintanetAccess] = useState(false);
 
   const { SubMenu } = Menu;
 
-  const [collapsed, setCollapsed] = useState(false);
-  const onCollapse = (collapsed) => {
-    console.log(collapsed);
-    setCollapsed(collapsed);
-  };
+    const [collapsed, setCollapsed] = useState(false)
+    const onCollapse = collapsed => {
+        setCollapsed(collapsed)
+    };
 
-  useEffect(() => {
-    if (props.config) {
-      setintanetAccess(props.config.intranet_enabled);
-    }
+    useLayoutEffect(() => {
+        if (props.config) {
+            setintanetAccess(props.config.intranet_enabled);
+        }
   }, [props.config]);
 
   return (
@@ -366,3 +366,10 @@ const MainSider = ({
 };
 
 export default MainSider;
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
+  };
+};
+export default connect(mapState)(MainSider); 
