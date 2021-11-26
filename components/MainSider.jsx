@@ -17,7 +17,12 @@ import {
   UserAddOutlined,
   BugOutlined,
 } from "@ant-design/icons";
-import { BusinessCenterOutlined, BusinessOutlined } from "@material-ui/icons";
+import {
+  BugReportOutlined,
+  BusinessCenterOutlined,
+  BusinessOutlined,
+  SettingsOutlined,
+} from "@material-ui/icons";
 
 const { Sider } = Layout;
 
@@ -60,7 +65,7 @@ const MainSider = ({
                     border-right: solid 1px #8070F2 !important;
                 }
                 .mainSideMenu ul  li.ant-menu-item, li.ant-menu-submenu{
-                    padding: ${collapsed ? "auto" : "0px 50px !important;"}
+                    padding: ${collapsed ? "auto" : "0px 30px !important;"}
                 }
                 .mainSideMenu ul li.ant-menu-submenu .ant-menu-submenu-title{
                     padding: ${collapsed ? "auto" : "0% !important;"}
@@ -161,12 +166,17 @@ const MainSider = ({
           </Menu.Item>
           <Menu.Item
             key="business"
-            icon={<UserOutlined />}
+            icon={<BusinessOutlined />}
             onClick={() => router.push({ pathname: "/business" })}
           >
             Empresas
           </Menu.Item>
-          <SubMenu key="config" title="Configuración" className="subMainMenu">
+          <SubMenu
+            key="config"
+            title="Configuración"
+            icon={<SettingsOutlined />}
+            className="subMainMenu"
+          >
             <Menu.Item
               key="catalogos"
               onClick={() => router.push({ pathname: "/config/business" })}
@@ -184,6 +194,7 @@ const MainSider = ({
             key="comuniction"
             title="Comunicación"
             className="subMainMenu"
+            icon={<MessageOutlined />}
           >
             <Menu.Item
               key="comunicados"
@@ -211,6 +222,7 @@ const MainSider = ({
             key="solicitudes"
             title="Solicitudes"
             className="subMainMenu"
+            icon={<FormOutlined />}
           >
             <Menu.Item
               key="prestamos"
@@ -243,7 +255,12 @@ const MainSider = ({
               Cuentas bancarias
             </Menu.Item>
           </SubMenu>
-          <SubMenu key="nomina" title="Nómina" className="subMainMenu">
+          <SubMenu
+            key="nomina"
+            title="Nómina"
+            className="subMainMenu"
+            icon={<DollarOutlined />}
+          >
             <Menu.Item
               key="nomina_empresarial"
               onClick={() =>
@@ -290,6 +307,7 @@ const MainSider = ({
           <Menu.Item
             key="asignar"
             onClick={() => router.push({ pathname: "/assignedCompanies" })}
+            icon={<UserAddOutlined />}
           >
             Asignar empresa
           </Menu.Item>
@@ -318,6 +336,7 @@ const MainSider = ({
             key="uploads"
             title="Registro de errores"
             className="subMainMenu"
+            icon={<BugReportOutlined />}
           >
             <Menu.Item
               key="persons_upload"

@@ -959,7 +959,7 @@ const homeScreen = ({ ...props }) => {
                       </Col>
                       <Col
                         className="button-filter-person"
-                        style={{ display: "flex" }}
+                        style={{ display: "flex", marginTop: "10px" }}
                       >
                         <Tooltip
                           title="Filtrar"
@@ -982,23 +982,19 @@ const homeScreen = ({ ...props }) => {
                             <SyncOutlined />
                           </Button>
                         </Tooltip>
+                        {permissions.create && (
+                          <Button
+                            className="btn-add-person"
+                            onClick={() => getModalPerson(true)}
+                            style={{ marginTop: "auto", marginLeft: 10 }}
+                          >
+                            <PlusOutlined />
+                            Agregar persona
+                          </Button>
+                        )}
                       </Col>
                     </Row>
                   </Form>
-                </Col>
-                <Col
-                  className="button-filter-person"
-                  style={{ display: "flex" }}
-                >
-                  {permissions.create && (
-                    <Button
-                      className="btn-add-person"
-                      onClick={() => getModalPerson(true)}
-                    >
-                      <PlusOutlined />
-                      Agregar persona
-                    </Button>
-                  )}
                 </Col>
               </Row>
               <Row justify={"end"} style={{ padding: "1% 0" }}>
@@ -1008,6 +1004,7 @@ const homeScreen = ({ ...props }) => {
                     icon={<DownloadOutlined />}
                     size={{ size: "large" }}
                     onClick={() => exportPersons()}
+                    style={{ marginBottom: "10px" }}
                   >
                     Descargar resultados
                   </Button>
@@ -1019,7 +1016,10 @@ const homeScreen = ({ ...props }) => {
                     arrow
                     className={"ml-20"}
                   >
-                    <Button icon={<DownloadOutlined />}>
+                    <Button
+                      icon={<DownloadOutlined />}
+                      style={{ marginBottom: "10px" }}
+                    >
                       Importar personas
                     </Button>
                   </Dropdown>
@@ -1040,7 +1040,10 @@ const homeScreen = ({ ...props }) => {
                   arrow
                   className={"ml-20"}
                 >
-                  <Button icon={<DownloadOutlined />}>
+                  <Button
+                    icon={<DownloadOutlined />}
+                    style={{ marginBottom: "10px" }}
+                  >
                     Descargar plantilla
                   </Button>
                 </Dropdown>

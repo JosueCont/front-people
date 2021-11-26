@@ -159,6 +159,7 @@ const MainLayout = ({
                 ? props.config.concierge_font_secondary_color
                 : "#000"
             };
+            
 
             .ant-layout-content{
                 // background: var(--primaryColor) !important;
@@ -236,6 +237,16 @@ const MainLayout = ({
           <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
         )}
       </Helmet>
+      {/* <Layout>
+        <NewHeader
+          key="main_header"
+          hideMenu={hideMenu}
+          mainLogo={mainLogo}
+          hideProfile={hideProfile}
+          onClickImage={onClickImage}
+          hideSearch={hideSearch}
+          hideLogo={hideLogo}
+        /> */}
       <Layout>
         <NewHeader
           key="main_header"
@@ -247,32 +258,22 @@ const MainLayout = ({
           hideLogo={hideLogo}
         />
         <Layout>
-          <NewHeader
-            key="main_header"
-            hideMenu={hideMenu}
-            mainLogo={mainLogo}
-            hideProfile={hideProfile}
-            onClickImage={onClickImage}
-            hideSearch={hideSearch}
-            hideLogo={hideLogo}
-          />
-          <Layout>
-            {!hideMenu && (
-              <MainSider
-                currentKey={currentKey}
-                defaultOpenKeys={
-                  props.defaultOpenKeys ? props.defaultOpenKeys : null
-                }
-              />
-            )}
-            <Content>
-              <div className="div-main-layout">{props.children}</div>
-            </Content>
-            {/*  */}
-            {/*  */}
-          </Layout>
+          {!hideMenu && (
+            <MainSider
+              currentKey={currentKey}
+              defaultOpenKeys={
+                props.defaultOpenKeys ? props.defaultOpenKeys : null
+              }
+            />
+          )}
+          <Content>
+            <div className="div-main-layout">{props.children}</div>
+          </Content>
+          {/*  */}
+          {/*  */}
         </Layout>
       </Layout>
+      {/* </Layout> */}
 
       {/* <HeaderCustom
         key="main_header"
