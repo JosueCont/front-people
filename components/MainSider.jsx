@@ -16,8 +16,9 @@ import {
   FormOutlined,
   DollarOutlined,
   UserAddOutlined,
-  BugOutlined,
-} from "@ant-design/icons";
+  DeploymentUnitOutlined
+} from '@ant-design/icons';
+import { FormattedMessage } from "react-intl";
 import {
   BugReportOutlined,
   BusinessCenterOutlined,
