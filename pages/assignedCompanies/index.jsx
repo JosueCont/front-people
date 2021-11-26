@@ -181,7 +181,7 @@ const SelectCompany = () => {
   ];
 
   return (
-    <MainLayout currentKey="8.5">
+    <MainLayout currentKey={["asignar"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

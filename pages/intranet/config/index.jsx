@@ -76,7 +76,7 @@ const configIntranet = () => {
     }
 
     return (
-        <MainLayout currentKey="11.2">
+        <MainLayout currentKey={["config"]} defaultOpenKeys={["intranet"]}>
             <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
                 <Breadcrumb.Item
                     className={"pointer"}

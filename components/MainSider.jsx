@@ -24,6 +24,7 @@ const { Sider } = Layout;
 const MainSider = ({
   hideMenu,
   currentKey,
+  defaultOpenKeys = null,
   hideProfile = true,
   onClickImage = true,
   ...props
@@ -71,19 +72,65 @@ const MainSider = ({
                     background: var(--primaryColor) !important;
                 }
                 .ant-layout-sider .ant-menu {
-                background: var(--primaryColor) !important;
+                    background: var(--primaryColor) !important;
+                    color: varl(--fontSpanColor) !important
                 }
+                
+                .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
+                .mainMenu li:hover > div.ant-menu-submenu-title > i::after{
+                    background: var(--fontSpanColor) !important;
+                }
+
                 .subMainMenu .ant-menu .ant-menu-item{
                     padding: 0px 0px 0px 20px !important;
                 }
                 .mainMenu li:hover{
                     background: var(--secondaryColor) !important;
                     opacity: 0.7;
+                    color: var(--fontColorSecondary) !important;
                 }
-                .mainMenu li.ant-menu-item-selected{
+                .mainMenu li:hover > div.ant-menu-submenu-title{
+                    color: var(--fontColorSecondary) !important;
+                }
+
+                .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
+                .mainMenu li:hover > div.ant-menu-submenu-title > i::after{
+                    background: var(--fontColorSecondary) !important;
+                }
+
+                .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item{
+                    color: var(--fontColorSecondary) !important;
+                }
+                .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item:hover{
+                    color: var(--fontColorSecondary) !important;
+                    opacity: 0.5
+                }
+
+                .mainMenu li ul.ant-menu-sub{
+                    background: transparent !important;
+
+                }
+                .ant-menu-submenu-open ul.ant-menu-sub li.ant-menu-item-selected{
+                    text-decoration: underline;
+                    font-weight:500;
+                }
+
+                /* .mainMenu li:hover{
+                    color: var(--fontColorSecondary) !important;
+                } */
+                
+
+                .mainMenu li.ant-menu-item-selected, 
+                .mainMenu li.ant-menu-submenu-selected  {
                     background: var(--secondaryColor) !important;
                     opacity: 1;
                 }
+                .mainMenu li.ant-menu-item-selected span,
+                .mainMenu li.ant-menu-submenu-selected  > div,
+                .mainMenu li.ant-menu-submenu-selected  > ul li {
+                    color: var(--fontColorSecondary) !important;
+                }
+                
 
             `}
       />
@@ -98,7 +145,8 @@ const MainSider = ({
         <Menu
           theme="dark"
           className="mainMenu"
-          defaultSelectedKeys={[currentKey]}
+          defaultSelectedKeys={currentKey}
+          defaultOpenKeys={defaultOpenKeys ? defaultOpenKeys : [""]}
           mode="inline"
         >
           {/* <Menu.Item key="applications" icon={<UserOutlined style={{opacity:0}} />} >
@@ -112,18 +160,13 @@ const MainSider = ({
             Personas
           </Menu.Item>
           <Menu.Item
-            key="companies"
-            icon={<BusinessOutlined />}
+            key="business"
+            icon={<UserOutlined />}
             onClick={() => router.push({ pathname: "/business" })}
           >
             Empresas
           </Menu.Item>
-          <SubMenu
-            key="3"
-            title="Configuración"
-            icon={<SettingOutlined />}
-            className="subMainMenu"
-          >
+          <SubMenu key="config" title="Configuración" className="subMainMenu">
             <Menu.Item
               key="catalogos"
               onClick={() => router.push({ pathname: "/config/business" })}
@@ -138,9 +181,8 @@ const MainSider = ({
             </Menu.Item>
           </SubMenu>
           <SubMenu
-            key="4"
+            key="comuniction"
             title="Comunicación"
-            icon={<MessageOutlined />}
             className="subMainMenu"
           >
             <Menu.Item
@@ -166,9 +208,8 @@ const MainSider = ({
             Reportes
           </Menu.Item>
           <SubMenu
-            key="7"
+            key="solicitudes"
             title="Solicitudes"
-            icon={<FormOutlined />}
             className="subMainMenu"
           >
             <Menu.Item
@@ -202,12 +243,7 @@ const MainSider = ({
               Cuentas bancarias
             </Menu.Item>
           </SubMenu>
-          <SubMenu
-            key="9"
-            title="Nómina"
-            icon={<DollarOutlined />}
-            className="subMainMenu"
-          >
+          <SubMenu key="nomina" title="Nómina" className="subMainMenu">
             <Menu.Item
               key="nomina_empresarial"
               onClick={() =>
@@ -254,7 +290,6 @@ const MainSider = ({
           <Menu.Item
             key="asignar"
             onClick={() => router.push({ pathname: "/assignedCompanies" })}
-            icon={<UserAddOutlined />}
           >
             Asignar empresa
           </Menu.Item>
@@ -280,19 +315,18 @@ const MainSider = ({
           )}
 
           <SubMenu
-            key="12"
+            key="uploads"
             title="Registro de errores"
-            icon={<BugOutlined />}
             className="subMainMenu"
           >
             <Menu.Item
-              key="12.1"
+              key="persons_upload"
               onClick={() => router.push({ pathname: "/bulk_upload" })}
             >
               Carga masiva de personas
             </Menu.Item>
             <Menu.Item
-              key="12.2"
+              key="documents"
               onClick={() => router.push({ pathname: "/log/documentsLog" })}
             >
               Carga de documentos

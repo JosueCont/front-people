@@ -426,7 +426,7 @@ const businessForm = () => {
   );
 
   return (
-    <MainLayout currentKey="2">
+    <MainLayout currentKey={["business"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
