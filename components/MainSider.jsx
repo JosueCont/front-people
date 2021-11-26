@@ -28,7 +28,7 @@ const MainSider = ({hideMenu, currentKey,
   const [logOut, setLogOut] = useState(false);
   const [primaryColor, setPrimaryColor] = useState(null);
   const [secondaryColor, setSecondaryColor] = useState(null);
-  const [intranet_access, setintanetAccess] = useState(null);
+  const [intranetAccess, setintanetAccess] = useState(null);
 
     const { SubMenu } = Menu;
 
@@ -152,7 +152,7 @@ const MainSider = ({hideMenu, currentKey,
                     <Menu.Item key="asignar" onClick={() => router.push({ pathname: "/assignedCompanies" }) } >
                         Asignar empresa
                     </Menu.Item>
-                    {intranet_access && (
+                    {intranetAccess && (
                         <SubMenu key="intranet" title={<FormattedMessage id="header.intranet" />} className="subMainMenu">
                             <Menu.Item key="groups" onClick={() => router.push({ pathname: "/intranet/groups" }) } >
                                 <FormattedMessage id="header.groups" />
