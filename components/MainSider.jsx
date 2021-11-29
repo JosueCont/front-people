@@ -12,12 +12,11 @@ import {
   SettingOutlined,
   MessageOutlined,
   ProfileOutlined,
-  DeploymentUnitOutlined,
   FormOutlined,
   DollarOutlined,
   UserAddOutlined,
-  DeploymentUnitOutlined
-} from '@ant-design/icons';
+  DeploymentUnitOutlined,
+} from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import {
   BugReportOutlined,
@@ -47,15 +46,15 @@ const MainSider = ({
 
   const { SubMenu } = Menu;
 
-    const [collapsed, setCollapsed] = useState(false)
-    const onCollapse = collapsed => {
-        setCollapsed(collapsed)
-    };
+  const [collapsed, setCollapsed] = useState(false);
+  const onCollapse = (collapsed) => {
+    setCollapsed(collapsed);
+  };
 
-    useLayoutEffect(() => {
-        if (props.config) {
-            setintanetAccess(props.config.intranet_enabled);
-        }
+  useLayoutEffect(() => {
+    if (props.config) {
+      setintanetAccess(props.config.intranet_enabled);
+    }
   }, [props.config]);
 
   return (
@@ -312,7 +311,7 @@ const MainSider = ({
           >
             Asignar empresa
           </Menu.Item>
-          {intranet_access && (
+          {props.config && props.config.intranet_access && (
             <SubMenu
               key="intranet"
               title={<FormattedMessage id="header.intranet" />}
@@ -366,11 +365,10 @@ const MainSider = ({
   );
 };
 
-export default MainSider;
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
   };
 };
-export default connect(mapState)(MainSider); 
+export default connect(mapState)(MainSider);
