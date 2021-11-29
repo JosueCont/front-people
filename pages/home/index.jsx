@@ -362,6 +362,7 @@ const homeScreen = ({ ...props }) => {
       align: "center",
       key: "CompaniesAsosigned",
       align: "center",
+      fixed: "right",
       render: (item) => {
         return (
           <Text
@@ -374,6 +375,7 @@ const homeScreen = ({ ...props }) => {
       },
     },
     {
+      fixed: "right",
       title: () => {
         return (
           <>
@@ -1049,22 +1051,22 @@ const homeScreen = ({ ...props }) => {
                 </Dropdown>
               </Row>
             </div>
-            <div className="container-border-radius">
-              <Table
-                className={"mainTable"}
-                size="small"
-                columns={columns2}
-                dataSource={person}
-                loading={loading}
-                scroll={{ x: 300 }}
-                locale={{
-                  emptyText: loading
-                    ? "Cargando..."
-                    : "No se encontraron resultados.",
-                }}
-                rowSelection={rowSelectionPerson}
-              />
-            </div>
+            {/* <div className="container-border-radius"> */}
+            <Table
+              className={"mainTable"}
+              size="small"
+              columns={columns2}
+              dataSource={person}
+              loading={loading}
+              scroll={{ x: 1300 }}
+              locale={{
+                emptyText: loading
+                  ? "Cargando..."
+                  : "No se encontraron resultados.",
+              }}
+              rowSelection={rowSelectionPerson}
+            />
+            {/* </div> */}
           </>
         ) : (
           <div className="notAllowed" />
