@@ -86,8 +86,8 @@ const Home = ({ ...props }) => {
             opacity: 1;
           }
 
-          .div-container-left {
-            top: 185px;
+          .divContainerLeft {
+            top: 185px !important;
             position: relative;
             text-align: center;
             width: 90%;
@@ -102,9 +102,9 @@ const Home = ({ ...props }) => {
           }
 
           .divform {
-            top: 120px;
+            top: 175px;
             position: relative;
-            width: 85% !important;
+            width: 75% !important;
             margin: 0 auto;
             padding: 20px 50px 50px !important;
             min-height: 510px;
@@ -229,7 +229,7 @@ const Home = ({ ...props }) => {
       {props.config ? (
         <Row>
           <Col xs={0} md={12} sm={0}>
-            <div className="div-container-left">
+            <div className="divContainerLeft">
               <div
                 style={{ width: "100%", textAlign: "center", marginTop: "30%" }}
               >
@@ -291,7 +291,7 @@ const Home = ({ ...props }) => {
           </Col>
         </Row>
       ) : (
-        <div className="center-content" style={{ padding: "10%" }}>
+        <div className="center-content">
           <Spin tip="Cargando..." spinning={loading} />
         </div>
       )}
