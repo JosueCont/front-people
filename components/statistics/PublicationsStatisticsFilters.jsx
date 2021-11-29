@@ -15,6 +15,7 @@ const CustomInput = styled(Input)`
 const CustomDatePicker = styled(DatePicker)`
     width: 90%;
     margin: auto;
+    border-radius: 5px;
 `;
 const CustomButton = styled(Button)`
     width: 90%;

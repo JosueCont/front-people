@@ -33,7 +33,7 @@ const CustomTable = styled(Table)`
 `;
 const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage}) => {
 
-    const ReactionByType = ({reactions = [{1: '1'}, {2:'2'}, {3: '2'}, {4: '1'}, {5: '2'}, {6: '5'}, {7: '7'}]}) => (
+    const ReactionByType = ({reactions = [{1: '0'}, {2:'0'}, {3: '0'}, {4: '0'}, {5: '0'}, {6: '0'}, {7: '0'}]}) => (
         <>
             {/* <Row>
                 <Col span={8}>
@@ -113,7 +113,7 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             key: 'reactions',
             render: reactions => (
                 <>
-                    <ReactionByType reactio/>
+                    <ReactionByType reactions={reactions}/>
                 </>
             )
         }

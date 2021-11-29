@@ -37,7 +37,7 @@ const index = (props) => {
                         comments: publication.comments ? publication.comments.length : 0,
                         clics: 0,
                         prints: 0,
-                        reactions: publication.reactions ? publication.reactions : [],
+                        reactions: publication.count_by_reaction_type ? publication.count_by_reaction_type : [],
 
                     })
                 });
@@ -45,6 +45,7 @@ const index = (props) => {
                 setProcessedPubications(publicationsFiltered);
                 setPublicationsList(props.publicationsList);
                 setLoadingData(false);
+                console.log("filtradas" ,publicationsFiltered)
             }catch(error){
                 console.log(error);
             }
