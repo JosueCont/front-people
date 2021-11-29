@@ -86,8 +86,8 @@ const Home = ({ ...props }) => {
             opacity: 1;
           }
 
-          .div-container-left {
-            top: 185px;
+          .divContainerLeft {
+            top: 185px !important;
             position: relative;
             text-align: center;
             width: 90%;
@@ -229,7 +229,7 @@ const Home = ({ ...props }) => {
       {props.config ? (
         <Row>
           <Col xs={0} md={12} sm={0}>
-            <div className="div-container-left">
+            <div className="divContainerLeft">
               <div
                 style={{ width: "100%", textAlign: "center", marginTop: "30%" }}
               >
