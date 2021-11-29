@@ -8,6 +8,7 @@ import jwt_decode from "jwt-decode";
 import Link from "next/link";
 import WebApi from "../api/webApi";
 import { ruleEmail } from "../utils/constant";
+import { EyeOutlined, MailOutlined } from "@ant-design/icons";
 
 const LoginForm = ({
   recoveryPsw = true,
@@ -107,16 +108,18 @@ const LoginForm = ({
         <Form
           name="normal_login"
           className="login-form"
-          layout="vertical"
+          // layout="vertical"
           form={loginForm}
           initialValues={{ remember: true }}
           onFinish={onFinish}
         >
+          <Form.Item>
+            <p className={"form-title"}>A new people management system</p>
+            <p className={"form-subtitle"}>Inicio de Sesión</p>
+          </Form.Item>
           <Form.Item
             name="email"
             rules={[ruleRequired, ruleEmail]}
-            label={"Correo electrónico"}
-            labelAlign={"left"}
             className="font-color-khor"
           >
             <Input
@@ -127,20 +130,20 @@ const LoginForm = ({
                   email: value.target.value.toLowerCase(),
                 })
               }
+              prefix={<MailOutlined />}
             />
           </Form.Item>
           <Text className="font-color-khor"></Text>
           <Form.Item
             name="password"
             rules={[ruleRequired]}
-            label={"Contraseña"}
-            labelAlign={"left"}
             className="font-color-khor"
           >
             <Input
               style={{ marginTop: "5px" }}
               type="password"
               placeholder="Contraseña"
+              prefix={<EyeOutlined />}
             />
           </Form.Item>
 
@@ -174,7 +177,7 @@ const LoginForm = ({
               Iniciar sesión
             </Button>
           </Form.Item>
-          <Form.Item>
+          <Form.Item style={{ textAlign: "right" }}>
             <span className="text-link">
               <Link href="https://www.grupohuman.com/aviso-privacidad">
                 Aviso de privacidad.

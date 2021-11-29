@@ -7,7 +7,7 @@ body {
 
 @font-face {
   font-family: "FontPeople";
-  src: url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf");
+  src: url("/flavors/demo/fonts/Poligon-Regular.ttf");
   font-weight: 400;
   
 }
@@ -29,9 +29,10 @@ a {
 }
 
 .loginContainer {
-  height: 100vh;
+  /* height: 100vh; */
   background: white;
   display: flex;
+  border-radius: 20px;
 }
 /* .card-login {
  height: 100vh;
@@ -99,6 +100,17 @@ div#__next > section.layout{
   margin: 0 10px;
 }
 
+.top-container-border-radius{  
+  background: #fff !important;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+.container-border-radius{
+  background: #fff !important;
+  border-radius: 20px;
+  padding:5px 20px;  
+}
 header.ant-layout-header > ul {
   background-color: var(--primaryColor) !important;
 }
@@ -333,6 +345,7 @@ li.ant-menu-submenu-selected {
   
   background-color: var(--secondaryColor) !important;
   border-color: var(--secondaryColor) !important;
+  color: var(--fontSecondaryColor) !important
 }
 
 
@@ -344,6 +357,7 @@ li.ant-menu-submenu-selected {
 .ant-btn-primary:hover{
   background-color: var(--secondaryColor) !important;
   border-color: var(--secondaryColor) !important;
+  color: var(--fontSecondaryColor) !important
 }
 
 .text-link {
