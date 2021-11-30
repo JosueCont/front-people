@@ -143,6 +143,9 @@ header.ant-layout-header
   background-color: #fff !important;
   color: #000 !important;
 }
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-radius: 10px;
+}
 
 .formPermission .ant-input-number-disabled,
 .ant-input-disabled {
@@ -275,6 +278,7 @@ li.ant-menu-submenu-selected {
 
 .ant-input, .ant-form-item-control-input{
   border-color: var(--primaryColor) !important;
+  border-radius: 10px;
 }
 
 .ant-input:hover, .ant-input-focused, .ant-input:focus  {
@@ -302,6 +306,7 @@ li.ant-menu-submenu-selected {
 
 .ant-picker{
   border: 1px solid var(--primaryColor) !important;
+  border-radius: 10px;
 }
 
 .ant-picker:hover, .ant-picker-focused {
@@ -324,12 +329,14 @@ li.ant-menu-submenu-selected {
 .ant-btn{
   background-color: var(--primaryColor) !important;
   border-color: var(--primaryColor) !important;
+  border-radius: 10px;
 }
 
 .ant-btn:hover{
   
   background-color: var(--secondaryColor) !important;
   border-color: var(--secondaryColor) !important;
+  color: var(--fontSecondaryColor) !important
 }
 
 
@@ -341,6 +348,7 @@ li.ant-menu-submenu-selected {
 .ant-btn-primary:hover{
   background-color: var(--secondaryColor) !important;
   border-color: var(--secondaryColor) !important;
+  color: var(--fontSecondaryColor) !important
 }
 
 .text-link {
@@ -483,6 +491,7 @@ header.ant-layout-header {
   font-weight: "bold";
   color: var(--fontSpanColor);
   margin-top: auto;
+  border-radius: 10px;
 }
 
 .ant-tooltip-inner{
@@ -519,8 +528,14 @@ header.ant-layout-header {
   color: #878787;
   font-weight: 100;
 }
+.ant-input-affix-wrapper {
+  border-radius: 10px;
+}
 .ant-input-affix-wrapper-focused{
   border: 1px solid #878787 !important;
+}
+.input[type='text'], input[type='password'], input[type='number'], textarea{
+  border-radius: 10px;
 }
 .search_header input{
   background-color: transparent;
@@ -532,5 +547,46 @@ header.ant-layout-header {
 }
 
 .ant-breadcrumb span{
-  color: var(--primaryColor)
+  /* color: var(--primaryColor) */
+  color: #000
+}
+
+/*Login styles*/
+.divContainerLeft {
+  top: 185px !important;
+  position: relative;
+  text-align: center;
+  width: 90%;
+  margin: 0 auto;
+  padding: 50px;
+  height: 510px;
+  -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 2s; /* Firefox < 16 */
+  -ms-animation: fadein 2s; /* Internet Explorer */
+  -o-animation: fadein 2s; /* Opera < 12.1 */
+  animation: fadein 2s;
+}
+
+/*Border radius table*/
+.ant-table.ant-table-small {
+  border-radius: 20px; 
+}
+
+.ant-table-content{  
+  border-radius: 20px;
+}
+.ant-table-container table > thead > tr:first-child th:last-child {  
+  border-top-right-radius: 20px;
+}
+.ant-table-container table > thead > tr:first-child th:first-child {
+  border-top-left-radius: 20px;
+}
+
+/*Border radius modal*/
+.ant-modal-header {  
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+}
+.ant-modal-content {  
+  border-radius: 20px;
 }
