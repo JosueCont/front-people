@@ -8,6 +8,7 @@ import esES from 'antd/lib/locale/es_ES';
 import MainLayout from '../../../layout/MainLayout';
 
 import { publicationsListAction } from '../../../redux/publicationsListDuck';
+import { useGetCompanyId } from '../../../utils/useGetCompanyId';
 import PublicationsStatisticsTable from '../../../components/statistics/PublicationsStatisticsTable';
 import PublicationsStatisticsFilters from '../../../components/statistics/PublicationsStatisticsFilters';
 
@@ -17,9 +18,13 @@ const index = (props) => {
     const [loadingData, setLoadingData] = useState(true);
     const [processedPublications, setProcessedPubications] = useState([]);
     const [parameters, setParameters] = useState('');
+    // Hook para traer la compania
+    const { companyId, getCompanyId } = useGetCompanyId();
     
     useEffect(() => {
+        moment.locale('es-mx')
         props.publicationsListAction(1);
+        getCompanyId();
     },[]);
 
     useEffect(() => {
@@ -45,22 +50,18 @@ const index = (props) => {
                 setProcessedPubications(publicationsFiltered);
                 setPublicationsList(props.publicationsList);
                 setLoadingData(false);
-                console.log("filtradas" ,publicationsFiltered)
+                // console.log("filtradas" ,publicationsFiltered)
             }catch(error){
                 console.log(error);
             }
         }
     },[props.publicationsList]);
 
-    const filterData = async() =>{
-        // props.publicationsListAction(1);
-    }
-
     return (
         <>
          <MainLayout currentKey="1">
             <ConfigProvider locale={esES}>
-                <PublicationsStatisticsFilters processedPublicationsList={processedPublications}/>
+                <PublicationsStatisticsFilters companyId={companyId} getPostsByFilter={props.publicationsListAction}/>
                 <PublicationsStatisticsTable 
                     current={publicationsList.data ? publicationsList.data.page : 1}
                     total={publicationsList.data ? publicationsList.data.count : 1}

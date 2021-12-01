@@ -127,7 +127,7 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
     return(
         <>
         
-            <CustomTable columns={columns} pagination={{
+            <CustomTable columns={columns} scroll={{ x: 800 }} pagination={{
                 current: current, 
                 pageSize: 10, 
                 total: total }} 
