@@ -19,7 +19,6 @@ import {
 import Avatar from "antd/lib/avatar/avatar";
 import Meta from "antd/lib/card/Meta";
 import { Content } from "antd/lib/layout/layout";
-import axios from "axios";
 import { set } from "js-cookie";
 import { useState } from "react";
 import { connect } from "react-redux";
@@ -29,6 +28,7 @@ import SelectPeriodicity from "../../components/selects/SelectPeriodicity";
 import SelectYear from "../../components/selects/SelectYear";
 import MainLayout from "../../layout/MainLayout";
 import { ruleRequired } from "../../utils/constant";
+import webApiFiscal from "../../api/WebApiFiscal";
 
 const assimilatedSalary = () => {
   const [form] = Form.useForm();
@@ -36,26 +36,30 @@ const assimilatedSalary = () => {
   const [salary, setSalary] = useState(null);
   const [type, setType] = useState(0);
 
-  const onFinish = (value) => {
+  const onFinish = async (value) => {
     setSalary(null);
     setLoading(true);
-    axios
-      .post(
-        "http://gape.localhost:8000/fiscal/assimilated_salary_calculation",
-        value
-      )
-      .then((response) => {
+    try {
+      let response = await webApiFiscal.assimilatedSalaryCalculation(value);
+      if (response.data.level == "success") 
+      {
         setTimeout(() => {
           setSalary(response.data);
           setLoading(false);
         }, 500);
-      })
-      .catch((error) => {
-        console.log(error);
+      } 
+      else {      
         message.error("Ocurrio un error intente de nuevo");
         setSalary(null);
         setLoading(false);
-      });
+      }
+    }
+    catch (error) {
+      console.log(error);
+      message.error("Ocurrio un error intente de nuevo, " + error);
+      setSalary(null);
+      setLoading(false);
+    }
   };
   const types = [
     {
