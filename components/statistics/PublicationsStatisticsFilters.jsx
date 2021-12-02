@@ -62,6 +62,9 @@ const CustomCol = styled(Col)`
 const CenterItemsCol = styled(Col)`
     margin: auto;
     text-align: center;
+    & .ant-btn:hover{
+        background-color: var(--primaryColor) !important;
+    }
 `;
 
 
@@ -72,6 +75,7 @@ const PublicationsStatisticsFilters = (props) => {
     const [groupList, setGroupList] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [datePickerValue, setDatePickerValue] = useState(null);
 
     const { Option } = Select;
     const { RangePicker } = DatePicker;
@@ -81,9 +85,11 @@ const PublicationsStatisticsFilters = (props) => {
     }
 
     function getSelectedDate(value, dateString){
+        // console.log(value);
         if(dateString.length == 2){
             setStartDate(dateString[0]);
             setEndDate(dateString[1]);
+            setDatePickerValue(value);
         }
     }
 
@@ -127,23 +133,28 @@ const PublicationsStatisticsFilters = (props) => {
     }, [props.groupList]);
 
     const getPostsByFilter = () => {
-        let userParam = user && user != "" ? `&owner__khonnect_id=${user}` : "" ;
+        let userParam = user && user != "" ? `owner__khonnect_id=${user}` : "" ;
         let groupParam = group && group != "" ? `&group=${group}` : "";
+        let dateRange = startDate && endDate ? `&start_date=${startDate}&end_date=${endDate}` : ''; 
 
-        props.getPostsByFilter('', `${userParam}${groupParam}`);
+        props.getPostsByFilter('', `${userParam}${groupParam}${dateRange}`);
     }
 
     const getExcelFile = () => {
-        let userParam = user && user != "" ? `&owner__khonnect_id=${user}` : "" ;
-        let groupParam = group && group != "" ? `&group=${group}` : "";
+        let userParam = user && user != '' ? `&owner__khonnect_id=${user}` : '';
+        let groupParam = group && group != '' ? `&group=${group}` : '';
+        let dateRange = startDate && endDate ? `&start_date=${startDate}&end_date=${endDate}` : ''; 
         // Genera el pdf
-        props.getExcelFileAction(`${userParam}${groupParam}`);
+        props.getExcelFileAction(`${userParam}${groupParam}${dateRange}`);
         // Actualiza la tabla con los filtros
-        props.getPostsByFilter('', `${userParam}${groupParam}`);
+        props.getPostsByFilter('', `${userParam}${groupParam}${dateRange}`);
     }
     const clearFilter = () => {
         setGroup('');
         setUser('');
+        setStartDate('');
+        setEndDate('');
+        setDatePickerValue();
         props.getPostsByFilter(1,'', false);
     }
     
@@ -173,7 +184,7 @@ const PublicationsStatisticsFilters = (props) => {
                             <InputLabel>Fecha</InputLabel>
                         </Col>
                         <CustomCol style={{textAlign: 'center'}} span={24}>
-                            <RangePicker onChange={getSelectedDate} format={"YYYY-MM-DD"}/>
+                            <RangePicker value={datePickerValue ? datePickerValue : null} onChange={getSelectedDate} format={"YYYY-MM-DD"}/>
                         </CustomCol>
                     </Row>
                 </Col>
