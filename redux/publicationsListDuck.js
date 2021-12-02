@@ -24,7 +24,7 @@ const publicationsListReducer = (state = initialData, action) => {
         case ERROR_PUBLICATIONS_LIST:
             return {...state, fetching: false, publicationsList: []}
         case LOADING_FILE:
-            return {...state, fetching: true, excelFileStatus: null }
+            return {...state, fetching: true, excelFileStatus: action.payload }
         case SUCCESS_FILE:
             return {...state, fetching: false, excelFileStatus: action.payload}
         case ERROR_FILE:
@@ -65,7 +65,7 @@ export const publicationsListAction = (page = '', parameters = '', exportFile = 
 }
 
 export const getExcelFileAction = (params='') => async(dispatch, getState) => {
-    dispatch({type: LOADING_FILE, fetching: true});
+    dispatch({type: LOADING_FILE, fetching: true, payload: 'loading'});
     await axios.get(`https://demo.people.hiumanlab.com/intranet/post/?export=true${params}`).then( response => {
         if(response.status == 200){
             const type = response.headers["content-type"];
