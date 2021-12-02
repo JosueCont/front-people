@@ -590,3 +590,7 @@ header.ant-layout-header {
 .ant-modal-content {  
   border-radius: 20px;
 }
+
+.icon-intranet{
+  width: 15px !important;
+}
