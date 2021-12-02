@@ -34,10 +34,9 @@ const publicationsListReducer = (state = initialData, action) => {
     }
 }
 
-export const publicationsListAction = (page = '', parameters = '', exportFile = false) => async(dispatch, getState) => {
+export const publicationsListAction = (page = '', parameters = '') => async(dispatch, getState) => {
     dispatch({type: LOADING_PUBLICATIONS_LIST});
-    let exportParameter = exportFile ? `export=${exportFile}` : '';
-    await axios.get(`https://demo.people-api.khorplus.com/intranet/post/?${page && page != '' ? `page=${page}` : ''}${parameters}${exportParameter}`).then( ({status, data}) => {
+    await axios.get(`https://demo.people-api.khorplus.com/intranet/post/?${page && page != '' ? `page=${page}` : ''}${parameters}`).then( ({status, data}) => {
         console.log(data);
         let dataAndResults = {
             data: data,
@@ -66,7 +65,7 @@ export const publicationsListAction = (page = '', parameters = '', exportFile = 
 
 export const getExcelFileAction = (params='') => async(dispatch, getState) => {
     dispatch({type: LOADING_FILE, fetching: true, payload: 'loading'});
-    await axios.get(`https://demo.people.hiumanlab.com/intranet/post/?export=true${params}`).then( response => {
+    await axios.get(`https://demo.people-api.khorplus.com/intranet/post/?export=true${params}`).then( response => {
         if(response.status == 200){
             const type = response.headers["content-type"];
             const blob = new Blob([response.data], {

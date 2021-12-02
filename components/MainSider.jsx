@@ -16,6 +16,7 @@ import {
   DollarOutlined,
   UserAddOutlined,
   DeploymentUnitOutlined,
+  AreaChartOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import {
@@ -333,6 +334,13 @@ const MainSider = ({
                 icon={<SettingsOutlined />}
               >
                 <FormattedMessage id="header.config" />
+              </Menu.Item>
+              <Menu.Item
+                key="statistics"
+                onClick={() => router.push({ pathname: "/intranet/publications_statistics" })}
+                icon={<AreaChartOutlined />}
+              >
+                <FormattedMessage id="header.statistics" />
               </Menu.Item>
             </SubMenu>
           )}
