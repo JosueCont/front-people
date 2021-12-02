@@ -65,7 +65,7 @@ export const publicationsListAction = (page = '', parameters = '') => async(disp
 
 export const getExcelFileAction = (params='') => async(dispatch, getState) => {
     dispatch({type: LOADING_FILE, fetching: true, payload: 'loading'});
-    await axios.get(`https://demo.people.hiumanlab.com/intranet/post/?export=true${params}`).then( response => {
+    await axios.get(`https://demo.people-api.khorplus.com/intranet/post/?export=true${params}`).then( response => {
         if(response.status == 200){
             const type = response.headers["content-type"];
             const blob = new Blob([response.data], {
