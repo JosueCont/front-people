@@ -28,10 +28,16 @@ const CustomButton = styled(Button)`
     border-radius: 5px;
     margin-top: 27px;
     max-width: 140px; 
+    & :hover{
+       background-color: var(--primaryColor) !important;
+    }
 `;
 const CustomSelect = styled(Select)`
     width: 90%;
     margin: auto;
+    & .ant-select-single:hover{
+        border: 1px solid var(--primaryColor);
+    }
     /* border-radius: 5px; */
 `;
 const InputLabel = styled.p`
@@ -45,6 +51,12 @@ const CustomCol = styled(Col)`
     width: 90% !important;
     margin: auto;
     border-radius: 5px;
+    & .ant-picker:hover{
+        border: 1px solid var(--primaryColor) !important;
+    }
+    & .ant-picker-focused{
+        background-color: var(--primaryColor) !important;
+    }
  }
 `;
 const CenterItemsCol = styled(Col)`
@@ -79,6 +91,8 @@ const PublicationsStatisticsFilters = (props) => {
         console.log('Respuesta de la api de excel', props.excelFileStatus);
         if(props.excelFileStatus == 'failed'){
             message.warning('No existen datos con los filtros establecidos');
+        }else if(props.excelFileStatus == 'loading'){
+            message.loading({content: 'Cargando archivo, por favor espere', key: 'updatable'});
         }
     }, [props.excelFileStatus]);
 
@@ -116,13 +130,16 @@ const PublicationsStatisticsFilters = (props) => {
         let userParam = user && user != "" ? `&owner__khonnect_id=${user}` : "" ;
         let groupParam = group && group != "" ? `&group=${group}` : "";
 
-        props.getPostsByFilter('', `${userParam}${groupParam}`, false);
+        props.getPostsByFilter('', `${userParam}${groupParam}`);
     }
 
     const getExcelFile = () => {
         let userParam = user && user != "" ? `&owner__khonnect_id=${user}` : "" ;
         let groupParam = group && group != "" ? `&group=${group}` : "";
+        // Genera el pdf
         props.getExcelFileAction(`${userParam}${groupParam}`);
+        // Actualiza la tabla con los filtros
+        props.getPostsByFilter('', `${userParam}${groupParam}`);
     }
     const clearFilter = () => {
         setGroup('');
