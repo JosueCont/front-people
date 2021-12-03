@@ -41,20 +41,17 @@ const assimilatedSalary = () => {
     setLoading(true);
     try {
       let response = await webApiFiscal.assimilatedSalaryCalculation(value);
-      if (response.data.level == "success") 
-      {
+      if (response.status == 200) {
         setTimeout(() => {
           setSalary(response.data);
           setLoading(false);
         }, 500);
-      } 
-      else {      
+      } else {
         message.error("Ocurrio un error intente de nuevo");
         setSalary(null);
         setLoading(false);
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
       message.error("Ocurrio un error intente de nuevo, " + error);
       setSalary(null);
@@ -170,7 +167,7 @@ const assimilatedSalary = () => {
                       backgroundColor: type == 1 && "yellow",
                     }}
                   >
-                    {type == 1 ? salary.salary : salary.assimilated_salary}
+                    $ {salary.gross_salary}
                   </Col>
                   <Col span={12} style={{ border: "1px black solid" }}>
                     <span>- Límite inferior</span>
@@ -246,7 +243,7 @@ const assimilatedSalary = () => {
                       backgroundColor: type == 2 && "yellow",
                     }}
                   >
-                    $ {type == 1 ? salary.assimilated_salary : salary.salary}
+                    $ {salary.net_salary}
                   </Col>
                 </Row>
               )}
