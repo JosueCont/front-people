@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Input, Button, DatePicker, Select, message  } from 'antd';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import { SearchOutlined, DownloadOutlined, ClearOutlined } from '@ant-design/icons';
 
 import { getUsersList, getGroupList } from '../../redux/userAndCompanyFilterDuck';
 import { getExcelFileAction } from '../../redux/publicationsListDuck';
@@ -11,16 +12,6 @@ const CustomCard = styled(Card)`
     min-height: 80px;
     margin: 20px 0px;
 `;
-// const CustomInput = styled(Input)`
-//     width: 90%;
-//     margin: auto;
-//     border-radius: 5px;
-// `;
-// const CustomDatePicker = styled(DatePicker)`
-//     width: 90% !important;
-//     margin: auto;
-//     border-radius: 5px;
-// `;
 
 const CustomButton = styled(Button)`
     width: 90%;
@@ -135,15 +126,20 @@ const PublicationsStatisticsFilters = (props) => {
     const getPostsByFilter = () => {
         let userParam = user && user != "" ? `owner__khonnect_id=${user}` : "" ;
         let groupParam = group && group != "" ? `&group=${group}` : "";
-        let dateRange = startDate && endDate ? `&start_date=${startDate}&end_date=${endDate}` : ''; 
-
+        let dateRange = startDate && endDate ? `&start_date=${startDate}&end_date=${endDate}` : '';
+        
+        // seteamos parámetros globales para el paginado
+        props.setParameters(`${userParam}${groupParam}${dateRange}`);
         props.getPostsByFilter('', `${userParam}${groupParam}${dateRange}`);
     }
 
     const getExcelFile = () => {
         let userParam = user && user != '' ? `&owner__khonnect_id=${user}` : '';
         let groupParam = group && group != '' ? `&group=${group}` : '';
-        let dateRange = startDate && endDate ? `&start_date=${startDate}&end_date=${endDate}` : ''; 
+        let dateRange = startDate && endDate ? `&start_date=${startDate}&end_date=${endDate}` : '';
+
+        // seteamos parámetros globales para el paginado
+        setParameters(`${userParam}${groupParam}${dateRange}`);
         // Genera el pdf
         props.getExcelFileAction(`${userParam}${groupParam}${dateRange}`);
         // Actualiza la tabla con los filtros
@@ -208,13 +204,13 @@ const PublicationsStatisticsFilters = (props) => {
                 </Col>
 
                 <CenterItemsCol xs={12} sm={8} md={8} lg={3} xl={3}>
-                    <CustomButton onClick={getPostsByFilter}>Filtrar</CustomButton>
+                    <CustomButton icon={<SearchOutlined />} onClick={getPostsByFilter}>Filtrar</CustomButton>
                 </CenterItemsCol>
                 <CenterItemsCol xs={12} sm={8} md={8} lg={3} xl={3}>
-                    <CustomButton onClick={getExcelFile}>Excel</CustomButton>
+                    <CustomButton icon={<DownloadOutlined />} onClick={getExcelFile}>Excel</CustomButton>
                 </CenterItemsCol>
                 <CenterItemsCol xs={12} sm={8} md={8} lg={3} xl={3}>
-                    <CustomButton onClick={clearFilter}>Limpiar</CustomButton>
+                    <CustomButton icon={<ClearOutlined />} onClick={clearFilter}>Limpiar</CustomButton>
                 </CenterItemsCol>
             </Row>
             </CustomCard>
