@@ -61,13 +61,14 @@ const index = (props) => {
         <>
          <MainLayout currentKey="1">
             <ConfigProvider locale={esES}>
-                <PublicationsStatisticsFilters companyId={companyId} getPostsByFilter={props.publicationsListAction}/>
+                <PublicationsStatisticsFilters companyId={companyId} getPostsByFilter={props.publicationsListAction} setParameters={setParameters}/>
                 <PublicationsStatisticsTable 
                     current={publicationsList.data ? publicationsList.data.page : 1}
                     total={publicationsList.data ? publicationsList.data.count : 1}
                     fetching={loadingData}
                     processedPublicationsList={processedPublications}
                     changePage={props.publicationsListAction}
+                    parameters={parameters}
                 />
             </ConfigProvider>
          </MainLayout>

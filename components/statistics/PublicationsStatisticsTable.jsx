@@ -31,7 +31,7 @@ const CustomTable = styled(Table)`
         width: 16%;
     }
 `;
-const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage}) => {
+const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters}) => {
 
     const ReactionByType = ({reactions = [{1: '0'}, {2:'0'}, {3: '0'}, {4: '0'}, {5: '0'}, {6: '0'}, {7: '0'}]}) => (
         <>
@@ -83,7 +83,12 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             title: 'Publicación',
             dataIndex: 'publication',
             key: 'publication',
-            className: 'publication-column'
+            className: 'publication-column',
+            render: publication => (
+                <>
+                    { publication && publication != '' ?  publication : <i>*Esta publicación es de contenido multimedia</i>}
+                </>
+            )
         },
         {
             title: 'Publicado por',
@@ -121,7 +126,13 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
 
     const handleChange = (pagination) => {
         console.log(pagination);
-        changePage(pagination.current);
+        // if(props.parameters && props.parameters != '')
+        if(pagination.current == 1){
+            changePage('', parameters);
+        }else{
+            changePage(pagination.current, parameters);
+        }
+        
     }
     
     return(
