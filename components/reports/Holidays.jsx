@@ -357,6 +357,7 @@ const HolidaysReport = (props) => {
             dataSource={holidayList}
             key="tableHolidays"
             columns={columns}
+            scroll={{ x: 350 }}
             locale={{
               emptyText: loading
                 ? "Cargando..."

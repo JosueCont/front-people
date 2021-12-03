@@ -365,6 +365,7 @@ const CollaboratorsReport = (props) => {
             key="tableHolidays"
             columns={columns}
             loading={loading}
+            scroll={{ x: 400 }}
             locale={{
               emptyText: loading
                 ? "Cargando..."

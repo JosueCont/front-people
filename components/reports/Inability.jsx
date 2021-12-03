@@ -403,6 +403,7 @@ const InabilityReport = (props) => {
             key="tableHolidays"
             loading={loading}
             columns={columns}
+            scroll={{ x: 350 }}
             locale={{
               emptyText: loading
                 ? "Cargando..."

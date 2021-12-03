@@ -351,6 +351,7 @@ const PermissionsReport = (props) => {
             key="tableHolidays"
             columns={columns}
             loading={loading}
+            scroll={{ x: 350 }}
             locale={{
               emptyText: loading
                 ? "Cargando..."

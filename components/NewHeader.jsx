@@ -187,7 +187,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <div className="overlay" />
         <div className="container-fluid">
           <Row justify="space-between">
-            <Col style={{ width: 250, display: "flex" }}>
+            <Col style={{ maxWidth: 250, minWidth: 50, display: "flex" }}>
               <img
                 style={{ maxWidth: 100, margin: "auto", maxHeight: 50 }}
                 src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
@@ -203,7 +203,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 />
               )}
             </Col>
-            <Col style={{ width: 250, textAlign: "end" }}>
+            <Col style={{ maxWidth: 250, minWidth: 50, textAlign: "end" }}>
               <div
                 className={"pointer"}
                 style={{ float: "right" }}
