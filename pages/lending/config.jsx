@@ -39,7 +39,7 @@ const HolidaysNew = () => {
         min_amount: data.min_amount ? parseInt(data.min_amount) : "",
         max_amount: data.max_amount ? parseInt(data.max_amount) : "",
         min_deadline: data.min_deadline ? data.min_deadline : "",
-        max_deadline: data.max_deadline ?  data.max_deadline : "",
+        max_deadline: data.max_deadline ? data.max_deadline : "",
       });
     } catch (error) {
       console.log(error);
@@ -114,34 +114,26 @@ const HolidaysNew = () => {
       </Breadcrumb>
       <div
         className="container back-white"
-        style={{ width: "100%", padding: "20px 0" }}
+        style={{ width: "100%", padding: 20 }}
       >
         {permissions.view && (
-          <Row justify={"center"}>
-            <Col span={23}>
-              <Form layout="horizontal" onFinish={saveConfig} form={form}>
-                <Row justify={"start"}>
+          <Row>
+            <Col span={24}>
+              <Form layout="vertical" onFinish={saveConfig} form={form}>
+                <Row gutter={24}>
                   <Col span={24}>
                     <Title key="dats_gnrl" level={4}>
                       Cantidad
                     </Title>
                   </Col>
-                  <Col span="8">
-                    <Form.Item
-                      name="min_amount"
-                      label="Mínimo"
-                      labelCol={{ span: 10 }}
-                      labelAlign={"left"}
-                    >
-                      <InputNumber style={{ width: "150px" }} />
+                  <Col xl={12} md={12} sm={24}>
+                    <Form.Item name="min_amount" label="Mínimo">
+                      <InputNumber style={{ width: "100%" }} />
                     </Form.Item>
-                    <Form.Item
-                      label="Máximo"
-                      name="max_amount"
-                      labelCol={{ span: 10 }}
-                      labelAlign={"left"}
-                    >
-                      <InputNumber style={{ width: "150px" }} />
+                  </Col>
+                  <Col xl={12} md={12} sm={24}>
+                    <Form.Item label="Máximo" name="max_amount">
+                      <InputNumber style={{ width: "100%" }} />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
@@ -149,27 +141,19 @@ const HolidaysNew = () => {
                       Plazos
                     </Title>
                   </Col>
-                  <Col span="8">
-                    <Form.Item
-                      label="Mínimo"
-                      name="min_deadline"
-                      labelCol={{ span: 10 }}
-                      labelAlign={"left"}
-                    >
-                      <InputNumber style={{ width: "150px" }} />
+                  <Col xl={12} md={12} sm={24}>
+                    <Form.Item label="Mínimo" name="min_deadline">
+                      <InputNumber style={{ width: "100%" }} />
                     </Form.Item>
-                    <Form.Item
-                      label="Máximo"
-                      name="max_deadline"
-                      labelCol={{ span: 10 }}
-                      labelAlign={"left"}
-                    >
-                      <InputNumber style={{ width: "150px" }} />
+                  </Col>
+                  <Col xl={12} md={12} sm={24}>
+                    <Form.Item label="Máximo" name="max_deadline">
+                      <InputNumber style={{ width: "100%" }} />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row style={{ paddingTop: 20 }} justify={"end"}>
-                  <Col span={10} style={{ textAlign: "right" }}>
+                  <Col span={24} style={{ textAlign: "right" }}>
                     <Button
                       onClick={() => route.push("/lending")}
                       style={{ padding: "0 40px", margin: "0 10px" }}

@@ -131,6 +131,7 @@ const Newrelease = () => {
         datos.append("files", f.originFileObj);
       });
     }
+    console.log("Enviando", values);
     setSending(true);
     try {
       let response = await Axios.post(
@@ -308,14 +309,16 @@ const Newrelease = () => {
         <Breadcrumb.Item href="./">Comunicados</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>
-      <div className="container back-white" style={{ width: "100%" }}>
-        <Row justify={"center"}>
+      <div
+        className="container back-white"
+        style={{ width: "100%", padding: "20px" }}
+      >
+        <Row gutter={24}>
           <Col span="23" style={{ padding: "20px 0 30px 0" }}>
             <Form
               key="notification_form"
               form={form}
-              layout="horizontal"
-              labelCol={{ xs: 24, sm: 24, md: 5 }}
+              layout="vertical"
               onFinish={saveNotification}
             >
               <Row>
@@ -390,28 +393,41 @@ const Newrelease = () => {
 
                 <Col xs={24} sm={24} md={14} lg={14} xl={14}>
                   <Row>
-                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                      {/* <Form.Item
-                        name={"target_department"}
-                        label="Departamento"
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        rules={[checkSegmentacion]}
-                      > */}
+                    <Col
+                      xs={24}
+                      sm={24}
+                      md={12}
+                      lg={12}
+                      xl={12}
+                      style={{ padding: "0 5px 0 5px" }}
+                    >
                       <SelectDepartment
                         name={"target_department"}
                         titleLabel={false}
                       />
-                      {/* </Form.Item> */}
-
+                    </Col>
+                    <Col
+                      xs={24}
+                      sm={24}
+                      md={12}
+                      lg={12}
+                      xl={12}
+                      style={{ padding: "0 5px 0 5px" }}
+                    >
                       <SelectJob name={"target_job"} titleLabel={false} />
                     </Col>
-                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Col
+                      xs={24}
+                      sm={24}
+                      md={12}
+                      lg={12}
+                      xl={12}
+                      style={{ padding: "0 5px 0 5px" }}
+                    >
                       <Form.Item
                         name={"target_person_type"}
                         label="Tipo de persona"
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
+                        labelCol={{ span: 24 }}
                         rules={[checkSegmentacion]}
                       >
                         <Select
@@ -420,11 +436,19 @@ const Newrelease = () => {
                           notFoundContent={"No se encontraron resultados."}
                         />
                       </Form.Item>
+                    </Col>
+                    <Col
+                      xs={24}
+                      sm={24}
+                      md={12}
+                      lg={12}
+                      xl={12}
+                      style={{ padding: "0 5px 0 5px" }}
+                    >
                       <Form.Item
                         name={"target_gender"}
                         label="Género"
                         labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
                         rules={[checkSegmentacion]}
                       >
                         <Select

@@ -48,6 +48,7 @@ const GroupAdd = (...props) => {
   useEffect(() => {
     if (props && props[0] && props[0].config) {
       setintanetAccess(props[0].config.intranet_enabled);
+      headers["client-id"] = props[0].config.client_khonnect_id;
     }
   }, [props]);
 
