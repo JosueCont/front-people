@@ -38,6 +38,9 @@ const CustomSelect = styled(Select)`
     & .ant-select-single:hover{
         border: 1px solid var(--primaryColor);
     }
+    & .ant-select-selector:hover, .ant-select-selector:focus-within{
+        border: 1px solid var(--primaryColor);
+    }
     /* border-radius: 5px; */
 `;
 const InputLabel = styled.p`
@@ -51,11 +54,8 @@ const CustomCol = styled(Col)`
     width: 90% !important;
     margin: auto;
     border-radius: 5px;
-    & .ant-picker:hover{
+    & .ant-picker:hover, .ant-picker-focused{
         border: 1px solid var(--primaryColor) !important;
-    }
-    & .ant-picker-focused{
-        background-color: var(--primaryColor) !important;
     }
  }
 `;
