@@ -16,6 +16,7 @@ import {
   DollarOutlined,
   UserAddOutlined,
   DeploymentUnitOutlined,
+  AreaChartOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import {
@@ -23,6 +24,7 @@ import {
   BusinessCenterOutlined,
   BusinessOutlined,
   SettingsOutlined,
+  GroupOutlined
 } from "@material-ui/icons";
 
 const { Sider } = Layout;
@@ -311,23 +313,34 @@ const MainSider = ({
           >
             Asignar empresa
           </Menu.Item>
-          {props.config && props.config.intranet_access && (
+          {intranetAccess && (
             <SubMenu
               key="intranet"
               title={<FormattedMessage id="header.intranet" />}
+              icon={ <img className="anticon ant-menu-item-icon icon-intranet" src={"images/Intranet.svg"}/>}
               className="subMainMenu"
             >
+             
               <Menu.Item
                 key="groups"
                 onClick={() => router.push({ pathname: "/intranet/groups" })}
+                icon={<GroupOutlined />}
               >
                 <FormattedMessage id="header.groups" />
               </Menu.Item>
               <Menu.Item
                 key="config"
                 onClick={() => router.push({ pathname: "/intranet/config" })}
+                icon={<SettingsOutlined />}
               >
                 <FormattedMessage id="header.config" />
+              </Menu.Item>
+              <Menu.Item
+                key="statistics"
+                onClick={() => router.push({ pathname: "/intranet/publications_statistics" })}
+                icon={<AreaChartOutlined />}
+              >
+                <FormattedMessage id="header.statistics" />
               </Menu.Item>
             </SubMenu>
           )}

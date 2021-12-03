@@ -628,6 +628,9 @@ header.ant-layout-header {
   border-radius: 20px;
 }
 
+.icon-intranet{
+  width: 15px !important;
+}
 
 @media screen and (max-width: 880px) {
   .text-title-tab{   
@@ -662,6 +665,6 @@ header.ant-layout-header {
   .search_header{
     display: none;
   }
+}
  
   
-}

@@ -41,12 +41,12 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
   useEffect(() => {
-    console.log("getPerson");
+    
     getPerson();
   }, []);
 
   const actionEvent = (data) => {
-    console.log("actionEvent");
+    
   };
 
   const getPerson = async () => {
@@ -60,7 +60,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         personName = personName + " " + response.data.mlast_name;
       response.data.fullName = personName;
       setPerson(response.data);
-      console.log("response.data", response.data);
     } catch (error) {
       console.log("error", error);
       setPerson({ photo: defaulPhoto });
