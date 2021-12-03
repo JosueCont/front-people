@@ -255,6 +255,7 @@ const Incapacity = () => {
                 <Table
                   dataSource={incapacityList}
                   key="tableHolidays"
+                  scroll={{ x: 350 }}
                   loading={loading}
                   locale={{
                     emptyText: loading

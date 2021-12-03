@@ -400,7 +400,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                 </Col>
               )}
 
-              {props.config && config.intranet_enabled && (
+              {config && config.intranet_enabled && (
                 <Col lg={7} xs={22} offset={1}>
                   <Form.Item
                     name="intranet_access"

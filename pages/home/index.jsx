@@ -236,7 +236,7 @@ const homeScreen = ({ ...props }) => {
     {
       title: "Foto",
       width: 42,
-      fixed: "left",
+      //fixed: "left",
       render: (item) => {
         return (
           <div>
@@ -248,7 +248,7 @@ const homeScreen = ({ ...props }) => {
     {
       title: "Nombre",
       width: 120,
-      fixed: "left",
+      //fixed: "left",
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
@@ -362,7 +362,7 @@ const homeScreen = ({ ...props }) => {
       align: "center",
       key: "CompaniesAsosigned",
       align: "center",
-      fixed: "right",
+      //fixed: "right",
       render: (item) => {
         return (
           <Text
@@ -972,6 +972,11 @@ const homeScreen = ({ ...props }) => {
                             <SearchOutlined />
                           </Button>
                         </Tooltip>
+                      </Col>
+                      <Col
+                        className="button-filter-person"
+                        style={{ display: "flex", marginTop: "10px" }}
+                      >
                         <Tooltip
                           title="Limpiar filtros"
                           color={"#3d78b9"}
@@ -984,6 +989,11 @@ const homeScreen = ({ ...props }) => {
                             <SyncOutlined />
                           </Button>
                         </Tooltip>
+                      </Col>
+                      <Col
+                        className="button-filter-person"
+                        style={{ display: "flex", marginTop: "10px" }}
+                      >
                         {permissions.create && (
                           <Button
                             className="btn-add-person"
