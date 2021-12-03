@@ -66,7 +66,8 @@ export const publicationsListAction = (page = '', parameters = '') => async(disp
 export const getExcelFileAction = (params='') => async(dispatch, getState) => {
     dispatch({type: LOADING_FILE, fetching: true, payload: 'loading'});
     await axios.get(`https://demo.people-api.khorplus.com/intranet/post/?export=true${params}`).then( response => {
-        if(response.status == 200){
+        let regexResponseContent =  /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
+        if(response.status == 200 && regexResponseContent.test(response.data)){
             const type = response.headers["content-type"];
             const blob = new Blob([response.data], {
                 type: type,
