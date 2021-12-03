@@ -144,6 +144,7 @@ const Releases = () => {
       if (a.includes("people.comunication.can.delete")) perms.delete = true;
     });
     setPermissions(perms);
+    console.log("Permisos=>", perms);
   };
 
   const resetFilter = () => {

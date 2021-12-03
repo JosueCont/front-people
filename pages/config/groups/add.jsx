@@ -52,7 +52,7 @@ const GroupAdd = (...props) => {
   }, [props]);
 
   const headers = {
-    "client-id": props[0].config.client_khonnect_id,
+    "client-id": "",
     "Content-Type": "application/json",
   };
 
