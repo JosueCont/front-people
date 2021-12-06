@@ -15,6 +15,7 @@ import {
   Skeleton,
   Select,
   message,
+  Checkbox,
 } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import Meta from "antd/lib/card/Meta";
@@ -27,16 +28,21 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectPeriodicity from "../../components/selects/SelectPeriodicity";
 import SelectYear from "../../components/selects/SelectYear";
 import MainLayout from "../../layout/MainLayout";
-import { ruleRequired } from "../../utils/constant";
+import { monthsName, ruleRequired } from "../../utils/constant";
 import webApiFiscal from "../../api/WebApiFiscal";
+import DatePicker from "react-multi-date-picker";
 
 const assimilatedSalary = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [salary, setSalary] = useState(null);
   const [type, setType] = useState(0);
+  const [allowance, setAllowance] = useState(false);
+  const [mont, setMonth] = useState(0);
 
   const onFinish = async (value) => {
+    value.allowance = allowance;
+    value.salary = parseFloat(value.salary);
     setSalary(null);
     setLoading(true);
     try {
@@ -102,7 +108,7 @@ const assimilatedSalary = () => {
                     />
                   </Col>
                 </Row>
-                <Row gutter={[10]}>
+                <Row gutter={[12]}>
                   <Col>
                     <Form.Item label="Tipo de calculo" name="type">
                       <Select
@@ -116,7 +122,7 @@ const assimilatedSalary = () => {
                   </Col>
                   <Col>
                     <Form.Item label="Salario" name="salary">
-                      <Input placeholder="Salario" />
+                      <Input type="number" placeholder="Salario" />
                     </Form.Item>
                   </Col>
                   <Col>
@@ -125,6 +131,32 @@ const assimilatedSalary = () => {
                   <Col>
                     <SelectYear />
                   </Col>
+                  <Col>
+                    <Form.Item label="Subsidio" name="allowance">
+                      <Checkbox
+                        onChange={() => {
+                          allowance ? setAllowance(false) : setAllowance(true);
+                        }}
+                        placeholder="Subsidio"
+                      />
+                    </Form.Item>
+                  </Col>
+                  {allowance && (
+                    <Col>
+                      <Form.Item
+                        name="month"
+                        label="Mes"
+                        placeholder="Selecciona mes"
+                        rules={[ruleRequired]}
+                      >
+                        <Select
+                          style={{ width: "150px" }}
+                          options={monthsName}
+                        />
+                      </Form.Item>
+                    </Col>
+                  )}
+
                   <Col
                     className="button-filter-person"
                     style={{ display: "flex" }}
@@ -231,20 +263,59 @@ const assimilatedSalary = () => {
                   <Col span={4} style={{ border: "1px black solid" }}>
                     {salary.charge_isr}
                   </Col>
-                  <Col span={12} style={{ border: "1px black solid" }}>
-                    <span style={{ fontWeight: type == 2 && "bold" }}>
-                      ASIMILADO NETO
-                    </span>
-                  </Col>
-                  <Col
-                    span={4}
-                    style={{
-                      border: "1px black solid",
-                      backgroundColor: type == 2 && "yellow",
-                    }}
-                  >
-                    $ {salary.net_salary}
-                  </Col>
+                  {allowance && (
+                    <>
+                      <Col span={12} style={{ border: "1px black solid" }}>
+                        <span>Retención IMSS</span>
+                      </Col>
+                      <Col span={4} style={{ border: "1px black solid" }}>
+                        {salary.retention_imss}
+                      </Col>
+                      <Col span={12} style={{ border: "1px black solid" }}>
+                        <span>
+                          {" "}
+                          {salary.retention_isr
+                            ? "ISR a retener"
+                            : "SUBSIDIO PARA EL EMPLEO A ENTREGAR"}
+                        </span>
+                      </Col>
+                      <Col span={4} style={{ border: "1px black solid" }}>
+                        {salary.retention_isr
+                          ? salary.retention_isr
+                          : salary.allowance_employee}
+                      </Col>
+                      <Col span={12} style={{ border: "1px black solid" }}>
+                        <span>Percepción del trabajador</span>
+                      </Col>
+                      <Col span={4} style={{ border: "1px black solid" }}>
+                        {salary.perception_employee}
+                      </Col>
+                      <Col span={12} style={{ border: "1px black solid" }}>
+                        <span>IMSS/INFONAVIT</span>
+                      </Col>
+                      <Col span={4} style={{ border: "1px black solid" }}>
+                        {salary["imss/infonavit/afore"]}
+                      </Col>
+                    </>
+                  )}
+                  {!allowance && (
+                    <>
+                      <Col span={12} style={{ border: "1px black solid" }}>
+                        <span style={{ fontWeight: type == 2 && "bold" }}>
+                          ASIMILADO NETO
+                        </span>
+                      </Col>
+                      <Col
+                        span={4}
+                        style={{
+                          border: "1px black solid",
+                          backgroundColor: type == 2 && "yellow",
+                        }}
+                      >
+                        $ {salary.net_salary}
+                      </Col>
+                    </>
+                  )}
                 </Row>
               )}
             </Spin>
