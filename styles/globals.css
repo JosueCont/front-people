@@ -579,7 +579,9 @@ header.ant-layout-header {
 .ant-form-item-label > label {  
   color: rgba(0, 0, 0, 0.85) !important;  
 }
-
+.ant-input-number{
+  border-radius: 10px;
+}
 /*Login styles*/
 .divContainerLeft {
   top: 185px !important;

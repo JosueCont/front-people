@@ -55,10 +55,12 @@ class WebApi {
   }
 
   static assimilatedSalaryCalculation(data) {
-    return WebApi.ApisType(`/fiscal/assimilated_salary_calculation`, "post", data);
+    return WebApi.ApisType(
+      `/fiscal/salary_calculation_and_allowance`,
+      "post",
+      data
+    );
   }
-
-  
 }
 
 export default WebApi;

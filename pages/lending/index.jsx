@@ -124,126 +124,129 @@ const Lending = () => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <>
-            <Row
-              justify="space-between"
-              key="row1"
-              style={{ paddingBottom: 20 }}
-            >
-              <Col>
-                <Form
-                  form={form}
-                  className={"formFilter"}
-                  name="filter"
-                  onFinish={filter}
-                  layout="vertical"
-                  key="form"
-                >
-                  <Row gutter={[24, 8]}>
-                    <Col>
-                      <SelectCollaborator
-                        name="person"
-                        style={{ width: 150 }}
-                      />
-                    </Col>
-                    <Col>
-                      <Form.Item key="type" name="type" label="Tipo">
-                        <Select
-                          placeholder="Todos"
+            <div className="top-container-border-radius">
+              <Row
+                justify="space-between"
+                key="row1"
+                style={{ paddingBottom: 20 }}
+              >
+                <Col>
+                  <Form
+                    form={form}
+                    className={"formFilter"}
+                    name="filter"
+                    onFinish={filter}
+                    layout="vertical"
+                    key="form"
+                  >
+                    <Row gutter={[24, 8]}>
+                      <Col>
+                        <SelectCollaborator
+                          name="person"
                           style={{ width: 150 }}
-                          key="select_type"
-                          options={typeOptions}
-                          allowClear
-                          notFoundContent={"No se encontraron resultados."}
                         />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        key="estatus_filter"
-                        name="status"
-                        label="Estatus"
-                      >
-                        <Select
-                          style={{ width: 150 }}
-                          key="select_status"
-                          options={optionStatus}
-                          placeholder="Todos"
-                          allowClear
-                          notFoundContent={"No se encontraron resultados."}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Button
-                        loading={loading}
-                        htmlType="submit"
-                        key="filter"
-                        style={{
-                          background: "#fa8c16",
-                          fontWeight: "bold",
-                          color: "white",
-                          marginTop: "auto",
-                        }}
-                      >
-                        <SearchOutlined />
-                      </Button>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto", marginLeft: 10 }}
+                      </Col>
+                      <Col>
+                        <Form.Item key="type" name="type" label="Tipo">
+                          <Select
+                            placeholder="Todos"
+                            style={{ width: 150 }}
+                            key="select_type"
+                            options={typeOptions}
+                            allowClear
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          key="estatus_filter"
+                          name="status"
+                          label="Estatus"
                         >
-                          <SyncOutlined />
+                          <Select
+                            style={{ width: 150 }}
+                            key="select_status"
+                            options={optionStatus}
+                            placeholder="Todos"
+                            allowClear
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Button
+                          loading={loading}
+                          htmlType="submit"
+                          key="filter"
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "auto",
+                          }}
+                        >
+                          <SearchOutlined />
                         </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                {permissions.config && (
-                  <Button
-                    key="config"
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    onClick={() => route.push("lending/config")}
-                  >
-                    Configuración
-                  </Button>
-                )}
-                {permissions.create && (
-                  <Button
-                    key="btnnvo"
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginLeft: 20,
-                      marginTop: "auto",
-                    }}
-                    onClick={() => route.push("lending/new")}
-                  >
-                    <PlusOutlined />
-                    Agregar préstamo
-                  </Button>
-                )}
-              </Col>
-            </Row>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto", marginLeft: 10 }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+                <Col style={{ display: "flex" }}>
+                  {permissions.config && (
+                    <Button
+                      key="config"
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginTop: "auto",
+                      }}
+                      onClick={() => route.push("lending/config")}
+                    >
+                      Configuración
+                    </Button>
+                  )}
+                  {permissions.create && (
+                    <Button
+                      key="btnnvo"
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginLeft: 20,
+                        marginTop: "auto",
+                      }}
+                      onClick={() => route.push("lending/new")}
+                    >
+                      <PlusOutlined />
+                      Agregar préstamo
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+            </div>
             <Row justify={"end"}>
               <Col span={24}>
                 <Table
                   dataSource={lendingList}
                   key="table_holidays"
                   loading={loading}
+                  scroll={{ x: 350 }}
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
