@@ -139,7 +139,7 @@ const PublicationsStatisticsFilters = (props) => {
         let dateRange = startDate && endDate ? `&start_date=${startDate}&end_date=${endDate}` : '';
 
         // seteamos parámetros globales para el paginado
-        setParameters(`${userParam}${groupParam}${dateRange}`);
+        props.setParameters(`${userParam}${groupParam}${dateRange}`);
         // Genera el pdf
         props.getExcelFileAction(`${userParam}${groupParam}${dateRange}`);
         // Actualiza la tabla con los filtros
