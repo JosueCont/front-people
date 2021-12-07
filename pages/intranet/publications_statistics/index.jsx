@@ -40,8 +40,8 @@ const index = (props) => {
                         publication: publication.content,
                         owner: `${publication.owner.first_name} ${publication.owner.flast_name}`,
                         comments: publication.comments ? publication.comments.length : 0,
-                        clics: 0,
-                        prints: 0,
+                        clicks: publication.clicks ? publication.clicks : 0,
+                        prints: publication.prints ? publication.prints : 0,
                         reactions: publication.count_by_reaction_type ? publication.count_by_reaction_type : [],
 
                     })
