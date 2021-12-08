@@ -109,8 +109,8 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
         },
         {
             title: 'Clics',
-            dataIndex: 'clics',
-            key: 'clics'
+            dataIndex: 'clicks',
+            key: 'clicks'
         },
         {
             title: 'Reacciones por tipo',
