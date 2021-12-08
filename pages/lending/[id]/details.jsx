@@ -24,6 +24,7 @@ import Axios from "axios";
 import jsCookie from "js-cookie";
 
 const HolidaysNew = () => {
+  const { Title, Text } = Typography;
   const route = useRouter();
   const { confirm, success } = Modal;
   const { id } = route.query;
@@ -198,100 +199,224 @@ const HolidaysNew = () => {
         <Breadcrumb.Item href="/lending/">Préstamos</Breadcrumb.Item>
         <Breadcrumb.Item>Detalles</Breadcrumb.Item>
       </Breadcrumb>
-      <div
-        className="container back-white"
-        style={{ width: "100%", padding: "20px 0" }}
-      >
+      <div className="container back-white" style={{ width: "100%" }}>
         <Spin tip="Cargando..." spinning={loading}>
-          <Row>
-            <Col span={16} offset={1}>
-              <Descriptions
-                title="Detalles del préstamo"
-                column={2}
-                labelStyle={{ width: 180, fontWeight: 700 }}
+          <Col span={24} style={{ padding: 20 }}>
+            <Row>
+              <Col span={24}>
+                <Title level={3}>Detalles del préstamo</Title>
+              </Col>
+
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                style={{ margin: "10px 0px" }}
               >
-                <Descriptions.Item label="Estatus">
-                  {" "}
-                  {strStatus}{" "}
-                </Descriptions.Item>
-                <Descriptions.Item label="Fecha de solicitud">
-                  {details.timestamp
-                    ? moment(details.timestamp).format("DD/MMM/YYYY")
-                    : null}
-                </Descriptions.Item>
-                <Descriptions.Item label="Colaborador">
-                  {details.person
-                    ? details.person.first_name +
-                      " " +
-                      details.person.flast_name
-                    : null}
-                </Descriptions.Item>
-                <Descriptions.Item label="Fecha autorizada">
-                  {details.date_confirm
-                    ? moment(details.date_confirm).format("DD/MMM/YYYY")
-                    : null}
-                </Descriptions.Item>
-                <Descriptions.Item label="Plazos">
-                  {details.deadline ? details.deadline : null}
-                </Descriptions.Item>
-                <Descriptions.Item label="Cantidad autorizada">
-                  {details.amount ? "$ " + details.amount : null}
-                </Descriptions.Item>
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Text strong>Estatus:</Text>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {strStatus}
+                  </Col>
+                </Row>
+              </Col>
 
-                <Descriptions.Item label="Periodicidad">
-                  {details.periodicity && details.periodicity === 1
-                    ? "Semanal"
-                    : details.periodicity && details.periodicity === 2
-                    ? "Catorcenal"
-                    : details.periodicity && details.periodicity === 3
-                    ? "Quincenal"
-                    : details.periodicity && details.periodicity === 4
-                    ? "Mensual"
-                    : null}
-                </Descriptions.Item>
-                <Descriptions.Item label="Pago">
-                  {" "}
-                  {details.periodicity_amount
-                    ? "$ " + details.periodicity_amount
-                    : 0}
-                </Descriptions.Item>
-                <Descriptions.Item label="Tipo de préstamo">
-                  {details.type && details.type === "EMP"
-                    ? "Empresa"
-                    : details.type && details.type === "EPS"
-                    ? "E-Pesos"
-                    : null}
-                </Descriptions.Item>
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                style={{ margin: "10px 0px" }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Text strong>Fecha de solicitud:</Text>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {details.timestamp
+                      ? moment(details.timestamp).format("DD/MMM/YYYY")
+                      : null}
+                  </Col>
+                </Row>
+              </Col>
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                style={{ margin: "10px 0px" }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Text strong>Colaborador:</Text>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {details.person
+                      ? details.person.first_name +
+                        " " +
+                        details.person.flast_name
+                      : null}
+                  </Col>
+                </Row>
+              </Col>
 
-                <br />
-                <Descriptions.Item
-                  label="Motivo"
-                  span={3}
-                  contentStyle={{ textAlign: "justify" }}
-                >
-                  {details.reason ? details.reason : null}
-                </Descriptions.Item>
-              </Descriptions>
-              <Table
-                columns={columns}
-                dataSource={plan}
-                locale={{
-                  emptyText: loading
-                    ? "Cargando..."
-                    : "No se encontraron resultados.",
-                }}
-              />
-            </Col>
-            <Col
-              span={16}
-              offset={1}
-              style={{ textAlign: "right", padding: "30px 0" }}
-            >
-              <Button onClick={onCancel} style={{ padding: "0 40px" }}>
-                Regresar
-              </Button>
-            </Col>
-          </Row>
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                style={{ margin: "10px 0px" }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Text strong>Fecha autorizada:</Text>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {details.date_confirm
+                      ? moment(details.date_confirm).format("DD/MMM/YYYY")
+                      : null}
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                style={{ margin: "10px 0px" }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Text strong>Plazos:</Text>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {details.deadline ? details.deadline : null}
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                style={{ margin: "10px 0px" }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Text strong>Cantidad autorizada:</Text>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {details.amount ? "$ " + details.amount : null}
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                style={{ margin: "10px 0px" }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Text strong>Periodicidad:</Text>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {details.periodicity && details.periodicity === 1
+                      ? "Semanal"
+                      : details.periodicity && details.periodicity === 2
+                      ? "Catorcenal"
+                      : details.periodicity && details.periodicity === 3
+                      ? "Quincenal"
+                      : details.periodicity && details.periodicity === 4
+                      ? "Mensual"
+                      : null}
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                style={{ margin: "10px 0px" }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Text strong>Pago:</Text>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {details.periodicity_amount
+                      ? "$ " + details.periodicity_amount
+                      : 0}
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                style={{ margin: "10px 0px" }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Text strong>Tipo de préstamo:</Text>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {details.type && details.type === "EMP"
+                      ? "Empresa"
+                      : details.type && details.type === "EPS"
+                      ? "E-Pesos"
+                      : null}
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col
+                xs={24}
+                sm={24}
+                md={12}
+                lg={12}
+                style={{ margin: "10px 0px" }}
+              >
+                <Row>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Text strong>Motivo:</Text>
+                  </Col>
+                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    {details.reason ? details.reason : null}
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col span={24} style={{ marginTop: 20 }}>
+                <Table
+                  columns={columns}
+                  dataSource={plan}
+                  scroll={{ x: 350 }}
+                  locale={{
+                    emptyText: loading
+                      ? "Cargando..."
+                      : "No se encontraron resultados.",
+                  }}
+                />
+              </Col>
+              <Col span={24} style={{ textAlign: "right", padding: "30px 0" }}>
+                <Button onClick={onCancel} style={{ padding: "0 40px" }}>
+                  Regresar
+                </Button>
+              </Col>
+            </Row>
+          </Col>
         </Spin>
       </div>
     </MainLayout>

@@ -137,108 +137,111 @@ const Holidays = ({ ...props }) => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <>
-            <Row justify="space-between" style={{ paddingBottom: 20 }}>
-              <Col>
-                <Form
-                  name="filter"
-                  form={form}
-                  onFinish={filterHolidays}
-                  layout="vertical"
-                  key="formFilter"
-                  className={"formFilter"}
-                >
-                  <Row gutter={[24, 8]}>
-                    <Col>
-                      <SelectCollaborator
-                        name="collaborator"
-                        style={{ width: 150 }}
-                      />
-                    </Col>
-
-                    <Col>
-                      <SelectDepartment
-                        name="department"
-                        companyId={companyId}
-                        key="selectDepartament"
-                      />
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        key="estatus_filter"
-                        name="status"
-                        label="Estatus"
-                      >
-                        <Select
+            <div className="top-container-border-radius">
+              <Row justify="space-between" style={{ paddingBottom: 20 }}>
+                <Col>
+                  <Form
+                    name="filter"
+                    form={form}
+                    onFinish={filterHolidays}
+                    layout="vertical"
+                    key="formFilter"
+                    className={"formFilter"}
+                  >
+                    <Row gutter={[24, 8]}>
+                      <Col>
+                        <SelectCollaborator
+                          name="collaborator"
                           style={{ width: 150 }}
-                          key="select"
-                          options={optionStatus}
-                          allowClear
-                          placeholder="Estatus"
-                          notFoundContent={"No se encontraron resultados."}
                         />
-                      </Form.Item>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Button
-                        style={{
-                          background: "#fa8c16",
-                          fontWeight: "bold",
-                          color: "white",
-                          marginTop: "auto",
-                        }}
-                        key="buttonFilter"
-                        htmlType="submit"
-                        loading={searching}
-                      >
-                        <SearchOutlined />
-                      </Button>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto" }}
+                      </Col>
+
+                      <Col>
+                        <SelectDepartment
+                          name="department"
+                          companyId={companyId}
+                          key="selectDepartament"
+                        />
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          key="estatus_filter"
+                          name="status"
+                          label="Estatus"
                         >
-                          <SyncOutlined />
+                          <Select
+                            style={{ width: 150 }}
+                            key="select"
+                            options={optionStatus}
+                            allowClear
+                            placeholder="Estatus"
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Button
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "auto",
+                          }}
+                          key="buttonFilter"
+                          htmlType="submit"
+                          loading={searching}
+                        >
+                          <SearchOutlined />
                         </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                  {/* <Form.Item key="company_select_new" name="company_new" label="Empresa">
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto" }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                    {/* <Form.Item key="company_select_new" name="company_new" label="Empresa">
                     <SelectCompany  key="SelectCompany" />
                 </Form.Item> */}
-                </Form>
+                  </Form>
 
-                {/*  */}
-              </Col>
-              <Col style={{ display: "flex" }}>
-                {permissions.create && (
-                  <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    onClick={() => route.push("holidays/new")}
-                    key="btn_new"
-                  >
-                    <PlusOutlined />
-                    Agregar vacaciones
-                  </Button>
-                )}
-              </Col>
-            </Row>
+                  {/*  */}
+                </Col>
+                <Col style={{ display: "flex" }}>
+                  {permissions.create && (
+                    <Button
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginTop: "auto",
+                      }}
+                      onClick={() => route.push("holidays/new")}
+                      key="btn_new"
+                    >
+                      <PlusOutlined />
+                      Agregar vacaciones
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+            </div>
             <Row justify="end">
               <Col span={24}>
                 <Table
                   dataSource={holidayList}
                   key="tableHolidays"
                   loading={loading}
+                  scroll={{ x: 350 }}
                   locale={{
                     emptyText: loading
                       ? "Cargando..."

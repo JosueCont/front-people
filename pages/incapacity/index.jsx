@@ -162,94 +162,96 @@ const Incapacity = () => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <>
-            <Row justify="space-between" style={{ paddingBottom: 20 }}>
-              <Col>
-                <Form
-                  name="filter"
-                  onFinish={filter}
-                  layout="vertical"
-                  key="formFilter"
-                  className={"formFilter"}
-                  form={form}
-                >
-                  <Row gutter={[24, 8]}>
-                    <Col>
-                      <SelectCollaborator
-                        name="collaborator"
-                        style={{ width: 150 }}
-                      />
-                    </Col>
-                    <Col>
-                      <SelectDepartment
-                        companyId={nodeId}
-                        key="SelectDepartment"
-                      />
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        key="estatus_filter"
-                        name="status"
-                        label="Estatus"
-                      >
-                        <Select
-                          style={{ width: 100 }}
-                          key="select"
-                          options={optionStatus}
-                          allowClear
-                          notFoundContent={"No se encontraron resultados."}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Button
-                        style={{
-                          background: "#fa8c16",
-                          fontWeight: "bold",
-                          color: "white",
-                          marginTop: "auto",
-                        }}
-                        key="buttonFilter"
-                        htmlType="submit"
-                        loading={loading}
-                      >
-                        <SearchOutlined />
-                      </Button>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto", marginLeft: 10 }}
-                        >
-                          <SyncOutlined />
-                        </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                {permissions.create && (
-                  <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    onClick={() => route.push("/incapacity/new")}
-                    key="btn_new"
+            <div className="top-container-border-radius">
+              <Row justify="space-between" style={{ paddingBottom: 20 }}>
+                <Col>
+                  <Form
+                    name="filter"
+                    onFinish={filter}
+                    layout="vertical"
+                    key="formFilter"
+                    className={"formFilter"}
+                    form={form}
                   >
-                    <PlusOutlined />
-                    Agregar incapacidad
-                  </Button>
-                )}
-              </Col>
-            </Row>
+                    <Row gutter={[24, 8]}>
+                      <Col>
+                        <SelectCollaborator
+                          name="collaborator"
+                          style={{ width: 150 }}
+                        />
+                      </Col>
+                      <Col>
+                        <SelectDepartment
+                          companyId={nodeId}
+                          key="SelectDepartment"
+                        />
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          key="estatus_filter"
+                          name="status"
+                          label="Estatus"
+                        >
+                          <Select
+                            style={{ width: 100 }}
+                            key="select"
+                            options={optionStatus}
+                            allowClear
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Button
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "auto",
+                          }}
+                          key="buttonFilter"
+                          htmlType="submit"
+                          loading={loading}
+                        >
+                          <SearchOutlined />
+                        </Button>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto", marginLeft: 10 }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+                <Col style={{ display: "flex" }}>
+                  {permissions.create && (
+                    <Button
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginTop: "auto",
+                      }}
+                      onClick={() => route.push("/incapacity/new")}
+                      key="btn_new"
+                    >
+                      <PlusOutlined />
+                      Agregar incapacidad
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+            </div>
             <Row justify="end">
               <Col span={24}>
                 <Table
