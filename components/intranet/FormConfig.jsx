@@ -26,6 +26,7 @@ const arrayConfigType = [
   { id: 4, name: "Me encanta", emoji: "❤️" },
   { id: 5, name: "Me divierte", emoji: "😂" },
   { id: 6, name: "Me entristece", emoji: "😔" },
+  { id: 7, name: "Me interesa", emoji: "🤓"},
 ];
 const getConfig = [{ id: 1, name: "Por Wellness Coins" }];
 
