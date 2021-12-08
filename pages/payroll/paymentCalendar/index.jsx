@@ -101,28 +101,24 @@ const PaymentCalendars = () => {
                   title="Periodicidad"
                   dataIndex="periodicity"
                   key="periodicity"
-                  render={(periodicity, record) =>
-                    periodicity === 1
-                      ? "Diario"
-                      : periodicity === 2
-                      ? "Semanal"
-                      : periodicity === 3
-                      ? "Decenal"
-                      : periodicity === 4
-                      ? "Catorcenal"
-                      : periodicity === 5
-                      ? "Quincenal"
-                      : periodicity === 6
-                      ? "Mensual"
-                      : "Anual"
-                  }
+                  render={(periodicity, record) => (
+                    <>
+                      {periodicity && periodicity.description
+                        ? periodicity.description
+                        : ""}
+                    </>
+                  )}
                 />
                 <Column
                   title="Tipo de impuesto"
-                  dataIndex="type_tax.name"
+                  dataIndex="type_tax"
                   key="type_tax"
                   render={(type_tax, record) => (
-                    <>{type_tax && type_tax.name ? type_tax.name : null}</>
+                    <>
+                      {type_tax && type_tax.description
+                        ? type_tax.description
+                        : ""}
+                    </>
                   )}
                 />
                 <Column

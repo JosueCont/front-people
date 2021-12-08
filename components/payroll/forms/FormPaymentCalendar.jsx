@@ -26,24 +26,17 @@ const FormPaymentCalendar = ({
   const route = useRouter();
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
-  const optionsPeriodicity = [
-    { value: 1, label: "Diario" },
-    { value: 2, label: "Semanal" },
-    { value: 3, label: "Decenal" },
-    { value: 4, label: "Catorcenal" },
-    { value: 5, label: "Quincenal" },
-    { value: 6, label: "Mensual" },
-    { value: 7, label: "Anual" },
-  ];
   const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [typeTax, setTypeTax] = useState([]);
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [activationDate, setActivationtDate] = useState("");
   const [period, setPeriod] = useState("");
+  const [paymentPeriodicity, setPaymentPeriodicity] = useState([]);
 
   useEffect(() => {
     getTypeTax();
+    getPaymentPeriodicity();
     if (idPaymentCalendar) {
       getPaymentCalendar();
     }
@@ -61,6 +54,18 @@ const FormPaymentCalendar = ({
     }
   };
 
+  const getPaymentPeriodicity = async () => {
+    try {
+      let response = await WebApiFiscal.getPaymentPeriodicity();
+      let periodicity = response.data.results.map((a) => {
+        return { value: a.id, label: a.description };
+      });
+      setPaymentPeriodicity(periodicity);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getPaymentCalendar = async () => {
     setLoading(true);
     try {
@@ -69,8 +74,8 @@ const FormPaymentCalendar = ({
         let item = response.data;
         formPaymentCalendar.setFieldsValue({
           name: item.name,
-          periodicity: item.periodicity,
-          type_tax: item.type_tax,
+          periodicity: item.periodicity.id,
+          type_tax: item.type_tax.id,
           start_date: item.start_date ? moment(item.start_date) : "",
           period: item.period ? moment().year(item.period) : "",
           start_incidence: item.start_incidence,
@@ -82,9 +87,12 @@ const FormPaymentCalendar = ({
             ? item.payment_saturday
             : false,
           payment_sunday: item.payment_sunday ? item.payment_sunday : false,
-          activation_date: item.activation_date,
+          activation_date: item.activation_date
+            ? moment(item.activation_date)
+            : "",
         });
         setStartDate(item.start_date);
+        setActivationtDate(item.activation_date);
         setPeriod(item.period);
       }
       setLoading(false);
@@ -142,7 +150,9 @@ const FormPaymentCalendar = ({
     if (startDate) {
       value.start_date = startDate;
     }
-    value.activation_date = activationDate !== "" ? activationDate : "";
+    if (activationDate) {
+      value.activation_date = activationDate;
+    }
     if (period) {
       value.period = parseInt(period);
     }
@@ -189,7 +199,7 @@ const FormPaymentCalendar = ({
                 rules={[ruleRequired]}
               >
                 <Select
-                  options={optionsPeriodicity}
+                  options={paymentPeriodicity}
                   notFoundContent={"No se encontraron resultados."}
                 />
               </Form.Item>
