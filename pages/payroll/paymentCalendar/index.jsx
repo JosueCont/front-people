@@ -64,23 +64,26 @@ const PaymentCalendars = () => {
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <>
-          <Row justify="space-between" style={{ paddingBottom: 20 }}>
-            <Col style={{ display: "flex" }}>
-              <Button
-                style={{
-                  background: "#fa8c16",
-                  fontWeight: "bold",
-                  color: "white",
-                  marginTop: "auto",
-                }}
-                onClick={() => route.push("paymentCalendar/new")}
-                key="btn_new"
-              >
-                <PlusOutlined />
-                Agregar Calendario
-              </Button>
-            </Col>
-          </Row>
+          <div className="top-container-border-radius">
+            <Row justify="space-between" style={{ paddingBottom: 20 }}>
+              <Col style={{ display: "flex" }}>
+                <Button
+                  style={{
+                    background: "#fa8c16",
+                    fontWeight: "bold",
+                    color: "white",
+                    marginTop: "auto",
+                  }}
+                  onClick={() => route.push("paymentCalendar/new")}
+                  key="btn_new"
+                >
+                  <PlusOutlined />
+                  Agregar Calendario
+                </Button>
+              </Col>
+            </Row>
+          </div>
+
           <Row justify="end">
             <Col span={24}>
               <Table

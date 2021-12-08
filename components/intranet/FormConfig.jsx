@@ -198,146 +198,139 @@ const FormConfig = (props) => {
 
   return (
     <>
-      <Layout className="site-layout-background">
-        <Spin tip="Cargando..." spinning={props.loading}>
-          <Form
-            layout={"vertical"}
-            form={formConfigIntranet}
-            onFinish={onFinish}
-          >
-            <Row>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  rules={[
-                    {
-                      required: true,
-                      message: "Nombre requerido",
-                    },
-                  ]}
+      {/* <Layout className="site-layout-background"> */}
+      <Spin tip="Cargando..." spinning={props.loading}>
+        <Form layout={"vertical"} form={formConfigIntranet} onFinish={onFinish}>
+          <Row>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: "Nombre requerido",
+                  },
+                ]}
+                name="nameIntranet"
+                label="Nombre de intranet"
+              >
+                <AutoComplete
                   name="nameIntranet"
-                  label="Nombre de intranet"
+                  label="Nombre"
+                  onChange={onWebsiteChange}
                 >
-                  <AutoComplete
-                    name="nameIntranet"
-                    label="Nombre"
-                    onChange={onWebsiteChange}
-                  >
-                    <Input />
-                  </AutoComplete>
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  name="primaryColor"
-                  label="Color primario de intranet"
-                >
-                  <Input type={"color"} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  name="intranet_menu_font_primary_color"
-                  label="Color texto primario de intranet"
-                >
-                  <Input type={"color"} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  label="Color secundario de intranet"
-                  name="secondaryColor"
-                >
-                  <Input type={"color"} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  name="intranet_menu_font_secondary_color"
-                  label="Color texto secundario de intranet"
-                >
-                  <Input type={"color"} />
-                </Form.Item>
-              </Col>
-              {/* <Col lg={6} xs={22} offset={1}>
+                  <Input />
+                </AutoComplete>
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item name="primaryColor" label="Color primario de intranet">
+                <Input type={"color"} />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="intranet_menu_font_primary_color"
+                label="Color texto primario de intranet"
+              >
+                <Input type={"color"} />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                label="Color secundario de intranet"
+                name="secondaryColor"
+              >
+                <Input type={"color"} />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="intranet_menu_font_secondary_color"
+                label="Color texto secundario de intranet"
+              >
+                <Input type={"color"} />
+              </Form.Item>
+            </Col>
+            {/* <Col lg={6} xs={22} offset={1}>
                         <Form.Item name="accessIntranet" label="Acceso a la intranet" valuePropName="checked">
                             <Switch/>
                         </Form.Item>
                     </Col>*/}
 
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  name="intranet_enable_post_reaction"
-                  label="Tipo de reacciones"
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="intranet_enable_post_reaction"
+                label="Tipo de reacciones"
+              >
+                <Select
+                  mode="multiple"
+                  value={interactionsSelected}
+                  onChange={interactionsChange}
+                  placeholder={"Seleccione..."}
+                  notFoundContent={"No se encontraron resultados."}
                 >
-                  <Select
-                    mode="multiple"
-                    value={interactionsSelected}
-                    onChange={interactionsChange}
-                    placeholder={"Seleccione..."}
-                    notFoundContent={"No se encontraron resultados."}
-                  >
-                    {interactionsFilteredOptions.map((item) => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name} {item.emoji}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  label="Imagen de intranet"
-                  name="image"
-                  labelAlign={"left"}
+                  {interactionsFilteredOptions.map((item) => (
+                    <Select.Option key={item.id} value={item.id}>
+                      {item.name} {item.emoji}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                label="Imagen de intranet"
+                name="image"
+                labelAlign={"left"}
+              >
+                <Upload
+                  name="avatar"
+                  listType="picture-card"
+                  showUploadList={false}
+                  beforeUpload={beforeUpload}
+                  onChange={upImage}
                 >
-                  <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    showUploadList={false}
-                    beforeUpload={beforeUpload}
-                    onChange={upImage}
-                  >
-                    {photo ? (
-                      <div
-                        className="frontImage"
-                        style={
-                          photo
-                            ? {
-                                width: "190px",
-                                height: "190px",
-                                display: "flex",
-                                flexWrap: "wrap",
-                                textAlign: "center",
-                                alignContent: "center",
-                              }
-                            : {}
-                        }
-                      >
-                        <img
-                          className="img"
-                          src={photo}
-                          alt="avatar"
-                          preview={false}
-                          style={{ width: 100 }}
-                        />
-                      </div>
-                    ) : (
-                      uploadButton
-                    )}
-                  </Upload>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
-              <Col>
-                <Button type="primary" htmlType="submit">
-                  Guardar
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Spin>
-      </Layout>
+                  {photo ? (
+                    <div
+                      className="frontImage"
+                      style={
+                        photo
+                          ? {
+                              width: "190px",
+                              height: "190px",
+                              display: "flex",
+                              flexWrap: "wrap",
+                              textAlign: "center",
+                              alignContent: "center",
+                            }
+                          : {}
+                      }
+                    >
+                      <img
+                        className="img"
+                        src={photo}
+                        alt="avatar"
+                        preview={false}
+                        style={{ width: 100 }}
+                      />
+                    </div>
+                  ) : (
+                    uploadButton
+                  )}
+                </Upload>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
+            <Col>
+              <Button type="primary" htmlType="submit">
+                Guardar
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Spin>
+      {/* </Layout> */}
     </>
   );
 };

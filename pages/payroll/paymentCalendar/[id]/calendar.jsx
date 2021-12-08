@@ -93,7 +93,7 @@ const Calendars = () => {
           Calendario de pagos
         </Breadcrumb.Item>
       </Breadcrumb>
-      <div className="container" style={{ width: "100%" }}>
+      <div className="container-border-radius" style={{ width: "100%" }}>
         <>
           <Row>
             <Col span={24}>

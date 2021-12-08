@@ -101,42 +101,41 @@ const AddUploadPayroll = () => {
         <Breadcrumb.Item>Agregar recibos de nómina</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
-        <div style={{ padding: "1%", float: "right" }}>
-          <Button
-            style={{ marginRight: "5px" }}
-            onClick={() => router.push({ pathname: "/payrollvoucher" })}
-          >
-            Regresar
-          </Button>
-          <Button type="primary" onClick={() => sendPayroll()}>
-            Guardar
-          </Button>
-        </div>
-        <div
-          className="site-layout-background"
-          style={{
-            padding: 24,
-            minHeight: 380,
-            height: "100%",
-          }}
-        >
-          <Dragger
-            {...props}
-            style={{
-              marginTop: "30px",
-            }}
-          >
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">
-              Haga clic o arrastre el archivo a esta área para cargar{" "}
-            </p>
-            <p className="ant-upload-hint">
-              Soporte para una carga única o masiva. Sólo se permitan archivos
-              xml de recibos de nómina
-            </p>
-          </Dragger>
+        <div className="container-border-radius">
+          <Col span={24}>
+            <Row>
+              <Col span={24} style={{ marginBottom: 50 }}>
+                <Dragger
+                  {...props}
+                  style={{
+                    marginTop: "30px",
+                  }}
+                >
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <p className="ant-upload-text">
+                    Haga clic o arrastre el archivo a esta área para cargar{" "}
+                  </p>
+                  <p className="ant-upload-hint">
+                    Soporte para una carga única o masiva. Sólo se permitan
+                    archivos xml de recibos de nómina
+                  </p>
+                </Dragger>
+              </Col>
+              <Col span={24} style={{ margin: "10px 0px", textAlign: "right" }}>
+                <Button
+                  style={{ marginRight: "5px" }}
+                  onClick={() => router.push({ pathname: "/payrollvoucher" })}
+                >
+                  Regresar
+                </Button>
+                <Button type="primary" onClick={() => sendPayroll()}>
+                  Guardar
+                </Button>
+              </Col>
+            </Row>
+          </Col>
         </div>
       </Content>
     </MainLayout>

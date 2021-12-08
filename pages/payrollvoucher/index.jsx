@@ -268,31 +268,32 @@ const UploadPayroll = () => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <>
-            <Row justify="space-between">
-              <Col>
-                <Form
-                  name="filter"
-                  onFinish={filter}
-                  layout="vertical"
-                  key="formFilter"
-                  className={"formFilter"}
-                  form={form}
-                >
-                  <Row gutter={[24, 8]}>
-                    <Col>
-                      <SelectCollaborator
-                        style={{ width: 150 }}
-                        key="collaborator"
-                        name="collaborator"
-                        label="Colaborador"
-                      />
-                    </Col>
-                    <Col>
-                      <Form.Item key="rfc" name="rfc" label="Rfc">
-                        <Input placeholder="Rfc" />
-                      </Form.Item>
-                    </Col>
-                    {/* <Col>
+            <div className="top-container-border-radius">
+              <Row justify="space-between">
+                <Col>
+                  <Form
+                    name="filter"
+                    onFinish={filter}
+                    layout="vertical"
+                    key="formFilter"
+                    className={"formFilter"}
+                    form={form}
+                  >
+                    <Row gutter={[24, 8]}>
+                      <Col>
+                        <SelectCollaborator
+                          style={{ width: 150 }}
+                          key="collaborator"
+                          name="collaborator"
+                          label="Colaborador"
+                        />
+                      </Col>
+                      <Col>
+                        <Form.Item key="rfc" name="rfc" label="Rfc">
+                          <Input placeholder="Rfc" />
+                        </Form.Item>
+                      </Col>
+                      {/* <Col>
                       <SelectCompany
                         name="company"
                         label="Empresa"
@@ -301,61 +302,63 @@ const UploadPayroll = () => {
                         style={{ width: 150 }}
                       />
                     </Col> */}
-                    <Col>
-                      <SelectDepartment
-                        companyId={nodeId}
-                        key="SelectDepartment"
-                      />
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Button
-                        style={{
-                          background: "#fa8c16",
-                          fontWeight: "bold",
-                          color: "white",
-                          marginTop: "auto",
-                        }}
-                        key="buttonFilter"
-                        htmlType="submit"
-                        loading={loading}
-                      >
-                        <SearchOutlined />
-                      </Button>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
+                      <Col>
+                        <SelectDepartment
+                          companyId={nodeId}
+                          key="SelectDepartment"
+                        />
+                      </Col>
+                      <Col style={{ display: "flex" }}>
                         <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto", marginLeft: 10 }}
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "auto",
+                          }}
+                          key="buttonFilter"
+                          htmlType="submit"
+                          loading={loading}
                         >
-                          <SyncOutlined />
+                          <SearchOutlined />
                         </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                {permissions.create && (
-                  <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    onClick={() => router.push("payrollvoucher/add")}
-                  >
-                    <PlusOutlined />
-                    Nuevo
-                  </Button>
-                )}
-              </Col>
-            </Row>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto", marginLeft: 10 }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+                <Col style={{ display: "flex" }}>
+                  {permissions.create && (
+                    <Button
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginTop: "auto",
+                      }}
+                      onClick={() => router.push("payrollvoucher/add")}
+                    >
+                      <PlusOutlined />
+                      Nuevo
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+            </div>
+
             <Row>
               <Col span={24}>
                 <Table
@@ -363,6 +366,7 @@ const UploadPayroll = () => {
                   columns={columns}
                   dataSource={vouchers}
                   loading={loading}
+                  scroll={{ x: 350 }}
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
