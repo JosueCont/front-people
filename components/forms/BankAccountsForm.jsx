@@ -8,39 +8,41 @@ const BankAccountsForm = (props) => {
 
   return (
     <>
-      <Form.Item label="Colaborador" labelCol={{ span: 7 }} labelAlign={"left"}>
-        <Input value={props.data ? props.data.employee : null} />
-      </Form.Item>
-      <Form.Item
-        label="Número de cuenta"
-        labelCol={{ span: 7 }}
-        labelAlign={"left"}
-      >
-        <Input value={props.data ? props.data.account_number : null} />
-      </Form.Item>
-      <Form.Item
-        label="Cuenta clabe"
-        labelCol={{ span: 7 }}
-        labelAlign={"left"}
-      >
-        <Input value={props.data ? props.data.interbank_key : null} />
-      </Form.Item>
-      <Form.Item label="Banco" labelCol={{ span: 7 }} labelAlign={"left"}>
-        <Input value={props.data ? props.data.bank : null} />
-      </Form.Item>
-      <Form.Item
-        label="Número de tarjeta"
-        labelCol={{ span: 7 }}
-        labelAlign={"left"}
-      >
-        <Input value={props.data ? props.data.card_number : null} />
-      </Form.Item>
-      <Form.Item label="Mes" labelCol={{ span: 7 }} labelAlign={"left"}>
-        <Input value={props.data ? props.data.expiration_month : null} />
-      </Form.Item>
-      <Form.Item label="Año" labelCol={{ span: 7 }} labelAlign={"left"}>
-        <Input value={props.data ? props.data.expiration_year : null} />
-      </Form.Item>
+      <Col span={24}>
+        <Form.Item label="Colaborador">
+          <Input value={props.data ? props.data.employee : null} />
+        </Form.Item>
+      </Col>
+      <Col span={24}>
+        <Form.Item label="Número de cuenta">
+          <Input value={props.data ? props.data.account_number : null} />
+        </Form.Item>
+      </Col>
+      <Col span={24}>
+        <Form.Item label="Cuenta clabe">
+          <Input value={props.data ? props.data.interbank_key : null} />
+        </Form.Item>
+      </Col>
+      <Col span={24}>
+        <Form.Item label="Banco">
+          <Input value={props.data ? props.data.bank : null} />
+        </Form.Item>
+      </Col>
+      <Col span={24}>
+        <Form.Item label="Número de tarjeta">
+          <Input value={props.data ? props.data.card_number : null} />
+        </Form.Item>
+      </Col>
+      <Col span={24}>
+        <Form.Item label="Mes">
+          <Input value={props.data ? props.data.expiration_month : null} />
+        </Form.Item>
+      </Col>
+      <Col span={24}>
+        <Form.Item label="Año">
+          <Input value={props.data ? props.data.expiration_year : null} />
+        </Form.Item>
+      </Col>
     </>
   );
 };

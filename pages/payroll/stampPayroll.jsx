@@ -324,49 +324,52 @@ const StampPayroll = () => {
         <>
           <Row justify="space-between" style={{ paddingBottom: 20 }}>
             <Col span={24}>
-              <Row gutter={[16, 8]}>
-                <Col xxs={24} xl={4}>
-                  <Select
-                    style={{ width: "100%" }}
-                    options={optionspPaymentCalendars}
-                    onChange={changePaymentCalendar}
-                    placeholder="Calendarios"
-                    notFoundContent={"No se encontraron resultados."}
-                  />
-                </Col>
-                <Col xxs={24} xl={4}>
-                  <Input
-                    key="periodicity"
-                    placeholder="Periodicidad"
-                    disabled={true}
-                    value={periodicity}
-                  />
-                </Col>
-                <Col xxs={24} xl={6}>
-                  <Input
-                    key="period"
-                    placeholder="Período"
-                    disabled={true}
-                    value={period}
-                  />
-                </Col>
-                <Col xxs={24} xl={6}>
-                  <Input
-                    key="insidence_period"
-                    placeholder="Período de incidencia"
-                    disabled={true}
-                    value={insidencePeriod}
-                  />
-                </Col>
-                <Col xxs={24} xl={4}>
-                  <Input
-                    key="payment_day"
-                    placeholder="Dia de pago"
-                    disabled={true}
-                    value={paymentDate}
-                  />
-                </Col>
-              </Row>
+              <div className="top-container-border-radius">
+                <Row gutter={[16, 8]}>
+                  <Col xxs={24} xl={4}>
+                    <Select
+                      style={{ width: "100%" }}
+                      options={optionspPaymentCalendars}
+                      onChange={changePaymentCalendar}
+                      placeholder="Calendarios"
+                      notFoundContent={"No se encontraron resultados."}
+                    />
+                  </Col>
+                  <Col xxs={24} xl={4}>
+                    <Input
+                      key="periodicity"
+                      placeholder="Periodicidad"
+                      disabled={true}
+                      value={periodicity}
+                    />
+                  </Col>
+                  <Col xxs={24} xl={6}>
+                    <Input
+                      key="period"
+                      placeholder="Período"
+                      disabled={true}
+                      value={period}
+                    />
+                  </Col>
+                  <Col xxs={24} xl={6}>
+                    <Input
+                      key="insidence_period"
+                      placeholder="Período de incidencia"
+                      disabled={true}
+                      value={insidencePeriod}
+                    />
+                  </Col>
+                  <Col xxs={24} xl={4}>
+                    <Input
+                      key="payment_day"
+                      placeholder="Dia de pago"
+                      disabled={true}
+                      value={paymentDate}
+                    />
+                  </Col>
+                </Row>
+              </div>
+
               <Row>
                 <Col span={24}>
                   <Button

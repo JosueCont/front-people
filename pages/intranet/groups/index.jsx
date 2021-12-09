@@ -117,9 +117,11 @@ const GroupView = ({ ...props }) => {
         </Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
-        <Button type="primary" onClick={showModal}>
-          + Agregar nuevo
-        </Button>
+        <div className="top-container-border-radius">
+          <Button type="primary" onClick={showModal}>
+            + Agregar nuevo
+          </Button>
+        </div>
 
         {isModalVisible && (
           <FormGroup

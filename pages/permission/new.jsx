@@ -90,7 +90,7 @@ const PermissionNew = () => {
         style={{ width: "100%", padding: "20px 0" }}
       >
         <Row justify={"center"}>
-          <Col span={23}>
+          <Col span={24}>
             <Permissionform
               details={null}
               onFinish={saveRequest}

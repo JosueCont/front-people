@@ -221,63 +221,74 @@ const BankAccountsDetails = () => {
         className="container back-white"
         style={{ width: "100%", padding: "20px 0" }}
       >
-        <Row justify={"center"}>
-          {/* <Col span={23}>
+        <Col span={24} style={{ padding: 20 }}>
+          <Row>
+            {/* <Col span={23}>
                         <Title key="dats_gnrl" level={4}>
                             Solicitud de revisión
                         </Title>
                     </Col> */}
-          <Col span={23}>
-            <Form layout="horizontal" className={"formPermission"}>
-              <Row>
-                {update ? (
-                  <Col span={10}>
-                    <Title level={5}> Datos actuales </Title>
+            <Col span={24}>
+              {/* className={"formPermission"} */}
+              <Form layout="vertical">
+                <Row gutter={24}>
+                  {update ? (
+                    <Col lg={12} md={12} sm={24}>
+                      <Title level={5}> Datos actuales </Title>
 
-                    <BankAccountsForm data={currentDetails} />
+                      <BankAccountsForm data={currentDetails} />
+                    </Col>
+                  ) : null}
+                  <Col lg={12} md={12} sm={24}>
+                    <Title level={5}> Nuevos datos </Title>
+
+                    <BankAccountsForm data={newDetails} />
                   </Col>
-                ) : null}
-                <Col span={10} offset={update ? 1 : 0}>
-                  <Title level={5}> Nuevos datos </Title>
-
-                  <BankAccountsForm data={newDetails} />
-                </Col>
-              </Row>
-            </Form>
-          </Col>
-          <Col span={17} offset={4}>
-            <Button
-              key="cancel"
-              style={{ padding: "0 50px" }}
-              onClick={() => route.push("/bank_accounts")}
-            >
-              Regresar
-            </Button>
-
-            {permissions.reject && (
+                </Row>
+              </Form>
+            </Col>
+            <Col span={24} style={{ textAlign: "right" }}>
               <Button
-                danger
-                key="reject"
-                type="primary"
-                onClick={() => setVisibleModalReject(true)}
-                style={{ padding: "0 50px", marginLeft: 15 }}
+                key="cancel"
+                style={{ padding: "0 50px", marginBottom: "10px" }}
+                onClick={() => route.push("/bank_accounts")}
               >
-                Rechazar
+                Regresar
               </Button>
-            )}
 
-            {permissions.approve && (
-              <Button
-                key="save"
-                onClick={modalAprobe}
-                type="primary"
-                style={{ padding: "0 50px", marginLeft: 15 }}
-              >
-                {update ? "Actualizar" : "Aprobar"}
-              </Button>
-            )}
-          </Col>
-        </Row>
+              {permissions.reject && (
+                <Button
+                  danger
+                  key="reject"
+                  type="primary"
+                  onClick={() => setVisibleModalReject(true)}
+                  style={{
+                    padding: "0 50px",
+                    marginLeft: 15,
+                    marginBottom: "10px",
+                  }}
+                >
+                  Rechazar
+                </Button>
+              )}
+
+              {permissions.approve && (
+                <Button
+                  key="save"
+                  onClick={modalAprobe}
+                  type="primary"
+                  style={{
+                    padding: "0 50px",
+                    marginLeft: 15,
+                    marginBottom: "10px",
+                  }}
+                >
+                  {update ? "Actualizar" : "Aprobar"}
+                </Button>
+              )}
+            </Col>
+          </Row>
+        </Col>
       </div>
       <Modal
         title={

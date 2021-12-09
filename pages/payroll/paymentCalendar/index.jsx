@@ -64,23 +64,26 @@ const PaymentCalendars = () => {
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <>
-          <Row justify="space-between" style={{ paddingBottom: 20 }}>
-            <Col style={{ display: "flex" }}>
-              <Button
-                style={{
-                  background: "#fa8c16",
-                  fontWeight: "bold",
-                  color: "white",
-                  marginTop: "auto",
-                }}
-                onClick={() => route.push("paymentCalendar/new")}
-                key="btn_new"
-              >
-                <PlusOutlined />
-                Agregar Calendario
-              </Button>
-            </Col>
-          </Row>
+          <div className="top-container-border-radius">
+            <Row justify="space-between" style={{ paddingBottom: 20 }}>
+              <Col style={{ display: "flex" }}>
+                <Button
+                  style={{
+                    background: "#fa8c16",
+                    fontWeight: "bold",
+                    color: "white",
+                    marginTop: "auto",
+                  }}
+                  onClick={() => route.push("paymentCalendar/new")}
+                  key="btn_new"
+                >
+                  <PlusOutlined />
+                  Agregar Calendario
+                </Button>
+              </Col>
+            </Row>
+          </div>
+
           <Row justify="end">
             <Col span={24}>
               <Table
@@ -98,28 +101,24 @@ const PaymentCalendars = () => {
                   title="Periodicidad"
                   dataIndex="periodicity"
                   key="periodicity"
-                  render={(periodicity, record) =>
-                    periodicity === 1
-                      ? "Diario"
-                      : periodicity === 2
-                      ? "Semanal"
-                      : periodicity === 3
-                      ? "Decenal"
-                      : periodicity === 4
-                      ? "Catorcenal"
-                      : periodicity === 5
-                      ? "Quincenal"
-                      : periodicity === 6
-                      ? "Mensual"
-                      : "Anual"
-                  }
+                  render={(periodicity, record) => (
+                    <>
+                      {periodicity && periodicity.description
+                        ? periodicity.description
+                        : ""}
+                    </>
+                  )}
                 />
                 <Column
                   title="Tipo de impuesto"
-                  dataIndex="type_tax.name"
+                  dataIndex="type_tax"
                   key="type_tax"
                   render={(type_tax, record) => (
-                    <>{type_tax && type_tax.name ? type_tax.name : null}</>
+                    <>
+                      {type_tax && type_tax.description
+                        ? type_tax.description
+                        : ""}
+                    </>
                   )}
                 />
                 <Column

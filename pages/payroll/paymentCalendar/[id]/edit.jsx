@@ -29,7 +29,7 @@ const EditPaymentCalendar = () => {
           </Breadcrumb.Item>
         </Breadcrumb>
         <div
-          className="container"
+          className="container-border-radius"
           style={{ width: "100%", backgroundColor: "white", padding: "2%" }}
         >
           <Row justify={"space-between"} className={"formFilter"}>

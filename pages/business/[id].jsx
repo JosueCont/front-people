@@ -11,7 +11,7 @@ import {
   Tabs,
 } from "antd";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
@@ -20,7 +20,7 @@ import TaxInformationForm from "../../components/payroll/forms/TaxInformationFor
 import { connect } from "react-redux";
 // import { config } from "../../api/axiosApi";
 
-const ConfigCompany = (...props) => {
+const ConfigCompany = ({ ...props }) => {
   let router = useRouter();
   const [loading, setLoading] = useState(false);
   const [update, setUpdate] = useState(false);
@@ -30,6 +30,7 @@ const ConfigCompany = (...props) => {
   const { Title } = Typography;
   const { TextArea } = Input;
   const { TabPane } = Tabs;
+  const [fiscalConfig, setFiscalConfig] = useState(false);
 
   useEffect(() => {
     {
@@ -60,7 +61,11 @@ const ConfigCompany = (...props) => {
     }
   }, [router.query.id]);
 
-  useEffect(() => {}, [props[0].config]);
+  useLayoutEffect(() => {
+    if (props.config && props.config.nomina_enabled) {
+      setFiscalConfig(true);
+    }
+  }, [props.config]);
 
   const onFinish = (data) => {
     data.node = company.id;
@@ -123,7 +128,7 @@ const ConfigCompany = (...props) => {
       </Breadcrumb>
       <Spin tip="Cargando..." spinning={loading}>
         <div
-          className="site-layout-background"
+          className="container-border-radius"
           style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
           {company && <Title level={3}>{company.name}</Title>}
@@ -193,7 +198,7 @@ const ConfigCompany = (...props) => {
                 </Row>
               </Form>
             </TabPane>
-            {props[0].config && props[0].config.nomina_enabled && (
+            {fiscalConfig && (
               <TabPane tab="Fiscal" key="tab_2">
                 <TaxInformationForm node_id={router.query.id} />
               </TabPane>

@@ -41,13 +41,10 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
   useEffect(() => {
-    
     getPerson();
   }, []);
 
-  const actionEvent = (data) => {
-    
-  };
+  const actionEvent = (data) => {};
 
   const getPerson = async () => {
     try {
@@ -192,7 +189,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
               />
             </Col>
-            <Col>
+            {/* <Col>
               {!hideSearch && (
                 <Input
                   className="search_header"
@@ -201,7 +198,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   prefix={<SearchOutlined style={{ color: "white" }} />}
                 />
               )}
-            </Col>
+            </Col> */}
             <Col style={{ maxWidth: 250, minWidth: 50, textAlign: "end" }}>
               <div
                 className={"pointer"}

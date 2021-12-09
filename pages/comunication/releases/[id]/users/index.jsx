@@ -50,6 +50,14 @@ const UserNotification = () => {
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row justify="space-between" key="row1" style={{ padding: "20px 0" }}>
+          <Col span={24} style={{ textAlign: "right" }}>
+            <Button
+              onClick={() => route.push("/comunication/releases")}
+              style={{ padding: "0 50px", margin: "20px 0px" }}
+            >
+              Regresar
+            </Button>
+          </Col>
           <Col span={24}>
             <Table
               dataSource={list}
@@ -90,14 +98,6 @@ const UserNotification = () => {
                 }
               />
             </Table>
-          </Col>
-          <Col span={24} style={{ textAlign: "right" }}>
-            <Button
-              onClick={() => route.push("/comunication/releases")}
-              style={{ padding: "0 50px", margin: "0 10px" }}
-            >
-              Regresar
-            </Button>
           </Col>
         </Row>
       </div>
