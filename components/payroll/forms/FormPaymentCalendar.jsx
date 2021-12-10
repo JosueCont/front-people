@@ -82,7 +82,7 @@ const FormPaymentCalendar = ({
           end_incidence: item.end_incidence,
           adjustment: item.adjustment ? item.adjustment : false,
           active: item.active ? item.active : false,
-          pay_before: item.pay_before ? item.pay_before : 0,
+          pay_before: item.pay_before ? parseInt(item.pay_before) : 0,
           payment_saturday: item.payment_saturday
             ? item.payment_saturday
             : false,
@@ -142,7 +142,7 @@ const FormPaymentCalendar = ({
     value.node = parseInt(nodeId);
     value.active = value.active ? value.active : false;
     value.adjustment = value.adjustment ? value.adjustment : false;
-    value.pay_before = value.pay_before ? value.pay_before : 0;
+    value.pay_before = value.pay_before ? parseInt(value.pay_before) : 0;
     value.payment_saturday = value.payment_saturday
       ? value.payment_saturday
       : false;

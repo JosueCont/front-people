@@ -14,33 +14,34 @@ import {
 import moment from "moment";
 
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
+import WebApi from "../../api/webApi";
 
 const Vacationform = (props) => {
   const { Title } = Typography;
 
   const [formVacation] = Form.useForm();
 
-  const { Option } = Select;
-
   const [allPersons, setAllPersons] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
 
-  const changePerson = (value) => {
+  const changePerson = async (value) => {
     if (value) {
-      let index = allPersons.find((data) => data.id === value);
-      formVacation.setFieldsValue({
-        antiquity: index.antiquity,
-        availableDays: index.Available_days_vacation,
-        dateOfAdmission: index.date_of_admission
-          ? moment(index.date_of_admission).format("DD-MM-YYYY")
-          : null,
-      });
-      if (index.job) {
+      let index = await getCollaborator(value);
+      if (index) {
         formVacation.setFieldsValue({
-          job: index.job.name,
+          antiquity: index.antiquity,
+          availableDays: index.Available_days_vacation,
+          dateOfAdmission: index.date_of_admission
+            ? moment(index.date_of_admission).format("DD-MM-YYYY")
+            : null,
         });
+        if (index.job) {
+          formVacation.setFieldsValue({
+            job: index.job.name,
+          });
+        }
+        setUrlPhoto(index.photo ? index.photo : null);
       }
-      setUrlPhoto(index.photo ? index.photo : null);
     } else {
       formVacation.setFieldsValue({
         antiquity: null,
@@ -50,6 +51,16 @@ const Vacationform = (props) => {
       });
       setUrlPhoto(null);
     }
+  };
+
+  const getCollaborator = async (id) => {
+    let collaborator = {};
+    let response = await WebApi.getPerson(id);
+
+    if (response.status == 200) {
+      collaborator = response.data;
+    }
+    return collaborator;
   };
 
   useEffect(() => {
@@ -108,7 +119,7 @@ const Vacationform = (props) => {
           : null
       );
     }
-  }, [allPersons]);
+  }, [props.details]);
 
   return (
     <Form form={formVacation} layout="vertical" onFinish={props.onFinish}>

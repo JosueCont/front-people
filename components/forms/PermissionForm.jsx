@@ -15,23 +15,21 @@ import moment from "moment";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
+import WebApi from "../../api/webApi";
 
 const Permissionform = (props) => {
   const { Title } = Typography;
 
   const [formPermission] = Form.useForm();
-
-  const { Option } = Select;
   const { TextArea } = Input;
 
   const [allPersons, setAllPersons] = useState(null);
-  const [personList, setPersonList] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
   const [permissions, setPermissions] = useState({});
 
-  const changePerson = (value) => {
+  const changePerson = async (value) => {
     if (value) {
-      let index = allPersons.find((data) => data.id === value);
+      let index = await getCollaborator(value);
       if (index.job) {
         formPermission.setFieldsValue({
           job: index.job.name,
@@ -46,6 +44,16 @@ const Permissionform = (props) => {
       });
       setUrlPhoto(null);
     }
+  };
+
+  const getCollaborator = async (id) => {
+    let collaborator = {};
+    let response = await WebApi.getPerson(id);
+
+    if (response.status == 200) {
+      collaborator = response.data;
+    }
+    return collaborator;
   };
 
   useEffect(() => {
@@ -75,7 +83,7 @@ const Permissionform = (props) => {
           : null
       );
     }
-  }, [allPersons]);
+  }, [props.details]);
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
