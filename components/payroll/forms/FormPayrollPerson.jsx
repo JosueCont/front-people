@@ -198,6 +198,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
       value.person = person_id;
       value.id = idPayroll;
       value.last_day_paid = lastDayPaid;
+      value.payment_type = parseInt(value.payment_type);
       updatePayrollPerson(value);
     } else {
       value.person = person_id;
