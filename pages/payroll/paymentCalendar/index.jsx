@@ -90,6 +90,7 @@ const PaymentCalendars = () => {
                 dataSource={paymentCalendars}
                 key="tablePaymentCalendar"
                 loading={loading}
+                scroll={{ x: 350 }}
                 locale={{
                   emptyText: loading
                     ? "Cargando..."
