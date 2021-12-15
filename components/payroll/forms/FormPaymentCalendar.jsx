@@ -294,7 +294,7 @@ const FormPaymentCalendar = ({
             <Col lg={6} xs={22} offset={1}>
               <Form.Item
                 name="pay_before"
-                label="¿Pagar dias antes?"
+                label="¿Pagar días antes?"
                 rules={[onlyNumeric]}
               >
                 <Input maxLength={10} />
