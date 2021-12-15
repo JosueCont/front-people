@@ -100,7 +100,7 @@ div#__next > section.layout{
   margin: 0 10px;
 }
 
-.top-container-border-radius{  
+/* .top-container-border-radius{  
   background: #fff !important;
   border-radius: 20px;
   padding: 20px;
@@ -110,7 +110,7 @@ div#__next > section.layout{
   background: #fff !important;
   border-radius: 20px;
   padding:5px 20px;  
-}
+} */
 header.ant-layout-header > ul {
   background-color: var(--primaryColor) !important;
 }

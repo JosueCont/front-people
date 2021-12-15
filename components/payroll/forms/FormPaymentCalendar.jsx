@@ -294,7 +294,7 @@ const FormPaymentCalendar = ({
             <Col lg={6} xs={22} offset={1}>
               <Form.Item
                 name="pay_before"
-                label="Pagar antes?"
+                label="¿Pagar dias antes?"
                 rules={[onlyNumeric]}
               >
                 <Input maxLength={10} />
@@ -303,7 +303,7 @@ const FormPaymentCalendar = ({
             <Col lg={6} xs={22} offset={1}>
               <Form.Item
                 name="payment_saturday"
-                label="Pago en sábado?"
+                label="¿Pago en sábado?"
                 valuePropName="checked"
               >
                 <Switch
@@ -315,7 +315,7 @@ const FormPaymentCalendar = ({
             <Col lg={6} xs={22} offset={1}>
               <Form.Item
                 name="payment_sunday"
-                label="Pago en domingo?"
+                label="¿Pago en domingo?"
                 valuePropName="checked"
               >
                 <Switch
