@@ -30,6 +30,8 @@ import SelectGroup from "../selects/SelectGroup";
 import SelectJob from "../selects/SelectJob";
 import SelectDepartment from "../selects/SelectDepartment";
 import SelectPersonType from "../selects/SelectPersonType";
+import SelectWorkTitle from '../selects/SelectWorkTitle';
+import SelectWorkTitleStatus from '../selects/SelectWorkTitleStatus';
 
 const FormPerson = ({
   config = null,
@@ -215,7 +217,7 @@ const FormPerson = ({
 
   return (
     <>
-      <Layout>
+      
         <Modal
           maskClosable={false}
           title="Alta de personas"
@@ -224,6 +226,7 @@ const FormPerson = ({
           onCancel={() => closeDialog()}
           footer={null}
           width={"60%"}
+          destroyOnClose
         >
           <Form
             initialValues={{
@@ -251,6 +254,14 @@ const FormPerson = ({
               <Col lg={7} xs={22} offset={1}>
                 <SelectJob titleLabel={false} name="job" style={false} />
               </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <SelectWorkTitle titleLabel={false} style={false} />
+              </Col>
+              <Col lg={7} xs={22} offset={1}>
+                <SelectWorkTitleStatus titleLabel={false} style={false} />
+              </Col>
+              
+              
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item rules={[ruleRequired]} name="first_name">
                   <Input type="text" placeholder="Nombre" />
@@ -368,7 +379,6 @@ const FormPerson = ({
             </Row>
           </Form>
         </Modal>
-      </Layout>
     </>
   );
 };

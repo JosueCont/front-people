@@ -49,6 +49,7 @@ import { genders, periodicity, statusSelect } from "../../utils/constant";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
 import { useRouter } from "next/router";
+import SelectWorkTitle from '../../components/selects/SelectWorkTitle';
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -937,6 +938,9 @@ const homeScreen = ({ ...props }) => {
                         <SelectDepartment />
                       </Col>
                       <Col>
+                        <SelectWorkTitle />
+                      </Col>
+                      <Col>
                         <SelectJob />
                       </Col>
                       <Col>
@@ -1082,15 +1086,13 @@ const homeScreen = ({ ...props }) => {
           <div className="notAllowed" />
         )}
       </div>
-      {modalAddPerson && (
-        <FormPerson
-          config={props.config}
-          close={getModalPerson}
-          visible={modalAddPerson}
-          nameNode={userCompanyName()}
-          node={userCompanyId()}
-        />
-      )}
+      <FormPerson
+        config={props.config}
+        close={getModalPerson}
+        visible={modalAddPerson}
+        nameNode={userCompanyName()}
+        node={userCompanyId()}
+      />
     </MainLayout>
   );
 };

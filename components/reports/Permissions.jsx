@@ -30,6 +30,7 @@ import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
+import SelectWorkTitle from '../selects/SelectWorkTitle';
 
 const PermissionsReport = (props) => {
   const route = useRouter();
@@ -279,6 +280,9 @@ const PermissionsReport = (props) => {
                   companyId={nodeId}
                   key="selectDepartament"
                 />
+              </Col>
+              <Col>
+                <SelectWorkTitle />
               </Col>
               <Col>
                 <Form.Item key="status" name="status" label="Estatus">

@@ -30,6 +30,7 @@ import SelectJob from "../selects/SelectJob";
 import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
+import SelectWorkTitle from '../selects/SelectWorkTitle';
 
 const PayrollReport = (props) => {
   const route = useRouter();
@@ -342,6 +343,9 @@ const PayrollReport = (props) => {
                   companyId={nodeId}
                   key="selectDepartament"
                 />
+              </Col>
+              <Col>
+                <SelectWorkTitle />
               </Col>
               <Col>
                 <SelectJob

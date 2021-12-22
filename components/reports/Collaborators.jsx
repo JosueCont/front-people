@@ -20,6 +20,7 @@ import SelectJob from "../selects/SelectJob";
 import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
+import SelectWorkTitle from '../selects/SelectWorkTitle';
 
 const CollaboratorsReport = (props) => {
   const route = useRouter();
@@ -287,6 +288,9 @@ const CollaboratorsReport = (props) => {
                   companyId={nodeId}
                   style={{ maxWidth: 150 }}
                 />
+              </Col>
+              <Col>
+                <SelectWorkTitle />
               </Col>
               <Col>
                 <SelectJob
