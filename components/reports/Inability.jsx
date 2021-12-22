@@ -28,6 +28,7 @@ import { API_URL } from "../../config/config";
 import moment from "moment";
 import jsCookie from "js-cookie";
 import { userCompanyId, userCompanyName } from "../../libs/auth";
+import SelectWorkTitle from '../selects/SelectWorkTitle';
 
 const InabilityReport = (props) => {
   const route = useRouter();
@@ -321,6 +322,9 @@ const InabilityReport = (props) => {
                   companyId={nodeId}
                   key="selectDepartament"
                 />
+              </Col>
+              <Col>
+                <SelectWorkTitle />
               </Col>
               <Col>
                 <Form.Item key="status" name="status" label="Estatus">
