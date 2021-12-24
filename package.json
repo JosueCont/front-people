@@ -44,6 +44,7 @@
     "react-native": "^0.64.0",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
+    "react-smooth-draggable": "^1.0.21",
     "react-spring": "^8.0.27",
     "redux": "^4.1.1",
     "redux-devtools": "^3.7.0",
