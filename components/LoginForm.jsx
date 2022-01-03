@@ -9,6 +9,8 @@ import Link from "next/link";
 import WebApi from "../api/webApi";
 import { ruleEmail } from "../utils/constant";
 import { EyeOutlined, MailOutlined } from "@ant-design/icons";
+import { connect } from "react-redux";
+import { setUserPermissions } from "../redux/UserDuck";
 
 const LoginForm = ({
   recoveryPsw = true,
@@ -45,7 +47,6 @@ const LoginForm = ({
   };
 
   const login = async (email, password) => {
-    console.log("CONFIG--->>>", props.generalConfig);
     try {
       setErrorLogin(false);
       setLoading(true);
@@ -70,12 +71,20 @@ const LoginForm = ({
             if (token) {
               saveJWT(token).then(function (responseJWT) {
                 if (responseJWT) {
-                  message.success("Acceso correcto.");
-                  Cookies.set("token", token);
-                  setLoading(false);
-                  router.push({
-                    pathname: "/select-company",
-                  });
+                  props
+                    .setUserPermissions(token.perms)
+                    .then((response) => {
+                      message.success("Acceso correcto.");
+                      delete token.perms;
+                      Cookies.set("token", token);
+                      setLoading(false);
+                      router.push({
+                        pathname: "/select-company",
+                      });
+                    })
+                    .catch((error) => {
+                      message.error("Acceso denegado");
+                    });
                 } else {
                   message.error("Acceso denegado");
                   setLoading(false);
@@ -191,4 +200,8 @@ const LoginForm = ({
   );
 };
 
-export default LoginForm;
+const mapState = () => {
+  return {};
+};
+
+export default connect(mapState, { setUserPermissions })(LoginForm);

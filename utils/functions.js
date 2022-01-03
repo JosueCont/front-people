@@ -207,6 +207,7 @@ export const UserPermissions = (data) => {
       },
     };
     data.map((a) => {
+      console.log("item--- >> ", a);
       if (a == "people.company.can.view") perms.company.view = true;
       else if (a == "people.company.can.create") perms.company.create = true;
       else if (a == "people.company.can.edit") perms.company.edit = true;

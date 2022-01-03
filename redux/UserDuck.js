@@ -1,6 +1,7 @@
 import WebApi from "../api/webApi";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../libs/auth";
+import { UserPermissions } from "../utils/functions";
 
 const initialData = {
   default: true,
