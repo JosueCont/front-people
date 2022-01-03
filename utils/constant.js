@@ -189,11 +189,9 @@ export const generateYear = () => {
   return yearsArray.reverse();
 };
 
-export const headersApi = () => {
-  return {
-    "client-id": APP_ID,
-    "Content-Type": "application/json",
-  };
+export const headersApiKhonnect = {
+  "client-id": APP_ID,
+  "Content-Type": "application/json",
 };
 
 export const monthsName = [

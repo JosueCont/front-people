@@ -45,6 +45,7 @@ const LoginForm = ({
   };
 
   const login = async (email, password) => {
+    console.log("CONFIG--->>>", props.generalConfig);
     try {
       setErrorLogin(false);
       setLoading(true);
