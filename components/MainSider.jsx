@@ -257,7 +257,14 @@ const MainSider = ({
               Cuentas bancarias
             </Menu.Item>
           </SubMenu>
-          <SubMenu
+          <Menu.Item
+            icon={<DollarOutlined />}
+            key="nomina"
+            onClick={() => router.push({ pathname: "/payroll/" })}
+          >
+            Nomina
+          </Menu.Item>
+          {/* <SubMenu
             key="nomina"
             title="Nómina"
             className="subMainMenu"
@@ -305,7 +312,7 @@ const MainSider = ({
                 </Menu.Item>
               </>
             )}
-          </SubMenu>
+          </SubMenu> */}
           <Menu.Item
             key="asignar"
             onClick={() => router.push({ pathname: "/assignedCompanies" })}
