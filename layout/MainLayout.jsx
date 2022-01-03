@@ -11,6 +11,7 @@ import { css, Global } from "@emotion/core";
 import { getFlavor, getRouteFlavor } from "../utils/brand";
 import NewHeader from "../components/NewHeader";
 import MainSider from "../components/MainSider";
+import SiderNomina from '../components/SiderNomina';
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -30,6 +31,7 @@ const MainLayout = ({
   onClickImage,
   hideSearch,
   hideLogo = false,
+  nomina =false,
   ...props
 }) => {
   const router = useRouter();
@@ -255,14 +257,25 @@ const MainLayout = ({
           hideLogo={hideLogo}
         />
         <Layout>
-          {!hideMenu && (
+          {/* {!hideMenu && (
             <MainSider
               currentKey={currentKey}
               defaultOpenKeys={
                 props.defaultOpenKeys ? props.defaultOpenKeys : null
               }
             />
-          )}
+          )} */}
+          {nomina ? 
+            <SiderNomina currentKey={currentKey} /> :
+            !hideMenu && (
+              <MainSider
+                currentKey={currentKey}
+                defaultOpenKeys={
+                  props.defaultOpenKeys ? props.defaultOpenKeys : null
+                }
+              />
+            ) 
+          }
           <Content>
             <div className="div-main-layout">{props.children}</div>
           </Content>

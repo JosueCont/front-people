@@ -31,6 +31,7 @@ import MainLayout from "../../layout/MainLayout";
 import { monthsName, ruleRequired } from "../../utils/constant";
 import webApiFiscal from "../../api/WebApiFiscal";
 import DatePicker from "react-multi-date-picker";
+import { css, Global } from "@emotion/core";
 
 const assimilatedSalary = () => {
   const [form] = Form.useForm();
@@ -86,20 +87,26 @@ const assimilatedSalary = () => {
   };
 
   return (
-    <MainLayout currentKey={["asimilado"]} defaultOpenKeys={["nomina"]}>
+    <MainLayout currentKey={["calculator"]}  nomina>
+      <Global 
+        styles={`
+          .card-calculator .ant-card-body{
+            padding: 0px;
+          }
+        `}
+      />
       <Content className="site-layout">
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
           <Breadcrumb.Item>Nomina</Breadcrumb.Item>
           <Breadcrumb.Item>Nomina asimilados</Breadcrumb.Item>
         </Breadcrumb>
-        <div
-          className="container-border-radius"
-          style={{ width: "100%", backgroundColor: "white", padding: "2%" }}
-        >
-          <Row justify={"space-between"} className={"formFilter"}>
-            <Col>
-              <Form layout="vertical" form={form} onFinish={onFinish}>
+        <Row>
+          <Col md={23}>
+            <Card className="card-calculator">
+              <Row>
+                <Col md={12} style={{backgroundColor:'#7B25F1' }}>
+                  <Form layout="vertical" form={form} onFinish={onFinish}>
                 <Row style={{ marginBottom: "20px" }} gutter={[24]}>
                   <Col span={12}>
                     <SelectCollaborator
@@ -178,6 +185,17 @@ const assimilatedSalary = () => {
                   </Col>
                 </Row>
               </Form>
+                </Col>
+                <Col md={12}>
+                </Col>
+              </Row>
+            </Card>
+          </Col>
+        </Row>
+
+        <div className="container-border-radius" style={{ width: "100%", backgroundColor: "white", padding: "2%" }} >
+          <Row justify={"space-between"} className={"formFilter"}>
+            <Col>
             </Col>
           </Row>
           <div style={{ padding: "5%" }}>
