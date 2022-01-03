@@ -11,6 +11,7 @@ const SelectYear = ({ titleLabel = true, rules = [], companyId, ...props }) => {
         rules={rules}
       >
         <Select
+        size={props.size?props.size:'middle'}
           key="SelectPeriod"
           options={generateYear()}
           placeholder="Periodo"
