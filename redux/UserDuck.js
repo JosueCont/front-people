@@ -121,19 +121,22 @@ export const setUser = () => async (dispatch, getState) => {
     let jwt = JSON.parse(jsCookie.get("token"));
     let response = await WebApi.personForKhonnectId({ id: jwt.user_id });
     dispatch({ type: USER, payload: response.data });
-    dispatch(setUserPermissions(response.data.jwt_data.perms));
+    dispatch(
+      setUserPermissions(response.data.jwt_data.perms, response.data.is_admin)
+    );
     return true;
   } catch (error) {
     return false;
   }
 };
 
-export const setUserPermissions = (data) => async (dispatch, getState) => {
-  try {
-    let perms = await UserPermissions(data);
-    dispatch({ type: PERMISSIONS, payload: perms });
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
+export const setUserPermissions =
+  (permits, is_admin) => async (dispatch, getState) => {
+    try {
+      let perms = await UserPermissions(permits, is_admin);
+      dispatch({ type: PERMISSIONS, payload: perms });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
