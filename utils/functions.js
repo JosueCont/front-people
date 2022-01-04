@@ -105,107 +105,107 @@ export const asyncForEach = async (array, callback) => {
 };
 
 export const UserPermissions = (data) => {
+  let perms = {
+    person: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false,
+      change_is_active: false,
+      export_csv_person: false,
+      import_csv_person: false,
+    },
+    company: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false,
+      change_is_active: false,
+    },
+    groups: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false,
+      approve_account: false,
+      reject_account: false,
+    },
+    requestaccount: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false,
+      approve_account: false,
+      reject_account: false,
+    },
+    person_type: { view: false, create: false, edit: false, delete: false },
+    department: { view: false, create: false, edit: false, delete: false },
+    job: { view: false, create: false, edit: false, delete: false },
+    relationship: { view: false, create: false, edit: false, delete: false },
+    bank: { view: false, create: false, edit: false, delete: false },
+    document_type: { view: false, create: false, edit: false, delete: false },
+    payrollvoucher: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false,
+      import_payrollvoucher: false,
+    },
+    comunication: { view: false, create: false, edit: false, delete: false },
+    event: { view: false, create: false, edit: false, delete: false },
+    loan: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false,
+      approve_loan: false,
+      reject_loan: false,
+      approve_loan_pay: false,
+    },
+    loanconfigure: { view: false, create: false, edit: false, delete: false },
+    vacation: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false,
+      approve_vacation: false,
+      reject_vacation: false,
+    },
+    permit: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false,
+      approve_permit: false,
+      reject_permit: false,
+    },
+    incapacity: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false,
+
+      approve_incapacity: false,
+      reject_incapacity: false,
+    },
+    report: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false,
+      export_collaborators: false,
+      export_payrolls: false,
+      export_loans: false,
+      export_vacations: false,
+      export_inabilitys: false,
+      export_permits: false,
+    },
+
+    intranet: {
+      dashboard: { statistics: false },
+    },
+  };
   try {
-    let perms = {
-      person: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        change_is_active: false,
-        export_csv_person: false,
-        import_csv_person: false,
-      },
-      company: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        change_is_active: false,
-      },
-      groups: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        approve_account: false,
-        reject_account: false,
-      },
-      requestaccount: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        approve_account: false,
-        reject_account: false,
-      },
-      person_type: { view: false, create: false, edit: false, delete: false },
-      department: { view: false, create: false, edit: false, delete: false },
-      job: { view: false, create: false, edit: false, delete: false },
-      relationship: { view: false, create: false, edit: false, delete: false },
-      bank: { view: false, create: false, edit: false, delete: false },
-      document_type: { view: false, create: false, edit: false, delete: false },
-      payrollvoucher: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        import_payrollvoucher: false,
-      },
-      comunication: { view: false, create: false, edit: false, delete: false },
-      event: { view: false, create: false, edit: false, delete: false },
-      loan: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        approve_loan: false,
-        reject_loan: false,
-        approve_loan_pay: false,
-      },
-      loanconfigure: { view: false, create: false, edit: false, delete: false },
-      vacation: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        approve_vacation: false,
-        reject_vacation: false,
-      },
-      permit: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        approve_permit: false,
-        reject_permit: false,
-      },
-      incapacity: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-
-        approve_incapacity: false,
-        reject_incapacity: false,
-      },
-      report: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        export_collaborators: false,
-        export_payrolls: false,
-        export_loans: false,
-        export_vacations: false,
-        export_inabilitys: false,
-        export_permits: false,
-      },
-
-      intranet: {
-        dashboard: { statistics: false },
-      },
-    };
     data.map((a) => {
       console.log("item--- >> ", a);
       if (a == "people.company.can.view") perms.company.view = true;
@@ -361,6 +361,6 @@ export const UserPermissions = (data) => {
     });
     return perms;
   } catch {
-    return [];
+    return perms;
   }
 };
