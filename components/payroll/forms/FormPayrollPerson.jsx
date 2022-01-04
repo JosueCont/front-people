@@ -20,20 +20,18 @@ import moment from "moment";
 import WebApiPayroll from "../../../api/webApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
 import { treeDecimal } from "../../../utils/constant";
+import { ruleRequired } from "../../../utils/rules";
 
 const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const { Title } = Typography;
   const [formPayrollPerson] = Form.useForm();
   const { confirm } = Modal;
-  /*iniciales */
   const [contrctsType, setContractsType] = useState([]);
   const [hiringRegimeType, setHiringRegimeType] = useState([]);
   const [typeTax, setTypeTax] = useState([]);
   const [banks, setBanks] = useState([]);
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [paymentPeriods, setPaymentPeriodicity] = useState([]);
-  // const [perceptionTypes, setPerceptionTypes] = useState([]);
-  // const [unionized, setUnionized] = useState(false);
   const [lastDayPaid, setLastDayPaid] = useState("");
   const PaymentTypes = [
     { value: 1, label: "Efectivo" },
@@ -42,7 +40,6 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     { value: 30, label: "Anticipo" },
     { value: 99, label: "Por definir" },
   ];
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [idPayroll, setIdPayroll] = useState(null);
   const [loading, setLoading] = useState(false);
   const [payrollPerson, setPayrolPerson] = useState(null);

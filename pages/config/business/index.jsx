@@ -9,25 +9,14 @@ import {
   Breadcrumb,
   Tabs,
   Form,
-  Row,
-  Col,
   Layout,
-  Input,
-  Button,
-  Select,
-  Spin,
-  Table,
   Modal,
-  Switch,
   message,
   Card,
   Tooltip,
 } from "antd";
 import {
-  EditOutlined,
-  DeleteOutlined,
   ExclamationCircleOutlined,
-  UploadOutlined,
   ApartmentOutlined,
   GoldOutlined,
   UserOutlined,
@@ -39,7 +28,6 @@ import Title from "antd/lib/typography/Title";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import Router from "next/router";
-import SelectCompany from "../../../components/selects/SelectCompany";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import WebApi from "../../../api/webApi";
@@ -50,23 +38,21 @@ import {
   messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../../utils/constant";
-import MassiveImportDepartments from "../../../components/business/MassiveImportDepartments";
-import MassiveImportJobs from "../../../components/MassiveImportJobs";
 
-import Levels from '../../../components/catalogs/Levels';
-import WorkTitle from '../../../components/catalogs/WorkTitle';
-import Departaments from '../../../components/catalogs/Departaments';
-import TabJobs from '../../../components/catalogs/Jobs';
-import PersonTypes from '../../../components/catalogs/PersonTypes';
-import Relationship from '../../../components/catalogs/Relationship';
-import DocumentsTypes from '../../../components/catalogs/DocumentsTypes';
-import Banks from '../../../components/catalogs/Banks';
+import Levels from "../../../components/catalogs/Levels";
+import WorkTitle from "../../../components/catalogs/WorkTitle";
+import Departaments from "../../../components/catalogs/Departaments";
+import TabJobs from "../../../components/catalogs/Jobs";
+import PersonTypes from "../../../components/catalogs/PersonTypes";
+import Relationship from "../../../components/catalogs/Relationship";
+import DocumentsTypes from "../../../components/catalogs/DocumentsTypes";
+import Banks from "../../../components/catalogs/Banks";
+import { ruleRequired } from "../../../utils/rules";
 
 const { Content } = Layout;
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [formDepartment] = Form.useForm();
   const [formJob] = Form.useForm();
   const [formTypePerson] = Form.useForm();
@@ -423,7 +409,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_1"
                     >
-                      <Departaments permissions={permissions} ruleRequired={ruleRequired} onFinishForm={onFinishForm} />
+                      <Departaments
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -441,7 +431,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_2"
                     >
-                     <TabJobs permissions={permissions} ruleRequired={ruleRequired} onFinishForm={onFinishForm} />
+                      <TabJobs
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -459,7 +453,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_3"
                     >
-                     <PersonTypes permissions={permissions} ruleRequired={ruleRequired} onFinishForm={onFinishForm} /> 
+                      <PersonTypes
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -475,7 +473,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_4"
                     >
-                      <Relationship permissions={permissions} ruleRequired={ruleRequired} onFinishForm={onFinishForm} />
+                      <Relationship
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -493,7 +495,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_5"
                     >
-                      <DocumentsTypes permissions={permissions} ruleRequired={ruleRequired} onFinishForm={onFinishForm} />
+                      <DocumentsTypes
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -509,7 +515,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_6"
                     >
-                      <Banks permissions={permissions} ruleRequired={ruleRequired} onFinishForm={onFinishForm} />
+                      <Banks
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -524,7 +534,10 @@ const configBusiness = ({ ...props }) => {
                     }
                     key="tab_7"
                   >
-                    <Levels ruleRequired={ruleRequired} onFinishForm={onFinishForm} /> 
+                    <Levels
+                      ruleRequired={ruleRequired}
+                      onFinishForm={onFinishForm}
+                    />
                   </TabPane>
 
                   <TabPane
@@ -538,9 +551,11 @@ const configBusiness = ({ ...props }) => {
                     }
                     key="tab_8"
                   >
-                    <WorkTitle ruleRequired={ruleRequired} onFinishForm={onFinishForm} />
+                    <WorkTitle
+                      ruleRequired={ruleRequired}
+                      onFinishForm={onFinishForm}
+                    />
                   </TabPane>
-
                 </Tabs>
               </>
             ) : (
@@ -549,18 +564,6 @@ const configBusiness = ({ ...props }) => {
           </Card>
         </div>
       </MainLayout>
-
-      {/* <Modal
-                title="Eliminar"
-                visible={modal}
-                onOk={deleteRegister}
-                onCancel={showModal}
-                okText="Si, Eliminar"
-                cancelText="Cancelar"
-            >
-                Al eliminar este registro perderá todos los datos relacionados a el de
-                manera permanente. ¿Está seguro de querer eliminarlo?
-      </Modal> */}
     </>
   );
 };

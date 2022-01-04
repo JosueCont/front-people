@@ -24,11 +24,8 @@ import { API_URL } from "../../config/config";
 import moment from "moment";
 import { genders } from "../../utils/functions";
 import WebApi from "../../api/webApi";
-import {
-  messageDialogDelete,
-  onlyNumeric,
-  titleDialogDelete,
-} from "../../utils/constant";
+import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
+import { onlyNumeric, ruleRequired } from "../../utils/rules";
 
 const FormFamily = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -41,7 +38,6 @@ const FormFamily = ({ person_id = null }) => {
   const [family, setFamily] = useState([]);
   const [relationship, setRelationship] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   useEffect(() => {
     getFamily();

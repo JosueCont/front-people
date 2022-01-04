@@ -24,6 +24,7 @@ import FormItemHTMLPlace from "../../../components/draft";
 import { withAuthSync, userCompanyId } from "../../../libs/auth";
 import SelectJob from "../../../components/selects/SelectJob";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
+import { ruleRequired } from "../../../utils/rules";
 
 const Newrelease = () => {
   let nodeId = userCompanyId();
@@ -294,8 +295,6 @@ const Newrelease = () => {
     console.log(e);
     setSegmentationRequired(!e);
   };
-
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
     <MainLayout currentKey="4.1">

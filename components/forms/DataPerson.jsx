@@ -30,7 +30,7 @@ import {
   minLengthNumber,
   onlyNumeric,
   rfcFormat,
-} from "../../utils/constant";
+} from "../../utils/rules";
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
 

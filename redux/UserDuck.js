@@ -130,9 +130,7 @@ export const setUser = () => async (dispatch, getState) => {
 
 export const setUserPermissions = (data) => async (dispatch, getState) => {
   try {
-    console.log("DATA USER-->> ", data);
     let perms = await UserPermissions(data);
-    console.log("RESP-->> ", perms);
     dispatch({ type: PERMISSIONS, payload: perms });
     return true;
   } catch (error) {

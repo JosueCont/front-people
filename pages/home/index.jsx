@@ -4,7 +4,6 @@ import {
   Table,
   Tooltip,
   Row,
-  Image,
   Col,
   List,
   Input,
@@ -16,20 +15,12 @@ import {
   Avatar,
   message,
   Modal,
-  Alert,
   Menu,
   Dropdown,
 } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import {
-  useCallback,
-  useEffect,
-  useState,
-  useRef,
-  React,
-  useLayoutEffect,
-} from "react";
+import { useEffect, useState, useRef, React } from "react";
 import {
   SyncOutlined,
   SearchOutlined,
@@ -38,7 +29,6 @@ import {
   UploadOutlined,
   EllipsisOutlined,
   ExclamationCircleOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 import _ from "lodash";
@@ -97,7 +87,7 @@ const homeScreen = ({ ...props }) => {
   const [deactivateTrigger, setDeactivateTrigger] = useState(false);
   const [userSession, setUserSession] = useState({});
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (props.currentNode) {
       filterPersonName();
     }

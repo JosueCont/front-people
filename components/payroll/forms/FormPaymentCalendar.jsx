@@ -17,7 +17,8 @@ import moment from "moment";
 import WebApi from "../../../api/webApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
 import { useRouter } from "next/router";
-import { messageSaveSuccess, onlyNumeric } from "../../../utils/constant";
+import { messageSaveSuccess } from "../../../utils/constant";
+import { onlyNumeric, ruleRequired } from "../../../utils/rules";
 const FormPaymentCalendar = ({
   title,
   nodeId = null,
@@ -26,7 +27,6 @@ const FormPaymentCalendar = ({
   const route = useRouter();
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [typeTax, setTypeTax] = useState([]);
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState("");

@@ -22,11 +22,8 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
-import {
-  messageDialogDelete,
-  onlyNumeric,
-  titleDialogDelete,
-} from "../../utils/constant";
+import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
+import { onlyNumeric, ruleRequired } from "../../utils/rules";
 
 const FormTraining = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -39,7 +36,6 @@ const FormTraining = ({ person_id = null }) => {
   const [upTraining, setUpTraining] = useState(false);
   const [training, setTraining] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [dateRange, setDateRange] = useState(null);
 
   useEffect(() => {

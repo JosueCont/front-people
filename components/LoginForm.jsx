@@ -7,10 +7,10 @@ import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import Link from "next/link";
 import WebApi from "../api/webApi";
-import { ruleEmail } from "../utils/constant";
 import { EyeOutlined, MailOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { setUserPermissions } from "../redux/UserDuck";
+import { ruleEmail, ruleRequired } from "../utils/rules";
 
 const LoginForm = ({
   recoveryPsw = true,
@@ -109,8 +109,6 @@ const LoginForm = ({
     } finally {
     }
   };
-
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
     <>

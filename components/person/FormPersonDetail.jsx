@@ -50,6 +50,7 @@ const { Content } = Layout;
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
+import { ruleRequired } from "../../utils/rules";
 
 const personDetailForm = () => {
   const { TabPane } = Tabs;
@@ -1747,7 +1748,6 @@ const personDetailForm = () => {
     }
   };
 
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const rulePassword = ({ getFieldValue }) => ({
     validator() {
       if (getFieldValue("newPassword") == getFieldValue("new_password")) {

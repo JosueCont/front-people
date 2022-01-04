@@ -28,10 +28,11 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectPeriodicity from "../../components/selects/SelectPeriodicity";
 import SelectYear from "../../components/selects/SelectYear";
 import MainLayout from "../../layout/MainLayout";
-import { monthsName, ruleRequired } from "../../utils/constant";
+import { monthsName } from "../../utils/constant";
 import webApiFiscal from "../../api/WebApiFiscal";
 import DatePicker from "react-multi-date-picker";
 import { css, Global } from "@emotion/core";
+import { ruleRequired } from "../../utils/rules";
 
 const assimilatedSalary = () => {
   const [form] = Form.useForm();
@@ -87,8 +88,8 @@ const assimilatedSalary = () => {
   };
 
   return (
-    <MainLayout currentKey={["calculator"]}  nomina>
-      <Global 
+    <MainLayout currentKey={["calculator"]} nomina>
+      <Global
         styles={`
           .card-calculator .ant-card-body{
             padding: 0px;
@@ -105,98 +106,101 @@ const assimilatedSalary = () => {
           <Col md={23}>
             <Card className="card-calculator">
               <Row>
-                <Col md={12} style={{backgroundColor:'#7B25F1' }}>
+                <Col md={12} style={{ backgroundColor: "#7B25F1" }}>
                   <Form layout="vertical" form={form} onFinish={onFinish}>
-                <Row style={{ marginBottom: "20px" }} gutter={[24]}>
-                  <Col span={12}>
-                    <SelectCollaborator
-                      placeholder="Colaboradores"
-                      name="person_id"
-                    />
-                  </Col>
-                </Row>
-                <Row gutter={[12]}>
-                  <Col>
-                    <Form.Item label="Tipo de calculo" name="type">
-                      <Select
-                        options={types}
-                        placeholder="Tipo de calculo"
-                        onChange={(value) => {
-                          setType(value), setSalary(null);
-                        }}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col>
-                    <Form.Item label="Salario" name="salary">
-                      <Input type="number" placeholder="Salario" />
-                    </Form.Item>
-                  </Col>
-                  <Col>
-                    <SelectPeriodicity />
-                  </Col>
-                  <Col>
-                    <SelectYear />
-                  </Col>
-                  <Col>
-                    <Form.Item label="Subsidio" name="allowance">
-                      <Checkbox
-                        onChange={() => {
-                          allowance ? setAllowance(false) : setAllowance(true);
-                        }}
-                        placeholder="Subsidio"
-                      />
-                    </Form.Item>
-                  </Col>
-                  {allowance && (
-                    <Col>
-                      <Form.Item
-                        name="month"
-                        label="Mes"
-                        placeholder="Selecciona mes"
-                        rules={[ruleRequired]}
-                      >
-                        <Select
-                          style={{ width: "150px" }}
-                          options={monthsName}
+                    <Row style={{ marginBottom: "20px" }} gutter={[24]}>
+                      <Col span={12}>
+                        <SelectCollaborator
+                          placeholder="Colaboradores"
+                          name="person_id"
                         />
-                      </Form.Item>
-                    </Col>
-                  )}
+                      </Col>
+                    </Row>
+                    <Row gutter={[12]}>
+                      <Col>
+                        <Form.Item label="Tipo de calculo" name="type">
+                          <Select
+                            options={types}
+                            placeholder="Tipo de calculo"
+                            onChange={(value) => {
+                              setType(value), setSalary(null);
+                            }}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item label="Salario" name="salary">
+                          <Input type="number" placeholder="Salario" />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <SelectPeriodicity />
+                      </Col>
+                      <Col>
+                        <SelectYear />
+                      </Col>
+                      <Col>
+                        <Form.Item label="Subsidio" name="allowance">
+                          <Checkbox
+                            onChange={() => {
+                              allowance
+                                ? setAllowance(false)
+                                : setAllowance(true);
+                            }}
+                            placeholder="Subsidio"
+                          />
+                        </Form.Item>
+                      </Col>
+                      {allowance && (
+                        <Col>
+                          <Form.Item
+                            name="month"
+                            label="Mes"
+                            placeholder="Selecciona mes"
+                            rules={[ruleRequired]}
+                          >
+                            <Select
+                              style={{ width: "150px" }}
+                              options={monthsName}
+                            />
+                          </Form.Item>
+                        </Col>
+                      )}
 
-                  <Col
-                    className="button-filter-person"
-                    style={{ display: "flex" }}
-                  >
-                    <Button className="btn-filter" htmlType="submit">
-                      Calcular
-                    </Button>
-                  </Col>
-                  <Col
-                    className="button-filter-person"
-                    style={{ display: "flex" }}
-                  >
-                    <Button
-                      className="btn-filter"
-                      onClick={() => generateCfdi()}
-                    >
-                      Generar cfdi
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
+                      <Col
+                        className="button-filter-person"
+                        style={{ display: "flex" }}
+                      >
+                        <Button className="btn-filter" htmlType="submit">
+                          Calcular
+                        </Button>
+                      </Col>
+                      <Col
+                        className="button-filter-person"
+                        style={{ display: "flex" }}
+                      >
+                        <Button
+                          className="btn-filter"
+                          onClick={() => generateCfdi()}
+                        >
+                          Generar cfdi
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form>
                 </Col>
-                <Col md={12}>
-                </Col>
+                <Col md={12}></Col>
               </Row>
             </Card>
           </Col>
         </Row>
 
-        <div className="container-border-radius" style={{ width: "100%", backgroundColor: "white", padding: "2%" }} >
+        <div
+          className="container-border-radius"
+          style={{ width: "100%", backgroundColor: "white", padding: "2%" }}
+        >
           <Row justify={"space-between"} className={"formFilter"}>
-            <Col>
-            </Col>
+            <Col></Col>
           </Row>
           <div style={{ padding: "5%" }}>
             <Spin tip="Cargando..." spinning={loading}>

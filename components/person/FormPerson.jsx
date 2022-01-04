@@ -32,6 +32,8 @@ import SelectDepartment from "../selects/SelectDepartment";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import SelectWorkTitleStatus from "../selects/SelectWorkTitleStatus";
+import { headersApiKhonnect } from "../../utils/constant.js";
+import { ruleRequired } from "../../utils/rules";
 
 const FormPerson = ({
   config = null,
@@ -83,16 +85,11 @@ const FormPerson = ({
   };
 
   const getValueSelects = async (id) => {
-    const headers = {
-      "client-id": config.client_khonnect_id,
-      "Content-Type": "application/json",
-    };
-
     let company = `?company=${node}`;
 
     /////PERMSS GROUPS
     Axios.get(config.url_server_khonnect + "/group/list/" + company, {
-      headers: headers,
+      headers: headersApiKhonnect,
     })
       .then((response) => {
         if (response.status === 200) {
@@ -172,7 +169,6 @@ const FormPerson = ({
     props.close(false);
     form.resetFields();
   };
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   const changeNode = () => {
     form.setFieldsValue({
