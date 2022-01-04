@@ -14,17 +14,9 @@ import {
   Divider,
   Modal,
 } from "antd";
-import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
-  UserOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, SearchOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { css, Global } from "@emotion/core";
-import CardUser from "./CardUser";
 import Cookie from "js-cookie";
 import WebApi from "../api/webApi";
 import { logoutAuth } from "../libs/auth";
@@ -41,10 +33,9 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
   useEffect(() => {
+    console.log("getPerson");
     getPerson();
   }, []);
-
-  const actionEvent = (data) => {};
 
   const getPerson = async () => {
     try {
@@ -121,12 +112,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           </Col>
         </Row>
       </Card>
-      {/* <CardUser
-        person={person}
-        visible={logOut}
-        currentNode={props.currentNode}
-        acction={actionEvent}
-      /> */}
     </>
   );
 
@@ -149,11 +134,11 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           }
           .ant-menu {
             width: 100%;
-            // text-align: center;
+            text-align: center;
           }
           .ant-menu .ant-menu-item {
             margin: 0px !important;
-            // padding: 0px !important;
+            padding: 0px !important;
           }
           .text-menu {
             text-align: center;
@@ -183,13 +168,13 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <div className="overlay" />
         <div className="container-fluid">
           <Row justify="space-between">
-            <Col style={{ maxWidth: 250, minWidth: 50, display: "flex" }}>
+            <Col style={{ width: 250, display: "flex" }}>
               <img
                 style={{ maxWidth: 100, margin: "auto", maxHeight: 50 }}
                 src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
               />
             </Col>
-            {/* <Col>
+            <Col>
               {!hideSearch && (
                 <Input
                   className="search_header"
@@ -198,8 +183,8 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   prefix={<SearchOutlined style={{ color: "white" }} />}
                 />
               )}
-            </Col> */}
-            <Col style={{ maxWidth: 250, minWidth: 50, textAlign: "end" }}>
+            </Col>
+            <Col style={{ width: 250, textAlign: "end" }}>
               <div
                 className={"pointer"}
                 style={{ float: "right" }}

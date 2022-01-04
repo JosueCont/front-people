@@ -14,6 +14,7 @@ export const genders = [
     value: 3,
   },
 ];
+
 export const civilStatus = [
   {
     label: "Soltero(a)",
@@ -28,6 +29,7 @@ export const civilStatus = [
     value: 3,
   },
 ];
+
 export const typePhones = [
   {
     label: "Alterno",
@@ -42,6 +44,7 @@ export const typePhones = [
     value: 3,
   },
 ];
+
 export const typeLines = [
   {
     label: "Celular",
@@ -52,6 +55,7 @@ export const typeLines = [
     value: 2,
   },
 ];
+
 export const typeStreet = [
   {
     label: "Avenida",
@@ -66,6 +70,7 @@ export const typeStreet = [
     value: 3,
   },
 ];
+
 export const periodicity = [
   {
     label: "Semanal",
@@ -84,6 +89,7 @@ export const periodicity = [
     value: 4,
   },
 ];
+
 export const statusSelect = [
   {
     label: "Todos",
@@ -130,16 +136,16 @@ export const periodicityNom = [
   },
 ];
 
-export const generateYear = () => {
-  let yearsArray = [];
-  let currentYear = new Date().getFullYear();
-  let startYear = currentYear - 10;
-  while (startYear < currentYear) {
-    startYear++;
-    yearsArray.push({ label: `${startYear}`, value: startYear });
-  }
-  return yearsArray.reverse();
-};
+export const typeMessage = [
+  {
+    label: "Noticias",
+    value: 2,
+  },
+  {
+    label: "Aviso",
+    value: 1,
+  },
+];
 
 export const headersApiKhonnect = {
   "client-id": APP_ID,

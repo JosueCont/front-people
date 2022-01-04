@@ -22,7 +22,7 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
-import { genders } from "../../utils/functions";
+import { genders } from "../../utils/constant";
 import WebApi from "../../api/webApi";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../utils/rules";

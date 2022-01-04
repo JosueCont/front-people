@@ -23,7 +23,7 @@ import {
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
-import { ruleEmail } from "../../utils/constant";
+import { genders, ruleEmail } from "../../utils/constant";
 import moment from "moment";
 import { getPeopleCompany } from "../../redux/UserDuck";
 import SelectGroup from "../selects/SelectGroup";
@@ -141,21 +141,6 @@ const FormPerson = ({
       else message.error("Error al agregar, intente de nuevo");
     }
   };
-
-  const genders = [
-    {
-      label: "Masculino",
-      value: 1,
-    },
-    {
-      label: "Femenino",
-      value: 2,
-    },
-    {
-      label: "Otro",
-      value: 3,
-    },
-  ];
 
   function onChange(date, dateString) {
     setDate(dateString);

@@ -10,20 +10,6 @@ const NewPaymentCalendar = () => {
   return (
     <>
       <MainLayout currentKey="9.4">
-        <Breadcrumb className={"mainBreadcrumb"}>
-          <Breadcrumb.Item
-            className={"pointer"}
-            onClick={() => route.push({ pathname: "/home" })}
-          >
-            Inicio
-          </Breadcrumb.Item>
-          <Breadcrumb.Item
-            className={"pointer"}
-            onClick={() => route.push({ pathname: "/payroll/paymentCalendar" })}
-          >
-            Calendario de pagos
-          </Breadcrumb.Item>
-        </Breadcrumb>
         <div
           className="container-border-radius"
           style={{ width: "100%", backgroundColor: "white", padding: "2%" }}

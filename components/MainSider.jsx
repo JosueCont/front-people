@@ -257,33 +257,19 @@ const MainSider = ({
               Cuentas bancarias
             </Menu.Item>
           </SubMenu>
-          <Menu.Item
+          {/* <Menu.Item
             icon={<DollarOutlined />}
             key="nomina"
             onClick={() => router.push({ pathname: "/payroll/" })}
           >
             Nomina
-          </Menu.Item>
-          {/* <SubMenu
+          </Menu.Item> */}
+          <SubMenu
             key="nomina"
             title="Nómina"
             className="subMainMenu"
             icon={<DollarOutlined />}
           >
-            <Menu.Item
-              key="nomina_empresarial"
-              onClick={() =>
-                router.push({ pathname: "/payrollvoucher/statisticsPayroll" })
-              }
-            >
-              Nómina empresarial
-            </Menu.Item>
-            <Menu.Item
-              key="recibos_nomina"
-              onClick={() => router.push({ pathname: "/payrollvoucher" })}
-            >
-              Recibos de nómina
-            </Menu.Item>
             {props.config && props.config.nomina_enabled && (
               <>
                 <Menu.Item
@@ -292,7 +278,7 @@ const MainSider = ({
                     router.push({ pathname: "/payroll/assimilatedSalary" })
                   }
                 >
-                  Salario asimilado
+                  Calculadora
                 </Menu.Item>
                 <Menu.Item
                   key="calendario"
@@ -308,11 +294,26 @@ const MainSider = ({
                     router.push({ pathname: "/payroll/stampPayroll" })
                   }
                 >
-                  Timbrar nomina
+                  Timbrado de nomina
+                  {/* Calculo de nómina */}
                 </Menu.Item>
               </>
             )}
-          </SubMenu> */}
+            <Menu.Item
+              key="nomina_empresarial"
+              onClick={() =>
+                router.push({ pathname: "/payrollvoucher/statisticsPayroll" })
+              }
+            >
+              Nómina empresarial
+            </Menu.Item>
+            <Menu.Item
+              key="recibos_nomina"
+              onClick={() => router.push({ pathname: "/payrollvoucher" })}
+            >
+              Recibos de nómina
+            </Menu.Item>
+          </SubMenu>
           <Menu.Item
             key="asignar"
             onClick={() => router.push({ pathname: "/assignedCompanies" })}

@@ -21,7 +21,7 @@ const SiderNomina = ({ currentKey, ...props }) => {
     return (
         <>
             <Global
-        styles={`
+                styles={`
                 .mainSideMenu, .ant-menu-inline-collapsed{
                     border-right: solid 1px #8070F2 !important;
                 }

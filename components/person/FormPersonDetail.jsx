@@ -51,6 +51,14 @@ const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { ruleRequired } from "../../utils/rules";
+import {
+  civilStatus,
+  genders,
+  periodicity,
+  typeLines,
+  typePhones,
+  typeStreet,
+} from "../../utils/constant";
 
 const personDetailForm = () => {
   const { TabPane } = Tabs;
@@ -142,90 +150,6 @@ const personDetailForm = () => {
     labelCol: { span: 5 },
     wrapperCol: { span: 10 },
   };
-  const genders = [
-    {
-      label: "Masculino",
-      value: 1,
-    },
-    {
-      label: "Femenino",
-      value: 2,
-    },
-    {
-      label: "Otro",
-      value: 3,
-    },
-  ];
-  const civilStatus = [
-    {
-      label: "Soltero(a)",
-      value: 1,
-    },
-    {
-      label: "Casado(a)",
-      value: 2,
-    },
-    {
-      label: "Viudo(a)",
-      value: 3,
-    },
-  ];
-  const typePhones = [
-    {
-      label: "Alterno",
-      value: 1,
-    },
-    {
-      label: "Principal",
-      value: 2,
-    },
-    {
-      label: "Recados",
-      value: 3,
-    },
-  ];
-  const typeLines = [
-    {
-      label: "Celular",
-      value: 1,
-    },
-    {
-      label: "Fijo",
-      value: 2,
-    },
-  ];
-  const typeStreet = [
-    {
-      label: "Avenida",
-      value: 1,
-    },
-    {
-      label: "Boulevard",
-      value: 2,
-    },
-    {
-      label: "Calle",
-      value: 3,
-    },
-  ];
-  const periodicity = [
-    {
-      label: "Semanal",
-      value: 1,
-    },
-    {
-      label: "Catorcenal",
-      value: 2,
-    },
-    {
-      label: "Quincenal",
-      value: 3,
-    },
-    {
-      label: "Mensual",
-      value: 4,
-    },
-  ];
 
   ////CHANGE DATE
   const onChangeBirthDate = (date, dateString) => {
