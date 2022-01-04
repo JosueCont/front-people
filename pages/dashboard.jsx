@@ -38,37 +38,8 @@ const dashboard = () => {
 
     const array_move = (from, to) => {
         const array = [...originalPositions];
-        /* console.log('from',from);
-        console.log('to',to);
-        let prevArray = [...array];
-        array.splice(from, 1);
-        let newArray2 = [];
-        for (let index = 0; index < prevArray.length; index++) {
-            if(index < to){
-                newArray2[index] = array[index];
-            }else if(index === to){
-                newArray2[index] = prevArray[from];
-            }else if(index > to){
-                newArray2[index] = array[index-1];
-            }
-        }
-        console.log('newArray2',newArray2);
-        return newArray2; */
-
-        /* if (new_index >= array.length) {
-            var k = new_index - arr.length + 1;
-            while (k--) {
-                arr.push(undefined);
-            }
-        } */
-        /* var element = array[old_index];
-        array.splice(old_index, 1);
-        array.splice(new_index, 0, element); */
-    /* array.splice(old_index, 1)
-    array.splice(new_index,0, elementOrigin) */
-    /* console.log('arr.splice(old_index, 1)[0]',array.splice(old_index, 1)[0]); */
-    array.splice(to, 0, array.splice(from, 1)[0]);
-    return array; // for testing
+        array.splice(to, 0, array.splice(from, 1)[0]);
+        return array; // for testing
     };
 
     const dragStart = (position) => {

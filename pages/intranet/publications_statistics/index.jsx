@@ -30,7 +30,6 @@ const index = (props) => {
     setLoadingData(true);
     if (props.publicationsList && props.publicationsList.results) {
       let publicationsFiltered = [];
-      console.log("Lista de publicaciones", props.publicationsList);
       try {
         props.publicationsList.results.map((publication) => {
           // Se filtran las propiedades a utilizar en la tabla

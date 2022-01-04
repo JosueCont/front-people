@@ -17,16 +17,20 @@ import moment from "moment";
 import WebApi from "../../../api/webApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
 import { useRouter } from "next/router";
-import { messageSaveSuccess, onlyNumeric } from "../../../utils/constant";
+import { messageSaveSuccess } from "../../../utils/constant";
+import { onlyNumeric, ruleRequired } from "../../../utils/rules";
+import { css, Global } from "@emotion/core";
+
 const FormPaymentCalendar = ({
   title,
   nodeId = null,
   idPaymentCalendar = null,
+  onCancel,
+  ...props
 }) => {
   const route = useRouter();
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [typeTax, setTypeTax] = useState([]);
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState("");
@@ -177,6 +181,26 @@ const FormPaymentCalendar = ({
 
   return (
     <>
+      <Global
+        styles={`
+          .ant-form-item-extra{
+            text-align: end;
+          }
+          .ant-input, .ant-input:hover, .ant-input:focus, .ant-form-item-control-input, .ant-select-selector, .ant-select-selector:hover, .ant-select-selector:active, .ant-picker, .ant-picker:hover, .ant-picker:focus  {
+            border-color: #7B25F1 !important;
+          }
+          .ant-form-item{
+            margin-bottom:0px;
+          }
+          .close_modal {
+            background: transparent !important;
+            border-color: #7B25F1 !important;
+          }
+          .close_modal > span {
+            color: black !important;
+          }
+        `}
+      />
       <Spin tip="Cargando..." spinning={loading}>
         <Row>
           <Title style={{ fontSize: "20px" }}>{title}</Title>
@@ -185,14 +209,30 @@ const FormPaymentCalendar = ({
           layout={"vertical"}
           form={formPaymentCalendar}
           onFinish={formFinish}
+          size="large"
         >
-          <Row style={{ marginBottom: 20 }}>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
+          <Row gutter={30} style={{ marginBottom: 20 }}>
+            <Col lg={8} xs={22}>
+              <Form.Item
+                name="name"
+                label="Nombre"
+                rules={[ruleRequired]}
+                extra={
+                  <>
+                    Aplicar ajuste
+                    <Switch
+                      size="small"
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                      style={{ marginLeft: 10 }}
+                    />
+                  </>
+                }
+              >
                 <Input />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22}>
               <Form.Item
                 name="periodicity"
                 label="Periodicidad"
@@ -204,7 +244,7 @@ const FormPaymentCalendar = ({
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22}>
               <Form.Item
                 name="type_tax"
                 label="Tipo de impuesto"
@@ -216,7 +256,7 @@ const FormPaymentCalendar = ({
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            {/* <Col lg={8} xs={22}>
               <Form.Item
                 name="adjustment"
                 label="¿Aplicar ajuste?"
@@ -227,8 +267,33 @@ const FormPaymentCalendar = ({
                   unCheckedChildren={<CloseOutlined />}
                 />
               </Form.Item>
+            </Col> */}
+            <Col lg={8} xs={22}>
+              <Form.Item
+                name="period"
+                label="Período"
+                rules={[ruleRequired]}
+                extra={
+                  <>
+                    Activo
+                    <Switch
+                      size="small"
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                      style={{ marginLeft: 10 }}
+                    />
+                  </>
+                }
+              >
+                <DatePicker
+                  style={{ width: "100%" }}
+                  onChange={onChangePeriod}
+                  picker="year"
+                  moment={"YYYY"}
+                />
+              </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22}>
               <Form.Item
                 name="start_date"
                 label="Inicio de calendario"
@@ -241,7 +306,7 @@ const FormPaymentCalendar = ({
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22}>
               <Form.Item name="activation_date" label="Fecha de activación">
                 <DatePicker
                   style={{ width: "100%" }}
@@ -250,18 +315,45 @@ const FormPaymentCalendar = ({
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item name="period" label="Período" rules={[ruleRequired]}>
-                <DatePicker
-                  style={{ width: "100%" }}
-                  onChange={onChangePeriod}
-                  picker="year"
-                  moment={"YYYY"}
-                />
+            <Col lg={8} xs={22}>
+              <Form.Item
+                name="pay_before"
+                label="¿Pagar días antes?"
+                rules={[onlyNumeric]}
+                extra={
+                  <>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span>
+                        <small>Pagar sabados</small>
+                        <Switch
+                          size="small"
+                          checkedChildren={<CheckOutlined />}
+                          unCheckedChildren={<CloseOutlined />}
+                          style={{ marginLeft: 10 }}
+                        />
+                      </span>
+                      <span>
+                        <small>Pagar Domingos</small>
+                        <Switch
+                          size="small"
+                          checkedChildren={<CheckOutlined />}
+                          unCheckedChildren={<CloseOutlined />}
+                          style={{ marginLeft: 10 }}
+                        />
+                      </span>
+                    </div>
+                  </>
+                }
+              >
+                <Input maxLength={10} />
               </Form.Item>
             </Col>
-
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22}>
               <Form.Item
                 name="start_incidence"
                 label="Inicio de incidencia"
@@ -272,7 +364,7 @@ const FormPaymentCalendar = ({
                 <Input maxLength={10} />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22}>
               <Form.Item
                 name="end_incidence"
                 label="Fin de incidencia"
@@ -283,7 +375,7 @@ const FormPaymentCalendar = ({
                 <Input maxLength={10} />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            {/* <Col lg={8} xs={22}>
               <Form.Item name="active" label="¿Activo?" valuePropName="checked">
                 <Switch
                   checkedChildren={<CheckOutlined />}
@@ -291,16 +383,7 @@ const FormPaymentCalendar = ({
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="pay_before"
-                label="¿Pagar días antes?"
-                rules={[onlyNumeric]}
-              >
-                <Input maxLength={10} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22}>
               <Form.Item
                 name="payment_saturday"
                 label="¿Pago en sábado?"
@@ -312,7 +395,7 @@ const FormPaymentCalendar = ({
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22}>
               <Form.Item
                 name="payment_sunday"
                 label="¿Pago en domingo?"
@@ -323,27 +406,25 @@ const FormPaymentCalendar = ({
                   unCheckedChildren={<CloseOutlined />}
                 />
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
-          <Row justify={"end"}>
-            <Button
-              htmlType="button"
-              style={{ marginRight: 10 }}
-              onClick={() =>
-                route.push({ pathname: "/payroll/paymentCalendar" })
-              }
-            >
-              Cancelar
-            </Button>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
+          <Row justify={"center"} gutter={10}>
+            <Col md={5}>
+              <Button
+                block
+                className="close_modal"
+                htmlType="button"
+                style={{ marginRight: 10 }}
+                onClick={() => onCancel()}
+              >
+                Cancelar
+              </Button>
+            </Col>
+            <Col md={5}>
+              <Button block className="" type="primary" htmlType="submit">
                 Guardar
               </Button>
-            </Form.Item>
-            <Col
-              span={24}
-              style={{ textAlign: "right", padding: "30px 0" }}
-            ></Col>
+            </Col>
           </Row>
         </Form>
       </Spin>

@@ -9,6 +9,7 @@ import webApiFiscal from "../../../api/WebApiFiscal";
 import { StepContent } from "@material-ui/core";
 import { Receipt, Reorder } from "@material-ui/icons";
 import { treeDecimal } from "../../../utils/constant";
+import { ruleRequired } from "../../../utils/rules";
 
 const FormPerceptionsDeductions = ({
   setIsModalVisible,
@@ -19,7 +20,6 @@ const FormPerceptionsDeductions = ({
 }) => {
   const [formQuantity] = Form.useForm();
   const { Column } = Table;
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [perceptions, setPerceptions] = useState([]);
   const [deductions, setDeductions] = useState([]);
   const [otherPayments, setOtherPayments] = useState([]);

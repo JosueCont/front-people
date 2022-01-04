@@ -1,22 +1,10 @@
-import {
-  Form,
-  Input,
-  Button,
-  Checkbox,
-  Spin,
-  Alert,
-  Typography,
-  message,
-} from "antd";
+import { Form, Input, Button, Spin, Alert, Typography } from "antd";
 const { Text, Title } = Typography;
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Axios from "axios";
-import Cookies from "js-cookie";
-import jwt_decode from "jwt-decode";
-
+import { ruleRequired } from "../utils/rules";
 const PasswordRecover = (props) => {
-  
   const router = useRouter();
   const [errorResponse, setErrorResponse] = useState(false);
   const [loading, setLoading] = useState(null);
@@ -52,8 +40,6 @@ const PasswordRecover = (props) => {
       setLoading(false);
     }
   };
-
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
     <>

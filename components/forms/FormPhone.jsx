@@ -18,11 +18,8 @@ import {
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import WebApi from "../../api/webApi";
-import {
-  messageDialogDelete,
-  onlyNumeric,
-  titleDialogDelete,
-} from "../../utils/constant";
+import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
+import { onlyNumeric, ruleRequired } from "../../utils/rules";
 
 const FormPhone = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -32,7 +29,6 @@ const FormPhone = ({ person_id = null }) => {
   const [upPhone, setUpPhone] = useState(false);
   const [phones, setPhones] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   useEffect(() => {
     getPhone();

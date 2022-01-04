@@ -17,16 +17,15 @@ import UploadFile from "../../UploadFile";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import { curpFormat, rfcFormat } from "../../../utils/constant";
+import { ruleRequired } from "../../../utils/rules";
 
 const TaxInformationForm = ({ node_id }) => {
   const { Title } = Typography;
   const [formTaxInfo] = Form.useForm();
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [pTypeSelected, setPTypeSelected] = useState(0);
   const [acceptAgreement, setAcceptAgreement] = useState(false);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
-  // const [taxRegime, setTaxRegime] = useState([]);
   const [loading, setLoading] = useState(false);
   const [infoId, setInfoId] = useState(null);
   const [taxRegimePhysical, setTaxRegimePhysical] = useState([]);

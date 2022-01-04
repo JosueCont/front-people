@@ -25,7 +25,7 @@ export default () => {
   companySelected()(store.dispatch);
   doGetGeneralConfig()(store.dispatch);
   doCompanySelectedCatalog()(store.dispatch);
-  assessmentLoadAction()(store.dispatch);
+  // assessmentLoadAction()(store.dispatch);
   doFiscalSelectedData()(store.dispatch);
   return store;
 };

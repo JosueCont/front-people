@@ -9,25 +9,14 @@ import {
   Breadcrumb,
   Tabs,
   Form,
-  Row,
-  Col,
   Layout,
-  Input,
-  Button,
-  Select,
-  Spin,
-  Table,
   Modal,
-  Switch,
   message,
   Card,
   Tooltip,
 } from "antd";
 import {
-  EditOutlined,
-  DeleteOutlined,
   ExclamationCircleOutlined,
-  UploadOutlined,
   ApartmentOutlined,
   GoldOutlined,
   UserOutlined,
@@ -39,7 +28,6 @@ import Title from "antd/lib/typography/Title";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import Router from "next/router";
-import SelectCompany from "../../../components/selects/SelectCompany";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import WebApi from "../../../api/webApi";
@@ -50,19 +38,27 @@ import {
   messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../../utils/constant";
-import MassiveImportDepartments from "../../../components/business/MassiveImportDepartments";
-import MassiveImportJobs from "../../../components/MassiveImportJobs";
+
+import Levels from "../../../components/catalogs/Levels";
+import WorkTitle from "../../../components/catalogs/WorkTitle";
+import Departaments from "../../../components/catalogs/Departaments";
+import TabJobs from "../../../components/catalogs/Jobs";
+import PersonTypes from "../../../components/catalogs/PersonTypes";
+import Relationship from "../../../components/catalogs/Relationship";
+import DocumentsTypes from "../../../components/catalogs/DocumentsTypes";
+import Banks from "../../../components/catalogs/Banks";
+import { ruleRequired } from "../../../utils/rules";
 
 const { Content } = Layout;
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [formDepartment] = Form.useForm();
   const [formJob] = Form.useForm();
   const [formTypePerson] = Form.useForm();
   const [formRelationship] = Form.useForm();
   const [formTypeDocument] = Form.useForm();
+  const [formLevels] = Form.useForm();
   const [formBank] = Form.useForm();
   const [loadingTable, setLoadingTable] = useState(false);
   const [jobs, setJobs] = useState([]);
@@ -298,283 +294,6 @@ const configBusiness = ({ ...props }) => {
       });
   };
 
-  const colDepartment = [
-    {
-      title: "Empresa",
-      render: (item) => {
-        return <>{item.node.name}</>;
-      },
-    },
-    {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "key",
-    },
-    {
-      title: "Descripción",
-      dataIndex: "description",
-    },
-    {
-      title: "Código",
-      dataIndex: "code",
-    },
-    {
-      title: "Acciones",
-      render: (item) => {
-        return (
-          <div>
-            <Row gutter={16}>
-              {permissions.edit_department && (
-                <Col className="gutter-row" offset={1}>
-                  <EditOutlined onClick={() => editRegister(item, "dep")} />
-                </Col>
-              )}
-              {permissions.delete_department && (
-                <Col className="gutter-row" offset={1}>
-                  <DeleteOutlined
-                    onClick={() => {
-                      setDeleteRegister({
-                        id: item.id,
-                        url: "/business/department/",
-                      });
-                    }}
-                  />
-                </Col>
-              )}
-            </Row>
-          </div>
-        );
-      },
-    },
-  ];
-  const colJob = [
-    {
-      title: "Empresa",
-      render: (item) => {
-        return <>{userCompanyName()}</>;
-      },
-    },
-
-    // {
-    //   title: "Departamento",
-    //   render: (item) => {
-    //     return <>{item.department.name}</>;
-    //   },
-    // },
-    {
-      title: "Nombre",
-      render: (item) => {
-        return <>{item.name}</>;
-      },
-      key: "key",
-    },
-    {
-      title: "Código",
-      render: (item) => {
-        return <>{item.code}</>;
-      },
-    },
-    {
-      title: "Acciones",
-      render: (item) => {
-        return (
-          <div>
-            <Row gutter={16}>
-              {permissions.edit_job && (
-                <Col className="gutter-row" offset={1}>
-                  <EditOutlined onClick={() => editRegister(item, "job")} />
-                </Col>
-              )}
-              {permissions.delete_job && (
-                <Col className="gutter-row" offset={1}>
-                  <DeleteOutlined
-                    onClick={() => {
-                      setDeleteRegister({
-                        id: item.id,
-                        url: "/person/job/",
-                      });
-                    }}
-                  />
-                </Col>
-              )}
-            </Row>
-          </div>
-        );
-      },
-    },
-  ];
-  const colTypePerson = [
-    {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "key",
-    },
-    {
-      title: "Código",
-      dataIndex: "code",
-    },
-    {
-      title: "Acciones",
-      render: (item) => {
-        return (
-          <div>
-            <Row gutter={16}>
-              {permissions.edit_persontype && (
-                <Col className="gutter-row" offset={1}>
-                  <EditOutlined onClick={() => editRegister(item, "tp")} />
-                </Col>
-              )}
-              {permissions.delete_persontype && (
-                <Col className="gutter-row" offset={1}>
-                  <DeleteOutlined
-                    onClick={() => {
-                      setDeleteRegister({
-                        id: item.id,
-                        url: "/person/person-type/",
-                      });
-                    }}
-                  />
-                </Col>
-              )}
-            </Row>
-          </div>
-        );
-      },
-    },
-  ];
-  const colRelationShip = [
-    {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "key",
-    },
-    {
-      title: "Código",
-      dataIndex: "code",
-    },
-    {
-      title: "Acciones",
-      render: (item) => {
-        return (
-          <div>
-            <Row gutter={16}>
-              {permissions.edit_relationship && (
-                <Col className="gutter-row" offset={1}>
-                  <EditOutlined onClick={() => editRegister(item, "rs")} />
-                </Col>
-              )}
-              {permissions.delete_relationship && (
-                <Col className="gutter-row" offset={1}>
-                  <DeleteOutlined
-                    onClick={() => {
-                      setDeleteRegister({
-                        id: item.id,
-                        url: "/setup/relationship/",
-                      });
-                    }}
-                  />
-                </Col>
-              )}
-            </Row>
-          </div>
-        );
-      },
-    },
-  ];
-  const colTypeDocument = [
-    {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "key",
-    },
-    {
-      title: "Código",
-      dataIndex: "code",
-    },
-    {
-      title: "Visible",
-      render: (item) => {
-        return (
-          <>
-            <Switch
-              defaultChecked={item.is_visible}
-              checkedChildren="Visible"
-              unCheckedChildren="No visible"
-              onChange={() => onchangeVisible(item)}
-            />
-          </>
-        );
-      },
-    },
-    {
-      title: "Acciones",
-      render: (item) => {
-        return (
-          <div>
-            <Row gutter={16}>
-              {permissions.edit_documenttype && (
-                <Col className="gutter-row" offset={1}>
-                  <EditOutlined onClick={() => editRegister(item, "td")} />
-                </Col>
-              )}
-              {permissions.delete_documenttype && (
-                <Col className="gutter-row" offset={1}>
-                  <DeleteOutlined
-                    onClick={() => {
-                      setDeleteRegister({
-                        id: item.id,
-                        url: "/setup/document-type/",
-                      });
-                    }}
-                  />
-                </Col>
-              )}
-            </Row>
-          </div>
-        );
-      },
-    },
-  ];
-  const colBank = [
-    {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "key",
-    },
-    {
-      title: "Código",
-      dataIndex: "code",
-    },
-    {
-      title: "Acciones",
-      render: (item) => {
-        return (
-          <div>
-            <Row gutter={16}>
-              {permissions.edit_bank && (
-                <Col className="gutter-row" offset={1}>
-                  <EditOutlined onClick={() => editRegister(item, "bank")} />
-                </Col>
-              )}
-              {permissions.delete_bank && (
-                <Col className="gutter-row" offset={1}>
-                  <DeleteOutlined
-                    onClick={() => {
-                      setDeleteRegister({
-                        id: item.id,
-                        url: "/setup/banks/",
-                      });
-                    }}
-                  />
-                </Col>
-              )}
-            </Row>
-          </div>
-        );
-      },
-    },
-  ];
-
   const showModal = () => {
     modal ? setModal(false) : setModal(true);
   };
@@ -690,100 +409,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_1"
                     >
-                      {edit ? (
-                        <Title style={{ fontSize: "20px" }}>Editar</Title>
-                      ) : (
-                        <></>
-                      )}
-                      {permissions.create_department && (
-                        <Tabs tabPosition={"top"}>
-                          <TabPane
-                            tab="Individual"
-                            key="tab_1_1"
-                            style={{ paddingTop: "15px" }}
-                          >
-                            <Form
-                              layout={"vertical"}
-                              form={formDepartment}
-                              onFinish={(values) =>
-                                onFinishForm(
-                                  values,
-                                  `/business/department/?node=${nodeId}`
-                                )
-                              }
-                            >
-                              <Row>
-                                <Col lg={6} xs={22} offset={1}>
-                                  <Form.Item
-                                    label="Empresa"
-                                    rules={[ruleRequired]}
-                                  >
-                                    <Input readOnly value={nodePeople} />
-                                  </Form.Item>
-                                </Col>
-                                <Col lg={6} xs={22} offset={1}>
-                                  <Form.Item
-                                    name="name"
-                                    label="Nombre"
-                                    rules={[ruleRequired]}
-                                  >
-                                    <Input />
-                                  </Form.Item>
-                                </Col>
-                                <Col lg={6} xs={22} offset={1}>
-                                  <Form.Item
-                                    name="description"
-                                    label="Descripción"
-                                    rules={[ruleRequired]}
-                                  >
-                                    <Input />
-                                  </Form.Item>
-                                </Col>
-                                <Col lg={6} xs={22} offset={1}>
-                                  <Form.Item name="code" label="Código">
-                                    <Input />
-                                  </Form.Item>
-                                </Col>
-                              </Row>
-                              <Row
-                                justify={"end"}
-                                gutter={20}
-                                style={{ marginBottom: 20 }}
-                              >
-                                <Col>
-                                  <Button onClick={resetForm}>Cancelar</Button>
-                                </Col>
-                                <Col>
-                                  <Button type="primary" htmlType="submit">
-                                    Guardar
-                                  </Button>
-                                </Col>
-                              </Row>
-                            </Form>
-                          </TabPane>
-                          <TabPane
-                            tab="Carga masiva"
-                            key="tab_1_2"
-                            style={{ paddingTop: "15px" }}
-                          >
-                            <MassiveImportDepartments
-                              nodePeople={nodePeople}
-                              setLoadingTable={setLoadingTable}
-                            />
-                          </TabPane>
-                        </Tabs>
-                      )}
-                      <Spin tip="Cargando..." spinning={loadingTable}>
-                        <Table
-                          columns={colDepartment}
-                          dataSource={props.cat_departments}
-                          locale={{
-                            emptyText: loadingTable
-                              ? "Cargando..."
-                              : "No se encontraron resultados.",
-                          }}
-                        />
-                      </Spin>
+                      <Departaments
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -801,110 +431,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_2"
                     >
-                      {edit ? (
-                        <Title style={{ fontSize: "20px" }}>Editar</Title>
-                      ) : (
-                        <></>
-                      )}
-                      {permissions.create_job && (
-                        <Tabs tabPosition={"top"}>
-                          <TabPane
-                            tab="Individual"
-                            key="tab_2_1"
-                            style={{ paddingTop: "15px" }}
-                          >
-                            <Form
-                              layout={"vertical"}
-                              form={formJob}
-                              onFinish={(values) =>
-                                onFinishForm(
-                                  values,
-                                  `/person/job/?node=${nodeId}`
-                                )
-                              }
-                            >
-                              <Row>
-                                <Col lg={6} xs={22} offset={1}>
-                                  <Form.Item
-                                    label="Empresa"
-                                    rules={[ruleRequired]}
-                                  >
-                                    <Input readOnly value={nodePeople} />
-                                  </Form.Item>
-                                </Col>
-
-                                {/* <Col lg={6} xs={22} offset={1}>
-                            <Form.Item
-                              name="department"
-                              label="Departamento"
-                              rules={[ruleRequired]}
-                            >
-                              <Select
-                                options={selectDep}
-                                notFoundContent={
-                                  "No se encontraron resultados."
-                                }
-                              />
-                            </Form.Item>
-                          </Col> */}
-                                <Col lg={6} xs={22} offset={1}>
-                                  <Form.Item
-                                    name="name"
-                                    label="Nombre"
-                                    rules={[ruleRequired]}
-                                  >
-                                    <Input />
-                                  </Form.Item>
-                                </Col>
-                                <Col lg={6} xs={22} offset={1}>
-                                  <Form.Item
-                                    name="code"
-                                    label="Código"
-                                    rules={[ruleRequired]}
-                                  >
-                                    <Input />
-                                  </Form.Item>
-                                </Col>
-                              </Row>
-                              <Row
-                                justify={"end"}
-                                gutter={20}
-                                style={{ marginBottom: 20 }}
-                              >
-                                <Col>
-                                  <Button onClick={resetForm}>Cancelar</Button>
-                                </Col>
-                                <Col>
-                                  <Button type="primary" htmlType="submit">
-                                    Guardar
-                                  </Button>
-                                </Col>
-                              </Row>
-                            </Form>
-                          </TabPane>
-                          <TabPane
-                            tab="Carga masiva"
-                            key="tab_2_2"
-                            style={{ paddingTop: "15px" }}
-                          >
-                            <MassiveImportJobs
-                              nodePeople={nodePeople}
-                              setLoadingTable={setLoadingTable}
-                            />
-                          </TabPane>
-                        </Tabs>
-                      )}{" "}
-                      <Spin tip="Cargando..." spinning={loadingTable}>
-                        <Table
-                          columns={colJob}
-                          dataSource={props.cat_job}
-                          locale={{
-                            emptyText: loadingTable
-                              ? "Cargando..."
-                              : "No se encontraron resultados.",
-                          }}
-                        />
-                      </Spin>
+                      <TabJobs
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -922,66 +453,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_3"
                     >
-                      {edit ? (
-                        <Title style={{ fontSize: "20px" }}>Editar</Title>
-                      ) : (
-                        <></>
-                      )}
-                      {permissions.create_persontype && (
-                        <Form
-                          layout={"vertical"}
-                          form={formTypePerson}
-                          onFinish={(values) =>
-                            onFinishForm(values, "/person/person-type/")
-                          }
-                        >
-                          <Row>
-                            <Col lg={6} xs={22} offset={1}>
-                              <Form.Item
-                                name="name"
-                                label="Nombre"
-                                rules={[ruleRequired]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                            <Col lg={6} xs={22} offset={1}>
-                              <Form.Item
-                                name="code"
-                                label="Código"
-                                rules={[ruleRequired]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                          </Row>
-                          <Row
-                            justify={"end"}
-                            gutter={20}
-                            style={{ marginBottom: 20 }}
-                          >
-                            <Col>
-                              <Button onClick={resetForm}>Cancelar</Button>
-                            </Col>
-                            <Col>
-                              <Button type="primary" htmlType="submit">
-                                Guardar
-                              </Button>
-                            </Col>
-                          </Row>
-                        </Form>
-                      )}
-                      <Spin tip="Cargando..." spinning={loadingTable}>
-                        <Table
-                          columns={colTypePerson}
-                          dataSource={props.person_type_table}
-                          locale={{
-                            emptyText: loadingTable
-                              ? "Cargando..."
-                              : "No se encontraron resultados.",
-                          }}
-                        />
-                      </Spin>
+                      <PersonTypes
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -997,66 +473,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_4"
                     >
-                      {edit ? (
-                        <Title style={{ fontSize: "20px" }}>Editar</Title>
-                      ) : (
-                        <></>
-                      )}
-                      {permissions.create_relationship && (
-                        <Form
-                          layout={"vertical"}
-                          form={formRelationship}
-                          onFinish={(values) =>
-                            onFinishForm(values, "/setup/relationship/")
-                          }
-                        >
-                          <Row>
-                            <Col lg={6} xs={22} offset={1}>
-                              <Form.Item
-                                name="name"
-                                label="Nombre"
-                                rules={[ruleRequired]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                            <Col lg={6} xs={22} offset={1}>
-                              <Form.Item
-                                name="code"
-                                label="Código"
-                                rules={[ruleRequired]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                          </Row>
-                          <Row
-                            justify={"end"}
-                            gutter={20}
-                            style={{ marginBottom: 20 }}
-                          >
-                            <Col>
-                              <Button onClick={resetForm}>Cancelar</Button>
-                            </Col>
-                            <Col>
-                              <Button type="primary" htmlType="submit">
-                                Guardar
-                              </Button>
-                            </Col>
-                          </Row>
-                        </Form>
-                      )}
-                      <Spin tip="Cargando..." spinning={loadingTable}>
-                        <Table
-                          columns={colRelationShip}
-                          dataSource={props.cat_relationship}
-                          locale={{
-                            emptyText: loadingTable
-                              ? "Cargando..."
-                              : "No se encontraron resultados.",
-                          }}
-                        />
-                      </Spin>
+                      <Relationship
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -1074,69 +495,11 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_5"
                     >
-                      {edit ? (
-                        <Title style={{ fontSize: "20px" }}>Editar</Title>
-                      ) : (
-                        <></>
-                      )}
-                      {permissions.create_documenttype && (
-                        <Form
-                          layout={"vertical"}
-                          form={formTypeDocument}
-                          onFinish={(values) =>
-                            onFinishForm(
-                              values,
-                              `/setup/document-type/?node=${nodeId}`
-                            )
-                          }
-                        >
-                          <Row>
-                            <Col lg={6} xs={22} offset={1}>
-                              <Form.Item
-                                name="name"
-                                label="Nombre"
-                                rules={[ruleRequired]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                            <Col lg={6} xs={22} offset={1}>
-                              <Form.Item
-                                name="code"
-                                label="Código"
-                                rules={[ruleRequired]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                          </Row>
-                          <Row
-                            justify={"end"}
-                            gutter={20}
-                            style={{ marginBottom: 20 }}
-                          >
-                            <Col>
-                              <Button onClick={resetForm}>Cancelar</Button>
-                            </Col>
-                            <Col>
-                              <Button type="primary" htmlType="submit">
-                                Guardar
-                              </Button>
-                            </Col>
-                          </Row>
-                        </Form>
-                      )}
-                      <Spin tip="Cargando..." spinning={loadingTable}>
-                        <Table
-                          columns={colTypeDocument}
-                          dataSource={props.cat_document_type}
-                          locale={{
-                            emptyText: loadingTable
-                              ? "Cargando..."
-                              : "No se encontraron resultados.",
-                          }}
-                        />
-                      </Spin>
+                      <DocumentsTypes
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
 
@@ -1152,68 +515,47 @@ const configBusiness = ({ ...props }) => {
                       }
                       key="tab_6"
                     >
-                      {edit ? (
-                        <Title style={{ fontSize: "20px" }}>Editar</Title>
-                      ) : (
-                        <></>
-                      )}
-                      {permissions.create_bank && (
-                        <Form
-                          layout={"vertical"}
-                          form={formBank}
-                          onFinish={(values) =>
-                            onFinishForm(values, "/setup/banks/")
-                          }
-                        >
-                          <Row>
-                            <Col lg={6} xs={22} offset={1}>
-                              <Form.Item
-                                name="name"
-                                label="Nombre"
-                                rules={[ruleRequired]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                            <Col lg={6} xs={22} offset={1}>
-                              <Form.Item
-                                name="code"
-                                label="Código"
-                                rules={[ruleRequired]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Col>
-                          </Row>
-                          <Row
-                            justify={"end"}
-                            gutter={20}
-                            style={{ marginBottom: 20 }}
-                          >
-                            <Col>
-                              <Button onClick={resetForm}>Cancelar</Button>
-                            </Col>
-                            <Col>
-                              <Button type="primary" htmlType="submit">
-                                Guardar
-                              </Button>
-                            </Col>
-                          </Row>
-                        </Form>
-                      )}
-                      <Spin tip="Cargando..." spinning={loadingTable}>
-                        <Table
-                          columns={colBank}
-                          dataSource={props.cat_bank}
-                          locale={{
-                            emptyText: loadingTable
-                              ? "Cargando..."
-                              : "No se encontraron resultados.",
-                          }}
-                        />
-                      </Spin>
+                      <Banks
+                        permissions={permissions}
+                        ruleRequired={ruleRequired}
+                        onFinishForm={onFinishForm}
+                      />
                     </TabPane>
                   )}
+
+                  <TabPane
+                    tab={
+                      <Tooltip title="Departamentos">
+                        <div className="container-title-tab">
+                          <GoldOutlined />
+                          <div className="text-title-tab">Niveles</div>
+                        </div>
+                      </Tooltip>
+                    }
+                    key="tab_7"
+                  >
+                    <Levels
+                      ruleRequired={ruleRequired}
+                      onFinishForm={onFinishForm}
+                    />
+                  </TabPane>
+
+                  <TabPane
+                    tab={
+                      <Tooltip title="Departamentos">
+                        <div className="container-title-tab">
+                          <GoldOutlined />
+                          <div className="text-title-tab">Plazas</div>
+                        </div>
+                      </Tooltip>
+                    }
+                    key="tab_8"
+                  >
+                    <WorkTitle
+                      ruleRequired={ruleRequired}
+                      onFinishForm={onFinishForm}
+                    />
+                  </TabPane>
                 </Tabs>
               </>
             ) : (
@@ -1222,18 +564,6 @@ const configBusiness = ({ ...props }) => {
           </Card>
         </div>
       </MainLayout>
-
-      {/* <Modal
-                title="Eliminar"
-                visible={modal}
-                onOk={deleteRegister}
-                onCancel={showModal}
-                okText="Si, Eliminar"
-                cancelText="Cancelar"
-            >
-                Al eliminar este registro perderá todos los datos relacionados a el de
-                manera permanente. ¿Está seguro de querer eliminarlo?
-      </Modal> */}
     </>
   );
 };
