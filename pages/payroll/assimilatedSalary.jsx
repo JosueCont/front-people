@@ -90,7 +90,7 @@ const assimilatedSalary = () => {
   };
 
   return (
-    <MainLayout currentKey={["calculator"]}  nomina>
+    <MainLayout currentKey={["asimilado"]}  defaultOpenKeys={["nomina"]} >
       <Global 
         styles={`
           .card-calculator .ant-card-body{
@@ -166,7 +166,7 @@ const assimilatedSalary = () => {
         </Breadcrumb>
         <Row>
           <Col md={23}>
-            <Card className="card-calculator">
+            <Card className="card-calculator"  >
               <Row>
                 <Col className="col-calculator col-form" md={12}>
                   <Form layout="vertical" form={form} onFinish={onFinish}>

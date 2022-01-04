@@ -7,7 +7,7 @@ const SelectPersonType = ({ ...props }) => {
 
   useEffect(() => {
     setPersonType([]);
-    if (props.cat_person_type) {
+    if(props.cat_person_type){
       setPersonType(props.cat_person_type);
     }
   }, [props.cat_person_type]);

@@ -265,8 +265,7 @@ const MainLayout = ({
               }
             />
           )} */}
-          {nomina ? 
-            <SiderNomina currentKey={currentKey} /> :
+          {
             !hideMenu && (
               <MainSider
                 currentKey={currentKey}

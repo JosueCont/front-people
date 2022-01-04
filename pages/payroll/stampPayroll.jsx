@@ -13,6 +13,7 @@ import {
   Spin,
   Table,
   Tooltip,
+  Card,
 } from "antd";
 import { useRouter } from "next/router";
 import {
@@ -25,6 +26,7 @@ import { userCompanyId } from "../../libs/auth";
 import { periodicityNom } from "../../utils/constant";
 import webApiPayroll from "../../api/webApiPayroll";
 import FormPerceptionsDeductions from "../../components/payroll/forms/FormPerceptionsDeductions";
+import { Global, css } from "@emotion/core";
 
 const StampPayroll = () => {
   const { Panel } = Collapse;
@@ -310,6 +312,14 @@ const StampPayroll = () => {
   };
 
   return (
+    <>
+      <Global 
+        styles={`
+          .ant-card{
+            background: #7B25F1 !important;
+          }
+        `}
+      />
     <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["nomina"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
@@ -319,126 +329,127 @@ const StampPayroll = () => {
           Inicio
         </Breadcrumb.Item>
         <Breadcrumb.Item>Timbrado de nomina</Breadcrumb.Item>
-      </Breadcrumb>
-      <div className="container" style={{ width: "100%" }}>
-        <>
-          <Row justify="space-between" style={{ paddingBottom: 20 }}>
-            <Col span={24}>
-              <div className="top-container-border-radius">
-                <Row gutter={[16, 8]}>
-                  <Col xxs={24} xl={4}>
-                    <Select
-                      style={{ width: "100%" }}
-                      options={optionspPaymentCalendars}
-                      onChange={changePaymentCalendar}
-                      placeholder="Calendarios"
-                      notFoundContent={"No se encontraron resultados."}
-                    />
-                  </Col>
-                  <Col xxs={24} xl={4}>
-                    <Input
-                      key="periodicity"
-                      placeholder="Periodicidad"
-                      disabled={true}
-                      value={periodicity}
-                    />
-                  </Col>
-                  <Col xxs={24} xl={6}>
-                    <Input
-                      key="period"
-                      placeholder="Período"
-                      disabled={true}
-                      value={period}
-                    />
-                  </Col>
-                  <Col xxs={24} xl={6}>
-                    <Input
-                      key="insidence_period"
-                      placeholder="Período de incidencia"
-                      disabled={true}
-                      value={insidencePeriod}
-                    />
-                  </Col>
-                  <Col xxs={24} xl={4}>
-                    <Input
-                      key="payment_day"
-                      placeholder="Dia de pago"
-                      disabled={true}
-                      value={paymentDate}
-                    />
-                  </Col>
-                </Row>
-              </div>
+      </Breadcrumb>  
+      <Row justify="end" gutter={[10,10]}>
+        <Col span={24}>
+          <Card className="form_header">
+            <Row gutter={[16, 8]}>
+              <Col xxs={24} xl={4}>
+                <Select
+                  size="large"
+                  style={{ width: "100%" }}
+                  options={optionspPaymentCalendars}
+                  onChange={changePaymentCalendar}
+                  placeholder="Calendarios"
+                  notFoundContent={"No se encontraron resultados."}
+                />
+              </Col>
+              <Col xxs={24} xl={4}>
+                <Input
+                size="large"
+                  key="periodicity"
+                  placeholder="Periodicidad"
+                  disabled={true}
+                  value={periodicity}
+                />
+              </Col>
+              <Col xxs={24} xl={6}>
+                <Input
+                  size="large"
+                  key="period"
+                  placeholder="Período"
+                  disabled={true}
+                  value={period}
+                />
+              </Col>
+              <Col xxs={24} xl={6}>
+                <Input
+                  size="large"
+                  key="insidence_period"
+                  placeholder="Período de incidencia"
+                  disabled={true}
+                  value={insidencePeriod}
+                />
+              </Col>
+              <Col xxs={24} xl={4}>
+                <Input
+                  size="large"
+                  key="payment_day"
+                  placeholder="Dia de pago"
+                  disabled={true}
+                  value={paymentDate}
+                />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+        <Col md={3}>
+          <Button
+            size="large"
+            block
+            htmlType="button"
+            onClick={() => sendStampPayroll()}
+          >
+            Enviar
+          </Button>
+        </Col>
+      </Row>
+      <Row justify="end">
+        <Col span={24}>
+          <Spin tip="Cargando..." spinning={loading}>
+            {!stamped && (
+              <Collapse defaultActiveKey={["1"]}>
+                {persons &&
+                  persons.map((p, i) => {
+                    if (p.person) {
+                      return (
+                        <Panel
+                          header={
+                            p.person.first_name +
+                            " " +
+                            p.person.flast_name +
+                            " " +
+                            p.person.mlast_name +
+                            "  " +
+                            "    -  Salario diario: $" +
+                            p.daily_salary
+                          }
+                          key={i + 1}
+                        >
+                          <PanelInfo
+                            data={p}
+                            setObjectStamp={setObjectStamp}
+                            payroll={payroll}
+                            setLoading={setLoading}
+                            key={p.person.id}
+                          />
+                        </Panel>
+                      );
+                    }
+                  })}
+              </Collapse>
+            )}
 
-              <Row>
-                <Col span={24}>
-                  <Button
-                    htmlType="button"
-                    style={{ float: "right", marginTop: "10px" }}
-                    onClick={() => sendStampPayroll()}
-                  >
-                    Enviar
-                  </Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Row justify="end">
-            <Col span={24}>
-              <Spin tip="Cargando..." spinning={loading}>
-                {!stamped && (
-                  <Collapse defaultActiveKey={["1"]}>
-                    {persons &&
-                      persons.map((p, i) => {
-                        if (p.person) {
-                          return (
-                            <Panel
-                              header={
-                                p.person.first_name +
-                                " " +
-                                p.person.flast_name +
-                                " " +
-                                p.person.mlast_name +
-                                "  " +
-                                "    -  Salario diario: $" +
-                                p.daily_salary
-                              }
-                              key={i + 1}
-                            >
-                              <PanelInfo
-                                data={p}
-                                setObjectStamp={setObjectStamp}
-                                payroll={payroll}
-                                setLoading={setLoading}
-                                key={p.person.id}
-                              />
-                            </Panel>
-                          );
-                        }
-                      })}
-                  </Collapse>
-                )}
-
-                {stampedInvoices && stampedInvoices.length > 0 && stamped && (
-                  <Table
-                    className={"mainTable"}
-                    size="small"
-                    columns={columns}
-                    dataSource={stampedInvoices}
-                    loading={loading}
-                    locale={{
-                      emptyText: loading
-                        ? "Cargando..."
-                        : "No se encontraron resultados.",
-                    }}
-                  />
-                )}
-              </Spin>
-            </Col>
-          </Row>
-        </>
-      </div>
+            {stampedInvoices && stampedInvoices.length > 0 && stamped && (
+              <Table
+                className={"mainTable"}
+                size="small"
+                columns={columns}
+                dataSource={stampedInvoices}
+                loading={loading}
+                locale={{
+                  emptyText: loading
+                    ? "Cargando..."
+                    : "No se encontraron resultados.",
+                }}
+              />
+            )}
+          </Spin>
+        </Col>
+      </Row>
+        
     </MainLayout>
+    </>
   );
 };
 
