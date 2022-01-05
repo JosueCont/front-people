@@ -31,8 +31,10 @@ import SelectDepartment from "../../components/selects/SelectDepartment";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
 import SelectWorkTitle from '../selects/SelectWorkTitle';
+import { connect } from 'react-redux'
 
-const HolidaysReport = (props) => {
+
+const HolidaysReport = ({permissions ,...props}) => {
   const route = useRouter();
   const { Option } = Select;
   const [form] = Form.useForm();
@@ -46,7 +48,6 @@ const HolidaysReport = (props) => {
 
   const [loading, setLoading] = useState(false);
   const [holidayList, setHolidayList] = useState([]);
-  const [permissions, setPermissions] = useState({});
   let nodeId = userCompanyId();
 
   /* Columnas de tabla */
@@ -114,7 +115,7 @@ const HolidaysReport = (props) => {
       render: (record, item) => {
         return (
           <>
-            {permissions.vacations && (
+            {permissions.export_vacations && (
               <DownloadOutlined onClick={() => download(item)} />
             )}
           </>
@@ -235,17 +236,9 @@ const HolidaysReport = (props) => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getAllHolidays();
   }, []);
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.report.function.export_vacations"))
-        perms.vacations = true;
-    });
-    setPermissions(perms);
-  };
+
 
   return (
     <>
@@ -338,7 +331,7 @@ const HolidaysReport = (props) => {
           </Form>
         </Col>
         <Col className="columnRightFilter">
-          {permissions.vacations && (
+          {permissions.export_vacations && (
             <Button
               style={{
                 background: "#fa8c16",
@@ -374,4 +367,10 @@ const HolidaysReport = (props) => {
   );
 };
 
-export default HolidaysReport;
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.report
+  };
+};
+
+export default connect(mapState)(HolidaysReport);

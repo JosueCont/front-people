@@ -310,7 +310,7 @@ const UploadPayroll = () => {
                         <SelectDepartment
                           companyId={nodeId}
                           key="SelectDepartment"
-                          showLabel={false}
+                          titleLabel={false}
                         />
                       </Col>
                       <Col style={{ display: "flex" }}>

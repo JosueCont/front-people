@@ -34,7 +34,7 @@ const SelectDepartment = ({
       <Form.Item
         key="ItemDepartment"
         name={props.name ? props.name : "department"}
-        label={ props.showLabel ? titleLabel ? "Departamento" : "" : null}
+        label={titleLabel ? "Departamento" : ""}
         rules={rules}
       >
         <Select

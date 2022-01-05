@@ -21,8 +21,10 @@ import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
 import SelectWorkTitle from '../selects/SelectWorkTitle';
+import { connect } from 'react-redux'
 
-const CollaboratorsReport = (props) => {
+
+const CollaboratorsReport = ({permissions, ...props}) => {
   const route = useRouter();
   const [form] = Form.useForm();
   const { Title } = Typography;
@@ -38,7 +40,6 @@ const CollaboratorsReport = (props) => {
 
   /* for selects */
   const [departmentId, setDepartmentId] = useState(null);
-  const [permissions, setPermissions] = useState({});
   let nodeId = userCompanyId();
   /* Columnas de tabla */
   const columns = [
@@ -82,7 +83,7 @@ const CollaboratorsReport = (props) => {
       render: (record, item) => {
         return (
           <>
-            {permissions.collaborators && (
+            {permissions.export_collaborators && (
               <DownloadOutlined onClick={() => download(item)} />
             )}
           </>
@@ -248,20 +249,12 @@ const CollaboratorsReport = (props) => {
   useEffect(() => {
     nodeId = userCompanyId();
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getCollaborators();
     // getAllPersons();
     // getDepartaments();
   }, [route]);
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.report.function.export_collaborators"))
-        perms.collaborators = true;
-    });
-    setPermissions(perms);
-  };
+  
   return (
     <>
       <Row justify="space-between" style={{ paddingRight: 20 }}>
@@ -347,7 +340,7 @@ const CollaboratorsReport = (props) => {
           </Form>
         </Col>
         <Col className="columnRightFilter">
-          {permissions.collaborators && (
+          {permissions.export_collaborators && (
             <Button
               style={{
                 background: "#fa8c16",
@@ -382,4 +375,10 @@ const CollaboratorsReport = (props) => {
   );
 };
 
-export default CollaboratorsReport;
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.report
+  };
+};
+
+export default connect(mapState)(CollaboratorsReport);

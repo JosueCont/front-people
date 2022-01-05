@@ -23,8 +23,10 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import Cookies from "js-cookie";
 import jsCookie from "js-cookie";
+import { connect } from 'react-redux'
 
-const Releases = () => {
+
+const Releases = ({permissions, ...props}) => {
   /* React */
   const { Column } = Table;
   const { Option } = Select;
@@ -38,7 +40,7 @@ const Releases = () => {
   const [searching, setSearching] = useState(false);
   const [dateOne, setDateOne] = useState(null);
   const [dateTwo, setDateTwo] = useState(null);
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   const [form] = Form.useForm();
 
   let userToken = cookie.get("toke") ? cookie.get("token") : null;
@@ -130,22 +132,9 @@ const Releases = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getNotifications();
     getAllPersons();
   }, []);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.comunication.can.view")) perms.view = true;
-      if (a.includes("people.comunication.can.create")) perms.create = true;
-      if (a.includes("people.comunication.can.edit")) perms.edit = true;
-      if (a.includes("people.comunication.can.delete")) perms.delete = true;
-    });
-    setPermissions(perms);
-    console.log("Permisos=>", perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -370,4 +359,10 @@ const Releases = () => {
   );
 };
 
-export default withAuthSync(Releases);
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.comunication
+  }
+}
+
+export default connect(mapState)(withAuthSync(Releases));
