@@ -165,13 +165,15 @@ const MainSider = ({
             >
               Dashboard
             </Menu.Item>
-          <Menu.Item
-            key="persons"
-            icon={<UserOutlined />}
-            onClick={() => router.push({ pathname: "/home" })}
-          >
-            Personas
-          </Menu.Item>
+          { props.permissions.person.view && 
+            <Menu.Item
+              key="persons"
+              icon={<UserOutlined />}
+              onClick={() => router.push({ pathname: "/home" })}
+            >
+              Personas
+            </Menu.Item>
+          }
           <Menu.Item
             key="business"
             icon={<BusinessOutlined />}
@@ -396,6 +398,7 @@ const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
+    permissions: state.userStore.permissions
   };
 };
 export default connect(mapState)(MainSider);
