@@ -17,19 +17,20 @@ import moment from "moment";
 import WebApi from "../../../api/webApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
 import { useRouter } from "next/router";
+import { messageSaveSuccess } from "../../../utils/constant";
+import { onlyNumeric, ruleRequired } from "../../../utils/rules";
 import { css, Global } from "@emotion/core";
-import { messageSaveSuccess, onlyNumeric } from "../../../utils/constant";
 
 const FormPaymentCalendar = ({
   title,
   nodeId = null,
   idPaymentCalendar = null,
-  onCancel, ...props
+  onCancel,
+  ...props
 }) => {
   const route = useRouter();
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [typeTax, setTypeTax] = useState([]);
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState("");
@@ -212,12 +213,22 @@ const FormPaymentCalendar = ({
         >
           <Row gutter={30} style={{ marginBottom: 20 }}>
             <Col lg={8} xs={22}>
-              <Form.Item name="name" label="Nombre" rules={[ruleRequired]} extra={<>Aplicar ajuste<Switch
-                  size="small"
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                  style={{marginLeft:10}}
-                /></>}>
+              <Form.Item
+                name="name"
+                label="Nombre"
+                rules={[ruleRequired]}
+                extra={
+                  <>
+                    Aplicar ajuste
+                    <Switch
+                      size="small"
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                      style={{ marginLeft: 10 }}
+                    />
+                  </>
+                }
+              >
                 <Input />
               </Form.Item>
             </Col>
@@ -258,12 +269,22 @@ const FormPaymentCalendar = ({
               </Form.Item>
             </Col> */}
             <Col lg={8} xs={22}>
-              <Form.Item name="period" label="Período" rules={[ruleRequired]} extra={<>Activo<Switch
-                  size="small"
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                  style={{marginLeft:10}}
-                /></>}>
+              <Form.Item
+                name="period"
+                label="Período"
+                rules={[ruleRequired]}
+                extra={
+                  <>
+                    Activo
+                    <Switch
+                      size="small"
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                      style={{ marginLeft: 10 }}
+                    />
+                  </>
+                }
+              >
                 <DatePicker
                   style={{ width: "100%" }}
                   onChange={onChangePeriod}
@@ -301,26 +322,31 @@ const FormPaymentCalendar = ({
                 rules={[onlyNumeric]}
                 extra={
                   <>
-                  <div style={{ display:'flex', justifyContent:'space-between'}}>
-                    <span>
-                      <small>Pagar sabados</small>
-                      <Switch
-                        size="small"
-                        checkedChildren={<CheckOutlined />}
-                        unCheckedChildren={<CloseOutlined />}
-                        style={{marginLeft:10}}
-                      />
-                    </span>
-                    <span>
-                      <small>Pagar Domingos</small>
-                      <Switch
-                        size="small"
-                        checkedChildren={<CheckOutlined />}
-                        unCheckedChildren={<CloseOutlined />}
-                        style={{marginLeft:10}}
-                      />
-                    </span>
-                  </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span>
+                        <small>Pagar sabados</small>
+                        <Switch
+                          size="small"
+                          checkedChildren={<CheckOutlined />}
+                          unCheckedChildren={<CloseOutlined />}
+                          style={{ marginLeft: 10 }}
+                        />
+                      </span>
+                      <span>
+                        <small>Pagar Domingos</small>
+                        <Switch
+                          size="small"
+                          checkedChildren={<CheckOutlined />}
+                          unCheckedChildren={<CloseOutlined />}
+                          style={{ marginLeft: 10 }}
+                        />
+                      </span>
+                    </div>
                   </>
                 }
               >
@@ -389,9 +415,7 @@ const FormPaymentCalendar = ({
                 className="close_modal"
                 htmlType="button"
                 style={{ marginRight: 10 }}
-                onClick={() =>
-                  onCancel()
-                }
+                onClick={() => onCancel()}
               >
                 Cancelar
               </Button>

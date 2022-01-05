@@ -1,5 +1,5 @@
 import { Select, Form } from "antd";
-import { generateYear } from "../../utils/constant";
+import { generateYear } from "../../utils/functions";
 
 const SelectYear = ({ titleLabel = true, rules = [], companyId, ...props }) => {
   return (
@@ -11,7 +11,7 @@ const SelectYear = ({ titleLabel = true, rules = [], companyId, ...props }) => {
         rules={rules}
       >
         <Select
-        size={props.size?props.size:'middle'}
+          size={props.size ? props.size : "middle"}
           key="SelectPeriod"
           options={generateYear()}
           placeholder="Periodo"

@@ -1,12 +1,12 @@
 import axios from "axios";
 import { APP_ID, LOGIN_URL, client_khonnect_id } from "../config/config";
-import { headersApi } from "../utils/constant";
+import { headersApiKhonnect } from "../utils/constant";
 
 export const getGroups = async (node) => {
   let group = [];
   await axios
     .get(LOGIN_URL + `/group/list/?company=${node}`, {
-      headers: headersApi(),
+      headers: headersApiKhonnect,
     })
     .then((response) => {
       if (response.status === 200) {
@@ -31,10 +31,7 @@ export const getGroupPerson = async (config, khonnect_id) => {
         user_id: khonnect_id,
       },
       {
-        headers: {
-          "client-id": config.client_khonnect_id,
-          "Content-Type": "application/json",
-        },
+        headers: headersApiKhonnect,
       }
     )
     .then((response) => {

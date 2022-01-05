@@ -1,24 +1,13 @@
-import {
-  Form,
-  Input,
-  Button,
-  Checkbox,
-  Spin,
-  Alert,
-  Typography,
-  message,
-} from "antd";
+import { Form, Input, Button, Spin, Typography } from "antd";
 const { Text } = Typography;
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { LOGIN_URL, APP_ID } from "../config/config";
 import Axios from "axios";
-import Cookies from "js-cookie";
-import jwt_decode from "jwt-decode";
+import { ruleRequired } from "../utils/rules";
 
 const NewPasswordForm = (props) => {
-  
-  consoe.log('newpasswordform')
+  consoe.log("newpasswordform");
   const router = useRouter();
   const { token } = router.query;
 
@@ -60,8 +49,6 @@ const NewPasswordForm = (props) => {
     }
   };
 
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
-
   const validatePassword = ({ getFieldValue }) => ({
     validator(rule, value) {
       if (!value || getFieldValue("passwordOne") === value) {
@@ -102,15 +89,6 @@ const NewPasswordForm = (props) => {
             />
           </Form.Item>
 
-          {/* {errorLogin && (
-                        <Alert
-                            message="Error al iniciar sesión,"
-                            description="la contraseña y/o correo electrónico son incorrectos"
-                            type="error"
-                            style={{ textAlign: "center", marginBottom: "10px" }}
-                            closable
-                        />
-                    )} */}
           <Form.Item>
             <Button
               style={{ width: "100%" }}

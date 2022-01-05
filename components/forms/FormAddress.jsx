@@ -9,23 +9,19 @@ import {
   Select,
 } from "antd";
 import { useState, useEffect } from "react";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { typeStreet } from "../../utils/functions";
 import WebApi from "../../api/webApi";
-import { onlyNumeric } from "../../utils/constant";
+import { ruleRequired } from "../../utils/rules";
 
 const FormAddress = ({ person_id }) => {
   const { Title } = Typography;
   const [formAddress] = Form.useForm();
   const [idAddress, setIdAddress] = useState("");
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   useEffect(() => {
     getAddress();
   }, []);
 
-  /*functions CRUD */
   const getAddress = async () => {
     try {
       let response = await WebApi.getAddress(person_id);

@@ -16,7 +16,7 @@ import {
   Select,
   message,
   Checkbox,
-  Typography
+  Typography,
 } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import Meta from "antd/lib/card/Meta";
@@ -29,10 +29,11 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectPeriodicity from "../../components/selects/SelectPeriodicity";
 import SelectYear from "../../components/selects/SelectYear";
 import MainLayout from "../../layout/MainLayout";
-import { monthsName, ruleRequired } from "../../utils/constant";
+import { monthsName } from "../../utils/constant";
 import webApiFiscal from "../../api/WebApiFiscal";
 import DatePicker from "react-multi-date-picker";
 import { css, Global } from "@emotion/core";
+import { ruleRequired } from "../../utils/rules";
 
 const assimilatedSalary = () => {
   const [form] = Form.useForm();
@@ -42,7 +43,7 @@ const assimilatedSalary = () => {
   const [allowance, setAllowance] = useState(false);
   const [mont, setMonth] = useState(0);
 
-  const {Text, Title} = Typography;
+  const { Text, Title } = Typography;
 
   const onFinish = async (value) => {
     value.allowance = allowance;
@@ -90,8 +91,8 @@ const assimilatedSalary = () => {
   };
 
   return (
-    <MainLayout currentKey={["asimilado"]}  defaultOpenKeys={["nomina"]} >
-      <Global 
+    <MainLayout currentKey={["asimilado"]} defaultOpenKeys={["nomina"]}>
+      <Global
         styles={`
           .card-calculator .ant-card-body{
             padding: 0px;
@@ -166,13 +167,17 @@ const assimilatedSalary = () => {
         </Breadcrumb>
         <Row>
           <Col md={23}>
-            <Card className="card-calculator"  >
+            <Card className="card-calculator">
               <Row>
                 <Col className="col-calculator col-form" md={12}>
                   <Form layout="vertical" form={form} onFinish={onFinish}>
                     <Row gutter={[24]}>
                       <Col span={24}>
-                        <SelectCollaborator placeholder="Colaboradores" name="person_id" size={"large"} />
+                        <SelectCollaborator
+                          placeholder="Colaboradores"
+                          name="person_id"
+                          size={"large"}
+                        />
                       </Col>
                       <Col span={12}>
                         <Form.Item label="Tipo de calculo" name="type">
@@ -185,50 +190,57 @@ const assimilatedSalary = () => {
                             }}
                           />
                         </Form.Item>
-                    </Col>
-                    <Col md={12}>
-                      <Form.Item label="Salario" name="salary">
-                        <Input type="number" placeholder="Salario" size="large" />
-                      </Form.Item>
-                    </Col>
-                    <Col md={12}>
-                      <SelectPeriodicity size="large" />
-                    </Col>
-                    <Col md={12}>
-                      <SelectYear size="large" />
-                    </Col>
-                  <Col md={12}>
-                    <Form.Item label="Subsidio" name="allowance">
-                      <Checkbox
-                        onChange={() => {
-                          allowance ? setAllowance(false) : setAllowance(true);
-                        }}
-                        placeholder="Subsidio"
-                      />
-                    </Form.Item>
-                  </Col>
-                  {allowance && (
-                    <Col md={12}>
-                      <Form.Item
-                        name="month"
-                        label="Mes"
-                        placeholder="Selecciona mes"
-                        rules={[ruleRequired]}
-                      >
-                        <Select
-                          size="large"
-                          options={monthsName}
-                        />
-                      </Form.Item>
-                    </Col>
-                  )}
+                      </Col>
+                      <Col md={12}>
+                        <Form.Item label="Salario" name="salary">
+                          <Input
+                            type="number"
+                            placeholder="Salario"
+                            size="large"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col md={12}>
+                        <SelectPeriodicity size="large" />
+                      </Col>
+                      <Col md={12}>
+                        <SelectYear size="large" />
+                      </Col>
+                      <Col md={12}>
+                        <Form.Item label="Subsidio" name="allowance">
+                          <Checkbox
+                            onChange={() => {
+                              allowance
+                                ? setAllowance(false)
+                                : setAllowance(true);
+                            }}
+                            placeholder="Subsidio"
+                          />
+                        </Form.Item>
+                      </Col>
+                      {allowance && (
+                        <Col md={12}>
+                          <Form.Item
+                            name="month"
+                            label="Mes"
+                            placeholder="Selecciona mes"
+                            rules={[ruleRequired]}
+                          >
+                            <Select size="large" options={monthsName} />
+                          </Form.Item>
+                        </Col>
+                      )}
                     </Row>
                     <Row gutter={10}>
                       <Col
                         className="button-filter-person"
                         style={{ display: "flex" }}
                       >
-                        <Button className="btn-calculate" htmlType="submit" size="large">
+                        <Button
+                          className="btn-calculate"
+                          htmlType="submit"
+                          size="large"
+                        >
                           Calcular
                         </Button>
                       </Col>
@@ -248,76 +260,71 @@ const assimilatedSalary = () => {
                     </Row>
                   </Form>
                 </Col>
-                <Col md={12} style={{display:'flex'}} className="col-results">
-                  <Spin tip="Cargando..." spinning={loading} style={{display:'flex'}}>
+                <Col
+                  md={12}
+                  style={{ display: "flex" }}
+                  className="col-results"
+                >
+                  <Spin
+                    tip="Cargando..."
+                    spinning={loading}
+                    style={{ display: "flex" }}
+                  >
                     {/* {salary && ( */}
-                      <div style={{margin:'auto'}}>
-                        <Row className="table-grid-title">
-                          <Col span={18}>
-                            <Text strong={ type == 1 ? true : false} >
+                    <div style={{ margin: "auto" }}>
+                      <Row className="table-grid-title">
+                        <Col span={18}>
+                          <Text strong={type == 1 ? true : false}>
                             {/* <span style={{ fontWeight: type == 1 && "bold" }}> */}
-                              ASIMILADO BRUTO
-                            </Text>
-                          </Col>
-                          <Col span={6} className="border-results">
-                            <Text>
-                              {/* $ {salary.gross_salary} */}
-                              $23432
-                            </Text>
-                          </Col>
-                        </Row>
-                        <Row className="table-grid-results"  style={{marginTop:20}}>
-                          <Col span={18}>
-                            <Text>- Límite inferior</Text>
-                          </Col>
-                          <Col span={6} >
-                            $1234567
-                            {/* {salary.lower_limit} */}
-                          </Col>
-                          <Col span={18}>
-                            <span>= Excedente del límite inferior</span>
-                          </Col>
-                          <Col span={6} >
-                            {/* {salary.surplus} */}
-                          </Col>
-                          <Col span={18}>
-                            <span>× % sobre excedente del límite inferior</span>
-                          </Col>
-                          <Col
-                            span={6}
-                          >
-                            {/* {salary.percentage_exceeding_lower_limit} */}
-                          </Col>
-                          <Col span={18}>
-                            <span>= Impuesto marginal</span>
-                          </Col>
-                          <Col
-                            span={6}
-                          >
-                            {/* {salary.marginal_tax} */}
-                          </Col>
-                          <Col span={18}>
-                            <span>+ Cuota fija del impuesto</span>
-                          </Col>
-                          <Col
-                            span={6}
-                          >
-                            {/* {salary.fixed_fee} */}
-                          </Col>
-                          <Col span={18}>
-                            <span>I.S.R. a cargo</span>
-                          </Col>
-                          <Col span={6}>
-                            {/* {salary.charge_isr} */}
-                          </Col>
-                          {allowance && (
-                            <>
+                            ASIMILADO BRUTO
+                          </Text>
+                        </Col>
+                        <Col span={6} className="border-results">
+                          <Text>
+                            {/* $ {salary.gross_salary} */}
+                            $23432
+                          </Text>
+                        </Col>
+                      </Row>
+                      <Row
+                        className="table-grid-results"
+                        style={{ marginTop: 20 }}
+                      >
+                        <Col span={18}>
+                          <Text>- Límite inferior</Text>
+                        </Col>
+                        <Col span={6}>
+                          $1234567
+                          {/* {salary.lower_limit} */}
+                        </Col>
+                        <Col span={18}>
+                          <span>= Excedente del límite inferior</span>
+                        </Col>
+                        <Col span={6}>{/* {salary.surplus} */}</Col>
+                        <Col span={18}>
+                          <span>× % sobre excedente del límite inferior</span>
+                        </Col>
+                        <Col span={6}>
+                          {/* {salary.percentage_exceeding_lower_limit} */}
+                        </Col>
+                        <Col span={18}>
+                          <span>= Impuesto marginal</span>
+                        </Col>
+                        <Col span={6}>{/* {salary.marginal_tax} */}</Col>
+                        <Col span={18}>
+                          <span>+ Cuota fija del impuesto</span>
+                        </Col>
+                        <Col span={6}>{/* {salary.fixed_fee} */}</Col>
+                        <Col span={18}>
+                          <span>I.S.R. a cargo</span>
+                        </Col>
+                        <Col span={6}>{/* {salary.charge_isr} */}</Col>
+                        {allowance && (
+                          <>
                             <Col span={18}>
                               <span>Retención IMSS</span>
                             </Col>
-                            <Col span={6}>
-                              {salary.retention_imss}
-                            </Col>
+                            <Col span={6}>{salary.retention_imss}</Col>
                             <Col span={18}>
                               <span>
                                 {" "}
@@ -340,31 +347,34 @@ const assimilatedSalary = () => {
                             <Col span={18}>
                               <span>IMSS/INFONAVIT</span>
                             </Col>
-                            <Col span={6}>
-                              {salary["imss/infonavit/afore"]}
-                            </Col>
-                            </>
-                          )}
-                        </Row>
+                            <Col span={6}>{salary["imss/infonavit/afore"]}</Col>
+                          </>
+                        )}
+                      </Row>
                       {!allowance && (
                         <Row className="table-grid-footer">
                           <Col span={18}>
-                            <Text strong={ type == 1 ? true : false} >
+                            <Text strong={type == 1 ? true : false}>
                               ASIMILADO NETO
                             </Text>
                           </Col>
-                          <Col span={6} style={{ backgroundColor: type == 2 && "yellow", }} className="border-results" >
+                          <Col
+                            span={6}
+                            style={{ backgroundColor: type == 2 && "yellow" }}
+                            className="border-results"
+                          >
                             <Text>
                               $23432
-                            {/* $ {salary.net_salary} */}
+                              {/* $ {salary.net_salary} */}
                             </Text>
                           </Col>
                         </Row>
                       )}
-                      </div>
+                    </div>
                     {/* )} */}
                   </Spin>
                 </Col>
+                <Col md={12}></Col>
               </Row>
             </Card>
           </Col>

@@ -1,7 +1,7 @@
 import { Select, Form } from "antd";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ruleRequired } from "../../utils/constant";
+import { ruleRequired } from "../../utils/rules";
 
 const SelectGroup = ({ titleLabel, ...props }) => {
   const [groups, setGroups] = useState([]);
