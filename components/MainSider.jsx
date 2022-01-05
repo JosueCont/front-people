@@ -160,6 +160,12 @@ const MainSider = ({
                         Aplicaciones
                     </Menu.Item> */}
           <Menu.Item
+            key="dashboard"
+            onClick={() => router.push({ pathname: "/dashboard" })}
+            >
+              Dashboard
+            </Menu.Item>
+          <Menu.Item
             key="persons"
             icon={<UserOutlined />}
             onClick={() => router.push({ pathname: "/home" })}

@@ -15,7 +15,7 @@ const SelectCollaborator = ({ setAllPersons, ...props }) => {
 
   return (
     <Form.Item
-      label={props.label ? props.label : "Colaborador"}
+      label={props.showLabel ? props.label ? props.label : "Colaborador" : null}
       name={props.name ? props.name : "collaborator"}
       labelCol={props.labelCol ? props.labelCol : { span: 24 }}
       labelAlign={"left"}

@@ -221,6 +221,16 @@ const MainLayout = ({
             /* th, td{
               background: transparent;
             } */
+            .form_header{
+              background: #7B25F1 !important;
+            }
+
+            .headers_transparent .ant-table-thead tr th{
+              background-color:transparent !important;
+            }
+            .card_table .ant-table{
+              box-shadow: none;
+            }
 
 
               `}
