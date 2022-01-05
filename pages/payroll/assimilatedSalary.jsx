@@ -387,6 +387,7 @@ const assimilatedSalary = () => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    permissions: state.userStore.permissions,
   };
 };
 

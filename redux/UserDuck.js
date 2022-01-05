@@ -9,7 +9,7 @@ const initialData = {
   error: false,
   people_company: [],
   user: null,
-  permissions: {},
+  permissions: UserPermissions(),
 };
 
 const LOADING_WEB = "LOADING_WEB";
