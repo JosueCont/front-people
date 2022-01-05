@@ -11,11 +11,10 @@ import {
   Spin,
   Input,
 } from "antd";
-import { userCompanyName } from "../../libs/auth";
 import { ruleRequired } from "../../utils/rules";
+import { connect } from "react-redux";
 
 const DocumentsTypes = ({ permissions, onFinishForm, ...props }) => {
-  let nodePeople = userCompanyName();
   const { Title } = Typography;
   const { TabPane } = Tabs;
 
@@ -59,12 +58,12 @@ const DocumentsTypes = ({ permissions, onFinishForm, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit_documenttype && (
+              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined onClick={() => editRegister(item, "td")} />
                 </Col>
               )}
-              {permissions.delete_documenttype && (
+              {permissions.delete && (
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -86,7 +85,7 @@ const DocumentsTypes = ({ permissions, onFinishForm, ...props }) => {
   return (
     <>
       {edit && <Title style={{ fontSize: "20px" }}>Editar</Title>}
-      {permissions.create_documenttype && (
+      {permissions.create && (
         <Form
           layout={"vertical"}
           form={form}
@@ -133,4 +132,10 @@ const DocumentsTypes = ({ permissions, onFinishForm, ...props }) => {
   );
 };
 
-export default DocumentsTypes;
+const mapState = (state) => {
+  return {
+    cat_document_type: state.catalogStore.cat_document_type,
+  };
+};
+
+export default connect(mapState)(DocumentsTypes);

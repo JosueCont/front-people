@@ -13,6 +13,7 @@ import {
 import { userCompanyName } from "../../libs/auth";
 import MassiveImportJobs from "../MassiveImportJobs";
 import { ruleRequired } from "../../utils/rules";
+import { connect } from "react-redux";
 
 const TabJobs = ({ permissions, onFinishForm, ...props }) => {
   let nodePeople = userCompanyName();
@@ -35,13 +36,6 @@ const TabJobs = ({ permissions, onFinishForm, ...props }) => {
         return <>{userCompanyName()}</>;
       },
     },
-
-    // {
-    //   title: "Departamento",
-    //   render: (item) => {
-    //     return <>{item.department.name}</>;
-    //   },
-    // },
     {
       title: "Nombre",
       render: (item) => {
@@ -61,12 +55,12 @@ const TabJobs = ({ permissions, onFinishForm, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit_job && (
+              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined onClick={() => editRegister(item, "job")} />
                 </Col>
               )}
-              {permissions.delete_job && (
+              {permissions.delete && (
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -88,7 +82,7 @@ const TabJobs = ({ permissions, onFinishForm, ...props }) => {
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
-      {permissions.create_job && (
+      {permissions.create && (
         <Tabs tabPosition={"top"}>
           <TabPane
             tab="Individual"
@@ -108,21 +102,6 @@ const TabJobs = ({ permissions, onFinishForm, ...props }) => {
                     <Input readOnly value={nodePeople} />
                   </Form.Item>
                 </Col>
-
-                {/* <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                    name="department"
-                    label="Departamento"
-                    rules={[ruleRequired]}
-                >
-                    <Select
-                    options={selectDep}
-                    notFoundContent={
-                        "No se encontraron resultados."
-                    }
-                    />
-                </Form.Item>
-                </Col> */}
                 <Col lg={6} xs={22} offset={1}>
                   <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
                     <Input />
@@ -173,4 +152,10 @@ const TabJobs = ({ permissions, onFinishForm, ...props }) => {
   );
 };
 
-export default TabJobs;
+const mapState = (state) => {
+  return {
+    cat_job: state.catalogStore.cat_job,
+  };
+};
+
+export default connect(mapState)(TabJobs);

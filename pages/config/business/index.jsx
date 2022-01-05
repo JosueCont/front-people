@@ -62,104 +62,50 @@ const configBusiness = ({ ...props }) => {
   const [formBank] = Form.useForm();
   const [loadingTable, setLoadingTable] = useState(false);
   const [jobs, setJobs] = useState([]);
-  const [selectCompany, setselectCompany] = useState([]);
+  // const [selectCompany, setselectCompany] = useState([]);
   const [id, setId] = useState("");
   const [edit, setEdit] = useState(false);
   const [modal, setModal] = useState(false);
   const [deleted, setDeleted] = useState({});
   const [selectDep, setSelectDep] = useState([]);
-  const [permissions, setPermissions] = useState({});
   let nodeId = userCompanyId();
-  let nodePeople = userCompanyName();
   const urls = [
     `/business/department/?node=${nodeId}`,
     `/person/job/?node=${nodeId}`,
   ];
 
-  useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
-  }, []);
+  // const getCompanies = async () => {
+  //   try {
+  //     let response = await Axios.get(API_URL + `/business/node/`);
+  //     let data = response.data.results;
+  //     let options = [];
+  //     data.map((item) => {
+  //       options.push({
+  //         value: item.id,
+  //         label: item.name,
+  //         key: item.name + item.id,
+  //       });
+  //     });
+  //     setselectCompany(options);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.department.can.view"))
-        perms.view_department = true;
-      if (a.includes("people.department.can.create"))
-        perms.create_department = true;
-      if (a.includes("people.department.can.edit"))
-        perms.edit_department = true;
-      if (a.includes("people.department.can.delete"))
-        perms.delete_department = true;
-      if (a.includes("people.job.can.view")) perms.view_job = true;
-      if (a.includes("people.job.can.create")) perms.create_job = true;
-      if (a.includes("people.job.can.edit")) perms.edit_job = true;
-      if (a.includes("people.job.can.delete")) perms.delete_job = true;
-      if (a.includes("people.person_type.can.view"))
-        perms.view_persontype = true;
-      if (a.includes("people.person_type.can.create"))
-        perms.create_persontype = true;
-      if (a.includes("people.person_type.can.edit"))
-        perms.edit_persontype = true;
-      if (a.includes("people.person_type.can.delete"))
-        perms.delete_persontype = true;
-      if (a.includes("people.relationship.can.view"))
-        perms.view_relationship = true;
-      if (a.includes("people.relationship.can.create"))
-        perms.create_relationship = true;
-      if (a.includes("people.relationship.can.edit"))
-        perms.edit_relationship = true;
-      if (a.includes("people.relationship.can.delete"))
-        perms.delete_relationship = true;
-      if (a.includes("people.document_type.can.view"))
-        perms.view_documenttype = true;
-      if (a.includes("people.document_type.can.create"))
-        perms.create_documenttype = true;
-      if (a.includes("people.document_type.can.edit"))
-        perms.edit_documenttype = true;
-      if (a.includes("people.document_type.can.delete"))
-        perms.delete_documenttype = true;
-      if (a.includes("people.bank.can.view")) perms.view_bank = true;
-      if (a.includes("people.bank.can.create")) perms.create_bank = true;
-      if (a.includes("people.bank.can.edit")) perms.edit_bank = true;
-      if (a.includes("people.bank.can.delete")) perms.delete_bank = true;
-    });
-    setPermissions(perms);
-  };
-
-  const getCompanies = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/business/node/`);
-      let data = response.data.results;
-      let options = [];
-      data.map((item) => {
-        options.push({
-          value: item.id,
-          label: item.name,
-          key: item.name + item.id,
-        });
-      });
-      setselectCompany(options);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getCatalog = (url) => {
-    Axios.get(API_URL + url)
-      .then((response) => {
-        if (url == `/business/department/?node=${nodeId}`)
-          setDepartments(response.data.results);
-        if (url == `/person/job/?node=${nodeId}`) setJobs(response.data);
-        getCompanies();
-        setLoadingTable(false);
-      })
-      .catch((error) => {
-        setLoadingTable(false);
-        console.log(error);
-      });
-  };
+  // const getCatalog = (url) => {
+  //   Axios.get(API_URL + url)
+  //     .then((response) => {
+  //       if (url == `/business/department/?node=${nodeId}`)
+  //         setDepartments(response.data.results);
+  //       if (url == `/person/job/?node=${nodeId}`) setJobs(response.data);
+  //       // getCompanies();
+  //       setLoadingTable(false);
+  //     })
+  //     .catch((error) => {
+  //       setLoadingTable(false);
+  //       console.log(error);
+  //     });
+  // };
 
   const onFinishForm = (value, url) => {
     if (id != "") {
@@ -274,25 +220,25 @@ const configBusiness = ({ ...props }) => {
     }
   };
 
-  const onchangeVisible = (value) => {
-    value.is_visible ? (value.is_visible = false) : (value.is_visible = true);
-    let data = {
-      id: value.id,
-      is_visible: value.is_visible,
-      node: nodeId,
-    };
-    Axios.post(API_URL + `/setup/document-type/change_is_visible/`, data)
-      .then((response) => {
-        setLoadingTable(true);
-        getCatalog(`/setup/document-type/?node=${nodeId}`);
-      })
-      .catch((error) => {
-        message.error("Ocurrio un error intente de nuevo.");
-        setLoadingTable(false);
-        getCatalog("/setup/document-type/");
-        console.log(error);
-      });
-  };
+  // const onchangeVisible = (value) => {
+  //   value.is_visible ? (value.is_visible = false) : (value.is_visible = true);
+  //   let data = {
+  //     id: value.id,
+  //     is_visible: value.is_visible,
+  //     node: nodeId,
+  //   };
+  //   Axios.post(API_URL + `/setup/document-type/change_is_visible/`, data)
+  //     .then((response) => {
+  //       setLoadingTable(true);
+  //       getCatalog(`/setup/document-type/?node=${nodeId}`);
+  //     })
+  //     .catch((error) => {
+  //       message.error("Ocurrio un error intente de nuevo.");
+  //       setLoadingTable(false);
+  //       getCatalog("/setup/document-type/");
+  //       console.log(error);
+  //     });
+  // };
 
   const showModal = () => {
     modal ? setModal(false) : setModal(true);
@@ -333,22 +279,22 @@ const configBusiness = ({ ...props }) => {
     setEdit(false);
   };
 
-  const changeNode = (value) => {
-    formJob.setFieldsValue({
-      department: "",
-    });
-    Axios.get(API_URL + `/business/department/?node=${value}`)
-      .then((response) => {
-        let data = response.data.results;
-        data = data.map((a) => {
-          return { label: a.name, value: a.id, key: a.name + a.id };
-        });
-        setSelectDep(data);
-      })
-      .catch((error) => {
-        setSelectDep([]);
-      });
-  };
+  // const changeNode = (value) => {
+  //   formJob.setFieldsValue({
+  //     department: "",
+  //   });
+  //   Axios.get(API_URL + `/business/department/?node=${value}`)
+  //     .then((response) => {
+  //       let data = response.data.results;
+  //       data = data.map((a) => {
+  //         return { label: a.name, value: a.id, key: a.name + a.id };
+  //       });
+  //       setSelectDep(data);
+  //     })
+  //     .catch((error) => {
+  //       setSelectDep([]);
+  //     });
+  // };
 
   useEffect(() => {
     if (deleted.id) {
@@ -388,179 +334,173 @@ const configBusiness = ({ ...props }) => {
           style={{ minHeight: 380, height: "100%" }}
         >
           <Card bordered={true}>
-            {permissions.view_department ||
-            permissions.view_bank ||
-            permissions.view_documenttype ||
-            permissions.view_job ||
-            permissions.view_persontype ||
-            permissions.view_relationship ? (
-              <>
-                <Title style={{ fontSize: "25px" }}>Catálogos</Title>
-                <Tabs tabPosition={"left"}>
-                  {permissions.view_department && (
-                    <TabPane
-                      tab={
-                        <Tooltip title="Departamentos">
-                          <div className="container-title-tab">
-                            <GoldOutlined />
-                            <div className="text-title-tab">Departamentos</div>
-                          </div>
-                        </Tooltip>
-                      }
-                      key="tab_1"
-                    >
-                      <Departaments
-                        permissions={permissions}
-                        ruleRequired={ruleRequired}
-                        onFinishForm={onFinishForm}
-                      />
-                    </TabPane>
-                  )}
-
-                  {permissions.view_job && (
-                    <TabPane
-                      tab={
-                        <Tooltip title="Puestos de trabajo">
-                          <div className="container-title-tab">
-                            <ApartmentOutlined />
-                            <div className="text-title-tab">
-                              Puestos de trabajo
-                            </div>
-                          </div>
-                        </Tooltip>
-                      }
-                      key="tab_2"
-                    >
-                      <TabJobs
-                        permissions={permissions}
-                        ruleRequired={ruleRequired}
-                        onFinishForm={onFinishForm}
-                      />
-                    </TabPane>
-                  )}
-
-                  {permissions.view_persontype && (
-                    <TabPane
-                      tab={
-                        <Tooltip title="Tipos de persona">
-                          <div className="container-title-tab">
-                            <UserOutlined />
-                            <div className="text-title-tab">
-                              Tipos de personas
-                            </div>
-                          </div>
-                        </Tooltip>
-                      }
-                      key="tab_3"
-                    >
-                      <PersonTypes
-                        permissions={permissions}
-                        ruleRequired={ruleRequired}
-                        onFinishForm={onFinishForm}
-                      />
-                    </TabPane>
-                  )}
-
-                  {permissions.view_relationship && (
-                    <TabPane
-                      tab={
-                        <Tooltip title="Parentescos">
-                          <div className="container-title-tab">
-                            <UserSwitchOutlined />
-                            <div className="text-title-tab">Parentescos</div>
-                          </div>
-                        </Tooltip>
-                      }
-                      key="tab_4"
-                    >
-                      <Relationship
-                        permissions={permissions}
-                        ruleRequired={ruleRequired}
-                        onFinishForm={onFinishForm}
-                      />
-                    </TabPane>
-                  )}
-
-                  {permissions.view_documenttype && (
-                    <TabPane
-                      tab={
-                        <Tooltip title="Tipos de documento">
-                          <div className="container-title-tab">
-                            <FileOutlined />
-                            <div className="text-title-tab">
-                              Tipos de documento
-                            </div>
-                          </div>
-                        </Tooltip>
-                      }
-                      key="tab_5"
-                    >
-                      <DocumentsTypes
-                        permissions={permissions}
-                        ruleRequired={ruleRequired}
-                        onFinishForm={onFinishForm}
-                      />
-                    </TabPane>
-                  )}
-
-                  {permissions.view_bank && (
-                    <TabPane
-                      tab={
-                        <Tooltip title="Bancos">
-                          <div className="container-title-tab">
-                            <BankOutlined />
-                            <div className="text-title-tab">Bancos</div>
-                          </div>
-                        </Tooltip>
-                      }
-                      key="tab_6"
-                    >
-                      <Banks
-                        permissions={permissions}
-                        ruleRequired={ruleRequired}
-                        onFinishForm={onFinishForm}
-                      />
-                    </TabPane>
-                  )}
-
+            <>
+              <Title style={{ fontSize: "25px" }}>Catálogos</Title>
+              <Tabs tabPosition={"left"}>
+                {props.permissions.department.view && (
                   <TabPane
                     tab={
                       <Tooltip title="Departamentos">
                         <div className="container-title-tab">
                           <GoldOutlined />
-                          <div className="text-title-tab">Niveles</div>
+                          <div className="text-title-tab">Departamentos</div>
                         </div>
                       </Tooltip>
                     }
-                    key="tab_7"
+                    key="tab_1"
                   >
-                    <Levels
+                    <Departaments
+                      permissions={props.permissions.department}
                       ruleRequired={ruleRequired}
                       onFinishForm={onFinishForm}
                     />
                   </TabPane>
+                )}
 
+                {props.permissions.job.view && (
                   <TabPane
                     tab={
-                      <Tooltip title="Departamentos">
+                      <Tooltip title="Puestos de trabajo">
                         <div className="container-title-tab">
-                          <GoldOutlined />
-                          <div className="text-title-tab">Plazas</div>
+                          <ApartmentOutlined />
+                          <div className="text-title-tab">
+                            Puestos de trabajo
+                          </div>
                         </div>
                       </Tooltip>
                     }
-                    key="tab_8"
+                    key="tab_2"
                   >
-                    <WorkTitle
+                    <TabJobs
+                      permissions={props.permissions.job}
                       ruleRequired={ruleRequired}
                       onFinishForm={onFinishForm}
                     />
                   </TabPane>
-                </Tabs>
-              </>
-            ) : (
+                )}
+
+                {props.permissions.person_type.view && (
+                  <TabPane
+                    tab={
+                      <Tooltip title="Tipos de persona">
+                        <div className="container-title-tab">
+                          <UserOutlined />
+                          <div className="text-title-tab">
+                            Tipos de personas
+                          </div>
+                        </div>
+                      </Tooltip>
+                    }
+                    key="tab_3"
+                  >
+                    <PersonTypes
+                      permissions={props.permissions.person_type}
+                      ruleRequired={ruleRequired}
+                      onFinishForm={onFinishForm}
+                    />
+                  </TabPane>
+                )}
+
+                {props.permissions.relationship.view && (
+                  <TabPane
+                    tab={
+                      <Tooltip title="Parentescos">
+                        <div className="container-title-tab">
+                          <UserSwitchOutlined />
+                          <div className="text-title-tab">Parentescos</div>
+                        </div>
+                      </Tooltip>
+                    }
+                    key="tab_4"
+                  >
+                    <Relationship
+                      permissions={props.permissions.relationship}
+                      ruleRequired={ruleRequired}
+                      onFinishForm={onFinishForm}
+                    />
+                  </TabPane>
+                )}
+
+                {props.permissions.document_type.view && (
+                  <TabPane
+                    tab={
+                      <Tooltip title="Tipos de documento">
+                        <div className="container-title-tab">
+                          <FileOutlined />
+                          <div className="text-title-tab">
+                            Tipos de documento
+                          </div>
+                        </div>
+                      </Tooltip>
+                    }
+                    key="tab_5"
+                  >
+                    <DocumentsTypes
+                      permissions={props.permissions.document_type}
+                      ruleRequired={ruleRequired}
+                      onFinishForm={onFinishForm}
+                    />
+                  </TabPane>
+                )}
+
+                {props.permissions.bank.view && (
+                  <TabPane
+                    tab={
+                      <Tooltip title="Bancos">
+                        <div className="container-title-tab">
+                          <BankOutlined />
+                          <div className="text-title-tab">Bancos</div>
+                        </div>
+                      </Tooltip>
+                    }
+                    key="tab_6"
+                  >
+                    <Banks
+                      permissions={props.permissions.bank}
+                      ruleRequired={ruleRequired}
+                      onFinishForm={onFinishForm}
+                    />
+                  </TabPane>
+                )}
+
+                <TabPane
+                  tab={
+                    <Tooltip title="Departamentos">
+                      <div className="container-title-tab">
+                        <GoldOutlined />
+                        <div className="text-title-tab">Niveles</div>
+                      </div>
+                    </Tooltip>
+                  }
+                  key="tab_7"
+                >
+                  <Levels
+                    ruleRequired={ruleRequired}
+                    onFinishForm={onFinishForm}
+                  />
+                </TabPane>
+
+                <TabPane
+                  tab={
+                    <Tooltip title="Departamentos">
+                      <div className="container-title-tab">
+                        <GoldOutlined />
+                        <div className="text-title-tab">Plazas</div>
+                      </div>
+                    </Tooltip>
+                  }
+                  key="tab_8"
+                >
+                  <WorkTitle
+                    ruleRequired={ruleRequired}
+                    onFinishForm={onFinishForm}
+                  />
+                </TabPane>
+              </Tabs>
+            </>
+            {/* ) : (
               <div className="notAllowed" />
-            )}
+            )} */}
           </Card>
         </div>
       </MainLayout>
@@ -571,17 +511,7 @@ const configBusiness = ({ ...props }) => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
-    cat_relationship: state.catalogStore.cat_relationship,
-    cat_bank: state.catalogStore.cat_bank,
-    cat_experience_type: state.catalogStore.cat_experience_type,
-    cat_reason_separation: state.catalogStore.cat_reason_separation,
-    cat_labor_relation: state.catalogStore.cat_labor_relation,
-    cat_treatment: state.catalogStore.cat_treatment,
-    cat_document_type: state.catalogStore.cat_document_type,
-    cat_departments: state.catalogStore.cat_departments,
-    cat_job: state.catalogStore.cat_job,
-    cat_person_type: state.catalogStore.cat_person_type,
-    person_type_table: state.catalogStore.person_type_table,
+    permissions: state.userStore.permissions,
   };
 };
 

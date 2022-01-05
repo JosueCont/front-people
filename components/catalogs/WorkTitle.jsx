@@ -14,6 +14,7 @@ import {
 import { GoldOutlined } from "@ant-design/icons";
 import { userCompanyName } from "../../libs/auth";
 import { ruleRequired } from "../../utils/rules";
+import { connect } from "react-redux";
 
 const WorkTitle = ({ onFinishForm, ...props }) => {
   let nodePeople = userCompanyName();
@@ -140,4 +141,8 @@ const WorkTitle = ({ onFinishForm, ...props }) => {
   );
 };
 
-export default WorkTitle;
+const mapState = (state) => {
+  return {};
+};
+
+export default connect(mapState)(WorkTitle);

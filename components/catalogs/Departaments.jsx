@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Tabs,
-  Tooltip,
   Typography,
   Form,
   Row,
@@ -11,11 +10,11 @@ import {
   Spin,
   Input,
 } from "antd";
-import { GoldOutlined } from "@ant-design/icons";
 import { userCompanyName } from "../../libs/auth";
 import MassiveImportDepartments from "../business/MassiveImportDepartments";
 import { ruleRequired } from "../../utils/rules";
-/* import MassiveImportJobs from ".../components/MassiveImportJobs"; */
+import { connect } from "react-redux";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 const Departaments = ({ permissions, onFinishForm, ...props }) => {
   let nodePeople = userCompanyName();
@@ -57,12 +56,12 @@ const Departaments = ({ permissions, onFinishForm, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit_department && (
+              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined onClick={() => editRegister(item, "dep")} />
                 </Col>
               )}
-              {permissions.delete_department && (
+              {permissions.delete && (
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -84,7 +83,7 @@ const Departaments = ({ permissions, onFinishForm, ...props }) => {
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
-      {permissions.create_department && (
+      {permissions.create && (
         <Tabs tabPosition={"top"}>
           <TabPane
             tab="Individual"
@@ -163,4 +162,10 @@ const Departaments = ({ permissions, onFinishForm, ...props }) => {
   );
 };
 
-export default Departaments;
+const mapState = (state) => {
+  return {
+    cat_departments: state.catalogStore.cat_departments,
+  };
+};
+
+export default connect(mapState)(Departaments);
