@@ -12,6 +12,7 @@ import {
   Form,
   Select,
   Tooltip,
+  Card
 } from "antd";
 import {
   PlusOutlined,
@@ -265,13 +266,13 @@ const UploadPayroll = () => {
         </Breadcrumb.Item>
         <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
       </Breadcrumb>
-      <div className="container" style={{ width: "100%" }}>
-        {permissions.view ? (
-          <>
-            <div className="top-container-border-radius">
-              <Row justify="space-between">
+      <Row justify="end" gutter={[10,10]}>
+        <Col span={24}>
+          <Card className="form_header">
+            <Row justify="space-between">
                 <Col>
                   <Form
+                    size="large"
                     name="filter"
                     onFinish={filter}
                     layout="vertical"
@@ -286,10 +287,13 @@ const UploadPayroll = () => {
                           key="collaborator"
                           name="collaborator"
                           label="Colaborador"
+                          size="large"
+                          placeholder="Colaborador"
+                          showLabel={false}
                         />
                       </Col>
                       <Col>
-                        <Form.Item key="rfc" name="rfc" label="Rfc">
+                        <Form.Item key="rfc" name="rfc">
                           <Input placeholder="Rfc" />
                         </Form.Item>
                       </Col>
@@ -306,6 +310,7 @@ const UploadPayroll = () => {
                         <SelectDepartment
                           companyId={nodeId}
                           key="SelectDepartment"
+                          titleLabel={false}
                         />
                       </Col>
                       <Col style={{ display: "flex" }}>
@@ -341,7 +346,7 @@ const UploadPayroll = () => {
                   </Form>
                 </Col>
                 <Col style={{ display: "flex" }}>
-                  {permissions.create && (
+                  {/* {permissions.create && ( */}
                     <Button
                       style={{
                         background: "#fa8c16",
@@ -354,14 +359,15 @@ const UploadPayroll = () => {
                       <PlusOutlined />
                       Nuevo
                     </Button>
-                  )}
+                  {/* )} */}
                 </Col>
-              </Row>
-            </div>
-
-            <Row>
-              <Col span={24}>
-                <Table
+            </Row>
+          </Card>
+        </Col>
+        <Col span={24}>
+          <Card className="card_table">
+            <Table
+                
                   size="small"
                   columns={columns}
                   dataSource={vouchers}
@@ -372,14 +378,24 @@ const UploadPayroll = () => {
                       ? "Cargando..."
                       : "No se encontraron resultados.",
                   }}
-                  className={"mainTable"}
+                  className={"mainTable headers_transparent"}
                 />
+          </Card>
+        </Col>
+      </Row>
+
+      <div className="container" style={{ width: "100%" }}>
+        {/* {permissions.view ? ( */}
+          <>
+            <Row>
+              <Col span={24}>
+                
               </Col>
             </Row>
           </>
-        ) : (
+        {/* ) : (
           <div className="notAllowed" />
-        )}
+        )} */}
       </div>
     </MainLayout>
   );

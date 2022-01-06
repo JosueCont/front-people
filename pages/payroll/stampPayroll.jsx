@@ -13,7 +13,11 @@ import {
   Spin,
   Table,
   Tooltip,
+  Badge,
   Card,
+  Avatar,
+  Space,
+  Typography
 } from "antd";
 import { useRouter } from "next/router";
 import {
@@ -21,12 +25,16 @@ import {
   PlusOutlined,
   FileOutlined,
   Html5Outlined,
+  RightOutlined,
+  DownOutlined,
+  EditFilled,
 } from "@ant-design/icons";
 import { userCompanyId } from "../../libs/auth";
 import { periodicityNom } from "../../utils/constant";
 import webApiPayroll from "../../api/webApiPayroll";
 import FormPerceptionsDeductions from "../../components/payroll/forms/FormPerceptionsDeductions";
 import { Global, css } from "@emotion/core";
+import { EditSharp } from "@material-ui/icons";
 
 const StampPayroll = () => {
   const { Panel } = Collapse;
@@ -43,6 +51,9 @@ const StampPayroll = () => {
   const [objectStamp, setObjectStamp] = useState(null);
   const [stamped, setStamped] = useState(false);
   const [stampedInvoices, setStampedInvoices] = useState([]);
+  const [expandRow, setExpandRow] = useState(null)
+  const {Text} = Typography
+
   let nodeId = userCompanyId();
 
   /* functions */
@@ -311,13 +322,137 @@ const StampPayroll = () => {
     }
   };
 
+
+  const columnsNew = [
+  { 
+    title: '', 
+    className: 'column_arrow',
+    key: 'arrow',
+    render: row => <>
+      { expandRow === row.key ? <DownOutlined/> : <RightOutlined />}
+    </>  
+  },  
+  { title: 'Name', className: 'column_name', dataIndex: 'name', key: 'name',
+    render: name => <Space>
+      <Avatar src="https://joeschmoe.io/api/v1/random" />
+      {name}
+    </Space>
+  },
+    
+  { title: 'Age', dataIndex: 'age', key: 'age' },
+    
+  { title: 'Address', dataIndex: 'address', key: 'address' },
+];
+
+const dataNew = [
+  {
+    key: 1,
+    name: 'John Brown',
+    age: 32,
+    address: 'New York No. 1 Lake Park',
+    description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.',
+  },
+  {
+    key: 2,
+    name: 'Jim Green',
+    age: 42,
+    address: 'London No. 1 Lake Park',
+    description: 'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.',
+  },
+  {
+    key: 3,
+    name: 'Not Expandable',
+    age: 29,
+    address: 'Jiangsu No. 1 Lake Park',
+    description: 'This not expandable',
+  },
+  {
+    key: 4,
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    description: 'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.',
+  },
+];
+
+  const rowExpand = (expanded, row) => {
+    if(!expanded){
+      setExpandRow(false)
+    }else{
+      setExpandRow(row.key)
+    }
+  }
+
+
+  const expandedRowRender = () =>{
+    const columns = [
+      { title: 'concepto',  key: 'concept-title',
+        render: () => (
+          <Space size="middle">
+            <Text>
+              *Concepto
+            </Text>
+            <Text>
+              Otros pagos
+            </Text>
+          </Space>
+        ),
+      },
+      { title: 'monto', key: 'ampunt',
+        render: () => (
+          <Space size="middle">
+            <Text>
+              Monto
+            </Text>
+            <Text>
+              $200.00
+            </Text>
+          </Space>
+        ),
+      },
+      {
+        title: 'Action',
+        dataIndex: 'operation',
+        align:'right',
+        key: 'operation',
+        render: () => (
+          <Space size="middle">
+            <EditFilled />
+          </Space>
+        ),
+      },
+    ];
+
+    const data = [{
+        key: 0,
+        date: '2014-12-24 23:12:00',
+        name: 'This is production name',
+        upgradeNum: 'Upgraded: 56',
+      }]
+
+    return <Table className="subTable"  columns={columns} dataSource={data} pagination={false} showHeader={false} />;
+  }
+
   return (
     <>
       <Global 
         styles={`
-          .ant-card{
-            background: #7B25F1 !important;
+          
+          .column_arrow{
+            width: 10px !important;
+            padding:10px 0px 10px 10px !important;
           }
+          .column_name{
+            padding-left:10px !important;
+          }
+          .subTable .ant-table{
+            margin-left: 70px !important;
+            background: rgb(252 102 2 / 10%);
+          }
+          .subTable .ant-table tr:hover td{
+            background: rgb(252 102 2 / 10%) !important;
+          }
+          
         `}
       />
     <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["nomina"]}>
@@ -330,6 +465,7 @@ const StampPayroll = () => {
         </Breadcrumb.Item>
         <Breadcrumb.Item>Timbrado de nomina</Breadcrumb.Item>
       </Breadcrumb>  
+      
       <Row justify="end" gutter={[10,10]}>
         <Col span={24}>
           <Card className="form_header">
@@ -393,8 +529,29 @@ const StampPayroll = () => {
             Enviar
           </Button>
         </Col>
+        <Col span={24}>
+          <Card className="card_table">
+            <Table
+              className="headers_transparent"
+              columns={columnsNew}
+              /* expandable={{
+                expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
+              }} */
+              expandable={
+                {expandedRowRender}
+              }
+              expandRowByClick
+              onExpand={(expanded, record) =>  rowExpand(expanded, record) }
+              dataSource={dataNew}
+              expandIconColumnIndex={4}
+            />
+          </Card>
+        </Col>
       </Row>
-      <Row justify="end">
+
+      
+
+      <Row justify="end" style={{display:'none'}}>
         <Col span={24}>
           <Spin tip="Cargando..." spinning={loading}>
             {!stamped && (

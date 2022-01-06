@@ -30,7 +30,7 @@ export const asyncForEach = async (array, callback) => {
   }
 };
 
-export const UserPermissions = (permits, is_admin = false) => {
+export const UserPermissions = (permits=null, is_admin = false) => {
   let perms = {
     person: {
       view: is_admin,
@@ -171,7 +171,7 @@ export const UserPermissions = (permits, is_admin = false) => {
       dashboard: { statistics: is_admin },
     },
   };
-  if (is_admin) {
+  if (is_admin || !permits) {
     return perms;
   }
   try {

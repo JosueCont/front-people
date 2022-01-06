@@ -8,8 +8,7 @@ import webApiPayroll from "../../../api/webApiPayroll";
 import webApiFiscal from "../../../api/WebApiFiscal";
 import { StepContent } from "@material-ui/core";
 import { Receipt, Reorder } from "@material-ui/icons";
-import { treeDecimal } from "../../../utils/constant";
-import { ruleRequired } from "../../../utils/rules";
+import { ruleRequired, treeDecimal } from "../../../utils/rules";
 
 const FormPerceptionsDeductions = ({
   setIsModalVisible,

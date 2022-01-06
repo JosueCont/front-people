@@ -23,7 +23,8 @@ import {
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
-import { genders, ruleEmail } from "../../utils/constant";
+import { genders } from "../../utils/constant";
+import {ruleEmail} from '../../utils/rules';
 import moment from "moment";
 import { getPeopleCompany } from "../../redux/UserDuck";
 import SelectGroup from "../selects/SelectGroup";

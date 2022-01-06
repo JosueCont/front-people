@@ -18,7 +18,6 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import Axios from "axios";
 import { API_URL } from "./../../config/config";
 import moment from "moment";
-
 import {
   EditOutlined,
   SearchOutlined,
@@ -28,8 +27,10 @@ import {
 } from "@ant-design/icons";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from 'react-redux'
 
-const Lending = () => {
+
+const Lending = ({permissions, configPermissions, ...props}) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -38,7 +39,7 @@ const Lending = () => {
   const [lendingList, setLendingList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   let nodeId = userCompanyId();
 
   const optionStatus = [
@@ -87,23 +88,9 @@ const Lending = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getLending();
   }, [route]);
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.loan.can.view")) perms.view = true;
-      if (a.includes("people.loan.can.create")) perms.create = true;
-      if (a.includes("people.loan.can.edit")) perms.edit = true;
-      if (a.includes("people.loan.can.delete")) perms.delete = true;
-      if (a.includes("people.loanconfigure.can.view")) perms.config = true;
-      if (a.includes("people.loan.function.approve_loan")) perms.approve = true;
-      if (a.includes("people.loan.function.reject_loan")) perms.reject = true;
-    });
-    setPermissions(perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -207,7 +194,7 @@ const Lending = () => {
                   </Form>
                 </Col>
                 <Col style={{ display: "flex" }}>
-                  {permissions.config && (
+                  {configPermissions.view && (
                     <Button
                       key="config"
                       style={{
@@ -347,4 +334,12 @@ const Lending = () => {
   );
 };
 
-export default withAuthSync(Lending);
+
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.loan,
+    configPermissions: state.userStore.permissions.loanconfigure
+  };
+};
+
+export default connect(mapState)(withAuthSync(Lending));
