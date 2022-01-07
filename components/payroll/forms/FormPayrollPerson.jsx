@@ -19,8 +19,8 @@ import { API_URL } from "../../../config/config";
 import moment from "moment";
 import WebApiPayroll from "../../../api/webApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
-import { treeDecimal } from "../../../utils/constant";
-import { ruleRequired } from "../../../utils/rules";
+/* import { treeDecimal } from "../../../utils/constant"; */
+import { ruleRequired, treeDecimal } from "../../../utils/rules";
 
 const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const { Title } = Typography;

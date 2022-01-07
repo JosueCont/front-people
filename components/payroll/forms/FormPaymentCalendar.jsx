@@ -38,6 +38,12 @@ const FormPaymentCalendar = ({
   const [period, setPeriod] = useState("");
   const [paymentPeriodicity, setPaymentPeriodicity] = useState([]);
 
+  /* Const switchs */
+  const [adjustmentAppy, setAdjustmentApply] = useState(false);
+  const [periodActive, setPeriodActive] = useState(false);
+  const [paymentSaturday, setPaymentSaturday] = useState(false);
+  const [paymentSunday, setPaymentSunday] = useState(false);
+
   useEffect(() => {
     getTypeTax();
     getPaymentPeriodicity();
@@ -74,6 +80,7 @@ const FormPaymentCalendar = ({
     setLoading(true);
     try {
       let response = await WebApi.getDetailPaymentCalendar(idPaymentCalendar);
+      console.log('item => ', response.data);
       if (response.data) {
         let item = response.data;
         formPaymentCalendar.setFieldsValue({
@@ -84,17 +91,21 @@ const FormPaymentCalendar = ({
           period: item.period ? moment().year(item.period) : "",
           start_incidence: item.start_incidence,
           end_incidence: item.end_incidence,
-          adjustment: item.adjustment ? item.adjustment : false,
-          active: item.active ? item.active : false,
+          /* adjustment: item.adjustment ? item.adjustment : false, */
+          /* active: item.active ? item.active : false, */
           pay_before: item.pay_before ? parseInt(item.pay_before) : 0,
-          payment_saturday: item.payment_saturday
+          /* payment_saturday: item.payment_saturday
             ? item.payment_saturday
-            : false,
-          payment_sunday: item.payment_sunday ? item.payment_sunday : false,
+            : false, */
+          /* payment_sunday: item.payment_sunday ? item.payment_sunday : false, */
           activation_date: item.activation_date
             ? moment(item.activation_date)
             : "",
         });
+        setAdjustmentApply(item.adjustment);
+        setPeriodActive(item.active);
+        setPaymentSaturday(item.payment_saturday)
+        setPaymentSunday(item.payment_saturday)
         setStartDate(item.start_date);
         setActivationtDate(item.activation_date);
         setPeriod(item.period);
@@ -112,9 +123,12 @@ const FormPaymentCalendar = ({
         content: messageSaveSuccess,
         className: "custom-class",
       });
-      route.push({ pathname: "/payroll/paymentCalendar" });
+      closeModal();
+      /* route.push({ pathname: "/payroll/paymentCalendar" }); */
     } catch (error) {
       console.log(error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -125,7 +139,8 @@ const FormPaymentCalendar = ({
         content: "Guardado correctamente.",
         className: "custom-class",
       });
-      route.push({ pathname: "/payroll/paymentCalendar" });
+      /* route.push({ pathname: "/payroll/paymentCalendar" }); */
+      closeModal();
     } catch (error) {
       console.log(error);
     }
@@ -143,14 +158,14 @@ const FormPaymentCalendar = ({
     setPeriod(dateString);
   };
   const formFinish = (value) => {
+    setLoading(true);
     value.node = parseInt(nodeId);
-    value.active = value.active ? value.active : false;
-    value.adjustment = value.adjustment ? value.adjustment : false;
+    value.active = periodActive;
+    value.adjustment = adjustmentAppy;
     value.pay_before = value.pay_before ? parseInt(value.pay_before) : 0;
-    value.payment_saturday = value.payment_saturday
-      ? value.payment_saturday
-      : false;
-    value.payment_sunday = value.payment_sunday ? value.payment_sunday : false;
+    value.payment_saturday =  paymentSaturday;
+    value.payment_sunday = paymentSunday
+    
     if (startDate) {
       value.start_date = startDate;
     }
@@ -178,6 +193,32 @@ const FormPaymentCalendar = ({
       savePaymentCalendar(value);
     }
   };
+  
+  const changeAdjustmentAppy = (checked) => {
+    console.log('checked =>', checked);
+    setAdjustmentApply(checked)
+  }
+
+  const changePeriodActive = (checked) => {
+    setPeriodActive(checked);
+  }
+
+  const changePaymentSaturday = (checked) =>{
+    setPaymentSaturday(checked)
+  }
+
+  const changePaymentSunday = (checked) =>{
+    setPaymentSunday(checked)
+  }
+
+  const closeModal = () =>{
+    props.setIsModalVisible(false);
+    setPaymentSunday(false);
+    setPaymentSaturday(false);
+    setAdjustmentApply(false);
+    setPeriodActive(false);
+    props.getPaymentCalendars();
+  }
 
   return (
     <>
@@ -222,9 +263,11 @@ const FormPaymentCalendar = ({
                     Aplicar ajuste
                     <Switch
                       size="small"
+                      checked={adjustmentAppy}
                       checkedChildren={<CheckOutlined />}
                       unCheckedChildren={<CloseOutlined />}
                       style={{ marginLeft: 10 }}
+                      onChange={changeAdjustmentAppy}
                     />
                   </>
                 }
@@ -278,6 +321,8 @@ const FormPaymentCalendar = ({
                     Activo
                     <Switch
                       size="small"
+                      checked={periodActive}
+                      onChange={changePeriodActive}
                       checkedChildren={<CheckOutlined />}
                       unCheckedChildren={<CloseOutlined />}
                       style={{ marginLeft: 10 }}
@@ -332,6 +377,8 @@ const FormPaymentCalendar = ({
                         <small>Pagar sabados</small>
                         <Switch
                           size="small"
+                          checked={paymentSaturday}
+                          onChange={changePaymentSaturday}
                           checkedChildren={<CheckOutlined />}
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
@@ -341,6 +388,8 @@ const FormPaymentCalendar = ({
                         <small>Pagar Domingos</small>
                         <Switch
                           size="small"
+                          checked={paymentSunday}
+                          onChange={changePaymentSunday}
                           checkedChildren={<CheckOutlined />}
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}

@@ -17,6 +17,7 @@ import {
   UserAddOutlined,
   DeploymentUnitOutlined,
   AreaChartOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import {
@@ -24,7 +25,7 @@ import {
   BusinessCenterOutlined,
   BusinessOutlined,
   SettingsOutlined,
-  GroupOutlined
+  GroupOutlined,
 } from "@material-ui/icons";
 
 const { Sider } = Layout;
@@ -62,9 +63,16 @@ const MainSider = ({
   return (
     <>
       <Global
-        styles={`
+        styles={css`
                 .mainSideMenu, .ant-menu-inline-collapsed{
                     border-right: solid 1px #8070F2 !important;
+                }
+
+                .mainMenu .ant-menu-item{
+                  text-align: ${collapsed ? "center;" : "left;"}
+                }
+                .mainSideMenu ul  li{
+                  padding: ${collapsed ? "auto" : "0px 30px !important;"}
                 }
                 .mainSideMenu ul  li.ant-menu-item, li.ant-menu-submenu{
                     padding: ${collapsed ? "auto" : "0px 30px !important;"}
@@ -137,7 +145,14 @@ const MainSider = ({
                 .mainMenu li.ant-menu-submenu-selected  > ul li {
                     color: var(--fontColorSecondary) !important;
                 }
-                
+                .item_custom_icon .ant-menu-submenu-title{
+                  white-space: break-spaces;  
+                }
+                .custom_icon{
+                  margin-right:10px;
+                  font-size: ${collapsed ? "19px !important;" : "16px !important;"}
+                }
+                .ant-menu-item, 
 
             `}
       />
@@ -162,6 +177,7 @@ const MainSider = ({
           <Menu.Item
             key="dashboard"
             onClick={() => router.push({ pathname: "/dashboard" })}
+            icon={<AppstoreOutlined />}
             >
               Dashboard
             </Menu.Item>
@@ -187,8 +203,8 @@ const MainSider = ({
           <SubMenu
             key="config"
             title="Configuración"
-            icon={<SettingsOutlined />}
-            className="subMainMenu"
+            icon={<SettingsOutlined className="custom_icon" />}
+            className="subMainMenu item_custom_icon"
           >
             <Menu.Item
               key="catalogos"
@@ -327,19 +343,19 @@ const MainSider = ({
                     router.push({ pathname: "/payroll/stampPayroll" })
                   }
                 >
-                  Timbrado de nomina
+                  Calculo de nomina
                   {/* Calculo de nómina */}
                 </Menu.Item>
               </>
             )}
-            <Menu.Item
+            {/* <Menu.Item
               key="nomina_empresarial"
               onClick={() =>
                 router.push({ pathname: "/payrollvoucher/statisticsPayroll" })
               }
             >
               Nómina empresarial
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item
               key="recibos_nomina"
               onClick={() => router.push({ pathname: "/payrollvoucher" })}
@@ -392,8 +408,8 @@ const MainSider = ({
           <SubMenu
             key="uploads"
             title="Registro de errores"
-            className="subMainMenu"
-            icon={<BugReportOutlined />}
+            className="subMainMenu item_custom_icon"
+            icon={<BugReportOutlined className="custom_icon" />}
           >
             <Menu.Item
               key="persons_upload"
