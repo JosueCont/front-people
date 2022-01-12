@@ -33,12 +33,14 @@ import NodeTreeView from "./TreeView/treeview";
 import Cookie from "js-cookie";
 import { userId } from "../../libs/auth";
 import Clipboard from "../Clipboard";
+import { connect } from 'react-redux'
+
 
 const { TextArea } = Input;
 const { Content } = Layout;
 const { Option } = Select;
 
-const businessForm = () => {
+const businessForm = ({permissions, ...props}) => {
   let router = useRouter();
   const [business, setBusiness] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
@@ -56,7 +58,7 @@ const businessForm = () => {
   const [nodesTree, setNodesTree] = useState([]);
   const [updateModal, setUpdateModal] = useState(false);
   const [businessUpdate, setBusinessUpdate] = useState({});
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   let personId = userId();
   const [admin, setAdmin] = useState(false);
   const [addB, setAddB] = useState(false);
@@ -201,7 +203,7 @@ const businessForm = () => {
   useEffect(() => {
     personId = userId();
     const jwt = JSON.parse(Cookie.get("token"));
-    searchPermissions(jwt.perms);
+    /* searchPermissions(jwt.perms); */
     person();
     getNodesTree();
   }, []);
@@ -254,7 +256,7 @@ const businessForm = () => {
       });
   };
 
-  const searchPermissions = (data) => {
+  /* const searchPermissions = (data) => {
     const perms = {};
     data.map((a) => {
       if (a.includes("people.company.can.view")) perms.view = true;
@@ -265,7 +267,7 @@ const businessForm = () => {
         perms.change_status = true;
     });
     setPermissions(perms);
-  };
+  }; */
 
   const getNodesTree = () => {
     Axios.post(API_URL + `/business/node/node_in_cascade/`, {
@@ -300,7 +302,7 @@ const businessForm = () => {
         return (
           <>
             <Switch
-              disabled={permissions.change_status ? false : true}
+              disabled={permissions.change_is_active ? false : true}
               defaultChecked={item.active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
@@ -621,4 +623,11 @@ const businessForm = () => {
     </MainLayout>
   );
 };
-export default businessForm;
+
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.company
+  }
+}
+
+export default connect(mapState)(businessForm) ;

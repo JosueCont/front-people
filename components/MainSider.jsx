@@ -17,6 +17,7 @@ import {
   UserAddOutlined,
   DeploymentUnitOutlined,
   AreaChartOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import {
@@ -24,7 +25,7 @@ import {
   BusinessCenterOutlined,
   BusinessOutlined,
   SettingsOutlined,
-  GroupOutlined
+  GroupOutlined,
 } from "@material-ui/icons";
 
 const { Sider } = Layout;
@@ -62,9 +63,16 @@ const MainSider = ({
   return (
     <>
       <Global
-        styles={`
+        styles={css`
                 .mainSideMenu, .ant-menu-inline-collapsed{
                     border-right: solid 1px #8070F2 !important;
+                }
+
+                .mainMenu .ant-menu-item{
+                  text-align: ${collapsed ? "center;" : "left;"}
+                }
+                .mainSideMenu ul  li{
+                  padding: ${collapsed ? "auto" : "0px 30px !important;"}
                 }
                 .mainSideMenu ul  li.ant-menu-item, li.ant-menu-submenu{
                     padding: ${collapsed ? "auto" : "0px 30px !important;"}
@@ -137,7 +145,14 @@ const MainSider = ({
                 .mainMenu li.ant-menu-submenu-selected  > ul li {
                     color: var(--fontColorSecondary) !important;
                 }
-                
+                .item_custom_icon .ant-menu-submenu-title{
+                  white-space: break-spaces;  
+                }
+                .custom_icon{
+                  margin-right:10px;
+                  font-size: ${collapsed ? "19px !important;" : "16px !important;"}
+                }
+                .ant-menu-item, 
 
             `}
       />
@@ -162,6 +177,7 @@ const MainSider = ({
           <Menu.Item
             key="dashboard"
             onClick={() => router.push({ pathname: "/dashboard" })}
+            icon={<AppstoreOutlined />}
             >
               Dashboard
             </Menu.Item>
@@ -174,18 +190,21 @@ const MainSider = ({
               Personas
             </Menu.Item>
           }
-          <Menu.Item
-            key="business"
-            icon={<BusinessOutlined />}
-            onClick={() => router.push({ pathname: "/business" })}
-          >
-            Empresas
-          </Menu.Item>
+          {
+            props.permissions.company.view && 
+            <Menu.Item
+              key="business"
+              icon={<BusinessOutlined />}
+              onClick={() => router.push({ pathname: "/business" })}
+            >
+              Empresas
+            </Menu.Item>
+          }
           <SubMenu
             key="config"
             title="Configuración"
-            icon={<SettingsOutlined />}
-            className="subMainMenu"
+            icon={<SettingsOutlined className="custom_icon" />}
+            className="subMainMenu item_custom_icon"
           >
             <Menu.Item
               key="catalogos"
@@ -200,52 +219,74 @@ const MainSider = ({
               Perfiles de seguridad
             </Menu.Item>
           </SubMenu>
-          <SubMenu
-            key="comuniction"
-            title="Comunicación"
-            className="subMainMenu"
-            icon={<MessageOutlined />}
-          >
-            <Menu.Item
-              key="comunicados"
-              onClick={() =>
-                router.push({ pathname: "/comunication/releases" })
-              }
-            >
-              Comunicados
-            </Menu.Item>
-            <Menu.Item
-              key="eventos"
-              onClick={() => router.push({ pathname: "/comunication/events" })}
-            >
-              Eventos
-            </Menu.Item>
-          </SubMenu>
-          <Menu.Item
-            icon={<ProfileOutlined />}
-            key="reportes"
-            onClick={() => router.push({ pathname: "/reports" })}
-          >
-            Reportes
-          </Menu.Item>
+          {
+            (props.permissions.comunication.view || props.permissions.event.view) && (
+              <SubMenu
+                key="comuniction"
+                title="Comunicación"
+                className="subMainMenu"
+                icon={<MessageOutlined />}
+              >
+                {props.permissions.comunication.view && (
+                    <Menu.Item
+                    key="comunicados"
+                    onClick={() =>
+                      router.push({ pathname: "/comunication/releases" })
+                    }
+                  >
+                    Comunicados
+                  </Menu.Item>)
+                }
+                {
+                  props.permissions.event.view && (
+                  <Menu.Item
+                    key="eventos"
+                    onClick={() => router.push({ pathname: "/comunication/events" })}
+                  >
+                    Eventos
+                  </Menu.Item>
+                  )
+                }
+              </SubMenu>
+            )
+          }
+          {
+            props.permissions.report.view && (
+              <Menu.Item
+                icon={<ProfileOutlined />}
+                key="reportes"
+                onClick={() => router.push({ pathname: "/reports" })}
+              >
+                Reportes
+              </Menu.Item>
+            )
+          }
           <SubMenu
             key="solicitudes"
             title="Solicitudes"
             className="subMainMenu"
             icon={<FormOutlined />}
           >
-            <Menu.Item
-              key="prestamos"
-              onClick={() => router.push({ pathname: "/lending" })}
-            >
-              Préstamos
-            </Menu.Item>
-            <Menu.Item
-              key="vacaciones"
-              onClick={() => router.push({ pathname: "/holidays" })}
-            >
-              Vacaciones
-            </Menu.Item>
+            {
+              props.permissions.loan.view && (
+                <Menu.Item
+                  key="prestamos"
+                  onClick={() => router.push({ pathname: "/lending" })}
+                >
+                  Préstamos
+                </Menu.Item>
+              )
+            }
+            {
+              props.permissions.vacation.view && (
+                <Menu.Item
+                  key="vacaciones"
+                  onClick={() => router.push({ pathname: "/holidays" })}
+                >
+                  Vacaciones
+                </Menu.Item>
+              )
+            }
             <Menu.Item
               key="permisos"
               onClick={() => router.push({ pathname: "/permission" })}
@@ -302,19 +343,19 @@ const MainSider = ({
                     router.push({ pathname: "/payroll/stampPayroll" })
                   }
                 >
-                  Timbrado de nomina
+                  Calculo de nomina
                   {/* Calculo de nómina */}
                 </Menu.Item>
               </>
             )}
-            <Menu.Item
+            {/* <Menu.Item
               key="nomina_empresarial"
               onClick={() =>
                 router.push({ pathname: "/payrollvoucher/statisticsPayroll" })
               }
             >
               Nómina empresarial
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item
               key="recibos_nomina"
               onClick={() => router.push({ pathname: "/payrollvoucher" })}
@@ -336,14 +377,17 @@ const MainSider = ({
               icon={ <img className="anticon ant-menu-item-icon icon-intranet" src={"images/Intranet.svg"}/>}
               className="subMainMenu"
             >
-             
-              <Menu.Item
-                key="groups"
-                onClick={() => router.push({ pathname: "/intranet/groups" })}
-                icon={<GroupOutlined />}
-              >
-                <FormattedMessage id="header.groups" />
-              </Menu.Item>
+              { props.permissions.groups.view && 
+                (
+                  <Menu.Item
+                    key="groups"
+                    onClick={() => router.push({ pathname: "/intranet/groups" })}
+                    icon={<GroupOutlined />}
+                  >
+                    <FormattedMessage id="header.groups" />
+                  </Menu.Item>
+                )
+              }
               <Menu.Item
                 key="config"
                 onClick={() => router.push({ pathname: "/intranet/config" })}
@@ -364,8 +408,8 @@ const MainSider = ({
           <SubMenu
             key="uploads"
             title="Registro de errores"
-            className="subMainMenu"
-            icon={<BugReportOutlined />}
+            className="subMainMenu item_custom_icon"
+            icon={<BugReportOutlined className="custom_icon" />}
           >
             <Menu.Item
               key="persons_upload"

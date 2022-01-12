@@ -29,8 +29,10 @@ import moment from "moment";
 import jsCookie from "js-cookie";
 import { userCompanyId, userCompanyName } from "../../libs/auth";
 import SelectWorkTitle from '../selects/SelectWorkTitle';
+import { connect } from 'react-redux'
 
-const InabilityReport = (props) => {
+
+const InabilityReport = ({permissions, ...props}) => {
   const route = useRouter();
   const { Option } = Select;
   const [form] = Form.useForm();
@@ -49,7 +51,7 @@ const InabilityReport = (props) => {
 
   const [personList, setPersonList] = useState([]);
   const [collaboratorList, setCollaboratorList] = useState([]);
-  const [permissions, setPermissions] = useState({});
+
   let nodeId = userCompanyId();
 
   /* Columnas de tabla */
@@ -123,7 +125,7 @@ const InabilityReport = (props) => {
       render: (record, item) => {
         return (
           <>
-            {permissions.inabilitys && (
+            {permissions.export_inabilitys && (
               <DownloadOutlined onClick={() => download(item)} />
             )}
           </>
@@ -271,17 +273,8 @@ const InabilityReport = (props) => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getIncapacity();
   }, []);
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.report.function.export_inabilitys"))
-        perms.inabilitys = true;
-    });
-    setPermissions(perms);
-  };
 
   return (
     <>
@@ -385,7 +378,7 @@ const InabilityReport = (props) => {
           </Form>
         </Col>
         <Col className="columnRightFilter">
-          {permissions.inabilitys && (
+          {permissions.export_inabilitys && (
             <Button
               style={{
                 background: "#fa8c16",
@@ -420,4 +413,10 @@ const InabilityReport = (props) => {
   );
 };
 
-export default InabilityReport;
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.report
+  };
+};
+
+export default connect(mapState)(InabilityReport);

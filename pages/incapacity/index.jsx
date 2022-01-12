@@ -17,6 +17,8 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
+import { connect } from 'react-redux'
+
 
 import {
   EditOutlined,
@@ -29,7 +31,7 @@ import {
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
-const Incapacity = () => {
+const Incapacity = ({permissions, ...props}) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -42,7 +44,7 @@ const Incapacity = () => {
 
   /* Variables */
   const [departamentId, setDepartamentId] = useState(null);
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   let nodeId = userCompanyId();
 
   /* Select estatus */
@@ -122,25 +124,10 @@ const Incapacity = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getIncapacity();
     getAllPersons();
   }, [route]);
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.incapacity.can.view")) perms.view = true;
-      if (a.includes("people.incapacity.can.create")) perms.create = true;
-      if (a.includes("people.incapacity.can.edit")) perms.edit = true;
-      if (a.includes("people.incapacity.can.delete")) perms.delete = true;
-      if (a.includes("people.incapacity.function.approve_incapacity"))
-        perms.approve = true;
-      if (a.includes("people.incapacity.function.reject_incapacity"))
-        perms.reject = true;
-    });
-    setPermissions(perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -354,4 +341,10 @@ const Incapacity = () => {
   );
 };
 
-export default withAuthSync(Incapacity);
+const mapState = (state) => {
+  return { 
+    permissions: state.userStore.permissions.incapacity,
+  };
+};
+
+export default connect(mapState)(withAuthSync(Incapacity));

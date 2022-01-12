@@ -26,8 +26,10 @@ import {
 } from "@ant-design/icons";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from 'react-redux'
 
-const Permission = () => {
+
+const Permission = ({permissions, ...props}) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -41,7 +43,7 @@ const Permission = () => {
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
   const [departamentId, setDepartamentId] = useState(null);
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   let nodeId = userCompanyId();
 
   /* Select estatus */
@@ -128,25 +130,9 @@ const Permission = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getPermissions();
     getAllPersons();
   }, [route]);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.permit.can.view")) perms.view = true;
-      if (a.includes("people.permit.can.create")) perms.create = true;
-      if (a.includes("people.permit.can.edit")) perms.edit = true;
-      if (a.includes("people.permit.can.delete")) perms.delete = true;
-      if (a.includes("people.permit.function.approve_permit"))
-        perms.approve = true;
-      if (a.includes("people.permit.function.reject_permit"))
-        perms.reject = true;
-    });
-    setPermissions(perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -358,4 +344,10 @@ const Permission = () => {
   );
 };
 
-export default withAuthSync(Permission);
+const mapState = (state) => {
+  return { 
+    permissions: state.userStore.permissions.permit,
+  };
+};
+
+export default connect(mapState)(withAuthSync(Permission));

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import MainLayout from '../layout/MainLayout';
-import {Breadcrumb, Row, Col, Typography, Button, Divider, Card, Dropdown, Menu} from 'antd';
+import {Breadcrumb, Row, Col, Typography, Button, Divider, Card, Dropdown, Menu, Drawer} from 'antd';
 import {PlusCircleOutlined, DeleteOutlined, MoreOutlined, TeamOutlined, HomeOutlined, DollarCircleOutlined} from '@ant-design/icons';
 import { css, Global } from "@emotion/core";
 import DragAndDrop from '../components/DragAndDrop';
@@ -13,7 +13,6 @@ import ChartDoughnut from '../components/dashboards-cards/ChartDoughnut';
 import WeekCard from '../components/dashboards-cards/WeekCard';
 
 const index = () => {
-
     const {Title, Text} = Typography
     const [contents, setContents] = useState([])
     const [originalPositions, setOriginalPositions] = useState([]);
@@ -126,6 +125,8 @@ const index = () => {
         setOriginalPositions(list)
     }, [])
 
+   
+
     return (
         <>
         <Global
@@ -190,7 +191,7 @@ const index = () => {
         />
         <MainLayout currentKey={["dashboard"]}  >
             <Row justify={'space-between'}>
-                <Col md={16} sm={24} style={{paddingRight:'30px !important'}}>
+                <Col span={24} style={{paddingRight:'30px !important'}}>
                     <Row justify={'space-between'} gutter={[10,20]} style={{marginTop:20}} >
                         <Col>
                             <Title level={3}>
@@ -203,11 +204,11 @@ const index = () => {
                                 Agregar indicador
                             </Button>
                         </Col>
-                        <Col span={24}>
+                        {/* <Col span={24}>
                             <img src="https://menaiortho.com.au/wp-content/uploads/2015/03/banner-placeholder.jpg" style={{width:'100%'}} />
-                        </Col>
+                        </Col> */}
                     </Row>
-                    <DragAndDrop columns={2} reorder={reorder} dragEnd={dragEnd}>
+                    <DragAndDrop  columns={3} reorder={reorder} dragEnd={dragEnd}>
                         {contents.map((item, idx) =>
                             <div position={item.position} key={idx}>
                                 {
@@ -227,20 +228,6 @@ const index = () => {
                             </div>
                         )}
                     </DragAndDrop>
-                </Col>
-                <Col md={8} sm={24} style={{background:'red'}}>
-                    <Row justify="center" >
-                        <Col span={21}>
-                            <Title level={3} style={{marginBottom:0, marginTop:20}}>
-                                <span className="card_element_icon">
-                                    <DollarCircleOutlined />
-                                </span>
-                                Proximos eventos
-                            </Title>
-                            <Divider style={{margin:'10px 0px 15px 0px'}} />
-                            <WeekCard />
-                        </Col>
-                    </Row>
                 </Col>
             </Row>
         </MainLayout>

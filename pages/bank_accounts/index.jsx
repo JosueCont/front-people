@@ -21,8 +21,10 @@ import SelectBank from "../../components/selects/SelectBank";
 import { SearchOutlined, EyeOutlined, SyncOutlined } from "@ant-design/icons";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from 'react-redux'
 
-const BankAccounts = () => {
+
+const BankAccounts = ({permissions, ...props}) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -31,7 +33,7 @@ const BankAccounts = () => {
   const [loading, setLoading] = useState(false);
 
   const [backsAccountsList, setBanksAccountsList] = useState([]);
-  const [permissions, setPermissions] = useState({});
+  
 
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
@@ -182,20 +184,9 @@ const BankAccounts = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
+
     getBanksAccountRequest();
   }, [route]);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.requestaccount.can.view")) perms.view = true;
-      if (a.includes("people.requestaccount.can.create")) perms.create = true;
-      if (a.includes("people.requestaccount.can.edit")) perms.edit = true;
-      if (a.includes("people.requestaccount.can.delete")) perms.delete = true;
-    });
-    setPermissions(perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -334,6 +325,12 @@ const BankAccounts = () => {
       </div>
     </MainLayout>
   );
+};
+
+const mapState = (state) => {
+  return { 
+    permissions: state.userStore.permissions.bank,
+  };
 };
 
 export default withAuthSync(BankAccounts);

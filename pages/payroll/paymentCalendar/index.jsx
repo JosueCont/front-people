@@ -25,6 +25,8 @@ const PaymentCalendars = () => {
   const [loading, setLoading] = useState(false);
   let nodeId = userCompanyId();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [titleModal, setTitleModal] = useState('Crear');
+  const [idPaymentCalendar, setIdPaymentCalendar] = useState(null)
 
 
   const getPaymentCalendars = async () => {
@@ -46,7 +48,10 @@ const PaymentCalendars = () => {
   };
 
   const GotoEdit = (data) => {
-    route.push("paymentCalendar/" + data.id + "/edit");
+      setIsModalVisible(true);
+      setTitleModal('Editar')
+      setIdPaymentCalendar(data.id);
+    /* route.push("paymentCalendar/" + data.id + "/edit"); */
   };
   const GotoCalendar = (data) => {
     route.push("paymentCalendar/" + data.id + "/calendar");
@@ -108,9 +113,11 @@ const PaymentCalendars = () => {
                 padding: '0 30px',
                 background: "#7B25F1 !important",
               }}
-              onClick={() => 
-                /* route.push("paymentCalendar/new") */
-                setIsModalVisible(true)
+              onClick={() => {
+                  setTitleModal('Crear')
+                  setIsModalVisible(true)
+                  setIdPaymentCalendar(null)
+                }
               }
               key="btn_new"
               size="large"
@@ -191,7 +198,9 @@ const PaymentCalendars = () => {
       </Row>
     </MainLayout>
     <Modal className="modal_form" width={1000} destroyOnClose footer="" title="" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <FormPaymentCalendar title={"Crear"} nodeId={nodeId} onCancel={handleCancel} />
+        <FormPaymentCalendar
+          idPaymentCalendar={idPaymentCalendar}
+         getPaymentCalendars={getPaymentCalendars} setIsModalVisible={setIsModalVisible} title={titleModal} nodeId={nodeId} onCancel={handleCancel} />
     </Modal>
     </>
   );

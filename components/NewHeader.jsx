@@ -13,13 +13,16 @@ import {
   Typography,
   Divider,
   Modal,
+  Space,
+  Badge
 } from "antd";
-import { UserOutlined, SearchOutlined } from "@ant-design/icons";
+import { UserOutlined, SearchOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { css, Global } from "@emotion/core";
 import Cookie from "js-cookie";
 import WebApi from "../api/webApi";
 import { logoutAuth } from "../libs/auth";
+
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Title, Text } = Typography;
@@ -132,16 +135,11 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             background: var(--primaryColor) !important;
             opacity: 0.9;
           }
-          .ant-menu {
-            width: 100%;
-            text-align: center;
-          }
           .ant-menu .ant-menu-item {
             margin: 0px !important;
             padding: 0px !important;
           }
           .text-menu {
-            text-align: center;
             padding-bottom: 5px;
             padding-top: 5px;
             margin: 0px;
@@ -174,7 +172,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
               />
             </Col>
-            <Col>
+           {/*  <Col>
               {!hideSearch && (
                 <Input
                   className="search_header"
@@ -183,22 +181,29 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   prefix={<SearchOutlined style={{ color: "white" }} />}
                 />
               )}
-            </Col>
+            </Col> */}
             <Col style={{ width: 250, textAlign: "end" }}>
               <div
                 className={"pointer"}
                 style={{ float: "right" }}
                 key={"menu_user_" + props.currentKey}
               >
-                <Dropdown overlay={userCardDisplay} key="dropdown_user">
+                <Space size={'middle'}>
+                  <Badge dot>
+                    <BellOutlined style={{color:'white', fontSize:20 }} onClick={() => props.setShowEvents(true)} />
+                  </Badge>
+                  <MenuOutlined style={{color:'white', fontSize:20 }}  />
+                  <Dropdown overlay={userCardDisplay} key="dropdown_user">
                   <div key="menu_user_content">
                     <Avatar
                       key="avatar_key"
                       icon={<UserOutlined />}
                       src={person.photo}
-                    />
+                    />    
                   </div>
                 </Dropdown>
+                </Space>
+                
               </div>
 
               {/* <Avatar

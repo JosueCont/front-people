@@ -295,14 +295,14 @@ const homeScreen = ({ ...props }) => {
       },
     },
 
-    {
+    /* {
       title: "Fecha de ingreso a la plataforma",
       width: 82,
       align: "center",
       render: (item) => {
         return <div>{item.register_date}</div>;
       },
-    },
+    }, */
     {
       title: "Departamento",
       width: 100,
@@ -317,21 +317,21 @@ const homeScreen = ({ ...props }) => {
         return <div>{item.job ? item.job.name : ""}</div>;
       },
     },
-    {
+    /* {
       title: "RFC",
       width: 121,
       align: "center",
       dataIndex: "rfc",
       key: "rfc",
-    },
-    {
+    }, */
+    /* {
       title: "IMSS",
       width: 100,
       align: "center",
       dataIndex: "imss",
       key: "imss",
-    },
-    {
+    }, */
+    /* {
       title: "Periocidad",
       width: 80,
       align: "center",
@@ -339,7 +339,7 @@ const homeScreen = ({ ...props }) => {
         let per = periodicity.filter((a) => a.value === item.periodicity);
         if (per.length > 0) return per[0].label;
       },
-    },
+    }, */
     {
       title: "Empresas Asignadas",
       width: 75,
