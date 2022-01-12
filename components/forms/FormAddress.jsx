@@ -9,7 +9,7 @@ import {
   Select,
 } from "antd";
 import { useState, useEffect } from "react";
-import { typeStreet } from "../../utils/functions";
+import { typeStreet } from "../../utils/constant";
 import WebApi from "../../api/webApi";
 import { ruleRequired } from "../../utils/rules";
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Layout, Row, Col, Avatar, Menu, Space } from "antd";
+import { Layout, Row, Col, Avatar, Menu, Space, Drawer, Typography, Divider } from "antd";
 import { useRouter } from "next/router";
+import {DollarCircleOutlined} from '@ant-design/icons';
 import HeaderCustom from "../components/Header";
 import Footer from "../components/Footer";
 import { Helmet } from "react-helmet";
@@ -38,12 +39,14 @@ const MainLayout = ({
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
+    const {Text, Title} = Typography;
   let nodeName = userCompanyName();
   const [mainLogo, setMainLogo] = useState("");
   const [company, setCompany] = useState("");
   const isBrowser = () => typeof window !== "undefined";
   const [flavor, setFlavor] = useState({});
   const [routeFlavor, setRouteFlavor] = useState({});
+  const [showEvents, setShowEvents] = useState(false);
 
   /* Variable del side menu */
   const [collapsed, setCollapsed] = useState(false);
@@ -97,6 +100,10 @@ const MainLayout = ({
       let response = props.companySelected();
     }
   }, [props.currentNode]);
+
+   const closeEvents = () => {
+        setShowEvents(false);
+    }
 
   return (
     <Layout className="layout" style={{ minHeight: "100vh" }}>
@@ -265,6 +272,7 @@ const MainLayout = ({
           onClickImage={onClickImage}
           hideSearch={hideSearch}
           hideLogo={hideLogo}
+          setShowEvents={setShowEvents}
         />
         <Layout>
           {/* {!hideMenu && (
@@ -292,6 +300,22 @@ const MainLayout = ({
           {/*  */}
         </Layout>
       </Layout>
+      <Drawer placement="right" onClose={closeEvents} visible={showEvents}>
+              <Row justify="center" >
+                  <Col span={21}>
+                      <Title level={3} style={{marginBottom:0, marginTop:20}}>
+                          <span className="card_element_icon">
+                              <DollarCircleOutlined />
+                          </span>
+                          Proximos eventos
+                      </Title>
+                      <Divider style={{margin:'10px 0px 15px 0px'}} />
+                      {/* <WeekCard /> */}
+                  </Col>
+              </Row>
+          </Drawer>
+
+
       {/* </Layout> */}
 
       {/* <HeaderCustom
