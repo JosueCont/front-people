@@ -126,12 +126,12 @@ const UploadPayroll = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
+    /* searchPermissions(jwt.perms); */
     getVouchers();
     getAllPersons();
   }, [router]);
 
-  const searchPermissions = (data) => {
+  /* const searchPermissions = (data) => {
     const perms = {};
     data.map((a) => {
       if (a.includes("people.payrollvoucher.can.view")) perms.view = true;
@@ -142,7 +142,7 @@ const UploadPayroll = () => {
         perms.import = true;
     });
     setPermissions(perms);
-  };
+  }; */
 
   const importPDF = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);

@@ -270,7 +270,7 @@ const assimilatedSalary = () => {
                     spinning={loading}
                     style={{ display: "flex" }}
                   >
-                    {/* {salary && ( */}
+                    {salary && (
                     <div style={{ margin: "auto" }}>
                       <Row className="table-grid-title">
                         <Col span={18}>
@@ -281,8 +281,7 @@ const assimilatedSalary = () => {
                         </Col>
                         <Col span={6} className="border-results">
                           <Text>
-                            {/* $ {salary.gross_salary} */}
-                            $23432
+                            $ {salary.gross_salary}
                           </Text>
                         </Col>
                       </Row>
@@ -294,31 +293,30 @@ const assimilatedSalary = () => {
                           <Text>- Límite inferior</Text>
                         </Col>
                         <Col span={6}>
-                          $1234567
-                          {/* {salary.lower_limit} */}
+                          {salary.lower_limit}
                         </Col>
                         <Col span={18}>
                           <span>= Excedente del límite inferior</span>
                         </Col>
-                        <Col span={6}>{/* {salary.surplus} */}</Col>
+                        <Col span={6}>{salary.surplus}</Col>
                         <Col span={18}>
                           <span>× % sobre excedente del límite inferior</span>
                         </Col>
                         <Col span={6}>
-                          {/* {salary.percentage_exceeding_lower_limit} */}
+                          {salary.percentage_exceeding_lower_limit}
                         </Col>
                         <Col span={18}>
                           <span>= Impuesto marginal</span>
                         </Col>
-                        <Col span={6}>{/* {salary.marginal_tax} */}</Col>
+                        <Col span={6}>{salary.marginal_tax}</Col>
                         <Col span={18}>
                           <span>+ Cuota fija del impuesto</span>
                         </Col>
-                        <Col span={6}>{/* {salary.fixed_fee} */}</Col>
+                        <Col span={6}>{salary.fixed_fee}</Col>
                         <Col span={18}>
                           <span>I.S.R. a cargo</span>
                         </Col>
-                        <Col span={6}>{/* {salary.charge_isr} */}</Col>
+                        <Col span={6}>{salary.charge_isr}</Col>
                         {allowance && (
                           <>
                             <Col span={18}>
@@ -342,7 +340,7 @@ const assimilatedSalary = () => {
                               <span>Percepción del trabajador</span>
                             </Col>
                             <Col span={6}>
-                              {/* {salary.perception_employee} */}
+                              {salary.perception_employee}
                             </Col>
                             <Col span={18}>
                               <span>IMSS/INFONAVIT</span>
@@ -371,7 +369,7 @@ const assimilatedSalary = () => {
                         </Row>
                       )}
                     </div>
-                    {/* )} */}
+                    )} 
                   </Spin>
                 </Col>
                 <Col md={12}></Col>

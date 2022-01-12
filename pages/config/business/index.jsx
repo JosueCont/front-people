@@ -83,7 +83,7 @@ const configBusiness = ({ ...props }) => {
 
   const searchPermissions = (data) => {
     const perms = {};
-    data.map((a) => {
+    /* data.map((a) => {
       if (a.includes("people.department.can.view"))
         perms.view_department = true;
       if (a.includes("people.department.can.create"))
@@ -124,7 +124,7 @@ const configBusiness = ({ ...props }) => {
       if (a.includes("people.bank.can.create")) perms.create_bank = true;
       if (a.includes("people.bank.can.edit")) perms.edit_bank = true;
       if (a.includes("people.bank.can.delete")) perms.delete_bank = true;
-    });
+    }); */
     setPermissions(perms);
   };
 

@@ -28,6 +28,7 @@ import {
   RightOutlined,
   DownOutlined,
   EditFilled,
+  UserOutlined
 } from "@ant-design/icons";
 import { userCompanyId } from "../../libs/auth";
 import { periodicityNom } from "../../utils/constant";
@@ -52,7 +53,9 @@ const StampPayroll = () => {
   const [stamped, setStamped] = useState(false);
   const [stampedInvoices, setStampedInvoices] = useState([]);
   const [expandRow, setExpandRow] = useState(null)
-  const {Text} = Typography
+  const {Text, Title} = Typography
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [personSelected, setPersonSelected] = useState(null);
 
   let nodeId = userCompanyId();
 
@@ -72,13 +75,21 @@ const StampPayroll = () => {
   };
 
   const getPersonCalendar = async (calendar_id) => {
+    
     setLoading(true);
     let response = await webApiPayroll.getPersonsCalendar(calendar_id);
+    
     if (response.data.length > 0) {
       let arrar_payroll = [];
       response.data.map((a) => {
         if (a.person) {
           arrar_payroll.push({
+            person_id: a.person.id,
+            key: a.person.id,
+            full_name: a.person.first_name+' '+a.person.mlast_name+' '+a.person.flast_name,
+            photo: a.person.photo,
+            company: a.person.node_user ? a.person.node_user.name : null,
+            daily_salary: a.daily_salary ? `$ ${a.daily_salary}` : null,
             person_id: a.person.id,
             perceptions: [],
             deductions: [],
@@ -90,6 +101,7 @@ const StampPayroll = () => {
       setPersons(response.data);
     } else {
       setPersons([]);
+      setPayroll([])
       message.error("No se encontraron resultados");
     }
     setLoading(false);
@@ -182,6 +194,7 @@ const StampPayroll = () => {
     getPaymentCalendars();
   }, [nodeId]);
 
+
   useEffect(() => {
     if (persons.length > 0) {
     }
@@ -189,17 +202,22 @@ const StampPayroll = () => {
 
   useEffect(() => {}, [optionspPaymentCalendars]);
 
-  useEffect(() => {
+ /*  useEffect(() => {
     if (objectStamp) {
-      let array_payroll = payroll.slice();
+      let array_payroll = [...payroll].slice();
+      console.log('array_payroll => ',array_payroll);
+
       let elem_payroll = array_payroll.find(
         (elem) => elem.person_id == objectStamp.person_id
       );
+      console.log('elem_payroll =>', elem_payroll);
       if (elem_payroll) {
         let array = array_payroll.filter(
           (elem) => elem.person_id !== objectStamp.person_id
         );
         array.push(objectStamp);
+
+        console.log('array =>',array);
         setPayroll(array);
       } else {
         array_payroll.push(objectStamp);
@@ -207,9 +225,9 @@ const StampPayroll = () => {
       }
       setLoading(false);
     }
-  }, [objectStamp]);
+  }, [objectStamp]); */
 
-  const PanelInfo = ({ data, setObjectStamp, payroll, setLoading }) => {
+  /* const PanelInfo = ({ data, setObjectStamp, payroll, setLoading }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const showModal = () => {
       setIsModalVisible(true);
@@ -245,7 +263,7 @@ const StampPayroll = () => {
         </Modal>
       </Row>
     );
-  };
+  }; */
 
   const columns = [
     {
@@ -324,25 +342,42 @@ const StampPayroll = () => {
 
 
   const columnsNew = [
-  { 
-    title: '', 
-    className: 'column_arrow',
-    key: 'arrow',
-    render: row => <>
-      { expandRow === row.key ? <DownOutlined/> : <RightOutlined />}
-    </>  
-  },  
-  { title: 'Name', className: 'column_name', dataIndex: 'name', key: 'name',
-    render: name => <Space>
-      <Avatar src="https://joeschmoe.io/api/v1/random" />
-      {name}
-    </Space>
+  { title: 'Nombre', className: 'column_name cursor_pointer', key: 'name',
+    render: (record) => <div onClick={() => setExpandRow(expandRow ? null : record.key) }>
+      <Space>
+        <Avatar icon={<UserOutlined />} src={record.photo ? record.photo : null} />
+        {record.full_name}
+      </Space>
+    </div>
   },
-    
-  { title: 'Age', dataIndex: 'age', key: 'age' },
-    
-  { title: 'Address', dataIndex: 'address', key: 'address' },
+  { title: 'Empresa', dataIndex: 'company', key: 'company', className:'cursor_pointer',
+    render: (company, record) => <div onClick={() => setExpandRow(expandRow ? null : record.key) }>
+      {company}
+    </div>
+ },
+  { title: 'Salario Diario', dataIndex: 'daily_salary', key: 'daily_salary', className:'cursor_pointer',
+    render: (salary, record) => <div onClick={() => setExpandRow(expandRow ? null : record.key) }>
+      {salary}
+    </div> },
+  { key: 'actions', className: 'cell-actions',
+    render: record => 
+    <Button size="small" onClick={() => showModal(record) }>
+      <PlusOutlined/>
+    </Button>
+  }
 ];
+
+const showModal = (person) => {
+  
+  setPersonSelected(person)
+  setIsModalVisible(true);
+}
+
+/* useEffect(() => {
+  if(isModalVisible && expandRow){
+    setExpandRow(false);
+  }
+}, [isModalVisible]) */
 
 const dataNew = [
   {
@@ -376,6 +411,7 @@ const dataNew = [
 ];
 
   const rowExpand = (expanded, row) => {
+    
     if(!expanded){
       setExpandRow(false)
     }else{
@@ -384,37 +420,48 @@ const dataNew = [
   }
 
 
-  const expandedRowRender = () =>{
+  const expandedRowRender = (record) =>{
+    console.log('record =>',record);
+    let data = record.perceptions.concat(record.deductions).concat(record.others_payments);
+    /* record.perceptions.map(item =>{
+      data.push(item);
+    })
+    record.deductions.map(item =>{
+      data.push(item);
+    })
+    record.others_payments.map(item =>{
+      data.push(item);
+    }) */
+
+
     const columns = [
-      { title: 'concepto',  key: 'concept-title',
-        render: () => (
-          <Space size="middle">
+      { title: 'concepto_title', key:'concept-title', width: 100, 
+        render: (record) => (
             <Text>
               *Concepto
             </Text>
-            <Text>
-              Otros pagos
-            </Text>
-          </Space>
-        ),
+        )
       },
-      { title: 'monto', key: 'ampunt',
-        render: () => (
+      { title: 'concepto',  key: 'concept', dataIndex:'label',
+        className:'cell-concept',
+        width: 500,
+      },
+      { title: 'monto', key: 'ampunt', dataIndex:'amount', width: 150,
+        render: (amount) => (
           <Space size="middle">
             <Text>
               Monto
             </Text>
             <Text>
-              $200.00
+              $ {amount}
             </Text>
           </Space>
         ),
       },
       {
         title: 'Action',
-        dataIndex: 'operation',
-        align:'right',
         key: 'operation',
+        className: 'cell-actions',
         render: () => (
           <Space size="middle">
             <EditFilled />
@@ -423,15 +470,46 @@ const dataNew = [
       },
     ];
 
-    const data = [{
-        key: 0,
-        date: '2014-12-24 23:12:00',
-        name: 'This is production name',
-        upgradeNum: 'Upgraded: 56',
-      }]
 
-    return <Table className="subTable"  columns={columns} dataSource={data} pagination={false} showHeader={false} />;
+    return <Table className="subTable"  columns={columns} dataSource={data} pagination={false} showHeader={false} locale={{emptyText: 'Aún no hay datos'}} />;
   }
+
+  const saveConcepts = (concept) => {
+    console.log('concept ==>',concept);
+    const tempPayroll = [...payroll];
+    console.log('tempPayroll =>',tempPayroll);
+    let payroll_person = tempPayroll.find( (elem) =>elem.person_id === concept.person_id);
+    console.log('payroll_person =>',payroll_person );
+    vaidatePerception(concept.perceptions, payroll_person);
+  }
+
+  const vaidatePerception = (perceptions, payroll_person) =>{
+    console.log('perceptions =>',perceptions);
+    console.log('payroll_person =>',payroll_person);
+
+    perceptions.map(item => {
+      console.log('item => code => ', item.code);
+      let idx = payroll_person.perceptions.findIndex(element => element.code === item.code);
+      console.log('idx =>',idx );
+      if(idx === -1){
+        payroll_person.perceptions.push(item)
+      }else{
+        payroll_person.perceptions[idx] = item;
+      }
+    })
+    console.log('UPD PERSON =>',payroll_person);
+    updPersonsPayroll(payroll_person)
+  }
+
+  const updPersonsPayroll = (object_person) =>{
+    let newpayroll = [...payroll];
+    let idx = newpayroll.findIndex(item => item.person_id === object_person.person_id);
+    newpayroll[idx] = object_person;
+    setPayroll(newpayroll);
+    
+  }
+
+
 
   return (
     <>
@@ -451,8 +529,22 @@ const dataNew = [
           }
           .subTable .ant-table tr:hover td{
             background: rgb(252 102 2 / 10%) !important;
+          } 
+
+          td.cursor_pointer{
+            cursor:pointer;
           }
-          
+          .form_concept .ant-form-item{
+            margin-bottom:0px;
+          }
+          .cell-concept{
+              text-overflow: ellipsis;
+              overflow: hidden;
+          }
+          .cell-actions{
+            width: 70px;
+            text-align: center;
+          }
         `}
       />
     <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["nomina"]}>
@@ -530,28 +622,41 @@ const dataNew = [
           </Button>
         </Col>
         <Col span={24}>
-          <Card className="card_table">
-            <Table
-              className="headers_transparent"
-              columns={columnsNew}
-              /* expandable={{
-                expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
-              }} */
-              expandable={
-                {expandedRowRender}
-              }
-              expandRowByClick
-              onExpand={(expanded, record) =>  rowExpand(expanded, record) }
-              dataSource={dataNew}
-              expandIconColumnIndex={4}
-            />
-          </Card>
+          
+            <Card className="card_table">
+              <Table
+                className="headers_transparent"
+                columns={columnsNew}
+                /* expandable={{
+                  expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
+                }} */
+                expandable={
+                  {
+                    expandedRowRender: record => expandedRowRender(record),
+                    /* expandRowByClick: true, */
+                    onExpand: (expanded, record) =>  rowExpand(expanded, record),
+                    expandIconAsCell: false,
+                    /* expandIconColumnIndex: -1, */
+                    expandedRowKeys:[expandRow],
+                    expandIcon: ({ expanded, onExpand, record }) =>
+                      expanded ? (
+                        <DownOutlined onClick={e => onExpand(record, e)} />
+                      ) : (
+                        <RightOutlined onClick={e => onExpand(record, e)} />
+                      )
+                  }
+                }
+                hideExpandIcon
+                dataSource={payroll}
+                locale={{emptyText: 'No se encontraron resultados'}}
+              />
+            </Card>
         </Col>
       </Row>
 
       
 
-      <Row justify="end" style={{display:'none'}}>
+      {/* <Row justify="end" style={{ display:'none' }}>
         <Col span={24}>
           <Spin tip="Cargando..." spinning={loading}>
             {!stamped && (
@@ -603,8 +708,30 @@ const dataNew = [
             )}
           </Spin>
         </Col>
-      </Row>
-        
+      </Row> */}
+      <Modal
+          visible={isModalVisible}
+          footer={null}
+          width={600}
+          closable={false}
+          destroyOnClose
+          /* key={"modal-" + data.person.id} */
+        >
+          <Row justify="center">
+            <Col md={20}>
+              <Title level={2}>
+                Agregar
+              </Title>
+              <FormPerceptionsDeductions
+                setIsModalVisible={setIsModalVisible}
+                person_id={personSelected && personSelected.person_id}
+                saveConcepts={saveConcepts}
+                payroll={payroll}
+                setLoading={setLoading}
+              />
+            </Col>
+          </Row>
+        </Modal>
     </MainLayout>
     </>
   );
