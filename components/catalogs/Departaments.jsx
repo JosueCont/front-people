@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Tabs,
   Typography,
@@ -9,26 +9,35 @@ import {
   Table,
   Spin,
   Input,
+  message,
+  Modal,
 } from "antd";
-import { userCompanyName } from "../../libs/auth";
 import MassiveImportDepartments from "../business/MassiveImportDepartments";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
+import { getDepartmets } from "../../redux/catalogCompany";
+import {
+  messageDeleteSuccess,
+  messageError,
+  messageSaveSuccess,
+  messageUpdateSuccess,
+} from "../../utils/constant";
+import WebApi from "../../api/webApi";
 
-const Departaments = ({ permissions, onFinishForm, ...props }) => {
-  let nodePeople = userCompanyName();
+const Departaments = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
   const { TabPane } = Tabs;
 
   const [edit, setEdit] = useState(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-
-  const resetForm = () => {
-    form.resetFields();
-    setEdit(false);
-  };
+  const [deleted, setDeleted] = useState({});
+  const [id, setId] = useState("");
 
   const columns = [
     {
@@ -80,6 +89,127 @@ const Departaments = ({ permissions, onFinishForm, ...props }) => {
     },
   ];
 
+  const resetForm = () => {
+    form.resetFields();
+    setEdit(false);
+    setId("");
+  };
+
+  const onFinishForm = (value, url) => {
+    if (edit) {
+      updateRegister(url, value);
+    } else saveRegister(url, value);
+  };
+
+  const saveRegister = async (url, data) => {
+    data.node = currentNode.id;
+    setLoading(true);
+    try {
+      let response = await WebApi.createRegisterCatalogs(
+        "/business/department/",
+        data
+      );
+      props
+        .getDepartmets(currentNode.id)
+        .then((response) => {
+          resetForm();
+          message.success(messageSaveSuccess);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      message.error(messageError);
+    }
+  };
+
+  const editRegister = (item, param) => {
+    setEdit(true);
+    setId(item.id);
+    form.setFieldsValue({
+      node: item.node.id,
+      name: item.name,
+      description: item.description,
+      code: item.code,
+    });
+  };
+
+  const updateRegister = async (url, value) => {
+    try {
+      let response = await WebApi.updateRegisterCatalogs(
+        `/business/department/${id}/`,
+        value
+      );
+      props
+        .getDepartmets(currentNode.id)
+        .then((response) => {
+          setId("");
+          resetForm();
+          message.success(messageUpdateSuccess);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      setId("");
+      setEdit(false);
+      setLoading(false);
+      resetForm();
+      message.error("Ocurrio un error intente de nuevo.");
+    }
+  };
+
+  const setDeleteRegister = (data) => {
+    setDeleted(data);
+  };
+
+  useEffect(() => {
+    if (deleted.id) {
+      Modal.confirm({
+        title: "¿Está seguro de eliminar este registro?",
+        content: "Si lo elimina no podrá recuperarlo",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Si, eliminar",
+        okButtonProps: {
+          danger: true,
+        },
+        cancelText: "Cancelar",
+        onOk() {
+          deleteRegister();
+        },
+      });
+    }
+  }, [deleted]);
+
+  const deleteRegister = async () => {
+    try {
+      let response = await WebApi.deleteRegisterCatalogs(
+        deleted.url + `${deleted.id}/`
+      );
+      props
+        .getDepartmets(currentNode.id)
+        .then((response) => {
+          resetForm();
+          message.success(messageDeleteSuccess);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
@@ -94,13 +224,16 @@ const Departaments = ({ permissions, onFinishForm, ...props }) => {
               layout={"vertical"}
               form={form}
               onFinish={(values) =>
-                onFinishForm(values, `/business/department/?node=${nodeId}`)
+                onFinishForm(
+                  values,
+                  `/business/department/?node=${currentNode.id}`
+                )
               }
             >
               <Row>
                 <Col lg={6} xs={22} offset={1}>
                   <Form.Item label="Empresa" rules={[ruleRequired]}>
-                    <Input readOnly value={nodePeople} />
+                    <Input readOnly value={currentNode.name} />
                   </Form.Item>
                 </Col>
                 <Col lg={6} xs={22} offset={1}>
@@ -141,7 +274,7 @@ const Departaments = ({ permissions, onFinishForm, ...props }) => {
             style={{ paddingTop: "15px" }}
           >
             <MassiveImportDepartments
-              nodePeople={nodePeople}
+              // nodePeople={nodePeople}
               setLoadingTable={setLoading}
             />
           </TabPane>
@@ -168,4 +301,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(Departaments);
+export default connect(mapState, { getDepartmets })(Departaments);
