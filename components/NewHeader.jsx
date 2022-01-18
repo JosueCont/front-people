@@ -14,15 +14,19 @@ import {
   Divider,
   Modal,
   Space,
-  Badge
+  Badge,
 } from "antd";
-import { UserOutlined, SearchOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  SearchOutlined,
+  MenuOutlined,
+  BellOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { css, Global } from "@emotion/core";
 import Cookie from "js-cookie";
 import WebApi from "../api/webApi";
 import { logoutAuth } from "../libs/auth";
-
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Title, Text } = Typography;
@@ -36,7 +40,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
   useEffect(() => {
-    console.log("getPerson");
     getPerson();
   }, []);
 
@@ -172,7 +175,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
               />
             </Col>
-           {/*  <Col>
+            {/*  <Col>
               {!hideSearch && (
                 <Input
                   className="search_header"
@@ -188,22 +191,24 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 style={{ float: "right" }}
                 key={"menu_user_" + props.currentKey}
               >
-                <Space size={'middle'}>
+                <Space size={"middle"}>
                   <Badge dot>
-                    <BellOutlined style={{color:'white', fontSize:20 }} onClick={() => props.setShowEvents(true)} />
+                    <BellOutlined
+                      style={{ color: "white", fontSize: 20 }}
+                      onClick={() => props.setShowEvents(true)}
+                    />
                   </Badge>
-                  <MenuOutlined style={{color:'white', fontSize:20 }}  />
+                  <MenuOutlined style={{ color: "white", fontSize: 20 }} />
                   <Dropdown overlay={userCardDisplay} key="dropdown_user">
-                  <div key="menu_user_content">
-                    <Avatar
-                      key="avatar_key"
-                      icon={<UserOutlined />}
-                      src={person.photo}
-                    />    
-                  </div>
-                </Dropdown>
+                    <div key="menu_user_content">
+                      <Avatar
+                        key="avatar_key"
+                        icon={<UserOutlined />}
+                        src={person.photo}
+                      />
+                    </div>
+                  </Dropdown>
                 </Space>
-                
               </div>
 
               {/* <Avatar

@@ -235,7 +235,7 @@ const homeScreen = ({ ...props }) => {
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
         return (
           <>
-            {(props.permissions.edit || props.delete) ? (
+            {props.permissions.edit || props.delete ? (
               <Dropdown overlay={() => menuPerson(item)}>
                 <a>
                   <div>{personName}</div>
@@ -255,11 +255,7 @@ const homeScreen = ({ ...props }) => {
         return (
           <>
             <Switch
-              disabled={
-                props.permissions.change_is_active
-                  ? false
-                  : true
-              }
+              disabled={props.permissions.change_is_active ? false : true}
               defaultChecked={item.is_active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
@@ -363,13 +359,13 @@ const homeScreen = ({ ...props }) => {
       title: () => {
         return (
           <>
-            { props.permissions.delete && (
-                <Dropdown overlay={menuGeneric}>
-                  <Button style={menuDropDownStyle} size="small">
-                    <EllipsisOutlined />
-                  </Button>
-                </Dropdown>
-              )}
+            {props.permissions.delete && (
+              <Dropdown overlay={menuGeneric}>
+                <Button style={menuDropDownStyle} size="small">
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
           </>
         );
       },
@@ -378,7 +374,7 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-            { (props.permissions.edit || props.permissions.delete) ? (
+            {props.permissions.edit || props.permissions.delete ? (
               <Dropdown overlay={() => menuPerson(item)}>
                 <Button
                   style={{ background: "#8c8c8c", color: "withe" }}
@@ -460,7 +456,7 @@ const homeScreen = ({ ...props }) => {
           />
         </Menu.Item>
       )}
-      { props.permissions.delete && (
+      {props.permissions.delete && (
         <Menu.Item key="2" onClick={() => setDeleteModal(personsToDelete)}>
           Eliminar
         </Menu.Item>
@@ -791,10 +787,6 @@ const homeScreen = ({ ...props }) => {
   }, [modalDelete]);
 
   useEffect(() => {
-    console.log('permissions',props.permissions);
-  }, [props.permissions])
-
-  useEffect(() => {
     if (modalDeactivate) {
       Modal.confirm({
         title: stringToDeactivate,
@@ -869,11 +861,9 @@ const homeScreen = ({ ...props }) => {
       </Menu.Item>
     </Menu>
   );
-  
-  if(!props.permissions){
-    return (
-      <></>
-    )
+
+  if (!props.permissions) {
+    return <></>;
   }
 
   return (
@@ -926,13 +916,9 @@ const homeScreen = ({ ...props }) => {
                           <Form.Item name="gender" label="Género">
                             <Select
                               options={genders}
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                               placeholder="Todos"
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                             />
                           </Form.Item>
                         </Col>
@@ -950,9 +936,7 @@ const homeScreen = ({ ...props }) => {
                             <Select
                               options={statusSelect}
                               placeholder="Estatus"
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                               style={{ width: 90 }}
                             />
                           </Form.Item>
@@ -962,9 +946,7 @@ const homeScreen = ({ ...props }) => {
                             <Select
                               options={periodicity}
                               placeholder="Periocidad"
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                               style={{ width: 90 }}
                             />
                           </Form.Item>
@@ -978,10 +960,7 @@ const homeScreen = ({ ...props }) => {
                             color={"#3d78b9"}
                             key={"#filtrar"}
                           >
-                            <Button
-                              className="btn-filter"
-                              htmlType="submit"
-                            >
+                            <Button className="btn-filter" htmlType="submit">
                               <SearchOutlined />
                             </Button>
                           </Tooltip>
@@ -1101,7 +1080,7 @@ const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
-    permissions: state.userStore.permissions.person ,
+    permissions: state.userStore.permissions.person,
   };
 };
 

@@ -19,7 +19,7 @@ import { API_URL } from "../../../config/config";
 import { curpFormat, rfcFormat } from "../../../utils/constant";
 import { ruleRequired } from "../../../utils/rules";
 
-const TaxInformationForm = ({ node_id }) => {
+const TaxInformationForm = ({ node_id, fiscal }) => {
   const { Title } = Typography;
   const [formTaxInfo] = Form.useForm();
   const [pTypeSelected, setPTypeSelected] = useState(0);
@@ -375,65 +375,69 @@ const TaxInformationForm = ({ node_id }) => {
               </Col>
             </Row>
 
-            <Row>
-              <Title style={{ fontSize: "15px" }}>
-                Certificados y sellos digitales
-              </Title>
-            </Row>
-            <Divider style={{ marginTop: "2px" }} />
-            <Row>
-              <Col lg={2} xs={22} offset={1}>
-                <Form.Item name="consent" label="" valuePropName="checked">
-                  <Switch
-                    onChange={changeAcceptment}
-                    checkedChildren={<CheckOutlined />}
-                    unCheckedChildren={<CloseOutlined />}
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={14} xs={22} offset={1}>
-                <p>
-                  Estoy de acuerdo y doy mi consentimiento para que EL SISTEMA
-                  almacene y utilice estos archivos con fines exclusivos para
-                  emisión de CFDI para el timbrado de nomina
-                </p>
-              </Col>
-              {acceptAgreement && (
-                <>
-                  <Col
-                    lg={8}
-                    xs={22}
-                    offset={1}
-                    style={{ marginBottom: "15px" }}
-                  >
-                    <Form.Item name="password" label="Contraseña">
-                      <Input.Password maxLength={12} />
+            {fiscal && (
+              <>
+                <Row>
+                  <Title style={{ fontSize: "15px" }}>
+                    Certificados y sellos digitales
+                  </Title>
+                </Row>
+                <Divider style={{ marginTop: "2px" }} />
+                <Row>
+                  <Col lg={2} xs={22} offset={1}>
+                    <Form.Item name="consent" label="" valuePropName="checked">
+                      <Switch
+                        onChange={changeAcceptment}
+                        checkedChildren={<CheckOutlined />}
+                        unCheckedChildren={<CloseOutlined />}
+                      />
                     </Form.Item>
                   </Col>
-                  <UploadFile
-                    textButton={"Cargar sello fiscal"}
-                    setDataFile={setTaxStamp}
-                    file_name={nameTaxStamp}
-                    setFileName={setNameTaxStamp}
-                    set_disabled={nameTaxStamp ? false : true}
-                  />
-                  <UploadFile
-                    textButton={"Cargar llave"}
-                    setDataFile={setKey}
-                    file_name={nameKey}
-                    setFileName={setNameKey}
-                    set_disabled={nameKey ? false : true}
-                  />
-                  <UploadFile
-                    textButton={"Cargar certificado"}
-                    setDataFile={setCertificate}
-                    file_name={nameCertificate}
-                    setFileName={setNameCertificate}
-                    set_disabled={nameCertificate ? false : true}
-                  />
-                </>
-              )}
-            </Row>
+                  <Col lg={14} xs={22} offset={1}>
+                    <p>
+                      Estoy de acuerdo y doy mi consentimiento para que EL
+                      SISTEMA almacene y utilice estos archivos con fines
+                      exclusivos para emisión de CFDI para el timbrado de nomina
+                    </p>
+                  </Col>
+                  {acceptAgreement && (
+                    <>
+                      <Col
+                        lg={8}
+                        xs={22}
+                        offset={1}
+                        style={{ marginBottom: "15px" }}
+                      >
+                        <Form.Item name="password" label="Contraseña">
+                          <Input.Password maxLength={12} />
+                        </Form.Item>
+                      </Col>
+                      <UploadFile
+                        textButton={"Cargar sello fiscal"}
+                        setDataFile={setTaxStamp}
+                        file_name={nameTaxStamp}
+                        setFileName={setNameTaxStamp}
+                        set_disabled={nameTaxStamp ? false : true}
+                      />
+                      <UploadFile
+                        textButton={"Cargar llave"}
+                        setDataFile={setKey}
+                        file_name={nameKey}
+                        setFileName={setNameKey}
+                        set_disabled={nameKey ? false : true}
+                      />
+                      <UploadFile
+                        textButton={"Cargar certificado"}
+                        setDataFile={setCertificate}
+                        file_name={nameCertificate}
+                        setFileName={setNameCertificate}
+                        set_disabled={nameCertificate ? false : true}
+                      />
+                    </>
+                  )}
+                </Row>
+              </>
+            )}
           </Col>
           <Row justify={"end"}>
             <Form.Item>

@@ -88,12 +88,7 @@ const PublicationsStatisticsFilters = (props) => {
   const { Option } = Select;
   const { RangePicker } = DatePicker;
 
-  const handleChange = (event) => {
-    console.log(event);
-  };
-
   function getSelectedDate(value, dateString) {
-    // console.log(value);
     if (dateString.length == 2) {
       setStartDate(dateString[0]);
       setEndDate(dateString[1]);

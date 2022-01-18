@@ -51,7 +51,6 @@ const index = (props) => {
         setProcessedPubications(publicationsFiltered);
         setPublicationsList(props.publicationsList);
         setLoadingData(false);
-        // console.log("filtradas" ,publicationsFiltered)
       } catch (error) {
         console.log(error);
       }
