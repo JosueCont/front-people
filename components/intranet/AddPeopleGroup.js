@@ -55,6 +55,8 @@ const AddPeopleGroup = (props) => {
       });
   };
 
+  console.log("persons", persons);
+
   return (
     <>
       <Layout>
