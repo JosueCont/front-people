@@ -352,35 +352,7 @@ const AddUploadPayroll = () => {
           <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Detalle de recibos de nómina</Breadcrumb.Item>
         </Breadcrumb>
-        <Row>
-          <Col span={24}>
-            <div style={{ padding: "1%", float: "right" }}>
-              <Button
-                style={{ marginRight: "5px" }}
-                onClick={() => router.push({ pathname: "/payrollvoucher" })}
-              >
-                Regresar
-              </Button>
-              <Button
-                type="primary"
-                className={"ml-20"}
-                icon={<UploadOutlined />}
-                onClick={() => {
-                  inputFileRef.current.click();
-                }}
-                // disabled={disabledImport}
-              >
-                Importar PDF
-              </Button>
-              <input
-                ref={inputFileRef}
-                type="file"
-                style={{ display: "none" }}
-                onChange={(e) => importPDF(e)}
-              />
-            </div>
-          </Col>
-        </Row>
+        <Row></Row>
 
         <Content className="site-layout">
           <div
@@ -392,6 +364,31 @@ const AddUploadPayroll = () => {
             }}
           >
             <Row>
+              <Col span={24} style={{ textAlign: "right" }}>
+                <Button
+                  style={{ marginRight: "5px", marginBottom: 10 }}
+                  onClick={() => router.push({ pathname: "/payrollvoucher" })}
+                >
+                  Regresar
+                </Button>
+                <Button
+                  type="primary"
+                  className={"ml-20"}
+                  icon={<UploadOutlined />}
+                  onClick={() => {
+                    inputFileRef.current.click();
+                  }}
+                  // disabled={disabledImport}
+                >
+                  Importar PDF
+                </Button>
+                <input
+                  ref={inputFileRef}
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={(e) => importPDF(e)}
+                />
+              </Col>
               <Col span={24}>
                 {movement.length > 0 ? rendermovements() : null}
               </Col>

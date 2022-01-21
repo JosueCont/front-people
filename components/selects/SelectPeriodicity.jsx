@@ -16,6 +16,7 @@ const SelectPeriodicity = ({
         rules={rules}
       >
         <Select
+          size={props.size ?props.size :'middle'}
           key="SelectPeriodicity"
           options={periodicityNom}
           placeholder="Periocidad"

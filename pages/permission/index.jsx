@@ -26,8 +26,10 @@ import {
 } from "@ant-design/icons";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from 'react-redux'
 
-const Permission = () => {
+
+const Permission = ({permissions, ...props}) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -41,7 +43,7 @@ const Permission = () => {
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
   const [departamentId, setDepartamentId] = useState(null);
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   let nodeId = userCompanyId();
 
   /* Select estatus */
@@ -128,25 +130,9 @@ const Permission = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getPermissions();
     getAllPersons();
   }, [route]);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.permit.can.view")) perms.view = true;
-      if (a.includes("people.permit.can.create")) perms.create = true;
-      if (a.includes("people.permit.can.edit")) perms.edit = true;
-      if (a.includes("people.permit.can.delete")) perms.delete = true;
-      if (a.includes("people.permit.function.approve_permit"))
-        perms.approve = true;
-      if (a.includes("people.permit.function.reject_permit"))
-        perms.reject = true;
-    });
-    setPermissions(perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -155,7 +141,7 @@ const Permission = () => {
   };
 
   return (
-    <MainLayout currentKey="7.3">
+    <MainLayout currentKey={["permisos"]} defaultOpenKeys={["solicitudes"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -168,24 +154,25 @@ const Permission = () => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <>
-            <Row justify="space-between" style={{ paddingBottom: 20 }}>
-              <Col>
-                <Form
-                  name="filter"
-                  onFinish={filterPermission}
-                  layout="vertical"
-                  key="formFilter"
-                  className={"formFilter"}
-                  form={form}
-                >
-                  <Row gutter={[24, 8]}>
-                    <Col>
-                      <SelectCollaborator
-                        name="collaborator"
-                        style={{ width: 150 }}
-                      />
-                    </Col>
-                    {/* <Col>
+            <div className="top-container-border-radius">
+              <Row justify="space-between" style={{ paddingBottom: 20 }}>
+                <Col>
+                  <Form
+                    name="filter"
+                    onFinish={filterPermission}
+                    layout="vertical"
+                    key="formFilter"
+                    className={"formFilter"}
+                    form={form}
+                  >
+                    <Row gutter={[24, 8]}>
+                      <Col>
+                        <SelectCollaborator
+                          name="collaborator"
+                          style={{ width: 150 }}
+                        />
+                      </Col>
+                      {/* <Col>
                       <SelectCompany
                         name="company"
                         label="Empresa"
@@ -194,83 +181,85 @@ const Permission = () => {
                         style={{ width: 150 }}
                       />
                     </Col> */}
-                    <Col>
-                      <SelectDepartment
-                        companyId={nodeId}
-                        key="SelectDepartment"
-                      />
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        key="estatus_filter"
-                        name="status"
-                        label="Estatus"
-                      >
-                        <Select
-                          style={{ width: 150 }}
-                          key="select"
-                          options={optionStatus}
-                          allowClear
-                          notFoundContent={"No se encontraron resultados."}
+                      <Col>
+                        <SelectDepartment
+                          companyId={nodeId}
+                          key="SelectDepartment"
                         />
-                      </Form.Item>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Button
-                        style={{
-                          background: "#fa8c16",
-                          fontWeight: "bold",
-                          color: "white",
-                          marginTop: "auto",
-                        }}
-                        key="buttonFilter"
-                        htmlType="submit"
-                        loading={sending}
-                      >
-                        <SearchOutlined />
-                      </Button>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto", marginLeft: 10 }}
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          key="estatus_filter"
+                          name="status"
+                          label="Estatus"
                         >
-                          <SyncOutlined />
+                          <Select
+                            style={{ width: 150 }}
+                            key="select"
+                            options={optionStatus}
+                            allowClear
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Button
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "auto",
+                          }}
+                          key="buttonFilter"
+                          htmlType="submit"
+                          loading={sending}
+                        >
+                          <SearchOutlined />
                         </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                {permissions.create && (
-                  <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    onClick={() => route.push("/permission/new")}
-                    key="btn_new"
-                  >
-                    <PlusOutlined />
-                    Agregar permiso
-                  </Button>
-                )}
-              </Col>
-            </Row>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto", marginLeft: 10 }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        {permissions.create && (
+                          <Button
+                            style={{
+                              background: "#fa8c16",
+                              fontWeight: "bold",
+                              color: "white",
+                              marginTop: "auto",
+                            }}
+                            onClick={() => route.push("/permission/new")}
+                            key="btn_new"
+                          >
+                            <PlusOutlined />
+                            Agregar permiso
+                          </Button>
+                        )}
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+              </Row>
+            </div>
             <Row justify="end">
               <Col span={24}>
                 <Table
                   dataSource={permissionsList}
                   key="tableHolidays"
                   loading={loading}
+                  scroll={{ x: 350 }}
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
@@ -355,4 +344,10 @@ const Permission = () => {
   );
 };
 
-export default withAuthSync(Permission);
+const mapState = (state) => {
+  return { 
+    permissions: state.userStore.permissions.permit,
+  };
+};
+
+export default connect(mapState)(withAuthSync(Permission));

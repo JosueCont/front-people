@@ -10,6 +10,7 @@ import {
   Col,
   Modal,
   message,
+  Tooltip,
 } from "antd";
 import {
   SearchOutlined,
@@ -204,7 +205,7 @@ const Groups = ({ ...props }) => {
     getGroups();
   };
   return (
-    <MainLayout currentKey="3.2">
+    <MainLayout currentKey={["perfiles"]} defaultOpenKeys={["config"]}>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -215,83 +216,89 @@ const Groups = ({ ...props }) => {
         <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
-        <Row>
-          <Col span={20}>
-            <Form
-              form={form}
-              onFinish={filter}
-              initialValues={{
-                id: "",
-                name: "",
-                perms: [],
-              }}
-              scrollToFirstError
-            >
-              <Row>
-                <Col xl={10} md={10} xs={24}>
-                  <Form.Item name="name" label="Nombre">
-                    <Input placeholder="Nombre" />
-                  </Form.Item>
-                </Col>
-                <Col span={4}>
-                  <div style={{ float: "left", marginLeft: "5px" }}>
-                    <Form.Item>
+        <div className="top-container-border-radius">
+          <Row justify={"space-between"} className={"formFilter"}>
+            <Col>
+              <Form
+                form={form}
+                onFinish={filter}
+                layout={"vertical"}
+                initialValues={{
+                  id: "",
+                  name: "",
+                  perms: [],
+                }}
+                scrollToFirstError
+              >
+                <Row gutter={[10]}>
+                  <Col>
+                    <Form.Item name="name" label="Nombre">
+                      <Input placeholder="Nombre" />
+                    </Form.Item>
+                  </Col>
+                  <Col
+                    className="button-filter-person"
+                    style={{ display: "flex", marginTop: "10px" }}
+                  >
+                    <Tooltip title="Filtrar" color={"#3d78b9"} key={"#filtrar"}>
                       <Button
-                        style={{
-                          background: "#fa8c16",
-                          fontWeight: "bold",
-                          color: "white",
-                        }}
                         htmlType="submit"
+                        style={{ marginTop: "auto", marginLeft: 10 }}
                       >
                         <SearchOutlined />
                       </Button>
-                    </Form.Item>
-                  </div>
-                  <div style={{ float: "left", marginLeft: "5px" }}>
-                    <Form.Item>
+                    </Tooltip>
+                  </Col>
+                  <Col
+                    className="button-filter-person"
+                    style={{ display: "flex", marginTop: "10px" }}
+                  >
+                    <Tooltip title="Filtrar" color={"#3d78b9"} key={"#filtrar"}>
                       <Button
                         onClick={() => resetFilter()}
                         style={{ marginTop: "auto", marginLeft: 10 }}
                       >
                         <SyncOutlined />
                       </Button>
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-            </Form>
-          </Col>
-          <Col style={{ display: "flex" }}>
-            {permissions.create && (
-              <Button
-                style={{
-                  background: "#fa8c16",
-                  fontWeight: "bold",
-                  color: "white",
-                }}
-                onClick={() => router.push({ pathname: "/config/groups/add" })}
-              >
-                <PlusOutlined />
-                Agregar
-              </Button>
-            )}
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Table
-              columns={columns}
-              dataSource={groups}
-              loading={loading}
-              locale={{
-                emptyText: loading
-                  ? "Cargando..."
-                  : "No se encontraron resultados.",
-              }}
-            />
-          </Col>
-        </Row>
+                    </Tooltip>
+                  </Col>
+                  <Col
+                    className="button-filter-person"
+                    style={{ marginTop: "auto", marginLeft: 10 }}
+                  >
+                    {permissions.create && (
+                      <Button
+                        style={{
+                          background: "#fa8c16",
+                          fontWeight: "bold",
+                          color: "white",
+                        }}
+                        onClick={() =>
+                          router.push({ pathname: "/config/groups/add" })
+                        }
+                      >
+                        <PlusOutlined />
+                        Agregar
+                      </Button>
+                    )}
+                  </Col>
+                </Row>
+              </Form>
+            </Col>
+          </Row>
+        </div>
+
+        <Table
+          className={"mainTable"}
+          columns={columns}
+          dataSource={groups}
+          loading={loading}
+          locale={{
+            emptyText: loading
+              ? "Cargando..."
+              : "No se encontraron resultados.",
+          }}
+        />
       </div>
     </MainLayout>
   );

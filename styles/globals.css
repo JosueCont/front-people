@@ -73,6 +73,7 @@ div#__next > section.layout{
 
 .back-white {
   background-color: #fff;
+  border-radius: 20px;
 }
 
 .ant-layout-content > .container {
@@ -81,6 +82,7 @@ div#__next > section.layout{
 
 .mainBreadcrumb {
   margin-bottom: 20px;
+  padding-left: 50px;
 }
 
 .ant-tabs-content-holder {
@@ -94,11 +96,7 @@ div#__next > section.layout{
   margin: 0 10px;
 }
 
-header.ant-layout-header {
-  padding-left: 10px;
-  padding-right: 10px;
-  background-color: var(--primaryColor) !important;
-}
+
 header.ant-layout-header > ul {
   background-color: var(--primaryColor) !important;
 }
@@ -145,6 +143,9 @@ header.ant-layout-header
 .formPermission .ant-select-disabled > .ant-select-selector {
   background-color: #fff !important;
   color: #000 !important;
+}
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-radius: 10px;
 }
 
 .formPermission .ant-input-number-disabled,
@@ -263,6 +264,34 @@ li.ant-menu-submenu-selected {
   background-color: var(--bluePrimary) !important;
   height: 64px !important;
 }
+.top-container-border-radius{  
+  background: #fff !important;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: -1px 2px 10px 0px #88888842;
+}
+.container-border-radius{
+  background: #fff !important;
+  border-radius: 10px;
+  padding:5px 20px;  
+  box-shadow: -1px 2px 10px 0px #88888842;
+}
+
+.ant-table {
+border-radius: 10px;
+box-shadow: -1px 2px 10px 0px #88888842;
+}
+.ant-table-pagination-right {  
+  justify-content: center;
+}
+
+.ant-table-container table > thead > tr:first-child th:last-child {  
+  border-top-right-radius: 10px !important;
+}
+.ant-table-container table > thead > tr:first-child th:first-child {
+  border-top-left-radius: 10px !important;
+}
 
 .container-items-center {
   display: flex;
@@ -278,6 +307,7 @@ li.ant-menu-submenu-selected {
 
 .ant-input, .ant-form-item-control-input{
   border-color: var(--primaryColor) !important;
+  border-radius: 10px;
 }
 
 .ant-input:hover, .ant-input-focused, .ant-input:focus  {
@@ -305,6 +335,7 @@ li.ant-menu-submenu-selected {
 
 .ant-picker{
   border: 1px solid var(--primaryColor) !important;
+  border-radius: 10px;
 }
 
 .ant-picker:hover, .ant-picker-focused {
@@ -327,12 +358,14 @@ li.ant-menu-submenu-selected {
 .ant-btn{
   background-color: var(--primaryColor) !important;
   border-color: var(--primaryColor) !important;
+  border-radius: 10px;
 }
 
 .ant-btn:hover{
   
   background-color: var(--secondaryColor) !important;
   border-color: var(--secondaryColor) !important;
+  color: var(--fontSecondaryColor) !important
 }
 
 
@@ -344,6 +377,7 @@ li.ant-menu-submenu-selected {
 .ant-btn-primary:hover{
   background-color: var(--secondaryColor) !important;
   border-color: var(--secondaryColor) !important;
+  color: var(--fontSecondaryColor) !important
 }
 
 .text-link {
@@ -466,12 +500,15 @@ li.ant-menu-submenu-selected {
 }
 
 header.ant-layout-header {
-    background-color: var(--primaryColor) !important;
+    background-color: transparent !important;
 }
 
 .ant-checkbox-checked .ant-checkbox-inner {
     background-color: var(--primaryColor) !important;
     border-color: var(--primaryColor) !important;
+}
+.ant-checkbox-inner {
+  border-radius: 5px;
 }
 
 .btn-add-person{
@@ -486,6 +523,7 @@ header.ant-layout-header {
   font-weight: "bold";
   color: var(--fontSpanColor);
   margin-top: auto;
+  border-radius: 10px;
 }
 
 .ant-tooltip-inner{
@@ -511,4 +549,129 @@ header.ant-layout-header {
   height: 200px;
   padding: 0px;
   margin-bottom: 25px;
+}
+
+
+.search_header{
+  background-color: transparent;
+  width: 300px;
+  border: 1px solid #878787;
+  border-radius: 11px;
+  color: #878787;
+  font-weight: 100;
+}
+.ant-input-affix-wrapper {
+  border-radius: 10px;
+}
+.ant-input-affix-wrapper-focused{
+  border: 1px solid #878787 !important;
+}
+.input[type='text'], input[type='password'], input[type='number'], textarea{
+  border-radius: 10px;
+}
+.search_header input{
+  background-color: transparent;
+  color: #878787;
+  font-size: 14px;
+}
+.search_header .ant-input-prefix span{
+    color: #878787 !important;
+}
+
+.ant-breadcrumb span{
+  /* color: var(--primaryColor) */
+  color: #000
+}
+.ant-form-item-label > label {  
+  color: rgba(0, 0, 0, 0.85) !important;  
+}
+.ant-input-number{
+  border-radius: 10px;
+}
+/*Login styles*/
+.divContainerLeft {
+  top: 185px !important;
+  position: relative;
+  text-align: center;
+  width: 90%;
+  margin: 0 auto;
+  padding: 50px;
+  height: 510px;
+  -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 2s; /* Firefox < 16 */
+  -ms-animation: fadein 2s; /* Internet Explorer */
+  -o-animation: fadein 2s; /* Opera < 12.1 */
+  animation: fadein 2s;
+}
+
+/*Border radius table*/
+.ant-table.ant-table-small {
+  border-radius: 10px; 
+}
+
+.ant-table-content{  
+  border-radius: 10px;
+}
+
+/*Border radius modal*/
+.ant-modal-header {  
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+.ant-modal-content {  
+  border-radius: 10px;
+}
+
+/*Border radius card*/
+.ant-card-bordered {
+  border-radius: 10px; 
+  box-shadow: -1px 2px 10px 0px #88888842;
+}
+
+.container-title-tab{
+  display: flex;
+  align-items: center;
+}
+
+.site-layout .site-layout-background { 
+  border-radius: 20px;
+}
+
+.icon-intranet{
+  width: 15px !important;
+}
+
+@media screen and (max-width: 880px) {
+  .text-title-tab{   
+    display: none;
+  }
+  .container-title-tab{
+    font-size: 18px;
+  }
+  
+}
+
+/*Media queryes*/
+@media screen and (max-width: 750px ) {
+  .ant-tabs-left > .ant-tabs-nav .ant-tabs-tab, .ant-tabs-right > .ant-tabs-nav .ant-tabs-tab, .ant-tabs-left > div > .ant-tabs-nav .ant-tabs-tab, .ant-tabs-right > div > .ant-tabs-nav .ant-tabs-tab {
+    padding: 8px 10px;
+}
+.title-tab-left{
+  display: none;
+}
+}
+
+@media screen and (max-width: 600px ) {
+  .ant-layout-sider {
+    flex: 0 0 80px !important;
+    max-width: 80px !important;
+    min-width: 80px !important;
+    width: 80px !important;
+  }
+  .ant-layout-sider-trigger {
+    width: 80px !important;
+  }
+  .search_header{
+    display: none;
+  }
 }

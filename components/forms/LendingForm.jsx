@@ -183,26 +183,26 @@ const Lendingform = (props) => {
   });
 
   return (
-    <Form form={form} layout="horizontal" onFinish={props.onFinish}>
-      <Row justify={"start"}>
+    <Form form={form} layout="vertical" onFinish={props.onFinish}>
+      <Row gutter={24}>
         <Col span={24}>
           <Title key="dats_gnrl" level={4}>
             Nueva solicitud de préstamo
           </Title>
         </Col>
-        <Col span="8">
+        <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
           <SelectCollaborator
             label="Colaborador"
             name="person"
-            labelCol={{ span: 10 }}
-            labelAlign={"left"}
+            labelCol={{ span: 24 }}
             rules={[ruleRequired]}
           />
+        </Col>
+        <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
           <Form.Item
             name="type"
             label="Tipo de préstamo"
-            labelCol={{ span: 10 }}
-            labelAlign={"left"}
+            labelCol={{ span: 24 }}
             rules={[ruleRequired]}
           >
             <Select
@@ -211,11 +211,12 @@ const Lendingform = (props) => {
               notFoundContent={"No se encontraron resultados."}
             />
           </Form.Item>
+        </Col>
+        <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
           <Form.Item
             name="amount"
             label="Cantidad solicitada"
-            labelCol={{ span: 10 }}
-            labelAlign={"left"}
+            labelCol={{ span: 24 }}
             rules={[ruleRequired, ruleAmount]}
           >
             <InputNumber
@@ -228,21 +229,23 @@ const Lendingform = (props) => {
             />
             {/* <InputNumber style={{ width: '100%' }} /> */}
           </Form.Item>
+        </Col>
+        <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
           <Form.Item
             name="deadline"
             label="Plazos"
-            labelCol={{ span: 10 }}
-            labelAlign={"left"}
+            labelCol={{ span: 24 }}
             rules={[ruleRequired, ruleDeadline]}
           >
-            <InputNumber onChange={getPayment} />
+            <InputNumber style={{ width: "100%" }} onChange={getPayment} />
             {/* <InputNumber style={{ width: '100%' }} onChange={getPayment}/> */}
           </Form.Item>
+        </Col>
+        <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
           <Form.Item
             name="periodicity"
             label="Periodicidad"
-            labelCol={{ span: 10 }}
-            labelAlign={"left"}
+            labelCol={{ span: 24 }}
             rules={[ruleRequired]}
           >
             <Select
@@ -250,11 +253,12 @@ const Lendingform = (props) => {
               notFoundContent={"No se encontraron resultados."}
             />
           </Form.Item>
+        </Col>
+        <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
           <Form.Item
             name="periodicity_amount"
             label="Pago"
-            labelCol={{ span: 10 }}
-            labelAlign={"left"}
+            labelCol={{ span: 24 }}
           >
             <InputNumber
               style={{ width: "100%" }}
@@ -269,15 +273,12 @@ const Lendingform = (props) => {
             {/* <InputNumber style={{ width: '100%' }} /> */}
           </Form.Item>
         </Col>
-        <Col span={19} style={{ textAlign: "right" }}>
-          <Form.Item
-            label="Motivo"
-            name="reason"
-            labelCol={{ span: 4 }}
-            labelAlign={"left"}
-          >
+        <Col span={24}>
+          <Form.Item label="Motivo" name="reason" labelCol={{ span: 24 }}>
             <TextArea rows="4" style={{ marginLeft: 6 }} />
           </Form.Item>
+        </Col>
+        <Col span={24} style={{ textAlign: "right" }}>
           <Button
             onClick={() => route.push("/lending")}
             key="cancel"

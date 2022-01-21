@@ -17,14 +17,9 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import WebApi from "../../api/webApi";
-import {
-  messageDialogDelete,
-  onlyNumeric,
-  titleDialogDelete,
-} from "../../utils/constant";
+import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
+import { onlyNumeric, ruleRequired } from "../../utils/rules";
 
 const FormEmergencyContact = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -35,7 +30,6 @@ const FormEmergencyContact = ({ person_id = null }) => {
   const [contactEmergency, setContactEmergency] = useState([]);
   const [relationship, setRelationship] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   useEffect(() => {
     getContactEmergency();

@@ -24,6 +24,8 @@ import FormItemHTMLPlace from "../../../components/draft";
 import { withAuthSync, userCompanyId } from "../../../libs/auth";
 import SelectJob from "../../../components/selects/SelectJob";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
+import { ruleRequired } from "../../../utils/rules";
+import { typeMessage } from "../../../utils/constant";
 
 const Newrelease = () => {
   let nodeId = userCompanyId();
@@ -131,6 +133,7 @@ const Newrelease = () => {
         datos.append("files", f.originFileObj);
       });
     }
+    console.log("Enviando", values);
     setSending(true);
     try {
       let response = await Axios.post(
@@ -204,36 +207,6 @@ const Newrelease = () => {
     route.push("/comunication/releases");
   };
 
-  const genders = [
-    {
-      label: "Todos",
-      value: 0,
-    },
-    {
-      label: "Masculino",
-      value: 1,
-    },
-    {
-      label: "Femenino",
-      value: 2,
-    },
-    {
-      label: "Otro",
-      value: 3,
-    },
-  ];
-
-  const typeMessage = [
-    {
-      label: "Noticias",
-      value: 2,
-    },
-    {
-      label: "Aviso",
-      value: 1,
-    },
-  ];
-
   /////GET DATA SELCTS
   const getValueSelects = async () => {
     /////PERSON TYPE
@@ -294,8 +267,6 @@ const Newrelease = () => {
     setSegmentationRequired(!e);
   };
 
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
-
   return (
     <MainLayout currentKey="4.1">
       <Breadcrumb key="Breadcrumb">
@@ -308,158 +279,146 @@ const Newrelease = () => {
         <Breadcrumb.Item href="./">Comunicados</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>
-      <div className="container back-white" style={{ width: "100%" }}>
-        <Row justify={"center"}>
-          <Col span="23" style={{ padding: "20px 0 30px 0" }}>
-            <Form
-              key="notification_form"
-              form={form}
-              layout="horizontal"
-              labelCol={{ xs: 24, sm: 24, md: 5 }}
-              onFinish={saveNotification}
-            >
-              <Row>
-                <Col span={24}>
-                  <Title key="dats_gnrl" level={3}>
-                    Datos Generales
-                  </Title>
-                </Col>
-                <Col xs={24} sm={24} md={14} lg={14} xl={14}>
-                  <Form.Item
-                    name="category"
-                    label="Categoría"
-                    labelAlign={"left"}
-                    rules={[ruleRequired]}
-                  >
-                    <Select
-                      style={{ width: 250 }}
-                      options={typeMessage}
-                      notFoundContent={"No se encontraron resultados."}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Título"
-                    name="title"
-                    labelAlign={"left"}
-                    rules={[ruleRequired]}
-                  >
-                    <Input className={"formItemPayment"} />
-                  </Form.Item>
-                  <FormItemHTMLPlace
-                    messageAlert={messageAlert}
-                    setMessageAlert={setMessageAlert}
-                    html=""
-                    setHTML={setHtml}
-                  />
+      <div
+        className="container back-white"
+        style={{ width: "100%", padding: "20px" }}
+      >
+        <Form
+          key="notification_form"
+          form={form}
+          layout="vertical"
+          onFinish={saveNotification}
+        >
+          <Row gutter={24}>
+            <Col span={24}>
+              <Title key="dats_gnrl" level={3}>
+                Datos Generales
+              </Title>
+            </Col>
+            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+              <Form.Item
+                name="category"
+                label="Categoría"
+                labelAlign={"left"}
+                rules={[ruleRequired]}
+              >
+                <Select
+                  style={{ width: "100%" }}
+                  options={typeMessage}
+                  notFoundContent={"No se encontraron resultados."}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+              <Form.Item
+                label="Título"
+                name="title"
+                labelAlign={"left"}
+                rules={[ruleRequired]}
+              >
+                <Input className={"formItemPayment"} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <FormItemHTMLPlace
+                messageAlert={messageAlert}
+                setMessageAlert={setMessageAlert}
+                html=""
+                setHTML={setHtml}
+              />
 
-                  {/*  */}
-                  <Form.Item>
-                    <Upload
-                      listType="picture-card"
-                      fileList={fileList}
-                      onChange={onchangeFile}
-                    >
-                      <div>
-                        <PlusOutlined />
-                        <div style={{ marginTop: 8 }}>Upload</div>
-                      </div>
-                    </Upload>
-                    <input
-                      ref={inputFileRef}
-                      type="file"
-                      style={{ display: "none" }}
-                      onChange={(e) => selectedFile(e)}
-                    />
-                  </Form.Item>
-                </Col>
+              {/*  */}
+              <Form.Item>
+                <Upload
+                  listType="picture-card"
+                  fileList={fileList}
+                  onChange={onchangeFile}
+                >
+                  <div>
+                    <PlusOutlined />
+                    <div style={{ marginTop: 8 }}>Upload</div>
+                  </div>
+                </Upload>
+                <input
+                  ref={inputFileRef}
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={(e) => selectedFile(e)}
+                />
+              </Form.Item>
+            </Col>
 
-                <Col span={24}>
-                  <Title level={3} key="segmentacion">
-                    Segmentación
-                  </Title>
-                </Col>
-                <Col xs={24} sm={24} md={13} lg={13} xl={13}>
-                  <Form.Item
-                    name="send_to_all"
-                    label="Enviar a todos"
-                    labelAlign="left"
-                  >
-                    <Switch value={false} onChange={changeSendToAll} />
-                  </Form.Item>
-                </Col>
+            <Col span={24}>
+              <Title level={3} key="segmentacion">
+                Segmentación
+              </Title>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="send_to_all"
+                label="Enviar a todos"
+                labelAlign="left"
+              >
+                <Switch value={false} onChange={changeSendToAll} />
+              </Form.Item>
+            </Col>
 
-                <Col xs={24} sm={24} md={14} lg={14} xl={14}>
-                  <Row>
-                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                      {/* <Form.Item
-                        name={"target_department"}
-                        label="Departamento"
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        rules={[checkSegmentacion]}
-                      > */}
-                      <SelectDepartment
-                        name={"target_department"}
-                        titleLabel={false}
-                      />
-                      {/* </Form.Item> */}
+            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+              <SelectDepartment name={"target_department"} titleLabel={false} />
+            </Col>
+            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+              <SelectJob name={"target_job"} titleLabel={false} />
+            </Col>
+            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+              <Form.Item
+                name={"target_person_type"}
+                label="Tipo de persona"
+                labelCol={{ span: 24 }}
+                rules={[checkSegmentacion]}
+              >
+                <Select
+                  options={personType}
+                  key="person_select"
+                  notFoundContent={"No se encontraron resultados."}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+              <Form.Item
+                name={"target_gender"}
+                label="Género"
+                labelCol={{ span: 10 }}
+                rules={[checkSegmentacion]}
+              >
+                <Select
+                  options={genders}
+                  key="gender_select"
+                  notFoundContent={"No se encontraron resultados."}
+                />
+              </Form.Item>
+            </Col>
 
-                      <SelectJob name={"target_job"} titleLabel={false} />
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                      <Form.Item
-                        name={"target_person_type"}
-                        label="Tipo de persona"
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        rules={[checkSegmentacion]}
-                      >
-                        <Select
-                          options={personType}
-                          key="person_select"
-                          notFoundContent={"No se encontraron resultados."}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name={"target_gender"}
-                        label="Género"
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
-                        rules={[checkSegmentacion]}
-                      >
-                        <Select
-                          options={genders}
-                          key="gender_select"
-                          notFoundContent={"No se encontraron resultados."}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Col>
-                <Col span={24} style={{ textAlign: "right" }}>
-                  <Button
-                    key="cancel"
-                    onClick={() => onCancel()}
-                    disabled={sending}
-                    style={{ padding: "0 50px", margin: "0 10px" }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    key="save"
-                    htmlType="submit"
-                    loading={sending}
-                    type="primary"
-                    style={{ padding: "0 50px", margin: "0 10px" }}
-                    disabled={sending}
-                  >
-                    Enviar
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Col>
-        </Row>
+            <Col span={24} style={{ textAlign: "right" }}>
+              <Button
+                key="cancel"
+                onClick={() => onCancel()}
+                disabled={sending}
+                style={{ padding: "0 50px", margin: "0 10px" }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                key="save"
+                htmlType="submit"
+                loading={sending}
+                type="primary"
+                disabled={sending}
+              >
+                Enviar
+              </Button>
+            </Col>
+          </Row>
+        </Form>
       </div>
     </MainLayout>
   );

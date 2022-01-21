@@ -104,7 +104,7 @@ const GroupView = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey="11.1">
+    <MainLayout currentKey={["groups"]} defaultOpenKeys={["intranet"]}>
       <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
@@ -117,9 +117,11 @@ const GroupView = ({ ...props }) => {
         </Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
-        <Button type="primary" onClick={showModal}>
-          + Agregar nuevo
-        </Button>
+        <div className="top-container-border-radius">
+          <Button type="primary" onClick={showModal}>
+            + Agregar nuevo
+          </Button>
+        </div>
 
         {isModalVisible && (
           <FormGroup

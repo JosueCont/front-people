@@ -18,7 +18,6 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import Axios from "axios";
 import { API_URL } from "./../../config/config";
 import moment from "moment";
-
 import {
   EditOutlined,
   SearchOutlined,
@@ -28,8 +27,10 @@ import {
 } from "@ant-design/icons";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from 'react-redux'
 
-const Lending = () => {
+
+const Lending = ({permissions, configPermissions, ...props}) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -38,7 +39,7 @@ const Lending = () => {
   const [lendingList, setLendingList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   let nodeId = userCompanyId();
 
   const optionStatus = [
@@ -87,23 +88,9 @@ const Lending = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getLending();
   }, [route]);
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.loan.can.view")) perms.view = true;
-      if (a.includes("people.loan.can.create")) perms.create = true;
-      if (a.includes("people.loan.can.edit")) perms.edit = true;
-      if (a.includes("people.loan.can.delete")) perms.delete = true;
-      if (a.includes("people.loanconfigure.can.view")) perms.config = true;
-      if (a.includes("people.loan.function.approve_loan")) perms.approve = true;
-      if (a.includes("people.loan.function.reject_loan")) perms.reject = true;
-    });
-    setPermissions(perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -111,7 +98,7 @@ const Lending = () => {
   };
 
   return (
-    <MainLayout currentKey="7.1">
+    <MainLayout currentKey={["prestamos"]} defaultOpenKeys={["solicitudes"]}>
       <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
@@ -124,126 +111,129 @@ const Lending = () => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <>
-            <Row
-              justify="space-between"
-              key="row1"
-              style={{ paddingBottom: 20 }}
-            >
-              <Col>
-                <Form
-                  form={form}
-                  className={"formFilter"}
-                  name="filter"
-                  onFinish={filter}
-                  layout="vertical"
-                  key="form"
-                >
-                  <Row gutter={[24, 8]}>
-                    <Col>
-                      <SelectCollaborator
-                        name="person"
-                        style={{ width: 150 }}
-                      />
-                    </Col>
-                    <Col>
-                      <Form.Item key="type" name="type" label="Tipo">
-                        <Select
-                          placeholder="Todos"
+            <div className="top-container-border-radius">
+              <Row
+                justify="space-between"
+                key="row1"
+                style={{ paddingBottom: 20 }}
+              >
+                <Col>
+                  <Form
+                    form={form}
+                    className={"formFilter"}
+                    name="filter"
+                    onFinish={filter}
+                    layout="vertical"
+                    key="form"
+                  >
+                    <Row gutter={[24, 8]}>
+                      <Col>
+                        <SelectCollaborator
+                          name="person"
                           style={{ width: 150 }}
-                          key="select_type"
-                          options={typeOptions}
-                          allowClear
-                          notFoundContent={"No se encontraron resultados."}
                         />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        key="estatus_filter"
-                        name="status"
-                        label="Estatus"
-                      >
-                        <Select
-                          style={{ width: 150 }}
-                          key="select_status"
-                          options={optionStatus}
-                          placeholder="Todos"
-                          allowClear
-                          notFoundContent={"No se encontraron resultados."}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Button
-                        loading={loading}
-                        htmlType="submit"
-                        key="filter"
-                        style={{
-                          background: "#fa8c16",
-                          fontWeight: "bold",
-                          color: "white",
-                          marginTop: "auto",
-                        }}
-                      >
-                        <SearchOutlined />
-                      </Button>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto", marginLeft: 10 }}
+                      </Col>
+                      <Col>
+                        <Form.Item key="type" name="type" label="Tipo">
+                          <Select
+                            placeholder="Todos"
+                            style={{ width: 150 }}
+                            key="select_type"
+                            options={typeOptions}
+                            allowClear
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          key="estatus_filter"
+                          name="status"
+                          label="Estatus"
                         >
-                          <SyncOutlined />
+                          <Select
+                            style={{ width: 150 }}
+                            key="select_status"
+                            options={optionStatus}
+                            placeholder="Todos"
+                            allowClear
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Button
+                          loading={loading}
+                          htmlType="submit"
+                          key="filter"
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "auto",
+                          }}
+                        >
+                          <SearchOutlined />
                         </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                {permissions.config && (
-                  <Button
-                    key="config"
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    onClick={() => route.push("lending/config")}
-                  >
-                    Configuración
-                  </Button>
-                )}
-                {permissions.create && (
-                  <Button
-                    key="btnnvo"
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginLeft: 20,
-                      marginTop: "auto",
-                    }}
-                    onClick={() => route.push("lending/new")}
-                  >
-                    <PlusOutlined />
-                    Agregar préstamo
-                  </Button>
-                )}
-              </Col>
-            </Row>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto", marginLeft: 10 }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+                <Col style={{ display: "flex" }}>
+                  {configPermissions.view && (
+                    <Button
+                      key="config"
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginTop: "auto",
+                      }}
+                      onClick={() => route.push("lending/config")}
+                    >
+                      Configuración
+                    </Button>
+                  )}
+                  {permissions.create && (
+                    <Button
+                      key="btnnvo"
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginLeft: 20,
+                        marginTop: "auto",
+                      }}
+                      onClick={() => route.push("lending/new")}
+                    >
+                      <PlusOutlined />
+                      Agregar préstamo
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+            </div>
             <Row justify={"end"}>
               <Col span={24}>
                 <Table
                   dataSource={lendingList}
                   key="table_holidays"
                   loading={loading}
+                  scroll={{ x: 350 }}
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
@@ -344,4 +334,12 @@ const Lending = () => {
   );
 };
 
-export default withAuthSync(Lending);
+
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.loan,
+    configPermissions: state.userStore.permissions.loanconfigure
+  };
+};
+
+export default connect(mapState)(withAuthSync(Lending));

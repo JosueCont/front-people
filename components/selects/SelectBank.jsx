@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 
-const SelectBank = (props) => {
+const SelectBank =  ({ bankSelected=null, ...props }) => {
   const [options, setOptions] = useState(null);
   const route = useRouter();
 
@@ -37,6 +37,7 @@ const SelectBank = (props) => {
         onChange={props.onChange ? props.onChange : null}
         allowClear
         notFoundContent={"No se encontraron resultados."}
+        value={bankSelected}
       />
     </Form.Item>
   );

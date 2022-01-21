@@ -14,33 +14,34 @@ import {
 import moment from "moment";
 
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
+import WebApi from "../../api/webApi";
 
 const Vacationform = (props) => {
   const { Title } = Typography;
 
   const [formVacation] = Form.useForm();
 
-  const { Option } = Select;
-
   const [allPersons, setAllPersons] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
 
-  const changePerson = (value) => {
+  const changePerson = async (value) => {
     if (value) {
-      let index = allPersons.find((data) => data.id === value);
-      formVacation.setFieldsValue({
-        antiquity: index.antiquity,
-        availableDays: index.Available_days_vacation,
-        dateOfAdmission: index.date_of_admission
-          ? moment(index.date_of_admission).format("DD-MM-YYYY")
-          : null,
-      });
-      if (index.job) {
+      let index = await getCollaborator(value);
+      if (index) {
         formVacation.setFieldsValue({
-          job: index.job.name,
+          antiquity: index.antiquity,
+          availableDays: index.Available_days_vacation,
+          dateOfAdmission: index.date_of_admission
+            ? moment(index.date_of_admission).format("DD-MM-YYYY")
+            : null,
         });
+        if (index.job) {
+          formVacation.setFieldsValue({
+            job: index.job.name,
+          });
+        }
+        setUrlPhoto(index.photo ? index.photo : null);
       }
-      setUrlPhoto(index.photo ? index.photo : null);
     } else {
       formVacation.setFieldsValue({
         antiquity: null,
@@ -50,6 +51,16 @@ const Vacationform = (props) => {
       });
       setUrlPhoto(null);
     }
+  };
+
+  const getCollaborator = async (id) => {
+    let collaborator = {};
+    let response = await WebApi.getPerson(id);
+
+    if (response.status == 200) {
+      collaborator = response.data;
+    }
+    return collaborator;
   };
 
   useEffect(() => {
@@ -108,10 +119,10 @@ const Vacationform = (props) => {
           : null
       );
     }
-  }, [allPersons]);
+  }, [props.details]);
 
   return (
-    <Form form={formVacation} layout="horizontal" onFinish={props.onFinish}>
+    <Form form={formVacation} layout="vertical" onFinish={props.onFinish}>
       <Row>
         <Col span={20} offset={4}>
           <Title key="dats_gnrl" level={4}>
@@ -129,116 +140,81 @@ const Vacationform = (props) => {
             />
           )}
         </Col>
+        <Col span={20} style={{ padding: 20 }}>
+          <Row gutter={24}>
+            <Col sm={24} md={12} lg={12}>
+              <SelectCollaborator
+                label="Empleado"
+                name="person"
+                onChange={changePerson}
+                setAllPersons={setAllPersons}
+              />
 
-        <Col span="8">
-          <SelectCollaborator
-            label="Empleado"
-            name="person"
-            labelCol={{ span: 9 }}
-            labelAlign={"left"}
-            onChange={changePerson}
-            setAllPersons={setAllPersons}
-          />
-
-          <Form.Item
-            label="Puesto"
-            name="job"
-            labelCol={{ span: 9 }}
-            labelAlign={"left"}
-            readOnly
-          >
-            <Input readOnly />
-          </Form.Item>
-          <Form.Item
-            name="days_requested"
-            label="Días solicitados"
-            labelCol={{ span: 9 }}
-            labelAlign={"left"}
-          >
-            <InputNumber min={1} max={20} style={{ width: "100%" }} />
-          </Form.Item>
-        </Col>
-        <Col span="8" offset={1}>
-          <Form.Item
-            name="departure_date"
-            label="Fecha de salida"
-            labelCol={{ span: 9 }}
-            labelAlign={"left"}
-          >
-            <DatePicker
-              key="departure_date"
-              style={{ width: "100%" }}
-              onChange={props.onChangeDepartureDate}
-            />
-          </Form.Item>
-          <Form.Item
-            name="return_date"
-            label="Fecha de regreso"
-            labelCol={{ span: 9 }}
-            labelAlign={"left"}
-          >
-            <DatePicker
-              key="return_date"
-              style={{ width: "100%" }}
-              onChange={props.onChangeReturnDate}
-            />
-          </Form.Item>
-          <Form.Item
-            name="availableDays"
-            label="Días disponibles"
-            labelCol={{ span: 9 }}
-            labelAlign={"left"}
-          >
-            <Input
-              /* defaultValue={availableDays} */ /* value={availableDays} */ readOnly
-            />
-          </Form.Item>
-        </Col>
-        <Col span={20} offset={4}>
-          <Title key="dats_gnrl" level={4} style={{ marginTop: 10 }}>
-            Información
-          </Title>
-        </Col>
-        <Col span={8} offset={4}>
-          <Form.Item
-            label="Fecha de ingreso"
-            name="dateOfAdmission"
-            labelCol={{ span: 9 }}
-            labelAlign={"left"}
-          >
-            <Input
-              readOnly /* defaultValue={dateOfAdmission ? moment(dateOfAdmission, 'YYYY-MM-DD'): null} */
-            />
-          </Form.Item>
-        </Col>
-        <Col span={8} offset={1}>
-          <Form.Item
-            label="Antigüedad"
-            name="antiquity"
-            labelCol={{ span: 9 }}
-            labelAlign={"left"}
-          >
-            <Input readOnly />
-          </Form.Item>
-        </Col>
-        <Col span={21} style={{ textAlign: "right" }}>
-          <Button
-            key="cancel"
-            onClick={props.onCancel}
-            disabled={props.sending}
-            style={{ padding: "0 50px", margin: "0 10px" }}
-          >
-            Cancelar
-          </Button>
-          <Button
-            key="save"
-            htmlType="submit"
-            loading={props.sending}
-            type="primary"
-            style={{ padding: "0 50px", margin: "0 0 0 10px" }}
-          >
-            {props.edit ? "Actualizar" : "Guardar"}
-          </Button>
+              <Form.Item label="Puesto" name="job" readOnly>
+                <Input readOnly />
+              </Form.Item>
+              <Form.Item name="days_requested" label="Días solicitados">
+                <InputNumber min={1} max={20} style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+            <Col sm={24} md={12} lg={12}>
+              <Form.Item name="departure_date" label="Fecha de salida">
+                <DatePicker
+                  key="departure_date"
+                  style={{ width: "100%" }}
+                  onChange={props.onChangeDepartureDate}
+                />
+              </Form.Item>
+              <Form.Item name="return_date" label="Fecha de regreso">
+                <DatePicker
+                  key="return_date"
+                  style={{ width: "100%" }}
+                  onChange={props.onChangeReturnDate}
+                />
+              </Form.Item>
+              <Form.Item name="availableDays" label="Días disponibles">
+                <Input
+                  /* defaultValue={availableDays} */ /* value={availableDays} */ readOnly
+                />
+              </Form.Item>
+            </Col>
+            <Col span={20} offset={4}>
+              <Title key="dats_gnrl" level={4} style={{ marginTop: 10 }}>
+                Información
+              </Title>
+            </Col>
+            <Col sm={24} md={12} lg={12}>
+              <Form.Item label="Fecha de ingreso" name="dateOfAdmission">
+                <Input
+                  readOnly /* defaultValue={dateOfAdmission ? moment(dateOfAdmission, 'YYYY-MM-DD'): null} */
+                />
+              </Form.Item>
+            </Col>
+            <Col sm={24} md={12} lg={12}>
+              <Form.Item label="Antigüedad" name="antiquity">
+                <Input readOnly />
+              </Form.Item>
+            </Col>
+            <Col span={24} style={{ textAlign: "right" }}>
+              <Button
+                key="cancel"
+                onClick={props.onCancel}
+                disabled={props.sending}
+                style={{ padding: "0 50px", margin: "0 10px" }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                key="save"
+                htmlType="submit"
+                loading={props.sending}
+                type="primary"
+                style={{ padding: "0 50px", margin: "0 0 0 10px" }}
+              >
+                {props.edit ? "Actualizar" : "Guardar"}
+              </Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </Form>

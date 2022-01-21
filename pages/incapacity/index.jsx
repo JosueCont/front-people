@@ -17,6 +17,8 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
+import { connect } from 'react-redux'
+
 
 import {
   EditOutlined,
@@ -29,7 +31,7 @@ import {
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
-const Incapacity = () => {
+const Incapacity = ({permissions, ...props}) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -42,7 +44,7 @@ const Incapacity = () => {
 
   /* Variables */
   const [departamentId, setDepartamentId] = useState(null);
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   let nodeId = userCompanyId();
 
   /* Select estatus */
@@ -122,25 +124,10 @@ const Incapacity = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getIncapacity();
     getAllPersons();
   }, [route]);
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.incapacity.can.view")) perms.view = true;
-      if (a.includes("people.incapacity.can.create")) perms.create = true;
-      if (a.includes("people.incapacity.can.edit")) perms.edit = true;
-      if (a.includes("people.incapacity.can.delete")) perms.delete = true;
-      if (a.includes("people.incapacity.function.approve_incapacity"))
-        perms.approve = true;
-      if (a.includes("people.incapacity.function.reject_incapacity"))
-        perms.reject = true;
-    });
-    setPermissions(perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -149,7 +136,7 @@ const Incapacity = () => {
   };
 
   return (
-    <MainLayout currentKey="7.4">
+    <MainLayout currentKey={["incapacidad"]} defaultOpenKeys={["solicitudes"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -162,99 +149,102 @@ const Incapacity = () => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <>
-            <Row justify="space-between" style={{ paddingBottom: 20 }}>
-              <Col>
-                <Form
-                  name="filter"
-                  onFinish={filter}
-                  layout="vertical"
-                  key="formFilter"
-                  className={"formFilter"}
-                  form={form}
-                >
-                  <Row gutter={[24, 8]}>
-                    <Col>
-                      <SelectCollaborator
-                        name="collaborator"
-                        style={{ width: 150 }}
-                      />
-                    </Col>
-                    <Col>
-                      <SelectDepartment
-                        companyId={nodeId}
-                        key="SelectDepartment"
-                      />
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        key="estatus_filter"
-                        name="status"
-                        label="Estatus"
-                      >
-                        <Select
-                          style={{ width: 100 }}
-                          key="select"
-                          options={optionStatus}
-                          allowClear
-                          notFoundContent={"No se encontraron resultados."}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Button
-                        style={{
-                          background: "#fa8c16",
-                          fontWeight: "bold",
-                          color: "white",
-                          marginTop: "auto",
-                        }}
-                        key="buttonFilter"
-                        htmlType="submit"
-                        loading={loading}
-                      >
-                        <SearchOutlined />
-                      </Button>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto", marginLeft: 10 }}
-                        >
-                          <SyncOutlined />
-                        </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                {permissions.create && (
-                  <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    onClick={() => route.push("/incapacity/new")}
-                    key="btn_new"
+            <div className="top-container-border-radius">
+              <Row justify="space-between" style={{ paddingBottom: 20 }}>
+                <Col>
+                  <Form
+                    name="filter"
+                    onFinish={filter}
+                    layout="vertical"
+                    key="formFilter"
+                    className={"formFilter"}
+                    form={form}
                   >
-                    <PlusOutlined />
-                    Agregar incapacidad
-                  </Button>
-                )}
-              </Col>
-            </Row>
+                    <Row gutter={[24, 8]}>
+                      <Col>
+                        <SelectCollaborator
+                          name="collaborator"
+                          style={{ width: 150 }}
+                        />
+                      </Col>
+                      <Col>
+                        <SelectDepartment
+                          companyId={nodeId}
+                          key="SelectDepartment"
+                        />
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          key="estatus_filter"
+                          name="status"
+                          label="Estatus"
+                        >
+                          <Select
+                            style={{ width: 100 }}
+                            key="select"
+                            options={optionStatus}
+                            allowClear
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Button
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "auto",
+                          }}
+                          key="buttonFilter"
+                          htmlType="submit"
+                          loading={loading}
+                        >
+                          <SearchOutlined />
+                        </Button>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto", marginLeft: 10 }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+                <Col style={{ display: "flex" }}>
+                  {permissions.create && (
+                    <Button
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginTop: "auto",
+                      }}
+                      onClick={() => route.push("/incapacity/new")}
+                      key="btn_new"
+                    >
+                      <PlusOutlined />
+                      Agregar incapacidad
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+            </div>
             <Row justify="end">
               <Col span={24}>
                 <Table
                   dataSource={incapacityList}
                   key="tableHolidays"
+                  scroll={{ x: 350 }}
                   loading={loading}
                   locale={{
                     emptyText: loading
@@ -351,4 +341,10 @@ const Incapacity = () => {
   );
 };
 
-export default withAuthSync(Incapacity);
+const mapState = (state) => {
+  return { 
+    permissions: state.userStore.permissions.incapacity,
+  };
+};
+
+export default connect(mapState)(withAuthSync(Incapacity));

@@ -49,6 +49,18 @@ class WebApi {
   static getOtherPayments() {
     return WebApi.ApisType(`/fiscal/other-payment-type/`, "get");
   }
+
+  static validateAccountNumber(data) {
+    return WebApi.ApisType(`/fiscal/validate-account-number/`, "post", data);
+  }
+
+  static assimilatedSalaryCalculation(data) {
+    return WebApi.ApisType(
+      `/fiscal/salary_calculation_and_allowance`,
+      "post",
+      data
+    );
+  }
 }
 
 export default WebApi;

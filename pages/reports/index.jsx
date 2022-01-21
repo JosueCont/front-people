@@ -24,7 +24,7 @@ const Reports = () => {
   const { TabPane } = Tabs;
 
   return (
-    <MainLayout currentKey="8.5">
+    <MainLayout currentKey={["reportes"]} >
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

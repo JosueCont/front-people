@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Table, Button, Select, Input, Form, message } from "antd";
+import { Row, Col, Table, Button, Select, Input, Form, message, Space } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
@@ -8,7 +8,7 @@ import webApiPayroll from "../../../api/webApiPayroll";
 import webApiFiscal from "../../../api/WebApiFiscal";
 import { StepContent } from "@material-ui/core";
 import { Receipt, Reorder } from "@material-ui/icons";
-import { treeDecimal } from "../../../utils/constant";
+import { ruleRequired, treeDecimal } from "../../../utils/rules";
 
 const FormPerceptionsDeductions = ({
   setIsModalVisible,
@@ -16,10 +16,10 @@ const FormPerceptionsDeductions = ({
   setObjectStamp = null,
   payroll = null,
   setLoading,
+  saveConcepts
 }) => {
   const [formQuantity] = Form.useForm();
   const { Column } = Table;
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [perceptions, setPerceptions] = useState([]);
   const [deductions, setDeductions] = useState([]);
   const [otherPayments, setOtherPayments] = useState([]);
@@ -36,7 +36,9 @@ const FormPerceptionsDeductions = ({
 
   /** Get initial values */
   const getPerceptions = async () => {
+    
     let response = await webApiFiscal.getPerseptions();
+    
     if (response.data.results.length > 0) {
       let perceptions = response.data.results.map((a) => {
         return { value: a.code, label: a.description };
@@ -67,7 +69,6 @@ const FormPerceptionsDeductions = ({
 
   const changeConcept = (value) => {
     setConcept(value);
-
     formQuantity.setFieldsValue({
       perception: null,
       deduction: null,
@@ -81,14 +82,23 @@ const FormPerceptionsDeductions = ({
   };
 
   const formFinish = (value) => {
+    let tempArray = [...dataSource]
     let code = value.perception
       ? value.perception
       : value.deduction
       ? value.deduction
       : value.others_payments;
-    let exist = dataSource.filter(
-      (item) => item.concept == value.concept && item.code == code
-    );
+
+    let exist = tempArray.filter( (item) => item.concept == value.concept && item.code == code );
+    let label = "";
+    if(value.concept === 1){
+      label = perceptions.find(element => element.value === code);
+    }else if(value.concept === 2){
+      label = deductions .find(element => element.value === code);
+    }else if(value.concept === 3){
+      label = otherPayments.find(element => element.value === code);
+    }
+    
     if (exist.length > 0) {
       if (isEdit) {
         let data_source = dataSource.filter((item) => item);
@@ -96,6 +106,7 @@ const FormPerceptionsDeductions = ({
           let editData = {
             concept: value.concept,
             code: code,
+            label: label.label,
             amount: value.amount,
           };
           data_source[indexData] = editData;
@@ -107,11 +118,13 @@ const FormPerceptionsDeductions = ({
       }
     } else {
       let newData = {
+        key: code,
         concept: value.concept,
+        label: label.label,
         code: code,
         amount: value.amount,
       };
-      setDataSource([...dataSource, newData]);
+      setDataSource([...tempArray, newData]);
       formQuantity.resetFields();
       setConcept(null);
     }
@@ -147,33 +160,40 @@ const FormPerceptionsDeductions = ({
 
   const saveData = () => {
     setLoading(true);
+    console.log('dataSource =>',dataSource);
     if (dataSource.length > 0) {
-      let perceptions = [];
-      dataSource.map((a) => {
-        if (a.concept == 1) {
-          perceptions.push({ code: a.code, amount: Number(a.amount) });
-        }
-      });
+      let perceptions_list = [];
+      let deductions_list = [];
+      let others_payments_list = [];
+      
+      perceptions_list = [...dataSource].map(item => {
+        /* let label_perception = perceptions.find(element => element.value === item.code); */
+        return {'label': item.label ,'key': item.code ,'code': item.code, 'amount': Number(item.amount) }
+      })
 
-      let deductions = [];
-      dataSource.map((a) => {
-        if (a.concept == 2) {
-          deductions.push({ code: a.code, amount: Number(a.amount) });
+      /* dataSource.map((a) => {
+        
+        if (a.concept === 1) {
+          let label_perception = perceptions.find(element => element.value === a.code);
+          perceptions_list.push({ concept: label_perception.label, key: a.code ,code: a.code, amount: Number(a.amount) });
         }
-      });
-
-      let others_payments = [];
-      dataSource.map((a) => {
-        if (a.concept == 3) {
-          others_payments.push({ code: a.code, amount: Number(a.amount) });
+        if (a.concept === 2) {
+          let label_deduction = deductions.find(element => element.value === a.code);
+          deductions_list.push({concept: label_deduction.label, key: a.code, code: a.code, amount: Number(a.amount) });
         }
-      });
+        if (a.concept === 3) {
+          let label_otherPayments = otherPayments.find(element => element.value === a.code);
+          others_payments_list.push({concept: label_otherPayments.label , key: a.code, code: a.code, amount: Number(a.amount) });
+        }
 
-      setObjectStamp({
+      }); */
+      console.log('perceptions_list =>',perceptions_list);
+
+      saveConcepts({
         person_id: person_id,
-        perceptions: perceptions,
-        deductions: deductions,
-        others_payments: others_payments,
+        perceptions: perceptions_list,
+        deductions: deductions_list,
+        others_payments: others_payments_list,
       });
       setIsModalVisible(false);
     } else {
@@ -188,19 +208,16 @@ const FormPerceptionsDeductions = ({
   };
 
   useEffect(() => {
-    if (person_id) {
+    /* if (person_id) { */
       getPerceptions();
       getDeductions();
       getOtherPayments();
-    }
+    /* } */
   }, []);
 
-  useEffect(() => {
-    if (concept) {
-    }
-  }, [concept]);
 
   useEffect(() => {
+    
     if (payroll !== null && payroll.length > 0) {
       let objectPayroll = payroll.find((elem) => elem.person_id == person_id);
       let array_data = [];
@@ -212,6 +229,8 @@ const FormPerceptionsDeductions = ({
                 concept: 1,
                 code: x.code,
                 amount: x.amount,
+                key: x.code,
+                label: x.label
               });
             }
           });
@@ -223,6 +242,8 @@ const FormPerceptionsDeductions = ({
                 concept: 2,
                 code: x.code,
                 amount: x.amount,
+                key: x.code,
+                label: x.label
               });
             }
           });
@@ -234,6 +255,8 @@ const FormPerceptionsDeductions = ({
                 concept: 3,
                 code: x.code,
                 amount: x.amount,
+                key: x.code,
+                label: x.label
               });
             }
           });
@@ -247,8 +270,7 @@ const FormPerceptionsDeductions = ({
 
   return (
     <>
-      <Col span={24}>
-        <Form layout={"vertical"} form={formQuantity} onFinish={formFinish}>
+        <Form size="large" layout={"vertical"} className="form_concept" form={formQuantity} onFinish={formFinish}>
           <Row style={{ marginBottom: 20 }}>
             <Col span={24}>
               <Form.Item name="concept" label="Concepto" rules={[ruleRequired]}>
@@ -313,43 +335,47 @@ const FormPerceptionsDeductions = ({
               </Form.Item>
             </Col>
           </Row>
-          <Row justify={"end"}>
+          <Row justify={"center"}>
+            <Space>
             <Button
               htmlType="button"
-              style={{ marginRight: 10 }}
               onClick={() => onCancelForm()}
+              style={{paddingLeft:50, paddingRight:50 }}
             >
               Cancelar
             </Button>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Agregar
+            
+              <Button size="large" type="primary" htmlType="submit" style={{paddingLeft:50, paddingRight:50 }}>
+                Pre cargar
               </Button>
-            </Form.Item>
+              </Space>
           </Row>
         </Form>
         <Row justify="center">
           <Col span={24}>
-            <Table dataSource={dataSource}>
+            <Table dataSource={dataSource} style={{marginTop:30}} locale={{emptyText: 'No hay datos aún'}} >
               <Column
                 title="Concepto"
                 dataIndex="perception"
                 key="perception"
                 render={(text, record) => (
                   <div>
-                    {record.concept == 1
+                    {record.label}
+                    {/* {record.concept == 1
                       ? "Percepcion"
                       : record.concept == 2
                       ? "Deduccion"
-                      : "Otros pagos"}
+                      : "Otros pagos"} */}
                   </div>
                 )}
               />
-              <Column title="Monto" dataIndex="amount" key="amount" />
+              <Column width={120} title="Monto" align="center" dataIndex="amount" key="amount" />
               <Column
+                width={100}
                 title="Opciones"
                 dataIndex="options"
                 key="options"
+                align="center"
                 render={(text, record, index) => (
                   <>
                     <EditOutlined
@@ -366,26 +392,27 @@ const FormPerceptionsDeductions = ({
               />
             </Table>
           </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
+          <Col >
+            <Space>
             <Button
+              size="large"
               htmlType="button"
-              style={{ float: "right" }}
-              onClick={() => saveData()}
-            >
-              Guardar
-            </Button>
-            <Button
-              htmlType="button"
-              style={{ marginRight: 10, float: "right" }}
               onClick={() => onCancel()}
+              style={{paddingLeft:50, paddingRight:50 }}
             >
               Cancelar
             </Button>
+            <Button
+              size="large"
+              htmlType="button"
+              onClick={() => saveData()}
+              style={{paddingLeft:50, paddingRight:50 }}
+            >
+              Guardar
+            </Button>
+            </Space>
           </Col>
         </Row>
-      </Col>
     </>
   );
 };

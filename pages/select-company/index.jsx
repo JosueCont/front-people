@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
-import { Row, Col, Breadcrumb, message, Typography, Card, Spin } from "antd";
+import {
+  Row,
+  Col,
+  Breadcrumb,
+  message,
+  Typography,
+  Card,
+  Spin,
+  Button,
+  Switch,
+  Table,
+} from "antd";
 import useRouter from "next/router";
 import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
@@ -9,6 +20,13 @@ import { companySelected, setUser } from "../../redux/UserDuck";
 import { doCompanySelectedCatalog } from "../../redux/catalogCompany";
 import WebApi from "../../api/webApi";
 import Clipboard from "../../components/Clipboard";
+import { Global, css } from "@emotion/core";
+import {
+  AppstoreOutlined,
+  EditOutlined,
+  TableOutlined,
+} from "@ant-design/icons";
+import { GridOffOutlined, GridOnOutlined } from "@material-ui/icons";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
@@ -17,12 +35,19 @@ const SelectCompany = ({ ...props }) => {
   const [jwt, setJwt] = useState(null);
   let personId = userId();
   const [admin, setAdmin] = useState(false);
+  const { Meta } = Card;
+  const isBrowser = () => typeof window !== "undefined";
+  const [treeTable, setTreeTable] = useState(true);
 
   useEffect(() => {
     try {
       setJwt(JSON.parse(jsCookie.get("token")));
     } catch (error) {
       useRouter.push("/");
+    }
+
+    if (isBrowser()) {
+      window.sessionStorage.setItem("image", null);
     }
   }, []);
 
@@ -91,34 +116,166 @@ const SelectCompany = ({ ...props }) => {
     }
   };
 
+  const changeView = () => {
+    treeTable ? setTreeTable(false) : setTreeTable(true);
+  };
+
+  const columns = [
+    {
+      title: "Name",
+      key: "name",
+      render: (text, record) => (
+        <div
+          style={{ cursor: "pointer" }}
+          size="middle"
+          onClick={() => setCompanySelect(record)}
+        >
+          <a>{record.name}</a>
+        </div>
+      ),
+    },
+    {
+      title: "Nombre comercial",
+      key: "tradename",
+      render: (text, record) => (
+        <div
+          style={{ cursor: "pointer" }}
+          size="middle"
+          onClick={() => setCompanySelect(record)}
+        >
+          <a>{record.tradename}</a>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <>
+      <Global
+        styles={css`
+          .ant-breadcrumb-link,
+          .ant-breadcrumb-separator {
+            color: white;
+          }
+          .cardCompany {
+            border-radius: 15px;
+            border: none;
+            position: relative;
+          }
+          .ant-card-cover {
+            display: flex;
+            height: 190px;
+          }
+
+          .ant-card-cover img {
+            margin: auto;
+          }
+
+          .cardCompany .ant-card-body {
+            background: #252837;
+            border-bottom-right-radius: 13px;
+            border-bottom-left-radius: 13px;
+          }
+          .ant-card-meta-title,
+          .ant-card-meta-description {
+            color: white;
+          }
+          .buttonEditCompany {
+            padding: 2px 6px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            border: none;
+            border-radius: 10px;
+            color: black;
+            background-color: #f6f8fd;
+          }
+
+          .buttonEditCompany span {
+            color: black !important;
+          }
+          .ant-btn-icon-only {
+            background-color: red !important;
+          }
+        `}
+      />
       {jwt && jwt.user_id ? (
-        <MainLayout currentKey="8.5" hideMenu={true}>
+        <MainLayout
+          currentKey="8.5"
+          hideMenu={true}
+          hideSearch={true}
+          hideLogo={true}
+        >
           <Breadcrumb className={"mainBreadcrumb"}>
-            <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>
+            <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+            <Breadcrumb.Item>Empresas</Breadcrumb.Item>
           </Breadcrumb>
           <div className="container" style={{ width: "100%", padding: 20 }}>
             <Spin tip="Cargando..." spinning={loading}>
-              <Row
-                gutter={[16, 16]}
-                style={{
-                  display: "flex",
-                  textAlign: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {dataList.map((item) => (
-                  <Col
-                    xl={5}
-                    lg={5}
-                    md={5}
-                    sm={8}
-                    xs={24}
-                    style={{ display: "grid", margin: "10px" }}
-                  >
-                    <Card
+              <Row gutter={[36, 26]} justify="center">
+                <Col span={24} style={{ textAlign: "center" }}>
+                  <Title level={4} style={{ color: "black", marginTop: 50 }}>
+                    Elige la empresa donde colaboras
+                  </Title>
+                </Col>
+                <Col span={24}>
+                  <Row justify={"end"}>
+                    <Col style={{ margin: "1%" }}>
+                      {treeTable ? (
+                        <Button onClick={changeView}>
+                          <AppstoreOutlined />
+                          Grid
+                        </Button>
+                      ) : (
+                        <Button onClick={changeView}>
+                          <TableOutlined />
+                          Tabla
+                        </Button>
+                      )}
+                    </Col>
+                  </Row>
+                </Col>
+                {!treeTable &&
+                  dataList.map((item) => (
+                    <Col
+                      key={item.permanent_code}
+                      xl={5}
+                      lg={5}
+                      md={5}
+                      sm={8}
+                      xs={24}
+                    >
+                      <Card
+                        className="cardCompany"
+                        hoverable
+                        cover={
+                          <img
+                            alt="example"
+                            src={item.image}
+                            style={{ width: "50%" }}
+                          />
+                        }
+                        style={{
+                          backgroundColor: `#${Math.floor(
+                            Math.random() * 16777215
+                          ).toString(16)}`,
+                        }}
+                        onClick={() => setCompanySelect(item)}
+                      >
+                        <span
+                          className="buttonEditCompany"
+                          style={{ position: "absolute" }}
+                        >
+                          <EditOutlined />
+                        </span>
+                        {/* <Button type="primary" className="buttonEditCompany" icon={<EditOutlined />} style={{position:'absolute' }} /> */}
+                        <Meta
+                          className="meta_company"
+                          title={item.name}
+                          description="Ultima vez: Hace 2 Hrs"
+                        />
+                      </Card>
+                      {/* <Card
                       hoverable
                       className={"cardH100"}
                       actions={[
@@ -145,9 +302,25 @@ const SelectCompany = ({ ...props }) => {
                           {item.name}
                         </Title>
                       </div>
-                    </Card>
+                    </Card> */}
+                    </Col>
+                  ))}
+                {treeTable && dataList && (
+                  <Col span={24}>
+                    <Table
+                      className={"mainTable"}
+                      size="small"
+                      columns={columns}
+                      dataSource={dataList}
+                      loading={loading}
+                      locale={{
+                        emptyText: loading
+                          ? "Cargando..."
+                          : "No se encontraron resultados.",
+                      }}
+                    />
                   </Col>
-                ))}
+                )}
               </Row>
             </Spin>
           </div>

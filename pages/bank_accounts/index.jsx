@@ -21,8 +21,10 @@ import SelectBank from "../../components/selects/SelectBank";
 import { SearchOutlined, EyeOutlined, SyncOutlined } from "@ant-design/icons";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from 'react-redux'
 
-const BankAccounts = () => {
+
+const BankAccounts = ({permissions, ...props}) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -31,7 +33,7 @@ const BankAccounts = () => {
   const [loading, setLoading] = useState(false);
 
   const [backsAccountsList, setBanksAccountsList] = useState([]);
-  const [permissions, setPermissions] = useState({});
+  
 
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
@@ -182,20 +184,9 @@ const BankAccounts = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
+
     getBanksAccountRequest();
   }, [route]);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.requestaccount.can.view")) perms.view = true;
-      if (a.includes("people.requestaccount.can.create")) perms.create = true;
-      if (a.includes("people.requestaccount.can.edit")) perms.edit = true;
-      if (a.includes("people.requestaccount.can.delete")) perms.delete = true;
-    });
-    setPermissions(perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -203,7 +194,7 @@ const BankAccounts = () => {
   };
 
   return (
-    <MainLayout currentKey="7.5">
+    <MainLayout currentKey={["cuentas"]} defaultOpenKeys={["solicitudes"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -216,98 +207,101 @@ const BankAccounts = () => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <>
-            <Row justify="space-between" style={{ paddingBottom: 20 }}>
-              <Col>
-                <Form
-                  form={form}
-                  name="filter"
-                  onFinish={filter}
-                  layout="vertical"
-                  key="formFilter"
-                  className={"formFilter"}
-                >
-                  <Row gutter={[24, 8]}>
-                    <Col>
-                      <SelectCollaborator
-                        name={"collaborator"}
-                        style={{ width: 150 }}
-                      />
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        key="account_number_filter"
-                        name="account_number"
-                        label="Número de cuenta"
-                      >
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <SelectBank name="bank" style={{ width: 140 }} />
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        key="type_filter"
-                        name="type"
-                        label="Tipo de solicitud"
-                      >
-                        <Select
+            <div className="top-container-border-radius">
+              <Row justify="space-between" style={{ paddingBottom: 20 }}>
+                <Col>
+                  <Form
+                    form={form}
+                    name="filter"
+                    onFinish={filter}
+                    layout="vertical"
+                    key="formFilter"
+                    className={"formFilter"}
+                  >
+                    <Row gutter={[24, 8]}>
+                      <Col>
+                        <SelectCollaborator
+                          name={"collaborator"}
                           style={{ width: 150 }}
-                          key="select_type"
-                          options={optionType}
-                          allowClear
-                          notFoundContent={"No se encontraron resultados."}
                         />
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        key="estatus_filter"
-                        name="status"
-                        label="Estatus"
-                      >
-                        <Select
-                          style={{ width: 100 }}
-                          key="select_status"
-                          options={optionStatus}
-                          allowClear
-                          notFoundContent={"No se encontraron resultados."}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Button
-                        style={{
-                          background: "#fa8c16",
-                          fontWeight: "bold",
-                          color: "white",
-                          marginTop: "auto",
-                        }}
-                        key="buttonFilter"
-                        htmlType="submit"
-                        loading={loading}
-                      >
-                        <SearchOutlined />
-                      </Button>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto", marginLeft: 10 }}
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          key="account_number_filter"
+                          name="account_number"
+                          label="Número de cuenta"
                         >
-                          <SyncOutlined />
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <SelectBank name="bank" style={{ width: 140 }} />
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          key="type_filter"
+                          name="type"
+                          label="Tipo de solicitud"
+                        >
+                          <Select
+                            style={{ width: 150 }}
+                            key="select_type"
+                            options={optionType}
+                            allowClear
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          key="estatus_filter"
+                          name="status"
+                          label="Estatus"
+                        >
+                          <Select
+                            style={{ width: 100 }}
+                            key="select_status"
+                            options={optionStatus}
+                            allowClear
+                            notFoundContent={"No se encontraron resultados."}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Button
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "auto",
+                          }}
+                          key="buttonFilter"
+                          htmlType="submit"
+                          loading={loading}
+                        >
+                          <SearchOutlined />
                         </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-            </Row>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto", marginLeft: 10 }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+              </Row>
+            </div>
+
             <Row justify="end">
               <Col span={24}>
                 <Table
@@ -315,6 +309,7 @@ const BankAccounts = () => {
                   key="tableHolidays"
                   loading={loading}
                   columns={columns}
+                  scroll={{ x: 350 }}
                   locale={{
                     emptyText: loading
                       ? "Cargando..."
@@ -330,6 +325,12 @@ const BankAccounts = () => {
       </div>
     </MainLayout>
   );
+};
+
+const mapState = (state) => {
+  return { 
+    permissions: state.userStore.permissions.bank,
+  };
 };
 
 export default withAuthSync(BankAccounts);

@@ -31,8 +31,10 @@ import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 import { API_URL } from "../../../config/config";
 import jsCookie from "js-cookie";
+import { connect } from 'react-redux'
 
-const Events = () => {
+
+const Events = ({permissions, ...props}) => {
   const { Column } = Table;
   const { confirm } = Modal;
   const route = useRouter();
@@ -40,7 +42,7 @@ const Events = () => {
   const [loading, setLoading] = useState(null);
   const { Option } = Select;
   const [evenstList, setEventList] = useState([]);
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
 
   const getAllEvents = (filter) => {
     setLoading(true);
@@ -121,20 +123,10 @@ const Events = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
+    
     getAllEvents();
   }, [route]);
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.event.can.view")) perms.view = true;
-      if (a.includes("people.event.can.create")) perms.create = true;
-      if (a.includes("people.event.can.edit")) perms.edit = true;
-      if (a.includes("people.event.can.delete")) perms.delete = true;
-    });
-    setPermissions(perms);
-  };
 
   const filter = (value) => {
     let tit = false;
@@ -163,7 +155,7 @@ const Events = () => {
   };
 
   return (
-    <MainLayout currentKey="4.2">
+    <MainLayout currentKey={["eventos"]} defaultOpenKeys={["comuniction"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -176,80 +168,82 @@ const Events = () => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <Spin tip="Cargando..." spinning={loading}>
-            <Row justify={"space-between"}>
-              <Col>
-                <Form
-                  onFinish={filter}
-                  form={formFilter}
-                  layout="vertical"
-                  className={"formFilter"}
-                >
-                  <Row gutter={[24, 8]}>
-                    <Col lg={10} xs={22}>
-                      <Form.Item name="title" label="Título">
-                        <Input placeholder="Título" />
-                      </Form.Item>
-                    </Col>
-                    <Col lg={10} xs={22} offset={1}>
-                      <Form.Item label="Fecha" name="date">
-                        <DatePicker
-                          style={{ width: "100%" }}
-                          moment={"YYYY-MM-DD"}
-                          placeholder="Fecha"
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col lg={2} xs={5} offset={1} style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Filtrar"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          style={{
-                            background: "#fa8c16",
-                            fontWeight: "bold",
-                            color: "white",
-                            marginTop: "auto",
-                          }}
-                          htmlType="submit"
-                        >
-                          <SearchOutlined />
-                        </Button>
-                      </Tooltip>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto", marginLeft: 5 }}
-                        >
-                          <SyncOutlined />
-                        </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                {permissions.create && (
-                  <Button
-                    style={{
-                      background: "#fa8c16",
-                      fontWeight: "bold",
-                      color: "white",
-                      marginTop: "auto",
-                    }}
-                    onClick={() => route.push("events/add")}
+            <div className="top-container-border-radius">
+              <Row justify={"space-between"}>
+                <Col>
+                  <Form
+                    onFinish={filter}
+                    form={formFilter}
+                    layout="vertical"
+                    className={"formFilter"}
                   >
-                    <PlusOutlined />
-                    Agregar evento
-                  </Button>
-                )}
-              </Col>
-            </Row>
+                    <Row gutter={[24, 8]}>
+                      <Col lg={10} xs={22}>
+                        <Form.Item name="title" label="Título">
+                          <Input placeholder="Título" />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={10} xs={22} offset={1}>
+                        <Form.Item label="Fecha" name="date">
+                          <DatePicker
+                            style={{ width: "100%" }}
+                            moment={"YYYY-MM-DD"}
+                            placeholder="Fecha"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col lg={2} xs={5} offset={1} style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Filtrar"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            style={{
+                              background: "#fa8c16",
+                              fontWeight: "bold",
+                              color: "white",
+                              marginTop: "auto",
+                            }}
+                            htmlType="submit"
+                          >
+                            <SearchOutlined />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto", marginLeft: 5 }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+                <Col style={{ display: "flex" }}>
+                  {permissions.create && (
+                    <Button
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginTop: "auto",
+                      }}
+                      onClick={() => route.push("events/add")}
+                    >
+                      <PlusOutlined />
+                      Agregar evento
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+            </div>
             <Row>
               <Col span={24}>
                 <Table
@@ -307,4 +301,11 @@ const Events = () => {
     </MainLayout>
   );
 };
-export default withAuthSync(Events);
+
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.event
+  }
+}
+
+export default connect(mapState)(withAuthSync(Events));

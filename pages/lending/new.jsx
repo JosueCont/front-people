@@ -89,22 +89,19 @@ const HolidaysNew = () => {
         <Breadcrumb.Item href="./">Préstamos</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>
-      <div
-        className="container back-white"
-        style={{ width: "100%", padding: "20px 0" }}
-      >
+      <div className="top-container-border-radius">
         <Spin tip="Cargando..." spinning={!ready}>
-          <Row justify={"center"}>
-            <Col span={23}>
-              <Lendingform
-                sending={sending}
-                details={null}
-                edit={false}
-                onFinish={saveRequest}
-                config={config}
-              />
-            </Col>
-          </Row>
+          {/* <Row justify={"center"}>
+            <Col span={24}> */}
+          <Lendingform
+            sending={sending}
+            details={null}
+            edit={false}
+            onFinish={saveRequest}
+            config={config}
+          />
+          {/* </Col>
+          </Row> */}
         </Spin>
       </div>
       <Modal

@@ -23,8 +23,10 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import Cookies from "js-cookie";
 import jsCookie from "js-cookie";
+import { connect } from 'react-redux'
 
-const Releases = () => {
+
+const Releases = ({permissions, ...props}) => {
   /* React */
   const { Column } = Table;
   const { Option } = Select;
@@ -38,7 +40,7 @@ const Releases = () => {
   const [searching, setSearching] = useState(false);
   const [dateOne, setDateOne] = useState(null);
   const [dateTwo, setDateTwo] = useState(null);
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   const [form] = Form.useForm();
 
   let userToken = cookie.get("toke") ? cookie.get("token") : null;
@@ -130,21 +132,9 @@ const Releases = () => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getNotifications();
     getAllPersons();
   }, []);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.comunication.can.view")) perms.view = true;
-      if (a.includes("people.comunication.can.create")) perms.create = true;
-      if (a.includes("people.comunication.can.edit")) perms.edit = true;
-      if (a.includes("people.comunication.can.delete")) perms.delete = true;
-    });
-    setPermissions(perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -153,7 +143,7 @@ const Releases = () => {
   };
 
   return (
-    <MainLayout currentKey="4.1">
+    <MainLayout currentKey={["comunicados"]} defaultOpenKeys={["comuniction"]}>
       <Breadcrumb key="Breadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
@@ -166,24 +156,25 @@ const Releases = () => {
       <div className="container" style={{ width: "100%" }}>
         {permissions.view ? (
           <>
-            <Row justify="space-between" key="row1">
-              <Col>
-                <Form
-                  name="filter"
-                  layout="vertical"
-                  key="form"
-                  form={form}
-                  className={"formFilter"}
-                  onFinish={sendFilter}
-                >
-                  <Row gutter={[24, 8]}>
-                    <Col>
-                      <SelectCollaborator
-                        name="send_by"
-                        label="Enviado por"
-                        style={{ width: 150 }}
-                      />
-                      {/* <Form.Item  
+            <div className="top-container-border-radius">
+              <Row justify="space-between" key="row1">
+                <Col>
+                  <Form
+                    name="filter"
+                    layout="vertical"
+                    key="form"
+                    form={form}
+                    className={"formFilter"}
+                    onFinish={sendFilter}
+                  >
+                    <Row gutter={[24, 8]}>
+                      <Col>
+                        <SelectCollaborator
+                          name="send_by"
+                          label="Enviado por"
+                          style={{ width: 150 }}
+                        />
+                        {/* <Form.Item  
                         key="send_by"
                         name="send_by"
                         label="Enviado por"
@@ -195,99 +186,101 @@ const Releases = () => {
                           allowClear
                         />
                       </Form.Item> */}
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        key="category"
-                        name="category"
-                        label="Categoría"
-                      >
-                        <Select
-                          style={{ width: 150 }}
-                          key="select"
-                          allowClear
-                          notFoundContent={"No se encontraron resultados."}
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          key="category"
+                          name="category"
+                          label="Categoría"
                         >
-                          <Option key="item_1" value="1">
-                            Aviso
-                          </Option>
-                          <Option key="item_2" value="2">
-                            Noticia
-                          </Option>
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        name="send_date"
-                        label="Fecha de envio"
-                        key="send_date"
-                      >
-                        <RangePicker onChange={onchangeRange} />
-                      </Form.Item>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Filtrar"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          style={{
-                            background: "#fa8c16",
-                            fontWeight: "bold",
-                            color: "white",
-                            marginTop: "auto",
-                          }}
-                          key="submit"
-                          htmlType="submit"
-                          loading={searching}
+                          <Select
+                            style={{ width: 150 }}
+                            key="select"
+                            allowClear
+                            notFoundContent={"No se encontraron resultados."}
+                          >
+                            <Option key="item_1" value="1">
+                              Aviso
+                            </Option>
+                            <Option key="item_2" value="2">
+                              Noticia
+                            </Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          name="send_date"
+                          label="Fecha de envio"
+                          key="send_date"
                         >
-                          <SearchOutlined />
-                        </Button>
-                      </Tooltip>
-                    </Col>
-                    <Col style={{ display: "flex" }}>
-                      <Tooltip
-                        title="Limpiar filtros"
-                        color={"#3d78b9"}
-                        key={"#3d78b9"}
-                      >
-                        <Button
-                          onClick={() => resetFilter()}
-                          style={{ marginTop: "auto" }}
+                          <RangePicker onChange={onchangeRange} />
+                        </Form.Item>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Filtrar"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
                         >
-                          <SyncOutlined />
-                        </Button>
-                      </Tooltip>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col style={{ display: "flex" }}>
-                {permissions.create && (
-                  <Tooltip
-                    title="Agregar nuevo"
-                    color={"#3d78b9"}
-                    key={"#3d78b9"}
-                  >
-                    <Button
-                      key="add"
-                      onClick={() => route.push("releases/new")}
-                      style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                        marginTop: "auto",
-                      }}
+                          <Button
+                            style={{
+                              background: "#fa8c16",
+                              fontWeight: "bold",
+                              color: "white",
+                              marginTop: "auto",
+                            }}
+                            key="submit"
+                            htmlType="submit"
+                            loading={searching}
+                          >
+                            <SearchOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                      <Col style={{ display: "flex" }}>
+                        <Tooltip
+                          title="Limpiar filtros"
+                          color={"#3d78b9"}
+                          key={"#3d78b9"}
+                        >
+                          <Button
+                            onClick={() => resetFilter()}
+                            style={{ marginTop: "auto" }}
+                          >
+                            <SyncOutlined />
+                          </Button>
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+                <Col style={{ display: "flex" }}>
+                  {permissions.create && (
+                    <Tooltip
+                      title="Agregar nuevo"
+                      color={"#3d78b9"}
+                      key={"#3d78b9"}
                     >
-                      <PlusOutlined />
-                      Agregar comunicado
-                    </Button>
-                  </Tooltip>
-                )}
-              </Col>
-            </Row>
+                      <Button
+                        key="add"
+                        onClick={() => route.push("releases/new")}
+                        style={{
+                          background: "#fa8c16",
+                          fontWeight: "bold",
+                          color: "white",
+                          marginTop: "auto",
+                        }}
+                      >
+                        <PlusOutlined />
+                        Agregar comunicado
+                      </Button>
+                    </Tooltip>
+                  )}
+                </Col>
+              </Row>
+            </div>
+
             <Row key="row2">
               <Col span={24}>
                 <Table
@@ -366,4 +359,10 @@ const Releases = () => {
   );
 };
 
-export default withAuthSync(Releases);
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.comunication
+  }
+}
+
+export default connect(mapState)(withAuthSync(Releases));

@@ -21,7 +21,7 @@ import SelectJob from "../selects/SelectJob";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 import moment from "moment";
-import { civilStatus, genders, periodicity } from "../../utils/functions";
+import { civilStatus, genders, periodicity } from "../../utils/constant";
 import WebApi from "../../api/webApi";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
@@ -30,7 +30,7 @@ import {
   minLengthNumber,
   onlyNumeric,
   rfcFormat,
-} from "../../utils/constant";
+} from "../../utils/rules";
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
 
@@ -400,7 +400,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                 </Col>
               )}
 
-              {props.config && config.intranet_enabled && (
+              {config && config.intranet_enabled && (
                 <Col lg={7} xs={22} offset={1}>
                   <Form.Item
                     name="intranet_access"

@@ -15,9 +15,10 @@ import { useState, useEffect } from "react";
 import WebApi from "../../api/webApi";
 import Link from "next/link";
 import LoginModal from "../modal/LoginModal";
-import { genders, ruleEmail, ruleRequired } from "../../utils/constant";
+import { genders } from "../../utils/constant";
 
 import moment from "moment";
+import { ruleRequired } from "../../utils/rules";
 
 const FormSelfRegistration = ({
   hideProfileSecurity = true,

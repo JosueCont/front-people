@@ -3,15 +3,11 @@ import { withAuthSync } from "../../libs/auth";
 import {
   Form,
   Input,
-  Row,
   Upload,
   message,
-  Col,
   Typography,
   Layout,
   Modal,
-  Select,
-  DatePicker,
   Space,
   Button,
   Spin,
@@ -19,7 +15,7 @@ import {
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { API_URL } from "../../config/config";
-import { common } from "@material-ui/core/colors";
+import { ruleRequired } from "../../utils/rules";
 
 const beforeUpload = (file) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -140,8 +136,6 @@ const FormGroup = (props) => {
     }
   };
 
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
-
   return (
     <>
       <Layout>
@@ -155,12 +149,12 @@ const FormGroup = (props) => {
           width={"50%"}
         >
           <Spin tip="Cargando..." spinning={loadingGroup}>
-            <Form onFinish={onFinish} form={forms}>
+            <Form onFinish={onFinish} layout="vertical" form={forms}>
               <Form.Item
                 label="Nombre de grupo"
                 name="name"
                 rules={[ruleRequired]}
-                labelAlign={"left"}
+                // labelAlign={"left"}
                 help="(Máximo 50 caracteres)"
               >
                 <Input type="text" maxLength={50} />
@@ -169,7 +163,7 @@ const FormGroup = (props) => {
               <Form.Item
                 label="Descripción de grupo"
                 name="description"
-                labelAlign={"left"}
+                // labelAlign={"left"}
                 style={{ marginTop: 15 }}
               >
                 <Input.TextArea />
@@ -177,7 +171,7 @@ const FormGroup = (props) => {
               <Form.Item
                 label="Imagen de grupo"
                 name="image"
-                labelAlign={"left"}
+                // labelAlign={"left"}
                 style={{ marginTop: 15 }}
                 rules={[ruleRequired]}
               >
@@ -220,10 +214,10 @@ const FormGroup = (props) => {
               <Form.Item labelAlign="right">
                 <Space style={{ float: "right" }}>
                   <Button onClick={() => closeDialog()}>Cancelar</Button>
-                  <Button 
-                    type="primary" 
+                  <Button
+                    type="primary"
                     htmlType="submit"
-                    disabled = {photo ? false : true}
+                    disabled={photo ? false : true}
                   >
                     {props.isEdit ? "Editar" : "Guardar"}
                   </Button>

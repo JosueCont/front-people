@@ -169,15 +169,7 @@ const FormDocument = ({ person_id, node }) => {
             Agregar
           </Button>
         </Col>
-        <Col style={{ padding: "2%" }}>
-          <Button
-            icon={<PlusOutlined />}
-            type="primary"
-            onClick={() => getModalSelectDoc(true)}
-          >
-            Seleccionar y cargar
-          </Button>
-        </Col>
+       
       </Row>
       <Spin tip="Cargando..." spinning={loadingTable}>
         <Table

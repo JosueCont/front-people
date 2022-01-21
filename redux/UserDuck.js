@@ -1,6 +1,7 @@
 import WebApi from "../api/webApi";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../libs/auth";
+import { UserPermissions } from "../utils/functions";
 
 const initialData = {
   default: true,
@@ -8,6 +9,7 @@ const initialData = {
   error: false,
   people_company: [],
   user: null,
+  permissions: UserPermissions(),
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -19,6 +21,7 @@ const COMPANY_SELCTED = "COMPANY_SELECTED";
 const PEOPLE_COMPANY = "PEOPLE_COMPANY";
 const DATA_UPLOAD = "DATA_UPLOAD";
 const USER = "USER";
+const PERMISSIONS = "PERMISSIONS";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -40,6 +43,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, data_upload: action.payload };
     case USER:
       return { ...state, user: action.payload };
+    case PERMISSIONS:
+      return { ...state, permissions: action.payload };
     default:
       return state;
   }
@@ -116,8 +121,22 @@ export const setUser = () => async (dispatch, getState) => {
     let jwt = JSON.parse(jsCookie.get("token"));
     let response = await WebApi.personForKhonnectId({ id: jwt.user_id });
     dispatch({ type: USER, payload: response.data });
+    dispatch(
+      setUserPermissions(response.data.jwt_data.perms, response.data.is_admin)
+    );
     return true;
   } catch (error) {
     return false;
   }
 };
+
+export const setUserPermissions =
+  (permits, is_admin) => async (dispatch, getState) => {
+    try {
+      let perms = await UserPermissions(permits, is_admin);
+      dispatch({ type: PERMISSIONS, payload: perms });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };

@@ -3,12 +3,12 @@ import { Form, Input, Button, Modal, message, Upload } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { connect, useDispatch } from "react-redux";
 import { withAuthSync, userCompanyId } from "../../../libs/auth";
-import { ruleRequired } from "../../../utils/constant";
 import FormItemHTML from "./FormItemHtml";
 import {
   assessmentCreateAction,
   assessmentUpdateAction,
 } from "../../../redux/assessmentDuck";
+import { ruleRequired } from "../../../utils/rules";
 
 const FormAssessment = ({ ...props }) => {
   const dispatch = useDispatch();

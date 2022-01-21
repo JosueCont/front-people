@@ -9,7 +9,6 @@ import {
   Typography,
   Table,
   Modal,
-  Select,
 } from "antd";
 import {
   EditOutlined,
@@ -17,17 +16,12 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import WebApi from "../../api/webApi";
-
-import {
-  messageDialogDelete,
-  onlyNumeric,
-  titleDialogDelete,
-  twoDigit,
-} from "../../utils/constant";
+import webApiFiscal from "../../api/WebApiFiscal";
+import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
+import { onlyNumeric, twoDigit } from "../../utils/rules";
 import SelectBank from "../selects/SelectBank";
+import { ruleRequired } from "../../utils/rules";
 
 const FormBanckAccount = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -35,10 +29,9 @@ const FormBanckAccount = ({ person_id = null }) => {
   const { confirm } = Modal;
   const [idBankAcc, setIdBankAcc] = useState("");
   const [upBankAcc, setUpBankAcc] = useState(false);
-  const [banks, setBanks] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
+  const [selectedBank, setSelectedBank] = useState(null);
 
   useEffect(() => {
     getBankAccount();
@@ -231,6 +224,39 @@ const FormBanckAccount = ({ person_id = null }) => {
     },
   ];
 
+  const validateInterbankKey = ({ getFieldValue }) => ({
+    async validator() {
+      let response = await webApiFiscal.validateAccountNumber({
+        number_account: getFieldValue("interbank_key"),
+        type_validation: 1,
+      });
+      if (response.data.level == "success") {
+        formBank.setFieldsValue({ bank: response.data.bank_id });
+        return Promise.resolve();
+      } else {
+        return Promise.reject("Clave Interbancaria incorrecta");
+      }
+    },
+  });
+
+  const validateAccountNumberWithInterbankKey = ({ getFieldValue }) => ({
+    async validator() {
+      let response = await webApiFiscal.validateAccountNumber({
+        number_account: getFieldValue("account_number"),
+        number_account_clabe: getFieldValue("interbank_key"),
+        type_validation: 3,
+      });
+      if (response.data.level == "success") {
+        //formBank.setFieldsValue({bank:response.data.bank_id})
+        return Promise.resolve();
+      } else {
+        return Promise.reject(
+          "EL número de cuenta no correspon de con la Clave Interbancaria"
+        );
+      }
+    },
+  });
+
   return (
     <>
       <Row>
@@ -239,30 +265,32 @@ const FormBanckAccount = ({ person_id = null }) => {
       <Form layout="vertical" form={formBank} onFinish={formBankAcc}>
         <Row>
           <Col lg={6} xs={22} offset={1}>
-            {/* <Form.Item name="bank" label="Banco" rules={[ruleRequired]}> */}
-            <SelectBank name="bank" style={{ width: 140 }} />
-            {/* <Select
-                options={banks}
-                notFoundContent={"No se encontraron resultados."}
-              /> */}
-            {/* </Form.Item> */}
+            <SelectBank
+              name="bank"
+              bankSelected={selectedBank}
+              style={{ width: 140 }}
+            />
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="account_number"
               label="Número de cuenta"
-              rules={[ruleRequired, onlyNumeric]}
+              rules={[
+                ruleRequired,
+                onlyNumeric,
+                validateAccountNumberWithInterbankKey,
+              ]}
             >
-              <Input maxLength={10} />
+              <Input minLength={11} maxLength={11} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="interbank_key"
               label="Clabe interbancaria"
-              rules={[onlyNumeric]}
+              rules={[onlyNumeric, validateInterbankKey]}
             >
-              <Input maxLength={18} />
+              <Input minLength={18} maxLength={18} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>

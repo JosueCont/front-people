@@ -30,8 +30,11 @@ import SelectJob from "../selects/SelectJob";
 import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
+import SelectWorkTitle from '../selects/SelectWorkTitle';
+import { connect } from 'react-redux'
 
-const PayrollReport = (props) => {
+
+const PayrollReport = ({ permissions, ...props}) => {
   const route = useRouter();
   const { Option } = Select;
   const { Title, Text } = Typography;
@@ -49,7 +52,7 @@ const PayrollReport = (props) => {
 
   const [departmentId, setDepartmentId] = useState(null);
   const [job, setJob] = useState(null);
-  const [permissions, setPermissions] = useState({});
+  
   let nodeId = userCompanyId();
 
   /* Columnas de tabla */
@@ -137,7 +140,7 @@ const PayrollReport = (props) => {
       render: (record, item) => {
         return (
           <>
-            {permissions.payrolls && (
+            {permissions.export_payrolls && (
               <DownloadOutlined onClick={() => download(item)} />
             )}
           </>
@@ -285,19 +288,9 @@ const PayrollReport = (props) => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     /* getAllPersons(); */
     getPayroll();
   }, []);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.report.function.export_payrolls"))
-        perms.payrolls = true;
-    });
-    setPermissions(perms);
-  };
 
   return (
     <>
@@ -342,6 +335,9 @@ const PayrollReport = (props) => {
                   companyId={nodeId}
                   key="selectDepartament"
                 />
+              </Col>
+              <Col>
+                <SelectWorkTitle />
               </Col>
               <Col>
                 <SelectJob
@@ -393,7 +389,7 @@ const PayrollReport = (props) => {
           </Form>
         </Col>
         <Col className="columnRightFilter">
-          {permissions.payrolls && (
+          {permissions.export_payrolls && (
             <Button
               style={{
                 background: "#fa8c16",
@@ -428,4 +424,10 @@ const PayrollReport = (props) => {
   );
 };
 
-export default PayrollReport;
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.report
+  };
+};
+
+export default connect(mapState)(PayrollReport);
