@@ -1,10 +1,10 @@
 import { Form, Input, Button, message, Row, Typography } from "antd";
 import Axios from "axios";
+import { ruleRequired } from "../../utils/rules";
 
 const FormChangePassword = ({ config, khonnectId }) => {
   const { Title } = Typography;
   const [formPassword] = Form.useForm();
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   const changePassword = (value) => {
     if (value.new_password == value.newPassword) {

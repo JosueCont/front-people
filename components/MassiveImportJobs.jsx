@@ -49,7 +49,6 @@ const MassiveImportJobs = ({ nodePeople, setLoadingTable }) => {
       setDisabled(true);
       setLoadingTable(true);
       let response = await WebApi.saveMassiveJobs(data);
-      console.log("Response", response);
       if (response.status == 200) {
         message.success("Cargado correctamente");
       } else {

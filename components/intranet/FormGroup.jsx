@@ -3,15 +3,11 @@ import { withAuthSync } from "../../libs/auth";
 import {
   Form,
   Input,
-  Row,
   Upload,
   message,
-  Col,
   Typography,
   Layout,
   Modal,
-  Select,
-  DatePicker,
   Space,
   Button,
   Spin,
@@ -19,7 +15,7 @@ import {
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { API_URL } from "../../config/config";
-import { common } from "@material-ui/core/colors";
+import { ruleRequired } from "../../utils/rules";
 
 const beforeUpload = (file) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -139,8 +135,6 @@ const FormGroup = (props) => {
       });
     }
   };
-
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
     <>

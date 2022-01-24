@@ -88,12 +88,7 @@ const PublicationsStatisticsFilters = (props) => {
   const { Option } = Select;
   const { RangePicker } = DatePicker;
 
-  const handleChange = (event) => {
-    console.log(event);
-  };
-
   function getSelectedDate(value, dateString) {
-    // console.log(value);
     if (dateString.length == 2) {
       setStartDate(dateString[0]);
       setEndDate(dateString[1]);
@@ -102,7 +97,6 @@ const PublicationsStatisticsFilters = (props) => {
   }
 
   useEffect(() => {
-    console.log("Respuesta de la api de excel", props.excelFileStatus);
     if (props.excelFileStatus == "failed") {
       message.warning("No existen datos con los filtros establecidos");
     } else if (props.excelFileStatus == "loading") {
@@ -122,20 +116,17 @@ const PublicationsStatisticsFilters = (props) => {
 
   useEffect(() => {
     if (props.usersList && props.usersList.length > 0) {
-      // console.log('Lista de usuarios en vista de tabla', props.usersList);
       setUsersList(props.usersList);
     }
   }, [props.usersList]);
 
   useEffect(() => {
     if (props.groupList && props.groupList.length > 0) {
-      console.log("Lista de grupos en vista de tabla", props.groupList);
       let activeGroups = [];
       props.groupList.map((group) => {
         if (group.is_active) {
           activeGroups.push(group);
         }
-        // setGroupList(activeGroups);
       });
 
       setGroupList(props.groupList);

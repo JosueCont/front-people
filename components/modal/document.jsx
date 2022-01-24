@@ -20,6 +20,7 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { userCompanyId } from "../../libs/auth";
 import { connect } from "react-redux";
+import { ruleRequired } from "../../utils/rules";
 
 const documentModal = ({ person_id, node, ...props }) => {
   const [form] = Form.useForm();
@@ -94,8 +95,6 @@ const documentModal = ({ person_id, node, ...props }) => {
     setDisabled(true);
     setfileName(null);
   };
-
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
     <>

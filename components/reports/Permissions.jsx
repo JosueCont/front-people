@@ -31,8 +31,10 @@ import SelectDepartment from "../../components/selects/SelectDepartment";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
 import SelectWorkTitle from '../selects/SelectWorkTitle';
+import { connect } from 'react-redux'
 
-const PermissionsReport = (props) => {
+
+const PermissionsReport = ({ permissions ,...props}) => {
   const route = useRouter();
   const { Option } = Select;
   const [form] = Form.useForm();
@@ -45,7 +47,6 @@ const PermissionsReport = (props) => {
 
   const [loading, setLoading] = useState(false);
   const [permissionsList, setPermissionsList] = useState([]);
-  const [permissions, setPermissions] = useState({});
   let nodeId = userCompanyId();
 
   /* Columnas de tabla */
@@ -117,7 +118,7 @@ const PermissionsReport = (props) => {
       render: (record, item) => {
         return (
           <>
-            {permissions.permits && (
+            {permissions.export_permits && (
               <DownloadOutlined onClick={() => download(item)} />
             )}
           </>
@@ -229,18 +230,11 @@ const PermissionsReport = (props) => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
+
     getPermissions();
   }, []);
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.report.function.export_permits"))
-        perms.permits = true;
-    });
-    setPermissions(perms);
-  };
+  
 
   return (
     <>
@@ -333,7 +327,7 @@ const PermissionsReport = (props) => {
           </Form>
         </Col>
         <Col className="columnRightFilter">
-          {permissions.permits && (
+          {permissions.export_permits && (
             <Button
               style={{
                 background: "#fa8c16",
@@ -368,4 +362,10 @@ const PermissionsReport = (props) => {
   );
 };
 
-export default PermissionsReport;
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.report
+  };
+};
+
+export default connect(mapState)(PermissionsReport);

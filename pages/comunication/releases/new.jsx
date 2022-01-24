@@ -24,6 +24,8 @@ import FormItemHTMLPlace from "../../../components/draft";
 import { withAuthSync, userCompanyId } from "../../../libs/auth";
 import SelectJob from "../../../components/selects/SelectJob";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
+import { ruleRequired } from "../../../utils/rules";
+import { typeMessage } from "../../../utils/constant";
 
 const Newrelease = () => {
   let nodeId = userCompanyId();
@@ -131,7 +133,6 @@ const Newrelease = () => {
         datos.append("files", f.originFileObj);
       });
     }
-    console.log("Enviando", values);
     setSending(true);
     try {
       let response = await Axios.post(
@@ -205,36 +206,6 @@ const Newrelease = () => {
     route.push("/comunication/releases");
   };
 
-  const genders = [
-    {
-      label: "Todos",
-      value: 0,
-    },
-    {
-      label: "Masculino",
-      value: 1,
-    },
-    {
-      label: "Femenino",
-      value: 2,
-    },
-    {
-      label: "Otro",
-      value: 3,
-    },
-  ];
-
-  const typeMessage = [
-    {
-      label: "Noticias",
-      value: 2,
-    },
-    {
-      label: "Aviso",
-      value: 1,
-    },
-  ];
-
   /////GET DATA SELCTS
   const getValueSelects = async () => {
     /////PERSON TYPE
@@ -294,8 +265,6 @@ const Newrelease = () => {
     console.log(e);
     setSegmentationRequired(!e);
   };
-
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
     <MainLayout currentKey="4.1">
