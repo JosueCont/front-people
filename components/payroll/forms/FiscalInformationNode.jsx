@@ -16,8 +16,7 @@ import { useState, useEffect } from "react";
 import UploadFile from "../../UploadFile";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
-import { curpFormat, rfcFormat } from "../../../utils/constant";
-import { ruleRequired } from "../../../utils/rules";
+import { curpFormat, rfcFormat, ruleRequired } from "../../../utils/rules";
 import FiscalAddress from "../../forms/FiscalAddress";
 
 const FiscalInformationNode = ({ node_id, fiscal }) => {
