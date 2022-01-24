@@ -38,7 +38,6 @@ const Groups = ({ ...props }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [groups, setGroups] = useState([]);
-  const [permissions, setPermissions] = useState({});
 
   const getGroups = (name = "") => {
     const headers = {
@@ -130,22 +129,9 @@ const Groups = ({ ...props }) => {
 
   useEffect(() => {
     if (props.currentNode && props.config) {
-      const jwt = JSON.parse(jsCookie.get("token"));
-      searchPermissions(jwt.perms);
       getGroups();
     }
   }, [props.config, props.currentNode]);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.groups.can.view")) perms.view = true;
-      if (a.includes("people.groups.can.create")) perms.create = true;
-      if (a.includes("people.groups.can.edit")) perms.edit = true;
-      if (a.includes("people.groups.can.delete")) perms.delete = true;
-    });
-    setPermissions(perms);
-  };
 
   const filter = (value) => {
     let filt = "";
@@ -174,7 +160,7 @@ const Groups = ({ ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit && (
+              {props.permissions.edit && (
                 <Col className="gutter-row" span={6}>
                   <a
                     onClick={() =>
@@ -188,7 +174,7 @@ const Groups = ({ ...props }) => {
                   </a>
                 </Col>
               )}
-              {permissions.delete && (
+              {props.permissions.delete && (
                 <Col className="gutter-row" span={6}>
                   <DeleteOutlined onClick={() => confirmDelete(record.id)} />
                 </Col>
@@ -266,7 +252,7 @@ const Groups = ({ ...props }) => {
                     className="button-filter-person"
                     style={{ marginTop: "auto", marginLeft: 10 }}
                   >
-                    {permissions.create && (
+                    {props.permissions.create && (
                       <Button
                         style={{
                           background: "#fa8c16",
@@ -308,6 +294,7 @@ const mapState = (state) => {
   return {
     config: state.userStore.general_config,
     currentNode: state.userStore.current_node,
+    permissions: state.userStore.permissions.groups,
   };
 };
 

@@ -18,14 +18,15 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import { curpFormat, rfcFormat } from "../../../utils/constant";
 import { ruleRequired } from "../../../utils/rules";
+import FiscalAddress from "../../forms/FiscalAddress";
 
-const TaxInformationForm = ({ node_id, fiscal }) => {
+const FiscalInformationNode = ({ node_id, fiscal }) => {
   const { Title } = Typography;
   const [formTaxInfo] = Form.useForm();
+  const [fiscalAddress] = Form.useForm();
   const [pTypeSelected, setPTypeSelected] = useState(0);
   const [acceptAgreement, setAcceptAgreement] = useState(false);
-  const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [infoId, setInfoId] = useState(null);
   const [taxRegimePhysical, setTaxRegimePhysical] = useState([]);
@@ -40,7 +41,6 @@ const TaxInformationForm = ({ node_id, fiscal }) => {
   const [nameCertificate, setNameCertificate] = useState(null);
 
   useEffect(() => {
-    getCountries();
     getTaxRegime();
     getFiscalInfotmation(node_id);
   }, [node_id]);
@@ -76,40 +76,6 @@ const TaxInformationForm = ({ node_id, fiscal }) => {
     setAcceptAgreement(!acceptAgreement);
   };
 
-  const getCountries = async () => {
-    Axios.get(API_URL + `/fiscal/country/`)
-      .then((response) => {
-        if (response.status === 200) {
-          if (response.data.results.length > 0) {
-            let countries = response.data.results.map((st) => {
-              return { value: st.id, label: st.description };
-            });
-            setCountries(countries);
-          }
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const getStates = async (country) => {
-    Axios.get(API_URL + `/fiscal/state/?country=${country}`)
-      .then((response) => {
-        if (response.status === 200) {
-          if (response.data.results.length > 0) {
-            let states = response.data.results.map((a) => {
-              return { value: a.id, label: a.name_state };
-            });
-            setStates(states);
-          }
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const getTaxRegime = async () => {
     Axios.get(API_URL + `/fiscal/tax-regime/`)
       .then((response) => {
@@ -137,54 +103,56 @@ const TaxInformationForm = ({ node_id, fiscal }) => {
         console.log(e);
       });
   };
-
-  onchange = (value) => {
-    getStates(value);
-  };
-
   const formFinish = (value) => {
-    let data = new FormData();
-    data.append("node", node_id);
-    data.append(
-      "assimilated_pay",
-      value.assimilated_pay == undefined ? false : value.assimilated_pay
-    );
-    data.append("tax_regime", value.tax_regime);
-    data.append("country", value.country);
-    data.append("state", value.state);
-    data.append("person_type", value.person_type);
-    data.append("curp", value.curp ? value.curp : "");
-    data.append("rfc", value.rfc ? value.rfc : "");
-    data.append(
-      "assimilated_pay",
-      value.assimilated_pay ? value.assimilated_pay : false
-    );
-    data.append("suburb", value.suburb);
-    data.append("street", value.street);
-    data.append("interior_number", value.interior_number);
-    data.append("password_fiscal", value.password ? value.password : "");
-    if (taxStamp) {
-      data.append("tax_stamp", taxStamp);
-    } else if (taxStamp == null && nameTaxStamp == null) {
-      data.append("tax_stamp", "");
-    }
-    if (key) {
-      data.append("key", key);
-    } else if (key == null && nameKey == null) {
-      data.append("key", "");
-    }
-    if (certificate) {
-      data.append("certificate", certificate);
-    } else if (certificate == null && nameCertificate == null) {
-      data.append("certificate", "");
-    }
-    if (infoId) {
-      data.append("id", infoId);
-      updateFiscalnformation(data);
-    } else {
-      saveFiscalnformation(data);
-    }
+    let fiscalInfo = formTaxInfo.getFieldsValue();
+    console.log("Fiscal--->> ", fiscalInfo);
+    let address = fiscalAddress.getFieldsValue();
+    console.log("Address--->> ", address);
   };
+
+  // const formFinish = (value) => {
+  //   let data = new FormData();
+  //   data.append("node", node_id);
+  //   data.append(
+  //     "assimilated_pay",
+  //     value.assimilated_pay == undefined ? false : value.assimilated_pay
+  //   );
+  //   data.append("tax_regime", value.tax_regime);
+  //   data.append("country", value.country);
+  //   data.append("state", value.state);
+  //   data.append("person_type", value.person_type);
+  //   data.append("curp", value.curp ? value.curp : "");
+  //   data.append("rfc", value.rfc ? value.rfc : "");
+  //   data.append(
+  //     "assimilated_pay",
+  //     value.assimilated_pay ? value.assimilated_pay : false
+  //   );
+  //   data.append("suburb", value.suburb);
+  //   data.append("street", value.street);
+  //   data.append("interior_number", value.interior_number);
+  //   data.append("password_fiscal", value.password ? value.password : "");
+  //   if (taxStamp) {
+  //     data.append("tax_stamp", taxStamp);
+  //   } else if (taxStamp == null && nameTaxStamp == null) {
+  //     data.append("tax_stamp", "");
+  //   }
+  //   if (key) {
+  //     data.append("key", key);
+  //   } else if (key == null && nameKey == null) {
+  //     data.append("key", "");
+  //   }
+  //   if (certificate) {
+  //     data.append("certificate", certificate);
+  //   } else if (certificate == null && nameCertificate == null) {
+  //     data.append("certificate", "");
+  //   }
+  //   if (infoId) {
+  //     data.append("id", infoId);
+  //     updateFiscalnformation(data);
+  //   } else {
+  //     saveFiscalnformation(data);
+  //   }
+  // };
 
   const getFiscalInfotmation = async (node_id) => {
     setLoading(true);
@@ -193,7 +161,6 @@ const TaxInformationForm = ({ node_id, fiscal }) => {
         if (response.status === 200) {
           if (response.data) {
             let info = response.data;
-            getStates(info.country);
             setInfoId(info.id);
             setPTypeSelected(info.person_type);
             if (info.tax_stamp) {
@@ -275,7 +242,7 @@ const TaxInformationForm = ({ node_id, fiscal }) => {
         <Form layout={"vertical"} form={formTaxInfo} onFinish={formFinish}>
           <Col span={24}>
             <Row>
-              <Title style={{ fontSize: "15px" }}>Generales</Title>
+              <Title style={{ fontSize: "15px" }}>Informacion fiscal</Title>
             </Row>
             <Divider style={{ marginTop: "2px" }} />
             <Row>
@@ -336,112 +303,11 @@ const TaxInformationForm = ({ node_id, fiscal }) => {
               <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
             </Row>
             <Divider style={{ marginTop: "2px" }} />
-            <Row>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item name="country" label="Pais" rules={[ruleRequired]}>
-                  <Select
-                    options={countries}
-                    notFoundContent={"No se encontraron resultados."}
-                    onChange={onchange}
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item name="state" label="Estado" rules={[ruleRequired]}>
-                  <Select
-                    options={states}
-                    notFoundContent={"No se encontraron resultados."}
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item name="suburb" label="Suburbio">
-                  <Input maxLength={100} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item name="street" label="Calle" rules={[ruleRequired]}>
-                  <Input maxLength={35} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  name="interior_number"
-                  label="Numero interior"
-                  rules={[ruleRequired]}
-                >
-                  <Input maxLength={10} />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            {fiscal && (
-              <>
-                <Row>
-                  <Title style={{ fontSize: "15px" }}>
-                    Certificados y sellos digitales
-                  </Title>
-                </Row>
-                <Divider style={{ marginTop: "2px" }} />
-                <Row>
-                  <Col lg={2} xs={22} offset={1}>
-                    <Form.Item name="consent" label="" valuePropName="checked">
-                      <Switch
-                        onChange={changeAcceptment}
-                        checkedChildren={<CheckOutlined />}
-                        unCheckedChildren={<CloseOutlined />}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={14} xs={22} offset={1}>
-                    <p>
-                      Estoy de acuerdo y doy mi consentimiento para que EL
-                      SISTEMA almacene y utilice estos archivos con fines
-                      exclusivos para emisión de CFDI para el timbrado de nomina
-                    </p>
-                  </Col>
-                  {acceptAgreement && (
-                    <>
-                      <Col
-                        lg={8}
-                        xs={22}
-                        offset={1}
-                        style={{ marginBottom: "15px" }}
-                      >
-                        <Form.Item name="password" label="Contraseña">
-                          <Input.Password maxLength={12} />
-                        </Form.Item>
-                      </Col>
-                      <UploadFile
-                        textButton={"Cargar sello fiscal"}
-                        setDataFile={setTaxStamp}
-                        file_name={nameTaxStamp}
-                        setFileName={setNameTaxStamp}
-                        set_disabled={nameTaxStamp ? false : true}
-                      />
-                      <UploadFile
-                        textButton={"Cargar llave"}
-                        setDataFile={setKey}
-                        file_name={nameKey}
-                        setFileName={setNameKey}
-                        set_disabled={nameKey ? false : true}
-                      />
-                      <UploadFile
-                        textButton={"Cargar certificado"}
-                        setDataFile={setCertificate}
-                        file_name={nameCertificate}
-                        setFileName={setNameCertificate}
-                        set_disabled={nameCertificate ? false : true}
-                      />
-                    </>
-                  )}
-                </Row>
-              </>
-            )}
+            <FiscalAddress node={node_id} formAddress={fiscalAddress} />
           </Col>
           <Row justify={"end"}>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" onClick={() => formFinish()}>
                 Guardar
               </Button>
             </Form.Item>
@@ -452,4 +318,4 @@ const TaxInformationForm = ({ node_id, fiscal }) => {
   );
 };
 
-export default TaxInformationForm;
+export default FiscalInformationNode;

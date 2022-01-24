@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import React, { useLayoutEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { withAuthSync } from "../../libs/auth";
-import TaxInformationForm from "../../components/payroll/forms/TaxInformationForm";
+import FiscalInformationNode from "../../components/payroll/forms/FiscalInformationNode";
 import { connect } from "react-redux";
 import GeneralData from "../../components/business/GeneralData";
 
@@ -49,8 +49,12 @@ const ConfigCompany = ({ ...props }) => {
               <GeneralData config={props.config} setCompany={setCompany} />
             </TabPane>
             <TabPane tab="Fiscal" key="tab_2">
-              <TaxInformationForm node_id={router.query.id} fiscal={fiscal} />
+              <FiscalInformationNode
+                node_id={router.query.id}
+                fiscal={fiscal}
+              />
             </TabPane>
+            <TabPane tab="Representante legal" key="tab_3"></TabPane>
           </Tabs>
         </div>
       </Spin>

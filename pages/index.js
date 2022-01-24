@@ -38,8 +38,6 @@ const Home = ({ ...props }) => {
       setLoading(false);
     }
   }, [props.config]);
-  /* const [loginFormShow, SetLoginFormShow] = useState(true); */
-  console.log(flavor);
   return (
     <>
       <Global
