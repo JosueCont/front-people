@@ -133,7 +133,6 @@ const Newrelease = () => {
         datos.append("files", f.originFileObj);
       });
     }
-    console.log("Enviando", values);
     setSending(true);
     try {
       let response = await Axios.post(

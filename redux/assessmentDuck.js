@@ -3,7 +3,7 @@ import Axios from "axios";
 import { types } from "../types/assessments";
 import _ from "lodash";
 import { asyncForEach } from "../utils/functions";
-import { API_ASSESSMENT } from "../config/config"; //"https://humand.kuiz.hiumanlab.com"
+import { API_ASSESSMENT } from "../config/config";
 
 const nodeId = Number.parseInt(userCompanyId());
 

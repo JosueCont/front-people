@@ -1,5 +1,4 @@
 import {
-  Layout,
   Breadcrumb,
   Table,
   Tooltip,
@@ -31,12 +30,11 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
-import _ from "lodash";
+import _, { set } from "lodash";
 import FormPerson from "../../components/person/FormPerson";
 import { withAuthSync, userCompanyId, userCompanyName } from "../../libs/auth";
 import { setDataUpload } from "../../redux/UserDuck";
 
-const { Content } = Layout;
 import Link from "next/link";
 import jsCookie from "js-cookie";
 import Clipboard from "../../components/Clipboard";
@@ -47,7 +45,6 @@ import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
-import { useLayoutEffect } from "react";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -55,10 +52,8 @@ const homeScreen = ({ ...props }) => {
 
   const [columns2, setColumns2] = useState([]);
   const [valRefreshColumns, setValRefreshColumns] = useState(false);
-
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState(true);
   const [modalAddPerson, setModalAddPerson] = useState(false);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
@@ -78,18 +73,18 @@ const homeScreen = ({ ...props }) => {
   const [idsDelete, setIdsDelete] = useState("");
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
-  const [departmentId, setDepartmentId] = useState(null);
   let urlFilter = "/person/person/?";
 
   const [listUserCompanies, setListUserCompanies] = useState("");
   const [showModalCompanies, setShowModalCompanies] = useState(false);
-  const [deleteTrigger, setDeleteTrigger] = useState(false);
-  const [deactivateTrigger, setDeactivateTrigger] = useState(false);
   const [userSession, setUserSession] = useState({});
+  const [deactivateTrigger, setDeactivateTrigger] = useState(false);
 
   useEffect(() => {
-    if (props.currentNode) {
+    if (props.currentNode && props.permissions) {
       filterPersonName();
+    } else {
+      return <></>;
     }
   }, [props.currentNode, props.permissions]);
 
@@ -134,26 +129,6 @@ const homeScreen = ({ ...props }) => {
       .catch((error) => {
         setLoading(false);
         message.error("Error al desactivar");
-      });
-  };
-
-  const deletePerson = () => {
-    setLoading(true);
-    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
-      persons_id: idsDelete,
-    })
-      .then((response) => {
-        setIdsDelete("");
-        setModalDelete(false);
-        setPersonsToDelete([]);
-        filterPersonName();
-        setLoading(false);
-        message.success("Eliminado correctamente.");
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.log(error);
-        message.error("Error al eliminar");
       });
   };
 
@@ -235,7 +210,7 @@ const homeScreen = ({ ...props }) => {
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
         return (
           <>
-            {(props.permissions.edit || props.delete) ? (
+            {props.permissions.edit || props.delete ? (
               <Dropdown overlay={() => menuPerson(item)}>
                 <a>
                   <div>{personName}</div>
@@ -255,11 +230,7 @@ const homeScreen = ({ ...props }) => {
         return (
           <>
             <Switch
-              disabled={
-                props.permissions.change_is_active
-                  ? false
-                  : true
-              }
+              disabled={props.permissions.change_is_active ? false : true}
               defaultChecked={item.is_active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
@@ -295,14 +266,6 @@ const homeScreen = ({ ...props }) => {
       },
     },
 
-    /* {
-      title: "Fecha de ingreso a la plataforma",
-      width: 82,
-      align: "center",
-      render: (item) => {
-        return <div>{item.register_date}</div>;
-      },
-    }, */
     {
       title: "Departamento",
       width: 100,
@@ -317,29 +280,6 @@ const homeScreen = ({ ...props }) => {
         return <div>{item.job ? item.job.name : ""}</div>;
       },
     },
-    /* {
-      title: "RFC",
-      width: 121,
-      align: "center",
-      dataIndex: "rfc",
-      key: "rfc",
-    }, */
-    /* {
-      title: "IMSS",
-      width: 100,
-      align: "center",
-      dataIndex: "imss",
-      key: "imss",
-    }, */
-    /* {
-      title: "Periocidad",
-      width: 80,
-      align: "center",
-      render: (item) => {
-        let per = periodicity.filter((a) => a.value === item.periodicity);
-        if (per.length > 0) return per[0].label;
-      },
-    }, */
     {
       title: "Empresas Asignadas",
       width: 75,
@@ -363,22 +303,21 @@ const homeScreen = ({ ...props }) => {
       title: () => {
         return (
           <>
-            { props.permissions.delete && (
-                <Dropdown overlay={menuGeneric}>
-                  <Button style={menuDropDownStyle} size="small">
-                    <EllipsisOutlined />
-                  </Button>
-                </Dropdown>
-              )}
+            {props.permissions.delete && (
+              <Dropdown overlay={menuGeneric}>
+                <Button style={menuDropDownStyle} size="small">
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
           </>
         );
       },
       width: 44,
-      // align: "center",
       render: (item) => {
         return (
           <>
-            { (props.permissions.edit || props.permissions.delete) ? (
+            {(props.permissions.edit || props.permissions.delete) && (
               <Dropdown overlay={() => menuPerson(item)}>
                 <Button
                   style={{ background: "#8c8c8c", color: "withe" }}
@@ -387,8 +326,6 @@ const homeScreen = ({ ...props }) => {
                   <EllipsisOutlined />
                 </Button>
               </Dropdown>
-            ) : (
-              ""
             )}
           </>
         );
@@ -414,19 +351,12 @@ const homeScreen = ({ ...props }) => {
     });
   }
 
-  const rowSelectionPerson = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      setPersonsToDelete(selectedRows);
-    },
-  };
-
   const onchangeStatus = (value) => {
     value.is_active ? (value.is_active = false) : (value.is_active = true);
     let data = {
       id: value.id,
       status: value.is_active,
     };
-    // Axios.put(API_URL + `/person/person/${value.id}/`, value)
     Axios.post(API_URL + `/person/person/change_is_active/`, data)
       .then((response) => {
         if (!response.data.photo) response.data.photo = defaulPhoto;
@@ -442,35 +372,35 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const menuGeneric = (
-    <Menu>
-      {props.currentNode && (
-        <Menu.Item key="1">
-          <Clipboard
-            text={
-              window.location.origin +
-              "/ac/urn/" +
-              props.currentNode.permanent_code
-            }
-            title={"Link de empresa"}
-            border={false}
-            type={"button"}
-            msg={"Copiado en portapapeles"}
-            tooltipTitle={"Copiar link de auto registro"}
-          />
+  const menuGeneric = () => {
+    return (
+      <Menu>
+        {props.currentNode && props.permissions && (
+          <Menu.Item key="1">
+            <Clipboard
+              text={
+                window.location.origin +
+                "/ac/urn/" +
+                props.currentNode.permanent_code
+              }
+              title={"Link de empresa"}
+              border={false}
+              type={"button"}
+              msg={"Copiado en portapapeles"}
+              tooltipTitle={"Copiar link de auto registro"}
+            />
+          </Menu.Item>
+        )}
+        {props.permissions.delete && (
+          <Menu.Item key="2" onClick={() => setDeleteModal()}>
+            Eliminar
+          </Menu.Item>
+        )}
+        <Menu.Item key="3" onClick={() => handleDeactivate()}>
+          Desactivar
         </Menu.Item>
-      )}
-      { props.permissions.delete && (
-        <Menu.Item key="2" onClick={() => setDeleteModal(personsToDelete)}>
-          Eliminar
-        </Menu.Item>
-      )}
-      <Menu.Item onClick={() => handleDeactivate()}>Desactivar</Menu.Item>
-    </Menu>
-  );
-
-  const handleDelete = () => {
-    setDeleteTrigger(true);
+      </Menu>
+    );
   };
 
   const handleDeactivate = () => {
@@ -486,7 +416,7 @@ const homeScreen = ({ ...props }) => {
           </Menu.Item>
         )}
         {props.permissions.delete && (
-          <Menu.Item onClick={() => setDeleteModal([item])}>Eliminar</Menu.Item>
+          <Menu.Item onClick={() => setDeleteModal(item)}>Eliminar</Menu.Item>
         )}
         <Menu.Item onClick={() => setDeactivateModal([item])}>
           Desactivar
@@ -541,32 +471,6 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
-  /////DELETE MODAL
-  const setDeleteModal = async (value) => {
-    setStringToDelete("Eliminar usuarios ");
-    if (value.length > 0) {
-      if (value.length == 1) {
-        setStringToDelete(
-          "Eliminar usuario " + value[0].first_name + " " + value[0].flast_name
-        );
-      }
-      setPersonsToDelete(value);
-      let ids = null;
-      value.map((a) => {
-        if (ids) ids = ids + "," + a.id;
-        else ids = a.id;
-      });
-      setIdsDelete(ids);
-      showModalDelete();
-    } else {
-      message.error("Selecciona una persona.");
-    }
-  };
-
-  const showModalDelete = () => {
-    modalDelete ? setModalDelete(false) : setModalDelete(true);
-  };
-
   const ListElementsToDelete = ({ personsDelete }) => {
     return (
       <div>
@@ -608,29 +512,6 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const importPersonFile = async (e) => {
-    let extension = getFileExtension(e.target.files[0].name);
-    if (extension === "xlsx") {
-      let formData = new FormData();
-      formData.append("File", e.target.files[0]);
-      formData.append("node_id", props.currentNode.id);
-      setLoading(true);
-      Axios.post(API_URL + `/person/person/import_xls/`, formData)
-        .then((response) => {
-          setLoading(false);
-          message.success("Excel importado correctamente.");
-          filterPersonName();
-        })
-        .catch((e) => {
-          filterPersonName();
-          setLoading(false);
-          message.error("Error al importar.");
-          console.log(e);
-        });
-    } else {
-      message.error("Formato incorrecto, suba un archivo .xlsx");
-    }
-  };
   const importPersonFileExtend = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
     if (extension === "xlsx") {
@@ -705,34 +586,8 @@ const homeScreen = ({ ...props }) => {
 
   const resetFilter = () => {
     formFilter.resetFields();
-    setStatus(true);
     filter();
     filterPersonName();
-  };
-
-  const getNodes = () => {
-    Axios.get(API_URL + `/business/node/`)
-      .then((response) => {
-        let data = response.data.results;
-        let options = [];
-        data.map((item) => {
-          options.push({
-            value: item.id,
-            label: item.name,
-            key: item.name + item.id,
-          });
-        });
-        setNodes(options);
-      })
-      .catch((error) => {
-        console.log(error);
-        setNodes([]);
-      });
-  };
-
-  const changeDepartment = (value) => {
-    formFilter.setFieldsValue({ job: null });
-    setDepartmentId(value);
   };
 
   const AlertDeactivate = () => (
@@ -755,19 +610,40 @@ const homeScreen = ({ ...props }) => {
     </div>
   );
 
-  useEffect(() => {
-    if (deleteTrigger) {
-      setDeleteModal(personsToDelete);
-      setDeleteTrigger(false);
-    }
-  }, [deleteTrigger]);
+  const rowSelectionPerson = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log("rowSlect", selectedRows);
+      setPersonsToDelete(selectedRows);
+    },
+  };
 
-  useEffect(() => {
-    if (deactivateTrigger) {
-      setDeactivateModal(personsToDelete);
-      setDeactivateTrigger(false);
+  /////DELETE MODAL
+  const setDeleteModal = (value = null) => {
+    console.log("ROWS--> ", personsToDelete);
+    if (value) {
+      setPersonsToDelete([value]);
+      setStringToDelete(
+        "Eliminar usuario " + value.first_name + " " + value.flast_name
+      );
+      setIdsDelete(value.id);
+      showModalDelete();
+    } else if (personsToDelete) {
+      console.log("Array--> ", value);
+      let ids = null;
+      personsToDelete.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+      setIdsDelete(ids);
+      showModalDelete();
+    } else {
+      message.error("Selecciona una persona.");
     }
-  }, [deactivateTrigger]);
+  };
+
+  const showModalDelete = () => {
+    modalDelete ? setModalDelete(false) : setModalDelete(true);
+  };
 
   useEffect(() => {
     if (modalDelete) {
@@ -780,6 +656,7 @@ const homeScreen = ({ ...props }) => {
           danger: true,
         },
         onCancel() {
+          setModalDelete(false);
           setModalDelete();
         },
         cancelText: "Cancelar",
@@ -790,9 +667,25 @@ const homeScreen = ({ ...props }) => {
     }
   }, [modalDelete]);
 
-  useEffect(() => {
-    console.log('permissions',props.permissions);
-  }, [props.permissions])
+  const deletePerson = () => {
+    setLoading(true);
+    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
+      persons_id: idsDelete,
+    })
+      .then((response) => {
+        setIdsDelete(null);
+        setModalDelete(false);
+        setPersonsToDelete(null);
+        filterPersonName();
+        setLoading(false);
+        message.success("Eliminado correctamente.");
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        message.error("Error al eliminar");
+      });
+  };
 
   useEffect(() => {
     if (modalDeactivate) {
@@ -869,12 +762,6 @@ const homeScreen = ({ ...props }) => {
       </Menu.Item>
     </Menu>
   );
-  
-  if(!props.permissions){
-    return (
-      <></>
-    )
-  }
 
   return (
     <>
@@ -926,13 +813,9 @@ const homeScreen = ({ ...props }) => {
                           <Form.Item name="gender" label="Género">
                             <Select
                               options={genders}
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                               placeholder="Todos"
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                             />
                           </Form.Item>
                         </Col>
@@ -950,9 +833,7 @@ const homeScreen = ({ ...props }) => {
                             <Select
                               options={statusSelect}
                               placeholder="Estatus"
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                               style={{ width: 90 }}
                             />
                           </Form.Item>
@@ -962,9 +843,7 @@ const homeScreen = ({ ...props }) => {
                             <Select
                               options={periodicity}
                               placeholder="Periocidad"
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                               style={{ width: 90 }}
                             />
                           </Form.Item>
@@ -978,10 +857,7 @@ const homeScreen = ({ ...props }) => {
                             color={"#3d78b9"}
                             key={"#filtrar"}
                           >
-                            <Button
-                              className="btn-filter"
-                              htmlType="submit"
-                            >
+                            <Button className="btn-filter" htmlType="submit">
                               <SearchOutlined />
                             </Button>
                           </Tooltip>
@@ -1101,7 +977,7 @@ const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
-    permissions: state.userStore.permissions.person ,
+    permissions: state.userStore.permissions.person,
   };
 };
 

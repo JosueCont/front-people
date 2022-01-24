@@ -6,24 +6,19 @@ import { API_URL } from "../../config/config";
 import { userCompanyId } from "../../libs/auth";
 import { connect } from "react-redux";
 
-const SelectCollaborator = ({ showLabel=true, setAllPersons, ...props }) => {
+const SelectCollaborator = ({ showLabel = true, setAllPersons, ...props }) => {
   const { Option } = Select;
-
-  useEffect(() => {
-    console.log('peopleCompany',props.peopleCompany);
-  }, [])
 
   return (
     <Form.Item
-      label={showLabel ? props.label ? props.label : "Colaborador" : null}
+      label={showLabel ? (props.label ? props.label : "Colaborador") : null}
       name={props.name ? props.name : "collaborator"}
       labelCol={props.labelCol ? props.labelCol : { span: 24 }}
       labelAlign={"left"}
       rules={props.rules ? props.rules : null}
-      
     >
       <Select
-        size={props.size ? props.size : 'middle'}
+        size={props.size ? props.size : "middle"}
         key="selectPerson"
         showSearch
         style={props.style ? props.style : null}

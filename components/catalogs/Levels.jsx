@@ -14,6 +14,7 @@ import {
 import { GoldOutlined } from "@ant-design/icons";
 import { userCompanyName } from "../../libs/auth";
 import { ruleRequired } from "../../utils/rules";
+import { connect } from "react-redux";
 
 const Levels = ({ onFinishForm, ...props }) => {
   let nodePeople = userCompanyName();
@@ -72,7 +73,7 @@ const Levels = ({ onFinishForm, ...props }) => {
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="level"
-              label="Nivel del que procede"
+              label="Nivel que precede"
               rules={[ruleRequired]}
             >
               <Input />
@@ -105,4 +106,8 @@ const Levels = ({ onFinishForm, ...props }) => {
   );
 };
 
-export default Levels;
+const mapSate = () => {
+  return {};
+};
+
+export default connect(mapSate)(Levels);

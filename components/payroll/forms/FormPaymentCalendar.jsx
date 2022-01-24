@@ -80,7 +80,6 @@ const FormPaymentCalendar = ({
     setLoading(true);
     try {
       let response = await WebApi.getDetailPaymentCalendar(idPaymentCalendar);
-      console.log('item => ', response.data);
       if (response.data) {
         let item = response.data;
         formPaymentCalendar.setFieldsValue({
@@ -104,8 +103,8 @@ const FormPaymentCalendar = ({
         });
         setAdjustmentApply(item.adjustment);
         setPeriodActive(item.active);
-        setPaymentSaturday(item.payment_saturday)
-        setPaymentSunday(item.payment_saturday)
+        setPaymentSaturday(item.payment_saturday);
+        setPaymentSunday(item.payment_saturday);
         setStartDate(item.start_date);
         setActivationtDate(item.activation_date);
         setPeriod(item.period);
@@ -127,7 +126,7 @@ const FormPaymentCalendar = ({
       /* route.push({ pathname: "/payroll/paymentCalendar" }); */
     } catch (error) {
       console.log(error);
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -163,9 +162,9 @@ const FormPaymentCalendar = ({
     value.active = periodActive;
     value.adjustment = adjustmentAppy;
     value.pay_before = value.pay_before ? parseInt(value.pay_before) : 0;
-    value.payment_saturday =  paymentSaturday;
-    value.payment_sunday = paymentSunday
-    
+    value.payment_saturday = paymentSaturday;
+    value.payment_sunday = paymentSunday;
+
     if (startDate) {
       value.start_date = startDate;
     }
@@ -193,32 +192,31 @@ const FormPaymentCalendar = ({
       savePaymentCalendar(value);
     }
   };
-  
+
   const changeAdjustmentAppy = (checked) => {
-    console.log('checked =>', checked);
-    setAdjustmentApply(checked)
-  }
+    setAdjustmentApply(checked);
+  };
 
   const changePeriodActive = (checked) => {
     setPeriodActive(checked);
-  }
+  };
 
-  const changePaymentSaturday = (checked) =>{
-    setPaymentSaturday(checked)
-  }
+  const changePaymentSaturday = (checked) => {
+    setPaymentSaturday(checked);
+  };
 
-  const changePaymentSunday = (checked) =>{
-    setPaymentSunday(checked)
-  }
+  const changePaymentSunday = (checked) => {
+    setPaymentSunday(checked);
+  };
 
-  const closeModal = () =>{
+  const closeModal = () => {
     props.setIsModalVisible(false);
     setPaymentSunday(false);
     setPaymentSaturday(false);
     setAdjustmentApply(false);
     setPeriodActive(false);
     props.getPaymentCalendars();
-  }
+  };
 
   return (
     <>

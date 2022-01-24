@@ -11,11 +11,10 @@ import {
   Spin,
   Input,
 } from "antd";
-import { userCompanyName } from "../../libs/auth";
 import { ruleRequired } from "../../utils/rules";
+import { connect } from "react-redux";
 
 const Relationship = ({ permissions, onFinishForm, ...props }) => {
-  let nodePeople = userCompanyName();
   const { Title } = Typography;
   const { TabPane } = Tabs;
 
@@ -44,12 +43,12 @@ const Relationship = ({ permissions, onFinishForm, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit_relationship && (
+              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined onClick={() => editRegister(item, "rs")} />
                 </Col>
               )}
-              {permissions.delete_relationship && (
+              {permissions.delete && (
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -71,7 +70,7 @@ const Relationship = ({ permissions, onFinishForm, ...props }) => {
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
-      {permissions.create_relationship && (
+      {permissions.create && (
         <Form
           layout={"vertical"}
           form={form}
@@ -116,4 +115,10 @@ const Relationship = ({ permissions, onFinishForm, ...props }) => {
   );
 };
 
-export default Relationship;
+const mapState = (state) => {
+  return {
+    cat_relationship: state.catalogStore.cat_relationship,
+  };
+};
+
+export default connect(mapState)(Relationship);
