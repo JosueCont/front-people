@@ -21,18 +21,15 @@ import {
 import Avatar from "antd/lib/avatar/avatar";
 import Meta from "antd/lib/card/Meta";
 import { Content } from "antd/lib/layout/layout";
-import { set } from "js-cookie";
 import { useState } from "react";
 import { connect } from "react-redux";
-import WebApi from "../../api/webApi";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectPeriodicity from "../../components/selects/SelectPeriodicity";
 import SelectYear from "../../components/selects/SelectYear";
 import MainLayout from "../../layout/MainLayout";
 import { monthsName } from "../../utils/constant";
 import webApiFiscal from "../../api/WebApiFiscal";
-import DatePicker from "react-multi-date-picker";
-import { css, Global } from "@emotion/core";
+import { Global } from "@emotion/core";
 import { ruleRequired } from "../../utils/rules";
 
 const assimilatedSalary = () => {
@@ -271,105 +268,101 @@ const assimilatedSalary = () => {
                     style={{ display: "flex" }}
                   >
                     {salary && (
-                    <div style={{ margin: "auto" }}>
-                      <Row className="table-grid-title">
-                        <Col span={18}>
-                          <Text strong={type == 1 ? true : false}>
-                            {/* <span style={{ fontWeight: type == 1 && "bold" }}> */}
-                            ASIMILADO BRUTO
-                          </Text>
-                        </Col>
-                        <Col span={6} className="border-results">
-                          <Text>
-                            $ {salary.gross_salary}
-                          </Text>
-                        </Col>
-                      </Row>
-                      <Row
-                        className="table-grid-results"
-                        style={{ marginTop: 20 }}
-                      >
-                        <Col span={18}>
-                          <Text>- Límite inferior</Text>
-                        </Col>
-                        <Col span={6}>
-                          {salary.lower_limit}
-                        </Col>
-                        <Col span={18}>
-                          <span>= Excedente del límite inferior</span>
-                        </Col>
-                        <Col span={6}>{salary.surplus}</Col>
-                        <Col span={18}>
-                          <span>× % sobre excedente del límite inferior</span>
-                        </Col>
-                        <Col span={6}>
-                          {salary.percentage_exceeding_lower_limit}
-                        </Col>
-                        <Col span={18}>
-                          <span>= Impuesto marginal</span>
-                        </Col>
-                        <Col span={6}>{salary.marginal_tax}</Col>
-                        <Col span={18}>
-                          <span>+ Cuota fija del impuesto</span>
-                        </Col>
-                        <Col span={6}>{salary.fixed_fee}</Col>
-                        <Col span={18}>
-                          <span>I.S.R. a cargo</span>
-                        </Col>
-                        <Col span={6}>{salary.charge_isr}</Col>
-                        {allowance && (
-                          <>
-                            <Col span={18}>
-                              <span>Retención IMSS</span>
-                            </Col>
-                            <Col span={6}>{salary.retention_imss}</Col>
-                            <Col span={18}>
-                              <span>
-                                {" "}
-                                {salary.retention_isr
-                                  ? "ISR a retener"
-                                  : "SUBSIDIO PARA EL EMPLEO A ENTREGAR"}
-                              </span>
-                            </Col>
-                            <Col span={6}>
-                              {salary.retention_isr
-                                ? salary.retention_isr
-                                : salary.allowance_employee}
-                            </Col>
-                            <Col span={18}>
-                              <span>Percepción del trabajador</span>
-                            </Col>
-                            <Col span={6}>
-                              {salary.perception_employee}
-                            </Col>
-                            <Col span={18}>
-                              <span>IMSS/INFONAVIT</span>
-                            </Col>
-                            <Col span={6}>{salary["imss/infonavit/afore"]}</Col>
-                          </>
-                        )}
-                      </Row>
-                      {!allowance && (
-                        <Row className="table-grid-footer">
+                      <div style={{ margin: "auto" }}>
+                        <Row className="table-grid-title">
                           <Col span={18}>
                             <Text strong={type == 1 ? true : false}>
-                              ASIMILADO NETO
+                              {/* <span style={{ fontWeight: type == 1 && "bold" }}> */}
+                              ASIMILADO BRUTO
                             </Text>
                           </Col>
-                          <Col
-                            span={6}
-                            style={{ backgroundColor: type == 2 && "yellow" }}
-                            className="border-results"
-                          >
-                            <Text>
-                              $23432
-                              {/* $ {salary.net_salary} */}
-                            </Text>
+                          <Col span={6} className="border-results">
+                            <Text>$ {salary.gross_salary}</Text>
                           </Col>
                         </Row>
-                      )}
-                    </div>
-                    )} 
+                        <Row
+                          className="table-grid-results"
+                          style={{ marginTop: 20 }}
+                        >
+                          <Col span={18}>
+                            <Text>- Límite inferior</Text>
+                          </Col>
+                          <Col span={6}>{salary.lower_limit}</Col>
+                          <Col span={18}>
+                            <span>= Excedente del límite inferior</span>
+                          </Col>
+                          <Col span={6}>{salary.surplus}</Col>
+                          <Col span={18}>
+                            <span>× % sobre excedente del límite inferior</span>
+                          </Col>
+                          <Col span={6}>
+                            {salary.percentage_exceeding_lower_limit}
+                          </Col>
+                          <Col span={18}>
+                            <span>= Impuesto marginal</span>
+                          </Col>
+                          <Col span={6}>{salary.marginal_tax}</Col>
+                          <Col span={18}>
+                            <span>+ Cuota fija del impuesto</span>
+                          </Col>
+                          <Col span={6}>{salary.fixed_fee}</Col>
+                          <Col span={18}>
+                            <span>I.S.R. a cargo</span>
+                          </Col>
+                          <Col span={6}>{salary.charge_isr}</Col>
+                          {allowance && (
+                            <>
+                              <Col span={18}>
+                                <span>Retención IMSS</span>
+                              </Col>
+                              <Col span={6}>{salary.retention_imss}</Col>
+                              <Col span={18}>
+                                <span>
+                                  {" "}
+                                  {salary.retention_isr
+                                    ? "ISR a retener"
+                                    : "SUBSIDIO PARA EL EMPLEO A ENTREGAR"}
+                                </span>
+                              </Col>
+                              <Col span={6}>
+                                {salary.retention_isr
+                                  ? salary.retention_isr
+                                  : salary.allowance_employee}
+                              </Col>
+                              <Col span={18}>
+                                <span>Percepción del trabajador</span>
+                              </Col>
+                              <Col span={6}>{salary.perception_employee}</Col>
+                              <Col span={18}>
+                                <span>IMSS/INFONAVIT</span>
+                              </Col>
+                              <Col span={6}>
+                                {salary["imss/infonavit/afore"]}
+                              </Col>
+                            </>
+                          )}
+                        </Row>
+                        {!allowance && (
+                          <Row className="table-grid-footer">
+                            <Col span={18}>
+                              <Text strong={type == 1 ? true : false}>
+                                ASIMILADO NETO
+                              </Text>
+                            </Col>
+                            <Col
+                              span={6}
+                              style={{ backgroundColor: type == 2 && "yellow" }}
+                              className="border-results"
+                            >
+                              <Text>
+                                $23432
+                                {/* $ {salary.net_salary} */}
+                              </Text>
+                            </Col>
+                          </Row>
+                        )}
+                      </div>
+                    )}
                   </Spin>
                 </Col>
                 <Col md={12}></Col>
