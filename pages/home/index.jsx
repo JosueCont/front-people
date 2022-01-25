@@ -45,6 +45,7 @@ import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
+import { useLayoutEffect } from "react";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -79,14 +80,21 @@ const homeScreen = ({ ...props }) => {
   const [showModalCompanies, setShowModalCompanies] = useState(false);
   const [userSession, setUserSession] = useState({});
   const [deactivateTrigger, setDeactivateTrigger] = useState(false);
+  const [permissions, setPermissions] = useState({});
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
 
   useEffect(() => {
-    if (props.currentNode && props.permissions) {
+    if (props.currentNode) {
       filterPersonName();
     } else {
       return <></>;
     }
-  }, [props.currentNode, props.permissions]);
+  }, [props.currentNode]);
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
@@ -210,7 +218,7 @@ const homeScreen = ({ ...props }) => {
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
         return (
           <>
-            {props.permissions.edit || props.delete ? (
+            {permissions.edit || props.delete ? (
               <Dropdown overlay={() => menuPerson(item)}>
                 <a>
                   <div>{personName}</div>
@@ -230,7 +238,7 @@ const homeScreen = ({ ...props }) => {
         return (
           <>
             <Switch
-              disabled={props.permissions.change_is_active ? false : true}
+              disabled={permissions.change_is_active ? false : true}
               defaultChecked={item.is_active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
@@ -303,7 +311,7 @@ const homeScreen = ({ ...props }) => {
       title: () => {
         return (
           <>
-            {props.permissions.delete && (
+            {permissions.delete && (
               <Dropdown overlay={menuGeneric}>
                 <Button style={menuDropDownStyle} size="small">
                   <EllipsisOutlined />
@@ -317,7 +325,7 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-            {(props.permissions.edit || props.permissions.delete) && (
+            {(permissions.edit || permissions.delete) && (
               <Dropdown overlay={() => menuPerson(item)}>
                 <Button
                   style={{ background: "#8c8c8c", color: "withe" }}
@@ -375,7 +383,7 @@ const homeScreen = ({ ...props }) => {
   const menuGeneric = () => {
     return (
       <Menu>
-        {props.currentNode && props.permissions && (
+        {props.currentNode && permissions && (
           <Menu.Item key="1">
             <Clipboard
               text={
@@ -391,8 +399,8 @@ const homeScreen = ({ ...props }) => {
             />
           </Menu.Item>
         )}
-        {props.permissions.delete && (
-          <Menu.Item key="2" onClick={() => setDeleteModal()}>
+        {permissions.delete && (
+          <Menu.Item key="2" onClick={() => showModalDelete()}>
             Eliminar
           </Menu.Item>
         )}
@@ -410,13 +418,19 @@ const homeScreen = ({ ...props }) => {
   const menuPerson = (item) => {
     return (
       <Menu>
-        {props.permissions.edit && (
+        {permissions.edit && (
           <Menu.Item>
             <Link href={`/home/${item.id}`}>Editar</Link>
           </Menu.Item>
         )}
-        {props.permissions.delete && (
-          <Menu.Item onClick={() => setDeleteModal(item)}>Eliminar</Menu.Item>
+        {permissions.delete && (
+          <Menu.Item
+            onClick={() => {
+              setPersonsToDelete([item]), showModalDelete();
+            }}
+          >
+            Eliminar
+          </Menu.Item>
         )}
         <Menu.Item onClick={() => setDeactivateModal([item])}>
           Desactivar
@@ -472,6 +486,23 @@ const homeScreen = ({ ...props }) => {
   };
 
   const ListElementsToDelete = ({ personsDelete }) => {
+    if (personsDelete.length == 1) {
+      setStringToDelete(
+        "Eliminar usuario " +
+          personsDelete[0].first_name +
+          " " +
+          personsDelete[0].flast_name
+      );
+      setIdsDelete(personsDelete[0].id);
+      showModalDelete();
+    } else if (personsDelete.length > 0) {
+      let ids = null;
+      personsDelete.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+      setIdsDelete(ids);
+    }
     return (
       <div>
         {personsDelete.map((p) => {
@@ -612,7 +643,6 @@ const homeScreen = ({ ...props }) => {
 
   const rowSelectionPerson = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log("rowSlect", selectedRows);
       setPersonsToDelete(selectedRows);
     },
   };
@@ -634,10 +664,9 @@ const homeScreen = ({ ...props }) => {
         if (ids) ids = ids + "," + a.id;
         else ids = a.id;
       });
+      console.log("IDS--->> ", ids);
       setIdsDelete(ids);
       showModalDelete();
-    } else {
-      message.error("Selecciona una persona.");
     }
   };
 
@@ -646,7 +675,7 @@ const homeScreen = ({ ...props }) => {
   };
 
   useEffect(() => {
-    if (modalDelete) {
+    if (modalDelete && personsToDelete.length > 0) {
       Modal.confirm({
         title: stringToDelete,
         content: <AlertDeletes />,
@@ -658,6 +687,7 @@ const homeScreen = ({ ...props }) => {
         onCancel() {
           setModalDelete(false);
           setModalDelete();
+          setPersonsToDelete([]);
         },
         cancelText: "Cancelar",
         onOk() {
@@ -665,7 +695,7 @@ const homeScreen = ({ ...props }) => {
         },
       });
     }
-  }, [modalDelete]);
+  }, [modalDelete, personsToDelete]);
 
   const deletePerson = () => {
     setLoading(true);
@@ -771,7 +801,7 @@ const homeScreen = ({ ...props }) => {
           <Breadcrumb.Item>Personas</Breadcrumb.Item>
         </Breadcrumb>
         <div className="container" style={{ width: "100%" }}>
-          {props.permissions.view ? (
+          {permissions.view ? (
             <>
               <div className="top-container-border-radius">
                 <Row justify={"space-between"} className={"formFilter"}>
@@ -883,7 +913,7 @@ const homeScreen = ({ ...props }) => {
                           className="button-filter-person"
                           style={{ display: "flex", marginTop: "10px" }}
                         >
-                          {props.permissions.create && (
+                          {permissions.create && (
                             <Button
                               className="btn-add-person"
                               onClick={() => getModalPerson(true)}
@@ -899,7 +929,7 @@ const homeScreen = ({ ...props }) => {
                   </Col>
                 </Row>
                 <Row justify={"end"} style={{ padding: "1% 0" }}>
-                  {props.permissions.export_csv_person && (
+                  {permissions.export_csv_person && (
                     <Button
                       type="primary"
                       icon={<DownloadOutlined />}
@@ -910,7 +940,7 @@ const homeScreen = ({ ...props }) => {
                       Descargar resultados
                     </Button>
                   )}
-                  {props.permissions.import_csv_person && (
+                  {permissions.import_csv_person && (
                     <Dropdown
                       overlay={menuImportPerson}
                       placement="bottomLeft"
