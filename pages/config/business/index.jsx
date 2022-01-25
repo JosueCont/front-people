@@ -92,7 +92,6 @@ const configBusiness = ({ ...props }) => {
                     />
                   </TabPane>
                 )}
-
                 {props.permissions.person_type.view && (
                   <TabPane
                     tab={
@@ -151,26 +150,6 @@ const configBusiness = ({ ...props }) => {
                   >
                     <DocumentsTypes
                       permissions={props.permissions.document_type}
-                      currentNode={props.currentNode}
-                      doCompanySelectedCatalog={doCompanySelectedCatalog}
-                    />
-                  </TabPane>
-                )}
-
-                {props.permissions.bank.view && (
-                  <TabPane
-                    tab={
-                      <Tooltip title="Bancos">
-                        <div className="container-title-tab">
-                          <BankOutlined />
-                          <div className="text-title-tab">Bancos</div>
-                        </div>
-                      </Tooltip>
-                    }
-                    key="tab_6"
-                  >
-                    <Banks
-                      permissions={props.permissions.bank}
                       currentNode={props.currentNode}
                       doCompanySelectedCatalog={doCompanySelectedCatalog}
                     />

@@ -56,7 +56,6 @@ const webReducer = (state = initialData, action) => {
       return {
         ...state,
         cat_person_type: action.payload,
-        person_type_table: action.table,
       };
     case PROFILE_GROUP:
       return { ...state, cat_groups: action.payload };
@@ -149,6 +148,7 @@ export const getTreatment = (data) => async (dispatch, getState) => {
 export const getDocumentType = (data) => async (dispatch, getState) => {
   try {
     let response = await WebApi.getCatalogs("document-type", data);
+    console.log("CATALOGO-->> ", response.data);
     dispatch({ type: DOCUMENT_TYPE, payload: response.data });
   } catch (error) {
     console.log(error);
@@ -176,13 +176,9 @@ export const getJobs = (data) => async (dispatch, getState) => {
 export const getPersonType = (data) => async (dispatch, getState) => {
   try {
     let response = await WebApi.getPersontype(data);
-    let typesPerson = response.data.results.map((a) => {
-      return { label: a.name, value: a.id };
-    });
     dispatch({
       type: PERSON_TYPE,
-      payload: typesPerson,
-      table: response.data.results,
+      payload: response.data.results,
     });
   } catch (error) {
     console.log(error);
