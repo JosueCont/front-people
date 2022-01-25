@@ -55,7 +55,6 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
   try {
     let response = await WebApi.getGeneralConfig();
     sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
-    console.log("COnfig-->> ", response.data);
     dispatch({ type: GENERAL_CONFIG, payload: response.data });
     dispatch(setUser());
   } catch (error) {}

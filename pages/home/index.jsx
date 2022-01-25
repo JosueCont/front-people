@@ -485,40 +485,6 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
-  const ListElementsToDelete = ({ personsDelete }) => {
-    if (personsDelete.length == 1) {
-      setStringToDelete(
-        "Eliminar usuario " +
-          personsDelete[0].first_name +
-          " " +
-          personsDelete[0].flast_name
-      );
-      setIdsDelete(personsDelete[0].id);
-      showModalDelete();
-    } else if (personsDelete.length > 0) {
-      let ids = null;
-      personsDelete.map((a) => {
-        if (ids) ids = ids + "," + a.id;
-        else ids = a.id;
-      });
-      setIdsDelete(ids);
-    }
-    return (
-      <div>
-        {personsDelete.map((p) => {
-          return (
-            <>
-              <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo} />
-                <span>{" " + p.first_name + " " + p.flast_name}</span>
-              </Row>
-            </>
-          );
-        })}
-      </div>
-    );
-  };
-
   ////IMPORT/EXPORT PERSON
   const exportPersons = () => {
     setLoading(true);
@@ -647,27 +613,62 @@ const homeScreen = ({ ...props }) => {
     },
   };
 
-  /////DELETE MODAL
-  const setDeleteModal = (value = null) => {
-    console.log("ROWS--> ", personsToDelete);
-    if (value) {
-      setPersonsToDelete([value]);
+  // /////DELETE MODAL
+  // const setDeleteModal = (value = null) => {
+  //   console.log("ROWS--> ", personsToDelete);
+  //   if (value) {
+  //     setPersonsToDelete([value]);
+  //     setStringToDelete(
+  //       "Eliminar usuario " + value.first_name + " " + value.flast_name
+  //     );
+  //     setIdsDelete(value.id);
+  //     showModalDelete();
+  //   } else if (personsToDelete) {
+  //     console.log("Array--> ", value);
+  //     let ids = null;
+  //     personsToDelete.map((a) => {
+  //       if (ids) ids = ids + "," + a.id;
+  //       else ids = a.id;
+  //     });
+  //     console.log("IDS--->> ", ids);
+  //     setIdsDelete(ids);
+  //     showModalDelete();
+  //   }
+  // };
+
+  const ListElementsToDelete = ({ personsDelete }) => {
+    if (personsDelete.length == 1) {
       setStringToDelete(
-        "Eliminar usuario " + value.first_name + " " + value.flast_name
+        "Eliminar usuario " +
+          personsDelete[0].first_name +
+          " " +
+          personsDelete[0].flast_name
       );
-      setIdsDelete(value.id);
+      setIdsDelete(personsDelete[0].id);
       showModalDelete();
-    } else if (personsToDelete) {
-      console.log("Array--> ", value);
+    } else if (personsDelete.length > 0) {
       let ids = null;
-      personsToDelete.map((a) => {
+      personsDelete.map((a) => {
         if (ids) ids = ids + "," + a.id;
         else ids = a.id;
       });
-      console.log("IDS--->> ", ids);
+      console.log(ids);
       setIdsDelete(ids);
-      showModalDelete();
     }
+    return (
+      <div>
+        {personsDelete.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
   };
 
   const showModalDelete = () => {
@@ -685,27 +686,28 @@ const homeScreen = ({ ...props }) => {
           danger: true,
         },
         onCancel() {
-          setModalDelete(false);
           setModalDelete();
           setPersonsToDelete([]);
         },
         cancelText: "Cancelar",
         onOk() {
-          deletePerson();
+          deletePerson(idsDelete);
         },
       });
     }
   }, [modalDelete, personsToDelete]);
 
-  const deletePerson = () => {
+  const deletePerson = (ids) => {
+    console.log("IDS--->> ", ids);
+    console.log("IDS--->> ", idsDelete);
     setLoading(true);
     Axios.post(API_URL + `/person/person/delete_by_ids/`, {
       persons_id: idsDelete,
     })
       .then((response) => {
-        setIdsDelete(null);
+        setIdsDelete("");
         setModalDelete(false);
-        setPersonsToDelete(null);
+        setPersonsToDelete([]);
         filterPersonName();
         setLoading(false);
         message.success("Eliminado correctamente.");

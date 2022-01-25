@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Tabs,
-  Tooltip,
   Typography,
   Form,
   Row,
@@ -10,22 +8,33 @@ import {
   Table,
   Spin,
   Input,
+  message,
+  Modal,
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
+import { getRelationship } from "../../redux/catalogCompany";
+import WebApi from "../../api/webApi";
+import {
+  messageDeleteSuccess,
+  messageError,
+  messageSaveSuccess,
+  messageUpdateSuccess,
+} from "../../utils/constant";
 
-const Relationship = ({ permissions, onFinishForm, ...props }) => {
+const Relationship = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
-  const { TabPane } = Tabs;
 
   const [edit, setEdit] = useState(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-
-  const resetForm = () => {
-    form.resetFields();
-    setEdit(false);
-  };
+  const [deleted, setDeleted] = useState({});
+  const [id, setId] = useState("");
 
   const colRelationShip = [
     {
@@ -54,7 +63,7 @@ const Relationship = ({ permissions, onFinishForm, ...props }) => {
                     onClick={() => {
                       setDeleteRegister({
                         id: item.id,
-                        url: "/setup/relationship/",
+                        url: "/business/relationship/",
                       });
                     }}
                   />
@@ -67,6 +76,126 @@ const Relationship = ({ permissions, onFinishForm, ...props }) => {
     },
   ];
 
+  const resetForm = () => {
+    form.resetFields();
+    setEdit(false);
+    setId("");
+  };
+
+  const onFinishForm = (value, url) => {
+    if (edit) {
+      updateRegister(url, value);
+    } else saveRegister(url, value);
+  };
+
+  const saveRegister = async (url, data) => {
+    data.node = currentNode.id;
+    setLoading(true);
+    try {
+      let response = await WebApi.createRegisterCatalogs(
+        "/business/relationship/",
+        data
+      );
+      props
+        .getRelationship(currentNode.id)
+        .then((response) => {
+          resetForm();
+          message.success(messageSaveSuccess);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      message.error(messageError);
+    }
+  };
+
+  const editRegister = (item, param) => {
+    setEdit(true);
+    setId(item.id);
+    form.setFieldsValue({
+      node: item.node.id,
+      name: item.name,
+      code: item.code,
+    });
+  };
+
+  const updateRegister = async (url, value) => {
+    try {
+      let response = await WebApi.updateRegisterCatalogs(
+        `/business/relationship/${id}/`,
+        value
+      );
+      props
+        .getRelationship(currentNode.id)
+        .then((response) => {
+          setId("");
+          resetForm();
+          message.success(messageUpdateSuccess);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      setId("");
+      setEdit(false);
+      setLoading(false);
+      resetForm();
+      message.error("Ocurrio un error intente de nuevo.");
+    }
+  };
+
+  const setDeleteRegister = (data) => {
+    setDeleted(data);
+  };
+
+  useEffect(() => {
+    if (deleted.id) {
+      Modal.confirm({
+        title: "¿Está seguro de eliminar este registro?",
+        content: "Si lo elimina no podrá recuperarlo",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Si, eliminar",
+        okButtonProps: {
+          danger: true,
+        },
+        cancelText: "Cancelar",
+        onOk() {
+          deleteRegister();
+        },
+      });
+    }
+  }, [deleted]);
+
+  const deleteRegister = async () => {
+    try {
+      let response = await WebApi.deleteRegisterCatalogs(
+        deleted.url + `${deleted.id}/`
+      );
+      props
+        .getRelationship(currentNode.id)
+        .then((response) => {
+          resetForm();
+          message.success(messageDeleteSuccess);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
@@ -74,7 +203,7 @@ const Relationship = ({ permissions, onFinishForm, ...props }) => {
         <Form
           layout={"vertical"}
           form={form}
-          onFinish={(values) => onFinishForm(values, "/setup/relationship/")}
+          onFinish={(values) => onFinishForm(values, "/business/relationship/")}
         >
           <Row>
             <Col lg={6} xs={22} offset={1}>
@@ -121,4 +250,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(Relationship);
+export default connect(mapState, { getRelationship })(Relationship);
