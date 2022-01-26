@@ -33,6 +33,7 @@ import {
 } from "../../utils/rules";
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
+import SelectPersonType from "../selects/SelectPersonType";
 
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
@@ -231,10 +232,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
             <Row>
               <Col lg={7} xs={22} offset={1}>
                 <Form.Item name="person_type" label="Tipo de persona">
-                  <Select
-                    options={props.cat_person_type}
-                    placeholder="Tipo de persona"
-                  />
+                  <SelectPersonType />
                 </Form.Item>
               </Col>
             </Row>
