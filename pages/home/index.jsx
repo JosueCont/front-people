@@ -689,7 +689,7 @@ const homeScreen = ({ ...props }) => {
           setModalDelete();
           setPersonsToDelete([]);
         },
-        cancelText: "Cancelar",
+        cancelText: "Cancelar ",
         onOk() {
           deletePerson(idsDelete);
         },
