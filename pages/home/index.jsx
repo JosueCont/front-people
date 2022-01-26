@@ -51,7 +51,6 @@ const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
   const route = useRouter();
 
-  const [columns2, setColumns2] = useState([]);
   const [valRefreshColumns, setValRefreshColumns] = useState(false);
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -248,6 +247,141 @@ const homeScreen = ({ ...props }) => {
         );
       },
     },
+
+    {
+      title: "Fecha de ingreso",
+      width: 82,
+      align: "center",
+      render: (item) => {
+        return <div>{item.date_of_admission}</div>;
+      },
+    },
+
+    {
+      title: "Departamento",
+      width: 100,
+      render: (item) => {
+        return <div>{item.department ? item.department.name : ""}</div>;
+      },
+    },
+    {
+      title: "Puesto",
+      width: 100,
+      render: (item) => {
+        return <div>{item.job ? item.job.name : ""}</div>;
+      },
+    },
+    {
+      title: "Empresas Asignadas",
+      width: 75,
+      align: "center",
+      key: "CompaniesAsosigned",
+      align: "center",
+      //fixed: "right",
+      render: (item) => {
+        return (
+          <Text
+            className={"text-center pointer"}
+            onClick={() => getUserCompanies(item)}
+          >
+            Ver
+          </Text>
+        );
+      },
+    },
+    {
+      fixed: "right",
+      title: () => {
+        return (
+          <>
+            {permissions.delete && (
+              <Dropdown overlay={menuGeneric}>
+                <Button style={menuDropDownStyle} size="small">
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
+          </>
+        );
+      },
+      width: 44,
+      render: (item) => {
+        return (
+          <>
+            {(permissions.edit || permissions.delete) && (
+              <Dropdown overlay={() => menuPerson(item)}>
+                <Button
+                  style={{ background: "#8c8c8c", color: "withe" }}
+                  size="small"
+                >
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
+          </>
+        );
+      },
+    },
+  ];
+
+  let columns2 = [
+    {
+      title: "Núm. Empleado",
+      width: 74,
+      fixed: "left",
+      render: (item) => {
+        return <div>{item.code ? item.code : ""}</div>;
+      },
+    },
+    {
+      title: "Foto",
+      width: 42,
+      render: (item) => {
+        return (
+          <div>
+            <Avatar src={item.photo ? item.photo : defaulPhoto} />
+          </div>
+        );
+      },
+    },
+    {
+      title: "Nombre",
+      width: 120,
+      render: (item) => {
+        let personName = item.first_name + " " + item.flast_name;
+        if (item.mlast_name) personName = personName + " " + item.mlast_name;
+        return (
+          <>
+            {permissions.edit || props.delete ? (
+              <Dropdown overlay={() => menuPerson(item)}>
+                <a>
+                  <div>{personName}</div>
+                </a>
+              </Dropdown>
+            ) : (
+              <div>{personName}</div>
+            )}
+          </>
+        );
+      },
+    },
+    {
+      title: "Estatus",
+      width: 70,
+      render: (item) => {
+        return (
+          <>
+            <Switch
+              disabled={permissions.change_is_active ? false : true}
+              defaultChecked={item.is_active}
+              checkedChildren="Activo"
+              unCheckedChildren="Inactivo"
+              onChange={() => onchangeStatus(item)}
+            />
+          </>
+        );
+      },
+    },
     {
       title: "Acceso a intranet",
       width: 70,
@@ -340,24 +474,6 @@ const homeScreen = ({ ...props }) => {
       },
     },
   ];
-
-  useEffect(() => {
-    if (props.config && !props.config.intranet_enabled) {
-      columns = removeItemFromArr(columns, "Acceso a intranet");
-      setValRefreshColumns(true);
-    } else {
-      setValRefreshColumns(true);
-    }
-    setColumns2(columns);
-  }, [valRefreshColumns, props.config]);
-
-  function removeItemFromArr(arr, item) {
-    return arr.filter(function (e) {
-      if (e.title !== item) {
-        return e.title;
-      }
-    });
-  }
 
   const onchangeStatus = (value) => {
     value.is_active ? (value.is_active = false) : (value.is_active = true);
@@ -613,48 +729,7 @@ const homeScreen = ({ ...props }) => {
     },
   };
 
-  // /////DELETE MODAL
-  // const setDeleteModal = (value = null) => {
-  //   console.log("ROWS--> ", personsToDelete);
-  //   if (value) {
-  //     setPersonsToDelete([value]);
-  //     setStringToDelete(
-  //       "Eliminar usuario " + value.first_name + " " + value.flast_name
-  //     );
-  //     setIdsDelete(value.id);
-  //     showModalDelete();
-  //   } else if (personsToDelete) {
-  //     console.log("Array--> ", value);
-  //     let ids = null;
-  //     personsToDelete.map((a) => {
-  //       if (ids) ids = ids + "," + a.id;
-  //       else ids = a.id;
-  //     });
-  //     console.log("IDS--->> ", ids);
-  //     setIdsDelete(ids);
-  //     showModalDelete();
-  //   }
-  // };
-
   const ListElementsToDelete = ({ personsDelete }) => {
-    if (personsDelete.length == 1) {
-      setStringToDelete(
-        "Eliminar usuario " +
-          personsDelete[0].first_name +
-          " " +
-          personsDelete[0].flast_name
-      );
-      setIdsDelete(personsDelete[0].id);
-      showModalDelete();
-    } else if (personsDelete.length > 0) {
-      let ids = null;
-      personsDelete.map((a) => {
-        if (ids) ids = ids + "," + a.id;
-        else ids = a.id;
-      });
-      console.log(ids);
-      setIdsDelete(ids);
-    }
     return (
       <div>
         {personsDelete.map((p) => {
@@ -686,26 +761,39 @@ const homeScreen = ({ ...props }) => {
           danger: true,
         },
         onCancel() {
-          setModalDelete();
-          setPersonsToDelete([]);
+          setModalDelete(false);
         },
         cancelText: "Cancelar ",
         onOk() {
-          deletePerson(idsDelete);
+          deletePerson();
         },
       });
+    } else if (modalDelete) {
+      setModalDelete(false);
     }
-  }, [modalDelete, personsToDelete]);
+  }, [modalDelete]);
 
-  const deletePerson = (ids) => {
-    console.log("IDS--->> ", ids);
-    console.log("IDS--->> ", idsDelete);
+  const deletePerson = () => {
+    let ids = null;
+    if (personsToDelete.length == 1) {
+      setStringToDelete(
+        "Eliminar usuario " +
+          personsToDelete[0].first_name +
+          " " +
+          personsToDelete[0].flast_name
+      );
+      ids = personsToDelete[0].id;
+    } else if (personsToDelete.length > 0) {
+      personsToDelete.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+    }
     setLoading(true);
     Axios.post(API_URL + `/person/person/delete_by_ids/`, {
-      persons_id: idsDelete,
+      persons_id: ids,
     })
       .then((response) => {
-        setIdsDelete("");
         setModalDelete(false);
         setPersonsToDelete([]);
         filterPersonName();
@@ -975,7 +1063,11 @@ const homeScreen = ({ ...props }) => {
               <Table
                 className={"mainTable"}
                 size="small"
-                columns={columns2}
+                columns={
+                  props.config && props.config.intranet_enabled
+                    ? columns2
+                    : columns
+                }
                 dataSource={person}
                 loading={loading}
                 scroll={{ x: 1300 }}
