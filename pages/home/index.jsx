@@ -1090,6 +1090,7 @@ const homeScreen = ({ ...props }) => {
             visible={modalAddPerson}
             nameNode={userCompanyName()}
             node={userCompanyId()}
+            currentNode={props.currentNode}
           />
         )}
       </MainLayout>
