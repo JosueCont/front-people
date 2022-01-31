@@ -168,7 +168,9 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
       let payment_perceptions = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
-      perceptionTypes(payment_perceptions);
+      
+      console.log('payment_perceptions =>',payment_perceptions);
+      setPerceptionTypes(payment_perceptions);
     } catch (error) {
       console.log(error);
     }
