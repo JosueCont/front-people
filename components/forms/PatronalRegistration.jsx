@@ -1,11 +1,13 @@
-import { Form, Input, Button, message, Row, Col, Select } from "antd";
-import Title from "antd/lib/skeleton/Title";
+import { Form, Input, Row, Col, Select, Divider, Typography } from "antd";
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { API_URL } from "../../config/config";
+import FiscalAddress from "./FiscalAddress";
 
-const LegalRepresentative = ({ node, formAddress, ...props }) => {
+const PatronalRegistration = ({ node, formAddress, ...props }) => {
+  const { Title } = Typography;
+
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
 
@@ -56,35 +58,41 @@ const LegalRepresentative = ({ node, formAddress, ...props }) => {
     <Form layout={"vertical"} form={formAddress}>
       <Row>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="postal_code" label="Nombre">
+          <Form.Item name="postal_code" label="Actividad economica">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="state" label="Plaza">
+          <Form.Item name="state" label="Tipo de contribucion">
             <Select
-              options={states}
+              options={[]}
               notFoundContent={"No se encontraron resultados."}
             />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="country" label="Email">
-            <Input />
+          <Form.Item name="state" label="Representante legal">
+            <Select
+              options={[]}
+              notFoundContent={"No se encontraron resultados."}
+            />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="country" label="Telefono">
-            <Input />
-          </Form.Item>
-        </Col>
-        <Col lg={13} xs={22} offset={1}>
-          <Form.Item name="country" label="Direccion">
-            <Input />
+          <Form.Item name="state" label="Direccion fiscal">
+            <Select
+              options={[]}
+              notFoundContent={"No se encontraron resultados."}
+            />
           </Form.Item>
         </Col>
       </Row>
+      <Row>
+        <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
+      </Row>
+      <Divider style={{ marginTop: "2px" }} />
+      <FiscalAddress />
     </Form>
   );
 };
-export default LegalRepresentative;
+export default PatronalRegistration;

@@ -6,6 +6,8 @@ import { withAuthSync } from "../../libs/auth";
 import FiscalInformationNode from "../../components/payroll/forms/FiscalInformationNode";
 import { connect } from "react-redux";
 import GeneralData from "../../components/business/GeneralData";
+import LegalRepresentative from "../../components/forms/LegalRepresentative";
+import PatronalRegistration from "../../components/forms/PatronalRegistration";
 
 const ConfigCompany = ({ ...props }) => {
   let router = useRouter();
@@ -54,7 +56,12 @@ const ConfigCompany = ({ ...props }) => {
                 fiscal={fiscal}
               />
             </TabPane>
-            <TabPane tab="Representante legal" key="tab_3"></TabPane>
+            <TabPane tab="Representante legal" key="tab_3">
+              <LegalRepresentative />
+            </TabPane>
+            <TabPane tab="Registro patronal" key="tab_4">
+              <PatronalRegistration />
+            </TabPane>
           </Tabs>
         </div>
       </Spin>
