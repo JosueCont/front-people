@@ -16,6 +16,8 @@ const initialData = {
   person_type_table: [],
   cat_groups: [],
   people_company: [],
+  cat_level: [],
+  cat_work_title: [],
 };
 2;
 
@@ -31,6 +33,8 @@ const PERSON_TYPE = "PERSON_TYPE";
 const PROFILE_GROUP = "PROFILE_GROUP";
 const PEOPLE_COMPANY = "PEOPLE_COMPANY";
 const JOB = "JOB";
+const LEVEL = "LEVEL";
+const WORK_TITLE = "WORKTITLE";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -61,6 +65,10 @@ const webReducer = (state = initialData, action) => {
       return { ...state, cat_groups: action.payload };
     case PEOPLE_COMPANY:
       return { ...state, people_company: action.payload };
+    case LEVEL:
+      return { ...state, cat_level: action.payload };
+    case WORK_TITLE:
+      return { ...state, cat_work_title: action.payload };
     default:
       return state;
   }
@@ -84,6 +92,8 @@ export const doCompanySelectedCatalog =
         dispatch(getPersonType(data));
         dispatch(getProfileGroups(data));
         dispatch(getPeopleCompany(data));
+        dispatch(getLevel(data));
+        dispatch(getWorkTitle(data));
         return true;
       }
     } catch (error) {
@@ -204,6 +214,26 @@ export const getPeopleCompany = (data) => async (dispatch, getState) => {
       };
     });
     dispatch({ type: PEOPLE_COMPANY, payload: people });
+  } catch (error) {
+    return;
+  }
+};
+
+export const getLevel = (data) => async (dispatch, getState) => {
+  try {
+    let response = await WebApi.getCatalogs("level", data);
+    console.log("LEVELS-->> ", response.data.results);
+    dispatch({ type: LEVEL, payload: response.data.results });
+  } catch (error) {
+    return;
+  }
+};
+
+export const getWorkTitle = (data) => async (dispatch, getState) => {
+  try {
+    let response = await WebApi.getCatalogs("work-title", data);
+    console.log("WORKTITLE-->> ", response.data.results);
+    dispatch({ type: WORK_TITLE, payload: response.data.results });
   } catch (error) {
     return;
   }
