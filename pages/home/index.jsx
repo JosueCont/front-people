@@ -45,12 +45,12 @@ import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
+import { useLayoutEffect } from "react";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
   const route = useRouter();
 
-  const [columns2, setColumns2] = useState([]);
   const [valRefreshColumns, setValRefreshColumns] = useState(false);
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -79,14 +79,21 @@ const homeScreen = ({ ...props }) => {
   const [showModalCompanies, setShowModalCompanies] = useState(false);
   const [userSession, setUserSession] = useState({});
   const [deactivateTrigger, setDeactivateTrigger] = useState(false);
+  const [permissions, setPermissions] = useState({});
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
 
   useEffect(() => {
-    if (props.currentNode && props.permissions) {
+    if (props.currentNode) {
       filterPersonName();
     } else {
       return <></>;
     }
-  }, [props.currentNode, props.permissions]);
+  }, [props.currentNode]);
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
@@ -210,7 +217,7 @@ const homeScreen = ({ ...props }) => {
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
         return (
           <>
-            {props.permissions.edit || props.delete ? (
+            {permissions.edit || props.delete ? (
               <Dropdown overlay={() => menuPerson(item)}>
                 <a>
                   <div>{personName}</div>
@@ -230,7 +237,142 @@ const homeScreen = ({ ...props }) => {
         return (
           <>
             <Switch
-              disabled={props.permissions.change_is_active ? false : true}
+              disabled={permissions.change_is_active ? false : true}
+              defaultChecked={item.is_active}
+              checkedChildren="Activo"
+              unCheckedChildren="Inactivo"
+              onChange={() => onchangeStatus(item)}
+            />
+          </>
+        );
+      },
+    },
+
+    {
+      title: "Fecha de ingreso",
+      width: 82,
+      align: "center",
+      render: (item) => {
+        return <div>{item.date_of_admission}</div>;
+      },
+    },
+
+    {
+      title: "Departamento",
+      width: 100,
+      render: (item) => {
+        return <div>{item.department ? item.department.name : ""}</div>;
+      },
+    },
+    {
+      title: "Puesto",
+      width: 100,
+      render: (item) => {
+        return <div>{item.job ? item.job.name : ""}</div>;
+      },
+    },
+    {
+      title: "Empresas Asignadas",
+      width: 75,
+      align: "center",
+      key: "CompaniesAsosigned",
+      align: "center",
+      //fixed: "right",
+      render: (item) => {
+        return (
+          <Text
+            className={"text-center pointer"}
+            onClick={() => getUserCompanies(item)}
+          >
+            Ver
+          </Text>
+        );
+      },
+    },
+    {
+      fixed: "right",
+      title: () => {
+        return (
+          <>
+            {permissions.delete && (
+              <Dropdown overlay={menuGeneric}>
+                <Button style={menuDropDownStyle} size="small">
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
+          </>
+        );
+      },
+      width: 44,
+      render: (item) => {
+        return (
+          <>
+            {(permissions.edit || permissions.delete) && (
+              <Dropdown overlay={() => menuPerson(item)}>
+                <Button
+                  style={{ background: "#8c8c8c", color: "withe" }}
+                  size="small"
+                >
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
+          </>
+        );
+      },
+    },
+  ];
+
+  let columns2 = [
+    {
+      title: "Núm. Empleado",
+      width: 74,
+      fixed: "left",
+      render: (item) => {
+        return <div>{item.code ? item.code : ""}</div>;
+      },
+    },
+    {
+      title: "Foto",
+      width: 42,
+      render: (item) => {
+        return (
+          <div>
+            <Avatar src={item.photo ? item.photo : defaulPhoto} />
+          </div>
+        );
+      },
+    },
+    {
+      title: "Nombre",
+      width: 120,
+      render: (item) => {
+        let personName = item.first_name + " " + item.flast_name;
+        if (item.mlast_name) personName = personName + " " + item.mlast_name;
+        return (
+          <>
+            {permissions.edit || props.delete ? (
+              <Dropdown overlay={() => menuPerson(item)}>
+                <a>
+                  <div>{personName}</div>
+                </a>
+              </Dropdown>
+            ) : (
+              <div>{personName}</div>
+            )}
+          </>
+        );
+      },
+    },
+    {
+      title: "Estatus",
+      width: 70,
+      render: (item) => {
+        return (
+          <>
+            <Switch
+              disabled={permissions.change_is_active ? false : true}
               defaultChecked={item.is_active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
@@ -303,7 +445,7 @@ const homeScreen = ({ ...props }) => {
       title: () => {
         return (
           <>
-            {props.permissions.delete && (
+            {permissions.delete && (
               <Dropdown overlay={menuGeneric}>
                 <Button style={menuDropDownStyle} size="small">
                   <EllipsisOutlined />
@@ -317,7 +459,7 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-            {(props.permissions.edit || props.permissions.delete) && (
+            {(permissions.edit || permissions.delete) && (
               <Dropdown overlay={() => menuPerson(item)}>
                 <Button
                   style={{ background: "#8c8c8c", color: "withe" }}
@@ -332,24 +474,6 @@ const homeScreen = ({ ...props }) => {
       },
     },
   ];
-
-  useEffect(() => {
-    if (props.config && !props.config.intranet_enabled) {
-      columns = removeItemFromArr(columns, "Acceso a intranet");
-      setValRefreshColumns(true);
-    } else {
-      setValRefreshColumns(true);
-    }
-    setColumns2(columns);
-  }, [valRefreshColumns, props.config]);
-
-  function removeItemFromArr(arr, item) {
-    return arr.filter(function (e) {
-      if (e.title !== item) {
-        return e.title;
-      }
-    });
-  }
 
   const onchangeStatus = (value) => {
     value.is_active ? (value.is_active = false) : (value.is_active = true);
@@ -375,7 +499,7 @@ const homeScreen = ({ ...props }) => {
   const menuGeneric = () => {
     return (
       <Menu>
-        {props.currentNode && props.permissions && (
+        {props.currentNode && permissions && (
           <Menu.Item key="1">
             <Clipboard
               text={
@@ -391,8 +515,8 @@ const homeScreen = ({ ...props }) => {
             />
           </Menu.Item>
         )}
-        {props.permissions.delete && (
-          <Menu.Item key="2" onClick={() => setDeleteModal()}>
+        {permissions.delete && (
+          <Menu.Item key="2" onClick={() => showModalDelete()}>
             Eliminar
           </Menu.Item>
         )}
@@ -410,13 +534,19 @@ const homeScreen = ({ ...props }) => {
   const menuPerson = (item) => {
     return (
       <Menu>
-        {props.permissions.edit && (
+        {permissions.edit && (
           <Menu.Item>
             <Link href={`/home/${item.id}`}>Editar</Link>
           </Menu.Item>
         )}
-        {props.permissions.delete && (
-          <Menu.Item onClick={() => setDeleteModal(item)}>Eliminar</Menu.Item>
+        {permissions.delete && (
+          <Menu.Item
+            onClick={() => {
+              setPersonsToDelete([item]), showModalDelete();
+            }}
+          >
+            Eliminar
+          </Menu.Item>
         )}
         <Menu.Item onClick={() => setDeactivateModal([item])}>
           Desactivar
@@ -458,23 +588,6 @@ const homeScreen = ({ ...props }) => {
     return (
       <div>
         {personsDeactivate.map((p) => {
-          return (
-            <>
-              <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo} />
-                <span>{" " + p.first_name + " " + p.flast_name}</span>
-              </Row>
-            </>
-          );
-        })}
-      </div>
-    );
-  };
-
-  const ListElementsToDelete = ({ personsDelete }) => {
-    return (
-      <div>
-        {personsDelete.map((p) => {
           return (
             <>
               <Row style={{ marginBottom: 15 }}>
@@ -612,33 +725,25 @@ const homeScreen = ({ ...props }) => {
 
   const rowSelectionPerson = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log("rowSlect", selectedRows);
       setPersonsToDelete(selectedRows);
     },
   };
 
-  /////DELETE MODAL
-  const setDeleteModal = (value = null) => {
-    console.log("ROWS--> ", personsToDelete);
-    if (value) {
-      setPersonsToDelete([value]);
-      setStringToDelete(
-        "Eliminar usuario " + value.first_name + " " + value.flast_name
-      );
-      setIdsDelete(value.id);
-      showModalDelete();
-    } else if (personsToDelete) {
-      console.log("Array--> ", value);
-      let ids = null;
-      personsToDelete.map((a) => {
-        if (ids) ids = ids + "," + a.id;
-        else ids = a.id;
-      });
-      setIdsDelete(ids);
-      showModalDelete();
-    } else {
-      message.error("Selecciona una persona.");
-    }
+  const ListElementsToDelete = ({ personsDelete }) => {
+    return (
+      <div>
+        {personsDelete.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
   };
 
   const showModalDelete = () => {
@@ -646,7 +751,7 @@ const homeScreen = ({ ...props }) => {
   };
 
   useEffect(() => {
-    if (modalDelete) {
+    if (modalDelete && personsToDelete.length > 0) {
       Modal.confirm({
         title: stringToDelete,
         content: <AlertDeletes />,
@@ -657,25 +762,40 @@ const homeScreen = ({ ...props }) => {
         },
         onCancel() {
           setModalDelete(false);
-          setModalDelete();
         },
-        cancelText: "Cancelar",
+        cancelText: "Cancelar ",
         onOk() {
           deletePerson();
         },
       });
+    } else if (modalDelete) {
+      setModalDelete(false);
     }
   }, [modalDelete]);
 
   const deletePerson = () => {
+    let ids = null;
+    if (personsToDelete.length == 1) {
+      setStringToDelete(
+        "Eliminar usuario " +
+          personsToDelete[0].first_name +
+          " " +
+          personsToDelete[0].flast_name
+      );
+      ids = personsToDelete[0].id;
+    } else if (personsToDelete.length > 0) {
+      personsToDelete.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+    }
     setLoading(true);
     Axios.post(API_URL + `/person/person/delete_by_ids/`, {
-      persons_id: idsDelete,
+      persons_id: ids,
     })
       .then((response) => {
-        setIdsDelete(null);
         setModalDelete(false);
-        setPersonsToDelete(null);
+        setPersonsToDelete([]);
         filterPersonName();
         setLoading(false);
         message.success("Eliminado correctamente.");
@@ -771,7 +891,7 @@ const homeScreen = ({ ...props }) => {
           <Breadcrumb.Item>Personas</Breadcrumb.Item>
         </Breadcrumb>
         <div className="container" style={{ width: "100%" }}>
-          {props.permissions.view ? (
+          {permissions.view ? (
             <>
               <div className="top-container-border-radius">
                 <Row justify={"space-between"} className={"formFilter"}>
@@ -883,7 +1003,7 @@ const homeScreen = ({ ...props }) => {
                           className="button-filter-person"
                           style={{ display: "flex", marginTop: "10px" }}
                         >
-                          {props.permissions.create && (
+                          {permissions.create && (
                             <Button
                               className="btn-add-person"
                               onClick={() => getModalPerson(true)}
@@ -899,7 +1019,7 @@ const homeScreen = ({ ...props }) => {
                   </Col>
                 </Row>
                 <Row justify={"end"} style={{ padding: "1% 0" }}>
-                  {props.permissions.export_csv_person && (
+                  {permissions.export_csv_person && (
                     <Button
                       type="primary"
                       icon={<DownloadOutlined />}
@@ -910,7 +1030,7 @@ const homeScreen = ({ ...props }) => {
                       Descargar resultados
                     </Button>
                   )}
-                  {props.permissions.import_csv_person && (
+                  {permissions.import_csv_person && (
                     <Dropdown
                       overlay={menuImportPerson}
                       placement="bottomLeft"
@@ -943,7 +1063,11 @@ const homeScreen = ({ ...props }) => {
               <Table
                 className={"mainTable"}
                 size="small"
-                columns={columns2}
+                columns={
+                  props.config && props.config.intranet_enabled
+                    ? columns2
+                    : columns
+                }
                 dataSource={person}
                 loading={loading}
                 scroll={{ x: 1300 }}
@@ -966,6 +1090,7 @@ const homeScreen = ({ ...props }) => {
             visible={modalAddPerson}
             nameNode={userCompanyName()}
             node={userCompanyId()}
+            currentNode={props.currentNode}
           />
         )}
       </MainLayout>

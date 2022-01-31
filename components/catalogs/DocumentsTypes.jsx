@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Tabs,
-  Tooltip,
   Typography,
   Form,
   Row,
@@ -10,22 +8,34 @@ import {
   Table,
   Spin,
   Input,
+  message,
+  Modal,
+  Switch,
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
+import { getDocumentType } from "../../redux/catalogCompany";
+import WebApi from "../../api/webApi";
+import {
+  messageDeleteSuccess,
+  messageError,
+  messageSaveSuccess,
+  messageUpdateSuccess,
+} from "../../utils/constant";
 
-const DocumentsTypes = ({ permissions, onFinishForm, ...props }) => {
+const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
-  const { TabPane } = Tabs;
 
   const [edit, setEdit] = useState(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-
-  const resetForm = () => {
-    form.resetFields();
-    setEdit(false);
-  };
+  const [deleted, setDeleted] = useState({});
+  const [id, setId] = useState("");
 
   const colTypeDocument = [
     {
@@ -69,7 +79,7 @@ const DocumentsTypes = ({ permissions, onFinishForm, ...props }) => {
                     onClick={() => {
                       setDeleteRegister({
                         id: item.id,
-                        url: "/setup/document-type/",
+                        url: "/business/document-type/",
                       });
                     }}
                   />
@@ -82,6 +92,126 @@ const DocumentsTypes = ({ permissions, onFinishForm, ...props }) => {
     },
   ];
 
+  const resetForm = () => {
+    form.resetFields();
+    setEdit(false);
+    setId("");
+  };
+
+  const onFinishForm = (value, url) => {
+    if (edit) {
+      updateRegister(url, value);
+    } else saveRegister(url, value);
+  };
+
+  const saveRegister = async (url, data) => {
+    data.node = currentNode.id;
+    setLoading(true);
+    try {
+      let response = await WebApi.createRegisterCatalogs(
+        "/business/document-type/",
+        data
+      );
+      props
+        .getDocumentType(currentNode.id)
+        .then((response) => {
+          resetForm();
+          message.success(messageSaveSuccess);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      message.error(messageError);
+    }
+  };
+
+  const editRegister = (item, param) => {
+    setEdit(true);
+    setId(item.id);
+    form.setFieldsValue({
+      node: item.node.id,
+      name: item.name,
+      code: item.code,
+    });
+  };
+
+  const updateRegister = async (url, value) => {
+    try {
+      let response = await WebApi.updateRegisterCatalogs(
+        `/business/document-type/${id}/`,
+        value
+      );
+      props
+        .getDocumentType(currentNode.id)
+        .then((response) => {
+          setId("");
+          resetForm();
+          message.success(messageUpdateSuccess);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      setId("");
+      setEdit(false);
+      setLoading(false);
+      resetForm();
+      message.error("Ocurrio un error intente de nuevo.");
+    }
+  };
+
+  const setDeleteRegister = (data) => {
+    setDeleted(data);
+  };
+
+  useEffect(() => {
+    if (deleted.id) {
+      Modal.confirm({
+        title: "¿Está seguro de eliminar este registro?",
+        content: "Si lo elimina no podrá recuperarlo",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Si, eliminar",
+        okButtonProps: {
+          danger: true,
+        },
+        cancelText: "Cancelar",
+        onOk() {
+          deleteRegister();
+        },
+      });
+    }
+  }, [deleted]);
+
+  const deleteRegister = async () => {
+    try {
+      let response = await WebApi.deleteRegisterCatalogs(
+        deleted.url + `${deleted.id}/`
+      );
+      props
+        .getDocumentType(currentNode.id)
+        .then((response) => {
+          resetForm();
+          message.success(messageDeleteSuccess);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       {edit && <Title style={{ fontSize: "20px" }}>Editar</Title>}
@@ -90,7 +220,10 @@ const DocumentsTypes = ({ permissions, onFinishForm, ...props }) => {
           layout={"vertical"}
           form={form}
           onFinish={(values) =>
-            onFinishForm(values, `/setup/document-type/?node=${nodeId}`)
+            onFinishForm(
+              values,
+              `/business/document-type/?node=${currentNode.id}`
+            )
           }
         >
           <Row>
@@ -138,4 +271,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(DocumentsTypes);
+export default connect(mapState, { getDocumentType })(DocumentsTypes);

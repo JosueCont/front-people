@@ -24,7 +24,7 @@ import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
 import { genders } from "../../utils/constant";
-import {ruleEmail} from '../../utils/rules';
+import { ruleEmail } from "../../utils/rules";
 import moment from "moment";
 import { getPeopleCompany } from "../../redux/UserDuck";
 import SelectGroup from "../selects/SelectGroup";
@@ -43,6 +43,7 @@ const FormPerson = ({
   node = null,
   nameNode = "",
   setPerson = null,
+  currentNode,
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -123,6 +124,7 @@ const FormPerson = ({
 
   const createPerson = async (value) => {
     try {
+      value.node = currentNode.id;
       let response = await WebApi.createPerson(value);
       if (setPerson) {
         setPerson(response.data.person);

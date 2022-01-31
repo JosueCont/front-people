@@ -186,11 +186,11 @@ class WebApi {
   }
 
   static getJobs(data) {
-    return WebApi.ApisType(`/person/job/?node=${data}`, "get");
+    return WebApi.ApisType(`/business/job/?node=${data}`, "get");
   }
 
   static getCatalogs(model, data) {
-    return WebApi.ApisType(`/setup/${model}/?node=${data}`, "get");
+    return WebApi.ApisType(`/business/${model}/?node=${data}`, "get");
   }
 
   static updateRegisterCatalogs(url, data) {

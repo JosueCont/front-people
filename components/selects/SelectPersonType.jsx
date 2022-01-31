@@ -7,8 +7,11 @@ const SelectPersonType = ({ ...props }) => {
 
   useEffect(() => {
     setPersonType([]);
-    if(props.cat_person_type){
-      setPersonType(props.cat_person_type);
+    if (props.cat_person_type) {
+      let cats = props.cat_person_type.map((a) => {
+        return { label: a.name, value: a.id };
+      });
+      setPersonType(cats);
     }
   }, [props.cat_person_type]);
 
