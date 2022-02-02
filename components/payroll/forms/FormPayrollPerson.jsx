@@ -233,6 +233,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     } else {
       value.person = person_id;
       value.last_day_paid = lastDayPaid;
+      value.daily_salary = parseFloat(value.daily_salary)
       savePayrollPerson(value);
     }
   };
