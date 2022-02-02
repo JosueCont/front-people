@@ -229,19 +229,19 @@ const FormPerson = ({
             </Col>
             <Col lg={7} xs={22} offset={1}>
               <SelectDepartment
-                titleLabel={false}
+                viewLabel={false}
                 name="person_department"
                 style={false}
               />
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <SelectJob titleLabel={false} name="job" style={false} />
+              <SelectJob viewLabel={false} name="job" style={false} />
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <SelectWorkTitle titleLabel={false} style={false} />
+              <SelectWorkTitle viewLabel={false} style={false} />
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <SelectWorkTitleStatus titleLabel={false} style={false} />
+              <SelectWorkTitleStatus viewLabel={false} style={false} />
             </Col>
 
             <Col lg={7} xs={22} offset={1}>

@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 
 const SelectDepartment = ({
   disabled,
-  titleLabel = true,
+  viewLabel = true,
   rules = [],
   companyId,
   ...props
@@ -34,7 +34,7 @@ const SelectDepartment = ({
       <Form.Item
         key="ItemDepartment"
         name={props.name ? props.name : "department"}
-        label={titleLabel ? "Departamento" : ""}
+        label={viewLabel ? "Departamento" : ""}
         rules={rules}
       >
         <Select

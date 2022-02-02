@@ -40,7 +40,7 @@ export const publicationsListAction =
     dispatch({ type: LOADING_PUBLICATIONS_LIST });
     await axios
       .get(
-        `https://demo.people-api.khorplus.com/intranet/post/?${
+        `https://demo.api.people.hiumanlab.com.com/intranet/post/?${
           page && page != "" ? `page=${page}` : ""
         }${parameters}`
       )
@@ -76,7 +76,7 @@ export const getExcelFileAction =
     dispatch({ type: LOADING_FILE, fetching: true, payload: "loading" });
     await axios
       .get(
-        `https://demo.people-api.khorplus.com/intranet/post/?export=true${params}`
+        `https://demo.api.people.hiumanlab.com.com/intranet/post/?export=true${params}`
       )
       .then((response) => {
         let regexResponseContent = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
