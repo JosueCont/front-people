@@ -43,6 +43,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const [idPayroll, setIdPayroll] = useState(null);
   const [loading, setLoading] = useState(false);
   const [payrollPerson, setPayrolPerson] = useState(null);
+  const [perceptionTypes, setPerceptionTypes] = useState([])
 
   useEffect(() => {
     getPayrollPerson();
@@ -52,14 +53,16 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     getBanks();
     getPaymentCalendar();
     getPaymentPeriodicity();
+    getPerceptionTypes();
   }, []);
 
   const getPayrollPerson = async () => {
     setLoading(true);
     Axios.get(API_URL + `/payroll/payroll-person/?person__id=${person_id}`)
       .then((response) => {
-        if (response.data.results.length > 0) {
-          let item = response.data.results[0];
+        if (response.data) {
+          /* let item = response.data.results[0]; */
+          let item = response.data;
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
             contract_type: item.contract_type.id,
@@ -154,6 +157,21 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
         return { value: a.id, label: a.description };
       });
       setPaymentPeriodicity(payment_periodicity);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  
+  const getPerceptionTypes = async () => {
+    try {
+      let response = await WebApiFiscal.getPerseptions();
+      let payment_perceptions = response.data.results.map((a) => {
+        return { value: a.id, label: a.description };
+      });
+      
+      console.log('payment_perceptions =>',payment_perceptions);
+      setPerceptionTypes(payment_perceptions);
     } catch (error) {
       console.log(error);
     }
@@ -316,7 +334,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            {/* <Col lg={6} xs={22} offset={1}>
               <Form.Item
                 name="payment_period"
                 label="Período de pago"
@@ -327,15 +345,15 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                   notFoundContent={"No se encontraron resultados."}
                 />
               </Form.Item>
-            </Col>
-            {/* <Col lg={6} xs={22} offset={1}>
+            </Col> */}
+            <Col lg={6} xs={22} offset={1}>
               <Form.Item name="perception_type" label="Tipo de percepción">
                 <Select
                   options={perceptionTypes}
                   notFoundContent={"No se encontraron resultados."}
                 />
               </Form.Item>
-            </Col> */}
+            </Col>
           </Row>
           <Row justify={"end"}>
             <Form.Item>

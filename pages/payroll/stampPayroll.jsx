@@ -30,7 +30,7 @@ import {
   EditFilled,
   UserOutlined,
 } from "@ant-design/icons";
-import { userCompanyId } from "../../libs/auth";
+import { userCompanyId, userCompanyName } from "../../libs/auth";
 import { periodicityNom } from "../../utils/constant";
 import webApiPayroll from "../../api/webApiPayroll";
 import FormPerceptionsDeductions from "../../components/payroll/forms/FormPerceptionsDeductions";
@@ -58,6 +58,7 @@ const StampPayroll = () => {
   const [personSelected, setPersonSelected] = useState(null);
 
   let nodeId = userCompanyId();
+  let nodeName = userCompanyName();
 
   /* functions */
   const getPaymentCalendars = async () => {
@@ -111,14 +112,52 @@ const StampPayroll = () => {
     setLoading(false);
   };
 
+
+  const prepareData = (dataPersons) => {
+    console.log('dataPersons =>=>',dataPersons );
+    let newData = []
+
+    dataPersons.map(item => {
+      let newItem = {...item};
+      let newDeductions = [];
+      let newPerceptions = [];
+
+      item.perceptions.map(p =>{
+        if(!p.locked){
+          newPerceptions.push(p);
+        }
+      })
+
+      item.deductions.map(d => {
+        if(!d.locked){
+          newDeductions.push(d)
+        }
+      })
+
+      newItem['perceptions'] = newPerceptions
+      newItem['deductions'] = newDeductions
+
+
+      newData.push(newItem);
+    })
+
+    return newData
+
+  } 
+
   const sendStampPayroll = async () => {
+
+    let tempArray = [...payroll];
+    console.log('tempArray =>',tempArray);
+    let newData = prepareData(tempArray);
+    console.log('newData ==>',newData);
     let data = {
       node: nodeId,
       period: period,
-      payroll: [],
+      payroll: newData,
       invoice: true,
     };
-    if (payroll.length === 0) {
+    /* if (payroll.length === 0) {
       let arrar_payroll = [];
       persons.map((a) => {
         if (a.person) {
@@ -133,9 +172,11 @@ const StampPayroll = () => {
       data.payroll = arrar_payroll;
     } else {
       data.payroll = payroll;
-    }
+    } */
     setLoading(true);
+    console.log('data ==>', data);
     let response = await webApiPayroll.payrollFacturama(data);
+    console.log('response =>',response);
     if (response.data.length > 0) {
       setStamped(true);
       setStampedInvoices(response.data);
@@ -161,11 +202,74 @@ const StampPayroll = () => {
   };
 
   /* Events */
+  const getPayroll = async (dataToSend, fisrtRequest = false) => {
+    setLoading(true);
+    let response = await webApiPayroll.payrollFacturama(dataToSend);
+    console.log('response',response);
+
+    let arrar_payroll = [];
+    response.data.map((a) => {
+        if (a.person) {
+          let item = {
+            person_id: a.employee_id,
+            key: a.employee_id,
+            full_name: a.person,
+            company: nodeName,
+            daily_salary: a.payroll ? `$ ${a.payroll.Employee.DailySalary}` : null,
+            perceptions: [],
+            deductions: [],
+            others_payments: [],
+          }
+
+          if(a.payroll){
+            if(a.payroll.Perceptions.Details){
+              let perceptions = [];
+              let deductions = [];
+
+              a.payroll.Perceptions.Details.map(item => {
+                perceptions.push({
+                  locked: fisrtRequest,
+                  code: item.code ? item.code : '',
+                  key: item.Description,
+                  label: item.Description ? item.Description : '',
+                  amount: item.Amount ? item.Amount : 0,
+                })
+              })
+
+              a.payroll.Deductions.Details.map(item => {
+                deductions.push({
+                  locked: fisrtRequest,
+                  code: item.code ? item.code : '',
+                  key: item.Description,
+                  label: item.Description ? item.Description : '',
+                  amount: item.Amount ? item.Amount : 0,
+                })
+              })
+
+              item['perceptions'] = perceptions;
+              item['deductions'] = deductions;
+
+            }
+          }
+
+
+          arrar_payroll.push(item);
+        }
+      });
+
+      setPayroll(arrar_payroll);
+      /* setPersons(response.data); */
+
+
+  }
+
   const changePaymentCalendar = (value) => {
     if (value) {
       let calendar = paymentCalendars.find((elm) => elm.id == value);
       if (calendar) {
-        getPersonCalendar(value);
+        /* getPersonCalendar(value); */
+        getPayroll({calendar_id:value }, true)
+
         let periodicity = periodicityNom.find(
           (p) => p.value == calendar.periodicity
         );
@@ -334,46 +438,6 @@ const StampPayroll = () => {
     setPersonSelected(person);
     setIsModalVisible(true);
   };
-
-  /* useEffect(() => {
-  if(isModalVisible && expandRow){
-    setExpandRow(false);
-  }
-}, [isModalVisible]) */
-
-  const dataNew = [
-    {
-      key: 1,
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-      description:
-        "My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.",
-    },
-    {
-      key: 2,
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-      description:
-        "My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.",
-    },
-    {
-      key: 3,
-      name: "Not Expandable",
-      age: 29,
-      address: "Jiangsu No. 1 Lake Park",
-      description: "This not expandable",
-    },
-    {
-      key: 4,
-      name: "Joe Black",
-      age: 32,
-      address: "Sidney No. 1 Lake Park",
-      description:
-        "My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.",
-    },
-  ];
 
   const rowExpand = (expanded, row) => {
     if (!expanded) {

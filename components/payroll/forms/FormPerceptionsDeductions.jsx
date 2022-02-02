@@ -180,7 +180,7 @@ const FormPerceptionsDeductions = ({
         /* let label_perception = perceptions.find(element => element.value === item.code); */
         return {
           label: item.label,
-          key: item.code,
+          key: item.label,
           code: item.code,
           amount: Number(item.amount),
         };
