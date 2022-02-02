@@ -39,7 +39,9 @@ const userAndCompanyReducer = (state = initialData, action) => {
 export const getGroupList = (node) => async (dispatch, getState) => {
   dispatch({ type: LOADING_GROUPS, fetching: true });
   await axios
-    .get(`https://demo.people-api.khorplus.com/intranet/group/?node=${node}`)
+    .get(
+      `https://demo.api.people.hiumanlab.com.com/intranet/group/?node=${node}`
+    )
     .then((response) => {
       if (response.status == 200) {
         dispatch({
@@ -66,7 +68,7 @@ export const getUsersList = (node) => async (dispatch, getState) => {
   dispatch({ type: LOADING_USERS, fetching: true });
   axios
     .get(
-      `https://demo.people-api.khorplus.com/intranet/search-person/?node=${node}`
+      `https://demo.api.people.hiumanlab.com.com/intranet/search-person/?node=${node}`
     )
     .then((response) => {
       if ((response.status = 200)) {

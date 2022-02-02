@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import SelectLevel from "../selects/SelectLevel";
 import SelectJob from "../selects/SelectJob";
+import SelectDepartment from "../selects/SelectDepartment";
 
 const WorkTitle = ({ currentNode, ...props }) => {
   const { Title } = Typography;
@@ -130,7 +131,13 @@ const WorkTitle = ({ currentNode, ...props }) => {
     form.setFieldsValue({
       node: item.node.id,
       name: item.name,
-      code: item.code,
+      department: item.department.id,
+      job: item.job.id,
+      level: item.level.id,
+      salary: item.salary,
+      work_title_report: item.work_title_report
+        ? item.work_title_report.id
+        : null,
     });
   };
 
@@ -221,19 +228,20 @@ const WorkTitle = ({ currentNode, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <SelectDepartment />
+            <SelectDepartment rules={[ruleRequired]} />
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <SelectJob />
+            <SelectJob rules={[ruleRequired]} />
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <SelectWorkTitle
               labelText={"Plaza a la que reporta"}
               name={"work_title_report"}
+              forDepto={true}
             />
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <SelectLevel />
+            <SelectLevel textLabel={"Nivel"} />
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="salary" label="Salario" rules={[ruleRequired]}>

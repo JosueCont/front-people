@@ -12,7 +12,7 @@ import {
   Form,
   Select,
   Tooltip,
-  Card
+  Card,
 } from "antd";
 import {
   PlusOutlined,
@@ -266,38 +266,38 @@ const UploadPayroll = () => {
         </Breadcrumb.Item>
         <Breadcrumb.Item>Recibos de nómina</Breadcrumb.Item>
       </Breadcrumb>
-      <Row justify="end" gutter={[10,10]}>
+      <Row justify="end" gutter={[10, 10]}>
         <Col span={24}>
           <Card className="form_header">
             <Row justify="space-between">
-                <Col>
-                  <Form
-                    size="large"
-                    name="filter"
-                    onFinish={filter}
-                    layout="vertical"
-                    key="formFilter"
-                    className={"formFilter"}
-                    form={form}
-                  >
-                    <Row gutter={[24, 8]}>
-                      <Col>
-                        <SelectCollaborator
-                          style={{ width: 150 }}
-                          key="collaborator"
-                          name="collaborator"
-                          label="Colaborador"
-                          size="large"
-                          placeholder="Colaborador"
-                          showLabel={false}
-                        />
-                      </Col>
-                      <Col>
-                        <Form.Item key="rfc" name="rfc">
-                          <Input placeholder="Rfc" />
-                        </Form.Item>
-                      </Col>
-                      {/* <Col>
+              <Col>
+                <Form
+                  size="large"
+                  name="filter"
+                  onFinish={filter}
+                  layout="vertical"
+                  key="formFilter"
+                  className={"formFilter"}
+                  form={form}
+                >
+                  <Row gutter={[24, 8]}>
+                    <Col>
+                      <SelectCollaborator
+                        style={{ width: 150 }}
+                        key="collaborator"
+                        name="collaborator"
+                        label="Colaborador"
+                        size="large"
+                        placeholder="Colaborador"
+                        showLabel={false}
+                      />
+                    </Col>
+                    <Col>
+                      <Form.Item key="rfc" name="rfc">
+                        <Input placeholder="Rfc" />
+                      </Form.Item>
+                    </Col>
+                    {/* <Col>
                       <SelectCompany
                         name="company"
                         label="Empresa"
@@ -306,93 +306,90 @@ const UploadPayroll = () => {
                         style={{ width: 150 }}
                       />
                     </Col> */}
-                      <Col>
-                        <SelectDepartment
-                          companyId={nodeId}
-                          key="SelectDepartment"
-                          titleLabel={false}
-                        />
-                      </Col>
-                      <Col style={{ display: "flex" }}>
+                    <Col>
+                      <SelectDepartment
+                        companyId={nodeId}
+                        key="SelectDepartment"
+                        viewLabel={false}
+                      />
+                    </Col>
+                    <Col style={{ display: "flex" }}>
+                      <Button
+                        style={{
+                          background: "#fa8c16",
+                          fontWeight: "bold",
+                          color: "white",
+                          marginTop: "auto",
+                        }}
+                        key="buttonFilter"
+                        htmlType="submit"
+                        loading={loading}
+                      >
+                        <SearchOutlined />
+                      </Button>
+                    </Col>
+                    <Col style={{ display: "flex" }}>
+                      <Tooltip
+                        title="Limpiar filtros"
+                        color={"#3d78b9"}
+                        key={"#3d78b9"}
+                      >
                         <Button
-                          style={{
-                            background: "#fa8c16",
-                            fontWeight: "bold",
-                            color: "white",
-                            marginTop: "auto",
-                          }}
-                          key="buttonFilter"
-                          htmlType="submit"
-                          loading={loading}
+                          onClick={() => resetFilter()}
+                          style={{ marginTop: "auto", marginLeft: 10 }}
                         >
-                          <SearchOutlined />
+                          <SyncOutlined />
                         </Button>
-                      </Col>
-                      <Col style={{ display: "flex" }}>
-                        <Tooltip
-                          title="Limpiar filtros"
-                          color={"#3d78b9"}
-                          key={"#3d78b9"}
-                        >
-                          <Button
-                            onClick={() => resetFilter()}
-                            style={{ marginTop: "auto", marginLeft: 10 }}
-                          >
-                            <SyncOutlined />
-                          </Button>
-                        </Tooltip>
-                      </Col>
-                    </Row>
-                  </Form>
-                </Col>
-                <Col style={{ display: "flex" }}>
-                  {/* {permissions.create && ( */}
-                    <Button
-                      style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                        marginTop: "auto",
-                      }}
-                      onClick={() => router.push("payrollvoucher/add")}
-                    >
-                      <PlusOutlined />
-                      Nuevo
-                    </Button>
-                  {/* )} */}
-                </Col>
+                      </Tooltip>
+                    </Col>
+                  </Row>
+                </Form>
+              </Col>
+              <Col style={{ display: "flex" }}>
+                {/* {permissions.create && ( */}
+                <Button
+                  style={{
+                    background: "#fa8c16",
+                    fontWeight: "bold",
+                    color: "white",
+                    marginTop: "auto",
+                  }}
+                  onClick={() => router.push("payrollvoucher/add")}
+                >
+                  <PlusOutlined />
+                  Nuevo
+                </Button>
+                {/* )} */}
+              </Col>
             </Row>
           </Card>
         </Col>
         <Col span={24}>
           <Card className="card_table">
             <Table
-                
-                  size="small"
-                  columns={columns}
-                  dataSource={vouchers}
-                  loading={loading}
-                  scroll={{ x: 350 }}
-                  locale={{
-                    emptyText: loading
-                      ? "Cargando..."
-                      : "No se encontraron resultados.",
-                  }}
-                  className={"mainTable headers_transparent"}
-                />
+              size="small"
+              columns={columns}
+              dataSource={vouchers}
+              loading={loading}
+              scroll={{ x: 350 }}
+              locale={{
+                emptyText: loading
+                  ? "Cargando..."
+                  : "No se encontraron resultados.",
+              }}
+              className={"mainTable headers_transparent"}
+            />
           </Card>
         </Col>
       </Row>
 
       <div className="container" style={{ width: "100%" }}>
         {/* {permissions.view ? ( */}
-          <>
-            <Row>
-              <Col span={24}>
-                
-              </Col>
-            </Row>
-          </>
+        <>
+          <Row>
+            <Col span={24}></Col>
+          </Row>
+        </>
         {/* ) : (
           <div className="notAllowed" />
         )} */}

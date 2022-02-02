@@ -4,9 +4,10 @@ import { connect } from "react-redux";
 
 const SelectLevel = ({
   disabled,
-  titleLabel = true,
+  viewLabel = true,
   rules = [],
   value_form = "id",
+  textLabel = null,
   ...props
 }) => {
   const [options, setOptions] = useState(null);
@@ -30,7 +31,7 @@ const SelectLevel = ({
       <Form.Item
         key={"ItemLevel"}
         name={props.name ? props.name : "level"}
-        label={titleLabel ? "Nivel que precede" : ""}
+        label={viewLabel ? (textLabel ? textLabel : "Nivel") : ""}
         rules={rules}
       >
         <Select
