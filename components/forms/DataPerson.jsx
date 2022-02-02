@@ -426,7 +426,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
 
               {hideProfileSecurity && (
                 <Col lg={15} xs={22} offset={1}>
-                  <SelectGroup titleLabel={true} />
+                  <SelectGroup viewLabel={true} />
                   {/* <Form.Item name="groups" label="Perfil de seguridad">
                     <Select
                       options={props.cat_groups}

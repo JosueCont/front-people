@@ -213,15 +213,14 @@ const Levels = ({ currentNode, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <SelectLevel name={"order"} value_form={"order"} />
+            <SelectLevel
+              name={"order"}
+              value_form={"order"}
+              textLabel={"Nivel que precede"}
+            />
           </Col>
         </Row>
-        <Row
-          justify={"end"}
-          gutter={20}
-          titleLabel={"Nivel que precede"}
-          style={{ marginBottom: 20 }}
-        >
+        <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
             <Button onClick={resetForm}>Cancelar</Button>
           </Col>

@@ -166,7 +166,6 @@ export const UserPermissions = (permits = null, is_admin = false) => {
       export_inabilitys: is_admin,
       export_permits: is_admin,
     },
-
     intranet: {
       dashboard: { statistics: is_admin },
     },
