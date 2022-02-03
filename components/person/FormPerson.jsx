@@ -52,6 +52,8 @@ const FormPerson = ({
   const [jobs, setJobs] = useState([]);
   const [date, setDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
+  const [departmentSelected, setDepartmentSelected] = useState(null);
+  const [jobSelected, setJobSelected] = useState(null);
 
   const [departments, setDepartments] = useState("");
   let nodeId = userCompanyId();
@@ -199,6 +201,26 @@ const FormPerson = ({
       });
   };
 
+  /* useEffect(() => {
+    if (form['person_department'] && form['job']) {
+      console.log('form =>', form);
+    }
+  }, [form]); */
+
+  const getWorkTitle = () =>{
+    const values = form.getFieldsValue();
+    console.log('values.person_department =>', values.person_department);
+    console.log('values.job =>', values.job);
+    if (values.person_department && values.job) {
+      setDepartmentSelected(values.person_department)
+      setJobSelected(values.job)
+      console.log('si');
+    }else{
+      setDepartmentSelected(null)
+      setJobSelected(null)
+    }
+  }
+
   return (
     <>
       <Modal
@@ -232,13 +254,14 @@ const FormPerson = ({
                 viewLabel={false}
                 name="person_department"
                 style={false}
+                onChange={getWorkTitle}
               />
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <SelectJob viewLabel={false} name="job" style={false} />
+              <SelectJob viewLabel={false} name="job" style={false} onChange={getWorkTitle} />
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <SelectWorkTitle viewLabel={false} style={false} />
+              <SelectWorkTitle viewLabel={false} style={false} department={departmentSelected} job={jobSelected} />
             </Col>
             <Col lg={7} xs={22} offset={1}>
               <SelectWorkTitleStatus viewLabel={false} style={false} />
