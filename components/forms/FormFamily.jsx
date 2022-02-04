@@ -23,7 +23,7 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
 import { genders } from "../../utils/constant";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../utils/rules";
 
@@ -58,7 +58,7 @@ const FormFamily = ({ person_id = null }) => {
 
   const getFamily = async () => {
     try {
-      let response = await WebApi.getFamily(person_id);
+      let response = await WebApiPeople.getFamily(person_id);
       response.data.map((a) => {
         a.relation = a.relationship.name;
         a.fullname = a.name + " " + a.flast_name + " " + a.mlast_name;
@@ -77,7 +77,7 @@ const FormFamily = ({ person_id = null }) => {
   };
   const saveFamily = async (data) => {
     try {
-      let response = await WebApi.createFamily(data);
+      let response = await WebApiPeople.createFamily(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
@@ -92,7 +92,7 @@ const FormFamily = ({ person_id = null }) => {
   const updateFamily = async (data) => {
     try {
       setLoadingTable(true);
-      let response = await WebApi.updateFamily(data);
+      let response = await WebApiPeople.updateFamily(data);
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",
@@ -115,7 +115,7 @@ const FormFamily = ({ person_id = null }) => {
   const deleteFamily = async (data) => {
     try {
       setLoadingTable(true);
-      let response = await WebApi.deleteFamily(data);
+      let response = await WebApiPeople.deleteFamily(data);
       message.success({
         content: "Eliminado con éxito.",
         className: "custom-class",

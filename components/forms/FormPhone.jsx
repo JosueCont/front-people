@@ -17,7 +17,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../utils/rules";
 
@@ -36,7 +36,7 @@ const FormPhone = ({ person_id = null }) => {
 
   const getPhone = async () => {
     try {
-      let response = await WebApi.getPhone(person_id);
+      let response = await WebApiPeople.getPhone(person_id);
       setPhones(response.data);
       setTimeout(() => {
         setLoadingTable(false);
@@ -53,7 +53,7 @@ const FormPhone = ({ person_id = null }) => {
 
   const savePhone = async (data) => {
     try {
-      let response = await WebApi.createPhone(data);
+      let response = await WebApiPeople.createPhone(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
@@ -68,7 +68,7 @@ const FormPhone = ({ person_id = null }) => {
   const updatePhone = async (data) => {
     try {
       setLoadingTable(true);
-      let response = await WebApi.updatePhone(data);
+      let response = await WebApiPeople.updatePhone(data);
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",
@@ -89,7 +89,7 @@ const FormPhone = ({ person_id = null }) => {
   };
   const deletePhone = async (id) => {
     try {
-      let response = await WebApi.deletePhone(id);
+      let response = await WebApiPeople.deletePhone(id);
       setLoadingTable(true);
 
       message.success({

@@ -14,7 +14,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { userCompanyId } from "../../../libs/auth";
-import webApiPayroll from "../../../api/webApiPayroll";
+import WebApiPayroll from "../../../api/WebApiPayroll";
 import webApiFiscal from "../../../api/WebApiFiscal";
 import { StepContent } from "@material-ui/core";
 import { Receipt, Reorder } from "@material-ui/icons";

@@ -15,7 +15,7 @@ import moment from "moment";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const Permissionform = (props) => {
   const { Title } = Typography;
@@ -48,7 +48,7 @@ const Permissionform = (props) => {
 
   const getCollaborator = async (id) => {
     let collaborator = {};
-    let response = await WebApi.getPerson(id);
+    let response = await WebApiPeople.getPerson(id);
 
     if (response.status == 200) {
       collaborator = response.data;

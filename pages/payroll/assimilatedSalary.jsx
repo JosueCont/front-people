@@ -81,7 +81,7 @@ const assimilatedSalary = () => {
     try {
       if (form.getFieldValue("person_id")) return;
       else message.error("Seleccione un colaborador.");
-      // let response = WebApi.getCfdi()
+      // let response = WebApiPeople.getCfdi()
     } catch (error) {
       console.log(error);
     }

@@ -27,7 +27,7 @@ import {
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const Holidays = ({ permissions, ...props }) => {
   const { Column } = Table;
@@ -70,7 +70,7 @@ const Holidays = ({ permissions, ...props }) => {
         url += `&person__person_department__id=${department}`;
       }
 
-      let response = await WebApi.getVacationRequest(url);
+      let response = await WebApiPeople.getVacationRequest(url);
       let data = response.data.results;
       data.map((item, index) => {
         item.key = index;
@@ -101,8 +101,6 @@ const Holidays = ({ permissions, ...props }) => {
       getAllHolidays();
     }
   }, [route, props.currentNode]);
-
-  
 
   const resetFilter = () => {
     form.resetFields();

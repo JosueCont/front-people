@@ -15,7 +15,7 @@ import {
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
 import { getPersonType } from "../../redux/catalogCompany";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import {
   messageDeleteSuccess,
   messageError,
@@ -94,7 +94,7 @@ const PersonTypes = ({ permissions, currentNode, ...props }) => {
     data.node = currentNode.id;
     setLoading(true);
     try {
-      let response = await WebApi.createRegisterCatalogs(
+      let response = await WebApiPeople.createRegisterCatalogs(
         "/person/person-type/",
         data
       );
@@ -129,7 +129,7 @@ const PersonTypes = ({ permissions, currentNode, ...props }) => {
 
   const updateRegister = async (url, value) => {
     try {
-      let response = await WebApi.updateRegisterCatalogs(
+      let response = await WebApiPeople.updateRegisterCatalogs(
         `/person/person-type/${id}/`,
         value
       );
@@ -179,7 +179,7 @@ const PersonTypes = ({ permissions, currentNode, ...props }) => {
 
   const deleteRegister = async () => {
     try {
-      let response = await WebApi.deleteRegisterCatalogs(
+      let response = await WebApiPeople.deleteRegisterCatalogs(
         deleted.url + `${deleted.id}/`
       );
       props
