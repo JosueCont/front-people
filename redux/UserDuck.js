@@ -1,4 +1,4 @@
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../libs/auth";
 import { UserPermissions } from "../utils/functions";
@@ -53,7 +53,7 @@ export default webReducer;
 
 export const doGetGeneralConfig = () => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getGeneralConfig();
+    let response = await WebApiPeople.getGeneralConfig();
     sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
     dispatch({ type: GENERAL_CONFIG, payload: response.data });
     dispatch(setUser());
@@ -79,7 +79,7 @@ export const companySelected = (data) => async (dispatch, getState) => {
   try {
     if (!data) data = await userCompanyId();
     if (data) {
-      let response = await WebApi.getCompany(data);
+      let response = await WebApiPeople.getCompany(data);
       dispatch({ type: COMPANY_SELCTED, payload: response.data });
       dispatch(getPeopleCompany(data));
       return true;
@@ -93,7 +93,7 @@ export const companySelected = (data) => async (dispatch, getState) => {
 
 export const getPeopleCompany = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.filterPerson({ node: data });
+    let response = await WebApiPeople.filterPerson({ node: data });
     let people = response.data.map((a, i) => {
       return {
         label: a.first_name + " " + a.flast_name,
@@ -119,7 +119,7 @@ export const setDataUpload = (data) => async (dispatch, getState) => {
 export const setUser = () => async (dispatch, getState) => {
   try {
     let jwt = JSON.parse(jsCookie.get("token"));
-    let response = await WebApi.personForKhonnectId({ id: jwt.user_id });
+    let response = await WebApiPeople.personForKhonnectId({ id: jwt.user_id });
     dispatch({ type: USER, payload: response.data });
     dispatch(
       setUserPermissions(response.data.jwt_data.perms, response.data.is_admin)
@@ -134,6 +134,7 @@ export const setUserPermissions =
   (permits, is_admin) => async (dispatch, getState) => {
     try {
       let perms = await UserPermissions(permits, is_admin);
+
       dispatch({ type: PERMISSIONS, payload: perms });
       return true;
     } catch (error) {

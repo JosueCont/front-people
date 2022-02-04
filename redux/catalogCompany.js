@@ -1,5 +1,5 @@
 import { getGroups } from "../api/apiKhonnect";
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 import { userCompanyId } from "../libs/auth";
 
 const initialData = {
@@ -103,7 +103,7 @@ export const doCompanySelectedCatalog =
 
 export const getRelationship = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getCatalogs("relationship", data);
+    let response = await WebApiPeople.getCatalogs("relationship", data);
     dispatch({ type: RELATIONSHIP, payload: response.data.results });
   } catch (error) {
     return;
@@ -112,7 +112,7 @@ export const getRelationship = (data) => async (dispatch, getState) => {
 
 export const getBanks = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getCatalogs("banks", data);
+    let response = await WebApiPeople.getCatalogs("banks", data);
     dispatch({ type: BANK, payload: response.data.results });
   } catch (error) {
     return;
@@ -121,7 +121,7 @@ export const getBanks = (data) => async (dispatch, getState) => {
 
 export const getExperienceType = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getCatalogs("experience-type", data);
+    let response = await WebApiPeople.getCatalogs("experience-type", data);
     dispatch({ type: EXPERIENCE_TYPE, payload: response.data.results });
   } catch (error) {
     return;
@@ -130,7 +130,7 @@ export const getExperienceType = (data) => async (dispatch, getState) => {
 
 export const getReasonSeparation = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getCatalogs("reason-separation", data);
+    let response = await WebApiPeople.getCatalogs("reason-separation", data);
     dispatch({ type: REASON_SEPARATION, payload: response.data.results });
   } catch (error) {
     return;
@@ -139,7 +139,7 @@ export const getReasonSeparation = (data) => async (dispatch, getState) => {
 
 export const getLaborRelation = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getCatalogs("labor-relationship", data);
+    let response = await WebApiPeople.getCatalogs("labor-relationship", data);
     dispatch({ type: LABOR_RELATION, payload: response.data.results });
   } catch (error) {
     return;
@@ -148,7 +148,7 @@ export const getLaborRelation = (data) => async (dispatch, getState) => {
 
 export const getTreatment = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getCatalogs("treatment", data);
+    let response = await WebApiPeople.getCatalogs("treatment", data);
     dispatch({ type: TREATMENT, payload: response.data.results });
   } catch (error) {
     return;
@@ -157,7 +157,7 @@ export const getTreatment = (data) => async (dispatch, getState) => {
 
 export const getDocumentType = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getCatalogs("document-type", data);
+    let response = await WebApiPeople.getCatalogs("document-type", data);
     dispatch({ type: DOCUMENT_TYPE, payload: response.data });
   } catch (error) {
     return;
@@ -166,7 +166,7 @@ export const getDocumentType = (data) => async (dispatch, getState) => {
 
 export const getDepartmets = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.filterDepartmentByNode(data);
+    let response = await WebApiPeople.filterDepartmentByNode(data);
     dispatch({ type: DEPARTMENT, payload: response.data.results });
   } catch (error) {
     return;
@@ -175,7 +175,7 @@ export const getDepartmets = (data) => async (dispatch, getState) => {
 
 export const getJobs = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getJobs(data);
+    let response = await WebApiPeople.getJobs(data);
     dispatch({ type: JOB, payload: response.data.results });
   } catch (error) {
     return;
@@ -184,7 +184,7 @@ export const getJobs = (data) => async (dispatch, getState) => {
 
 export const getPersonType = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getPersontype(data);
+    let response = await WebApiPeople.getPersontype(data);
     dispatch({
       type: PERSON_TYPE,
       payload: response.data.results,
@@ -205,7 +205,7 @@ export const getProfileGroups = (data) => async (dispatch, getState) => {
 
 export const getPeopleCompany = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.filterPerson({ node: data });
+    let response = await WebApiPeople.filterPerson({ node: data });
     let people = response.data.map((a, i) => {
       return {
         label: a.first_name + " " + a.flast_name,
@@ -221,7 +221,7 @@ export const getPeopleCompany = (data) => async (dispatch, getState) => {
 
 export const getLevel = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getCatalogs("level", data);
+    let response = await WebApiPeople.getCatalogs("level", data);
     console.log("LEVELS-->> ", response.data.results);
     dispatch({ type: LEVEL, payload: response.data.results });
   } catch (error) {
@@ -231,7 +231,7 @@ export const getLevel = (data) => async (dispatch, getState) => {
 
 export const getWorkTitle = (data) => async (dispatch, getState) => {
   try {
-    let response = await WebApi.getCatalogs("work-title", data);
+    let response = await WebApiPeople.getCatalogs("work-title", data);
     console.log("WORKTITLE-->> ", response.data.results);
     dispatch({ type: WORK_TITLE, payload: response.data.results });
   } catch (error) {

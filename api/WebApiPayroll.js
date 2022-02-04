@@ -1,23 +1,6 @@
-import axiosApi from "./axiosApi";
+import WebApi from "./webApi";
 
-class WebApi {
-  static ApisType = (url, method = "post", params = {}) => {
-    switch (method) {
-      case "post":
-        return axiosApi.post(url, params);
-        break;
-      case "put":
-        return axiosApi.put(url, params);
-        break;
-      case "get":
-        return axiosApi.get(url);
-        break;
-      case "delete":
-        return axiosApi.delete(url);
-        break;
-    }
-  };
-
+class WebApiPayroll {
   static getCfdi(data) {
     return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
   }
@@ -75,4 +58,4 @@ class WebApi {
   }
 }
 
-export default WebApi;
+export default WebApiPayroll;

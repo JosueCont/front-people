@@ -102,7 +102,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
     data.node = currentNode.id;
     setLoading(true);
     try {
-      let response = await WebApi.createRegisterCatalogs(
+      let response = await WebApiPeople.createRegisterCatalogs(
         "/business/job/",
         data
       );
@@ -143,7 +143,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
 
   const updateRegister = async (url, value) => {
     try {
-      let response = await WebApi.updateRegisterCatalogs(
+      let response = await WebApiPeople.updateRegisterCatalogs(
         `/business/job/${id}/`,
         value
       );
@@ -193,7 +193,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
 
   const deleteRegister = async () => {
     try {
-      let response = await WebApi.deleteRegisterCatalogs(
+      let response = await WebApiPeople.deleteRegisterCatalogs(
         deleted.url + `${deleted.id}/`
       );
       props

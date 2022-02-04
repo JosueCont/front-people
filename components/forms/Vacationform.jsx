@@ -14,7 +14,7 @@ import {
 import moment from "moment";
 
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const Vacationform = (props) => {
   const { Title } = Typography;
@@ -55,7 +55,7 @@ const Vacationform = (props) => {
 
   const getCollaborator = async (id) => {
     let collaborator = {};
-    let response = await WebApi.getPerson(id);
+    let response = await WebApiPeople.getPerson(id);
 
     if (response.status == 200) {
       collaborator = response.data;

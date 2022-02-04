@@ -20,7 +20,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { getDocumentType } from "../../redux/catalogCompany";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import {
   messageDeleteSuccess,
   messageError,
@@ -108,7 +108,7 @@ const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
     data.node = currentNode.id;
     setLoading(true);
     try {
-      let response = await WebApi.createRegisterCatalogs(
+      let response = await WebApiPeople.createRegisterCatalogs(
         "/business/document-type/",
         data
       );
@@ -143,7 +143,7 @@ const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
 
   const updateRegister = async (url, value) => {
     try {
-      let response = await WebApi.updateRegisterCatalogs(
+      let response = await WebApiPeople.updateRegisterCatalogs(
         `/business/document-type/${id}/`,
         value
       );
@@ -193,7 +193,7 @@ const DocumentsTypes = ({ permissions, currentNode, ...props }) => {
 
   const deleteRegister = async () => {
     try {
-      let response = await WebApi.deleteRegisterCatalogs(
+      let response = await WebApiPeople.deleteRegisterCatalogs(
         deleted.url + `${deleted.id}/`
       );
       props

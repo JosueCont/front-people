@@ -32,7 +32,7 @@ import {
 } from "@ant-design/icons";
 import { userCompanyId, userCompanyName } from "../../libs/auth";
 import { periodicityNom } from "../../utils/constant";
-import webApiPayroll from "../../api/webApiPayroll";
+import WebApiPayroll from "../../api/WebApiPayroll";
 import FormPerceptionsDeductions from "../../components/payroll/forms/FormPerceptionsDeductions";
 import { Global, css } from "@emotion/core";
 import { EditSharp } from "@material-ui/icons";
@@ -62,7 +62,7 @@ const StampPayroll = () => {
 
   /* functions */
   const getPaymentCalendars = async () => {
-    let response = await webApiPayroll.getPaymentCalendar(nodeId);
+    let response = await WebApiPayroll.getPaymentCalendar(nodeId);
     let data = response.data.results;
     if (data.length > 0) {
       setPaymentCalendars(data);
@@ -77,7 +77,7 @@ const StampPayroll = () => {
 
   const getPersonCalendar = async (calendar_id) => {
     setLoading(true);
-    let response = await webApiPayroll.getPersonsCalendar(calendar_id);
+    let response = await WebApiPayroll.getPersonsCalendar(calendar_id);
 
     if (response.data.length > 0) {
       let arrar_payroll = [];
@@ -112,45 +112,41 @@ const StampPayroll = () => {
     setLoading(false);
   };
 
-
   const prepareData = (dataPersons) => {
-    console.log('dataPersons =>=>',dataPersons );
-    let newData = []
+    console.log("dataPersons =>=>", dataPersons);
+    let newData = [];
 
-    dataPersons.map(item => {
-      let newItem = {...item};
+    dataPersons.map((item) => {
+      let newItem = { ...item };
       let newDeductions = [];
       let newPerceptions = [];
 
-      item.perceptions.map(p =>{
-        if(!p.locked){
+      item.perceptions.map((p) => {
+        if (!p.locked) {
           newPerceptions.push(p);
         }
-      })
+      });
 
-      item.deductions.map(d => {
-        if(!d.locked){
-          newDeductions.push(d)
+      item.deductions.map((d) => {
+        if (!d.locked) {
+          newDeductions.push(d);
         }
-      })
+      });
 
-      newItem['perceptions'] = newPerceptions
-      newItem['deductions'] = newDeductions
-
+      newItem["perceptions"] = newPerceptions;
+      newItem["deductions"] = newDeductions;
 
       newData.push(newItem);
-    })
+    });
 
-    return newData
-
-  } 
+    return newData;
+  };
 
   const sendStampPayroll = async () => {
-
     let tempArray = [...payroll];
-    console.log('tempArray =>',tempArray);
+    console.log("tempArray =>", tempArray);
     let newData = prepareData(tempArray);
-    console.log('newData ==>',newData);
+    console.log("newData ==>", newData);
     let data = {
       node: nodeId,
       period: period,
@@ -174,9 +170,9 @@ const StampPayroll = () => {
       data.payroll = payroll;
     } */
     setLoading(true);
-    console.log('data ==>', data);
-    let response = await webApiPayroll.payrollFacturama(data);
-    console.log('response =>',response);
+    console.log("data ==>", data);
+    let response = await WebApiPayroll.payrollFacturama(data);
+    console.log("response =>", response);
     if (response.data.length > 0) {
       setStamped(true);
       setStampedInvoices(response.data);
@@ -204,71 +200,69 @@ const StampPayroll = () => {
   /* Events */
   const getPayroll = async (dataToSend, fisrtRequest = false) => {
     setLoading(true);
-    let response = await webApiPayroll.payrollFacturama(dataToSend);
-    console.log('response',response);
+    let response = await WebApiPayroll.payrollFacturama(dataToSend);
+    console.log("response", response);
 
     let arrar_payroll = [];
     response.data.map((a) => {
-        if (a.person) {
-          let item = {
-            person_id: a.employee_id,
-            key: a.employee_id,
-            full_name: a.person,
-            company: nodeName,
-            daily_salary: a.payroll ? `$ ${a.payroll.Employee.DailySalary}` : null,
-            perceptions: [],
-            deductions: [],
-            others_payments: [],
+      if (a.person) {
+        let item = {
+          person_id: a.employee_id,
+          key: a.employee_id,
+          full_name: a.person,
+          company: nodeName,
+          daily_salary: a.payroll
+            ? `$ ${a.payroll.Employee.DailySalary}`
+            : null,
+          perceptions: [],
+          deductions: [],
+          others_payments: [],
+        };
+
+        if (a.payroll) {
+          if (a.payroll.Perceptions.Details) {
+            let perceptions = [];
+            let deductions = [];
+
+            a.payroll.Perceptions.Details.map((item) => {
+              perceptions.push({
+                locked: fisrtRequest,
+                code: item.code ? item.code : "",
+                key: item.Description,
+                label: item.Description ? item.Description : "",
+                amount: item.Amount ? item.Amount : 0,
+              });
+            });
+
+            a.payroll.Deductions.Details.map((item) => {
+              deductions.push({
+                locked: fisrtRequest,
+                code: item.code ? item.code : "",
+                key: item.Description,
+                label: item.Description ? item.Description : "",
+                amount: item.Amount ? item.Amount : 0,
+              });
+            });
+
+            item["perceptions"] = perceptions;
+            item["deductions"] = deductions;
           }
-
-          if(a.payroll){
-            if(a.payroll.Perceptions.Details){
-              let perceptions = [];
-              let deductions = [];
-
-              a.payroll.Perceptions.Details.map(item => {
-                perceptions.push({
-                  locked: fisrtRequest,
-                  code: item.code ? item.code : '',
-                  key: item.Description,
-                  label: item.Description ? item.Description : '',
-                  amount: item.Amount ? item.Amount : 0,
-                })
-              })
-
-              a.payroll.Deductions.Details.map(item => {
-                deductions.push({
-                  locked: fisrtRequest,
-                  code: item.code ? item.code : '',
-                  key: item.Description,
-                  label: item.Description ? item.Description : '',
-                  amount: item.Amount ? item.Amount : 0,
-                })
-              })
-
-              item['perceptions'] = perceptions;
-              item['deductions'] = deductions;
-
-            }
-          }
-
-
-          arrar_payroll.push(item);
         }
-      });
 
-      setPayroll(arrar_payroll);
-      /* setPersons(response.data); */
+        arrar_payroll.push(item);
+      }
+    });
 
-
-  }
+    setPayroll(arrar_payroll);
+    /* setPersons(response.data); */
+  };
 
   const changePaymentCalendar = (value) => {
     if (value) {
       let calendar = paymentCalendars.find((elm) => elm.id == value);
       if (calendar) {
         /* getPersonCalendar(value); */
-        getPayroll({calendar_id:value }, true)
+        getPayroll({ calendar_id: value }, true);
 
         let periodicity = periodicityNom.find(
           (p) => p.value == calendar.periodicity
@@ -359,7 +353,7 @@ const StampPayroll = () => {
         type_file: type_file,
         id_facturama: item.id_facturama,
       };
-      webApiPayroll.cfdiMultiEmitter(data).then((response) => {
+      WebApiPayroll.cfdiMultiEmitter(data).then((response) => {
         if (type_file == 2) {
           const linkSource = `data:application/pdf;base64,${response.data}`;
           const downloadLink = document.createElement("a");

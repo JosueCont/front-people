@@ -16,7 +16,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import webApiFiscal from "../../api/WebApiFiscal";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, twoDigit } from "../../utils/rules";
@@ -41,7 +41,7 @@ const FormBanckAccount = ({ person_id = null }) => {
   const getBankAccount = async () => {
     setLoadingTable(true);
     try {
-      let response = await WebApi.getBankAccount(person_id);
+      let response = await WebApiPeople.getBankAccount(person_id);
       setBankAccounts(response.data.results);
       setTimeout(() => {
         setLoadingTable(false);
@@ -58,7 +58,7 @@ const FormBanckAccount = ({ person_id = null }) => {
 
   const saveBankAcc = async (data) => {
     try {
-      let response = await WebApi.createBankAccount(data);
+      let response = await WebApiPeople.createBankAccount(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
@@ -73,7 +73,7 @@ const FormBanckAccount = ({ person_id = null }) => {
   const updateBankAcc = async (data) => {
     setLoadingTable(true);
     try {
-      let response = await WebApi.updateBankAccount(data);
+      let response = await WebApiPeople.updateBankAccount(data);
 
       message.success({
         content: "Actualizado correctamente.",
@@ -97,7 +97,7 @@ const FormBanckAccount = ({ person_id = null }) => {
   const deleteBankAcc = async (data) => {
     setLoadingTable(true);
     try {
-      let response = await WebApi.deleteBankAccount(data);
+      let response = await WebApiPeople.deleteBankAccount(data);
       message.success({
         content: "Eliminado con éxito.",
         className: "custom-class",

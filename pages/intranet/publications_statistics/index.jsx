@@ -22,9 +22,11 @@ const index = (props) => {
 
   useEffect(() => {
     moment.locale("es-mx");
-    props.publicationsListAction(1);
-    getCompanyId();
-  }, []);
+    if (props.currentNode) {
+      props.publicationsListAction(props.currentNode.id, 1);
+      getCompanyId();
+    }
+  }, [props.current]);
 
   useEffect(() => {
     setLoadingData(true);
@@ -59,24 +61,26 @@ const index = (props) => {
 
   return (
     <>
-      <MainLayout currentKey="1">
-        <ConfigProvider locale={esES}>
-          <PublicationsStatisticsFilters
-            style={{ margin: "30px 0px" }}
-            companyId={companyId}
-            getPostsByFilter={props.publicationsListAction}
-            setParameters={setParameters}
-          />
-          <PublicationsStatisticsTable
-            current={publicationsList.data ? publicationsList.data.page : 1}
-            total={publicationsList.data ? publicationsList.data.count : 1}
-            fetching={loadingData}
-            processedPublicationsList={processedPublications}
-            changePage={props.publicationsListAction}
-            parameters={parameters}
-          />
-        </ConfigProvider>
-      </MainLayout>
+      {props.currentNode && (
+        <MainLayout currentKey="1">
+          <ConfigProvider locale={esES}>
+            <PublicationsStatisticsFilters
+              style={{ margin: "30px 0px" }}
+              companyId={props.currentNode.id}
+              getPostsByFilter={props.publicationsListAction}
+              setParameters={setParameters}
+            />
+            <PublicationsStatisticsTable
+              current={publicationsList.data ? publicationsList.data.page : 1}
+              total={publicationsList.data ? publicationsList.data.count : 1}
+              fetching={loadingData}
+              processedPublicationsList={processedPublications}
+              changePage={props.publicationsListAction}
+              parameters={parameters}
+            />
+          </ConfigProvider>
+        </MainLayout>
+      )}
     </>
   );
 };
@@ -84,6 +88,7 @@ const index = (props) => {
 const mapState = (state) => {
   return {
     publicationsList: state.publicationsListStore.publicationsList,
+    currentNode: state.userStore.current_node,
   };
 };
 
