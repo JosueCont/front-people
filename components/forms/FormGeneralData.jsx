@@ -105,35 +105,38 @@ const FormGeneralData = ({ person_id = null }) => {
         layout={"vertical"}
         form={formGeneralData}
         onFinish={formGeneralDataPerson}
+        className="inputs_form_responsive"
       >
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
+        <Row justify="center">
+          <Col span={23}>
+            <Row justify="space-betwen" gutter={20}>
+              <Col lg={6} xs={22} md={12}>
             <Form.Item name="place_birth" label="Lugar de nacimiento">
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item name="nationality" label="Nacionalidad">
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item name="other_nationality" label="Otra nacionalidad">
               <Input />
             </Form.Item>
           </Col>
 
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item name="allergies" label="Alergias">
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item name="blood_type" label="Tipo de sangre">
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item
               name="availability_travel"
               label="Disponibilidad para viajar"
@@ -141,10 +144,12 @@ const FormGeneralData = ({ person_id = null }) => {
               <Checkbox onClick={checkTravel} checked={checkedTravel} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item label="Cambio de residencia">
               <Checkbox onClick={checkResidence} checked={checkedResidence} />
             </Form.Item>
+          </Col>
+            </Row>
           </Col>
         </Row>
         <Row justify={"end"}>
