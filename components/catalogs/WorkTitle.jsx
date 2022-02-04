@@ -221,29 +221,29 @@ const WorkTitle = ({ currentNode, ...props }) => {
         form={form}
         onFinish={(values) => onFinishForm(values, "/person/person-type/")}
       >
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
+        <Row gutter={20}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <SelectDepartment rules={[ruleRequired]} />
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <SelectJob rules={[ruleRequired]} />
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <SelectWorkTitle
               labelText={"Plaza a la que reporta"}
               name={"work_title_report"}
               forDepto={true}
             />
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <SelectLevel textLabel={"Nivel"} />
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item name="salary" label="Salario" rules={[ruleRequired]}>
               <Input />
             </Form.Item>
