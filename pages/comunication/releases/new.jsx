@@ -363,10 +363,10 @@ const Newrelease = () => {
             </Col>
 
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <SelectDepartment name={"target_department"} titleLabel={false} />
+              <SelectDepartment name={"target_department"} viewLabel={false} />
             </Col>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-              <SelectJob name={"target_job"} titleLabel={false} />
+              <SelectJob name={"target_job"} viewLabel={false} />
             </Col>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
               <Form.Item

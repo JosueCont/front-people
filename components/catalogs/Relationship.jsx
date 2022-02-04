@@ -19,7 +19,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { getRelationship } from "../../redux/catalogCompany";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import {
   messageDeleteSuccess,
   messageError,
@@ -92,7 +92,7 @@ const Relationship = ({ permissions, currentNode, ...props }) => {
     data.node = currentNode.id;
     setLoading(true);
     try {
-      let response = await WebApi.createRegisterCatalogs(
+      let response = await WebApiPeople.createRegisterCatalogs(
         "/business/relationship/",
         data
       );
@@ -127,7 +127,7 @@ const Relationship = ({ permissions, currentNode, ...props }) => {
 
   const updateRegister = async (url, value) => {
     try {
-      let response = await WebApi.updateRegisterCatalogs(
+      let response = await WebApiPeople.updateRegisterCatalogs(
         `/business/relationship/${id}/`,
         value
       );
@@ -177,7 +177,7 @@ const Relationship = ({ permissions, currentNode, ...props }) => {
 
   const deleteRegister = async () => {
     try {
-      let response = await WebApi.deleteRegisterCatalogs(
+      let response = await WebApiPeople.deleteRegisterCatalogs(
         deleted.url + `${deleted.id}/`
       );
       props

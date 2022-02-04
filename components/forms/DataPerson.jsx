@@ -22,7 +22,7 @@ import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 import moment from "moment";
 import { civilStatus, genders, periodicity } from "../../utils/constant";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import {
@@ -134,7 +134,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
   const updatePerson = async (data) => {
     setLoading(true);
     try {
-      let response = await WebApi.updatePerson(data, person.id);
+      let response = await WebApiPeople.updatePerson(data, person.id);
       setFormPerson(response.data);
       message.success({
         content: "Actualizado correctamente.",
@@ -170,7 +170,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
     if (numberPhoto === 1) {
       try {
         setLoadImage(true);
-        let response = await WebApi.updatePhotoPerson(data);
+        let response = await WebApiPeople.updatePhotoPerson(data);
         formPerson.setFieldsValue({
           photo: response.data.photo,
         });
@@ -426,7 +426,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
 
               {hideProfileSecurity && (
                 <Col lg={15} xs={22} offset={1}>
-                  <SelectGroup titleLabel={true} />
+                  <SelectGroup viewLabel={true} />
                   {/* <Form.Item name="groups" label="Perfil de seguridad">
                     <Select
                       options={props.cat_groups}

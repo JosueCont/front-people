@@ -17,7 +17,7 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import moment from "moment";
-import WebApiPayroll from "../../../api/webApiPayroll";
+import WebApiPayroll from "../../../api/WebApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
 /* import { treeDecimal } from "../../../utils/constant"; */
 import { ruleRequired, treeDecimal } from "../../../utils/rules";
@@ -43,7 +43,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const [idPayroll, setIdPayroll] = useState(null);
   const [loading, setLoading] = useState(false);
   const [payrollPerson, setPayrolPerson] = useState(null);
-  const [perceptionTypes, setPerceptionTypes] = useState([])
+  const [perceptionTypes, setPerceptionTypes] = useState([]);
 
   useEffect(() => {
     getPayrollPerson();
@@ -60,8 +60,9 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     setLoading(true);
     Axios.get(API_URL + `/payroll/payroll-person/?person__id=${person_id}`)
       .then((response) => {
-        if (response.data.results.length > 0) {
-          let item = response.data.results[0];
+        if (response.data) {
+          /* let item = response.data.results[0]; */
+          let item = response.data;
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
             contract_type: item.contract_type.id,
@@ -77,6 +78,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
             payment_period: item.payment_period,
             perception_type: item.perception_type,
             last_day_paid: item.last_day_paid ? moment(item.last_day_paid) : "",
+            integrated_daily_salary: item.integrated_daily_salary,
           });
           setLastDayPaid(item.last_day_paid);
           if (item.id) setIdPayroll(item.id);
@@ -161,15 +163,14 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     }
   };
 
-  
   const getPerceptionTypes = async () => {
     try {
       let response = await WebApiFiscal.getPerseptions();
       let payment_perceptions = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
-      
-      console.log('payment_perceptions =>',payment_perceptions);
+
+      console.log("payment_perceptions =>", payment_perceptions);
       setPerceptionTypes(payment_perceptions);
     } catch (error) {
       console.log(error);
@@ -183,6 +184,12 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
         content: "Guardado correctamente.",
         className: "custom-class",
       });
+      console.log("response =>", response);
+      if (response.data) {
+        formPayrollPerson.setFieldsValue({
+          integrated_daily_salary: response.data.integrated_daily_salary,
+        });
+      }
       getPayrollPerson();
     } catch (error) {
       console.log(error);
@@ -197,6 +204,13 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
         content: "Actualizado correctamente.",
         className: "custom-class",
       });
+      console.log("response =>", response);
+      if (response.data) {
+        formPayrollPerson.setFieldsValue({
+          integrated_daily_salary: response.data.integrated_daily_salary,
+        });
+      }
+
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -213,10 +227,12 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
       value.id = idPayroll;
       value.last_day_paid = lastDayPaid;
       value.payment_type = parseInt(value.payment_type);
+      value.daily_salary = parseFloat(value.daily_salary);
       updatePayrollPerson(value);
     } else {
       value.person = person_id;
       value.last_day_paid = lastDayPaid;
+      value.daily_salary = parseFloat(value.daily_salary)
       savePayrollPerson(value);
     }
   };
@@ -242,6 +258,16 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 rules={[treeDecimal]}
               >
                 <Input maxLength={10} />
+              </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item
+                name="integrated_daily_salary"
+                label="Salario diario integrado"
+                maxLength={13}
+                rules={[treeDecimal]}
+              >
+                <Input maxLength={10} disabled />
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>

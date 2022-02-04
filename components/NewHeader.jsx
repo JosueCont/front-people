@@ -25,7 +25,7 @@ import {
 import { useRouter } from "next/router";
 import { css, Global } from "@emotion/core";
 import Cookie from "js-cookie";
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 import { logoutAuth } from "../libs/auth";
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
@@ -46,7 +46,9 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const getPerson = async () => {
     try {
       const user = JSON.parse(Cookie.get("token"));
-      let response = await WebApi.personForKhonnectId({ id: user.user_id });
+      let response = await WebApiPeople.personForKhonnectId({
+        id: user.user_id,
+      });
       if (!response.data.photo) response.data.photo = defaulPhoto;
       let personName =
         response.data.first_name + " " + response.data.flast_name;

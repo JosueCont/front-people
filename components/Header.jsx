@@ -9,7 +9,7 @@ import { logoutAuth } from "../libs/auth";
 import { FormattedMessage } from "react-intl";
 import { css, Global } from "@emotion/core";
 import { connect } from "react-redux";
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 import { companySelected } from "../redux/UserDuck";
 
 const { Header } = Layout;
@@ -44,7 +44,9 @@ const headerCustom = ({
   const getPerson = async () => {
     try {
       const user = JSON.parse(Cookie.get("token"));
-      let response = await WebApi.personForKhonnectId({ id: user.user_id });
+      let response = await WebApiPeople.personForKhonnectId({
+        id: user.user_id,
+      });
       if (!response.data.photo) response.data.photo = defaulPhoto;
       let personName =
         response.data.first_name + " " + response.data.flast_name;

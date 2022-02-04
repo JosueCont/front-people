@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import SelectLevel from "../selects/SelectLevel";
 import SelectJob from "../selects/SelectJob";
+import SelectDepartment from "../selects/SelectDepartment";
 
 const WorkTitle = ({ currentNode, ...props }) => {
   const { Title } = Typography;
@@ -101,7 +102,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
     data.node = currentNode.id;
     setLoading(true);
     try {
-      let response = await WebApi.createRegisterCatalogs(
+      let response = await WebApiPeople.createRegisterCatalogs(
         "/business/job/",
         data
       );
@@ -130,13 +131,19 @@ const WorkTitle = ({ currentNode, ...props }) => {
     form.setFieldsValue({
       node: item.node.id,
       name: item.name,
-      code: item.code,
+      department: item.department.id,
+      job: item.job.id,
+      level: item.level.id,
+      salary: item.salary,
+      work_title_report: item.work_title_report
+        ? item.work_title_report.id
+        : null,
     });
   };
 
   const updateRegister = async (url, value) => {
     try {
-      let response = await WebApi.updateRegisterCatalogs(
+      let response = await WebApiPeople.updateRegisterCatalogs(
         `/business/job/${id}/`,
         value
       );
@@ -186,7 +193,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
 
   const deleteRegister = async () => {
     try {
-      let response = await WebApi.deleteRegisterCatalogs(
+      let response = await WebApiPeople.deleteRegisterCatalogs(
         deleted.url + `${deleted.id}/`
       );
       props
@@ -221,19 +228,20 @@ const WorkTitle = ({ currentNode, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <SelectDepartment />
+            <SelectDepartment rules={[ruleRequired]} />
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <SelectJob />
+            <SelectJob rules={[ruleRequired]} />
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <SelectWorkTitle
               labelText={"Plaza a la que reporta"}
               name={"work_title_report"}
+              forDepto={true}
             />
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <SelectLevel />
+            <SelectLevel textLabel={"Nivel"} />
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item name="salary" label="Salario" rules={[ruleRequired]}>

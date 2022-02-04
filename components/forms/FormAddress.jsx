@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { useState, useEffect } from "react";
 import { typeStreet } from "../../utils/constant";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import { ruleRequired } from "../../utils/rules";
 
 const FormAddress = ({ person_id }) => {
@@ -24,7 +24,7 @@ const FormAddress = ({ person_id }) => {
 
   const getAddress = async () => {
     try {
-      let response = await WebApi.getAddress(person_id);
+      let response = await WebApiPeople.getAddress(person_id);
       formAddress.setFieldsValue({
         street_type: response.data[0].street_type,
         street: response.data[0].street,
@@ -43,7 +43,7 @@ const FormAddress = ({ person_id }) => {
   };
   const saveAddress = async (data) => {
     try {
-      let response = await WebApi.createAddress(data);
+      let response = await WebApiPeople.createAddress(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
@@ -55,7 +55,7 @@ const FormAddress = ({ person_id }) => {
   };
   const updateAddress = async (data) => {
     try {
-      let response = await WebApi.updateAddress(idAddress, data);
+      let response = await WebApiPeople.updateAddress(idAddress, data);
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",

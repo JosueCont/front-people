@@ -26,7 +26,7 @@ import {
   messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../utils/constant";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const Levels = ({ currentNode, ...props }) => {
   const [edit, setEdit] = useState(false);
@@ -92,7 +92,7 @@ const Levels = ({ currentNode, ...props }) => {
     else data.order = data.order + 1;
     setLoading(true);
     try {
-      let response = await WebApi.createRegisterCatalogs(
+      let response = await WebApiPeople.createRegisterCatalogs(
         "/business/level/",
         data
       );
@@ -128,7 +128,7 @@ const Levels = ({ currentNode, ...props }) => {
   const updateRegister = async (url, value) => {
     try {
       if (!value.order || value.order == undefined) value.order = 0;
-      let response = await WebApi.updateRegisterCatalogs(
+      let response = await WebApiPeople.updateRegisterCatalogs(
         `/business/level/${id}/`,
         value
       );
@@ -178,7 +178,7 @@ const Levels = ({ currentNode, ...props }) => {
 
   const deleteRegister = async () => {
     try {
-      let response = await WebApi.deleteRegisterCatalogs(
+      let response = await WebApiPeople.deleteRegisterCatalogs(
         deleted.url + `${deleted.id}/`
       );
       props
@@ -213,15 +213,14 @@ const Levels = ({ currentNode, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <SelectLevel name={"order"} value_form={"order"} />
+            <SelectLevel
+              name={"order"}
+              value_form={"order"}
+              textLabel={"Nivel que precede"}
+            />
           </Col>
         </Row>
-        <Row
-          justify={"end"}
-          gutter={20}
-          titleLabel={"Nivel que precede"}
-          style={{ marginBottom: 20 }}
-        >
+        <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
             <Button onClick={resetForm}>Cancelar</Button>
           </Col>

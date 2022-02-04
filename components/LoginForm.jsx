@@ -6,7 +6,7 @@ import Axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import Link from "next/link";
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 import { EyeOutlined, MailOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { setUserPermissions } from "../redux/UserDuck";
@@ -33,7 +33,7 @@ const LoginForm = ({
         jwt: jwt,
       };
 
-      let response = await WebApi.saveJwt(data);
+      let response = await WebApiPeople.saveJwt(data);
 
       if (response.status == 200) {
         if (response.data.is_active) return true;
@@ -147,7 +147,7 @@ const LoginForm = ({
             rules={[ruleRequired]}
             className="font-color-khor"
           >
-            <Input
+            <Input.Password
               style={{ marginTop: "5px" }}
               type="password"
               placeholder="Contraseña"

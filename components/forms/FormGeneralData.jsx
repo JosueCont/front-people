@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const FormGeneralData = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -29,7 +29,7 @@ const FormGeneralData = ({ person_id = null }) => {
   /* functions CRUD */
   const getGeneralData = async () => {
     try {
-      let response = await WebApi.getGeneralDataPerson(person_id);
+      let response = await WebApiPeople.getGeneralDataPerson(person_id);
       formGeneralData.setFieldsValue({
         place_birth: response.data.place_birth,
         nationality: response.data.nationality,
@@ -51,7 +51,7 @@ const FormGeneralData = ({ person_id = null }) => {
   };
   const saveGeneralData = async (data) => {
     try {
-      let response = await WebApi.createGeneralDataPerson(data);
+      let response = await WebApiPeople.createGeneralDataPerson(data);
       setIdGeneralP(response.data.id);
       message.success({
         content: "Guardado correctamente.",
@@ -63,7 +63,10 @@ const FormGeneralData = ({ person_id = null }) => {
   };
   const updateGeneralData = async (data) => {
     try {
-      let response = await WebApi.updateGeneralDataPerson(idGeneralP, data);
+      let response = await WebApiPeople.updateGeneralDataPerson(
+        idGeneralP,
+        data
+      );
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",

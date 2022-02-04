@@ -22,7 +22,7 @@ import {
 } from "../../libs/auth";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import { genders } from "../../utils/constant";
 import { ruleEmail } from "../../utils/rules";
 import moment from "moment";
@@ -125,7 +125,7 @@ const FormPerson = ({
   const createPerson = async (value) => {
     try {
       value.node = currentNode.id;
-      let response = await WebApi.createPerson(value);
+      let response = await WebApiPeople.createPerson(value);
       if (setPerson) {
         setPerson(response.data.person);
         sessionStorage.setItem("tok", response.data.person.id);
@@ -229,19 +229,19 @@ const FormPerson = ({
             </Col>
             <Col lg={7} xs={22} offset={1}>
               <SelectDepartment
-                titleLabel={false}
+                viewLabel={false}
                 name="person_department"
                 style={false}
               />
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <SelectJob titleLabel={false} name="job" style={false} />
+              <SelectJob viewLabel={false} name="job" style={false} />
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <SelectWorkTitle titleLabel={false} style={false} />
+              <SelectWorkTitle viewLabel={false} style={false} />
             </Col>
             <Col lg={7} xs={22} offset={1}>
-              <SelectWorkTitleStatus titleLabel={false} style={false} />
+              <SelectWorkTitleStatus viewLabel={false} style={false} />
             </Col>
 
             <Col lg={7} xs={22} offset={1}>

@@ -5,7 +5,7 @@ import {
   CloudUploadOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 import { userCompanyId } from "../libs/auth";
 
 const MassiveImportJobs = ({ nodePeople, setLoadingTable }) => {
@@ -48,7 +48,7 @@ const MassiveImportJobs = ({ nodePeople, setLoadingTable }) => {
     try {
       setDisabled(true);
       setLoadingTable(true);
-      let response = await WebApi.saveMassiveJobs(data);
+      let response = await WebApiPeople.saveMassiveJobs(data);
       if (response.status == 200) {
         message.success("Cargado correctamente");
       } else {

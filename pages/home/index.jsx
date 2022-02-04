@@ -39,7 +39,7 @@ import Link from "next/link";
 import jsCookie from "js-cookie";
 import Clipboard from "../../components/Clipboard";
 import { connect } from "react-redux";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import { genders, periodicity, statusSelect } from "../../utils/constant";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
@@ -105,7 +105,7 @@ const homeScreen = ({ ...props }) => {
     filters.node = props.currentNode.id;
     setLoading(true);
     try {
-      let response = await WebApi.filterPerson(filters);
+      let response = await WebApiPeople.filterPerson(filters);
       setPerson([]);
       setLoading(false);
       let persons = response.data.map((a) => {
