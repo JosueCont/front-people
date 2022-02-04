@@ -150,7 +150,9 @@ const MainSider = ({
                 }
                 .custom_icon{
                   margin-right:10px;
-                  font-size: ${collapsed ? "19px !important;" : "16px !important;"}
+                  font-size: ${
+                    collapsed ? "19px !important;" : "16px !important;"
+                  }
                 }
                 .ant-menu-item, 
 
@@ -178,10 +180,10 @@ const MainSider = ({
             key="dashboard"
             onClick={() => router.push({ pathname: "/dashboard" })}
             icon={<AppstoreOutlined />}
-            >
-              Dashboard
-            </Menu.Item>
-          { props.permissions.person.view && 
+          >
+            Dashboard
+          </Menu.Item>
+          {props.permissions.person.view && (
             <Menu.Item
               key="persons"
               icon={<UserOutlined />}
@@ -189,9 +191,8 @@ const MainSider = ({
             >
               Personas
             </Menu.Item>
-          }
-          {
-            props.permissions.company.view && 
+          )}
+          {props.permissions.company.view && (
             <Menu.Item
               key="business"
               icon={<BusinessOutlined />}
@@ -199,7 +200,7 @@ const MainSider = ({
             >
               Empresas
             </Menu.Item>
-          }
+          )}
           <SubMenu
             key="config"
             title="Configuración"
@@ -219,74 +220,67 @@ const MainSider = ({
               Perfiles de seguridad
             </Menu.Item>
           </SubMenu>
-          {
-            (props.permissions.comunication.view || props.permissions.event.view) && (
-              <SubMenu
-                key="comuniction"
-                title="Comunicación"
-                className="subMainMenu"
-                icon={<MessageOutlined />}
-              >
-                {props.permissions.comunication.view && (
-                    <Menu.Item
-                    key="comunicados"
-                    onClick={() =>
-                      router.push({ pathname: "/comunication/releases" })
-                    }
-                  >
-                    Comunicados
-                  </Menu.Item>)
-                }
-                {
-                  props.permissions.event.view && (
-                  <Menu.Item
-                    key="eventos"
-                    onClick={() => router.push({ pathname: "/comunication/events" })}
-                  >
-                    Eventos
-                  </Menu.Item>
-                  )
-                }
-              </SubMenu>
-            )
-          }
-          {
-            props.permissions.report.view && (
-              <Menu.Item
-                icon={<ProfileOutlined />}
-                key="reportes"
-                onClick={() => router.push({ pathname: "/reports" })}
-              >
-                Reportes
-              </Menu.Item>
-            )
-          }
+          {(props.permissions.comunication.view ||
+            props.permissions.event.view) && (
+            <SubMenu
+              key="comuniction"
+              title="Comunicación"
+              className="subMainMenu"
+              icon={<MessageOutlined />}
+            >
+              {props.permissions.comunication.view && (
+                <Menu.Item
+                  key="comunicados"
+                  onClick={() =>
+                    router.push({ pathname: "/comunication/releases" })
+                  }
+                >
+                  Comunicados
+                </Menu.Item>
+              )}
+              {props.permissions.event.view && (
+                <Menu.Item
+                  key="eventos"
+                  onClick={() =>
+                    router.push({ pathname: "/comunication/events" })
+                  }
+                >
+                  Eventos
+                </Menu.Item>
+              )}
+            </SubMenu>
+          )}
+          {props.permissions.report.view && (
+            <Menu.Item
+              icon={<ProfileOutlined />}
+              key="reportes"
+              onClick={() => router.push({ pathname: "/reports" })}
+            >
+              Reportes
+            </Menu.Item>
+          )}
           <SubMenu
             key="solicitudes"
             title="Solicitudes"
             className="subMainMenu"
             icon={<FormOutlined />}
           >
-            {
-              props.permissions.loan.view && (
-                <Menu.Item
-                  key="prestamos"
-                  onClick={() => router.push({ pathname: "/lending" })}
-                >
-                  Préstamos
-                </Menu.Item>
-              )
-            }
-            {
-              props.permissions.vacation.view && (
-                <Menu.Item
-                  key="vacaciones"
-                  onClick={() => router.push({ pathname: "/holidays" })}
-                >
-                  Vacaciones
-                </Menu.Item>
-              )
-            }
+            {props.permissions.loan.view && (
+              <Menu.Item
+                key="prestamos"
+                onClick={() => router.push({ pathname: "/lending" })}
+              >
+                Préstamos
+              </Menu.Item>
+            )}
+            {props.permissions.vacation.view && (
+              <Menu.Item
+                key="vacaciones"
+                onClick={() => router.push({ pathname: "/holidays" })}
+              >
+                Vacaciones
+              </Menu.Item>
+            )}
             <Menu.Item
               key="permisos"
               onClick={() => router.push({ pathname: "/permission" })}
@@ -374,20 +368,23 @@ const MainSider = ({
             <SubMenu
               key="intranet"
               title={<FormattedMessage id="header.intranet" />}
-              icon={ <img className="anticon ant-menu-item-icon icon-intranet" src={"images/Intranet.svg"}/>}
+              icon={
+                <img
+                  className="anticon ant-menu-item-icon icon-intranet"
+                  src={"/images/Intranet.svg"}
+                />
+              }
               className="subMainMenu"
             >
-              { props.permissions.groups.view && 
-                (
-                  <Menu.Item
-                    key="groups"
-                    onClick={() => router.push({ pathname: "/intranet/groups" })}
-                    icon={<GroupOutlined />}
-                  >
-                    <FormattedMessage id="header.groups" />
-                  </Menu.Item>
-                )
-              }
+              {props.permissions.groups.view && (
+                <Menu.Item
+                  key="groups"
+                  onClick={() => router.push({ pathname: "/intranet/groups" })}
+                  icon={<GroupOutlined />}
+                >
+                  <FormattedMessage id="header.groups" />
+                </Menu.Item>
+              )}
               <Menu.Item
                 key="config"
                 onClick={() => router.push({ pathname: "/intranet/config" })}
@@ -397,7 +394,9 @@ const MainSider = ({
               </Menu.Item>
               <Menu.Item
                 key="statistics"
-                onClick={() => router.push({ pathname: "/intranet/publications_statistics" })}
+                onClick={() =>
+                  router.push({ pathname: "/intranet/publications_statistics" })
+                }
                 icon={<AreaChartOutlined />}
               >
                 <FormattedMessage id="header.statistics" />
@@ -424,14 +423,6 @@ const MainSider = ({
               Carga de documentos
             </Menu.Item>
           </SubMenu>
-          {/* {props.config && props.config.kuiz_enabled && (
-                        <Menu.Item
-                        key="13"
-                        onClick={() => router.push({ pathname: "/assessment" })}
-                        >
-                        Encuestas
-                        </Menu.Item>
-                    )} */}
         </Menu>
       </Sider>
     </>
@@ -442,7 +433,7 @@ const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
-    permissions: state.userStore.permissions
+    permissions: state.userStore.permissions,
   };
 };
 export default connect(mapState)(MainSider);

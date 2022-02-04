@@ -7,7 +7,7 @@ import esES from "antd/lib/locale/es_ES";
 
 import MainLayout from "../../../layout/MainLayout";
 
-import { publicationsListAction } from "../../../redux/publicationsListDuck";
+import { publicationsListAction } from "../../../redux/IntranetDuck";
 import { useGetCompanyId } from "../../../utils/useGetCompanyId";
 import PublicationsStatisticsTable from "../../../components/statistics/PublicationsStatisticsTable";
 import PublicationsStatisticsFilters from "../../../components/statistics/PublicationsStatisticsFilters";
@@ -87,7 +87,7 @@ const index = (props) => {
 
 const mapState = (state) => {
   return {
-    publicationsList: state.publicationsListStore.publicationsList,
+    publicationsList: state.intranetStore.publicationsList,
     currentNode: state.userStore.current_node,
   };
 };
