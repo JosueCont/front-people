@@ -262,16 +262,16 @@ const FormBanckAccount = ({ person_id = null }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Cuentas bancarias</Title>
       </Row>
-      <Form layout="vertical" form={formBank} onFinish={formBankAcc}>
+      <Form layout="vertical" form={formBank} onFinish={formBankAcc} className="inputs_form_responsive">
         <Row>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <SelectBank
               name="bank"
               bankSelected={selectedBank}
-              style={{ width: 140 }}
+              style={{ width: '100%' }}
             />
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="account_number"
               label="Número de cuenta"
@@ -284,7 +284,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input minLength={11} maxLength={11} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="interbank_key"
               label="Clabe interbancaria"
@@ -293,7 +293,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input minLength={18} maxLength={18} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="card_number"
               label="Número de tarjeta"
@@ -302,7 +302,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input maxLength={16} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="expiration_month"
               label="Mes de vencimiento"
@@ -312,7 +312,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input maxLength={2} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="expiration_year"
               label="Año de vencimiento"

@@ -246,9 +246,9 @@ const FormFamily = ({ person_id = null }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Familia</Title>
       </Row>
-      <Form layout={"vertical"} form={formFamily} onFinish={formFinishFamily}>
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
+       <Form layout={"vertical"} form={formFamily} onFinish={formFinishFamily} className="inputs_form_responsive">
+        <Row gutter={20}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="relationship"
               label="Parentesco"
@@ -260,17 +260,17 @@ const FormFamily = ({ person_id = null }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="job" label="Puesto de trabajo">
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="flast_name"
               label="Apellido paterno"
@@ -279,7 +279,7 @@ const FormFamily = ({ person_id = null }) => {
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="mlast_name"
               label="Apellido materno"
@@ -288,7 +288,7 @@ const FormFamily = ({ person_id = null }) => {
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="gender" label="Género" rules={[ruleRequired]}>
               <Select
                 options={genders}
@@ -296,12 +296,12 @@ const FormFamily = ({ person_id = null }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="life" label="¿Vive?">
               <Checkbox checked={lifeFamily} onChange={lifeFamilyShip} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="birth_date"
               label="Fecha de nacimiento"
@@ -314,22 +314,22 @@ const FormFamily = ({ person_id = null }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="place_birth" label="Lugar de nacimiento">
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="nationality" label="Nacionalidad">
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="other_nationality" label="Otra nacionalidad">
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="benefit"
               label="% Beneficio"

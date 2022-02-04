@@ -80,9 +80,9 @@ const FormAddress = ({ person_id }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Dirección</Title>
       </Row>
-      <Form layout={"vertical"} form={formAddress} onFinish={formAddressPerson}>
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
+      <Form layout={"vertical"} form={formAddress} onFinish={formAddressPerson} className="inputs_form_responsive">
+        <Row gutter={20}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="street_type"
               label="Tipo de calle"
@@ -94,12 +94,12 @@ const FormAddress = ({ person_id }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="street" label="Calle" rules={[ruleRequired]}>
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="numberOne"
               label="Número exterior"
@@ -108,17 +108,17 @@ const FormAddress = ({ person_id }) => {
               <Input maxLength={20} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="numberTwo" label="Número interior">
               <Input maxLength={20} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="building" label="Edificio">
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="postalCode"
               label="Código postal"
@@ -127,17 +127,17 @@ const FormAddress = ({ person_id }) => {
               <Input maxLength={10} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="suburb" label="Suburbio" rules={[ruleRequired]}>
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="location" label="Ubicación" rules={[ruleRequired]}>
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="reference" label="Referencia">
               <Input maxLength={50} />
             </Form.Item>

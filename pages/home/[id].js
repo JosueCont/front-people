@@ -7,6 +7,8 @@ import WebApi from "../../api/webApi";
 import MainLayout from "../../layout/MainLayout";
 import { Content } from "antd/lib/layout/layout";
 import { connect } from "react-redux";
+import { Global, css } from "@emotion/core";
+
 
 const EmployeeDetailPage = (...props) => {
   const router = useRouter();
@@ -25,8 +27,24 @@ const EmployeeDetailPage = (...props) => {
       console.log(error);
     }
   };
+
+
+
+
   return (
     <>
+      <Global
+        styles={css`
+          .inputs_form_responsive .ant-col {
+            display: flex;
+          }
+
+          .inputs_form_responsive .ant-col .ant-form-item {
+            margin-top: auto;
+            width: 100%;
+          }
+        `}
+      />
       <MainLayout currentKey="1">
         <Content className="site-layout">
           <Breadcrumb style={{ margin: "16px 0" }}>

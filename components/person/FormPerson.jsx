@@ -230,7 +230,7 @@ const FormPerson = ({
         visible={props.visible}
         onCancel={() => closeDialog()}
         footer={null}
-        width={"60%"}
+        width={800}
         destroyOnClose
       >
         <Form
@@ -240,16 +240,18 @@ const FormPerson = ({
           onFinish={onFinish}
           form={form}
         >
-          <Row>
-            <Col lg={7} xs={22} offset={1}>
-              <SelectPersonType />
-            </Col>
-            <Col lg={7} xs={22} offset={1}>
-              <Form.Item rules={[ruleRequired]}>
-                <Input readOnly value={nameNode} />
-              </Form.Item>
-            </Col>
-            <Col lg={7} xs={22} offset={1}>
+          <Row justify="center">
+            <Col span={23}>
+              <Row justify="space-between">
+                <Col lg={7} xs={24} md={11}>
+                  <SelectPersonType />
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item rules={[ruleRequired]}>
+                    <Input readOnly value={nameNode} />
+                  </Form.Item>
+                </Col>
+            <Col lg={7} xs={24} md={11}>
               <SelectDepartment
                 viewLabel={false}
                 name="person_department"
@@ -257,37 +259,37 @@ const FormPerson = ({
                 onChange={getWorkTitle}
               />
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <SelectJob viewLabel={false} name="job" style={false} onChange={getWorkTitle} />
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <SelectWorkTitle viewLabel={false} style={false} department={departmentSelected} job={jobSelected} />
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <SelectWorkTitleStatus viewLabel={false} style={false} />
             </Col>
 
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <Form.Item rules={[ruleRequired]} name="first_name">
                 <Input type="text" placeholder="Nombre" />
               </Form.Item>
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <Form.Item rules={[ruleRequired]} name="flast_name">
                 <Input type="text" placeholder="Apellido paterno" />
               </Form.Item>
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <Form.Item name="mlast_name">
                 <Input type="text" placeholder="Apellido materno" />
               </Form.Item>
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <Form.Item name="gender">
                 <Select options={genders} placeholder="Género" />
               </Form.Item>
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <Form.Item>
                 <DatePicker
                   style={{ width: "100%" }}
@@ -297,12 +299,12 @@ const FormPerson = ({
                 />
               </Form.Item>
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <Form.Item name="code">
                 <Input type="text" placeholder="Núm. empleado" />
               </Form.Item>
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
                 <Input
                   type="email"
@@ -315,12 +317,12 @@ const FormPerson = ({
                 />
               </Form.Item>
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <Form.Item rules={[ruleRequired]} name="password">
                 <Input.Password type="text" placeholder="Contraseña" />
               </Form.Item>
             </Col>
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <Form.Item
                 rules={[
                   ruleRequired,
@@ -343,7 +345,7 @@ const FormPerson = ({
               </Form.Item>
             </Col>
             {accessIntranet !== "false" && intranetAccess && (
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={7} xs={24} md={11}>
                 <Form.Item
                   name="intranet_access"
                   label="Acceso a la intranet"
@@ -356,7 +358,7 @@ const FormPerson = ({
                 </Form.Item>
               </Col>
             )}
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <Form.Item name="register_date">
                 <DatePicker
                   style={{ width: "100%" }}
@@ -368,10 +370,10 @@ const FormPerson = ({
               </Form.Item>
             </Col>
             {/* {hideProfileSecurity && ( */}
-            <Col lg={7} xs={22} offset={1}>
+            <Col lg={7} xs={24} md={11}>
               <SelectGroup />
             </Col>
-            <Col lg={22} xs={22} offset={1}>
+            <Col lg={22} xs={24}>
               <Form.Item labelAlign="right">
                 <Space style={{ float: "right" }}>
                   <Button onClick={() => closeDialog()}>Cancelar</Button>
@@ -380,6 +382,8 @@ const FormPerson = ({
                   </Button>
                 </Space>
               </Form.Item>
+            </Col>
+              </Row>
             </Col>
           </Row>
         </Form>

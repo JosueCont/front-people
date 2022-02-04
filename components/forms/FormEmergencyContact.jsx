@@ -233,9 +233,10 @@ const FormEmergencyContact = ({ person_id = null }) => {
         layout="vertical"
         form={formContactEmergency}
         onFinish={formFinishContactE}
+        className="inputs_form_responsive"
       >
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
+        <Row gutter={20}>
+          <Col lg={6} xs={22} md={8}>
             <Form.Item
               name="relationship"
               label="Parentesco"
@@ -247,7 +248,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={8}>
             <Form.Item
               name="fullname"
               label="Nombre completo"
@@ -256,7 +257,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
               <Input maxLength={100} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={8}>
             <Form.Item
               name="phone_one"
               label="Teléfono 1"
@@ -265,7 +266,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
               <Input maxLength={10} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={8}>
             <Form.Item
               name="phone_two"
               label="Teléfono 2"

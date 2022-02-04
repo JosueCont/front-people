@@ -635,7 +635,9 @@ header.ant-layout-header {
   .container-title-tab{
     font-size: 18px;
   }
-  
+  .div-main-layout{
+    padding: 10px 10px !important;
+  } 
 }
 
 /*Media queryes*/

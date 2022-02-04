@@ -162,6 +162,7 @@ const MainSider = ({
         collapsible
         collapsed={collapsed}
         onCollapse={onCollapse}
+        breakpoint="md"
       >
         <div className="logo" />
         <Menu
