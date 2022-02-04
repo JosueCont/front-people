@@ -81,7 +81,6 @@ const homeScreen = ({ ...props }) => {
   const [deactivateTrigger, setDeactivateTrigger] = useState(false);
   const [permissions, setPermissions] = useState({});
   useLayoutEffect(() => {
-    console.log("PERMISSIONS-->> ", props.permissions);
     setPermissions(props.permissions);
     setTimeout(() => {
       permissions;

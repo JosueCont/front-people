@@ -6,14 +6,14 @@ import webReducerUser, {
 } from "./UserDuck";
 import webReducerCatalog, { doCompanySelectedCatalog } from "./catalogCompany";
 import fiscalDuck, { doFiscalSelectedData } from "./fiscalDuck";
-import publicationsListReducer from "./publicationsListDuck";
+import IntranetDuck from "./IntranetDuck";
 import userAndCompanyReducer from "./userAndCompanyFilterDuck";
 
 const rootReducer = combineReducers({
   userStore: webReducerUser,
   catalogStore: webReducerCatalog,
   fiscalStore: fiscalDuck,
-  publicationsListStore: publicationsListReducer,
+  intranetStore: IntranetDuck,
   userAndCompanyStore: userAndCompanyReducer,
 });
 

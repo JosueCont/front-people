@@ -21,7 +21,7 @@ import {
   getUsersList,
   getGroupList,
 } from "../../redux/userAndCompanyFilterDuck";
-import { getExcelFileAction } from "../../redux/publicationsListDuck";
+import { getExcelFileAction } from "../../redux/IntranetDuck";
 
 const CustomCard = styled(Card)`
   width: 100%;
@@ -161,7 +161,10 @@ const PublicationsStatisticsFilters = (props) => {
     // seteamos parámetros globales para el paginado
     props.setParameters(`${userParam}${groupParam}${dateRange}`);
     // Genera el pdf
-    props.getExcelFileAction(`${userParam}${groupParam}${dateRange}`);
+    props.getExcelFileAction(
+      props.companyId,
+      `${userParam}${groupParam}${dateRange}`
+    );
     // Actualiza la tabla con los filtros
     props.getPostsByFilter(
       props.companyId,
@@ -264,7 +267,7 @@ const mapState = (state) => {
   return {
     usersList: state.userAndCompanyStore.usersList,
     groupList: state.userAndCompanyStore.groupList,
-    excelFileStatus: state.publicationsListStore.excelFileStatus,
+    excelFileStatus: state.intranetStore.excelFileStatus,
   };
 };
 

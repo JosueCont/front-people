@@ -1,4 +1,4 @@
-import axios from "axios";
+import WebApiIntranet from "../api/WebApiIntranet";
 
 const initialData = {
   groupList: [],
@@ -7,12 +7,9 @@ const initialData = {
   error: "",
 };
 
-// Constantes para traer los grupos de la empresa
 const LOADING_GROUPS = "LOADING_GROUPS";
 const SUCCESS_GROUPS = "SUCCESS_GROUPS";
 const ERROR_GROUPS = "ERROR_GROUPS";
-// Constantes para traer los usuarios con accesso a la red solcial
-// Variables para traer los grupos de la empresa
 const LOADING_USERS = "LOADING_USERS";
 const SUCCESS_USERS = "SUCCESS_USERS";
 const ERROR_USERS = "ERROR_USERS";
@@ -38,10 +35,7 @@ const userAndCompanyReducer = (state = initialData, action) => {
 
 export const getGroupList = (node) => async (dispatch, getState) => {
   dispatch({ type: LOADING_GROUPS, fetching: true });
-  await axios
-    .get(
-      `https://demo.api.people.hiumanlab.com.com/intranet/group/?node=${node}`
-    )
+  let response = WebApiIntranet.getGroupList(node)
     .then((response) => {
       if (response.status == 200) {
         dispatch({
@@ -66,10 +60,7 @@ export const getGroupList = (node) => async (dispatch, getState) => {
 
 export const getUsersList = (node) => async (dispatch, getState) => {
   dispatch({ type: LOADING_USERS, fetching: true });
-  axios
-    .get(
-      `https://demo.api.people.hiumanlab.com.com/intranet/search-person/?node=${node}`
-    )
+  let response = WebApiIntranet.getUsersList(node)
     .then((response) => {
       if ((response.status = 200)) {
         dispatch({

@@ -1,4 +1,5 @@
 import axios from "axios";
+import WebApiIntranet from "../api/WebApiIntranet";
 
 const initialData = {
   fetching: false,
@@ -35,15 +36,13 @@ const publicationsListReducer = (state = initialData, action) => {
 };
 
 export const publicationsListAction =
-  (page = "", parameters = "") =>
+  (node, page = "", parameters = "") =>
   async (dispatch, getState) => {
     dispatch({ type: LOADING_PUBLICATIONS_LIST });
-    await axios
-      .get(
-        `https://demo.api.people.hiumanlab.com.com/intranet/post/?${
-          page && page != "" ? `page=${page}` : ""
-        }${parameters}`
-      )
+    let data = `?node=${node}${
+      page && page != "" ? `&&page=${page}` : ""
+    }&&${parameters}`;
+    let response = WebApiIntranet.publigationList(data)
       .then(({ status, data }) => {
         let dataAndResults = {
           data: data,
@@ -71,13 +70,10 @@ export const publicationsListAction =
   };
 
 export const getExcelFileAction =
-  (params = "") =>
+  (node, params = "") =>
   async (dispatch, getState) => {
     dispatch({ type: LOADING_FILE, fetching: true, payload: "loading" });
-    await axios
-      .get(
-        `https://demo.api.people.hiumanlab.com.com/intranet/post/?export=true${params}`
-      )
+    let response = WebApiIntranet.excelFileAction(node, params)
       .then((response) => {
         let regexResponseContent = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
         if (
