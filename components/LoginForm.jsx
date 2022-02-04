@@ -147,7 +147,7 @@ const LoginForm = ({
             rules={[ruleRequired]}
             className="font-color-khor"
           >
-            <Input
+            <Input.Password
               style={{ marginTop: "5px" }}
               type="password"
               placeholder="Contraseña"
