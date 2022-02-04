@@ -14,7 +14,7 @@ import {
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import moment from "moment";
-import WebApi from "../../../api/webApiPayroll";
+import WebApiPayroll from "../../../api/WebApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
 import { useRouter } from "next/router";
 import { messageSaveSuccess } from "../../../utils/constant";
@@ -79,7 +79,9 @@ const FormPaymentCalendar = ({
   const getPaymentCalendar = async () => {
     setLoading(true);
     try {
-      let response = await WebApi.getDetailPaymentCalendar(idPaymentCalendar);
+      let response = await WebApiPayroll.getDetailPaymentCalendar(
+        idPaymentCalendar
+      );
       if (response.data) {
         let item = response.data;
         formPaymentCalendar.setFieldsValue({
@@ -117,7 +119,7 @@ const FormPaymentCalendar = ({
 
   const savePaymentCalendar = async (data) => {
     try {
-      let response = await WebApi.createPaymentCalendar(data);
+      let response = await WebApiPayroll.createPaymentCalendar(data);
       message.success({
         content: messageSaveSuccess,
         className: "custom-class",
@@ -133,7 +135,7 @@ const FormPaymentCalendar = ({
 
   const updatePaymentCalendar = async (data) => {
     try {
-      let response = await WebApi.updatePaymentCalendar(data);
+      let response = await WebApiPayroll.updatePaymentCalendar(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",

@@ -12,7 +12,7 @@ import {
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { useState, useEffect } from "react";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import Link from "next/link";
 import LoginModal from "../modal/LoginModal";
 import { genders } from "../../utils/constant";
@@ -79,7 +79,7 @@ const FormSelfRegistration = ({
 
   const createPerson = async (value) => {
     try {
-      let response = await WebApi.createPerson(value);
+      let response = await WebApiPeople.createPerson(value);
       if (setPerson) {
         setPerson(response.data.person);
         sessionStorage.setItem("tok", response.data.person.id);

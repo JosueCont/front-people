@@ -143,7 +143,11 @@ const PublicationsStatisticsFilters = (props) => {
 
     // seteamos parámetros globales para el paginado
     props.setParameters(`${userParam}${groupParam}${dateRange}`);
-    props.getPostsByFilter("", `${userParam}${groupParam}${dateRange}`);
+    props.getPostsByFilter(
+      props.companyId,
+      "",
+      `${userParam}${groupParam}${dateRange}`
+    );
   };
 
   const getExcelFile = () => {
@@ -159,7 +163,11 @@ const PublicationsStatisticsFilters = (props) => {
     // Genera el pdf
     props.getExcelFileAction(`${userParam}${groupParam}${dateRange}`);
     // Actualiza la tabla con los filtros
-    props.getPostsByFilter("", `${userParam}${groupParam}${dateRange}`);
+    props.getPostsByFilter(
+      props.companyId,
+      "",
+      `${userParam}${groupParam}${dateRange}`
+    );
   };
   const clearFilter = () => {
     setGroup("");
@@ -167,7 +175,7 @@ const PublicationsStatisticsFilters = (props) => {
     setStartDate("");
     setEndDate("");
     setDatePickerValue();
-    props.getPostsByFilter(1, "", false);
+    props.getPostsByFilter(props.companyId, 1, "", false);
   };
 
   return (

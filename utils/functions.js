@@ -1,4 +1,4 @@
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 
 export const generateYear = () => {
   let yearsArray = [];
@@ -13,7 +13,7 @@ export const generateYear = () => {
 
 export const getJobForSelect = async (id) => {
   try {
-    let response = await WebApi.getJobSelect(id);
+    let response = await WebApiPeople.getJobSelect(id);
     let job = response.data;
     job = job.map((a) => {
       return { label: a.name, value: a.id };

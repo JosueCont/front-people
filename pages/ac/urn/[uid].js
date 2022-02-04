@@ -4,7 +4,7 @@ import MainLayout from "../../../layout/MainLayout";
 import { Breadcrumb, Spin } from "antd";
 import { useState } from "react";
 import DetailPerson from "../../../components/person/DetailPerson";
-import WebApi from "../../../api/webApi";
+import WebApiPeople from "../../../api/WebApiPeople";
 import { connect } from "react-redux";
 import { companySelected } from "../../../redux/UserDuck";
 import FormSelfRegistration from "../../../components/forms/FormSelfRegistration";
@@ -36,7 +36,7 @@ const userRegister = ({ ...props }) => {
 
   const getCompany = async (data) => {
     try {
-      let response = await WebApi.getCompanyPermanentCode(data);
+      let response = await WebApiPeople.getCompanyPermanentCode(data);
       if (response.data.results.length > 0)
         props
           .companySelected(response.data.results[0].id)
@@ -54,7 +54,7 @@ const userRegister = ({ ...props }) => {
 
   const getPerson = async (data) => {
     try {
-      let response = await WebApi.getPerson(data);
+      let response = await WebApiPeople.getPerson(data);
       setPerson(response.data);
       setTimeout(() => {
         setLoading(false);
@@ -81,7 +81,7 @@ const userRegister = ({ ...props }) => {
 
   const getPersonKhonnectId = async () => {
     try {
-      let response = await WebApi.personForKhonnectId({
+      let response = await WebApiPeople.personForKhonnectId({
         id: khonnectId,
       });
       sessionStorage.setItem("tok", response.data.id);

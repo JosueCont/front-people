@@ -22,7 +22,7 @@ import {
 } from "../../libs/auth";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import { genders } from "../../utils/constant";
 import { ruleEmail } from "../../utils/rules";
 import moment from "moment";
@@ -125,7 +125,7 @@ const FormPerson = ({
   const createPerson = async (value) => {
     try {
       value.node = currentNode.id;
-      let response = await WebApi.createPerson(value);
+      let response = await WebApiPeople.createPerson(value);
       if (setPerson) {
         setPerson(response.data.person);
         sessionStorage.setItem("tok", response.data.person.id);

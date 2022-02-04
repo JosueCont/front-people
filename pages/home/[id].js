@@ -3,7 +3,7 @@ import DetailPerson from "../../components/person/DetailPerson";
 import { withAuthSync } from "../../libs/auth";
 import { useRouter } from "next/router";
 import { Breadcrumb, Spin } from "antd";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import MainLayout from "../../layout/MainLayout";
 import { Content } from "antd/lib/layout/layout";
 import { connect } from "react-redux";
@@ -19,7 +19,7 @@ const EmployeeDetailPage = (...props) => {
 
   const getPerson = async (data) => {
     try {
-      let response = await WebApi.getPerson(data);
+      let response = await WebApiPeople.getPerson(data);
       setPerson(response.data);
     } catch (error) {
       console.log(error);

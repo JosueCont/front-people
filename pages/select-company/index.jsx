@@ -18,7 +18,7 @@ import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import { companySelected, setUser } from "../../redux/UserDuck";
 import { doCompanySelectedCatalog } from "../../redux/catalogCompany";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import Clipboard from "../../components/Clipboard";
 import { Global, css } from "@emotion/core";
 import {
@@ -54,7 +54,9 @@ const SelectCompany = ({ ...props }) => {
   useEffect(async () => {
     try {
       if (jwt) {
-        let response = await WebApi.personForKhonnectId({ id: jwt.user_id });
+        let response = await WebApiPeople.personForKhonnectId({
+          id: jwt.user_id,
+        });
         props
           .setUser()
           .then((response) => {
@@ -92,7 +94,7 @@ const SelectCompany = ({ ...props }) => {
 
   const getCopaniesList = async () => {
     try {
-      let response = await WebApi.getCompanys();
+      let response = await WebApiPeople.getCompanys();
       let data = response.data.results.filter((a) => a.active);
       setDataList(data);
       setLoading(false);
