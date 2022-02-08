@@ -207,19 +207,19 @@ const FormPerson = ({
     }
   }, [form]); */
 
-  const getWorkTitle = () =>{
+  const getWorkTitle = () => {
     const values = form.getFieldsValue();
-    console.log('values.person_department =>', values.person_department);
-    console.log('values.job =>', values.job);
+    console.log("values.person_department =>", values.person_department);
+    console.log("values.job =>", values.job);
     if (values.person_department && values.job) {
-      setDepartmentSelected(values.person_department)
-      setJobSelected(values.job)
-      console.log('si');
-    }else{
-      setDepartmentSelected(null)
-      setJobSelected(null)
+      setDepartmentSelected(values.person_department);
+      setJobSelected(values.job);
+      console.log("si");
+    } else {
+      setDepartmentSelected(null);
+      setJobSelected(null);
     }
-  }
+  };
 
   return (
     <>
@@ -251,138 +251,151 @@ const FormPerson = ({
                     <Input readOnly value={nameNode} />
                   </Form.Item>
                 </Col>
-            <Col lg={7} xs={24} md={11}>
-              <SelectDepartment
-                viewLabel={false}
-                name="person_department"
-                style={false}
-                onChange={getWorkTitle}
-              />
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <SelectJob viewLabel={false} name="job" style={false} onChange={getWorkTitle} />
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <SelectWorkTitle viewLabel={false} style={false} department={departmentSelected} job={jobSelected} />
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <SelectWorkTitleStatus viewLabel={false} style={false} />
-            </Col>
-
-            <Col lg={7} xs={24} md={11}>
-              <Form.Item rules={[ruleRequired]} name="first_name">
-                <Input type="text" placeholder="Nombre" />
-              </Form.Item>
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <Form.Item rules={[ruleRequired]} name="flast_name">
-                <Input type="text" placeholder="Apellido paterno" />
-              </Form.Item>
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <Form.Item name="mlast_name">
-                <Input type="text" placeholder="Apellido materno" />
-              </Form.Item>
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <Form.Item name="gender">
-                <Select options={genders} placeholder="Género" />
-              </Form.Item>
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <Form.Item>
-                <DatePicker
-                  style={{ width: "100%" }}
-                  onChange={onChange}
-                  moment={"YYYY-MM-DD"}
-                  placeholder="Fecha de nacimiento"
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <Form.Item name="code">
-                <Input type="text" placeholder="Núm. empleado" />
-              </Form.Item>
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
-                <Input
-                  type="email"
-                  placeholder="E-mail"
-                  onBlur={(value) =>
-                    form.setFieldsValue({
-                      email: value.target.value.toLowerCase(),
-                    })
-                  }
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <Form.Item rules={[ruleRequired]} name="password">
-                <Input.Password type="text" placeholder="Contraseña" />
-              </Form.Item>
-            </Col>
-            <Col lg={7} xs={24} md={11}>
-              <Form.Item
-                rules={[
-                  ruleRequired,
-                  ({ getFieldValue }) => ({
-                    validator() {
-                      if (
-                        getFieldValue("password") ==
-                        getFieldValue("passwordTwo")
-                      ) {
-                        return Promise.resolve();
-                      } else {
-                        return Promise.reject("Las contraseñas no coinciden");
-                      }
-                    },
-                  }),
-                ]}
-                name="passwordTwo"
-              >
-                <Input.Password type="text" placeholder="Contraseña" />
-              </Form.Item>
-            </Col>
-            {accessIntranet !== "false" && intranetAccess && (
-              <Col lg={7} xs={24} md={11}>
-                <Form.Item
-                  name="intranet_access"
-                  label="Acceso a la intranet"
-                  valuePropName="checked"
-                >
-                  <Switch
-                    checkedChildren={<CheckOutlined />}
-                    unCheckedChildren={<CloseOutlined />}
+                <Col lg={7} xs={24} md={11}>
+                  <SelectDepartment
+                    viewLabel={false}
+                    name="person_department"
+                    style={false}
+                    onChange={getWorkTitle}
                   />
-                </Form.Item>
-              </Col>
-            )}
-            <Col lg={7} xs={24} md={11}>
-              <Form.Item name="register_date">
-                <DatePicker
-                  style={{ width: "100%" }}
-                  onChange={onChangeIngPlatform}
-                  defaultValue={moment()}
-                  moment={"YYYY-MM-DD"}
-                  placeholder="Fecha de ingreso a la plataforma"
-                />
-              </Form.Item>
-            </Col>
-            {/* {hideProfileSecurity && ( */}
-            <Col lg={7} xs={24} md={11}>
-              <SelectGroup />
-            </Col>
-            <Col lg={22} xs={24}>
-              <Form.Item labelAlign="right">
-                <Space style={{ float: "right" }}>
-                  <Button onClick={() => closeDialog()}>Cancelar</Button>
-                  <Button type="primary" htmlType="submit">
-                    Guardar
-                  </Button>
-                </Space>
-              </Form.Item>
-            </Col>
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <SelectJob
+                    viewLabel={false}
+                    name="job"
+                    style={false}
+                    onChange={getWorkTitle}
+                  />
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <SelectWorkTitle
+                    viewLabel={false}
+                    style={false}
+                    forPerson={true}
+                    department={departmentSelected}
+                    job={jobSelected}
+                  />
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <SelectWorkTitleStatus viewLabel={false} style={false} />
+                </Col>
+
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item rules={[ruleRequired]} name="first_name">
+                    <Input type="text" placeholder="Nombre" />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item rules={[ruleRequired]} name="flast_name">
+                    <Input type="text" placeholder="Apellido paterno" />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item name="mlast_name">
+                    <Input type="text" placeholder="Apellido materno" />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item name="gender">
+                    <Select options={genders} placeholder="Género" />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item>
+                    <DatePicker
+                      style={{ width: "100%" }}
+                      onChange={onChange}
+                      moment={"YYYY-MM-DD"}
+                      placeholder="Fecha de nacimiento"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item name="code">
+                    <Input type="text" placeholder="Núm. empleado" />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
+                    <Input
+                      type="email"
+                      placeholder="E-mail"
+                      onBlur={(value) =>
+                        form.setFieldsValue({
+                          email: value.target.value.toLowerCase(),
+                        })
+                      }
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item rules={[ruleRequired]} name="password">
+                    <Input.Password type="text" placeholder="Contraseña" />
+                  </Form.Item>
+                </Col>
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item
+                    rules={[
+                      ruleRequired,
+                      ({ getFieldValue }) => ({
+                        validator() {
+                          if (
+                            getFieldValue("password") ==
+                            getFieldValue("passwordTwo")
+                          ) {
+                            return Promise.resolve();
+                          } else {
+                            return Promise.reject(
+                              "Las contraseñas no coinciden"
+                            );
+                          }
+                        },
+                      }),
+                    ]}
+                    name="passwordTwo"
+                  >
+                    <Input.Password type="text" placeholder="Contraseña" />
+                  </Form.Item>
+                </Col>
+                {accessIntranet !== "false" && intranetAccess && (
+                  <Col lg={7} xs={24} md={11}>
+                    <Form.Item
+                      name="intranet_access"
+                      label="Acceso a la intranet"
+                      valuePropName="checked"
+                    >
+                      <Switch
+                        checkedChildren={<CheckOutlined />}
+                        unCheckedChildren={<CloseOutlined />}
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+                <Col lg={7} xs={24} md={11}>
+                  <Form.Item name="register_date">
+                    <DatePicker
+                      style={{ width: "100%" }}
+                      onChange={onChangeIngPlatform}
+                      defaultValue={moment()}
+                      moment={"YYYY-MM-DD"}
+                      placeholder="Fecha de ingreso a la plataforma"
+                    />
+                  </Form.Item>
+                </Col>
+                {/* {hideProfileSecurity && ( */}
+                <Col lg={7} xs={24} md={11}>
+                  <SelectGroup />
+                </Col>
+                <Col lg={22} xs={24}>
+                  <Form.Item labelAlign="right">
+                    <Space style={{ float: "right" }}>
+                      <Button onClick={() => closeDialog()}>Cancelar</Button>
+                      <Button type="primary" htmlType="submit">
+                        Guardar
+                      </Button>
+                    </Space>
+                  </Form.Item>
+                </Col>
               </Row>
             </Col>
           </Row>
