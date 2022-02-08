@@ -9,48 +9,37 @@ const SelectWorkTitle = ({
   labelText = "Plaza laboral",
   forDepto = false,
   forPerson = false,
+  department = null,
+  job = null,
   ...props
 }) => {
   const [options, setOptions] = useState(null);
 
   useEffect(() => {
-    console.log('change props');
     setOptions([]);
-    console.log('cat_work_title =>', props.cat_work_title);
     if (props.cat_work_title) {
-      let data = [];
-      if(props.department !== null && props.job !== null){
-        data = props.cat_work_title.filter((item) => item.department.id === props.department && item.job.id === props.job)
-        .map(function(item) {
-          return {
-            label: forDepto
-              ? `${item.department.name} - ${item.name}`
-              : item.name,
-            value: item.id,
-            key: item.id,
-          };
-        })
-        /* data = props.cat_work_title.map((item, index) => {
-          return {
-            label: forDepto
-              ? `${item.department.name} - ${item.name}`
-              : item.name,
-            value: item.id,
-            key: item.id + index,
-          };
-        }); */
+      let data = props.cat_work_title;
+      if (department || job) {
+        data = data.filter(
+          (item) =>
+            department &&
+            item.department.id === department &&
+            job &&
+            item.job.id === job
+        );
       }
-
-
-      /* let data = props.cat_work_title.map((item, index) => {
+      data = data.map((item) => {
         return {
           label: forDepto
             ? `${item.department.name} - ${item.name}`
+            : forPerson
+            ? `Persona - ${item.name}`
             : item.name,
           value: item.id,
-          key: item.id + index,
+          key: item.id,
         };
-      }); */
+      });
+
       setOptions(data);
     }
   }, [props.department, props.job]);

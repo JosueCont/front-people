@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Form, Row, Col, Button, Table, Spin, Input } from "antd";
+import {
+  Typography,
+  Form,
+  Row,
+  Col,
+  Button,
+  Table,
+  Spin,
+  Input,
+  message,
+} from "antd";
 import { DeleteOutlined, EditOutlined, GoldOutlined } from "@ant-design/icons";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -7,6 +17,11 @@ import SelectWorkTitle from "../selects/SelectWorkTitle";
 import SelectLevel from "../selects/SelectLevel";
 import SelectJob from "../selects/SelectJob";
 import SelectDepartment from "../selects/SelectDepartment";
+import {
+  messageDeleteSuccess,
+  messageError,
+  messageUpdateSuccess,
+} from "../../utils/constant";
 
 const WorkTitle = ({ currentNode, ...props }) => {
   const { Title } = Typography;
@@ -35,15 +50,6 @@ const WorkTitle = ({ currentNode, ...props }) => {
       width: 100,
       render: (item) => {
         return <div>{item.job ? item.job.name : ""}</div>;
-      },
-    },
-    {
-      title: "Plaza a la que reporta",
-      width: 100,
-      render: (item) => {
-        return (
-          <div>{item.work_title_report ? item.work_title_report.name : ""}</div>
-        );
       },
     },
     {
@@ -165,7 +171,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
       setEdit(false);
       setLoading(false);
       resetForm();
-      message.error("Ocurrio un error intente de nuevo.");
+      message.error(messageError);
     }
   };
 
@@ -219,7 +225,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
       <Form
         layout={"vertical"}
         form={form}
-        onFinish={(values) => onFinishForm(values, "/person/person-type/")}
+        onFinish={(values) => onFinishForm(values, "/business/work-title/")}
       >
         <Row>
           <Col lg={6} xs={22} offset={1}>
@@ -232,13 +238,6 @@ const WorkTitle = ({ currentNode, ...props }) => {
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <SelectJob rules={[ruleRequired]} />
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <SelectWorkTitle
-              labelText={"Plaza a la que reporta"}
-              name={"work_title_report"}
-              forDepto={true}
-            />
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <SelectLevel textLabel={"Nivel"} />
