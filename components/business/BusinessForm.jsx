@@ -481,6 +481,7 @@ const businessForm = ({permissions, ...props}) => {
             {treeTable ? (
               <Table
                 className={"mainTable"}
+                scroll={{x:300}}
                 size="small"
                 columns={columns}
                 dataSource={business}
