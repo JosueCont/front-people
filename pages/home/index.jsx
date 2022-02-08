@@ -863,7 +863,7 @@ const homeScreen = ({ ...props }) => {
           onChange={(e) => importPersonFileExtend(e)}
         />
       </Menu.Item>
-      <Menu.Item key="2">
+      {/* <Menu.Item key="2">
         <a
           className={"ml-20"}
           icon={<UploadOutlined />}
@@ -879,7 +879,7 @@ const homeScreen = ({ ...props }) => {
           style={{ display: "none" }}
           onChange={(e) => importPersonFileExtend(e)}
         />
-      </Menu.Item>
+      </Menu.Item> */}
     </Menu>
   );
 
