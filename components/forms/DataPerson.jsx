@@ -227,37 +227,13 @@ const DataPerson = ({ config, person = null, ...props }) => {
   return (
     <Spin tip="Cargando..." spinning={loading}>
       <Form onFinish={onFinishPerson} layout={"vertical"} form={formPerson}>
-        <Row>
-          <Col lg={24} xs={24}>
-            <Row>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="person_type" label="Tipo de persona">
-                  <SelectPersonType />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item
-                  name="first_name"
-                  label="Nombre(s)"
-                  rules={[{ message: "Ingresa un nombre" }]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item
-                  name="flast_name"
-                  label="Apellido Paterno"
-                  rules={[{ message: "Ingresa un apellido paterno" }]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col lg={7} xs={22} offset={1}>
-                <Row justify="center">
-                  <Col lg={12} md={8} xs={24}>
+        <Row justify="center">
+          <Col lg={22}>
+            <Row justify="space-between" gutter={20}>
+                <Col lg={8} xs={24}>
+                    <SelectPersonType label="Tipo de persona" />
+                </Col>
+                <Col lg={6} md={0} xs={0} xl={0} >
                     <Spin tip="Cargando..." spinning={loadImge}>
                       <div
                         style={
@@ -315,7 +291,87 @@ const DataPerson = ({ config, person = null, ...props }) => {
                       </div>
                     </Spin>
                   </Col>
-                  <Col lg={12} md={16} xs={24}>
+            </Row>
+            <Row gutter={20}>
+              <Col lg={8} xs={24} md={12}>
+                <Form.Item
+                  name="first_name"
+                  label="Nombre(s)"
+                  rules={[{ message: "Ingresa un nombre" }]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24} md={12}>
+                <Form.Item
+                  name="flast_name"
+                  label="Apellido Paterno"
+                  rules={[{ message: "Ingresa un apellido paterno" }]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={24}>
+                <Row justify="center">
+                  <Col lg={0} md={12} xs={24} xl={12}>
+                    <Spin tip="Cargando..." spinning={loadImge}>
+                      <div
+                        style={
+                          photo
+                            ? {
+                                width: "120px",
+                                height: "120px",
+                                display: "flex",
+                                flexWrap: "wrap",
+                                alignContent: "center",
+                                textAlign: "center",
+                              }
+                            : {}
+                        }
+                      >
+                        <Upload
+                          name="avatar"
+                          listType="picture-card"
+                          showUploadList={false}
+                          onChange={upImage}
+                        >
+                          {photo ? (
+                            <div
+                              className="frontImage"
+                              style={
+                                photo
+                                  ? {
+                                      width: "120px",
+                                      height: "120px",
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      borderRadius: "10px",
+                                      textAlign: "center",
+                                      alignContent: "center",
+                                    }
+                                  : {}
+                              }
+                            >
+                              <img
+                                className="img"
+                                src={photo}
+                                alt="avatar"
+                                preview={false}
+                                style={{
+                                  width: "120px",
+                                  height: "120px",
+                                  borderRadius: "11px",
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            uploadButton
+                          )}
+                        </Upload>
+                      </div>
+                    </Spin>
+                  </Col>
+                  <Col lg={24} md={12} xs={24} xl={12}>
                     <Form.Item
                       name="date_of_admission"
                       label="Fecha de ingreso"
@@ -324,6 +380,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                         onChange={onChangeDateAdmission}
                         moment={"YYYY-MM-DD"}
                         readOnly
+                        style={{width:'100%'}}
                       />
                     </Form.Item>
                     <Switch
@@ -335,7 +392,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   </Col>
                 </Row>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="mlast_name"
                   label="Apellido Materno"
@@ -344,7 +401,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Input />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item label="Empresa">
                   <Input
                     readOnly
@@ -352,7 +409,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <SelectDepartment
                   disabled={
                     (props.user && props.user.nodes) ||
@@ -364,7 +421,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   style={false}
                 />
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <SelectJob
                   disabled={
                     (props.user && props.user.nodes) ||
@@ -376,7 +433,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   style={false}
                 />
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="register_date"
                   label="Fecha de ingreso a la plataforma"
@@ -391,7 +448,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
               </Col>
               {((props.user && props.user.nodes) ||
                 (props.user && props.user.is_admin)) && (
-                <Col lg={7} xs={22} offset={1}>
+                <Col lg={8} xs={24} md={12}>
                   <Form.Item label="Número de empleado" name="code">
                     <Input type="text" placeholder="Núm. empleado" />
                   </Form.Item>
@@ -399,7 +456,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
               )}
 
               {config && config.intranet_enabled && (
-                <Col lg={7} xs={22} offset={1}>
+                <Col lg={8} xs={24} md={12}>
                   <Form.Item
                     name="intranet_access"
                     label="Acceso a la intranet"
@@ -414,7 +471,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
               )}
               {((props.user && props.user.nodes) ||
                 (props.user && props.user.is_admin)) && (
-                <Col lg={7} xs={22} offset={1}>
+                <Col lg={8} xs={24} md={12}>
                   <Form.Item name="report_to" label="Reporta a ">
                     <Select
                       options={props.people_company}
@@ -425,7 +482,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
               )}
 
               {hideProfileSecurity && (
-                <Col lg={15} xs={22} offset={1}>
+                <Col lg={8} xs={24} md={12}>
                   <SelectGroup viewLabel={true} />
                   {/* <Form.Item name="groups" label="Perfil de seguridad">
                     <Select
@@ -439,14 +496,14 @@ const DataPerson = ({ config, person = null, ...props }) => {
                 </Col>
               )}
             </Row>
-            <Row>
+            <Row gutter={20}>
               <hr />
-              <Col offset={1} span={23}>
+              <Col span={23}>
                 <Title level={5} style={{ marginBottom: 15 }}>
                   Información adicional
                 </Title>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="email"
                   label="Dirección de e-mail"
@@ -455,7 +512,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Input disabled />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="birth_date" label="Fecha de nacimiento">
                   <DatePicker
                     style={{ width: "100%" }}
@@ -465,7 +522,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="civil_status" label="Estado Civil">
                   <Select
                     options={civilStatus}
@@ -473,7 +530,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="gender" label="Género">
                   <Select
                     options={genders}
@@ -481,17 +538,17 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="curp" label="CURP" rules={[curpFormat]}>
                   <Input maxLength={18} />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="rfc" label="RFC" rules={[rfcFormat]}>
                   <Input maxLength={13} />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="imss"
                   label="IMSS"
@@ -500,7 +557,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Input maxLength={11} />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="periodicity" label="Periodicidad">
                   <Select
                     options={periodicity}

@@ -221,18 +221,18 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
             onFinishForm(values, `/business/department/?node=${currentNode.id}`)
           }
         >
-          <Row>
-            <Col lg={6} xs={22} offset={1}>
+          <Row gutter={20}>
+            <Col lg={6} xs={22} md={12}>
               <Form.Item label="Empresa" rules={[ruleRequired]}>
                 <Input readOnly value={currentNode.name} />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={6} xs={22} md={12}>
               <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
                 <Input />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={6} xs={22} md={12}>
               <Form.Item
                 name="description"
                 label="Descripción"
@@ -241,7 +241,7 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
                 <Input />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={6} xs={22} md={12}>
               <Form.Item name="code" label="Código">
                 <Input />
               </Form.Item>

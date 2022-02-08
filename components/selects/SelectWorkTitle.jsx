@@ -14,9 +14,35 @@ const SelectWorkTitle = ({
   const [options, setOptions] = useState(null);
 
   useEffect(() => {
+    console.log('change props');
     setOptions([]);
+    console.log('cat_work_title =>', props.cat_work_title);
     if (props.cat_work_title) {
-      let data = props.cat_work_title.map((item, index) => {
+      let data = [];
+      if(props.department !== null && props.job !== null){
+        data = props.cat_work_title.filter((item) => item.department.id === props.department && item.job.id === props.job)
+        .map(function(item) {
+          return {
+            label: forDepto
+              ? `${item.department.name} - ${item.name}`
+              : item.name,
+            value: item.id,
+            key: item.id,
+          };
+        })
+        /* data = props.cat_work_title.map((item, index) => {
+          return {
+            label: forDepto
+              ? `${item.department.name} - ${item.name}`
+              : item.name,
+            value: item.id,
+            key: item.id + index,
+          };
+        }); */
+      }
+
+
+      /* let data = props.cat_work_title.map((item, index) => {
         return {
           label: forDepto
             ? `${item.department.name} - ${item.name}`
@@ -24,10 +50,10 @@ const SelectWorkTitle = ({
           value: item.id,
           key: item.id + index,
         };
-      });
+      }); */
       setOptions(data);
     }
-  }, [props.cat_work_title]);
+  }, [props.department, props.job]);
 
   return (
     <Form.Item

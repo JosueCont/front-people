@@ -264,6 +264,7 @@ const FormTraining = ({ person_id = null }) => {
         layout="vertical"
         form={formTraining}
         onFinish={formFinishTraining}
+        className="inputs_form_responsive"
       >
         <Row>
           <Col lg={6} xs={22} offset={1}>

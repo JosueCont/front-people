@@ -16,7 +16,7 @@ const SelectPersonType = ({ ...props }) => {
   }, [props.cat_person_type]);
 
   return (
-    <Form.Item name="person_type">
+    <Form.Item name="person_type" label={props.label ? props.label : null}>
       <Select options={personType} placeholder="Tipo de persona" />
     </Form.Item>
   );
