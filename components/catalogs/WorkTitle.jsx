@@ -13,7 +13,6 @@ import {
 import { DeleteOutlined, EditOutlined, GoldOutlined } from "@ant-design/icons";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
-import SelectWorkTitle from "../selects/SelectWorkTitle";
 import SelectLevel from "../selects/SelectLevel";
 import SelectJob from "../selects/SelectJob";
 import SelectDepartment from "../selects/SelectDepartment";
@@ -22,6 +21,9 @@ import {
   messageError,
   messageUpdateSuccess,
 } from "../../utils/constant";
+import { getWorkTitle } from "../../redux/catalogCompany";
+import WebApiPeople from "../../api/WebApiPeople";
+import SelectWorkTitle from "../selects/SelectWorkTitle";
 
 const WorkTitle = ({ currentNode, ...props }) => {
   const { Title } = Typography;
@@ -113,7 +115,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
         data
       );
       props
-        .getJobs(currentNode.id)
+        .getWorkTitle(currentNode.id)
         .then((response) => {
           resetForm();
           message.success(messageSaveSuccess);
@@ -148,13 +150,15 @@ const WorkTitle = ({ currentNode, ...props }) => {
   };
 
   const updateRegister = async (url, value) => {
+    console.log("UPDATE-->> ", value);
+    value.node = currentNode.id;
     try {
       let response = await WebApiPeople.updateRegisterCatalogs(
-        `/business/job/${id}/`,
+        `/business/work-title/${id}/`,
         value
       );
       props
-        .getJobs(currentNode.id)
+        .getWorkTitle(currentNode.id)
         .then((response) => {
           setId("");
           resetForm();
@@ -203,7 +207,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
         deleted.url + `${deleted.id}/`
       );
       props
-        .getJobs(currentNode.id)
+        .getWorkTitle(currentNode.id)
         .then((response) => {
           resetForm();
           message.success(messageDeleteSuccess);
@@ -227,22 +231,34 @@ const WorkTitle = ({ currentNode, ...props }) => {
         form={form}
         onFinish={(values) => onFinishForm(values, "/business/work-title/")}
       >
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
+        <Row gutter={20}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <SelectDepartment rules={[ruleRequired]} />
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <SelectJob rules={[ruleRequired]} />
           </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <SelectLevel textLabel={"Nivel"} />
+          <Col lg={8} xs={22} md={12}>
+            <SelectWorkTitle
+              labelText={"Plaza a la que reporta"}
+              name={"work_title_report"}
+              forDepto={true}
+            />
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
+            <SelectLevel textLabel={"Nivel"} rules={[ruleRequired]} />
+          </Col>
+          <Col lg={8} xs={22} md={12}>
+            <Form.Item name="vacancy" label="Vacantes">
+              <Input type="number" min={1} />
+            </Form.Item>
+          </Col>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="salary" label="Salario" rules={[ruleRequired]}>
               <Input />
             </Form.Item>
@@ -278,4 +294,4 @@ const mapState = (state) => {
   return { cat_work_title: state.catalogStore.cat_work_title };
 };
 
-export default connect(mapState)(WorkTitle);
+export default connect(mapState, { getWorkTitle })(WorkTitle);

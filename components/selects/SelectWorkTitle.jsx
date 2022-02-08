@@ -60,7 +60,16 @@ const SelectWorkTitle = ({
         style={props.style ? props.style : {}}
         onChange={props.onChange ? props.onChange : null}
         notFoundContent={"No se encontraron resultados."}
-      />
+      >
+        <Option value="korea" label="Korea">
+          <div className="demo-option-label-item">
+            <span role="img" aria-label="Korea">
+              🇰🇷
+            </span>
+            Korea (韩国)
+          </div>
+        </Option>
+      </Select>
     </Form.Item>
   );
 };
