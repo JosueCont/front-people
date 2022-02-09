@@ -15,6 +15,7 @@ import {
   CheckCircleTwoTone,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
+import WebApiPeople from "../../api/WebApiPeople";
 const PreviewBulkUpload = ({ ...props }) => {
   const route = useRouter();
   const [loading, setLoading] = useState(true);
@@ -105,10 +106,7 @@ const PreviewBulkUpload = ({ ...props }) => {
 
   useEffect(() => {
     if (props.formData) {
-      Axios.post(
-        API_URL + `/person/bulk-upload-person/upload_xls/`,
-        props.formData
-      )
+      WebApiPeople.BulkMassivePerson(props.formData)
         .then((response) => {
           if (response.data.data[0].issync == false) {
             let cols = [];
@@ -161,7 +159,7 @@ const PreviewBulkUpload = ({ ...props }) => {
             persons: dataUpload,
           };
 
-          Axios.post(API_URL + "/person/person/massive_save_person/", data)
+          WebApiPeople.saveMassivePerson(data)
             .then((response) => {
               if (response.data.persons.length > 0) {
                 setDataUpload(response.data.persons);
