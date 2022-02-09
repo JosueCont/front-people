@@ -159,10 +159,6 @@ const PreviewBulkUpload = ({ ...props }) => {
           setDisabledButton(true);
           const data = {
             persons: dataUpload,
-            credentials: {
-              user: user_session.email,
-              password: "",
-            },
           };
 
           Axios.post(API_URL + "/person/person/massive_save_person/", data)

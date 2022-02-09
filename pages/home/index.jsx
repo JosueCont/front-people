@@ -859,7 +859,6 @@ const homeScreen = ({ ...props }) => {
           ref={inputFileRef}
           type="file"
           style={{ display: "none" }}
-          // onChange={(e) => importPersonFile(e)}
           onChange={(e) => importPersonFileExtend(e)}
         />
       </Menu.Item>
