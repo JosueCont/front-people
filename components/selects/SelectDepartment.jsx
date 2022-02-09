@@ -46,7 +46,7 @@ const SelectDepartment = ({
           style={props.style ? props.style : {}}
           onChange={props.onChange ? props.onChange : null}
           notFoundContent={"No se encontraron resultados."}
-        />
+        />  
       </Form.Item>
     </>
   );

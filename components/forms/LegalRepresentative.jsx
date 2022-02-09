@@ -5,9 +5,12 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { API_URL } from "../../config/config";
 
-const LegalRepresentative = ({ node, formAddress, ...props }) => {
+const LegalRepresentative = ({ node, ...props }) => {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
+  const [form] = Form.useForm();
+
+  console.log('node ====>', node);
 
   onchange = (value) => {
     getStates(value);
@@ -15,6 +18,7 @@ const LegalRepresentative = ({ node, formAddress, ...props }) => {
 
   useEffect(() => {
     getCountries();
+    getLegalRepresentative();
   }, []);
 
   const getCountries = async () => {
@@ -52,8 +56,30 @@ const LegalRepresentative = ({ node, formAddress, ...props }) => {
         console.log(e);
       });
   };
+
+  const getLegalRepresentative = async () => {
+    axios
+      .get(API_URL + `/business/legal-representative/?node=${node}`)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log(response.data);
+          /* if (response.data.results.length > 0) {
+            let states = response.data.results.map((a) => {
+              return { value: a.id, label: a.name_state };
+            });
+            setStates(states);
+          } */
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
+  
+
   return (
-    <Form layout={"vertical"} form={formAddress}>
+    <Form layout={"vertical"} form={form}>
       <Row>
         <Col lg={6} xs={22} offset={1}>
           <Form.Item name="postal_code" label="Nombre">
