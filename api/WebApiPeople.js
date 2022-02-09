@@ -252,9 +252,11 @@ class WebApiPeople {
       data
     );
   }
+
   static saveMassiveJobs(data) {
     return WebApi.ApisType(`/person/job/import_jobs_xls/`, "post", data);
   }
+
   static BulkMassivePerson(data) {
     return WebApi.ApisType(
       `/person/bulk-upload-person/upload_xls/`,
@@ -262,8 +264,20 @@ class WebApiPeople {
       data
     );
   }
+
   static saveMassivePerson(data) {
     return WebApi.ApisType("/person/person/massive_save_person/", "post", data);
+  }
+
+  static deletePerson(data) {
+    return WebApi.ApisType("/person/person/deactivate_by_ids/", "post", data);
+  }
+
+  static getCompaniesPeople(data) {
+    return WebApi.ApisType(
+      `/business/node-person/get_assignment/?person__id=${data}`,
+      "get"
+    );
   }
 }
 export default WebApiPeople;
