@@ -57,7 +57,7 @@ const ConfigCompany = ({ ...props }) => {
               />
             </TabPane>
             <TabPane tab="Representante legal" key="tab_3">
-              <LegalRepresentative />
+              <LegalRepresentative node={router.query.id} />
             </TabPane>
             <TabPane tab="Registro patronal" key="tab_4">
               <PatronalRegistration />
