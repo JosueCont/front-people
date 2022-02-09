@@ -44,6 +44,14 @@ class WebApiFiscal {
       data
     );
   }
+
+  static getCountries() {
+    return WebApi.ApisType(`/fiscal/country/`, "get");
+  }
+
+  static getStates(data) {
+    return WebApi.ApisType(`/fiscal/state/?country=${data}`, "get");
+  }
 }
 
 export default WebApiFiscal;

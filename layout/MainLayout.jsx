@@ -1,9 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Layout, Row, Col, Avatar, Menu, Space, Drawer, Typography, Divider } from "antd";
+import { Layout, Row, Col, Menu, Drawer, Typography, Divider } from "antd";
 import { useRouter } from "next/router";
-import {DollarCircleOutlined} from '@ant-design/icons';
-import HeaderCustom from "../components/Header";
-import Footer from "../components/Footer";
+import { DollarCircleOutlined } from "@ant-design/icons";
 import { Helmet } from "react-helmet";
 import { userCompanyName } from "../libs/auth";
 import { connect } from "react-redux";
@@ -12,14 +10,6 @@ import { css, Global } from "@emotion/core";
 import { getFlavor, getRouteFlavor } from "../utils/brand";
 import NewHeader from "../components/NewHeader";
 import MainSider from "../components/MainSider";
-import SiderNomina from '../components/SiderNomina';
-import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
 
 const { Header, Content, Sider } = Layout;
 
@@ -32,14 +22,14 @@ const MainLayout = ({
   onClickImage,
   hideSearch,
   hideLogo = false,
-  nomina =false,
+  nomina = false,
   ...props
 }) => {
   const router = useRouter();
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
-    const {Text, Title} = Typography;
+  const { Text, Title } = Typography;
   let nodeName = userCompanyName();
   const [mainLogo, setMainLogo] = useState("");
   const [company, setCompany] = useState("");
@@ -47,13 +37,6 @@ const MainLayout = ({
   const [flavor, setFlavor] = useState({});
   const [routeFlavor, setRouteFlavor] = useState({});
   const [showEvents, setShowEvents] = useState(false);
-
-  /* Variable del side menu */
-  const [collapsed, setCollapsed] = useState(false);
-  const { SubMenu } = Menu;
-  const onCollapse = (collapsed) => {
-    setCollapsed(collapsed);
-  };
 
   useLayoutEffect(() => {
     try {
@@ -101,9 +84,9 @@ const MainLayout = ({
     }
   }, [props.currentNode]);
 
-   const closeEvents = () => {
-        setShowEvents(false);
-    }
+  const closeEvents = () => {
+    setShowEvents(false);
+  };
 
   return (
     <Layout className="layout" style={{ minHeight: "100vh" }}>
@@ -253,16 +236,7 @@ const MainLayout = ({
           <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
         )}
       </Helmet>
-      {/* <Layout>
-        <NewHeader
-          key="main_header"
-          hideMenu={hideMenu}
-          mainLogo={mainLogo}
-          hideProfile={hideProfile}
-          onClickImage={onClickImage}
-          hideSearch={hideSearch}
-          hideLogo={hideLogo}
-        /> */}
+
       <Layout>
         <NewHeader
           key="main_header"
@@ -275,29 +249,17 @@ const MainLayout = ({
           setShowEvents={setShowEvents}
         />
         <Layout>
-          {/* {!hideMenu && (
+          {!hideMenu && (
             <MainSider
               currentKey={currentKey}
               defaultOpenKeys={
                 props.defaultOpenKeys ? props.defaultOpenKeys : null
               }
             />
-          )} */}
-          {
-            !hideMenu && (
-              <MainSider
-                currentKey={currentKey}
-                defaultOpenKeys={
-                  props.defaultOpenKeys ? props.defaultOpenKeys : null
-                }
-              />
-            ) 
-          }
+          )}
           <Content>
             <div className="div-main-layout">{props.children}</div>
           </Content>
-          {/*  */}
-          {/*  */}
         </Layout>
       </Layout>
       <Drawer placement="right" onClose={closeEvents} visible={showEvents}>

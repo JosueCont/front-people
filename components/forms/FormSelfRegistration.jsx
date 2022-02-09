@@ -9,9 +9,7 @@ import {
   Row,
   Col,
 } from "antd";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import WebApiPeople from "../../api/WebApiPeople";
 import Link from "next/link";
 import LoginModal from "../modal/LoginModal";
@@ -19,6 +17,7 @@ import { genders } from "../../utils/constant";
 
 import moment from "moment";
 import { ruleRequired } from "../../utils/rules";
+import SelectPersonType from "../selects/SelectPersonType";
 
 const FormSelfRegistration = ({
   hideProfileSecurity = true,
@@ -33,17 +32,9 @@ const FormSelfRegistration = ({
   ...props
 }) => {
   const [form] = Form.useForm();
-  const [personType, setPersonType] = useState([]);
-  const [departmentId, setDepartmentId] = useState(null);
   const [date, setDate] = useState("");
   const [disabled, setDisabled] = useState(false);
   const toDay = moment().format("YYYY-MM-DD").toString();
-
-  useEffect(() => {
-    if (node) {
-      getValueSelects();
-    }
-  }, [node]);
 
   const onFinish = (value) => {
     if (date !== "") {
@@ -59,22 +50,6 @@ const FormSelfRegistration = ({
 
       createPerson(value);
     }
-  };
-
-  const getValueSelects = async (id) => {
-    Axios.get(API_URL + `/person/person-type/`)
-      .then((response) => {
-        if (response.status === 200) {
-          let typesPerson = response.data.results;
-          typesPerson = typesPerson.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setPersonType(typesPerson);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   };
 
   const createPerson = async (value) => {
@@ -104,13 +79,6 @@ const FormSelfRegistration = ({
     setDate(dateString);
   }
 
-  const onChangeDepartment = (value) => {
-    form.setFieldsValue({
-      job: null,
-    });
-    setDepartmentId(value);
-  };
-
   return (
     <>
       <Layout className="center-content">
@@ -132,13 +100,7 @@ const FormSelfRegistration = ({
             >
               <Row>
                 <Col lg={7} xs={22} offset={1}>
-                  <Form.Item name="person_type" label="Tipo de persona">
-                    <Select
-                      style={{ textAlign: "left" }}
-                      options={personType}
-                      placeholder="Tipo de persona"
-                    />
-                  </Form.Item>
+                  <SelectPersonType />
                 </Col>
                 <Col lg={14} xs={22} offset={1}>
                   <Form.Item rules={[ruleRequired]} label="Empresa">

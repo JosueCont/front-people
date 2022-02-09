@@ -19,8 +19,6 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import moment from "moment";
 import { genders } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
@@ -41,7 +39,7 @@ const FormFamily = ({ person_id = null }) => {
 
   useEffect(() => {
     getFamily();
-    Axios.get(API_URL + "/setup/relationship/")
+    WebApiPeople.getRelationShip()
       .then((response) => {
         if (response.status === 200) {
           let relation = response.data.results;
@@ -246,7 +244,12 @@ const FormFamily = ({ person_id = null }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Familia</Title>
       </Row>
-       <Form layout={"vertical"} form={formFamily} onFinish={formFinishFamily} className="inputs_form_responsive">
+      <Form
+        layout={"vertical"}
+        form={formFamily}
+        onFinish={formFinishFamily}
+        className="inputs_form_responsive"
+      >
         <Row gutter={20}>
           <Col lg={8} xs={22} md={12}>
             <Form.Item

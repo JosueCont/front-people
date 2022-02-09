@@ -122,7 +122,7 @@ const homeScreen = ({ ...props }) => {
 
   const deactivatePerson = () => {
     setLoading(true);
-    Axios.post(API_URL + "/person/person/deactivate_by_ids/", {
+    WebApiPeople.deactivatePerson({
       persons_id: idsDeactivate,
     })
       .then((response) => {
@@ -160,9 +160,7 @@ const homeScreen = ({ ...props }) => {
     setListUserCompanies([]);
     setShowModalCompanies(false);
     try {
-      let response = await Axios.get(
-        API_URL + `/business/node-person/get_assignment/?person__id=${item.id}`
-      );
+      let response = WebApiPeoplegetCompaniesPeople(item.id);
       let result = response.data;
       let stringList = [];
       result.map((item) => {
@@ -790,7 +788,7 @@ const homeScreen = ({ ...props }) => {
       });
     }
     setLoading(true);
-    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
+    WebApiPeople.deletePerson({
       persons_id: ids,
     })
       .then((response) => {
@@ -859,11 +857,10 @@ const homeScreen = ({ ...props }) => {
           ref={inputFileRef}
           type="file"
           style={{ display: "none" }}
-          // onChange={(e) => importPersonFile(e)}
           onChange={(e) => importPersonFileExtend(e)}
         />
       </Menu.Item>
-      <Menu.Item key="2">
+      {/* <Menu.Item key="2">
         <a
           className={"ml-20"}
           icon={<UploadOutlined />}
@@ -879,7 +876,7 @@ const homeScreen = ({ ...props }) => {
           style={{ display: "none" }}
           onChange={(e) => importPersonFileExtend(e)}
         />
-      </Menu.Item>
+      </Menu.Item> */}
     </Menu>
   );
 

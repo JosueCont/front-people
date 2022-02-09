@@ -105,7 +105,7 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/family/${data}/`, "delete");
   }
 
-  static getRelationShip(data) {
+  static getRelationShip() {
     return WebApi.ApisType(`/setup/relationship/`, "get");
   }
 
@@ -252,8 +252,64 @@ class WebApiPeople {
       data
     );
   }
+
   static saveMassiveJobs(data) {
     return WebApi.ApisType(`/person/job/import_jobs_xls/`, "post", data);
+  }
+
+  static BulkMassivePerson(data) {
+    return WebApi.ApisType(
+      `/person/bulk-upload-person/upload_xls/`,
+      "post",
+      data
+    );
+  }
+
+  static saveMassivePerson(data) {
+    return WebApi.ApisType("/person/person/massive_save_person/", "post", data);
+  }
+
+  static deactivatePerson(data) {
+    return WebApi.ApisType("/person/person/deactivate_by_ids/", "post", data);
+  }
+
+  static deletePerson(data) {
+    return WebApi.ApisType(`/person/person/delete_by_ids/`, "post", data);
+  }
+
+  static getCompaniesPeople(data) {
+    return WebApi.ApisType(
+      `/business/node-person/get_assignment/?person__id=${data}`,
+      "get"
+    );
+  }
+
+  static deleteNode(data) {
+    return WebApi.ApisType("/business/node/" + data + "/", "delete");
+  }
+
+  static updateNode(id, data) {
+    return WebApi.ApisType("/business/node/" + id + "/", "patch", data);
+  }
+
+  static createNode(data) {
+    return WebApi.ApisType("/business/node/", "post", data);
+  }
+
+  static getNodeTree(data) {
+    return WebApi.ApisType(`/business/node/node_in_cascade/`, "post", data);
+  }
+
+  static changeStatusNode(id, data) {
+    return WebApi.ApisType(`/business/node/id}/`, "put", data);
+  }
+
+  static getDocumentPerson(data) {
+    return WebApi.ApisType(`/person/person/${data}/document_person/`, "get");
+  }
+
+  static deleteDocument(data) {
+    return WebApi.ApisType(`/person/document/${data}/`, "delete");
   }
 }
 export default WebApiPeople;

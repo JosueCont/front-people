@@ -23,8 +23,6 @@ import { useEffect } from "react";
 import moment from "moment";
 import { civilStatus, genders, periodicity } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import {
   curpFormat,
   minLengthNumber,
@@ -204,16 +202,11 @@ const DataPerson = ({ config, person = null, ...props }) => {
     let p = formPerson.getFieldsValue();
     isActive ? (p.is_active = false) : (p.is_active = true);
     delete p["date_of_admission"], p["node"], p["report_to"], p["department"];
-    Axios.put(API_URL + `/person/person/${person.id}/`, p)
+    WebApiPeople.updatePerson(p, person.id)
       .then((response) => {})
       .catch((error) => {
         console.log(error);
       });
-  };
-
-  const onChangeDepartment = (val) => {
-    formPerson.setFieldsValue({ job: null });
-    setDepartmentId(val);
   };
 
   const onChangeIngPlatform = (date, dateString) => {
@@ -230,67 +223,67 @@ const DataPerson = ({ config, person = null, ...props }) => {
         <Row justify="center">
           <Col lg={22}>
             <Row justify="space-between" gutter={20}>
-                <Col lg={8} xs={24}>
-                    <SelectPersonType label="Tipo de persona" />
-                </Col>
-                <Col lg={6} md={0} xs={0} xl={0} >
-                    <Spin tip="Cargando..." spinning={loadImge}>
-                      <div
-                        style={
-                          photo
-                            ? {
-                                width: "120px",
-                                height: "120px",
-                                display: "flex",
-                                flexWrap: "wrap",
-                                alignContent: "center",
-                                textAlign: "center",
-                              }
-                            : {}
-                        }
-                      >
-                        <Upload
-                          name="avatar"
-                          listType="picture-card"
-                          showUploadList={false}
-                          onChange={upImage}
-                        >
-                          {photo ? (
-                            <div
-                              className="frontImage"
-                              style={
-                                photo
-                                  ? {
-                                      width: "120px",
-                                      height: "120px",
-                                      display: "flex",
-                                      flexWrap: "wrap",
-                                      borderRadius: "10px",
-                                      textAlign: "center",
-                                      alignContent: "center",
-                                    }
-                                  : {}
-                              }
-                            >
-                              <img
-                                className="img"
-                                src={photo}
-                                alt="avatar"
-                                preview={false}
-                                style={{
+              <Col lg={8} xs={24}>
+                <SelectPersonType label="Tipo de persona" />
+              </Col>
+              <Col lg={6} md={0} xs={0} xl={0}>
+                <Spin tip="Cargando..." spinning={loadImge}>
+                  <div
+                    style={
+                      photo
+                        ? {
+                            width: "120px",
+                            height: "120px",
+                            display: "flex",
+                            flexWrap: "wrap",
+                            alignContent: "center",
+                            textAlign: "center",
+                          }
+                        : {}
+                    }
+                  >
+                    <Upload
+                      name="avatar"
+                      listType="picture-card"
+                      showUploadList={false}
+                      onChange={upImage}
+                    >
+                      {photo ? (
+                        <div
+                          className="frontImage"
+                          style={
+                            photo
+                              ? {
                                   width: "120px",
                                   height: "120px",
-                                  borderRadius: "11px",
-                                }}
-                              />
-                            </div>
-                          ) : (
-                            uploadButton
-                          )}
-                        </Upload>
-                      </div>
-                    </Spin>
-                  </Col>
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  borderRadius: "10px",
+                                  textAlign: "center",
+                                  alignContent: "center",
+                                }
+                              : {}
+                          }
+                        >
+                          <img
+                            className="img"
+                            src={photo}
+                            alt="avatar"
+                            preview={false}
+                            style={{
+                              width: "120px",
+                              height: "120px",
+                              borderRadius: "11px",
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        uploadButton
+                      )}
+                    </Upload>
+                  </div>
+                </Spin>
+              </Col>
             </Row>
             <Row gutter={20}>
               <Col lg={8} xs={24} md={12}>
@@ -380,7 +373,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                         onChange={onChangeDateAdmission}
                         moment={"YYYY-MM-DD"}
                         readOnly
-                        style={{width:'100%'}}
+                        style={{ width: "100%" }}
                       />
                     </Form.Item>
                     <Switch
@@ -484,15 +477,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
               {hideProfileSecurity && (
                 <Col lg={8} xs={24} md={12}>
                   <SelectGroup viewLabel={true} />
-                  {/* <Form.Item name="groups" label="Perfil de seguridad">
-                    <Select
-                      options={props.cat_groups}
-                      showArrow
-                      style={{ width: "100%" }}
-                      placeholder="Perfiles de seguridad"
-                      notFoundContent={"No se encontraron resultados."}
-                    />
-                  </Form.Item> */}
                 </Col>
               )}
             </Row>
