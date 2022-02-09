@@ -263,18 +263,36 @@ const MainLayout = ({
         </Layout>
       </Layout>
       <Drawer placement="right" onClose={closeEvents} visible={showEvents}>
-        <Row justify="center">
-          <Col span={21}>
-            <Title level={3} style={{ marginBottom: 0, marginTop: 20 }}>
-              <span className="card_element_icon">
-                <DollarCircleOutlined />
-              </span>
-              Proximos eventos
-            </Title>
-            <Divider style={{ margin: "10px 0px 15px 0px" }} />
-          </Col>
-        </Row>
+          <Row justify="center" >
+              <Col span={21}>
+                  <Title level={3} style={{marginBottom:0, marginTop:20}}>
+                      <span className="card_element_icon">
+                          <DollarCircleOutlined />
+                      </span>
+                      Proximos eventos
+                  </Title>
+                  <Divider style={{margin:'10px 0px 15px 0px'}} />
+                  {/* <WeekCard /> */}
+              </Col>
+          </Row>
       </Drawer>
+
+
+      {/* </Layout> */}
+
+      {/* <HeaderCustom
+        key="main_header"
+        currentKey={props.currentKey}
+        hideMenu={hideMenu}
+        mainLogo={mainLogo}
+        hideProfile={hideProfile}
+        onClickImage={onClickImage}
+      /> */}
+
+      {/* <div style={{ marginLeft: "50px" }}>
+        <h1> {company != undefined && company}</h1>
+      </div> */}
+      {/* <Footer /> */}
     </Layout>
   );
 };

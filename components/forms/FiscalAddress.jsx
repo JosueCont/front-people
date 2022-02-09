@@ -53,11 +53,12 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
       <Row>
         <Col lg={6} xs={22} offset={1}>
           <Form.Item name="postal_code" label="Codigo postal">
-            <Select
+            <Input />
+            {/* <Select
               options={countries}
               notFoundContent={"No se encontraron resultados."}
               onChange={onchange}
-            />
+            /> */}
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
@@ -72,6 +73,7 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
         <Col lg={6} xs={22} offset={1}>
           <Form.Item name="state" label="Estado">
             <Select
+              showSearch
               options={states}
               notFoundContent={"No se encontraron resultados."}
             />
