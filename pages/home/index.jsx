@@ -122,7 +122,7 @@ const homeScreen = ({ ...props }) => {
 
   const deactivatePerson = () => {
     setLoading(true);
-    Axios.post(API_URL + "/person/person/deactivate_by_ids/", {
+    WebApiPeople.deletePerson({
       persons_id: idsDeactivate,
     })
       .then((response) => {
@@ -160,9 +160,7 @@ const homeScreen = ({ ...props }) => {
     setListUserCompanies([]);
     setShowModalCompanies(false);
     try {
-      let response = await Axios.get(
-        API_URL + `/business/node-person/get_assignment/?person__id=${item.id}`
-      );
+      let response = WebApiPeoplegetCompaniesPeople(item.id);
       let result = response.data;
       let stringList = [];
       result.map((item) => {
