@@ -269,8 +269,12 @@ class WebApiPeople {
     return WebApi.ApisType("/person/person/massive_save_person/", "post", data);
   }
 
-  static deletePerson(data) {
+  static deactivatePerson(data) {
     return WebApi.ApisType("/person/person/deactivate_by_ids/", "post", data);
+  }
+
+  static deletePerson(data) {
+    return WebApi.ApisType(`/person/person/delete_by_ids/`, "post", data);
   }
 
   static getCompaniesPeople(data) {
