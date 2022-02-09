@@ -122,7 +122,7 @@ const homeScreen = ({ ...props }) => {
 
   const deactivatePerson = () => {
     setLoading(true);
-    WebApiPeople.deletePerson({
+    WebApiPeople.deactivatePerson({
       persons_id: idsDeactivate,
     })
       .then((response) => {
@@ -788,7 +788,7 @@ const homeScreen = ({ ...props }) => {
       });
     }
     setLoading(true);
-    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
+    WebApiPeople.deletePerson({
       persons_id: ids,
     })
       .then((response) => {
