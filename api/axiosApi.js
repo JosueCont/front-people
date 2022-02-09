@@ -10,7 +10,6 @@ if (process.browser) {
   let splitDomain = window.location.hostname.split(".");
   if (splitDomain.length > 0) {
     tenant = splitDomain[0];
-    console.log("TENANT 1-->> ", tenant);
   }
 }
 
@@ -18,11 +17,9 @@ export const typeHttp = process.browser
   ? process.env.NEXT_PUBLIC_USE_HTTPS
   : process.env.USE_HTTPS;
 const domainApiWithTenant = `${tenant}.${domainApi}`;
-console.log("TENANT 2-->> ", domainApiWithTenant);
 
 export const config = {
   baseURL: `${typeHttp}://${domainApiWithTenant}/`,
-  // baseURL: domainApi,
   headers: { "Content-Type": "application/json" },
 };
 
