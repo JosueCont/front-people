@@ -255,5 +255,15 @@ class WebApiPeople {
   static saveMassiveJobs(data) {
     return WebApi.ApisType(`/person/job/import_jobs_xls/`, "post", data);
   }
+  static BulkMassivePerson(data) {
+    return WebApi.ApisType(
+      `/person/bulk-upload-person/upload_xls/`,
+      "post",
+      data
+    );
+  }
+  static saveMassivePerson(data) {
+    return WebApi.ApisType("/person/person/massive_save_person/", "post", data);
+  }
 }
 export default WebApiPeople;
