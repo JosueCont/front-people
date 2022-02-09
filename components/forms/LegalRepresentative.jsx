@@ -1,9 +1,7 @@
 import { Form, Input, Button, message, Row, Col, Select } from "antd";
-import Title from "antd/lib/skeleton/Title";
-import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
-import { API_URL } from "../../config/config";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const LegalRepresentative = ({ node, formAddress, ...props }) => {
   const [countries, setCountries] = useState([]);
@@ -18,8 +16,7 @@ const LegalRepresentative = ({ node, formAddress, ...props }) => {
   }, []);
 
   const getCountries = async () => {
-    axios
-      .get(API_URL + `/fiscal/country/`)
+    WebApiPeople.getCountries()
       .then((response) => {
         if (response.status === 200) {
           if (response.data.results.length > 0) {
@@ -36,8 +33,7 @@ const LegalRepresentative = ({ node, formAddress, ...props }) => {
   };
 
   const getStates = async (country) => {
-    axios
-      .get(API_URL + `/fiscal/state/?country=${country}`)
+    WebApiPeople.getStates(country)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.results.length > 0) {

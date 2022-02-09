@@ -1,8 +1,7 @@
 import { Form, Input, Row, Col, Select, Divider, Typography } from "antd";
-import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
-import { API_URL } from "../../config/config";
+import WebApiPeople from "../../api/WebApiPeople";
 import FiscalAddress from "./FiscalAddress";
 
 const PatronalRegistration = ({ node, formAddress, ...props }) => {
@@ -20,8 +19,7 @@ const PatronalRegistration = ({ node, formAddress, ...props }) => {
   }, []);
 
   const getCountries = async () => {
-    axios
-      .get(API_URL + `/fiscal/country/`)
+    WebApiPeople.getCountries()
       .then((response) => {
         if (response.status === 200) {
           if (response.data.results.length > 0) {
@@ -38,8 +36,7 @@ const PatronalRegistration = ({ node, formAddress, ...props }) => {
   };
 
   const getStates = async (country) => {
-    axios
-      .get(API_URL + `/fiscal/state/?country=${country}`)
+    WebApiPeople.getStates(country)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.results.length > 0) {
