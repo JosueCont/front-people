@@ -6,18 +6,12 @@ import {
   Row,
   Col,
   Input,
-  Image,
   Select,
   Modal,
   InputNumber,
-  DatePicker,
 } from "antd";
-import moment from "moment";
 import { useRouter } from "next/router";
 import SelectCollaborator from "../selects/SelectCollaborator";
-import details from "../../pages/holidays/[id]/details";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import jsCookie from "js-cookie";
 
@@ -30,16 +24,9 @@ const Lendingform = (props) => {
 
   const route = useRouter();
 
-  const [personList, setPersonList] = useState([]);
-  const [payment, setPayment] = useState(null);
-  const [amount, setAmount] = useState(null);
   const [permissions, setPermissions] = useState({});
 
-  /* Options List */
-  const TypeOptions = [
-    { value: "EMP", label: "Empresa", key: "type1" },
-    // { value: "EPS", label: "E-Pesos", key: "type_2" },
-  ];
+  const TypeOptions = [{ value: "EMP", label: "Empresa", key: "type1" }];
 
   const periodicityOptions = [
     { value: 1, label: "Semanal", key: "p1" },
@@ -48,34 +35,12 @@ const Lendingform = (props) => {
     { value: 4, label: "Mensual", key: "p4" },
   ];
 
-  const getPersons = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/person/person/`);
-      let data = response.data.results;
-      let list = [];
-      data = data.map((a, index) => {
-        let item = {
-          label: a.first_name + " " + a.flast_name,
-          value: props.khonnect_id ? a.khonnect_id : a.id,
-          key: a.id + index,
-        };
-        list.push(item);
-      });
-      setPersonList(list);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const getPayment = () => {
     let formAmount = form.getFieldValue("amount");
     let formDeadline = form.getFieldValue("deadline");
 
     formAmount = formAmount ? parseFloat(formAmount) : 0;
     formDeadline = formDeadline ? parseInt(formDeadline) : 1;
-    /* let paym = formAmount/formDeadline; */
-
-    /* PARA TOMAR EN CUENTA EL INTERES */
     let paym = 0;
 
     if (props.config && props.config.interest === 0) {
@@ -86,14 +51,12 @@ const Lendingform = (props) => {
         formDeadline;
     }
 
-    /* setPayment(paym) */
     form.setFieldsValue({
       periodicity_amount: paym,
     });
   };
 
   const showMoalapprove = () => {
-    /* props.onApprove */
     confirm({
       title: "¿Está seguro de aprobar la siguiente solicitud de préstamo?",
       icon: <ExclamationCircleOutlined />,
@@ -108,7 +71,6 @@ const Lendingform = (props) => {
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
-    getPersons();
     if (props.details) {
       form.setFieldsValue({
         person: props.details.person.id,
@@ -120,7 +82,6 @@ const Lendingform = (props) => {
         reason: props.details.reason,
       });
       getPayment();
-      //form.setFieldsValue({ type: props.details.type });
     }
   }, [route]);
 
@@ -227,7 +188,6 @@ const Lendingform = (props) => {
               }
               parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
             />
-            {/* <InputNumber style={{ width: '100%' }} /> */}
           </Form.Item>
         </Col>
         <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
@@ -238,7 +198,6 @@ const Lendingform = (props) => {
             rules={[ruleRequired, ruleDeadline]}
           >
             <InputNumber style={{ width: "100%" }} onChange={getPayment} />
-            {/* <InputNumber style={{ width: '100%' }} onChange={getPayment}/> */}
           </Form.Item>
         </Col>
         <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
@@ -269,8 +228,6 @@ const Lendingform = (props) => {
               }
               parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
             />
-            {/* <Input/> */}
-            {/* <InputNumber style={{ width: '100%' }} /> */}
           </Form.Item>
         </Col>
         <Col span={24}>

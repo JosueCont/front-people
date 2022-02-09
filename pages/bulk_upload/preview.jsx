@@ -3,8 +3,6 @@ import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Table, Breadcrumb, Button, message, Modal } from "antd";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import {
@@ -40,7 +38,6 @@ const PreviewBulkUpload = ({ ...props }) => {
         );
       },
     },
-
     {
       title: "Guardado",
       key: "id",
@@ -65,7 +62,7 @@ const PreviewBulkUpload = ({ ...props }) => {
                   item.status == "Exists"
                     ? "Usuario existente."
                     : item.status
-                    ? "Creao correctamente"
+                    ? "Creado correctamente"
                     : "Error al crear"
                 )
               }

@@ -105,7 +105,7 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/family/${data}/`, "delete");
   }
 
-  static getRelationShip(data) {
+  static getRelationShip() {
     return WebApi.ApisType(`/setup/relationship/`, "get");
   }
 
@@ -282,6 +282,34 @@ class WebApiPeople {
       `/business/node-person/get_assignment/?person__id=${data}`,
       "get"
     );
+  }
+
+  static deleteNode(data) {
+    return WebApi.ApisType("/business/node/" + data + "/", "delete");
+  }
+
+  static updateNode(id, data) {
+    return WebApi.ApisType("/business/node/" + id + "/", "patch", data);
+  }
+
+  static createNode(data) {
+    return WebApi.ApisType("/business/node/", "post", data);
+  }
+
+  static getNodeTree(data) {
+    return WebApi.ApisType(`/business/node/node_in_cascade/`, "post", data);
+  }
+
+  static changeStatusNode(id, data) {
+    return WebApi.ApisType(`/business/node/id}/`, "put", data);
+  }
+
+  static getDocumentPerson(data) {
+    return WebApi.ApisType(`/person/person/${data}/document_person/`, "get");
+  }
+
+  static deleteDocument(data) {
+    return WebApi.ApisType(`/person/document/${data}/`, "delete");
   }
 }
 export default WebApiPeople;
