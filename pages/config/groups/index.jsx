@@ -9,15 +9,14 @@ import {
   Row,
   Col,
   Modal,
-  message,
   Tooltip,
+  message,
 } from "antd";
 import {
   SearchOutlined,
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
-  EllipsisOutlined,
   ExclamationCircleOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
@@ -25,89 +24,37 @@ import MainLayout from "../../../layout/MainLayout";
 const { Content } = Layout;
 const { TabPane } = Tabs;
 const { confirm } = Modal;
-import Axios from "axios";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import moment from "moment";
-import { userCompanyId, withAuthSync } from "../../../libs/auth";
-import jsCookie from "js-cookie";
+import { withAuthSync } from "../../../libs/auth";
 import { connect } from "react-redux";
+import { deleteGroups } from "../../../api/apiKhonnect";
+import { messageDeleteSuccess, messageError } from "../../../utils/constant";
+import { getProfileGroups } from "../../../redux/catalogCompany";
 
 const Groups = ({ ...props }) => {
   const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [groups, setGroups] = useState([]);
-
-  const getGroups = (name = "") => {
-    const headers = {
-      "client-id": props.config.client_khonnect_id,
-      "Content-Type": "application/json",
-    };
-    setLoading(true);
-    let company = "";
-    if (name === "") company = `?company=${props.currentNode.id}`;
-    else company = `&company=${props.currentNode.id}`;
-
-    Axios.get(
-      props.config.url_server_khonnect + `/group/list/` + name + company,
-      {
-        headers: headers,
-      }
-    )
-      .then((response) => {
-        response.data.data.map((item) => {
-          item["key"] = item.id;
-          item.timestamp = moment(item.timestamp).format("DD/MM/YYYY");
-        });
-        setGroups(response.data.data);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        setGroups([]);
-        console.log(e);
-      });
-  };
+  useEffect(() => {
+    if (props.cat_groups && props.config) setGroups(props.cat_groups);
+  }, [props.cat_groups, props.config]);
 
   const deleteGroup = async (id) => {
     let data = { id: id };
-
-    Axios.post(props.url_server_khonnect + `/group/delete/`, data, {
-      headers: headers,
-    })
-      .then(function (response) {
-        if (response.status === 200) {
-          if (response.data.level == "associated") {
-            message.error({
-              content: "Este perfil tiene usuarios asociados",
-              className: "custom-class",
-              style: {
-                marginTop: "20vh",
-              },
-            });
-          } else {
-            message.success({
-              content: "Grupo eliminado éxitosamente",
-              className: "custom-class",
-              style: {
-                marginTop: "20vh",
-              },
-            });
-            getGroups();
-          }
-        }
-      })
-      .catch(function (error) {
-        message.error({
-          content: "Ocurrió un error, intente de nuevo",
-          className: "custom-class",
-          style: {
-            marginTop: "20vh",
-          },
-        });
-        console.log(error);
+    let response = await deleteGroups(props.config, data);
+    if (response == "associated")
+      message.error({
+        content: "Este perfil tiene usuarios asociados",
+        className: "custom-class",
+        style: {
+          marginTop: "20vh",
+        },
       });
+    else if (response) message.success(messageDeleteSuccess);
+    else if (!response) message.error(messageError);
+    props.getProfileGroups(props.currentNode.id);
   };
 
   const confirmDelete = (id) => {
@@ -126,12 +73,6 @@ const Groups = ({ ...props }) => {
       },
     });
   };
-
-  useEffect(() => {
-    if (props.currentNode && props.config) {
-      getGroups();
-    }
-  }, [props.config, props.currentNode]);
 
   const filter = (value) => {
     let filt = "";
@@ -295,7 +236,8 @@ const mapState = (state) => {
     config: state.userStore.general_config,
     currentNode: state.userStore.current_node,
     permissions: state.userStore.permissions.groups,
+    cat_groups: state.catalogStore.cat_groups,
   };
 };
 
-export default connect(mapState)(withAuthSync(Groups));
+export default connect(mapState, { getProfileGroups })(withAuthSync(Groups));

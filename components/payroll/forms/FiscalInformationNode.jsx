@@ -102,12 +102,7 @@ const FiscalInformationNode = ({ node_id, fiscal }) => {
   };
   const formFinish = (value) => {
     let fiscalInfo = formTaxInfo.getFieldsValue();
-    console.log("Fiscal--->> ", fiscalInfo);
     let address = fiscalAddress.getFieldsValue();
-    console.log("Address--->> ", address);
-
-    
-
   };
 
   // const formFinish = (value) => {
@@ -161,7 +156,7 @@ const FiscalInformationNode = ({ node_id, fiscal }) => {
         if (response.status === 200) {
           if (response.data) {
             let info = response.data;
-            console.log('fiscal info  => ', info);
+            console.log("fiscal info  => ", info);
             setInfoId(info.id);
             setPTypeSelected(info.person_type);
             console.log('person_type =>',info.person_type);
@@ -241,7 +236,7 @@ const FiscalInformationNode = ({ node_id, fiscal }) => {
   return (
     <>
       <Spin tip="Cargando..." spinning={loading}>
-        
+      <Row>
           <Col span={24}>
             <Row>
               <Title style={{ fontSize: "15px" }}>Informacion fiscal</Title>
@@ -268,6 +263,7 @@ const FiscalInformationNode = ({ node_id, fiscal }) => {
               </Button>
             </Form.Item>
           </Row> */}
+        </Row>
       </Spin>
     </>
   );

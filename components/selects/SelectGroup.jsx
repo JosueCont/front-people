@@ -8,7 +8,11 @@ const SelectGroup = ({ viewLabel, ...props }) => {
 
   useEffect(() => {
     if (props.cat_groups) {
-      setGroups(props.cat_groups);
+      setGroups(
+        props.cat_groups.map((a) => {
+          return { label: a.name, value: a.id };
+        })
+      );
     }
   }, [props.cat_groups]);
 
