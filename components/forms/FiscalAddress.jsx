@@ -1,4 +1,4 @@
-import { Form, Input, Row, Col, Select } from "antd";
+import { Form, Input, Row, Col, Select, Button } from "antd";
 import { useEffect } from "react";
 import { useState } from "react";
 import WebApiFiscal from "../../api/WebApiFiscal";
@@ -48,10 +48,18 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
         console.log(e);
       });
   };
+
+  
+  const submitForm = (values) =>{
+    console.log('values=>',values)
+  }
+
+
+
   return (
-    <Form layout={"vertical"} form={formAddress}>
-      <Row>
-        <Col lg={6} xs={22} offset={1}>
+    <Form layout={"vertical"} form={formAddress} onFinish={submitForm}>
+      <Row gutter={30}>
+        <Col lg={8} xs={22} md={6}>
           <Form.Item name="postal_code" label="Codigo postal">
             <Input />
             {/* <Select
@@ -61,7 +69,7 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
             /> */}
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
+        <Col lg={8} xs={22} md={6}>
           <Form.Item name="country" label="Pais">
             <Select
               options={countries}
@@ -70,7 +78,7 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
             />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
+        <Col lg={8} xs={22} md={6}>
           <Form.Item name="state" label="Estado">
             <Select
               showSearch
@@ -79,30 +87,35 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
             />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
+        <Col lg={8} xs={22} md={6}>
           <Form.Item name="municipality" label="Municipio">
             <Input maxLength={100} />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
+        <Col lg={8} xs={22} md={6}>
           <Form.Item name="suburb" label="Suburbio">
             <Input maxLength={100} />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
+        <Col lg={8} xs={22} md={6}>
           <Form.Item name="street" label="Calle">
             <Input maxLength={35} />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
+        <Col lg={8} xs={22} md={6}>
           <Form.Item name="outdoor_number" label="Numero exterior">
             <Input maxLength={10} />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
+        <Col lg={8} xs={22} md={6}>
           <Form.Item name="interior_number" label="Numero interior">
             <Input maxLength={10} />
           </Form.Item>
+        </Col>
+        <Col span={24} style={{ textAlign:'end' }} >
+        <Form.Item>
+          <Button type="submit" >Guardar</Button>
+        </Form.Item>
         </Col>
       </Row>
     </Form>

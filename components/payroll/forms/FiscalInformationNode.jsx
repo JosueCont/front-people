@@ -18,6 +18,7 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import { curpFormat, rfcFormat, ruleRequired } from "../../../utils/rules";
 import FiscalAddress from "../../forms/FiscalAddress";
+import FiscalInformation from '../../forms/FiscalInformation';
 
 const FiscalInformationNode = ({ node_id, fiscal }) => {
   const { Title } = Typography;
@@ -57,10 +58,7 @@ const FiscalInformationNode = ({ node_id, fiscal }) => {
   useEffect(() => {}, [nameKey]);
   useEffect(() => {}, [nameCertificate]);
 
-  const personType = [
-    { value: 1, label: "Fisica" },
-    { value: 2, label: "Moral" },
-  ];
+  
 
   const selectPersonType = (value) => {
     setPTypeSelected(value);
@@ -161,6 +159,7 @@ const FiscalInformationNode = ({ node_id, fiscal }) => {
             console.log("fiscal info  => ", info);
             setInfoId(info.id);
             setPTypeSelected(info.person_type);
+            console.log('person_type =>',info.person_type);
             if (info.tax_stamp) {
               setNameTaxStamp(info.tax_stamp);
             }
@@ -237,83 +236,34 @@ const FiscalInformationNode = ({ node_id, fiscal }) => {
   return (
     <>
       <Spin tip="Cargando..." spinning={loading}>
-        <Form
-          layout={"vertical"}
-          form={formTaxInfo} /* onFinish={formFinish} */
-        >
+      <Row>
           <Col span={24}>
             <Row>
               <Title style={{ fontSize: "15px" }}>Informacion fiscal</Title>
             </Row>
             <Divider style={{ marginTop: "2px" }} />
-            <Row>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  name="person_type"
-                  label="Tipo de persona"
-                  rules={[ruleRequired]}
-                >
-                  <Select
-                    options={personType}
-                    onChange={selectPersonType}
-                    notFoundContent={"No se encontraron resultados."}
-                  />
-                </Form.Item>
-              </Col>
-              {pTypeSelected === 1 && (
-                <Col lg={6} xs={22} offset={1}>
-                  <Form.Item name="curp" label="CURP" rules={[curpFormat]}>
-                    <Input maxLength={18} />
-                  </Form.Item>
-                </Col>
-              )}
-
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item name="rfc" label="RFC" rules={[rfcFormat]}>
-                  <Input maxLength={13} />
-                </Form.Item>
-              </Col>
-              <Col lg={13} xs={22} offset={1}>
-                <Form.Item
-                  name="tax_regime"
-                  label="Regimen fiscal"
-                  rules={[ruleRequired]}
-                >
-                  <Select
-                    options={
-                      pTypeSelected == 1 ? taxRegimePhysical : taxRegimeMoral
-                    }
-                    notFoundContent={"No se encontraron resultados."}
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} offset={1}>
-                <Form.Item
-                  name="assimilated_pay"
-                  label="Pago asimilados"
-                  valuePropName="checked"
-                >
-                  <Switch
-                    checkedChildren={<CheckOutlined />}
-                    unCheckedChildren={<CloseOutlined />}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
+            <FiscalInformation 
+              infoId={infoId}
+              formTaxInfo={formTaxInfo} 
+              taxRegimePhysical={taxRegimePhysical} 
+              taxRegimeMoral={taxRegimeMoral} 
+              pTypeSelected={pTypeSelected}
+              setPTypeSelected={setPTypeSelected}
+            />
             <Row>
               <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
             </Row>
             <Divider style={{ marginTop: "2px" }} />
             <FiscalAddress node={node_id} formAddress={fiscalAddress} />
           </Col>
-          <Row justify={"end"}>
+          {/* <Row justify={"end"}>
             <Form.Item>
               <Button type="primary" onClick={() => formFinish()}>
                 Guardar
               </Button>
             </Form.Item>
-          </Row>
-        </Form>
+          </Row> */}
+        </Row>
       </Spin>
     </>
   );

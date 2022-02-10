@@ -1,7 +1,9 @@
 import { Form, Input, Button, message, Row, Col, Select } from "antd";
+import Title from "antd/lib/skeleton/Title";
+import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
-import WebApiPeople from "../../api/WebApiPeople";
+import { API_URL } from "../../config/config";
 
 const LegalRepresentative = ({ node, ...props }) => {
   const [countries, setCountries] = useState([]);
@@ -20,7 +22,8 @@ const LegalRepresentative = ({ node, ...props }) => {
   }, []);
 
   const getCountries = async () => {
-    WebApiPeople.getCountries()
+    axios
+      .get(API_URL + `/fiscal/country/`)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.results.length > 0) {
@@ -37,7 +40,8 @@ const LegalRepresentative = ({ node, ...props }) => {
   };
 
   const getStates = async (country) => {
-    WebApiPeople.getStates(country)
+    axios
+      .get(API_URL + `/fiscal/state/?country=${country}`)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.results.length > 0) {
@@ -58,13 +62,16 @@ const LegalRepresentative = ({ node, ...props }) => {
       .get(API_URL + `/business/legal-representative/?node=${node}`)
       .then((response) => {
         if (response.status === 200) {
-          console.log(response.data);
-          /* if (response.data.results.length > 0) {
-            let states = response.data.results.map((a) => {
+          if (response.data.results.length > 0) {
+            form.setFieldsValue({
+              curp: "",
+              tax_regime: "",
+            });
+            /* let states = response.data.results.map((a) => {
               return { value: a.id, label: a.name_state };
             });
-            setStates(states);
-          } */
+            setStates(states); */
+          }
         }
       })
       .catch((e) => {
@@ -78,12 +85,12 @@ const LegalRepresentative = ({ node, ...props }) => {
     <Form layout={"vertical"} form={form}>
       <Row>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="postal_code" label="Nombre">
+          <Form.Item name="name_representative" label="Nombre">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="state" label="Plaza">
+          <Form.Item name="position_representative" label="Plaza">
             <Select
               options={states}
               notFoundContent={"No se encontraron resultados."}
@@ -91,7 +98,7 @@ const LegalRepresentative = ({ node, ...props }) => {
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="country" label="Email">
+          <Form.Item name="email_representative" label="Email">
             <Input />
           </Form.Item>
         </Col>
