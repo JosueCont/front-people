@@ -20,7 +20,7 @@ import FormGeneralData from "../forms/FormGeneralData";
 import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   BankOutlined,
   BookOutlined,
@@ -35,10 +35,9 @@ import {
   UsergroupDeleteOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
-import { API_URL } from "../../config/config";
-import Axios from "axios";
 import { useRouter } from "next/router";
 import Router from "next/router";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const DetailPerson = ({
   config,
@@ -64,9 +63,7 @@ const DetailPerson = ({
   };
 
   const deletePersons = (data) => {
-    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
-      persons_id: router.query.id,
-    })
+    WebApiPeople.deletePerson
       .then((response) => {
         setLoading(false);
         showModal();

@@ -1,8 +1,7 @@
-import { Form, Input, Button, message, Row, Col, Select } from "antd";
-import axios from "axios";
+import { Form, Input, Row, Col, Select } from "antd";
 import { useEffect } from "react";
 import { useState } from "react";
-import { API_URL } from "../../config/config";
+import WebApiFiscal from "../../api/WebApiFiscal";
 
 const FiscalAddress = ({ node, formAddress, ...props }) => {
   const [countries, setCountries] = useState([]);
@@ -17,8 +16,7 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
   }, []);
 
   const getCountries = async () => {
-    axios
-      .get(API_URL + `/fiscal/country/`)
+    WebApiFiscal.getCountries()
       .then((response) => {
         if (response.status === 200) {
           if (response.data.results.length > 0) {
@@ -35,8 +33,7 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
   };
 
   const getStates = async (country) => {
-    axios
-      .get(API_URL + `/fiscal/state/?country=${country}`)
+    WebApiFiscal.getStates(country)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.results.length > 0) {
@@ -56,11 +53,12 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
       <Row>
         <Col lg={6} xs={22} offset={1}>
           <Form.Item name="postal_code" label="Codigo postal">
-            <Select
+            <Input />
+            {/* <Select
               options={countries}
               notFoundContent={"No se encontraron resultados."}
               onChange={onchange}
-            />
+            /> */}
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
@@ -75,6 +73,7 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
         <Col lg={6} xs={22} offset={1}>
           <Form.Item name="state" label="Estado">
             <Select
+              showSearch
               options={states}
               notFoundContent={"No se encontraron resultados."}
             />

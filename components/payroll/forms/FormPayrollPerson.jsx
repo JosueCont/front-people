@@ -170,7 +170,6 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
         return { value: a.id, label: a.description };
       });
 
-      console.log("payment_perceptions =>", payment_perceptions);
       setPerceptionTypes(payment_perceptions);
     } catch (error) {
       console.log(error);
@@ -184,7 +183,6 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
         content: "Guardado correctamente.",
         className: "custom-class",
       });
-      console.log("response =>", response);
       if (response.data) {
         formPayrollPerson.setFieldsValue({
           integrated_daily_salary: response.data.integrated_daily_salary,
@@ -204,7 +202,6 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
         content: "Actualizado correctamente.",
         className: "custom-class",
       });
-      console.log("response =>", response);
       if (response.data) {
         formPayrollPerson.setFieldsValue({
           integrated_daily_salary: response.data.integrated_daily_salary,
@@ -232,7 +229,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     } else {
       value.person = person_id;
       value.last_day_paid = lastDayPaid;
-      value.daily_salary = parseFloat(value.daily_salary)
+      value.daily_salary = parseFloat(value.daily_salary);
       savePayrollPerson(value);
     }
   };
@@ -251,7 +248,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
           className="inputs_form_responsive"
         >
           <Row gutter={20}>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="daily_salary"
                 label="Salario diario"
@@ -261,7 +258,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 <Input maxLength={10} />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="integrated_daily_salary"
                 label="Salario diario integrado"
@@ -271,7 +268,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 <Input maxLength={10} disabled />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="contract_type"
                 label="Tipo de contrato"
@@ -283,7 +280,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="hiring_regime_type"
                 label="Tipo de regimen de contratación"
@@ -295,7 +292,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="type_tax" label="Tipo de impuesto">
                 <Select
                   options={typeTax}
@@ -303,7 +300,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="unionized"
                 label="¿Sindicalizado?"
@@ -315,7 +312,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="payment_type" label="Forma de pago">
                 <Select
                   options={PaymentTypes}
@@ -323,7 +320,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="bank" label="Banco">
                 <Select
                   options={banks}
@@ -331,7 +328,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="apply_annual_adjustment"
                 label="¿Aplicar ajuste anual?"
@@ -343,7 +340,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="last_day_paid" label="Ultimo día de pago">
                 <DatePicker
                   style={{ width: "100%" }}
@@ -352,7 +349,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="payment_calendar" label="Calendario de pago">
                 <Select
                   options={paymentCalendars}
@@ -372,7 +369,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col> */}
-            <Col lg={8} xs={22} md={12} >
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="perception_type" label="Tipo de percepción">
                 <Select
                   options={perceptionTypes}

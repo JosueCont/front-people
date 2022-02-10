@@ -1,8 +1,7 @@
 import { Form, Input, Row, Col, Select, Divider, Typography } from "antd";
-import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
-import { API_URL } from "../../config/config";
+import WebApiPeople from "../../api/WebApiPeople";
 import FiscalAddress from "./FiscalAddress";
 
 const PatronalRegistration = ({ node, formAddress, ...props }) => {
@@ -20,8 +19,7 @@ const PatronalRegistration = ({ node, formAddress, ...props }) => {
   }, []);
 
   const getCountries = async () => {
-    axios
-      .get(API_URL + `/fiscal/country/`)
+    WebApiPeople.getCountries()
       .then((response) => {
         if (response.status === 200) {
           if (response.data.results.length > 0) {
@@ -38,8 +36,7 @@ const PatronalRegistration = ({ node, formAddress, ...props }) => {
   };
 
   const getStates = async (country) => {
-    axios
-      .get(API_URL + `/fiscal/state/?country=${country}`)
+    WebApiPeople.getStates(country)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.results.length > 0) {
@@ -56,21 +53,36 @@ const PatronalRegistration = ({ node, formAddress, ...props }) => {
   };
   return (
     <Form layout={"vertical"} form={formAddress}>
-      <Row>
-        <Col lg={6} xs={22} offset={1}>
+      <Row gutter={20}>
+        <Col lg={6} xs={22} >
+          <Form.Item name="code" label="Codigo">
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col lg={6} xs={22} >
           <Form.Item name="postal_code" label="Actividad economica">
             <Input />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="state" label="Tipo de contribucion">
+        <Col lg={6} xs={22} >
+          <Form.Item name="phone" label="Telefono">
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col lg={6} xs={22} >
+          <Form.Item name="subsidy_reimbursement_agreement" label="Acuerdo de reembolso de subsidio">
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col lg={6} xs={22} >
+          <Form.Item name="state" label="Tipo de contribución">
             <Select
               options={[]}
               notFoundContent={"No se encontraron resultados."}
             />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
+        <Col lg={6} xs={22} >
           <Form.Item name="state" label="Representante legal">
             <Select
               options={[]}
@@ -78,7 +90,7 @@ const PatronalRegistration = ({ node, formAddress, ...props }) => {
             />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
+        <Col lg={6} xs={22} >
           <Form.Item name="state" label="Direccion fiscal">
             <Select
               options={[]}
@@ -87,11 +99,11 @@ const PatronalRegistration = ({ node, formAddress, ...props }) => {
           </Form.Item>
         </Col>
       </Row>
-      <Row>
+      {/* <Row>
         <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
       </Row>
       <Divider style={{ marginTop: "2px" }} />
-      <FiscalAddress />
+      <FiscalAddress /> */}
     </Form>
   );
 };

@@ -190,15 +190,14 @@ const homeScreen = ({ ...props }) => {
   let columns = [
     {
       title: "Núm. Empleado",
-      width: 74,
-      fixed: "left",
+      width: 2,
       render: (item) => {
         return <div>{item.code ? item.code : ""}</div>;
       },
     },
     {
       title: "Foto",
-      width: 42,
+      width: 1,
       render: (item) => {
         return (
           <div>
@@ -230,7 +229,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Estatus",
-      width: 70,
+      width: 30,
       render: (item) => {
         return (
           <>
@@ -247,48 +246,7 @@ const homeScreen = ({ ...props }) => {
     },
 
     {
-      title: "Fecha de ingreso",
-      width: 82,
-      align: "center",
-      render: (item) => {
-        return <div>{item.date_of_admission}</div>;
-      },
-    },
-
-    {
-      title: "Departamento",
-      width: 100,
-      render: (item) => {
-        return <div>{item.department ? item.department.name : ""}</div>;
-      },
-    },
-    {
-      title: "Puesto",
-      width: 100,
-      render: (item) => {
-        return <div>{item.job ? item.job.name : ""}</div>;
-      },
-    },
-    {
-      title: "Empresas Asignadas",
-      width: 75,
-      align: "center",
-      key: "CompaniesAsosigned",
-      align: "center",
-      //fixed: "right",
-      render: (item) => {
-        return (
-          <Text
-            className={"text-center pointer"}
-            onClick={() => getUserCompanies(item)}
-          >
-            Ver
-          </Text>
-        );
-      },
-    },
-    {
-      fixed: "right",
+      // fixed: "right",
       title: () => {
         return (
           <>
@@ -325,7 +283,7 @@ const homeScreen = ({ ...props }) => {
   let columns2 = [
     {
       title: "Núm. Empleado",
-      width: 74,
+      width: 2,
       fixed: "left",
       render: (item) => {
         return <div>{item.code ? item.code : ""}</div>;
@@ -398,48 +356,7 @@ const homeScreen = ({ ...props }) => {
     },
 
     {
-      title: "Fecha de ingreso",
-      width: 82,
-      align: "center",
-      render: (item) => {
-        return <div>{item.date_of_admission}</div>;
-      },
-    },
-
-    {
-      title: "Departamento",
-      width: 100,
-      render: (item) => {
-        return <div>{item.department ? item.department.name : ""}</div>;
-      },
-    },
-    {
-      title: "Puesto",
-      width: 100,
-      render: (item) => {
-        return <div>{item.job ? item.job.name : ""}</div>;
-      },
-    },
-    {
-      title: "Empresas Asignadas",
-      width: 75,
-      align: "center",
-      key: "CompaniesAsosigned",
-      align: "center",
-      //fixed: "right",
-      render: (item) => {
-        return (
-          <Text
-            className={"text-center pointer"}
-            onClick={() => getUserCompanies(item)}
-          >
-            Ver
-          </Text>
-        );
-      },
-    },
-    {
-      fixed: "right",
+      // fixed: "right",
       title: () => {
         return (
           <>
@@ -943,9 +860,6 @@ const homeScreen = ({ ...props }) => {
                           <SelectWorkTitle />
                         </Col>
                         <Col>
-                          <SelectJob />
-                        </Col>
-                        <Col>
                           <Form.Item name="is_active" label="Estatus">
                             <Select
                               options={statusSelect}
@@ -955,16 +869,7 @@ const homeScreen = ({ ...props }) => {
                             />
                           </Form.Item>
                         </Col>
-                        <Col>
-                          <Form.Item name="periodicity" label="Periocidad">
-                            <Select
-                              options={periodicity}
-                              placeholder="Periocidad"
-                              notFoundContent={"No se encontraron resultados."}
-                              style={{ width: 90 }}
-                            />
-                          </Form.Item>
-                        </Col>
+
                         <Col
                           className="button-filter-person"
                           style={{ display: "flex", marginTop: "10px" }}
@@ -1067,7 +972,7 @@ const homeScreen = ({ ...props }) => {
                 }
                 dataSource={person}
                 loading={loading}
-                scroll={{ x: 1300 }}
+                // scroll={{ x: 1300 }}
                 locale={{
                   emptyText: loading
                     ? "Cargando..."

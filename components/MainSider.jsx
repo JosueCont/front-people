@@ -1,28 +1,21 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Layout, Row, Col, Avatar, Menu, Space } from "antd";
+import React, { useLayoutEffect, useState } from "react";
+import { Layout, Menu } from "antd";
 import { css, Global } from "@emotion/core";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
   UserOutlined,
-  SettingOutlined,
   MessageOutlined,
   ProfileOutlined,
   FormOutlined,
   DollarOutlined,
   UserAddOutlined,
-  DeploymentUnitOutlined,
   AreaChartOutlined,
   AppstoreOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import {
   BugReportOutlined,
-  BusinessCenterOutlined,
   BusinessOutlined,
   SettingsOutlined,
   GroupOutlined,
@@ -38,17 +31,9 @@ const MainSider = ({
   onClickImage = true,
   ...props
 }) => {
-  const router = useRouter();
-  const defaulPhoto =
-    "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
-  const [person, setPerson] = useState({});
-  const [logOut, setLogOut] = useState(false);
-  const [primaryColor, setPrimaryColor] = useState(null);
-  const [secondaryColor, setSecondaryColor] = useState(null);
-  const [intranetAccess, setintanetAccess] = useState(false);
-
   const { SubMenu } = Menu;
-
+  const router = useRouter();
+  const [intranetAccess, setintanetAccess] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
@@ -149,7 +134,6 @@ const MainSider = ({
                   white-space: break-spaces;  
                 }
                 .custom_icon{
-                  margin-right:10px;
                   font-size: ${
                     collapsed ? "19px !important;" : "16px !important;"
                   }
@@ -164,7 +148,6 @@ const MainSider = ({
         collapsible
         collapsed={collapsed}
         onCollapse={onCollapse}
-        breakpoint="md"
       >
         <div className="logo" />
         <Menu
@@ -174,9 +157,6 @@ const MainSider = ({
           defaultOpenKeys={defaultOpenKeys ? defaultOpenKeys : [""]}
           mode="inline"
         >
-          {/* <Menu.Item key="applications" icon={<UserOutlined style={{opacity:0}} />} >
-                        Aplicaciones
-                    </Menu.Item> */}
           <Menu.Item
             key="dashboard"
             onClick={() => router.push({ pathname: "/dashboard" })}
@@ -205,8 +185,8 @@ const MainSider = ({
           <SubMenu
             key="config"
             title="Configuración"
+            className="subMainMenu"
             icon={<SettingsOutlined className="custom_icon" />}
-            className="subMainMenu item_custom_icon"
           >
             <Menu.Item
               key="catalogos"
@@ -301,13 +281,6 @@ const MainSider = ({
               Cuentas bancarias
             </Menu.Item>
           </SubMenu>
-          {/* <Menu.Item
-            icon={<DollarOutlined />}
-            key="nomina"
-            onClick={() => router.push({ pathname: "/payroll/" })}
-          >
-            Nomina
-          </Menu.Item> */}
           <SubMenu
             key="nomina"
             title="Nómina"
@@ -339,18 +312,9 @@ const MainSider = ({
                   }
                 >
                   Calculo de nomina
-                  {/* Calculo de nómina */}
                 </Menu.Item>
               </>
             )}
-            {/* <Menu.Item
-              key="nomina_empresarial"
-              onClick={() =>
-                router.push({ pathname: "/payrollvoucher/statisticsPayroll" })
-              }
-            >
-              Nómina empresarial
-            </Menu.Item> */}
             <Menu.Item
               key="recibos_nomina"
               onClick={() => router.push({ pathname: "/payrollvoucher" })}
@@ -372,7 +336,7 @@ const MainSider = ({
               icon={
                 <img
                   className="anticon ant-menu-item-icon icon-intranet"
-                  src={"/images/Intranet.svg"}
+                  src={"images/Intranet.svg"}
                 />
               }
               className="subMainMenu"
@@ -424,6 +388,14 @@ const MainSider = ({
               Carga de documentos
             </Menu.Item>
           </SubMenu>
+          {/* {props.config && props.config.kuiz_enabled && (
+                        <Menu.Item
+                        key="13"
+                        onClick={() => router.push({ pathname: "/assessment" })}
+                        >
+                        Encuestas
+                        </Menu.Item>
+                    )} */}
         </Menu>
       </Sider>
     </>
