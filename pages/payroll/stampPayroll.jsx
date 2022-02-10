@@ -113,7 +113,6 @@ const StampPayroll = () => {
   };
 
   const prepareData = (dataPersons) => {
-    console.log("dataPersons =>=>", dataPersons);
     let newData = [];
 
     dataPersons.map((item) => {
@@ -144,9 +143,7 @@ const StampPayroll = () => {
 
   const sendStampPayroll = async () => {
     let tempArray = [...payroll];
-    console.log("tempArray =>", tempArray);
     let newData = prepareData(tempArray);
-    console.log("newData ==>", newData);
     let data = {
       node: nodeId,
       period: period,
@@ -170,9 +167,7 @@ const StampPayroll = () => {
       data.payroll = payroll;
     } */
     setLoading(true);
-    console.log("data ==>", data);
     let response = await WebApiPayroll.payrollFacturama(data);
-    console.log("response =>", response);
     if (response.data.length > 0) {
       setStamped(true);
       setStampedInvoices(response.data);

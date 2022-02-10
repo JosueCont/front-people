@@ -150,7 +150,6 @@ const WorkTitle = ({ currentNode, ...props }) => {
   };
 
   const updateRegister = async (url, value) => {
-    console.log("UPDATE-->> ", value);
     value.node = currentNode.id;
     try {
       let response = await WebApiPeople.updateRegisterCatalogs(
