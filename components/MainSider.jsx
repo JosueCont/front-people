@@ -157,13 +157,13 @@ const MainSider = ({
           defaultOpenKeys={defaultOpenKeys ? defaultOpenKeys : [""]}
           mode="inline"
         >
-          <Menu.Item
+          {/* <Menu.Item
             key="dashboard"
             onClick={() => router.push({ pathname: "/dashboard" })}
             icon={<AppstoreOutlined />}
           >
             Dashboard
-          </Menu.Item>
+          </Menu.Item> */}
           {props.permissions.person.view && (
             <Menu.Item
               key="persons"
@@ -336,7 +336,7 @@ const MainSider = ({
               icon={
                 <img
                   className="anticon ant-menu-item-icon icon-intranet"
-                  src={"images/Intranet.svg"}
+                  src={"/images/Intranet.svg"}
                 />
               }
               className="subMainMenu"
