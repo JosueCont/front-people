@@ -201,20 +201,12 @@ const FormPerson = ({
       });
   };
 
-  /* useEffect(() => {
-    if (form['person_department'] && form['job']) {
-      console.log('form =>', form);
-    }
-  }, [form]); */
-
   const getWorkTitle = () => {
     const values = form.getFieldsValue();
-    console.log("values.person_department =>", values.person_department);
-    console.log("values.job =>", values.job);
+
     if (values.person_department && values.job) {
       setDepartmentSelected(values.person_department);
       setJobSelected(values.job);
-      console.log("si");
     } else {
       setDepartmentSelected(null);
       setJobSelected(null);

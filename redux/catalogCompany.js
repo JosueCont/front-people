@@ -222,7 +222,6 @@ export const getPeopleCompany = (data) => async (dispatch, getState) => {
 export const getLevel = (data) => async (dispatch, getState) => {
   try {
     let response = await WebApiPeople.getCatalogs("level", data);
-    console.log("LEVELS-->> ", response.data.results);
     dispatch({ type: LEVEL, payload: response.data.results });
   } catch (error) {
     return;
@@ -232,7 +231,6 @@ export const getLevel = (data) => async (dispatch, getState) => {
 export const getWorkTitle = (data) => async (dispatch, getState) => {
   try {
     let response = await WebApiPeople.getCatalogs("work-title", data);
-    console.log("WORKTITLE-->> ", response.data.results);
     dispatch({ type: WORK_TITLE, payload: response.data.results });
   } catch (error) {
     return;

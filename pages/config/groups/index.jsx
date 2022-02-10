@@ -44,7 +44,6 @@ const Groups = ({ ...props }) => {
   const deleteGroup = async (id) => {
     let data = { id: id };
     let response = await deleteGroups(props.config, data);
-    console.log("Response delete---->>", response);
     if (response == "associated")
       message.error({
         content: "Este perfil tiene usuarios asociados",
