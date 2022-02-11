@@ -16,6 +16,7 @@ import {
   DownloadOutlined,
   ClearOutlined,
 } from "@ant-design/icons";
+import {statusActivePost} from '../../utils/constant';
 
 import {
   getUsersList,
@@ -185,7 +186,7 @@ const PublicationsStatisticsFilters = (props) => {
     <>
       <CustomCard>
         <Row>
-          <Col xs={24} sm={12} md={8} lg={5} xl={5}>
+          <Col xs={24} sm={12} md={8} lg={6} xl={4}>
             <Row>
               <Col span={24}>
                 <InputLabel>Grupo</InputLabel>
@@ -204,7 +205,7 @@ const PublicationsStatisticsFilters = (props) => {
               </CenterItemsCol>
             </Row>
           </Col>
-          <Col xs={24} sm={12} md={8} lg={5} xl={5}>
+          <Col xs={24} sm={12} md={8} lg={6} xl={5}>
             <Row>
               <Col span={24}>
                 <InputLabel>Fecha</InputLabel>
@@ -218,7 +219,7 @@ const PublicationsStatisticsFilters = (props) => {
               </CustomCol>
             </Row>
           </Col>
-          <Col xs={24} sm={12} md={8} lg={5} xl={5}>
+          <Col xs={24} sm={12} md={8} lg={6} xl={4}>
             <Row>
               <Col span={24}>
                 <InputLabel>Autor</InputLabel>
@@ -242,22 +243,41 @@ const PublicationsStatisticsFilters = (props) => {
               </CenterItemsCol>
             </Row>
           </Col>
+          <Col xs={24} sm={12} md={8} lg={6} xl={3}>
+            <Row>
+              <Col span={24}>
+                <InputLabel>Estatus</InputLabel>
+              </Col>
+              <CenterItemsCol span={24}>
+                <CustomSelect
+                  placeholder="Seleccionar un autor"
+                  /* onChange={(value) => setUser(value)} */
+                  options={statusActivePost}
+                />
+                {/* <CustomInput onChange={handleChange} placeholder="Nombre del autor"/> */}
+              </CenterItemsCol>
+            </Row>
+          </Col>
 
-          <CenterItemsCol xs={12} sm={8} md={8} lg={3} xl={3}>
-            <CustomButton icon={<SearchOutlined />} onClick={getPostsByFilter}>
-              Filtrar
-            </CustomButton>
-          </CenterItemsCol>
-          <CenterItemsCol xs={12} sm={8} md={8} lg={3} xl={3}>
-            <CustomButton icon={<DownloadOutlined />} onClick={getExcelFile}>
-              Excel
-            </CustomButton>
-          </CenterItemsCol>
-          <CenterItemsCol xs={12} sm={8} md={8} lg={3} xl={3}>
-            <CustomButton icon={<ClearOutlined />} onClick={clearFilter}>
-              Limpiar
-            </CustomButton>
-          </CenterItemsCol>
+          <Col xs={24} sm={24} md={24} lg={15} xl={8} >
+            <Row>
+              <CenterItemsCol xs={24} sm={8} md={8} lg={8} xl={8}>
+                <CustomButton icon={<SearchOutlined />} onClick={getPostsByFilter}>
+                  Filtrar
+                </CustomButton>
+              </CenterItemsCol>
+              <CenterItemsCol xs={12} sm={8} md={8} lg={8} xl={8}>
+                <CustomButton icon={<DownloadOutlined />} onClick={getExcelFile}>
+                  Excel
+                </CustomButton>
+              </CenterItemsCol>
+              <CenterItemsCol xs={12} sm={8} md={8} lg={8} xl={8}>
+                <CustomButton icon={<ClearOutlined />} onClick={clearFilter}>
+                  Limpiar
+                </CustomButton>
+              </CenterItemsCol>
+            </Row>
+          </Col>
         </Row>
       </CustomCard>
     </>

@@ -29,6 +29,11 @@ const index = (props) => {
   }, [props.current]);
 
   useEffect(() => {
+    console.log('publicationsList',publicationsList);
+  }, [publicationsList])
+  
+
+  useEffect(() => {
     setLoadingData(true);
     if (props.publicationsList && props.publicationsList.results) {
       let publicationsFiltered = [];
@@ -57,6 +62,18 @@ const index = (props) => {
         console.log(error);
       }
     }
+    setProcessedPubications([
+          {
+            date: '',
+            publication: 'publication.content',
+            owner: `sada`,
+            comments: 0,
+            clicks:  0,
+            prints: 0,
+            reactions: [],
+            isActive: true
+          }
+        ]);
   }, [props.publicationsList]);
 
   return (

@@ -7,16 +7,25 @@ import { useRouter } from "next/router";
 import FormConfig from "../../../components/intranet/FormConfig";
 import axios from "axios";
 import { API_URL } from "../../../config/config";
+import { connect } from "react-redux";
 
-const configIntranet = () => {
+
+const configIntranet = (props) => {
+  const currentNode = {props};
   const router = useRouter();
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(null);
   const [getImage, setImage] = useState(null);
 
+
   useEffect(() => {
     getConfig();
   }, []);
+
+  /* useEffect(() => {
+      console.log('currentNode =>',props.currentNode);
+  }, [props]) */
+  
 
   const getConfig = () => {
     setLoading(true);
@@ -100,6 +109,7 @@ const configIntranet = () => {
         style={{ padding: 24, minHeight: 380, height: "100%" }}
       >
         <FormConfig
+          nodeId={currentNode.id}
           config={config}
           save={saveData}
           saveImage={saveImage}
@@ -111,4 +121,11 @@ const configIntranet = () => {
   );
 };
 
-export default withAuthSync(configIntranet);
+
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(withAuthSync(configIntranet));

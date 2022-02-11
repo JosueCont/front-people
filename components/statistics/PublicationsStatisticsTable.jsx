@@ -1,7 +1,7 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Select } from 'antd';
 import styled from 'styled-components';
-import { Row, Col } from 'antd';
+import { Row, Col, Badge } from 'antd';
 
 const ReactionsImg = styled.img`
     max-width: 20px;
@@ -33,6 +33,28 @@ const CustomTable = styled(Table)`
 `;
 const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters}) => {
 
+    const {Option} = Select
+
+    const optionsActions = [
+        {
+            label: 'Pendiente',
+            value: 0
+        },
+        {
+            label: 'Aceptar',
+            value: 1
+        },
+        {
+            label: 'Rechazar',
+            value: 2
+        },
+        {
+            label: 'Eliminar',
+            value: 3
+        }
+    ]
+
+    console.log('processedPublicationsList =>',processedPublicationsList)
     const ReactionByType = ({reactions = [{1: '0'}, {2:'0'}, {3: '0'}, {4: '0'}, {5: '0'}, {6: '0'}, {7: '0'}]}) => (
         <>
             {/* <Row>
@@ -113,12 +135,29 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             key: 'clicks'
         },
         {
+            title: 'Estatus',
+            key: 'status',
+            render: (row) => (
+                <Select value={0} options={optionsActions} placeholder="Estatus">
+                </Select>
+            )
+        },
+        {
             title: 'Reacciones por tipo',
             dataIndex: 'reactions',
             key: 'reactions',
             render: reactions => (
                 <>
                     <ReactionByType reactions={reactions}/>
+                </>
+            )
+        },
+        {
+            title: 'Esta activo',
+            key: 'isActive',
+            render: row =>(
+                <>
+                    {row.isActive ? <Badge status="success" text="Activo" /> : <Badge status="error" text="Inactivo" />  }     
                 </>
             )
         }

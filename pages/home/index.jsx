@@ -43,6 +43,7 @@ import WebApiPeople from "../../api/WebApiPeople";
 import { genders, periodicity, statusSelect } from "../../utils/constant";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
+import SelectAccessIntranet from '../../components/selects/SelectAccessIntranet'
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
@@ -58,6 +59,8 @@ const homeScreen = ({ ...props }) => {
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
   const inputFileRef2 = useRef(null);
+  const { Option } = Select;
+
   let filters = { node: "" };
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -344,12 +347,13 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-            <Switch
+             <SelectAccessIntranet />
+            {/* <Switch
               disabled={true}
               defaultChecked={item.intranet_access}
               checkedChildren="Si"
               unCheckedChildren="No"
-            />
+            /> */}
           </>
         );
       },
