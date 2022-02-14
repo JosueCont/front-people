@@ -18,6 +18,7 @@ import {
   AutoComplete,
 } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
+import WebApiPeople from '../../api/WebApiPeople'
 
 const arrayConfigType = [
   { id: 1, name: "Me gusta", emoji: "👍🏻" },
@@ -47,15 +48,18 @@ const FormConfig = (props) => {
   const [photo, setPhoto] = useState(
     props.getImage ? props.getImage + "?" + new Date() : null
   );
+  const {nodeId} = props;
   const [imageUpdate, setImageUpdate] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  const [showPersons, setShowPersons] = useState(false)
 
   const [interactionsAPI, setInteractionsAPI] = useState(arrayConfigType);
   const [interactionsSelected, setInteractionsSelected] = useState([]);
   const interactionsFilteredOptions = interactionsAPI.filter(
     (o) => !interactionsSelected.includes(o)
   );
+  const [persons, setPersons] = useState([])
 
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
 
@@ -88,6 +92,7 @@ const FormConfig = (props) => {
 
   useEffect(() => {
     getDataInfo();
+    getPersons();
   }, [props.config]);
 
   const getDataInfo = () => {
@@ -196,6 +201,28 @@ const FormConfig = (props) => {
       }
     }
   };
+
+  const getPersons = async () => {
+    /* setLoading(true); */
+    try {
+      let response = await WebApiPeople.filterPerson({node: nodeId});
+      setPersons([]);
+      let persons = response.data.map((a) => {
+        a.key = a.khonnect_id;
+        return a;
+      });
+      console.log('persons',persons);
+      setPersons(persons);
+    } catch (error) {
+      setPersons([]);
+      console.log(error);
+    }
+  };
+
+  const changeSwitch = (checked, e) =>{
+    setShowPersons(checked)
+    /* console.log('checked =>', checked) */
+  }
 
   return (
     <>
@@ -321,6 +348,35 @@ const FormConfig = (props) => {
                 </Upload>
               </Form.Item>
             </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item name={'moderate_posts'} label="Las publicaciones requieren moderación">
+                <Switch onChange={changeSwitch} />
+              </Form.Item>
+            </Col>
+
+            { showPersons && 
+              <Col lg={6} xs={22} offset={1}>
+                <Form.Item label={'Usuarios'} >
+                  <Select
+                    mode="multiple"
+                    showSearch
+                    placeholder="Select a person"
+                    optionFilterProp="children"
+                    /* onChange={onChange} */
+                    /* onSearch={onSearch} */
+                    filterOption={(input, option) =>
+                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {
+                      persons.map(item => (
+                        <Select.Option value={item.id}>{item.first_name+' '+item.flast_name}</Select.Option>
+                      ))
+                    }
+                  </Select>,
+                </Form.Item>
+              </Col>
+            } 
           </Row>
           <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
             <Col>
