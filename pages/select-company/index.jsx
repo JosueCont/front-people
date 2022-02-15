@@ -107,8 +107,6 @@ const SelectCompany = ({ ...props }) => {
   const setCompanySelect = async (item) => {
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
-    sessionStorage.setItem("name", item.name);
-    sessionStorage.setItem("image", item.image);
     let response = await props.companySelected(item.id);
     if (response) {
       props.doCompanySelectedCatalog();

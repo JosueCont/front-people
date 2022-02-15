@@ -1,6 +1,6 @@
 import { withAuthSync } from "../../../libs/auth";
 import MainLayout from "../../../layout/MainLayout";
-import { Breadcrumb, Table, Typography } from "antd";
+import { Breadcrumb, Table, Typography, notification } from "antd";
 import { FormattedMessage } from "react-intl";
 import { React, useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -33,6 +33,7 @@ const configIntranet = (props) => {
     axios
       .get(API_URL + "/setup/site-configuration/")
       .then((res) => {
+        console.log('res =>',res);
         setConfig(res.data);
         setLoading(false);
       })
@@ -49,6 +50,9 @@ const configIntranet = (props) => {
         .post(API_URL + "/setup/site-configuration/", data)
         .then((res) => {
           getConfig();
+          notification['success']({
+            message: 'Información guardada'
+          });
         })
         .catch((e) => {
           console.log(e);
@@ -58,6 +62,9 @@ const configIntranet = (props) => {
         .put(API_URL + `/setup/site-configuration/${id}/`, data)
         .then((res) => {
           getConfig();
+          notification['success']({
+            message: 'Información actualizada'
+          });
         })
         .catch((e) => {
           console.log(e);

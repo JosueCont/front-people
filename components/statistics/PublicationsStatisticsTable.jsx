@@ -31,26 +31,22 @@ const CustomTable = styled(Table)`
         width: 16%;
     }
 `;
-const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters}) => {
+const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters, changeStatus}) => {
 
     const {Option} = Select
 
     const optionsActions = [
         {
             label: 'Pendiente',
-            value: 0
-        },
-        {
-            label: 'Aceptar',
-            value: 1
-        },
-        {
-            label: 'Rechazar',
             value: 2
         },
         {
-            label: 'Eliminar',
-            value: 3
+            label: 'Publicado',
+            value: 1
+        },
+        {
+            label: 'Bloqueado',
+            value: 0
         }
     ]
 
@@ -93,6 +89,8 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             </Row>
         </>
     );
+
+    
 
     const columns = [
         {
@@ -138,7 +136,7 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             title: 'Estatus',
             key: 'status',
             render: (row) => (
-                <Select value={0} options={optionsActions} placeholder="Estatus">
+                <Select value={row.status} options={optionsActions} onChange={(e) => changeStatus(row, e)} placeholder="Estatus">
                 </Select>
             )
         },
@@ -149,15 +147,6 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             render: reactions => (
                 <>
                     <ReactionByType reactions={reactions}/>
-                </>
-            )
-        },
-        {
-            title: 'Esta activo',
-            key: 'isActive',
-            render: row =>(
-                <>
-                    {row.isActive ? <Badge status="success" text="Activo" /> : <Badge status="error" text="Inactivo" />  }     
                 </>
             )
         }

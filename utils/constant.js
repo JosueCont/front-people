@@ -206,15 +206,15 @@ export const monthsName = [
 export const intranetAccess = [
   {
     label: "No",
-    value: 0,
-  },
-  {
-    label: "Lectura",
     value: 1,
   },
   {
     label: "Escritura",
     value: 2,
+  },
+  {
+    label: "Lectura",
+    value: 3,
   },
 ];
 

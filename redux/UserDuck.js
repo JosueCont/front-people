@@ -2,7 +2,8 @@ import WebApiPeople from "../api/WebApiPeople";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../libs/auth";
 import { UserPermissions } from "../utils/functions";
-import { assessmentLoadAction } from "./assessmentDuck";
+import { doCompanySelectedCatalog } from "./catalogCompany";
+import { assessmentLoadAction} from "./assessmentDuck"
 
 const initialData = {
   default: true,
@@ -83,6 +84,7 @@ export const companySelected = (data) => async (dispatch, getState) => {
     if (data) {
       let response = await WebApiPeople.getCompany(data);
       dispatch({ type: COMPANY_SELCTED, payload: response.data });
+      dispatch(doCompanySelectedCatalog(response.data.id));
       dispatch(getPeopleCompany(data));
       return true;
     }

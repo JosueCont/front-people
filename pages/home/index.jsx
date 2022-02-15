@@ -16,6 +16,7 @@ import {
   Modal,
   Menu,
   Dropdown,
+  notification,
 } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
@@ -47,6 +48,7 @@ import SelectAccessIntranet from '../../components/selects/SelectAccessIntranet'
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
+import { LocalGroceryStoreTwoTone } from "@material-ui/icons";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -283,6 +285,26 @@ const homeScreen = ({ ...props }) => {
     },
   ];
 
+  const changeValuePerosn = (value, user) =>{
+    console.log('value', value);
+    user['intranet_access'] = value;
+    WebApiPeople.updatePerson(user, user.id).then((response)=>{
+      let idx = person.findIndex(item => item.id === user.id);
+      let newPerson = response.data;
+      newPerson['key'] = response.data.khonnect_id;
+
+      let personsTemp = [...person]
+      personsTemp[idx] = newPerson
+      setPerson(personsTemp)
+
+      notification["success"]({
+        message: "Permisos acualizados"
+      });
+    }).catch(error =>{
+      console.log('error =>', error);
+    })
+  }
+
   let columns2 = [
     {
       title: "Núm. Empleado",
@@ -347,7 +369,7 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-             <SelectAccessIntranet />
+             <SelectAccessIntranet value={item.intranet_access} onChange={(e) => changeValuePerosn(e, item)} />
             {/* <Switch
               disabled={true}
               defaultChecked={item.intranet_access}
