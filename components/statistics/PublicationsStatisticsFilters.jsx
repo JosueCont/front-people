@@ -85,9 +85,25 @@ const PublicationsStatisticsFilters = (props) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [datePickerValue, setDatePickerValue] = useState(null);
+  const [statusFilter, setStatusFilter] = useState(null)
 
   const { Option } = Select;
   const { RangePicker } = DatePicker;
+
+  const optionsActions = [
+        {
+            label: 'Pendiente',
+            value: 2
+        },
+        {
+            label: 'Publicado',
+            value: 1
+        },
+        {
+            label: 'Bloqueado',
+            value: 0
+        }
+    ]
 
   function getSelectedDate(value, dateString) {
     if (dateString.length == 2) {
@@ -141,14 +157,20 @@ const PublicationsStatisticsFilters = (props) => {
       startDate && endDate
         ? `&start_date=${startDate}&end_date=${endDate}`
         : "";
+        console.log('statusFilter =>',statusFilter);
+    let statusParam = statusFilter !== undefined ? `&status=${statusFilter}` : "" ;
+    console.log('statusParam =>',statusParam)
 
     // seteamos parámetros globales para el paginado
-    props.setParameters(`${userParam}${groupParam}${dateRange}`);
+    props.setParameters(`${userParam}${groupParam}${dateRange}${statusParam}`);
     props.getPostsByFilter(
       props.companyId,
       "",
-      `${userParam}${groupParam}${dateRange}`
+      `${userParam}${groupParam}${dateRange}${statusParam}`
     );
+
+    console.log(`${userParam}${groupParam}${dateRange}${statusParam}`);
+
   };
 
   const getExcelFile = () => {
@@ -250,9 +272,11 @@ const PublicationsStatisticsFilters = (props) => {
               </Col>
               <CenterItemsCol span={24}>
                 <CustomSelect
+                  allowClear
                   placeholder="Seleccionar un autor"
-                  /* onChange={(value) => setUser(value)} */
-                  options={statusActivePost}
+                  value={statusFilter}
+                  onChange={(value) => setStatusFilter(value)}
+                  options={optionsActions}
                 />
                 {/* <CustomInput onChange={handleChange} placeholder="Nombre del autor"/> */}
               </CenterItemsCol>

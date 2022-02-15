@@ -12,6 +12,10 @@ class WebApiIntranet {
     );
   }
 
+  static updateStatusPost(postId, data){
+    return WebApi.ApisType(`/intranet/post/${postId}/`, "patch", data);
+  }
+
   static getGroupList(data) {
     return WebApi.ApisType(`/intranet/group/?node=${data}`, "get");
   }

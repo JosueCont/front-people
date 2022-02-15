@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { withAuthSync } from "../../../libs/auth";
 import moment from "moment";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, notification } from "antd";
 import esES from "antd/lib/locale/es_ES";
 
 import MainLayout from "../../../layout/MainLayout";
-
+import WebApiIntranet from "../../../api/WebApiIntranet";
 import { publicationsListAction } from "../../../redux/IntranetDuck";
 import { useGetCompanyId } from "../../../utils/useGetCompanyId";
 import PublicationsStatisticsTable from "../../../components/statistics/PublicationsStatisticsTable";
@@ -16,7 +16,7 @@ const index = (props) => {
   const [publicationsList, setPublicationsList] = useState({});
   const [loadingData, setLoadingData] = useState(true);
   const [processedPublications, setProcessedPubications] = useState([]);
-  const [parameters, setParameters] = useState("");
+  const [parameters, setParameters] = useState(null);
   // Hook para traer la compania
   const { companyId, getCompanyId } = useGetCompanyId();
 
@@ -38,9 +38,11 @@ const index = (props) => {
     if (props.publicationsList && props.publicationsList.results) {
       let publicationsFiltered = [];
       try {
+        console.log('props.publicationsList.results',props.publicationsList.results);
         props.publicationsList.results.map((publication) => {
           // Se filtran las propiedades a utilizar en la tabla
           publicationsFiltered.push({
+            id: publication.id,
             date: moment(new Date(publication.timestamp)).format(
               "DD MMMM hh:mm a"
             ),
@@ -52,6 +54,7 @@ const index = (props) => {
             reactions: publication.count_by_reaction_type
               ? publication.count_by_reaction_type
               : [],
+              status: publication.status
           });
         });
         // Contiene el data ya ordenado para la tabla
@@ -62,19 +65,16 @@ const index = (props) => {
         console.log(error);
       }
     }
-    setProcessedPubications([
-          {
-            date: '',
-            publication: 'publication.content',
-            owner: `sada`,
-            comments: 0,
-            clicks:  0,
-            prints: 0,
-            reactions: [],
-            isActive: true
-          }
-        ]);
   }, [props.publicationsList]);
+
+  const changeStatus = async (post, status) =>{
+    let response = await  WebApiIntranet.updateStatusPost(post.id, {status: status})
+    if(response.status === 200){
+      notification['success']({
+        message: 'Estatus actualizado'
+      });
+    }
+  }
 
   return (
     <>
@@ -94,6 +94,7 @@ const index = (props) => {
               processedPublicationsList={processedPublications}
               changePage={props.publicationsListAction}
               parameters={parameters}
+              changeStatus={changeStatus}
             />
           </ConfigProvider>
         </MainLayout>
