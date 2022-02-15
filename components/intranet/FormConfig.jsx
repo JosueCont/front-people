@@ -44,6 +44,7 @@ const beforeUpload = (file) => {
 };
 
 const FormConfig = (props) => {
+  const [personsSelected, setPersonsSelected] = useState([])
   const [formConfigIntranet] = Form.useForm();
   const [photo, setPhoto] = useState(
     props.getImage ? props.getImage + "?" + new Date() : null
@@ -113,6 +114,18 @@ const FormConfig = (props) => {
               })
             : [],
       });
+
+      if(props.config.intranet_moderator_enabled){
+        setShowPersons(props.config.intranet_moderator_enabled)
+        let valuesPerson = props.config.intranet_moderator_person.map(item =>{
+          return item.id
+        })
+        console.log('valuesPerson',valuesPerson);
+        setPersonsSelected(valuesPerson)
+
+      }
+
+
       if (props.config.intranet_logo) {
         setPhoto(props.config.intranet_logo + "?" + new Date());
       }
@@ -137,6 +150,11 @@ const FormConfig = (props) => {
   }));
 
   const onFinish = (values) => {
+    
+    if(values.intranet_moderator_enabled){
+      values['intranet_moderator_person'] = personsSelected;
+    }
+    console.log(values)
     saveConfig(values);
   };
 
@@ -159,6 +177,8 @@ const FormConfig = (props) => {
         data.intranet_enable_post_reaction.length > 0
           ? data.intranet_enable_post_reaction
           : null,
+      intranet_moderator_enabled: data.intranet_moderator_enabled,
+      intranet_moderator_person: data.intranet_moderator_person
     };
     let params = new FormData();
     let image = data.image ? data.image.file.originFileObj : "";
@@ -222,6 +242,11 @@ const FormConfig = (props) => {
   const changeSwitch = (checked, e) =>{
     setShowPersons(checked)
     /* console.log('checked =>', checked) */
+  }
+
+  const onChangePerson = (values) =>{
+    console.log('values',values);
+    setPersonsSelected(values)
   }
 
   return (
@@ -349,8 +374,8 @@ const FormConfig = (props) => {
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
-              <Form.Item name={'moderate_posts'} label="Las publicaciones requieren moderación">
-                <Switch onChange={changeSwitch} />
+              <Form.Item name={'intranet_moderator_enabled'} label="Las publicaciones requieren moderación">
+                <Switch checked={props.config && props.config.intranet_moderator_enabled} onChange={changeSwitch} />
               </Form.Item>
             </Col>
 
@@ -362,15 +387,16 @@ const FormConfig = (props) => {
                     showSearch
                     placeholder="Select a person"
                     optionFilterProp="children"
-                    /* onChange={onChange} */
+                    onChange={onChangePerson}
                     /* onSearch={onSearch} */
                     filterOption={(input, option) =>
                       option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                     }
+                    value={personsSelected}
                   >
                     {
                       persons.map(item => (
-                        <Select.Option value={item.id}>{item.first_name+' '+item.flast_name}</Select.Option>
+                        <Select.Option key={item.first_name+item.flast_name} value={item.id}>{item.first_name+' '+item.flast_name}</Select.Option>
                       ))
                     }
                   </Select>,

@@ -355,7 +355,6 @@ const FormPerson = ({
                     <Form.Item
                       name="intranet_access"
                       /* label="Acceso a la intranet" */
-                      valuePropName="checked"
                     >
                       {/* <Switch
                         checkedChildren={<CheckOutlined />}

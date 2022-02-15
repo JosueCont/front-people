@@ -37,6 +37,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/${id}/`, "put", data);
   }
 
+  static permissionIntranet(data, id){
+    return WebApi.ApisType(`/person/person/${id}/`, "patch", data);
+  }
+
   static updatePhotoPerson(data) {
     return WebApi.ApisType(
       `/person/person/update_pthoto_person/`,
