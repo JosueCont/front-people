@@ -2,6 +2,7 @@ import WebApiPeople from "../api/WebApiPeople";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../libs/auth";
 import { UserPermissions } from "../utils/functions";
+import { assessmentLoadAction } from "./assessmentDuck";
 
 const initialData = {
   default: true,
@@ -57,6 +58,7 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
     sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
     dispatch({ type: GENERAL_CONFIG, payload: response.data });
     dispatch(setUser());
+    response.data.kuiz_enabled && dispatch(assessmentLoadAction());
   } catch (error) {}
 };
 

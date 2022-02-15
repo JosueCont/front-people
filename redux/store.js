@@ -8,6 +8,7 @@ import webReducerCatalog, { doCompanySelectedCatalog } from "./catalogCompany";
 import fiscalDuck, { doFiscalSelectedData } from "./fiscalDuck";
 import IntranetDuck from "./IntranetDuck";
 import userAndCompanyReducer from "./userAndCompanyFilterDuck";
+import assessmentReducer from "./assessmentDuck";
 
 const rootReducer = combineReducers({
   userStore: webReducerUser,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   fiscalStore: fiscalDuck,
   intranetStore: IntranetDuck,
   userAndCompanyStore: userAndCompanyReducer,
+  assessmentStore: assessmentReducer
 });
 
 export const store = createStore(rootReducer, applyMiddleware(thunk));

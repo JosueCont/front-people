@@ -12,6 +12,7 @@ import {
   UserAddOutlined,
   AreaChartOutlined,
   AppstoreOutlined,
+  QuestionCircleOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import {
@@ -138,7 +139,7 @@ const MainSider = ({
                     collapsed ? "19px !important;" : "16px !important;"
                   }
                 }
-                .ant-menu-item, 
+                /* .ant-menu-item,  */
 
             `}
       />
@@ -388,14 +389,27 @@ const MainSider = ({
               Carga de documentos
             </Menu.Item>
           </SubMenu>
-          {/* {props.config && props.config.kuiz_enabled && (
-                        <Menu.Item
-                        key="13"
-                        onClick={() => router.push({ pathname: "/assessment" })}
-                        >
-                        Encuestas
-                        </Menu.Item>
-                    )} */}
+          {props.config && props.config.kuiz_enabled && (
+            <SubMenu
+              key="kuis"
+              title="Kuiz"
+              className="subMainMenu"
+              icon={<QuestionCircleOutlined className="custom_icon"/>}
+            >
+              <Menu.Item
+                key="suverys"
+                onClick={() => router.push({ pathname: "/assessment/surveys" })}
+              >
+                Encuestas
+              </Menu.Item>
+              <Menu.Item
+                key="groups"
+                onClick={() => router.push({ pathname: "/assessment/groups" })}
+              >
+                Grupos
+              </Menu.Item>
+            </SubMenu>
+          )}
         </Menu>
       </Sider>
     </>
