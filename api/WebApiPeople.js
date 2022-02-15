@@ -37,7 +37,7 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/${id}/`, "put", data);
   }
 
-  static permissionIntranet(data, id){
+  static permissionIntranet(data, id) {
     return WebApi.ApisType(`/person/person/${id}/`, "patch", data);
   }
 
@@ -196,10 +196,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
   }
 
-  /*Payroll Person */
   static createPayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
   }
+
   static updatePayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/${data.id}/`, "put", data);
   }
@@ -228,7 +228,6 @@ class WebApiPeople {
     return WebApi.ApisType(`/fiscal/periodicity/`, "get");
   }
 
-  /** PaymentCalendar */
   static createPaymentCalendar(data) {
     return WebApi.ApisType(`/payroll/payment-calendar`, "post", data);
   }
