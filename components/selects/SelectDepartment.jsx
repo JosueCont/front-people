@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { connect } from "react-redux";
 
 const SelectDepartment = ({
@@ -46,7 +44,7 @@ const SelectDepartment = ({
           style={props.style ? props.style : {}}
           onChange={props.onChange ? props.onChange : null}
           notFoundContent={"No se encontraron resultados."}
-        />  
+        />
       </Form.Item>
     </>
   );
