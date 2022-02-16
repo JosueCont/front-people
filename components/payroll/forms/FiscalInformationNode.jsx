@@ -8,19 +8,19 @@ const FiscalInformationNode = ({ node_id, fiscal }) => {
 
   return (
     <>
-      <Spin tip="Cargando..." spinning={loading}>
+      <Spin tip="Cargando..." spinning={false}>
         <Row>
           <Col span={24}>
             <Row>
               <Title style={{ fontSize: "15px" }}>Informacion fiscal</Title>
             </Row>
             <Divider style={{ marginTop: "2px" }} />
-            <FiscalInformation />
+            <FiscalInformation node={node_id} />
             <Row>
               <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
             </Row>
             <Divider style={{ marginTop: "2px" }} />
-            <FiscalAddress node={node_id} formAddress={fiscalAddress} />
+            <FiscalAddress node={node_id} />
           </Col>
         </Row>
       </Spin>
