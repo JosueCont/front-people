@@ -68,12 +68,33 @@ const index = (props) => {
   }, [props.publicationsList]);
 
   const changeStatus = async (post, status) =>{
-    let response = await  WebApiIntranet.updateStatusPost(post.id, {status: status})
-    if(response.status === 200){
+    WebApiIntranet.updateStatusPost(post.id, {status: status}).then(response => {
+      let idx = processedPublications.findIndex(item => item.id === post.id);
+      let newPost = {
+        key:response.data.timestamp, 
+        id: response.data.id,
+        date: moment(new Date(response.data.timestamp)).format(
+          "DD MMMM hh:mm a"
+        ),
+        publication: response.data.content,
+        owner: `${response.data.owner.first_name} ${response.data.owner.flast_name}`,
+        comments: response.data.comments ? response.data.comments.length : 0,
+        clicks: response.data.clicks ? response.data.clicks : 0,
+        prints: response.data.prints ? response.data.prints : 0,
+        reactions: response.data.count_by_reaction_type
+          ? response.data.count_by_reaction_type
+          : [],
+        status: response.data.status
+      }
+
+      let PostTemp = [...processedPublications]
+      PostTemp[idx] = newPost
+      setProcessedPubications(PostTemp);
+
       notification['success']({
         message: 'Estatus actualizado'
       });
-    }
+    })
   }
 
   return (
