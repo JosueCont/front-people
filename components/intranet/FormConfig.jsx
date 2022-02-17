@@ -375,7 +375,7 @@ const FormConfig = (props) => {
             </Col>
             <Col lg={6} xs={22} offset={1}>
               <Form.Item name={'intranet_moderator_enabled'} label="Las publicaciones requieren moderación">
-                <Switch checked={props.config && props.config.intranet_moderator_enabled} onChange={changeSwitch} />
+                <Switch checked={showPersons} onChange={changeSwitch} />
               </Form.Item>
             </Col>
 
