@@ -32,6 +32,7 @@ import {
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
 import SelectPersonType from "../selects/SelectPersonType";
+import SelectAccessIntranet from '../selects/SelectAccessIntranet';
 
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
@@ -453,12 +454,12 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Form.Item
                     name="intranet_access"
                     label="Acceso a la intranet"
-                    valuePropName="checked"
                   >
-                    <Switch
+                    {/* <Switch
                       checkedChildren={<CheckOutlined />}
                       unCheckedChildren={<CloseOutlined />}
-                    />
+                    /> */}
+                    <SelectAccessIntranet />
                   </Form.Item>
                 </Col>
               )}

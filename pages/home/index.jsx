@@ -16,6 +16,7 @@ import {
   Modal,
   Menu,
   Dropdown,
+  notification,
 } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
@@ -43,9 +44,11 @@ import WebApiPeople from "../../api/WebApiPeople";
 import { genders, periodicity, statusSelect } from "../../utils/constant";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
+import SelectAccessIntranet from '../../components/selects/SelectAccessIntranet'
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
+import { LocalGroceryStoreTwoTone } from "@material-ui/icons";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -58,6 +61,8 @@ const homeScreen = ({ ...props }) => {
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
   const inputFileRef2 = useRef(null);
+  const { Option } = Select;
+
   let filters = { node: "" };
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -280,6 +285,30 @@ const homeScreen = ({ ...props }) => {
     },
   ];
 
+  const changeValuePerosn = (value, user) =>{
+    /* user['intranet_access'] = value; */
+    let dataUpd = {
+      id: `${user.id}`,
+      intranet_access: value
+}
+    WebApiPeople.updatePerson(dataUpd).then((response)=>{
+      let idx = person.findIndex(item => item.id === user.id);
+      let newPerson = response.data;
+      newPerson['key'] = response.data.khonnect_id;
+
+      let personsTemp = [...person]
+      personsTemp[idx] = newPerson
+      setPerson(personsTemp)
+
+      notification["success"]({
+        message: "Permisos acualizados"
+      });
+      
+    }).catch(error =>{
+      console.log('error =>', error);
+    })
+  }
+
   let columns2 = [
     {
       title: "Núm. Empleado",
@@ -344,12 +373,13 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-            <Switch
+             <SelectAccessIntranet value={item.intranet_access} onChange={(e) => changeValuePerosn(e, item)} />
+            {/* <Switch
               disabled={true}
               defaultChecked={item.intranet_access}
               checkedChildren="Si"
               unCheckedChildren="No"
-            />
+            /> */}
           </>
         );
       },

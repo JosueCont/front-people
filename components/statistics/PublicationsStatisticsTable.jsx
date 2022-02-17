@@ -1,7 +1,7 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Select } from 'antd';
 import styled from 'styled-components';
-import { Row, Col } from 'antd';
+import { Row, Col, Badge } from 'antd';
 
 const ReactionsImg = styled.img`
     max-width: 20px;
@@ -31,8 +31,26 @@ const CustomTable = styled(Table)`
         width: 16%;
     }
 `;
-const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters}) => {
+const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters, changeStatus}) => {
 
+    const {Option} = Select
+
+    const optionsActions = [
+        {
+            label: 'Pendiente',
+            value: 2
+        },
+        {
+            label: 'Publicado',
+            value: 1
+        },
+        {
+            label: 'Bloqueado',
+            value: 0
+        }
+    ]
+
+    console.log('processedPublicationsList =>',processedPublicationsList)
     const ReactionByType = ({reactions = [{1: '0'}, {2:'0'}, {3: '0'}, {4: '0'}, {5: '0'}, {6: '0'}, {7: '0'}]}) => (
         <>
             {/* <Row>
@@ -71,6 +89,8 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             </Row>
         </>
     );
+
+    
 
     const columns = [
         {
@@ -111,6 +131,14 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             title: 'Clics',
             dataIndex: 'clicks',
             key: 'clicks'
+        },
+        {
+            title: 'Estatus',
+            key: 'status',
+            render: (row) => (
+                <Select value={row.status} options={optionsActions} onChange={(e) => changeStatus(row, e)} placeholder="Estatus">
+                </Select>
+            )
         },
         {
             title: 'Reacciones por tipo',

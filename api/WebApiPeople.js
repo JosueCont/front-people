@@ -33,9 +33,11 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/${data}/`, "get");
   }
 
-  static updatePerson(data, id) {
-    return WebApi.ApisType(`/person/person/${id}/`, "put", data);
+  static updatePerson(data) {
+    //isysa.localhost:8000
+    return WebApi.ApisType(`/person/person/change-intranet-access`, "post", data);
   }
+
 
   static updatePhotoPerson(data) {
     return WebApi.ApisType(

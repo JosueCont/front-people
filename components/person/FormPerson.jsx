@@ -33,6 +33,7 @@ import SelectDepartment from "../selects/SelectDepartment";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import SelectWorkTitleStatus from "../selects/SelectWorkTitleStatus";
+import SelectAccessIntranet from '../selects/SelectAccessIntranet'
 import { headersApiKhonnect } from "../../utils/constant.js";
 import { ruleRequired } from "../../utils/rules";
 
@@ -353,13 +354,13 @@ const FormPerson = ({
                   <Col lg={7} xs={24} md={11}>
                     <Form.Item
                       name="intranet_access"
-                      label="Acceso a la intranet"
-                      valuePropName="checked"
+                      /* label="Acceso a la intranet" */
                     >
-                      <Switch
+                      {/* <Switch
                         checkedChildren={<CheckOutlined />}
                         unCheckedChildren={<CloseOutlined />}
-                      />
+                      /> */}
+                      <SelectAccessIntranet />
                     </Form.Item>
                   </Col>
                 )}

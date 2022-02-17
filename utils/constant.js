@@ -203,6 +203,34 @@ export const monthsName = [
   },
 ];
 
+export const intranetAccess = [
+  {
+    label: "No",
+    value: 1,
+  },
+  {
+    label: "Escritura",
+    value: 2,
+  },
+  {
+    label: "Lectura",
+    value: 3,
+  },
+];
+
+export const statusActivePost = [
+  {
+    label: 'Inactivo',
+    value: 0,
+    key: 0
+  },
+  {
+    label: 'Activo',
+    value: 1,
+    key: 1
+  }
+]
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
 export const messageDeleteSuccess = "Eliminado correctamente.";
