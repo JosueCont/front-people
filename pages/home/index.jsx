@@ -286,9 +286,12 @@ const homeScreen = ({ ...props }) => {
   ];
 
   const changeValuePerosn = (value, user) =>{
-    console.log('value', value);
-    user['intranet_access'] = value;
-    WebApiPeople.updatePerson(user, user.id).then((response)=>{
+    /* user['intranet_access'] = value; */
+    let dataUpd = {
+      id: `${user.id}`,
+      intranet_access: value
+}
+    WebApiPeople.updatePerson(dataUpd).then((response)=>{
       let idx = person.findIndex(item => item.id === user.id);
       let newPerson = response.data;
       newPerson['key'] = response.data.khonnect_id;
@@ -300,6 +303,7 @@ const homeScreen = ({ ...props }) => {
       notification["success"]({
         message: "Permisos acualizados"
       });
+      
     }).catch(error =>{
       console.log('error =>', error);
     })
