@@ -33,13 +33,11 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/${data}/`, "get");
   }
 
-  static updatePerson(data, id) {
-    return WebApi.ApisType(`/person/person/${id}/`, "put", data);
+  static updatePerson(data) {
+    //isysa.localhost:8000
+    return WebApi.ApisType(`/person/person/change-intranet-access`, "post", data);
   }
 
-  static permissionIntranet(data, id) {
-    return WebApi.ApisType(`/person/person/${id}/`, "patch", data);
-  }
 
   static updatePhotoPerson(data) {
     return WebApi.ApisType(
@@ -196,10 +194,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
   }
 
+  /*Payroll Person */
   static createPayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
   }
-
   static updatePayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/${data.id}/`, "put", data);
   }
@@ -228,6 +226,7 @@ class WebApiPeople {
     return WebApi.ApisType(`/fiscal/periodicity/`, "get");
   }
 
+  /** PaymentCalendar */
   static createPaymentCalendar(data) {
     return WebApi.ApisType(`/payroll/payment-calendar`, "post", data);
   }
