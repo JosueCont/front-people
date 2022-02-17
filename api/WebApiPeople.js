@@ -220,30 +220,6 @@ class WebApiPeople {
     return WebApi.ApisType(`/fiscal/bank/`, "get");
   }
 
-  static getPaymentCalendar(data) {
-    return WebApi.ApisType(`/payroll/payment-calendar/?node=${data}`, "get");
-  }
-
-  static getPaymentPeriodicity() {
-    return WebApi.ApisType(`/fiscal/periodicity/`, "get");
-  }
-
-  static createPaymentCalendar(data) {
-    return WebApi.ApisType(`/payroll/payment-calendar`, "post", data);
-  }
-
-  static updatePaymentCalendar(data) {
-    return WebApi.ApisType(
-      `/payroll/payment-calendar/${data.id}/`,
-      "put",
-      data
-    );
-  }
-
-  static getDetailPaymentCalendar(id) {
-    return WebApi.ApisType(`/payroll/payment-calendar/${id}`, "get");
-  }
-
   static getVacationRequest(data) {
     return WebApi.ApisType(`/person/vacation/?${data}`, "get");
   }
@@ -313,6 +289,18 @@ class WebApiPeople {
 
   static deleteDocument(data) {
     return WebApi.ApisType(`/person/document/${data}/`, "delete");
+  }
+
+  static getTemplateImportPerson() {
+    return WebApi.ApisType(`/person/person/generate_template/`, "get");
+  }
+
+  static fiscalInformationNode(type, node, data) {
+    return WebApi.ApisType(
+      `/business/fiscal-information/?node__id=${node}`,
+      type,
+      data
+    );
   }
 }
 export default WebApiPeople;

@@ -31,7 +31,6 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
-import _, { set } from "lodash";
 import FormPerson from "../../components/person/FormPerson";
 import { withAuthSync, userCompanyId, userCompanyName } from "../../libs/auth";
 import { setDataUpload } from "../../redux/UserDuck";
@@ -40,15 +39,13 @@ import Link from "next/link";
 import jsCookie from "js-cookie";
 import Clipboard from "../../components/Clipboard";
 import { connect } from "react-redux";
-import WebApiPeople from "../../api/WebApiPeople";
-import { genders, periodicity, statusSelect } from "../../utils/constant";
+import { genders, statusSelect } from "../../utils/constant";
 import SelectDepartment from "../../components/selects/SelectDepartment";
-import SelectJob from "../../components/selects/SelectJob";
-import SelectAccessIntranet from '../../components/selects/SelectAccessIntranet'
+import SelectAccessIntranet from "../../components/selects/SelectAccessIntranet";
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
-import { LocalGroceryStoreTwoTone } from "@material-ui/icons";
+import { downloadTemplateImportPerson, getDomain } from "../../utils/functions";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -161,24 +158,6 @@ const homeScreen = ({ ...props }) => {
     }
   }, [showModalCompanies]);
 
-  const getUserCompanies = async (item) => {
-    setListUserCompanies([]);
-    setShowModalCompanies(false);
-    try {
-      let response = WebApiPeoplegetCompaniesPeople(item.id);
-      let result = response.data;
-      let stringList = [];
-      result.map((item) => {
-        stringList.push(item.name);
-      });
-      setListUserCompanies(stringList);
-      setShowModalCompanies(true);
-    } catch (error) {
-      setListUserCompanies([]);
-      setShowModalCompanies(true);
-    }
-  };
-
   const getModalPerson = (value) => {
     setModalAddPerson(value);
     setLoading(true);
@@ -285,25 +264,27 @@ const homeScreen = ({ ...props }) => {
     },
   ];
 
-  const changeValuePerosn = (value, user) =>{
-    console.log('value', value);
-    user['intranet_access'] = value;
-    WebApiPeople.updatePerson(user, user.id).then((response)=>{
-      let idx = person.findIndex(item => item.id === user.id);
-      let newPerson = response.data;
-      newPerson['key'] = response.data.khonnect_id;
+  const changeValuePerosn = (value, user) => {
+    console.log("value", value);
+    user["intranet_access"] = value;
+    WebApiPeople.updatePerson(user, user.id)
+      .then((response) => {
+        let idx = person.findIndex((item) => item.id === user.id);
+        let newPerson = response.data;
+        newPerson["key"] = response.data.khonnect_id;
 
-      let personsTemp = [...person]
-      personsTemp[idx] = newPerson
-      setPerson(personsTemp)
+        let personsTemp = [...person];
+        personsTemp[idx] = newPerson;
+        setPerson(personsTemp);
 
-      notification["success"]({
-        message: "Permisos acualizados"
+        notification["success"]({
+          message: "Permisos acualizados",
+        });
+      })
+      .catch((error) => {
+        console.log("error =>", error);
       });
-    }).catch(error =>{
-      console.log('error =>', error);
-    })
-  }
+  };
 
   let columns2 = [
     {
@@ -369,7 +350,10 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-             <SelectAccessIntranet value={item.intranet_access} onChange={(e) => changeValuePerosn(e, item)} />
+            <SelectAccessIntranet
+              value={item.intranet_access}
+              onChange={(e) => changeValuePerosn(e, item)}
+            />
             {/* <Switch
               disabled={true}
               defaultChecked={item.intranet_access}
@@ -772,15 +756,17 @@ const homeScreen = ({ ...props }) => {
   const menuExportTemplate = (
     <Menu>
       <Menu.Item key="1">
-        <a href={`${API_URL}/static/plantillaPersonas.xlsx`}>
+        <a href={`${getDomain()}/person/person/generate_template/`}>
           Plantilla básica
         </a>
       </Menu.Item>
-      <Menu.Item key="2">
-        <a href={`${API_URL}/static/plantillaExtendidaPersonas.xlsx`}>
-          Plantilla Extensa
-        </a>
-      </Menu.Item>
+      {props.config && props.config.enabled_nomina && (
+        <Menu.Item key="2">
+          <a href={`${API_URL}/static/plantillaExtendidaPersonas.xlsx`}>
+            Plantilla Extensa
+          </a>
+        </Menu.Item>
+      )}
     </Menu>
   );
 
@@ -803,23 +789,6 @@ const homeScreen = ({ ...props }) => {
           onChange={(e) => importPersonFileExtend(e)}
         />
       </Menu.Item>
-      {/* <Menu.Item key="2">
-        <a
-          className={"ml-20"}
-          icon={<UploadOutlined />}
-          onClick={() => {
-            inputFileRef2.current.click();
-          }}
-        >
-          Datos Extensos
-        </a>
-        <input
-          ref={inputFileRef2}
-          type="file"
-          style={{ display: "none" }}
-          onChange={(e) => importPersonFileExtend(e)}
-        />
-      </Menu.Item> */}
     </Menu>
   );
 

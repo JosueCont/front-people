@@ -331,3 +331,11 @@ export const UserPermissions = (permits = null, is_admin = false) => {
     return perms;
   }
 };
+
+export const getDomain = () => {
+  try {
+    return window.location.hostname;
+  } catch (error) {
+    return "error";
+  }
+};
