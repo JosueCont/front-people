@@ -18,7 +18,6 @@ import SelectDepartment from "../selects/SelectDepartment";
 import { connect } from "react-redux";
 import SelectJob from "../selects/SelectJob";
 
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 import moment from "moment";
 import { civilStatus, genders, periodicity } from "../../utils/constant";
@@ -32,7 +31,7 @@ import {
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
 import SelectPersonType from "../selects/SelectPersonType";
-import SelectAccessIntranet from '../selects/SelectAccessIntranet';
+import SelectAccessIntranet from "../selects/SelectAccessIntranet";
 
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
@@ -40,7 +39,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
   const [formPerson] = Form.useForm();
   const [photo, setPhoto] = useState(null);
   const [isActive, setIsActive] = useState(false);
-  const [departmentId, setDepartmentId] = useState(null);
   const [birthDate, setBirthDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
@@ -86,7 +84,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
         person_department: person.department.id,
         job: person.job.id,
       });
-      setDepartmentId(person.person_department);
     }
     if (person.person_type)
       formPerson.setFieldsValue({
@@ -474,12 +471,9 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   </Form.Item>
                 </Col>
               )}
-
-              {hideProfileSecurity && (
-                <Col lg={8} xs={24} md={12}>
-                  <SelectGroup viewLabel={true} />
-                </Col>
-              )}
+              <Col lg={8} xs={24} md={12}>
+                <SelectGroup viewLabel={true} />
+              </Col>
             </Row>
             <Row gutter={20}>
               <hr />
