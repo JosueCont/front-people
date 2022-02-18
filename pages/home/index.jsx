@@ -45,13 +45,13 @@ import SelectAccessIntranet from "../../components/selects/SelectAccessIntranet"
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
-import { downloadTemplateImportPerson, getDomain } from "../../utils/functions";
+import { getDomain } from "../../utils/functions";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
   const route = useRouter();
 
-  const [valRefreshColumns, setValRefreshColumns] = useState(false);
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalAddPerson, setModalAddPerson] = useState(false);
