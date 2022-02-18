@@ -2,6 +2,7 @@ import { Form, Row, Col, Input, Button, Switch, Select } from "antd";
 import React, { useState, useEffect } from "react";
 import { curpFormat, rfcFormat, ruleRequired } from "../../utils/rules";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const FiscalInformation = ({ node, ...props }) => {
   const [form] = Form.useForm();
@@ -16,13 +17,13 @@ const FiscalInformation = ({ node, ...props }) => {
   };
 
   useEffect(() => {
-    console.log("NODE-->> ", node);
     if (node) getInfo(node);
   }, [node]);
 
-  const getInfo = (data) => {
+  const getInfo = async (data) => {
     try {
-      let response = WebApi;
+      let response = await WebApiPeople.fiscalInformationNode("get", node);
+      console.log("fiscal data-->> ", response[0]);
     } catch (error) {
       console.log(error);
     }
@@ -67,10 +68,7 @@ const FiscalInformation = ({ node, ...props }) => {
             label="Regimen fiscal"
             rules={[ruleRequired]}
           >
-            <Select
-              // options={pTypeSelected == 1 ? taxRegimePhysical : taxRegimeMoral}
-              notFoundContent={"No se encontraron resultados."}
-            />
+            <Select notFoundContent={"No se encontraron resultados."} />
           </Form.Item>
         </Col>
         <Col lg={8} xs={22} md={12}>
