@@ -33,13 +33,8 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/${data}/`, "get");
   }
 
-  static updatePerson(data) {
-    //isysa.localhost:8000
-    return WebApi.ApisType(
-      `/person/person/change-intranet-access`,
-      "post",
-      data
-    );
+  static updatePerson(data, id) {
+    return WebApi.ApisType(`/person/person/${id}/`, "put", data);
   }
 
   static updatePhotoPerson(data) {
@@ -300,6 +295,14 @@ class WebApiPeople {
     return WebApi.ApisType(
       `/business/fiscal-information/?node__id=${node}`,
       type,
+      data
+    );
+  }
+
+  static changeIntranetAccess(data) {
+    return WebApi.ApisType(
+      `/person/person/change-intranet-access`,
+      "post",
       data
     );
   }

@@ -47,18 +47,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
 
   useEffect(() => {
     setFormPerson(person);
-    getGroupPerson(config, person.khonnect_id)
-      .then((response) => {
-        formPerson.setFieldsValue({
-          groups: response[0],
-        });
-      })
-      .catch((error) => {
-        formPerson.setFieldsValue({
-          groups: [],
-        });
-      });
-    setLoading(false);
   }, []);
 
   const setFormPerson = (person) => {
@@ -105,6 +93,18 @@ const DataPerson = ({ config, person = null, ...props }) => {
         register_date: moment(person.register_date),
       });
 
+    getGroupPerson(config, person.khonnect_id)
+      .then((response) => {
+        formPerson.setFieldsValue({
+          groups: response[0],
+        });
+      })
+      .catch((error) => {
+        formPerson.setFieldsValue({
+          groups: [],
+        });
+      });
+    setLoading(false);
     // getValueSelects();
     setPhoto(person.photo);
     setDateAdmission(person.date_of_admission);
