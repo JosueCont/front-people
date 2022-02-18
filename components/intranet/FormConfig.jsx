@@ -243,6 +243,11 @@ const FormConfig = (props) => {
     setShowPersons(checked)
     /* console.log('checked =>', checked) */
   }
+  
+  useEffect(() => {
+    console.log('showPersons',showPersons)
+  }, [showPersons])
+  
 
   const onChangePerson = (values) =>{
     console.log('values',values);
