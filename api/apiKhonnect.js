@@ -42,6 +42,7 @@ export const getGroupPerson = async (config, khonnect_id) => {
     .catch((e) => {
       return [];
     });
+  console.log("GURPOS PERSON-->> ", groups);
   return groups;
 };
 
