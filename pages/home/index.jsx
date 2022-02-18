@@ -19,7 +19,7 @@ import {
   notification,
 } from "antd";
 import Axios from "axios";
-import { API_URL } from "../../config/config";
+import { API_URL, API_URL_TENANT } from "../../config/config";
 import { useEffect, useState, useRef, React } from "react";
 import {
   SyncOutlined,
@@ -759,13 +759,17 @@ const homeScreen = ({ ...props }) => {
   const menuExportTemplate = (
     <Menu>
       <Menu.Item key="1">
-        <a href={`${getDomain()}/person/person/generate_template/`}>
+        <a
+          href={`https://${getDomain(
+            API_URL_TENANT
+          )}/person/person/generate_template/`}
+        >
           Plantilla básica
         </a>
       </Menu.Item>
       {props.config && props.config.enabled_nomina && (
         <Menu.Item key="2">
-          <a href={`${API_URL}/static/plantillaExtendidaPersonas.xlsx`}>
+          <a href={`${API_URL_TENANT}/static/plantillaExtendidaPersonas.xlsx`}>
             Plantilla Extensa
           </a>
         </Menu.Item>
