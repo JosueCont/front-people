@@ -12,7 +12,7 @@ class WebApiIntranet {
     );
   }
 
-  static updateStatusPost(postId, data){
+  static updateStatusPost(postId, data) {
     return WebApi.ApisType(`/intranet/post/${postId}/`, "patch", data);
   }
 
@@ -22,6 +22,14 @@ class WebApiIntranet {
 
   static getUsersList(data) {
     return WebApi.ApisType(`/intranet/search-person/?node=${data}`, "get");
+  }
+
+  static saveIntranetConfig(data) {
+    return WebApi.ApisType("/setup/site-configuration/", "post", data);
+  }
+
+  static updIntranetConfig(id, data) {
+    return WebApi.ApisType(`/setup/site-configuration/${id}/`, "put", data);
   }
 }
 export default WebApiIntranet;
