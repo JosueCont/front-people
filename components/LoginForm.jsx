@@ -1,6 +1,6 @@
 import { Form, Input, Button, Spin, Alert, Typography, message } from "antd";
 const { Text } = Typography;
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Axios from "axios";
 import Cookies from "js-cookie";
@@ -45,6 +45,31 @@ const LoginForm = ({
       return false;
     }
   };
+
+  const getIfno = async () => {
+    const headers = {
+      headers: 
+        {"client-id": props.generalConfig.client_khonnect_id,
+        "Content-Type": "application/json"}
+      };
+      try {
+        await Axios.get(props.generalConfig.url_server_khonnect+`/appstore/app/get/id=${props.generalConfig.client_khonnect_id}`, headers).then(res =>{
+          console.log('response', res);
+        }).catch(err => {
+          console.log('error', error);
+        })
+      } catch (error) {
+        console.log('error', error);
+      }
+  }
+
+  useEffect(() => {
+    if(props.generalConfig){
+      getIfno();
+    }
+      
+  }, [])
+  
 
   const login = async (email, password) => {
     try {

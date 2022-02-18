@@ -243,6 +243,11 @@ const FormConfig = (props) => {
     setShowPersons(checked)
     /* console.log('checked =>', checked) */
   }
+  
+  useEffect(() => {
+    console.log('showPersons',showPersons)
+  }, [showPersons])
+  
 
   const onChangePerson = (values) =>{
     console.log('values',values);
@@ -375,7 +380,7 @@ const FormConfig = (props) => {
             </Col>
             <Col lg={6} xs={22} offset={1}>
               <Form.Item name={'intranet_moderator_enabled'} label="Las publicaciones requieren moderación">
-                <Switch checked={props.config && props.config.intranet_moderator_enabled} onChange={changeSwitch} />
+                <Switch checked={showPersons} onChange={changeSwitch} />
               </Form.Item>
             </Col>
 
