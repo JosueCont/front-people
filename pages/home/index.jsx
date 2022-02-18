@@ -46,6 +46,7 @@ import { useRouter } from "next/router";
 import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
 import { downloadTemplateImportPerson, getDomain } from "../../utils/functions";
+import WebApiPeople from '../../api/WebApiPeople';
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;

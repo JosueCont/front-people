@@ -19,15 +19,14 @@ const SelectWorkTitle = ({
     setOptions([]);
     if (props.cat_work_title) {
       let data = props.cat_work_title;
-      if (department || job) {
-        data = data.filter(
-          (item) =>
-            department &&
-            item.department.id === department &&
-            job &&
-            item.job.id === job
-        );
+      if (department && job) {
+        data = data.filter( (item) => department && item.department.id === department && job && item.job.id === job );
+      }else if(department){
+        data = data.filter( (item) => department && item.department.id === department);
+      }else if(job){
+        data = data.filter( (item) => job && item.job.id === job );
       }
+
       data = data.map((item) => {
         return {
           label: forDepto
