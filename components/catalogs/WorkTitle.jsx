@@ -9,8 +9,14 @@ import {
   Spin,
   Input,
   message,
+  Modal,
 } from "antd";
-import { DeleteOutlined, EditOutlined, GoldOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  GoldOutlined,
+} from "@ant-design/icons";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
 import SelectLevel from "../selects/SelectLevel";
@@ -19,6 +25,7 @@ import SelectDepartment from "../selects/SelectDepartment";
 import {
   messageDeleteSuccess,
   messageError,
+  messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../utils/constant";
 import { getWorkTitle } from "../../redux/catalogCompany";
@@ -62,6 +69,13 @@ const WorkTitle = ({ currentNode, ...props }) => {
       },
     },
     {
+      title: "Vacantes",
+      key: "vacancy",
+      render: (item) => {
+        return <div>{item.vacancy ? item.vacancy : ""}</div>;
+      },
+    },
+    {
       title: "Salario",
       key: "Salario",
       render: (item) => {
@@ -82,7 +96,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
                   onClick={() => {
                     setDeleteRegister({
                       id: item.id,
-                      url: "/business/job/",
+                      url: "/business/work-title/",
                     });
                   }}
                 />
@@ -110,10 +124,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
     data.node = currentNode.id;
     setLoading(true);
     try {
-      let response = await WebApiPeople.createRegisterCatalogs(
-        "/business/job/",
-        data
-      );
+      await WebApiPeople.createRegisterCatalogs("/business/work-title/", data);
       props
         .getWorkTitle(currentNode.id)
         .then((response) => {
@@ -152,7 +163,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
   const updateRegister = async (url, value) => {
     value.node = currentNode.id;
     try {
-      let response = await WebApiPeople.updateRegisterCatalogs(
+      await WebApiPeople.updateRegisterCatalogs(
         `/business/work-title/${id}/`,
         value
       );
@@ -202,9 +213,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
 
   const deleteRegister = async () => {
     try {
-      let response = await WebApiPeople.deleteRegisterCatalogs(
-        deleted.url + `${deleted.id}/`
-      );
+      await WebApiPeople.deleteRegisterCatalogs(deleted.url + `${deleted.id}/`);
       props
         .getWorkTitle(currentNode.id)
         .then((response) => {
@@ -258,8 +267,8 @@ const WorkTitle = ({ currentNode, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={12}>
-            <Form.Item name="salary" label="Salario" rules={[ruleRequired]}>
-              <Input />
+            <Form.Item name="salary" label="Salario">
+              <Input type="number" min={0} />
             </Form.Item>
           </Col>
         </Row>

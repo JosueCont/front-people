@@ -332,9 +332,10 @@ export const UserPermissions = (permits = null, is_admin = false) => {
   }
 };
 
-export const getDomain = () => {
+export const getDomain = (api) => {
   try {
-    return window.location.hostname;
+    let tenat = window.location.hostname.split(".")[0];
+    return `${tenat}.${api}`;
   } catch (error) {
     return "error";
   }
