@@ -270,7 +270,7 @@ const homeScreen = ({ ...props }) => {
       id: `${user.id}`,
       intranet_access: value,
     };
-    WebApiPeople.updatePerson(dataUpd)
+    WebApiPeople.changeIntranetAccess(dataUpd)
       .then((response) => {
         let idx = person.findIndex((item) => item.id === user.id);
         let newPerson = response.data;

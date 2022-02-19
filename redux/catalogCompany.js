@@ -81,7 +81,7 @@ export const doCompanySelectedCatalog =
       if (!data) data = userCompanyId();
       if (data) {
         dispatch(getRelationship(data));
-        dispatch(getBanks(data));
+        // dispatch(getBanks(data));
         dispatch(getExperienceType(data));
         dispatch(getReasonSeparation(data));
         dispatch(getLaborRelation(data));

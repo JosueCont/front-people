@@ -8,6 +8,7 @@ import FormConfig from "../../../components/intranet/FormConfig";
 import axios from "axios";
 import { API_URL } from "../../../config/config";
 import { connect } from "react-redux";
+import WebApiIntranet from '../../../api/WebApiIntranet';
 
 
 const configIntranet = (props) => {
@@ -44,11 +45,10 @@ const configIntranet = (props) => {
       });
   };
 
-  const saveData = (data, type, id = 0) => {
+  const saveData = async (data, type, id = 0) => {
     if (type === "add") {
-      axios
-        .post(API_URL + "/setup/site-configuration/", data)
-        .then((res) => {
+      await WebApiIntranet.saveIntranetConfig(data)
+      .then((res) => {
           getConfig();
           notification['success']({
             message: 'Información guardada'
@@ -58,8 +58,7 @@ const configIntranet = (props) => {
           console.log(e);
         });
     } else {
-      axios
-        .put(API_URL + `/setup/site-configuration/${id}/`, data)
+      await WebApiIntranet.updIntranetConfig(id, data)
         .then((res) => {
           getConfig();
           notification['success']({
