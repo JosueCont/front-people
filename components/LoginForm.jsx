@@ -48,28 +48,31 @@ const LoginForm = ({
 
   const getIfno = async () => {
     const headers = {
-      headers: 
-        {"client-id": props.generalConfig.client_khonnect_id,
-        "Content-Type": "application/json"}
-      };
-      try {
-        await Axios.get(props.generalConfig.url_server_khonnect+`/appstore/app/get/id=${props.generalConfig.client_khonnect_id}`, headers).then(res =>{
-          console.log('response', res);
-        }).catch(err => {
-          console.log('error', error);
-        })
-      } catch (error) {
-        console.log('error', error);
-      }
-  }
+      headers: {
+        "client-id": props.generalConfig.client_khonnect_id,
+        "Content-Type": "application/json",
+      },
+    };
+    try {
+      await Axios.get(
+        props.generalConfig.url_server_khonnect +
+          `/appstore/app/get/id=${props.generalConfig.client_khonnect_id}`,
+        headers
+      )
+        .then((res) => {})
+        .catch((err) => {
+          console.log("error", error);
+        });
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   useEffect(() => {
-    if(props.generalConfig){
+    if (props.generalConfig) {
       getIfno();
     }
-      
-  }, [])
-  
+  }, []);
 
   const login = async (email, password) => {
     try {

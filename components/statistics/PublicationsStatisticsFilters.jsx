@@ -16,7 +16,7 @@ import {
   DownloadOutlined,
   ClearOutlined,
 } from "@ant-design/icons";
-import {statusActivePost} from '../../utils/constant';
+import { statusActivePost } from "../../utils/constant";
 
 import {
   getUsersList,
@@ -85,25 +85,25 @@ const PublicationsStatisticsFilters = (props) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [datePickerValue, setDatePickerValue] = useState(null);
-  const [statusFilter, setStatusFilter] = useState(null)
+  const [statusFilter, setStatusFilter] = useState(null);
 
   const { Option } = Select;
   const { RangePicker } = DatePicker;
 
   const optionsActions = [
-        {
-            label: 'Pendiente',
-            value: 2
-        },
-        {
-            label: 'Publicado',
-            value: 1
-        },
-        {
-            label: 'Bloqueado',
-            value: 0
-        }
-    ]
+    {
+      label: "Pendiente",
+      value: 2,
+    },
+    {
+      label: "Publicado",
+      value: 1,
+    },
+    {
+      label: "Bloqueado",
+      value: 0,
+    },
+  ];
 
   function getSelectedDate(value, dateString) {
     if (dateString.length == 2) {
@@ -157,9 +157,11 @@ const PublicationsStatisticsFilters = (props) => {
       startDate && endDate
         ? `&start_date=${startDate}&end_date=${endDate}`
         : "";
-        console.log('statusFilter =>',statusFilter);
-    let statusParam = statusFilter !== undefined ? `&status=${statusFilter}` : "" ;
-    console.log('statusParam =>',statusParam)
+    let statusParam =
+      statusFilter && statusFilter !== undefined
+        ? `status=${statusFilter}`
+        : "";
+    console.log("statusParam =>", statusParam);
 
     // seteamos parámetros globales para el paginado
     props.setParameters(`${userParam}${groupParam}${dateRange}${statusParam}`);
@@ -170,7 +172,6 @@ const PublicationsStatisticsFilters = (props) => {
     );
 
     console.log(`${userParam}${groupParam}${dateRange}${statusParam}`);
-
   };
 
   const getExcelFile = () => {
@@ -283,15 +284,21 @@ const PublicationsStatisticsFilters = (props) => {
             </Row>
           </Col>
 
-          <Col xs={24} sm={24} md={24} lg={15} xl={8} >
+          <Col xs={24} sm={24} md={24} lg={15} xl={8}>
             <Row>
               <CenterItemsCol xs={24} sm={8} md={8} lg={8} xl={8}>
-                <CustomButton icon={<SearchOutlined />} onClick={getPostsByFilter}>
+                <CustomButton
+                  icon={<SearchOutlined />}
+                  onClick={getPostsByFilter}
+                >
                   Filtrar
                 </CustomButton>
               </CenterItemsCol>
               <CenterItemsCol xs={12} sm={8} md={8} lg={8} xl={8}>
-                <CustomButton icon={<DownloadOutlined />} onClick={getExcelFile}>
+                <CustomButton
+                  icon={<DownloadOutlined />}
+                  onClick={getExcelFile}
+                >
                   Excel
                 </CustomButton>
               </CenterItemsCol>

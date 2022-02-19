@@ -33,8 +33,7 @@ import SelectDepartment from "../selects/SelectDepartment";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import SelectWorkTitleStatus from "../selects/SelectWorkTitleStatus";
-import SelectAccessIntranet from '../selects/SelectAccessIntranet'
-import { headersApiKhonnect } from "../../utils/constant.js";
+import SelectAccessIntranet from "../selects/SelectAccessIntranet";
 import { ruleRequired } from "../../utils/rules";
 
 const FormPerson = ({
@@ -48,9 +47,6 @@ const FormPerson = ({
   ...props
 }) => {
   const [form] = Form.useForm();
-  const [groups, setGroups] = useState([]);
-  const [personType, setPersonType] = useState([]);
-  const [jobs, setJobs] = useState([]);
   const [date, setDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [departmentSelected, setDepartmentSelected] = useState(null);
@@ -63,7 +59,6 @@ const FormPerson = ({
   useEffect(() => {
     if (node) {
       changeNode();
-      getValueSelects();
     }
   }, [node]);
 
@@ -87,42 +82,6 @@ const FormPerson = ({
       else value.node = node;
       createPerson(value);
     }
-  };
-
-  const getValueSelects = async (id) => {
-    let company = `?company=${node}`;
-
-    /////PERMSS GROUPS
-    Axios.get(config.url_server_khonnect + "/group/list/" + company, {
-      headers: headersApiKhonnect,
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          let group = response.data.data;
-          group = group.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setGroups(group);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-
-    /////PERSON TYPE
-    Axios.get(API_URL + `/person/person-type/`)
-      .then((response) => {
-        if (response.status === 200) {
-          let typesPerson = response.data.results;
-          typesPerson = typesPerson.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setPersonType(typesPerson);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   };
 
   const createPerson = async (value) => {
@@ -182,26 +141,6 @@ const FormPerson = ({
       });
   };
 
-  const onChangeDepartment = (value) => {
-    ////JOBS
-    form.setFieldsValue({
-      job: null,
-    });
-    Axios.get(API_URL + `/person/job/?department=${value}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let job = response.data;
-          job = job.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setJobs(job);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const getWorkTitle = () => {
     const values = form.getFieldsValue();
 
@@ -218,7 +157,7 @@ const FormPerson = ({
     <>
       <Modal
         maskClosable={false}
-        title={ currentNode ? "Alta de personas en "+ currentNode.name : ""}
+        title={currentNode ? "Alta de personas en " + currentNode.name : ""}
         centered
         visible={props.visible}
         onCancel={() => closeDialog()}

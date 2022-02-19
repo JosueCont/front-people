@@ -77,12 +77,12 @@ const MainLayout = ({
   }, [logoNode, companyName]);
 
   useEffect(() => {
-    if (props.currentNode) {
+    if (props.currentNode && props.config) {
       setMainLogo(props.currentNode.image);
     } else {
-      let response = props.companySelected();
+      if (props.config) props.companySelected(null, props.config);
     }
-  }, [props.currentNode]);
+  }, [props.currentNode, props.config]);
 
   const closeEvents = () => {
     setShowEvents(false);
@@ -263,20 +263,19 @@ const MainLayout = ({
         </Layout>
       </Layout>
       <Drawer placement="right" onClose={closeEvents} visible={showEvents}>
-          <Row justify="center" >
-              <Col span={21}>
-                  <Title level={3} style={{marginBottom:0, marginTop:20}}>
-                      <span className="card_element_icon">
-                          <DollarCircleOutlined />
-                      </span>
-                      Proximos eventos
-                  </Title>
-                  <Divider style={{margin:'10px 0px 15px 0px'}} />
-                  {/* <WeekCard /> */}
-              </Col>
-          </Row>
+        <Row justify="center">
+          <Col span={21}>
+            <Title level={3} style={{ marginBottom: 0, marginTop: 20 }}>
+              <span className="card_element_icon">
+                <DollarCircleOutlined />
+              </span>
+              Proximos eventos
+            </Title>
+            <Divider style={{ margin: "10px 0px 15px 0px" }} />
+            {/* <WeekCard /> */}
+          </Col>
+        </Row>
       </Drawer>
-
 
       {/* </Layout> */}
 

@@ -90,7 +90,6 @@ export const doCompanySelectedCatalog =
         dispatch(getDepartmets(data));
         dispatch(getJobs(data));
         dispatch(getPersonType(data));
-        dispatch(getProfileGroups(data));
         dispatch(getPeopleCompany(data));
         dispatch(getLevel(data));
         dispatch(getWorkTitle(data));
@@ -194,14 +193,15 @@ export const getPersonType = (data) => async (dispatch, getState) => {
   }
 };
 
-export const getProfileGroups = (data) => async (dispatch, getState) => {
-  try {
-    let response = await getGroups(data);
-    if (response) dispatch({ type: PROFILE_GROUP, payload: response });
-  } catch (error) {
-    return;
-  }
-};
+export const getProfileGroups =
+  (node, config) => async (dispatch, getState) => {
+    try {
+      let response = await getGroups(node, config);
+      if (response) dispatch({ type: PROFILE_GROUP, payload: response });
+    } catch (error) {
+      return;
+    }
+  };
 
 export const getPeopleCompany = (data) => async (dispatch, getState) => {
   try {
