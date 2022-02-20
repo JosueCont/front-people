@@ -152,7 +152,7 @@ const FormConfig = (props) => {
 
   const onFinish = (values) => {
     
-    if(values.intranet_moderator_enabled){
+    if(showPersons){
       values['intranet_moderator_person'] = personsSelected;
     }
     console.log(values)

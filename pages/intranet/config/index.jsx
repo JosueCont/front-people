@@ -115,7 +115,7 @@ const configIntranet = (props) => {
         style={{ padding: 24, minHeight: 380, height: "100%" }}
       >
         <FormConfig
-          nodeId={currentNode.id}
+          nodeId={currentNode ? currentNode.id : ''}
           config={config}
           save={saveData}
           saveImage={saveImage}
