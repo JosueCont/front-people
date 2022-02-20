@@ -233,6 +233,34 @@ export const statusActivePost = [
   },
 ];
 
+export const workTitleStatus = [
+  {
+    label: "Postulado",
+    value: 1,
+    key: 1,
+  },
+  {
+    label: "Aspirante",
+    value: 2,
+    key: 2,
+  },
+  {
+    label: "Aceptado",
+    value: 3,
+    key: 3,
+  },
+  {
+    label: "Rechazado",
+    value: 4,
+    key: 4,
+  },
+  {
+    label: "Inactivo",
+    value: 5,
+    key: 5,
+  },
+];
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
 export const messageDeleteSuccess = "Eliminado correctamente.";
