@@ -79,7 +79,6 @@ const Groups = ({ ...props }) => {
     if (value.name != "" && value.name != undefined) {
       filt = "?name=" + value.name;
     }
-    getGroups(filt);
   };
 
   const columns = [
@@ -129,7 +128,6 @@ const Groups = ({ ...props }) => {
 
   const resetFilter = () => {
     form.resetFields();
-    getGroups();
   };
   return (
     <MainLayout currentKey={["perfiles"]} defaultOpenKeys={["config"]}>

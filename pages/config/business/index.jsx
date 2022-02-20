@@ -21,7 +21,6 @@ import TabJobs from "../../../components/catalogs/Jobs";
 import PersonTypes from "../../../components/catalogs/PersonTypes";
 import Relationship from "../../../components/catalogs/Relationship";
 import DocumentsTypes from "../../../components/catalogs/DocumentsTypes";
-import Banks from "../../../components/catalogs/Banks";
 
 const { Content } = Layout;
 

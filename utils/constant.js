@@ -147,9 +147,11 @@ export const typeMessage = [
   },
 ];
 
-export const headersApiKhonnect = {
-  "client-id": APP_ID,
-  "Content-Type": "application/json",
+export const headersApiKhonnect = (app_id) => {
+  return {
+    "client-id": app_id,
+    "Content-Type": "application/json",
+  };
 };
 
 export const monthsName = [
@@ -220,16 +222,16 @@ export const intranetAccess = [
 
 export const statusActivePost = [
   {
-    label: 'Inactivo',
+    label: "Inactivo",
     value: 0,
-    key: 0
+    key: 0,
   },
   {
-    label: 'Activo',
+    label: "Activo",
     value: 1,
-    key: 1
-  }
-]
+    key: 1,
+  },
+];
 
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
