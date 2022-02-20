@@ -396,7 +396,7 @@ const FormConfig = (props) => {
                   <Select
                     mode="multiple"
                     showSearch
-                    placeholder="Select a person"
+                    placeholder="Selecciona una opción"
                     optionFilterProp="children"
                     onChange={onChangePerson}
                     /* onSearch={onSearch} */
