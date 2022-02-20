@@ -196,7 +196,6 @@ const StampPayroll = () => {
   const getPayroll = async (dataToSend, fisrtRequest = false) => {
     setLoading(true);
     let response = await WebApiPayroll.payrollFacturama(dataToSend);
-    console.log("response", response);
 
     let arrar_payroll = [];
     response.data.map((a) => {

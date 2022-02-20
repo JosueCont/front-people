@@ -1,12 +1,11 @@
 import axios from "axios";
-import { LOGIN_URL } from "../config/config";
 import { headersApiKhonnect } from "../utils/constant";
 
-export const getGroups = async (node, type = 1) => {
+export const getGroups = async (node, config) => {
   let group = [];
   await axios
-    .get(LOGIN_URL + `/group/list/?company=${node}`, {
-      headers: headersApiKhonnect,
+    .get(config.url_server_khonnect + `/group/list/?company=${node}`, {
+      headers: headersApiKhonnect(config.client_khonnect_id),
     })
     .then((response) => {
       if (response.status === 200) {
@@ -28,7 +27,7 @@ export const getGroupPerson = async (config, khonnect_id) => {
         user_id: khonnect_id,
       },
       {
-        headers: headersApiKhonnect,
+        headers: headersApiKhonnect(config.client_khonnect_id),
       }
     )
     .then((response) => {
@@ -42,7 +41,6 @@ export const getGroupPerson = async (config, khonnect_id) => {
     .catch((e) => {
       return [];
     });
-  console.log("GURPOS PERSON-->> ", groups);
   return groups;
 };
 
@@ -50,7 +48,7 @@ export const deleteGroups = async (config, data) => {
   let return_data = false;
   await axios
     .post(config.url_server_khonnect + `/group/delete/`, data, {
-      headers: headersApiKhonnect,
+      headers: headersApiKhonnect(config.client_khonnect_id),
     })
     .then(function (response) {
       if (response.status === 200) {
@@ -71,7 +69,7 @@ export const createGroup = async (config, data) => {
   let return_data = false;
   await axios
     .post(config.url_server_khonnect + "/group/create/", data, {
-      headers: headersApiKhonnect,
+      headers: headersApiKhonnect(config.client_khonnect_id),
     })
     .then(function (response) {
       return_data = true;
@@ -87,7 +85,7 @@ export const editGroups = async (config, data) => {
 
   await axios
     .post(config.url_server_khonnect + "/group/edit/", data, {
-      headers: headersApiKhonnect,
+      headers: headersApiKhonnect(config.client_khonnect_id),
     })
     .then(function (response) {
       return_data = true;
@@ -103,7 +101,7 @@ export const getGroupById = async (config, data) => {
 
   await axios
     .post(config.url_server_khonnect + "/group/get/", data, {
-      headers: headersApiKhonnect,
+      headers: headersApiKhonnect(config.client_khonnect_id),
     })
     .then((response) => {
       return_data = response.data.data;

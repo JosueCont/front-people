@@ -107,7 +107,7 @@ const SelectCompany = ({ ...props }) => {
   const setCompanySelect = async (item) => {
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
-    let response = await props.companySelected(item.id);
+    let response = await props.companySelected(item.id, props.config);
     if (response) {
       props.doCompanySelectedCatalog();
       useRouter.push("home");
