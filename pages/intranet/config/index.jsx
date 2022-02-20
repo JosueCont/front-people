@@ -12,7 +12,7 @@ import WebApiIntranet from '../../../api/WebApiIntranet';
 
 
 const configIntranet = (props) => {
-  const currentNode = {props};
+  const {currentNode} = props;
   const router = useRouter();
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(null);
@@ -115,7 +115,7 @@ const configIntranet = (props) => {
         style={{ padding: 24, minHeight: 380, height: "100%" }}
       >
         <FormConfig
-          nodeId={currentNode.id}
+          nodeId={currentNode ? currentNode.id : ''}
           config={config}
           save={saveData}
           saveImage={saveImage}
