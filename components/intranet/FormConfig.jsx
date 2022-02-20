@@ -44,6 +44,7 @@ const beforeUpload = (file) => {
 };
 
 const FormConfig = (props) => {
+  console.log('props',props);
   const [personsSelected, setPersonsSelected] = useState([])
   const [formConfigIntranet] = Form.useForm();
   const [photo, setPhoto] = useState(
@@ -151,7 +152,7 @@ const FormConfig = (props) => {
 
   const onFinish = (values) => {
     
-    if(values.intranet_moderator_enabled){
+    if(showPersons){
       values['intranet_moderator_person'] = personsSelected;
     }
     console.log(values)
@@ -227,12 +228,17 @@ const FormConfig = (props) => {
     try {
       let response = await WebApiPeople.filterPerson({node: nodeId});
       setPersons([]);
-      let persons = response.data.map((a) => {
+      let personList = response.data.map((a) => {
         a.key = a.khonnect_id;
         return a;
       });
-      console.log('persons',persons);
-      setPersons(persons);
+      console.log('object');
+      console.log('nodeID', nodeId);
+      let list2 = personList.filter( (item) => item.node === nodeId );
+      console.log('list2',list2);
+
+      console.log('persons',personList);
+      setPersons(personList);
     } catch (error) {
       setPersons([]);
       console.log(error);
@@ -390,7 +396,7 @@ const FormConfig = (props) => {
                   <Select
                     mode="multiple"
                     showSearch
-                    placeholder="Select a person"
+                    placeholder="Selecciona una opción"
                     optionFilterProp="children"
                     onChange={onChangePerson}
                     /* onSearch={onSearch} */
