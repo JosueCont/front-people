@@ -1,18 +1,29 @@
-import React from 'react'
-import {Select} from 'antd';
-import {intranetAccess} from '../../utils/constant'
+import React from "react";
+import { Form, Select } from "antd";
+import { intranetAccess } from "../../utils/constant";
+import { ruleRequired } from "../../utils/rules";
 
-const SelectAccessIntranet = ({value="", onChange=null, ...props}) => {
-    const { Option } = Select;
-    return (
-        <Select
-            value={value?value: null} 
-            placeholder="Acceso a la intranet" 
-            options={intranetAccess}
-            onChange={onChange}
-            allowClear
-        />
-    )
-}
+const SelectAccessIntranet = ({
+  viewLabel = false,
+  onChange,
+  value,
+  ...props
+}) => {
+  return (
+    <Form.Item
+      key="itemAccessIntranet"
+      label={viewLabel ? "Acceso a la intranet" : ""}
+      name="intranet_access"
+      rules={[ruleRequired]}
+    >
+      <Select
+        defaultValue={value}
+        onChange={onChange}
+        options={intranetAccess}
+        placeholder="Acceso a la intranet"
+      />
+    </Form.Item>
+  );
+};
 
-export default SelectAccessIntranet
+export default SelectAccessIntranet;

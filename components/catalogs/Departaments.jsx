@@ -41,12 +41,6 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
 
   const columns = [
     {
-      title: "Empresa",
-      render: (item) => {
-        return <>{item.node.name}</>;
-      },
-    },
-    {
       title: "Nombre",
       dataIndex: "name",
       key: "key",
@@ -222,11 +216,6 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
           }
         >
           <Row gutter={20}>
-            <Col lg={6} xs={22} md={12}>
-              <Form.Item label="Empresa" rules={[ruleRequired]}>
-                <Input readOnly value={currentNode.name} />
-              </Form.Item>
-            </Col>
             <Col lg={6} xs={22} md={12}>
               <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
                 <Input />

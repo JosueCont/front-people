@@ -357,12 +357,6 @@ const homeScreen = ({ ...props }) => {
               value={item.intranet_access}
               onChange={(e) => changeValuePerosn(e, item)}
             />
-            {/* <Switch
-              disabled={true}
-              defaultChecked={item.intranet_access}
-              checkedChildren="Si"
-              unCheckedChildren="No"
-            /> */}
           </>
         );
       },

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Form, Select } from "antd";
+import { workTitleStatus } from "../../utils/constant";
 
 const SelectWorkTitleStatus = ({
   viewLabel = true,
@@ -9,19 +10,6 @@ const SelectWorkTitleStatus = ({
   companyId,
   ...props
 }) => {
-  const options = [
-    {
-      value: 2,
-      label: "Estatus 1",
-      key: "status1",
-    },
-    {
-      value: 3,
-      label: "Estatus 2",
-      key: "status2",
-    },
-  ];
-
   return (
     <Form.Item
       key="itemWorkTitleStatus"
@@ -32,7 +20,7 @@ const SelectWorkTitleStatus = ({
       <Select
         disabled={disabled}
         key="SelectWorkTitleStatus"
-        options={options}
+        options={workTitleStatus}
         placeholder="Estatus de Plaza laboral"
         allowClear
         style={props.style ? props.style : {}}

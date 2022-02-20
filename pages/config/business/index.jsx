@@ -48,7 +48,9 @@ const configBusiness = ({ ...props }) => {
         >
           <Card bordered={true}>
             <>
-              <Title style={{ fontSize: "25px" }}>Catálogos</Title>
+              <Title style={{ fontSize: "25px" }}>
+                Catálogos de {props.currentNode && props.currentNode.name}
+              </Title>
               <Tabs tabPosition={"left"}>
                 {props.permissions.department.view && (
                   <TabPane
