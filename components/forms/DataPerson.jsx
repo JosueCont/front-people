@@ -32,6 +32,7 @@ import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectAccessIntranet from "../selects/SelectAccessIntranet";
+import SelectWorkTitle from "../selects/SelectWorkTitle";
 
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
@@ -42,7 +43,8 @@ const DataPerson = ({ config, person = null, ...props }) => {
   const [birthDate, setBirthDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
-  const [hideProfileSecurity, setHideProfileSecrity] = useState(true);
+  const [departmentSelected, setDepartmentSelected] = useState(null);
+  const [jobSelected, setJobSelected] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -67,10 +69,11 @@ const DataPerson = ({ config, person = null, ...props }) => {
       periodicity: person.periodicity,
       intranet_access: person.intranet_access,
     });
-    if (person.person_department) {
+    if (person.work_title) {
       formPerson.setFieldsValue({
-        person_department: person.department.id,
-        job: person.job.id,
+        person_department: person.work_title.department,
+        job: person.work_title.job,
+        work_title: person.work_title.id,
       });
     }
     if (person.person_type)
@@ -105,7 +108,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
         });
       });
     setLoading(false);
-    // getValueSelects();
     setPhoto(person.photo);
     setDateAdmission(person.date_of_admission);
     setBirthDate(person.birth_date);
@@ -220,8 +222,16 @@ const DataPerson = ({ config, person = null, ...props }) => {
       <Form onFinish={onFinishPerson} layout={"vertical"} form={formPerson}>
         <Row justify="center">
           <Col lg={22}>
-            <Row justify="space-between" gutter={20}>
-              <Col lg={8} xs={24}>
+            <Row gutter={20}>
+              {((props.user && props.user.nodes) ||
+                (props.user && props.user.is_admin)) && (
+                <Col lg={8} xs={12}>
+                  <Form.Item label="Número de empleado" name="code">
+                    <Input type="text" placeholder="Núm. empleado" />
+                  </Form.Item>
+                </Col>
+              )}
+              <Col lg={8} xs={12}>
                 <SelectPersonType label="Tipo de persona" />
               </Col>
               <Col lg={6} md={0} xs={0} xl={0}>
@@ -410,6 +420,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   }
                   name="person_department"
                   style={false}
+                  onChange={(item) => setDepartmentSelected(item)}
                 />
               </Col>
               <Col lg={8} xs={24} md={12}>
@@ -422,8 +433,25 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   }
                   name="job"
                   style={false}
+                  onChange={(item) => setJobSelected(item)}
                 />
               </Col>
+              <Col lg={8} xs={24} md={12}>
+                <SelectWorkTitle
+                  viewLabel={true}
+                  department={departmentSelected}
+                  job={jobSelected}
+                  name={"work_title"}
+                />
+              </Col>
+              {((props.user && props.user.nodes) ||
+                (props.user && props.user.is_admin)) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item label="Reporta a ">
+                    <Input readOnly />
+                  </Form.Item>
+                </Col>
+              )}
               <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="register_date"
@@ -437,14 +465,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              {((props.user && props.user.nodes) ||
-                (props.user && props.user.is_admin)) && (
-                <Col lg={8} xs={24} md={12}>
-                  <Form.Item label="Número de empleado" name="code">
-                    <Input type="text" placeholder="Núm. empleado" />
-                  </Form.Item>
-                </Col>
-              )}
 
               {config && config.intranet_enabled && (
                 <Col lg={8} xs={24} md={12}>
@@ -452,22 +472,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                     name="intranet_access"
                     label="Acceso a la intranet"
                   >
-                    {/* <Switch
-                      checkedChildren={<CheckOutlined />}
-                      unCheckedChildren={<CloseOutlined />}
-                    /> */}
                     <SelectAccessIntranet />
-                  </Form.Item>
-                </Col>
-              )}
-              {((props.user && props.user.nodes) ||
-                (props.user && props.user.is_admin)) && (
-                <Col lg={8} xs={24} md={12}>
-                  <Form.Item name="report_to" label="Reporta a ">
-                    <Select
-                      options={props.people_company}
-                      notFoundContent={"No se encontraron resultados."}
-                    />
                   </Form.Item>
                 </Col>
               )}

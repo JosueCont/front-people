@@ -1,7 +1,6 @@
 import {
   Form,
   Input,
-  Layout,
   Modal,
   DatePicker,
   Button,
@@ -10,17 +9,8 @@ import {
   message,
   Row,
   Col,
-  Switch,
 } from "antd";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
-import { useState, useEffect } from "react";
-import {
-  getAccessIntranet,
-  userCompanyId,
-  userCompanyName,
-} from "../../libs/auth";
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
+import { useState } from "react";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { genders } from "../../utils/constant";
@@ -39,11 +29,9 @@ import { ruleRequired } from "../../utils/rules";
 const FormPerson = ({
   config = null,
   hideProfileSecurity = true,
-  intranetAccess = true,
-  node = null,
-  nameNode = "",
   setPerson = null,
   currentNode,
+  close,
   ...props
 }) => {
   const [form] = Form.useForm();
@@ -51,16 +39,6 @@ const FormPerson = ({
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [departmentSelected, setDepartmentSelected] = useState(null);
   const [jobSelected, setJobSelected] = useState(null);
-
-  const [departments, setDepartments] = useState("");
-  let nodeId = userCompanyId();
-  let accessIntranet = getAccessIntranet();
-
-  useEffect(() => {
-    if (node) {
-      changeNode();
-    }
-  }, [node]);
 
   const onFinish = (value) => {
     if (date !== "") {
@@ -78,33 +56,30 @@ const FormPerson = ({
     else {
       delete value["passwordTwo"];
       value.groups = [value.groups];
-      if (nodeId) value.node = nodeId;
+      if (currentNode) value.node = currentNode.id;
       else value.node = node;
       createPerson(value);
     }
   };
 
   const createPerson = async (value) => {
-    try {
-      value.node = currentNode.id;
-      let response = await WebApiPeople.createPerson(value);
-      if (setPerson) {
-        setPerson(response.data.person);
-        sessionStorage.setItem("tok", response.data.person.id);
-      }
-      props.getPeopleCompany(node);
-      message.success("Agregado correctamente");
-      form.resetFields();
-      props.close(false);
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message === "exist"
-      )
-        message.error("El correo se encuentra registrado.");
-      else message.error("Error al agregar, intente de nuevo");
-    }
+    value.node = currentNode.id;
+    await WebApiPeople.createPerson(value)
+      .then((response) => {
+        props.getPeopleCompany(currentNode.id);
+        message.success("Agregado correctamente");
+        form.resetFields();
+        close(false);
+      })
+      .catch((error) => {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        )
+          message.error(error.response.data.message);
+        else if (error) message.error("Error al agregar, intente de nuevo");
+      });
   };
 
   function onChange(date, dateString) {
@@ -116,41 +91,8 @@ const FormPerson = ({
   };
 
   const closeDialog = () => {
-    props.close(false);
+    close(false);
     form.resetFields();
-  };
-
-  const changeNode = () => {
-    form.setFieldsValue({
-      job: null,
-      department: null,
-    });
-    setDepartments([]);
-    Axios.get(API_URL + `/business/department/?node=${node}`)
-      .then((response) => {
-        if (response.status === 200) {
-          let dep = response.data.results;
-          dep = dep.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setDepartments(dep);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const getWorkTitle = () => {
-    const values = form.getFieldsValue();
-
-    if (values.person_department && values.job) {
-      setDepartmentSelected(values.person_department);
-      setJobSelected(values.job);
-    } else {
-      setDepartmentSelected(null);
-      setJobSelected(null);
-    }
   };
 
   return (
@@ -183,7 +125,7 @@ const FormPerson = ({
                     viewLabel={false}
                     name="person_department"
                     style={false}
-                    onChange={getWorkTitle}
+                    onChange={(item) => setDepartmentSelected(item)}
                   />
                 </Col>
                 <Col lg={8} xs={24}>
@@ -191,21 +133,31 @@ const FormPerson = ({
                     viewLabel={false}
                     name="job"
                     style={false}
-                    onChange={getWorkTitle}
+                    onChange={(item) => setJobSelected(item)}
                   />
                 </Col>
-                <Col lg={8} xs={24}>
-                  <SelectWorkTitle
-                    viewLabel={false}
-                    style={false}
-                    forPerson={true}
-                    department={departmentSelected}
-                    job={jobSelected}
-                  />
-                </Col>
-                <Col lg={8} xs={24}>
-                  <SelectWorkTitleStatus viewLabel={false} style={false} />
-                </Col>
+                {(departmentSelected || jobSelected) && (
+                  <>
+                    <Col lg={8} xs={24}>
+                      <SelectWorkTitle
+                        name={"work_title"}
+                        viewLabel={false}
+                        style={false}
+                        forPerson={true}
+                        department={departmentSelected}
+                        job={jobSelected}
+                        rules={[ruleRequired]}
+                      />
+                    </Col>
+                    <Col lg={8} xs={24}>
+                      <SelectWorkTitleStatus
+                        rules={[ruleRequired]}
+                        viewLabel={false}
+                        style={false}
+                      />
+                    </Col>
+                  </>
+                )}
 
                 <Col lg={8} xs={24}>
                   <Form.Item rules={[ruleRequired]} name="first_name">
@@ -284,18 +236,9 @@ const FormPerson = ({
                     <Input.Password type="text" placeholder="Contraseña" />
                   </Form.Item>
                 </Col>
-                {accessIntranet !== "false" && intranetAccess && (
+                {config.intranet_enabled && (
                   <Col lg={8} xs={24}>
-                    <Form.Item
-                      name="intranet_access"
-                      /* label="Acceso a la intranet" */
-                    >
-                      {/* <Switch
-                        checkedChildren={<CheckOutlined />}
-                        unCheckedChildren={<CloseOutlined />}
-                      /> */}
-                      <SelectAccessIntranet />
-                    </Form.Item>
+                    <SelectAccessIntranet />
                   </Col>
                 )}
                 <Col lg={8} xs={24}>
@@ -309,7 +252,6 @@ const FormPerson = ({
                     />
                   </Form.Item>
                 </Col>
-                {/* {hideProfileSecurity && ( */}
                 <Col lg={8} xs={24}>
                   <SelectGroup />
                 </Col>
