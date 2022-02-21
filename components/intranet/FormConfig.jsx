@@ -279,13 +279,13 @@ const FormConfig = (props) => {
                 name="nameIntranet"
                 label="Nombre de intranet"
               >
-                <AutoComplete
+                {/* <AutoComplete
                   name="nameIntranet"
                   label="Nombre"
                   onChange={onWebsiteChange}
-                >
+                > */}
                   <Input />
-                </AutoComplete>
+                {/* </AutoComplete> */}
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
