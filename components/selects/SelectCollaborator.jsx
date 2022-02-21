@@ -18,9 +18,10 @@ const SelectCollaborator = ({ showLabel = true, setAllPersons, ...props }) => {
       rules={props.rules ? props.rules : null}
     >
       <Select
+        mode={props.mode ? props.mode : null}
         size={props.size ? props.size : "middle"}
         key="selectPerson"
-        showSearch
+        showSearch={props.showSearch ? props.showSearch : false}
         style={props.style ? props.style : null}
         allowClear
         optionFilterProp="children"
@@ -35,6 +36,7 @@ const SelectCollaborator = ({ showLabel = true, setAllPersons, ...props }) => {
             .localeCompare(optionB.children.toLowerCase())
         }
         onChange={props.onChange ? props.onChange : null}
+        defaultValue={props.value||undefined}
       >
         {props.peopleCompany
           ? props.peopleCompany.map((item) => {

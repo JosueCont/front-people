@@ -24,6 +24,10 @@ class WebApiIntranet {
     return WebApi.ApisType(`/intranet/search-person/?node=${data}`, "get");
   }
 
+  static getConfig(data){
+    return WebApi.ApisType("/setup/site-configuration/", "get");
+  }
+
   static saveIntranetConfig(data) {
     return WebApi.ApisType("/setup/site-configuration/", "post", data);
   }
@@ -31,5 +35,6 @@ class WebApiIntranet {
   static updIntranetConfig(id, data) {
     return WebApi.ApisType(`/setup/site-configuration/${id}/`, "put", data);
   }
+  
 }
 export default WebApiIntranet;

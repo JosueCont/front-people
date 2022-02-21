@@ -28,11 +28,10 @@ const configIntranet = (props) => {
   }, [props]) */
   
 
-  const getConfig = () => {
+  const getConfig = async () => {
     setLoading(true);
 
-    axios
-      .get(API_URL + "/setup/site-configuration/")
+    await WebApiIntranet.getConfig()
       .then((res) => {
         console.log('res =>',res);
         setConfig(res.data);
