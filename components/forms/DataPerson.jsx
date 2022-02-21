@@ -34,6 +34,7 @@ import SelectPersonType from "../selects/SelectPersonType";
 import SelectAccessIntranet from "../selects/SelectAccessIntranet";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 
+
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
   const [loadImge, setLoadImage] = useState(false);
