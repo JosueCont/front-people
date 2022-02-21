@@ -155,6 +155,7 @@ const FormConfig = (props) => {
     if(showPersons){
       values['intranet_moderator_person'] = personsSelected;
     }
+    
     console.log(values)
     saveConfig(values);
   };
