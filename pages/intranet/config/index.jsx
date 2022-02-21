@@ -28,7 +28,7 @@ const configIntranet = (props) => {
   }, [props]) */
   
 
-  const getConfig = async () => {
+  const getConfig = () => {
     setLoading(true);
 
     await WebApiIntranet.getConfig()
