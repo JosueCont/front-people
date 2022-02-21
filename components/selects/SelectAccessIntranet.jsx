@@ -10,12 +10,19 @@ const SelectAccessIntranet = ({
   ...props
 }) => {
   return (
-    <Select
-      defaultValue={value || undefined}
-      onChange={onChange}
-      options={intranetAccess}
-      placeholder="Acceso a la intranet"
-    />
+    <Form.Item
+      key="itemAccessIntranet"
+      label={viewLabel ? "Acceso a la intranet" : ""}
+      name="intranet_access"
+      rules={[ruleRequired]}
+    >
+      <Select
+        defaultValue={value}
+        onChange={onChange}
+        options={intranetAccess}
+        placeholder="Acceso a la intranet"
+      />
+    </Form.Item>
   );
 };
 
