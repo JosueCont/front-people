@@ -140,7 +140,7 @@ const FormPerson = ({
                   <>
                     <Col lg={8} xs={24}>
                       <SelectWorkTitle
-                        name={"work_title"}
+                        name={"work_title_id"}
                         viewLabel={false}
                         style={false}
                         forPerson={true}
