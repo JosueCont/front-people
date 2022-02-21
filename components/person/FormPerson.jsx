@@ -10,7 +10,7 @@ import {
   Row,
   Col,
 } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { genders } from "../../utils/constant";
@@ -94,6 +94,8 @@ const FormPerson = ({
     close(false);
     form.resetFields();
   };
+
+  
 
   return (
     <>
@@ -238,7 +240,13 @@ const FormPerson = ({
                 </Col>
                 {config.intranet_enabled && (
                   <Col lg={8} xs={24}>
+                    <Form.Item
+                      key="itemAccessIntranet"
+                      name="intranet_access"
+                      rules={[ruleRequired]}
+                    >
                     <SelectAccessIntranet />
+                    </Form.Item>
                   </Col>
                 )}
                 <Col lg={8} xs={24}>
