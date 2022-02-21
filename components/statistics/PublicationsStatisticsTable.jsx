@@ -31,7 +31,7 @@ const CustomTable = styled(Table)`
         width: 16%;
     }
 `;
-const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters, changeStatus}) => {
+const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters, changeStatus, ...props}) => {
 
     const {Option} = Select
 
@@ -41,11 +41,11 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             value: 2
         },
         {
-            label: 'Publicado',
+            label: 'Publicada',
             value: 1
         },
         {
-            label: 'Bloqueado',
+            label: 'Bloqueada',
             value: 0
         }
     ]
@@ -155,21 +155,22 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
     const handleChange = (pagination) => {
         console.log(pagination);
         // if(props.parameters && props.parameters != '')
-        if(pagination.current == 1){
+        if(pagination.current === 1){
             changePage('', parameters);
         }else{
-            changePage(pagination.current, parameters);
+            changePage( props.currentNode, pagination.current, parameters);
         }
         
     }
-    
+
     return(
         <>
         
             <CustomTable columns={columns} scroll={{ x: 800 }} pagination={{
                 current: current, 
                 pageSize: 10, 
-                total: total }} 
+                total: total,
+             }} 
                 dataSource={processedPublicationsList}
                 onChange={handleChange}
                 loading={fetching}
