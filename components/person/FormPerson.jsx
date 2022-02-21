@@ -238,7 +238,13 @@ const FormPerson = ({
                 </Col>
                 {config.intranet_enabled && (
                   <Col lg={8} xs={24}>
-                    <SelectAccessIntranet />
+                    <Form.Item
+                      key="itemAccessIntranet"
+                      name="intranet_access"
+                      rules={[ruleRequired]}
+                    >
+                      <SelectAccessIntranet />
+                    </Form.Item>
                   </Col>
                 )}
                 <Col lg={8} xs={24}>

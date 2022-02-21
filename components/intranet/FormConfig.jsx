@@ -19,6 +19,7 @@ import {
 } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import WebApiPeople from '../../api/WebApiPeople'
+import SelectCollaborator from '../selects/SelectCollaborator';
 
 const arrayConfigType = [
   { id: 1, name: "Me gusta", emoji: "👍🏻" },
@@ -155,7 +156,7 @@ const FormConfig = (props) => {
     if(showPersons){
       values['intranet_moderator_person'] = personsSelected;
     }
-    
+
     console.log(values)
     saveConfig(values);
   };
@@ -278,13 +279,13 @@ const FormConfig = (props) => {
                 name="nameIntranet"
                 label="Nombre de intranet"
               >
-                <AutoComplete
+                {/* <AutoComplete
                   name="nameIntranet"
                   label="Nombre"
                   onChange={onWebsiteChange}
-                >
+                > */}
                   <Input />
-                </AutoComplete>
+                {/* </AutoComplete> */}
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
@@ -393,14 +394,21 @@ const FormConfig = (props) => {
 
             { showPersons && 
               <Col lg={6} xs={22} offset={1}>
-                <Form.Item label={'Usuarios'} >
+                <SelectCollaborator 
+                  label="Usuarios" 
+                  mode="multiple" 
+                  showSearch 
+                  placeholder="Selecciona una opción"
+                  onChange={onChangePerson}
+                  value={personsSelected}
+                />
+                {/* <Form.Item label={'Usuarios'} >
                   <Select
                     mode="multiple"
                     showSearch
                     placeholder="Selecciona una opción"
                     optionFilterProp="children"
                     onChange={onChangePerson}
-                    /* onSearch={onSearch} */
                     filterOption={(input, option) =>
                       option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                     }
@@ -411,8 +419,8 @@ const FormConfig = (props) => {
                         <Select.Option key={item.first_name+item.flast_name} value={item.id}>{item.first_name+' '+item.flast_name}</Select.Option>
                       ))
                     }
-                  </Select>,
-                </Form.Item>
+                  </Select>
+                </Form.Item> */}
               </Col>
             } 
           </Row>
