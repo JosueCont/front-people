@@ -8,6 +8,7 @@ import {
   DatePicker,
   Select,
   message,
+  Form
 } from "antd";
 import styled from "styled-components";
 import { connect } from "react-redux";
@@ -31,7 +32,7 @@ const CustomCard = styled(Card)`
 `;
 
 const CustomButton = styled(Button)`
-  width: 90%;
+  width: 100%;
   margin: auto;
   border-radius: 5px;
   margin-top: 27px;
@@ -70,7 +71,6 @@ const CustomCol = styled(Col)`
   }
 `;
 const CenterItemsCol = styled(Col)`
-  margin: auto;
   text-align: center;
   & .ant-btn:hover {
     background-color: var(--primaryColor) !important;
@@ -96,11 +96,11 @@ const PublicationsStatisticsFilters = (props) => {
       value: 2,
     },
     {
-      label: "Publicado",
+      label: "Publicada",
       value: 1,
     },
     {
-      label: "Bloqueado",
+      label: "Bloqueada",
       value: 0,
     },
   ];
@@ -208,14 +208,10 @@ const PublicationsStatisticsFilters = (props) => {
   return (
     <>
       <CustomCard>
-        <Row>
+        <Row gutter={10}>
           <Col xs={24} sm={12} md={8} lg={6} xl={4}>
-            <Row>
-              <Col span={24}>
-                <InputLabel>Grupo</InputLabel>
-              </Col>
-              <CenterItemsCol span={24}>
-                <CustomSelect
+            <Form.Item label="Grupo">
+              <CustomSelect
                   value={group ? group : null}
                   placeholder="Seleccionar grupo"
                   onChange={(value) => setGroup(value)}
@@ -225,30 +221,33 @@ const PublicationsStatisticsFilters = (props) => {
                       <Option value={group.id}>{group.name}</Option>
                     ))}
                 </CustomSelect>
+            </Form.Item>
+            {/* <Row>
+              <Col span={24}>
+                <InputLabel>Grupo</InputLabel>
+              </Col>
+              <CenterItemsCol span={24}>
+                
               </CenterItemsCol>
-            </Row>
+            </Row> */}
           </Col>
           <Col xs={24} sm={12} md={8} lg={6} xl={5}>
-            <Row>
-              <Col span={24}>
-                <InputLabel>Fecha</InputLabel>
-              </Col>
-              <CustomCol style={{ textAlign: "center" }} span={24}>
+            <Form.Item label="Grupo">
                 <RangePicker
                   value={datePickerValue ? datePickerValue : null}
                   onChange={getSelectedDate}
                   format={"YYYY-MM-DD"}
                 />
-              </CustomCol>
-            </Row>
+            </Form.Item>
+            {/* <Row>
+              <Col span={24}>
+                <InputLabel>Fecha</InputLabel>
+              </Col>
+            </Row> */}
           </Col>
           <Col xs={24} sm={12} md={8} lg={6} xl={4}>
-            <Row>
-              <Col span={24}>
-                <InputLabel>Autor</InputLabel>
-              </Col>
-              <CenterItemsCol span={24}>
-                <CustomSelect
+            <Form.Item label="Autor">
+              <CustomSelect
                   value={user ? user : null}
                   placeholder="Seleccionar un autor"
                   onChange={(value) => setUser(value)}
@@ -262,30 +261,39 @@ const PublicationsStatisticsFilters = (props) => {
                   {/* <Option value="HiumanLab">HiumanLab</Option>
                                 <Option value="Pakal">Pakal</Option> */}
                 </CustomSelect>
-                {/* <CustomInput onChange={handleChange} placeholder="Nombre del autor"/> */}
-              </CenterItemsCol>
-            </Row>
-          </Col>
-          <Col xs={24} sm={12} md={8} lg={6} xl={3}>
-            <Row>
+            </Form.Item>
+            {/* <Row>
               <Col span={24}>
-                <InputLabel>Estatus</InputLabel>
+                <InputLabel>Autor</InputLabel>
               </Col>
               <CenterItemsCol span={24}>
-                <CustomSelect
+                
+              </CenterItemsCol>
+            </Row> */}
+          </Col>
+          <Col xs={24} sm={12} md={8} lg={6} xl={3}>
+            <Form.Item label="Estatus">
+              <CustomSelect
                   allowClear
                   placeholder="Seleccionar un autor"
                   value={statusFilter}
                   onChange={(value) => setStatusFilter(value)}
                   options={optionsActions}
                 />
-                {/* <CustomInput onChange={handleChange} placeholder="Nombre del autor"/> */}
+            </Form.Item>
+            {/* <Row>
+              <Col span={24}>
+                <InputLabel>Estatus</InputLabel>
+              </Col>
+              <CenterItemsCol span={24}>
+                
+                
               </CenterItemsCol>
-            </Row>
+            </Row> */}
           </Col>
 
           <Col xs={24} sm={24} md={24} lg={15} xl={8}>
-            <Row>
+            <Row gutter={10}>
               <CenterItemsCol xs={24} sm={8} md={8} lg={8} xl={8}>
                 <CustomButton
                   icon={<SearchOutlined />}
