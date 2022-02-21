@@ -71,8 +71,8 @@ const DataPerson = ({ config, person = null, ...props }) => {
     });
     if (person.work_title) {
       formPerson.setFieldsValue({
-        person_department: person.work_title.department,
-        job: person.work_title.job,
+        person_department: person.work_title.department.id,
+        job: person.work_title.job.id,
         work_title: person.work_title.id,
       });
     }
