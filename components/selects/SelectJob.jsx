@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
-import { useRouter } from "next/router";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { connect } from "react-redux";
 
 const SelectJob = ({

@@ -13,7 +13,7 @@ const SelectWorkTitleStatus = ({
   return (
     <Form.Item
       key="itemWorkTitleStatus"
-      name={"work_title_status"}
+      name={"status_work_title"}
       label={viewLabel ? "Estatus de plaza laboral" : ""}
       rules={rules}
     >
