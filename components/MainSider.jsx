@@ -157,13 +157,13 @@ const MainSider = ({
           defaultOpenKeys={defaultOpenKeys ? defaultOpenKeys : [""]}
           mode="inline"
         >
-          {/* <Menu.Item
+          <Menu.Item
             key="dashboard"
             onClick={() => router.push({ pathname: "/dashboard" })}
             icon={<AppstoreOutlined />}
           >
             Dashboard
-          </Menu.Item> */}
+          </Menu.Item>
           {props.permissions.person.view && (
             <Menu.Item
               key="persons"
