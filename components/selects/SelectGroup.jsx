@@ -20,7 +20,6 @@ const SelectGroup = ({ viewLabel, ...props }) => {
     <Form.Item
       rules={[ruleRequired]}
       name="groups"
-      label="Perfil de seguridad"
       label={viewLabel ? "Perfil de seguridad" : ""}
     >
       <Select
@@ -28,7 +27,7 @@ const SelectGroup = ({ viewLabel, ...props }) => {
         showArrow
         style={{ width: "100%" }}
         placeholder="Perfiles de seguridad"
-      ></Select>
+      />
     </Form.Item>
   );
 };
