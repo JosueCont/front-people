@@ -166,13 +166,25 @@ const MainSider = ({
             Dashboard
           </Menu.Item> */}
           {props.permissions.person.view && (
-            <Menu.Item
-              key="persons"
-              icon={<UserOutlined />}
-              onClick={() => router.push({ pathname: "/home" })}
-            >
-              Personas
-            </Menu.Item>
+             <SubMenu
+                key="people"
+                title="People"
+                className="subMainMenu"
+                icon={<UserOutlined className="custom_icon" />}
+              >
+                <Menu.Item
+                  key="persons"
+                  onClick={() => router.push({ pathname: "/home/persons" })}
+                >
+                  Personas
+                </Menu.Item>
+              <Menu.Item
+                key="groups_people"
+                onClick={() => router.push({ pathname: "/home/groups" })}
+              >
+                Grupos
+              </Menu.Item>
+            </SubMenu>
           )}
           {props.permissions.company.view && (
             <Menu.Item
@@ -403,7 +415,7 @@ const MainSider = ({
                 Encuestas
               </Menu.Item>
               <Menu.Item
-                key="groups"
+                key="groups_kuiz"
                 onClick={() => router.push({ pathname: "/assessment/groups" })}
               >
                 Grupos

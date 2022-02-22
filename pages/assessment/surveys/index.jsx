@@ -205,7 +205,7 @@ const AssessmentScreen = ({assessmentStore, ...props }) => {
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({ pathname: "/home" })}
+          onClick={() => router.push({ pathname: "/assessments/surveys" })}
         >
           {" "}
           Inicio{" "}

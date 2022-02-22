@@ -121,7 +121,6 @@ export const assessmentLoadAction = () => {
       let response = await Axios.get(
         `${API_ASSESSMENT}/assessments/assessment/?companies=${nodeId}`
       );
-      console.log('datos por aqui---->', response)
       dispatch({ type: types.LOAD_ASSESSMENTS, payload: response.data });
     } catch (e) {
       dispatch({ type: types.FETCHING, payload: false });
