@@ -33,7 +33,6 @@ const SelectTaxRegime = ({ taxRegimeSelected = null, ...props }) => {
         onChange={props.onChange ? props.onChange : null}
         allowClear
         notFoundContent={"No se encontraron resultados."}
-        value={bankSelected}
       />
     </Form.Item>
   );

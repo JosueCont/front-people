@@ -43,7 +43,6 @@ export const getFiscalBanks = () => async (dispatch, getState) => {
 export const getFiscalTaxRegime = () => async (dispatch, getState) => {
   await WebApiFiscal.getTaxRegime()
     .then((response) => {
-      console.log("Tax REGIME--->> ", response.data.results);
       dispatch({ type: TAX_REGIME, payload: response.data.results });
     })
     .catch((error) => {
