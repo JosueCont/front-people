@@ -116,23 +116,19 @@ export const periodicityNom = [
   },
   {
     label: "Decenal",
-    value: 3,
+    value: 10,
   },
   {
     label: "Catorcenal",
-    value: 4,
+    value: 3,
   },
   {
     label: "Quincenal",
-    value: 5,
+    value: 4,
   },
   {
     label: "Mensual",
-    value: 6,
-  },
-  {
-    label: "Anual",
-    value: 7,
+    value: 5,
   },
 ];
 

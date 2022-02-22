@@ -54,18 +54,11 @@ const PreviewBulkUpload = ({ ...props }) => {
       key: "actions",
       render: (item) => {
         return (
-          item.status && (
+          !item.status &&
+          item.message && (
             <EyeOutlined
               className="icon_actions"
-              onClick={() =>
-                viewDetails(
-                  item.status == "Exists"
-                    ? "Usuario existente."
-                    : item.status
-                    ? "Creado correctamente"
-                    : "Error al crear"
-                )
-              }
+              onClick={() => viewDetails(item.message)}
             />
           )
         );
