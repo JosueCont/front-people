@@ -110,7 +110,7 @@ const SelectCompany = ({ ...props }) => {
     let response = await props.companySelected(item.id, props.config);
     if (response) {
       props.doCompanySelectedCatalog();
-      useRouter.push("home");
+      useRouter.push("home/persons");
     } else {
       message.error("Ocurrio un error, intente de nuevo.");
     }
