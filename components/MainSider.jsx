@@ -12,7 +12,6 @@ import {
   UserAddOutlined,
   AreaChartOutlined,
   AppstoreOutlined,
-  QuestionCircleOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import {
@@ -139,7 +138,7 @@ const MainSider = ({
                     collapsed ? "19px !important;" : "16px !important;"
                   }
                 }
-                /* .ant-menu-item,  */
+                .ant-menu-item, 
 
             `}
       />
@@ -166,25 +165,13 @@ const MainSider = ({
             Dashboard
           </Menu.Item> */}
           {props.permissions.person.view && (
-             <SubMenu
-                key="people"
-                title="People"
-                className="subMainMenu"
-                icon={<UserOutlined className="custom_icon" />}
-              >
-                <Menu.Item
-                  key="persons"
-                  onClick={() => router.push({ pathname: "/home/persons" })}
-                >
-                  Personas
-                </Menu.Item>
-              <Menu.Item
-                key="groups_people"
-                onClick={() => router.push({ pathname: "/home/groups" })}
-              >
-                Grupos
-              </Menu.Item>
-            </SubMenu>
+            <Menu.Item
+              key="persons"
+              icon={<UserOutlined />}
+              onClick={() => router.push({ pathname: "/home" })}
+            >
+              Personas
+            </Menu.Item>
           )}
           {props.permissions.company.view && (
             <Menu.Item
@@ -401,27 +388,14 @@ const MainSider = ({
               Carga de documentos
             </Menu.Item>
           </SubMenu>
-          {props.config && props.config.kuiz_enabled && (
-            <SubMenu
-              key="kuis"
-              title="Kuiz"
-              className="subMainMenu"
-              icon={<QuestionCircleOutlined className="custom_icon"/>}
-            >
-              <Menu.Item
-                key="suverys"
-                onClick={() => router.push({ pathname: "/assessment/surveys" })}
-              >
-                Encuestas
-              </Menu.Item>
-              <Menu.Item
-                key="groups_kuiz"
-                onClick={() => router.push({ pathname: "/assessment/groups" })}
-              >
-                Grupos
-              </Menu.Item>
-            </SubMenu>
-          )}
+          {/* {props.config && props.config.kuiz_enabled && (
+                        <Menu.Item
+                        key="13"
+                        onClick={() => router.push({ pathname: "/assessment" })}
+                        >
+                        Encuestas
+                        </Menu.Item>
+                    )} */}
         </Menu>
       </Sider>
     </>

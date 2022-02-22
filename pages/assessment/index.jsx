@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MainLayout from "../../../layout/MainLayout";
+import MainLayout from "../../layout/MainLayout";
 import { useRouter } from "next/router";
 import {
   Form,
@@ -21,20 +21,20 @@ import {
   SyncOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { withAuthSync } from "../../../libs/auth";
+import { withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
-import FormAssessment from "../../../components/assessment/forms/FormAssessment";
+import FormAssessment from "../../components/assessment/forms/FormAssessment";
 import { connect, useDispatch } from "react-redux";
 const { confirm } = Modal;
-import { types } from "../../../types/assessments";
+import { types } from "../../types/assessments";
 import {
   assessmentModalAction,
   assessmentDeleteAction,
   assessmentStatusAction,
-} from "../../../redux/assessmentDuck";
-import { useFilter } from "../../../components/assessment/useFilter";
+} from "../../redux/assessmentDuck";
+import { useFilter } from "../../components/assessment/useFilter";
 
-const AssessmentScreen = ({assessmentStore, ...props }) => {
+const AssessmentScreen = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [form] = Form.useForm();
@@ -60,16 +60,14 @@ const AssessmentScreen = ({assessmentStore, ...props }) => {
   ] = useFilter();
 
   useEffect(() => {
-    if(assessmentStore){
-      setAssessments(assessmentStore.assessments);
-      setLoading(assessmentStore.fetching);
-      assessmentStore.active_modal === types.CREATE_ASSESSMENTS
-        ? setShowCreateAssessment(true)
-        : setShowCreateAssessment(false);
-      assessmentStore.active_modal === types.UPDATE_ASSESSMENTS
-        ? setShowUpdateAssessment(true)
-        : setShowUpdateAssessment(false);
-    }
+    setAssessments(assessmentStore.assessments);
+    setLoading(assessmentStore.fetching);
+    assessmentStore.active_modal === types.CREATE_ASSESSMENTS
+      ? setShowCreateAssessment(true)
+      : setShowCreateAssessment(false);
+    assessmentStore.active_modal === types.UPDATE_ASSESSMENTS
+      ? setShowUpdateAssessment(true)
+      : setShowUpdateAssessment(false);
   }, [assessmentStore]);
 
   const HandleCreateAssessment = () => {
@@ -140,7 +138,10 @@ const AssessmentScreen = ({assessmentStore, ...props }) => {
             className={"pointer"}
             key={"name_" + item.id + item.order_position}
             onClick={() => {
-              router.push({pathname: `/assessment/surveys/${item.id}`});
+              router.push({
+                pathname: "/assessment/detail",
+                query: { id: item.id },
+              });
             }}
           >
             {" "}
@@ -201,11 +202,11 @@ const AssessmentScreen = ({assessmentStore, ...props }) => {
   ];
 
   return (
-    <MainLayout currentKey="surveys">
+    <MainLayout currentKey="1">
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({ pathname: "/assessments/surveys" })}
+          onClick={() => router.push({ pathname: "/home" })}
         >
           {" "}
           Inicio{" "}
