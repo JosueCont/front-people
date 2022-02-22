@@ -45,7 +45,7 @@ const FormGroup = (props) => {
       message.success("Actualizado correctamente.");
     } else {
       saveGroup(values);
-      message.success("guardado correctamente.");
+      message.success("Guardado correctamente.");
     }
   };
 
