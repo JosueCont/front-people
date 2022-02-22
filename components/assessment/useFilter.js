@@ -18,7 +18,7 @@ export const useFilter = () => {
         if (filterString.trim() === "") {
             setFilterActive(false);
         }else{
-            let filtradas = values.filter( filtro => filtro.name.toLowerCase().includes(filterString.toLowerCase()));
+            let filtradas = values.filter( filtro => filtro.name.toLowerCase().includes(filterString) );
             setFilterValues(filtradas);
             setFilterActive(true);
         }
