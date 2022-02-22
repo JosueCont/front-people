@@ -8,7 +8,6 @@ import esES from "antd/lib/locale/es_ES";
 import MainLayout from "../../../layout/MainLayout";
 import WebApiIntranet from "../../../api/WebApiIntranet";
 import { publicationsListAction } from "../../../redux/IntranetDuck";
-import { useGetCompanyId } from "../../../utils/useGetCompanyId";
 import PublicationsStatisticsTable from "../../../components/statistics/PublicationsStatisticsTable";
 import PublicationsStatisticsFilters from "../../../components/statistics/PublicationsStatisticsFilters";
 
@@ -18,27 +17,27 @@ const index = (props) => {
   const [processedPublications, setProcessedPubications] = useState([]);
   const [parameters, setParameters] = useState(null);
   // Hook para traer la compania
-  const { companyId, getCompanyId } = useGetCompanyId();
 
   useEffect(() => {
     moment.locale("es-mx");
     if (props.currentNode) {
       props.publicationsListAction(props.currentNode.id, 1);
-      getCompanyId();
     }
-  }, [props.current]);
+  }, [props.currentNode]);
 
   useEffect(() => {
-    console.log('publicationsList',publicationsList);
-  }, [publicationsList])
-  
+    console.log("publicationsList", publicationsList);
+  }, [publicationsList]);
 
   useEffect(() => {
     setLoadingData(true);
     if (props.publicationsList && props.publicationsList.results) {
       let publicationsFiltered = [];
       try {
-        console.log('props.publicationsList.results',props.publicationsList.results);
+        console.log(
+          "props.publicationsList.results",
+          props.publicationsList.results
+        );
         props.publicationsList.results.map((publication) => {
           // Se filtran las propiedades a utilizar en la tabla
           publicationsFiltered.push({
@@ -54,7 +53,7 @@ const index = (props) => {
             reactions: publication.count_by_reaction_type
               ? publication.count_by_reaction_type
               : [],
-              status: publication.status
+            status: publication.status,
           });
         });
         // Contiene el data ya ordenado para la tabla
@@ -62,43 +61,68 @@ const index = (props) => {
         setPublicationsList(props.publicationsList);
         setLoadingData(false);
       } catch (error) {
+        setLoadingData(false);
         console.log(error);
       }
     }
   }, [props.publicationsList]);
 
-  const changeStatus = async (post, status) =>{
-    let response = await  WebApiIntranet.updateStatusPost(post.id, {status: status})
-    if(response.status === 200){
-      notification['success']({
-        message: 'Estatus actualizado'
-      });
-    }
-  }
+  const changeStatus = async (post, status) => {
+    WebApiIntranet.updateStatusPost(post.id, { status: status }).then(
+      (response) => {
+        let idx = processedPublications.findIndex(
+          (item) => item.id === post.id
+        );
+        let newPost = {
+          key: response.data.timestamp,
+          id: response.data.id,
+          date: moment(new Date(response.data.timestamp)).format(
+            "DD MMMM hh:mm a"
+          ),
+          publication: response.data.content,
+          owner: `${response.data.owner.first_name} ${response.data.owner.flast_name}`,
+          comments: response.data.comments ? response.data.comments.length : 0,
+          clicks: response.data.clicks ? response.data.clicks : 0,
+          prints: response.data.prints ? response.data.prints : 0,
+          reactions: response.data.count_by_reaction_type
+            ? response.data.count_by_reaction_type
+            : [],
+          status: response.data.status,
+        };
+
+        let PostTemp = [...processedPublications];
+        PostTemp[idx] = newPost;
+        setProcessedPubications(PostTemp);
+
+        notification["success"]({
+          message: "Estatus actualizado",
+        });
+      }
+    );
+  };
 
   return (
     <>
-      {props.currentNode && (
-        <MainLayout currentKey="1">
-          <ConfigProvider locale={esES}>
-            <PublicationsStatisticsFilters
-              style={{ margin: "30px 0px" }}
-              companyId={props.currentNode.id}
-              getPostsByFilter={props.publicationsListAction}
-              setParameters={setParameters}
-            />
-            <PublicationsStatisticsTable
-              current={publicationsList.data ? publicationsList.data.page : 1}
-              total={publicationsList.data ? publicationsList.data.count : 1}
-              fetching={loadingData}
-              processedPublicationsList={processedPublications}
-              changePage={props.publicationsListAction}
-              parameters={parameters}
-              changeStatus={changeStatus}
-            />
-          </ConfigProvider>
-        </MainLayout>
-      )}
+      <MainLayout currentKey="1">
+        <ConfigProvider locale={esES}>
+          <PublicationsStatisticsFilters
+            style={{ margin: "30px 0px" }}
+            companyId={props.currentNode ? props.currentNode.id : null}
+            getPostsByFilter={props.publicationsListAction}
+            setParameters={setParameters}
+          />
+          <PublicationsStatisticsTable
+            currentNode={ props.currentNode ? props.currentNode.id: null }
+            current={publicationsList.data ? publicationsList.data.page : 1}
+            total={publicationsList.data ? publicationsList.data.count : 1}
+            fetching={loadingData}
+            processedPublicationsList={processedPublications}
+            changePage={props.publicationsListAction}
+            parameters={parameters}
+            changeStatus={changeStatus}
+          />
+        </ConfigProvider>
+      </MainLayout>
     </>
   );
 };

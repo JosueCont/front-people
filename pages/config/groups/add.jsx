@@ -21,7 +21,7 @@ import { withAuthSync } from "../../../libs/auth";
 import { connect } from "react-redux";
 import {
   createGroup,
-  editGroups,
+  editGroupsK,
   getGroupById,
 } from "../../../api/apiKhonnect";
 import {
@@ -279,7 +279,7 @@ const GroupAdd = ({ ...props }) => {
   const editGroup = async () => {
     setLoading(true);
 
-    let response = editGroups(props.config, data);
+    let response = editGroupsK(props.config, data);
     if (response) {
       props.getProfileGroups(props.currentNode.id);
       message.success(messageUpdateSuccess);

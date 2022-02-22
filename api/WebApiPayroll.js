@@ -5,7 +5,6 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
   }
 
-  /*Payroll Person */
   static createPayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
   }
@@ -17,7 +16,6 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/payment-calendar/?node=${data}`, "get");
   }
 
-  /** PaymentCalendar */
   static createPaymentCalendar(data) {
     return WebApi.ApisType(
       `/payroll/payment-calendar/payment_calendar/`,
@@ -43,6 +41,10 @@ class WebApiPayroll {
       `/payroll/payment-calendar/${id}/person_calendar/`,
       "get"
     );
+  }
+
+  static getPaymentPeriodicity() {
+    return WebApi.ApisType(`/fiscal/periodicity/`, "get");
   }
 
   static payrollFacturama(data) {

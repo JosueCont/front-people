@@ -21,7 +21,6 @@ import TabJobs from "../../../components/catalogs/Jobs";
 import PersonTypes from "../../../components/catalogs/PersonTypes";
 import Relationship from "../../../components/catalogs/Relationship";
 import DocumentsTypes from "../../../components/catalogs/DocumentsTypes";
-import Banks from "../../../components/catalogs/Banks";
 
 const { Content } = Layout;
 
@@ -49,7 +48,9 @@ const configBusiness = ({ ...props }) => {
         >
           <Card bordered={true}>
             <>
-              <Title style={{ fontSize: "25px" }}>Catálogos</Title>
+              <Title style={{ fontSize: "25px" }}>
+                Catálogos de {props.currentNode && props.currentNode.name}
+              </Title>
               <Tabs tabPosition={"left"}>
                 {props.permissions.department.view && (
                   <TabPane

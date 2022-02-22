@@ -19,6 +19,7 @@ import {
 } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import WebApiPeople from '../../api/WebApiPeople'
+import SelectCollaborator from '../selects/SelectCollaborator';
 
 const arrayConfigType = [
   { id: 1, name: "Me gusta", emoji: "👍🏻" },
@@ -44,6 +45,7 @@ const beforeUpload = (file) => {
 };
 
 const FormConfig = (props) => {
+  console.log('props',props);
   const [personsSelected, setPersonsSelected] = useState([])
   const [formConfigIntranet] = Form.useForm();
   const [photo, setPhoto] = useState(
@@ -151,9 +153,10 @@ const FormConfig = (props) => {
 
   const onFinish = (values) => {
     
-    if(values.intranet_moderator_enabled){
+    if(showPersons){
       values['intranet_moderator_person'] = personsSelected;
     }
+
     console.log(values)
     saveConfig(values);
   };
@@ -227,12 +230,17 @@ const FormConfig = (props) => {
     try {
       let response = await WebApiPeople.filterPerson({node: nodeId});
       setPersons([]);
-      let persons = response.data.map((a) => {
+      let personList = response.data.map((a) => {
         a.key = a.khonnect_id;
         return a;
       });
-      console.log('persons',persons);
-      setPersons(persons);
+      console.log('object');
+      console.log('nodeID', nodeId);
+      let list2 = personList.filter( (item) => item.node === nodeId );
+      console.log('list2',list2);
+
+      console.log('persons',personList);
+      setPersons(personList);
     } catch (error) {
       setPersons([]);
       console.log(error);
@@ -243,6 +251,11 @@ const FormConfig = (props) => {
     setShowPersons(checked)
     /* console.log('checked =>', checked) */
   }
+  
+  useEffect(() => {
+    console.log('showPersons',showPersons)
+  }, [showPersons])
+  
 
   const onChangePerson = (values) =>{
     console.log('values',values);
@@ -266,13 +279,13 @@ const FormConfig = (props) => {
                 name="nameIntranet"
                 label="Nombre de intranet"
               >
-                <AutoComplete
+                {/* <AutoComplete
                   name="nameIntranet"
                   label="Nombre"
                   onChange={onWebsiteChange}
-                >
+                > */}
                   <Input />
-                </AutoComplete>
+                {/* </AutoComplete> */}
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
@@ -375,20 +388,27 @@ const FormConfig = (props) => {
             </Col>
             <Col lg={6} xs={22} offset={1}>
               <Form.Item name={'intranet_moderator_enabled'} label="Las publicaciones requieren moderación">
-                <Switch checked={props.config && props.config.intranet_moderator_enabled} onChange={changeSwitch} />
+                <Switch checked={showPersons} onChange={changeSwitch} />
               </Form.Item>
             </Col>
 
             { showPersons && 
               <Col lg={6} xs={22} offset={1}>
-                <Form.Item label={'Usuarios'} >
+                <SelectCollaborator 
+                  label="Usuarios" 
+                  mode="multiple" 
+                  showSearch 
+                  placeholder="Selecciona una opción"
+                  onChange={onChangePerson}
+                  value={personsSelected}
+                />
+                {/* <Form.Item label={'Usuarios'} >
                   <Select
                     mode="multiple"
                     showSearch
-                    placeholder="Select a person"
+                    placeholder="Selecciona una opción"
                     optionFilterProp="children"
                     onChange={onChangePerson}
-                    /* onSearch={onSearch} */
                     filterOption={(input, option) =>
                       option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                     }
@@ -399,8 +419,8 @@ const FormConfig = (props) => {
                         <Select.Option key={item.first_name+item.flast_name} value={item.id}>{item.first_name+' '+item.flast_name}</Select.Option>
                       ))
                     }
-                  </Select>,
-                </Form.Item>
+                  </Select>
+                </Form.Item> */}
               </Col>
             } 
           </Row>

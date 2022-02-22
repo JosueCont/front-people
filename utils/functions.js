@@ -331,3 +331,12 @@ export const UserPermissions = (permits = null, is_admin = false) => {
     return perms;
   }
 };
+
+export const getDomain = (api) => {
+  try {
+    let tenat = window.location.hostname.split(".")[0];
+    return `${tenat}.${api}`;
+  } catch (error) {
+    return "error";
+  }
+};

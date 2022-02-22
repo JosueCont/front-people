@@ -2,8 +2,7 @@ import WebApiPeople from "../api/WebApiPeople";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../libs/auth";
 import { UserPermissions } from "../utils/functions";
-import { doCompanySelectedCatalog } from "./catalogCompany";
-import { assessmentLoadAction} from "./assessmentDuck"
+import { doCompanySelectedCatalog, getProfileGroups } from "./catalogCompany";
 
 const initialData = {
   default: true,
@@ -56,10 +55,10 @@ export default webReducer;
 export const doGetGeneralConfig = () => async (dispatch, getState) => {
   try {
     let response = await WebApiPeople.getGeneralConfig();
+    sessionStorage.setItem("aid", response.data.client_khonnect_id);
     sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
     dispatch({ type: GENERAL_CONFIG, payload: response.data });
     dispatch(setUser());
-    response.data.kuiz_enabled && dispatch(assessmentLoadAction());
   } catch (error) {}
 };
 
@@ -78,14 +77,16 @@ export const showLoading = (data) => async (dispatch, getState) => {
   } catch (error) {}
 };
 
-export const companySelected = (data) => async (dispatch, getState) => {
+export const companySelected = (data, config) => async (dispatch, getState) => {
   try {
     if (!data) data = await userCompanyId();
-    if (data) {
+    if (data && config) {
       let response = await WebApiPeople.getCompany(data);
       dispatch({ type: COMPANY_SELCTED, payload: response.data });
       dispatch(doCompanySelectedCatalog(response.data.id));
-      dispatch(getPeopleCompany(data));
+      dispatch(getPeopleCompany(response.data.id));
+      dispatch(getProfileGroups(response.data.id, config));
+
       return true;
     }
     return false;

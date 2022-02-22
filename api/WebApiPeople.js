@@ -37,10 +37,6 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/${id}/`, "put", data);
   }
 
-  static permissionIntranet(data, id) {
-    return WebApi.ApisType(`/person/person/${id}/`, "patch", data);
-  }
-
   static updatePhotoPerson(data) {
     return WebApi.ApisType(
       `/person/person/update_pthoto_person/`,
@@ -196,10 +192,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
   }
 
+  /*Payroll Person */
   static createPayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
   }
-
   static updatePayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/${data.id}/`, "put", data);
   }
@@ -218,30 +214,6 @@ class WebApiPeople {
 
   static getBanks() {
     return WebApi.ApisType(`/fiscal/bank/`, "get");
-  }
-
-  static getPaymentCalendar(data) {
-    return WebApi.ApisType(`/payroll/payment-calendar/?node=${data}`, "get");
-  }
-
-  static getPaymentPeriodicity() {
-    return WebApi.ApisType(`/fiscal/periodicity/`, "get");
-  }
-
-  static createPaymentCalendar(data) {
-    return WebApi.ApisType(`/payroll/payment-calendar`, "post", data);
-  }
-
-  static updatePaymentCalendar(data) {
-    return WebApi.ApisType(
-      `/payroll/payment-calendar/${data.id}/`,
-      "put",
-      data
-    );
-  }
-
-  static getDetailPaymentCalendar(id) {
-    return WebApi.ApisType(`/payroll/payment-calendar/${id}`, "get");
   }
 
   static getVacationRequest(data) {
@@ -313,6 +285,26 @@ class WebApiPeople {
 
   static deleteDocument(data) {
     return WebApi.ApisType(`/person/document/${data}/`, "delete");
+  }
+
+  static getTemplateImportPerson() {
+    return WebApi.ApisType(`/person/person/generate_template/`, "get");
+  }
+
+  static fiscalInformationNode(type, node, data) {
+    return WebApi.ApisType(
+      `/business/fiscal-information/?node__id=${node}`,
+      type,
+      data
+    );
+  }
+
+  static changeIntranetAccess(data) {
+    return WebApi.ApisType(
+      `/person/person/change-intranet-access`,
+      "post",
+      data
+    );
   }
 }
 export default WebApiPeople;

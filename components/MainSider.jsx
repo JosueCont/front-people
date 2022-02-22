@@ -364,7 +364,7 @@ const MainSider = ({
                 </Menu.Item>
               )}
               <Menu.Item
-                key="config"
+                key="intranet2"
                 onClick={() => router.push({ pathname: "/intranet/config" })}
                 icon={<SettingsOutlined />}
               >
