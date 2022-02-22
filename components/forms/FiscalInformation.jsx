@@ -20,13 +20,25 @@ const FiscalInformation = ({ node, ...props }) => {
     if (node) getInfo(node);
   }, [node]);
 
-  const getInfo = async (data) => {
-    try {
-      let response = await WebApiPeople.fiscalInformationNode("get", node);
-      console.log("fiscal data-->> ", response[0]);
-    } catch (error) {
-      console.log(error);
-    }
+  const getInfo = async () => {
+    await WebApiPeople.fiscalInformationNode("get", node)
+      .then((response) => {
+        if (response.data) setForm(response.data);
+        console.log("fiscal data-->> ", response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const setForm = (data) => {
+    form.setFieldsValue({
+      person_type: data.person_type,
+      curp: data.curp,
+      rfc: data.rfc,
+      tax_regime: data.tax_regime,
+      assimilated_pay: data.assimilated_pay,
+    });
   };
 
   const saveInfo = (values) => {

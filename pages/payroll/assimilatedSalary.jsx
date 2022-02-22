@@ -47,25 +47,29 @@ const assimilatedSalary = () => {
     value.salary = parseFloat(value.salary);
     setSalary(null);
     setLoading(true);
-    try {
-      let response = await webApiFiscal.assimilatedSalaryCalculation(value);
-      if (response.status == 200) {
-        setTimeout(() => {
-          setSalary(response.data);
+    await webApiFiscal
+      .assimilatedSalaryCalculation(value)
+      .then((response) => {
+        console.log("Response-->>> ", response);
+        if (response.status == 200) {
+          setTimeout(() => {
+            setSalary(response.data);
+            setLoading(false);
+          }, 500);
+        } else {
+          message.error("Ocurrio un error intente de nuevo");
+          setSalary(null);
           setLoading(false);
-        }, 500);
-      } else {
-        message.error("Ocurrio un error intente de nuevo");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        message.error("Ocurrio un error intente de nuevo, " + error);
         setSalary(null);
         setLoading(false);
-      }
-    } catch (error) {
-      console.log(error);
-      message.error("Ocurrio un error intente de nuevo, " + error);
-      setSalary(null);
-      setLoading(false);
-    }
+      });
   };
+
   const types = [
     {
       label: "Bruto-Neto",
@@ -250,7 +254,6 @@ const assimilatedSalary = () => {
                           onClick={() => generateCfdi()}
                           size="large"
                         >
-                          {/* Generar cfdi */}
                           Guardar PDF
                         </Button>
                       </Col>
@@ -272,7 +275,6 @@ const assimilatedSalary = () => {
                         <Row className="table-grid-title">
                           <Col span={18}>
                             <Text strong={type == 1 ? true : false}>
-                              {/* <span style={{ fontWeight: type == 1 && "bold" }}> */}
                               ASIMILADO BRUTO
                             </Text>
                           </Col>
@@ -354,10 +356,7 @@ const assimilatedSalary = () => {
                               style={{ backgroundColor: type == 2 && "yellow" }}
                               className="border-results"
                             >
-                              <Text>
-                                $23432
-                                {/* $ {salary.net_salary} */}
-                              </Text>
+                              <Text>$ {salary.net_salary}</Text>
                             </Col>
                           </Row>
                         )}
