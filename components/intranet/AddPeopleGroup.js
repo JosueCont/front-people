@@ -4,6 +4,7 @@ import { API_URL } from "../../config/config";
 import React, { useEffect, useState } from "react";
 import { userCompanyId } from "../../libs/auth";
 import SelectCollaborator from "../selects/SelectCollaborator";
+import WebApiIntranet from '../../api/WebApiIntranet'
 
 const { Option } = Select;
 const AddPeopleGroup = (props) => {
@@ -42,11 +43,10 @@ const AddPeopleGroup = (props) => {
       });
   };
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     let data = {};
     data.user = values.guests;
-    axios
-      .patch(API_URL + `/intranet/group/${props.group.id}/`, data)
+    await WebApiIntranet.savePersonsGroup(props.group.id, data)
       .then((res) => {
         props.setVisible();
       })
