@@ -13,6 +13,10 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/type-tax/`, "get");
   }
 
+  static getTaxRegime() {
+    return WebApi.ApisType(`/fiscal/tax-regime/`, "get");
+  }
+
   static getBanks() {
     return WebApi.ApisType(`/fiscal/bank/`, "get");
   }
