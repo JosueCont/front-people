@@ -36,7 +36,7 @@ class WebApiAssessment {
         return Axios.put(`${API_URL}/person/group/${id}/`, {...data, node: nodeId});
     }
     static deleteGroupPersons(data){
-        return Axios.put(`${API_URL}/person/group/delete_by_ids/`, data);
+        return Axios.post(`${API_URL}/person/group/delete_by_ids/`, data);
     }
 }
 
