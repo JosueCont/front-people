@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import DetailPerson from "../../../components/person/DetailPerson";
-import { withAuthSync } from "../../../libs/auth";
+import DetailPerson from "../../components/person/DetailPerson";
+import { withAuthSync } from "../../libs/auth";
 import { useRouter } from "next/router";
 import { Breadcrumb, Spin } from "antd";
-import WebApiPeople from "../../../api/WebApiPeople";
-import MainLayout from "../../../layout/MainLayout";
+import WebApiPeople from "../../api/WebApiPeople";
+import MainLayout from "../../layout/MainLayout";
 import { Content } from "antd/lib/layout/layout";
 import { connect } from "react-redux";
 import { Global, css } from "@emotion/core";
@@ -48,8 +48,8 @@ const EmployeeDetailPage = (...props) => {
       <MainLayout currentKey="1">
         <Content className="site-layout">
           <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item href="/home/persons/">Inicio</Breadcrumb.Item>
-            <Breadcrumb.Item href="/home/persons/">Personas</Breadcrumb.Item>
+            <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
+            <Breadcrumb.Item href="/home/">Personas</Breadcrumb.Item>
             <Breadcrumb.Item>Expediente de empleado</Breadcrumb.Item>
           </Breadcrumb>
           {person ? (
