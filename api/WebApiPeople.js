@@ -291,12 +291,8 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/generate_template/`, "get");
   }
 
-  static fiscalInformationNode(type, node, data) {
-    return WebApi.ApisType(
-      `/business/fiscal-information/?node__id=${node}`,
-      type,
-      data
-    );
+  static fiscalInformationNode(type, data = "", url = "") {
+    return WebApi.ApisType(`/business/fiscal-information/${url}`, type, data);
   }
 
   static changeIntranetAccess(data) {

@@ -27,13 +27,14 @@ import {
   minLengthNumber,
   onlyNumeric,
   rfcFormat,
+  ruleRequired,
 } from "../../utils/rules";
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectAccessIntranet from "../selects/SelectAccessIntranet";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
-
+import SelectWorkTitleStatus from "../selects/SelectWorkTitleStatus";
 
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
@@ -74,7 +75,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
       formPerson.setFieldsValue({
         person_department: person.work_title.department.id,
         job: person.work_title.job.id,
-        work_title: person.work_title.id,
+        work_title_id: person.work_title.id,
       });
     }
     if (person.person_type)
@@ -442,8 +443,11 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   viewLabel={true}
                   department={departmentSelected}
                   job={jobSelected}
-                  name={"work_title"}
+                  name={"work_title_id"}
                 />
+              </Col>
+              <Col lg={8} xs={24}>
+                <SelectWorkTitleStatus rules={[ruleRequired]} style={false} />
               </Col>
               {((props.user && props.user.nodes) ||
                 (props.user && props.user.is_admin)) && (
@@ -466,7 +470,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-
               {config && config.intranet_enabled && (
                 <Col lg={8} xs={24} md={12}>
                   <Form.Item

@@ -2,7 +2,7 @@ import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import webReducerUser, { doGetGeneralConfig } from "./UserDuck";
 import webReducerCatalog, { doCompanySelectedCatalog } from "./catalogCompany";
-import fiscalDuck from "./fiscalDuck";
+import fiscalDuck, { doFiscalSelectedData } from "./fiscalDuck";
 import IntranetDuck from "./IntranetDuck";
 import userAndCompanyReducer from "./userAndCompanyFilterDuck";
 
@@ -19,5 +19,6 @@ export const store = createStore(rootReducer, applyMiddleware(thunk));
 export default () => {
   doGetGeneralConfig()(store.dispatch);
   doCompanySelectedCatalog()(store.dispatch);
+  doFiscalSelectedData()(store.dispatch);
   return store;
 };

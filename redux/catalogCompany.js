@@ -81,7 +81,6 @@ export const doCompanySelectedCatalog =
       if (!data) data = userCompanyId();
       if (data) {
         dispatch(getRelationship(data));
-        // dispatch(getBanks(data));
         dispatch(getExperienceType(data));
         dispatch(getReasonSeparation(data));
         dispatch(getLaborRelation(data));
@@ -105,7 +104,7 @@ export const getRelationship = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.getCatalogs("relationship", data);
     dispatch({ type: RELATIONSHIP, payload: response.data.results });
   } catch (error) {
-    return;
+    dispatch({ type: RELATIONSHIP, payload: [] });
   }
 };
 
@@ -114,7 +113,7 @@ export const getBanks = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.getCatalogs("banks", data);
     dispatch({ type: BANK, payload: response.data.results });
   } catch (error) {
-    return;
+    dispatch({ type: BANK, payload: [] });
   }
 };
 
@@ -123,7 +122,7 @@ export const getExperienceType = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.getCatalogs("experience-type", data);
     dispatch({ type: EXPERIENCE_TYPE, payload: response.data.results });
   } catch (error) {
-    return;
+    dispatch({ type: EXPERIENCE_TYPE, payload: [] });
   }
 };
 
@@ -132,7 +131,7 @@ export const getReasonSeparation = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.getCatalogs("reason-separation", data);
     dispatch({ type: REASON_SEPARATION, payload: response.data.results });
   } catch (error) {
-    return;
+    dispatch({ type: REASON_SEPARATION, payload: [] });
   }
 };
 
@@ -141,7 +140,7 @@ export const getLaborRelation = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.getCatalogs("labor-relationship", data);
     dispatch({ type: LABOR_RELATION, payload: response.data.results });
   } catch (error) {
-    return;
+    dispatch({ type: LABOR_RELATION, payload: [] });
   }
 };
 
@@ -150,7 +149,7 @@ export const getTreatment = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.getCatalogs("treatment", data);
     dispatch({ type: TREATMENT, payload: response.data.results });
   } catch (error) {
-    return;
+    dispatch({ type: TREATMENT, payload: [] });
   }
 };
 
@@ -159,7 +158,7 @@ export const getDocumentType = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.getCatalogs("document-type", data);
     dispatch({ type: DOCUMENT_TYPE, payload: response.data });
   } catch (error) {
-    return;
+    dispatch({ type: DOCUMENT_TYPE, payload: [] });
   }
 };
 
@@ -168,7 +167,7 @@ export const getDepartmets = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.filterDepartmentByNode(data);
     dispatch({ type: DEPARTMENT, payload: response.data.results });
   } catch (error) {
-    return;
+    dispatch({ type: DEPARTMENT, payload: [] });
   }
 };
 
@@ -177,7 +176,7 @@ export const getJobs = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.getJobs(data);
     dispatch({ type: JOB, payload: response.data.results });
   } catch (error) {
-    return;
+    dispatch({ type: JOB, payload: [] });
   }
 };
 
@@ -189,7 +188,10 @@ export const getPersonType = (data) => async (dispatch, getState) => {
       payload: response.data.results,
     });
   } catch (error) {
-    return;
+    dispatch({
+      type: PERSON_TYPE,
+      payload: [],
+    });
   }
 };
 
@@ -199,7 +201,7 @@ export const getProfileGroups =
       let response = await getGroups(node, config);
       if (response) dispatch({ type: PROFILE_GROUP, payload: response });
     } catch (error) {
-      return;
+      if (response) dispatch({ type: PROFILE_GROUP, payload: [] });
     }
   };
 
@@ -215,7 +217,7 @@ export const getPeopleCompany = (data) => async (dispatch, getState) => {
     });
     dispatch({ type: PEOPLE_COMPANY, payload: people });
   } catch (error) {
-    return;
+    dispatch({ type: PEOPLE_COMPANY, payload: [] });
   }
 };
 
@@ -224,7 +226,7 @@ export const getLevel = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.getCatalogs("level", data);
     dispatch({ type: LEVEL, payload: response.data.results });
   } catch (error) {
-    return;
+    dispatch({ type: LEVEL, payload: [] });
   }
 };
 
@@ -233,6 +235,6 @@ export const getWorkTitle = (data) => async (dispatch, getState) => {
     let response = await WebApiPeople.getCatalogs("work-title", data);
     dispatch({ type: WORK_TITLE, payload: response.data.results });
   } catch (error) {
-    return;
+    dispatch({ type: WORK_TITLE, payload: [] });
   }
 };
