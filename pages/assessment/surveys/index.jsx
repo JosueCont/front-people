@@ -60,7 +60,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
   ] = useFilter();
 
   useEffect(() => {
-    if(assessmentStore){
+    if(assessmentStore.assessments?.length > 0){
       setAssessments(assessmentStore.assessments);
       setLoading(assessmentStore.fetching);
       assessmentStore.active_modal === types.CREATE_ASSESSMENTS

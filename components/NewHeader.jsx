@@ -14,7 +14,7 @@ import {
   Divider,
   Modal,
   Space,
-  Badge,
+  Badge
 } from "antd";
 import {
   UserOutlined,
@@ -140,10 +140,10 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             background: var(--primaryColor) !important;
             opacity: 0.9;
           }
-          .ant-menu .ant-menu-item {
+          /* .ant-menu .ant-menu-item {
             margin: 0px !important;
             padding: 0px !important;
-          }
+          } */
           .text-menu {
             padding-bottom: 5px;
             padding-top: 5px;
@@ -172,10 +172,16 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <div className="container-fluid">
           <Row justify="space-between">
             <Col style={{ width: 250, display: "flex" }}>
-              <img
+              <object
                 style={{ maxWidth: 100, margin: "auto", maxHeight: 50 }}
-                src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
-              />
+                data="/images/LogoKhorconnect.svg"
+                type="image/svg+xml"
+              >
+                <img
+                  style={{ maxWidth: 100, margin: "auto", maxHeight: 50 }}
+                  src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
+                />
+              </object>
             </Col>
             {/*  <Col>
               {!hideSearch && (
