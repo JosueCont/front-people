@@ -75,6 +75,7 @@ const FormGroup = ({...props}) =>{
             visible={props.visible}
             onCancel={() => props.close()}
             afterClose={()=> props.close()}
+            maskClosable={false}
             width={500}
             footer={[
                 <>

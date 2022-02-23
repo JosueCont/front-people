@@ -87,7 +87,9 @@ export const companySelected = (data, config) => async (dispatch, getState) => {
       dispatch(doCompanySelectedCatalog(response.data.id));
       dispatch(getPeopleCompany(response.data.id));
       dispatch(getProfileGroups(response.data.id, config));
-      dispatch(assessmentLoadAction(response.data.id))
+      if(config.kuiz_enabled){
+        dispatch(assessmentLoadAction(response.data.id))
+      }
       return true;
     }
     return false;
