@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
-import { Row, Col, Table, Breadcrumb, Button, message, Modal } from "antd";
+import {
+  Row,
+  Col,
+  Table,
+  Breadcrumb,
+  Button,
+  message,
+  Modal,
+  Alert,
+} from "antd";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { withAuthSync } from "../../libs/auth";
@@ -22,6 +31,7 @@ const PreviewBulkUpload = ({ ...props }) => {
   const [errors, setErrors] = useState([]);
   const [disabledButton, setDisabledButton] = useState(false);
   const [arrColumns, setArrColumns] = useState([]);
+  const [messageSave, setMessageSave] = useState(null);
 
   /* Columns */
   const columns = [
@@ -112,15 +122,17 @@ const PreviewBulkUpload = ({ ...props }) => {
           const data = {
             persons: dataUpload,
           };
-
           WebApiPeople.saveMassivePerson(data)
             .then((response) => {
               setDataUpload(response.data.persons);
               message.success("Cargado correctamente");
+              setMessageSave(response.data.message);
               setLoading(false);
             })
             .catch((response) => {
               setLoading(false);
+              setDataUpload(response.data.persons);
+              setMessageSave(response.data.message);
               message.error("Error al agregar, intente de nuevo");
             });
         } else {
@@ -156,7 +168,7 @@ const PreviewBulkUpload = ({ ...props }) => {
           )}
 
           <Button
-            onClick={() => router.push("/home/person")}
+            onClick={() => router.push("/home/persons")}
             className={"ml-20"}
             type="primary"
             size={{ size: "large" }}
@@ -165,7 +177,11 @@ const PreviewBulkUpload = ({ ...props }) => {
             Regresar
           </Button>
         </Row>
-        <Row>
+        <Row justify="center">
+          <Col span={10}>
+            {messageSave && <Alert message={messageSave} type="info" />}
+            <br />
+          </Col>
           <Col span={24}>
             <Table
               dataSource={dataUpload}
