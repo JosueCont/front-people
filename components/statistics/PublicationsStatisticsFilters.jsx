@@ -35,7 +35,7 @@ const CustomButton = styled(Button)`
   width: 100%;
   margin: auto;
   border-radius: 5px;
-  margin-top: 27px;
+  //margin-top: 27px;
   max-width: 140px;
   & :hover {
     background-color: var(--primaryColor) !important;
@@ -209,6 +209,96 @@ const PublicationsStatisticsFilters = (props) => {
     <>
       <CustomCard>
         <Row gutter={10}>
+          <Form
+              layout="inline">
+            <Form.Item>
+              <CustomSelect
+                  size={'small'}
+                  value={group ? group : null}
+                  placeholder="Seleccionar grupo"
+                  onChange={(value) => setGroup(value)}
+              >
+                {groupList &&
+                    groupList.map((group) => (
+                        <Option value={group.id}>{group.name}</Option>
+                    ))}
+              </CustomSelect>
+            </Form.Item>
+
+            <Form.Item>
+              <RangePicker
+                  size={'small'}
+                  value={datePickerValue ? datePickerValue : null}
+                  onChange={getSelectedDate}
+                  format={"YYYY-MM-DD"}
+              />
+            </Form.Item>
+
+            <Form.Item>
+              <CustomSelect
+                  size={'small'}
+                  value={user ? user : null}
+                  placeholder="Seleccionar un autor"
+                  onChange={(value) => setUser(value)}
+              >
+                {usersList &&
+                    usersList.map((user) => (
+                        <Option
+                            value={user.khonnect_id}
+                        >{`${user.first_name} ${user.flast_name}`}</Option>
+                    ))}
+                {/* <Option value="HiumanLab">HiumanLab</Option>
+                                <Option value="Pakal">Pakal</Option> */}
+              </CustomSelect>
+            </Form.Item>
+
+
+            <Form.Item>
+              <CustomSelect
+                  allowClear
+                  size={'small'}
+                  placeholder="Seleccionar un status"
+                  value={statusFilter}
+                  onChange={(value) => setStatusFilter(value)}
+                  options={optionsActions}
+              />
+            </Form.Item>
+
+
+
+            <Form.Item>
+              <CustomButton
+                  size={'small'}
+                  icon={<SearchOutlined />}
+                  onClick={getPostsByFilter}
+              >
+                Filtrar
+              </CustomButton>
+            </Form.Item>
+
+
+            <Form.Item>
+              <CustomButton
+                  size={'small'}
+                  icon={<DownloadOutlined />}
+                  onClick={getExcelFile}
+              >
+                Excel
+              </CustomButton>
+            </Form.Item>
+
+            <Form.Item>
+              <CustomButton size={'small'} icon={<ClearOutlined />} onClick={clearFilter}>
+                Limpiar
+              </CustomButton>
+            </Form.Item>
+
+
+
+          </Form>
+        </Row>
+
+        <Row gutter={10} style={{display:'none'}}>
           <Col xs={24} sm={12} md={8} lg={6} xl={4}>
             <Form.Item label="Grupo">
               <CustomSelect

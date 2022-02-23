@@ -21,7 +21,7 @@ import { withAuthSync } from "../../../libs/auth";
 import { connect } from "react-redux";
 import {
   createGroup,
-  editGroupsK,
+  editGroups,
   getGroupById,
 } from "../../../api/apiKhonnect";
 import {
@@ -235,7 +235,7 @@ const GroupAdd = ({ ...props }) => {
     },
     // Acceso a dashboard
     {
-      name: "Acceso estadísticas intranet",
+      name: "Acceso moderación intranet",
       module: "Dashboard",
       value: "intranet.dashboard.function.statistics",
     },
@@ -265,7 +265,7 @@ const GroupAdd = ({ ...props }) => {
     data.company = props.currentNode.id;
     let response = await createGroup(props.config, data);
     if (response) {
-      props.getProfileGroups(props.currentNode.id);
+      props.getProfileGroups(props.currentNode.id, props.config);
       message.success(messageSaveSuccess);
       setTimeout(() => {
         router.push({ pathname: "/config/groups" });
@@ -279,13 +279,13 @@ const GroupAdd = ({ ...props }) => {
   const editGroup = async () => {
     setLoading(true);
 
-    let response = editGroupsK(props.config, data);
+    let response = await editGroups(props.config, data);
     if (response) {
-      props.getProfileGroups(props.currentNode.id);
+      props.getProfileGroups(props.currentNode.id, props.config);
       message.success(messageUpdateSuccess);
       setTimeout(() => {
         router.push({ pathname: "/config/groups" });
-      }, 600);
+      }, 1000);
     } else {
       setLoading(false);
       message.error(messageError);
@@ -692,7 +692,7 @@ const GroupAdd = ({ ...props }) => {
                       key="1"
                     >
                       <Col span={24}>
-                        <Row>
+                        <Row gutter={10}>
                           <Col xl={12} md={12} sm={24} xs={24}>
                             <Table
                               pagination={false}
@@ -735,7 +735,7 @@ const GroupAdd = ({ ...props }) => {
                       key="2"
                     >
                       <Col span={24}>
-                        <Row>
+                        <Row gutter={10}>
                           <Col xl={12} md={12} sm={24} xs={24}>
                             <Table
                               pagination={false}

@@ -72,7 +72,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
       title: "Vacantes",
       key: "vacancy",
       render: (item) => {
-        return <div>{item.vacancy ? item.vacancy : ""}</div>;
+        return <div>{item.vacancy ? item.vacancy.vacancy_numbers : ""}</div>;
       },
     },
     {
@@ -157,6 +157,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
       work_title_report: item.work_title_report
         ? item.work_title_report.id
         : null,
+      vacancy: item.vacancy.vacancy_numbers,
     });
   };
 

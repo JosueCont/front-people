@@ -112,6 +112,7 @@ const index = (props) => {
             setParameters={setParameters}
           />
           <PublicationsStatisticsTable
+              style={{marginTop:20}}
             currentNode={ props.currentNode ? props.currentNode.id: null }
             current={publicationsList.data ? publicationsList.data.page : 1}
             total={publicationsList.data ? publicationsList.data.count : 1}

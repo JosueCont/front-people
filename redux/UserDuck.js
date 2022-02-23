@@ -3,6 +3,7 @@ import jsCookie from "js-cookie";
 import { userCompanyId } from "../libs/auth";
 import { UserPermissions } from "../utils/functions";
 import { doCompanySelectedCatalog, getProfileGroups } from "./catalogCompany";
+import { assessmentLoadAction } from "./assessmentDuck";
 
 const initialData = {
   default: true,
@@ -86,7 +87,7 @@ export const companySelected = (data, config) => async (dispatch, getState) => {
       dispatch(doCompanySelectedCatalog(response.data.id));
       dispatch(getPeopleCompany(response.data.id));
       dispatch(getProfileGroups(response.data.id, config));
-
+      dispatch(assessmentLoadAction(response.data.id))
       return true;
     }
     return false;
