@@ -20,11 +20,19 @@ class WebApiIntranet {
     return WebApi.ApisType(`/intranet/group/?node=${data}`, "get");
   }
 
+  static saveGroup(data) {
+    return WebApi.ApisType(`/intranet/group/`, "post", data);
+  }
+
+  static updGroup(groupId, data) {
+    return WebApi.ApisType(`/intranet/group/${groupId}/`, "patch", data);
+  }
+
   static getUsersList(data) {
     return WebApi.ApisType(`/intranet/search-person/?node=${data}`, "get");
   }
 
-  static getConfig(data){
+  static getConfig(data) {
     return WebApi.ApisType("/setup/site-configuration/", "get");
   }
 
@@ -35,6 +43,5 @@ class WebApiIntranet {
   static updIntranetConfig(id, data) {
     return WebApi.ApisType(`/setup/site-configuration/${id}/`, "put", data);
   }
-  
 }
 export default WebApiIntranet;
