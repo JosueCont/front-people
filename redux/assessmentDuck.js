@@ -114,12 +114,12 @@ const assessmentReducer = (state = initialData, action) => {
 };
 
 //ASSESSMENT LOAD ASSESSMENTS
-export const assessmentLoadAction = () => {
+export const assessmentLoadAction = (id) => {
   return async (dispatch) => {
     dispatch({ type: types.FETCHING, payload: true });
     try {
       let response = await Axios.get(
-        `${API_ASSESSMENT}/assessments/assessment/?companies=${nodeId}`
+        `${API_ASSESSMENT}/assessments/assessment/?companies=${id}`
       );
       dispatch({ type: types.LOAD_ASSESSMENTS, payload: response.data });
     } catch (e) {
