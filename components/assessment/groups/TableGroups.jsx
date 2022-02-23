@@ -28,6 +28,7 @@ import FormGroup from "./FormGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewSurveys from "./ViewSurveys";
 import ViewMembers from "./ViewMembers";
+import DeleteGroups from "./DeleteGroups";
 
 const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, ...props}) => {
 
@@ -37,6 +38,7 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, ...props}) => 
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalSurveys, setShowModalSurveys] = useState(false);
   const [showModalMembers, setShowModalMembers] = useState(false);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
   const [itemGroup, setItemGroup] = useState({});
   const [groupsToDelete, setGroupsToDelete] = useState([]);
   const [groupsKeys, setGroupsKeys] = useState([]);
@@ -76,6 +78,7 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, ...props}) => 
     setGroupsKeys([])
     setGroupsToDelete([])
     setShowModalDelete(false)
+    setOpenModalDelete(false)
   }
 
   const rowSelectionGroup = {
@@ -96,50 +99,18 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, ...props}) => 
     }
   }
 
-  const getOnlyIds = () =>{
-    let ids = [];
-    groupsToDelete.map((item)=>{
-      ids.push(item.id)
-    })
-    return ids;
-  }
-
   useEffect(()=>{
-    if(showModalDelete){
+    if(openModalDelete){
       if(groupsToDelete.length > 0){
-        confirmDeleteGroups()
+        setShowModalDelete(true)
       }else{
-        setShowModalDelete(false)
+        setOpenModalDelete(false)
         message.error("Selecciona al menos un grupo")
       }
     }
-  },[showModalDelete])
+  },[openModalDelete])
 
-  const confirmDeleteGroups = () =>{
-    confirm({
-      title: groupsToDelete.length > 1 ?
-        "¿Estás seguro de eliminar estos grupos?":
-        "¿Estás seguro de eliminar este grupo?",
-      icon: null,
-      content: <ListGroupsToDelete/>,
-      okText: 'Sí',
-      okType: 'danger',
-      cancelText: 'No',
-      onOk() {
-        return new Promise((resolve) => {
-          setTimeout(()=>resolve(
-            removeGroups()
-          ), 2000)
-      })
-      },
-      onCancel() {
-        resetValuesDelete()
-      }
-    })
-  }
-
-  const removeGroups = async () =>{
-    const ids = getOnlyIds();
+  const removeGroups = async (ids) =>{
     props.setLoading(true)
     props.deteleGroup(ids)
     resetValuesDelete();
@@ -150,23 +121,6 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, ...props}) => 
     props.updateGroup(values, itemGroup.id)
   }
 
-  const ListGroupsToDelete = () => {
-    return(
-      <List
-        itemLayout="horizontal"
-        dataSource={groupsToDelete}
-        renderItem={(item) => (
-            <List.Item key={item.id}>
-                <List.Item.Meta
-                    avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                    title={<a href="https://ant.design">{item.name}</a>}
-                />
-            </List.Item>
-        )}
-      />
-    ) 
-  }
-
   const menuTable = () => {
     return (
       <Menu>
@@ -174,7 +128,7 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, ...props}) => 
           <Menu.Item
             key={1}
             icon={<DeleteOutlined/>}
-            onClick={()=>setShowModalDelete(true)}
+            onClick={()=>setOpenModalDelete(true)}
           >
             Eliminar
           </Menu.Item>
@@ -351,6 +305,14 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, ...props}) => 
             visible={showModalMembers}
             setVisible={setShowModalMembers}
             item={itemGroup}
+          />
+        )}
+        {showModalDelete && (
+          <DeleteGroups
+            visible={showModalDelete}
+            close={resetValuesDelete}
+            groups={groupsToDelete}
+            actionDelete={removeGroups}
           />
         )}
     </>
