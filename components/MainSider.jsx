@@ -8,19 +8,16 @@ import {
   MessageOutlined,
   ProfileOutlined,
   FormOutlined,
+  BugOutlined,
   DollarOutlined,
   UserAddOutlined,
-  AreaChartOutlined,
-  AppstoreOutlined,
+  BankOutlined,
+  SettingOutlined,
+  AlertOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
-import {
-  BugReportOutlined,
-  BusinessOutlined,
-  SettingsOutlined,
-  GroupOutlined,
-} from "@material-ui/icons";
+import { GroupOutlined } from "@material-ui/icons";
 
 const { Sider } = Layout;
 
@@ -140,13 +137,7 @@ const MainSider = ({
           /* .ant-menu-item,  */
         `}
       />
-      <Sider
-        className="mainSideMenu"
-        width="250"
-        collapsible
-        collapsed={collapsed}
-        onCollapse={onCollapse}
-      >
+      <Sider className="mainSideMenu" width="250" collapsible>
         <div className="logo" />
         <Menu
           theme="dark"
@@ -169,7 +160,7 @@ const MainSider = ({
               key="people"
               title="People"
               className="subMainMenu"
-              icon={<UserOutlined className="custom_icon" />}
+              icon={<UserOutlined />}
             >
               <Menu.Item
                 key="persons"
@@ -190,9 +181,10 @@ const MainSider = ({
           {props.permissions.company.view && (
             <Menu.Item
               key="business"
-              icon={<BusinessOutlined />}
+              icon={<BankOutlined />}
               onClick={() => router.push({ pathname: "/business" })}
             >
+              {" "}
               Empresas
             </Menu.Item>
           )}
@@ -200,7 +192,7 @@ const MainSider = ({
             key="config"
             title="Configuración"
             className="subMainMenu"
-            icon={<SettingsOutlined className="custom_icon" />}
+            icon={<SettingOutlined />}
           >
             <Menu.Item
               key="catalogos"
@@ -367,7 +359,7 @@ const MainSider = ({
               <Menu.Item
                 key="intranet2"
                 onClick={() => router.push({ pathname: "/intranet/config" })}
-                icon={<SettingsOutlined />}
+                icon={<SettingOutlined />}
               >
                 <FormattedMessage id="header.config" />
               </Menu.Item>
@@ -376,9 +368,9 @@ const MainSider = ({
                 onClick={() =>
                   router.push({ pathname: "/intranet/publications_statistics" })
                 }
-                icon={<AreaChartOutlined />}
+                icon={<AlertOutlined />}
               >
-                <FormattedMessage id="header.statistics" />
+                <FormattedMessage id="header.moderation" />
               </Menu.Item>
             </SubMenu>
           )}
@@ -387,7 +379,7 @@ const MainSider = ({
             key="uploads"
             title="Registro de errores"
             className="subMainMenu item_custom_icon"
-            icon={<BugReportOutlined className="custom_icon" />}
+            icon={<BugOutlined />}
           >
             <Menu.Item
               key="persons_upload"
@@ -408,7 +400,7 @@ const MainSider = ({
               key="kuis"
               title="Kuiz"
               className="subMainMenu"
-              icon={<QuestionCircleOutlined className="custom_icon" />}
+              icon={<QuestionCircleOutlined />}
             >
               <Menu.Item
                 key="suverys"
