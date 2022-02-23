@@ -156,7 +156,7 @@ const PreviewBulkUpload = ({ ...props }) => {
           )}
 
           <Button
-            onClick={() => router.push("/home")}
+            onClick={() => router.push("/home/person")}
             className={"ml-20"}
             type="primary"
             size={{ size: "large" }}

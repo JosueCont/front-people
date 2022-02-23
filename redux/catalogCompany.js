@@ -201,7 +201,7 @@ export const getProfileGroups =
       let response = await getGroups(node, config);
       if (response) dispatch({ type: PROFILE_GROUP, payload: response });
     } catch (error) {
-      if (response) dispatch({ type: PROFILE_GROUP, payload: [] });
+      dispatch({ type: PROFILE_GROUP, payload: [] });
     }
   };
 
@@ -233,7 +233,6 @@ export const getLevel = (data) => async (dispatch, getState) => {
 export const getWorkTitle = (data) => async (dispatch, getState) => {
   try {
     let response = await WebApiPeople.getCatalogs("work-title", data);
-    console.log("WORKTITL-->> ", response.data.results);
     dispatch({ type: WORK_TITLE, payload: response.data.results });
   } catch (error) {
     dispatch({ type: WORK_TITLE, payload: [] });

@@ -8,19 +8,16 @@ import {
   MessageOutlined,
   ProfileOutlined,
   FormOutlined,
+  BugOutlined,
   DollarOutlined,
   UserAddOutlined,
-  AreaChartOutlined,
-  AppstoreOutlined,
-  QuestionCircleOutlined
+  BankOutlined,
+  SettingOutlined,
+  AlertOutlined,
+  QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
-import {
-  BugReportOutlined,
-  BusinessOutlined,
-  SettingsOutlined,
-  GroupOutlined,
-} from "@material-ui/icons";
+import { GroupOutlined } from "@material-ui/icons";
 
 const { Sider } = Layout;
 
@@ -50,106 +47,97 @@ const MainSider = ({
     <>
       <Global
         styles={css`
-                .mainSideMenu, .ant-menu-inline-collapsed{
-                    border-right: solid 1px #8070F2 !important;
-                }
+          .mainSideMenu,
+          .ant-menu-inline-collapsed {
+            border-right: solid 1px #8070f2 !important;
+          }
 
-                .mainMenu .ant-menu-item{
-                  text-align: ${collapsed ? "center;" : "left;"}
-                }
-                .mainSideMenu ul  li{
-                  padding: ${collapsed ? "auto" : "0px 30px !important;"}
-                }
-                .mainSideMenu ul  li.ant-menu-item, li.ant-menu-submenu{
-                    padding: ${collapsed ? "auto" : "0px 30px !important;"}
-                }
-                .mainSideMenu ul li.ant-menu-submenu .ant-menu-submenu-title{
-                    padding: ${collapsed ? "auto" : "0% !important;"}
-                }
-                .mainMenu{
-                    margin-top:50px;
-                }
-                .ant-layout-sider{
-                    background: var(--primaryColor) !important;
-                }
-                .ant-layout-sider .ant-menu {
-                    background: var(--primaryColor) !important;
-                    color: varl(--fontSpanColor) !important
-                }
-                
-                .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
-                .mainMenu li:hover > div.ant-menu-submenu-title > i::after{
-                    background: var(--fontSpanColor) !important;
-                }
+          .mainMenu .ant-menu-item {
+            text-align: ${collapsed ? "center;" : "left;"};
+          }
+          .mainSideMenu ul li {
+            padding: ${collapsed ? "auto" : "0px 30px !important;"};
+          }
+          .mainSideMenu ul li.ant-menu-item,
+          li.ant-menu-submenu {
+            padding: ${collapsed ? "auto" : "0px 30px !important;"};
+          }
+          .mainSideMenu ul li.ant-menu-submenu .ant-menu-submenu-title {
+            padding: ${collapsed ? "auto" : "0% !important;"};
+          }
+          .mainMenu {
+            margin-top: 50px;
+          }
+          .ant-layout-sider {
+            background: var(--primaryColor) !important;
+          }
+          .ant-layout-sider .ant-menu {
+            background: var(--primaryColor) !important;
+            color: varl(--fontSpanColor) !important;
+          }
 
-                .subMainMenu .ant-menu .ant-menu-item{
-                    padding: 0px 0px 0px 20px !important;
-                }
-                .mainMenu li:hover{
-                    background: var(--secondaryColor) !important;
-                    opacity: 0.7;
-                    color: var(--fontColorSecondary) !important;
-                }
-                .mainMenu li:hover > div.ant-menu-submenu-title{
-                    color: var(--fontColorSecondary) !important;
-                }
+          .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
+          .mainMenu li:hover > div.ant-menu-submenu-title > i::after {
+            background: var(--fontSpanColor) !important;
+          }
 
-                .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
-                .mainMenu li:hover > div.ant-menu-submenu-title > i::after{
-                    background: var(--fontColorSecondary) !important;
-                }
+          .subMainMenu .ant-menu .ant-menu-item {
+            padding: 0px 0px 0px 20px !important;
+          }
+          .mainMenu li:hover {
+            background: var(--secondaryColor) !important;
+            opacity: 0.7;
+            color: var(--fontColorSecondary) !important;
+          }
+          .mainMenu li:hover > div.ant-menu-submenu-title {
+            color: var(--fontColorSecondary) !important;
+          }
 
-                .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item{
-                    color: var(--fontColorSecondary) !important;
-                }
-                .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item:hover{
-                    color: var(--fontColorSecondary) !important;
-                    opacity: 0.5
-                }
+          .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
+          .mainMenu li:hover > div.ant-menu-submenu-title > i::after {
+            background: var(--fontColorSecondary) !important;
+          }
 
-                .mainMenu li ul.ant-menu-sub{
-                    background: transparent !important;
+          .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item {
+            color: var(--fontColorSecondary) !important;
+          }
+          .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item:hover {
+            color: var(--fontColorSecondary) !important;
+            opacity: 0.5;
+          }
 
-                }
-                .ant-menu-submenu-open ul.ant-menu-sub li.ant-menu-item-selected{
-                    text-decoration: underline;
-                    font-weight:500;
-                }
+          .mainMenu li ul.ant-menu-sub {
+            background: transparent !important;
+          }
+          .ant-menu-submenu-open ul.ant-menu-sub li.ant-menu-item-selected {
+            text-decoration: underline;
+            font-weight: 500;
+          }
 
-                /* .mainMenu li:hover{
+          /* .mainMenu li:hover{
                     color: var(--fontColorSecondary) !important;
                 } */
-                
 
-                .mainMenu li.ant-menu-item-selected, 
-                .mainMenu li.ant-menu-submenu-selected  {
-                    background: var(--secondaryColor) !important;
-                    opacity: 1;
-                }
-                .mainMenu li.ant-menu-item-selected span,
-                .mainMenu li.ant-menu-submenu-selected  > div,
-                .mainMenu li.ant-menu-submenu-selected  > ul li {
-                    color: var(--fontColorSecondary) !important;
-                }
-                .item_custom_icon .ant-menu-submenu-title{
-                  white-space: break-spaces;  
-                }
-                .custom_icon{
-                  font-size: ${
-                    collapsed ? "19px !important;" : "16px !important;"
-                  }
-                }
-                /* .ant-menu-item,  */
-
-            `}
+          .mainMenu li.ant-menu-item-selected,
+          .mainMenu li.ant-menu-submenu-selected {
+            background: var(--secondaryColor) !important;
+            opacity: 1;
+          }
+          .mainMenu li.ant-menu-item-selected span,
+          .mainMenu li.ant-menu-submenu-selected > div,
+          .mainMenu li.ant-menu-submenu-selected > ul li {
+            color: var(--fontColorSecondary) !important;
+          }
+          .item_custom_icon .ant-menu-submenu-title {
+            white-space: break-spaces;
+          }
+          .custom_icon {
+            font-size: ${collapsed ? "19px !important;" : "16px !important;"};
+          }
+          /* .ant-menu-item,  */
+        `}
       />
-      <Sider
-        className="mainSideMenu"
-        width="250"
-        collapsible
-        collapsed={collapsed}
-        onCollapse={onCollapse}
-      >
+      <Sider className="mainSideMenu" width="250" collapsible>
         <div className="logo" />
         <Menu
           theme="dark"
@@ -158,19 +146,21 @@ const MainSider = ({
           defaultOpenKeys={defaultOpenKeys ? defaultOpenKeys : [""]}
           mode="inline"
         >
-          <Menu.Item
-            key="dashboard"
-            onClick={() => router.push({ pathname: "/dashboard" })}
-            icon={<AppstoreOutlined />}
-          >
-            Dashboard
-          </Menu.Item>
+          {props.config && props.config.enable_nomina && (
+            <Menu.Item
+              key="dashboard"
+              onClick={() => router.push({ pathname: "/dashboard" })}
+              icon={<AppstoreOutlined />}
+            >
+              Dashboard
+            </Menu.Item>
+          )}
           {props.permissions.person.view && (
             <SubMenu
               key="people"
               title="People"
               className="subMainMenu"
-              icon={<UserOutlined className="custom_icon" />}
+              icon={<UserOutlined />}
             >
               <Menu.Item
                 key="persons"
@@ -178,20 +168,23 @@ const MainSider = ({
               >
                 Personas
               </Menu.Item>
-              <Menu.Item
-                key="groups_people"
-                onClick={() => router.push({ pathname: "/home/groups" })}
-              >
-                Grupos
-              </Menu.Item>
+              {props.config && props.config.kuiz_enabled && (
+                <Menu.Item
+                  key="groups_people"
+                  onClick={() => router.push({ pathname: "/home/groups" })}
+                >
+                  Grupos
+                </Menu.Item>
+              )}
             </SubMenu>
           )}
           {props.permissions.company.view && (
             <Menu.Item
               key="business"
-              icon={<BusinessOutlined />}
+              icon={<BankOutlined />}
               onClick={() => router.push({ pathname: "/business" })}
             >
+              {" "}
               Empresas
             </Menu.Item>
           )}
@@ -199,7 +192,7 @@ const MainSider = ({
             key="config"
             title="Configuración"
             className="subMainMenu"
-            icon={<SettingsOutlined className="custom_icon" />}
+            icon={<SettingOutlined />}
           >
             <Menu.Item
               key="catalogos"
@@ -366,7 +359,7 @@ const MainSider = ({
               <Menu.Item
                 key="intranet2"
                 onClick={() => router.push({ pathname: "/intranet/config" })}
-                icon={<SettingsOutlined />}
+                icon={<SettingOutlined />}
               >
                 <FormattedMessage id="header.config" />
               </Menu.Item>
@@ -375,9 +368,9 @@ const MainSider = ({
                 onClick={() =>
                   router.push({ pathname: "/intranet/publications_statistics" })
                 }
-                icon={<AreaChartOutlined />}
+                icon={<AlertOutlined />}
               >
-                <FormattedMessage id="header.statistics" />
+                <FormattedMessage id="header.moderation" />
               </Menu.Item>
             </SubMenu>
           )}
@@ -386,7 +379,7 @@ const MainSider = ({
             key="uploads"
             title="Registro de errores"
             className="subMainMenu item_custom_icon"
-            icon={<BugReportOutlined className="custom_icon" />}
+            icon={<BugOutlined />}
           >
             <Menu.Item
               key="persons_upload"
@@ -407,7 +400,7 @@ const MainSider = ({
               key="kuis"
               title="Kuiz"
               className="subMainMenu"
-              icon={<QuestionCircleOutlined className="custom_icon"/>}
+              icon={<QuestionCircleOutlined />}
             >
               <Menu.Item
                 key="suverys"

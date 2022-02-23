@@ -4,5 +4,6 @@ export const enus = {
     'header.intranet':'Intranet',
     'header.groups':'Groups',
     'header.config':'Configuration',
-    'header.statistics': 'Statistics'
+    'header.statistics': 'Statistics',
+    'header.moderation': 'Moderation',
 }
