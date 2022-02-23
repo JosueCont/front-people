@@ -20,6 +20,10 @@ class WebApiIntranet {
     return WebApi.ApisType(`/intranet/group/?node=${data}`, "get");
   }
 
+  static savePersonsGroup(groupId, persons){
+    return WebApi.ApisType(`/intranet/group/${groupId}/`, "patch", persons);
+  }
+
   static getUsersList(data) {
     return WebApi.ApisType(`/intranet/search-person/?node=${data}`, "get");
   }
