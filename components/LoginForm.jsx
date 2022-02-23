@@ -19,6 +19,7 @@ import { EyeOutlined, MailOutlined, LinkOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { setUserPermissions } from "../redux/UserDuck";
 import { ruleEmail, ruleRequired } from "../utils/rules";
+import { useLayoutEffect } from "react";
 
 const LoginForm = ({
   recoveryPsw = true,
@@ -96,6 +97,13 @@ const LoginForm = ({
     if (props.generalConfig) {
       getIfno();
     }
+  }, [props.generalConfig]);
+
+  useLayoutEffect(() => {
+    try {
+      const user = Cookies.get("token");
+      if (user) router.push({ pathname: "/select-company" });
+    } catch (error) {}
   }, []);
 
   const login = async (email, password) => {
