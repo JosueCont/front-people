@@ -76,6 +76,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
         person_department: person.work_title.department.id,
         job: person.work_title.job.id,
         work_title_id: person.work_title.id,
+        status_work_title: person.person_work_title.status,
       });
     }
     if (person.person_type)
@@ -449,14 +450,17 @@ const DataPerson = ({ config, person = null, ...props }) => {
               <Col lg={8} xs={24}>
                 <SelectWorkTitleStatus rules={[ruleRequired]} style={false} />
               </Col>
-              {((props.user && props.user.nodes) ||
-                (props.user && props.user.is_admin)) && (
-                <Col lg={8} xs={24} md={12}>
-                  <Form.Item label="Reporta a ">
-                    <Input readOnly />
-                  </Form.Item>
-                </Col>
-              )}
+              {props.config &&
+                props.config.enabled_nomina(
+                  ((props.user && props.user.nodes) ||
+                    (props.user && props.user.is_admin)) && (
+                    <Col lg={8} xs={24} md={12}>
+                      <Form.Item label="Reporta a ">
+                        <Input readOnly />
+                      </Form.Item>
+                    </Col>
+                  )
+                )}
               <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="register_date"
