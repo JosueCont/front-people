@@ -11,6 +11,7 @@ import {
   DollarOutlined,
   UserAddOutlined,
   AreaChartOutlined,
+  AlertOutlined,
   AppstoreOutlined,
   QuestionCircleOutlined
 } from "@ant-design/icons";
@@ -375,9 +376,9 @@ const MainSider = ({
                 onClick={() =>
                   router.push({ pathname: "/intranet/publications_statistics" })
                 }
-                icon={<AreaChartOutlined />}
+                icon={<AlertOutlined />}
               >
-                <FormattedMessage id="header.statistics" />
+                <FormattedMessage id="header.moderation" />
               </Menu.Item>
             </SubMenu>
           )}
