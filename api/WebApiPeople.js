@@ -302,5 +302,9 @@ class WebApiPeople {
       data
     );
   }
+
+  static changeStatusPerson(data) {
+    return WebApi.ApisType(`/person/person/change_is_active/`, "post", data);
+  }
 }
 export default WebApiPeople;
