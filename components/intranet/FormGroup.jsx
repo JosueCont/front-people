@@ -168,11 +168,11 @@ const FormGroup = (props) => {
                 <Input.TextArea />
               </Form.Item>
               <Form.Item
-                label="Imagen de grupo"
+                label={"Imagen de grupo"}
                 name="image"
                 // labelAlign={"left"}
                 style={{ marginTop: 15 }}
-                rules={[ruleRequired]}
+                rules={!photo? [ruleRequired]:[]}
               >
                 <Upload
                   label="avatar"
