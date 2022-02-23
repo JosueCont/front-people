@@ -19,7 +19,7 @@ import {
   notification,
 } from "antd";
 import Axios from "axios";
-import { API_URL, API_URL_TENANT } from "../../config/config";
+import { API_URL, API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
 import {
   SyncOutlined,
@@ -30,23 +30,25 @@ import {
   EllipsisOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import MainLayout from "../../layout/MainLayout";
-import FormPerson from "../../components/person/FormPerson";
-import { withAuthSync, userCompanyId, userCompanyName } from "../../libs/auth";
-import { setDataUpload } from "../../redux/UserDuck";
+import MainLayout from "../../../layout/MainLayout";
+import FormPerson from "../../../components/person/FormPerson";
+import { withAuthSync, userCompanyId, userCompanyName } from "../../../libs/auth";
+import { setDataUpload } from "../../../redux/UserDuck";
 
 import Link from "next/link";
 import jsCookie from "js-cookie";
-import Clipboard from "../../components/Clipboard";
+import Clipboard from "../../../components/Clipboard";
 import { connect } from "react-redux";
-import { genders, statusSelect } from "../../utils/constant";
-import SelectDepartment from "../../components/selects/SelectDepartment";
-import SelectAccessIntranet from "../../components/selects/SelectAccessIntranet";
+import { genders, statusSelect } from "../../../utils/constant";
+import SelectDepartment from "../../../components/selects/SelectDepartment";
+import SelectAccessIntranet from "../../../components/selects/SelectAccessIntranet";
 import { useRouter } from "next/router";
-import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
+import SelectWorkTitle from "../../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
-import { downloadTemplateImportPerson, getDomain } from "../../utils/functions";
-import WebApiPeople from "../../api/WebApiPeople";
+import { downloadTemplateImportPerson, getDomain } from "../../../utils/functions";
+import WebApiPeople from "../../../api/WebApiPeople";
+import FormGroup from "../../../components/assessment/groups/FormGroup"
+import WebApiAssessment from "../../../api/WebApiAssessment";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -55,6 +57,9 @@ const homeScreen = ({ ...props }) => {
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalAddPerson, setModalAddPerson] = useState(false);
+  const [modalCreateGroup, setModalCreateGroup] = useState(false);
+  const [showModalGroup, setShowModalGroup] = useState(false);
+  const [personsKeys, setPersonsKeys] = useState([]);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
   const inputFileRef2 = useRef(null);
@@ -437,6 +442,11 @@ const homeScreen = ({ ...props }) => {
             />
           </Menu.Item>
         )}
+        {permissions.create && (
+          <Menu.Item key="4" onClick={() => setModalCreateGroup(true)}>
+            Crear grupo
+          </Menu.Item>
+        )}
         {permissions.delete && (
           <Menu.Item key="2" onClick={() => showModalDelete()}>
             Eliminar
@@ -458,7 +468,7 @@ const homeScreen = ({ ...props }) => {
       <Menu>
         {permissions.edit && (
           <Menu.Item>
-            <Link href={`/home/${item.id}`}>Editar</Link>
+            <Link href={`/home/persons/${item.id}`}>Editar</Link>
           </Menu.Item>
         )}
         {permissions.delete && (
@@ -646,7 +656,9 @@ const homeScreen = ({ ...props }) => {
   );
 
   const rowSelectionPerson = {
+    selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
+      setPersonsKeys(selectedRowKeys)
       setPersonsToDelete(selectedRows);
     },
   };
@@ -667,6 +679,51 @@ const homeScreen = ({ ...props }) => {
       </div>
     );
   };
+
+  const HandleCloseGroup = () =>{
+    setShowModalGroup(false)
+    setModalCreateGroup(false)
+    setPersonsToDelete([])
+    setPersonsKeys([])
+  }
+
+  const getOnlyIds = () =>{
+    let ids = [];
+    personsToDelete.map(item=>{
+      ids.push(item.id)
+    })
+    return ids;
+  }
+
+  const onFinishCreateGroup = async (values)=>{
+    setLoading(true)
+    const ids = getOnlyIds();
+    const body = {...values, persons: ids}
+    try {
+        await WebApiAssessment.createGroupPersons(body)
+        filterPersonName();
+        message.success("Grupo agregado")
+    } catch (e) {
+        setLoading(false)
+        message.error("Grupo no agregado")
+    }
+  }
+
+  useEffect(()=>{
+    if(modalCreateGroup){
+      if(personsToDelete.length > 0){
+        if(personsToDelete.length >= 2){
+          setShowModalGroup(true)
+        }else{
+          setModalCreateGroup(false)
+          message.error("Selecciona al menos 2 integrantes")
+        }
+      }else{
+        setModalCreateGroup(false)
+        message.error("Selecciona los integrantes")
+      }
+    }
+  },[modalCreateGroup])
 
   const showModalDelete = () => {
     modalDelete ? setModalDelete(false) : setModalDelete(true);
@@ -989,6 +1046,17 @@ const homeScreen = ({ ...props }) => {
             nameNode={userCompanyName()}
             node={userCompanyId()}
             currentNode={props.currentNode}
+          />
+        )}
+        {showModalGroup && (
+          <FormGroup
+              loadData={{}}
+              title={'Crear nuevo grupo'}
+              visible={showModalGroup}
+              close={HandleCloseGroup}
+              actionForm={onFinishCreateGroup}
+              hiddenSurveys={true}
+              hiddenMembers={true}
           />
         )}
       </MainLayout>
