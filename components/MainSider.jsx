@@ -8,18 +8,16 @@ import {
   MessageOutlined,
   ProfileOutlined,
   FormOutlined,
+  BugOutlined,
   DollarOutlined,
   UserAddOutlined,
-  AreaChartOutlined,
+  BankOutlined,
+  SettingOutlined,
   AlertOutlined,
-  AppstoreOutlined,
   QuestionCircleOutlined
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import {
-  BugReportOutlined,
-  BusinessOutlined,
-  SettingsOutlined,
   GroupOutlined,
 } from "@material-ui/icons";
 
@@ -148,8 +146,6 @@ const MainSider = ({
         className="mainSideMenu"
         width="250"
         collapsible
-        collapsed={collapsed}
-        onCollapse={onCollapse}
       >
         <div className="logo" />
         <Menu
@@ -171,7 +167,7 @@ const MainSider = ({
               key="people"
               title="People"
               className="subMainMenu"
-              icon={<UserOutlined className="custom_icon" />}
+              icon={<UserOutlined  />}
             >
               <Menu.Item
                 key="persons"
@@ -190,17 +186,15 @@ const MainSider = ({
           {props.permissions.company.view && (
             <Menu.Item
               key="business"
-              icon={<BusinessOutlined />}
+              icon={<BankOutlined />}
               onClick={() => router.push({ pathname: "/business" })}
-            >
-              Empresas
-            </Menu.Item>
+            > Empresas</Menu.Item>
           )}
           <SubMenu
             key="config"
             title="Configuración"
             className="subMainMenu"
-            icon={<SettingsOutlined className="custom_icon" />}
+            icon={<SettingOutlined />}
           >
             <Menu.Item
               key="catalogos"
@@ -367,7 +361,7 @@ const MainSider = ({
               <Menu.Item
                 key="intranet2"
                 onClick={() => router.push({ pathname: "/intranet/config" })}
-                icon={<SettingsOutlined />}
+                icon={<SettingOutlined />}
               >
                 <FormattedMessage id="header.config" />
               </Menu.Item>
@@ -387,7 +381,7 @@ const MainSider = ({
             key="uploads"
             title="Registro de errores"
             className="subMainMenu item_custom_icon"
-            icon={<BugReportOutlined className="custom_icon" />}
+            icon={<BugOutlined />}
           >
             <Menu.Item
               key="persons_upload"
@@ -408,7 +402,7 @@ const MainSider = ({
               key="kuis"
               title="Kuiz"
               className="subMainMenu"
-              icon={<QuestionCircleOutlined className="custom_icon"/>}
+              icon={<QuestionCircleOutlined/>}
             >
               <Menu.Item
                 key="suverys"

@@ -201,7 +201,7 @@ export const getProfileGroups =
       let response = await getGroups(node, config);
       if (response) dispatch({ type: PROFILE_GROUP, payload: response });
     } catch (error) {
-      if (response) dispatch({ type: PROFILE_GROUP, payload: [] });
+      dispatch({ type: PROFILE_GROUP, payload: [] });
     }
   };
 
