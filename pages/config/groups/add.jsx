@@ -265,7 +265,7 @@ const GroupAdd = ({ ...props }) => {
     data.company = props.currentNode.id;
     let response = await createGroup(props.config, data);
     if (response) {
-      props.getProfileGroups(props.currentNode.id);
+      props.getProfileGroups(props.currentNode.id, props.config);
       message.success(messageSaveSuccess);
       setTimeout(() => {
         router.push({ pathname: "/config/groups" });
@@ -279,13 +279,13 @@ const GroupAdd = ({ ...props }) => {
   const editGroup = async () => {
     setLoading(true);
 
-    let response = editGroups(props.config, data);
+    let response = await editGroups(props.config, data);
     if (response) {
-      props.getProfileGroups(props.currentNode.id);
+      props.getProfileGroups(props.currentNode.id, props.config);
       message.success(messageUpdateSuccess);
       setTimeout(() => {
         router.push({ pathname: "/config/groups" });
-      }, 600);
+      }, 1000);
     } else {
       setLoading(false);
       message.error(messageError);

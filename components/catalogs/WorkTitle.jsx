@@ -15,7 +15,6 @@ import {
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
-  GoldOutlined,
 } from "@ant-design/icons";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -73,6 +72,15 @@ const WorkTitle = ({ currentNode, ...props }) => {
       key: "vacancy",
       render: (item) => {
         return <div>{item.vacancy ? item.vacancy.vacancy_numbers : ""}</div>;
+      },
+    },
+    {
+      title: "Vacantes disponibles",
+      key: "vacancies_available",
+      render: (item) => {
+        return (
+          <div>{item.vacancy ? item.vacancy.vacancies_available : ""}</div>
+        );
       },
     },
     {
