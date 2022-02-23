@@ -46,7 +46,7 @@ const AddPeopleGroup = (props) => {
   const onFinish = async (values) => {
     let data = {};
     data.user = values.guests;
-    await WebApiIntranet.savePersonsGroup(props.group.id, data)
+    await WebApiIntranet.updGroup(props.group.id, data)
       .then((res) => {
         props.setVisible();
       })
