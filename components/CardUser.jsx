@@ -1,7 +1,6 @@
-import { Card, Image, Button, Modal, Tooltip } from "antd";
+import { Card, Image, Button, Tooltip } from "antd";
 import {
   EditOutlined,
-  SettingOutlined,
   PoweroffOutlined,
   SwapOutlined,
 } from "@ant-design/icons";

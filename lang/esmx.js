@@ -5,5 +5,6 @@ export const esmx = {
     'header.groups':'Grupos',
     'header.config':'Configuración',
     'header.statistics': 'Estadísticas',
+    'header.moderation': 'Moderación',
 
 }
