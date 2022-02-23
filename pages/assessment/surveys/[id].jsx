@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../../layout/MainLayout";
 import {
   Breadcrumb,
   Button,
@@ -14,14 +14,14 @@ import {
 import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { connect, useDispatch } from "react-redux";
-import { withAuthSync } from "../../libs/auth";
-import { types } from "../../types/assessments";
+import { withAuthSync } from "../../../libs/auth";
+import { types } from "../../../types/assessments";
 const { confirm } = Modal;
-import FormSection from "../../components/assessment/forms/FormSection";
-import FormQuestion from "../../components/assessment/forms/FormQuestion";
-import FormAnswer from "../../components/assessment/forms/FormAnswer";
-import Options from "../../components/assessment/Options";
-import NoCollapseContent from "../../components/assessment/NoCollapseContent";
+import FormSection from "../../../components/assessment/forms/FormSection";
+import FormQuestion from "../../../components/assessment/forms/FormQuestion";
+import FormAnswer from "../../../components/assessment/forms/FormAnswer";
+import Options from "../../../components/assessment/Options";
+import NoCollapseContent from "../../../components/assessment/NoCollapseContent";
 import {
   assessmentModalAction,
   assessmentDetailsAction,
@@ -30,7 +30,7 @@ import {
   answerDeleteAction,
   sectionOrderAction,
   questionOrderAction,
-} from "../../redux/assessmentDuck";
+} from "../../../redux/assessmentDuck";
 
 const Detail = ({ assessmentStore, ...props }) => {
   const { Panel } = Collapse;
