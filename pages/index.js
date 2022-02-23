@@ -216,6 +216,7 @@ const Home = ({ ...props }) => {
             .login-form {
               width: 100% !important;
             }
+           }
         `}
       />
       <Helmet>
