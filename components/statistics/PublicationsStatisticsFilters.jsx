@@ -151,6 +151,7 @@ const PublicationsStatisticsFilters = (props) => {
   }, [props.groupList]);
 
   const getPostsByFilter = () => {
+    debugger;
     let userParam = user && user != "" ? `owner__khonnect_id=${user}` : "";
     let groupParam = group && group != "" ? `&group=${group}` : "";
     let dateRange =
@@ -162,13 +163,12 @@ const PublicationsStatisticsFilters = (props) => {
         ? `status=${statusFilter}`
         : "";
     console.log("statusParam =>", statusParam);
-
     // seteamos parámetros globales para el paginado
     props.setParameters(`${userParam}${groupParam}${dateRange}${statusParam}`);
     props.getPostsByFilter(
       props.companyId,
       "",
-      `${userParam}${groupParam}${dateRange}${statusParam}`
+      `${userParam}${groupParam}${dateRange}${statusParam}&is_moderator_view=true`
     );
 
     console.log(`${userParam}${groupParam}${dateRange}${statusParam}`);
