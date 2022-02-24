@@ -245,6 +245,7 @@ const LoginForm = ({
               |
               <a href={infoSite.terms_and_conditions_link} target="_blank">
                 <LinkOutlined size={"small"} />
+                
               </a>
             </Form.Item>
           )}
