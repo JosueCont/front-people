@@ -7,7 +7,7 @@ class WebApiIntranet {
 
   static excelFileAction(node, data) {
     return WebApi.ApisType(
-      `/intranet/post/?node=${node}&&export=true${data}`,
+      `/intranet/post/?node=${node}&export=true${data}`,
       "get"
     );
   }

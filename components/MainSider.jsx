@@ -15,6 +15,7 @@ import {
   SettingOutlined,
   AlertOutlined,
   QuestionCircleOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined } from "@material-ui/icons";
