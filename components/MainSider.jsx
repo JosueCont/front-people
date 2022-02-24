@@ -146,7 +146,7 @@ const MainSider = ({
           defaultOpenKeys={defaultOpenKeys ? defaultOpenKeys : [""]}
           mode="inline"
         >
-          {props.config && props.config.enable_nomina && (
+          {props.config && props.config.nomina_enabled && (
             <Menu.Item
               key="dashboard"
               onClick={() => router.push({ pathname: "/dashboard" })}
@@ -207,93 +207,99 @@ const MainSider = ({
               Perfiles de seguridad
             </Menu.Item>
           </SubMenu>
-          {(props.permissions.comunication.view ||
-            props.permissions.event.view) && (
+          {props.config &&
+            props.config.nomina_enabled &&
+            (props.permissions.comunication.view ||
+              props.permissions.event.view) && (
+              <SubMenu
+                key="comuniction"
+                title="Comunicación"
+                className="subMainMenu"
+                icon={<MessageOutlined />}
+              >
+                {props.permissions.comunication.view && (
+                  <Menu.Item
+                    key="comunicados"
+                    onClick={() =>
+                      router.push({ pathname: "/comunication/releases" })
+                    }
+                  >
+                    Comunicados
+                  </Menu.Item>
+                )}
+                {props.permissions.event.view && (
+                  <Menu.Item
+                    key="eventos"
+                    onClick={() =>
+                      router.push({ pathname: "/comunication/events" })
+                    }
+                  >
+                    Eventos
+                  </Menu.Item>
+                )}
+              </SubMenu>
+            )}
+          {props.config &&
+            props.config.nomina_enabled &&
+            props.permissions.report.view && (
+              <Menu.Item
+                icon={<ProfileOutlined />}
+                key="reportes"
+                onClick={() => router.push({ pathname: "/reports" })}
+              >
+                Reportes
+              </Menu.Item>
+            )}
+          {props.config && props.config.nomina_enabled && (
             <SubMenu
-              key="comuniction"
-              title="Comunicación"
+              key="solicitudes"
+              title="Solicitudes"
               className="subMainMenu"
-              icon={<MessageOutlined />}
+              icon={<FormOutlined />}
             >
-              {props.permissions.comunication.view && (
+              {props.permissions.loan.view && (
                 <Menu.Item
-                  key="comunicados"
-                  onClick={() =>
-                    router.push({ pathname: "/comunication/releases" })
-                  }
+                  key="prestamos"
+                  onClick={() => router.push({ pathname: "/lending" })}
                 >
-                  Comunicados
+                  Préstamos
                 </Menu.Item>
               )}
-              {props.permissions.event.view && (
+              {props.permissions.vacation.view && (
                 <Menu.Item
-                  key="eventos"
-                  onClick={() =>
-                    router.push({ pathname: "/comunication/events" })
-                  }
+                  key="vacaciones"
+                  onClick={() => router.push({ pathname: "/holidays" })}
                 >
-                  Eventos
+                  Vacaciones
                 </Menu.Item>
               )}
+              <Menu.Item
+                key="permisos"
+                onClick={() => router.push({ pathname: "/permission" })}
+              >
+                Permisos
+              </Menu.Item>
+              <Menu.Item
+                key="incapacidad"
+                onClick={() => router.push({ pathname: "/incapacity" })}
+              >
+                Incapacidad
+              </Menu.Item>
+              <Menu.Item
+                key="cuentas"
+                onClick={() => router.push({ pathname: "/bank_accounts" })}
+              >
+                Cuentas bancarias
+              </Menu.Item>
             </SubMenu>
           )}
-          {props.permissions.report.view && (
-            <Menu.Item
-              icon={<ProfileOutlined />}
-              key="reportes"
-              onClick={() => router.push({ pathname: "/reports" })}
+          {props.config && props.config.nomina_enabled && (
+            <SubMenu
+              key="nomina"
+              title="Nómina"
+              className="subMainMenu"
+              icon={<DollarOutlined />}
             >
-              Reportes
-            </Menu.Item>
-          )}
-          <SubMenu
-            key="solicitudes"
-            title="Solicitudes"
-            className="subMainMenu"
-            icon={<FormOutlined />}
-          >
-            {props.permissions.loan.view && (
-              <Menu.Item
-                key="prestamos"
-                onClick={() => router.push({ pathname: "/lending" })}
-              >
-                Préstamos
-              </Menu.Item>
-            )}
-            {props.permissions.vacation.view && (
-              <Menu.Item
-                key="vacaciones"
-                onClick={() => router.push({ pathname: "/holidays" })}
-              >
-                Vacaciones
-              </Menu.Item>
-            )}
-            <Menu.Item
-              key="permisos"
-              onClick={() => router.push({ pathname: "/permission" })}
-            >
-              Permisos
-            </Menu.Item>
-            <Menu.Item
-              key="incapacidad"
-              onClick={() => router.push({ pathname: "/incapacity" })}
-            >
-              Incapacidad
-            </Menu.Item>
-            <Menu.Item
-              key="cuentas"
-              onClick={() => router.push({ pathname: "/bank_accounts" })}
-            >
-              Cuentas bancarias
-            </Menu.Item>
-          </SubMenu>
-          <SubMenu
-            key="nomina"
-            title="Nómina"
-            className="subMainMenu"
-            icon={<DollarOutlined />}
-          >
-            {props.config && props.config.nomina_enabled && (
               <>
                 <Menu.Item
                   key="asimilado"
@@ -320,14 +326,14 @@ const MainSider = ({
                   Calculo de nomina
                 </Menu.Item>
               </>
-            )}
-            <Menu.Item
-              key="recibos_nomina"
-              onClick={() => router.push({ pathname: "/payrollvoucher" })}
-            >
-              Recibos de nómina
-            </Menu.Item>
-          </SubMenu>
+              <Menu.Item
+                key="recibos_nomina"
+                onClick={() => router.push({ pathname: "/payrollvoucher" })}
+              >
+                Recibos de nómina
+              </Menu.Item>
+            </SubMenu>
+          )}
           <Menu.Item
             key="asignar"
             onClick={() => router.push({ pathname: "/assignedCompanies" })}
@@ -375,25 +381,27 @@ const MainSider = ({
             </SubMenu>
           )}
 
-          <SubMenu
-            key="uploads"
-            title="Registro de errores"
-            className="subMainMenu item_custom_icon"
-            icon={<BugOutlined />}
-          >
-            <Menu.Item
-              key="persons_upload"
-              onClick={() => router.push({ pathname: "/bulk_upload" })}
+          {props.config && props.config.nomina_enabled && (
+            <SubMenu
+              key="uploads"
+              title="Registro de errores"
+              className="subMainMenu item_custom_icon"
+              icon={<BugOutlined />}
             >
-              Carga masiva de personas
-            </Menu.Item>
-            <Menu.Item
-              key="documents"
-              onClick={() => router.push({ pathname: "/log/documentsLog" })}
-            >
-              Carga de documentos
-            </Menu.Item>
-          </SubMenu>
+              <Menu.Item
+                key="persons_upload"
+                onClick={() => router.push({ pathname: "/bulk_upload" })}
+              >
+                Carga masiva de personas
+              </Menu.Item>
+              <Menu.Item
+                key="documents"
+                onClick={() => router.push({ pathname: "/log/documentsLog" })}
+              >
+                Carga de documentos
+              </Menu.Item>
+            </SubMenu>
+          )}
 
           {props.config && props.config.kuiz_enabled && (
             <SubMenu
