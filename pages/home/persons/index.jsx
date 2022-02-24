@@ -45,6 +45,7 @@ import Clipboard from "../../../components/Clipboard";
 import { connect } from "react-redux";
 import {
   genders,
+  messageError,
   messageUpdateSuccess,
   statusSelect,
 } from "../../../utils/constant";
@@ -429,7 +430,7 @@ const homeScreen = ({ ...props }) => {
         message.success(messageUpdateSuccess);
       })
       .catch((error) => {
-        message.error("Ocurrio un error intente de nuevo.");
+        message.error(messageError);
         filterPersonName();
         console.log(error);
       });
@@ -492,9 +493,6 @@ const homeScreen = ({ ...props }) => {
             Eliminar
           </Menu.Item>
         )}
-        <Menu.Item onClick={() => setDeactivateModal([item])}>
-          Desactivar
-        </Menu.Item>
       </Menu>
     );
   };

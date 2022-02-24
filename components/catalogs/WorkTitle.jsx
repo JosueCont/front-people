@@ -165,7 +165,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
       work_title_report: item.work_title_report
         ? item.work_title_report.id
         : null,
-      vacancy: item.vacancy.vacancy_numbers,
+      vacancy: item.vacancy ? item.vacancy.vacancy_numbers : "",
     });
   };
 
@@ -272,12 +272,12 @@ const WorkTitle = ({ currentNode, ...props }) => {
           </Col>
           <Col lg={8} xs={22} md={12}>
             <Form.Item name="vacancy" label="Vacantes">
-              <Input type="number" min={1} />
+              <Input type="number" min={1} defaultValue={1} />
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={12}>
             <Form.Item name="salary" label="Salario">
-              <Input type="number" min={0} />
+              <Input prefix={"$"} type="number" min={0} defaultValue={0} />
             </Form.Item>
           </Col>
         </Row>
