@@ -240,6 +240,7 @@ const MainLayout = ({
       <Layout>
         <NewHeader
           key="main_header"
+          currentNode={props.currentNode}
           hideMenu={hideMenu}
           mainLogo={mainLogo}
           hideProfile={hideProfile}
