@@ -252,7 +252,7 @@ const PublicationsStatisticsFilters = (props) => {
                   showLabel={false}
                   /* value={user ? user : null} */
                   placeholder="Seleccionar un autor"
-                  onChange={(value) => setUser(value)}
+                  /* onChange={(value) => setUser(value)} */
                   val='khonnect_id'
                   showSearch
              />

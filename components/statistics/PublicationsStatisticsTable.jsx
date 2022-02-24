@@ -2,6 +2,7 @@ import React from 'react';
 import { Table, Select } from 'antd';
 import styled from 'styled-components';
 import { Row, Col, Badge } from 'antd';
+import _ from 'lodash'
 
 const ReactionsImg = styled.img`
     max-width: 20px;
@@ -98,6 +99,12 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             dataIndex: 'date',
             key: 'date',
             className: 'date-column'
+        },
+        {
+            title: 'Grupo',
+            key: 'group',
+            dataIndex: 'group',
+            className: 'small-column'
         },
         {
             title: 'Publicación',
