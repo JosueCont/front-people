@@ -19,7 +19,6 @@ import { API_URL } from "../../../config/config";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
-/* import { treeDecimal } from "../../../utils/constant"; */
 import { ruleRequired, treeDecimal } from "../../../utils/rules";
 
 const FormPayrollPerson = ({ person_id = null, node = null }) => {
@@ -58,7 +57,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
 
   const getPayrollPerson = async () => {
     setLoading(true);
-    Axios.get(API_URL + `/payroll/payroll-person/?person__id=${person_id}`)
+    await WebApiPayroll.getPayrollPerson(person_id)
       .then((response) => {
         if (response.data) {
           /* let item = response.data.results[0]; */

@@ -192,14 +192,6 @@ class WebApiPeople {
     return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
   }
 
-  /*Payroll Person */
-  static createPayrollPerson(data) {
-    return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
-  }
-  static updatePayrollPerson(data) {
-    return WebApi.ApisType(`/payroll/payroll-person/${data.id}/`, "put", data);
-  }
-
   static getContractTypes() {
     return WebApi.ApisType(`/fiscal/contract-type/`, "get");
   }
@@ -305,6 +297,10 @@ class WebApiPeople {
 
   static changeStatusPerson(data) {
     return WebApi.ApisType(`/person/person/change_is_active/`, "post", data);
+  }
+
+  static trainingPerson(type, url = "", data = null) {
+    return WebApi.ApisType(`/person/person/${url}`, type, data);
   }
 }
 export default WebApiPeople;
