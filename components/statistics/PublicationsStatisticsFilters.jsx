@@ -93,15 +93,15 @@ const PublicationsStatisticsFilters = (props) => {
   const optionsActions = [
     {
       label: "Pendiente",
-      value: 2,
+      value: '2',
     },
     {
       label: "Publicada",
-      value: 1,
+      value: '1',
     },
     {
       label: "Bloqueada",
-      value: 0,
+      value: '0',
     },
   ];
 
@@ -202,6 +202,7 @@ const PublicationsStatisticsFilters = (props) => {
     setStartDate("");
     setEndDate("");
     setDatePickerValue();
+    setStatusFilter(null)
     props.getPostsByFilter(props.companyId, 1, "", false);
   };
 
@@ -215,6 +216,7 @@ const PublicationsStatisticsFilters = (props) => {
               <CustomSelect
                   size={'small'}
                   value={group ? group : null}
+                  allowClear
                   placeholder="Seleccionar grupo"
                   onChange={(value) => setGroup(value)}
               >
@@ -237,6 +239,7 @@ const PublicationsStatisticsFilters = (props) => {
             <Form.Item>
               <CustomSelect
                   size={'small'}
+                  allowClear
                   value={user ? user : null}
                   placeholder="Seleccionar un autor"
                   onChange={(value) => setUser(value)}

@@ -4,7 +4,7 @@ import { withAuthSync } from "../../../libs/auth";
 import moment from "moment";
 import { ConfigProvider, notification } from "antd";
 import esES from "antd/lib/locale/es_ES";
-
+import _ from 'lodash'
 import MainLayout from "../../../layout/MainLayout";
 import WebApiIntranet from "../../../api/WebApiIntranet";
 import { publicationsListAction } from "../../../redux/IntranetDuck";
@@ -46,6 +46,7 @@ const index = (props) => {
               "DD MMMM hh:mm a"
             ),
             publication: publication.content,
+            group:_.get(publication ,'group.name', ''),
             owner: `${publication.owner.first_name} ${publication.owner.flast_name}`,
             comments: publication.comments ? publication.comments.length : 0,
             clicks: publication.clicks ? publication.clicks : 0,
@@ -111,8 +112,8 @@ const index = (props) => {
             getPostsByFilter={props.publicationsListAction}
             setParameters={setParameters}
           />
+          <br/>
           <PublicationsStatisticsTable
-              style={{marginTop:20}}
             currentNode={ props.currentNode ? props.currentNode.id: null }
             current={publicationsList.data ? publicationsList.data.page : 1}
             total={publicationsList.data ? publicationsList.data.count : 1}
