@@ -40,10 +40,11 @@ export const publicationsListAction =
   async (dispatch, getState) => {
     dispatch({ type: LOADING_PUBLICATIONS_LIST });
     let data = `?node=${node}${
-      page && page != "" ? `&&page=${page}` : ""
+      page && page != "" ? `&page=${page}` : ""
     }&&${parameters}`;
     await WebApiIntranet.publigationList(data)
       .then(({ status, data }) => {
+        console.log('data,',data)
         let dataAndResults = {
           data: data,
           results: data.results,
@@ -72,6 +73,7 @@ export const publicationsListAction =
 export const getExcelFileAction =
   (node, params = "") =>
   async (dispatch, getState) => {
+    console.log("params =>", params);
     dispatch({ type: LOADING_FILE, fetching: true, payload: "loading" });
     await WebApiIntranet.excelFileAction(node, params)
       .then((response) => {
