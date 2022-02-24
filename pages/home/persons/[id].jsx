@@ -9,7 +9,6 @@ import { Content } from "antd/lib/layout/layout";
 import { connect } from "react-redux";
 import { Global, css } from "@emotion/core";
 
-
 const EmployeeDetailPage = (...props) => {
   const router = useRouter();
   const [person, setPerson] = useState(null);
@@ -27,9 +26,6 @@ const EmployeeDetailPage = (...props) => {
       console.log(error);
     }
   };
-
-
-
 
   return (
     <>
