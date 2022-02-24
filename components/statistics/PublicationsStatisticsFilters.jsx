@@ -12,12 +12,14 @@ import {
 } from "antd";
 import styled from "styled-components";
 import { connect } from "react-redux";
+import moment from "moment";
 import {
   SearchOutlined,
   DownloadOutlined,
   ClearOutlined,
 } from "@ant-design/icons";
 import { statusActivePost } from "../../utils/constant";
+import SelectCollaborator from '../selects/SelectCollaborator'
 
 import {
   getUsersList,
@@ -87,21 +89,23 @@ const PublicationsStatisticsFilters = (props) => {
   const [datePickerValue, setDatePickerValue] = useState(null);
   const [statusFilter, setStatusFilter] = useState(null);
 
+  const [form] = Form.useForm();
+
   const { Option } = Select;
   const { RangePicker } = DatePicker;
 
   const optionsActions = [
     {
       label: "Pendiente",
-      value: 2,
+      value: '2',
     },
     {
       label: "Publicada",
-      value: 1,
+      value: '1',
     },
     {
       label: "Bloqueada",
-      value: 0,
+      value: '0',
     },
   ];
 
@@ -151,72 +155,81 @@ const PublicationsStatisticsFilters = (props) => {
   }, [props.groupList]);
 
   const getPostsByFilter = () => {
-    let userParam = user && user != "" ? `owner__khonnect_id=${user}` : "";
-    let groupParam = group && group != "" ? `&group=${group}` : "";
-    let dateRange =
-      startDate && endDate
-        ? `&start_date=${startDate}&end_date=${endDate}`
-        : "";
+
+    const values = form.getFieldValue();
+
+    let userParam = values.user && values.user != "" ? `&owner__khonnect_id=${values.user}` : "";
+    let groupParam = values.group && values.group != "" ? `&group=${values.group}` : "";
+    let dateRange = "";
+    if(values.datePickerValue){
+      dateRange = `&start_date=${moment(values.datePickerValue[0]).format('YYYY-MM-DD')}&end_date=${moment(values.datePickerValue[1]).format('YYYY-MM-DD')}`
+    }
+
     let statusParam =
-      statusFilter && statusFilter !== undefined
-        ? `status=${statusFilter}`
+      values.status && values.status !== undefined
+        ? `&status=${values.status}`
         : "";
-    console.log("statusParam =>", statusParam);
 
     // seteamos parámetros globales para el paginado
     props.setParameters(`${userParam}${groupParam}${dateRange}${statusParam}`);
-    props.getPostsByFilter(
-      props.companyId,
-      "",
-      `${userParam}${groupParam}${dateRange}${statusParam}`
-    );
+    props.getPostsByFilter( props.companyId, "", `${userParam}${groupParam}${dateRange}${statusParam}&is_moderator_view=true` );
 
     console.log(`${userParam}${groupParam}${dateRange}${statusParam}`);
   };
 
   const getExcelFile = () => {
-    let userParam = user && user != "" ? `&owner__khonnect_id=${user}` : "";
-    let groupParam = group && group != "" ? `&group=${group}` : "";
-    let dateRange =
-      startDate && endDate
-        ? `&start_date=${startDate}&end_date=${endDate}`
+    const values = form.getFieldValue();
+
+    let userParam = values.user && values.user != "" ? `&owner__khonnect_id=${values.user}` : "";
+    let groupParam = values.group && values.group != "" ? `&group=${values.group}` : "";
+    let dateRange = "";
+    if(values.datePickerValue){
+      dateRange = `&start_date=${moment(values.datePickerValue[0]).format('YYYY-MM-DD')}&end_date=${moment(values.datePickerValue[1]).format('YYYY-MM-DD')}`
+    }
+
+    let statusParam =
+      values.status && values.status !== undefined
+        ? `&status=${values.status}`
         : "";
 
     // seteamos parámetros globales para el paginado
-    props.setParameters(`${userParam}${groupParam}${dateRange}`);
+    /* props.setParameters(`${userParam}${groupParam}${dateRange}`); */
     // Genera el pdf
     props.getExcelFileAction(
       props.companyId,
-      `${userParam}${groupParam}${dateRange}`
+      `${userParam}${groupParam}${dateRange}${statusParam}&is_moderator_view=true`
     );
     // Actualiza la tabla con los filtros
-    props.getPostsByFilter(
+    /* props.getPostsByFilter(
       props.companyId,
       "",
       `${userParam}${groupParam}${dateRange}`
-    );
+    ); */
   };
   const clearFilter = () => {
-    setGroup("");
-    setUser("");
+    form.resetFields();
+    /* setGroup("");
+    setUser(null);
     setStartDate("");
     setEndDate("");
     setDatePickerValue();
-    props.getPostsByFilter(props.companyId, 1, "", false);
+    setStatusFilter("") */
+    props.getPostsByFilter(props.companyId, 1, "?is_moderator_view=true", false);
   };
+
+
 
   return (
     <>
       <CustomCard>
         <Row gutter={10}>
-          <Form
-              layout="inline">
-            <Form.Item>
+          <Form form={form} name="name_form" layout="inline">
+            <Form.Item name={'group'}>
               <CustomSelect
-                  size={'small'}
-                  value={group ? group : null}
+                  /* value={group ? group : null} */
                   placeholder="Seleccionar grupo"
-                  onChange={(value) => setGroup(value)}
+                  /* onChange={(value) => setGroup(value)} */
+                  allowClear
               >
                 {groupList &&
                     groupList.map((group) => (
@@ -225,41 +238,31 @@ const PublicationsStatisticsFilters = (props) => {
               </CustomSelect>
             </Form.Item>
 
-            <Form.Item>
+            <Form.Item name={'datePickerValue'}>
               <RangePicker
-                  size={'small'}
-                  value={datePickerValue ? datePickerValue : null}
-                  onChange={getSelectedDate}
+                  /* value={datePickerValue ? datePickerValue : null} */
+                  /* onChange={getSelectedDate} */
                   format={"YYYY-MM-DD"}
               />
             </Form.Item>
 
-            <Form.Item>
-              <CustomSelect
-                  size={'small'}
-                  value={user ? user : null}
+            
+              <SelectCollaborator
+                name={'user'}
+                  showLabel={false}
+                  /* value={user ? user : null} */
                   placeholder="Seleccionar un autor"
                   onChange={(value) => setUser(value)}
-              >
-                {usersList &&
-                    usersList.map((user) => (
-                        <Option
-                            value={user.khonnect_id}
-                        >{`${user.first_name} ${user.flast_name}`}</Option>
-                    ))}
-                {/* <Option value="HiumanLab">HiumanLab</Option>
-                                <Option value="Pakal">Pakal</Option> */}
-              </CustomSelect>
-            </Form.Item>
-
-
-            <Form.Item>
+                  val='khonnect_id'
+                  showSearch
+             />
+              
+            <Form.Item name={'status'}>
               <CustomSelect
                   allowClear
-                  size={'small'}
                   placeholder="Seleccionar un status"
-                  value={statusFilter}
-                  onChange={(value) => setStatusFilter(value)}
+                  /* value={statusFilter} */
+                  /* onChange={(value) => setStatusFilter(value)} */
                   options={optionsActions}
               />
             </Form.Item>
@@ -268,7 +271,6 @@ const PublicationsStatisticsFilters = (props) => {
 
             <Form.Item>
               <CustomButton
-                  size={'small'}
                   icon={<SearchOutlined />}
                   onClick={getPostsByFilter}
               >
@@ -279,7 +281,6 @@ const PublicationsStatisticsFilters = (props) => {
 
             <Form.Item>
               <CustomButton
-                  size={'small'}
                   icon={<DownloadOutlined />}
                   onClick={getExcelFile}
               >
@@ -288,7 +289,7 @@ const PublicationsStatisticsFilters = (props) => {
             </Form.Item>
 
             <Form.Item>
-              <CustomButton size={'small'} icon={<ClearOutlined />} onClick={clearFilter}>
+              <CustomButton  icon={<ClearOutlined />} onClick={clearFilter}>
                 Limpiar
               </CustomButton>
             </Form.Item>
@@ -302,9 +303,9 @@ const PublicationsStatisticsFilters = (props) => {
           <Col xs={24} sm={12} md={8} lg={6} xl={4}>
             <Form.Item label="Grupo">
               <CustomSelect
-                  value={group ? group : null}
+                  /* value={group ? group : null} */
                   placeholder="Seleccionar grupo"
-                  onChange={(value) => setGroup(value)}
+                  /* onChange={(value) => setGroup(value)} */
                 >
                   {groupList &&
                     groupList.map((group) => (
@@ -312,35 +313,22 @@ const PublicationsStatisticsFilters = (props) => {
                     ))}
                 </CustomSelect>
             </Form.Item>
-            {/* <Row>
-              <Col span={24}>
-                <InputLabel>Grupo</InputLabel>
-              </Col>
-              <CenterItemsCol span={24}>
-                
-              </CenterItemsCol>
-            </Row> */}
           </Col>
-          <Col xs={24} sm={12} md={8} lg={6} xl={5}>
+          <Col xs={24} sm={12} md={8} lg={5} xl={5}>
             <Form.Item label="Grupo">
                 <RangePicker
-                  value={datePickerValue ? datePickerValue : null}
-                  onChange={getSelectedDate}
+                  /* value={datePickerValue ? datePickerValue : null}
+                  onChange={getSelectedDate} */
                   format={"YYYY-MM-DD"}
                 />
             </Form.Item>
-            {/* <Row>
-              <Col span={24}>
-                <InputLabel>Fecha</InputLabel>
-              </Col>
-            </Row> */}
           </Col>
           <Col xs={24} sm={12} md={8} lg={6} xl={4}>
             <Form.Item label="Autor">
               <CustomSelect
-                  value={user ? user : null}
+                  /* value={user ? user : null} */
                   placeholder="Seleccionar un autor"
-                  onChange={(value) => setUser(value)}
+                  /* onChange={(value) => setUser(value)} */
                 >
                   {usersList &&
                     usersList.map((user) => (
@@ -362,7 +350,8 @@ const PublicationsStatisticsFilters = (props) => {
             </Row> */}
           </Col>
           <Col xs={24} sm={12} md={8} lg={6} xl={3}>
-            <Form.Item label="Estatus">
+            
+            {/* <Form.Item label="Estatus">
               <CustomSelect
                   allowClear
                   placeholder="Seleccionar un autor"
@@ -370,7 +359,7 @@ const PublicationsStatisticsFilters = (props) => {
                   onChange={(value) => setStatusFilter(value)}
                   options={optionsActions}
                 />
-            </Form.Item>
+            </Form.Item> */}
             {/* <Row>
               <Col span={24}>
                 <InputLabel>Estatus</InputLabel>
