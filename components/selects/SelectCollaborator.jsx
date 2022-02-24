@@ -6,7 +6,7 @@ import { API_URL } from "../../config/config";
 import { userCompanyId } from "../../libs/auth";
 import { connect } from "react-redux";
 
-const SelectCollaborator = ({ showLabel = true, setAllPersons, ...props }) => {
+const SelectCollaborator = ({ showLabel = true, setAllPersons, val=false, ...props }) => {
   const { Option } = Select;
 
   return (
@@ -22,7 +22,7 @@ const SelectCollaborator = ({ showLabel = true, setAllPersons, ...props }) => {
         size={props.size ? props.size : "middle"}
         key="selectPerson"
         showSearch={props.showSearch ? props.showSearch : false}
-        style={props.style ? props.style : null}
+        style={props.style ? props.style : { width:'100% !important' }}
         allowClear
         optionFilterProp="children"
         placeholder={props.placeholder ? props.placeholder : "Todos"}
@@ -41,7 +41,7 @@ const SelectCollaborator = ({ showLabel = true, setAllPersons, ...props }) => {
         {props.peopleCompany
           ? props.peopleCompany.map((item) => {
               return (
-                <Option key={item.key} value={item.value}>
+                <Option key={item.key} value={ val?item.khonnect_id:item.value}>
                   {item.label}
                 </Option>
               );

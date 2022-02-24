@@ -50,6 +50,7 @@ const index = (props) => {
             owner: `${publication.owner.first_name} ${publication.owner.flast_name}`,
             comments: publication.comments ? publication.comments.length : 0,
             clicks: publication.clicks ? publication.clicks : 0,
+            group: publication.group ? publication.group : '',
             prints: publication.prints ? publication.prints : 0,
             reactions: publication.count_by_reaction_type
               ? publication.count_by_reaction_type
@@ -114,6 +115,7 @@ const index = (props) => {
           />
           <br/>
           <PublicationsStatisticsTable
+            style={{marginTop:20}}
             currentNode={ props.currentNode ? props.currentNode.id: null }
             current={publicationsList.data ? publicationsList.data.page : 1}
             total={publicationsList.data ? publicationsList.data.count : 1}
