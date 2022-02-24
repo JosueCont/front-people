@@ -101,12 +101,6 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             className: 'date-column'
         },
         {
-            title: 'Grupo',
-            key: 'group',
-            dataIndex: 'group',
-            className: 'small-column'
-        },
-        {
             title: 'Publicación',
             dataIndex: 'publication',
             key: 'publication',
@@ -126,7 +120,7 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             title: 'Grupo',
             key: 'owner',
             render: row => (
-                row.group && row.group.name ? row.group.name : "N/A"
+                row.group && row.group.name ? row.group.name : "--"
             )
         },
         {

@@ -17,6 +17,7 @@ import {
   SearchOutlined,
   DownloadOutlined,
   ClearOutlined,
+  FileExcelOutlined
 } from "@ant-design/icons";
 import { statusActivePost } from "../../utils/constant";
 import SelectCollaborator from '../selects/SelectCollaborator'
@@ -271,26 +272,26 @@ const PublicationsStatisticsFilters = (props) => {
 
             <Form.Item>
               <CustomButton
-                  icon={<SearchOutlined />}
+                  title={'Filtrar'}
                   onClick={getPostsByFilter}
               >
-                Filtrar
+                <SearchOutlined />
               </CustomButton>
             </Form.Item>
 
 
             <Form.Item>
               <CustomButton
-                  icon={<DownloadOutlined />}
+                  title={'Descargar'}
                   onClick={getExcelFile}
               >
-                Excel
+                <FileExcelOutlined />
               </CustomButton>
             </Form.Item>
 
             <Form.Item>
-              <CustomButton  icon={<ClearOutlined />} onClick={clearFilter}>
-                Limpiar
+              <CustomButton title={'Limpiar'}  onClick={clearFilter}>
+                <ClearOutlined />
               </CustomButton>
             </Form.Item>
 
