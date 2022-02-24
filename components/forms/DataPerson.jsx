@@ -20,7 +20,13 @@ import SelectJob from "../selects/SelectJob";
 
 import { useEffect } from "react";
 import moment from "moment";
-import { civilStatus, genders, periodicity } from "../../utils/constant";
+import {
+  civilStatus,
+  genders,
+  messageError,
+  messageUpdateSuccess,
+  periodicity,
+} from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
   curpFormat,
@@ -200,14 +206,18 @@ const DataPerson = ({ config, person = null, ...props }) => {
     setDateAdmission(dateString);
   };
 
-  const changeStatus = (value) => {
+  const changeStatus = async (value) => {
     isActive ? setIsActive(false) : setIsActive(true);
-    let p = formPerson.getFieldsValue();
-    isActive ? (p.is_active = false) : (p.is_active = true);
-    delete p["date_of_admission"], p["node"], p["report_to"], p["department"];
-    WebApiPeople.updatePerson(p, person.id)
-      .then((response) => {})
+    let data = {
+      id: person.id,
+      status: value,
+    };
+    await WebApiPeople.changeStatusPerson(data)
+      .then((response) => {
+        message.success(messageUpdateSuccess);
+      })
       .catch((error) => {
+        message.error(messageError);
         console.log(error);
       });
   };
