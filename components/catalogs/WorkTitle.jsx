@@ -84,6 +84,19 @@ const WorkTitle = ({ currentNode, ...props }) => {
       },
     },
     {
+      title: "Vacantes ocupadas",
+      key: "vacancies_",
+      render: (item) => {
+        return (
+          <div>
+            {item.vacancy
+              ? item.vacancy.vacancy_numbers - item.vacancy.vacancies_available
+              : ""}
+          </div>
+        );
+      },
+    },
+    {
       title: "Salario",
       key: "Salario",
       render: (item) => {
