@@ -149,7 +149,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
     setLoading(true);
     await WebApiPeople.updatePerson(data, person.id)
       .then((response) => {
-        console.log("Response-->> ", response.data);
         setFormPerson(response.data);
         message.success({
           content: "Actualizado correctamente.",
@@ -158,7 +157,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
         setLoading(false);
       })
       .catch((error) => {
-        console.log("Response error-->> ", response.data);
         message.error("Error al actualizar, intente de nuevo.");
         setLoading(false);
       });
