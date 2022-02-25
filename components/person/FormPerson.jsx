@@ -248,17 +248,6 @@ const FormPerson = ({
                   </Col>
                 )}
                 <Col lg={8} xs={24}>
-                  <Form.Item name="register_date">
-                    <DatePicker
-                      style={{ width: "100%" }}
-                      onChange={onChangeIngPlatform}
-                      defaultValue={moment()}
-                      moment={"YYYY-MM-DD"}
-                      placeholder="Fecha de ingreso a la plataforma"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={8} xs={24}>
                   <SelectGroup />
                 </Col>
                 <Col lg={22} xs={24}>
