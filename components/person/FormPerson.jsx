@@ -44,11 +44,6 @@ const FormPerson = ({
     if (date !== "") {
       value.birth_date = date;
     }
-    if (dateIngPlatform !== "") {
-      value.register_date = dateIngPlatform;
-    } else {
-      value.register_date = moment().format("YYYY-MM-DD");
-    }
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
     if (value.password != value.passwordTwo)
