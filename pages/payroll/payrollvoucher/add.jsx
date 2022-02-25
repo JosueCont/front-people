@@ -10,14 +10,14 @@ import {
   Upload,
 } from "antd";
 import { PlusOutlined, InboxOutlined } from "@ant-design/icons";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../../layout/MainLayout";
 const { Content } = Layout;
 const { confirm } = Modal;
 import Axios from "axios";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { withAuthSync } from "../../libs/auth";
-import { API_URL } from "../../config/config";
+import { withAuthSync } from "../../../libs/auth";
+import { API_URL } from "../../../config/config";
 
 const { Dragger } = Upload;
 

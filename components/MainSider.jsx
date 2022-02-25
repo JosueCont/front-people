@@ -311,6 +311,12 @@ const MainSider = ({
                   Calculadora
                 </Menu.Item>
                 <Menu.Item
+                  key="recibos_nomina"
+                  onClick={() => router.push({ pathname: "/payrollvoucher" })}
+                >
+                  Importar nomina con xmls
+                </Menu.Item>
+                <Menu.Item
                   key="calendario"
                   onClick={() =>
                     router.push({ pathname: "/payroll/paymentCalendar" })
@@ -327,12 +333,6 @@ const MainSider = ({
                   Calculo de nomina
                 </Menu.Item>
               </>
-              <Menu.Item
-                key="recibos_nomina"
-                onClick={() => router.push({ pathname: "/payrollvoucher" })}
-              >
-                Recibos de nómina
-              </Menu.Item>
             </SubMenu>
           )}
           <Menu.Item

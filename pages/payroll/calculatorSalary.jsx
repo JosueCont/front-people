@@ -32,7 +32,7 @@ import webApiFiscal from "../../api/WebApiFiscal";
 import { Global } from "@emotion/core";
 import { ruleRequired } from "../../utils/rules";
 
-const assimilatedSalary = () => {
+const calculatorSalary = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [salary, setSalary] = useState(null);
@@ -48,9 +48,8 @@ const assimilatedSalary = () => {
     setSalary(null);
     setLoading(true);
     await webApiFiscal
-      .assimilatedSalaryCalculation(value)
+      .calculatorSalary(value)
       .then((response) => {
-        console.log("Response-->>> ", response);
         if (response.status == 200) {
           setTimeout(() => {
             setSalary(response.data);
@@ -381,4 +380,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(assimilatedSalary);
+export default connect(mapState)(calculatorSalary);

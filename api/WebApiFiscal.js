@@ -41,7 +41,7 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/validate-account-number/`, "post", data);
   }
 
-  static assimilatedSalaryCalculation(data) {
+  static calculatorSalary(data) {
     return WebApi.ApisType(
       `/fiscal/salary_calculation_and_allowance`,
       "post",
