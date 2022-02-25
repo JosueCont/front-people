@@ -19,14 +19,14 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import moment from "moment";
 import {
   messageDialogDelete,
-  onlyNumeric,
+  messageSaveSuccess,
   titleDialogDelete,
 } from "../../utils/constant";
+import { onlyNumeric, ruleRequired } from "../../utils/rules";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const FormTraining = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -39,17 +39,15 @@ const FormTraining = ({ person_id = null }) => {
   const [upTraining, setUpTraining] = useState(false);
   const [training, setTraining] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
   const [dateRange, setDateRange] = useState(null);
 
   useEffect(() => {
     getTraining();
   }, []);
 
-  /**CRUD training */
-  const getTraining = () => {
+  const getTraining = async () => {
     setLoadingTable(true);
-    Axios.get(API_URL + `/person/person/${person_id}/training_person/`)
+    await WebApiPeople.trainingPerson("get", `${person_id}/training_person/`)
       .then((response) => {
         setTraining(response.data);
         setTimeout(() => {
@@ -64,13 +62,11 @@ const FormTraining = ({ person_id = null }) => {
         }, 1000);
       });
   };
-  const saveTraining = (data) => {
-    Axios.post(API_URL + `/person/training/`, data)
+
+  const saveTraining = async (data) => {
+    await WebApiPeople.trainingPerson("post", "", data)
       .then((response) => {
-        message.success({
-          content: "Guardado correctamente.",
-          className: "custom-class",
-        });
+        message.success(messageSaveSuccess);
         getTraining();
         formTraining.resetFields();
         setCurrenlyStuding(false);
@@ -85,9 +81,9 @@ const FormTraining = ({ person_id = null }) => {
         }, 1000);
       });
   };
-  const updateTraining = (data) => {
+  const updateTraining = async (data) => {
     setLoadingTable(true);
-    Axios.put(API_URL + `/person/training/${data.id}/`, data)
+    await WebApiPeople.trainingPerson("put", `${data.id}/`, data)
       .then((response) => {
         message.success({
           content: "Actualizado correctamente.",
@@ -111,8 +107,8 @@ const FormTraining = ({ person_id = null }) => {
         }, 1000);
       });
   };
-  const deleteTraining = (id) => {
-    Axios.delete(API_URL + `/person/training/${id}/`)
+  const deleteTraining = async (id) => {
+    await WebApiPeople.trainingPerson("delete", `${id}/`)
       .then((response) => {
         message.success({
           content: "Eliminado con éxito.",
@@ -132,7 +128,6 @@ const FormTraining = ({ person_id = null }) => {
       });
   };
 
-  /*Events */
   const formFinishTraining = (value) => {
     if (upTraining) {
       value.id = idTraining;
@@ -268,6 +263,7 @@ const FormTraining = ({ person_id = null }) => {
         layout="vertical"
         form={formTraining}
         onFinish={formFinishTraining}
+        className="inputs_form_responsive"
       >
         <Row>
           <Col lg={6} xs={22} offset={1}>

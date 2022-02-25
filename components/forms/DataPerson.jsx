@@ -18,21 +18,30 @@ import SelectDepartment from "../selects/SelectDepartment";
 import { connect } from "react-redux";
 import SelectJob from "../selects/SelectJob";
 
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 import moment from "moment";
-import { civilStatus, genders, periodicity } from "../../utils/functions";
-import WebApi from "../../api/webApi";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
+import {
+  civilStatus,
+  genders,
+  intranetAccess,
+  messageError,
+  messageUpdateSuccess,
+  periodicity,
+} from "../../utils/constant";
+import WebApiPeople from "../../api/WebApiPeople";
 import {
   curpFormat,
   minLengthNumber,
   onlyNumeric,
   rfcFormat,
-} from "../../utils/constant";
+  ruleRequired,
+} from "../../utils/rules";
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
+import SelectPersonType from "../selects/SelectPersonType";
+import SelectAccessIntranet from "../selects/SelectAccessIntranet";
+import SelectWorkTitle from "../selects/SelectWorkTitle";
+import SelectWorkTitleStatus from "../selects/SelectWorkTitleStatus";
 
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
@@ -40,30 +49,19 @@ const DataPerson = ({ config, person = null, ...props }) => {
   const [formPerson] = Form.useForm();
   const [photo, setPhoto] = useState(null);
   const [isActive, setIsActive] = useState(false);
-  const [departmentId, setDepartmentId] = useState(null);
   const [birthDate, setBirthDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
-  const [hideProfileSecurity, setHideProfileSecrity] = useState(true);
+  const [departmentSelected, setDepartmentSelected] = useState(null);
+  const [jobSelected, setJobSelected] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setFormPerson(person);
-    getGroupPerson(config, person.khonnect_id)
-      .then((response) => {
-        formPerson.setFieldsValue({
-          groups: response[0],
-        });
-      })
-      .catch((error) => {
-        formPerson.setFieldsValue({
-          groups: [],
-        });
-      });
-    setLoading(false);
   }, []);
 
   const setFormPerson = (person) => {
+    console.log("PERSONAAAA-->> ", person);
     formPerson.setFieldsValue({
       first_name: person.first_name,
       flast_name: person.flast_name,
@@ -81,12 +79,13 @@ const DataPerson = ({ config, person = null, ...props }) => {
       periodicity: person.periodicity,
       intranet_access: person.intranet_access,
     });
-    if (person.person_department) {
+    if (person.work_title) {
       formPerson.setFieldsValue({
-        person_department: person.department.id,
-        job: person.job.id,
+        person_department: person.work_title.department.id,
+        job: person.work_title.job.id,
+        work_title_id: person.work_title.id,
+        status_work_title: person.person_work_title.status,
       });
-      setDepartmentId(person.person_department);
     }
     if (person.person_type)
       formPerson.setFieldsValue({
@@ -108,7 +107,23 @@ const DataPerson = ({ config, person = null, ...props }) => {
         register_date: moment(person.register_date),
       });
 
-    // getValueSelects();
+    getGroupPerson(config, person.khonnect_id)
+      .then((response) => {
+        formPerson.setFieldsValue({
+          groups: response[0],
+        });
+      })
+      .catch((error) => {
+        formPerson.setFieldsValue({
+          groups: [],
+        });
+      });
+    if (person.work_title) {
+      formPerson.setFieldsValue({
+        work_title_id: person.work_title.id,
+      });
+    }
+    setLoading(false);
     setPhoto(person.photo);
     setDateAdmission(person.date_of_admission);
     setBirthDate(person.birth_date);
@@ -132,18 +147,21 @@ const DataPerson = ({ config, person = null, ...props }) => {
 
   const updatePerson = async (data) => {
     setLoading(true);
-    try {
-      let response = await WebApi.updatePerson(data, person.id);
-      setFormPerson(response.data);
-      message.success({
-        content: "Actualizado correctamente.",
-        className: "custom-class",
+    await WebApiPeople.updatePerson(data, person.id)
+      .then((response) => {
+        console.log("Response-->> ", response.data);
+        setFormPerson(response.data);
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("Response error-->> ", response.data);
+        message.error("Error al actualizar, intente de nuevo.");
+        setLoading(false);
       });
-      setLoading(false);
-    } catch (error) {
-      message.error("Error al actualizar, intente de nuevo.");
-      setLoading(false);
-    }
   };
 
   let numberPhoto = 0;
@@ -169,7 +187,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
     if (numberPhoto === 1) {
       try {
         setLoadImage(true);
-        let response = await WebApi.updatePhotoPerson(data);
+        let response = await WebApiPeople.updatePhotoPerson(data);
         formPerson.setFieldsValue({
           photo: response.data.photo,
         });
@@ -198,21 +216,20 @@ const DataPerson = ({ config, person = null, ...props }) => {
     setDateAdmission(dateString);
   };
 
-  const changeStatus = (value) => {
+  const changeStatus = async (value) => {
     isActive ? setIsActive(false) : setIsActive(true);
-    let p = formPerson.getFieldsValue();
-    isActive ? (p.is_active = false) : (p.is_active = true);
-    delete p["date_of_admission"], p["node"], p["report_to"], p["department"];
-    Axios.put(API_URL + `/person/person/${person.id}/`, p)
-      .then((response) => {})
+    let data = {
+      id: person.id,
+      status: value,
+    };
+    await WebApiPeople.changeStatusPerson(data)
+      .then((response) => {
+        message.success(messageUpdateSuccess);
+      })
       .catch((error) => {
+        message.error(messageError);
         console.log(error);
       });
-  };
-
-  const onChangeDepartment = (val) => {
-    formPerson.setFieldsValue({ job: null });
-    setDepartmentId(val);
   };
 
   const onChangeIngPlatform = (date, dateString) => {
@@ -226,20 +243,81 @@ const DataPerson = ({ config, person = null, ...props }) => {
   return (
     <Spin tip="Cargando..." spinning={loading}>
       <Form onFinish={onFinishPerson} layout={"vertical"} form={formPerson}>
-        <Row>
-          <Col lg={24} xs={24}>
-            <Row>
-              <Col lg={7} xs={22} offset={1}>
-                <Form.Item name="person_type" label="Tipo de persona">
-                  <Select
-                    options={props.cat_person_type}
-                    placeholder="Tipo de persona"
-                  />
-                </Form.Item>
+        <Row justify="center">
+          <Col lg={22}>
+            <Row gutter={20}>
+              {((props.user && props.user.nodes) ||
+                (props.user && props.user.is_admin)) && (
+                <Col lg={8} xs={12}>
+                  <Form.Item label="Número de empleado" name="code">
+                    <Input type="text" placeholder="Núm. empleado" />
+                  </Form.Item>
+                </Col>
+              )}
+              <Col lg={8} xs={12}>
+                <SelectPersonType label="Tipo de persona" />
+              </Col>
+              <Col lg={6} md={0} xs={0} xl={0}>
+                <Spin tip="Cargando..." spinning={loadImge}>
+                  <div
+                    style={
+                      photo
+                        ? {
+                            width: "120px",
+                            height: "120px",
+                            display: "flex",
+                            flexWrap: "wrap",
+                            alignContent: "center",
+                            textAlign: "center",
+                          }
+                        : {}
+                    }
+                  >
+                    <Upload
+                      name="avatar"
+                      listType="picture-card"
+                      showUploadList={false}
+                      onChange={upImage}
+                    >
+                      {photo ? (
+                        <div
+                          className="frontImage"
+                          style={
+                            photo
+                              ? {
+                                  width: "120px",
+                                  height: "120px",
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  borderRadius: "10px",
+                                  textAlign: "center",
+                                  alignContent: "center",
+                                }
+                              : {}
+                          }
+                        >
+                          <img
+                            className="img"
+                            src={photo}
+                            alt="avatar"
+                            preview={false}
+                            style={{
+                              width: "120px",
+                              height: "120px",
+                              borderRadius: "11px",
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        uploadButton
+                      )}
+                    </Upload>
+                  </div>
+                </Spin>
               </Col>
             </Row>
-            <Row>
-              <Col lg={7} xs={22} offset={1}>
+            <Row gutter={20}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="first_name"
                   label="Nombre(s)"
@@ -248,7 +326,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Input />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="flast_name"
                   label="Apellido Paterno"
@@ -257,9 +335,9 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Input />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24}>
                 <Row justify="center">
-                  <Col lg={12} md={8} xs={24}>
+                  <Col lg={0} md={12} xs={24} xl={12}>
                     <Spin tip="Cargando..." spinning={loadImge}>
                       <div
                         style={
@@ -317,7 +395,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                       </div>
                     </Spin>
                   </Col>
-                  <Col lg={12} md={16} xs={24}>
+                  <Col lg={24} md={12} xs={24} xl={12}>
                     <Form.Item
                       name="date_of_admission"
                       label="Fecha de ingreso"
@@ -326,6 +404,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                         onChange={onChangeDateAdmission}
                         moment={"YYYY-MM-DD"}
                         readOnly
+                        style={{ width: "100%" }}
                       />
                     </Form.Item>
                     <Switch
@@ -337,7 +416,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   </Col>
                 </Row>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="mlast_name"
                   label="Apellido Materno"
@@ -346,7 +425,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Input />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item label="Empresa">
                   <Input
                     readOnly
@@ -354,7 +433,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <SelectDepartment
                   disabled={
                     (props.user && props.user.nodes) ||
@@ -364,9 +443,10 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   }
                   name="person_department"
                   style={false}
+                  onChange={(item) => setDepartmentSelected(item)}
                 />
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <SelectJob
                   disabled={
                     (props.user && props.user.nodes) ||
@@ -376,9 +456,32 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   }
                   name="job"
                   style={false}
+                  onChange={(item) => setJobSelected(item)}
                 />
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
+                <SelectWorkTitle
+                  viewLabel={true}
+                  department={departmentSelected}
+                  job={jobSelected}
+                  name={"work_title_id"}
+                />
+              </Col>
+              <Col lg={8} xs={24}>
+                <SelectWorkTitleStatus rules={[ruleRequired]} style={false} />
+              </Col>
+              {props.config &&
+                props.config.enabled_nomina(
+                  ((props.user && props.user.nodes) ||
+                    (props.user && props.user.is_admin)) && (
+                    <Col lg={8} xs={24} md={12}>
+                      <Form.Item label="Reporta a ">
+                        <Input readOnly />
+                      </Form.Item>
+                    </Col>
+                  )
+                )}
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="register_date"
                   label="Fecha de ingreso a la plataforma"
@@ -391,64 +494,28 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              {((props.user && props.user.nodes) ||
-                (props.user && props.user.is_admin)) && (
-                <Col lg={7} xs={22} offset={1}>
-                  <Form.Item label="Número de empleado" name="code">
-                    <Input type="text" placeholder="Núm. empleado" />
-                  </Form.Item>
-                </Col>
-              )}
-
               {config && config.intranet_enabled && (
-                <Col lg={7} xs={22} offset={1}>
+                <Col lg={8} xs={24} md={12}>
                   <Form.Item
                     name="intranet_access"
                     label="Acceso a la intranet"
-                    valuePropName="checked"
                   >
-                    <Switch
-                      checkedChildren={<CheckOutlined />}
-                      unCheckedChildren={<CloseOutlined />}
-                    />
+                    <Select options={intranetAccess} />
                   </Form.Item>
                 </Col>
               )}
-              {((props.user && props.user.nodes) ||
-                (props.user && props.user.is_admin)) && (
-                <Col lg={7} xs={22} offset={1}>
-                  <Form.Item name="report_to" label="Reporta a ">
-                    <Select
-                      options={props.people_company}
-                      notFoundContent={"No se encontraron resultados."}
-                    />
-                  </Form.Item>
-                </Col>
-              )}
-
-              {hideProfileSecurity && (
-                <Col lg={15} xs={22} offset={1}>
-                  <SelectGroup titleLabel={true} />
-                  {/* <Form.Item name="groups" label="Perfil de seguridad">
-                    <Select
-                      options={props.cat_groups}
-                      showArrow
-                      style={{ width: "100%" }}
-                      placeholder="Perfiles de seguridad"
-                      notFoundContent={"No se encontraron resultados."}
-                    />
-                  </Form.Item> */}
-                </Col>
-              )}
+              <Col lg={8} xs={24} md={12}>
+                <SelectGroup viewLabel={true} />
+              </Col>
             </Row>
-            <Row>
+            <Row gutter={20}>
               <hr />
-              <Col offset={1} span={23}>
+              <Col span={23}>
                 <Title level={5} style={{ marginBottom: 15 }}>
                   Información adicional
                 </Title>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="email"
                   label="Dirección de e-mail"
@@ -457,7 +524,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Input disabled />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="birth_date" label="Fecha de nacimiento">
                   <DatePicker
                     style={{ width: "100%" }}
@@ -467,7 +534,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="civil_status" label="Estado Civil">
                   <Select
                     options={civilStatus}
@@ -475,7 +542,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="gender" label="Género">
                   <Select
                     options={genders}
@@ -483,17 +550,17 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="curp" label="CURP" rules={[curpFormat]}>
                   <Input maxLength={18} />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="rfc" label="RFC" rules={[rfcFormat]}>
                   <Input maxLength={13} />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item
                   name="imss"
                   label="IMSS"
@@ -502,7 +569,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Input maxLength={11} />
                 </Form.Item>
               </Col>
-              <Col lg={7} xs={22} offset={1}>
+              <Col lg={8} xs={24} md={12}>
                 <Form.Item name="periodicity" label="Periodicidad">
                   <Select
                     options={periodicity}

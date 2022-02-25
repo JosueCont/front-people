@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
-import { Row, Col, Table, Breadcrumb, Button, message, Modal } from "antd";
+import {
+  Row,
+  Col,
+  Table,
+  Breadcrumb,
+  Button,
+  message,
+  Modal,
+  Alert,
+} from "antd";
 import router, { useRouter } from "next/router";
 import { connect } from "react-redux";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import {
@@ -15,6 +22,7 @@ import {
   CheckCircleTwoTone,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
+import WebApiPeople from "../../api/WebApiPeople";
 const PreviewBulkUpload = ({ ...props }) => {
   const route = useRouter();
   const [loading, setLoading] = useState(true);
@@ -23,52 +31,28 @@ const PreviewBulkUpload = ({ ...props }) => {
   const [errors, setErrors] = useState([]);
   const [disabledButton, setDisabledButton] = useState(false);
   const [arrColumns, setArrColumns] = useState([]);
+  const [messageSave, setMessageSave] = useState(null);
 
   /* Columns */
   const columns = [
     {
-      title: "Correo",
-      dataIndex: "email",
-      key: "email",
-    },
-    ,
-    {
-      title: "Departamento",
-      dataIndex: "code_department",
-      key: "person_department",
-    },
-    {
-      title: "Puesto",
-      dataIndex: "code_job",
-      key: "job",
-    },
-    {
-      title: "Estatus",
-      key: "status_log",
-      render: (row) => {
-        return row.status_log != "" ? (
-          <CloseCircleTwoTone twoToneColor="#eb2f96" />
+      title: "Nombre",
+      key: "name",
+      render: (item) => {
+        return item.name ? (
+          <span>{item.name}</span>
         ) : (
-          <CheckCircleTwoTone twoToneColor="#52c41a" />
+          <span>
+            {item.first_name + " " + item.flast_name + " " + item.mlast_name}
+          </span>
         );
       },
     },
     {
       title: "Guardado",
       key: "id",
-      render: (row) => {
-        return row.id == "" ? (
-          <CloseCircleTwoTone twoToneColor="#eb2f96" />
-        ) : (
-          <CheckCircleTwoTone twoToneColor="#52c41a" />
-        );
-      },
-    },
-    {
-      title: "Sincronizado",
-      key: "bulk_load_person",
-      render: (row) => {
-        return row.bulk_load_person && row.sync == 2 ? (
+      render: (item) => {
+        return item.status && item.status != "Exists" ? (
           <CheckCircleTwoTone twoToneColor="#52c41a" />
         ) : (
           <CloseCircleTwoTone twoToneColor="#eb2f96" />
@@ -78,50 +62,30 @@ const PreviewBulkUpload = ({ ...props }) => {
     {
       title: "Detalles",
       key: "actions",
-      render: (row) => {
-        return row.status_log != "" ? (
-          <EyeOutlined
-            className="icon_actions"
-            key={"goDetails_" + row.id}
-            onClick={() => viewDetails(row.status_log)}
-          />
-        ) : row.sync == !2 ? (
-          <EyeOutlined
-            className="icon_actions"
-            key={"goDetails_" + row.id}
-            onClick={() => viewDetails("Error de sincronización")}
-          />
-        ) : null;
+      render: (item) => {
+        return (
+          !item.status &&
+          item.message && (
+            <EyeOutlined
+              className="icon_actions"
+              onClick={() => viewDetails(item.message)}
+            />
+          )
+        );
       },
     },
   ];
 
-  const viewDetails = (data) => {
-    if (data !== "") {
-      setErrors(data.split(","));
-      setIsModalVisible(true);
-    }
+  const viewDetails = (data, type) => {
+    setErrors(data);
+    setIsModalVisible(true);
   };
 
   useEffect(() => {
     if (props.formData) {
-      Axios.post(
-        API_URL + `/person/bulk-upload-person/upload_xls/`,
-        props.formData
-      )
+      WebApiPeople.BulkMassivePerson(props.formData)
         .then((response) => {
-          if (response.data.data[0].issync == false) {
-            let cols = [];
-            columns.map((c) => {
-              if (c.key !== "bulk_load_person") {
-                cols.push(c);
-              }
-            });
-            setArrColumns(cols);
-          } else {
-            setArrColumns(columns);
-          }
-
+          setArrColumns(columns);
           setDataUpload(response.data.data);
           setLoading(false);
           message.success("Excel importado correctamente.");
@@ -133,8 +97,6 @@ const PreviewBulkUpload = ({ ...props }) => {
         });
     }
   }, [props.formData]);
-
-  useEffect(() => {}, [dataUpload]);
 
   const handleOk = () => {
     setIsModalVisible(false);
@@ -159,22 +121,18 @@ const PreviewBulkUpload = ({ ...props }) => {
           setDisabledButton(true);
           const data = {
             persons: dataUpload,
-            credentials: {
-              user: user_session.email,
-              password: "",
-            },
           };
-
-          Axios.post(API_URL + "/person/person/massive_save_person/", data)
+          WebApiPeople.saveMassivePerson(data)
             .then((response) => {
-              if (response.data.persons.length > 0) {
-                setDataUpload(response.data.persons);
-              }
-              message.success("Guardado correctamente");
+              setDataUpload(response.data.persons);
+              message.success("Cargado correctamente");
+              setMessageSave(response.data.message);
               setLoading(false);
             })
             .catch((response) => {
               setLoading(false);
+              setDataUpload(response.data.persons);
+              setMessageSave(response.data.message);
               message.error("Error al agregar, intente de nuevo");
             });
         } else {
@@ -197,19 +155,20 @@ const PreviewBulkUpload = ({ ...props }) => {
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row justify={"end"} style={{ padding: "1% 0" }}>
-          <Button
-            onClick={savePersons}
-            className={"ml-20"}
-            type="primary"
-            size={{ size: "large" }}
-            icon={<SaveOutlined />}
-            disabled={disabledButton}
-          >
-            Guardar
-          </Button>
+          {!disabledButton && (
+            <Button
+              onClick={savePersons}
+              className={"ml-20"}
+              type="primary"
+              size={{ size: "large" }}
+              icon={<SaveOutlined />}
+            >
+              Guardar
+            </Button>
+          )}
 
           <Button
-            onClick={() => router.push("/home")}
+            onClick={() => router.push("/home/persons")}
             className={"ml-20"}
             type="primary"
             size={{ size: "large" }}
@@ -218,7 +177,11 @@ const PreviewBulkUpload = ({ ...props }) => {
             Regresar
           </Button>
         </Row>
-        <Row>
+        <Row justify="center">
+          <Col span={10}>
+            {messageSave && <Alert message={messageSave} type="info" />}
+            <br />
+          </Col>
           <Col span={24}>
             <Table
               dataSource={dataUpload}
@@ -241,10 +204,7 @@ const PreviewBulkUpload = ({ ...props }) => {
         closable={false}
         cancelButtonProps={{ style: { display: "none" } }}
       >
-        {errors &&
-          errors.map((e) => {
-            return <p>{e}</p>;
-          })}
+        {errors && <p>{errors}</p>}
       </Modal>
     </MainLayout>
   );

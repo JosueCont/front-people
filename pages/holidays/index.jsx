@@ -27,9 +27,9 @@ import {
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 
-const Holidays = ({ ...props }) => {
+const Holidays = ({ permissions, ...props }) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -39,7 +39,7 @@ const Holidays = ({ ...props }) => {
 
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   let nodeId = userCompanyId();
 
   /* Variables */
@@ -70,7 +70,7 @@ const Holidays = ({ ...props }) => {
         url += `&person__person_department__id=${department}`;
       }
 
-      let response = await WebApi.getVacationRequest(url);
+      let response = await WebApiPeople.getVacationRequest(url);
       let data = response.data.results;
       data.map((item, index) => {
         item.key = index;
@@ -97,26 +97,10 @@ const Holidays = ({ ...props }) => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     if (props.currentNode) {
       getAllHolidays();
     }
   }, [route, props.currentNode]);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.vacation.can.view")) perms.view = true;
-      if (a.includes("people.vacation.can.create")) perms.create = true;
-      if (a.includes("people.vacation.can.edit")) perms.edit = true;
-      if (a.includes("people.vacation.can.delete")) perms.delete = true;
-      if (a.includes("people.vacation.function.reject_vacation"))
-        perms.reject = true;
-      if (a.includes("people.vacation.function.approve_vacation"))
-        perms.approve = true;
-    });
-    setPermissions(perms);
-  };
 
   const resetFilter = () => {
     form.resetFields();
@@ -332,6 +316,7 @@ const Holidays = ({ ...props }) => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    permissions: state.userStore.permissions.vacation,
   };
 };
 

@@ -1,31 +1,21 @@
-import axiosApi from "./axiosApi";
+import WebApi from "./webApi";
 
-class WebApi {
-  static ApisType = (url, method = "post", params = {}) => {
-    switch (method) {
-      case "post":
-        return axiosApi.post(url, params);
-        break;
-      case "put":
-        return axiosApi.put(url, params);
-        break;
-      case "get":
-        return axiosApi.get(url);
-        break;
-      case "delete":
-        return axiosApi.delete(url);
-        break;
-    }
-  };
-
+class WebApiPayroll {
   static getCfdi(data) {
     return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
   }
 
-  /*Payroll Person */
+  static getPayrollPerson(data) {
+    return WebApi.ApisType(
+      `/payroll/payroll-person/?person__id=${data}`,
+      "get"
+    );
+  }
+
   static createPayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
   }
+
   static updatePayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/${data.id}/`, "put", data);
   }
@@ -34,7 +24,6 @@ class WebApi {
     return WebApi.ApisType(`/payroll/payment-calendar/?node=${data}`, "get");
   }
 
-  /** PaymentCalendar */
   static createPaymentCalendar(data) {
     return WebApi.ApisType(
       `/payroll/payment-calendar/payment_calendar/`,
@@ -62,6 +51,10 @@ class WebApi {
     );
   }
 
+  static getPaymentPeriodicity() {
+    return WebApi.ApisType(`/fiscal/periodicity/`, "get");
+  }
+
   static payrollFacturama(data) {
     return WebApi.ApisType(`/payroll/invoice-payrrol-facturama`, "post", data);
   }
@@ -75,4 +68,4 @@ class WebApi {
   }
 }
 
-export default WebApi;
+export default WebApiPayroll;

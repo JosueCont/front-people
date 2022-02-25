@@ -1,16 +1,17 @@
 import { Select, Form } from "antd";
-import { generateYear } from "../../utils/constant";
+import { generateYear } from "../../utils/functions";
 
-const SelectYear = ({ titleLabel = true, rules = [], companyId, ...props }) => {
+const SelectYear = ({ viewLabel = true, rules = [], companyId, ...props }) => {
   return (
     <>
       <Form.Item
         key="ItemPeriod"
         name={props.name ? props.name : "period"}
-        label={titleLabel ? "Periodo" : ""}
+        label={viewLabel ? "Periodo" : ""}
         rules={rules}
       >
         <Select
+          size={props.size ? props.size : "middle"}
           key="SelectPeriod"
           options={generateYear()}
           placeholder="Periodo"

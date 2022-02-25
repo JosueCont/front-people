@@ -1,8 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Layout, Row, Col, Avatar, Menu, Space } from "antd";
+import { Layout, Row, Col, Menu, Drawer, Typography, Divider } from "antd";
 import { useRouter } from "next/router";
-import HeaderCustom from "../components/Header";
-import Footer from "../components/Footer";
+import { DollarCircleOutlined } from "@ant-design/icons";
 import { Helmet } from "react-helmet";
 import { userCompanyName } from "../libs/auth";
 import { connect } from "react-redux";
@@ -11,14 +10,6 @@ import { css, Global } from "@emotion/core";
 import { getFlavor, getRouteFlavor } from "../utils/brand";
 import NewHeader from "../components/NewHeader";
 import MainSider from "../components/MainSider";
-import SiderNomina from '../components/SiderNomina';
-import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
 
 const { Header, Content, Sider } = Layout;
 
@@ -31,26 +22,21 @@ const MainLayout = ({
   onClickImage,
   hideSearch,
   hideLogo = false,
-  nomina =false,
+  nomina = false,
   ...props
 }) => {
   const router = useRouter();
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
+  const { Text, Title } = Typography;
   let nodeName = userCompanyName();
   const [mainLogo, setMainLogo] = useState("");
   const [company, setCompany] = useState("");
   const isBrowser = () => typeof window !== "undefined";
   const [flavor, setFlavor] = useState({});
   const [routeFlavor, setRouteFlavor] = useState({});
-
-  /* Variable del side menu */
-  const [collapsed, setCollapsed] = useState(false);
-  const { SubMenu } = Menu;
-  const onCollapse = (collapsed) => {
-    setCollapsed(collapsed);
-  };
+  const [showEvents, setShowEvents] = useState(false);
 
   useLayoutEffect(() => {
     try {
@@ -62,7 +48,7 @@ const MainLayout = ({
       var head = document.head;
       var link = document.createElement("link");
       link.type = "text/css";
-      link.href = routeFlavor + "/" + vflavor.stylePath;
+      if (vflavor.stylePath) link.href = routeFlavor + "/" + vflavor.stylePath;
       link.rel = "stylesheet";
       link.async = true;
 
@@ -91,12 +77,16 @@ const MainLayout = ({
   }, [logoNode, companyName]);
 
   useEffect(() => {
-    if (props.currentNode) {
+    if (props.currentNode && props.config) {
       setMainLogo(props.currentNode.image);
     } else {
-      let response = props.companySelected();
+      if (props.config) props.companySelected(null, props.config);
     }
-  }, [props.currentNode]);
+  }, [props.currentNode, props.config]);
+
+  const closeEvents = () => {
+    setShowEvents(false);
+  };
 
   return (
     <Layout className="layout" style={{ minHeight: "100vh" }}>
@@ -221,6 +211,16 @@ const MainLayout = ({
             /* th, td{
               background: transparent;
             } */
+            .form_header{
+              background: #7B25F1 !important;
+            }
+
+            .headers_transparent .ant-table-thead tr th{
+              background-color:transparent !important;
+            }
+            .card_table .ant-table{
+              box-shadow: none;
+            }
 
 
               `}
@@ -236,53 +236,48 @@ const MainLayout = ({
           <link rel="icon" type="image/png" href="/images/logo_gape.svg"></link>
         )}
       </Helmet>
-      {/* <Layout>
-        <NewHeader
-          key="main_header"
-          hideMenu={hideMenu}
-          mainLogo={mainLogo}
-          hideProfile={hideProfile}
-          onClickImage={onClickImage}
-          hideSearch={hideSearch}
-          hideLogo={hideLogo}
-        /> */}
+
       <Layout>
         <NewHeader
           key="main_header"
+          currentNode={props.currentNode}
           hideMenu={hideMenu}
           mainLogo={mainLogo}
           hideProfile={hideProfile}
           onClickImage={onClickImage}
           hideSearch={hideSearch}
           hideLogo={hideLogo}
+          setShowEvents={setShowEvents}
         />
         <Layout>
-          {/* {!hideMenu && (
+          {!hideMenu && (
             <MainSider
               currentKey={currentKey}
               defaultOpenKeys={
                 props.defaultOpenKeys ? props.defaultOpenKeys : null
               }
             />
-          )} */}
-          {nomina ? 
-            <SiderNomina currentKey={currentKey} /> :
-            !hideMenu && (
-              <MainSider
-                currentKey={currentKey}
-                defaultOpenKeys={
-                  props.defaultOpenKeys ? props.defaultOpenKeys : null
-                }
-              />
-            ) 
-          }
+          )}
           <Content>
             <div className="div-main-layout">{props.children}</div>
           </Content>
-          {/*  */}
-          {/*  */}
         </Layout>
       </Layout>
+      <Drawer placement="right" onClose={closeEvents} visible={showEvents}>
+        <Row justify="center">
+          <Col span={21}>
+            <Title level={3} style={{ marginBottom: 0, marginTop: 20 }}>
+              <span className="card_element_icon">
+                <DollarCircleOutlined />
+              </span>
+              Proximos eventos
+            </Title>
+            <Divider style={{ margin: "10px 0px 15px 0px" }} />
+            {/* <WeekCard /> */}
+          </Col>
+        </Row>
+      </Drawer>
+
       {/* </Layout> */}
 
       {/* <HeaderCustom

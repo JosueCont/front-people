@@ -1,23 +1,6 @@
-import axiosApi from "./axiosApi";
+import WebApi from "./webApi";
 
-class WebApi {
-  static ApisType = (url, method = "post", params = {}) => {
-    switch (method) {
-      case "post":
-        return axiosApi.post(url, params);
-        break;
-      case "put":
-        return axiosApi.put(url, params);
-        break;
-      case "get":
-        return axiosApi.get(url);
-        break;
-      case "delete":
-        return axiosApi.delete(url);
-        break;
-    }
-  };
-
+class WebApiFiscal {
   static getContractTypes() {
     return WebApi.ApisType(`/fiscal/contract-type/`, "get");
   }
@@ -28,6 +11,10 @@ class WebApi {
 
   static getTypeTax() {
     return WebApi.ApisType(`/fiscal/type-tax/`, "get");
+  }
+
+  static getTaxRegime() {
+    return WebApi.ApisType(`/fiscal/tax-regime/`, "get");
   }
 
   static getBanks() {
@@ -61,6 +48,14 @@ class WebApi {
       data
     );
   }
+
+  static getCountries() {
+    return WebApi.ApisType(`/fiscal/country/`, "get");
+  }
+
+  static getStates(data) {
+    return WebApi.ApisType(`/fiscal/state/?country=${data}`, "get");
+  }
 }
 
-export default WebApi;
+export default WebApiFiscal;

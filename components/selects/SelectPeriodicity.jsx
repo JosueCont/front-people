@@ -2,7 +2,7 @@ import { Select, Form } from "antd";
 import { periodicityNom } from "../../utils/constant";
 
 const SelectPeriodicity = ({
-  titleLabel = true,
+  viewLabel = true,
   rules = [],
   companyId,
   ...props
@@ -12,10 +12,11 @@ const SelectPeriodicity = ({
       <Form.Item
         key="ItemPeriodicity"
         name={props.name ? props.name : "periodicity"}
-        label={titleLabel ? "Periocidad" : ""}
+        label={viewLabel ? "Periocidad" : ""}
         rules={rules}
       >
         <Select
+          size={props.size ? props.size : "middle"}
           key="SelectPeriodicity"
           options={periodicityNom}
           placeholder="Periocidad"

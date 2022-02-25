@@ -17,12 +17,9 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import WebApi from "../../api/webApi";
-import {
-  messageDialogDelete,
-  onlyNumeric,
-  titleDialogDelete,
-} from "../../utils/constant";
+import WebApiPeople from "../../api/WebApiPeople";
+import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
+import { onlyNumeric, ruleRequired } from "../../utils/rules";
 
 const FormPhone = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -32,7 +29,6 @@ const FormPhone = ({ person_id = null }) => {
   const [upPhone, setUpPhone] = useState(false);
   const [phones, setPhones] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   useEffect(() => {
     getPhone();
@@ -40,7 +36,7 @@ const FormPhone = ({ person_id = null }) => {
 
   const getPhone = async () => {
     try {
-      let response = await WebApi.getPhone(person_id);
+      let response = await WebApiPeople.getPhone(person_id);
       setPhones(response.data);
       setTimeout(() => {
         setLoadingTable(false);
@@ -57,7 +53,7 @@ const FormPhone = ({ person_id = null }) => {
 
   const savePhone = async (data) => {
     try {
-      let response = await WebApi.createPhone(data);
+      let response = await WebApiPeople.createPhone(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
@@ -72,7 +68,7 @@ const FormPhone = ({ person_id = null }) => {
   const updatePhone = async (data) => {
     try {
       setLoadingTable(true);
-      let response = await WebApi.updatePhone(data);
+      let response = await WebApiPeople.updatePhone(data);
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",
@@ -93,7 +89,7 @@ const FormPhone = ({ person_id = null }) => {
   };
   const deletePhone = async (id) => {
     try {
-      let response = await WebApi.deletePhone(id);
+      let response = await WebApiPeople.deletePhone(id);
       setLoadingTable(true);
 
       message.success({
@@ -223,13 +219,16 @@ const FormPhone = ({ person_id = null }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Teléfono</Title>
       </Row>
-      <Form layout={"vertical"} form={formPhone} onFinish={formFinishPhone}>
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
+      <Form layout={"vertical"} form={formPhone} onFinish={formFinishPhone} className="inputs_form_responsive">
+        <Row justify="center">
+          <Col span={23}>
+            <Row  gutter={20}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item
               name="phone_type"
               label="Tipo de teléfono"
               rules={[ruleRequired]}
+              style={{width: '100%'}}
             >
               <Select
                 options={typePhones}
@@ -237,11 +236,12 @@ const FormPhone = ({ person_id = null }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item
               name="line_type"
               label="Tipo de línea"
               rules={[ruleRequired]}
+              style={{width: '100%'}}
             >
               <Select
                 options={typeLines}
@@ -249,41 +249,47 @@ const FormPhone = ({ person_id = null }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item
               name="international_code"
               label="Código internacional"
               rules={[ruleRequired, onlyNumeric]}
+              style={{width: '100%'}}
             >
               <Input maxLength={10} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item
               name="national_code"
               label="Código de país"
               rules={[ruleRequired, onlyNumeric]}
+              style={{width: '100%'}}
             >
               <Input maxLength={10} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item
               name="country_code"
               label="Código de ciudad"
               rules={[ruleRequired, onlyNumeric]}
+              style={{width: '100%'}}
             >
               <Input maxLength={10} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={12}>
             <Form.Item
               name="phone"
               label="Número telefónico"
               rules={[ruleRequired, onlyNumeric]}
+              style={{width: '100%'}}
             >
               <Input maxLength={10} />
             </Form.Item>
+          </Col>
+        </Row>
           </Col>
         </Row>
         <Row justify={"end"}>

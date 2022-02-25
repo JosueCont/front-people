@@ -14,7 +14,6 @@ import {
   message,
   Tooltip,
 } from "antd";
-import Axios from "axios";
 import { useEffect, useState } from "react";
 import {
   DeleteOutlined,
@@ -26,19 +25,20 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
-import { API_URL } from "../../config/config";
 import Router, { useRouter } from "next/router";
 import MainLayout from "../../layout/MainLayout";
 import NodeTreeView from "./TreeView/treeview";
 import Cookie from "js-cookie";
 import { userId } from "../../libs/auth";
 import Clipboard from "../Clipboard";
+import { connect } from "react-redux";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const { TextArea } = Input;
 const { Content } = Layout;
 const { Option } = Select;
 
-const businessForm = () => {
+const businessForm = ({ permissions, ...props }) => {
   let router = useRouter();
   const [business, setBusiness] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
@@ -56,7 +56,7 @@ const businessForm = () => {
   const [nodesTree, setNodesTree] = useState([]);
   const [updateModal, setUpdateModal] = useState(false);
   const [businessUpdate, setBusinessUpdate] = useState({});
-  const [permissions, setPermissions] = useState({});
+  /* const [permissions, setPermissions] = useState({}); */
   let personId = userId();
   const [admin, setAdmin] = useState(false);
   const [addB, setAddB] = useState(false);
@@ -74,7 +74,7 @@ const businessForm = () => {
   };
   const deleteBusiness = async (id, name, description) => {
     setLoading(true);
-    Axios.delete(API_URL + "/business/node/" + id + "/")
+    WebApiPeople.PeopledeleteNode(id)
       .then(function (response) {
         if (response.status === 200) {
           Router.push("/business");
@@ -103,7 +103,7 @@ const businessForm = () => {
       data.append("image", logo);
     }
 
-    Axios.patch(API_URL + "/business/node/" + values.id + "/", data)
+    WebApiPeople.updateNode(values.id, data)
       .then(function (response) {
         person();
         setIsModalVisible(false);
@@ -116,8 +116,6 @@ const businessForm = () => {
           setTimeout(function () {
             Router.reload();
           }, 1000);
-
-          /* Router.push("/business"); */
         }
       })
       .catch(function (error) {
@@ -141,7 +139,7 @@ const businessForm = () => {
       setAddB(false);
       return;
     }
-    Axios.post(API_URL + "/business/node/", data)
+    WebApiPeople.createNode(data)
       .then(function (response) {
         if (response.status === 200) {
           Router.push("/business");
@@ -201,14 +199,13 @@ const businessForm = () => {
   useEffect(() => {
     personId = userId();
     const jwt = JSON.parse(Cookie.get("token"));
-    searchPermissions(jwt.perms);
     person();
     getNodesTree();
   }, []);
 
   const person = () => {
     const jwt = JSON.parse(Cookie.get("token"));
-    Axios.post(API_URL + `/person/person/person_for_khonnectid/`, {
+    WebApiPeople.personForKhonnectId({
       id: jwt.user_id,
     })
       .then((response) => {
@@ -227,7 +224,7 @@ const businessForm = () => {
 
   const getCopaniesList = async () => {
     try {
-      let response = await Axios.get(API_URL + `/business/node/`);
+      let response = await WebApiPeople.getCompanys();
       let data = response.data.results;
       setBusiness(data);
       setLoading(false);
@@ -239,9 +236,7 @@ const businessForm = () => {
 
   const getBusiness = () => {
     setLoading(true);
-    Axios.get(
-      API_URL + `/business/node-person/get_assignment/?person__id=${personId}`
-    )
+    WebApiPeople.getCompaniesPeople(personId)
       .then((response) => {
         setBusiness([]);
         setBusiness(response.data);
@@ -254,21 +249,8 @@ const businessForm = () => {
       });
   };
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.company.can.view")) perms.view = true;
-      if (a.includes("people.company.can.create")) perms.create = true;
-      if (a.includes("people.company.can.edit")) perms.edit = true;
-      if (a.includes("people.company.can.delete")) perms.delete = true;
-      if (a.includes("people.company.function.change_is_active"))
-        perms.change_status = true;
-    });
-    setPermissions(perms);
-  };
-
   const getNodesTree = () => {
-    Axios.post(API_URL + `/business/node/node_in_cascade/`, {
+    WebApiPeople.getNodeTree({
       person: personId,
     })
       .then((response) => {
@@ -300,7 +282,7 @@ const businessForm = () => {
         return (
           <>
             <Switch
-              disabled={permissions.change_status ? false : true}
+              disabled={permissions.change_is_active ? false : true}
               defaultChecked={item.active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
@@ -385,7 +367,7 @@ const businessForm = () => {
     if (value.id) {
       delete value["parent"];
       delete value["image"];
-      Axios.put(API_URL + `/business/node/${value.id}/`, value)
+      WebApiPeople.changeStatusNode(value.id, value)
         .then((response) => {
           closeModalUpdate();
         })
@@ -409,7 +391,6 @@ const businessForm = () => {
       return;
     }
     if (info.fileList.length > 0) {
-      // Get this url from response in real world.
       setLogo(info.file.originFileObj);
       getBase64(info.file.originFileObj, (imageUrl) => {
         setLoadingLogo(false);
@@ -479,6 +460,7 @@ const businessForm = () => {
             {treeTable ? (
               <Table
                 className={"mainTable"}
+                scroll={{ x: 300 }}
                 size="small"
                 columns={columns}
                 dataSource={business}
@@ -531,7 +513,6 @@ const businessForm = () => {
               listType="picture-card"
               className="avatar-uploader"
               showUploadList={false}
-              /* beforeUpload={beforeUpload} */
               onChange={handleChange}
             >
               {imageUrl ? (
@@ -621,4 +602,11 @@ const businessForm = () => {
     </MainLayout>
   );
 };
-export default businessForm;
+
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.company,
+  };
+};
+
+export default connect(mapState)(businessForm);

@@ -13,20 +13,19 @@ import {
   Typography,
   Divider,
   Modal,
+  Space,
+  Badge
 } from "antd";
 import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
   UserOutlined,
   SearchOutlined,
+  MenuOutlined,
+  BellOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { css, Global } from "@emotion/core";
-import CardUser from "./CardUser";
 import Cookie from "js-cookie";
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 import { logoutAuth } from "../libs/auth";
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
@@ -44,12 +43,12 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
     getPerson();
   }, []);
 
-  const actionEvent = (data) => {};
-
   const getPerson = async () => {
     try {
       const user = JSON.parse(Cookie.get("token"));
-      let response = await WebApi.personForKhonnectId({ id: user.user_id });
+      let response = await WebApiPeople.personForKhonnectId({
+        id: user.user_id,
+      });
       if (!response.data.photo) response.data.photo = defaulPhoto;
       let personName =
         response.data.first_name + " " + response.data.flast_name;
@@ -80,6 +79,8 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <Text strong>{person.fullName}</Text>
               <br />
               <Text>{person.email}</Text>
+              <br/>
+              <small><b>{props.currentNode?props.currentNode.name:''}</b></small>
             </Col>
             {/* <Col span={24}>
                     <Divider className="divider-primary" />
@@ -88,13 +89,13 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           <Divider className="divider-primary" style={{ margin: "10px 0px" }} />
         </div>
         <Row>
-          <Col span={24}>
+          <Col span={24} style={{padding:10}}>
             <p
               className="text-menu"
               onClick={() => {
                 !person.nodes && props.currentNode
                   ? router.push(`/ac/urn/${props.currentNode.permanent_code}`)
-                  : router.push(`/home/${person.id}`);
+                  : router.push(`/home/persons/${person.id}`);
               }}
             >
               <Text>Editar perfil</Text>
@@ -121,12 +122,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           </Col>
         </Row>
       </Card>
-      {/* <CardUser
-        person={person}
-        visible={logOut}
-        currentNode={props.currentNode}
-        acction={actionEvent}
-      /> */}
     </>
   );
 
@@ -147,24 +142,22 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             background: var(--primaryColor) !important;
             opacity: 0.9;
           }
-          .ant-menu {
-            width: 100%;
-            // text-align: center;
-          }
-          .ant-menu .ant-menu-item {
+          /* .ant-menu .ant-menu-item {
             margin: 0px !important;
-            // padding: 0px !important;
-          }
+            padding: 0px !important;
+          } */
           .text-menu {
-            text-align: center;
             padding-bottom: 5px;
             padding-top: 5px;
             margin: 0px;
+            padding: 5px;
             cursor: pointer;
           }
           .text-menu:hover {
             background-color: var(--primaryColor);
             opacity: 0.6;
+            border-radius: 20px;
+            padding: 5px;
           }
           .text-menu:hover span {
             color: var(--fontSpanColor);
@@ -183,13 +176,19 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <div className="overlay" />
         <div className="container-fluid">
           <Row justify="space-between">
-            <Col style={{ maxWidth: 250, minWidth: 50, display: "flex" }}>
-              <img
+            <Col style={{ width: 250, display: "flex" }}>
+              <object
                 style={{ maxWidth: 100, margin: "auto", maxHeight: 50 }}
-                src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
-              />
+                data="/images/LogoKhorconnect.svg"
+                type="image/svg+xml"
+              >
+                <img
+                  style={{ maxWidth: 100, margin: "auto", maxHeight: 50 }}
+                  src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
+                />
+              </object>
             </Col>
-            {/* <Col>
+            {/*  <Col>
               {!hideSearch && (
                 <Input
                   className="search_header"
@@ -199,21 +198,30 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 />
               )}
             </Col> */}
-            <Col style={{ maxWidth: 250, minWidth: 50, textAlign: "end" }}>
+            <Col style={{ width: 250, textAlign: "end" }}>
               <div
                 className={"pointer"}
                 style={{ float: "right" }}
                 key={"menu_user_" + props.currentKey}
               >
-                <Dropdown overlay={userCardDisplay} key="dropdown_user">
-                  <div key="menu_user_content">
-                    <Avatar
-                      key="avatar_key"
-                      icon={<UserOutlined />}
-                      src={person.photo}
+                <Space size={"middle"}>
+                  <Badge dot>
+                    <BellOutlined
+                      style={{ color: "white", fontSize: 20 }}
+                      onClick={() => props.setShowEvents(true)}
                     />
-                  </div>
-                </Dropdown>
+                  </Badge>
+                  <MenuOutlined style={{ color: "white", fontSize: 20 }} />
+                  <Dropdown overlay={userCardDisplay} key="dropdown_user">
+                    <div key="menu_user_content">
+                      <Avatar
+                        key="avatar_key"
+                        icon={<UserOutlined />}
+                        src={person.photo}
+                      />
+                    </div>
+                  </Dropdown>
+                </Space>
               </div>
 
               {/* <Avatar

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Select } from 'antd';
 import styled from 'styled-components';
-import { Row, Col } from 'antd';
+import { Row, Col, Badge } from 'antd';
+import _ from 'lodash'
 
 const ReactionsImg = styled.img`
     max-width: 20px;
@@ -31,8 +32,26 @@ const CustomTable = styled(Table)`
         width: 16%;
     }
 `;
-const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters}) => {
+const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters, changeStatus, ...props}) => {
 
+    const {Option} = Select
+
+    const optionsActions = [
+        {
+            label: 'Pendiente',
+            value: 2
+        },
+        {
+            label: 'Publicada',
+            value: 1
+        },
+        {
+            label: 'Bloqueada',
+            value: 0
+        }
+    ]
+
+    console.log('processedPublicationsList =>',processedPublicationsList)
     const ReactionByType = ({reactions = [{1: '0'}, {2:'0'}, {3: '0'}, {4: '0'}, {5: '0'}, {6: '0'}, {7: '0'}]}) => (
         <>
             {/* <Row>
@@ -72,6 +91,8 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
         </>
     );
 
+    
+
     const columns = [
         {
             title: 'Fecha',
@@ -96,6 +117,13 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             key: 'owner'
         },
         {
+            title: 'Grupo',
+            key: 'owner',
+            render: row => (
+                row.group && row.group.name ? row.group.name : "--"
+            )
+        },
+        {
             title: 'Comentarios',
             dataIndex: 'comments',
             key: 'comments',
@@ -113,6 +141,14 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             key: 'clicks'
         },
         {
+            title: 'Estatus',
+            key: 'status',
+            render: (row) => (
+                <Select value={row.status} options={optionsActions} onChange={(e) => changeStatus(row, e)} placeholder="Estatus">
+                </Select>
+            )
+        },
+        {
             title: 'Reacciones por tipo',
             dataIndex: 'reactions',
             key: 'reactions',
@@ -127,21 +163,22 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
     const handleChange = (pagination) => {
         console.log(pagination);
         // if(props.parameters && props.parameters != '')
-        if(pagination.current == 1){
-            changePage('', parameters);
+        if(pagination.current === 1){
+            changePage('', parameters+"&is_moderator_view=true");
         }else{
-            changePage(pagination.current, parameters);
+            changePage( props.currentNode, pagination.current, parameters+"&is_moderator_view=true");
         }
         
     }
-    
+
     return(
         <>
         
             <CustomTable columns={columns} scroll={{ x: 800 }} pagination={{
                 current: current, 
                 pageSize: 10, 
-                total: total }} 
+                total: total,
+             }} 
                 dataSource={processedPublicationsList}
                 onChange={handleChange}
                 loading={fetching}

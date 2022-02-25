@@ -8,12 +8,15 @@ const SelectPersonType = ({ ...props }) => {
   useEffect(() => {
     setPersonType([]);
     if (props.cat_person_type) {
-      setPersonType(props.cat_person_type);
+      let cats = props.cat_person_type.map((a) => {
+        return { label: a.name, value: a.id };
+      });
+      setPersonType(cats);
     }
   }, [props.cat_person_type]);
 
   return (
-    <Form.Item name="person_type">
+    <Form.Item name="person_type" label={props.label ? props.label : null}>
       <Select options={personType} placeholder="Tipo de persona" />
     </Form.Item>
   );

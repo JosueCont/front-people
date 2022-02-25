@@ -18,7 +18,7 @@ import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import { companySelected, setUser } from "../../redux/UserDuck";
 import { doCompanySelectedCatalog } from "../../redux/catalogCompany";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import Clipboard from "../../components/Clipboard";
 import { Global, css } from "@emotion/core";
 import {
@@ -54,7 +54,9 @@ const SelectCompany = ({ ...props }) => {
   useEffect(async () => {
     try {
       if (jwt) {
-        let response = await WebApi.personForKhonnectId({ id: jwt.user_id });
+        let response = await WebApiPeople.personForKhonnectId({
+          id: jwt.user_id,
+        });
         props
           .setUser()
           .then((response) => {
@@ -92,7 +94,7 @@ const SelectCompany = ({ ...props }) => {
 
   const getCopaniesList = async () => {
     try {
-      let response = await WebApi.getCompanys();
+      let response = await WebApiPeople.getCompanys();
       let data = response.data.results.filter((a) => a.active);
       setDataList(data);
       setLoading(false);
@@ -105,12 +107,10 @@ const SelectCompany = ({ ...props }) => {
   const setCompanySelect = async (item) => {
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
-    sessionStorage.setItem("name", item.name);
-    sessionStorage.setItem("image", item.image);
-    let response = await props.companySelected(item.id);
+    let response = await props.companySelected(item.id, props.config);
     if (response) {
       props.doCompanySelectedCatalog();
-      useRouter.push("home");
+      useRouter.push("home/persons");
     } else {
       message.error("Ocurrio un error, intente de nuevo.");
     }

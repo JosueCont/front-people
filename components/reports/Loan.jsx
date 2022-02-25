@@ -19,8 +19,10 @@ import moment from "moment-timezone";
 import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
+import { connect } from 'react-redux'
 
-const LoanReport = (props) => {
+
+const LoanReport = ({ permissions, ...props}) => {
   const route = useRouter();
   const { Option } = Select;
   const [form] = Form.useForm();
@@ -37,7 +39,6 @@ const LoanReport = (props) => {
   const [periodicity, setPeriodicity] = useState(null);
   const [timestampGte, setTimestampGte] = useState(null);
   const [timestampLte, setTimestampLte] = useState(null);
-  const [permissions, setPermissions] = useState({});
   const [status, setStatus] = useState(null);
   let nodeId = userCompanyId();
 
@@ -142,7 +143,7 @@ const LoanReport = (props) => {
       render: (record, item) => {
         return (
           <>
-            {permissions.loans && (
+            {permissions.export_loans && (
               <DownloadOutlined onClick={() => download(item)} />
             )}
           </>
@@ -327,17 +328,9 @@ const LoanReport = (props) => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getLending();
   }, []);
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.report.function.export_loans")) perms.loans = true;
-    });
-    setPermissions(perms);
-  };
 
   return (
     <>
@@ -438,7 +431,7 @@ const LoanReport = (props) => {
           </Form>
         </Col>
         <Col className="columnRightFilter">
-          {permissions.loans && (
+          {permissions.export_loans && (
             <Button
               style={{
                 background: "#fa8c16",
@@ -474,4 +467,10 @@ const LoanReport = (props) => {
   );
 };
 
-export default LoanReport;
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.report
+  };
+};
+
+export default connect(mapState)(LoanReport);

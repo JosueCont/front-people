@@ -3,6 +3,8 @@ import axios from "axios";
 import { API_URL } from "../../config/config";
 import React, { useEffect, useState } from "react";
 import { userCompanyId } from "../../libs/auth";
+import SelectCollaborator from "../selects/SelectCollaborator";
+import WebApiIntranet from '../../api/WebApiIntranet'
 
 const { Option } = Select;
 const AddPeopleGroup = (props) => {
@@ -41,11 +43,10 @@ const AddPeopleGroup = (props) => {
       });
   };
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     let data = {};
     data.user = values.guests;
-    axios
-      .patch(API_URL + `/intranet/group/${props.group.id}/`, data)
+    await WebApiIntranet.updGroup(props.group.id, data)
       .then((res) => {
         props.setVisible();
       })
@@ -62,8 +63,8 @@ const AddPeopleGroup = (props) => {
           maskClosable={false}
           title={
             props.group.user.length > 0
-              ? "Editar lista de personas del " + props.group.name
-              : "Agregar personas al " + props.group.name
+              ? "Editar lista de personas de" + props.group.name
+              : "Agregar personas a " + props.group.name
           }
           centered
           visible={props.visible}
@@ -74,27 +75,12 @@ const AddPeopleGroup = (props) => {
           <Form onFinish={onFinish} form={form} layout={"vertical"}>
             <Row>
               <Col lg={24} xs={12}>
-                <Form.Item
+                <SelectCollaborator
                   label="Personas"
                   name="guests"
-                  rules={[
-                    {
-                      required: false,
-                      message: "Por favor selecciona invitados",
-                    },
-                  ]}
-                >
-                  <Select
-                    showSearch
-                    optionFilterProp="children"
-                    mode="multiple"
-                    allowClear
-                    placeholder="Selecciona invitados"
-                    notFoundContent={"No se encontraron resultado."}
-                  >
-                    {persons.map(person => <Option key={person.value} value={person.value}>{person.label}</Option>)}
-                  </Select>
-                </Form.Item>
+                  mode="multiple"
+                  showSearch
+                />
               </Col>
             </Row>
 

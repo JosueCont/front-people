@@ -18,6 +18,8 @@ import {
   AutoComplete,
 } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
+import WebApiPeople from '../../api/WebApiPeople'
+import SelectCollaborator from '../selects/SelectCollaborator';
 
 const arrayConfigType = [
   { id: 1, name: "Me gusta", emoji: "👍🏻" },
@@ -43,19 +45,24 @@ const beforeUpload = (file) => {
 };
 
 const FormConfig = (props) => {
+  console.log('props',props);
+  const [personsSelected, setPersonsSelected] = useState([])
   const [formConfigIntranet] = Form.useForm();
   const [photo, setPhoto] = useState(
     props.getImage ? props.getImage + "?" + new Date() : null
   );
+  const {nodeId} = props;
   const [imageUpdate, setImageUpdate] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  const [showPersons, setShowPersons] = useState(false)
 
   const [interactionsAPI, setInteractionsAPI] = useState(arrayConfigType);
   const [interactionsSelected, setInteractionsSelected] = useState([]);
   const interactionsFilteredOptions = interactionsAPI.filter(
     (o) => !interactionsSelected.includes(o)
   );
+  const [persons, setPersons] = useState([])
 
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
 
@@ -88,6 +95,7 @@ const FormConfig = (props) => {
 
   useEffect(() => {
     getDataInfo();
+    getPersons();
   }, [props.config]);
 
   const getDataInfo = () => {
@@ -108,6 +116,18 @@ const FormConfig = (props) => {
               })
             : [],
       });
+
+      if(props.config.intranet_moderator_enabled){
+        setShowPersons(props.config.intranet_moderator_enabled)
+        let valuesPerson = props.config.intranet_moderator_person.map(item =>{
+          return item.id
+        })
+        console.log('valuesPerson',valuesPerson);
+        setPersonsSelected(valuesPerson)
+
+      }
+
+
       if (props.config.intranet_logo) {
         setPhoto(props.config.intranet_logo + "?" + new Date());
       }
@@ -132,6 +152,12 @@ const FormConfig = (props) => {
   }));
 
   const onFinish = (values) => {
+    
+    if(showPersons){
+      values['intranet_moderator_person'] = personsSelected;
+    }
+
+    console.log(values)
     saveConfig(values);
   };
 
@@ -154,6 +180,8 @@ const FormConfig = (props) => {
         data.intranet_enable_post_reaction.length > 0
           ? data.intranet_enable_post_reaction
           : null,
+      intranet_moderator_enabled: data.intranet_moderator_enabled,
+      intranet_moderator_person: data.intranet_moderator_person
     };
     let params = new FormData();
     let image = data.image ? data.image.file.originFileObj : "";
@@ -197,6 +225,43 @@ const FormConfig = (props) => {
     }
   };
 
+  const getPersons = async () => {
+    /* setLoading(true); */
+    try {
+      let response = await WebApiPeople.filterPerson({node: nodeId});
+      setPersons([]);
+      let personList = response.data.map((a) => {
+        a.key = a.khonnect_id;
+        return a;
+      });
+      console.log('object');
+      console.log('nodeID', nodeId);
+      let list2 = personList.filter( (item) => item.node === nodeId );
+      console.log('list2',list2);
+
+      console.log('persons',personList);
+      setPersons(personList);
+    } catch (error) {
+      setPersons([]);
+      console.log(error);
+    }
+  };
+
+  const changeSwitch = (checked, e) =>{
+    setShowPersons(checked)
+    /* console.log('checked =>', checked) */
+  }
+  
+  useEffect(() => {
+    console.log('showPersons',showPersons)
+  }, [showPersons])
+  
+
+  const onChangePerson = (values) =>{
+    console.log('values',values);
+    setPersonsSelected(values)
+  }
+
   return (
     <>
       {/* <Layout className="site-layout-background"> */}
@@ -214,13 +279,13 @@ const FormConfig = (props) => {
                 name="nameIntranet"
                 label="Nombre de intranet"
               >
-                <AutoComplete
+                {/* <AutoComplete
                   name="nameIntranet"
                   label="Nombre"
                   onChange={onWebsiteChange}
-                >
+                > */}
                   <Input />
-                </AutoComplete>
+                {/* </AutoComplete> */}
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
@@ -321,6 +386,43 @@ const FormConfig = (props) => {
                 </Upload>
               </Form.Item>
             </Col>
+            <Col lg={6} xs={22} offset={1}>
+              <Form.Item name={'intranet_moderator_enabled'} label="Las publicaciones requieren moderación">
+                <Switch checked={showPersons} onChange={changeSwitch} />
+              </Form.Item>
+            </Col>
+
+            { showPersons && 
+              <Col lg={6} xs={22} offset={1}>
+                <SelectCollaborator 
+                  label="Usuarios" 
+                  mode="multiple" 
+                  showSearch 
+                  placeholder="Selecciona una opción"
+                  onChange={onChangePerson}
+                  value={personsSelected}
+                />
+                {/* <Form.Item label={'Usuarios'} >
+                  <Select
+                    mode="multiple"
+                    showSearch
+                    placeholder="Selecciona una opción"
+                    optionFilterProp="children"
+                    onChange={onChangePerson}
+                    filterOption={(input, option) =>
+                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                    value={personsSelected}
+                  >
+                    {
+                      persons.map(item => (
+                        <Select.Option key={item.first_name+item.flast_name} value={item.id}>{item.first_name+' '+item.flast_name}</Select.Option>
+                      ))
+                    }
+                  </Select>
+                </Form.Item> */}
+              </Col>
+            } 
           </Row>
           <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
             <Col>

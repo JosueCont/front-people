@@ -38,8 +38,6 @@ const Home = ({ ...props }) => {
       setLoading(false);
     }
   }, [props.config]);
-  /* const [loginFormShow, SetLoginFormShow] = useState(true); */
-  console.log(flavor);
   return (
     <>
       <Global
@@ -87,13 +85,15 @@ const Home = ({ ...props }) => {
           }
 
           .divContainerLeft {
-            top: 185px !important;
-            position: relative;
             text-align: center;
             width: 90%;
             margin: 0 auto;
             padding: 50px;
             height: 510px;
+
+            position: relative;
+    display: flex;
+
             -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
             -moz-animation: fadein 2s; /* Firefox < 16 */
             -ms-animation: fadein 2s; /* Internet Explorer */
@@ -102,7 +102,6 @@ const Home = ({ ...props }) => {
           }
 
           .divform {
-            top: 175px;
             position: relative;
             width: 75% !important;
             margin: 0 auto;
@@ -114,9 +113,9 @@ const Home = ({ ...props }) => {
           }
 
           .textBottom {
-            top: 30%;
+            bottom:0;
             height: 45px;
-            position: relative;
+            position: absolute;
             font-size: 12px;
             letter-spacing: 0px;
             color: #ffffff !important;
@@ -171,6 +170,11 @@ const Home = ({ ...props }) => {
             }
           }
           
+          .fullPage{
+            width: 100%;
+            height: 100vh;
+            display: flex;
+          }
           
           @media only screen and (max-width: 768px) {
             .divform {
@@ -212,6 +216,7 @@ const Home = ({ ...props }) => {
             .login-form {
               width: 100% !important;
             }
+           }
         `}
       />
       <Helmet>
@@ -227,11 +232,42 @@ const Home = ({ ...props }) => {
       </Helmet>
 
       {props.config ? (
-        <Row>
-          <Col xs={0} md={12} sm={0}>
-            <div className="divContainerLeft">
+        <div className="fullPage">
+          <Row
+            style={{ marginTop: "auto", marginBottom: "auto", width: "100%" }}
+          >
+            <Col xs={0} md={12} sm={0}>
+              <div className="divContainerLeft">
+                <div
+                  style={{
+                    width: "100%",
+                    textAlign: "center",
+                    margin: 'auto'
+                  }}
+                >
+                  <img
+                    className={"logoKhor"}
+                    src={"/images/iU_Khorplus.png"}
+                    width={200}
+                    alt=""
+                  />
+                </div>
+
+                <p className={"textBottom"}>
+                  KHOR A People Management Framework y PPP Personal Proficiency
+                  Profile, son marcas registradas y propiedad de @-Hiuman, S.A.
+                  de C.V.
+                </p>
+              </div>
+            </Col>
+            <Col xs={24} md={0} sm={0}>
               <div
-                style={{ width: "100%", textAlign: "center", marginTop: "30%" }}
+                style={{
+                  width: "100%",
+                  textAlign: "center",
+                  marginTop: "80px",
+                }}
+                className={"fadein"}
               >
                 <img
                   className={"logoKhor"}
@@ -240,56 +276,41 @@ const Home = ({ ...props }) => {
                   alt=""
                 />
               </div>
+            </Col>
 
-              <p className={"textBottom"}>
-                KHOR A People Management Framework y PPP Personal Proficiency
-                Profile, son marcas registradas y propiedad de @-Hiuman, S.A. de
-                C.V.
-              </p>
-            </div>
-          </Col>
-          <Col xs={24} md={0} sm={0}>
-            <div
-              style={{ width: "100%", textAlign: "center", marginTop: "80px" }}
-              className={"fadein"}
-            >
-              <img
-                className={"logoKhor"}
-                src={"/images/iU_Khorplus.png"}
-                width={200}
-                alt=""
-              />
-            </div>
-          </Col>
-
-          <Col xs={24} md={12} sm={24} style={{ padding: 20 }}>
-            {recoverPasswordShow ? (
-              <PasswordRecover
-                generalConfig={props.config}
-                setRecoverPasswordShow={setRecoverPasswordShow}
-              />
-            ) : (
-              <div className={"divform"}>
-                <LoginForm
+            <Col xs={24} md={12} sm={24}>
+              {recoverPasswordShow ? (
+                <PasswordRecover
                   generalConfig={props.config}
                   setRecoverPasswordShow={setRecoverPasswordShow}
                 />
-              </div>
-            )}
-          </Col>
+              ) : (
+                <div className={"divform"}>
+                  <LoginForm
+                    generalConfig={props.config}
+                    setRecoverPasswordShow={setRecoverPasswordShow}
+                  />
+                </div>
+              )}
+            </Col>
 
-          <Col xs={24} md={0} sm={0}>
-            <div
-              style={{ width: "100%", textAlign: "center", marginTop: "10px" }}
-            >
-              <p className={"textBottomblack"}>
-                KHOR A People Management Framework y PPP Personal Proficiency
-                Profile, son marcas registradas y propiedad de @-Hiuman, S.A. de
-                C.V.
-              </p>
-            </div>
-          </Col>
-        </Row>
+            <Col xs={24} md={0} sm={0}>
+              <div
+                style={{
+                  width: "100%",
+                  textAlign: "center",
+                  marginTop: "10px",
+                }}
+              >
+                <p className={"textBottomblack"}>
+                  KHOR A People Management Framework y PPP Personal Proficiency
+                  Profile, son marcas registradas y propiedad de @-Hiuman, S.A.
+                  de C.V.
+                </p>
+              </div>
+            </Col>
+          </Row>
+        </div>
       ) : (
         <div className="center-content">
           <Spin tip="Cargando..." spinning={loading} />

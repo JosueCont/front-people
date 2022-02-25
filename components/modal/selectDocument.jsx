@@ -1,15 +1,5 @@
-import {
-  Form,
-  Modal,
-  message,
-  Layout,
-  Select,
-  Upload,
-  Button,
-  Space,
-} from "antd";
-import TextArea from "antd/lib/input/TextArea";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { Form, Modal, message, Layout, Select, Button, Space } from "antd";
+import { useEffect, useState, useRef } from "react";
 
 import {
   UploadOutlined,
@@ -19,7 +9,7 @@ import {
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { userCompanyId } from "../../libs/auth";
-import { connect } from "react-redux";
+import { ruleRequired } from "../../utils/rules";
 
 const ModalSelectDocument = ({
   person_id,
@@ -40,7 +30,6 @@ const ModalSelectDocument = ({
   const closeDialog = () => {
     props.close(false);
     form.resetFields();
-    ///setFile(null)
   };
 
   useEffect(() => {
@@ -185,8 +174,6 @@ const ModalSelectDocument = ({
         console.log(error);
       });
   };
-
-  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   return (
     <>

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { connect } from "react-redux";
 
 const SelectDepartment = ({
   disabled,
-  titleLabel = true,
+  viewLabel = true,
   rules = [],
   companyId,
   ...props
@@ -34,7 +32,7 @@ const SelectDepartment = ({
       <Form.Item
         key="ItemDepartment"
         name={props.name ? props.name : "department"}
-        label={titleLabel ? "Departamento" : ""}
+        label={viewLabel ? "Departamento" : ""}
         rules={rules}
       >
         <Select

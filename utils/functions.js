@@ -1,93 +1,19 @@
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 
-export const genders = [
-  {
-    label: "Masculino",
-    value: 1,
-  },
-  {
-    label: "Femenino",
-    value: 2,
-  },
-  {
-    label: "Otro",
-    value: 3,
-  },
-];
-export const civilStatus = [
-  {
-    label: "Soltero(a)",
-    value: 1,
-  },
-  {
-    label: "Casado(a)",
-    value: 2,
-  },
-  {
-    label: "Viudo(a)",
-    value: 3,
-  },
-];
-export const typePhones = [
-  {
-    label: "Alterno",
-    value: 1,
-  },
-  {
-    label: "Principal",
-    value: 2,
-  },
-  {
-    label: "Recados",
-    value: 3,
-  },
-];
-export const typeLines = [
-  {
-    label: "Celular",
-    value: 1,
-  },
-  {
-    label: "Fijo",
-    value: 2,
-  },
-];
-export const typeStreet = [
-  {
-    label: "Avenida",
-    value: 1,
-  },
-  {
-    label: "Boulevard",
-    value: 2,
-  },
-  {
-    label: "Calle",
-    value: 3,
-  },
-];
-export const periodicity = [
-  {
-    label: "Semanal",
-    value: 1,
-  },
-  {
-    label: "Catorcenal",
-    value: 2,
-  },
-  {
-    label: "Quincenal",
-    value: 3,
-  },
-  {
-    label: "Mensual",
-    value: 4,
-  },
-];
+export const generateYear = () => {
+  let yearsArray = [];
+  let currentYear = new Date().getFullYear();
+  let startYear = currentYear - 10;
+  while (startYear < currentYear) {
+    startYear++;
+    yearsArray.push({ label: `${startYear}`, value: startYear });
+  }
+  return yearsArray.reverse();
+};
 
 export const getJobForSelect = async (id) => {
   try {
-    let response = await WebApi.getJobSelect(id);
+    let response = await WebApiPeople.getJobSelect(id);
     let job = response.data;
     job = job.map((a) => {
       return { label: a.name, value: a.id };
@@ -104,109 +30,151 @@ export const asyncForEach = async (array, callback) => {
   }
 };
 
-export const UserPermissions = (data) => {
+export const UserPermissions = (permits = null, is_admin = false) => {
+  let perms = {
+    person: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+      change_is_active: is_admin,
+      export_csv_person: is_admin,
+      import_csv_person: is_admin,
+    },
+    company: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+      change_is_active: is_admin,
+    },
+    groups: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+      approve_account: is_admin,
+      reject_account: is_admin,
+    },
+    requestaccount: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+      approve_account: is_admin,
+      reject_account: is_admin,
+    },
+    person_type: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+    },
+    department: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+    },
+    job: { view: is_admin, create: is_admin, edit: is_admin, delete: is_admin },
+    relationship: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+    },
+    bank: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+    },
+    document_type: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+    },
+    payrollvoucher: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+      import_payrollvoucher: is_admin,
+    },
+    comunication: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+    },
+    event: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+    },
+    loan: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+      approve_loan: is_admin,
+      reject_loan: is_admin,
+      approve_loan_pay: is_admin,
+    },
+    loanconfigure: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+    },
+    vacation: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+      approve_vacation: is_admin,
+      reject_vacation: is_admin,
+    },
+    permit: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+      approve_permit: is_admin,
+      reject_permit: is_admin,
+    },
+    incapacity: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+
+      approve_incapacity: is_admin,
+      reject_incapacity: is_admin,
+    },
+    report: {
+      view: is_admin,
+      create: is_admin,
+      edit: is_admin,
+      delete: is_admin,
+      export_collaborators: is_admin,
+      export_payrolls: is_admin,
+      export_loans: is_admin,
+      export_vacations: is_admin,
+      export_inabilitys: is_admin,
+      export_permits: is_admin,
+    },
+    intranet: {
+      dashboard: { statistics: is_admin },
+    },
+  };
+  if (is_admin || !permits) {
+    return perms;
+  }
   try {
-    let perms = {
-      person: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        change_is_active: false,
-        export_csv_person: false,
-        import_csv_person: false,
-      },
-      company: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        change_is_active: false,
-      },
-      groups: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        approve_account: false,
-        reject_account: false,
-      },
-      requestaccount: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        approve_account: false,
-        reject_account: false,
-      },
-      person_type: { view: false, create: false, edit: false, delete: false },
-      department: { view: false, create: false, edit: false, delete: false },
-      job: { view: false, create: false, edit: false, delete: false },
-      relationship: { view: false, create: false, edit: false, delete: false },
-      bank: { view: false, create: false, edit: false, delete: false },
-      document_type: { view: false, create: false, edit: false, delete: false },
-      payrollvoucher: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        import_payrollvoucher: false,
-      },
-      comunication: { view: false, create: false, edit: false, delete: false },
-      event: { view: false, create: false, edit: false, delete: false },
-      loan: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        approve_loan: false,
-        reject_loan: false,
-        approve_loan_pay: false,
-      },
-      loanconfigure: { view: false, create: false, edit: false, delete: false },
-      vacation: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        approve_vacation: false,
-        reject_vacation: false,
-      },
-      permit: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        approve_permit: false,
-        reject_permit: false,
-      },
-      incapacity: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-
-        approve_incapacity: false,
-        reject_incapacity: false,
-      },
-      report: {
-        view: false,
-        create: false,
-        edit: false,
-        delete: false,
-        export_collaborators: false,
-        export_payrolls: false,
-        export_loans: false,
-        export_vacations: false,
-        export_inabilitys: false,
-        export_permits: false,
-      },
-
-      intranet: {
-        dashboard: { statistics: false },
-      },
-    };
-    data.map((a) => {
+    permits.map((a) => {
       if (a == "people.company.can.view") perms.company.view = true;
       else if (a == "people.company.can.create") perms.company.create = true;
       else if (a == "people.company.can.edit") perms.company.edit = true;
@@ -360,6 +328,15 @@ export const UserPermissions = (data) => {
     });
     return perms;
   } catch {
-    return [];
+    return perms;
+  }
+};
+
+export const getDomain = (api) => {
+  try {
+    let tenat = window.location.hostname.split(".")[0];
+    return `${tenat}.${api}`;
+  } catch (error) {
+    return "error";
   }
 };

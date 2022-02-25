@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Modal, message } from "antd";
 import { connect, useDispatch } from "react-redux";
 import { withAuthSync, userCompanyId } from "../../../libs/auth";
-import { ruleRequired } from "../../../utils/constant";
 import FormItemHTML from "./FormItemHtml";
 import {
   answerCreateAction,
   answerUpdateAction,
 } from "../../../redux/assessmentDuck";
+import { ruleRequired } from "../../../utils/rules";
 
 const FormAnswer = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();

@@ -16,6 +16,7 @@ import DetailGroup from "../../../components/intranet/DetailGroup";
 import { useRouter } from "next/router";
 import { withAuthSync } from "../../../libs/auth";
 import AddPeopleGroup from "../../../components/intranet/AddPeopleGroup";
+import WebApiIntranet from '../../../api/WebApiIntranet'
 
 const GroupView = ({ ...props }) => {
   const router = useRouter();
@@ -90,8 +91,7 @@ const GroupView = ({ ...props }) => {
       setLoading(true);
       setGroups([]);
       try {
-        const url = API_URL + `/intranet/group/?node=${companyId}`;
-        const res = await Axios.get(url);
+        const res = await WebApiIntranet.getGroupList(companyId);
         if (res.data.count > 0) {
           setGroups(res.data.results);
         }
