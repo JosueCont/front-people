@@ -109,6 +109,7 @@ const GroupsKuiz = () =>{
                     dataGroups={listGroups}
                     setLoading={setLoading}
                     createGroup={createGroup}
+                    hiddenName={false}
                     hiddenSurveys={false}
                 />
                 <TableGroups
@@ -120,6 +121,7 @@ const GroupsKuiz = () =>{
                     getListGroups={getListGroups}
                     updateGroup={updateGroup}
                     deteleGroup={deleteGroup}
+                    hiddenName={false}
                     hiddenSurveys={false}
                 />
             </div>

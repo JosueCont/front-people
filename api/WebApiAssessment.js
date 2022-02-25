@@ -14,7 +14,8 @@ class WebApiAssessment {
         return Axios.get(`${API_ASSESSMENT}/assessments/assessment/?companies=${nodeId}`);
     }
     static createGroupAssessments(data){
-        return Axios.post(`${API_ASSESSMENT}/assessments/group/`, {...data, company: nodeId});
+        // return Axios.post(`${API_ASSESSMENT}/assessments/group/`, {...data, company: nodeId});
+        return Axios.post(`${API_URL}/person/group-assessments/`, data);
     }
     static updateGroupAssessments(data, id){
         return Axios.put(`${API_ASSESSMENT}/assessments/group/${id}/`, {...data, node: nodeId});
