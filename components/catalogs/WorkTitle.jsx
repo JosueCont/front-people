@@ -15,7 +15,6 @@ import {
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
-  GoldOutlined,
 } from "@ant-design/icons";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -73,6 +72,28 @@ const WorkTitle = ({ currentNode, ...props }) => {
       key: "vacancy",
       render: (item) => {
         return <div>{item.vacancy ? item.vacancy.vacancy_numbers : ""}</div>;
+      },
+    },
+    {
+      title: "Vacantes disponibles",
+      key: "vacancies_available",
+      render: (item) => {
+        return (
+          <div>{item.vacancy ? item.vacancy.vacancies_available : ""}</div>
+        );
+      },
+    },
+    {
+      title: "Vacantes ocupadas",
+      key: "vacancies_",
+      render: (item) => {
+        return (
+          <div>
+            {item.vacancy
+              ? item.vacancy.vacancy_numbers - item.vacancy.vacancies_available
+              : ""}
+          </div>
+        );
       },
     },
     {
@@ -157,7 +178,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
       work_title_report: item.work_title_report
         ? item.work_title_report.id
         : null,
-      vacancy: item.vacancy.vacancy_numbers,
+      vacancy: item.vacancy ? item.vacancy.vacancy_numbers : "",
     });
   };
 
@@ -264,12 +285,12 @@ const WorkTitle = ({ currentNode, ...props }) => {
           </Col>
           <Col lg={8} xs={22} md={12}>
             <Form.Item name="vacancy" label="Vacantes">
-              <Input type="number" min={1} />
+              <Input type="number" min={1} defaultValue={1} />
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={12}>
             <Form.Item name="salary" label="Salario">
-              <Input type="number" min={0} />
+              <Input prefix={"$"} type="number" min={0} defaultValue={0} />
             </Form.Item>
           </Col>
         </Row>

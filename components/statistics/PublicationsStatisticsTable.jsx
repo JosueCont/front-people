@@ -2,6 +2,7 @@ import React from 'react';
 import { Table, Select } from 'antd';
 import styled from 'styled-components';
 import { Row, Col, Badge } from 'antd';
+import _ from 'lodash'
 
 const ReactionsImg = styled.img`
     max-width: 20px;
@@ -116,6 +117,13 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
             key: 'owner'
         },
         {
+            title: 'Grupo',
+            key: 'owner',
+            render: row => (
+                row.group && row.group.name ? row.group.name : "--"
+            )
+        },
+        {
             title: 'Comentarios',
             dataIndex: 'comments',
             key: 'comments',
@@ -156,9 +164,9 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
         console.log(pagination);
         // if(props.parameters && props.parameters != '')
         if(pagination.current === 1){
-            changePage('', parameters);
+            changePage('', parameters+"&is_moderator_view=true");
         }else{
-            changePage( props.currentNode, pagination.current, parameters);
+            changePage( props.currentNode, pagination.current, parameters+"&is_moderator_view=true");
         }
         
     }

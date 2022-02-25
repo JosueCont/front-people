@@ -48,7 +48,7 @@ const MainLayout = ({
       var head = document.head;
       var link = document.createElement("link");
       link.type = "text/css";
-      link.href = routeFlavor + "/" + vflavor.stylePath;
+      if (vflavor.stylePath) link.href = routeFlavor + "/" + vflavor.stylePath;
       link.rel = "stylesheet";
       link.async = true;
 
@@ -240,6 +240,7 @@ const MainLayout = ({
       <Layout>
         <NewHeader
           key="main_header"
+          currentNode={props.currentNode}
           hideMenu={hideMenu}
           mainLogo={mainLogo}
           hideProfile={hideProfile}

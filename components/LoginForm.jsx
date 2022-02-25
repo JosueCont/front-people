@@ -243,8 +243,9 @@ const LoginForm = ({
                 Acepto los términos y condiciones{" "}
               </Checkbox>
               |
-              <a href="https://google.com.mx" target="_blank">
+              <a href={infoSite.terms_and_conditions_link} target="_blank">
                 <LinkOutlined size={"small"} />
+                
               </a>
             </Form.Item>
           )}

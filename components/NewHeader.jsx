@@ -79,6 +79,8 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <Text strong>{person.fullName}</Text>
               <br />
               <Text>{person.email}</Text>
+              <br/>
+              <small><b>{props.currentNode?props.currentNode.name:''}</b></small>
             </Col>
             {/* <Col span={24}>
                     <Divider className="divider-primary" />
@@ -87,13 +89,13 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           <Divider className="divider-primary" style={{ margin: "10px 0px" }} />
         </div>
         <Row>
-          <Col span={24}>
+          <Col span={24} style={{padding:10}}>
             <p
               className="text-menu"
               onClick={() => {
                 !person.nodes && props.currentNode
                   ? router.push(`/ac/urn/${props.currentNode.permanent_code}`)
-                  : router.push(`/home/${person.id}`);
+                  : router.push(`/home/persons/${person.id}`);
               }}
             >
               <Text>Editar perfil</Text>
@@ -148,11 +150,14 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             padding-bottom: 5px;
             padding-top: 5px;
             margin: 0px;
+            padding: 5px;
             cursor: pointer;
           }
           .text-menu:hover {
             background-color: var(--primaryColor);
             opacity: 0.6;
+            border-radius: 20px;
+            padding: 5px;
           }
           .text-menu:hover span {
             color: var(--fontSpanColor);

@@ -20,7 +20,13 @@ import SelectJob from "../selects/SelectJob";
 
 import { useEffect } from "react";
 import moment from "moment";
-import { civilStatus, genders, periodicity } from "../../utils/constant";
+import {
+  civilStatus,
+  genders,
+  messageError,
+  messageUpdateSuccess,
+  periodicity,
+} from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
   curpFormat,
@@ -134,18 +140,21 @@ const DataPerson = ({ config, person = null, ...props }) => {
 
   const updatePerson = async (data) => {
     setLoading(true);
-    try {
-      let response = await WebApiPeople.updatePerson(data, person.id);
-      setFormPerson(response.data);
-      message.success({
-        content: "Actualizado correctamente.",
-        className: "custom-class",
+    await WebApiPeople.updatePerson(data, person.id)
+      .then((response) => {
+        console.log("Response-->> ", response.data);
+        setFormPerson(response.data);
+        message.success({
+          content: "Actualizado correctamente.",
+          className: "custom-class",
+        });
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("Response error-->> ", response.data);
+        message.error("Error al actualizar, intente de nuevo.");
+        setLoading(false);
       });
-      setLoading(false);
-    } catch (error) {
-      message.error("Error al actualizar, intente de nuevo.");
-      setLoading(false);
-    }
   };
 
   let numberPhoto = 0;
@@ -200,14 +209,18 @@ const DataPerson = ({ config, person = null, ...props }) => {
     setDateAdmission(dateString);
   };
 
-  const changeStatus = (value) => {
+  const changeStatus = async (value) => {
     isActive ? setIsActive(false) : setIsActive(true);
-    let p = formPerson.getFieldsValue();
-    isActive ? (p.is_active = false) : (p.is_active = true);
-    delete p["date_of_admission"], p["node"], p["report_to"], p["department"];
-    WebApiPeople.updatePerson(p, person.id)
-      .then((response) => {})
+    let data = {
+      id: person.id,
+      status: value,
+    };
+    await WebApiPeople.changeStatusPerson(data)
+      .then((response) => {
+        message.success(messageUpdateSuccess);
+      })
       .catch((error) => {
+        message.error(messageError);
         console.log(error);
       });
   };

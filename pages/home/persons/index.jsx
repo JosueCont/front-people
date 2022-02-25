@@ -32,22 +32,34 @@ import {
 } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 import FormPerson from "../../../components/person/FormPerson";
-import { withAuthSync, userCompanyId, userCompanyName } from "../../../libs/auth";
+import {
+  withAuthSync,
+  userCompanyId,
+  userCompanyName,
+} from "../../../libs/auth";
 import { setDataUpload } from "../../../redux/UserDuck";
 
 import Link from "next/link";
 import jsCookie from "js-cookie";
 import Clipboard from "../../../components/Clipboard";
 import { connect } from "react-redux";
-import { genders, statusSelect } from "../../../utils/constant";
+import {
+  genders,
+  messageError,
+  messageUpdateSuccess,
+  statusSelect,
+} from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectAccessIntranet from "../../../components/selects/SelectAccessIntranet";
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
-import { downloadTemplateImportPerson, getDomain } from "../../../utils/functions";
+import {
+  downloadTemplateImportPerson,
+  getDomain,
+} from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
-import FormGroup from "../../../components/assessment/groups/FormGroup"
+import FormGroup from "../../../components/assessment/groups/FormGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 
 const homeScreen = ({ ...props }) => {
@@ -404,22 +416,23 @@ const homeScreen = ({ ...props }) => {
     },
   ];
 
-  const onchangeStatus = (value) => {
+  const onchangeStatus = async (value) => {
     value.is_active ? (value.is_active = false) : (value.is_active = true);
     let data = {
       id: value.id,
       status: value.is_active,
     };
-    Axios.post(API_URL + `/person/person/change_is_active/`, data)
+    await WebApiPeople.changeStatusPerson(data)
       .then((response) => {
         if (!response.data.photo) response.data.photo = defaulPhoto;
         response.data.key = value.key;
         person.map((a) => {
           if (a.id == response.data.id) a = response.data;
         });
+        message.success(messageUpdateSuccess);
       })
       .catch((error) => {
-        message.error("Ocurrio un error intente de nuevo.");
+        message.error(messageError);
         filterPersonName();
         console.log(error);
       });
@@ -487,9 +500,6 @@ const homeScreen = ({ ...props }) => {
             Eliminar
           </Menu.Item>
         )}
-        <Menu.Item onClick={() => setDeactivateModal([item])}>
-          Desactivar
-        </Menu.Item>
       </Menu>
     );
   };
@@ -665,7 +675,7 @@ const homeScreen = ({ ...props }) => {
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      setPersonsKeys(selectedRowKeys)
+      setPersonsKeys(selectedRowKeys);
       setPersonsToDelete(selectedRows);
     },
   };
@@ -696,22 +706,22 @@ const homeScreen = ({ ...props }) => {
     setPersonsKeys([])
   }
 
-  const getOnlyIds = () =>{
+  const getOnlyIds = () => {
     let ids = [];
-    personsToDelete.map(item=>{
-      ids.push(item.id)
-    })
+    personsToDelete.map((item) => {
+      ids.push(item.id);
+    });
     return ids;
-  }
+  };
 
-  const onFinishCreateGroup = async (values)=>{
-    setLoading(true)
+  const onFinishCreateGroup = async (values) => {
+    setLoading(true);
     const ids = getOnlyIds();
-    const body = {...values, persons: ids}
+    const body = { ...values, persons: ids };
     try {
-        await WebApiAssessment.createGroupPersons(body)
-        filterPersonName();
-        message.success("Grupo agregado")
+      await WebApiAssessment.createGroupPersons(body);
+      filterPersonName();
+      message.success("Grupo agregado");
     } catch (e) {
       console.log(e)
       setLoading(false)
@@ -732,23 +742,23 @@ const homeScreen = ({ ...props }) => {
       setLoading(false)
       message.error("Evaluaciones no asignadas ")
     }
-  }
+  };
 
-  useEffect(()=>{
-    if(modalCreateGroup){
-      if(personsToDelete.length > 0){
-        if(personsToDelete.length >= 2){
-          setShowModalGroup(true)
-        }else{
-          setModalCreateGroup(false)
-          message.error("Selecciona al menos 2 integrantes")
+  useEffect(() => {
+    if (modalCreateGroup) {
+      if (personsToDelete.length > 0) {
+        if (personsToDelete.length >= 2) {
+          setShowModalGroup(true);
+        } else {
+          setModalCreateGroup(false);
+          message.error("Selecciona al menos 2 integrantes");
         }
-      }else{
-        setModalCreateGroup(false)
-        message.error("Selecciona los integrantes")
+      } else {
+        setModalCreateGroup(false);
+        message.error("Selecciona los integrantes");
       }
     }
-  },[modalCreateGroup])
+  }, [modalCreateGroup]);
 
 
   useEffect(()=>{
@@ -1087,13 +1097,13 @@ const homeScreen = ({ ...props }) => {
         )}
         {showModalGroup && (
           <FormGroup
-              loadData={{}}
-              title={'Crear nuevo grupo'}
-              visible={showModalGroup}
-              close={HandleCloseGroup}
-              actionForm={onFinishCreateGroup}
-              hiddenSurveys={true}
-              hiddenMembers={true}
+            loadData={{}}
+            title={"Crear nuevo grupo"}
+            visible={showModalGroup}
+            close={HandleCloseGroup}
+            actionForm={onFinishCreateGroup}
+            hiddenSurveys={true}
+            hiddenMembers={true}
           />
         )}
         {showModalAssignTest && (

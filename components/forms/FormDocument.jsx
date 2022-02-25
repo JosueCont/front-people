@@ -25,9 +25,9 @@ const FormDocument = ({ person_id, node }) => {
     getDocument();
   }, [person_id]);
 
-  const getDocument = () => {
+  const getDocument = async () => {
     setLoadingTable(true);
-    WebApiPeople.getDocumentPerson(person_id)
+    await WebApiPeople.getDocumentPerson(person_id)
       .then((response) => {
         setDocuments(response.data);
 
@@ -56,8 +56,8 @@ const FormDocument = ({ person_id, node }) => {
     setShowModalSelectDoc(value);
   };
 
-  const deleteDocument = (value) => {
-    WebApiPeople.deleteDocument(value)
+  const deleteDocument = async (value) => {
+    await WebApiPeople.deleteDocument(value)
       .then((response) => {
         getDocument();
       })

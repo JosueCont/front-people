@@ -5,9 +5,17 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/cfdi-payroll`, "post", data);
   }
 
+  static getPayrollPerson(data) {
+    return WebApi.ApisType(
+      `/payroll/payroll-person/?person__id=${data}`,
+      "get"
+    );
+  }
+
   static createPayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/`, "post", data);
   }
+
   static updatePayrollPerson(data) {
     return WebApi.ApisType(`/payroll/payroll-person/${data.id}/`, "put", data);
   }
