@@ -30,7 +30,7 @@ import ViewSurveys from "./ViewSurveys";
 import ViewMembers from "./ViewMembers";
 import DeleteGroups from "./DeleteGroups";
 
-const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, ...props}) => {
+const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = true, ...props}) => {
 
   const menuDropDownStyle = { background: "#434343", color: "#ffff"};
   const permissions = useSelector(state => state.userStore.permissions.person)
@@ -287,6 +287,7 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, ...props}) => 
               close={HandleClose}
               loadData={itemGroup}
               actionForm={onFinishEdit}
+              hiddenName={hiddenName}
               hiddenMembers={hiddenMembers}
               hiddenSurveys={hiddenSurveys}
           />

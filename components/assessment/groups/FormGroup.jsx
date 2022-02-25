@@ -56,6 +56,9 @@ const FormGroup = ({...props}) =>{
         }else{
             delete queryObject.assessments
         }
+        if(queryObject.name == "" || queryObject.name == null){
+            delete queryObject.name
+        }
         return queryObject;
     };
 
@@ -102,9 +105,11 @@ const FormGroup = ({...props}) =>{
                 layout={'vertical'}
             >
 
-                <Form.Item name="name" label={"Nombre del grupo"} rules={[ruleRequired]}>
-                    <Input maxLength={50} allowClear={true} placeholder="Ingresa un nombre" />
-                </Form.Item>
+                {!props.hiddenName && (
+                    <Form.Item name="name" label={"Nombre del grupo"} rules={[ruleRequired]}>
+                        <Input maxLength={50} allowClear={true} placeholder="Ingresa un nombre" />
+                    </Form.Item>
+                )}
                 {!props.hiddenMembers && (
                     <Form.Item name="persons" label="Añadir integrantes">
                         <SelectMembers
