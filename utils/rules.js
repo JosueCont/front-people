@@ -23,6 +23,11 @@ export const treeDecimal = {
   message: "El campo no puede tener más de tres decimales",
 };
 
+export const fourDecimal = {
+  pattern: /^\d+(?:\.\d{1,4})?$/,
+  message: "El campo no puede tener más de cuatro decimales",
+};
+
 // {pattern: /^[\d]{0,16}$/, message: "El no  debe tener más de 16 dígitos" }, numero menor  a 16 digitos
 
 export const curpFormat = {
