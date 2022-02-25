@@ -16,7 +16,7 @@ import {
 import FormGroup from "./FormGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 
-const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, ...props}) =>{
+const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = true, ...props}) =>{
     const [form] = Form.useForm();
     const permissions = useSelector(state => state.userStore.permissions.person)
     const [showModalCreate, setShowModalCreate] = useState(false);
@@ -49,7 +49,7 @@ const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, ...props}) =>{
                             <Col span={16}>
                                 <Form.Item name="Filter" label="Filtrar">
                                     <Input
-                                        placeholder="Filtra grupos"
+                                        placeholder={props.textSearch ? props.textSearch : 'Nombre del grupo'}
                                         maxLength={200}
                                         onChange={props.onFilterChange}
                                     />
@@ -83,7 +83,7 @@ const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, ...props}) =>{
                             loading={loading}
                             onClick={() => HandleCreateGroup()}
                         >
-                            <PlusOutlined /> Agregar grupo
+                            <PlusOutlined /> {props.textButton ? props.textButton : 'Agregar grupo'}
                         </Button>
                     )}
                 </Col>
@@ -95,6 +95,7 @@ const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, ...props}) =>{
                     visible={showModalCreate}
                     close={HandleClose}
                     actionForm={onFinishAdd}
+                    hiddenName={hiddenName}
                     hiddenSurveys={hiddenSurveys}
                     hiddenMembers={hiddenMembers}
                 />

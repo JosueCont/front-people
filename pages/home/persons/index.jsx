@@ -71,6 +71,8 @@ const homeScreen = ({ ...props }) => {
   const [modalAddPerson, setModalAddPerson] = useState(false);
   const [modalCreateGroup, setModalCreateGroup] = useState(false);
   const [showModalGroup, setShowModalGroup] = useState(false);
+  const [openAssignTest, setOpenAssignTest] = useState(false);
+  const [showModalAssignTest, setShowModalAssignTest] = useState(false);
   const [personsKeys, setPersonsKeys] = useState([]);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
@@ -456,9 +458,14 @@ const homeScreen = ({ ...props }) => {
           </Menu.Item>
         )}
         {permissions.create && (
-          <Menu.Item key="4" onClick={() => setModalCreateGroup(true)}>
-            Crear grupo
-          </Menu.Item>
+          <>
+            <Menu.Item key="5" onClick={() => setOpenAssignTest(true)}>
+              Asignar evaluaciones  
+            </Menu.Item>
+            <Menu.Item key="4" onClick={() => setModalCreateGroup(true)}>
+              Crear grupo
+            </Menu.Item>
+          </>
         )}
         {permissions.delete && (
           <Menu.Item key="2" onClick={() => showModalDelete()}>
@@ -690,12 +697,14 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
-  const HandleCloseGroup = () => {
-    setShowModalGroup(false);
-    setModalCreateGroup(false);
-    setPersonsToDelete([]);
-    setPersonsKeys([]);
-  };
+  const HandleCloseGroup = () =>{
+    setShowModalGroup(false)
+    setModalCreateGroup(false)
+    setOpenAssignTest(false)
+    setShowModalAssignTest(false)
+    setPersonsToDelete([])
+    setPersonsKeys([])
+  }
 
   const getOnlyIds = () => {
     let ids = [];
@@ -714,8 +723,24 @@ const homeScreen = ({ ...props }) => {
       filterPersonName();
       message.success("Grupo agregado");
     } catch (e) {
-      setLoading(false);
-      message.error("Grupo no agregado");
+      console.log(e)
+      setLoading(false)
+      message.error("Grupo no agregado")
+    }
+  }
+
+  const onFinishAssignTest = async (values) =>{3
+    setLoading(true)
+    const ids = getOnlyIds();
+    const body = {...values, persons: ids}
+    console.log('valores que se van a enviar----->', body)
+    try {
+      filterPersonName();
+      message.success("Evaluaciones asignadas")
+    } catch (e) {
+      console.log(e)
+      setLoading(false)
+      message.error("Evaluaciones no asignadas ")
     }
   };
 
@@ -734,6 +759,18 @@ const homeScreen = ({ ...props }) => {
       }
     }
   }, [modalCreateGroup]);
+
+
+  useEffect(()=>{
+    if(openAssignTest){
+      if(personsToDelete.length > 0){
+        setShowModalAssignTest(true)
+      }else{
+        setOpenAssignTest(false)
+        message.error("Selecciona al menos una persona")
+      }
+    }
+  },[openAssignTest])
 
   const showModalDelete = () => {
     modalDelete ? setModalDelete(false) : setModalDelete(true);
@@ -1067,6 +1104,18 @@ const homeScreen = ({ ...props }) => {
             actionForm={onFinishCreateGroup}
             hiddenSurveys={true}
             hiddenMembers={true}
+          />
+        )}
+        {showModalAssignTest && (
+          <FormGroup
+              loadData={{}}
+              title={'Asignar evaluaciones'}
+              visible={showModalAssignTest}
+              close={HandleCloseGroup}
+              actionForm={onFinishAssignTest}
+              hiddenSurveys={false}
+              hiddenMembers={true}
+              hiddenName={true}
           />
         )}
       </MainLayout>

@@ -44,11 +44,6 @@ const FormPerson = ({
     if (date !== "") {
       value.birth_date = date;
     }
-    if (dateIngPlatform !== "") {
-      value.register_date = dateIngPlatform;
-    } else {
-      value.register_date = moment().format("YYYY-MM-DD");
-    }
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
     if (value.password != value.passwordTwo)
@@ -247,17 +242,6 @@ const FormPerson = ({
                     </Form.Item>
                   </Col>
                 )}
-                <Col lg={8} xs={24}>
-                  <Form.Item name="register_date">
-                    <DatePicker
-                      style={{ width: "100%" }}
-                      onChange={onChangeIngPlatform}
-                      defaultValue={moment()}
-                      moment={"YYYY-MM-DD"}
-                      placeholder="Fecha de ingreso a la plataforma"
-                    />
-                  </Form.Item>
-                </Col>
                 <Col lg={8} xs={24}>
                   <SelectGroup />
                 </Col>

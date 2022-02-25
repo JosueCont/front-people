@@ -212,6 +212,7 @@ export const getPeopleCompany = (data) => async (dispatch, getState) => {
       return {
         label: a.first_name + " " + a.flast_name,
         value: a.id,
+        khonnect_id: a.khonnect_id,
         key: a.khonnect_id + i,
       };
     });
