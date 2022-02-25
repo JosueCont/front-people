@@ -109,6 +109,7 @@ const GroupsPeople = () =>{
                     dataGroups={listGroups}
                     setLoading={setLoading}
                     createGroup={createGroup}
+                    hiddenName={false}
                     hiddenMembers={false}
                 />
                 <TableGroups
@@ -120,6 +121,7 @@ const GroupsPeople = () =>{
                     getListGroups={getListGroups}
                     updateGroup={updateGroup}
                     deteleGroup={deleteGroup}
+                    hiddenName={false}
                     hiddenMembers={false}
                 />
             </div>
