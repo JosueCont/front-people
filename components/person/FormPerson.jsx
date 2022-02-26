@@ -15,7 +15,6 @@ import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { genders } from "../../utils/constant";
 import { ruleEmail } from "../../utils/rules";
-import moment from "moment";
 import { getPeopleCompany } from "../../redux/UserDuck";
 import SelectGroup from "../selects/SelectGroup";
 import SelectJob from "../selects/SelectJob";
@@ -36,18 +35,12 @@ const FormPerson = ({
 }) => {
   const [form] = Form.useForm();
   const [date, setDate] = useState("");
-  const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [departmentSelected, setDepartmentSelected] = useState(null);
   const [jobSelected, setJobSelected] = useState(null);
 
   const onFinish = (value) => {
     if (date !== "") {
       value.birth_date = date;
-    }
-    if (dateIngPlatform !== "") {
-      value.register_date = dateIngPlatform;
-    } else {
-      value.register_date = moment().format("YYYY-MM-DD");
     }
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
@@ -85,10 +78,6 @@ const FormPerson = ({
   function onChange(date, dateString) {
     setDate(dateString);
   }
-
-  const onChangeIngPlatform = (date, dateString) => {
-    setDateIngPlatform(dateString);
-  };
 
   const closeDialog = () => {
     close(false);

@@ -23,6 +23,7 @@ import moment from "moment";
 import {
   civilStatus,
   genders,
+  intranetAccess,
   messageError,
   messageUpdateSuccess,
   periodicity,
@@ -60,6 +61,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
   }, []);
 
   const setFormPerson = (person) => {
+    console.log("PERSONAAAA-->> ", person);
     formPerson.setFieldsValue({
       first_name: person.first_name,
       flast_name: person.flast_name,
@@ -116,6 +118,11 @@ const DataPerson = ({ config, person = null, ...props }) => {
           groups: [],
         });
       });
+    if (person.work_title) {
+      formPerson.setFieldsValue({
+        work_title_id: person.work_title.id,
+      });
+    }
     setLoading(false);
     setPhoto(person.photo);
     setDateAdmission(person.date_of_admission);
@@ -142,7 +149,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
     setLoading(true);
     await WebApiPeople.updatePerson(data, person.id)
       .then((response) => {
-        console.log("Response-->> ", response.data);
         setFormPerson(response.data);
         message.success({
           content: "Actualizado correctamente.",
@@ -151,7 +157,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
         setLoading(false);
       })
       .catch((error) => {
-        console.log("Response error-->> ", response.data);
         message.error("Error al actualizar, intente de nuevo.");
         setLoading(false);
       });
@@ -493,7 +498,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                     name="intranet_access"
                     label="Acceso a la intranet"
                   >
-                    <SelectAccessIntranet />
+                    <Select options={intranetAccess} />
                   </Form.Item>
                 </Col>
               )}

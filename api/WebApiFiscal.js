@@ -37,6 +37,10 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/other-payment-type/`, "get");
   }
 
+  static getTypeworkingday() {
+    return WebApi.ApisType(`/fiscal/type-working-day/`, "get");
+  }
+
   static validateAccountNumber(data) {
     return WebApi.ApisType(`/fiscal/validate-account-number/`, "post", data);
   }
