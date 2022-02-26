@@ -91,7 +91,7 @@ const calculatorSalary = () => {
   };
 
   return (
-    <MainLayout currentKey={["asimilado"]} defaultOpenKeys={["nomina"]}>
+    <MainLayout currentKey={["asimilado"]} defaultOpenKeys={["nómina"]}>
       <Global
         styles={`
           .card-calculator .ant-card-body{

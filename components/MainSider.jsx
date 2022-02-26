@@ -296,7 +296,7 @@ const MainSider = ({
           )}
           {props.config && props.config.nomina_enabled && (
             <SubMenu
-              key="nomina"
+              key="nómina"
               title="Nómina"
               className="subMainMenu"
               icon={<DollarOutlined />}
@@ -312,9 +312,11 @@ const MainSider = ({
                 </Menu.Item>
                 <Menu.Item
                   key="recibos_nomina"
-                  onClick={() => router.push({ pathname: "/payrollvoucher" })}
+                  onClick={() =>
+                    router.push({ pathname: "/payroll/payrollvoucher" })
+                  }
                 >
-                  Importar nomina con xmls
+                  Importar nómina con xmls
                 </Menu.Item>
                 <Menu.Item
                   key="calendario"
@@ -330,7 +332,7 @@ const MainSider = ({
                     router.push({ pathname: "/payroll/stampPayroll" })
                   }
                 >
-                  Calculo de nomina
+                  Calculo de nómina
                 </Menu.Item>
               </>
             </SubMenu>

@@ -130,7 +130,10 @@ const StatisticsPayroll = () => {
 
   return (
     <>
-      <MainLayout currentKey={["nomina_empresarial"]} defaultOpenKeys={["nomina"]}>
+      <MainLayout
+        currentKey={["nomina_empresarial"]}
+        defaultOpenKeys={["nómina"]}
+      >
         <Breadcrumb className={"mainBreadcrumb"}>
           <Breadcrumb.Item
             className={"pointer"}
