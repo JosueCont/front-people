@@ -729,7 +729,7 @@ const homeScreen = ({ ...props }) => {
     }
   }
 
-  const onFinishAssignTest = async (values) =>{3
+  const onFinishAssignTest = async (values) =>{
     setLoading(true)
     const ids = getOnlyIds();
     const body = {...values, persons: ids}
@@ -1104,6 +1104,7 @@ const homeScreen = ({ ...props }) => {
             actionForm={onFinishCreateGroup}
             hiddenSurveys={true}
             hiddenMembers={true}
+            hiddenName={false}
           />
         )}
         {showModalAssignTest && (
