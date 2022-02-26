@@ -46,7 +46,7 @@ const GroupsKuiz = () =>{
         setLoading(true)
         try {
             let response = await WebApiAssessment.getGroupsAssessments(queryParam);
-            console.log('response grupos kuiz', response)
+            // console.log('response grupos kuiz', response)
             setLisGroups(response.data)
             setLoading(false)
         } catch (e) {

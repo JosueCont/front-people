@@ -46,7 +46,7 @@ const GroupsPeople = () =>{
         setLoading(true)
         try {
             let response = await WebApiAssessment.getGroupsPersons(queryParam);
-            console.log('response grupos personas', response)
+            // console.log('response grupos personas', response)
             setLisGroups(response.data)
             setLoading(false)
         } catch (e) {

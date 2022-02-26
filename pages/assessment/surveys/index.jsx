@@ -205,8 +205,6 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
   const rowSelectionGroup = {
     selectedRowKeys: testsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log('test keys-------->', selectedRowKeys)
-      console.log('test selecionados-------->', selectedRows)
       setTestsKeys(selectedRowKeys)
       setTestsSelected(selectedRows)
     }
