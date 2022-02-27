@@ -45,13 +45,13 @@ const StampPayroll = () => {
   const [loading, setLoading] = useState(false);
   const [periodicity, setPeriodicity] = useState("");
   const [period, setPeriod] = useState("");
-  const [insidencePeriod, setInsidencePeriod] = useState("");
+  const [paymentPeriod, setPaymentPeriod] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
   const [persons, setPersons] = useState([]);
   const [payroll, setPayroll] = useState([]);
-  const [objectStamp, setObjectStamp] = useState(null);
-  const [stamped, setStamped] = useState(false);
-  const [stampedInvoices, setStampedInvoices] = useState([]);
+  // const [objectStamp, setObjectStamp] = useState(null);
+  // const [stamped, setStamped] = useState(false);
+  // const [stampedInvoices, setStampedInvoices] = useState([]);
   const [expandRow, setExpandRow] = useState(null);
   const { Text, Title } = Typography;
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -73,43 +73,6 @@ const StampPayroll = () => {
     } else {
       message.error("Sin resultados");
     }
-  };
-
-  const getPersonCalendar = async (calendar_id) => {
-    setLoading(true);
-    let response = await WebApiPayroll.getPersonsCalendar(calendar_id);
-
-    if (response.data.length > 0) {
-      let arrar_payroll = [];
-      response.data.map((a) => {
-        if (a.person) {
-          arrar_payroll.push({
-            person_id: a.person.id,
-            key: a.person.id,
-            full_name:
-              a.person.first_name +
-              " " +
-              a.person.mlast_name +
-              " " +
-              a.person.flast_name,
-            photo: a.person.photo,
-            company: a.person.node_user ? a.person.node_user.name : null,
-            daily_salary: a.daily_salary ? `$ ${a.daily_salary}` : null,
-            person_id: a.person.id,
-            perceptions: [],
-            deductions: [],
-            others_payments: [],
-          });
-        }
-      });
-      setPayroll(arrar_payroll);
-      setPersons(response.data);
-    } else {
-      setPersons([]);
-      setPayroll([]);
-      message.error("No se encontraron resultados");
-    }
-    setLoading(false);
   };
 
   const prepareData = (dataPersons) => {
@@ -150,135 +113,136 @@ const StampPayroll = () => {
       payroll: newData,
       invoice: true,
     };
-    /* if (payroll.length === 0) {
+    setLoading(true);
+    let calculate = await getCalculatePayroll(data, false);
+    if (calculate) {
+      // setStamped(true);
+      // setStampedInvoices(response.data);
+      setLoading(false);
+    } else {
+      message("Error al calcular la nómina");
+    }
+  };
+
+  const mapConcepts = (concepts, type) => {
+    let array_concepts = [];
+    if (type == "perceptions") {
+      concepts.map((item) => {
+        array_concepts.push({
+          locked: item.Code == "046" ? true : item.Code == "001" ? true : false,
+          code: item.Code ? item.Code : "",
+          key: item.Description,
+          label: item.Description ? item.Description : "",
+          amount: item.Amount ? item.Amount : 0,
+          taxed_amount: item.TaxedAmount,
+          exempt_amount: item.ExemptAmount,
+        });
+      });
+    }
+    if (type == "deductions") {
+      concepts.map((item) => {
+        array_concepts.push({
+          locked: item.Code == "002" ? true : item.Code == "001" ? true : false,
+          code: item.Code ? item.Code : "",
+          key: item.Description,
+          label: item.Description ? item.Description : "",
+          amount: item.Amount ? item.Amount : 0,
+        });
+      });
+    }
+    if (type == "other_payments") {
+      concepts.map((item) => {
+        array_concepts.push({
+          locked: item.Code == "002" ? true : false,
+          code: item.Code ? item.Code : "",
+          key: item.Description,
+          label: item.Description ? item.Description : "",
+          amount: item.Amount,
+          exempt_amount: item.ExemptAmount,
+          taxed_amount: item.taxed_amount,
+        });
+      });
+    }
+    return array_concepts;
+  };
+
+  const getCalculatePayroll = async (dataToSend, fisrtRequest = false) => {
+    try {
+      setLoading(true);
+      let response = await WebApiPayroll.calculatePayroll(dataToSend);
+
       let arrar_payroll = [];
-      persons.map((a) => {
-        if (a.person) {
-          arrar_payroll.push({
-            person_id: a.person.id,
+      response.data.payroll.map((a) => {
+        if (a.payroll_person) {
+          let item = {
+            person_id: a.payroll_person.person.id,
+            key: a.payroll_person.person.id,
+            full_name:
+              a.payroll_person.person.first_name +
+              " " +
+              a.payroll_person.person.flast_name +
+              " " +
+              a.payroll_person.person.mlast_name,
+            company: a.payroll_person.person.node_user.name,
+            daily_salary: a.payroll_person.daily_salary
+              ? `$ ${a.payroll_person.daily_salary}`
+              : null,
             perceptions: [],
             deductions: [],
             others_payments: [],
-          });
+          };
+
+          if (a.calculation) {
+            if (a.calculation.perceptions) {
+              item["perceptions"] = mapConcepts(
+                a.calculation.perceptions,
+                "perceptions"
+              );
+            }
+
+            if (a.calculation.deductions) {
+              item["deductions"] = mapConcepts(
+                a.calculation.deductions,
+                "deductions"
+              );
+            }
+
+            if (a.calculation.other_payments) {
+              item["other_payments"] = mapConcepts(
+                a.calculation.other_payments,
+                "other_payments"
+              );
+            }
+          }
+          arrar_payroll.push(item);
         }
       });
-      data.payroll = arrar_payroll;
-    } else {
-      data.payroll = payroll;
-    } */
-    setLoading(true);
-    let response = await WebApiPayroll.payrollFacturama(data);
-    if (response.data.length > 0) {
-      setStamped(true);
-      setStampedInvoices(response.data);
-      setLoading(false);
+      setPayroll(arrar_payroll);
+      console.log("PayrollCalculate", arrar_payroll);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
-    //   let payrolls = response.data.payrolls;
-    //   if (persons.length > 0) {
-    //     let arrayPersons = persons;
-    //     arrayPersons.map((p) => {
-    //       let payroll_person = payrolls.find(
-    //         (elem) =>
-    //           elem.Complemento.Payroll.Employee.EmployeeNumber == p.person.code
-    //       );
-    //       if (payroll_person) {
-    //         p.payroll = payroll_person;
-    //       }
-    //     });
-
-    //     setPersons(arrayPersons);
-    //     setLoading(false);
-    //   }
-    // }
   };
 
   /* Events */
-  const getPayroll = async (dataToSend, fisrtRequest = false) => {
-    setLoading(true);
-    let response = await WebApiPayroll.payrollFacturama(dataToSend);
-
-    let arrar_payroll = [];
-    response.data.map((a) => {
-      if (a.person) {
-        let item = {
-          person_id: a.employee_id,
-          key: a.employee_id,
-          full_name: a.person,
-          company: nodeName,
-          daily_salary: a.payroll
-            ? `$ ${a.payroll.Employee.DailySalary}`
-            : null,
-          perceptions: [],
-          deductions: [],
-          others_payments: [],
-        };
-
-        if (a.payroll) {
-          if (a.payroll.Perceptions.Details) {
-            let perceptions = [];
-            let deductions = [];
-
-            a.payroll.Perceptions.Details.map((item) => {
-              perceptions.push({
-                locked: fisrtRequest,
-                code: item.code ? item.code : "",
-                key: item.Description,
-                label: item.Description ? item.Description : "",
-                amount: item.Amount ? item.Amount : 0,
-              });
-            });
-
-            a.payroll.Deductions.Details.map((item) => {
-              deductions.push({
-                locked: fisrtRequest,
-                code: item.code ? item.code : "",
-                key: item.Description,
-                label: item.Description ? item.Description : "",
-                amount: item.Amount ? item.Amount : 0,
-              });
-            });
-
-            item["perceptions"] = perceptions;
-            item["deductions"] = deductions;
-          }
-        }
-
-        arrar_payroll.push(item);
-      }
-    });
-
-    setPayroll(arrar_payroll);
-    /* setPersons(response.data); */
-  };
-
   const changePaymentCalendar = (value) => {
     if (value) {
       let calendar = paymentCalendars.find((elm) => elm.id == value);
       if (calendar) {
-        /* getPersonCalendar(value); */
-        getPayroll({ calendar_id: value }, true);
-
-        let periodicity = periodicityNom.find(
-          (p) => p.value == calendar.periodicity
-        );
-
-        if (periodicity) {
-          setPeriodicity(periodicity.label);
-        } else {
-          setPeriodicity("");
-        }
+        let calculate = getCalculatePayroll({ calendar_id: value }, true);
+        if (!calculate) message("Error al calcular la nómina");
+        setPeriodicity(calendar.periodicity.description);
         setPeriod(calendar.period);
         let period = calendar.periods.find((p) => p.active == true);
         if (period) {
-          // setPeriod(period.start_date + " - " + period.end_date);
-          if (period.incidences) {
-            setInsidencePeriod(
-              period.incidences.start_date + " - " + period.incidences.end_date
-            );
-            setPaymentDate(period.payment_date);
-          }
+          console.log("período", period);
+          setPaymentPeriod(period.start_date + " - " + period.end_date);
+          setPaymentDate(period.payment_date);
         } else {
           setPeriod("");
+          setPaymentPeriod("");
           setInsidencePeriod("");
           setPaymentDate("");
         }
@@ -435,18 +399,78 @@ const StampPayroll = () => {
     }
   };
 
-  const expandedRowRender = (record) => {
-    let data = record.perceptions
-      .concat(record.deductions)
-      .concat(record.others_payments);
+  const renderPerceptionsTable = (record) => {
+    let data = record.perceptions;
 
     const columns = [
       {
-        title: "concepto_title",
-        key: "concept-title",
-        width: 100,
-        render: (record) => <Text>*Concepto</Text>,
+        title: "concepto",
+        key: "concept",
+        dataIndex: "label",
+        className: "cell-concept",
+        width: 500,
       },
+      {
+        title: "Grabado",
+        key: "taxed_amount",
+        dataIndex: "taxed_amount",
+        width: 150,
+        render: (taxed_amount) => (
+          <Space size="middle">
+            <Text>$ {taxed_amount}</Text>
+          </Space>
+        ),
+      },
+      {
+        title: "Exento",
+        key: "exempt_amount",
+        dataIndex: "exempt_amount",
+        width: 150,
+        render: (exempt_amount) => (
+          <Space size="middle">
+            <Text>$ {exempt_amount}</Text>
+          </Space>
+        ),
+      },
+      {
+        title: "Total",
+        key: "amount",
+        dataIndex: "amount",
+        width: 150,
+        render: (amount) => (
+          <Space size="middle">
+            <Text>$ {amount}</Text>
+          </Space>
+        ),
+      },
+      // {
+      //   title: "Action",
+      //   key: "operation",
+      //   className: "cell-actions",
+      //   render: () => (
+      //     <Space size="middle">
+      //       <EditFilled />
+      //     </Space>
+      //   ),
+      // },
+    ];
+
+    return (
+      <Table
+        className="subTable"
+        columns={columns}
+        dataSource={data}
+        pagination={false}
+        // showHeader={false}
+        size="small"
+        locale={{ emptyText: "Aún no hay datos" }}
+      />
+    );
+  };
+  const renderDeductionsTable = (record) => {
+    let data = record.deductions;
+
+    const columns = [
       {
         title: "concepto",
         key: "concept",
@@ -484,7 +508,56 @@ const StampPayroll = () => {
         columns={columns}
         dataSource={data}
         pagination={false}
-        showHeader={false}
+        // showHeader={false}
+        size="small"
+        locale={{ emptyText: "Aún no hay datos" }}
+      />
+    );
+  };
+
+  const renderOtherPaymentsTable = (record) => {
+    let data = record.others_payments;
+
+    const columns = [
+      {
+        title: "concepto",
+        key: "concept",
+        dataIndex: "label",
+        className: "cell-concept",
+        width: 500,
+      },
+      {
+        title: "monto",
+        key: "ampunt",
+        dataIndex: "amount",
+        width: 150,
+        render: (amount) => (
+          <Space size="middle">
+            <Text>Monto</Text>
+            <Text>$ {amount}</Text>
+          </Space>
+        ),
+      },
+      {
+        title: "Action",
+        key: "operation",
+        className: "cell-actions",
+        render: () => (
+          <Space size="middle">
+            <EditFilled />
+          </Space>
+        ),
+      },
+    ];
+
+    return (
+      <Table
+        className="subTable"
+        columns={columns}
+        dataSource={data}
+        pagination={false}
+        // showHeader={false}
+        size="small"
         locale={{ emptyText: "Aún no hay datos" }}
       />
     );
@@ -606,7 +679,7 @@ const StampPayroll = () => {
                     key="insidence_period"
                     placeholder="Período de incidencia"
                     disabled={true}
-                    value={insidencePeriod}
+                    value={paymentPeriod}
                   />
                 </Col>
                 <Col xxs={24} xl={4}>
@@ -636,11 +709,8 @@ const StampPayroll = () => {
               <Table
                 className="headers_transparent"
                 columns={columnsNew}
-                /* expandable={{
-                  expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
-                }} */
                 expandable={{
-                  expandedRowRender: (record) => expandedRowRender(record),
+                  expandedRowRender: (record) => renderPerceptionsTable(record),
                   /* expandRowByClick: true, */
                   onExpand: (expanded, record) => rowExpand(expanded, record),
                   expandIconAsCell: false,
@@ -661,59 +731,6 @@ const StampPayroll = () => {
           </Col>
         </Row>
 
-        {/* <Row justify="end" style={{ display:'none' }}>
-        <Col span={24}>
-          <Spin tip="Cargando..." spinning={loading}>
-            {!stamped && (
-              <Collapse defaultActiveKey={["1"]}>
-                {persons &&
-                  persons.map((p, i) => {
-                    if (p.person) {
-                      return (
-                        <Panel
-                          header={
-                            p.person.first_name +
-                            " " +
-                            p.person.flast_name +
-                            " " +
-                            p.person.mlast_name +
-                            "  " +
-                            "    -  Salario diario: $" +
-                            p.daily_salary
-                          }
-                          key={i + 1}
-                        >
-                          <PanelInfo
-                            data={p}
-                            setObjectStamp={setObjectStamp}
-                            payroll={payroll}
-                            setLoading={setLoading}
-                            key={p.person.id}
-                          />
-                        </Panel>
-                      );
-                    }
-                  })}
-              </Collapse>
-            )}
-
-            {stampedInvoices && stampedInvoices.length > 0 && stamped && (
-              <Table
-                className={"mainTable"}
-                size="small"
-                columns={columns}
-                dataSource={stampedInvoices}
-                loading={loading}
-                locale={{
-                  emptyText: loading
-                    ? "Cargando..."
-                    : "No se encontraron resultados.",
-                }}
-              />
-            )}
-          </Spin>
-        </Col>
-      </Row> */}
         <Modal
           visible={isModalVisible}
           footer={null}
