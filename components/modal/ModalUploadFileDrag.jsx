@@ -1,6 +1,6 @@
 import { InboxOutlined } from "@ant-design/icons";
-import { Button, Col, Layout, message, Modal, Row, Upload } from "antd";
-import { messageError } from "../../utils/constant";
+import { Button, Col, Layout, Modal, Row, Upload } from "antd";
+import { useState } from "react";
 
 const { Dragger } = Upload;
 
@@ -11,10 +11,11 @@ const ModalUploadFileDrag = ({
   setFiles,
   ...porps
 }) => {
+  const [upload, setUpload] = useState([]);
+
   const props = {
     name: "file",
     multiple: true,
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
     onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
@@ -26,16 +27,16 @@ const ModalUploadFileDrag = ({
             }
           });
           if (files.length > 0) {
-            setFiles(files);
+            setUpload(files);
           }
         }
       }
-      if (status === "done") {
-        message.success(`Documento cargado correctamente.`);
-      } else if (status === "error") {
-        message.error(messageError);
-      }
     },
+  };
+
+  const setSendFile = () => {
+    setFiles(upload);
+    setModal(false);
   };
 
   return (
@@ -61,7 +62,7 @@ const ModalUploadFileDrag = ({
                 <InboxOutlined />
               </p>
               <p className="ant-upload-text">
-                Haga clic o arrastre el archivo a esta área para cargar{" "}
+                Haga clic o arrastre el archivo a esta área para cargar
               </p>
               <p className="ant-upload-hint">
                 Soporte para una carga única o masiva. Sólo se permitan archivos
@@ -76,8 +77,8 @@ const ModalUploadFileDrag = ({
             >
               Cancelar
             </Button>
-            <Button type="primary" onClick={() => console.log("Guardar")}>
-              Guardar
+            <Button type="primary" onClick={() => setSendFile()}>
+              Enviar
             </Button>
           </Col>
         </Row>

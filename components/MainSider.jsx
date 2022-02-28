@@ -316,7 +316,7 @@ const MainSider = ({
                     router.push({ pathname: "/payroll/payrollvoucher" })
                   }
                 >
-                  Importar nómina con xmls
+                  Importar nómina con xml
                 </Menu.Item>
                 <Menu.Item
                   key="calendario"
