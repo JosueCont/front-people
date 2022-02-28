@@ -19,7 +19,7 @@ import { API_URL } from "../../../config/config";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
-import { ruleRequired, treeDecimal } from "../../../utils/rules";
+import { ruleRequired, fourDecimal } from "../../../utils/rules";
 
 const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const { Title } = Typography;
@@ -28,20 +28,23 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const [contrctsType, setContractsType] = useState([]);
   const [hiringRegimeType, setHiringRegimeType] = useState([]);
   const [typeTax, setTypeTax] = useState([]);
+  const [typeworkingday, setTypeworkingday] = useState([]);
   const [banks, setBanks] = useState([]);
   const [paymentCalendars, setPaymentCalendars] = useState([]);
-  const [paymentPeriods, setPaymentPeriodicity] = useState([]);
+  const [calendars, setCalendars] = useState([]);
+  const [bankDisabled, setBankDisabled] = useState(false);
+  const [disabledCalendar, setDisabledCalendar] = useState(false);
   const [lastDayPaid, setLastDayPaid] = useState("");
   const PaymentTypes = [
-    { value: 1, label: "Efectivo" },
-    { value: 2, label: "Cheques" },
+    { value: 0, label: "Efectivo" },
+    { value: 1, label: "Cheques" },
     { value: 3, label: "Transferencias" },
     { value: 30, label: "Anticipo" },
     { value: 99, label: "Por definir" },
   ];
   const [idPayroll, setIdPayroll] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [payrollPerson, setPayrolPerson] = useState(null);
+  // const [payrollPerson, setPayrolPerson] = useState(null);
   const [perceptionTypes, setPerceptionTypes] = useState([]);
 
   useEffect(() => {
@@ -51,7 +54,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     getTypeTax();
     getBanks();
     getPaymentCalendar();
-    getPaymentPeriodicity();
+    getTypeworkingday();
     getPerceptionTypes();
   }, []);
 
@@ -60,7 +63,6 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     await WebApiPayroll.getPayrollPerson(person_id)
       .then((response) => {
         if (response.data) {
-          /* let item = response.data.results[0]; */
           let item = response.data;
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
@@ -70,6 +72,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
             unionized: item.unionized ? item.unionized : false,
             payment_type: item.payment_type,
             bank: item.bank,
+            type_working_day: item.type_working_day,
             apply_annual_adjustment: item.apply_annual_adjustment
               ? item.apply_annual_adjustment
               : false,
@@ -80,7 +83,10 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
             integrated_daily_salary: item.integrated_daily_salary,
           });
           setLastDayPaid(item.last_day_paid);
-          if (item.id) setIdPayroll(item.id);
+          if (item.id) {
+            setIdPayroll(item.id);
+            setDisabledCalendar(true);
+          }
         }
         setLoading(false);
       })
@@ -141,22 +147,11 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const getPaymentCalendar = async () => {
     try {
       let response = await WebApiPayroll.getPaymentCalendar(node);
+      setCalendars(response.data.results);
       let payment_calendar = response.data.results.map((a) => {
         return { value: a.id, label: a.name };
       });
       setPaymentCalendars(payment_calendar);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getPaymentPeriodicity = async () => {
-    try {
-      let response = await WebApiFiscal.getPaymentPeriodicity();
-      let payment_periodicity = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-      setPaymentPeriodicity(payment_periodicity);
     } catch (error) {
       console.log(error);
     }
@@ -173,6 +168,16 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const getTypeworkingday = async () => {
+    try {
+      let response = await WebApiFiscal.getTypeworkingday();
+      let type_working_days = response.data.results.map((a) => {
+        return { value: a.id, label: a.description };
+      });
+      setTypeworkingday(type_working_days);
+    } catch (error) {}
   };
 
   const savePayrollPerson = async (data) => {
@@ -217,6 +222,31 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const onChangeLastDayPaid = (date, dateString) => {
     setLastDayPaid(dateString);
   };
+  const selectCalendar = (value) => {
+    if (value) {
+      let calendar = calendars.find((calendar) => calendar.id == value);
+      if (calendar) {
+        formPayrollPerson.setFieldsValue({
+          perception_type: calendar.perception_type,
+          type_tax: calendar.type_tax.id,
+        });
+      }
+    }
+  };
+
+  const changePaymentType = (type) => {
+    if (type === 3) {
+      setBankDisabled(false);
+    } else {
+      setBankDisabled(true);
+      formPayrollPerson.setFieldsValue({
+        bank: "",
+      });
+    }
+  };
+
+  useEffect(() => {}, [bankDisabled]);
+
   const formFinish = (value) => {
     if (idPayroll) {
       value.person = person_id;
@@ -252,7 +282,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 name="daily_salary"
                 label="Salario diario"
                 maxLength={13}
-                rules={[treeDecimal]}
+                rules={[fourDecimal]}
               >
                 <Input maxLength={10} />
               </Form.Item>
@@ -262,7 +292,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 name="integrated_daily_salary"
                 label="Salario diario integrado"
                 maxLength={13}
-                rules={[treeDecimal]}
+                rules={[fourDecimal]}
               >
                 <Input maxLength={10} disabled />
               </Form.Item>
@@ -292,9 +322,13 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
               </Form.Item>
             </Col>
             <Col lg={8} xs={22} md={12}>
-              <Form.Item name="type_tax" label="Tipo de impuesto">
+              <Form.Item
+                name="type_working_day"
+                label="Tipo de jornada"
+                rules={[ruleRequired]}
+              >
                 <Select
-                  options={typeTax}
+                  options={typeworkingday}
                   notFoundContent={"No se encontraron resultados."}
                 />
               </Form.Item>
@@ -316,6 +350,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 <Select
                   options={PaymentTypes}
                   notFoundContent={"No se encontraron resultados."}
+                  onChange={changePaymentType}
                 />
               </Form.Item>
             </Col>
@@ -324,6 +359,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 <Select
                   options={banks}
                   notFoundContent={"No se encontraron resultados."}
+                  disabled={bankDisabled}
                 />
               </Form.Item>
             </Col>
@@ -353,26 +389,26 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 <Select
                   options={paymentCalendars}
                   notFoundContent={"No se encontraron resultados."}
+                  onChange={selectCalendar}
+                  disabled={disabledCalendar}
                 />
               </Form.Item>
             </Col>
-            {/* <Col 8g={6} xs={22} md={12} >
-              <Form.Item
-                name="payment_period"
-                label="Período de pago"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  options={paymentPeriods}
-                  notFoundContent={"No se encontraron resultados."}
-                />
-              </Form.Item>
-            </Col> */}
             <Col lg={8} xs={22} md={12}>
               <Form.Item name="perception_type" label="Tipo de percepción">
                 <Select
                   options={perceptionTypes}
                   notFoundContent={"No se encontraron resultados."}
+                  disabled
+                />
+              </Form.Item>
+            </Col>
+            <Col lg={8} xs={22} md={12}>
+              <Form.Item name="type_tax" label="Tipo de impuesto">
+                <Select
+                  options={typeTax}
+                  notFoundContent={"No se encontraron resultados."}
+                  disabled
                 />
               </Form.Item>
             </Col>

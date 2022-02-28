@@ -557,7 +557,7 @@ const StampPayroll = () => {
           }
         `}
       />
-      <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["nomina"]}>
+      <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["nómina"]}>
         <Breadcrumb className={"mainBreadcrumb"}>
           <Breadcrumb.Item
             className={"pointer"}
@@ -565,7 +565,7 @@ const StampPayroll = () => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Timbrado de nomina</Breadcrumb.Item>
+          <Breadcrumb.Item>Timbrado de nómina</Breadcrumb.Item>
         </Breadcrumb>
 
         <Row justify="end" gutter={[10, 10]}>
