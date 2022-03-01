@@ -55,8 +55,8 @@ class WebApiPayroll {
     return WebApi.ApisType(`/fiscal/periodicity/`, "get");
   }
 
-  static payrollFacturama(data) {
-    return WebApi.ApisType(`/payroll/invoice-payrrol-facturama`, "post", data);
+  static calculatePayroll(data) {
+    return WebApi.ApisType(`/payroll/calculate-payroll`, "post", data);
   }
 
   static cfdiMultiEmitter(data) {
@@ -65,6 +65,10 @@ class WebApiPayroll {
       "post",
       data
     );
+  }
+
+  static importPayrollMasiveXml(data) {
+    return WebApi.ApisType(`/payroll/read-payroll-xml`, "post", data);
   }
 }
 

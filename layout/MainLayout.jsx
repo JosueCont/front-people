@@ -22,7 +22,7 @@ const MainLayout = ({
   onClickImage,
   hideSearch,
   hideLogo = false,
-  nomina = false,
+  nómina = false,
   ...props
 }) => {
   const router = useRouter();

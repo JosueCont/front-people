@@ -12,6 +12,7 @@ const initialData = {
   people_company: [],
   user: null,
   permissions: UserPermissions(),
+  current_node: null,
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -87,8 +88,8 @@ export const companySelected = (data, config) => async (dispatch, getState) => {
       dispatch(doCompanySelectedCatalog(response.data.id));
       dispatch(getPeopleCompany(response.data.id));
       dispatch(getProfileGroups(response.data.id, config));
-      if(config.kuiz_enabled){
-        dispatch(assessmentLoadAction(response.data.id))
+      if (config.kuiz_enabled) {
+        dispatch(assessmentLoadAction(response.data.id));
       }
       return true;
     }
