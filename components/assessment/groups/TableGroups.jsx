@@ -34,12 +34,14 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = t
 
   const menuDropDownStyle = { background: "#434343", color: "#ffff"};
   const permissions = useSelector(state => state.userStore.permissions.person)
+  const currenNode = useSelector(state => state.userStore.current_node)
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalSurveys, setShowModalSurveys] = useState(false);
   const [showModalMembers, setShowModalMembers] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [itemGroup, setItemGroup] = useState({});
+  const [itemGroupPeople, setItemGroupPeople] = useState();
   const [groupsToDelete, setGroupsToDelete] = useState([]);
   const [groupsKeys, setGroupsKeys] = useState([]);
   const router = useRouter();
@@ -49,9 +51,17 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = t
       console.log(value)
   }
 
-  const HandleUpdateGroup = (item) => {
+  const HandleUpdateGroup = async (item) => {
+    if(!hiddenSurveys){
+      let resp = await getOnlyGroup(item.group_kuiz_id);
+      setItemGroupPeople(item)
+      setItemGroup(resp)
+    }
+    if(!hiddenMembers){
+      setItemGroupPeople({})
       setItemGroup(item)
-      setShowModalEdit(true)
+    }
+    setShowModalEdit(true)
   }
 
   const HandleClose = () =>{
@@ -64,9 +74,15 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = t
       setShowModalDelete(true)
   }
 
-  const openModalSurveys = (item)=>{
-    setShowModalSurveys(true)
-    setItemGroup(item)
+  const openModalSurveys = async (item)=>{
+    let resp = await getOnlyGroup(item.group_kuiz_id);
+    if(resp.assessments?.length > 0){
+      setItemGroup(resp)
+      setShowModalSurveys(true)
+    }else{
+      setItemGroup({})
+      message.error("El grupo aún no tiene encuestas")
+    }
   }
 
   const openModalMembers = (item) =>{
@@ -93,9 +109,9 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = t
     if (pagination.current > 1) {
       const offset = (pagination.current - 1) * 10;
       const queryParam = `&limit=10&offset=${offset}`;
-      props.getListGroups(queryParam)
+      props.getListGroups(currenNode?.id,queryParam)
     } else if (pagination.current == 1) {
-      props.getListGroups("")
+      props.getListGroups(currenNode?.id,"")
     }
   }
 
@@ -118,7 +134,22 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = t
 
   const onFinishEdit = async (values) =>{
     props.setLoading(true)
-    props.updateGroup(values, itemGroup.id)
+    if(!hiddenSurveys){
+      props.updateGroup(values, itemGroupPeople.id)
+    }
+    if(!hiddenMembers){
+      props.updateGroup(values, itemGroup.id)
+    }
+  }
+
+  const getOnlyGroup = async (id) =>{
+    try {
+      let response = await WebApiAssessment.getOnlyGroupAssessment(id);
+      return response.data;
+    } catch (e) {
+      console.log(e)
+      return e.response;
+    }
   }
 
   const menuTable = () => {
@@ -179,14 +210,7 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = t
         render: (item) => {
           return (
             <Space>
-              <Tag
-                  icon={<FileTextOutlined style={{color:'#096dd9'}} />}
-                  color={'blue'}
-                  style={{fontSize: '14px'}}
-                >
-                  {item.assessments ? item.assessments.length : 0}
-              </Tag>
-              {item.assessments?.length > 0 &&(
+              {item.group_kuiz_id &&(
                 <Tooltip title='Ver encuestas'>
                     <EyeOutlined
                       style={{cursor: 'pointer'}}
@@ -261,11 +285,7 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = t
                   rowKey={'id'}
                   columns={columns}
                   loading={props.loading}
-                  dataSource={
-                    props.filterActive ?
-                    props.filterValues :
-                    props.dataGroups?.results
-                  }
+                  dataSource={props.dataGroups?.results}
                   locale={{
                     emptyText: props.loading ?
                     "Cargando..." :

@@ -19,15 +19,18 @@ const GroupsKuiz = () =>{
         onFilterActive,
         onFilterReset,
     ] = useFilter();
-    const [listGroups, setLisGroups] = useState([]);
+    const currenNode = useSelector(state => state.userStore.current_node)
+    const [listGroups, setLisGroups] = useState({});
     const [loading, setLoading] = useState(false);
 
     useEffect(()=>{
-        getListGroups("")
-    },[])
+        if(currenNode?.id){
+            getListGroups(currenNode.id, "", "")
+        }
+    },[currenNode])
 
     const successMessages = (ids) =>{
-        if(ids.ids_groups_kuiz?.length > 1){
+        if(ids.length > 1){
           return message.success("Grupos eliminados")
         }else{
           return message.success("Grupo eliminado")
@@ -35,17 +38,22 @@ const GroupsKuiz = () =>{
       }
     
     const errorMessages = (ids) =>{
-        if(ids.ids_groups_kuiz?.length > 1){
+        if(ids.length > 1){
             return message.error("Grupos no eliminados")
         }else{
             return message.error("Grupo no eliminado")
         }
     }
 
-    const getListGroups = async (queryParam)=>{
+    const getListGroups = async (nodeId, name, queryParam)=>{
+        const data = {
+            nodeId: nodeId,
+            name: name,
+            queryParam: queryParam
+        }
         setLoading(true)
         try {
-            let response = await WebApiAssessment.getGroupsAssessments(queryParam);
+            let response = await WebApiAssessment.getGroupsAssessments(data);
             // console.log('response grupos kuiz', response)
             setLisGroups(response.data)
             setLoading(false)
@@ -56,9 +64,10 @@ const GroupsKuiz = () =>{
     }
 
     const createGroup = async (values) =>{
+        const data = {...values, node: currenNode?.id}
         try {
-            await WebApiAssessment.createGroupAssessments(values)
-            getListGroups("")
+            await WebApiAssessment.createGroupAssessments(data)
+            getListGroups(currenNode?.id,"","")
             message.success("Grupo agregado")
         } catch (e) {
             setLoading(false)
@@ -67,9 +76,10 @@ const GroupsKuiz = () =>{
     }
 
     const updateGroup = async (values, id) =>{
+        const data = {...values, node: currenNode?.id}
         try {
-          await WebApiAssessment.updateGroupAssessments(values, id);
-          getListGroups("")
+          let response = await WebApiAssessment.updateGroupAssessments(data, id);
+          getListGroups(currenNode?.id, "","")
           message.success("Información actualizada")
         } catch (e) {
           setLoading(false)
@@ -80,15 +90,20 @@ const GroupsKuiz = () =>{
 
     const deleteGroup = async (ids) =>{
         try {
-          await WebApiAssessment.deleteGroupAssessments(ids)
-          getListGroups("")
+          await WebApiAssessment.deleteGroupAssessments({groups_id: ids})
+          getListGroups(currenNode?.id,"", "")
           successMessages(ids);
         } catch (e) {
           setLoading(false)
           errorMessages(ids)
           console.log(e)
         }
-      }
+    }
+
+    const searchGroup = async (name) =>{
+        setLoading(true)
+        getListGroups(currenNode?.id, name, "")
+    }
 
     return(
         <MainLayout currentKey="groups_kuiz">
@@ -103,18 +118,14 @@ const GroupsKuiz = () =>{
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
                 <FormSearch
-                    onFilterActive={onFilterActive}
-                    onFilterChange={onFilterChange}
-                    onFilterReset={onFilterReset}
                     dataGroups={listGroups}
                     setLoading={setLoading}
                     createGroup={createGroup}
                     hiddenName={false}
                     hiddenSurveys={false}
+                    searchGroup={searchGroup}
                 />
                 <TableGroups
-                    filterValues={filterValues}
-                    filterActive={filterActive}
                     dataGroups={listGroups}
                     loading={loading}
                     setLoading={setLoading}

@@ -717,7 +717,7 @@ const homeScreen = ({ ...props }) => {
   const onFinishCreateGroup = async (values) => {
     setLoading(true);
     const ids = getOnlyIds();
-    const body = { ...values, persons: ids };
+    const body = {...values, persons: ids, node: props.currentNode?.id}
     try {
       await WebApiAssessment.createGroupPersons(body);
       filterPersonName();
@@ -732,7 +732,7 @@ const homeScreen = ({ ...props }) => {
   const onFinishAssignTest = async (values) =>{
     setLoading(true)
     const ids = getOnlyIds();
-    const body = {...values, persons: ids}
+    const body = {...values, persons: ids, node: props.currentNode?.id}
     // console.log('valores que se van a enviar----->', body)
     try {
       filterPersonName();

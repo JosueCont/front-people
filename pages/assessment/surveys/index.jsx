@@ -151,7 +151,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
   const onFinishCreateGroup = async (values) =>{3
     setLoading(true)
     const ids = getOnlyIds();
-    const body = {...values, assessments: ids}
+    const body = {...values, assessments: ids, node: props.currentNode?.id}
     try {
       await WebApiAssessment.createGroupAssessments(body)
       message.success("Grupo agregado")
@@ -417,6 +417,7 @@ const mapState = (state) => {
     config: state.userStore.general_config,
     permissions: state.userStore.permissions.person,
     assessmentStore: state.assessmentStore,
+    currentNode: state.userStore.current_node
   };
 };
 

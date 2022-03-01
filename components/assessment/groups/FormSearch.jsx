@@ -20,11 +20,10 @@ const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = tr
     const [form] = Form.useForm();
     const permissions = useSelector(state => state.userStore.permissions.person)
     const [showModalCreate, setShowModalCreate] = useState(false);
-    const [loading, setLoading] = useState(false);
 
-    const HandleFilterReset = (groups) => {
+    const HandleFilterReset = () => {
         form.resetFields();
-        props.onFilterReset(groups);
+        props.searchGroup("")
     };
 
     const HandleCreateGroup = () =>{
@@ -40,35 +39,46 @@ const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = tr
         props.createGroup(values)
     }
 
+    const onFinishSearch = (values) =>{
+        let name = "";
+        if((values.name).trim()){
+            name = `&name=${values.name}`;
+        }else{
+            name = "";
+            form.resetFields();
+        }
+        props.searchGroup(name)
+    }
+
     return(
         <>
             <Row>
                 <Col span={18}>
-                    <Form form={form} scrollToFirstError>
+                    <Form form={form} scrollToFirstError onFinish={onFinishSearch}>
                         <Row>
                             <Col span={16}>
-                                <Form.Item name="Filter" label="Filtrar">
+                                <Form.Item name="name" label="Filtrar">
                                     <Input
-                                        placeholder={props.textSearch ? props.textSearch : 'Nombre del grupo'}
-                                        maxLength={200}
-                                        onChange={props.onFilterChange}
+                                        placeholder={
+                                            props.textSearch ?
+                                            props.textSearch :
+                                            'Nombre del grupo'
+                                        }
+                                        maxLength={50}
                                     />
                                 </Form.Item>
                             </Col>
                             <Col span={8}>
                                 <div style={{ float: "left", marginLeft: "5px" }}>
                                     <Form.Item>
-                                        <Button
-                                            onClick={() => props.onFilterActive(props.dataGroups?.results)}
-                                            htmlType="submit"
-                                        >
+                                        <Button htmlType="submit">
                                             <SearchOutlined />
                                         </Button>
                                     </Form.Item>
                                 </div>
                                 <div style={{ float: "left", marginLeft: "5px" }}>
                                     <Form.Item>
-                                        <Button onClick={() => HandleFilterReset(props.dataGroups?.results)}>
+                                        <Button onClick={()=>HandleFilterReset()}>
                                             <SyncOutlined />
                                         </Button>
                                     </Form.Item>
@@ -80,7 +90,6 @@ const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = tr
                 <Col span={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                     {permissions.create && (
                         <Button
-                            loading={loading}
                             onClick={() => HandleCreateGroup()}
                         >
                             <PlusOutlined /> {props.textButton ? props.textButton : 'Agregar grupo'}

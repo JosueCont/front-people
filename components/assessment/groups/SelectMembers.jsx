@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import WebApiAssessment from "../../../api/WebApiAssessment";
+import { useSelector } from "react-redux";
 
 const SelectMembers = ({...props}) => {
   
   const { Option } = Select;
+  const currenNode = useSelector(state => state.userStore.current_node)
   const [personList, setPersonList] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([])
 
@@ -13,12 +15,12 @@ const SelectMembers = ({...props}) => {
   },[props.members])
 
   useEffect(() => {
-    getPersons();
-  }, []);
+    getPersons(currenNode?.id);
+  }, [currenNode]);
 
-  const getPersons = async () => {
+  const getPersons = async (nodeId) => {
     try {
-      let response = await WebApiAssessment.getListPersons();
+      let response = await WebApiAssessment.getListPersons({node: nodeId});
       let list = [];
       response.data.map((item) => {
         let row = {
