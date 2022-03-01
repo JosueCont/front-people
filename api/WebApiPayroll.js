@@ -66,6 +66,10 @@ class WebApiPayroll {
       data
     );
   }
+
+  static importPayrollMasiveXml(data) {
+    return WebApi.ApisType(`/payroll/read-payroll-xml`, "post", data);
+  }
 }
 
 export default WebApiPayroll;

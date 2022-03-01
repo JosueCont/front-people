@@ -340,3 +340,7 @@ export const getDomain = (api) => {
     return "error";
   }
 };
+
+const getFileExtension = (filename) => {
+  return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
+};
