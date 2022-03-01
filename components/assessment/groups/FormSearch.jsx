@@ -42,7 +42,7 @@ const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = tr
     const onFinishSearch = (values) =>{
         let name = "";
         if((values.name).trim()){
-            name = `&name=${values.name}`;
+            name = `&name__icontains=${values.name}`;
         }else{
             name = "";
             form.resetFields();
