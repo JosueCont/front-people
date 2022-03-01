@@ -7,34 +7,36 @@ const idUser = userId();
 
 class WebApiAssessment {
     
-    static getGroupsAssessments(queryParam) {
-      return Axios.get(`${API_ASSESSMENT}/assessments/group/?company=${nodeId}${queryParam}`);
+    static getGroupsAssessments(data) {
+      return Axios.get(`${API_URL}/person/group-assessments/?node=${data.nodeId}${data.name}${data.queryParam}`);
     }
-    static getListSurveys(){
+    static getOnlyGroupAssessment(id) {
+        return Axios.get(`${API_ASSESSMENT}/assessments/group/${id}/`);
+    }
+    static getListSurveys(nodeId){
         return Axios.get(`${API_ASSESSMENT}/assessments/assessment/?companies=${nodeId}`);
     }
     static createGroupAssessments(data){
-        // return Axios.post(`${API_ASSESSMENT}/assessments/group/`, {...data, company: nodeId});
         return Axios.post(`${API_URL}/person/group-assessments/`, data);
     }
     static updateGroupAssessments(data, id){
-        return Axios.put(`${API_ASSESSMENT}/assessments/group/${id}/`, {...data, node: nodeId});
+        return Axios.put(`${API_URL}/person/group-assessments/${id}/`, data);
     }
-    static deleteGroupAssessments(id){
-        return Axios.delete(`${API_ASSESSMENT}/assessments/group/${id}/`);
+    static deleteGroupAssessments(data){
+        return Axios.post(`${API_URL}/person/group-assessments/delete_by_ids/`, data);
     }
 
-    static getListPersons() {
-        return Axios.post(`${API_URL}/person/person/get_list_persons/`, {node: nodeId});
+    static getListPersons(data) {
+        return Axios.post(`${API_URL}/person/person/get_list_persons/`, data);
     }
-    static getGroupsPersons(queryParam) {
-        return Axios.get(`${API_URL}/person/group/?company=${nodeId}${queryParam}`);
+    static getGroupsPersons(data) {
+        return Axios.get(`${API_URL}/person/group/?node=${data.nodeId}${data.name}${data.queryParam}`);
     }
     static createGroupPersons(data){
-        return Axios.post(`${API_URL}/person/group/`, {...data, node: nodeId});
+        return Axios.post(`${API_URL}/person/group/`, data);
     }
     static updateGroupPersons(data, id){
-        return Axios.put(`${API_URL}/person/group/${id}/`, {...data, node: nodeId});
+        return Axios.put(`${API_URL}/person/group/${id}/`, data);
     }
     static deleteGroupPersons(data){
         return Axios.post(`${API_URL}/person/group/delete_by_ids/`, data);

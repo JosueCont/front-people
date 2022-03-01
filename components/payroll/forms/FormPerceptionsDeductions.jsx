@@ -10,14 +10,8 @@ import {
   message,
   Space,
 } from "antd";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { userCompanyId } from "../../../libs/auth";
-import WebApiPayroll from "../../../api/WebApiPayroll";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import webApiFiscal from "../../../api/WebApiFiscal";
-import { StepContent } from "@material-ui/core";
-import { Receipt, Reorder } from "@material-ui/icons";
 import { ruleRequired, treeDecimal } from "../../../utils/rules";
 
 const FormPerceptionsDeductions = ({
@@ -190,8 +184,8 @@ const FormPerceptionsDeductions = ({
             key: a.code,
             code: a.code,
             amount: Number(a.amount),
-            taxed_amount: a.taxed_amount,
-            exempt_amount: a.exempt_amount,
+            taxed_amount: Number(a.taxed_amount),
+            exempt_amount: Number(a.exempt_amount),
           });
         }
         if (a.concept === 2) {
@@ -218,8 +212,8 @@ const FormPerceptionsDeductions = ({
             key: a.code,
             code: a.code,
             amount: Number(a.amount),
-            taxed_amount: a.taxed_amount,
-            exempt_amount: a.exempt_amount,
+            taxed_amount: Number(a.taxed_amount),
+            exempt_amount: Number(a.exempt_amount),
           });
         }
       });
@@ -263,9 +257,9 @@ const FormPerceptionsDeductions = ({
                 code: x.code,
                 key: x.label,
                 label: x.label,
-                amount: x.amount,
-                taxed_amount: x.taxed_amount,
-                exempt_amount: x.exempt_amount,
+                amount: Number(x.amount),
+                taxed_amount: Number(x.taxed_amount),
+                exempt_amount: Number(x.exempt_amount),
                 concept: 1,
               });
             }

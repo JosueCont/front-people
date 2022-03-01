@@ -421,30 +421,30 @@ const StampPayroll = () => {
         key: "code",
         dataIndex: "code",
         className: "cell-concept",
-        width: 100,
+        width: "10%",
       },
       {
         title: "Descripción",
         key: "label",
         dataIndex: "label",
         className: "cell-concept",
-        width: 500,
+        width: "50%",
       },
-      // {
-      //   title: "Dato",
-      //   key: "data",
-      //   dataIndex: "data",
-      //   className: "cell-concept",
-      //   width: 150,
-      // },
+      {
+        title: "Dato",
+        key: "data",
+        dataIndex: "data",
+        className: "cell-concept",
+        width: "10%",
+      },
       {
         title: "Grabado",
         key: "taxed_amount",
         dataIndex: "taxed_amount",
-        width: 150,
+        width: "10%",
         render: (taxed_amount) => (
           <Space size="middle">
-            <Text>$ {taxed_amount}</Text>
+            <Text>${taxed_amount}</Text>
           </Space>
         ),
       },
@@ -452,10 +452,21 @@ const StampPayroll = () => {
         title: "Exento",
         key: "exempt_amount",
         dataIndex: "exempt_amount",
-        width: 150,
+        width: "10%",
         render: (exempt_amount) => (
           <Space size="middle">
-            <Text>$ {exempt_amount}</Text>
+            <Text>${exempt_amount}</Text>
+          </Space>
+        ),
+      },
+      {
+        title: "Importe",
+        key: "amount",
+        dataIndex: "amount",
+        width: "10%",
+        render: (amount) => (
+          <Space size="middle">
+            <Text>${amount}</Text>
           </Space>
         ),
       },
@@ -467,31 +478,30 @@ const StampPayroll = () => {
         key: "code",
         dataIndex: "code",
         className: "cell-concept",
-        width: 100,
+        width: "10%",
       },
       {
         title: "Descripción",
         key: "label",
         dataIndex: "label",
         className: "cell-concept",
-        width: 500,
+        width: "70%",
       },
-      // {
-      //   title: "Dato",
-      //   key: "data",
-      //   dataIndex: "data",
-      //   className: "cell-concept",
-      //   width: 150,
-      // },
       {
-        title: "monto",
+        title: "Dato",
+        key: "data",
+        dataIndex: "data",
+        className: "cell-concept",
+        width: "10%",
+      },
+      {
+        title: "Importe",
         key: "amount",
         dataIndex: "amount",
-        width: 150,
+        width: "10%",
         render: (amount) => (
           <Space size="middle">
-            <Text>Monto</Text>
-            <Text>$ {amount}</Text>
+            <Text>${amount}</Text>
           </Space>
         ),
       },
@@ -503,24 +513,23 @@ const StampPayroll = () => {
         key: "code",
         dataIndex: "code",
         className: "cell-concept",
-        width: 100,
+        width: "10%",
       },
       {
         title: "Descripción",
         key: "label",
         dataIndex: "label",
         className: "cell-concept",
-        width: 500,
+        width: "80%",
       },
       {
-        title: "monto",
+        title: "Importe",
         key: "amount",
         dataIndex: "amount",
-        width: 150,
+        width: "10%",
         render: (amount) => (
           <Space size="middle">
-            <Text>Monto</Text>
-            <Text>$ {amount}</Text>
+            <Text>${amount}</Text>
           </Space>
         ),
       },
@@ -528,7 +537,9 @@ const StampPayroll = () => {
 
     return (
       <>
-        <div style={{ textAlign: "center" }}>Percepciones</div>
+        <div style={{ textAlign: "center", fontSize: 16, fontWeight: "bold" }}>
+          Percepciones
+        </div>
         <Table
           className="subTable"
           columns={columnsPerceptions}
@@ -539,7 +550,9 @@ const StampPayroll = () => {
           locale={{ emptyText: "Aún no hay datos" }}
         />
         <br />
-        <div style={{ textAlign: "center" }}>Deducciones</div>
+        <div style={{ textAlign: "center", fontSize: 16, fontWeight: "bold" }}>
+          Deducciones
+        </div>
         <Table
           className="subTable"
           columns={columnsDeductions}
@@ -550,41 +563,61 @@ const StampPayroll = () => {
           locale={{ emptyText: "Aún no hay datos" }}
         />
         <br />
-        <div style={{ textAlign: "center" }}>Otros pagos</div>
-        <Table
-          className="subTable"
-          columns={columnsOtherPayments}
-          dataSource={dataOtherPayments}
-          pagination={false}
-          size="small"
-          bordered
-          locale={{ emptyText: "Aún no hay datos" }}
-        />
+
+        {dataOtherPayments && dataOtherPayments.length > 0 && (
+          <>
+            <div
+              style={{ textAlign: "center", fontSize: 16, fontWeight: "bold" }}
+            >
+              Otros pagos
+            </div>
+            <Table
+              className="subTable"
+              columns={columnsOtherPayments}
+              dataSource={dataOtherPayments}
+              pagination={false}
+              size="small"
+              bordered
+              locale={{ emptyText: "Aún no hay datos" }}
+            />
+          </>
+        )}
 
         <br />
         <Col
           span={10}
-          style={{ display: "flex", float: "right", fontWeight: "bold" }}
+          style={{
+            display: "flex",
+            float: "right",
+            fontSize: 16,
+            fontWeight: "bold",
+          }}
         >
-          <Row>
-            <table>
-              <tr>
-                <td>Total percepciones :</td>
-                <td>$ {record.total_perceptions}</td>
-              </tr>
-              <tr>
-                <td>Total deducciones :</td>
-                <td>$ {record.total_deductions}</td>
-              </tr>
-              <tr>
-                <td>Total otros pagos :</td>
-                <td>$ {record.total_other_payments}</td>
-              </tr>
-              <tr>
-                <td>Total a pagar :</td>
-                <td>$ {record.total_to_pay}</td>
-              </tr>
-            </table>
+          <Row style={{ border: "1px solid" }}>
+            <Col span={24} style={{ display: "flex" }}>
+              <Col style={{ borderRight: "1px solid" }} span={14}>
+                Total percepciones :
+              </Col>
+              <Col style={{ textAlign: "right" }} span={10}>
+                $ {record.total_perceptions + record.total_other_payments}
+              </Col>
+            </Col>
+            <Col span={24} style={{ display: "flex" }}>
+              <Col style={{ borderRight: "1px solid" }} span={14}>
+                Total deducciones :
+              </Col>
+              <Col style={{ textAlign: "right" }} span={10}>
+                $ {record.total_deductions}
+              </Col>
+            </Col>
+            <Col span={24} style={{ display: "flex" }}>
+              <Col style={{ borderRight: "1px solid" }} span={14}>
+                Total a pagar :
+              </Col>
+              <Col style={{ textAlign: "right" }} span={10}>
+                $ {record.total_to_pay}
+              </Col>
+            </Col>
           </Row>
         </Col>
       </>
@@ -712,7 +745,7 @@ const StampPayroll = () => {
               </Row>
             </Card>
           </Col>
-          <Col md={3}>
+          <Col md={4}>
             <Button
               size="large"
               block

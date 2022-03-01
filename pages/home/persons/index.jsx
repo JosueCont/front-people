@@ -717,7 +717,7 @@ const homeScreen = ({ ...props }) => {
   const onFinishCreateGroup = async (values) => {
     setLoading(true);
     const ids = getOnlyIds();
-    const body = { ...values, persons: ids };
+    const body = {...values, persons: ids, node: props.currentNode?.id}
     try {
       await WebApiAssessment.createGroupPersons(body);
       filterPersonName();
@@ -729,11 +729,11 @@ const homeScreen = ({ ...props }) => {
     }
   }
 
-  const onFinishAssignTest = async (values) =>{3
+  const onFinishAssignTest = async (values) =>{
     setLoading(true)
     const ids = getOnlyIds();
-    const body = {...values, persons: ids}
-    console.log('valores que se van a enviar----->', body)
+    const body = {...values, persons: ids, node: props.currentNode?.id}
+    // console.log('valores que se van a enviar----->', body)
     try {
       filterPersonName();
       message.success("Evaluaciones asignadas")
@@ -1104,6 +1104,7 @@ const homeScreen = ({ ...props }) => {
             actionForm={onFinishCreateGroup}
             hiddenSurveys={true}
             hiddenMembers={true}
+            hiddenName={false}
           />
         )}
         {showModalAssignTest && (
