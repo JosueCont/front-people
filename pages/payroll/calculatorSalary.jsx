@@ -24,6 +24,7 @@ import webApiFiscal from "../../api/WebApiFiscal";
 import { Global } from "@emotion/core";
 import { ruleRequired } from "../../utils/rules";
 import { numberFormat } from "../../utils/functions";
+import { formatNumber } from "@formatjs/intl";
 const { TabPane } = Tabs;
 const calculatorSalary = () => {
   const [form] = Form.useForm();
@@ -45,6 +46,7 @@ const calculatorSalary = () => {
       .then((response) => {
         if (response.status == 200) {
           setTimeout(() => {
+            if (response.data.message) return;
             setSalary(response.data);
             setLoading(false);
           }, 500);
@@ -60,6 +62,16 @@ const calculatorSalary = () => {
         setSalary(null);
         setLoading(false);
       });
+  };
+
+  const changeMode = (item) => {
+    setSalary(null);
+    if (item == "1") {
+      setChangeType(false);
+      setAllowance(false);
+    } else {
+      setChangeType(true), setAllowance(true);
+    }
   };
 
   return (
@@ -139,16 +151,13 @@ const calculatorSalary = () => {
         </Breadcrumb>
         <Row>
           <Col md={23}>
-            <span>{numberFormat(20000000.33388888888)}</span>
             <Row style={{ width: "100%" }}>
               <Tabs
                 defaultActiveKey="1"
                 type="card"
                 size="small"
                 moreIcon={false}
-                onTabClick={(item) =>
-                  item == "1" ? setChangeType(false) : setChangeType(true)
-                }
+                onTabClick={(item) => changeMode(item)}
               >
                 <TabPane tab="Asimilado" key="1" />
                 <TabPane tab="Nómina" key="2" />
@@ -235,110 +244,128 @@ const calculatorSalary = () => {
                     </Row>
                   </Form>
                 </Col>
-                <Col
-                  md={12}
-                  style={{ display: "flex" }}
-                  className="col-results"
-                >
-                  <Spin
-                    tip="Cargando..."
-                    spinning={loading}
+                {salary && (
+                  <Col
+                    md={12}
                     style={{ display: "flex" }}
+                    className="col-results"
                   >
-                    {salary && (
-                      <div style={{ margin: "auto" }}>
-                        <Row className="table-grid-title">
-                          <Col span={18}>
-                            <Text strong={type == 1 ? true : false}>
-                              {changeType ? "Nomina" : "Asimilado"}
-                            </Text>
-                          </Col>
-                          <Col span={6} className="border-results">
-                            <Text>$ {salary.gross_salary}</Text>
-                          </Col>
-                        </Row>
-                        <Row
-                          className="table-grid-results"
-                          style={{ marginTop: 20 }}
-                        >
-                          <Col span={18}>
-                            <Text>- Límite inferior</Text>
-                          </Col>
-                          <Col span={6}>{salary.lower_limit}</Col>
-                          <Col span={18}>
-                            <span>= Excedente del límite inferior</span>
-                          </Col>
-                          <Col span={6}>{salary.surplus}</Col>
-                          <Col span={18}>
-                            <span>× % sobre excedente del límite inferior</span>
-                          </Col>
-                          <Col span={6}>
-                            {salary.percentage_exceeding_lower_limit}
-                          </Col>
-                          <Col span={18}>
-                            <span>= Impuesto marginal</span>
-                          </Col>
-                          <Col span={6}>{salary.marginal_tax}</Col>
-                          <Col span={18}>
-                            <span>+ Cuota fija del impuesto</span>
-                          </Col>
-                          <Col span={6}>{salary.fixed_fee}</Col>
-                          <Col span={18}>
-                            <span>I.S.R. a cargo</span>
-                          </Col>
-                          <Col span={6}>{salary.charge_isr}</Col>
-                          {allowance && (
-                            <>
-                              <Col span={18}>
-                                <span>Retención IMSS</span>
-                              </Col>
-                              <Col span={6}>{salary.retention_imss}</Col>
-                              <Col span={18}>
-                                <span>
-                                  {" "}
-                                  {salary.retention_isr
-                                    ? "ISR a retener"
-                                    : "SUBSIDIO PARA EL EMPLEO A ENTREGAR"}
-                                </span>
-                              </Col>
-                              <Col span={6}>
-                                {salary.retention_isr
-                                  ? salary.retention_isr
-                                  : salary.allowance_employee}
-                              </Col>
-                              <Col span={18}>
-                                <span>Percepción del trabajador</span>
-                              </Col>
-                              <Col span={6}>{salary.perception_employee}</Col>
-                              <Col span={18}>
-                                <span>IMSS/INFONAVIT</span>
-                              </Col>
-                              <Col span={6}>
-                                {salary["imss/infonavit/afore"]}
-                              </Col>
-                            </>
-                          )}
-                        </Row>
-                        {!allowance && (
-                          <Row className="table-grid-footer">
+                    <Spin
+                      tip="Cargando..."
+                      spinning={loading}
+                      style={{ display: "flex" }}
+                    >
+                      {salary && (
+                        <div style={{ margin: "auto" }}>
+                          <Row className="table-grid-title">
                             <Col span={18}>
                               <Text strong={type == 1 ? true : false}>
-                                ASIMILADO NETO
+                                {changeType ? "Nomina" : "Asimilado"}
                               </Text>
                             </Col>
-                            <Col
-                              span={6}
-                              style={{ backgroundColor: type == 2 && "yellow" }}
-                              className="border-results"
-                            >
-                              <Text>$ {salary.net_salary}</Text>
+                            <Col span={6} className="border-results">
+                              <Text>$ {numberFormat(salary.gross_salary)}</Text>
                             </Col>
                           </Row>
-                        )}
-                      </div>
-                    )}
-                  </Spin>
-                </Col>
+                          <Row
+                            className="table-grid-results"
+                            style={{ marginTop: 20 }}
+                          >
+                            <Col span={18}>
+                              <Text>- Límite inferior</Text>
+                            </Col>
+                            <Col span={6}>
+                              {numberFormat(salary.lower_limit)}
+                            </Col>
+                            <Col span={18}>
+                              <span>= Excedente del límite inferior</span>
+                            </Col>
+                            <Col span={6}>{numberFormat(salary.surplus)}</Col>
+                            <Col span={18}>
+                              <span>
+                                × % sobre excedente del límite inferior
+                              </span>
+                            </Col>
+                            <Col span={6}>
+                              {numberFormat(
+                                salary.percentage_exceeding_lower_limit
+                              )}
+                            </Col>
+                            <Col span={18}>
+                              <span>= Impuesto marginal</span>
+                            </Col>
+                            <Col span={6}>
+                              {numberFormat(salary.marginal_tax)}
+                            </Col>
+                            <Col span={18}>
+                              <span>+ Cuota fija del impuesto</span>
+                            </Col>
+                            <Col span={6}>{numberFormat(salary.fixed_fee)}</Col>
+                            <Col span={18}>
+                              <span>I.S.R. a cargo</span>
+                            </Col>
+                            <Col span={6}>
+                              {numberFormat(salary.charge_isr)}
+                            </Col>
+                            {allowance && (
+                              <>
+                                <Col span={18}>
+                                  <span>Retención IMSS</span>
+                                </Col>
+                                <Col span={6}>
+                                  {numberFormat(salary.retention_imss)}
+                                </Col>
+                                <Col span={18}>
+                                  <span>
+                                    {" "}
+                                    {salary.retention_isr
+                                      ? "ISR a retener"
+                                      : "SUBSIDIO PARA EL EMPLEO A ENTREGAR"}
+                                  </span>
+                                </Col>
+                                <Col span={6}>
+                                  {salary.retention_isr
+                                    ? salary.retention_isr
+                                    : salary.allowance_employee}
+                                </Col>
+                                <Col span={18}>
+                                  <span>Percepción del trabajador</span>
+                                </Col>
+                                <Col span={6}>
+                                  {numberFormat(salary.perception_employee)}
+                                </Col>
+                                <Col span={18}>
+                                  <span>IMSS/INFONAVIT</span>
+                                </Col>
+                                <Col span={6}>
+                                  {numberFormat(salary.imss_infonavit_afore)}
+                                </Col>
+                              </>
+                            )}
+                          </Row>
+                          {!allowance && (
+                            <Row className="table-grid-footer">
+                              <Col span={18}>
+                                <Text strong={type == 1 ? true : false}>
+                                  ASIMILADO NETO
+                                </Text>
+                              </Col>
+                              <Col
+                                span={6}
+                                style={{
+                                  backgroundColor: type == 2 && "yellow",
+                                }}
+                                className="border-results"
+                              >
+                                <Text>$ {numberFormat(salary.net_salary)}</Text>
+                              </Col>
+                            </Row>
+                          )}
+                        </div>
+                      )}
+                    </Spin>
+                  </Col>
+                )}
               </Row>
             </Card>
           </Col>
