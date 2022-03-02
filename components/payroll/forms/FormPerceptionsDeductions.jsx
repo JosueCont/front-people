@@ -167,6 +167,7 @@ const FormPerceptionsDeductions = ({
   };
 
   const saveData = () => {
+    //Guardando info
     setLoading(true);
     if (dataSource.length > 0) {
       let perceptions_list = [];
@@ -184,9 +185,9 @@ const FormPerceptionsDeductions = ({
             concept: label_perception.label,
             key: a.code,
             code: a.code,
-            amount: numberFormat(a.amount),
-            taxed_amount: numberFormat(a.taxed_amount),
-            exempt_amount: numberFormat(a.exempt_amount),
+            amount: Number(a.amount),
+            taxed_amount: Number(a.taxed_amount),
+            exempt_amount: Number(a.exempt_amount),
           });
         }
         if (a.concept === 2) {
@@ -199,7 +200,7 @@ const FormPerceptionsDeductions = ({
             concept: label_deduction.label,
             key: a.code,
             code: a.code,
-            amount: numberFormat(a.amount),
+            amount: Number(a.amount),
           });
         }
         if (a.concept === 3) {
@@ -212,9 +213,9 @@ const FormPerceptionsDeductions = ({
             concept: label_otherPayments.label,
             key: a.code,
             code: a.code,
-            amount: numberFormat(a.amount),
-            taxed_amount: numberFormat(a.taxed_amount),
-            exempt_amount: numberFormat(a.exempt_amount),
+            amount: Number(a.amount),
+            taxed_amount: Number(a.taxed_amount),
+            exempt_amount: Number(a.exempt_amount),
           });
         }
       });
@@ -425,9 +426,6 @@ const FormPerceptionsDeductions = ({
               align="center"
               dataIndex="amount"
               key="amount"
-              render={(text, record) => (
-                <div>{numberFormat(record.amount)}</div>
-              )}
             />
             <Column
               width={100}
