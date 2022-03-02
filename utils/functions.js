@@ -344,3 +344,9 @@ export const getDomain = (api) => {
 const getFileExtension = (filename) => {
   return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
 };
+
+export const numberFormat = (value) =>
+  new Intl.NumberFormat({
+    style: "unit",
+    unit: "money",
+  }).format(value);

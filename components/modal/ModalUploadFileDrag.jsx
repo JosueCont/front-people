@@ -6,7 +6,7 @@ const { Dragger } = Upload;
 
 const ModalUploadFileDrag = ({
   title,
-  setModal,
+  setVisible,
   visible,
   setFiles,
   ...porps
@@ -36,7 +36,7 @@ const ModalUploadFileDrag = ({
 
   const setSendFile = () => {
     setFiles(upload);
-    setModal(false);
+    setVisible(false);
   };
 
   return (
@@ -46,7 +46,7 @@ const ModalUploadFileDrag = ({
         title={title}
         centered
         visible={visible}
-        onCancel={() => setModal(false)}
+        onCancel={() => setVisible(false)}
         footer={null}
         width={"50%"}
       >
@@ -73,7 +73,7 @@ const ModalUploadFileDrag = ({
           <Col span={24} style={{ margin: "10px 0px", textAlign: "right" }}>
             <Button
               style={{ marginRight: "5px" }}
-              onClick={() => setModal(false)}
+              onClick={() => setVisible(false)}
             >
               Cancelar
             </Button>

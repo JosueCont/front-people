@@ -9,8 +9,8 @@ import {
   Card,
   Spin,
   Button,
-  Switch,
   Table,
+  Alert,
 } from "antd";
 import useRouter from "next/router";
 import { userId } from "../../libs/auth";
@@ -19,25 +19,34 @@ import { connect } from "react-redux";
 import { companySelected, setUser } from "../../redux/UserDuck";
 import { doCompanySelectedCatalog } from "../../redux/catalogCompany";
 import WebApiPeople from "../../api/WebApiPeople";
-import Clipboard from "../../components/Clipboard";
 import { Global, css } from "@emotion/core";
 import {
   AppstoreOutlined,
   EditOutlined,
+  PlusOutlined,
   TableOutlined,
 } from "@ant-design/icons";
-import { GridOffOutlined, GridOnOutlined } from "@material-ui/icons";
+import ModalCreateBusiness from "../../components/modal/createBusiness";
+import ModalUploadFileDrag from "../../components/modal/ModalUploadFileDrag";
+import Modal from "antd/lib/modal/Modal";
+import router from "next/router";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
+  const { Meta } = Card;
+
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [jwt, setJwt] = useState(null);
-  let personId = userId();
   const [admin, setAdmin] = useState(false);
-  const { Meta } = Card;
-  const isBrowser = () => typeof window !== "undefined";
   const [treeTable, setTreeTable] = useState(true);
+  const [modalSwitch, setModalSwitch] = useState(false);
+  const [createNode, setCreateNode] = useState(false);
+  const [modalUpload, setModalUpload] = useState(false);
+  const [files, setFiles] = useState(null);
+
+  let personId = userId();
+  const isBrowser = () => typeof window !== "undefined";
 
   useEffect(() => {
     try {
@@ -149,6 +158,15 @@ const SelectCompany = ({ ...props }) => {
     },
   ];
 
+  const switchModal = () => {
+    modalSwitch ? setModalSwitch(false) : setModalSwitch(true);
+  };
+
+  const addCompany = () => {
+    modalSwitch ? setModalSwitch(false) : setModalSwitch(true);
+    createNode ? setCreateNode(false) : setCreateNode(true);
+  };
+
   return (
     <>
       <Global
@@ -221,17 +239,24 @@ const SelectCompany = ({ ...props }) => {
                 <Col span={24}>
                   <Row justify={"end"}>
                     <Col style={{ margin: "1%" }}>
-                      {treeTable ? (
-                        <Button onClick={changeView}>
-                          <AppstoreOutlined />
-                          Grid
-                        </Button>
-                      ) : (
-                        <Button onClick={changeView}>
-                          <TableOutlined />
-                          Tabla
-                        </Button>
-                      )}
+                      <Button onClick={changeView}>
+                        {treeTable ? (
+                          <>
+                            <AppstoreOutlined />
+                            Grid
+                          </>
+                        ) : (
+                          <>
+                            <TableOutlined />
+                            Tabla
+                          </>
+                        )}
+                      </Button>
+                    </Col>
+                    <Col style={{ margin: "1%" }}>
+                      <Button onClick={switchModal}>
+                        <PlusOutlined /> Agregar empresa
+                      </Button>
                     </Col>
                   </Row>
                 </Col>
@@ -268,41 +293,12 @@ const SelectCompany = ({ ...props }) => {
                         >
                           <EditOutlined />
                         </span>
-                        {/* <Button type="primary" className="buttonEditCompany" icon={<EditOutlined />} style={{position:'absolute' }} /> */}
                         <Meta
                           className="meta_company"
                           title={item.name}
                           description="Ultima vez: Hace 2 Hrs"
                         />
                       </Card>
-                      {/* <Card
-                      hoverable
-                      className={"cardH100"}
-                      actions={[
-                        <Clipboard
-                          text={
-                            window.location.origin +
-                            "/ac/urn/" +
-                            item.permanent_code
-                          }
-                          border={false}
-                          type={"button"}
-                          msg={"Copiado en portapapeles"}
-                          tooltipTitle={"Copiar link de auto registro"}
-                        />,
-                      ]}
-                    >
-                      <div
-                        className="div-card "
-                        onClick={() => setCompanySelect(item)}
-                      >
-                        <Title level={4} style={{ margin: "auto" }}>
-                          <img alt="example" src={item.image} width="50px" />
-                          <br />
-                          {item.name}
-                        </Title>
-                      </div>
-                    </Card> */}
                     </Col>
                   ))}
                 {treeTable && dataList && (
@@ -324,6 +320,52 @@ const SelectCompany = ({ ...props }) => {
               </Row>
             </Spin>
           </div>
+          <Modal
+            visible={modalSwitch}
+            onCancel={switchModal}
+            footer={[]}
+            title={<b>Agregar empresa</b>}
+            footer={[
+              <Button
+                key="back"
+                onClick={() => router.push("/payroll/importMasivePayroll")}
+              >
+                Importar xml
+              </Button>,
+              <Button
+                key="submit"
+                onClick={() => {
+                  setModalSwitch(false), setCreateNode(true);
+                }}
+              >
+                Crear manualmente
+              </Button>,
+            ]}
+          >
+            <Alert
+              message={
+                <span>
+                  <b>Importar xml:</b> Se crea la empresa y el historico de
+                  nomina a base de una carga masiva de xml (nominas por persona)
+                </span>
+              }
+              type="warning"
+            />
+            <br />
+            <Alert
+              message={
+                <span>
+                  <b>Crear manualmente:</b> Se crea de manera manual una epresa
+                  con la informacion basica necesaria
+                </span>
+              }
+              type="warning"
+            />
+          </Modal>
+          <ModalCreateBusiness
+            visible={createNode}
+            setVisible={setCreateNode}
+          />
         </MainLayout>
       ) : (
         <div className="notAllowed" />
