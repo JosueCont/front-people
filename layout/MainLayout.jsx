@@ -78,7 +78,6 @@ const MainLayout = ({
 
   useEffect(() => {
     if (props.currentNode && props.config) {
-      console.log("CONFIG-->> ", props.config.theme_color);
       setMainLogo(props.currentNode.image);
     } else {
       if (props.config) props.companySelected(null, props.config);

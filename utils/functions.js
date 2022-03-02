@@ -346,7 +346,7 @@ const getFileExtension = (filename) => {
 };
 
 export const numberFormat = (value) =>
-  new Intl.NumberFormat({
-    style: "unit",
-    unit: "money",
+  new Intl.NumberFormat("es-MX", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value);
