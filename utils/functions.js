@@ -349,4 +349,8 @@ export const numberFormat = (value) =>
   new Intl.NumberFormat({
     style: "unit",
     unit: "money",
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 4,
+    minimumSignificantDigits: 1,
+    maximumSignificantDigits: 4,
   }).format(value);
