@@ -13,6 +13,7 @@ import {
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import webApiFiscal from "../../../api/WebApiFiscal";
 import { ruleRequired, treeDecimal } from "../../../utils/rules";
+import { numberFormat } from "../../../utils/functions";
 
 const FormPerceptionsDeductions = ({
   setIsModalVisible,
@@ -183,9 +184,9 @@ const FormPerceptionsDeductions = ({
             concept: label_perception.label,
             key: a.code,
             code: a.code,
-            amount: Number(a.amount),
-            taxed_amount: Number(a.taxed_amount),
-            exempt_amount: Number(a.exempt_amount),
+            amount: numberFormat(a.amount),
+            taxed_amount: numberFormat(a.taxed_amount),
+            exempt_amount: numberFormat(a.exempt_amount),
           });
         }
         if (a.concept === 2) {
@@ -198,7 +199,7 @@ const FormPerceptionsDeductions = ({
             concept: label_deduction.label,
             key: a.code,
             code: a.code,
-            amount: Number(a.amount),
+            amount: numberFormat(a.amount),
           });
         }
         if (a.concept === 3) {
@@ -211,9 +212,9 @@ const FormPerceptionsDeductions = ({
             concept: label_otherPayments.label,
             key: a.code,
             code: a.code,
-            amount: Number(a.amount),
-            taxed_amount: Number(a.taxed_amount),
-            exempt_amount: Number(a.exempt_amount),
+            amount: numberFormat(a.amount),
+            taxed_amount: numberFormat(a.taxed_amount),
+            exempt_amount: numberFormat(a.exempt_amount),
           });
         }
       });
@@ -424,6 +425,9 @@ const FormPerceptionsDeductions = ({
               align="center"
               dataIndex="amount"
               key="amount"
+              render={(text, record) => (
+                <div>{numberFormat(record.amount)}</div>
+              )}
             />
             <Column
               width={100}
