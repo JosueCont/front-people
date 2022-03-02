@@ -167,6 +167,7 @@ const FormPerceptionsDeductions = ({
   };
 
   const saveData = () => {
+    //Guardando info
     setLoading(true);
     if (dataSource.length > 0) {
       let perceptions_list = [];
