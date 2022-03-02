@@ -24,8 +24,8 @@ import webApiFiscal from "../../api/WebApiFiscal";
 import { Global } from "@emotion/core";
 import { ruleRequired } from "../../utils/rules";
 import { numberFormat } from "../../utils/functions";
-import { formatNumber } from "@formatjs/intl";
 const { TabPane } = Tabs;
+
 const calculatorSalary = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -258,13 +258,15 @@ const calculatorSalary = () => {
                       {salary && (
                         <div style={{ margin: "auto" }}>
                           <Row className="table-grid-title">
-                            <Col span={18}>
-                              <Text strong={type == 1 ? true : false}>
+                            <Col span={16}>
+                              <Text strong>
                                 {changeType ? "Nomina" : "Asimilado"}
                               </Text>
                             </Col>
-                            <Col span={6} className="border-results">
-                              <Text>$ {numberFormat(salary.gross_salary)}</Text>
+                            <Col span={8} className="border-results">
+                              <Text strong>
+                                $ {numberFormat(salary.gross_salary)}
+                              </Text>
                             </Col>
                           </Row>
                           <Row
@@ -272,40 +274,52 @@ const calculatorSalary = () => {
                             style={{ marginTop: 20 }}
                           >
                             <Col span={18}>
-                              <Text>- Límite inferior</Text>
+                              <span>- Límite inferior</span>
                             </Col>
                             <Col span={6}>
-                              {numberFormat(salary.lower_limit)}
+                              <Text strong>
+                                {numberFormat(salary.lower_limit)}
+                              </Text>
                             </Col>
                             <Col span={18}>
                               <span>= Excedente del límite inferior</span>
                             </Col>
-                            <Col span={6}>{numberFormat(salary.surplus)}</Col>
+                            <Col span={6}>
+                              <Text strong>{numberFormat(salary.surplus)}</Text>
+                            </Col>
                             <Col span={18}>
                               <span>
                                 × % sobre excedente del límite inferior
                               </span>
                             </Col>
                             <Col span={6}>
-                              {numberFormat(
-                                salary.percentage_exceeding_lower_limit
-                              )}
+                              <Text strong>
+                                {salary.percentage_exceeding_lower_limit}
+                              </Text>
                             </Col>
                             <Col span={18}>
                               <span>= Impuesto marginal</span>
                             </Col>
                             <Col span={6}>
-                              {numberFormat(salary.marginal_tax)}
+                              <Text strong>
+                                {numberFormat(salary.marginal_tax)}
+                              </Text>
                             </Col>
                             <Col span={18}>
                               <span>+ Cuota fija del impuesto</span>
                             </Col>
-                            <Col span={6}>{numberFormat(salary.fixed_fee)}</Col>
+                            <Col span={6}>
+                              <Text strong>
+                                {numberFormat(salary.fixed_fee)}
+                              </Text>
+                            </Col>
                             <Col span={18}>
                               <span>I.S.R. a cargo</span>
                             </Col>
                             <Col span={6}>
-                              {numberFormat(salary.charge_isr)}
+                              <Text strong>
+                                {numberFormat(salary.charge_isr)}
+                              </Text>
                             </Col>
                             {allowance && (
                               <>
@@ -313,7 +327,9 @@ const calculatorSalary = () => {
                                   <span>Retención IMSS</span>
                                 </Col>
                                 <Col span={6}>
-                                  {numberFormat(salary.retention_imss)}
+                                  <Text strong>
+                                    {numberFormat(salary.retention_imss)}
+                                  </Text>
                                 </Col>
                                 <Col span={18}>
                                   <span>
@@ -332,32 +348,38 @@ const calculatorSalary = () => {
                                   <span>Percepción del trabajador</span>
                                 </Col>
                                 <Col span={6}>
-                                  {numberFormat(salary.perception_employee)}
+                                  <Text strong>
+                                    {numberFormat(salary.perception_employee)}
+                                  </Text>
                                 </Col>
                                 <Col span={18}>
                                   <span>IMSS/INFONAVIT</span>
                                 </Col>
                                 <Col span={6}>
-                                  {numberFormat(salary.imss_infonavit_afore)}
+                                  <Text strong>
+                                    {numberFormat(salary.imss_infonavit_afore)}
+                                  </Text>
                                 </Col>
                               </>
                             )}
                           </Row>
                           {!allowance && (
                             <Row className="table-grid-footer">
-                              <Col span={18}>
+                              <Col span={16}>
                                 <Text strong={type == 1 ? true : false}>
                                   ASIMILADO NETO
                                 </Text>
                               </Col>
                               <Col
-                                span={6}
+                                span={8}
                                 style={{
                                   backgroundColor: type == 2 && "yellow",
                                 }}
                                 className="border-results"
                               >
-                                <Text>$ {numberFormat(salary.net_salary)}</Text>
+                                <Text strong>
+                                  $ {numberFormat(salary.net_salary)}
+                                </Text>
                               </Col>
                             </Row>
                           )}
