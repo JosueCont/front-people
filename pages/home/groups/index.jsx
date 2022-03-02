@@ -19,20 +19,23 @@ const GroupsPeople = () =>{
         onFilterActive,
         onFilterReset,
     ] = useFilter();
+    const currenNode = useSelector(state => state.userStore.current_node)
     const [listGroups, setLisGroups] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(()=>{
-        getListGroups("")
-    },[])
+        if(currenNode?.id){
+            getListGroups(currenNode.id, "", "")
+        }
+    },[currenNode])
 
     const successMessages = (ids) =>{
         if(ids.length > 1){
             return message.success("Grupos eliminados")
         }else{
             return message.success("Grupo eliminado")
-        }
-      }
+        }  
+    }
     
     const errorMessages = (ids) =>{
         if(ids.length > 1){
@@ -42,11 +45,16 @@ const GroupsPeople = () =>{
         }
     }
 
-    const getListGroups = async (queryParam)=>{
+    const getListGroups = async (nodeId, name, queryParam)=>{
+        const data = {
+            nodeId: nodeId,
+            name: name,
+            queryParam: queryParam
+        }
         setLoading(true)
         try {
-            let response = await WebApiAssessment.getGroupsPersons(queryParam);
-            console.log('response grupos personas', response)
+            let response = await WebApiAssessment.getGroupsPersons(data);
+            // console.log('response grupos personas', response)
             setLisGroups(response.data)
             setLoading(false)
         } catch (e) {
@@ -56,9 +64,10 @@ const GroupsPeople = () =>{
     }
 
     const createGroup = async (values) =>{
+        const data = {...values, node: currenNode?.id}
         try {
-            await WebApiAssessment.createGroupPersons(values)
-            getListGroups("")
+            await WebApiAssessment.createGroupPersons(data)
+            getListGroups(currenNode?.id,"", "")
             message.success("Grupo agregado")
         } catch (e) {
             setLoading(false)
@@ -67,27 +76,33 @@ const GroupsPeople = () =>{
     }
 
     const updateGroup = async (values, id) =>{
+        const data = {...values, node: currenNode?.id}
         try {
-            await WebApiAssessment.updateGroupPersons(values, id);
-            getListGroups("")
+            await WebApiAssessment.updateGroupPersons(data, id);
+            getListGroups(currenNode?.id,"", "")
             message.success("Información actualizada")
         } catch (e) {
             setLoading(false)
             message.error("Información no actualizada")
-            console.log(e)
+            console.log('no se actualiza----->',e.response)
         }
     }
 
     const deleteGroup= async (ids) =>{
         try {
             await WebApiAssessment.deleteGroupPersons({groups_id: ids})
-            getListGroups("")
+            getListGroups(currenNode?.id,"","")
             successMessages(ids);
         } catch (e) {
             setLoading(false)
             errorMessages(ids)
             console.log(e)
         }
+    }
+
+    const searchGroup = async (name) =>{
+        setLoading(true)
+        getListGroups(currenNode?.id, name, "")
     }
 
     return(
@@ -103,18 +118,14 @@ const GroupsPeople = () =>{
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
                 <FormSearch
-                    onFilterActive={onFilterActive}
-                    onFilterChange={onFilterChange}
-                    onFilterReset={onFilterReset}
                     dataGroups={listGroups}
                     setLoading={setLoading}
                     createGroup={createGroup}
                     hiddenName={false}
                     hiddenMembers={false}
+                    searchGroup={searchGroup}
                 />
                 <TableGroups
-                    filterValues={filterValues}
-                    filterActive={filterActive}
                     dataGroups={listGroups}
                     loading={loading}
                     setLoading={setLoading}

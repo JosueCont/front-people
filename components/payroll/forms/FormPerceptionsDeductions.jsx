@@ -10,14 +10,8 @@ import {
   message,
   Space,
 } from "antd";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { userCompanyId } from "../../../libs/auth";
-import WebApiPayroll from "../../../api/WebApiPayroll";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import webApiFiscal from "../../../api/WebApiFiscal";
-import { StepContent } from "@material-ui/core";
-import { Receipt, Reorder } from "@material-ui/icons";
 import { ruleRequired, treeDecimal } from "../../../utils/rules";
 
 const FormPerceptionsDeductions = ({
@@ -96,7 +90,7 @@ const FormPerceptionsDeductions = ({
       ? value.perception
       : value.deduction
       ? value.deduction
-      : value.others_payments;
+      : value.other_payments;
 
     let exist = tempArray.filter(
       (item) => item.concept == value.concept && item.code == code
@@ -115,6 +109,7 @@ const FormPerceptionsDeductions = ({
         let data_source = dataSource.filter((item) => item);
         if (data_source.length > 0) {
           let editData = {
+            locked: false,
             concept: value.concept,
             code: code,
             label: label.label,
@@ -129,6 +124,7 @@ const FormPerceptionsDeductions = ({
       }
     } else {
       let newData = {
+        locked: false,
         key: code,
         concept: value.concept,
         label: label.label,
@@ -156,7 +152,7 @@ const FormPerceptionsDeductions = ({
       concept: data.concept,
       perception: data.concept == 1 ? data.code : null,
       deduction: data.concept == 2 ? data.code : null,
-      others_payments: data.concept == 3 ? data.code : null,
+      other_payments: data.concept == 3 ? data.code : null,
       amount: data.amount,
     });
   };
@@ -174,40 +170,59 @@ const FormPerceptionsDeductions = ({
     if (dataSource.length > 0) {
       let perceptions_list = [];
       let deductions_list = [];
-      let others_payments_list = [];
+      let other_payments_list = [];
 
-      perceptions_list = [...dataSource].map((item) => {
-        /* let label_perception = perceptions.find(element => element.value === item.code); */
-        return {
-          label: item.label,
-          key: item.label,
-          code: item.code,
-          amount: Number(item.amount),
-        };
-      });
-
-      /* dataSource.map((a) => {
-        
+      dataSource.map((a) => {
         if (a.concept === 1) {
-          let label_perception = perceptions.find(element => element.value === a.code);
-          perceptions_list.push({ concept: label_perception.label, key: a.code ,code: a.code, amount: Number(a.amount) });
+          let label_perception = perceptions.find(
+            (element) => element.value === a.code
+          );
+          perceptions_list.push({
+            locked: a.locked,
+            label: label_perception.label,
+            concept: label_perception.label,
+            key: a.code,
+            code: a.code,
+            amount: Number(a.amount),
+            taxed_amount: Number(a.taxed_amount),
+            exempt_amount: Number(a.exempt_amount),
+          });
         }
         if (a.concept === 2) {
-          let label_deduction = deductions.find(element => element.value === a.code);
-          deductions_list.push({concept: label_deduction.label, key: a.code, code: a.code, amount: Number(a.amount) });
+          let label_deduction = deductions.find(
+            (element) => element.value === a.code
+          );
+          deductions_list.push({
+            locked: a.locked,
+            label: label_deduction.label,
+            concept: label_deduction.label,
+            key: a.code,
+            code: a.code,
+            amount: Number(a.amount),
+          });
         }
         if (a.concept === 3) {
-          let label_otherPayments = otherPayments.find(element => element.value === a.code);
-          others_payments_list.push({concept: label_otherPayments.label , key: a.code, code: a.code, amount: Number(a.amount) });
+          let label_otherPayments = otherPayments.find(
+            (element) => element.value === a.code
+          );
+          other_payments_list.push({
+            locked: a.locked,
+            label: label_otherPayments.label,
+            concept: label_otherPayments.label,
+            key: a.code,
+            code: a.code,
+            amount: Number(a.amount),
+            taxed_amount: Number(a.taxed_amount),
+            exempt_amount: Number(a.exempt_amount),
+          });
         }
-
-      }); */
+      });
 
       saveConcepts({
         person_id: person_id,
         perceptions: perceptions_list,
         deductions: deductions_list,
-        others_payments: others_payments_list,
+        other_payments: other_payments_list,
       });
       setIsModalVisible(false);
     } else {
@@ -215,7 +230,7 @@ const FormPerceptionsDeductions = ({
         person_id: person_id,
         perceptions: [],
         deductions: [],
-        others_payments: [],
+        other_payments: [],
       });
       setIsModalVisible(false);
     }
@@ -238,11 +253,14 @@ const FormPerceptionsDeductions = ({
           objectPayroll.perceptions.map((x) => {
             if (x.code) {
               array_data.push({
-                concept: 1,
+                locked: x.locked,
                 code: x.code,
-                amount: x.amount,
-                key: x.code,
+                key: x.label,
                 label: x.label,
+                amount: Number(x.amount),
+                taxed_amount: Number(x.taxed_amount),
+                exempt_amount: Number(x.exempt_amount),
+                concept: 1,
               });
             }
           });
@@ -251,24 +269,28 @@ const FormPerceptionsDeductions = ({
           objectPayroll.deductions.map((x) => {
             if (x.code) {
               array_data.push({
-                concept: 2,
+                locked: x.locked,
                 code: x.code,
-                amount: x.amount,
-                key: x.code,
+                key: x.label,
                 label: x.label,
+                amount: x.amount,
+                concept: 2,
               });
             }
           });
         }
-        if (objectPayroll.others_payments.length > 0) {
-          objectPayroll.others_payments.map((x) => {
+        if (objectPayroll.other_payments.length > 0) {
+          objectPayroll.other_payments.map((x) => {
             if (x.code) {
               array_data.push({
-                concept: 3,
+                locked: x.locked,
                 code: x.code,
-                amount: x.amount,
-                key: x.code,
+                key: x.label,
                 label: x.label,
+                amount: x.amount,
+                exempt_amount: x.exempt_amount,
+                taxed_amount: x.taxed_amount,
+                concept: 3,
               });
             }
           });
@@ -330,7 +352,7 @@ const FormPerceptionsDeductions = ({
           {concept == 3 && (
             <Col span={24}>
               <Form.Item
-                name="others_payments"
+                name="other_payments"
                 label="Otro pago"
                 rules={[ruleRequired]}
               >
@@ -409,19 +431,21 @@ const FormPerceptionsDeductions = ({
               dataIndex="options"
               key="options"
               align="center"
-              render={(text, record, index) => (
-                <>
-                  <EditOutlined
-                    style={{ marginRight: "10px" }}
-                    key={"edit" + record.perception}
-                    onClick={() => editAmount(record, index)}
-                  />
-                  <DeleteOutlined
-                    key={"delete" + record.perception}
-                    onClick={() => deleteAmount(index)}
-                  />
-                </>
-              )}
+              render={(text, record, index) =>
+                !record.locked && (
+                  <>
+                    <EditOutlined
+                      style={{ marginRight: "10px" }}
+                      key={"edit" + record.perception}
+                      onClick={() => editAmount(record, index)}
+                    />
+                    <DeleteOutlined
+                      key={"delete" + record.perception}
+                      onClick={() => deleteAmount(index)}
+                    />
+                  </>
+                )
+              }
             />
           </Table>
         </Col>
