@@ -11,7 +11,7 @@ import {
   Input,
   Alert,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { DollarCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -207,8 +207,19 @@ const ImportMasivePayroll = ({ ...props }) => {
                     </Form>
                   </Col>
                 ) : (
-                  <Row justify="end" style={{ width: "100%" }}>
-                    <Col style={{ display: "flex" }}>
+                  <Row style={{ width: "100%" }}>
+                    <Col span={18} style={{ display: "" }}>
+                      <span
+                        style={{
+                          color: "white",
+                          fontSize: "30px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        <DollarCircleOutlined /> Recibos de nómina
+                      </span>
+                    </Col>
+                    <Col span={2} style={{ display: "flex" }}>
                       <Button
                         style={{
                           background: "#fa8c16",
@@ -219,7 +230,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                         onClick={() => setModal(true)}
                       >
                         <PlusOutlined />
-                        Nuevo
+                        Importar nómina
                       </Button>
                     </Col>
                   </Row>
@@ -228,7 +239,7 @@ const ImportMasivePayroll = ({ ...props }) => {
             </Card>
           </Col>
           <Col span={24}>
-            {cfdi && (
+            {cfdi ? (
               <Card className="card_table">
                 <Table
                   size="small"
@@ -243,6 +254,34 @@ const ImportMasivePayroll = ({ ...props }) => {
                   }}
                   className={"mainTable headers_transparent"}
                 />
+              </Card>
+            ) : (
+              <Card className="">
+                <div className={"ImportPayroll"}></div>
+                <Row justify="center">
+                  <div style={{ width: "50%", textAlign: "center" }}>
+                    <span style={{ fontSize: "20px" }}>
+                      <b>Importa tus recibos aquí</b>
+                    </span>
+                    <p style={{ fontSize: "15px" }}>
+                      Se analizará la información de tus archivos, se creará la
+                      empresa, información de los empleados y sus pagos de
+                      nómina.
+                    </p>
+                    <Button
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginTop: "auto",
+                      }}
+                      onClick={() => setModal(true)}
+                    >
+                      <PlusOutlined />
+                      Importar nómina
+                    </Button>
+                  </div>
+                </Row>
               </Card>
             )}
           </Col>
