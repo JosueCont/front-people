@@ -5,8 +5,6 @@ import {
   Col,
   Avatar,
   Menu,
-  Image,
-  Input,
   Dropdown,
   Card,
   Button,
@@ -14,14 +12,9 @@ import {
   Divider,
   Modal,
   Space,
-  Badge
+  Badge,
 } from "antd";
-import {
-  UserOutlined,
-  SearchOutlined,
-  MenuOutlined,
-  BellOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { css, Global } from "@emotion/core";
 import Cookie from "js-cookie";
@@ -29,11 +22,10 @@ import WebApiPeople from "../api/WebApiPeople";
 import { logoutAuth } from "../libs/auth";
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
-  const { Title, Text } = Typography;
+  const { Text } = Typography;
   const router = useRouter();
   const { pathname } = router;
-  const { Header, Content, Footer, Sider } = Layout;
-  const { SubMenu } = Menu;
+  const { Header } = Layout;
   const [logOut, setLogOut] = useState(false);
   const [person, setPerson] = useState({});
   const defaulPhoto =
@@ -79,17 +71,16 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <Text strong>{person.fullName}</Text>
               <br />
               <Text>{person.email}</Text>
-              <br/>
-              <small><b>{props.currentNode?props.currentNode.name:''}</b></small>
+              <br />
+              <small>
+                <b>{props.currentNode ? props.currentNode.name : ""}</b>
+              </small>
             </Col>
-            {/* <Col span={24}>
-                    <Divider className="divider-primary" />
-                </Col> */}
           </Row>
           <Divider className="divider-primary" style={{ margin: "10px 0px" }} />
         </div>
         <Row>
-          <Col span={24} style={{padding:10}}>
+          <Col span={24} style={{ padding: 10 }}>
             <p
               className="text-menu"
               onClick={() => {
@@ -111,14 +102,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             <p className="text-menu" onClick={() => setLogOut(true)}>
               <Text>Cerrar sesión</Text>
             </p>
-            {/* <Menu style={{background:'none', border:'none', boxShadow:'none', width:'100%', padding:0, textAlign:'center'}}>
-                        <Menu.Item>
-                            <Text>1st menu item</Text>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Text>1st menu item</Text>
-                        </Menu.Item>
-                    </Menu> */}
           </Col>
         </Row>
       </Card>
@@ -188,16 +171,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 />
               </object>
             </Col>
-            {/*  <Col>
-              {!hideSearch && (
-                <Input
-                  className="search_header"
-                  size="large"
-                  placeholder="Search"
-                  prefix={<SearchOutlined style={{ color: "white" }} />}
-                />
-              )}
-            </Col> */}
             <Col style={{ width: 250, textAlign: "end" }}>
               <div
                 className={"pointer"}

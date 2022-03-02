@@ -1,9 +1,4 @@
 import {
-  SettingOutlined,
-  EditOutlined,
-  EllipsisOutlined,
-} from "@ant-design/icons";
-import {
   Breadcrumb,
   Spin,
   Form,
@@ -12,14 +7,11 @@ import {
   Button,
   Input,
   Card,
-  Skeleton,
   Select,
   message,
-  Checkbox,
   Typography,
+  Tabs,
 } from "antd";
-import Avatar from "antd/lib/avatar/avatar";
-import Meta from "antd/lib/card/Meta";
 import { Content } from "antd/lib/layout/layout";
 import { useState } from "react";
 import { connect } from "react-redux";
@@ -27,18 +19,19 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectPeriodicity from "../../components/selects/SelectPeriodicity";
 import SelectYear from "../../components/selects/SelectYear";
 import MainLayout from "../../layout/MainLayout";
-import { monthsName } from "../../utils/constant";
+import { monthsName, typeCalculate } from "../../utils/constant";
 import webApiFiscal from "../../api/WebApiFiscal";
 import { Global } from "@emotion/core";
 import { ruleRequired } from "../../utils/rules";
-
+import { numberFormat } from "../../utils/functions";
+const { TabPane } = Tabs;
 const calculatorSalary = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [salary, setSalary] = useState(null);
   const [type, setType] = useState(0);
   const [allowance, setAllowance] = useState(false);
-  const [mont, setMonth] = useState(0);
+  const [changeType, setChangeType] = useState(false);
 
   const { Text, Title } = Typography;
 
@@ -67,27 +60,6 @@ const calculatorSalary = () => {
         setSalary(null);
         setLoading(false);
       });
-  };
-
-  const types = [
-    {
-      label: "Bruto-Neto",
-      value: 1,
-    },
-    {
-      label: "Neto-Bruto",
-      value: 2,
-    },
-  ];
-
-  const generateCfdi = () => {
-    try {
-      if (form.getFieldValue("person_id")) return;
-      else message.error("Seleccione un colaborador.");
-      // let response = WebApiPeople.getCfdi()
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   return (
@@ -163,10 +135,25 @@ const calculatorSalary = () => {
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
           <Breadcrumb.Item>Nomina</Breadcrumb.Item>
-          <Breadcrumb.Item>Nomina asimilados</Breadcrumb.Item>
+          <Breadcrumb.Item>Calculadora</Breadcrumb.Item>
         </Breadcrumb>
         <Row>
           <Col md={23}>
+            <span>{numberFormat(20000000.33388888888)}</span>
+            <Row style={{ width: "100%" }}>
+              <Tabs
+                defaultActiveKey="1"
+                type="card"
+                size="small"
+                moreIcon={false}
+                onTabClick={(item) =>
+                  item == "1" ? setChangeType(false) : setChangeType(true)
+                }
+              >
+                <TabPane tab="Asimilado" key="1" />
+                <TabPane tab="Nómina" key="2" />
+              </Tabs>
+            </Row>
             <Card className="card-calculator">
               <Row>
                 <Col className="col-calculator col-form" md={12}>
@@ -183,7 +170,7 @@ const calculatorSalary = () => {
                         <Form.Item label="Tipo de calculo" name="type">
                           <Select
                             size="large"
-                            options={types}
+                            options={typeCalculate}
                             placeholder="Tipo de calculo"
                             onChange={(value) => {
                               setType(value), setSalary(null);
@@ -206,19 +193,8 @@ const calculatorSalary = () => {
                       <Col md={12}>
                         <SelectYear size="large" />
                       </Col>
-                      <Col md={12}>
-                        <Form.Item label="Subsidio" name="allowance">
-                          <Checkbox
-                            onChange={() => {
-                              allowance
-                                ? setAllowance(false)
-                                : setAllowance(true);
-                            }}
-                            placeholder="Subsidio"
-                          />
-                        </Form.Item>
-                      </Col>
-                      {allowance && (
+
+                      {changeType && (
                         <Col md={12}>
                           <Form.Item
                             name="month"
@@ -244,7 +220,7 @@ const calculatorSalary = () => {
                           Calcular
                         </Button>
                       </Col>
-                      <Col
+                      {/* <Col
                         className="button-filter-person"
                         style={{ display: "flex" }}
                       >
@@ -255,7 +231,7 @@ const calculatorSalary = () => {
                         >
                           Guardar PDF
                         </Button>
-                      </Col>
+                      </Col> */}
                     </Row>
                   </Form>
                 </Col>
@@ -274,7 +250,7 @@ const calculatorSalary = () => {
                         <Row className="table-grid-title">
                           <Col span={18}>
                             <Text strong={type == 1 ? true : false}>
-                              ASIMILADO BRUTO
+                              {changeType ? "Nomina" : "Asimilado"}
                             </Text>
                           </Col>
                           <Col span={6} className="border-results">
@@ -363,7 +339,6 @@ const calculatorSalary = () => {
                     )}
                   </Spin>
                 </Col>
-                <Col md={12}></Col>
               </Row>
             </Card>
           </Col>

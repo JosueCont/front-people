@@ -19,7 +19,6 @@ import { EyeOutlined, MailOutlined, LinkOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { setUserPermissions } from "../redux/UserDuck";
 import { ruleEmail, ruleRequired } from "../utils/rules";
-import { useLayoutEffect } from "react";
 
 const LoginForm = ({
   recoveryPsw = true,
@@ -98,13 +97,6 @@ const LoginForm = ({
       getIfno();
     }
   }, [props.generalConfig]);
-
-  useLayoutEffect(() => {
-    try {
-      const user = Cookies.get("token");
-      if (user) router.push({ pathname: "/select-company" });
-    } catch (error) {}
-  }, []);
 
   const login = async (email, password) => {
     try {
@@ -245,7 +237,6 @@ const LoginForm = ({
               |
               <a href={infoSite.terms_and_conditions_link} target="_blank">
                 <LinkOutlined size={"small"} />
-                
               </a>
             </Form.Item>
           )}
