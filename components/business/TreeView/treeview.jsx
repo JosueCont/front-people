@@ -37,22 +37,8 @@ const NodeTreeView = () => {
   useEffect(() => {
     personId = userId();
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     person();
   }, []);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.company.can.view")) perms.view = true;
-      if (a.includes("people.company.can.create")) perms.create = true;
-      if (a.includes("people.company.can.edit")) perms.edit = true;
-      if (a.includes("people.company.can.delete")) perms.delete = true;
-      if (a.includes("people.company.function.change_is_active"))
-        perms.change_status;
-    });
-    setPermissions(perms);
-  };
 
   const person = () => {
     const jwt = JSON.parse(jsCookie.get("token"));
