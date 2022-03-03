@@ -7,13 +7,9 @@ import {
   Button,
   Select,
   Input,
-  Collapse,
-  Modal,
   message,
   Spin,
   Table,
-  Tooltip,
-  Badge,
   Card,
   Avatar,
   Space,
@@ -21,24 +17,19 @@ import {
 } from "antd";
 import { useRouter } from "next/router";
 import {
-  FilePdfOutlined,
   PlusOutlined,
-  FileOutlined,
-  Html5Outlined,
   RightOutlined,
   DownOutlined,
-  EditFilled,
   UserOutlined,
 } from "@ant-design/icons";
-import { userCompanyId, userCompanyName } from "../../libs/auth";
+import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
-import FormPerceptionsDeductions from "../../components/payroll/forms/FormPerceptionsDeductions";
-import { Global, css } from "@emotion/core";
+import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsPayroll";
+import { Global } from "@emotion/core";
 import { numberFormat } from "../../utils/functions";
-import { EditSharp } from "@material-ui/icons";
+import { connect } from "react-redux";
 
-const StampPayroll = () => {
-  const { Panel } = Collapse;
+const StampPayroll = ({ ...props }) => {
   const route = useRouter();
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [optionspPaymentCalendars, setOptionsPaymentCalendars] = useState([]);
@@ -51,15 +42,15 @@ const StampPayroll = () => {
   const [fisrtRequest, setFirstRequest] = useState(true);
   const [expandRow, setExpandRow] = useState(null);
   const { Text, Title } = Typography;
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [personSelected, setPersonSelected] = useState(null);
 
-  let nodeId = userCompanyId();
-  let nodeName = userCompanyName();
+  useEffect(() => {
+    if (props.currentNode) getPaymentCalendars(props.currentNode.id);
+  }, [props.currentNode]);
 
-  /* functions */
-  const getPaymentCalendars = async () => {
-    let response = await WebApiPayroll.getPaymentCalendar(nodeId);
+  const getPaymentCalendars = async (value) => {
+    let response = await WebApiPayroll.getPaymentCalendar(value);
     let data = response.data.results;
     if (data.length > 0) {
       setPaymentCalendars(data);
@@ -114,7 +105,7 @@ const StampPayroll = () => {
       let tempArray = data ? data : [...payroll];
       let newData = prepareData(tempArray);
       let data = {
-        node: nodeId,
+        node: props.currentNode,
         period: period,
         payroll: newData,
         invoice: true,
@@ -241,7 +232,6 @@ const StampPayroll = () => {
     }
   };
 
-  /* Events */
   const changePaymentCalendar = (value) => {
     if (value) {
       let calendar = paymentCalendars.find((elm) => elm.id == value);
@@ -261,89 +251,6 @@ const StampPayroll = () => {
           setPaymentDate("");
         }
       }
-    }
-  };
-
-  useEffect(() => {
-    getPaymentCalendars();
-  }, [nodeId]);
-
-  useEffect(() => {}, [payroll]);
-  useEffect(() => {}, [optionspPaymentCalendars]);
-  useEffect(() => {}, [fisrtRequest]);
-
-  const columns = [
-    {
-      title: "Persona",
-      dataIndex: "person",
-      key: "person",
-    },
-    {
-      title: "Estatus",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => {
-        return <>{status ? "Timbrado" : "Error al timbrar"}</>;
-      },
-    },
-    {
-      title: "Acciones",
-      align: "center",
-      render: (item) => {
-        return (
-          <div>
-            <Row gutter={24}>
-              <Col className="gutter-row" span={8}>
-                <Tooltip title="Descargar XML">
-                  <FileOutlined onClick={() => downloadFile(item, 1)} />
-                </Tooltip>
-              </Col>
-              <Col className="gutter-row" span={8}>
-                <Tooltip title="Descargar PDF">
-                  <FilePdfOutlined onClick={() => downloadFile(item, 2)} />
-                </Tooltip>
-              </Col>
-              <Col className="gutter-row" span={8}>
-                <Tooltip title="Descargar HTML">
-                  <Html5Outlined onClick={() => downloadFile(item, 3)} />
-                </Tooltip>
-              </Col>
-            </Row>
-          </div>
-        );
-      },
-    },
-  ];
-
-  const downloadFile = (item, type_file) => {
-    if (item) {
-      let data = {
-        type_request: 3,
-        type_file: type_file,
-        id_facturama: item.id_facturama,
-      };
-      WebApiPayroll.cfdiMultiEmitter(data).then((response) => {
-        if (type_file == 2) {
-          const linkSource = `data:application/pdf;base64,${response.data}`;
-          const downloadLink = document.createElement("a");
-          const fileName = item.person + ".pdf";
-
-          downloadLink.href = linkSource;
-          downloadLink.download = fileName;
-          downloadLink.click();
-        } else {
-          const type = response.headers["content-type"];
-          const blob = new Blob([response.data], {
-            type: type,
-          });
-          const link = document.createElement("a");
-          link.href = window.URL.createObjectURL(blob);
-          link.download =
-            type_file == 1 ? item.person + ".xml" : item.person + ".html";
-
-          link.click();
-        }
-      });
     }
   };
 
@@ -390,17 +297,12 @@ const StampPayroll = () => {
       key: "actions",
       className: "cell-actions",
       render: (record) => (
-        <Button size="small" onClick={() => showModal(record)}>
+        <Button size="small" onClick={() => setModalVisible(true)}>
           <PlusOutlined />
         </Button>
       ),
     },
   ];
-
-  const showModal = (person) => {
-    setPersonSelected(person);
-    setIsModalVisible(true);
-  };
 
   const rowExpand = (expanded, row) => {
     if (!expanded) {
@@ -745,16 +647,18 @@ const StampPayroll = () => {
               </Row>
             </Card>
           </Col>
-          <Col md={4}>
-            <Button
-              size="large"
-              block
-              htmlType="button"
-              onClick={() => sendStampPayroll()}
-            >
-              Calcular
-            </Button>
-          </Col>
+          {payroll.length > 0 && (
+            <Col md={4}>
+              <Button
+                size="large"
+                block
+                htmlType="button"
+                onClick={() => sendStampPayroll()}
+              >
+                Consolidar nomina
+              </Button>
+            </Col>
+          )}
           <Col span={24}>
             <Spin tip="Cargando..." spinning={loading}>
               <Card className="card_table">
@@ -763,11 +667,8 @@ const StampPayroll = () => {
                   columns={columnsNew}
                   expandable={{
                     expandedRowRender: (record) => renderConceptsTable(record),
-
-                    /* expandRowByClick: true, */
                     onExpand: (expanded, record) => rowExpand(expanded, record),
                     expandIconAsCell: false,
-                    /* expandIconColumnIndex: -1, */
                     expandedRowKeys: [expandRow],
                     expandIcon: ({ expanded, onExpand, record }) =>
                       expanded ? (
@@ -785,30 +686,21 @@ const StampPayroll = () => {
           </Col>
         </Row>
 
-        <Modal
-          visible={isModalVisible}
-          footer={null}
-          width={600}
-          closable={false}
-          destroyOnClose
-          /* key={"modal-" + data.person.id} */
-        >
-          <Row justify="center">
-            <Col md={20}>
-              <Title level={2}>Agregar</Title>
-              <FormPerceptionsDeductions
-                setIsModalVisible={setIsModalVisible}
-                person_id={personSelected && personSelected.person_id}
-                saveConcepts={saveConcepts}
-                payroll={payroll}
-                setLoading={setLoading}
-              />
-            </Col>
-          </Row>
-        </Modal>
+        <ModalConceptsPayroll
+          visible={modalVisible}
+          setVisible={setModalVisible}
+          person_id={personSelected && personSelected.person_id}
+          saveConcepts={saveConcepts}
+          payroll={payroll}
+          setLoading={setLoading}
+        />
       </MainLayout>
     </>
   );
 };
 
-export default StampPayroll;
+const mapState = (state) => {
+  return { currentNode: state.userStore.current_node };
+};
+
+export default connect(mapState)(withAuthSync(StampPayroll));

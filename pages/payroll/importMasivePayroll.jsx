@@ -42,7 +42,7 @@ const ImportMasivePayroll = ({ ...props }) => {
     {
       title: "RFC",
       render: (item) => {
-        return <span>{item.headers.rfc}</span>;
+        return <span>{item.headers.rfc_receiver}</span>;
       },
       key: "rfc",
     },
