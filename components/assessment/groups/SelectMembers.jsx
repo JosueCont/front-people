@@ -9,6 +9,7 @@ const SelectMembers = ({...props}) => {
   const currenNode = useSelector(state => state.userStore.current_node)
   const [personList, setPersonList] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([])
+  const [isMultiple, setIsMultiple] = useState({});
 
   useEffect(()=>{
     getSelectedPersons(props.members)
@@ -17,6 +18,14 @@ const SelectMembers = ({...props}) => {
   useEffect(() => {
     getPersons(currenNode?.id);
   }, [currenNode]);
+
+  useEffect(()=>{
+    if(props.multiple){
+      setIsMultiple({mode: 'multiple'})
+    }else{
+      setIsMultiple({})
+    }
+  },[props.multiple])
 
   const getPersons = async (nodeId) => {
     try {
@@ -61,9 +70,10 @@ const SelectMembers = ({...props}) => {
     return (
       <Select
         allowClear
-        mode="multiple"
+        showSearch={false}
+        {...isMultiple}
         value={selectedMembers}
-        placeholder="Seleccionar integrantes"
+        placeholder="Seleccionar persona"
         onChange={handleChange}
       >
         {personList && personList.map((item) => (

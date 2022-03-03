@@ -41,6 +41,13 @@ class WebApiAssessment {
     static deleteGroupPersons(data){
         return Axios.post(`${API_URL}/person/group/delete_by_ids/`, data);
     }
+
+    static assignOneTest (data) {
+        return Axios.post(`${API_URL}/person/person-assessments/`, data);
+    }
+    static getAssignments (nodeId, queryParam) {
+        return Axios.get(`${API_URL}/person/person-assessments/?node=${nodeId}${queryParam}`);
+    }
 }
 
 export default WebApiAssessment
