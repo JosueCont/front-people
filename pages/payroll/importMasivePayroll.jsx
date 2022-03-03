@@ -9,25 +9,27 @@ import {
   Spin,
   message,
   Input,
+  Alert,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import MainLayout from "../../../layout/MainLayout";
+import { DollarCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import MainLayout from "../../layout/MainLayout";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { withAuthSync } from "../../../libs/auth";
+import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
-import ModalUploadFileDrag from "../../../components/modal/ModalUploadFileDrag";
+import ModalUploadFileDrag from "../../components/modal/ModalUploadFileDrag";
 import { useEffect } from "react";
-import WebApiPayroll from "../../../api/WebApiPayroll";
-import { messageError, messageUploadSuccess } from "../../../utils/constant";
+import WebApiPayroll from "../../api/WebApiPayroll";
+import { messageError, messageUploadSuccess } from "../../utils/constant";
 
-const UploadPayroll = ({ ...props }) => {
+const ImportMasivePayroll = ({ ...props }) => {
   const router = useRouter();
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [cfdi, setCfdi] = useState(null);
+  const [alertMessage, setAlertMessage] = useState(null);
 
   const columns = [
     {
@@ -95,13 +97,21 @@ const UploadPayroll = ({ ...props }) => {
       .then((response) => {
         setLoading(false);
         message.success(messageUploadSuccess);
-        console.log("TAX", props.taxRegime);
         setCompany(response.data.company);
         setCfdi(response.data.cfdis);
       })
       .catch((error) => {
         setLoading(false);
-        message.error(messageError);
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message &&
+          error.response.data.message.includes("Se detectó")
+        )
+          setAlertMessage(error.response.data.message);
+        else message.error(messageError);
+        setFiles([]);
+        setCfdi(null);
         console.log(error);
       });
   };
@@ -117,6 +127,15 @@ const UploadPayroll = ({ ...props }) => {
         </Breadcrumb.Item>
         <Breadcrumb.Item>Importar nómina</Breadcrumb.Item>
       </Breadcrumb>
+      {alertMessage && (
+        <Alert
+          style={{ margin: "2%" }}
+          type="error"
+          message={<b>{alertMessage}</b>}
+          banner
+          closable
+        />
+      )}
       <Spin spinning={loading}>
         <Row justify="end" gutter={[10, 10]}>
           <Col span={24}>
@@ -188,8 +207,19 @@ const UploadPayroll = ({ ...props }) => {
                     </Form>
                   </Col>
                 ) : (
-                  <Row justify="end" style={{ width: "100%" }}>
-                    <Col style={{ display: "flex" }}>
+                  <Row style={{ width: "100%" }}>
+                    <Col span={18} style={{ display: "" }}>
+                      <span
+                        style={{
+                          color: "white",
+                          fontSize: "30px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        <DollarCircleOutlined /> Recibos de nómina
+                      </span>
+                    </Col>
+                    <Col span={2} style={{ display: "flex" }}>
                       <Button
                         style={{
                           background: "#fa8c16",
@@ -200,7 +230,7 @@ const UploadPayroll = ({ ...props }) => {
                         onClick={() => setModal(true)}
                       >
                         <PlusOutlined />
-                        Nuevo
+                        Importar nómina
                       </Button>
                     </Col>
                   </Row>
@@ -209,7 +239,7 @@ const UploadPayroll = ({ ...props }) => {
             </Card>
           </Col>
           <Col span={24}>
-            {cfdi && (
+            {cfdi ? (
               <Card className="card_table">
                 <Table
                   size="small"
@@ -225,6 +255,34 @@ const UploadPayroll = ({ ...props }) => {
                   className={"mainTable headers_transparent"}
                 />
               </Card>
+            ) : (
+              <Card className="">
+                <div className={"ImportPayroll"}></div>
+                <Row justify="center">
+                  <div style={{ width: "50%", textAlign: "center" }}>
+                    <span style={{ fontSize: "20px" }}>
+                      <b>Importa tus recibos aquí</b>
+                    </span>
+                    <p style={{ fontSize: "15px" }}>
+                      Se analizará la información de tus archivos, se creará la
+                      empresa, información de los empleados y sus pagos de
+                      nómina.
+                    </p>
+                    <Button
+                      style={{
+                        background: "#fa8c16",
+                        fontWeight: "bold",
+                        color: "white",
+                        marginTop: "auto",
+                      }}
+                      onClick={() => setModal(true)}
+                    >
+                      <PlusOutlined />
+                      Importar nómina
+                    </Button>
+                  </div>
+                </Row>
+              </Card>
             )}
           </Col>
         </Row>
@@ -233,7 +291,7 @@ const UploadPayroll = ({ ...props }) => {
         <ModalUploadFileDrag
           title={"Cargar xml"}
           visible={viewModal}
-          setModal={setModal}
+          setVisible={setModal}
           setFiles={setFiles}
         />
       )}
@@ -248,4 +306,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(withAuthSync(UploadPayroll));
+export default connect(mapState)(withAuthSync(ImportMasivePayroll));

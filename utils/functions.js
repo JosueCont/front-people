@@ -344,3 +344,9 @@ export const getDomain = (api) => {
 const getFileExtension = (filename) => {
   return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
 };
+
+export const numberFormat = (value) =>
+  new Intl.NumberFormat("es-MX", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);

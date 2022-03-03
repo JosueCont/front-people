@@ -34,9 +34,6 @@ const MainSider = ({
   const router = useRouter();
   const [intranetAccess, setintanetAccess] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const onCollapse = (collapsed) => {
-    setCollapsed(collapsed);
-  };
 
   useLayoutEffect(() => {
     if (props.config) {
@@ -69,73 +66,89 @@ const MainSider = ({
           .mainMenu {
             margin-top: 50px;
           }
+
+          //////Sider
           .ant-layout-sider {
-            background: var(--primaryColor) !important;
+            background: var(--secondaryColor) !important;
           }
+
           .ant-layout-sider .ant-menu {
-            background: var(--primaryColor) !important;
-            color: varl(--fontSpanColor) !important;
+            background: var(--secondaryColor) !important;
+            color: white !important;
           }
 
           .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
           .mainMenu li:hover > div.ant-menu-submenu-title > i::after {
-            background: var(--fontSpanColor) !important;
+            background: red !important;
           }
 
           .subMainMenu .ant-menu .ant-menu-item {
             padding: 0px 0px 0px 20px !important;
           }
+
           .mainMenu li:hover {
-            background: var(--secondaryColor) !important;
+            background: var(--primaryColor) !important;
             opacity: 0.7;
-            color: var(--fontColorSecondary) !important;
+            color: white !important;
           }
           .mainMenu li:hover > div.ant-menu-submenu-title {
-            color: var(--fontColorSecondary) !important;
+            color: white !important;
           }
 
           .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
           .mainMenu li:hover > div.ant-menu-submenu-title > i::after {
-            background: var(--fontColorSecondary) !important;
+            background: white !important;
           }
 
           .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item {
-            color: var(--fontColorSecondary) !important;
-          }
-          .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item:hover {
-            color: var(--fontColorSecondary) !important;
-            opacity: 0.5;
+            color: white !important;
           }
 
-          .mainMenu li ul.ant-menu-sub {
-            background: transparent !important;
+          .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item:hover {
+            background: var(--secondaryColor) !important;
+            color: white !important;
           }
+
           .ant-menu-submenu-open ul.ant-menu-sub li.ant-menu-item-selected {
             text-decoration: underline;
             font-weight: 500;
           }
 
-          /* .mainMenu li:hover{
-                    color: var(--fontColorSecondary) !important;
-                } */
+          ///////Div sub menu selected
+          .ant-menu-submenu-open ul.ant-menu-sub {
+            background: var(--primaryColor) !important;
+            color: white !important;
+          }
 
-          .mainMenu li.ant-menu-item-selected,
+          ///////Expandible menu selected
           .mainMenu li.ant-menu-submenu-selected {
-            background: var(--secondaryColor) !important;
+            background: var(--primaryColor) !important;
             opacity: 1;
           }
+
+          ///////Sub menu selected
+          .mainMenu li.ant-menu-item-selected {
+            background: var(--primaryAlternativeColor) !important;
+            opacity: 1;
+          }
+
           .mainMenu li.ant-menu-item-selected span,
           .mainMenu li.ant-menu-submenu-selected > div,
           .mainMenu li.ant-menu-submenu-selected > ul li {
-            color: var(--fontColorSecondary) !important;
+            color: white !important;
           }
+
           .item_custom_icon .ant-menu-submenu-title {
             white-space: break-spaces;
           }
+
           .custom_icon {
             font-size: ${collapsed ? "19px !important;" : "16px !important;"};
           }
-          /* .ant-menu-item,  */
+
+          .ant-layout-sider-trigger {
+            background: var(--primaryColor) !important;
+          }
         `}
       />
       <Sider className="mainSideMenu" width="250" collapsible>
@@ -313,7 +326,7 @@ const MainSider = ({
                 <Menu.Item
                   key="asimilado"
                   onClick={() =>
-                    router.push({ pathname: "/payroll/assimilatedSalary" })
+                    router.push({ pathname: "/payroll/calculatorSalary" })
                   }
                 >
                   Calculadora
@@ -321,7 +334,7 @@ const MainSider = ({
                 <Menu.Item
                   key="recibos_nomina"
                   onClick={() =>
-                    router.push({ pathname: "/payroll/payrollvoucher" })
+                    router.push({ pathname: "/payroll/importMasivePayroll" })
                   }
                 >
                   Importar nómina con xml

@@ -34,6 +34,7 @@ import { userCompanyId, userCompanyName } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import FormPerceptionsDeductions from "../../components/payroll/forms/FormPerceptionsDeductions";
 import { Global, css } from "@emotion/core";
+import { numberFormat } from "../../utils/functions";
 import { EditSharp } from "@material-ui/icons";
 
 const StampPayroll = () => {
@@ -140,9 +141,9 @@ const StampPayroll = () => {
           code: item.Code ? item.Code : "",
           key: item.Description,
           label: item.Description ? item.Description : "",
-          amount: item.Amount ? item.Amount : 0,
-          taxed_amount: item.TaxedAmount,
-          exempt_amount: item.ExemptAmount,
+          amount: item.Amount ? item.Amount : 0.0,
+          taxed_amount: item.TaxedAmount ? item.TaxedAmount : 0.0,
+          exempt_amount: item.ExemptAmount ? item.ExemptAmount : 0.0,
         });
       });
     }
@@ -205,7 +206,6 @@ const StampPayroll = () => {
           if (a.calculation) {
             item["total_perceptions"] = a.calculation.total_perceptions;
             item["total_deductions"] = a.calculation.total_deductions;
-            item["total_other_payments"] = a.calculation.total_other_payments;
             item["total_to_pay"] = a.calculation.net_salary;
 
             if (a.calculation.perceptions) {
@@ -444,7 +444,7 @@ const StampPayroll = () => {
         width: "10%",
         render: (taxed_amount) => (
           <Space size="middle">
-            <Text>${taxed_amount}</Text>
+            <span>${numberFormat(taxed_amount)}</span>
           </Space>
         ),
       },
@@ -455,7 +455,7 @@ const StampPayroll = () => {
         width: "10%",
         render: (exempt_amount) => (
           <Space size="middle">
-            <Text>${exempt_amount}</Text>
+            <Text>${numberFormat(exempt_amount)}</Text>
           </Space>
         ),
       },
@@ -466,7 +466,7 @@ const StampPayroll = () => {
         width: "10%",
         render: (amount) => (
           <Space size="middle">
-            <Text>${amount}</Text>
+            <Text>${numberFormat(amount)}</Text>
           </Space>
         ),
       },
@@ -501,7 +501,7 @@ const StampPayroll = () => {
         width: "10%",
         render: (amount) => (
           <Space size="middle">
-            <Text>${amount}</Text>
+            <Text>${numberFormat(amount)}</Text>
           </Space>
         ),
       },
@@ -529,7 +529,7 @@ const StampPayroll = () => {
         width: "10%",
         render: (amount) => (
           <Space size="middle">
-            <Text>${amount}</Text>
+            <Text>${numberFormat(amount)}</Text>
           </Space>
         ),
       },
@@ -599,7 +599,7 @@ const StampPayroll = () => {
                 Total percepciones :
               </Col>
               <Col style={{ textAlign: "right" }} span={10}>
-                $ {record.total_perceptions + record.total_other_payments}
+                $ {numberFormat(record.total_perceptions)}
               </Col>
             </Col>
             <Col span={24} style={{ display: "flex" }}>
@@ -607,7 +607,7 @@ const StampPayroll = () => {
                 Total deducciones :
               </Col>
               <Col style={{ textAlign: "right" }} span={10}>
-                $ {record.total_deductions}
+                $ {numberFormat(record.total_deductions)}
               </Col>
             </Col>
             <Col span={24} style={{ display: "flex" }}>
@@ -615,7 +615,7 @@ const StampPayroll = () => {
                 Total a pagar :
               </Col>
               <Col style={{ textAlign: "right" }} span={10}>
-                $ {record.total_to_pay}
+                ${numberFormat(record.total_to_pay)}
               </Col>
             </Col>
           </Row>

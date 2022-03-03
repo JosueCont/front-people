@@ -1,19 +1,18 @@
-import Head from "next/head";
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { connect } from "react-redux";
 import LoginForm from "../components/LoginForm";
 import PasswordRecover from "../components/PasswordRecover";
-import { Row, Col, Card, Spin } from "antd";
+import { Row, Col, Spin } from "antd";
 import { Helmet } from "react-helmet";
 import { css, Global } from "@emotion/core";
 import { getRouteFlavor, getFlavor } from "../utils/brand";
-/* import {logoRoche} from '../public/images/Grupo Industrial Roche-Color.png' */
+import Cookies from "js-cookie";
+import router from "next/router";
 
 const Home = ({ ...props }) => {
   const [recoverPasswordShow, setRecoverPasswordShow] = useState(false);
   const [flavor, setFlavor] = useState({});
   const [routeFlavor, setRouteFlavor] = useState({});
-  const [configsTenant, setConfigsTenant] = useState({});
   const [loading, setLoading] = useState(true);
 
   useLayoutEffect(() => {
@@ -34,6 +33,13 @@ const Home = ({ ...props }) => {
   }, []);
 
   useLayoutEffect(() => {
+    try {
+      const user = Cookies.get("token");
+      if (user) router.push("/select-company");
+    } catch (error) {}
+  }, []);
+
+  useLayoutEffect(() => {
     if (props.config) {
       setLoading(false);
     }
@@ -43,38 +49,30 @@ const Home = ({ ...props }) => {
       <Global
         styles={css`
           :root {
-            --primaryColor: ${
-              props.config ? props.config.concierge_primary_color : "#1890ff"
-            };
-            --secondaryColor: ${
-              props.config ? props.config.concierge_secondary_color : "#1890ff"
-            };
-            --login_image: ${
-              props.config && props.config.concierge_logo_login
-                ? "url(" + props.config.concierge_logo_login + ")"
-                : 'url("/images/login.jpg")'
-            };
-            --logo_login: ${
-              props.config && props.config.concierge_logo
-                ? "url(" + props.config.concierge_logo + ")"
-                : 'url("/images/Grupo Industrial Roche-Color.png")'
-            };
-            --fontFamily: ${
-              flavor && flavor.font_family
-                ? flavor.font_family
-                : " -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif"
-            };
-            --fontStyle: ${
-              flavor && flavor.font_family ? flavor.font_style : "normal"
-            };
-            --fontFormColor: ${
-              props.config ? props.config.concierge_primary_color : "#000"
-            };
-            --srcFontFamily: ${
-              flavor && flavor.font_family
-                ? "url(/" + routeFlavor + "/fonts/" + flavor.font_family + ")"
-                : 'url("/fonts/sans-serif")'
-            };
+            --primaryColor: ${props.config
+              ? props.config.concierge_primary_color
+              : "#1890ff"};
+            --secondaryColor: ${props.config
+              ? props.config.concierge_secondary_color
+              : "#1890ff"};
+            --login_image: ${props.config && props.config.concierge_logo_login
+              ? "url(" + props.config.concierge_logo_login + ")"
+              : 'url("/images/login.jpg")'};
+            --logo_login: ${props.config && props.config.concierge_logo
+              ? "url(" + props.config.concierge_logo + ")"
+              : 'url("/images/Grupo Industrial Roche-Color.png")'};
+            --fontFamily: ${flavor && flavor.font_family
+              ? flavor.font_family
+              : " -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif"};
+            --fontStyle: ${flavor && flavor.font_family
+              ? flavor.font_style
+              : "normal"};
+            --fontFormColor: ${props.config
+              ? props.config.concierge_primary_color
+              : "#000"};
+            --srcFontFamily: ${flavor && flavor.font_family
+              ? "url(/" + routeFlavor + "/fonts/" + flavor.font_family + ")"
+              : 'url("/fonts/sans-serif")'};
           }
 
           body {
@@ -92,7 +90,7 @@ const Home = ({ ...props }) => {
             height: 510px;
 
             position: relative;
-    display: flex;
+            display: flex;
 
             -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
             -moz-animation: fadein 2s; /* Firefox < 16 */
@@ -113,7 +111,7 @@ const Home = ({ ...props }) => {
           }
 
           .textBottom {
-            bottom:0;
+            bottom: 0;
             height: 45px;
             position: absolute;
             font-size: 12px;
@@ -158,65 +156,66 @@ const Home = ({ ...props }) => {
           @media only screen and (max-width: 999px) {
             .divform {
               padding: 20px !important;
-              width: 100% !important;  
+              width: 100% !important;
             }
-          
+
             .form-title {
               font-size: 25px !important;
             }
-            
-            .form-subtitle{
-                font-size: 15px;
+
+            .form-subtitle {
+              font-size: 15px;
             }
           }
-          
-          .fullPage{
+
+          .fullPage {
             width: 100%;
             height: 100vh;
             display: flex;
           }
-          
+
           @media only screen and (max-width: 768px) {
             .divform {
               padding: 20px !important;
               width: 100% !important;
               min-height: auto;
-              margin:0;
+              margin: 0;
               top: 10px;
             }
-            
-            body{
-              background: transparent url('/images/banner_staff_iu.jpg') 70% 5% no-repeat padding-box;
+
+            body {
+              background: transparent url("/images/banner_staff_iu.jpg") 70% 5%
+                no-repeat padding-box;
               background-size: 100% 100%;
             }
-          
+
             .form-title {
               font-size: 20px !important;
             }
-            
-            .form-subtitle{
-                font-size: 14px;
+
+            .form-subtitle {
+              font-size: 14px;
             }
-          
+
             .login-form {
               width: 100% !important;
             }
           }
-          
-           @media only screen and (max-width: 600px) {
+
+          @media only screen and (max-width: 600px) {
             .divform {
               padding: 20px !important;
               width: 100%;
             }
-          
+
             .form-title {
               font-size: 25px !important;
             }
-          
+
             .login-form {
               width: 100% !important;
             }
-           }
+          }
         `}
       />
       <Helmet>
@@ -242,7 +241,7 @@ const Home = ({ ...props }) => {
                   style={{
                     width: "100%",
                     textAlign: "center",
-                    margin: 'auto'
+                    margin: "auto",
                   }}
                 >
                   <img

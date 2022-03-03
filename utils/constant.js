@@ -1,4 +1,13 @@
-import { APP_ID } from "../config/config";
+export const typeCalculate = [
+  {
+    label: "Bruto-Neto",
+    value: 1,
+  },
+  {
+    label: "Neto-Bruto",
+    value: 2,
+  },
+];
 
 export const genders = [
   {

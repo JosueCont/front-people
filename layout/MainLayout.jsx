@@ -94,22 +94,30 @@ const MainLayout = ({
         styles={css`
           :root {
             --primaryColor: ${
-              props.config ? props.config.concierge_primary_color : "#252837"
+              props.config && props.config.theme_color
+                ? props.config.theme_color.primary_color
+                : "#252837"
+            };
+            --primaryAlternativeColor: ${
+              props.config && props.config.theme_color
+                ? props.config.theme_color.primary_alternative_color
+                : "#252837"
             };
 
             --secondaryColor: ${
-              props.config ? props.config.concierge_secondary_color : "#1C1B2B"
+              props.config && props.config.theme_color
+                ? props.config.theme_color.secondary_color
+                : "#1C1B2B"
+            };
+            --secondaryAlternativeColor: ${
+              props.config && props.config.theme_color
+                ? props.config.theme_color.secondary_alternative_color
+                : "#1C1B2B"
             };
 
-            --fontPrimaryColor: ${
-              props.config ? props.config.concierge_font_primary_color : "#ffff"
-            };
+            --fontPrimaryColor: ${props.config ? "#ffff" : "#ffff"};
 
-            --fontSecondaryColor: ${
-              props.config
-                ? props.config.concierge_font_secondary_color
-                : "#ffff"
-            };
+            --fontSecondaryColor: ${props.config ? "#ffff" : "#ffff"};
 
             --login_image: ${
               props.config && props.config.concierge_logo_login

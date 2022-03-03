@@ -13,6 +13,7 @@ import {
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import webApiFiscal from "../../../api/WebApiFiscal";
 import { ruleRequired, treeDecimal } from "../../../utils/rules";
+import { numberFormat } from "../../../utils/functions";
 
 const FormPerceptionsDeductions = ({
   setIsModalVisible,
@@ -166,6 +167,7 @@ const FormPerceptionsDeductions = ({
   };
 
   const saveData = () => {
+    //Guardando info
     setLoading(true);
     if (dataSource.length > 0) {
       let perceptions_list = [];
