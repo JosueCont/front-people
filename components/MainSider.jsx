@@ -190,12 +190,6 @@ const MainSider = ({
                   >
                     Grupos
                   </Menu.Item>
-                    <Menu.Item
-                    key="assignments"
-                    onClick={() => router.push({ pathname: "/home/assignments" })}
-                  >
-                    Asignaciones
-                  </Menu.Item>
                 </>
               )}
             </SubMenu>
@@ -445,6 +439,12 @@ const MainSider = ({
                 onClick={() => router.push({ pathname: "/assessment/groups" })}
               >
                 Grupos
+              </Menu.Item>
+              <Menu.Item
+                    key="assignments"
+                    onClick={() => router.push({ pathname: "/assessment/assignments" })}
+                  >
+                    Asignaciones
               </Menu.Item>
             </SubMenu>
           )}

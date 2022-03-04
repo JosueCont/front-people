@@ -64,6 +64,7 @@ const SelectSurveys = ({...props}) => {
   }
 
   const handleChange = (value)=>{
+    console.log(value);
     setSelectedSurveys(value)
     props.setSurveys(value)
   }

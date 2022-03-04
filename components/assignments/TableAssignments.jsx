@@ -107,7 +107,7 @@ const TableAssignments = ({...props}) => {
         render: (item) => {
           return (
             <div>
-              {item.person}
+              {item.person.first_name}
             </div>
           );
         },
