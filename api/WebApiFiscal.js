@@ -41,7 +41,7 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/type-working-day/`, "get");
   }
 
-  static validateAccountNumber(data) {
+  static validateAccountNumber() {
     return WebApi.ApisType(`/fiscal/validate-account-number/`, "post", data);
   }
 
@@ -59,6 +59,18 @@ class WebApiFiscal {
 
   static getStates(data) {
     return WebApi.ApisType(`/fiscal/state/?country=${data}`, "get");
+  }
+
+  static getInternalPerceptions() {
+    return WebApi.ApisType(`/fiscal/internal-perception-type/`, "get");
+  }
+
+  static getInternalDeductions() {
+    return WebApi.ApisType(`/fiscal/internal-deduction-type/`, "get");
+  }
+
+  static getInternalOtherPayments() {
+    return WebApi.ApisType(`/fiscal/internal-other-payment-type/`, "get");
   }
 }
 

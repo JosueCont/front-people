@@ -342,7 +342,7 @@ const MainSider = ({
                 <Menu.Item
                   key="timbrar"
                   onClick={() =>
-                    router.push({ pathname: "/payroll/stampPayroll" })
+                    router.push({ pathname: "/payroll/calculatePayroll" })
                   }
                 >
                   Calculo de nómina
