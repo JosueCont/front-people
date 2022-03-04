@@ -11,23 +11,12 @@ const ViewMembers = ({...props}) =>{
     const defaultPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
-    const styleList = {
-        whiteSpace:'nowrap',
-        overflow:'hidden',
-        textOverflow:'ellipsis'
-    }
-
-    const styleContent = {
-        maxHeight:'calc(100vh - 300px)',
-        overflowY:'auto'
-    }
-
     return(
         <Modal
             title={props.title}
             visible={props.visible}
             onCancel={() => props.setVisible(false)}
-            bodyStyle={styleContent}
+            className={'custom-modal'}
             width={400}
             footer={[
                 <Button type="primary" onClick={()=>props.setVisible(false)}>
@@ -37,7 +26,6 @@ const ViewMembers = ({...props}) =>{
         >
             <List
                 itemLayout="horizontal"
-                style={styleList}
                 dataSource={props.item?.persons}
                 renderItem={item => (
                     <List.Item key={item.id}>

@@ -405,7 +405,8 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
             actionForm={onFinishCreateGroup}
             hiddenSurveys={true}
             hiddenMembers={true}
-            hiddenName={false}
+            multipleCategories={true}
+            // hiddenName={false}
         />
       )}
     </MainLayout>

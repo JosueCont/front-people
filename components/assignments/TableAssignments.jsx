@@ -25,6 +25,8 @@ import {
     EllipsisOutlined
 } from "@ant-design/icons";
 import DeleteAssign from "./DeleteAssign";
+import ViewSurveys from "../assessment/groups/ViewSurveys";
+import WebApiAssessment from "../../api/WebApiAssessment";
 
 const TableAssignments = ({...props}) => {
 
@@ -32,6 +34,7 @@ const TableAssignments = ({...props}) => {
   const currenNode = useSelector(state => state.userStore.current_node)
   const [openManyDelete, setOpenManyDelete] = useState(false);
   const [showManyDelete, setShowManyDelete] = useState(false);
+  const [showModalSurveys, setShowModalSurveys] = useState(false);
   const [itemSelected, setItemSelected] = useState({});
   const [selectedAssign, setSelectedAssign] = useState([]);
   const [assignKeys, setAssignKeys] = useState([]);
@@ -50,6 +53,10 @@ const TableAssignments = ({...props}) => {
     setAssignKeys([])
     setOpenManyDelete(false)
     setShowManyDelete(false)
+  }
+
+  const HandleViewSurveys = (item) =>{
+    getDetailsAssessment(item.id_assessment)
   }
   
   const rowSelectionAssign = {
@@ -85,6 +92,18 @@ const TableAssignments = ({...props}) => {
     props.setLoading(true)
     props.delete(ids)
     resetValues()
+  }
+
+  const getDetailsAssessment = async (id) =>{
+    try {
+      let response = await WebApiAssessment.getDetailsAssessment(id);
+      setItemSelected(response.data)
+      setShowModalSurveys(true)
+    } catch (e) {
+      setItemSelected({})
+      setShowModalSurveys(false)
+      message.error("No se encontraron detalles de la encuesta")
+    }
   }
 
   const menuTable = () => {
@@ -134,16 +153,25 @@ const TableAssignments = ({...props}) => {
         render: (item) => {
           return (
             <div>
-              {item.person}
+              {item.person.first_name} {item.person.flast_name} {item.person.mlast_name}
             </div>
           );
         },
       },
       {
-        title: "Encuestas",
+        title: "Encuesta",
         render: (item) => {
           return (
-            <div>{item.id_assessment}</div>
+            <Space>
+              {item.id_assessment &&(
+                <Tooltip title='Ver encuesta'>
+                    <EyeOutlined
+                      style={{cursor: 'pointer'}}
+                      onClick={()=>HandleViewSurveys(item)}
+                    />
+                </Tooltip>
+              )}
+            </Space>
           )
         }
       },
@@ -206,6 +234,14 @@ const TableAssignments = ({...props}) => {
             close={resetValues}
             assign={selectedAssign}
             actionDelete={removeAssign}
+          />
+        )}
+        {showModalSurveys && (
+          <ViewSurveys
+            title={'Encuesta asignada'}
+            visible={showModalSurveys}
+            setVisible={setShowModalSurveys}
+            item={{assessments: [itemSelected]}}
           />
         )}
     </>

@@ -5,6 +5,7 @@ import "../styles/person.css";
 import "../styles/sizeScreen.css";
 import "../styles/calendar.css";
 import "../styles/payroll.css";
+import "../styles/assessments.css"
 import { Provider } from "react-redux";
 import { langMessages } from "../lang/messages";
 import { IntlProvider } from "react-intl";

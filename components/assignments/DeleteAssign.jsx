@@ -5,17 +5,6 @@ const DeleteAssign = ({...props}) =>{
 
     const [loading, setLoading] = useState(false);
 
-    const styleList = {
-        whiteSpace:'nowrap',
-        overflow:'hidden',
-        textOverflow:'ellipsis'
-    }
-
-    const styleContent = {
-        maxHeight:'calc(100vh - 300px)',
-        overflowY:'auto'
-    }
-
     const getOnlyIds = () =>{
         let ids = [];
         props.assign.map((item)=>{
@@ -44,7 +33,7 @@ const DeleteAssign = ({...props}) =>{
             onCancel={() => props.close()}
             closable={false}
             maskClosable={false}
-            bodyStyle={styleContent}
+            className={'custom-modal'}
             width={400}
             footer={[
                 <>
@@ -66,12 +55,15 @@ const DeleteAssign = ({...props}) =>{
         >
             <List
                 itemLayout="horizontal"
-                style={styleList}
                 dataSource={props.assign}
                 renderItem={(item) => (
                     <List.Item key={item.id}>
                         <List.Item.Meta
-                            title={item.id}
+                            title={`
+                                ${item.person.first_name}
+                                ${item.person.flast_name}
+                                ${item.person.mlast_name !== null ? item.person.mlast_name :''}
+                            `}
                         />
                     </List.Item>
                 )}

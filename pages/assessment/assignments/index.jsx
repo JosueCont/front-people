@@ -14,7 +14,15 @@ const Assignments = () =>{
     const router = useRouter();
     const currenNode = useSelector(state => state.userStore.current_node)
     const [loading, setLoading] = useState(false);
-    const [listAssign, setListAssign] = useState({});
+    const [listAssign, setListAssign] = useState(autoData());
+
+
+    function autoData(){
+        return {
+            count: 0,
+            results: []
+        }
+    }
 
     useEffect(()=>{
         if(currenNode?.id){
@@ -85,11 +93,11 @@ const Assignments = () =>{
 
 
     return(
-        <MainLayout currentKey="assignments">
+        <MainLayout defaultOpenKeys={["kuis"]} currentKey={["assignments"]}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={"pointer"}
-                    onClick={() => router.push({ pathname: "/home/assignments" })}
+                    onClick={() => router.push({ pathname: "/assessment/assignments" })}
                 >
                     Inicio
                 </Breadcrumb.Item>

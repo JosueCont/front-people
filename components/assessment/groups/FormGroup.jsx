@@ -17,6 +17,7 @@ const FormGroup = ({...props}) =>{
     const [listSurveys, setListSurveys] = useState([]);
     const [listCategories, setListCategories] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [nameAssessment, setNameAssessment] = useState(null)
     
     useEffect(()=>{
         if(Object.keys(props.loadData).length > 0){
