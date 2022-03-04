@@ -21,6 +21,22 @@ const Assignments = () =>{
             getListAssign(currenNode.id, "")
         }
     },[currenNode])
+
+    const successMessages = (ids) =>{
+        if(ids.length > 1){
+            return message.success("Asignaciones eliminadas")
+        }else{
+            return message.success("Asignación eliminada")
+        }  
+    }
+    
+    const errorMessages = (ids) =>{
+        if(ids.length > 1){
+            return message.error("Asignaciones no eliminadas")
+        }else{
+            return message.error("Asignación no eliminada")
+        }
+    }
     
     const getListAssign = async (nodeId, queryParam) =>{
         setLoading(true)
@@ -40,7 +56,6 @@ const Assignments = () =>{
             person: values.persons,
             node: currenNode?.id
         }
-        console.log('estos valores vienen----->', data)
         try {
             await WebApiAssessment.assignOneTest(data)
             getListAssign(currenNode?.id,"")
@@ -49,6 +64,18 @@ const Assignments = () =>{
             console.log(e)
             setLoading(false)
             message.error("Evaluacion no asignada")
+        }
+    }
+
+    const deleteAssign = async (ids) =>{
+        try {
+            await WebApiAssessment.deletePersonAssessment({persons: ids})
+            getListAssign(currenNode?.id,"")
+            successMessages(ids);
+        } catch (e) {
+            setLoading(false)
+            errorMessages(ids)
+            console.log(e)
         }
     }
 
@@ -83,7 +110,9 @@ const Assignments = () =>{
                 <TableAssignments
                     dataAssign={listAssign}
                     loading={loading}
+                    setLoading={setLoading}
                     getList={getListAssign}
+                    delete={deleteAssign}
                 />
             </div>
         </MainLayout>

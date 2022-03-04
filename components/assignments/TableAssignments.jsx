@@ -24,12 +24,14 @@ import {
     FileTextOutlined,
     EllipsisOutlined
 } from "@ant-design/icons";
+import DeleteAssign from "./DeleteAssign";
 
 const TableAssignments = ({...props}) => {
 
   const permissions = useSelector(state => state.userStore.permissions.person)
   const currenNode = useSelector(state => state.userStore.current_node)
   const [openManyDelete, setOpenManyDelete] = useState(false);
+  const [showManyDelete, setShowManyDelete] = useState(false);
   const [itemSelected, setItemSelected] = useState({});
   const [selectedAssign, setSelectedAssign] = useState([]);
   const [assignKeys, setAssignKeys] = useState([]);
@@ -39,7 +41,15 @@ const TableAssignments = ({...props}) => {
   }
 
   const HandleDelete = (item) =>{
-    setItemSelected(item)
+    setSelectedAssign([item])
+    setOpenManyDelete(true)
+  }
+
+  const resetValues = () =>{
+    setSelectedAssign([])
+    setAssignKeys([])
+    setOpenManyDelete(false)
+    setShowManyDelete(false)
   }
   
   const rowSelectionAssign = {
@@ -58,6 +68,23 @@ const TableAssignments = ({...props}) => {
     } else if (pagination.current == 1) {
       props.getList(currenNode?.id,"")
     }
+  }
+
+  useEffect(()=>{
+    if(openManyDelete){
+      if(selectedAssign.length > 0){
+        setShowManyDelete(true)
+      }else{
+        message.error("Seleccio al menos una asignación")
+        setOpenManyDelete(false)
+      }
+    }
+  },[openManyDelete])
+
+  const removeAssign = (ids) =>{
+    props.setLoading(true)
+    props.delete(ids)
+    resetValues()
   }
 
   const menuTable = () => {
@@ -79,7 +106,7 @@ const TableAssignments = ({...props}) => {
   const menuItem = (item) => {
     return (
       <Menu>
-        {permissions?.edit && (
+        {/* {permissions?.edit && (
           <Menu.Item
             key={1}
             icon={<EditOutlined/>}
@@ -87,7 +114,7 @@ const TableAssignments = ({...props}) => {
           >
             Editar
           </Menu.Item>
-        )}
+        )} */}
         {permissions?.delete && (
           <Menu.Item
             key={2}
@@ -173,6 +200,14 @@ const TableAssignments = ({...props}) => {
                 />
             </Col>
         </Row>
+        {showManyDelete && (
+          <DeleteAssign
+            visible={showManyDelete}
+            close={resetValues}
+            assign={selectedAssign}
+            actionDelete={removeAssign}
+          />
+        )}
     </>
   )
 }

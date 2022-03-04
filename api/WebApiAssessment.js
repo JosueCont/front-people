@@ -48,6 +48,9 @@ class WebApiAssessment {
     static getAssignments (nodeId, queryParam) {
         return Axios.get(`${API_URL}/person/person-assessments/?node=${nodeId}${queryParam}`);
     }
+    static deletePersonAssessment (data) {
+        return Axios.post(`${API_URL}/person/person-assessment/delete_by_ids/`, data);
+    }
 }
 
 export default WebApiAssessment

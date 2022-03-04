@@ -33,9 +33,11 @@ import DeleteGroups from "./DeleteGroups";
 const TableGroups = ({
   hiddenMembers = true,
   hiddenSurveys = true,
+  hiddenCategories = true,
   hiddenName = true,
   multipleSurveys = true,
   multipleMembers = true,
+  multipleCategories = true,
   ...props}) => {
 
   const menuDropDownStyle = { background: "#434343", color: "#ffff"};
@@ -315,9 +317,11 @@ const TableGroups = ({
               actionForm={onFinishEdit}
               multipleSurveys={multipleSurveys}
               multipleMembers={multipleMembers}
+              multipleCategories={multipleCategories}
               hiddenName={hiddenName}
               hiddenMembers={hiddenMembers}
               hiddenSurveys={hiddenSurveys}
+              hiddenCategories={hiddenCategories}
           />
         )}
         {showModalSurveys && (

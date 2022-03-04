@@ -1148,7 +1148,7 @@ const homeScreen = ({ ...props }) => {
             actionForm={onFinishCreateGroup}
             hiddenSurveys={true}
             hiddenMembers={true}
-            hiddenName={false}
+            // hiddenName={false}
           />
         )}
         {showModalAssignTest && (
@@ -1159,7 +1159,8 @@ const homeScreen = ({ ...props }) => {
               close={HandleCloseGroup}
               actionForm={onFinishAssignManyTest}
               multipleSurveys={true}
-              hiddenSurveys={false}
+              // hiddenSurveys={false}
+              hiddenCategories={true}
               hiddenMembers={true}
               hiddenName={true}
           />
@@ -1171,8 +1172,8 @@ const homeScreen = ({ ...props }) => {
               visible={showAssignToPerson}
               close={HandleCloseGroup}
               actionForm={onFinishAssignOneTest}
-              multipleSurveys={false}
-              hiddenSurveys={false}
+              // multipleSurveys={false}
+              // hiddenSurveys={false}
               hiddenMembers={true}
               hiddenName={true}
           />
