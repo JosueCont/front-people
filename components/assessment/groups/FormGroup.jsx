@@ -1,30 +1,10 @@
 import React, { useState, useEffect } from "react";
-import MainLayout from "../../../layout/MainLayout";
-import { useRouter } from "next/router";
 import {
     Form,
     Input,
-    Table,
-    Breadcrumb,
     Button,
-    Row,
-    Col,
     Modal,
-    message,
-    Switch,
-    Checkbox
 } from "antd";
-import {
-    SearchOutlined,
-    PlusOutlined,
-    EditOutlined,
-    DeleteOutlined,
-    SyncOutlined,
-    ExclamationCircleOutlined,
-} from "@ant-design/icons";
-import { withAuthSync } from "../../../libs/auth";
-import { connect, useDispatch } from "react-redux";
-import { useFilter } from "../useFilter";
 import { ruleRequired } from "../../../utils/rules";
 import SelectMembers from "./SelectMembers";
 import SelectSurveys from "./SelectSurveys";
@@ -34,7 +14,10 @@ const FormGroup = ({...props}) =>{
     const [formGroup] = Form.useForm();
     const [listMembers, setListMembers] = useState([]);
     const [listSurveys, setListSurveys] = useState([]);
+    const [rulesMembers, setRulesMembers] = useState([]);
+    const [rulesSurveys, setRulesSurveys] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [nameAssessment, setNameAssessment] = useState(null)
     
     useEffect(()=>{
         if(Object.keys(props.loadData).length > 0){
@@ -47,12 +30,16 @@ const FormGroup = ({...props}) =>{
     const createData = (object) => {
         let queryObject = Object.assign(object);
         if (listMembers.length > 0) {
-          queryObject.persons = listMembers;
+            queryObject.persons = listMembers;
+        }else if(listMembers.length <= 0 && !props.hiddenMembers){
+            queryObject.persons = [];
         }else{
             delete queryObject.persons
         }
         if(listSurveys.length > 0){
             queryObject.assessments = listSurveys;
+        }else if(listSurveys.length <= 0 && !props.hiddenSurveys){
+            queryObject.assessments = [];
         }else{
             delete queryObject.assessments
         }
@@ -111,16 +98,18 @@ const FormGroup = ({...props}) =>{
                     </Form.Item>
                 )}
                 {!props.hiddenMembers && (
-                    <Form.Item name="persons" label="Añadir integrantes">
+                    <Form.Item name="persons" label="Añadir persona">
                         <SelectMembers
+                            multiple={props.multipleMembers}
                             members={props.loadData?.persons}
                             setMembers={setListMembers}
                         />
                     </Form.Item>
                 )}
                 {!props.hiddenSurveys && (
-                    <Form.Item name="assessments" label="Añadir encuestas">
+                    <Form.Item name="assessments" label="Añadir encuesta">
                         <SelectSurveys
+                            multiple={props.multipleSurveys}
                             surveys={props.loadData?.assessments}
                             setSurveys={setListSurveys}
                         />

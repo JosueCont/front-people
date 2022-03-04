@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import { useSelector } from "react-redux";
+import { ruleRequired, ruleMinArray } from "../../../utils/rules";
 
 const SelectSurveys = ({...props}) => {
   
@@ -9,6 +10,7 @@ const SelectSurveys = ({...props}) => {
   const currenNode = useSelector(state => state.userStore.current_node)
   const [listSurveys, setListSurveys] = useState([]);
   const [selectedSurveys, setSelectedSurveys] = useState([]);
+  const [isMultiple, setIsMultiple] = useState({});
 
   useEffect(()=>{
     getSelectedSurveys(props.surveys)
@@ -17,6 +19,14 @@ const SelectSurveys = ({...props}) => {
   useEffect(() => {
     getSurveys(currenNode?.id);
   }, [currenNode]);
+
+  useEffect(()=>{
+    if(props.multiple){
+      setIsMultiple({mode: 'multiple'})
+    }else{
+      setIsMultiple({})
+    }
+  },[props.multiple])
 
   const getSurveys = async (nodeId) => {
     try {
@@ -54,6 +64,7 @@ const SelectSurveys = ({...props}) => {
   }
 
   const handleChange = (value)=>{
+    console.log(value);
     setSelectedSurveys(value)
     props.setSurveys(value)
   }
@@ -61,9 +72,10 @@ const SelectSurveys = ({...props}) => {
     return (
       <Select
         allowClear
-        mode="multiple"
+        showSearch={false}
+        {...isMultiple}
         value={selectedSurveys}
-        placeholder="Seleccionar encuestas"
+        placeholder="Seleccionar encuesta"
         onChange={handleChange}
       >
         {listSurveys && listSurveys.map((item) => (

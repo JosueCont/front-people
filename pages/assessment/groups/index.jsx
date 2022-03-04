@@ -118,7 +118,6 @@ const GroupsKuiz = () =>{
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
                 <FormSearch
-                    dataGroups={listGroups}
                     setLoading={setLoading}
                     createGroup={createGroup}
                     hiddenName={false}

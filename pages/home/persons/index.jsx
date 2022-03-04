@@ -73,6 +73,8 @@ const homeScreen = ({ ...props }) => {
   const [showModalGroup, setShowModalGroup] = useState(false);
   const [openAssignTest, setOpenAssignTest] = useState(false);
   const [showModalAssignTest, setShowModalAssignTest] = useState(false);
+  const [openAssignToPerson, setOpenAssignToPerson] = useState(false);
+  const [showAssignToPerson, setShowAssignToPerson] = useState(false);
   const [personsKeys, setPersonsKeys] = useState([]);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
@@ -486,13 +488,18 @@ const homeScreen = ({ ...props }) => {
   const menuPerson = (item) => {
     return (
       <Menu>
+        {permissions.create && (
+          <Menu.Item key="1" onClick={() => HandleModalAssign(item)}>
+            Asignar evaluación
+          </Menu.Item>
+        )}
         {permissions.edit && (
-          <Menu.Item>
+          <Menu.Item key="2">
             <Link href={`/home/persons/${item.id}`}>Editar</Link>
           </Menu.Item>
         )}
         {permissions.delete && (
-          <Menu.Item
+          <Menu.Item key="3"
             onClick={() => {
               setPersonsToDelete([item]), showModalDelete();
             }}
@@ -702,8 +709,15 @@ const homeScreen = ({ ...props }) => {
     setModalCreateGroup(false)
     setOpenAssignTest(false)
     setShowModalAssignTest(false)
+    setOpenAssignToPerson(false)
+    setShowAssignToPerson(false)
     setPersonsToDelete([])
     setPersonsKeys([])
+  }
+
+  const HandleModalAssign = (item) =>{
+    setPersonsToDelete([item])
+    setOpenAssignToPerson(true)
   }
 
   const getOnlyIds = () => {
@@ -729,18 +743,37 @@ const homeScreen = ({ ...props }) => {
     }
   }
 
-  const onFinishAssignTest = async (values) =>{
+  const onFinishAssignManyTest = async (values) =>{
     setLoading(true)
     const ids = getOnlyIds();
     const body = {...values, persons: ids, node: props.currentNode?.id}
-    // console.log('valores que se van a enviar----->', body)
+    console.log('valores que se van a enviar----->', body)
     try {
       filterPersonName();
       message.success("Evaluaciones asignadas")
     } catch (e) {
       console.log(e)
       setLoading(false)
-      message.error("Evaluaciones no asignadas ")
+      message.error("Evaluaciones no asignadas")
+    }
+  };
+
+  const onFinishAssignOneTest = async (value) =>{
+    setLoading(true)
+    const ids = getOnlyIds();
+    const body = {
+      id_assessment: value.assessments,
+      person: ids.at(-1),
+      node: props.currentNode?.id
+    }
+    try {
+      await WebApiAssessment.assignOneTest(body)
+      filterPersonName();
+      message.success("Evaluación asignada")
+    } catch (e) {
+      console.log(e)
+      setLoading(false)
+      message.error("Evaluación no asignada")
     }
   };
 
@@ -771,6 +804,17 @@ const homeScreen = ({ ...props }) => {
       }
     }
   },[openAssignTest])
+
+  useEffect(()=>{
+    if(openAssignToPerson){
+      if(personsToDelete.length > 0){
+        setShowAssignToPerson(true)
+      }else{
+        setOpenAssignToPerson(false)
+        message.error("Selecciona al menos una persona")
+      }
+    }
+  },[openAssignToPerson])
 
   const showModalDelete = () => {
     modalDelete ? setModalDelete(false) : setModalDelete(true);
@@ -1113,7 +1157,21 @@ const homeScreen = ({ ...props }) => {
               title={'Asignar evaluaciones'}
               visible={showModalAssignTest}
               close={HandleCloseGroup}
-              actionForm={onFinishAssignTest}
+              actionForm={onFinishAssignManyTest}
+              multipleSurveys={true}
+              hiddenSurveys={false}
+              hiddenMembers={true}
+              hiddenName={true}
+          />
+        )}
+        {showAssignToPerson && (
+          <FormGroup
+              loadData={{}}
+              title={'Asignar evaluación'}
+              visible={showAssignToPerson}
+              close={HandleCloseGroup}
+              actionForm={onFinishAssignOneTest}
+              multipleSurveys={false}
               hiddenSurveys={false}
               hiddenMembers={true}
               hiddenName={true}
