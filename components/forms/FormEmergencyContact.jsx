@@ -17,7 +17,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../utils/rules";
 
@@ -38,7 +38,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
 
   const getRelationShip = async () => {
     try {
-      let response = await WebApi.getRelationShip();
+      let response = await WebApiPeople.getRelationShip();
       let relation = response.data.results;
       relation = relation.map((a) => {
         return { label: a.name, value: a.id };
@@ -52,7 +52,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
   const getContactEmergency = async () => {
     setContactEmergency([]);
     try {
-      let response = await WebApi.getContactEmergency(person_id);
+      let response = await WebApiPeople.getContactEmergency(person_id);
       setContactEmergency(response.data);
       setTimeout(() => {
         setLoadingTable(false);
@@ -68,7 +68,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
 
   const saveContactE = async (data) => {
     try {
-      let response = await WebApi.createContactEmergency(data);
+      let response = await WebApiPeople.createContactEmergency(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
@@ -83,7 +83,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
   const updateContEm = async (data) => {
     setLoadingTable(true);
     try {
-      let response = await WebApi.updateContactEmergency(data);
+      let response = await WebApiPeople.updateContactEmergency(data);
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",
@@ -106,7 +106,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
   const deleteContEm = async (data) => {
     setLoadingTable(true);
     try {
-      let response = await WebApi.deleteContactEmergency(data);
+      let response = await WebApiPeople.deleteContactEmergency(data);
       message.success({
         content: "Eliminado correctamente.",
         className: "custom-class",
@@ -233,9 +233,10 @@ const FormEmergencyContact = ({ person_id = null }) => {
         layout="vertical"
         form={formContactEmergency}
         onFinish={formFinishContactE}
+        className="inputs_form_responsive"
       >
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
+        <Row gutter={20}>
+          <Col lg={6} xs={22} md={8}>
             <Form.Item
               name="relationship"
               label="Parentesco"
@@ -247,7 +248,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={8}>
             <Form.Item
               name="fullname"
               label="Nombre completo"
@@ -256,7 +257,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
               <Input maxLength={100} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={8}>
             <Form.Item
               name="phone_one"
               label="Teléfono 1"
@@ -265,7 +266,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
               <Input maxLength={10} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22} md={8}>
             <Form.Item
               name="phone_two"
               label="Teléfono 2"

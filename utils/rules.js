@@ -3,6 +3,22 @@ export const ruleRequired = {
   message: "Este campo es requerido",
 };
 
+export const ruleMinArray = (min) =>{
+  return {
+    min: min,
+    type: 'array',
+    message: `Seleciona ${min} registros`
+  }
+}
+
+export const ruleMaxArray = (max) =>{
+  return {
+    max: max,
+    type: 'array',
+    message: `Máximo a seleccionar ${max} registros`
+  }
+}
+
 export const ruleEmail = {
   type: "email",
   message: "Ingrese un correo electrónico válido",
@@ -21,6 +37,11 @@ export const twoDigit = {
 export const treeDecimal = {
   pattern: /^\d+(?:\.\d{1,3})?$/,
   message: "El campo no puede tener más de tres decimales",
+};
+
+export const fourDecimal = {
+  pattern: /^\d+(?:\.\d{1,4})?$/,
+  message: "El campo no puede tener más de cuatro decimales",
 };
 
 // {pattern: /^[\d]{0,16}$/, message: "El no  debe tener más de 16 dígitos" }, numero menor  a 16 digitos

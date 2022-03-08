@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import DetailPerson from "../../components/person/DetailPerson";
-import { withAuthSync } from "../../libs/auth";
+import DetailPerson from "../../../components/person/DetailPerson";
+import { withAuthSync } from "../../../libs/auth";
 import { useRouter } from "next/router";
 import { Breadcrumb, Spin } from "antd";
-import WebApi from "../../api/webApi";
-import MainLayout from "../../layout/MainLayout";
+import WebApiPeople from "../../../api/WebApiPeople";
+import MainLayout from "../../../layout/MainLayout";
 import { Content } from "antd/lib/layout/layout";
 import { connect } from "react-redux";
+import { Global, css } from "@emotion/core";
 
 const EmployeeDetailPage = (...props) => {
   const router = useRouter();
@@ -19,19 +20,32 @@ const EmployeeDetailPage = (...props) => {
 
   const getPerson = async (data) => {
     try {
-      let response = await WebApi.getPerson(data);
+      let response = await WebApiPeople.getPerson(data);
       setPerson(response.data);
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <>
+      <Global
+        styles={css`
+          .inputs_form_responsive .ant-col {
+            display: flex;
+          }
+
+          .inputs_form_responsive .ant-col .ant-form-item {
+            margin-top: auto;
+            width: 100%;
+          }
+        `}
+      />
       <MainLayout currentKey="1">
         <Content className="site-layout">
           <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
-            <Breadcrumb.Item href="/home/">Personas</Breadcrumb.Item>
+            <Breadcrumb.Item href="/home/persons/">Inicio</Breadcrumb.Item>
+            <Breadcrumb.Item href="/home/persons/">Personas</Breadcrumb.Item>
             <Breadcrumb.Item>Expediente de empleado</Breadcrumb.Item>
           </Breadcrumb>
           {person ? (

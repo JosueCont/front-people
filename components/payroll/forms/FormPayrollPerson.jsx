@@ -17,10 +17,9 @@ import { useState, useEffect } from "react";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import moment from "moment";
-import WebApiPayroll from "../../../api/webApiPayroll";
+import WebApiPayroll from "../../../api/WebApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
-/* import { treeDecimal } from "../../../utils/constant"; */
-import { ruleRequired, treeDecimal } from "../../../utils/rules";
+import { ruleRequired, fourDecimal } from "../../../utils/rules";
 
 const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const { Title } = Typography;
@@ -29,20 +28,24 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const [contrctsType, setContractsType] = useState([]);
   const [hiringRegimeType, setHiringRegimeType] = useState([]);
   const [typeTax, setTypeTax] = useState([]);
+  const [typeworkingday, setTypeworkingday] = useState([]);
   const [banks, setBanks] = useState([]);
   const [paymentCalendars, setPaymentCalendars] = useState([]);
-  const [paymentPeriods, setPaymentPeriodicity] = useState([]);
+  const [calendars, setCalendars] = useState([]);
+  const [bankDisabled, setBankDisabled] = useState(false);
+  const [disabledCalendar, setDisabledCalendar] = useState(false);
   const [lastDayPaid, setLastDayPaid] = useState("");
   const PaymentTypes = [
-    { value: 1, label: "Efectivo" },
-    { value: 2, label: "Cheques" },
+    { value: 0, label: "Efectivo" },
+    { value: 1, label: "Cheques" },
     { value: 3, label: "Transferencias" },
     { value: 30, label: "Anticipo" },
     { value: 99, label: "Por definir" },
   ];
   const [idPayroll, setIdPayroll] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [payrollPerson, setPayrolPerson] = useState(null);
+  // const [payrollPerson, setPayrolPerson] = useState(null);
+  const [perceptionTypes, setPerceptionTypes] = useState([]);
 
   useEffect(() => {
     getPayrollPerson();
@@ -51,15 +54,16 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     getTypeTax();
     getBanks();
     getPaymentCalendar();
-    getPaymentPeriodicity();
+    getTypeworkingday();
+    getPerceptionTypes();
   }, []);
 
   const getPayrollPerson = async () => {
     setLoading(true);
-    Axios.get(API_URL + `/payroll/payroll-person/?person__id=${person_id}`)
+    await WebApiPayroll.getPayrollPerson(person_id)
       .then((response) => {
-        if (response.data.results.length > 0) {
-          let item = response.data.results[0];
+        if (response.data) {
+          let item = response.data;
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
             contract_type: item.contract_type.id,
@@ -68,6 +72,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
             unionized: item.unionized ? item.unionized : false,
             payment_type: item.payment_type,
             bank: item.bank,
+            type_working_day: item.type_working_day,
             apply_annual_adjustment: item.apply_annual_adjustment
               ? item.apply_annual_adjustment
               : false,
@@ -75,9 +80,13 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
             payment_period: item.payment_period,
             perception_type: item.perception_type,
             last_day_paid: item.last_day_paid ? moment(item.last_day_paid) : "",
+            integrated_daily_salary: item.integrated_daily_salary,
           });
           setLastDayPaid(item.last_day_paid);
-          if (item.id) setIdPayroll(item.id);
+          if (item.id) {
+            setIdPayroll(item.id);
+            setDisabledCalendar(true);
+          }
         }
         setLoading(false);
       })
@@ -138,6 +147,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const getPaymentCalendar = async () => {
     try {
       let response = await WebApiPayroll.getPaymentCalendar(node);
+      setCalendars(response.data.results);
       let payment_calendar = response.data.results.map((a) => {
         return { value: a.id, label: a.name };
       });
@@ -147,16 +157,27 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     }
   };
 
-  const getPaymentPeriodicity = async () => {
+  const getPerceptionTypes = async () => {
     try {
-      let response = await WebApiFiscal.getPaymentPeriodicity();
-      let payment_periodicity = response.data.results.map((a) => {
+      let response = await WebApiFiscal.getPerseptions();
+      let payment_perceptions = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
-      setPaymentPeriodicity(payment_periodicity);
+
+      setPerceptionTypes(payment_perceptions);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const getTypeworkingday = async () => {
+    try {
+      let response = await WebApiFiscal.getTypeworkingday();
+      let type_working_days = response.data.results.map((a) => {
+        return { value: a.id, label: a.description };
+      });
+      setTypeworkingday(type_working_days);
+    } catch (error) {}
   };
 
   const savePayrollPerson = async (data) => {
@@ -166,6 +187,11 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
         content: "Guardado correctamente.",
         className: "custom-class",
       });
+      if (response.data) {
+        formPayrollPerson.setFieldsValue({
+          integrated_daily_salary: response.data.integrated_daily_salary,
+        });
+      }
       getPayrollPerson();
     } catch (error) {
       console.log(error);
@@ -180,6 +206,12 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
         content: "Actualizado correctamente.",
         className: "custom-class",
       });
+      if (response.data) {
+        formPayrollPerson.setFieldsValue({
+          integrated_daily_salary: response.data.integrated_daily_salary,
+        });
+      }
+
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -190,16 +222,43 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const onChangeLastDayPaid = (date, dateString) => {
     setLastDayPaid(dateString);
   };
+  const selectCalendar = (value) => {
+    if (value) {
+      let calendar = calendars.find((calendar) => calendar.id == value);
+      if (calendar) {
+        formPayrollPerson.setFieldsValue({
+          perception_type: calendar.perception_type,
+          type_tax: calendar.type_tax.id,
+        });
+      }
+    }
+  };
+
+  const changePaymentType = (type) => {
+    if (type === 3) {
+      setBankDisabled(false);
+    } else {
+      setBankDisabled(true);
+      formPayrollPerson.setFieldsValue({
+        bank: "",
+      });
+    }
+  };
+
+  useEffect(() => {}, [bankDisabled]);
+
   const formFinish = (value) => {
     if (idPayroll) {
       value.person = person_id;
       value.id = idPayroll;
       value.last_day_paid = lastDayPaid;
       value.payment_type = parseInt(value.payment_type);
+      value.daily_salary = parseFloat(value.daily_salary);
       updatePayrollPerson(value);
     } else {
       value.person = person_id;
       value.last_day_paid = lastDayPaid;
+      value.daily_salary = parseFloat(value.daily_salary);
       savePayrollPerson(value);
     }
   };
@@ -215,19 +274,30 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
           layout={"vertical"}
           form={formPayrollPerson}
           onFinish={formFinish}
+          className="inputs_form_responsive"
         >
-          <Row>
-            <Col lg={6} xs={22} offset={1}>
+          <Row gutter={20}>
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="daily_salary"
                 label="Salario diario"
                 maxLength={13}
-                rules={[treeDecimal]}
+                rules={[fourDecimal]}
               >
                 <Input maxLength={10} />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22} md={12}>
+              <Form.Item
+                name="integrated_daily_salary"
+                label="Salario diario integrado"
+                maxLength={13}
+                rules={[fourDecimal]}
+              >
+                <Input maxLength={10} disabled />
+              </Form.Item>
+            </Col>
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="contract_type"
                 label="Tipo de contrato"
@@ -239,7 +309,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="hiring_regime_type"
                 label="Tipo de regimen de contratación"
@@ -251,15 +321,19 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item name="type_tax" label="Tipo de impuesto">
+            <Col lg={8} xs={22} md={12}>
+              <Form.Item
+                name="type_working_day"
+                label="Tipo de jornada"
+                rules={[ruleRequired]}
+              >
                 <Select
-                  options={typeTax}
+                  options={typeworkingday}
                   notFoundContent={"No se encontraron resultados."}
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="unionized"
                 label="¿Sindicalizado?"
@@ -271,23 +345,25 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="payment_type" label="Forma de pago">
                 <Select
                   options={PaymentTypes}
                   notFoundContent={"No se encontraron resultados."}
+                  onChange={changePaymentType}
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="bank" label="Banco">
                 <Select
                   options={banks}
                   notFoundContent={"No se encontraron resultados."}
+                  disabled={bankDisabled}
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="apply_annual_adjustment"
                 label="¿Aplicar ajuste anual?"
@@ -299,7 +375,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="last_day_paid" label="Ultimo día de pago">
                 <DatePicker
                   style={{ width: "100%" }}
@@ -308,34 +384,34 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="payment_calendar" label="Calendario de pago">
                 <Select
                   options={paymentCalendars}
                   notFoundContent={"No se encontraron resultados."}
+                  onChange={selectCalendar}
+                  disabled={disabledCalendar}
                 />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
-              <Form.Item
-                name="payment_period"
-                label="Período de pago"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  options={paymentPeriods}
-                  notFoundContent={"No se encontraron resultados."}
-                />
-              </Form.Item>
-            </Col>
-            {/* <Col lg={6} xs={22} offset={1}>
+            <Col lg={8} xs={22} md={12}>
               <Form.Item name="perception_type" label="Tipo de percepción">
                 <Select
                   options={perceptionTypes}
                   notFoundContent={"No se encontraron resultados."}
+                  disabled
                 />
               </Form.Item>
-            </Col> */}
+            </Col>
+            <Col lg={8} xs={22} md={12}>
+              <Form.Item name="type_tax" label="Tipo de impuesto">
+                <Select
+                  options={typeTax}
+                  notFoundContent={"No se encontraron resultados."}
+                  disabled
+                />
+              </Form.Item>
+            </Col>
           </Row>
           <Row justify={"end"}>
             <Form.Item>

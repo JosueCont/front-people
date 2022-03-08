@@ -1,16 +1,4 @@
-import {
-  Form,
-  Input,
-  Spin,
-  Button,
-  message,
-  Row,
-  Col,
-  Typography,
-  Table,
-  Modal,
-  Select,
-} from "antd";
+import { Spin, Button, Row, Col, Typography, Table, Modal } from "antd";
 import {
   FileTextOutlined,
   DeleteOutlined,
@@ -19,11 +7,10 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import DocumentModal from "../../components/modal/document";
 import DocumentSelectModal from "../../components/modal/selectDocument";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const FormDocument = ({ person_id, node }) => {
   const { Title } = Typography;
@@ -38,9 +25,9 @@ const FormDocument = ({ person_id, node }) => {
     getDocument();
   }, [person_id]);
 
-  const getDocument = () => {
+  const getDocument = async () => {
     setLoadingTable(true);
-    Axios.get(API_URL + `/person/person/${person_id}/document_person/`)
+    await WebApiPeople.getDocumentPerson(person_id)
       .then((response) => {
         setDocuments(response.data);
 
@@ -69,15 +56,13 @@ const FormDocument = ({ person_id, node }) => {
     setShowModalSelectDoc(value);
   };
 
-  const deleteDocument = (value) => {
-    Axios.delete(API_URL + `/person/document/${value}/`)
+  const deleteDocument = async (value) => {
+    await WebApiPeople.deleteDocument(value)
       .then((response) => {
         getDocument();
-        // showModal();
       })
       .catch((e) => {
         console.log(e);
-        // showModal();
       });
   };
 
@@ -169,7 +154,6 @@ const FormDocument = ({ person_id, node }) => {
             Agregar
           </Button>
         </Col>
-       
       </Row>
       <Spin tip="Cargando..." spinning={loadingTable}>
         <Table

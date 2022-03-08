@@ -16,8 +16,6 @@ import moment from "moment";
 import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import jsCookie from "js-cookie";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { withAuthSync } from "../../libs/auth";
 
 const Incapacityform = (props) => {
@@ -30,7 +28,6 @@ const Incapacityform = (props) => {
 
   const [fileList, setFileList] = useState([]);
   const [allPersons, setAllPersons] = useState(null);
-  const [personList, setPersonList] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
   const [permissions, setPermissions] = useState({});
 
@@ -63,25 +60,6 @@ const Incapacityform = (props) => {
         job: null,
       });
       setUrlPhoto(null);
-    }
-  };
-
-  const getAllPersons = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/person/person/`);
-      let data = response.data.results;
-      setAllPersons(data);
-
-      data = data.map((a, index) => {
-        return {
-          label: a.first_name + " " + a.flast_name,
-          value: a.khonnect_id,
-          key: a.id + index,
-        };
-      });
-      setPersonList(data);
-    } catch (e) {
-      console.log(e);
     }
   };
 
@@ -155,7 +133,6 @@ const Incapacityform = (props) => {
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     searchPermissions(jwt.perms);
-    getAllPersons();
   }, []);
 
   const searchPermissions = (data) => {

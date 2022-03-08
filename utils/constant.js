@@ -1,4 +1,13 @@
-import { APP_ID } from "../config/config";
+export const typeCalculate = [
+  {
+    label: "Bruto-Neto",
+    value: 1,
+  },
+  {
+    label: "Neto-Bruto",
+    value: 2,
+  },
+];
 
 export const genders = [
   {
@@ -116,23 +125,19 @@ export const periodicityNom = [
   },
   {
     label: "Decenal",
-    value: 3,
+    value: 10,
   },
   {
     label: "Catorcenal",
-    value: 4,
+    value: 3,
   },
   {
     label: "Quincenal",
-    value: 5,
+    value: 4,
   },
   {
     label: "Mensual",
-    value: 6,
-  },
-  {
-    label: "Anual",
-    value: 7,
+    value: 5,
   },
 ];
 
@@ -147,9 +152,11 @@ export const typeMessage = [
   },
 ];
 
-export const headersApiKhonnect = {
-  "client-id": APP_ID,
-  "Content-Type": "application/json",
+export const headersApiKhonnect = (app_id) => {
+  return {
+    "client-id": app_id,
+    "Content-Type": "application/json",
+  };
 };
 
 export const monthsName = [
@@ -203,6 +210,62 @@ export const monthsName = [
   },
 ];
 
+export const intranetAccess = [
+  {
+    label: "No",
+    value: 1,
+  },
+  {
+    label: "Escritura",
+    value: 2,
+  },
+  {
+    label: "Lectura",
+    value: 3,
+  },
+];
+
+export const statusActivePost = [
+  {
+    label: "Inactivo",
+    value: 0,
+    key: 0,
+  },
+  {
+    label: "Activo",
+    value: 1,
+    key: 1,
+  },
+];
+
+export const workTitleStatus = [
+  {
+    label: "Postulado",
+    value: 1,
+    key: 1,
+  },
+  {
+    label: "Aspirante",
+    value: 2,
+    key: 2,
+  },
+  {
+    label: "Aceptado",
+    value: 3,
+    key: 3,
+  },
+  {
+    label: "Rechazado",
+    value: 4,
+    key: 4,
+  },
+  {
+    label: "Inactivo",
+    value: 5,
+    key: 5,
+  },
+];
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
 export const messageDeleteSuccess = "Eliminado correctamente.";
@@ -210,3 +273,4 @@ export const messageError = "Ocurrio un error, intente de nuevo.";
 export const titleDialogDelete = "¿Está seguro de eliminarlo?";
 export const messageDialogDelete =
   "Al eliminar este registro se perderán todos los datos relacionados de manera permanente.";
+export const messageUploadSuccess = "Cargado correctamente.";

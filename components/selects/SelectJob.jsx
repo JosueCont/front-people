@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
-import { useRouter } from "next/router";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import { connect } from "react-redux";
 
 const SelectJob = ({
   disabled,
-  titleLabel = true,
+  viewLabel = true,
   rules = [],
   departmentId,
   ...props
@@ -33,7 +30,7 @@ const SelectJob = ({
       <Form.Item
         key={"ItemJob"}
         name={props.name ? props.name : "job"}
-        label={titleLabel ? "Puesto de trabajo" : ""}
+        label={viewLabel ? "Puesto de trabajo" : ""}
         rules={rules}
       >
         <Select

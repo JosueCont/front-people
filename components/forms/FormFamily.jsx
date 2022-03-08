@@ -19,11 +19,9 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import moment from "moment";
 import { genders } from "../../utils/constant";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../utils/rules";
 
@@ -41,7 +39,7 @@ const FormFamily = ({ person_id = null }) => {
 
   useEffect(() => {
     getFamily();
-    Axios.get(API_URL + "/setup/relationship/")
+    WebApiPeople.getRelationShip()
       .then((response) => {
         if (response.status === 200) {
           let relation = response.data.results;
@@ -58,7 +56,7 @@ const FormFamily = ({ person_id = null }) => {
 
   const getFamily = async () => {
     try {
-      let response = await WebApi.getFamily(person_id);
+      let response = await WebApiPeople.getFamily(person_id);
       response.data.map((a) => {
         a.relation = a.relationship.name;
         a.fullname = a.name + " " + a.flast_name + " " + a.mlast_name;
@@ -77,7 +75,7 @@ const FormFamily = ({ person_id = null }) => {
   };
   const saveFamily = async (data) => {
     try {
-      let response = await WebApi.createFamily(data);
+      let response = await WebApiPeople.createFamily(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
@@ -92,7 +90,7 @@ const FormFamily = ({ person_id = null }) => {
   const updateFamily = async (data) => {
     try {
       setLoadingTable(true);
-      let response = await WebApi.updateFamily(data);
+      let response = await WebApiPeople.updateFamily(data);
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",
@@ -115,7 +113,7 @@ const FormFamily = ({ person_id = null }) => {
   const deleteFamily = async (data) => {
     try {
       setLoadingTable(true);
-      let response = await WebApi.deleteFamily(data);
+      let response = await WebApiPeople.deleteFamily(data);
       message.success({
         content: "Eliminado con éxito.",
         className: "custom-class",
@@ -246,9 +244,14 @@ const FormFamily = ({ person_id = null }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Familia</Title>
       </Row>
-      <Form layout={"vertical"} form={formFamily} onFinish={formFinishFamily}>
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
+      <Form
+        layout={"vertical"}
+        form={formFamily}
+        onFinish={formFinishFamily}
+        className="inputs_form_responsive"
+      >
+        <Row gutter={20}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="relationship"
               label="Parentesco"
@@ -260,17 +263,17 @@ const FormFamily = ({ person_id = null }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="job" label="Puesto de trabajo">
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="flast_name"
               label="Apellido paterno"
@@ -279,7 +282,7 @@ const FormFamily = ({ person_id = null }) => {
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="mlast_name"
               label="Apellido materno"
@@ -288,7 +291,7 @@ const FormFamily = ({ person_id = null }) => {
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="gender" label="Género" rules={[ruleRequired]}>
               <Select
                 options={genders}
@@ -296,12 +299,12 @@ const FormFamily = ({ person_id = null }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="life" label="¿Vive?">
               <Checkbox checked={lifeFamily} onChange={lifeFamilyShip} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="birth_date"
               label="Fecha de nacimiento"
@@ -314,22 +317,22 @@ const FormFamily = ({ person_id = null }) => {
               />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="place_birth" label="Lugar de nacimiento">
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="nationality" label="Nacionalidad">
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="other_nationality" label="Otra nacionalidad">
               <Input maxLength={50} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="benefit"
               label="% Beneficio"

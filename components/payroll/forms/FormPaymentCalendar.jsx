@@ -14,7 +14,7 @@ import {
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import moment from "moment";
-import WebApi from "../../../api/webApiPayroll";
+import WebApiPayroll from "../../../api/WebApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
 import { useRouter } from "next/router";
 import { messageSaveSuccess } from "../../../utils/constant";
@@ -32,6 +32,7 @@ const FormPaymentCalendar = ({
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
   const [typeTax, setTypeTax] = useState([]);
+  const [perceptionType, setPerceptionType] = useState([]);
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [activationDate, setActivationtDate] = useState("");
@@ -40,13 +41,14 @@ const FormPaymentCalendar = ({
 
   /* Const switchs */
   const [adjustmentAppy, setAdjustmentApply] = useState(false);
-  const [periodActive, setPeriodActive] = useState(false);
+  const [periodActive, setPeriodActive] = useState(true);
   const [paymentSaturday, setPaymentSaturday] = useState(false);
   const [paymentSunday, setPaymentSunday] = useState(false);
 
   useEffect(() => {
     getTypeTax();
     getPaymentPeriodicity();
+    getPerceptionType();
     if (idPaymentCalendar) {
       getPaymentCalendar();
     }
@@ -59,6 +61,19 @@ const FormPaymentCalendar = ({
         return { value: a.id, label: a.description };
       });
       setTypeTax(tax_types);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getPerceptionType = async () => {
+    try {
+      let response = await WebApiFiscal.getPerseptions();
+      console.log("Percepciones", response);
+      let perception_types = response.data.results.map((a) => {
+        return { value: a.id, label: a.description };
+      });
+      setPerceptionType(perception_types);
     } catch (error) {
       console.log(error);
     }
@@ -79,33 +94,29 @@ const FormPaymentCalendar = ({
   const getPaymentCalendar = async () => {
     setLoading(true);
     try {
-      let response = await WebApi.getDetailPaymentCalendar(idPaymentCalendar);
-      console.log('item => ', response.data);
+      let response = await WebApiPayroll.getDetailPaymentCalendar(
+        idPaymentCalendar
+      );
       if (response.data) {
         let item = response.data;
         formPaymentCalendar.setFieldsValue({
           name: item.name,
           periodicity: item.periodicity.id,
           type_tax: item.type_tax.id,
+          perception_type: item.perception_type,
           start_date: item.start_date ? moment(item.start_date) : "",
           period: item.period ? moment().year(item.period) : "",
           start_incidence: item.start_incidence,
           end_incidence: item.end_incidence,
-          /* adjustment: item.adjustment ? item.adjustment : false, */
-          /* active: item.active ? item.active : false, */
           pay_before: item.pay_before ? parseInt(item.pay_before) : 0,
-          /* payment_saturday: item.payment_saturday
-            ? item.payment_saturday
-            : false, */
-          /* payment_sunday: item.payment_sunday ? item.payment_sunday : false, */
           activation_date: item.activation_date
             ? moment(item.activation_date)
             : "",
         });
         setAdjustmentApply(item.adjustment);
         setPeriodActive(item.active);
-        setPaymentSaturday(item.payment_saturday)
-        setPaymentSunday(item.payment_saturday)
+        setPaymentSaturday(item.payment_saturday);
+        setPaymentSunday(item.payment_sunday);
         setStartDate(item.start_date);
         setActivationtDate(item.activation_date);
         setPeriod(item.period);
@@ -118,28 +129,27 @@ const FormPaymentCalendar = ({
 
   const savePaymentCalendar = async (data) => {
     try {
-      let response = await WebApi.createPaymentCalendar(data);
+      console.log("Sending PayCalendar", data);
+      let response = await WebApiPayroll.createPaymentCalendar(data);
       message.success({
         content: messageSaveSuccess,
         className: "custom-class",
       });
       closeModal();
-      /* route.push({ pathname: "/payroll/paymentCalendar" }); */
     } catch (error) {
       console.log(error);
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
 
   const updatePaymentCalendar = async (data) => {
     try {
-      let response = await WebApi.updatePaymentCalendar(data);
+      let response = await WebApiPayroll.updatePaymentCalendar(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
       });
-      /* route.push({ pathname: "/payroll/paymentCalendar" }); */
       closeModal();
     } catch (error) {
       console.log(error);
@@ -163,9 +173,9 @@ const FormPaymentCalendar = ({
     value.active = periodActive;
     value.adjustment = adjustmentAppy;
     value.pay_before = value.pay_before ? parseInt(value.pay_before) : 0;
-    value.payment_saturday =  paymentSaturday;
-    value.payment_sunday = paymentSunday
-    
+    value.payment_saturday = paymentSaturday;
+    value.payment_sunday = paymentSunday;
+
     if (startDate) {
       value.start_date = startDate;
     }
@@ -193,32 +203,31 @@ const FormPaymentCalendar = ({
       savePaymentCalendar(value);
     }
   };
-  
+
   const changeAdjustmentAppy = (checked) => {
-    console.log('checked =>', checked);
-    setAdjustmentApply(checked)
-  }
+    setAdjustmentApply(checked);
+  };
 
   const changePeriodActive = (checked) => {
     setPeriodActive(checked);
-  }
+  };
 
-  const changePaymentSaturday = (checked) =>{
-    setPaymentSaturday(checked)
-  }
+  const changePaymentSaturday = (checked) => {
+    setPaymentSaturday(checked);
+  };
 
-  const changePaymentSunday = (checked) =>{
-    setPaymentSunday(checked)
-  }
+  const changePaymentSunday = (checked) => {
+    setPaymentSunday(checked);
+  };
 
-  const closeModal = () =>{
+  const closeModal = () => {
     props.setIsModalVisible(false);
     setPaymentSunday(false);
     setPaymentSaturday(false);
     setAdjustmentApply(false);
     setPeriodActive(false);
     props.getPaymentCalendars();
-  }
+  };
 
   return (
     <>
@@ -299,18 +308,19 @@ const FormPaymentCalendar = ({
                 />
               </Form.Item>
             </Col>
-            {/* <Col lg={8} xs={22}>
+            <Col lg={8} xs={22}>
               <Form.Item
-                name="adjustment"
-                label="¿Aplicar ajuste?"
-                valuePropName="checked"
+                name="perception_type"
+                label="Tipo de percepción"
+                rules={[ruleRequired]}
               >
-                <Switch
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
+                <Select
+                  options={perceptionType}
+                  notFoundContent={"No se encontraron resultados."}
+                  optionFilterProp="children"
                 />
               </Form.Item>
-            </Col> */}
+            </Col>
             <Col lg={8} xs={22}>
               <Form.Item
                 name="period"
@@ -424,38 +434,6 @@ const FormPaymentCalendar = ({
                 <Input maxLength={10} />
               </Form.Item>
             </Col>
-            {/* <Col lg={8} xs={22}>
-              <Form.Item name="active" label="¿Activo?" valuePropName="checked">
-                <Switch
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22}>
-              <Form.Item
-                name="payment_saturday"
-                label="¿Pago en sábado?"
-                valuePropName="checked"
-              >
-                <Switch
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22}>
-              <Form.Item
-                name="payment_sunday"
-                label="¿Pago en domingo?"
-                valuePropName="checked"
-              >
-                <Switch
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                />
-              </Form.Item>
-            </Col> */}
           </Row>
           <Row justify={"center"} gutter={10}>
             <Col md={5}>

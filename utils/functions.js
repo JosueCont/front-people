@@ -1,4 +1,4 @@
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 
 export const generateYear = () => {
   let yearsArray = [];
@@ -13,7 +13,7 @@ export const generateYear = () => {
 
 export const getJobForSelect = async (id) => {
   try {
-    let response = await WebApi.getJobSelect(id);
+    let response = await WebApiPeople.getJobSelect(id);
     let job = response.data;
     job = job.map((a) => {
       return { label: a.name, value: a.id };
@@ -30,7 +30,7 @@ export const asyncForEach = async (array, callback) => {
   }
 };
 
-export const UserPermissions = (permits=null, is_admin = false) => {
+export const UserPermissions = (permits = null, is_admin = false) => {
   let perms = {
     person: {
       view: is_admin,
@@ -166,7 +166,6 @@ export const UserPermissions = (permits=null, is_admin = false) => {
       export_inabilitys: is_admin,
       export_permits: is_admin,
     },
-
     intranet: {
       dashboard: { statistics: is_admin },
     },
@@ -332,3 +331,22 @@ export const UserPermissions = (permits=null, is_admin = false) => {
     return perms;
   }
 };
+
+export const getDomain = (api) => {
+  try {
+    let tenat = window.location.hostname.split(".")[0];
+    return `${tenat}.${api}`;
+  } catch (error) {
+    return "error";
+  }
+};
+
+const getFileExtension = (filename) => {
+  return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
+};
+
+export const numberFormat = (value) =>
+  new Intl.NumberFormat("es-MX", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);

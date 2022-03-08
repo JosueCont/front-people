@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Layout,
@@ -8,14 +8,8 @@ import {
   Typography,
   Form,
   Input,
-  Tooltip,
-  Cascader,
-  Select,
   Checkbox,
   Button,
-  AutoComplete,
-  Switch,
-  InputNumber,
   Spin,
   message,
   Divider,
@@ -23,15 +17,25 @@ import {
   Table,
 } from "antd";
 import MainLayout from "../../../layout/MainLayout";
-import Axios from "axios";
-import { userCompanyId, withAuthSync } from "../../../libs/auth";
+import { withAuthSync } from "../../../libs/auth";
 import { connect } from "react-redux";
+import {
+  createGroup,
+  editGroups,
+  getGroupById,
+} from "../../../api/apiKhonnect";
+import {
+  messageSaveSuccess,
+  messageError,
+  messageUpdateSuccess,
+} from "../../../utils/constant";
+import { getProfileGroups } from "../../../redux/catalogCompany";
 
 const { Content } = Layout;
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
-const GroupAdd = (...props) => {
+const GroupAdd = ({ ...props }) => {
   const [form] = Form.useForm();
   const router = useRouter();
   const [loading, setLoading] = useState(null);
@@ -42,13 +46,11 @@ const GroupAdd = (...props) => {
   const [arrayFunctions, setarrayFunctios] = useState([]);
   const [instruction, setInstruction] = useState(true);
   const [intranet_access, setintanetAccess] = useState(null);
-  let nodeId = userCompanyId();
 
-  // Obtener estado de acceso a intranet
   useEffect(() => {
-    if (props && props[0] && props[0].config) {
-      setintanetAccess(props[0].config.intranet_enabled);
-      headers["client-id"] = props[0].config.client_khonnect_id;
+    if (props && props && props.config) {
+      setintanetAccess(props.config.intranet_enabled);
+      headers["client-id"] = props.config.client_khonnect_id;
     }
   }, [props]);
 
@@ -233,7 +235,7 @@ const GroupAdd = (...props) => {
     },
     // Acceso a dashboard
     {
-      name: "Acceso estadísticas intranet",
+      name: "Acceso moderación intranet",
       module: "Dashboard",
       value: "intranet.dashboard.function.statistics",
     },
@@ -260,76 +262,34 @@ const GroupAdd = (...props) => {
 
   const saveGroup = async () => {
     setLoading(true);
-
-    data.company = nodeId;
-    Axios.post(props[0].config.url_server_khonnect + "/group/create/", data, {
-      headers: headers,
-    })
-      .then(function (response) {
-        if (response.status === 200) {
-          setLoading(false);
-          form.setFieldsValue({
-            name: "",
-            perms: [],
-          });
-          setPerms([]);
-          router.push({ pathname: "/config/groups" });
-          message.success({
-            content: "Grupo guardado éxitosamente!",
-            className: "custom-class",
-            style: {
-              marginTop: "20vh",
-            },
-          });
-        }
-      })
-      .catch(function (error) {
-        message.error({
-          content: "An error occurred",
-          className: "custom-class",
-          style: {
-            marginTop: "20vh",
-          },
-        });
-        console.log(error);
-      });
+    data.company = props.currentNode.id;
+    let response = await createGroup(props.config, data);
+    if (response) {
+      props.getProfileGroups(props.currentNode.id, props.config);
+      message.success(messageSaveSuccess);
+      setTimeout(() => {
+        router.push({ pathname: "/config/groups" });
+      }, 600);
+    } else {
+      setLoading(false);
+      message.error(messageError);
+    }
   };
 
   const editGroup = async () => {
     setLoading(true);
 
-    Axios.post(props[0].config.url_server_khonnect + "/group/edit/", data, {
-      headers: headers,
-    })
-      .then(function (response) {
-        if (response.status === 200) {
-          setLoading(false);
-          form.setFieldsValue({
-            id: "",
-            name: "",
-            perms: [],
-          });
-          setPerms([]);
-          router.push({ pathname: "/config/groups" });
-          message.success({
-            content: "Grupo editado éxitosamente",
-            className: "custom-class",
-            style: {
-              marginTop: "20vh",
-            },
-          });
-        }
-      })
-      .catch(function (error) {
-        message.error({
-          content: "Ocurrió un error",
-          className: "custom-class",
-          style: {
-            marginTop: "20vh",
-          },
-        });
-        console.log(error);
-      });
+    let response = await editGroups(props.config, data);
+    if (response) {
+      props.getProfileGroups(props.currentNode.id, props.config);
+      message.success(messageUpdateSuccess);
+      setTimeout(() => {
+        router.push({ pathname: "/config/groups" });
+      }, 1000);
+    } else {
+      setLoading(false);
+      message.error(messageError);
+    }
   };
 
   const getGroup = async (id) => {
@@ -337,68 +297,61 @@ const GroupAdd = (...props) => {
     data = {
       id: id,
     };
-
-    Axios.post(props[0].config.url_server_khonnect + "/group/get/", data, {
-      headers: headers,
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          let group = response.data.data;
-          form.setFieldsValue({
-            id: group._id.$oid.toString(),
-            name: group.name,
-            perms: group.perms,
-          });
-          let arrayperms = [];
-          let arrayfunctions = [];
-          group.perms.forEach(function (elem) {
-            var e = elem.indexOf("can");
-            if (e > -1) {
-              arrayperms.push(elem);
-            } else {
-              arrayfunctions.push(elem);
-            }
-          });
-          setarrayFunctios(arrayfunctions);
-          setLoading(false);
-          setGetperms(true);
-          if (perms >= 0) {
-            checkPerms(arrayperms);
-          }
-        }
-      })
-      .catch((e) => {
-        console.log(e);
+    let response = await getGroupById(props.config, data);
+    if (response) {
+      let group = response;
+      form.setFieldsValue({
+        id: group._id.$oid.toString(),
+        name: group.name,
+        perms: group.perms,
       });
+      let arrayperms = [];
+      let arrayfunctions = [];
+      group.perms.forEach(function (elem) {
+        var e = elem.indexOf("can");
+        if (e > -1) {
+          arrayperms.push(elem);
+        } else {
+          arrayfunctions.push(elem);
+        }
+      });
+      setarrayFunctios(arrayfunctions);
+      setLoading(false);
+      setGetperms(true);
+      if (perms >= 0) {
+        checkPerms(arrayperms);
+      }
+      //     }
+    } else {
+      setLoading(false);
+      message.error(messageError);
+    }
   };
 
   useEffect(() => {
     const { id } = router.query;
-    if (id !== undefined && props[0].config && edit == false) {
+    if (id !== undefined && props.config && edit == false) {
       getGroup(id);
       setEdit(true);
     } else {
       setEdit(false);
-      //   setMostrar(true);
     }
   }, [router.query.id]);
 
   useEffect(() => {
-    if (props[0].config) {
-      headers["client-id"] = props[0].config.client_khonnect_id;
+    if (props.config) {
+      headers["client-id"] = props.config.client_khonnect_id;
     }
     const { id } = router.query;
-    if (id !== undefined && props[0].config && edit == false) {
+    if (id !== undefined && props.config && edit == false) {
       getGroup(id);
       setEdit(true);
     } else {
       setEdit(false);
-      //   setMostrar(true);
     }
-  }, [props[0].config]);
+  }, [props.config]);
 
   function handleClick(e) {
-    // if (getperms == false) {
     let index = perms.indexOf(e.target.name);
     if (index > -1) {
       if (e.target.checked) {
@@ -411,7 +364,6 @@ const GroupAdd = (...props) => {
         setPerms([...perms, e.target.name]);
       }
     }
-    // }
   }
   function handleClickFunct(e) {
     if (getperms == false) {
@@ -740,7 +692,7 @@ const GroupAdd = (...props) => {
                       key="1"
                     >
                       <Col span={24}>
-                        <Row>
+                        <Row gutter={10}>
                           <Col xl={12} md={12} sm={24} xs={24}>
                             <Table
                               pagination={false}
@@ -783,7 +735,7 @@ const GroupAdd = (...props) => {
                       key="2"
                     >
                       <Col span={24}>
-                        <Row>
+                        <Row gutter={10}>
                           <Col xl={12} md={12} sm={24} xs={24}>
                             <Table
                               pagination={false}
@@ -863,7 +815,8 @@ const GroupAdd = (...props) => {
 const mapState = (state) => {
   return {
     config: state.userStore.general_config,
+    currentNode: state.userStore.current_node,
   };
 };
 
-export default connect(mapState)(withAuthSync(GroupAdd));
+export default connect(mapState, { getProfileGroups })(withAuthSync(GroupAdd));

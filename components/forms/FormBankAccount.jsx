@@ -16,7 +16,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import WebApi from "../../api/webApi";
+import WebApiPeople from "../../api/WebApiPeople";
 import webApiFiscal from "../../api/WebApiFiscal";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, twoDigit } from "../../utils/rules";
@@ -41,7 +41,7 @@ const FormBanckAccount = ({ person_id = null }) => {
   const getBankAccount = async () => {
     setLoadingTable(true);
     try {
-      let response = await WebApi.getBankAccount(person_id);
+      let response = await WebApiPeople.getBankAccount(person_id);
       setBankAccounts(response.data.results);
       setTimeout(() => {
         setLoadingTable(false);
@@ -58,7 +58,7 @@ const FormBanckAccount = ({ person_id = null }) => {
 
   const saveBankAcc = async (data) => {
     try {
-      let response = await WebApi.createBankAccount(data);
+      let response = await WebApiPeople.createBankAccount(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
@@ -73,7 +73,7 @@ const FormBanckAccount = ({ person_id = null }) => {
   const updateBankAcc = async (data) => {
     setLoadingTable(true);
     try {
-      let response = await WebApi.updateBankAccount(data);
+      let response = await WebApiPeople.updateBankAccount(data);
 
       message.success({
         content: "Actualizado correctamente.",
@@ -97,7 +97,7 @@ const FormBanckAccount = ({ person_id = null }) => {
   const deleteBankAcc = async (data) => {
     setLoadingTable(true);
     try {
-      let response = await WebApi.deleteBankAccount(data);
+      let response = await WebApiPeople.deleteBankAccount(data);
       message.success({
         content: "Eliminado con éxito.",
         className: "custom-class",
@@ -262,16 +262,16 @@ const FormBanckAccount = ({ person_id = null }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Cuentas bancarias</Title>
       </Row>
-      <Form layout="vertical" form={formBank} onFinish={formBankAcc}>
+      <Form layout="vertical" form={formBank} onFinish={formBankAcc} className="inputs_form_responsive">
         <Row>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <SelectBank
               name="bank"
               bankSelected={selectedBank}
-              style={{ width: 140 }}
+              style={{ width: '100%' }}
             />
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="account_number"
               label="Número de cuenta"
@@ -284,7 +284,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input minLength={11} maxLength={11} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="interbank_key"
               label="Clabe interbancaria"
@@ -293,7 +293,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input minLength={18} maxLength={18} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="card_number"
               label="Número de tarjeta"
@@ -302,7 +302,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input maxLength={16} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="expiration_month"
               label="Mes de vencimiento"
@@ -312,7 +312,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input maxLength={2} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item
               name="expiration_year"
               label="Año de vencimiento"

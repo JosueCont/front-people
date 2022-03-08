@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Tabs,
-  Tooltip,
   Typography,
   Form,
   Row,
@@ -11,11 +10,10 @@ import {
   Spin,
   Input,
 } from "antd";
-import { userCompanyName } from "../../libs/auth";
 import { ruleRequired } from "../../utils/rules";
+import { connect } from "react-redux";
 
 const Banks = ({ permissions, onFinishForm, ...props }) => {
-  let nodePeople = userCompanyName();
   const { Title } = Typography;
   const { TabPane } = Tabs;
 
@@ -44,12 +42,12 @@ const Banks = ({ permissions, onFinishForm, ...props }) => {
         return (
           <div>
             <Row gutter={16}>
-              {permissions.edit_bank && (
+              {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined onClick={() => editRegister(item, "bank")} />
                 </Col>
               )}
-              {permissions.delete_bank && (
+              {permissions.delete && (
                 <Col className="gutter-row" offset={1}>
                   <DeleteOutlined
                     onClick={() => {
@@ -71,7 +69,7 @@ const Banks = ({ permissions, onFinishForm, ...props }) => {
   return (
     <>
       {edit && <Title style={{ fontSize: "20px" }}>Editar</Title>}
-      {permissions.create_bank && (
+      {permissions.create && (
         <Form
           layout={"vertical"}
           form={form}
@@ -116,4 +114,10 @@ const Banks = ({ permissions, onFinishForm, ...props }) => {
   );
 };
 
-export default Banks;
+const mapState = (state) => {
+  return {
+    cat_bank: state.catalogStore.cat_bank,
+  };
+};
+
+export default connect(mapState)(Banks);

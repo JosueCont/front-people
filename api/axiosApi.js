@@ -4,7 +4,7 @@ export const domainApi = process.browser
   ? process.env.NEXT_PUBLIC_API_BASE_URL_TENANT
   : process.env.API_BASE_URL_TENANT;
 
-let tenant = "isysa";
+let tenant = "demo";
 
 if (process.browser) {
   let splitDomain = window.location.hostname.split(".");
@@ -20,7 +20,6 @@ const domainApiWithTenant = `${tenant}.${domainApi}`;
 
 export const config = {
   baseURL: `${typeHttp}://${domainApiWithTenant}/`,
-  // baseURL: domainApi,
   headers: { "Content-Type": "application/json" },
 };
 

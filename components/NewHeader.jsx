@@ -5,8 +5,6 @@ import {
   Col,
   Avatar,
   Menu,
-  Image,
-  Input,
   Dropdown,
   Card,
   Button,
@@ -14,36 +12,35 @@ import {
   Divider,
   Modal,
   Space,
-  Badge
+  Badge,
 } from "antd";
-import { UserOutlined, SearchOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
+import { UserOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { css, Global } from "@emotion/core";
 import Cookie from "js-cookie";
-import WebApi from "../api/webApi";
+import WebApiPeople from "../api/WebApiPeople";
 import { logoutAuth } from "../libs/auth";
 
-
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
-  const { Title, Text } = Typography;
+  const { Text } = Typography;
   const router = useRouter();
   const { pathname } = router;
-  const { Header, Content, Footer, Sider } = Layout;
-  const { SubMenu } = Menu;
+  const { Header } = Layout;
   const [logOut, setLogOut] = useState(false);
   const [person, setPerson] = useState({});
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
   useEffect(() => {
-    console.log("getPerson");
     getPerson();
   }, []);
 
   const getPerson = async () => {
     try {
       const user = JSON.parse(Cookie.get("token"));
-      let response = await WebApi.personForKhonnectId({ id: user.user_id });
+      let response = await WebApiPeople.personForKhonnectId({
+        id: user.user_id,
+      });
       if (!response.data.photo) response.data.photo = defaulPhoto;
       let personName =
         response.data.first_name + " " + response.data.flast_name;
@@ -74,21 +71,22 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               <Text strong>{person.fullName}</Text>
               <br />
               <Text>{person.email}</Text>
+              <br />
+              <small>
+                <b>{props.currentNode ? props.currentNode.name : ""}</b>
+              </small>
             </Col>
-            {/* <Col span={24}>
-                    <Divider className="divider-primary" />
-                </Col> */}
           </Row>
           <Divider className="divider-primary" style={{ margin: "10px 0px" }} />
         </div>
         <Row>
-          <Col span={24}>
+          <Col span={24} style={{ padding: 10 }}>
             <p
               className="text-menu"
               onClick={() => {
                 !person.nodes && props.currentNode
                   ? router.push(`/ac/urn/${props.currentNode.permanent_code}`)
-                  : router.push(`/home/${person.id}`);
+                  : router.push(`/home/persons/${person.id}`);
               }}
             >
               <Text>Editar perfil</Text>
@@ -104,14 +102,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             <p className="text-menu" onClick={() => setLogOut(true)}>
               <Text>Cerrar sesión</Text>
             </p>
-            {/* <Menu style={{background:'none', border:'none', boxShadow:'none', width:'100%', padding:0, textAlign:'center'}}>
-                        <Menu.Item>
-                            <Text>1st menu item</Text>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Text>1st menu item</Text>
-                        </Menu.Item>
-                    </Menu> */}
           </Col>
         </Row>
       </Card>
@@ -135,19 +125,22 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             background: var(--primaryColor) !important;
             opacity: 0.9;
           }
-          .ant-menu .ant-menu-item {
+          /* .ant-menu .ant-menu-item {
             margin: 0px !important;
             padding: 0px !important;
-          }
+          } */
           .text-menu {
             padding-bottom: 5px;
             padding-top: 5px;
             margin: 0px;
+            padding: 5px;
             cursor: pointer;
           }
           .text-menu:hover {
             background-color: var(--primaryColor);
             opacity: 0.6;
+            border-radius: 20px;
+            padding: 5px;
           }
           .text-menu:hover span {
             color: var(--fontSpanColor);
@@ -167,43 +160,41 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <div className="container-fluid">
           <Row justify="space-between">
             <Col style={{ width: 250, display: "flex" }}>
-              <img
+              <object
                 style={{ maxWidth: 100, margin: "auto", maxHeight: 50 }}
-                src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
-              />
-            </Col>
-           {/*  <Col>
-              {!hideSearch && (
-                <Input
-                  className="search_header"
-                  size="large"
-                  placeholder="Search"
-                  prefix={<SearchOutlined style={{ color: "white" }} />}
+                data="/images/LogoKhorconnect.svg"
+                type="image/svg+xml"
+              >
+                <img
+                  style={{ maxWidth: 100, margin: "auto", maxHeight: 50 }}
+                  src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
                 />
-              )}
-            </Col> */}
+              </object>
+            </Col>
             <Col style={{ width: 250, textAlign: "end" }}>
               <div
                 className={"pointer"}
                 style={{ float: "right" }}
                 key={"menu_user_" + props.currentKey}
               >
-                <Space size={'middle'}>
+                <Space size={"middle"}>
                   <Badge dot>
-                    <BellOutlined style={{color:'white', fontSize:20 }} onClick={() => props.setShowEvents(true)} />
+                    <BellOutlined
+                      style={{ color: "white", fontSize: 20 }}
+                      onClick={() => props.setShowEvents(true)}
+                    />
                   </Badge>
-                  <MenuOutlined style={{color:'white', fontSize:20 }}  />
+                  <MenuOutlined style={{ color: "white", fontSize: 20 }} />
                   <Dropdown overlay={userCardDisplay} key="dropdown_user">
-                  <div key="menu_user_content">
-                    <Avatar
-                      key="avatar_key"
-                      icon={<UserOutlined />}
-                      src={person.photo}
-                    />    
-                  </div>
-                </Dropdown>
+                    <div key="menu_user_content">
+                      <Avatar
+                        key="avatar_key"
+                        icon={<UserOutlined />}
+                        src={person.photo}
+                      />
+                    </div>
+                  </Dropdown>
                 </Space>
-                
               </div>
 
               {/* <Avatar

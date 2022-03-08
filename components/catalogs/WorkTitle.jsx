@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Tabs,
-  Tooltip,
   Typography,
   Form,
   Row,
@@ -10,32 +8,39 @@ import {
   Table,
   Spin,
   Input,
+  message,
+  Modal,
 } from "antd";
-import { GoldOutlined } from "@ant-design/icons";
-import { userCompanyName } from "../../libs/auth";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import { ruleRequired } from "../../utils/rules";
+import { connect } from "react-redux";
+import SelectLevel from "../selects/SelectLevel";
+import SelectJob from "../selects/SelectJob";
+import SelectDepartment from "../selects/SelectDepartment";
+import {
+  messageDeleteSuccess,
+  messageError,
+  messageSaveSuccess,
+  messageUpdateSuccess,
+} from "../../utils/constant";
+import { getWorkTitle } from "../../redux/catalogCompany";
+import WebApiPeople from "../../api/WebApiPeople";
+import SelectWorkTitle from "../selects/SelectWorkTitle";
 
-const WorkTitle = ({ onFinishForm, ...props }) => {
-  let nodePeople = userCompanyName();
-
+const WorkTitle = ({ currentNode, ...props }) => {
   const { Title } = Typography;
 
   const [edit, setEdit] = useState(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-
-  const resetForm = () => {
-    form.resetFields();
-    setEdit(false);
-  };
+  const [deleted, setDeleted] = useState({});
+  const [id, setId] = useState("");
 
   const columns = [
-    {
-      title: "Empresa",
-      render: (item) => {
-        return <>{item.node.name}</>;
-      },
-    },
     {
       title: "Nombre",
       dataIndex: "name",
@@ -43,26 +48,209 @@ const WorkTitle = ({ onFinishForm, ...props }) => {
     },
     {
       title: "Departamento",
-      dataIndex: "departament",
-      key: "departament",
+      width: 100,
+      render: (item) => {
+        return <div>{item.department ? item.department.name : ""}</div>;
+      },
     },
     {
       title: "Puesto",
-      key: "puesto",
-    },
-    {
-      title: "Plaza a la que reporta",
-      key: "place",
+      width: 100,
+      render: (item) => {
+        return <div>{item.job ? item.job.name : ""}</div>;
+      },
     },
     {
       title: "Nivel",
       key: "level",
+      render: (item) => {
+        return <div>{item.level ? item.level.name : ""}</div>;
+      },
+    },
+    {
+      title: "Vacantes",
+      key: "vacancy",
+      render: (item) => {
+        return <div>{item.vacancy ? item.vacancy.vacancy_numbers : ""}</div>;
+      },
+    },
+    {
+      title: "Vacantes disponibles",
+      key: "vacancies_available",
+      render: (item) => {
+        return (
+          <div>{item.vacancy ? item.vacancy.vacancies_available : ""}</div>
+        );
+      },
+    },
+    {
+      title: "Vacantes ocupadas",
+      key: "vacancies_",
+      render: (item) => {
+        return (
+          <div>
+            {item.vacancy
+              ? item.vacancy.vacancy_numbers - item.vacancy.vacancies_available
+              : ""}
+          </div>
+        );
+      },
     },
     {
       title: "Salario",
       key: "Salario",
+      render: (item) => {
+        return `$ ${item.salary}`;
+      },
+    },
+    {
+      title: "Acciones",
+      render: (item) => {
+        return (
+          <div>
+            <Row gutter={16}>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined onClick={() => editRegister(item, "job")} />
+              </Col>
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setDeleteRegister({
+                      id: item.id,
+                      url: "/business/work-title/",
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+        );
+      },
     },
   ];
+
+  const resetForm = () => {
+    form.resetFields();
+    setEdit(false);
+    setId("");
+  };
+
+  const onFinishForm = (value, url) => {
+    if (edit) {
+      updateRegister(url, value);
+    } else saveRegister(url, value);
+  };
+
+  const saveRegister = async (url, data) => {
+    data.node = currentNode.id;
+    setLoading(true);
+    try {
+      await WebApiPeople.createRegisterCatalogs("/business/work-title/", data);
+      props
+        .getWorkTitle(currentNode.id)
+        .then((response) => {
+          resetForm();
+          message.success(messageSaveSuccess);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      message.error(messageError);
+    }
+  };
+
+  const editRegister = (item, param) => {
+    setEdit(true);
+    setId(item.id);
+    form.setFieldsValue({
+      node: item.node.id,
+      name: item.name,
+      department: item.department.id,
+      job: item.job.id,
+      level: item.level.id,
+      salary: item.salary,
+      work_title_report: item.work_title_report
+        ? item.work_title_report.id
+        : null,
+      vacancy: item.vacancy ? item.vacancy.vacancy_numbers : "",
+    });
+  };
+
+  const updateRegister = async (url, value) => {
+    value.node = currentNode.id;
+    try {
+      await WebApiPeople.updateRegisterCatalogs(
+        `/business/work-title/${id}/`,
+        value
+      );
+      props
+        .getWorkTitle(currentNode.id)
+        .then((response) => {
+          setId("");
+          resetForm();
+          message.success(messageUpdateSuccess);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      setId("");
+      setEdit(false);
+      setLoading(false);
+      resetForm();
+      message.error(messageError);
+    }
+  };
+
+  const setDeleteRegister = (data) => {
+    setDeleted(data);
+  };
+
+  useEffect(() => {
+    if (deleted.id) {
+      Modal.confirm({
+        title: "¿Está seguro de eliminar este registro?",
+        content: "Si lo elimina no podrá recuperarlo",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Si, eliminar",
+        okButtonProps: {
+          danger: true,
+        },
+        cancelText: "Cancelar",
+        onOk() {
+          deleteRegister();
+        },
+      });
+    }
+  }, [deleted]);
+
+  const deleteRegister = async () => {
+    try {
+      await WebApiPeople.deleteRegisterCatalogs(deleted.url + `${deleted.id}/`);
+      props
+        .getWorkTitle(currentNode.id)
+        .then((response) => {
+          resetForm();
+          message.success(messageDeleteSuccess);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -71,46 +259,38 @@ const WorkTitle = ({ onFinishForm, ...props }) => {
       <Form
         layout={"vertical"}
         form={form}
-        onFinish={(values) => onFinishForm(values, "/person/person-type/")}
+        onFinish={(values) => onFinishForm(values, "/business/work-title/")}
       >
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item label="Empresa" rules={[ruleRequired]}>
-              <Input readOnly value={nodePeople} />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
+        <Row gutter={20}>
+          <Col lg={8} xs={22} md={12}>
             <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="level" label="Departamento" rules={[ruleRequired]}>
-              <Input />
+          <Col lg={8} xs={22} md={12}>
+            <SelectDepartment rules={[ruleRequired]} />
+          </Col>
+          <Col lg={8} xs={22} md={12}>
+            <SelectJob rules={[ruleRequired]} />
+          </Col>
+          <Col lg={8} xs={22} md={12}>
+            <SelectWorkTitle
+              labelText={"Plaza a la que reporta"}
+              name={"work_title_report"}
+              forDepto={true}
+            />
+          </Col>
+          <Col lg={8} xs={22} md={12}>
+            <SelectLevel textLabel={"Nivel"} rules={[ruleRequired]} />
+          </Col>
+          <Col lg={8} xs={22} md={12}>
+            <Form.Item name="vacancy" label="Vacantes">
+              <Input type="number" min={1} defaultValue={1} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="level" label="Puesto" rules={[ruleRequired]}>
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item
-              name="level"
-              label="Plaza a la que reporta"
-              rules={[ruleRequired]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="level" label="Nivel" rules={[ruleRequired]}>
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="level" label="Salario" rules={[ruleRequired]}>
-              <Input />
+          <Col lg={8} xs={22} md={12}>
+            <Form.Item name="salary" label="Salario">
+              <Input prefix={"$"} type="number" min={0} defaultValue={0} />
             </Form.Item>
           </Col>
         </Row>
@@ -128,7 +308,7 @@ const WorkTitle = ({ onFinishForm, ...props }) => {
       <Spin tip="Cargando..." spinning={loading}>
         <Table
           columns={columns}
-          dataSource={[]}
+          dataSource={props.cat_work_title}
           locale={{
             emptyText: loading
               ? "Cargando..."
@@ -140,4 +320,8 @@ const WorkTitle = ({ onFinishForm, ...props }) => {
   );
 };
 
-export default WorkTitle;
+const mapState = (state) => {
+  return { cat_work_title: state.catalogStore.cat_work_title };
+};
+
+export default connect(mapState, { getWorkTitle })(WorkTitle);

@@ -1,5 +1,4 @@
 import {
-  Layout,
   Breadcrumb,
   Table,
   Tooltip,
@@ -17,9 +16,10 @@ import {
   Modal,
   Menu,
   Dropdown,
+  notification,
 } from "antd";
 import Axios from "axios";
-import { API_URL } from "../../config/config";
+import { API_URL, API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
 import {
   SyncOutlined,
@@ -30,39 +30,57 @@ import {
   EllipsisOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import MainLayout from "../../layout/MainLayout";
-import _ from "lodash";
-import FormPerson from "../../components/person/FormPerson";
-import { withAuthSync, userCompanyId, userCompanyName } from "../../libs/auth";
-import { setDataUpload } from "../../redux/UserDuck";
+import MainLayout from "../../../layout/MainLayout";
+import FormPerson from "../../../components/person/FormPerson";
+import {
+  withAuthSync,
+  userCompanyId,
+  userCompanyName,
+} from "../../../libs/auth";
+import { setDataUpload } from "../../../redux/UserDuck";
 
-const { Content } = Layout;
 import Link from "next/link";
 import jsCookie from "js-cookie";
-import Clipboard from "../../components/Clipboard";
+import Clipboard from "../../../components/Clipboard";
 import { connect } from "react-redux";
-import WebApi from "../../api/webApi";
-import { genders, periodicity, statusSelect } from "../../utils/constant";
-import SelectDepartment from "../../components/selects/SelectDepartment";
-import SelectJob from "../../components/selects/SelectJob";
+import {
+  genders,
+  messageError,
+  messageUpdateSuccess,
+  statusSelect,
+} from "../../../utils/constant";
+import SelectDepartment from "../../../components/selects/SelectDepartment";
+import SelectAccessIntranet from "../../../components/selects/SelectAccessIntranet";
 import { useRouter } from "next/router";
-import SelectWorkTitle from "../../components/selects/SelectWorkTitle";
+import SelectWorkTitle from "../../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
+import {
+  downloadTemplateImportPerson,
+  getDomain,
+} from "../../../utils/functions";
+import WebApiPeople from "../../../api/WebApiPeople";
+import FormGroup from "../../../components/assessment/groups/FormGroup";
+import WebApiAssessment from "../../../api/WebApiAssessment";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
   const route = useRouter();
 
-  const [columns2, setColumns2] = useState([]);
-  const [valRefreshColumns, setValRefreshColumns] = useState(false);
-
   const [person, setPerson] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState(true);
   const [modalAddPerson, setModalAddPerson] = useState(false);
+  const [modalCreateGroup, setModalCreateGroup] = useState(false);
+  const [showModalGroup, setShowModalGroup] = useState(false);
+  const [openAssignTest, setOpenAssignTest] = useState(false);
+  const [showModalAssignTest, setShowModalAssignTest] = useState(false);
+  const [openAssignToPerson, setOpenAssignToPerson] = useState(false);
+  const [showAssignToPerson, setShowAssignToPerson] = useState(false);
+  const [personsKeys, setPersonsKeys] = useState([]);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
   const inputFileRef2 = useRef(null);
+  const { Option } = Select;
+
   let filters = { node: "" };
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -78,20 +96,27 @@ const homeScreen = ({ ...props }) => {
   const [idsDelete, setIdsDelete] = useState("");
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
-  const [departmentId, setDepartmentId] = useState(null);
   let urlFilter = "/person/person/?";
 
   const [listUserCompanies, setListUserCompanies] = useState("");
   const [showModalCompanies, setShowModalCompanies] = useState(false);
-  const [deleteTrigger, setDeleteTrigger] = useState(false);
-  const [deactivateTrigger, setDeactivateTrigger] = useState(false);
   const [userSession, setUserSession] = useState({});
+  const [deactivateTrigger, setDeactivateTrigger] = useState(false);
+  const [permissions, setPermissions] = useState({});
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
 
   useEffect(() => {
     if (props.currentNode) {
       filterPersonName();
+    } else {
+      return <></>;
     }
-  }, [props.currentNode, props.permissions]);
+  }, [props.currentNode]);
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
@@ -103,7 +128,7 @@ const homeScreen = ({ ...props }) => {
     filters.node = props.currentNode.id;
     setLoading(true);
     try {
-      let response = await WebApi.filterPerson(filters);
+      let response = await WebApiPeople.filterPerson(filters);
       setPerson([]);
       setLoading(false);
       let persons = response.data.map((a) => {
@@ -120,7 +145,7 @@ const homeScreen = ({ ...props }) => {
 
   const deactivatePerson = () => {
     setLoading(true);
-    Axios.post(API_URL + "/person/person/deactivate_by_ids/", {
+    WebApiPeople.deactivatePerson({
       persons_id: idsDeactivate,
     })
       .then((response) => {
@@ -134,26 +159,6 @@ const homeScreen = ({ ...props }) => {
       .catch((error) => {
         setLoading(false);
         message.error("Error al desactivar");
-      });
-  };
-
-  const deletePerson = () => {
-    setLoading(true);
-    Axios.post(API_URL + `/person/person/delete_by_ids/`, {
-      persons_id: idsDelete,
-    })
-      .then((response) => {
-        setIdsDelete("");
-        setModalDelete(false);
-        setPersonsToDelete([]);
-        filterPersonName();
-        setLoading(false);
-        message.success("Eliminado correctamente.");
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.log(error);
-        message.error("Error al eliminar");
       });
   };
 
@@ -174,26 +179,6 @@ const homeScreen = ({ ...props }) => {
     }
   }, [showModalCompanies]);
 
-  const getUserCompanies = async (item) => {
-    setListUserCompanies([]);
-    setShowModalCompanies(false);
-    try {
-      let response = await Axios.get(
-        API_URL + `/business/node-person/get_assignment/?person__id=${item.id}`
-      );
-      let result = response.data;
-      let stringList = [];
-      result.map((item) => {
-        stringList.push(item.name);
-      });
-      setListUserCompanies(stringList);
-      setShowModalCompanies(true);
-    } catch (error) {
-      setListUserCompanies([]);
-      setShowModalCompanies(true);
-    }
-  };
-
   const getModalPerson = (value) => {
     setModalAddPerson(value);
     setLoading(true);
@@ -210,7 +195,125 @@ const homeScreen = ({ ...props }) => {
   let columns = [
     {
       title: "Núm. Empleado",
-      width: 74,
+      width: 2,
+      render: (item) => {
+        return <div>{item.code ? item.code : ""}</div>;
+      },
+    },
+    {
+      title: "Foto",
+      width: 1,
+      render: (item) => {
+        return (
+          <div>
+            <Avatar src={item.photo ? item.photo : defaulPhoto} />
+          </div>
+        );
+      },
+    },
+    {
+      title: "Nombre",
+      width: 120,
+      render: (item) => {
+        let personName = item.first_name + " " + item.flast_name;
+        if (item.mlast_name) personName = personName + " " + item.mlast_name;
+        return (
+          <>
+            {permissions.edit || props.delete ? (
+              <Dropdown overlay={() => menuPerson(item)}>
+                <a>
+                  <div>{personName}</div>
+                </a>
+              </Dropdown>
+            ) : (
+              <div>{personName}</div>
+            )}
+          </>
+        );
+      },
+    },
+    {
+      title: "Estatus",
+      width: 30,
+      render: (item) => {
+        return (
+          <>
+            <Switch
+              disabled={permissions.change_is_active ? false : true}
+              defaultChecked={item.is_active}
+              checkedChildren="Activo"
+              unCheckedChildren="Inactivo"
+              onChange={() => onchangeStatus(item)}
+            />
+          </>
+        );
+      },
+    },
+
+    {
+      // fixed: "right",
+      title: () => {
+        return (
+          <>
+            {permissions.delete && (
+              <Dropdown overlay={menuGeneric}>
+                <Button style={menuDropDownStyle} size="small">
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
+          </>
+        );
+      },
+      width: 44,
+      render: (item) => {
+        return (
+          <>
+            {(permissions.edit || permissions.delete) && (
+              <Dropdown overlay={() => menuPerson(item)}>
+                <Button
+                  style={{ background: "#8c8c8c", color: "withe" }}
+                  size="small"
+                >
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
+          </>
+        );
+      },
+    },
+  ];
+
+  const changeValuePerosn = (value, user) => {
+    /* user['intranet_access'] = value; */
+    let dataUpd = {
+      id: `${user.id}`,
+      intranet_access: value,
+    };
+    WebApiPeople.changeIntranetAccess(dataUpd)
+      .then((response) => {
+        let idx = person.findIndex((item) => item.id === user.id);
+        let newPerson = response.data;
+        newPerson["key"] = response.data.khonnect_id;
+
+        let personsTemp = [...person];
+        personsTemp[idx] = newPerson;
+        setPerson(personsTemp);
+
+        notification["success"]({
+          message: "Permisos acualizados",
+        });
+      })
+      .catch((error) => {
+        console.log("error =>", error);
+      });
+  };
+
+  let columns2 = [
+    {
+      title: "Núm. Empleado",
+      width: 2,
       fixed: "left",
       render: (item) => {
         return <div>{item.code ? item.code : ""}</div>;
@@ -235,7 +338,7 @@ const homeScreen = ({ ...props }) => {
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
         return (
           <>
-            {(props.permissions.edit || props.delete) ? (
+            {permissions.edit || props.delete ? (
               <Dropdown overlay={() => menuPerson(item)}>
                 <a>
                   <div>{personName}</div>
@@ -255,11 +358,7 @@ const homeScreen = ({ ...props }) => {
         return (
           <>
             <Switch
-              disabled={
-                props.permissions.change_is_active
-                  ? false
-                  : true
-              }
+              disabled={permissions.change_is_active ? false : true}
               defaultChecked={item.is_active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
@@ -275,11 +374,9 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-            <Switch
-              disabled={true}
-              defaultChecked={item.intranet_access}
-              checkedChildren="Si"
-              unCheckedChildren="No"
+            <SelectAccessIntranet
+              value={item.intranet_access}
+              onChange={(e) => changeValuePerosn(e, item)}
             />
           </>
         );
@@ -287,98 +384,25 @@ const homeScreen = ({ ...props }) => {
     },
 
     {
-      title: "Fecha de ingreso",
-      width: 82,
-      align: "center",
-      render: (item) => {
-        return <div>{item.date_of_admission}</div>;
-      },
-    },
-
-    /* {
-      title: "Fecha de ingreso a la plataforma",
-      width: 82,
-      align: "center",
-      render: (item) => {
-        return <div>{item.register_date}</div>;
-      },
-    }, */
-    {
-      title: "Departamento",
-      width: 100,
-      render: (item) => {
-        return <div>{item.department ? item.department.name : ""}</div>;
-      },
-    },
-    {
-      title: "Puesto",
-      width: 100,
-      render: (item) => {
-        return <div>{item.job ? item.job.name : ""}</div>;
-      },
-    },
-    /* {
-      title: "RFC",
-      width: 121,
-      align: "center",
-      dataIndex: "rfc",
-      key: "rfc",
-    }, */
-    /* {
-      title: "IMSS",
-      width: 100,
-      align: "center",
-      dataIndex: "imss",
-      key: "imss",
-    }, */
-    /* {
-      title: "Periocidad",
-      width: 80,
-      align: "center",
-      render: (item) => {
-        let per = periodicity.filter((a) => a.value === item.periodicity);
-        if (per.length > 0) return per[0].label;
-      },
-    }, */
-    {
-      title: "Empresas Asignadas",
-      width: 75,
-      align: "center",
-      key: "CompaniesAsosigned",
-      align: "center",
-      //fixed: "right",
-      render: (item) => {
-        return (
-          <Text
-            className={"text-center pointer"}
-            onClick={() => getUserCompanies(item)}
-          >
-            Ver
-          </Text>
-        );
-      },
-    },
-    {
-      fixed: "right",
+      // fixed: "right",
       title: () => {
         return (
           <>
-            { props.permissions.delete && (
-                <Dropdown overlay={menuGeneric}>
-                  <Button style={menuDropDownStyle} size="small">
-                    <EllipsisOutlined />
-                  </Button>
-                </Dropdown>
-              )}
+            {permissions.delete && (
+              <Dropdown overlay={menuGeneric}>
+                <Button style={menuDropDownStyle} size="small">
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
           </>
         );
       },
       width: 44,
-      // align: "center",
       render: (item) => {
         return (
           <>
-            { (props.permissions.edit || props.permissions.delete) ? (
+            {(permissions.edit || permissions.delete) && (
               <Dropdown overlay={() => menuPerson(item)}>
                 <Button
                   style={{ background: "#8c8c8c", color: "withe" }}
@@ -387,8 +411,6 @@ const homeScreen = ({ ...props }) => {
                   <EllipsisOutlined />
                 </Button>
               </Dropdown>
-            ) : (
-              ""
             )}
           </>
         );
@@ -396,81 +418,67 @@ const homeScreen = ({ ...props }) => {
     },
   ];
 
-  useEffect(() => {
-    if (props.config && !props.config.intranet_enabled) {
-      columns = removeItemFromArr(columns, "Acceso a intranet");
-      setValRefreshColumns(true);
-    } else {
-      setValRefreshColumns(true);
-    }
-    setColumns2(columns);
-  }, [valRefreshColumns, props.config]);
-
-  function removeItemFromArr(arr, item) {
-    return arr.filter(function (e) {
-      if (e.title !== item) {
-        return e.title;
-      }
-    });
-  }
-
-  const rowSelectionPerson = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      setPersonsToDelete(selectedRows);
-    },
-  };
-
-  const onchangeStatus = (value) => {
+  const onchangeStatus = async (value) => {
     value.is_active ? (value.is_active = false) : (value.is_active = true);
     let data = {
       id: value.id,
       status: value.is_active,
     };
-    // Axios.put(API_URL + `/person/person/${value.id}/`, value)
-    Axios.post(API_URL + `/person/person/change_is_active/`, data)
+    await WebApiPeople.changeStatusPerson(data)
       .then((response) => {
         if (!response.data.photo) response.data.photo = defaulPhoto;
         response.data.key = value.key;
         person.map((a) => {
           if (a.id == response.data.id) a = response.data;
         });
+        message.success(messageUpdateSuccess);
       })
       .catch((error) => {
-        message.error("Ocurrio un error intente de nuevo.");
+        message.error(messageError);
         filterPersonName();
         console.log(error);
       });
   };
 
-  const menuGeneric = (
-    <Menu>
-      {props.currentNode && (
-        <Menu.Item key="1">
-          <Clipboard
-            text={
-              window.location.origin +
-              "/ac/urn/" +
-              props.currentNode.permanent_code
-            }
-            title={"Link de empresa"}
-            border={false}
-            type={"button"}
-            msg={"Copiado en portapapeles"}
-            tooltipTitle={"Copiar link de auto registro"}
-          />
+  const menuGeneric = () => {
+    return (
+      <Menu>
+        {props.currentNode && permissions && (
+          <Menu.Item key="1">
+            <Clipboard
+              text={
+                window.location.origin +
+                "/ac/urn/" +
+                props.currentNode.permanent_code
+              }
+              title={"Link de empresa"}
+              border={false}
+              type={"button"}
+              msg={"Copiado en portapapeles"}
+              tooltipTitle={"Copiar link de auto registro"}
+            />
+          </Menu.Item>
+        )}
+        {permissions.create && (
+          <>
+            <Menu.Item key="5" onClick={() => setOpenAssignTest(true)}>
+              Asignar evaluaciones  
+            </Menu.Item>
+            <Menu.Item key="4" onClick={() => setModalCreateGroup(true)}>
+              Crear grupo
+            </Menu.Item>
+          </>
+        )}
+        {permissions.delete && (
+          <Menu.Item key="2" onClick={() => showModalDelete()}>
+            Eliminar
+          </Menu.Item>
+        )}
+        <Menu.Item key="3" onClick={() => handleDeactivate()}>
+          Desactivar
         </Menu.Item>
-      )}
-      { props.permissions.delete && (
-        <Menu.Item key="2" onClick={() => setDeleteModal(personsToDelete)}>
-          Eliminar
-        </Menu.Item>
-      )}
-      <Menu.Item onClick={() => handleDeactivate()}>Desactivar</Menu.Item>
-    </Menu>
-  );
-
-  const handleDelete = () => {
-    setDeleteTrigger(true);
+      </Menu>
+    );
   };
 
   const handleDeactivate = () => {
@@ -480,17 +488,25 @@ const homeScreen = ({ ...props }) => {
   const menuPerson = (item) => {
     return (
       <Menu>
-        {props.permissions.edit && (
-          <Menu.Item>
-            <Link href={`/home/${item.id}`}>Editar</Link>
+        {permissions.create && (
+          <Menu.Item key="1" onClick={() => HandleModalAssign(item)}>
+            Asignar evaluación
           </Menu.Item>
         )}
-        {props.permissions.delete && (
-          <Menu.Item onClick={() => setDeleteModal([item])}>Eliminar</Menu.Item>
+        {permissions.edit && (
+          <Menu.Item key="2">
+            <Link href={`/home/persons/${item.id}`}>Editar</Link>
+          </Menu.Item>
         )}
-        <Menu.Item onClick={() => setDeactivateModal([item])}>
-          Desactivar
-        </Menu.Item>
+        {permissions.delete && (
+          <Menu.Item key="3"
+            onClick={() => {
+              setPersonsToDelete([item]), showModalDelete();
+            }}
+          >
+            Eliminar
+          </Menu.Item>
+        )}
       </Menu>
     );
   };
@@ -541,49 +557,6 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
-  /////DELETE MODAL
-  const setDeleteModal = async (value) => {
-    setStringToDelete("Eliminar usuarios ");
-    if (value.length > 0) {
-      if (value.length == 1) {
-        setStringToDelete(
-          "Eliminar usuario " + value[0].first_name + " " + value[0].flast_name
-        );
-      }
-      setPersonsToDelete(value);
-      let ids = null;
-      value.map((a) => {
-        if (ids) ids = ids + "," + a.id;
-        else ids = a.id;
-      });
-      setIdsDelete(ids);
-      showModalDelete();
-    } else {
-      message.error("Selecciona una persona.");
-    }
-  };
-
-  const showModalDelete = () => {
-    modalDelete ? setModalDelete(false) : setModalDelete(true);
-  };
-
-  const ListElementsToDelete = ({ personsDelete }) => {
-    return (
-      <div>
-        {personsDelete.map((p) => {
-          return (
-            <>
-              <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo} />
-                <span>{" " + p.first_name + " " + p.flast_name}</span>
-              </Row>
-            </>
-          );
-        })}
-      </div>
-    );
-  };
-
   ////IMPORT/EXPORT PERSON
   const exportPersons = () => {
     setLoading(true);
@@ -608,29 +581,6 @@ const homeScreen = ({ ...props }) => {
       });
   };
 
-  const importPersonFile = async (e) => {
-    let extension = getFileExtension(e.target.files[0].name);
-    if (extension === "xlsx") {
-      let formData = new FormData();
-      formData.append("File", e.target.files[0]);
-      formData.append("node_id", props.currentNode.id);
-      setLoading(true);
-      Axios.post(API_URL + `/person/person/import_xls/`, formData)
-        .then((response) => {
-          setLoading(false);
-          message.success("Excel importado correctamente.");
-          filterPersonName();
-        })
-        .catch((e) => {
-          filterPersonName();
-          setLoading(false);
-          message.error("Error al importar.");
-          console.log(e);
-        });
-    } else {
-      message.error("Formato incorrecto, suba un archivo .xlsx");
-    }
-  };
   const importPersonFileExtend = async (e) => {
     let extension = getFileExtension(e.target.files[0].name);
     if (extension === "xlsx") {
@@ -705,34 +655,8 @@ const homeScreen = ({ ...props }) => {
 
   const resetFilter = () => {
     formFilter.resetFields();
-    setStatus(true);
     filter();
     filterPersonName();
-  };
-
-  const getNodes = () => {
-    Axios.get(API_URL + `/business/node/`)
-      .then((response) => {
-        let data = response.data.results;
-        let options = [];
-        data.map((item) => {
-          options.push({
-            value: item.id,
-            label: item.name,
-            key: item.name + item.id,
-          });
-        });
-        setNodes(options);
-      })
-      .catch((error) => {
-        console.log(error);
-        setNodes([]);
-      });
-  };
-
-  const changeDepartment = (value) => {
-    formFilter.setFieldsValue({ job: null });
-    setDepartmentId(value);
   };
 
   const AlertDeactivate = () => (
@@ -755,22 +679,149 @@ const homeScreen = ({ ...props }) => {
     </div>
   );
 
-  useEffect(() => {
-    if (deleteTrigger) {
-      setDeleteModal(personsToDelete);
-      setDeleteTrigger(false);
+  const rowSelectionPerson = {
+    selectedRowKeys: personsKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setPersonsKeys(selectedRowKeys);
+      setPersonsToDelete(selectedRows);
+    },
+  };
+
+  const ListElementsToDelete = ({ personsDelete }) => {
+    return (
+      <div>
+        {personsDelete.map((p) => {
+          return (
+            <>
+              <Row style={{ marginBottom: 15 }}>
+                <Avatar src={p.photo} />
+                <span>{" " + p.first_name + " " + p.flast_name}</span>
+              </Row>
+            </>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const HandleCloseGroup = () =>{
+    setShowModalGroup(false)
+    setModalCreateGroup(false)
+    setOpenAssignTest(false)
+    setShowModalAssignTest(false)
+    setOpenAssignToPerson(false)
+    setShowAssignToPerson(false)
+    setPersonsToDelete([])
+    setPersonsKeys([])
+  }
+
+  const HandleModalAssign = (item) =>{
+    setPersonsToDelete([item])
+    setOpenAssignToPerson(true)
+  }
+
+  const getOnlyIds = () => {
+    let ids = [];
+    personsToDelete.map((item) => {
+      ids.push(item.id);
+    });
+    return ids;
+  };
+
+  const onFinishCreateGroup = async (values) => {
+    setLoading(true);
+    const ids = getOnlyIds();
+    const body = {...values, persons: ids, node: props.currentNode?.id}
+    try {
+      await WebApiAssessment.createGroupPersons(body);
+      filterPersonName();
+      message.success("Grupo agregado");
+    } catch (e) {
+      console.log(e)
+      setLoading(false)
+      message.error("Grupo no agregado")
     }
-  }, [deleteTrigger]);
+  }
+
+  const onFinishAssignManyTest = async (values) =>{
+    setLoading(true)
+    const ids = getOnlyIds();
+    const body = {...values, persons: ids, node: props.currentNode?.id}
+    console.log('valores que se van a enviar----->', body)
+    try {
+      filterPersonName();
+      message.success("Evaluaciones asignadas")
+    } catch (e) {
+      console.log(e)
+      setLoading(false)
+      message.error("Evaluaciones no asignadas")
+    }
+  };
+
+  const onFinishAssignOneTest = async (value) =>{
+    setLoading(true)
+    const ids = getOnlyIds();
+    const body = {
+      id_assessment: value.assessments,
+      person: ids.at(-1),
+      node: props.currentNode?.id
+    }
+    try {
+      await WebApiAssessment.assignOneTest(body)
+      filterPersonName();
+      message.success("Evaluación asignada")
+    } catch (e) {
+      console.log(e)
+      setLoading(false)
+      message.error("Evaluación no asignada")
+    }
+  };
 
   useEffect(() => {
-    if (deactivateTrigger) {
-      setDeactivateModal(personsToDelete);
-      setDeactivateTrigger(false);
+    if (modalCreateGroup) {
+      if (personsToDelete.length > 0) {
+        if (personsToDelete.length >= 2) {
+          setShowModalGroup(true);
+        } else {
+          setModalCreateGroup(false);
+          message.error("Selecciona al menos 2 integrantes");
+        }
+      } else {
+        setModalCreateGroup(false);
+        message.error("Selecciona los integrantes");
+      }
     }
-  }, [deactivateTrigger]);
+  }, [modalCreateGroup]);
+
+
+  useEffect(()=>{
+    if(openAssignTest){
+      if(personsToDelete.length > 0){
+        setShowModalAssignTest(true)
+      }else{
+        setOpenAssignTest(false)
+        message.error("Selecciona al menos una persona")
+      }
+    }
+  },[openAssignTest])
+
+  useEffect(()=>{
+    if(openAssignToPerson){
+      if(personsToDelete.length > 0){
+        setShowAssignToPerson(true)
+      }else{
+        setOpenAssignToPerson(false)
+        message.error("Selecciona al menos una persona")
+      }
+    }
+  },[openAssignToPerson])
+
+  const showModalDelete = () => {
+    modalDelete ? setModalDelete(false) : setModalDelete(true);
+  };
 
   useEffect(() => {
-    if (modalDelete) {
+    if (modalDelete && personsToDelete.length > 0) {
       Modal.confirm({
         title: stringToDelete,
         content: <AlertDeletes />,
@@ -780,19 +831,51 @@ const homeScreen = ({ ...props }) => {
           danger: true,
         },
         onCancel() {
-          setModalDelete();
+          setModalDelete(false);
         },
-        cancelText: "Cancelar",
+        cancelText: "Cancelar ",
         onOk() {
           deletePerson();
         },
       });
+    } else if (modalDelete) {
+      setModalDelete(false);
     }
   }, [modalDelete]);
 
-  useEffect(() => {
-    console.log('permissions',props.permissions);
-  }, [props.permissions])
+  const deletePerson = () => {
+    let ids = null;
+    if (personsToDelete.length == 1) {
+      setStringToDelete(
+        "Eliminar usuario " +
+          personsToDelete[0].first_name +
+          " " +
+          personsToDelete[0].flast_name
+      );
+      ids = personsToDelete[0].id;
+    } else if (personsToDelete.length > 0) {
+      personsToDelete.map((a) => {
+        if (ids) ids = ids + "," + a.id;
+        else ids = a.id;
+      });
+    }
+    setLoading(true);
+    WebApiPeople.deletePerson({
+      persons_id: ids,
+    })
+      .then((response) => {
+        setModalDelete(false);
+        setPersonsToDelete([]);
+        filterPersonName();
+        setLoading(false);
+        message.success("Eliminado correctamente.");
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        message.error("Error al eliminar");
+      });
+  };
 
   useEffect(() => {
     if (modalDeactivate) {
@@ -818,15 +901,21 @@ const homeScreen = ({ ...props }) => {
   const menuExportTemplate = (
     <Menu>
       <Menu.Item key="1">
-        <a href={`${API_URL}/static/plantillaPersonas.xlsx`}>
+        <a
+          href={`https://${getDomain(
+            API_URL_TENANT
+          )}/person/person/generate_template/`}
+        >
           Plantilla básica
         </a>
       </Menu.Item>
-      <Menu.Item key="2">
-        <a href={`${API_URL}/static/plantillaExtendidaPersonas.xlsx`}>
-          Plantilla Extensa
-        </a>
-      </Menu.Item>
+      {props.config && props.config.enabled_nomina && (
+        <Menu.Item key="2">
+          <a href={`${API_URL_TENANT}/static/plantillaExtendidaPersonas.xlsx`}>
+            Plantilla Extensa
+          </a>
+        </Menu.Item>
+      )}
     </Menu>
   );
 
@@ -846,35 +935,11 @@ const homeScreen = ({ ...props }) => {
           ref={inputFileRef}
           type="file"
           style={{ display: "none" }}
-          // onChange={(e) => importPersonFile(e)}
-          onChange={(e) => importPersonFileExtend(e)}
-        />
-      </Menu.Item>
-      <Menu.Item key="2">
-        <a
-          className={"ml-20"}
-          icon={<UploadOutlined />}
-          onClick={() => {
-            inputFileRef2.current.click();
-          }}
-        >
-          Datos Extensos
-        </a>
-        <input
-          ref={inputFileRef2}
-          type="file"
-          style={{ display: "none" }}
           onChange={(e) => importPersonFileExtend(e)}
         />
       </Menu.Item>
     </Menu>
   );
-  
-  if(!props.permissions){
-    return (
-      <></>
-    )
-  }
 
   return (
     <>
@@ -884,7 +949,7 @@ const homeScreen = ({ ...props }) => {
           <Breadcrumb.Item>Personas</Breadcrumb.Item>
         </Breadcrumb>
         <div className="container" style={{ width: "100%" }}>
-          {props.permissions.view ? (
+          {permissions.view ? (
             <>
               <div className="top-container-border-radius">
                 <Row justify={"space-between"} className={"formFilter"}>
@@ -926,13 +991,9 @@ const homeScreen = ({ ...props }) => {
                           <Form.Item name="gender" label="Género">
                             <Select
                               options={genders}
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                               placeholder="Todos"
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                             />
                           </Form.Item>
                         </Col>
@@ -943,32 +1004,16 @@ const homeScreen = ({ ...props }) => {
                           <SelectWorkTitle />
                         </Col>
                         <Col>
-                          <SelectJob />
-                        </Col>
-                        <Col>
                           <Form.Item name="is_active" label="Estatus">
                             <Select
                               options={statusSelect}
                               placeholder="Estatus"
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
+                              notFoundContent={"No se encontraron resultados."}
                               style={{ width: 90 }}
                             />
                           </Form.Item>
                         </Col>
-                        <Col>
-                          <Form.Item name="periodicity" label="Periocidad">
-                            <Select
-                              options={periodicity}
-                              placeholder="Periocidad"
-                              notFoundContent={
-                                "No se encontraron resultados."
-                              }
-                              style={{ width: 90 }}
-                            />
-                          </Form.Item>
-                        </Col>
+
                         <Col
                           className="button-filter-person"
                           style={{ display: "flex", marginTop: "10px" }}
@@ -978,10 +1023,7 @@ const homeScreen = ({ ...props }) => {
                             color={"#3d78b9"}
                             key={"#filtrar"}
                           >
-                            <Button
-                              className="btn-filter"
-                              htmlType="submit"
-                            >
+                            <Button className="btn-filter" htmlType="submit">
                               <SearchOutlined />
                             </Button>
                           </Tooltip>
@@ -1007,7 +1049,7 @@ const homeScreen = ({ ...props }) => {
                           className="button-filter-person"
                           style={{ display: "flex", marginTop: "10px" }}
                         >
-                          {props.permissions.create && (
+                          {permissions.create && (
                             <Button
                               className="btn-add-person"
                               onClick={() => getModalPerson(true)}
@@ -1023,7 +1065,7 @@ const homeScreen = ({ ...props }) => {
                   </Col>
                 </Row>
                 <Row justify={"end"} style={{ padding: "1% 0" }}>
-                  {props.permissions.export_csv_person && (
+                  {permissions.export_csv_person && (
                     <Button
                       type="primary"
                       icon={<DownloadOutlined />}
@@ -1034,7 +1076,7 @@ const homeScreen = ({ ...props }) => {
                       Descargar resultados
                     </Button>
                   )}
-                  {props.permissions.import_csv_person && (
+                  {permissions.import_csv_person && (
                     <Dropdown
                       overlay={menuImportPerson}
                       placement="bottomLeft"
@@ -1067,10 +1109,14 @@ const homeScreen = ({ ...props }) => {
               <Table
                 className={"mainTable"}
                 size="small"
-                columns={columns2}
+                columns={
+                  props.config && props.config.intranet_enabled
+                    ? columns2
+                    : columns
+                }
                 dataSource={person}
                 loading={loading}
-                scroll={{ x: 1300 }}
+                // scroll={{ x: 1300 }}
                 locale={{
                   emptyText: loading
                     ? "Cargando..."
@@ -1090,6 +1136,45 @@ const homeScreen = ({ ...props }) => {
             visible={modalAddPerson}
             nameNode={userCompanyName()}
             node={userCompanyId()}
+            currentNode={props.currentNode}
+          />
+        )}
+        {showModalGroup && (
+          <FormGroup
+            loadData={{}}
+            title={"Crear nuevo grupo"}
+            visible={showModalGroup}
+            close={HandleCloseGroup}
+            actionForm={onFinishCreateGroup}
+            hiddenSurveys={true}
+            hiddenMembers={true}
+            hiddenName={false}
+          />
+        )}
+        {showModalAssignTest && (
+          <FormGroup
+              loadData={{}}
+              title={'Asignar evaluaciones'}
+              visible={showModalAssignTest}
+              close={HandleCloseGroup}
+              actionForm={onFinishAssignManyTest}
+              multipleSurveys={true}
+              hiddenSurveys={false}
+              hiddenMembers={true}
+              hiddenName={true}
+          />
+        )}
+        {showAssignToPerson && (
+          <FormGroup
+              loadData={{}}
+              title={'Asignar evaluación'}
+              visible={showAssignToPerson}
+              close={HandleCloseGroup}
+              actionForm={onFinishAssignOneTest}
+              multipleSurveys={false}
+              hiddenSurveys={false}
+              hiddenMembers={true}
+              hiddenName={true}
           />
         )}
       </MainLayout>
@@ -1101,7 +1186,7 @@ const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
-    permissions: state.userStore.permissions.person ,
+    permissions: state.userStore.permissions.person,
   };
 };
 

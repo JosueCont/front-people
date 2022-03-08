@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Table, Button, Select, Input, Form, message, Space } from "antd";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { userCompanyId } from "../../../libs/auth";
-import webApiPayroll from "../../../api/webApiPayroll";
+import {
+  Row,
+  Col,
+  Table,
+  Button,
+  Select,
+  Input,
+  Form,
+  message,
+  Space,
+} from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import webApiFiscal from "../../../api/WebApiFiscal";
-import { StepContent } from "@material-ui/core";
-import { Receipt, Reorder } from "@material-ui/icons";
 import { ruleRequired, treeDecimal } from "../../../utils/rules";
+import { numberFormat } from "../../../utils/functions";
 
 const FormPerceptionsDeductions = ({
   setIsModalVisible,
@@ -16,7 +21,7 @@ const FormPerceptionsDeductions = ({
   setObjectStamp = null,
   payroll = null,
   setLoading,
-  saveConcepts
+  saveConcepts,
 }) => {
   const [formQuantity] = Form.useForm();
   const { Column } = Table;
@@ -36,9 +41,8 @@ const FormPerceptionsDeductions = ({
 
   /** Get initial values */
   const getPerceptions = async () => {
-    
     let response = await webApiFiscal.getPerseptions();
-    
+
     if (response.data.results.length > 0) {
       let perceptions = response.data.results.map((a) => {
         return { value: a.code, label: a.description };
@@ -82,28 +86,31 @@ const FormPerceptionsDeductions = ({
   };
 
   const formFinish = (value) => {
-    let tempArray = [...dataSource]
+    let tempArray = [...dataSource];
     let code = value.perception
       ? value.perception
       : value.deduction
       ? value.deduction
-      : value.others_payments;
+      : value.other_payments;
 
-    let exist = tempArray.filter( (item) => item.concept == value.concept && item.code == code );
+    let exist = tempArray.filter(
+      (item) => item.concept == value.concept && item.code == code
+    );
     let label = "";
-    if(value.concept === 1){
-      label = perceptions.find(element => element.value === code);
-    }else if(value.concept === 2){
-      label = deductions .find(element => element.value === code);
-    }else if(value.concept === 3){
-      label = otherPayments.find(element => element.value === code);
+    if (value.concept === 1) {
+      label = perceptions.find((element) => element.value === code);
+    } else if (value.concept === 2) {
+      label = deductions.find((element) => element.value === code);
+    } else if (value.concept === 3) {
+      label = otherPayments.find((element) => element.value === code);
     }
-    
+
     if (exist.length > 0) {
       if (isEdit) {
         let data_source = dataSource.filter((item) => item);
         if (data_source.length > 0) {
           let editData = {
+            locked: false,
             concept: value.concept,
             code: code,
             label: label.label,
@@ -118,6 +125,7 @@ const FormPerceptionsDeductions = ({
       }
     } else {
       let newData = {
+        locked: false,
         key: code,
         concept: value.concept,
         label: label.label,
@@ -145,7 +153,7 @@ const FormPerceptionsDeductions = ({
       concept: data.concept,
       perception: data.concept == 1 ? data.code : null,
       deduction: data.concept == 2 ? data.code : null,
-      others_payments: data.concept == 3 ? data.code : null,
+      other_payments: data.concept == 3 ? data.code : null,
       amount: data.amount,
     });
   };
@@ -159,41 +167,64 @@ const FormPerceptionsDeductions = ({
   };
 
   const saveData = () => {
+    //Guardando info
     setLoading(true);
-    console.log('dataSource =>',dataSource);
     if (dataSource.length > 0) {
       let perceptions_list = [];
       let deductions_list = [];
-      let others_payments_list = [];
-      
-      perceptions_list = [...dataSource].map(item => {
-        /* let label_perception = perceptions.find(element => element.value === item.code); */
-        return {'label': item.label ,'key': item.code ,'code': item.code, 'amount': Number(item.amount) }
-      })
+      let other_payments_list = [];
 
-      /* dataSource.map((a) => {
-        
+      dataSource.map((a) => {
         if (a.concept === 1) {
-          let label_perception = perceptions.find(element => element.value === a.code);
-          perceptions_list.push({ concept: label_perception.label, key: a.code ,code: a.code, amount: Number(a.amount) });
+          let label_perception = perceptions.find(
+            (element) => element.value === a.code
+          );
+          perceptions_list.push({
+            locked: a.locked,
+            label: label_perception.label,
+            concept: label_perception.label,
+            key: a.code,
+            code: a.code,
+            amount: Number(a.amount),
+            taxed_amount: Number(a.taxed_amount),
+            exempt_amount: Number(a.exempt_amount),
+          });
         }
         if (a.concept === 2) {
-          let label_deduction = deductions.find(element => element.value === a.code);
-          deductions_list.push({concept: label_deduction.label, key: a.code, code: a.code, amount: Number(a.amount) });
+          let label_deduction = deductions.find(
+            (element) => element.value === a.code
+          );
+          deductions_list.push({
+            locked: a.locked,
+            label: label_deduction.label,
+            concept: label_deduction.label,
+            key: a.code,
+            code: a.code,
+            amount: Number(a.amount),
+          });
         }
         if (a.concept === 3) {
-          let label_otherPayments = otherPayments.find(element => element.value === a.code);
-          others_payments_list.push({concept: label_otherPayments.label , key: a.code, code: a.code, amount: Number(a.amount) });
+          let label_otherPayments = otherPayments.find(
+            (element) => element.value === a.code
+          );
+          other_payments_list.push({
+            locked: a.locked,
+            label: label_otherPayments.label,
+            concept: label_otherPayments.label,
+            key: a.code,
+            code: a.code,
+            amount: Number(a.amount),
+            taxed_amount: Number(a.taxed_amount),
+            exempt_amount: Number(a.exempt_amount),
+          });
         }
-
-      }); */
-      console.log('perceptions_list =>',perceptions_list);
+      });
 
       saveConcepts({
         person_id: person_id,
         perceptions: perceptions_list,
         deductions: deductions_list,
-        others_payments: others_payments_list,
+        other_payments: other_payments_list,
       });
       setIsModalVisible(false);
     } else {
@@ -201,7 +232,7 @@ const FormPerceptionsDeductions = ({
         person_id: person_id,
         perceptions: [],
         deductions: [],
-        others_payments: [],
+        other_payments: [],
       });
       setIsModalVisible(false);
     }
@@ -209,15 +240,13 @@ const FormPerceptionsDeductions = ({
 
   useEffect(() => {
     /* if (person_id) { */
-      getPerceptions();
-      getDeductions();
-      getOtherPayments();
+    getPerceptions();
+    getDeductions();
+    getOtherPayments();
     /* } */
   }, []);
 
-
   useEffect(() => {
-    
     if (payroll !== null && payroll.length > 0) {
       let objectPayroll = payroll.find((elem) => elem.person_id == person_id);
       let array_data = [];
@@ -226,11 +255,14 @@ const FormPerceptionsDeductions = ({
           objectPayroll.perceptions.map((x) => {
             if (x.code) {
               array_data.push({
-                concept: 1,
+                locked: x.locked,
                 code: x.code,
-                amount: x.amount,
-                key: x.code,
-                label: x.label
+                key: x.label,
+                label: x.label,
+                amount: Number(x.amount),
+                taxed_amount: Number(x.taxed_amount),
+                exempt_amount: Number(x.exempt_amount),
+                concept: 1,
               });
             }
           });
@@ -239,24 +271,28 @@ const FormPerceptionsDeductions = ({
           objectPayroll.deductions.map((x) => {
             if (x.code) {
               array_data.push({
-                concept: 2,
+                locked: x.locked,
                 code: x.code,
+                key: x.label,
+                label: x.label,
                 amount: x.amount,
-                key: x.code,
-                label: x.label
+                concept: 2,
               });
             }
           });
         }
-        if (objectPayroll.others_payments.length > 0) {
-          objectPayroll.others_payments.map((x) => {
+        if (objectPayroll.other_payments.length > 0) {
+          objectPayroll.other_payments.map((x) => {
             if (x.code) {
               array_data.push({
-                concept: 3,
+                locked: x.locked,
                 code: x.code,
+                key: x.label,
+                label: x.label,
                 amount: x.amount,
-                key: x.code,
-                label: x.label
+                exempt_amount: x.exempt_amount,
+                taxed_amount: x.taxed_amount,
+                concept: 3,
               });
             }
           });
@@ -270,113 +306,135 @@ const FormPerceptionsDeductions = ({
 
   return (
     <>
-        <Form size="large" layout={"vertical"} className="form_concept" form={formQuantity} onFinish={formFinish}>
-          <Row style={{ marginBottom: 20 }}>
+      <Form
+        size="large"
+        layout={"vertical"}
+        className="form_concept"
+        form={formQuantity}
+        onFinish={formFinish}
+      >
+        <Row style={{ marginBottom: 20 }}>
+          <Col span={24}>
+            <Form.Item name="concept" label="Concepto" rules={[ruleRequired]}>
+              <Select
+                options={optionsConcept}
+                onChange={changeConcept}
+                notFoundContent={"No se encontraron resultados."}
+              />
+            </Form.Item>
+          </Col>
+          {concept == 1 && (
             <Col span={24}>
-              <Form.Item name="concept" label="Concepto" rules={[ruleRequired]}>
+              <Form.Item
+                name="perception"
+                label="Percepción"
+                rules={[ruleRequired]}
+              >
                 <Select
-                  options={optionsConcept}
-                  onChange={changeConcept}
+                  options={perceptions}
                   notFoundContent={"No se encontraron resultados."}
                 />
               </Form.Item>
             </Col>
-            {concept == 1 && (
-              <Col span={24}>
-                <Form.Item
-                  name="perception"
-                  label="Percepción"
-                  rules={[ruleRequired]}
-                >
-                  <Select
-                    options={perceptions}
-                    notFoundContent={"No se encontraron resultados."}
-                  />
-                </Form.Item>
-              </Col>
-            )}
-            {concept == 2 && (
-              <Col span={24}>
-                <Form.Item
-                  name="deduction"
-                  label="Deducción"
-                  rules={[ruleRequired]}
-                >
-                  <Select
-                    options={deductions}
-                    notFoundContent={"No se encontraron resultados."}
-                  />
-                </Form.Item>
-              </Col>
-            )}
-            {concept == 3 && (
-              <Col span={24}>
-                <Form.Item
-                  name="others_payments"
-                  label="Otro pago"
-                  rules={[ruleRequired]}
-                >
-                  <Select
-                    options={otherPayments}
-                    notFoundContent={"No se encontraron resultados."}
-                  />
-                </Form.Item>
-              </Col>
-            )}
+          )}
+          {concept == 2 && (
             <Col span={24}>
               <Form.Item
-                name="amount"
-                label="Monto"
-                maxLength={8}
-                type="number"
-                rules={[treeDecimal, ruleRequired]}
+                name="deduction"
+                label="Deducción"
+                rules={[ruleRequired]}
               >
-                <Input maxLength={10} />
+                <Select
+                  options={deductions}
+                  notFoundContent={"No se encontraron resultados."}
+                />
               </Form.Item>
             </Col>
-          </Row>
-          <Row justify={"center"}>
-            <Space>
+          )}
+          {concept == 3 && (
+            <Col span={24}>
+              <Form.Item
+                name="other_payments"
+                label="Otro pago"
+                rules={[ruleRequired]}
+              >
+                <Select
+                  options={otherPayments}
+                  notFoundContent={"No se encontraron resultados."}
+                />
+              </Form.Item>
+            </Col>
+          )}
+          <Col span={24}>
+            <Form.Item
+              name="amount"
+              label="Monto"
+              maxLength={8}
+              type="number"
+              rules={[treeDecimal, ruleRequired]}
+            >
+              <Input maxLength={10} />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify={"center"}>
+          <Space>
             <Button
               htmlType="button"
               onClick={() => onCancelForm()}
-              style={{paddingLeft:50, paddingRight:50 }}
+              style={{ paddingLeft: 50, paddingRight: 50 }}
             >
               Cancelar
             </Button>
-            
-              <Button size="large" type="primary" htmlType="submit" style={{paddingLeft:50, paddingRight:50 }}>
-                Pre cargar
-              </Button>
-              </Space>
-          </Row>
-        </Form>
-        <Row justify="center">
-          <Col span={24}>
-            <Table dataSource={dataSource} style={{marginTop:30}} locale={{emptyText: 'No hay datos aún'}} >
-              <Column
-                title="Concepto"
-                dataIndex="perception"
-                key="perception"
-                render={(text, record) => (
-                  <div>
-                    {record.label}
-                    {/* {record.concept == 1
+
+            <Button
+              size="large"
+              type="primary"
+              htmlType="submit"
+              style={{ paddingLeft: 50, paddingRight: 50 }}
+            >
+              Pre cargar
+            </Button>
+          </Space>
+        </Row>
+      </Form>
+      <Row justify="center">
+        <Col span={24}>
+          <Table
+            dataSource={dataSource}
+            style={{ marginTop: 30 }}
+            locale={{ emptyText: "No hay datos aún" }}
+          >
+            <Column
+              title="Concepto"
+              dataIndex="perception"
+              key="perception"
+              render={(text, record) => (
+                <div>
+                  {record.label}
+                  {/* {record.concept == 1
                       ? "Percepcion"
                       : record.concept == 2
                       ? "Deduccion"
                       : "Otros pagos"} */}
-                  </div>
-                )}
-              />
-              <Column width={120} title="Monto" align="center" dataIndex="amount" key="amount" />
-              <Column
-                width={100}
-                title="Opciones"
-                dataIndex="options"
-                key="options"
-                align="center"
-                render={(text, record, index) => (
+                </div>
+              )}
+            />
+            <Column
+              width={120}
+              title="Monto"
+              align="center"
+              dataIndex="amount"
+              key="amount"
+            />
+            <Column
+              width={100}
+              title="Opciones"
+              dataIndex="options"
+              key="options"
+              align="center"
+              render={(text, record, index) =>
+                !record.locked && (
                   <>
                     <EditOutlined
                       style={{ marginRight: "10px" }}
@@ -388,17 +446,18 @@ const FormPerceptionsDeductions = ({
                       onClick={() => deleteAmount(index)}
                     />
                   </>
-                )}
-              />
-            </Table>
-          </Col>
-          <Col >
-            <Space>
+                )
+              }
+            />
+          </Table>
+        </Col>
+        <Col>
+          <Space>
             <Button
               size="large"
               htmlType="button"
               onClick={() => onCancel()}
-              style={{paddingLeft:50, paddingRight:50 }}
+              style={{ paddingLeft: 50, paddingRight: 50 }}
             >
               Cancelar
             </Button>
@@ -406,13 +465,13 @@ const FormPerceptionsDeductions = ({
               size="large"
               htmlType="button"
               onClick={() => saveData()}
-              style={{paddingLeft:50, paddingRight:50 }}
+              style={{ paddingLeft: 50, paddingRight: 50 }}
             >
               Guardar
             </Button>
-            </Space>
-          </Col>
-        </Row>
+          </Space>
+        </Col>
+      </Row>
     </>
   );
 };

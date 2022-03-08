@@ -1,29 +1,39 @@
 import { withAuthSync } from "../../../libs/auth";
 import MainLayout from "../../../layout/MainLayout";
-import { Breadcrumb, Table, Typography } from "antd";
+import { Breadcrumb, Table, Typography, notification } from "antd";
 import { FormattedMessage } from "react-intl";
 import { React, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import FormConfig from "../../../components/intranet/FormConfig";
 import axios from "axios";
 import { API_URL } from "../../../config/config";
+import { connect } from "react-redux";
+import WebApiIntranet from '../../../api/WebApiIntranet';
 
-const configIntranet = () => {
+
+const configIntranet = (props) => {
+  const {currentNode} = props;
   const router = useRouter();
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(null);
   const [getImage, setImage] = useState(null);
 
+
   useEffect(() => {
     getConfig();
   }, []);
 
-  const getConfig = () => {
+  /* useEffect(() => {
+      console.log('currentNode =>',props.currentNode);
+  }, [props]) */
+  
+
+  const getConfig = async () => {
     setLoading(true);
 
-    axios
-      .get(API_URL + "/setup/site-configuration/")
+    await WebApiIntranet.getConfig()
       .then((res) => {
+        console.log('res =>',res);
         setConfig(res.data);
         setLoading(false);
       })
@@ -34,21 +44,25 @@ const configIntranet = () => {
       });
   };
 
-  const saveData = (data, type, id = 0) => {
+  const saveData = async (data, type, id = 0) => {
     if (type === "add") {
-      axios
-        .post(API_URL + "/setup/site-configuration/", data)
-        .then((res) => {
+      await WebApiIntranet.saveIntranetConfig(data)
+      .then((res) => {
           getConfig();
+          notification['success']({
+            message: 'Información guardada'
+          });
         })
         .catch((e) => {
           console.log(e);
         });
     } else {
-      axios
-        .put(API_URL + `/setup/site-configuration/${id}/`, data)
+      await WebApiIntranet.updIntranetConfig(id, data)
         .then((res) => {
           getConfig();
+          notification['success']({
+            message: 'Información actualizada'
+          });
         })
         .catch((e) => {
           console.log(e);
@@ -100,6 +114,7 @@ const configIntranet = () => {
         style={{ padding: 24, minHeight: 380, height: "100%" }}
       >
         <FormConfig
+          nodeId={currentNode ? currentNode.id : ''}
           config={config}
           save={saveData}
           saveImage={saveImage}
@@ -111,4 +126,11 @@ const configIntranet = () => {
   );
 };
 
-export default withAuthSync(configIntranet);
+
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(withAuthSync(configIntranet));

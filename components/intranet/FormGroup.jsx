@@ -16,6 +16,7 @@ import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { API_URL } from "../../config/config";
 import { ruleRequired } from "../../utils/rules";
+import WebApiIntranet from '../../api/WebApiIntranet'
 
 const beforeUpload = (file) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -45,7 +46,7 @@ const FormGroup = (props) => {
       message.success("Actualizado correctamente.");
     } else {
       saveGroup(values);
-      message.success("guardado correctamente.");
+      message.success("Guardado correctamente.");
     }
   };
 
@@ -65,7 +66,7 @@ const FormGroup = (props) => {
     }
   };
 
-  const saveGroup = (data) => {
+  const saveGroup = async (data) => {
     let params = new FormData();
     params.append("node", props.companyId);
     params.append("name", data.name);
@@ -77,9 +78,8 @@ const FormGroup = (props) => {
     }
     if (props.isEdit) {
       setLoadingGroup(true);
-      axios
-        .patch(API_URL + `/intranet/group/${props.group.id}/`, params)
-        .then((res) => {
+      await WebApiIntranet.updGroup(props.group.id, params)
+      .then((res) => {
           closeDialog();
           setLoadingGroup(false);
         })
@@ -90,8 +90,7 @@ const FormGroup = (props) => {
         });
     } else {
       setLoadingGroup(true);
-      axios
-        .post(API_URL + "/intranet/group/", params)
+      await WebApiIntranet.saveGroup(params)
         .then((res) => {
           closeDialog();
           setLoadingGroup(false);
@@ -169,11 +168,11 @@ const FormGroup = (props) => {
                 <Input.TextArea />
               </Form.Item>
               <Form.Item
-                label="Imagen de grupo"
+                label={"Imagen de grupo"}
                 name="image"
                 // labelAlign={"left"}
                 style={{ marginTop: 15 }}
-                rules={[ruleRequired]}
+                rules={!photo? [ruleRequired]:[]}
               >
                 <Upload
                   label="avatar"
