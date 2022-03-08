@@ -46,9 +46,14 @@ class WebApiAssessment {
     static assignOneTest (data) {
         return WebApi.ApisType(`/person/person-assessments/`, "post", data);
     }
-
     static getAssignments (nodeId, queryParam) {
         return WebApi.ApisType(`/person/person-assessments/?node=${nodeId}${queryParam}`, "get");
+    }
+    static deletePersonAssessment (data) {
+        return WebApi.ApisType(`/person/person-assessments/delete_by_ids/`, "post", data);
+    }
+    static getDetailsAssessment (id) {
+        return Axios.get(`${API_ASSESSMENT}/assessments/assessment/${id}/`);
     }
 }
 

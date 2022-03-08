@@ -19,9 +19,11 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 const FormSearch = ({
     hiddenMembers = true,
     hiddenSurveys = true,
+    hiddenCategories = true, 
     hiddenName = true,
     multipleSurveys = true,
     multipleMembers = true,
+    multipleCategories = true,
     ...props}) =>{
     const [form] = Form.useForm();
     const permissions = useSelector(state => state.userStore.permissions.person)
@@ -112,9 +114,11 @@ const FormSearch = ({
                     actionForm={onFinishAdd}
                     multipleMembers={multipleMembers}
                     multipleSurveys={multipleSurveys}
+                    multipleCategories={multipleCategories}
                     hiddenName={hiddenName}
                     hiddenSurveys={hiddenSurveys}
                     hiddenMembers={hiddenMembers}
+                    hiddenCategories={hiddenCategories}
                 />
             )}
         </>

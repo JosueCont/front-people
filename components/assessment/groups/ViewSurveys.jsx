@@ -8,24 +8,13 @@ import {
 
 const ViewSurveys = ({...props}) =>{
 
-    const styleList = {
-        whiteSpace:'nowrap',
-        overflow:'hidden',
-        textOverflow:'ellipsis'
-    }
-
-    const styleContent = {
-        maxHeight:'calc(100vh - 300px)',
-        overflowY:'auto'
-    }
-
     return(
         <Modal
             title={props.title}
             visible={props.visible}
             onCancel={() => props.setVisible(false)}
-            bodyStyle={styleContent}
-            width={550}
+            className={'custom-modal'}
+            width={500}
             footer={[
                 <Button type="primary" onClick={()=>props.setVisible(false)}>
                     Cerrar
@@ -34,7 +23,6 @@ const ViewSurveys = ({...props}) =>{
         >
             <List
                 itemLayout="horizontal"
-                style={styleList}
                 dataSource={props.item?.assessments}
                 renderItem={item => (
                     <List.Item key={item.id}>

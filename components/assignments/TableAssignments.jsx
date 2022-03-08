@@ -24,12 +24,17 @@ import {
     FileTextOutlined,
     EllipsisOutlined
 } from "@ant-design/icons";
+import DeleteAssign from "./DeleteAssign";
+import ViewSurveys from "../assessment/groups/ViewSurveys";
+import WebApiAssessment from "../../api/WebApiAssessment";
 
 const TableAssignments = ({...props}) => {
 
   const permissions = useSelector(state => state.userStore.permissions.person)
   const currenNode = useSelector(state => state.userStore.current_node)
   const [openManyDelete, setOpenManyDelete] = useState(false);
+  const [showManyDelete, setShowManyDelete] = useState(false);
+  const [showModalSurveys, setShowModalSurveys] = useState(false);
   const [itemSelected, setItemSelected] = useState({});
   const [selectedAssign, setSelectedAssign] = useState([]);
   const [assignKeys, setAssignKeys] = useState([]);
@@ -39,7 +44,19 @@ const TableAssignments = ({...props}) => {
   }
 
   const HandleDelete = (item) =>{
-    setItemSelected(item)
+    setSelectedAssign([item])
+    setOpenManyDelete(true)
+  }
+
+  const resetValues = () =>{
+    setSelectedAssign([])
+    setAssignKeys([])
+    setOpenManyDelete(false)
+    setShowManyDelete(false)
+  }
+
+  const HandleViewSurveys = (item) =>{
+    getDetailsAssessment(item.id_assessment)
   }
   
   const rowSelectionAssign = {
@@ -57,6 +74,35 @@ const TableAssignments = ({...props}) => {
       props.getList(currenNode?.id,queryParam)
     } else if (pagination.current == 1) {
       props.getList(currenNode?.id,"")
+    }
+  }
+
+  useEffect(()=>{
+    if(openManyDelete){
+      if(selectedAssign.length > 0){
+        setShowManyDelete(true)
+      }else{
+        message.error("Seleccio al menos una asignación")
+        setOpenManyDelete(false)
+      }
+    }
+  },[openManyDelete])
+
+  const removeAssign = (ids) =>{
+    props.setLoading(true)
+    props.delete(ids)
+    resetValues()
+  }
+
+  const getDetailsAssessment = async (id) =>{
+    try {
+      let response = await WebApiAssessment.getDetailsAssessment(id);
+      setItemSelected(response.data)
+      setShowModalSurveys(true)
+    } catch (e) {
+      setItemSelected({})
+      setShowModalSurveys(false)
+      message.error("No se encontraron detalles de la encuesta")
     }
   }
 
@@ -79,7 +125,7 @@ const TableAssignments = ({...props}) => {
   const menuItem = (item) => {
     return (
       <Menu>
-        {permissions?.edit && (
+        {/* {permissions?.edit && (
           <Menu.Item
             key={1}
             icon={<EditOutlined/>}
@@ -87,7 +133,7 @@ const TableAssignments = ({...props}) => {
           >
             Editar
           </Menu.Item>
-        )}
+        )} */}
         {permissions?.delete && (
           <Menu.Item
             key={2}
@@ -107,16 +153,25 @@ const TableAssignments = ({...props}) => {
         render: (item) => {
           return (
             <div>
-              {item.person.first_name}
+              {item.person.first_name} {item.person.flast_name} {item.person.mlast_name}
             </div>
           );
         },
       },
       {
-        title: "Encuestas",
+        title: "Encuesta",
         render: (item) => {
           return (
-            <div>{item.id_assessment}</div>
+            <Space>
+              {item.id_assessment &&(
+                <Tooltip title='Ver encuesta'>
+                    <EyeOutlined
+                      style={{cursor: 'pointer'}}
+                      onClick={()=>HandleViewSurveys(item)}
+                    />
+                </Tooltip>
+              )}
+            </Space>
           )
         }
       },
@@ -173,6 +228,22 @@ const TableAssignments = ({...props}) => {
                 />
             </Col>
         </Row>
+        {showManyDelete && (
+          <DeleteAssign
+            visible={showManyDelete}
+            close={resetValues}
+            assign={selectedAssign}
+            actionDelete={removeAssign}
+          />
+        )}
+        {showModalSurveys && (
+          <ViewSurveys
+            title={'Encuesta asignada'}
+            visible={showModalSurveys}
+            setVisible={setShowModalSurveys}
+            item={{assessments: [itemSelected]}}
+          />
+        )}
     </>
   )
 }
