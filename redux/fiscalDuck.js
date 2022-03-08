@@ -1,5 +1,4 @@
 import WebApiFiscal from "../api/WebApiFiscal";
-// import { userCompanyId } from "../libs/auth";
 
 const initialData = {
   banks: [],
@@ -10,6 +9,8 @@ const initialData = {
   perceptions_int: [],
   deductions_int: [],
   other_payments_int: [],
+  type_tax: [],
+  payment_periodicity: [],
 };
 
 const BANKS = "BANKS";
@@ -20,6 +21,8 @@ const OTHER_PAYMENTS = "OTHER_PAYMENTS";
 const PERCEPTIONS_INT = "PERCEPTIONS_INT";
 const DEDUCTIONS_INT = "DEDUCTIONS_INT";
 const OTHER_PAYMENTS_INT = "OTHER_PAYMENTS_INT";
+const TYPE_TAX = "TYPE_TAX";
+const PAYMENT_PERIODICITY = "PAYMENT_PERIODICITY";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -39,6 +42,10 @@ const webReducer = (state = initialData, action) => {
       return { ...state, deductions_int: action.payload, default: false };
     case OTHER_PAYMENTS_INT:
       return { ...state, other_payments_int: action.payload, default: false };
+    case TYPE_TAX:
+      return { ...state, type_tax: action.payload, default: false };
+    case PAYMENT_PERIODICITY:
+      return { ...state, payment_periodicity: action.payload, default: false };
     default:
       return state;
   }
@@ -55,6 +62,8 @@ export const doFiscalSelectedData = () => async (dispatch, getState) => {
     dispatch(getInternalPerceptions());
     dispatch(getInternalDeductions());
     dispatch(getInternalOtherPayments());
+    dispatch(getTypeTax());
+    dispatch(getPaymentPeriodicity());
   } catch (error) {
     console.log(error);
   }
@@ -135,6 +144,21 @@ export const getInternalOtherPayments = () => async (dispatch, getState) => {
     .then((response) => {
       dispatch({ type: OTHER_PAYMENTS_INT, payload: response.data.results });
     })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getTypeTax = () => async (dispatch, getState) => {
+  await WebApiFiscal.getTypeTax
+    .then((response) => {})
+    .catch((error) => {
+      console.log(error);
+    });
+};
+export const getPaymentPeriodicity = () => async (dispatch, getState) => {
+  await WebApiFiscal.getPaymentPeriodicity()
+    .then((response) => {})
     .catch((error) => {
       console.log(error);
     });
