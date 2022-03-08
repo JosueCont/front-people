@@ -1,0 +1,14 @@
+.custom-modal .ant-modal-body {
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+}
+
+.custom-modal .ant-list-item-meta-content {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.custom-modal .ant-list-item-meta-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

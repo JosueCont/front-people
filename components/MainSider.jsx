@@ -183,12 +183,14 @@ const MainSider = ({
                 Personas
               </Menu.Item>
               {props.config && props.config.kuiz_enabled && (
-                <Menu.Item
-                  key="groups_people"
-                  onClick={() => router.push({ pathname: "/home/groups" })}
-                >
-                  Grupos
-                </Menu.Item>
+                <>
+                  <Menu.Item
+                    key="groups_people"
+                    onClick={() => router.push({ pathname: "/home/groups" })}
+                  >
+                    Grupos
+                  </Menu.Item>
+                </>
               )}
             </SubMenu>
           )}
@@ -437,6 +439,12 @@ const MainSider = ({
                 onClick={() => router.push({ pathname: "/assessment/groups" })}
               >
                 Grupos
+              </Menu.Item>
+              <Menu.Item
+                    key="assignments"
+                    onClick={() => router.push({ pathname: "/assessment/assignments" })}
+                  >
+                    Asignaciones
               </Menu.Item>
             </SubMenu>
           )}

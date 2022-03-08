@@ -1,58 +1,103 @@
 import React, { useState, useEffect } from "react";
-import MainLayout from "../../../layout/MainLayout";
-import { useRouter } from "next/router";
 import {
     Form,
     Input,
-    Table,
-    Breadcrumb,
     Button,
-    Row,
-    Col,
     Modal,
-    message,
-    Switch,
-    Checkbox
 } from "antd";
-import {
-    SearchOutlined,
-    PlusOutlined,
-    EditOutlined,
-    DeleteOutlined,
-    SyncOutlined,
-    ExclamationCircleOutlined,
-} from "@ant-design/icons";
-import { withAuthSync } from "../../../libs/auth";
-import { connect, useDispatch } from "react-redux";
-import { useFilter } from "../useFilter";
 import { ruleRequired } from "../../../utils/rules";
 import SelectMembers from "./SelectMembers";
 import SelectSurveys from "./SelectSurveys";
+import SelectCategory from "./SelectCategory";
 
 const FormGroup = ({...props}) =>{
 
     const [formGroup] = Form.useForm();
     const [listMembers, setListMembers] = useState([]);
     const [listSurveys, setListSurveys] = useState([]);
+    const [listCategories, setListCategories] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [nameAssessment, setNameAssessment] = useState(null)
     
     useEffect(()=>{
         if(Object.keys(props.loadData).length > 0){
+            let fakeCategory = [{name: 'categoria de prueba 1', id:1}];
+            let surveys = getSelectedSurveys(props.loadData.assessments)
+            let members = getSelectedMembers(props.loadData.persons)
+            let categories = getSelectedCategories(fakeCategory)
             formGroup.setFieldsValue({
-                name: props.loadData.name
+                name: props.loadData.name,
+                assessments: surveys,
+                persons: members,
+                categories: categories
             })
         }
     },[props.loadData])
 
+    const getSelectedCategories = (categories) =>{
+        if(categories?.length > 0){
+            let list = [];
+            categories.map((item)=>{
+                let row = {
+                    label: item.name,
+                    key: item.id,
+                    value: item.id
+                }
+                list.push(row)
+            })
+            return list
+        }else{
+            return []
+        }
+    }
+
+    const getSelectedSurveys = (surveys) =>{
+        if(surveys?.length > 0){
+          let list = [];
+          surveys.map((item)=>{
+            let row = {
+              label: item.name_es,
+              key: item.id,
+              value: item.id
+            }
+            list.push(row)
+          })
+          return list
+        }else{
+          return []
+        }
+    }
+
+    const getSelectedMembers = (members) =>{
+        if(members?.length > 0){
+          let list = [];
+          members.map((item)=>{
+            let row = {
+              label: `${item.first_name} ${item.flast_name} ${item.mlast_name}`,
+              value: item.id,
+              key: item.id
+            }
+            list.push(row)
+          })
+          return list
+        }else{
+          return []
+        }
+    }
+
     const createData = (object) => {
         let queryObject = Object.assign(object);
         if (listMembers.length > 0) {
-          queryObject.persons = listMembers;
+            queryObject.persons = listMembers;
+        }else if(listMembers.length <= 0 && !props.hiddenMembers){
+            queryObject.persons = [];
         }else{
             delete queryObject.persons
         }
         if(listSurveys.length > 0){
             queryObject.assessments = listSurveys;
+        }else if(listSurveys.length <= 0 && !props.hiddenSurveys){
+            queryObject.assessments = [];
         }else{
             delete queryObject.assessments
         }
@@ -63,12 +108,12 @@ const FormGroup = ({...props}) =>{
     };
 
     const onFinish = (values) =>{
-        const data = createData(values)
+        // const data = createData(values)
         setLoading(true)
         setTimeout(()=>{
             props.close()
             setLoading(false)
-            props.actionForm(data)
+            props.actionForm(values)
         },2000)
     }
 
@@ -111,20 +156,28 @@ const FormGroup = ({...props}) =>{
                     </Form.Item>
                 )}
                 {!props.hiddenMembers && (
-                    <Form.Item name="persons" label="Añadir integrantes">
-                        <SelectMembers
-                            members={props.loadData?.persons}
-                            setMembers={setListMembers}
-                        />
-                    </Form.Item>
+                    <SelectMembers
+                        name={'persons'}
+                        label={'Añadir persona'}
+                        multiple={props.multipleMembers}
+                        setMembers={setListMembers}
+                    />
+                )}
+                {!props.hiddenCategories && (
+                    <SelectCategory
+                        name={'categories'}
+                        label={'Añadir categoría'}
+                        multiple={props.multipleCategories}
+                        setCategories={setListCategories}
+                    />
                 )}
                 {!props.hiddenSurveys && (
-                    <Form.Item name="assessments" label="Añadir encuestas">
-                        <SelectSurveys
-                            surveys={props.loadData?.assessments}
-                            setSurveys={setListSurveys}
-                        />
-                    </Form.Item>
+                    <SelectSurveys
+                        name={'assessments'}
+                        label={'Añadir encuesta'}
+                        multiple={props.multipleSurveys}
+                        setSurveys={setListSurveys}
+                    />
                 )}
             </Form>
         </Modal>

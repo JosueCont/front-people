@@ -78,7 +78,7 @@ const GroupsKuiz = () =>{
     const updateGroup = async (values, id) =>{
         const data = {...values, node: currenNode?.id}
         try {
-          let response = await WebApiAssessment.updateGroupAssessments(data, id);
+          await WebApiAssessment.updateGroupAssessments(data, id);
           getListGroups(currenNode?.id, "","")
           message.success("Información actualizada")
         } catch (e) {
@@ -118,11 +118,11 @@ const GroupsKuiz = () =>{
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
                 <FormSearch
-                    dataGroups={listGroups}
                     setLoading={setLoading}
                     createGroup={createGroup}
                     hiddenName={false}
                     hiddenSurveys={false}
+                    hiddenCategories={false}
                     searchGroup={searchGroup}
                 />
                 <TableGroups
@@ -134,6 +134,7 @@ const GroupsKuiz = () =>{
                     deteleGroup={deleteGroup}
                     hiddenName={false}
                     hiddenSurveys={false}
+                    hiddenCategories={false}
                 />
             </div>
         </MainLayout>

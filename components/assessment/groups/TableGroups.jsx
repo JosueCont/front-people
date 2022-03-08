@@ -30,7 +30,15 @@ import ViewSurveys from "./ViewSurveys";
 import ViewMembers from "./ViewMembers";
 import DeleteGroups from "./DeleteGroups";
 
-const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = true, ...props}) => {
+const TableGroups = ({
+  hiddenMembers = true,
+  hiddenSurveys = true,
+  hiddenCategories = true,
+  hiddenName = true,
+  multipleSurveys = true,
+  multipleMembers = true,
+  multipleCategories = true,
+  ...props}) => {
 
   const menuDropDownStyle = { background: "#434343", color: "#ffff"};
   const permissions = useSelector(state => state.userStore.permissions.person)
@@ -109,9 +117,9 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = t
     if (pagination.current > 1) {
       const offset = (pagination.current - 1) * 10;
       const queryParam = `&limit=10&offset=${offset}`;
-      props.getListGroups(currenNode?.id,queryParam)
+      props.getListGroups(currenNode?.id,"",queryParam)
     } else if (pagination.current == 1) {
-      props.getListGroups(currenNode?.id,"")
+      props.getListGroups(currenNode?.id,"","")
     }
   }
 
@@ -307,9 +315,13 @@ const TableGroups = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = t
               close={HandleClose}
               loadData={itemGroup}
               actionForm={onFinishEdit}
+              multipleSurveys={multipleSurveys}
+              multipleMembers={multipleMembers}
+              multipleCategories={multipleCategories}
               hiddenName={hiddenName}
               hiddenMembers={hiddenMembers}
               hiddenSurveys={hiddenSurveys}
+              hiddenCategories={hiddenCategories}
           />
         )}
         {showModalSurveys && (
