@@ -222,6 +222,13 @@ const MainSider = ({
             >
               Perfiles de seguridad
             </Menu.Item>
+            <Menu.Item
+              key="asignar"
+              onClick={() => router.push({ pathname: "/assignedCompanies" })}
+              icon={<UserAddOutlined />}
+            >
+              Asignar empresa
+            </Menu.Item>
           </SubMenu>
           {props.config &&
             props.config.nomina_enabled &&
@@ -352,13 +359,7 @@ const MainSider = ({
               </>
             </SubMenu>
           )}
-          <Menu.Item
-            key="asignar"
-            onClick={() => router.push({ pathname: "/assignedCompanies" })}
-            icon={<UserAddOutlined />}
-          >
-            Asignar empresa
-          </Menu.Item>
+
           {intranetAccess && (
             <SubMenu
               key="intranet"
@@ -441,10 +442,12 @@ const MainSider = ({
                 Grupos
               </Menu.Item>
               <Menu.Item
-                    key="assignments"
-                    onClick={() => router.push({ pathname: "/assessment/assignments" })}
-                  >
-                    Asignaciones
+                key="assignments"
+                onClick={() =>
+                  router.push({ pathname: "/assessment/assignments" })
+                }
+              >
+                Asignaciones
               </Menu.Item>
             </SubMenu>
           )}
