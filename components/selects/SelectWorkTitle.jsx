@@ -7,8 +7,6 @@ const SelectWorkTitle = ({
   disabled = false,
   rules = [],
   labelText = "Plaza laboral",
-  forDepto = false,
-  forPerson = false,
   department = null,
   job = null,
   name = "cat_work_title",
@@ -19,7 +17,8 @@ const SelectWorkTitle = ({
   useEffect(() => {
     setOptions([]);
     if (props.cat_work_title) {
-      let data = props.cat_work_title;
+      let data = props.cat_work_title.filter((item) => item.person === null);
+
       if (department && job) {
         data = data.filter(
           (item) => item.department.id === department && item.job.id === job
@@ -32,11 +31,7 @@ const SelectWorkTitle = ({
 
       data = data.map((item) => {
         return {
-          label: forDepto
-            ? `${item.department.name} - ${item.name}`
-            : forPerson
-            ? `Persona - ${item.name}`
-            : item.name,
+          label: item.name,
           value: item.id,
           key: item.id,
         };

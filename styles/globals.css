@@ -691,3 +691,8 @@ textarea {
   background-repeat: no-repeat;
   background-size: 70%;
 }
+
+.CheckGroup .ant-checkbox-wrapper {
+  color: #000 !important;
+  margin: 2%;
+}

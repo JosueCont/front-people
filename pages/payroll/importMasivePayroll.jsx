@@ -10,6 +10,9 @@ import {
   message,
   Input,
   Alert,
+  Radio,
+  Space,
+  Switch,
 } from "antd";
 import { DollarCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
@@ -24,12 +27,13 @@ import { messageError, messageUploadSuccess } from "../../utils/constant";
 
 const ImportMasivePayroll = ({ ...props }) => {
   const router = useRouter();
-  const [company, setCompany] = useState(null);
+  const [calendar] = Form.useForm();
+  const [companyImport, setCompanyImport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [viewModal, setViewModal] = useState(false);
-  const [cfdi, setCfdi] = useState(null);
   const [alertMessage, setAlertMessage] = useState(null);
+  const [periodSelcted, setPeriodSelected] = useState(null);
 
   const columns = [
     {
@@ -42,7 +46,7 @@ const ImportMasivePayroll = ({ ...props }) => {
     {
       title: "RFC",
       render: (item) => {
-        return <span>{item.headers.rfc}</span>;
+        return <span>{item.headers.rfc_receiver}</span>;
       },
       key: "rfc",
     },
@@ -97,8 +101,7 @@ const ImportMasivePayroll = ({ ...props }) => {
       .then((response) => {
         setLoading(false);
         message.success(messageUploadSuccess);
-        setCompany(response.data.company);
-        setCfdi(response.data.cfdis);
+        setCompanyImport(response.data);
       })
       .catch((error) => {
         setLoading(false);
@@ -111,9 +114,33 @@ const ImportMasivePayroll = ({ ...props }) => {
           setAlertMessage(error.response.data.message);
         else message.error(messageError);
         setFiles([]);
-        setCfdi(null);
         console.log(error);
       });
+  };
+
+  const sendCreateCompany = (data) => {
+    data.calendar = { name: "Prueba" };
+    console.log("SEND OBJ-->> ", data);
+  };
+
+  const PrintPeriods = ({ periods }) => {
+    return (
+      <>
+        {periods.map((item) => {
+          return (
+            <Col>
+              <Radio value={item.payment_start_date}>
+                {item.payment_start_date} - {item.payment_end_date}
+              </Radio>
+            </Col>
+          );
+        })}
+      </>
+    );
+  };
+
+  const onChangePeriod = (item) => {
+    setPeriodSelected(item.target.value);
   };
 
   return (
@@ -141,41 +168,105 @@ const ImportMasivePayroll = ({ ...props }) => {
           <Col span={24}>
             <Card className="form_header">
               <Row justify="space-between">
-                {cfdi && company ? (
-                  <Col>
-                    <Form
-                      layout="vertical"
-                      key="formFilter"
-                      className={"formFilter"}
-                    >
-                      <Row gutter={[16, 6]}>
-                        <Col style={{ display: "flex" }}>
-                          <Form.Item label="Razon social">
-                            <Input value={company.reason} />
-                          </Form.Item>
+                {companyImport ? (
+                  <>
+                    <Col>
+                      <Form
+                        layout="vertical"
+                        key="formFilter"
+                        className={"formFilter"}
+                      >
+                        <Row gutter={[16, 6]}>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item label="Razon social">
+                              <Input value={companyImport.company.reason} />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item label="RFC">
+                              <Input value={companyImport.company.rfc} />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item label="Registro patronal">
+                              <Input
+                                value={
+                                  companyImport.company.patronal_registration
+                                }
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item label="Regimen fiscal">
+                              <Input
+                                value={
+                                  props.taxRegime.find(
+                                    (item) =>
+                                      item.code ===
+                                      companyImport.company.fiscal_regime
+                                  ).description
+                                }
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Form>
+                      <Row style={{ width: "100%", padding: 10 }}>
+                        <Col span={24}>
+                          <h4>Fecha de inicio del calendario</h4>
                         </Col>
-                        <Col style={{ display: "flex" }}>
-                          <Form.Item label="RFC">
-                            <Input value={company.rfc} />
-                          </Form.Item>
+                        <Col span={24}>
+                          <Radio.Group onChange={onChangePeriod}>
+                            <PrintPeriods periods={companyImport.periods} />
+                          </Radio.Group>
                         </Col>
-                        <Col style={{ display: "flex" }}>
-                          <Form.Item label="Registro patronal">
-                            <Input value={company.patronal_registration} />
-                          </Form.Item>
-                        </Col>
-                        <Col style={{ display: "flex" }}>
-                          <Form.Item label="Regimen fiscal">
-                            <Input
-                              value={
-                                props.taxRegime.find(
-                                  (item) => item.code === company.fiscal_regime
-                                ).description
-                              }
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col style={{ display: "flex" }}>
+                      </Row>
+                      <Form
+                        form={calendar}
+                        layout="vertical"
+                        key="formFilter"
+                        className={"formFilter"}
+                      >
+                        <Row gutter={[16, 6]}>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item
+                              name={"name"}
+                              label="Nombre de calendario"
+                            >
+                              <Input value={companyImport.company.reason} />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item label="Periocidad">
+                              <Input
+                                readOnly
+                                value={companyImport.periodicity}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item
+                              name={"type_tax"}
+                              label="Tipo de impuesto"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item name={"period"} label="Periodo">
+                              <Input value={2022} />
+                            </Form.Item>
+                          </Col>
+
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item name={"active"} label="¿Activo?">
+                              <Switch />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Form>
+                      <Row gutter={24} justify="end">
+                        <Space>
                           <Button
                             style={{
                               background: "#fa8c16",
@@ -184,13 +275,11 @@ const ImportMasivePayroll = ({ ...props }) => {
                               marginTop: "auto",
                             }}
                             onClick={() => {
-                              setCfdi(null), setCompany(null), setFiles([]);
+                              setCompanyImport(null), setFiles([]);
                             }}
                           >
                             Cancelar
                           </Button>
-                        </Col>
-                        <Col style={{ display: "flex" }}>
                           <Button
                             style={{
                               background: "#fa8c16",
@@ -202,10 +291,10 @@ const ImportMasivePayroll = ({ ...props }) => {
                           >
                             Guardar
                           </Button>
-                        </Col>
+                        </Space>
                       </Row>
-                    </Form>
-                  </Col>
+                    </Col>
+                  </>
                 ) : (
                   <Row style={{ width: "100%" }}>
                     <Col span={18} style={{ display: "" }}>
@@ -239,12 +328,12 @@ const ImportMasivePayroll = ({ ...props }) => {
             </Card>
           </Col>
           <Col span={24}>
-            {cfdi ? (
+            {companyImport ? (
               <Card className="card_table">
                 <Table
                   size="small"
                   columns={columns}
-                  dataSource={cfdi}
+                  dataSource={companyImport.cfdi}
                   loading={loading}
                   scroll={{ x: 350 }}
                   locale={{
@@ -256,9 +345,9 @@ const ImportMasivePayroll = ({ ...props }) => {
                 />
               </Card>
             ) : (
-              <Card className="">
+              <Card>
                 <div className={"ImportPayroll"}></div>
-                <Row justify="center">
+                <Row justify="center" style={{ marginTop: "-40px" }}>
                   <div style={{ width: "50%", textAlign: "center" }}>
                     <span style={{ fontSize: "20px" }}>
                       <b>Importa tus recibos aquí</b>

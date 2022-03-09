@@ -232,10 +232,11 @@ export const getLevel = (data) => async (dispatch, getState) => {
 };
 
 export const getWorkTitle = (data) => async (dispatch, getState) => {
-  try {
-    let response = await WebApiPeople.getCatalogs("work-title", data);
-    dispatch({ type: WORK_TITLE, payload: response.data.results });
-  } catch (error) {
-    dispatch({ type: WORK_TITLE, payload: [] });
-  }
+  await WebApiPeople.getCatalogs("work-title", data)
+    .then((response) => {
+      dispatch({ type: WORK_TITLE, payload: response.data.results });
+    })
+    .catch((error) => {
+      dispatch({ type: WORK_TITLE, payload: [] });
+    });
 };
