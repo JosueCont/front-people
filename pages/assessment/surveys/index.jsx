@@ -36,8 +36,8 @@ import {
   assessmentStatusAction,
 } from "../../../redux/assessmentDuck";
 import { useFilter } from "../../../components/assessment/useFilter";
-import FormGroup from "../../../components/assessment/groups/FormGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
+import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
 
 const AssessmentScreen = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();
@@ -150,8 +150,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
 
   const onFinishCreateGroup = async (values) =>{3
     setLoading(true)
-    const ids = getOnlyIds();
-    const body = {...values, assessments: ids, node: props.currentNode?.id}
+    const body = {...values, node: props.currentNode?.id}
     try {
       await WebApiAssessment.createGroupAssessments(body)
       message.success("Grupo agregado")
@@ -397,16 +396,13 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
         />
       )}
       {showModalCreateGroup && (
-        <FormGroup
-            loadData={{}}
+        <AssessmentsGroup
+            loadData={{name: '', assessments: testsSelected}}
             title={'Crear nuevo grupo'}
             visible={showModalCreateGroup}
             close={HandleCloseGroup}
             actionForm={onFinishCreateGroup}
-            hiddenSurveys={true}
-            hiddenMembers={true}
-            multipleCategories={true}
-            // hiddenName={false}
+            surveyList={assessments}
         />
       )}
     </MainLayout>

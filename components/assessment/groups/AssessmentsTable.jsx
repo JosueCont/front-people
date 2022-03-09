@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import {
     Table,
@@ -20,25 +19,14 @@ import {
     EditOutlined,
     DeleteOutlined,
     EyeOutlined,
-    UserOutlined,
-    FileTextOutlined,
     EllipsisOutlined
 } from "@ant-design/icons";
-import FormGroup from "./FormGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewSurveys from "./ViewSurveys";
-import ViewMembers from "./ViewMembers";
 import DeleteGroups from "./DeleteGroups";
+import AssessmentsGroup from "./AssessmentsGroup";
 
-const TableGroups = ({
-  hiddenMembers = true,
-  hiddenSurveys = true,
-  hiddenCategories = true,
-  hiddenName = true,
-  multipleSurveys = true,
-  multipleMembers = true,
-  multipleCategories = true,
-  ...props}) => {
+const AssessmentsTable = ({...props}) => {
 
   const menuDropDownStyle = { background: "#434343", color: "#ffff"};
   const permissions = useSelector(state => state.userStore.permissions.person)
@@ -46,29 +34,16 @@ const TableGroups = ({
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalSurveys, setShowModalSurveys] = useState(false);
-  const [showModalMembers, setShowModalMembers] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [itemGroup, setItemGroup] = useState({});
   const [itemGroupPeople, setItemGroupPeople] = useState();
   const [groupsToDelete, setGroupsToDelete] = useState([]);
   const [groupsKeys, setGroupsKeys] = useState([]);
-  const router = useRouter();
-  const { confirm } = Modal;
-
-  const HandleChangeStatus = (value) => {
-      console.log(value)
-  }
 
   const HandleUpdateGroup = async (item) => {
-    if(!hiddenSurveys){
-      let resp = await getOnlyGroup(item.group_kuiz_id);
-      setItemGroupPeople(item)
-      setItemGroup(resp)
-    }
-    if(!hiddenMembers){
-      setItemGroupPeople({})
-      setItemGroup(item)
-    }
+    let resp = await getOnlyGroup(item.group_kuiz_id);
+    setItemGroupPeople(item)
+    setItemGroup(resp)
     setShowModalEdit(true)
   }
 
@@ -91,11 +66,6 @@ const TableGroups = ({
       setItemGroup({})
       message.error("El grupo aún no tiene encuestas")
     }
-  }
-
-  const openModalMembers = (item) =>{
-    setShowModalMembers(true)
-    setItemGroup(item)
   }
 
   const resetValuesDelete = ()=>{
@@ -142,12 +112,7 @@ const TableGroups = ({
 
   const onFinishEdit = async (values) =>{
     props.setLoading(true)
-    if(!hiddenSurveys){
-      props.updateGroup(values, itemGroupPeople.id)
-    }
-    if(!hiddenMembers){
-      props.updateGroup(values, itemGroup.id)
-    }
+    props.updateGroup(values, itemGroupPeople.id)
   }
 
   const getOnlyGroup = async (id) =>{
@@ -214,7 +179,6 @@ const TableGroups = ({
       },
       {
         title: "Encuestas",
-        hidden: hiddenSurveys,
         render: (item) => {
           return (
             <Space>
@@ -229,31 +193,6 @@ const TableGroups = ({
             </Space>
           )
         }
-      },
-      {
-        title: "Integrantes",
-        hidden: hiddenMembers,
-        render: (item) => {
-          return (
-            <Space>
-              <Tag
-                icon={<UserOutlined style={{color:'#52c41a'}} />}
-                color={'green'}
-                style={{fontSize: '14px'}}
-              >
-                {item.persons ? item.persons.length : 0}
-              </Tag>
-              {item.persons?.length > 0 && (
-                <Tooltip title='Ver integrantes'>
-                  <EyeOutlined
-                    style={{cursor: 'pointer'}}
-                    onClick={()=>openModalMembers(item)}
-                  />
-                </Tooltip>
-              )}
-            </Space>
-          )
-        },
       },
       {
         title: () => {
@@ -283,7 +222,7 @@ const TableGroups = ({
           )
         }
       },
-  ].filter(col => !col.hidden)
+  ]
 
   return(
     <>
@@ -292,6 +231,7 @@ const TableGroups = ({
                 <Table
                   rowKey={'id'}
                   columns={columns}
+                  size={'small'}
                   loading={props.loading}
                   dataSource={props.dataGroups?.results}
                   locale={{
@@ -309,19 +249,13 @@ const TableGroups = ({
             </Col>
         </Row>
         {showModalEdit && (
-          <FormGroup
+          <AssessmentsGroup
               title={'Editar grupo'}
               visible={showModalEdit}
               close={HandleClose}
               loadData={itemGroup}
               actionForm={onFinishEdit}
-              multipleSurveys={multipleSurveys}
-              multipleMembers={multipleMembers}
-              multipleCategories={multipleCategories}
-              hiddenName={hiddenName}
-              hiddenMembers={hiddenMembers}
-              hiddenSurveys={hiddenSurveys}
-              hiddenCategories={hiddenCategories}
+              surveyList={props.surveyList}
           />
         )}
         {showModalSurveys && (
@@ -329,14 +263,6 @@ const TableGroups = ({
             title={'Lista de encuestas'}
             visible={showModalSurveys}
             setVisible={setShowModalSurveys}
-            item={itemGroup}
-          />
-        )}
-        {showModalMembers && (
-          <ViewMembers
-            title={'Lista de integrantes'}
-            visible={showModalMembers}
-            setVisible={setShowModalMembers}
             item={itemGroup}
           />
         )}
@@ -352,4 +278,4 @@ const TableGroups = ({
   )
 }
 
-export default TableGroups
+export default AssessmentsTable
