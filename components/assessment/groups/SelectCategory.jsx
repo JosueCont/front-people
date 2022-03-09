@@ -4,15 +4,15 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import { useSelector } from "react-redux";
 import { ruleRequired, ruleMinArray } from "../../../utils/rules";
 
-const SelectSurveys = ({...props}) => {
+const SelectCategory = ({...props}) => {
   
   const { Option } = Select;
   const currenNode = useSelector(state => state.userStore.current_node)
-  const [listSurveys, setListSurveys] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
   const [properties, setProperties] = useState({});
 
   useEffect(() => {
-    getSurveys(currenNode?.id);
+    getCategories(currenNode?.id);
   }, [currenNode]);
 
   useEffect(()=>{
@@ -29,26 +29,35 @@ const SelectSurveys = ({...props}) => {
     }
   },[props.multiple])
 
-  const getSurveys = async (nodeId) => {
+  const getCategories = async (nodeId) => {
     try {
-      let response = await WebApiAssessment.getListSurveys(nodeId);
+      // let response = await WebApiAssessment.getListPersons({node: nodeId});
+      let response ={
+        data : [
+          {name: 'categoria de prueba 1', id: 1},
+          {name: 'categoria de prueba 2', id: 2},
+          {name: 'categoria de prueba 3', id: 3},
+          {name: 'categoria de prueba 4', id: 4},
+          {name: 'categoria de prueba 5', id: 5}
+        ]
+      }
       let list = [];
       response.data.map((item) => {
         let row = {
-          label: item.name_es,
+          label: item.name,
           value: item.id,
           key: item.id,
         }
         list.push(row);
       })
-      setListSurveys(list);
+      setCategoryList(list);
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleChange = (value)=>{
-    props.setSurveys(value)
+    props.setCategories(value)
   }
 
     return (
@@ -61,7 +70,7 @@ const SelectSurveys = ({...props}) => {
           allowClear
           showSearch
           {...properties.mode}
-          placeholder="Seleccionar encuesta"
+          placeholder="Seleccionar categoría"
           onChange={handleChange}
           optionFilterProp="children"
           filterOption={(input, option) =>
@@ -72,7 +81,7 @@ const SelectSurveys = ({...props}) => {
           }
           notFoundContent='No se encontraron resultados'
         >
-          {listSurveys && listSurveys.map((item) => (
+          {categoryList && categoryList.map((item) => (
             <Option key={item.key} value={item.value}>
               {item.label}
             </Option>
@@ -82,4 +91,4 @@ const SelectSurveys = ({...props}) => {
     )
 }
 
-export default SelectSurveys
+export default SelectCategory

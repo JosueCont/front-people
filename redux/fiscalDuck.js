@@ -150,7 +150,7 @@ export const getInternalOtherPayments = () => async (dispatch, getState) => {
 };
 
 export const getTypeTax = () => async (dispatch, getState) => {
-  await WebApiFiscal.getTypeTax
+  await WebApiFiscal.getTypeTax()
     .then((response) => {})
     .catch((error) => {
       console.log(error);

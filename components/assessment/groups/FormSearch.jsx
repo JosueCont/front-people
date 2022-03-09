@@ -16,7 +16,15 @@ import {
 import FormGroup from "./FormGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 
-const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = true, ...props}) =>{
+const FormSearch = ({
+    hiddenMembers = true,
+    hiddenSurveys = true,
+    hiddenCategories = true, 
+    hiddenName = true,
+    multipleSurveys = true,
+    multipleMembers = true,
+    multipleCategories = true,
+    ...props}) =>{
     const [form] = Form.useForm();
     const permissions = useSelector(state => state.userStore.permissions.person)
     const [showModalCreate, setShowModalCreate] = useState(false);
@@ -100,13 +108,17 @@ const FormSearch = ({hiddenMembers = true, hiddenSurveys = true, hiddenName = tr
             {showModalCreate && (
                 <FormGroup
                     loadData={{}}
-                    title={'Crear nuevo grupo'}
+                    title={props.textButton ? props.textButton : 'Crear nuevo grupo'}
                     visible={showModalCreate}
                     close={HandleClose}
                     actionForm={onFinishAdd}
+                    multipleMembers={multipleMembers}
+                    multipleSurveys={multipleSurveys}
+                    multipleCategories={multipleCategories}
                     hiddenName={hiddenName}
                     hiddenSurveys={hiddenSurveys}
                     hiddenMembers={hiddenMembers}
+                    hiddenCategories={hiddenCategories}
                 />
             )}
         </>

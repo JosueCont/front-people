@@ -3,6 +3,22 @@ export const ruleRequired = {
   message: "Este campo es requerido",
 };
 
+export const ruleMinArray = (min) =>{
+  return {
+    min: min,
+    type: 'array',
+    message: `Seleciona ${min} registros`
+  }
+}
+
+export const ruleMaxArray = (max) =>{
+  return {
+    max: max,
+    type: 'array',
+    message: `Máximo a seleccionar ${max} registros`
+  }
+}
+
 export const ruleEmail = {
   type: "email",
   message: "Ingrese un correo electrónico válido",

@@ -67,35 +67,35 @@ const WorkTitle = ({ currentNode, ...props }) => {
         return <div>{item.level ? item.level.name : ""}</div>;
       },
     },
-    {
-      title: "Vacantes",
-      key: "vacancy",
-      render: (item) => {
-        return <div>{item.vacancy ? item.vacancy.vacancy_numbers : ""}</div>;
-      },
-    },
-    {
-      title: "Vacantes disponibles",
-      key: "vacancies_available",
-      render: (item) => {
-        return (
-          <div>{item.vacancy ? item.vacancy.vacancies_available : ""}</div>
-        );
-      },
-    },
-    {
-      title: "Vacantes ocupadas",
-      key: "vacancies_",
-      render: (item) => {
-        return (
-          <div>
-            {item.vacancy
-              ? item.vacancy.vacancy_numbers - item.vacancy.vacancies_available
-              : ""}
-          </div>
-        );
-      },
-    },
+    // {
+    //   title: "Vacantes",
+    //   key: "vacancy",
+    //   render: (item) => {
+    //     return <div>{item.vacancy ? item.vacancy.vacancy_numbers : ""}</div>;
+    //   },
+    // },
+    // {
+    //   title: "Vacantes disponibles",
+    //   key: "vacancies_available",
+    //   render: (item) => {
+    //     return (
+    //       <div>{item.vacancy ? item.vacancy.vacancies_available : ""}</div>
+    //     );
+    //   },
+    // },
+    // {
+    //   title: "Vacantes ocupadas",
+    //   key: "vacancies_",
+    //   render: (item) => {
+    //     return (
+    //       <div>
+    //         {item.vacancy
+    //           ? item.vacancy.vacancy_numbers - item.vacancy.vacancies_available
+    //           : ""}
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       title: "Salario",
       key: "Salario",
@@ -138,7 +138,10 @@ const WorkTitle = ({ currentNode, ...props }) => {
   const onFinishForm = (value, url) => {
     if (edit) {
       updateRegister(url, value);
-    } else saveRegister(url, value);
+    } else {
+      // console.log("data y node", value, currentNode)
+      saveRegister(url, value)
+    };
   };
 
   const saveRegister = async (url, data) => {
@@ -273,21 +276,21 @@ const WorkTitle = ({ currentNode, ...props }) => {
           <Col lg={8} xs={22} md={12}>
             <SelectJob rules={[ruleRequired]} />
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          {/* <Col lg={8} xs={22} md={12}>
             <SelectWorkTitle
               labelText={"Plaza a la que reporta"}
               name={"work_title_report"}
               forDepto={true}
             />
-          </Col>
+          </Col> */}
           <Col lg={8} xs={22} md={12}>
             <SelectLevel textLabel={"Nivel"} rules={[ruleRequired]} />
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          {/* <Col lg={8} xs={22} md={12}>
             <Form.Item name="vacancy" label="Vacantes">
               <Input type="number" min={1} defaultValue={1} />
             </Form.Item>
-          </Col>
+          </Col> */}
           <Col lg={8} xs={22} md={12}>
             <Form.Item name="salary" label="Salario">
               <Input prefix={"$"} type="number" min={0} defaultValue={0} />
