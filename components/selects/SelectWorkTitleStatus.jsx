@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import { Form, Select } from "antd";
 import { workTitleStatus } from "../../utils/constant";
 

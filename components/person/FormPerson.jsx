@@ -16,12 +16,12 @@ import WebApiPeople from "../../api/WebApiPeople";
 import { genders } from "../../utils/constant";
 import { ruleEmail } from "../../utils/rules";
 import { getPeopleCompany } from "../../redux/UserDuck";
+import { getWorkTitle } from "../../redux/catalogCompany";
 import SelectGroup from "../selects/SelectGroup";
 import SelectJob from "../selects/SelectJob";
 import SelectDepartment from "../selects/SelectDepartment";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
-import SelectWorkTitleStatus from "../selects/SelectWorkTitleStatus";
 import SelectAccessIntranet from "../selects/SelectAccessIntranet";
 import { ruleRequired } from "../../utils/rules";
 
@@ -37,6 +37,7 @@ const FormPerson = ({
   const [date, setDate] = useState("");
   const [departmentSelected, setDepartmentSelected] = useState(null);
   const [jobSelected, setJobSelected] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const onFinish = (value) => {
     if (date !== "") {
@@ -56,12 +57,15 @@ const FormPerson = ({
   };
 
   const createPerson = async (value) => {
+    setLoading(true);
     value.node = currentNode.id;
     await WebApiPeople.createPerson(value)
       .then((response) => {
         props.getPeopleCompany(currentNode.id);
+        props.getWorkTitle(currentNode.id);
         message.success("Agregado correctamente");
         form.resetFields();
+        setLoading(false);
         close(false);
       })
       .catch((error) => {
@@ -72,6 +76,7 @@ const FormPerson = ({
         )
           message.error(error.response.data.message);
         else if (error) message.error("Error al agregar, intente de nuevo");
+        setLoading(false);
       });
   };
 
@@ -126,26 +131,17 @@ const FormPerson = ({
                   />
                 </Col>
                 {(departmentSelected || jobSelected) && (
-                  <>
-                    <Col lg={8} xs={24}>
-                      <SelectWorkTitle
-                        name={"work_title_id"}
-                        viewLabel={false}
-                        style={false}
-                        forPerson={true}
-                        department={departmentSelected}
-                        job={jobSelected}
-                        rules={[ruleRequired]}
-                      />
-                    </Col>
-                    <Col lg={8} xs={24}>
-                      <SelectWorkTitleStatus
-                        rules={[ruleRequired]}
-                        viewLabel={false}
-                        style={false}
-                      />
-                    </Col>
-                  </>
+                  <Col lg={8} xs={24}>
+                    <SelectWorkTitle
+                      name={"work_title_id"}
+                      viewLabel={false}
+                      style={false}
+                      forPerson={true}
+                      department={departmentSelected}
+                      job={jobSelected}
+                      rules={[ruleRequired]}
+                    />
+                  </Col>
                 )}
 
                 <Col lg={8} xs={24}>
@@ -242,8 +238,14 @@ const FormPerson = ({
                 <Col lg={22} xs={24}>
                   <Form.Item labelAlign="right">
                     <Space style={{ float: "right" }}>
-                      <Button onClick={() => closeDialog()}>Cancelar</Button>
-                      <Button type="primary" htmlType="submit">
+                      <Button onClick={() => closeDialog()} loading={loading}>
+                        Cancelar
+                      </Button>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                      >
                         Guardar
                       </Button>
                     </Space>
@@ -262,4 +264,6 @@ const mapState = (state) => {
   return {};
 };
 
-export default connect(mapState, { getPeopleCompany })(FormPerson);
+export default connect(mapState, { getPeopleCompany, getWorkTitle })(
+  FormPerson
+);
