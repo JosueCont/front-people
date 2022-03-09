@@ -34,14 +34,11 @@ import {
   minLengthNumber,
   onlyNumeric,
   rfcFormat,
-  ruleRequired,
 } from "../../utils/rules";
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
 import SelectPersonType from "../selects/SelectPersonType";
-import SelectAccessIntranet from "../selects/SelectAccessIntranet";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
-import SelectWorkTitleStatus from "../selects/SelectWorkTitleStatus";
 
 const DataPerson = ({ config, person = null, ...props }) => {
   const { Title } = Typography;
@@ -52,16 +49,23 @@ const DataPerson = ({ config, person = null, ...props }) => {
   const [birthDate, setBirthDate] = useState("");
   const [dateIngPlatform, setDateIngPlatform] = useState("");
   const [dateAdmission, setDateAdmission] = useState("");
-  const [departmentSelected, setDepartmentSelected] = useState(null);
-  const [jobSelected, setJobSelected] = useState(null);
+  const [departmentSelected, setDepartmentSelected] = useState(
+    person.work_title ? person.work_title.department.id : null
+  );
+  const [jobSelected, setJobSelected] = useState(
+    person.work_title ? person.work_title.job.id : null
+  );
   const [loading, setLoading] = useState(true);
+  const [personWT, setPersonWT] = useState(false);
 
   useEffect(() => {
+    setPersonWT(person.id);
     setFormPerson(person);
   }, []);
 
   const setFormPerson = (person) => {
-    console.log("PERSONAAAA-->> ", person);
+    setPersonWT(false);
+
     formPerson.setFieldsValue({
       first_name: person.first_name,
       flast_name: person.flast_name,
@@ -83,8 +87,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
       formPerson.setFieldsValue({
         person_department: person.work_title.department.id,
         job: person.work_title.job.id,
-        work_title_id: person.work_title.id,
-        status_work_title: person.person_work_title.status,
+        work_title: person.work_title.name,
       });
     }
     if (person.person_type)
@@ -118,11 +121,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
           groups: [],
         });
       });
-    if (person.work_title) {
-      formPerson.setFieldsValue({
-        work_title_id: person.work_title.id,
-      });
-    }
     setLoading(false);
     setPhoto(person.photo);
     setDateAdmission(person.date_of_admission);
@@ -441,7 +439,9 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   }
                   name="person_department"
                   style={false}
-                  onChange={(item) => setDepartmentSelected(item)}
+                  onChange={(item) => {
+                    setDepartmentSelected(item), setPersonWT(true);
+                  }}
                 />
               </Col>
               <Col lg={8} xs={24} md={12}>
@@ -454,19 +454,25 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   }
                   name="job"
                   style={false}
-                  onChange={(item) => setJobSelected(item)}
+                  onChange={(item) => {
+                    setJobSelected(item), setPersonWT(true);
+                  }}
                 />
               </Col>
               <Col lg={8} xs={24} md={12}>
-                <SelectWorkTitle
-                  viewLabel={true}
-                  department={departmentSelected}
-                  job={jobSelected}
-                  name={"work_title_id"}
-                />
-              </Col>
-              <Col lg={8} xs={24}>
-                <SelectWorkTitleStatus rules={[ruleRequired]} style={false} />
+                {personWT ? (
+                  <SelectWorkTitle
+                    viewLabel={true}
+                    department={departmentSelected}
+                    job={jobSelected}
+                    person={personWT}
+                    name={"work_title_id"}
+                  />
+                ) : (
+                  <Form.Item name="work_title" label="Plaza laboral">
+                    <Input readOnly />
+                  </Form.Item>
+                )}
               </Col>
               {props.config &&
                 props.config.enabled_nomina(

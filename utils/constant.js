@@ -266,6 +266,12 @@ export const workTitleStatus = [
   },
 ];
 
+const conceptPayroll = [
+  { value: 1, label: "Percepciones" },
+  { value: 2, label: "Deducciones" },
+  { value: 3, label: "Otros tipos de pagos" },
+];
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
 export const messageDeleteSuccess = "Eliminado correctamente.";

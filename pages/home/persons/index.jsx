@@ -462,7 +462,7 @@ const homeScreen = ({ ...props }) => {
         {permissions.create && (
           <>
             <Menu.Item key="5" onClick={() => setOpenAssignTest(true)}>
-              Asignar evaluaciones  
+              Asignar evaluaciones
             </Menu.Item>
             <Menu.Item key="4" onClick={() => setModalCreateGroup(true)}>
               Crear grupo
@@ -499,7 +499,8 @@ const homeScreen = ({ ...props }) => {
           </Menu.Item>
         )}
         {permissions.delete && (
-          <Menu.Item key="3"
+          <Menu.Item
+            key="3"
             onClick={() => {
               setPersonsToDelete([item]), showModalDelete();
             }}
@@ -704,21 +705,21 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
-  const HandleCloseGroup = () =>{
-    setShowModalGroup(false)
-    setModalCreateGroup(false)
-    setOpenAssignTest(false)
-    setShowModalAssignTest(false)
-    setOpenAssignToPerson(false)
-    setShowAssignToPerson(false)
-    setPersonsToDelete([])
-    setPersonsKeys([])
-  }
+  const HandleCloseGroup = () => {
+    setShowModalGroup(false);
+    setModalCreateGroup(false);
+    setOpenAssignTest(false);
+    setShowModalAssignTest(false);
+    setOpenAssignToPerson(false);
+    setShowAssignToPerson(false);
+    setPersonsToDelete([]);
+    setPersonsKeys([]);
+  };
 
-  const HandleModalAssign = (item) =>{
-    setPersonsToDelete([item])
-    setOpenAssignToPerson(true)
-  }
+  const HandleModalAssign = (item) => {
+    setPersonsToDelete([item]);
+    setOpenAssignToPerson(true);
+  };
 
   const getOnlyIds = () => {
     let ids = [];
@@ -731,49 +732,49 @@ const homeScreen = ({ ...props }) => {
   const onFinishCreateGroup = async (values) => {
     setLoading(true);
     const ids = getOnlyIds();
-    const body = {...values, persons: ids, node: props.currentNode?.id}
+    const body = { ...values, persons: ids, node: props.currentNode?.id };
     try {
       await WebApiAssessment.createGroupPersons(body);
       filterPersonName();
       message.success("Grupo agregado");
     } catch (e) {
-      console.log(e)
-      setLoading(false)
-      message.error("Grupo no agregado")
-    }
-  }
-
-  const onFinishAssignManyTest = async (values) =>{
-    setLoading(true)
-    const ids = getOnlyIds();
-    const body = {...values, persons: ids, node: props.currentNode?.id}
-    console.log('valores que se van a enviar----->', body)
-    try {
-      filterPersonName();
-      message.success("Evaluaciones asignadas")
-    } catch (e) {
-      console.log(e)
-      setLoading(false)
-      message.error("Evaluaciones no asignadas")
+      console.log(e);
+      setLoading(false);
+      message.error("Grupo no agregado");
     }
   };
 
-  const onFinishAssignOneTest = async (value) =>{
-    setLoading(true)
+  const onFinishAssignManyTest = async (values) => {
+    setLoading(true);
+    const ids = getOnlyIds();
+    const body = { ...values, persons: ids, node: props.currentNode?.id };
+    console.log("valores que se van a enviar----->", body);
+    try {
+      filterPersonName();
+      message.success("Evaluaciones asignadas");
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+      message.error("Evaluaciones no asignadas");
+    }
+  };
+
+  const onFinishAssignOneTest = async (value) => {
+    setLoading(true);
     const ids = getOnlyIds();
     const body = {
       id_assessment: value.assessments,
       person: ids.at(-1),
-      node: props.currentNode?.id
-    }
+      node: props.currentNode?.id,
+    };
     try {
-      await WebApiAssessment.assignOneTest(body)
+      await WebApiAssessment.assignOneTest(body);
       filterPersonName();
-      message.success("Evaluación asignada")
+      message.success("Evaluación asignada");
     } catch (e) {
-      console.log(e)
-      setLoading(false)
-      message.error("Evaluación no asignada")
+      console.log(e);
+      setLoading(false);
+      message.error("Evaluación no asignada");
     }
   };
 
@@ -793,28 +794,27 @@ const homeScreen = ({ ...props }) => {
     }
   }, [modalCreateGroup]);
 
-
-  useEffect(()=>{
-    if(openAssignTest){
-      if(personsToDelete.length > 0){
-        setShowModalAssignTest(true)
-      }else{
-        setOpenAssignTest(false)
-        message.error("Selecciona al menos una persona")
+  useEffect(() => {
+    if (openAssignTest) {
+      if (personsToDelete.length > 0) {
+        setShowModalAssignTest(true);
+      } else {
+        setOpenAssignTest(false);
+        message.error("Selecciona al menos una persona");
       }
     }
-  },[openAssignTest])
+  }, [openAssignTest]);
 
-  useEffect(()=>{
-    if(openAssignToPerson){
-      if(personsToDelete.length > 0){
-        setShowAssignToPerson(true)
-      }else{
-        setOpenAssignToPerson(false)
-        message.error("Selecciona al menos una persona")
+  useEffect(() => {
+    if (openAssignToPerson) {
+      if (personsToDelete.length > 0) {
+        setShowAssignToPerson(true);
+      } else {
+        setOpenAssignToPerson(false);
+        message.error("Selecciona al menos una persona");
       }
     }
-  },[openAssignToPerson])
+  }, [openAssignToPerson]);
 
   const showModalDelete = () => {
     modalDelete ? setModalDelete(false) : setModalDelete(true);
@@ -993,7 +993,6 @@ const homeScreen = ({ ...props }) => {
                               options={genders}
                               notFoundContent={"No se encontraron resultados."}
                               placeholder="Todos"
-                              notFoundContent={"No se encontraron resultados."}
                             />
                           </Form.Item>
                         </Col>
@@ -1153,29 +1152,29 @@ const homeScreen = ({ ...props }) => {
         )}
         {showModalAssignTest && (
           <FormGroup
-              loadData={{}}
-              title={'Asignar evaluaciones'}
-              visible={showModalAssignTest}
-              close={HandleCloseGroup}
-              actionForm={onFinishAssignManyTest}
-              multipleSurveys={true}
-              // hiddenSurveys={false}
-              hiddenCategories={true}
-              hiddenMembers={true}
-              hiddenName={true}
+            loadData={{}}
+            title={"Asignar evaluaciones"}
+            visible={showModalAssignTest}
+            close={HandleCloseGroup}
+            actionForm={onFinishAssignManyTest}
+            multipleSurveys={true}
+            // hiddenSurveys={false}
+            hiddenCategories={true}
+            hiddenMembers={true}
+            hiddenName={true}
           />
         )}
         {showAssignToPerson && (
           <FormGroup
-              loadData={{}}
-              title={'Asignar evaluación'}
-              visible={showAssignToPerson}
-              close={HandleCloseGroup}
-              actionForm={onFinishAssignOneTest}
-              // multipleSurveys={false}
-              // hiddenSurveys={false}
-              hiddenMembers={true}
-              hiddenName={true}
+            loadData={{}}
+            title={"Asignar evaluación"}
+            visible={showAssignToPerson}
+            close={HandleCloseGroup}
+            actionForm={onFinishAssignOneTest}
+            // multipleSurveys={false}
+            // hiddenSurveys={false}
+            hiddenMembers={true}
+            hiddenName={true}
           />
         )}
       </MainLayout>
