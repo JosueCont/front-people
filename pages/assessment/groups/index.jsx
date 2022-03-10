@@ -5,29 +5,31 @@ import { useSelector } from "react-redux";
 import { Breadcrumb, message } from "antd";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiAssessment from "../../../api/WebApiAssessment";
-import FormSearch from "../../../components/assessment/groups/FormSearch";
-import TableGroups from "../../../components/assessment/groups/TableGroups";
-import { useFilter } from "../../../components/assessment/useFilter";
+import AssessmentsSearch from "../../../components/assessment/groups/AssessmentsSearch";
+import AssessmentsTable from "../../../components/assessment/groups/AssessmentsTable";
 
 const GroupsKuiz = () =>{
     const router = useRouter();
-    const [
-        filterValues,
-        filterActive,
-        filterString,
-        onFilterChange,
-        onFilterActive,
-        onFilterReset,
-    ] = useFilter();
     const currenNode = useSelector(state => state.userStore.current_node)
     const [listGroups, setLisGroups] = useState({});
+    const [surveyList, setSurveyList] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(()=>{
         if(currenNode?.id){
             getListGroups(currenNode.id, "", "")
+            getSurveys(currenNode.id);
         }
     },[currenNode])
+
+    const getSurveys = async (nodeId) => {
+        try {
+          let response = await WebApiAssessment.getListSurveys(nodeId);
+          setSurveyList(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+    }
 
     const successMessages = (ids) =>{
         if(ids.length > 1){
@@ -54,7 +56,6 @@ const GroupsKuiz = () =>{
         setLoading(true)
         try {
             let response = await WebApiAssessment.getGroupsAssessments(data);
-            // console.log('response grupos kuiz', response)
             setLisGroups(response.data)
             setLoading(false)
         } catch (e) {
@@ -117,24 +118,20 @@ const GroupsKuiz = () =>{
                 <Breadcrumb.Item>Grupos</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
-                <FormSearch
+                <AssessmentsSearch
                     setLoading={setLoading}
                     createGroup={createGroup}
-                    hiddenName={false}
-                    hiddenSurveys={false}
-                    hiddenCategories={false}
                     searchGroup={searchGroup}
+                    surveyList={surveyList}
                 />
-                <TableGroups
+                <AssessmentsTable
                     dataGroups={listGroups}
                     loading={loading}
                     setLoading={setLoading}
                     getListGroups={getListGroups}
                     updateGroup={updateGroup}
                     deteleGroup={deleteGroup}
-                    hiddenName={false}
-                    hiddenSurveys={false}
-                    hiddenCategories={false}
+                    surveyList={surveyList}
                 />
             </div>
         </MainLayout>

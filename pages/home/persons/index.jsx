@@ -29,6 +29,7 @@ import {
   UploadOutlined,
   EllipsisOutlined,
   ExclamationCircleOutlined,
+  EyeOutlined
 } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 import FormPerson from "../../../components/person/FormPerson";
@@ -59,8 +60,10 @@ import {
   getDomain,
 } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
-import FormGroup from "../../../components/assessment/groups/FormGroup";
+import AssignAssessments from "../../../components/person/AssignAssessments";
+import PersonsGroup from "../../../components/person/groups/PersonsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
+import ViewAssigns from "../../../components/person/ViewAssigns";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -75,6 +78,8 @@ const homeScreen = ({ ...props }) => {
   const [showModalAssignTest, setShowModalAssignTest] = useState(false);
   const [openAssignToPerson, setOpenAssignToPerson] = useState(false);
   const [showAssignToPerson, setShowAssignToPerson] = useState(false);
+  const [showModalAssigns, setShowModalAssigns] = useState(false);
+  const [personSelected, setPersonSelected] = useState(false);
   const [personsKeys, setPersonsKeys] = useState([]);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
@@ -103,6 +108,10 @@ const homeScreen = ({ ...props }) => {
   const [userSession, setUserSession] = useState({});
   const [deactivateTrigger, setDeactivateTrigger] = useState(false);
   const [permissions, setPermissions] = useState({});
+  const [listSurveys, setListSurveys] = useState([]);
+  const [loadSurveys, setLoadSurveys] = useState(false);
+  const [listCategories, setListCategories] = useState([]);
+
   useLayoutEffect(() => {
     setPermissions(props.permissions);
     setTimeout(() => {
@@ -113,6 +122,8 @@ const homeScreen = ({ ...props }) => {
   useEffect(() => {
     if (props.currentNode) {
       filterPersonName();
+      getSurveys("");
+      getCategories();
     } else {
       return <></>;
     }
@@ -142,6 +153,29 @@ const homeScreen = ({ ...props }) => {
       console.log(error);
     }
   };
+
+  const getCategories = async () =>{
+    try {
+      let response = await WebApiAssessment.getCategoriesAssessment();
+      setListCategories(response.data?.results)
+    } catch (e) {
+      setListCategories([])
+      console.log(e)
+    }
+  }
+
+  const getSurveys = async (queryParam) => {
+    setLoadSurveys(true)
+    try {
+      let response = await WebApiAssessment.getListSurveys(props.currentNode.id, queryParam);
+      setListSurveys(response.data);
+      setLoadSurveys(false)
+    } catch (e) {
+      console.log(e);
+      setListSurveys([])
+      setLoadSurveys(false)
+    }
+  }
 
   const deactivatePerson = () => {
     setLoading(true);
@@ -191,18 +225,21 @@ const homeScreen = ({ ...props }) => {
     color: "#ffff",
   };
 
+  const OpenModalAssigns = (item) =>{
+    setPersonSelected(item)
+    setShowModalAssigns(true)
+  }
+
   /////TABLE PERSON
   let columns = [
     {
       title: "Núm. Empleado",
-      width: 2,
       render: (item) => {
         return <div>{item.code ? item.code : ""}</div>;
       },
     },
     {
       title: "Foto",
-      width: 1,
       render: (item) => {
         return (
           <div>
@@ -213,7 +250,6 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Nombre",
-      width: 120,
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
@@ -233,8 +269,20 @@ const homeScreen = ({ ...props }) => {
       },
     },
     {
+      title: "Asignaciones",
+      render: (item) => {
+        return (
+          <Tooltip title='Ver asignaciones'>
+            <EyeOutlined
+              style={{cursor: 'pointer'}}
+              onClick={()=>OpenModalAssigns(item)}
+            />
+          </Tooltip>
+        )
+      },
+    },
+    {
       title: "Estatus",
-      width: 30,
       render: (item) => {
         return (
           <>
@@ -265,7 +313,6 @@ const homeScreen = ({ ...props }) => {
           </>
         );
       },
-      width: 44,
       render: (item) => {
         return (
           <>
@@ -462,7 +509,7 @@ const homeScreen = ({ ...props }) => {
         {permissions.create && (
           <>
             <Menu.Item key="5" onClick={() => setOpenAssignTest(true)}>
-              Asignar evaluaciones
+              Asignar evaluaciones  
             </Menu.Item>
             <Menu.Item key="4" onClick={() => setModalCreateGroup(true)}>
               Crear grupo
@@ -490,7 +537,7 @@ const homeScreen = ({ ...props }) => {
       <Menu>
         {permissions.create && (
           <Menu.Item key="1" onClick={() => HandleModalAssign(item)}>
-            Asignar evaluación
+            Asignar evaluaciónes
           </Menu.Item>
         )}
         {permissions.edit && (
@@ -499,8 +546,7 @@ const homeScreen = ({ ...props }) => {
           </Menu.Item>
         )}
         {permissions.delete && (
-          <Menu.Item
-            key="3"
+          <Menu.Item key="3"
             onClick={() => {
               setPersonsToDelete([item]), showModalDelete();
             }}
@@ -705,21 +751,22 @@ const homeScreen = ({ ...props }) => {
     );
   };
 
-  const HandleCloseGroup = () => {
-    setShowModalGroup(false);
-    setModalCreateGroup(false);
-    setOpenAssignTest(false);
-    setShowModalAssignTest(false);
-    setOpenAssignToPerson(false);
-    setShowAssignToPerson(false);
-    setPersonsToDelete([]);
-    setPersonsKeys([]);
-  };
+  const HandleCloseGroup = () =>{
+    setShowModalGroup(false)
+    setModalCreateGroup(false)
+    setOpenAssignTest(false)
+    setShowModalAssignTest(false)
+    // setOpenAssignToPerson(false)
+    // setShowAssignToPerson(false)
+    setPersonsToDelete([])
+    setPersonsKeys([])
+  }
 
-  const HandleModalAssign = (item) => {
-    setPersonsToDelete([item]);
-    setOpenAssignToPerson(true);
-  };
+  const HandleModalAssign = (item) =>{
+    setPersonsToDelete([item])
+    // setOpenAssignToPerson(true)
+    setOpenAssignTest(true)
+  }
 
   const getOnlyIds = () => {
     let ids = [];
@@ -731,52 +778,53 @@ const homeScreen = ({ ...props }) => {
 
   const onFinishCreateGroup = async (values) => {
     setLoading(true);
-    const ids = getOnlyIds();
-    const body = { ...values, persons: ids, node: props.currentNode?.id };
+    // const ids = getOnlyIds();
+    const body = {...values, node: props.currentNode?.id}
     try {
       await WebApiAssessment.createGroupPersons(body);
       filterPersonName();
       message.success("Grupo agregado");
     } catch (e) {
-      console.log(e);
-      setLoading(false);
-      message.error("Grupo no agregado");
+      console.log(e)
+      setLoading(false)
+      message.error("Grupo no agregado")
+    }
+  }
+
+  const onFinishAssignAssessments = async (value) =>{
+    setLoading(true)
+    const ids = getOnlyIds();
+    const body = {assessments: value, persons: ids, node: props.currentNode?.id}
+    console.log('valores que se van a enviar------>', body)
+    try {
+      await WebApiAssessment.assignAssessments(body)
+      filterPersonName();
+      message.success("Evaluaciones asignadas")
+    } catch (e) {
+      console.log('no crea----->',e.response)
+      setLoading(false)
+      message.error("Evaluaciones no asignadas")
     }
   };
 
-  const onFinishAssignManyTest = async (values) => {
-    setLoading(true);
-    const ids = getOnlyIds();
-    const body = { ...values, persons: ids, node: props.currentNode?.id };
-    console.log("valores que se van a enviar----->", body);
-    try {
-      filterPersonName();
-      message.success("Evaluaciones asignadas");
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-      message.error("Evaluaciones no asignadas");
-    }
-  };
-
-  const onFinishAssignOneTest = async (value) => {
-    setLoading(true);
-    const ids = getOnlyIds();
-    const body = {
-      id_assessment: value.assessments,
-      person: ids.at(-1),
-      node: props.currentNode?.id,
-    };
-    try {
-      await WebApiAssessment.assignOneTest(body);
-      filterPersonName();
-      message.success("Evaluación asignada");
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-      message.error("Evaluación no asignada");
-    }
-  };
+  // const onFinishAssignOneTest = async (value) =>{
+  //   setLoading(true)
+  //   const ids = getOnlyIds();
+  //   const body = {
+  //     id_assessment: value.assessments,
+  //     person: ids.at(-1),
+  //     node: props.currentNode?.id
+  //   }
+  //   try {
+  //     await WebApiAssessment.assignOneTest(body)
+  //     filterPersonName();
+  //     message.success("Evaluación asignada")
+  //   } catch (e) {
+  //     console.log(e)
+  //     setLoading(false)
+  //     message.error("Evaluación no asignada")
+  //   }
+  // };
 
   useEffect(() => {
     if (modalCreateGroup) {
@@ -794,27 +842,28 @@ const homeScreen = ({ ...props }) => {
     }
   }, [modalCreateGroup]);
 
-  useEffect(() => {
-    if (openAssignTest) {
-      if (personsToDelete.length > 0) {
-        setShowModalAssignTest(true);
-      } else {
-        setOpenAssignTest(false);
-        message.error("Selecciona al menos una persona");
-      }
-    }
-  }, [openAssignTest]);
 
-  useEffect(() => {
-    if (openAssignToPerson) {
-      if (personsToDelete.length > 0) {
-        setShowAssignToPerson(true);
-      } else {
-        setOpenAssignToPerson(false);
-        message.error("Selecciona al menos una persona");
+  useEffect(()=>{
+    if(openAssignTest){
+      if(personsToDelete.length > 0){
+        setShowModalAssignTest(true)
+      }else{
+        setOpenAssignTest(false)
+        message.error("Selecciona al menos una persona")
       }
     }
-  }, [openAssignToPerson]);
+  },[openAssignTest])
+
+  // useEffect(()=>{
+  //   if(openAssignToPerson){
+  //     if(personsToDelete.length > 0){
+  //       setShowAssignToPerson(true)
+  //     }else{
+  //       setOpenAssignToPerson(false)
+  //       message.error("Selecciona al menos una persona")
+  //     }
+  //   }
+  // },[openAssignToPerson])
 
   const showModalDelete = () => {
     modalDelete ? setModalDelete(false) : setModalDelete(true);
@@ -1139,42 +1188,32 @@ const homeScreen = ({ ...props }) => {
           />
         )}
         {showModalGroup && (
-          <FormGroup
-            loadData={{}}
+          <PersonsGroup
+            loadData={{name:'',persons: personsToDelete}}
             title={"Crear nuevo grupo"}
             visible={showModalGroup}
             close={HandleCloseGroup}
             actionForm={onFinishCreateGroup}
-            hiddenSurveys={true}
-            hiddenMembers={true}
-            // hiddenName={false}
+            personList={person}
           />
         )}
         {showModalAssignTest && (
-          <FormGroup
-            loadData={{}}
-            title={"Asignar evaluaciones"}
-            visible={showModalAssignTest}
-            close={HandleCloseGroup}
-            actionForm={onFinishAssignManyTest}
-            multipleSurveys={true}
-            // hiddenSurveys={false}
-            hiddenCategories={true}
-            hiddenMembers={true}
-            hiddenName={true}
+          <AssignAssessments
+              title={'Asignar evaluaciones'}
+              visible={showModalAssignTest}
+              close={HandleCloseGroup}
+              actionForm={onFinishAssignAssessments}
+              getSurveys={getSurveys}
+              listSurveys={listSurveys}
+              listCategories={listCategories}
+              loading={loadSurveys}
           />
         )}
-        {showAssignToPerson && (
-          <FormGroup
-            loadData={{}}
-            title={"Asignar evaluación"}
-            visible={showAssignToPerson}
-            close={HandleCloseGroup}
-            actionForm={onFinishAssignOneTest}
-            // multipleSurveys={false}
-            // hiddenSurveys={false}
-            hiddenMembers={true}
-            hiddenName={true}
+        {showModalAssigns && (
+          <ViewAssigns
+            visible={showModalAssigns}
+            setVisible={setShowModalAssigns}
+            item={personSelected}
           />
         )}
       </MainLayout>
