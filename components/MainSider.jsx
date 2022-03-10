@@ -441,14 +441,14 @@ const MainSider = ({
               >
                 Grupos
               </Menu.Item>
-              <Menu.Item
+              {/* <Menu.Item
                 key="assignments"
                 onClick={() =>
                   router.push({ pathname: "/assessment/assignments" })
                 }
               >
                 Asignaciones
-              </Menu.Item>
+              </Menu.Item> */}
             </SubMenu>
           )}
         </Menu>

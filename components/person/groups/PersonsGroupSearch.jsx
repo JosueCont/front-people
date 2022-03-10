@@ -13,10 +13,9 @@ import {
     PlusOutlined,
     SyncOutlined,
 } from "@ant-design/icons";
-import FormGroup from "./FormGroup";
-import WebApiAssessment from "../../../api/WebApiAssessment";
+import PersonsGroup from "./PersonsGroup";
 
-const FormSearch = ({
+const PersonsGroupSearch = ({
     hiddenMembers = true,
     hiddenSurveys = true,
     hiddenCategories = true, 
@@ -26,7 +25,8 @@ const FormSearch = ({
     multipleCategories = true,
     ...props}) =>{
     const [form] = Form.useForm();
-    const permissions = useSelector(state => state.userStore.permissions.person)
+    const permissions = useSelector(state => state.userStore.permissions.person);
+    const currenNode = useSelector(state => state.userStore.current_node);
     const [showModalCreate, setShowModalCreate] = useState(false);
 
     const HandleFilterReset = () => {
@@ -67,11 +67,7 @@ const FormSearch = ({
                             <Col span={16}>
                                 <Form.Item name="name" label="Filtrar">
                                     <Input
-                                        placeholder={
-                                            props.textSearch ?
-                                            props.textSearch :
-                                            'Nombre del grupo'
-                                        }
+                                        placeholder={'Nombre del grupo'}
                                         maxLength={50}
                                     />
                                 </Form.Item>
@@ -100,29 +96,23 @@ const FormSearch = ({
                         <Button
                             onClick={() => HandleCreateGroup()}
                         >
-                            <PlusOutlined /> {props.textButton ? props.textButton : 'Agregar grupo'}
+                            <PlusOutlined /> Agregar grupo
                         </Button>
                     )}
                 </Col>
             </Row>
             {showModalCreate && (
-                <FormGroup
+                <PersonsGroup
                     loadData={{}}
-                    title={props.textButton ? props.textButton : 'Crear nuevo grupo'}
+                    title={"Crear nuevo grupo"}
                     visible={showModalCreate}
                     close={HandleClose}
                     actionForm={onFinishAdd}
-                    multipleMembers={multipleMembers}
-                    multipleSurveys={multipleSurveys}
-                    multipleCategories={multipleCategories}
-                    hiddenName={hiddenName}
-                    hiddenSurveys={hiddenSurveys}
-                    hiddenMembers={hiddenMembers}
-                    hiddenCategories={hiddenCategories}
+                    personList={props.personList}
                 />
             )}
         </>
     )
 }
 
-export default FormSearch
+export default PersonsGroupSearch
