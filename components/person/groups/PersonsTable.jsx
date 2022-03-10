@@ -25,6 +25,9 @@ import {
 import ViewMembers from "./ViewMembers";
 import DeleteGroups from "../../assessment/groups/DeleteGroups";
 import PersonsGroup from "./PersonsGroup";
+import AssignAssessments from "../assignments/AssignAssessments";
+import ViewAssigns from "../assignments/ViewAssigns";
+import WebApiAssessment from "../../../api/WebApiAssessment";
 
 const PersonsTable = ({...props}) => {
 
@@ -34,9 +37,13 @@ const PersonsTable = ({...props}) => {
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalMembers, setShowModalMembers] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [openModalAssign, setOpenModalAssign] = useState(false);
+  const [showModalAssign, setShowModalAssign] = useState(false);
   const [itemGroup, setItemGroup] = useState({});
   const [groupsToDelete, setGroupsToDelete] = useState([]);
   const [groupsKeys, setGroupsKeys] = useState([]);
+  const [modalViewAssign, setModalViewAssign] = useState(false);
+  const [listAssignGroup, setListAssignGroup] = useState([]);
 
   const HandleUpdateGroup = async (item) => {
     setItemGroup(item)
@@ -58,11 +65,43 @@ const PersonsTable = ({...props}) => {
     setItemGroup(item)
   }
 
+  const HandleModalAssign = (item) =>{
+    setGroupsToDelete([item])
+    setShowModalAssign(true)
+  }
+
+  const OpenModalAssigns = (item) =>{
+    setItemGroup(item)
+    getAssigns(item.id, "")
+  }
+
+  const getAssigns = async (id, queryParam) =>{
+    try {
+      let response = await WebApiAssessment.getAssignByGroup(id, queryParam)
+      setListAssignGroup(response.data)
+      setModalViewAssign(true)
+    } catch (e) {
+      setListAssignGroup([])
+      setModalViewAssign(false)
+      console.log(e)
+    }
+  }
+
+  const getOnlyIds = () =>{
+    let ids = [];
+    groupsToDelete.map((item)=>{
+      ids.push(item.id)
+    })
+    return ids;
+  }
+
   const resetValuesDelete = ()=>{
     setGroupsKeys([])
     setGroupsToDelete([])
     setShowModalDelete(false)
     setOpenModalDelete(false)
+    setShowModalAssign(false)
+    setOpenModalAssign(false)
   }
 
   const rowSelectionGroup = {
@@ -94,6 +133,17 @@ const PersonsTable = ({...props}) => {
     }
   },[openModalDelete])
 
+  useEffect(()=>{
+    if(openModalAssign){
+      if(groupsToDelete.length > 0){
+        setShowModalAssign(true)
+      }else{
+        setOpenModalAssign(false)
+        message.error("Selecciona al menos una grupo")
+      }
+    }
+  },[openModalAssign])
+
   const removeGroups = async (ids) =>{
     props.setLoading(true)
     props.deteleGroup(ids)
@@ -103,6 +153,13 @@ const PersonsTable = ({...props}) => {
   const onFinishEdit = async (values) =>{
     props.setLoading(true)
     props.updateGroup(values, itemGroup.id)
+  }
+
+  const onFinishAssign = async (values) =>{
+    const ids = getOnlyIds();
+    props.setLoading(true)
+    props.onFinishAssign(values, ids)
+    resetValuesDelete();
   }
 
   const menuTable = () => {
@@ -124,6 +181,13 @@ const PersonsTable = ({...props}) => {
   const menuGroup = (item) => {
     return (
       <Menu>
+        {permissions.create && (
+          <Menu.Item
+            key={3}
+            onClick={() => HandleModalAssign(item)}>
+            Asignar evaluaciónes
+          </Menu.Item>
+        )}
         {permissions?.edit && (
           <Menu.Item
             key={1}
@@ -178,6 +242,19 @@ const PersonsTable = ({...props}) => {
                 </Tooltip>
               )}
             </Space>
+          )
+        },
+      },
+      {
+        title: "Asignaciones",
+        render: (item) => {
+          return (
+            <Tooltip title='Ver asignaciones'>
+              <EyeOutlined
+                style={{cursor: 'pointer'}}
+                onClick={()=>OpenModalAssigns(item)}
+              />
+            </Tooltip>
           )
         },
       },
@@ -261,6 +338,19 @@ const PersonsTable = ({...props}) => {
             actionDelete={removeGroups}
           />
         )}
+        <AssignAssessments
+          title={'Asignar evaluaciones'}
+          visible={showModalAssign}
+          close={resetValuesDelete}
+          actionForm={onFinishAssign}
+        />
+        <ViewAssigns
+          visible={modalViewAssign}
+          setVisible={setModalViewAssign}
+          itemList={listAssignGroup}
+          itemSelected={itemGroup}
+          getAssigns={getAssigns}
+        />
     </>
   )
 }

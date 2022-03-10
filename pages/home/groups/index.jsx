@@ -18,7 +18,7 @@ const GroupsPeople = () =>{
     useEffect(()=>{
         if(currenNode?.id){
             getListGroups(currenNode.id, "", "")
-            getPersons(currenNode.id);
+            getPersons(currenNode.id)
         }
     },[currenNode])
 
@@ -105,6 +105,20 @@ const GroupsPeople = () =>{
         getListGroups(currenNode?.id, name, "")
     }
 
+    const onFinishAssign = async (values, ids) =>{
+        const body = {assessment: values.at(-1), group_person: ids.at(-1), node: currenNode?.id}
+        try {
+            let response = await WebApiAssessment.assignAssessmentsGroup(body)
+            console.log('si le asigna------->', response)
+            getListGroups(currenNode?.id,"","")
+            message.success("Evaluaciones asignadas")
+        } catch (e) {
+            console.log('no le asigna------>', e.response)
+            setLoading(false)
+            message.error("Evaluaciones no asignadas")
+        }
+    };
+
     return(
         <MainLayout currentKey="groups_people">
             <Breadcrumb>
@@ -131,6 +145,7 @@ const GroupsPeople = () =>{
                     updateGroup={updateGroup}
                     deteleGroup={deleteGroup}
                     personList={personList}
+                    onFinishAssign={onFinishAssign}
                 />
             </div>
         </MainLayout>

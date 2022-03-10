@@ -22,6 +22,7 @@ const ViewSurveys = ({...props}) =>{
             ]}
         >
             <List
+                size={'small'}
                 itemLayout="horizontal"
                 dataSource={props.item?.assessments}
                 renderItem={item => (

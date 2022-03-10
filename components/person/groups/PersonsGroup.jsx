@@ -97,12 +97,14 @@ const PersonsGroup = ({...props}) =>{
         },
         {
             title: "Acciones",
-            width: 100,
+            width: 50,
             render: (item, record, index) => {
                 return (
-                    <ButtonDanger onClick={()=>deleteItem(index)}>
-                        <DeleteOutlined/>
-                    </ButtonDanger>
+                    <ButtonDanger
+                        size={'small'}
+                        icon={<DeleteOutlined/>}
+                        onClick={()=>deleteItem(index)}
+                    />
                 )
             },
         }
@@ -176,6 +178,7 @@ const PersonsGroup = ({...props}) =>{
                             <Table
                                 rowKey={'id'}
                                 columns={colums}
+                                showHeader={false}
                                 dataSource={membersTable}
                                 loading={loading}
                                 size={'small'}
@@ -185,7 +188,7 @@ const PersonsGroup = ({...props}) =>{
                                     "No se encontraron resultados."
                                 }}
                                 scroll={{y: 200}}
-                                pagination={membersTable.length > 10 ? { position: ['bottomLeft'] }: false}
+                                pagination={{ position: ['bottomLeft'], hideOnSinglePage: true }}
                             />
                         </Form.Item>
                     </Col>

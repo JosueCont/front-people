@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, List } from "antd";
 
-const DeleteAssign = ({...props}) =>{
+const DeleteAssigns = ({...props}) =>{
 
     const [loading, setLoading] = useState(false);
 
     const getOnlyIds = () =>{
         let ids = [];
-        props.assign.map((item)=>{
+        props.items.map((item)=>{
           ids.push(item.id)
         })
         return ids;
@@ -18,6 +18,7 @@ const DeleteAssign = ({...props}) =>{
         setLoading(true)
         setTimeout(() => {
             setLoading(false)
+            props.close()
             props.actionDelete(ids)
         }, 2000);
     }
@@ -25,9 +26,9 @@ const DeleteAssign = ({...props}) =>{
     return(
         <Modal
             title={
-                props.assign?.length > 1
+                props.items?.length > 1
                 ? "¿Estás seguro de eliminar estas asignaciones?"
-                : "¿Estás seguro de eliminar esta asignación?"
+                : "¿Estás seguro de eliminar ésta asignación?"
             }
             visible={props.visible}
             onCancel={() => props.close()}
@@ -36,34 +37,29 @@ const DeleteAssign = ({...props}) =>{
             className={'custom-modal'}
             width={400}
             footer={[
-                <>
-                    <Button
-                        type="primary"
-                        onClick={()=>props.close()}
-                    >
-                        No
-                    </Button>
-                    <Button
-                        type="primary"
-                        onClick={()=>confirmDelete()}
-                        loading={loading}
-                    >
-                        Sí
-                    </Button>
-                </>
+                <Button
+                    type="primary"
+                    onClick={()=>props.close()}
+                >
+                    No
+                </Button>,
+                <Button
+                    type="primary"
+                    onClick={()=>confirmDelete()}
+                    loading={loading}
+                >
+                    Sí
+                </Button>
             ]}
         >
             <List
+                size={'small'}
                 itemLayout="horizontal"
-                dataSource={props.assign}
+                dataSource={props.items}
                 renderItem={(item) => (
                     <List.Item key={item.id}>
                         <List.Item.Meta
-                            title={`
-                                ${item.person.first_name}
-                                ${item.person.flast_name}
-                                ${item.person.mlast_name !== null ? item.person.mlast_name :''}
-                            `}
+                            title={item.name}
                         />
                     </List.Item>
                 )}
@@ -72,4 +68,4 @@ const DeleteAssign = ({...props}) =>{
     )
 }
 
-export default DeleteAssign
+export default DeleteAssigns
