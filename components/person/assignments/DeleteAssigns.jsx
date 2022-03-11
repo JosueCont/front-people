@@ -59,7 +59,7 @@ const DeleteAssigns = ({...props}) =>{
                 renderItem={(item) => (
                     <List.Item key={item.id}>
                         <List.Item.Meta
-                            title={item.name}
+                            title={item.assessment?.name}
                         />
                     </List.Item>
                 )}

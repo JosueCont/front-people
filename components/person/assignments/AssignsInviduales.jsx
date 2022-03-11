@@ -57,7 +57,7 @@ const AssignsIndividuales = ({...props}) =>{
         if(e.target.checked){
             let keys  = [];
             let items = [];
-            props.listAssigns?.map((item)=>{
+            props.listAssigns?.results.map((item)=>{
                 keys.push(item.id)
                 items.push(item)
             })
