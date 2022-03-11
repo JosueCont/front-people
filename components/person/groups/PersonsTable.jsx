@@ -44,6 +44,7 @@ const PersonsTable = ({...props}) => {
   const [groupsKeys, setGroupsKeys] = useState([]);
   const [modalViewAssign, setModalViewAssign] = useState(false);
   const [listAssignGroup, setListAssignGroup] = useState([]);
+  const [loadAssign, setLoadAssign] = useState(false);
 
   const HandleUpdateGroup = async (item) => {
     setItemGroup(item)
@@ -72,17 +73,28 @@ const PersonsTable = ({...props}) => {
 
   const OpenModalAssigns = (item) =>{
     setItemGroup(item)
-    getAssigns(item.id, "")
+    getAssigns(item.id, "", "")
   }
 
-  const getAssigns = async (id, queryParam) =>{
+  const onChangeTypeAssign = (key) =>{
+    if(key == 1){
+      getAssigns(itemGroup.id, "", "")
+    }else if(key  == 2){
+      getAssigns(itemGroup.id, "", "&groups")
+    }
+  }
+
+  const getAssigns = async (id, queryParam, type) =>{
+    setLoadAssign(true)
+    setModalViewAssign(true)
     try {
-      let response = await WebApiAssessment.getAssignByGroup(id, queryParam)
+      let response = await WebApiAssessment.getAssignByGroup(id, queryParam, type)
       setListAssignGroup(response.data)
-      setModalViewAssign(true)
+      setLoadAssign(false)
     } catch (e) {
       setListAssignGroup([])
-      setModalViewAssign(false)
+      // setModalViewAssign(false)
+      setLoadAssign(false)
       console.log(e)
     }
   }
@@ -350,6 +362,8 @@ const PersonsTable = ({...props}) => {
           itemList={listAssignGroup}
           itemSelected={itemGroup}
           getAssigns={getAssigns}
+          onChangeType={onChangeTypeAssign}
+          loadAssign={loadAssign}
         />
     </>
   )

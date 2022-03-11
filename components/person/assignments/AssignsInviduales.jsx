@@ -40,9 +40,9 @@ const AssignsIndividuales = ({...props}) =>{
         if (pagination.current > 1) {
             const offset = (pagination.current - 1) * 10;
             const queryParam = `&limit=10&offset=${offset}`;
-            props.getAssigns(props.itemId, queryParam)
+            props.getAssigns(props.itemId, queryParam, "")
         } else if (pagination.current == 1) {
-            props.getAssigns(props.itemId, "")
+            props.getAssigns(props.itemId, "", "")
         }
     }
 
@@ -70,7 +70,7 @@ const AssignsIndividuales = ({...props}) =>{
     }
 
     const confirmDeleteAssigns = (ids) => {
-        props.getAssigns(props.itemId)
+        props.getAssigns(props.itemId, "", "")
         console.log(ids)
     }
 
@@ -118,7 +118,7 @@ const AssignsIndividuales = ({...props}) =>{
     return(
         <>
             <Row gutter={[8,16]}>
-                {!props.loading && props.listAssigns.results.length > 0 && (
+                {!props.loading && props.listAssigns?.results.length > 0 && (
                     <>
                         <Col span={12}>
                             <CheckAll checked={isSelectAll} onChange={onSelectAll}>

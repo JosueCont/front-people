@@ -201,19 +201,27 @@ const homeScreen = ({ ...props }) => {
 
   const OpenModalAssigns = (item) =>{
     setItemPerson(item)
-    getAssigns(item.id, "")
+    getAssigns(item.id, "", "")
   }
 
-  const getAssigns = async (id, queryParam) =>{
+  const onChangeTypeAssign = (key) =>{
+    if(key == 1){
+      getAssigns(itemPerson.id, "", "")
+    }else if(key  == 2){
+      getAssigns(itemPerson.id, "", "&groups")
+    }
+  }
+
+  const getAssigns = async (id, queryParam, type) =>{
     setLoadAssign(true)
+    setShowModalAssigns(true)
     try {
-      let response = await WebApiAssessment.getAssignByPerson(id, queryParam)
+      let response = await WebApiAssessment.getAssignByPerson(id, queryParam, type)
       setPersonSelected(response.data)
-      setShowModalAssigns(true)
       setLoadAssign(false)
     } catch (e) {
       setPersonSelected([])
-      setShowModalAssigns(false)
+      // setShowModalAssigns(false)
       setLoadAssign(false)
       console.log(e)
     }
@@ -780,10 +788,10 @@ const homeScreen = ({ ...props }) => {
     }
   }
 
-  const onFinishAssignAssessments = async (value) =>{
+  const onFinishAssignAssessments = async (values) =>{
     setLoading(true)
     const ids = getOnlyIds();
-    const body = {assessments: value, persons: ids, node: props.currentNode?.id}
+    const body = {...values, persons: ids, node: props.currentNode?.id}
     try {
       await WebApiAssessment.assignAssessments(body)
       filterPersonName();
@@ -1199,6 +1207,8 @@ const homeScreen = ({ ...props }) => {
             itemList={personSelected}
             itemSelected={itemPerson}
             getAssigns={getAssigns}
+            onChangeType={onChangeTypeAssign}
+            loadAssign={loadAssign}
           />
         )}
       </MainLayout>

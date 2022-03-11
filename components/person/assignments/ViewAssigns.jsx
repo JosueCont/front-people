@@ -17,10 +17,21 @@ import AssignsGroup from './AssignsGroup';
 const ViewAssigns = ({visible, setVisible, item, widthModal = 600, ...props}) =>{
 
     const { TabPane } = Tabs;
+    const [defaultKey, setDefaultKey] = useState("1");
+
+    const onChangeTab = (key) =>{
+        props.onChangeType(key)
+        setDefaultKey(key)
+    }
+
+    const onCloseModal = () =>{
+        setVisible(false)
+        setDefaultKey("1")
+    }
 
     return(
         <CustomModal
-            onCancel={() => setVisible(false)}
+            onCancel={() => onCloseModal(false)}
             maskClosable={false}
             visible={visible}
             footer={null}
@@ -31,12 +42,13 @@ const ViewAssigns = ({visible, setVisible, item, widthModal = 600, ...props}) =>
                     <h3 style={{fontWeight:'bold'}}>Lista de asignaciones</h3>
                 </Col>
                 <ColTabs xs={24}>
-                    <Tabs defaultActiveKey="1" centered>
+                    <Tabs activeKey={defaultKey} onChange={onChangeTab} centered>
                         <TabPane tab="Inviduales" key="1">
                             <AssignsIndividuales
                                 listAssigns={props.itemList}
                                 itemId={props.itemSelected?.id}
                                 getAssigns={props.getAssigns}
+                                loading={props.loadAssign}
                             />
                         </TabPane>
                         <TabPane tab="Grupales" key="2">
@@ -44,6 +56,7 @@ const ViewAssigns = ({visible, setVisible, item, widthModal = 600, ...props}) =>
                                 listAssigns={props.itemList}
                                 itemId={props.itemSelected?.id}
                                 getAssigns={props.getAssigns}
+                                loading={props.loadAssign}
                             />
                         </TabPane>
                     </Tabs>

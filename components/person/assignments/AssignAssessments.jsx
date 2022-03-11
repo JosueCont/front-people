@@ -14,15 +14,17 @@ import {
     Checkbox,
     message,
     Radio,
-    Tooltip
+    Tooltip,
+    Tag
 } from "antd";
-import { ClearOutlined, SearchOutlined} from "@ant-design/icons";
+import { ClearOutlined, SearchOutlined, FileTextOutlined} from "@ant-design/icons";
 import MyModal from "../../../common/MyModal";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import {
     CustomInput,
     ColButtons,
     CustomCheck,
+    ButtonDanger,
     CompactSelect,
     CompactButton
 } from "../../assessment/groups/Styled";
@@ -116,14 +118,18 @@ const AssignAssessments = ({...props}) =>{
             setTimeout(()=>{
                 onCloseModal()
                 setLoadAdd(false)
-                props.actionForm(itemsKeys)
+                if(isIndividual){
+                    props.actionForm({assessments: itemsKeys})
+                }else if(!isIndividual){
+                    props.actionForm({groups_assessment: itemsKeys})
+                }
             },2000)
         }else{
             message.error("Selecciona al menos una encuesta")
         }
     }
 
-    const columns = [
+    const columnsInvidual = [
         {
             title: "Encuesta",
             render: (item) => {
@@ -146,6 +152,35 @@ const AssignAssessments = ({...props}) =>{
             },
         }
     ]
+
+    const columnsGroup = [
+        {
+            title: "Grupo",
+            render: (item) => {
+                return (
+                    <div>
+                        {item.group_assessment?.name}
+                    </div>
+                );
+            },
+            
+        },
+        {
+            title: "Encuestas",
+            render: (item) => {
+                return (
+                    <Tag
+                        icon={<FileTextOutlined style={{color:'#52c41a'}} />}
+                        color={'green'}
+                        style={{fontSize: '14px'}}
+                    >
+                        {item.group_assessment ? item.group_assessment.assessments.length : 0}
+                    </Tag>
+                );
+            },
+        }
+    ]
+
 
     const rowSelection = {
         columnTitle: 'Seleccionar',
@@ -187,8 +222,13 @@ const AssignAssessments = ({...props}) =>{
 
     const onSearchByName = (e) =>{
         const list = getListAssigned();
-        if((e.target.value).trim()){
-            let results = list.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
+        if(e.target.value){
+            let results = [];
+            if(isIndividual){
+                results = list.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
+            }else if(!isIndividual){
+                results = list.filter(item => item.group_assessment.name.toLowerCase().includes(e.target.value.toLowerCase()));
+            }
             setListSurveys(results)
         }else{
             setListSurveys(list)
@@ -202,7 +242,11 @@ const AssignAssessments = ({...props}) =>{
 
     const resetFilters = () =>{
         formGroup.resetFields();
-        getSurveys(currentNode.id, "")
+        if(isIndividual){
+            getSurveys(currentNode.id, "")
+        }else if(!isIndividual){
+            getGroupsSurveys(currentNode.id, "")
+        }
     }
 
     return(
@@ -232,34 +276,25 @@ const AssignAssessments = ({...props}) =>{
                     {isIndividual && (
                         <Col span={12}>
                             <Form.Item name="category" style={{marginBottom: '0px'}}>
-                                <Input.Group compact style={{width: '100%'}}>
-                                    <CompactSelect
-                                        showSearch
-                                        onChange={onChangeCategory}
-                                        placeholder={'Seleccionar categoría'}
-                                        notFoundContent='No se encontraron resultados'
-                                        optionFilterProp="children"
-                                        filterOption={(input, option) =>
-                                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        }
-                                        filterSort={(optionA, optionB) =>
-                                            optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
-                                        }
-                                    >
-                                        {listCategories.map(item =>(
-                                            <Option key={item.id} value={item.id}>
-                                                {item.name}
-                                            </Option>
-                                        ))}
-                                    </CompactSelect>
-                                    <Tooltip title={'Borrar filtros'}>
-                                        <CompactButton
-                                            icon={
-                                                <ClearOutlined onClick={()=>resetFilters()}/>
-                                            }
-                                        />
-                                    </Tooltip>
-                                </Input.Group>
+                                <Select
+                                    showSearch
+                                    onChange={onChangeCategory}
+                                    placeholder={'Seleccionar categoría'}
+                                    notFoundContent='No se encontraron resultados'
+                                    optionFilterProp="children"
+                                    filterOption={(input, option) =>
+                                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    }
+                                    filterSort={(optionA, optionB) =>
+                                        optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
+                                    }
+                                >
+                                    {listCategories.map(item =>(
+                                        <Option key={item.id} value={item.id}>
+                                            {item.name}
+                                        </Option>
+                                    ))}
+                                </Select>
                             </Form.Item>
                         </Col>
                     )}
@@ -270,6 +305,13 @@ const AssignAssessments = ({...props}) =>{
                         >
                             Seleccionar todos
                         </CustomCheck>
+                        <Tooltip title={'Borrar filtros'} placement={'right'}>
+                            <ButtonDanger
+                                size={'small'}
+                                icon={<ClearOutlined/>}
+                                onClick={()=>resetFilters()}
+                            />
+                        </Tooltip>
                     </Col>
                     <ColButtons span={12}>
                         <Radio.Group
@@ -285,7 +327,11 @@ const AssignAssessments = ({...props}) =>{
                     <Col span={24}>
                         <Table
                             rowKey={'id'}
-                            columns={columns}
+                            columns={
+                                isIndividual ?
+                                columnsInvidual :
+                                columnsGroup
+                            }
                             showHeader={false}
                             dataSource={
                                 listSurveys.results ?
