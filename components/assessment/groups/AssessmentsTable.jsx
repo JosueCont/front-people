@@ -255,7 +255,6 @@ const AssessmentsTable = ({...props}) => {
               close={HandleClose}
               loadData={itemGroup}
               actionForm={onFinishEdit}
-              surveyList={props.surveyList}
           />
         )}
         {showModalSurveys && (

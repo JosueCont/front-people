@@ -94,12 +94,14 @@ const AssessmentsGroup = ({...props}) =>{
         },
         {
             title: "Acciones",
-            width: 100,
+            width: 50,
             render: (item, record, index) => {
                 return (
-                    <ButtonDanger onClick={()=>deleteItem(index)}>
-                        <DeleteOutlined/>
-                    </ButtonDanger>
+                    <ButtonDanger
+                        size={'small'}
+                        icon={<DeleteOutlined/>}
+                        onClick={()=>deleteItem(index)}
+                    />
                 )
             },
         }
@@ -173,6 +175,7 @@ const AssessmentsGroup = ({...props}) =>{
                             <Table
                                 rowKey={'id'}
                                 columns={colums}
+                                showHeader={false}
                                 dataSource={surveysTable}
                                 size={'small'}
                                 loading={loading}
@@ -182,7 +185,7 @@ const AssessmentsGroup = ({...props}) =>{
                                     "No se encontraron resultados."
                                 }}
                                 scroll={{y: 200}}
-                                pagination={surveysTable.length > 10 ? { position: ['bottomLeft'] }: false}
+                                pagination={{ position: ['bottomLeft'], hideOnSinglePage: true }}
                             />
                         </Form.Item>
                     </Col>

@@ -55,11 +55,17 @@ class WebApiAssessment {
         return Axios.get(`${API_ASSESSMENT}/assessments/assessment/${id}/`);
     }
 
-    static getAssignByPerson (data) {
-        return WebApi.ApisType(`/person/person-assessments/my_profile/`, "post", data);
+    static getAssignByPerson (id, queryParam) {
+        return WebApi.ApisType(`/person/person-assessments/?person=${id}${queryParam}`, "get");
+    }
+    static getAssignByGroup (id, queryParam) {
+        return WebApi.ApisType(`/person/group-person-assessment/?group_person=${id}${queryParam}`, "get");
     }
     static getCategoriesAssessment () {
         return Axios.get(`${API_ASSESSMENT}/assessments/category-assessment/`);
+    }
+    static assignAssessmentsGroup (data) {
+        return WebApi.ApisType(`/person/group-person-assessment/`, "post", data);
     }
 }
 

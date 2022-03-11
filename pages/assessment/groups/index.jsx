@@ -18,13 +18,13 @@ const GroupsKuiz = () =>{
     useEffect(()=>{
         if(currenNode?.id){
             getListGroups(currenNode.id, "", "")
-            getSurveys(currenNode.id);
+            getSurveys(currenNode.id, "");
         }
     },[currenNode])
 
-    const getSurveys = async (nodeId) => {
+    const getSurveys = async (nodeId, queryParam) => {
         try {
-          let response = await WebApiAssessment.getListSurveys(nodeId);
+          let response = await WebApiAssessment.getListSurveys(nodeId, queryParam);
           setSurveyList(response.data);
         } catch (error) {
           console.log(error);
@@ -131,7 +131,6 @@ const GroupsKuiz = () =>{
                     getListGroups={getListGroups}
                     updateGroup={updateGroup}
                     deteleGroup={deleteGroup}
-                    surveyList={surveyList}
                 />
             </div>
         </MainLayout>
