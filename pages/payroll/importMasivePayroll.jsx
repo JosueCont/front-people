@@ -13,6 +13,7 @@ import {
   Radio,
   Space,
   Switch,
+  Select,
 } from "antd";
 import { DollarCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
@@ -24,6 +25,8 @@ import ModalUploadFileDrag from "../../components/modal/ModalUploadFileDrag";
 import { useEffect } from "react";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import { messageError, messageUploadSuccess } from "../../utils/constant";
+import SelectTypeTax from "../../components/selects/SelectTypeTax";
+import { ruleRequired } from "../../utils/rules";
 
 const ImportMasivePayroll = ({ ...props }) => {
   const router = useRouter();
@@ -34,6 +37,7 @@ const ImportMasivePayroll = ({ ...props }) => {
   const [viewModal, setViewModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
   const [periodSelcted, setPeriodSelected] = useState(null);
+  const [activeCalendar, setActiveCalendar] = useState(false);
 
   const columns = [
     {
@@ -101,7 +105,11 @@ const ImportMasivePayroll = ({ ...props }) => {
       .then((response) => {
         setLoading(false);
         message.success(messageUploadSuccess);
+        calendar.setFieldsValue({
+          period: response.data.cfdis[0].headers.payment_date.substring(0, 4),
+        });
         setCompanyImport(response.data);
+        console.log(response.data);
       })
       .catch((error) => {
         setLoading(false);
@@ -119,7 +127,7 @@ const ImportMasivePayroll = ({ ...props }) => {
   };
 
   const sendCreateCompany = (data) => {
-    data.calendar = { name: "Prueba" };
+    data.active = activeCalendar;
     console.log("SEND OBJ-->> ", data);
   };
 
@@ -226,12 +234,14 @@ const ImportMasivePayroll = ({ ...props }) => {
                         layout="vertical"
                         key="formFilter"
                         className={"formFilter"}
+                        onFinish={sendCreateCompany}
                       >
                         <Row gutter={[16, 6]}>
                           <Col style={{ display: "flex" }}>
                             <Form.Item
                               name={"name"}
                               label="Nombre de calendario"
+                              rules={[ruleRequired]}
                             >
                               <Input value={companyImport.company.reason} />
                             </Form.Item>
@@ -240,59 +250,61 @@ const ImportMasivePayroll = ({ ...props }) => {
                             <Form.Item label="Periocidad">
                               <Input
                                 readOnly
-                                value={companyImport.periodicity}
+                                value={
+                                  props.payment_periodicity.find(
+                                    (item) =>
+                                      item.id === companyImport.periodicity
+                                  ).description
+                                }
                               />
                             </Form.Item>
                           </Col>
                           <Col style={{ display: "flex" }}>
-                            <Form.Item
-                              name={"type_tax"}
-                              label="Tipo de impuesto"
-                            >
-                              <Input />
-                            </Form.Item>
+                            <SelectTypeTax />
                           </Col>
                           <Col style={{ display: "flex" }}>
-                            <Form.Item name={"period"} label="Periodo">
-                              <Input value={2022} />
+                            <Form.Item name="period" label="Periodo">
+                              <Input readOnly />
                             </Form.Item>
                           </Col>
 
                           <Col style={{ display: "flex" }}>
                             <Form.Item name={"active"} label="¿Activo?">
-                              <Switch />
+                              <Switch
+                                onChange={(value) => setActiveCalendar(value)}
+                              />
                             </Form.Item>
                           </Col>
                         </Row>
+                        <Row gutter={24} justify="end">
+                          <Space>
+                            <Button
+                              style={{
+                                background: "#fa8c16",
+                                fontWeight: "bold",
+                                color: "white",
+                                marginTop: "auto",
+                              }}
+                              onClick={() => {
+                                setCompanyImport(null), setFiles([]);
+                              }}
+                            >
+                              Cancelar
+                            </Button>
+                            <Button
+                              style={{
+                                background: "#fa8c16",
+                                fontWeight: "bold",
+                                color: "white",
+                                marginTop: "auto",
+                              }}
+                              htmlType="submit"
+                            >
+                              Guardar
+                            </Button>
+                          </Space>
+                        </Row>
                       </Form>
-                      <Row gutter={24} justify="end">
-                        <Space>
-                          <Button
-                            style={{
-                              background: "#fa8c16",
-                              fontWeight: "bold",
-                              color: "white",
-                              marginTop: "auto",
-                            }}
-                            onClick={() => {
-                              setCompanyImport(null), setFiles([]);
-                            }}
-                          >
-                            Cancelar
-                          </Button>
-                          <Button
-                            style={{
-                              background: "#fa8c16",
-                              fontWeight: "bold",
-                              color: "white",
-                              marginTop: "auto",
-                            }}
-                            onClick={() => setModal(true)}
-                          >
-                            Guardar
-                          </Button>
-                        </Space>
-                      </Row>
                     </Col>
                   </>
                 ) : (
@@ -333,7 +345,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                 <Table
                   size="small"
                   columns={columns}
-                  dataSource={companyImport.cfdi}
+                  dataSource={companyImport.cfdis}
                   loading={loading}
                   scroll={{ x: 350 }}
                   locale={{
@@ -392,6 +404,8 @@ const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     taxRegime: state.fiscalStore.tax_regime,
+    payment_periodicity: state.fiscalStore.payment_periodicity,
+    type_tax: state.fiscalStore.type_tax,
   };
 };
 

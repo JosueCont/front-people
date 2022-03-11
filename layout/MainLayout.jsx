@@ -51,7 +51,6 @@ const MainLayout = ({
       if (vflavor.stylePath) link.href = routeFlavor + "/" + vflavor.stylePath;
       link.rel = "stylesheet";
       link.async = true;
-
       head.appendChild(link);
     } catch (error) {}
   }, []);

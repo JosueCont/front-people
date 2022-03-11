@@ -27,7 +27,6 @@ import {
   TableOutlined,
 } from "@ant-design/icons";
 import ModalCreateBusiness from "../../components/modal/createBusiness";
-import ModalUploadFileDrag from "../../components/modal/ModalUploadFileDrag";
 import Modal from "antd/lib/modal/Modal";
 import router from "next/router";
 
@@ -42,8 +41,6 @@ const SelectCompany = ({ ...props }) => {
   const [treeTable, setTreeTable] = useState(true);
   const [modalSwitch, setModalSwitch] = useState(false);
   const [createNode, setCreateNode] = useState(false);
-  const [modalUpload, setModalUpload] = useState(false);
-  const [files, setFiles] = useState(null);
 
   let personId = userId();
   const isBrowser = () => typeof window !== "undefined";
@@ -102,15 +99,16 @@ const SelectCompany = ({ ...props }) => {
   }, [jwt]);
 
   const getCopaniesList = async () => {
-    try {
-      let response = await WebApiPeople.getCompanys();
-      let data = response.data.results.filter((a) => a.active);
-      setDataList(data);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    }
+    await WebApiPeople.getCompanys()
+      .then((response) => {
+        let data = response.data.results.filter((a) => a.active);
+        setDataList(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
   };
 
   const setCompanySelect = async (item) => {
@@ -323,7 +321,6 @@ const SelectCompany = ({ ...props }) => {
           <Modal
             visible={modalSwitch}
             onCancel={switchModal}
-            footer={[]}
             title={<b>Agregar empresa</b>}
             footer={[
               <Button
