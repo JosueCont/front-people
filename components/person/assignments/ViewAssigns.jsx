@@ -14,13 +14,25 @@ import WebApiAssessment from '../../../api/WebApiAssessment';
 import AssignsIndividuales from './AssignsInviduales';
 import AssignsGroup from './AssignsGroup';
 
-const ViewAssigns = ({visible, setVisible, item, widthModal = 600, ...props}) =>{
+const ViewAssigns = ({
+    item,
+    visible,
+    itemList,
+    setVisible,
+    itemSelected,
+    widthModal = 600,
+    onChangeType,
+    actionDelete,
+    getAssigns,
+    loadAssign,
+    ...props
+}) =>{
 
     const { TabPane } = Tabs;
     const [defaultKey, setDefaultKey] = useState("1");
 
     const onChangeTab = (key) =>{
-        props.onChangeType(key)
+        onChangeType(key)
         setDefaultKey(key)
     }
 
@@ -45,18 +57,20 @@ const ViewAssigns = ({visible, setVisible, item, widthModal = 600, ...props}) =>
                     <Tabs activeKey={defaultKey} onChange={onChangeTab} centered>
                         <TabPane tab="Inviduales" key="1">
                             <AssignsIndividuales
-                                listAssigns={props.itemList}
-                                itemId={props.itemSelected?.id}
-                                getAssigns={props.getAssigns}
-                                loading={props.loadAssign}
+                                listAssigns={itemList}
+                                itemId={itemSelected?.id}
+                                getAssigns={getAssigns}
+                                loading={loadAssign}
+                                actionDelete={actionDelete}
                             />
                         </TabPane>
                         <TabPane tab="Grupales" key="2">
                             <AssignsGroup
-                                listAssigns={props.itemList}
-                                itemId={props.itemSelected?.id}
-                                getAssigns={props.getAssigns}
-                                loading={props.loadAssign}
+                                listAssigns={itemList}
+                                itemId={itemSelected?.id}
+                                getAssigns={getAssigns}
+                                loading={loadAssign}
+                                actionDelete={actionDelete}
                             />
                         </TabPane>
                     </Tabs>

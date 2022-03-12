@@ -802,6 +802,36 @@ const homeScreen = ({ ...props }) => {
     }
   };
 
+  const successMessages = (ids) =>{
+    if(ids.length > 1){
+      return message.success("Asignaciones eliminadas")
+    }else{
+      return message.success("Asignación eliminada")
+    }
+  }
+
+  const errorMessages = (ids) =>{
+    if(ids.length > 1){
+        return message.error("Asignaciones no eliminadas")
+    }else{
+        return message.error("Asignación no eliminada")
+    }
+  }
+
+  const deleteAssigns = async (ids, type) =>{
+    setLoadAssign(true)
+    try {
+      console.log('ids que llegan---->', ids)
+      console.log('el type que llega----->', type)
+      successMessages(ids)
+      getAssigns(itemPerson.id, "", type)
+    } catch (e) {
+      console.log(e)
+      errorMessages(ids)
+      setLoadAssign(false)
+    }
+  }
+
   // const onFinishAssignOneTest = async (value) =>{
   //   setLoading(true)
   //   const ids = getOnlyIds();
@@ -1209,6 +1239,7 @@ const homeScreen = ({ ...props }) => {
             getAssigns={getAssigns}
             onChangeType={onChangeTypeAssign}
             loadAssign={loadAssign}
+            actionDelete={deleteAssigns}
           />
         )}
       </MainLayout>

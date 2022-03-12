@@ -42,6 +42,7 @@ const AssignAssessments = ({...props}) =>{
     const [loading, setLoading] = useState(false);
     const [listCategories, setListCategories] = useState([]);
     const [isSelectAll, setIsSelectAll] = useState(false);
+    const [copyList, setCopyList] = useState([]);
 
     useEffect(()=>{
         if(currentNode?.id){
@@ -65,7 +66,8 @@ const AssignAssessments = ({...props}) =>{
         setLoading(true)
         try {
             let response = await WebApiAssessment.getListSurveys(nodeId, queryParam);
-            setListSurveys(response.data);
+            setListSurveys(response.data)
+            setCopyList(response.data)
             setLoading(false)
         } catch (e) {
             console.log(e);
@@ -84,6 +86,7 @@ const AssignAssessments = ({...props}) =>{
         try {
             let response = await WebApiAssessment.getGroupsAssessments(data);
             setListSurveys(response.data)
+            setCopyList(response.data)
             setLoading(false)
         } catch (e) {
         console.log(e);
@@ -93,11 +96,19 @@ const AssignAssessments = ({...props}) =>{
     }
 
     const getListAssigned = () =>{
-        let copyList =
+        let list =
             listSurveys.results ?
             listSurveys.results :
             listSurveys;
-        return copyList;
+        return list;
+    }
+
+    const getListCopy = () =>{
+        let list =
+            copyList.results ?
+            copyList.results :
+            copyList;
+        return list;
     }
 
     const resetValues = () =>{
@@ -221,15 +232,15 @@ const AssignAssessments = ({...props}) =>{
     }
 
     const onSearchByName = (e) =>{
-        const list = getListAssigned();
-        if(e.target.value){
-            let results = [];
+        const list = getListCopy();
+        if((e.target.value).trim()){
             if(isIndividual){
-                results = list.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
+                let results = list.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
+                setListSurveys(results)
             }else if(!isIndividual){
-                results = list.filter(item => item.group_assessment.name.toLowerCase().includes(e.target.value.toLowerCase()));
+                let results = list.filter(item => item.group_assessment.name.toLowerCase().includes(e.target.value.toLowerCase()));
+                setListSurveys(results)
             }
-            setListSurveys(results)
         }else{
             setListSurveys(list)
         }
@@ -333,11 +344,7 @@ const AssignAssessments = ({...props}) =>{
                                 columnsGroup
                             }
                             showHeader={false}
-                            dataSource={
-                                listSurveys.results ?
-                                listSurveys.results :
-                                listSurveys
-                            }
+                            dataSource={getListAssigned()}
                             loading={loading}
                             size={'small'}
                             locale={{
