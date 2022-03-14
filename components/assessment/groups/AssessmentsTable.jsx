@@ -120,7 +120,7 @@ const AssessmentsTable = ({...props}) => {
 
   const onFinishEdit = async (values) =>{
     props.setLoading(true)
-    props.updateGroup(values, itemGroup.id)
+    props.updateGroup(values, itemGroupPeople.id)
   }
 
   const getOnlyGroup = async (id) =>{
