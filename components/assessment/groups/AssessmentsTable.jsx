@@ -43,9 +43,9 @@ const AssessmentsTable = ({...props}) => {
   const [groupsKeys, setGroupsKeys] = useState([]);
 
   const HandleUpdateGroup = async (item) => {
-    // let resp = await getOnlyGroup(item.group_kuiz_id);
-    // setItemGroupPeople(item)
-    setItemGroup(item)
+    /* let resp = await getOnlyGroup(item.group_kuiz_id); */
+    setItemGroupPeople(item)
+    setItemGroup(item.group_assessment)
     setShowModalEdit(true)
   }
 
@@ -106,6 +106,11 @@ const AssessmentsTable = ({...props}) => {
       }
     }
   },[openModalDelete])
+
+  useEffect(() => {
+    console.log('surveyList', props.surveyList)
+  }, [props])
+  
 
   const removeGroups = async (ids) =>{
     props.setLoading(true)
@@ -172,13 +177,8 @@ const AssessmentsTable = ({...props}) => {
   const columns = [
       {
         title: "Nombre",
-        render: (item) => {
-          return (
-            <div>
-              {item.group_assessment?.name}
-            </div>
-          );
-        },
+        key: 'Name',
+        dataIndex: ['group_assessment', 'name']
       },
       {
         title: "Encuestas",

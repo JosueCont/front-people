@@ -106,7 +106,9 @@ const GroupsPeople = () =>{
     }
 
     const onFinishAssign = async (values, ids) =>{
-        const body = {...values, groups_person: ids, node: currenNode?.id}
+        console.log('vaalues',values);
+        console.log('ids',ids);
+        const body = { ...values, groups_person: ids, node: currenNode?.id}
         try {
             await WebApiAssessment.assignAssessmentsGroup(body)
             getListGroups(currenNode?.id,"","")

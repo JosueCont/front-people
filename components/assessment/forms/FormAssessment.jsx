@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Modal, message, Upload } from "antd";
+import { Form, Input, Button, Modal, message, Upload, Select,Col } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { connect, useDispatch } from "react-redux";
 import { withAuthSync, userCompanyId } from "../../../libs/auth";
 import FormItemHTML from "./FormItemHtml";
+import WebApiAssessment from "../../../api/WebApiAssessment";
 import {
   assessmentCreateAction,
   assessmentUpdateAction,
@@ -22,16 +23,19 @@ const FormAssessment = ({ ...props }) => {
   const [instruccions, setInstruccions] = useState(
     props.loadData.instructions_es ? props.loadData.instructions_es : ""
   );
+  // const currentNode = useSelector(state => state.userStore.current_node)
   const [imageUrl, setImageUrl] = useState(null);
   const [imagen, setImagen] = useState(null);
   const [loadingLogo, setLoadingLogo] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [listCategories, setListCategories] = useState([]);
 
   useEffect(() => {
     if (props.loadData) {
       formAssessment.setFieldsValue({
         code: props.loadData.code,
         name: props.loadData.name,
+        categories: props.loadData.categories.at(-1),
       });
       setImageUrl(props.loadData.image);
     } else {
@@ -47,11 +51,26 @@ const FormAssessment = ({ ...props }) => {
     setLoading(props.assessmentStore.fetching);
   }, [props.assessmentStore]);
 
+  useEffect(()=>{
+    getCategories();
+  },[props.visible])
+
+  const getCategories = async () =>{
+    try {
+        let response = await WebApiAssessment.getCategoriesAssessment();
+        setListCategories(response.data?.results)
+    } catch (e) {
+        setListCategories([])
+        console.log(e)
+    }
+}
+
   const onFinish = (values) => {
     let data = new FormData();
     imagen && data.append("image", imagen);
     values.code && data.append("code", values.code);
     values.name && data.append("name", values.name);
+    values.categories && data.append("categories", [values.categories]);
     descripcion && data.append("description_es", descripcion);
     instruccions && data.append("instructions_es", instruccions);
     if (props.loadData) {
@@ -171,6 +190,28 @@ const FormAssessment = ({ ...props }) => {
         <Form.Item name="name" label={"Nombre"} rules={[ruleRequired]}>
           <Input maxLength={200} allowClear={true} placeholder="Nombre" />
         </Form.Item>
+        
+        <Form.Item name="categories" label={"Categoría"}  >
+        <Select
+          showSearch
+          placeholder={'Seleccionar categoría'}
+          notFoundContent='No se encontraron resultados'
+          optionFilterProp="children"
+          filterOption={(input, option) =>
+              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
+          filterSort={(optionA, optionB) =>
+              optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
+          }
+        >
+          {listCategories.map(item =>(
+              <Option key={item.id} value={item.id}>
+                  {item.name}
+              </Option>
+          ))}
+        </Select>
+        </Form.Item>
+        
         <FormItemHTML
           html={descripcion}
           setHTML={setDescripcion}

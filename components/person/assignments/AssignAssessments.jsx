@@ -146,7 +146,11 @@ const AssignAssessments = ({...props}) =>{
             render: (item) => {
                 return (
                     <div>
-                        {item.name}
+                        {
+                            isIndividual ? 
+                            item.name :
+                            item.group_assessment ? item.group_assessment.name : ''
+                        }
                     </div>
                 );
             },

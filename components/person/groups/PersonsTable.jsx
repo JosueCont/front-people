@@ -22,6 +22,7 @@ import {
     UserOutlined,
     EllipsisOutlined
 } from "@ant-design/icons";
+import { connect } from "react-redux";
 import ViewMembers from "./ViewMembers";
 import DeleteGroups from "../../assessment/groups/DeleteGroups";
 import PersonsGroup from "./PersonsGroup";
@@ -29,9 +30,9 @@ import AssignAssessments from "../assignments/AssignAssessments";
 import ViewAssigns from "../assignments/ViewAssigns";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 
-const PersonsTable = ({...props}) => {
+const PersonsTable = ({permissions, ...props}) => {
 
-  const permissions = useSelector(state => state.userStore.permissions.person)
+  /* const permissions = useSelector(state => state.userStore.permissions.person) */
   const currenNode = useSelector(state => state.userStore.current_node)
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
@@ -208,6 +209,13 @@ const PersonsTable = ({...props}) => {
     return (
       <Menu>
         {permissions.create && (
+          <Menu.Item
+            key={3}
+            onClick={() =>  groupsToDelete.length < 0 ? message.error("Selecciona al menos un grupo") : setOpenModalAssign(true) }>
+            Asignar evaluaciónes
+          </Menu.Item>
+        )}
+        {permissions?.delete && (
           <Menu.Item
             key={1}
             onClick={() => setOpenModalAssign(true)}>
@@ -407,4 +415,12 @@ const PersonsTable = ({...props}) => {
   )
 }
 
-export default PersonsTable
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
+    permissions: state.userStore.permissions.person,
+  };
+};
+
+export default connect(mapState)(PersonsTable);

@@ -93,7 +93,11 @@ const AssignsIndividuales = ({getAssigns, itemId, actionDelete, loading, listAss
             render: (item) => {
                 return (
                     <div>
-                        {item.assessment?.name}
+                        { 
+                            item.assessment ? 
+                            item.assessment.name :
+                            item.group_assessment ? item.group_assessment.name : ''
+                        }
                     </div>
                 );
             },
@@ -117,7 +121,7 @@ const AssignsIndividuales = ({getAssigns, itemId, actionDelete, loading, listAss
     return(
         <>
             <Row gutter={[8,16]}>
-                {!loading && listAssigns.results?.length > 0 && (
+                {!props.loading && props.listAssigns && props.listAssigns.results && props.listAssigns.results.length > 0 && (
                     <>
                         <Col span={12}>
                             <CheckAll checked={isSelectAll} onChange={onSelectAll}>
