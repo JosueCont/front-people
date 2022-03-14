@@ -19,7 +19,7 @@ import {
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import DeleteAssigns from './DeleteAssigns';
 
-const AssignsIndividuales = ({...props}) =>{
+const AssignsIndividuales = ({getAssigns, itemId, actionDelete, loading, listAssigns, ...props}) =>{
 
     const { confirm } = Modal;
     const [isSelectAll, setIsSelectAll] = useState(false);
@@ -40,9 +40,9 @@ const AssignsIndividuales = ({...props}) =>{
         if (pagination.current > 1) {
             const offset = (pagination.current - 1) * 10;
             const queryParam = `&limit=10&offset=${offset}`;
-            props.getAssigns(props.itemId, queryParam)
+            getAssigns(itemId, queryParam, "")
         } else if (pagination.current == 1) {
-            props.getAssigns(props.itemId, "")
+            getAssigns(itemId, "", "")
         }
     }
 
@@ -57,7 +57,7 @@ const AssignsIndividuales = ({...props}) =>{
         if(e.target.checked){
             let keys  = [];
             let items = [];
-            props.listAssigns?.results.map((item)=>{
+            listAssigns.results?.map((item)=>{
                 keys.push(item.id)
                 items.push(item)
             })
@@ -70,8 +70,7 @@ const AssignsIndividuales = ({...props}) =>{
     }
 
     const confirmDeleteAssigns = (ids) => {
-        props.getAssigns(props.itemId)
-        console.log(ids)
+        actionDelete(ids,"")
     }
 
     const deleteOneAssign = (item) =>{
@@ -118,7 +117,7 @@ const AssignsIndividuales = ({...props}) =>{
     return(
         <>
             <Row gutter={[8,16]}>
-                {!props.loading && props.listAssigns.results.length > 0 && (
+                {!loading && listAssigns.results?.length > 0 && (
                     <>
                         <Col span={12}>
                             <CheckAll checked={isSelectAll} onChange={onSelectAll}>
@@ -134,21 +133,21 @@ const AssignsIndividuales = ({...props}) =>{
                 )}
                 <Col span={24}>
                     <CustomTable
-                        dataSource={props.listAssigns?.results}
+                        dataSource={listAssigns?.results}
                         showHeader={false}
                         columns={columns}
-                        loading={props.loading}
+                        loading={loading}
                         scroll={{y:300}}
                         size={'small'}
                         rowKey={'id'}
                         pagination={{
                             pageSize: 10,
-                            total: props.listAssigns?.count,
+                            total: listAssigns?.count,
                             hideOnSinglePage: true,
                             showSizeChanger: false
                         }}
                         locale={{
-                            emptyText: props.loading ?
+                            emptyText: loading ?
                             "Cargando..." :
                             "No se encontraron resultados."
                         }}

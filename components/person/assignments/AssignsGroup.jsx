@@ -20,7 +20,7 @@ import WebApiAssessment from '../../../api/WebApiAssessment';
 import DeleteAssigns from './DeleteAssigns';
 
 
-const AssignsGroup = ({...props}) =>{
+const AssignsGroup = ({getAssigns, itemId, listAssigns, loading, actionDelete, ...props}) =>{
 
     const [isSelectAll, setIsSelectAll] = useState(false);
     const [itemsKeys, setItemsKeys] = useState([]);
@@ -40,9 +40,9 @@ const AssignsGroup = ({...props}) =>{
         if (pagination.current > 1) {
             const offset = (pagination.current - 1) * 10;
             const queryParam = `&limit=10&offset=${offset}`;
-            props.getAssigns(props.itemId, queryParam)
+            getAssigns(itemId, queryParam, "&groups")
         } else if (pagination.current == 1) {
-            props.getAssigns(props.itemId, "")
+            getAssigns(itemId, "", "&groups")
         }
     }
 
@@ -57,7 +57,7 @@ const AssignsGroup = ({...props}) =>{
         if(e.target.checked){
             let keys  = [];
             let items = [];
-            props.listAssigns?.results.map((item)=>{
+            listAssigns.results?.map((item)=>{
                 keys.push(item.id)
                 items.push(item)
             })
@@ -70,8 +70,7 @@ const AssignsGroup = ({...props}) =>{
     }
 
     const confirmDeleteAssigns = (ids) => {
-        props.getAssigns(props.itemId)
-        console.log(ids)
+        actionDelete(ids, "&groups")
     }
 
     const deleteOneAssign = (item) =>{
@@ -94,7 +93,7 @@ const AssignsGroup = ({...props}) =>{
             render: (item) => {
                 return (
                     <div>
-                        {item.assessment?.name}
+                        {item.group_assessment?.name}
                     </div>
                 );
             },
@@ -118,7 +117,7 @@ const AssignsGroup = ({...props}) =>{
     return(
         <>
             <Row gutter={[8,16]}>
-                {!props.loading && props.listAssigns.results.length > 0 && (
+                {!loading && listAssigns.results?.length > 0 && (
                     <>
                         <Col span={12}>
                             <CheckAll checked={isSelectAll} onChange={onSelectAll}>
@@ -134,21 +133,21 @@ const AssignsGroup = ({...props}) =>{
                 )}
                 <Col span={24}>
                     <CustomTable
-                        dataSource={props.listAssigns?.results}
+                        dataSource={listAssigns?.results}
                         showHeader={false}
-                        loading={props.loading}
+                        loading={loading}
                         columns={columns}
                         scroll={{y:300}}
                         size={'small'}
                         rowKey={'id'}
                         pagination={{
                             pageSize: 10,
-                            total: props.listAssigns?.count,
+                            total: listAssigns?.count,
                             hideOnSinglePage: true,
                             showSizeChanger: false
                         }}
                         locale={{
-                            emptyText: props.loading ?
+                            emptyText: loading ?
                             "Cargando..." :
                             "No se encontraron resultados."
                         }}

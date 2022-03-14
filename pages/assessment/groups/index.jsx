@@ -131,6 +131,7 @@ const GroupsKuiz = () =>{
                     getListGroups={getListGroups}
                     updateGroup={updateGroup}
                     deteleGroup={deleteGroup}
+                    surveyList={surveyList}
                 />
             </div>
         </MainLayout>
