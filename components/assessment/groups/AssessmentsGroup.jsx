@@ -46,7 +46,7 @@ const AssessmentsGroup = ({...props}) =>{
         let select = [];
         let table = [];        
         props.surveyList.map((a)=>{
-            let result = dataTable.some(b => a.id === b.id);
+            let result = dataTable?.some(b => a.id === b.id);
             if(result){
                 table.push(a)
             }else{

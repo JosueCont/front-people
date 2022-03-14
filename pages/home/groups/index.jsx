@@ -108,14 +108,12 @@ const GroupsPeople = () =>{
     const onFinishAssign = async (values, ids) =>{
         console.log('vaalues',values);
         console.log('ids',ids);
-        const body = {assessments: values, groups_person: ids, node: currenNode?.id}
+        const body = { ...values, groups_person: ids, node: currenNode?.id}
         try {
-            let response = await WebApiAssessment.assignAssessmentsGroup(body)
-            console.log('si le asigna------->', response)
+            await WebApiAssessment.assignAssessmentsGroup(body)
             getListGroups(currenNode?.id,"","")
             message.success("Evaluaciones asignadas")
         } catch (e) {
-            console.log('no le asigna------>', e.response)
             setLoading(false)
             message.error("Evaluaciones no asignadas")
         }

@@ -45,6 +45,7 @@ const PersonsTable = ({permissions, ...props}) => {
   const [groupsKeys, setGroupsKeys] = useState([]);
   const [modalViewAssign, setModalViewAssign] = useState(false);
   const [listAssignGroup, setListAssignGroup] = useState([]);
+  const [loadAssign, setLoadAssign] = useState(false);
 
   const HandleUpdateGroup = async (item) => {
     setItemGroup(item)
@@ -73,18 +74,30 @@ const PersonsTable = ({permissions, ...props}) => {
 
   const OpenModalAssigns = (item) =>{
     setItemGroup(item)
-    getAssigns(item.id, "")
+    getAssigns(item.id, "", "")
   }
 
-  const getAssigns = async (id, queryParam) =>{
-    try {
-      let response = await WebApiAssessment.getAssignByGroup(id, queryParam)
-      setListAssignGroup(response.data)
-      setModalViewAssign(true)
-    } catch (e) {
-      setListAssignGroup([])
-      setModalViewAssign(false)
-      console.log(e)
+  const successMessages = (ids) =>{
+    if(ids.length > 1){
+      return message.success("Asignaciones eliminadas")
+    }else{
+      return message.success("Asignación eliminada")
+    }
+  }
+
+  const errorMessages = (ids) =>{
+    if(ids.length > 1){
+        return message.error("Asignaciones no eliminadas")
+    }else{
+        return message.error("Asignación no eliminada")
+    }
+  }
+
+  const onChangeTypeAssign = (key) =>{
+    if(key == 1){
+      getAssigns(itemGroup.id, "", "")
+    }else if(key  == 2){
+      getAssigns(itemGroup.id, "", "&groups")
     }
   }
 
@@ -163,6 +176,35 @@ const PersonsTable = ({permissions, ...props}) => {
     resetValuesDelete();
   }
 
+  const getAssigns = async (id, queryParam, type) =>{
+    setLoadAssign(true)
+    setModalViewAssign(true)
+    try {
+      let response = await WebApiAssessment.getAssignByGroup(id, queryParam, type)
+      setListAssignGroup(response.data)
+      setLoadAssign(false)
+    } catch (e) {
+      setListAssignGroup([])
+      // setModalViewAssign(false)
+      setLoadAssign(false)
+      console.log(e)
+    }
+  }
+
+  const deleteAssigns = async (ids, type) =>{
+    setLoadAssign(true)
+    try {
+      console.log('ids que llegan---->', ids)
+      console.log('el type que llega----->', type)
+      successMessages(ids)
+      getAssigns(itemGroup.id, "", type)
+    } catch (e) {
+      console.log(e)
+      errorMessages(ids)
+      setLoadAssign(false)
+    }
+  }
+
   const menuTable = () => {
     return (
       <Menu>
@@ -176,6 +218,13 @@ const PersonsTable = ({permissions, ...props}) => {
         {permissions?.delete && (
           <Menu.Item
             key={1}
+            onClick={() => setOpenModalAssign(true)}>
+            Asignar evaluaciónes
+          </Menu.Item>
+        )}
+        {permissions?.delete && (
+          <Menu.Item
+            key={2}
             icon={<DeleteOutlined/>}
             onClick={()=>setOpenModalDelete(true)}
           >
@@ -358,6 +407,9 @@ const PersonsTable = ({permissions, ...props}) => {
           itemList={listAssignGroup}
           itemSelected={itemGroup}
           getAssigns={getAssigns}
+          onChangeType={onChangeTypeAssign}
+          loadAssign={loadAssign}
+          actionDelete={deleteAssigns}
         />
     </>
   )

@@ -19,7 +19,9 @@ import {
     EditOutlined,
     DeleteOutlined,
     EyeOutlined,
-    EllipsisOutlined
+    EllipsisOutlined,
+    UserOutlined,
+    FileTextOutlined
 } from "@ant-design/icons";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewSurveys from "./ViewSurveys";
@@ -58,9 +60,10 @@ const AssessmentsTable = ({...props}) => {
   }
 
   const openModalSurveys = async (item)=>{
-    let resp = await getOnlyGroup(item.group_kuiz_id);
-    if(resp.assessments?.length > 0){
-      setItemGroup(resp)
+    // let resp = await getOnlyGroup(item.group_kuiz_id);
+    console.log('item seleccionado---------->', item)
+    if(item.group_assessment.assessments.length > 0){
+      setItemGroup(item)
       setShowModalSurveys(true)
     }else{
       setItemGroup({})
@@ -117,7 +120,7 @@ const AssessmentsTable = ({...props}) => {
 
   const onFinishEdit = async (values) =>{
     props.setLoading(true)
-    props.updateGroup(values, itemGroupPeople.id)
+    props.updateGroup(values, itemGroup.id)
   }
 
   const getOnlyGroup = async (id) =>{
@@ -181,13 +184,20 @@ const AssessmentsTable = ({...props}) => {
         title: "Encuestas",
         render: (item) => {
           return (
-            <Space>
-              {item.group_kuiz_id &&(
-                <Tooltip title='Ver encuestas'>
-                    <EyeOutlined
-                      style={{cursor: 'pointer'}}
-                      onClick={()=>openModalSurveys(item)}
-                    />
+             <Space>
+              <Tag
+                icon={<FileTextOutlined style={{color:'#52c41a'}} />}
+                color={'green'}
+                style={{fontSize: '14px'}}
+              >
+                {item.group_assessment ? item.group_assessment.assessments.length : 0}
+              </Tag>
+              {item.group_assessment?.assessments.length > 0 && (
+                <Tooltip title='Ver integrantes'>
+                  <EyeOutlined
+                    style={{cursor: 'pointer'}}
+                    onClick={()=>openModalSurveys(item)}
+                  />
                 </Tooltip>
               )}
             </Space>
