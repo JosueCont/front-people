@@ -29,6 +29,11 @@ const AssessmentsGroup = ({...props}) =>{
     const [loadAdd, setLoadAdd] = useState(false);
 
     useEffect(() => {
+      console.log('props',props)
+    }, [props])
+    
+
+    useEffect(() => {
         if(props.surveyList && props.loadData.assessments){
             formGroup.setFieldsValue({name: props.loadData.name})
             filterSurveys(props.loadData.assessments)

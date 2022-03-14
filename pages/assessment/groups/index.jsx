@@ -25,6 +25,7 @@ const GroupsKuiz = () =>{
     const getSurveys = async (nodeId, queryParam) => {
         try {
           let response = await WebApiAssessment.getListSurveys(nodeId, queryParam);
+          console.log('response', response)
           setSurveyList(response.data);
         } catch (error) {
           console.log(error);
@@ -106,6 +107,11 @@ const GroupsKuiz = () =>{
         getListGroups(currenNode?.id, name, "")
     }
 
+    useEffect(() => {
+      console.log('surveyList___',surveyList);
+    }, [surveyList])
+    
+
     return(
         <MainLayout currentKey="groups_kuiz">
             <Breadcrumb>
@@ -131,6 +137,7 @@ const GroupsKuiz = () =>{
                     getListGroups={getListGroups}
                     updateGroup={updateGroup}
                     deteleGroup={deleteGroup}
+                    surveyList={surveyList}
                 />
             </div>
         </MainLayout>

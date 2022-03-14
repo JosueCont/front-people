@@ -106,7 +106,9 @@ const GroupsPeople = () =>{
     }
 
     const onFinishAssign = async (values, ids) =>{
-        const body = {assessment: values.at(-1), group_person: ids.at(-1), node: currenNode?.id}
+        console.log('vaalues',values);
+        console.log('ids',ids);
+        const body = {assessments: values, groups_person: ids, node: currenNode?.id}
         try {
             let response = await WebApiAssessment.assignAssessmentsGroup(body)
             console.log('si le asigna------->', response)

@@ -39,7 +39,7 @@ const AssignsGroup = ({...props}) =>{
     const onChangePage = (pagination) => {
         if (pagination.current > 1) {
             const offset = (pagination.current - 1) * 10;
-            const queryParam = `&limit=10&offset=${offset}`;
+            const queryParam = `&limit=10&offset=${offset}&groups`;
             props.getAssigns(props.itemId, queryParam)
         } else if (pagination.current == 1) {
             props.getAssigns(props.itemId, "")
@@ -118,7 +118,7 @@ const AssignsGroup = ({...props}) =>{
     return(
         <>
             <Row gutter={[8,16]}>
-                {!props.loading && props.listAssigns.results.length > 0 && (
+                {!props.loading && props.listAssigns.results && props.listAssigns.results.length > 0 && (
                     <>
                         <Col span={12}>
                             <CheckAll checked={isSelectAll} onChange={onSelectAll}>

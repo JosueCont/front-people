@@ -191,7 +191,7 @@ const FormAssessment = ({ ...props }) => {
           <Input maxLength={200} allowClear={true} placeholder="Nombre" />
         </Form.Item>
         
-        <Form.Item name="categories" label={"Categoría"} >
+        <Form.Item name="categories" label={"Categoría"}  >
         <Select
           showSearch
           placeholder={'Seleccionar categoría'}

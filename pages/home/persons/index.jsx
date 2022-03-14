@@ -201,7 +201,7 @@ const homeScreen = ({ ...props }) => {
 
   const OpenModalAssigns = (item) =>{
     setItemPerson(item)
-    getAssigns(item.id, "")
+    getAssigns(item.id, "");
   }
 
   const getAssigns = async (id, queryParam) =>{
@@ -368,7 +368,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Nombre",
-      width: 120,
+      width: 200,
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
@@ -389,7 +389,6 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Estatus",
-      width: 70,
       render: (item) => {
         return (
           <>
@@ -405,8 +404,20 @@ const homeScreen = ({ ...props }) => {
       },
     },
     {
+      title: "Asignaciones",
+      render: (item) => {
+        return (
+          <Tooltip title='Ver asignaciones'>
+            <EyeOutlined
+              style={{cursor: 'pointer'}}
+              onClick={()=>OpenModalAssigns(item)}
+            />
+          </Tooltip>
+        )
+      },
+    },
+    {
       title: "Acceso a intranet",
-      width: 70,
       render: (item) => {
         return (
           <>

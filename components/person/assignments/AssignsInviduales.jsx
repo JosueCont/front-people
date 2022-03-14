@@ -94,7 +94,11 @@ const AssignsIndividuales = ({...props}) =>{
             render: (item) => {
                 return (
                     <div>
-                        {item.assessment?.name}
+                        { 
+                            item.assessment ? 
+                            item.assessment.name :
+                            item.group_assessment ? item.group_assessment.name : ''
+                        }
                     </div>
                 );
             },
@@ -118,7 +122,7 @@ const AssignsIndividuales = ({...props}) =>{
     return(
         <>
             <Row gutter={[8,16]}>
-                {!props.loading && props.listAssigns.results.length > 0 && (
+                {!props.loading && props.listAssigns.results && props.listAssigns.results.length > 0 && (
                     <>
                         <Col span={12}>
                             <CheckAll checked={isSelectAll} onChange={onSelectAll}>
