@@ -14,6 +14,11 @@ import {
     Radio
 } from "antd";
 
+export const CustomContent = styled.div`
+    max-height: calc(100vh - 400px)!important;
+    overflow-y: auto!important;
+`;
+
 export const CustomModal = styled(Modal)`
     & .ant-modal-content{
         background: #F0F0F0;
@@ -49,9 +54,24 @@ export const CustomCheck = styled(Checkbox)`
     color: black!important;
 `;
 
+export const CheckAll = styled(CustomCheck)`
+    color: black!important;
+    padding-top: 16px;
+    padding-left: 16px;
+`;
+
 export const ButtonDanger = styled(Button)`
     background: #dc3545!important;
-    border: none ;
+    border: none;
+    border-radius: 10px!important;
+`;
+
+export const DeleteAll = styled(Button)`
+    background: #dc3545!important;
+    border: none;
+    border-radius: 10px!important;
+    margin-top: 16px;
+    margin-right: 16px;
 `;
 
 export const CompactSelect = styled(Select)`
@@ -65,4 +85,18 @@ export const CompactSelect = styled(Select)`
 export const CompactButton = styled(Button)`
     border-top-right-radius: 10px!important;
     border-bottom-right-radius: 10px!important;
+`;
+
+export const ColTabs = styled(Col)`
+    & .ant-tabs-content-holder{
+        border-radius: 12px;
+        background: #FAFAFA;
+    }
+`;
+
+export const CustomTable = styled(Table)`
+    & .ant-table-body {
+        max-height: calc(100vh - 400px)!important;
+        overflow-y: auto!important;
+    }
 `;

@@ -5,17 +5,6 @@ const DeleteGroups = ({...props}) =>{
 
     const [loading, setLoading] = useState(false);
 
-    const styleList = {
-        whiteSpace:'nowrap',
-        overflow:'hidden',
-        textOverflow:'ellipsis'
-    }
-
-    const styleContent = {
-        maxHeight:'calc(100vh - 300px)',
-        overflowY:'auto'
-    }
-
     const getOnlyIds = () =>{
         let ids = [];
         props.groups.map((item)=>{
@@ -44,7 +33,7 @@ const DeleteGroups = ({...props}) =>{
             onCancel={() => props.close()}
             closable={false}
             maskClosable={false}
-            bodyStyle={styleContent}
+            className={'custom-modal'}
             width={400}
             footer={[
                 <>
@@ -65,8 +54,8 @@ const DeleteGroups = ({...props}) =>{
             ]}
         >
             <List
+                size={'small'}
                 itemLayout="horizontal"
-                style={styleList}
                 dataSource={props.groups}
                 renderItem={(item) => (
                     <List.Item key={item.id}>

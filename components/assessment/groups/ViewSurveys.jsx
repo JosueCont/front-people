@@ -22,8 +22,9 @@ const ViewSurveys = ({...props}) =>{
             ]}
         >
             <List
+                size={'small'}
                 itemLayout="horizontal"
-                dataSource={props.item?.assessments}
+                dataSource={props.item.group_assessment.assessments}
                 renderItem={item => (
                     <List.Item key={item.id}>
                         <List.Item.Meta

@@ -60,10 +60,10 @@ import {
   getDomain,
 } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
-import AssignAssessments from "../../../components/person/AssignAssessments";
+import AssignAssessments from "../../../components/person/assignments/AssignAssessments";
 import PersonsGroup from "../../../components/person/groups/PersonsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
-import ViewAssigns from "../../../components/person/ViewAssigns";
+import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -108,9 +108,8 @@ const homeScreen = ({ ...props }) => {
   const [userSession, setUserSession] = useState({});
   const [deactivateTrigger, setDeactivateTrigger] = useState(false);
   const [permissions, setPermissions] = useState({});
-  const [listSurveys, setListSurveys] = useState([]);
-  const [loadSurveys, setLoadSurveys] = useState(false);
-  const [listCategories, setListCategories] = useState([]);
+  const [itemPerson, setItemPerson] = useState({});
+  const [loadAssign, setLoadAssign] = useState(false);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -122,8 +121,6 @@ const homeScreen = ({ ...props }) => {
   useEffect(() => {
     if (props.currentNode) {
       filterPersonName();
-      getSurveys("");
-      getCategories();
     } else {
       return <></>;
     }
@@ -153,29 +150,6 @@ const homeScreen = ({ ...props }) => {
       console.log(error);
     }
   };
-
-  const getCategories = async () =>{
-    try {
-      let response = await WebApiAssessment.getCategoriesAssessment();
-      setListCategories(response.data?.results)
-    } catch (e) {
-      setListCategories([])
-      console.log(e)
-    }
-  }
-
-  const getSurveys = async (queryParam) => {
-    setLoadSurveys(true)
-    try {
-      let response = await WebApiAssessment.getListSurveys(props.currentNode.id, queryParam);
-      setListSurveys(response.data);
-      setLoadSurveys(false)
-    } catch (e) {
-      console.log(e);
-      setListSurveys([])
-      setLoadSurveys(false)
-    }
-  }
 
   const deactivatePerson = () => {
     setLoading(true);
@@ -226,8 +200,31 @@ const homeScreen = ({ ...props }) => {
   };
 
   const OpenModalAssigns = (item) =>{
-    setPersonSelected(item)
+    setItemPerson(item)
+    getAssigns(item.id, "");
+  }
+
+  const onChangeTypeAssign = (key) =>{
+    if(key == 1){
+      getAssigns(itemPerson.id, "", "")
+    }else if(key  == 2){
+      getAssigns(itemPerson.id, "", "&groups")
+    }
+  }
+
+  const getAssigns = async (id, queryParam, type = "") =>{
+    setLoadAssign(true)
     setShowModalAssigns(true)
+    try {
+      let response = await WebApiAssessment.getAssignByPerson(id, queryParam, type)
+      setPersonSelected(response.data)
+      setLoadAssign(false)
+    } catch (e) {
+      setPersonSelected([])
+      // setShowModalAssigns(false)
+      setLoadAssign(false)
+      console.log(e)
+    }
   }
 
   /////TABLE PERSON
@@ -379,7 +376,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Nombre",
-      width: 120,
+      width: 200,
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
@@ -400,7 +397,6 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Estatus",
-      width: 70,
       render: (item) => {
         return (
           <>
@@ -416,8 +412,20 @@ const homeScreen = ({ ...props }) => {
       },
     },
     {
+      title: "Asignaciones",
+      render: (item) => {
+        return (
+          <Tooltip title='Ver asignaciones'>
+            <EyeOutlined
+              style={{cursor: 'pointer'}}
+              onClick={()=>OpenModalAssigns(item)}
+            />
+          </Tooltip>
+        )
+      },
+    },
+    {
       title: "Acceso a intranet",
-      width: 70,
       render: (item) => {
         return (
           <>
@@ -791,21 +799,49 @@ const homeScreen = ({ ...props }) => {
     }
   }
 
-  const onFinishAssignAssessments = async (value) =>{
+  const onFinishAssignAssessments = async (values) =>{
     setLoading(true)
     const ids = getOnlyIds();
-    const body = {assessments: value, persons: ids, node: props.currentNode?.id}
-    console.log('valores que se van a enviar------>', body)
+    const body = {...values, persons: ids, node: props.currentNode?.id}
     try {
       await WebApiAssessment.assignAssessments(body)
       filterPersonName();
       message.success("Evaluaciones asignadas")
     } catch (e) {
-      console.log('no crea----->',e.response)
       setLoading(false)
       message.error("Evaluaciones no asignadas")
     }
   };
+
+  const successMessages = (ids) =>{
+    if(ids.length > 1){
+      return message.success("Asignaciones eliminadas")
+    }else{
+      return message.success("Asignación eliminada")
+    }
+  }
+
+  const errorMessages = (ids) =>{
+    if(ids.length > 1){
+        return message.error("Asignaciones no eliminadas")
+    }else{
+        return message.error("Asignación no eliminada")
+    }
+  }
+
+  const deleteAssigns = async (ids, type) =>{
+    setLoadAssign(true)
+    try {
+      console.log('ids que llegan---->', ids)
+      console.log('el type que llega----->', type)
+      successMessages(ids)
+      getAssigns(itemPerson.id, "", type)
+    } catch (e) {
+      console.log(e)
+      errorMessages(ids)
+      setLoadAssign(false)
+    }
+  }
 
   // const onFinishAssignOneTest = async (value) =>{
   //   setLoading(true)
@@ -1203,17 +1239,18 @@ const homeScreen = ({ ...props }) => {
               visible={showModalAssignTest}
               close={HandleCloseGroup}
               actionForm={onFinishAssignAssessments}
-              getSurveys={getSurveys}
-              listSurveys={listSurveys}
-              listCategories={listCategories}
-              loading={loadSurveys}
           />
         )}
         {showModalAssigns && (
           <ViewAssigns
             visible={showModalAssigns}
             setVisible={setShowModalAssigns}
-            item={personSelected}
+            itemList={personSelected}
+            itemSelected={itemPerson}
+            getAssigns={getAssigns}
+            onChangeType={onChangeTypeAssign}
+            loadAssign={loadAssign}
+            actionDelete={deleteAssigns}
           />
         )}
       </MainLayout>

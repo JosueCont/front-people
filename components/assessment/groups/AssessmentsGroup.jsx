@@ -29,6 +29,11 @@ const AssessmentsGroup = ({...props}) =>{
     const [loadAdd, setLoadAdd] = useState(false);
 
     useEffect(() => {
+      console.log('props',props)
+    }, [props])
+    
+
+    useEffect(() => {
         if(props.surveyList && props.loadData.assessments){
             formGroup.setFieldsValue({name: props.loadData.name})
             filterSurveys(props.loadData.assessments)
@@ -41,7 +46,7 @@ const AssessmentsGroup = ({...props}) =>{
         let select = [];
         let table = [];        
         props.surveyList.map((a)=>{
-            let result = dataTable.some(b => a.id === b.id);
+            let result = dataTable?.some(b => a.id === b.id);
             if(result){
                 table.push(a)
             }else{
@@ -94,12 +99,14 @@ const AssessmentsGroup = ({...props}) =>{
         },
         {
             title: "Acciones",
-            width: 100,
+            width: 50,
             render: (item, record, index) => {
                 return (
-                    <ButtonDanger onClick={()=>deleteItem(index)}>
-                        <DeleteOutlined/>
-                    </ButtonDanger>
+                    <ButtonDanger
+                        size={'small'}
+                        icon={<DeleteOutlined/>}
+                        onClick={()=>deleteItem(index)}
+                    />
                 )
             },
         }
@@ -173,6 +180,7 @@ const AssessmentsGroup = ({...props}) =>{
                             <Table
                                 rowKey={'id'}
                                 columns={colums}
+                                showHeader={false}
                                 dataSource={surveysTable}
                                 size={'small'}
                                 loading={loading}
@@ -182,7 +190,7 @@ const AssessmentsGroup = ({...props}) =>{
                                     "No se encontraron resultados."
                                 }}
                                 scroll={{y: 200}}
-                                pagination={surveysTable.length > 10 ? { position: ['bottomLeft'] }: false}
+                                pagination={{ position: ['bottomLeft'], hideOnSinglePage: true }}
                             />
                         </Form.Item>
                     </Col>

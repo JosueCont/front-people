@@ -25,6 +25,7 @@ const ViewMembers = ({...props}) =>{
             ]}
         >
             <List
+                size={'small'}
                 itemLayout="horizontal"
                 dataSource={props.item?.persons}
                 renderItem={item => (
