@@ -35,7 +35,7 @@ const FormAssessment = ({ ...props }) => {
       formAssessment.setFieldsValue({
         code: props.loadData.code,
         name: props.loadData.name,
-        categories: props.loadData.categories.at(-1),
+        categories: props.loadData.categories,
       });
       setImageUrl(props.loadData.image);
     } else {
@@ -70,7 +70,7 @@ const FormAssessment = ({ ...props }) => {
     imagen && data.append("image", imagen);
     values.code && data.append("code", values.code);
     values.name && data.append("name", values.name);
-    values.categories && data.append("categories", [values.categories]);
+    values.categories && data.append("categories", values.categories);
     descripcion && data.append("description_es", descripcion);
     instruccions && data.append("instructions_es", instruccions);
     if (props.loadData) {
@@ -193,6 +193,8 @@ const FormAssessment = ({ ...props }) => {
         
         <Form.Item name="categories" label={"Categoría"} >
         <Select
+          mode="multiple"
+          allowClear
           showSearch
           placeholder={'Seleccionar categoría'}
           notFoundContent='No se encontraron resultados'
