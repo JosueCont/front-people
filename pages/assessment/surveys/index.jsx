@@ -50,6 +50,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
   //   edit: true,
   //   delete: true,
   // });
+  const [listCategories, setListCategories] = useState([]);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateAssessment, setShowCreateAssessment] = useState(false);
@@ -70,6 +71,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
 
   useEffect(() => {
     if(assessmentStore.assessments?.length > 0){
+      getCategories();
       setAssessments(assessmentStore.assessments);
       setLoading(assessmentStore.fetching);
       assessmentStore.active_modal === types.CREATE_ASSESSMENTS
@@ -80,6 +82,17 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
         : setShowUpdateAssessment(false);
     }
   }, [assessmentStore]);
+
+
+  const getCategories = async () =>{
+    try {
+        let response = await WebApiAssessment.getCategoriesAssessment();
+        setListCategories(response.data?.results)
+    } catch (e) {
+        setListCategories([])
+        console.log(e)
+    }
+}
 
   const HandleCreateAssessment = () => {
     setAssessmentData(false);
@@ -385,6 +398,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
           visible={showCreateAssessment}
           close={HandleCloseModal}
           loadData={assessmentData}
+          listCategories={listCategories}
         />
       )}
       {showUpdateAssessment && (
@@ -393,6 +407,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
           visible={showUpdateAssessment}
           close={HandleCloseModal}
           loadData={assessmentData}
+          listCategories={listCategories}
         />
       )}
       {showModalCreateGroup && (
