@@ -832,12 +832,10 @@ const homeScreen = ({ ...props }) => {
   const deleteAssigns = async (ids, type) =>{
     setLoadAssign(true)
     try {
-      console.log('ids que llegan---->', ids)
-      console.log('el type que llega----->', type)
+      await WebApiAssessment.deleteAssignByPerson({person_assessments: ids})
       successMessages(ids)
       getAssigns(itemPerson.id, "", type)
     } catch (e) {
-      console.log(e)
       errorMessages(ids)
       setLoadAssign(false)
     }
