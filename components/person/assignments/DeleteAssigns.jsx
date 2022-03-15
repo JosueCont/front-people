@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, List } from "antd";
 
-const DeleteAssigns = ({...props}) =>{
+const DeleteAssigns = ({actionDelete, visible, close, items, ...props}) =>{
 
     const [loading, setLoading] = useState(false);
 
     const getOnlyIds = () =>{
         let ids = [];
-        props.items.map((item)=>{
+        items.map((item)=>{
           ids.push(item.id)
         })
         return ids;
@@ -18,20 +18,20 @@ const DeleteAssigns = ({...props}) =>{
         setLoading(true)
         setTimeout(() => {
             setLoading(false)
-            props.close()
-            props.actionDelete(ids)
+            actionDelete(ids)
+            close()
         }, 2000);
     }
 
     return(
         <Modal
             title={
-                props.items?.length > 1
+                items?.length > 1
                 ? "¿Estás seguro de eliminar estas asignaciones?"
                 : "¿Estás seguro de eliminar ésta asignación?"
             }
-            visible={props.visible}
-            onCancel={() => props.close()}
+            visible={visible}
+            onCancel={() => close()}
             closable={false}
             maskClosable={false}
             className={'custom-modal'}
@@ -39,7 +39,7 @@ const DeleteAssigns = ({...props}) =>{
             footer={[
                 <Button
                     type="primary"
-                    onClick={()=>props.close()}
+                    onClick={()=>close()}
                 >
                     No
                 </Button>,
@@ -55,11 +55,16 @@ const DeleteAssigns = ({...props}) =>{
             <List
                 size={'small'}
                 itemLayout="horizontal"
-                dataSource={props.items}
+                dataSource={items}
                 renderItem={(item) => (
                     <List.Item key={item.id}>
                         <List.Item.Meta
-                            title={item.assessment?.name}
+                            title={
+                                item.assessment ?
+                                item.assessment.name :
+                                item.group_assessment &&
+                                item.group_assessment.name
+                            }
                         />
                     </List.Item>
                 )}

@@ -201,19 +201,27 @@ const homeScreen = ({ ...props }) => {
 
   const OpenModalAssigns = (item) =>{
     setItemPerson(item)
-    getAssigns(item.id, "")
+    getAssigns(item.id, "");
   }
 
-  const getAssigns = async (id, queryParam) =>{
+  const onChangeTypeAssign = (key) =>{
+    if(key == 1){
+      getAssigns(itemPerson.id, "", "")
+    }else if(key  == 2){
+      getAssigns(itemPerson.id, "", "&groups")
+    }
+  }
+
+  const getAssigns = async (id, queryParam, type = "") =>{
     setLoadAssign(true)
+    setShowModalAssigns(true)
     try {
-      let response = await WebApiAssessment.getAssignByPerson(id, queryParam)
+      let response = await WebApiAssessment.getAssignByPerson(id, queryParam, type)
       setPersonSelected(response.data)
-      setShowModalAssigns(true)
       setLoadAssign(false)
     } catch (e) {
       setPersonSelected([])
-      setShowModalAssigns(false)
+      // setShowModalAssigns(false)
       setLoadAssign(false)
       console.log(e)
     }
@@ -368,7 +376,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Nombre",
-      width: 120,
+      width: 200,
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
@@ -389,7 +397,6 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Estatus",
-      width: 70,
       render: (item) => {
         return (
           <>
@@ -405,8 +412,20 @@ const homeScreen = ({ ...props }) => {
       },
     },
     {
+      title: "Asignaciones",
+      render: (item) => {
+        return (
+          <Tooltip title='Ver asignaciones'>
+            <EyeOutlined
+              style={{cursor: 'pointer'}}
+              onClick={()=>OpenModalAssigns(item)}
+            />
+          </Tooltip>
+        )
+      },
+    },
+    {
       title: "Acceso a intranet",
-      width: 70,
       render: (item) => {
         return (
           <>
@@ -780,10 +799,10 @@ const homeScreen = ({ ...props }) => {
     }
   }
 
-  const onFinishAssignAssessments = async (value) =>{
+  const onFinishAssignAssessments = async (values) =>{
     setLoading(true)
     const ids = getOnlyIds();
-    const body = {assessments: value, persons: ids, node: props.currentNode?.id}
+    const body = {...values, persons: ids, node: props.currentNode?.id}
     try {
       await WebApiAssessment.assignAssessments(body)
       filterPersonName();
@@ -793,6 +812,36 @@ const homeScreen = ({ ...props }) => {
       message.error("Evaluaciones no asignadas")
     }
   };
+
+  const successMessages = (ids) =>{
+    if(ids.length > 1){
+      return message.success("Asignaciones eliminadas")
+    }else{
+      return message.success("Asignación eliminada")
+    }
+  }
+
+  const errorMessages = (ids) =>{
+    if(ids.length > 1){
+        return message.error("Asignaciones no eliminadas")
+    }else{
+        return message.error("Asignación no eliminada")
+    }
+  }
+
+  const deleteAssigns = async (ids, type) =>{
+    setLoadAssign(true)
+    try {
+      console.log('ids que llegan---->', ids)
+      console.log('el type que llega----->', type)
+      successMessages(ids)
+      getAssigns(itemPerson.id, "", type)
+    } catch (e) {
+      console.log(e)
+      errorMessages(ids)
+      setLoadAssign(false)
+    }
+  }
 
   // const onFinishAssignOneTest = async (value) =>{
   //   setLoading(true)
@@ -1199,6 +1248,9 @@ const homeScreen = ({ ...props }) => {
             itemList={personSelected}
             itemSelected={itemPerson}
             getAssigns={getAssigns}
+            onChangeType={onChangeTypeAssign}
+            loadAssign={loadAssign}
+            actionDelete={deleteAssigns}
           />
         )}
       </MainLayout>
