@@ -64,7 +64,6 @@ const FormAssessment = ({ ...props }) => {
     return newObj;
   }
 
-
   const onFinish = (values) => {
     // let data = new FormData();
     // imagen && data.append("image", imagen);
