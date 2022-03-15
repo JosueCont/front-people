@@ -193,13 +193,16 @@ const PersonsTable = ({permissions, ...props}) => {
 
   const deleteAssigns = async (ids, type) =>{
     setLoadAssign(true)
+    const data = {
+      group_person_assessments: ids
+    }
     try {
-      console.log('ids que llegan---->', ids)
-      console.log('el type que llega----->', type)
+      let response = await WebApiAssessment.deleteAssignByGroup(data)
+      console.log('si se elimina------>', response)
       successMessages(ids)
       getAssigns(itemGroup.id, "", type)
     } catch (e) {
-      console.log(e)
+      console.log('no se elimina----->',e.response)
       errorMessages(ids)
       setLoadAssign(false)
     }

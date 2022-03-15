@@ -117,7 +117,7 @@ const AssignsGroup = ({getAssigns, itemId, listAssigns, loading, actionDelete, .
     return(
         <>
             <Row gutter={[8,16]}>
-                {!props.loading && props.listAssigns && props.listAssigns.results && props.listAssigns.results.length > 0 && (
+                {!loading && listAssigns && listAssigns.results && listAssigns.results.length > 0 && (
                     <>
                         <Col span={12}>
                             <CheckAll checked={isSelectAll} onChange={onSelectAll}>
