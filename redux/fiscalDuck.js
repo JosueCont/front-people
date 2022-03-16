@@ -151,14 +151,19 @@ export const getInternalOtherPayments = () => async (dispatch, getState) => {
 
 export const getTypeTax = () => async (dispatch, getState) => {
   await WebApiFiscal.getTypeTax()
-    .then((response) => {})
+    .then((response) => {
+      dispatch({ type: TYPE_TAX, payload: response.data.results });
+    })
+
     .catch((error) => {
       console.log(error);
     });
 };
 export const getPaymentPeriodicity = () => async (dispatch, getState) => {
   await WebApiFiscal.getPaymentPeriodicity()
-    .then((response) => {})
+    .then((response) => {
+      dispatch({ type: PAYMENT_PERIODICITY, payload: response.data.results });
+    })
     .catch((error) => {
       console.log(error);
     });

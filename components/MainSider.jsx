@@ -10,7 +10,6 @@ import {
   FormOutlined,
   BugOutlined,
   DollarOutlined,
-  UserAddOutlined,
   BankOutlined,
   SettingOutlined,
   AlertOutlined,
@@ -224,8 +223,9 @@ const MainSider = ({
             </Menu.Item>
             <Menu.Item
               key="asignar"
-              onClick={() => router.push({ pathname: "/assignedCompanies" })}
-              icon={<UserAddOutlined />}
+              onClick={() =>
+                router.push({ pathname: "/config/assignedCompanies" })
+              }
             >
               Asignar empresa
             </Menu.Item>

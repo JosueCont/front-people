@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Row,
   Col,
   Table,
   Button,
-  Form,
   Space,
   Modal,
   Steps,
   Card,
   Checkbox,
+  Input,
+  Spin,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { numberFormat } from "../../../utils/functions";
@@ -22,30 +23,102 @@ const ModalConceptsPayroll = ({
   setVisible,
   visible,
   person_id = null,
-  payroll = null,
   setLoading,
-  saveConcepts,
+  payroll = null,
+  calendar,
+  sendCalculatePayroll,
   ...props
 }) => {
-  const [formQuantity] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
-  const [dataSource, setDataSource] = useState([]);
+  const [concepts, setConcepts] = useState([]);
+  const [perceptionsCat, setPerceptionsCat] = useState([]);
+  const [deductionsCat, setDeductionsCat] = useState([]);
+  const [otherPaymentsCat, setOtherPaymentsCat] = useState([]);
+  const [perceptions, setPerceptions] = useState([]);
+  const [deductions, setDeductions] = useState([]);
+  const [otherPayments, setOtherPayments] = useState([]);
 
-  const RenderCheckConcept = ({ data }) => {
+  useEffect(() => {
+    if (
+      props.perceptions_int &&
+      props.deductions_int &&
+      props.other_payments_int
+    ) {
+      setPerceptionsCat(
+        props.perceptions_int.map((item) => {
+          return {
+            id: item.id,
+            value: 0,
+            code: item.code,
+            description: item.description,
+            datum: 0,
+            amount: 0,
+          };
+        })
+      );
+      setDeductionsCat(
+        props.deductions_int.map((item) => {
+          return {
+            id: item.id,
+            value: 0,
+            code: item.code,
+            description: item.description,
+            datum: 0,
+            amount: 0,
+          };
+        })
+      );
+      setOtherPaymentsCat(
+        props.other_payments_int.map((item) => {
+          return {
+            id: item.id,
+            value: 0,
+            code: item.code,
+            description: item.description,
+            datum: 0,
+            amount: 0,
+          };
+        })
+      );
+    }
+  }, [props.perceptions_int, props.deductions_int, props.other_payments_int]);
+
+  const RenderCheckConcept = ({ data, type }) => {
     return (
       <>
         {data.map((item) => {
           return (
             <Col span={12}>
-              <Checkbox
-                key={item.code}
-                className="CheckGroup"
-                value={{ id: item.id, value: 0, data_type: item.data_type }}
-              >
+              <Checkbox key={item.code} className="CheckGroup" value={item}>
                 <span style={{ textTransform: "uppercase" }}>
                   {item.description}
                 </span>
               </Checkbox>
+            </Col>
+          );
+        })}
+      </>
+    );
+  };
+
+  const RenderConcept = ({ data = [], type }) => {
+    return (
+      <>
+        {data.map((item) => {
+          item.value = item.value != "" && item.value > 0 ? item.value : 0;
+          return (
+            <Col span={12}>
+              <Row style={{ marginBottom: "8px" }}>
+                <Col span={18}>-{item.description}</Col>
+                <Col span={4}>
+                  <Input
+                    type="number"
+                    name={item.id}
+                    defaultValue={item.value}
+                    onChange={(e) => changeHandler(type)(e)}
+                  />
+                </Col>
+              </Row>
             </Col>
           );
         })}
@@ -59,6 +132,95 @@ const ModalConceptsPayroll = ({
     if (type === 3) setOtherPayments(checkedValues);
   };
 
+  const changeHandler = (type) => (e) => {
+    if (type === 1)
+      perceptions.map((item) => {
+        if (item.id === e.target.name)
+          item.value = e.target.value != "" ? Number(e.target.value) : 0;
+      });
+    if (type === 2)
+      deductions.map((item) => {
+        if (item.id === e.target.name)
+          item.value = e.target.value != "" ? Number(e.target.value) : 0;
+      });
+    if (type === 3)
+      otherPayments.map((item) => {
+        if (item.id === e.target.name)
+          item.value = e.target.value != "" ? Number(e.target.value) : 0;
+      });
+  };
+
+  const listConcepts = () => {
+    let data = [];
+    if (perceptions.length > 0)
+      perceptions.map((item) => {
+        data.push(item);
+      });
+    if (deductions.length > 0)
+      deductions.map((item) => {
+        data.push(item);
+      });
+    if (otherPayments.length > 0)
+      otherPayments.map((item) => {
+        data.push(item);
+      });
+    setConcepts(data);
+  };
+
+  const createObjectSend = () => {
+    let data = [];
+    payroll.map((item) => {
+      if (item.person.id === person_id) {
+        data.push({
+          person_id: person_id,
+          perceptions: perceptions,
+          deductions: deductions,
+          otherPayments: otherPayments,
+        });
+      } else {
+        data.push({
+          person_id: item.person.id,
+          perceptions: item.perceptions.filter((item) => item.code != "P101"),
+          deductions: item.deductions.filter(
+            (item) => item.code != "D201" && item.code != "D202"
+          ),
+          otherPayments: item.otherPayments,
+        });
+      }
+    });
+    clearConcept();
+    calendar.payroll = data;
+    sendCalculatePayroll(calendar);
+  };
+
+  const removeItem = (data, index) => {
+    perceptions.map((item, i) => {
+      if (item.code == data.code) {
+        perceptions.pop(i);
+      }
+    });
+    deductions.map((item, i) => {
+      if (item.code == data.code) {
+        deductions.pop(i);
+      }
+    });
+    otherPayments.map((item, i) => {
+      if (item.code == data.code) {
+        otherPayments.pop(i);
+      }
+    });
+  };
+
+  const clearConcept = () => {
+    setCurrentStep(0);
+    setConcepts([]);
+    setPerceptions([]);
+    setDeductions([]);
+    setOtherPayments([]);
+    payroll = null;
+    person_id = null;
+  };
+
   return (
     <Modal
       visible={visible}
@@ -68,139 +230,152 @@ const ModalConceptsPayroll = ({
             <Button
               size="large"
               htmlType="button"
-              onClick={() => setVisible(false)}
+              onClick={() => {
+                clearConcept(), setVisible(false);
+              }}
               style={{ paddingLeft: 50, paddingRight: 50 }}
             >
               Cancelar
             </Button>
-            {currentStep == 2 && (
-              <Button
-                size="large"
-                htmlType="button"
-                onClick={() => saveData()}
-                style={{ paddingLeft: 50, paddingRight: 50 }}
-              >
-                Guardar
-              </Button>
-            )}
+            <Button
+              size="large"
+              htmlType="button"
+              onClick={() => createObjectSend()}
+              style={{ paddingLeft: 50, paddingRight: 50 }}
+            >
+              Guardar
+            </Button>
           </Space>
         </Col>
       }
       width={"90%"}
       centered={true}
-      onCancel={() => setVisible(false)}
+      onCancel={() => {
+        clearConcept(), setVisible(false);
+      }}
       title="Conceptos de nomina"
     >
       <Row>
-        <Steps current={currentStep} onChange={(item) => setCurrentStep(item)}>
+        <Steps
+          current={currentStep}
+          onChange={(item) => {
+            item === 2 && listConcepts(), setCurrentStep(item);
+          }}
+        >
           <Step title="Conceptos" description="Agregar conceptos" />
           <Step title="Montos" description="Capturar valores" />
           <Step title="Finalizar" description="Finalizar" />
         </Steps>
-        <Card hoverable>
+        <Card hoverable style={{ width: "100%" }}>
           {currentStep == 0 ? (
             <>
-              {props.perceptions_int.length > 0 && (
+              {perceptionsCat.length > 0 && (
                 <>
-                  <h2>Percepsiones</h2>
+                  <h2>Percepciones</h2>
                   <Checkbox.Group
+                    defaultValue={perceptions}
                     className="CheckGroup"
                     onChange={(checkedValues) =>
                       onChangeCheckConcepts(checkedValues, 1)
                     }
                   >
                     <Row>
-                      <RenderCheckConcept
-                        data={props.perceptions_int}
-                        type={1}
-                      />
+                      <RenderCheckConcept data={perceptionsCat} type={1} />
                     </Row>
                   </Checkbox.Group>
                 </>
               )}
-              {props.deductions_int.length > 0 && (
+              {deductionsCat.length > 0 && (
                 <>
                   <hr />
                   <h2>Deducciones</h2>
                   <Checkbox.Group
+                    defaultValue={deductions}
                     className="CheckGroup"
                     onChange={(checkedValues) =>
                       onChangeCheckConcepts(checkedValues, 2)
                     }
                   >
                     <Row>
-                      <RenderCheckConcept
-                        data={props.deductions_int}
-                        type={2}
-                      />
+                      <RenderCheckConcept data={deductionsCat} type={2} />
                     </Row>
                   </Checkbox.Group>
                 </>
               )}
-              {props.other_payments_int.length > 0 && (
+              {otherPaymentsCat.length > 0 && (
                 <>
                   <hr />
                   <h2>Otros pagos</h2>
                   <Checkbox.Group
+                    defaultValue={otherPayments}
                     className="CheckGroup"
                     onChange={(checkedValues) =>
                       onChangeCheckConcepts(checkedValues, 3)
                     }
                   >
                     <Row>
-                      <RenderCheckConcept
-                        data={props.other_payments_int}
-                        type={3}
-                      />
+                      <RenderCheckConcept data={otherPaymentsCat} type={3} />
                     </Row>
                   </Checkbox.Group>
                 </>
               )}
             </>
           ) : currentStep == 1 ? (
-            "Dos"
+            <Row>
+              {perceptions.length > 0 && (
+                <RenderConcept data={perceptions} type={1} />
+              )}
+              {deductions.length > 0 && (
+                <RenderConcept data={deductions} type={2} />
+              )}
+              {otherPayments.length > 0 && (
+                <RenderConcept data={otherPayments} type={3} />
+              )}
+            </Row>
           ) : (
             <Table
-              dataSource={dataSource}
+              dataSource={concepts}
               locale={{ emptyText: "No hay datos aún" }}
+              width={30}
             >
               <Column
                 title="Concepto"
-                dataIndex="perception"
                 key="perception"
-                render={(text, record) => <div>{record.label}</div>}
+                render={(record) => <div>{record.description}</div>}
               />
               <Column
-                width={120}
                 title="Monto"
                 align="center"
-                dataIndex="amount"
                 key="amount"
-                render={(text, record) => (
-                  <div>{numberFormat(record.amount)}</div>
-                )}
+                render={(record) => <div>{numberFormat(record.value)}</div>}
               />
               <Column
-                width={100}
-                title="Opciones"
-                dataIndex="options"
-                key="options"
+                title="Monto"
                 align="center"
-                render={(text, record, index) =>
-                  !record.locked && (
+                key="amount"
+                render={(text, record, index) => (
+                  <div>
                     <>
                       <EditOutlined
                         style={{ marginRight: "10px" }}
                         key={"edit" + record.perception}
-                        onClick={() => editAmount(record, index)}
+                        onClick={() => setCurrentStep(1)}
                       />
                       <DeleteOutlined
                         key={"delete" + record.perception}
-                        onClick={() => deleteAmount(index)}
+                        onClick={() => {
+                          concepts.filter((item) => item.id != record.id)
+                            .length < 1
+                            ? setCurrentStep(0)
+                            : setConcepts(
+                                concepts.filter((item) => item.id != record.id)
+                              ),
+                            removeItem(record, index);
+                        }}
                       />
                     </>
-                  )
-                }
+                  </div>
+                )}
               />
             </Table>
           )}
