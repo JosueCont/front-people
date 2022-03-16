@@ -69,7 +69,6 @@ const FormPaymentCalendar = ({
   const getPerceptionType = async () => {
     try {
       let response = await WebApiFiscal.getPerseptions();
-      console.log("Percepciones", response);
       let perception_types = response.data.results.map((a) => {
         return { value: a.id, label: a.description };
       });
@@ -129,7 +128,6 @@ const FormPaymentCalendar = ({
 
   const savePaymentCalendar = async (data) => {
     try {
-      console.log("Sending PayCalendar", data);
       let response = await WebApiPayroll.createPaymentCalendar(data);
       message.success({
         content: messageSaveSuccess,

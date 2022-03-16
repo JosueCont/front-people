@@ -73,6 +73,12 @@ class WebApiAssessment {
     static updateAssessments (id, data) {
         return WebApi.ApisType(`/person/assessment/${id}/`, "put", data);
     }
+    static deleteAssignByPerson (data) {
+        return WebApi.ApisType(`/person/person-assessments/delete_by_ids/`, "post", data);
+    }
+    static deleteAssignByGroup (data) {
+        return WebApi.ApisType(`/person/group-person-assessment/delete_by_ids/`, "post", data);
+    }
     static getOnlyGroupAssessment(id) {
         return Axios.get(`${API_ASSESSMENT}/assessments/group/${id}/`);
     }

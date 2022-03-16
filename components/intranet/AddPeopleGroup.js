@@ -4,7 +4,7 @@ import { API_URL } from "../../config/config";
 import React, { useEffect, useState } from "react";
 import { userCompanyId } from "../../libs/auth";
 import SelectCollaborator from "../selects/SelectCollaborator";
-import WebApiIntranet from '../../api/WebApiIntranet'
+import WebApiIntranet from "../../api/WebApiIntranet";
 
 const { Option } = Select;
 const AddPeopleGroup = (props) => {
@@ -55,8 +55,6 @@ const AddPeopleGroup = (props) => {
         props.setVisible();
       });
   };
-
-  console.log("persons", persons);
 
   return (
     <>
