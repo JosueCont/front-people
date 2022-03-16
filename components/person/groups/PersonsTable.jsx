@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import {
     Table,
@@ -21,54 +20,35 @@ import {
     DeleteOutlined,
     EyeOutlined,
     UserOutlined,
-    FileTextOutlined,
     EllipsisOutlined
 } from "@ant-design/icons";
-import FormGroup from "./FormGroup";
-import WebApiAssessment from "../../../api/WebApiAssessment";
-import ViewSurveys from "./ViewSurveys";
+import { connect } from "react-redux";
 import ViewMembers from "./ViewMembers";
-import DeleteGroups from "./DeleteGroups";
+import DeleteGroups from "../../assessment/groups/DeleteGroups";
+import PersonsGroup from "./PersonsGroup";
+import AssignAssessments from "../assignments/AssignAssessments";
+import ViewAssigns from "../assignments/ViewAssigns";
+import WebApiAssessment from "../../../api/WebApiAssessment";
 
-const TableGroups = ({
-  hiddenMembers = true,
-  hiddenSurveys = true,
-  hiddenCategories = true,
-  hiddenName = true,
-  multipleSurveys = true,
-  multipleMembers = true,
-  multipleCategories = true,
-  ...props}) => {
+const PersonsTable = ({permissions, ...props}) => {
 
-  const menuDropDownStyle = { background: "#434343", color: "#ffff"};
-  const permissions = useSelector(state => state.userStore.permissions.person)
+  /* const permissions = useSelector(state => state.userStore.permissions.person) */
   const currenNode = useSelector(state => state.userStore.current_node)
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
-  const [showModalSurveys, setShowModalSurveys] = useState(false);
   const [showModalMembers, setShowModalMembers] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [openModalAssign, setOpenModalAssign] = useState(false);
+  const [showModalAssign, setShowModalAssign] = useState(false);
   const [itemGroup, setItemGroup] = useState({});
-  const [itemGroupPeople, setItemGroupPeople] = useState();
   const [groupsToDelete, setGroupsToDelete] = useState([]);
   const [groupsKeys, setGroupsKeys] = useState([]);
-  const router = useRouter();
-  const { confirm } = Modal;
-
-  const HandleChangeStatus = (value) => {
-      console.log(value)
-  }
+  const [modalViewAssign, setModalViewAssign] = useState(false);
+  const [listAssignGroup, setListAssignGroup] = useState([]);
+  const [loadAssign, setLoadAssign] = useState(false);
 
   const HandleUpdateGroup = async (item) => {
-    if(!hiddenSurveys){
-      let resp = await getOnlyGroup(item.group_kuiz_id);
-      setItemGroupPeople(item)
-      setItemGroup(resp)
-    }
-    if(!hiddenMembers){
-      setItemGroupPeople({})
-      setItemGroup(item)
-    }
+    setItemGroup(item)
     setShowModalEdit(true)
   }
 
@@ -82,20 +62,51 @@ const TableGroups = ({
       setShowModalDelete(true)
   }
 
-  const openModalSurveys = async (item)=>{
-    let resp = await getOnlyGroup(item.group_kuiz_id);
-    if(resp.assessments?.length > 0){
-      setItemGroup(resp)
-      setShowModalSurveys(true)
-    }else{
-      setItemGroup({})
-      message.error("El grupo aún no tiene encuestas")
-    }
-  }
-
   const openModalMembers = (item) =>{
     setShowModalMembers(true)
     setItemGroup(item)
+  }
+
+  const HandleModalAssign = (item) =>{
+    setGroupsToDelete([item])
+    setShowModalAssign(true)
+  }
+
+  const OpenModalAssigns = (item) =>{
+    setItemGroup(item)
+    getAssigns(item.id, "", "")
+  }
+
+  const successMessages = (ids) =>{
+    if(ids.length > 1){
+      return message.success("Asignaciones eliminadas")
+    }else{
+      return message.success("Asignación eliminada")
+    }
+  }
+
+  const errorMessages = (ids) =>{
+    if(ids.length > 1){
+        return message.error("Asignaciones no eliminadas")
+    }else{
+        return message.error("Asignación no eliminada")
+    }
+  }
+
+  const onChangeTypeAssign = (key) =>{
+    if(key == 1){
+      getAssigns(itemGroup.id, "", "")
+    }else if(key  == 2){
+      getAssigns(itemGroup.id, "", "&groups")
+    }
+  }
+
+  const getOnlyIds = () =>{
+    let ids = [];
+    groupsToDelete.map((item)=>{
+      ids.push(item.id)
+    })
+    return ids;
   }
 
   const resetValuesDelete = ()=>{
@@ -103,6 +114,8 @@ const TableGroups = ({
     setGroupsToDelete([])
     setShowModalDelete(false)
     setOpenModalDelete(false)
+    setShowModalAssign(false)
+    setOpenModalAssign(false)
   }
 
   const rowSelectionGroup = {
@@ -134,6 +147,17 @@ const TableGroups = ({
     }
   },[openModalDelete])
 
+  useEffect(()=>{
+    if(openModalAssign){
+      if(groupsToDelete.length > 0){
+        setShowModalAssign(true)
+      }else{
+        setOpenModalAssign(false)
+        message.error("Selecciona al menos una grupo")
+      }
+    }
+  },[openModalAssign])
+
   const removeGroups = async (ids) =>{
     props.setLoading(true)
     props.deteleGroup(ids)
@@ -142,30 +166,68 @@ const TableGroups = ({
 
   const onFinishEdit = async (values) =>{
     props.setLoading(true)
-    if(!hiddenSurveys){
-      props.updateGroup(values, itemGroupPeople.id)
-    }
-    if(!hiddenMembers){
-      props.updateGroup(values, itemGroup.id)
+    props.updateGroup(values, itemGroup.id)
+  }
+
+  const onFinishAssign = async (values) =>{
+    const ids = getOnlyIds();
+    props.setLoading(true)
+    props.onFinishAssign(values, ids)
+    resetValuesDelete();
+  }
+
+  const getAssigns = async (id, queryParam, type) =>{
+    setLoadAssign(true)
+    setModalViewAssign(true)
+    try {
+      let response = await WebApiAssessment.getAssignByGroup(id, queryParam, type)
+      setListAssignGroup(response.data)
+      setLoadAssign(false)
+    } catch (e) {
+      setListAssignGroup([])
+      // setModalViewAssign(false)
+      setLoadAssign(false)
+      console.log(e)
     }
   }
 
-  const getOnlyGroup = async (id) =>{
+  const deleteAssigns = async (ids, type) =>{
+    setLoadAssign(true)
+    const data = {
+      group_person_assessments: ids
+    }
     try {
-      let response = await WebApiAssessment.getOnlyGroupAssessment(id);
-      return response.data;
+      let response = await WebApiAssessment.deleteAssignByGroup(data)
+      console.log('si se elimina------>', response)
+      successMessages(ids)
+      getAssigns(itemGroup.id, "", type)
     } catch (e) {
-      console.log(e)
-      return e.response;
+      console.log('no se elimina----->',e.response)
+      errorMessages(ids)
+      setLoadAssign(false)
     }
   }
 
   const menuTable = () => {
     return (
       <Menu>
+        {permissions.create && (
+          <Menu.Item
+            key={3}
+            onClick={() =>  groupsToDelete.length < 0 ? message.error("Selecciona al menos un grupo") : setOpenModalAssign(true) }>
+            Asignar evaluaciónes
+          </Menu.Item>
+        )}
         {permissions?.delete && (
           <Menu.Item
             key={1}
+            onClick={() => setOpenModalAssign(true)}>
+            Asignar evaluaciónes
+          </Menu.Item>
+        )}
+        {permissions?.delete && (
+          <Menu.Item
+            key={2}
             icon={<DeleteOutlined/>}
             onClick={()=>setOpenModalDelete(true)}
           >
@@ -179,6 +241,13 @@ const TableGroups = ({
   const menuGroup = (item) => {
     return (
       <Menu>
+        {permissions.create && (
+          <Menu.Item
+            key={3}
+            onClick={() => HandleModalAssign(item)}>
+            Asignar evaluaciónes
+          </Menu.Item>
+        )}
         {permissions?.edit && (
           <Menu.Item
             key={1}
@@ -213,26 +282,7 @@ const TableGroups = ({
         },
       },
       {
-        title: "Encuestas",
-        hidden: hiddenSurveys,
-        render: (item) => {
-          return (
-            <Space>
-              {item.group_kuiz_id &&(
-                <Tooltip title='Ver encuestas'>
-                    <EyeOutlined
-                      style={{cursor: 'pointer'}}
-                      onClick={()=>openModalSurveys(item)}
-                    />
-                </Tooltip>
-              )}
-            </Space>
-          )
-        }
-      },
-      {
         title: "Integrantes",
-        hidden: hiddenMembers,
         render: (item) => {
           return (
             <Space>
@@ -256,12 +306,25 @@ const TableGroups = ({
         },
       },
       {
+        title: "Asignaciones",
+        render: (item) => {
+          return (
+            <Tooltip title='Ver asignaciones'>
+              <EyeOutlined
+                style={{cursor: 'pointer'}}
+                onClick={()=>OpenModalAssigns(item)}
+              />
+            </Tooltip>
+          )
+        },
+      },
+      {
         title: () => {
           return (
             <>
               {permissions?.delete && (
                 <Dropdown overlay={menuTable}>
-                  <Button style={menuDropDownStyle} size="small">
+                  <Button size="small">
                     <EllipsisOutlined />
                   </Button>
                 </Dropdown>
@@ -274,7 +337,7 @@ const TableGroups = ({
             <>
               {(permissions?.edit || permissions?.delete) && (
                 <Dropdown overlay={() => menuGroup(item)}>
-                  <Button style={menuDropDownStyle} size="small">
+                  <Button size="small">
                     <EllipsisOutlined />
                   </Button>
                 </Dropdown>
@@ -283,7 +346,7 @@ const TableGroups = ({
           )
         }
       },
-  ].filter(col => !col.hidden)
+  ]
 
   return(
     <>
@@ -292,6 +355,7 @@ const TableGroups = ({
                 <Table
                   rowKey={'id'}
                   columns={columns}
+                  size={'small'}
                   loading={props.loading}
                   dataSource={props.dataGroups?.results}
                   locale={{
@@ -309,27 +373,13 @@ const TableGroups = ({
             </Col>
         </Row>
         {showModalEdit && (
-          <FormGroup
+          <PersonsGroup
               title={'Editar grupo'}
               visible={showModalEdit}
               close={HandleClose}
               loadData={itemGroup}
               actionForm={onFinishEdit}
-              multipleSurveys={multipleSurveys}
-              multipleMembers={multipleMembers}
-              multipleCategories={multipleCategories}
-              hiddenName={hiddenName}
-              hiddenMembers={hiddenMembers}
-              hiddenSurveys={hiddenSurveys}
-              hiddenCategories={hiddenCategories}
-          />
-        )}
-        {showModalSurveys && (
-          <ViewSurveys
-            title={'Lista de encuestas'}
-            visible={showModalSurveys}
-            setVisible={setShowModalSurveys}
-            item={itemGroup}
+              personList={props.personList}
           />
         )}
         {showModalMembers && (
@@ -348,8 +398,32 @@ const TableGroups = ({
             actionDelete={removeGroups}
           />
         )}
+        <AssignAssessments
+          title={'Asignar evaluaciones'}
+          visible={showModalAssign}
+          close={resetValuesDelete}
+          actionForm={onFinishAssign}
+        />
+        <ViewAssigns
+          visible={modalViewAssign}
+          setVisible={setModalViewAssign}
+          itemList={listAssignGroup}
+          itemSelected={itemGroup}
+          getAssigns={getAssigns}
+          onChangeType={onChangeTypeAssign}
+          loadAssign={loadAssign}
+          actionDelete={deleteAssigns}
+        />
     </>
   )
 }
 
-export default TableGroups
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
+    permissions: state.userStore.permissions.person,
+  };
+};
+
+export default connect(mapState)(PersonsTable);

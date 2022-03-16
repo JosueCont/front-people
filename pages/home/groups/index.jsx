@@ -5,29 +5,31 @@ import { useSelector } from "react-redux";
 import { Breadcrumb, message } from "antd";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiAssessment from "../../../api/WebApiAssessment";
-import FormSearch from "../../../components/assessment/groups/FormSearch"
-import TableGroups from "../../../components/assessment/groups/TableGroups";
-import { useFilter } from "../../../components/assessment/useFilter";
+import PersonsGroupSearch from "../../../components/person/groups/PersonsGroupSearch";
+import PersonsTable from "../../../components/person/groups/PersonsTable";
 
 const GroupsPeople = () =>{
     const router = useRouter();
-    const [
-        filterValues,
-        filterActive,
-        filterString,
-        onFilterChange,
-        onFilterActive,
-        onFilterReset,
-    ] = useFilter();
     const currenNode = useSelector(state => state.userStore.current_node)
     const [listGroups, setLisGroups] = useState([]);
+    const [personList, setPersonList] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(()=>{
         if(currenNode?.id){
             getListGroups(currenNode.id, "", "")
+            getPersons(currenNode.id)
         }
     },[currenNode])
+
+    const getPersons = async (nodeId) => {
+        try {
+            let response = await WebApiAssessment.getListPersons({node: nodeId});
+            setPersonList(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const successMessages = (ids) =>{
         if(ids.length > 1){
@@ -54,7 +56,6 @@ const GroupsPeople = () =>{
         setLoading(true)
         try {
             let response = await WebApiAssessment.getGroupsPersons(data);
-            // console.log('response grupos personas', response)
             setLisGroups(response.data)
             setLoading(false)
         } catch (e) {
@@ -84,7 +85,6 @@ const GroupsPeople = () =>{
         } catch (e) {
             setLoading(false)
             message.error("Información no actualizada")
-            console.log('no se actualiza----->',e.response)
         }
     }
 
@@ -105,6 +105,20 @@ const GroupsPeople = () =>{
         getListGroups(currenNode?.id, name, "")
     }
 
+    const onFinishAssign = async (values, ids) =>{
+        console.log('vaalues',values);
+        console.log('ids',ids);
+        const body = { ...values, groups_person: ids, node: currenNode?.id}
+        try {
+            await WebApiAssessment.assignAssessmentsGroup(body)
+            getListGroups(currenNode?.id,"","")
+            message.success("Evaluaciones asignadas")
+        } catch (e) {
+            setLoading(false)
+            message.error("Evaluaciones no asignadas")
+        }
+    };
+
     return(
         <MainLayout currentKey="groups_people">
             <Breadcrumb>
@@ -117,22 +131,21 @@ const GroupsPeople = () =>{
                 <Breadcrumb.Item>Grupos</Breadcrumb.Item>
             </Breadcrumb>
             <div className="container" style={{ width: "100%" }}>
-                <FormSearch
+                <PersonsGroupSearch
                     setLoading={setLoading}
                     createGroup={createGroup}
-                    hiddenName={false}
-                    hiddenMembers={false}
                     searchGroup={searchGroup}
+                    personList={personList}
                 />
-                <TableGroups
+                <PersonsTable
                     dataGroups={listGroups}
                     loading={loading}
                     setLoading={setLoading}
                     getListGroups={getListGroups}
                     updateGroup={updateGroup}
                     deteleGroup={deleteGroup}
-                    hiddenName={false}
-                    hiddenMembers={false}
+                    personList={personList}
+                    onFinishAssign={onFinishAssign}
                 />
             </div>
         </MainLayout>

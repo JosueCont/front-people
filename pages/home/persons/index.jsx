@@ -29,6 +29,7 @@ import {
   UploadOutlined,
   EllipsisOutlined,
   ExclamationCircleOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 import FormPerson from "../../../components/person/FormPerson";
@@ -59,8 +60,10 @@ import {
   getDomain,
 } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
-import FormGroup from "../../../components/assessment/groups/FormGroup";
+import AssignAssessments from "../../../components/person/assignments/AssignAssessments";
+import PersonsGroup from "../../../components/person/groups/PersonsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
+import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 
 const homeScreen = ({ ...props }) => {
   const { Text } = Typography;
@@ -75,6 +78,8 @@ const homeScreen = ({ ...props }) => {
   const [showModalAssignTest, setShowModalAssignTest] = useState(false);
   const [openAssignToPerson, setOpenAssignToPerson] = useState(false);
   const [showAssignToPerson, setShowAssignToPerson] = useState(false);
+  const [showModalAssigns, setShowModalAssigns] = useState(false);
+  const [personSelected, setPersonSelected] = useState(false);
   const [personsKeys, setPersonsKeys] = useState([]);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
@@ -103,6 +108,9 @@ const homeScreen = ({ ...props }) => {
   const [userSession, setUserSession] = useState({});
   const [deactivateTrigger, setDeactivateTrigger] = useState(false);
   const [permissions, setPermissions] = useState({});
+  const [itemPerson, setItemPerson] = useState({});
+  const [loadAssign, setLoadAssign] = useState(false);
+
   useLayoutEffect(() => {
     setPermissions(props.permissions);
     setTimeout(() => {
@@ -191,18 +199,48 @@ const homeScreen = ({ ...props }) => {
     color: "#ffff",
   };
 
+  const OpenModalAssigns = (item) => {
+    setItemPerson(item);
+    getAssigns(item.id, "");
+  };
+
+  const onChangeTypeAssign = (key) => {
+    if (key == 1) {
+      getAssigns(itemPerson.id, "", "");
+    } else if (key == 2) {
+      getAssigns(itemPerson.id, "", "&groups");
+    }
+  };
+
+  const getAssigns = async (id, queryParam, type = "") => {
+    setLoadAssign(true);
+    setShowModalAssigns(true);
+    try {
+      let response = await WebApiAssessment.getAssignByPerson(
+        id,
+        queryParam,
+        type
+      );
+      setPersonSelected(response.data);
+      setLoadAssign(false);
+    } catch (e) {
+      setPersonSelected([]);
+      // setShowModalAssigns(false)
+      setLoadAssign(false);
+      console.log(e);
+    }
+  };
+
   /////TABLE PERSON
   let columns = [
     {
       title: "Núm. Empleado",
-      width: 2,
       render: (item) => {
         return <div>{item.code ? item.code : ""}</div>;
       },
     },
     {
       title: "Foto",
-      width: 1,
       render: (item) => {
         return (
           <div>
@@ -213,7 +251,6 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Nombre",
-      width: 120,
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
@@ -233,8 +270,20 @@ const homeScreen = ({ ...props }) => {
       },
     },
     {
+      title: "Asignaciones",
+      render: (item) => {
+        return (
+          <Tooltip title="Ver asignaciones">
+            <EyeOutlined
+              style={{ cursor: "pointer" }}
+              onClick={() => OpenModalAssigns(item)}
+            />
+          </Tooltip>
+        );
+      },
+    },
+    {
       title: "Estatus",
-      width: 30,
       render: (item) => {
         return (
           <>
@@ -265,7 +314,6 @@ const homeScreen = ({ ...props }) => {
           </>
         );
       },
-      width: 44,
       render: (item) => {
         return (
           <>
@@ -332,7 +380,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Nombre",
-      width: 120,
+      width: 200,
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
@@ -353,7 +401,6 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Estatus",
-      width: 70,
       render: (item) => {
         return (
           <>
@@ -369,8 +416,20 @@ const homeScreen = ({ ...props }) => {
       },
     },
     {
+      title: "Asignaciones",
+      render: (item) => {
+        return (
+          <Tooltip title="Ver asignaciones">
+            <EyeOutlined
+              style={{ cursor: "pointer" }}
+              onClick={() => OpenModalAssigns(item)}
+            />
+          </Tooltip>
+        );
+      },
+    },
+    {
       title: "Acceso a intranet",
-      width: 70,
       render: (item) => {
         return (
           <>
@@ -490,7 +549,7 @@ const homeScreen = ({ ...props }) => {
       <Menu>
         {permissions.create && (
           <Menu.Item key="1" onClick={() => HandleModalAssign(item)}>
-            Asignar evaluación
+            Asignar evaluaciónes
           </Menu.Item>
         )}
         {permissions.edit && (
@@ -710,15 +769,16 @@ const homeScreen = ({ ...props }) => {
     setModalCreateGroup(false);
     setOpenAssignTest(false);
     setShowModalAssignTest(false);
-    setOpenAssignToPerson(false);
-    setShowAssignToPerson(false);
+    // setOpenAssignToPerson(false)
+    // setShowAssignToPerson(false)
     setPersonsToDelete([]);
     setPersonsKeys([]);
   };
 
   const HandleModalAssign = (item) => {
     setPersonsToDelete([item]);
-    setOpenAssignToPerson(true);
+    // setOpenAssignToPerson(true)
+    setOpenAssignTest(true);
   };
 
   const getOnlyIds = () => {
@@ -731,8 +791,8 @@ const homeScreen = ({ ...props }) => {
 
   const onFinishCreateGroup = async (values) => {
     setLoading(true);
-    const ids = getOnlyIds();
-    const body = { ...values, persons: ids, node: props.currentNode?.id };
+    // const ids = getOnlyIds();
+    const body = { ...values, node: props.currentNode?.id };
     try {
       await WebApiAssessment.createGroupPersons(body);
       filterPersonName();
@@ -744,38 +804,66 @@ const homeScreen = ({ ...props }) => {
     }
   };
 
-  const onFinishAssignManyTest = async (values) => {
+  const onFinishAssignAssessments = async (values) => {
     setLoading(true);
     const ids = getOnlyIds();
     const body = { ...values, persons: ids, node: props.currentNode?.id };
     try {
+      await WebApiAssessment.assignAssessments(body);
       filterPersonName();
       message.success("Evaluaciones asignadas");
     } catch (e) {
-      console.log(e);
       setLoading(false);
       message.error("Evaluaciones no asignadas");
     }
   };
 
-  const onFinishAssignOneTest = async (value) => {
-    setLoading(true);
-    const ids = getOnlyIds();
-    const body = {
-      id_assessment: value.assessments,
-      person: ids.at(-1),
-      node: props.currentNode?.id,
-    };
-    try {
-      await WebApiAssessment.assignOneTest(body);
-      filterPersonName();
-      message.success("Evaluación asignada");
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-      message.error("Evaluación no asignada");
+  const successMessages = (ids) => {
+    if (ids.length > 1) {
+      return message.success("Asignaciones eliminadas");
+    } else {
+      return message.success("Asignación eliminada");
     }
   };
+
+  const errorMessages = (ids) => {
+    if (ids.length > 1) {
+      return message.error("Asignaciones no eliminadas");
+    } else {
+      return message.error("Asignación no eliminada");
+    }
+  };
+
+  const deleteAssigns = async (ids, type) => {
+    setLoadAssign(true);
+    try {
+      await WebApiAssessment.deleteAssignByPerson({ person_assessments: ids });
+      successMessages(ids);
+      getAssigns(itemPerson.id, "", type);
+    } catch (e) {
+      errorMessages(ids);
+      setLoadAssign(false);
+    }
+  };
+
+  // const onFinishAssignOneTest = async (value) =>{
+  //   setLoading(true)
+  //   const ids = getOnlyIds();
+  //   const body = {
+  //     id_assessment: value.assessments,
+  //     person: ids.at(-1),
+  //     node: props.currentNode?.id
+  //   }
+  //   try {
+  //     await WebApiAssessment.assignOneTest(body)
+  //     filterPersonName();
+  //     message.success("Evaluación asignada")
+  //   } catch (e) {
+  //     console.log(e)
+  //     setLoading(false)
+  //     message.error("Evaluación no asignada")
+  //   }
+  // };
 
   useEffect(() => {
     if (modalCreateGroup) {
@@ -804,16 +892,16 @@ const homeScreen = ({ ...props }) => {
     }
   }, [openAssignTest]);
 
-  useEffect(() => {
-    if (openAssignToPerson) {
-      if (personsToDelete.length > 0) {
-        setShowAssignToPerson(true);
-      } else {
-        setOpenAssignToPerson(false);
-        message.error("Selecciona al menos una persona");
-      }
-    }
-  }, [openAssignToPerson]);
+  // useEffect(()=>{
+  //   if(openAssignToPerson){
+  //     if(personsToDelete.length > 0){
+  //       setShowAssignToPerson(true)
+  //     }else{
+  //       setOpenAssignToPerson(false)
+  //       message.error("Selecciona al menos una persona")
+  //     }
+  //   }
+  // },[openAssignToPerson])
 
   const showModalDelete = () => {
     modalDelete ? setModalDelete(false) : setModalDelete(true);
@@ -1138,42 +1226,33 @@ const homeScreen = ({ ...props }) => {
           />
         )}
         {showModalGroup && (
-          <FormGroup
-            loadData={{}}
+          <PersonsGroup
+            loadData={{ name: "", persons: personsToDelete }}
             title={"Crear nuevo grupo"}
             visible={showModalGroup}
             close={HandleCloseGroup}
             actionForm={onFinishCreateGroup}
-            hiddenSurveys={true}
-            hiddenMembers={true}
-            // hiddenName={false}
+            personList={person}
           />
         )}
         {showModalAssignTest && (
-          <FormGroup
-            loadData={{}}
+          <AssignAssessments
             title={"Asignar evaluaciones"}
             visible={showModalAssignTest}
             close={HandleCloseGroup}
-            actionForm={onFinishAssignManyTest}
-            multipleSurveys={true}
-            // hiddenSurveys={false}
-            hiddenCategories={true}
-            hiddenMembers={true}
-            hiddenName={true}
+            actionForm={onFinishAssignAssessments}
           />
         )}
-        {showAssignToPerson && (
-          <FormGroup
-            loadData={{}}
-            title={"Asignar evaluación"}
-            visible={showAssignToPerson}
-            close={HandleCloseGroup}
-            actionForm={onFinishAssignOneTest}
-            // multipleSurveys={false}
-            // hiddenSurveys={false}
-            hiddenMembers={true}
-            hiddenName={true}
+        {showModalAssigns && (
+          <ViewAssigns
+            visible={showModalAssigns}
+            setVisible={setShowModalAssigns}
+            itemList={personSelected}
+            itemSelected={itemPerson}
+            getAssigns={getAssigns}
+            onChangeType={onChangeTypeAssign}
+            loadAssign={loadAssign}
+            actionDelete={deleteAssigns}
           />
         )}
       </MainLayout>
