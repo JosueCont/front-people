@@ -748,7 +748,6 @@ const homeScreen = ({ ...props }) => {
     setLoading(true);
     const ids = getOnlyIds();
     const body = { ...values, persons: ids, node: props.currentNode?.id };
-    console.log("valores que se van a enviar----->", body);
     try {
       filterPersonName();
       message.success("Evaluaciones asignadas");

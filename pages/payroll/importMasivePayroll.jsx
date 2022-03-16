@@ -128,7 +128,6 @@ const ImportMasivePayroll = ({ ...props }) => {
 
   const sendCreateCompany = (data) => {
     data.active = activeCalendar;
-    console.log("SEND OBJ-->> ", data);
   };
 
   const PrintPeriods = ({ periods }) => {
