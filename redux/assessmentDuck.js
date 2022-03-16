@@ -4,6 +4,7 @@ import { types } from "../types/assessments";
 import _ from "lodash";
 import { asyncForEach } from "../utils/functions";
 import { API_ASSESSMENT } from "../config/config";
+import WebApiAssessment from "../api/WebApiAssessment";
 
 const nodeId = Number.parseInt(userCompanyId());
 
@@ -296,10 +297,12 @@ export const assessmentCreateAction = (data) => {
   return async (dispatch) => {
     dispatch({ type: types.FETCHING, payload: true });
     try {
-      let response = await Axios.post(
-        API_ASSESSMENT + "/assessments/assessment/",
-        data
-      );
+
+      // let response = await Axios.post(
+      //   API_ASSESSMENT + "/assessments/assessment/",
+      //   data
+      // );
+      let response = await WebApiAssessment.createAssessments(data);
       dispatch({ type: types.CREATE_ASSESSMENTS, payload: response.data });
       return true;
     } catch (e) {
@@ -315,10 +318,11 @@ export const assessmentUpdateAction = (id, data) => {
   return async (dispatch) => {
     dispatch({ type: types.FETCHING, payload: true });
     try {
-      let response = await Axios.patch(
-        `${API_ASSESSMENT}/assessments/assessment/${id}/`,
-        data
-      );
+      // let response = await Axios.patch(
+      //   `${API_ASSESSMENT}/assessments/assessment/${id}/`,
+      //   data
+      // );
+      let response = await WebApiAssessment.updateAssessments(id, data);
       dispatch({ type: types.UPDATE_ASSESSMENTS, payload: response.data });
       return true;
     } catch (e) {

@@ -28,14 +28,13 @@ const FormAssessment = ({ ...props }) => {
   const [imagen, setImagen] = useState(null);
   const [loadingLogo, setLoadingLogo] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [listCategories, setListCategories] = useState([]);
 
   useEffect(() => {
     if (props.loadData) {
       formAssessment.setFieldsValue({
         code: props.loadData.code,
         name: props.loadData.name,
-        categories: props.loadData.categories.at(-1),
+        categories: props.loadData.categories,
       });
       setImageUrl(props.loadData.image);
     } else {
@@ -50,32 +49,34 @@ const FormAssessment = ({ ...props }) => {
   useEffect(() => {
     setLoading(props.assessmentStore.fetching);
   }, [props.assessmentStore]);
-
-  useEffect(()=>{
-    getCategories();
-  },[props.visible])
-
-  const getCategories = async () =>{
-    try {
-        let response = await WebApiAssessment.getCategoriesAssessment();
-        setListCategories(response.data?.results)
-    } catch (e) {
-        setListCategories([])
-        console.log(e)
+  
+  const createData = (obj )=>{
+    let newObj = Object.assign(obj)
+    if(!newObj.image || newObj.image == "" ){
+      delete newObj.image
     }
-}
+    if(!newObj.description_es || newObj.description_es == "" ){
+      delete newObj.description_es
+    }
+    if(!newObj.instructions_es || newObj.instructions_es == "" ){
+      delete newObj.instructions_es
+    }
+    return newObj;
+  }
 
   const onFinish = (values) => {
-    let data = new FormData();
-    imagen && data.append("image", imagen);
-    values.code && data.append("code", values.code);
-    values.name && data.append("name", values.name);
-    values.categories && data.append("categories", [values.categories]);
-    descripcion && data.append("description_es", descripcion);
-    instruccions && data.append("instructions_es", instruccions);
+    // let data = new FormData();
+    // imagen && data.append("image", imagen);
+    // values.code && data.append("code", values.code);
+    // values.name && data.append("name", values.name);
+    // values.categories && data.append("categories", values.categories);
+    // descripcion && data.append("description_es", descripcion);
+    // instruccions && data.append("instructions_es", instruccions);
+    const body = {...values, image: imagen, description_es: descripcion, instructions_es: instruccions }
+    const params = createData(body);
     if (props.loadData) {
       props
-        .assessmentUpdateAction(assessmentId, data)
+        .assessmentUpdateAction(assessmentId, params)
         .then((response) => {
           response
             ? message.success("Actualizado correctamente")
@@ -87,7 +88,8 @@ const FormAssessment = ({ ...props }) => {
           props.close();
         });
     } else {
-      data.append("companies", [nodeId]);
+      const data = {...params, companies: [nodeId]}
+      // data.append("companies", [nodeId]);
       props
         .assessmentCreateAction(data)
         .then((response) => {
@@ -193,6 +195,8 @@ const FormAssessment = ({ ...props }) => {
         
         <Form.Item name="categories" label={"Categoría"}  >
         <Select
+          mode="multiple"
+          allowClear
           showSearch
           placeholder={'Seleccionar categoría'}
           notFoundContent='No se encontraron resultados'
@@ -204,7 +208,7 @@ const FormAssessment = ({ ...props }) => {
               optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
           }
         >
-          {listCategories.map(item =>(
+          {props.listCategories?.map(item =>(
               <Option key={item.id} value={item.id}>
                   {item.name}
               </Option>
