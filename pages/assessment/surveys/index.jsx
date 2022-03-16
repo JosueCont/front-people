@@ -392,24 +392,13 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
           </Col>
         </Row>
       </div>
-      {showCreateAssessment && (
-        <FormAssessment
-          title="Agregar nueva encuesta"
-          visible={showCreateAssessment}
+      <FormAssessment
+          title= {showCreateAssessment? "Agregar nueva encuesta": "Modificar encuesta"} 
+          visible={showCreateAssessment || showUpdateAssessment}
           close={HandleCloseModal}
           loadData={assessmentData}
           listCategories={listCategories}
         />
-      )}
-      {showUpdateAssessment && (
-        <FormAssessment
-          title="Modificar encuesta"
-          visible={showUpdateAssessment}
-          close={HandleCloseModal}
-          loadData={assessmentData}
-          listCategories={listCategories}
-        />
-      )}
       {showModalCreateGroup && (
         <AssessmentsGroup
             loadData={{name: '', assessments: testsSelected}}
@@ -421,6 +410,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
         />
       )}
     </MainLayout>
+    
   );
 };
 

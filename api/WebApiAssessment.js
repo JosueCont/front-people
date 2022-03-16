@@ -79,6 +79,55 @@ class WebApiAssessment {
     static deleteAssignByGroup (data) {
         return WebApi.ApisType(`/person/group-person-assessment/delete_by_ids/`, "post", data);
     }
+    static getOnlyGroupAssessment(id) {
+        return Axios.get(`${API_ASSESSMENT}/assessments/group/${id}/`);
+    }
+    static assessmentLoadAssessment(id) {
+        return  Axios.get( `${API_ASSESSMENT}/assessments/assessment/?companies=${id}`);
+    }
+    static assessmentSections(id) {
+        return  Axios.get(`${API_ASSESSMENT}/assessments/section/?assessment=${id}`);
+    }
+    static assessmentQuestions(id) {
+        return Axios.get(`${API_ASSESSMENT}/assessments/question/?section=${id}`);
+    }
+    static assessmentDelete(id) {
+        return  Axios.delete(`${API_ASSESSMENT}/assessments/assessment/${id}`);
+    }
+    static assessmentStatus(id, data) {
+        return Axios.patch(`${API_ASSESSMENT}/assessments/assessment/${id}/`, data);
+    }
+    static createSection(data) {
+        return Axios.post(API_ASSESSMENT + "/assessments/section/", data);
+    }
+    static updateSection(id, data) {
+        return Axios.patch(`${API_ASSESSMENT}/assessments/section/${id}/`, data);
+    }
+    static deleteSection(id) {
+        return Axios.delete(`${API_ASSESSMENT}/assessments/section/${id}`);
+    }
+    static createQuestion(data) {
+        return Axios.post(API_ASSESSMENT + "/assessments/question/", data);
+    }
+    static updateQuestion(id, data) {
+        return Axios.patch(`${API_ASSESSMENT}/assessments/question/${id}/`, data);
+    }
+    static deleteQuestion(id) {
+        return Axios.delete(`${API_ASSESSMENT}/assessments/question/${id}`);
+    }
+    static createAnswer(data) {
+        return Axios.post(API_ASSESSMENT + "/assessments/answer/", data);
+    }
+    static updateAnswer(id, data) {
+        return Axios.patch(`${API_ASSESSMENT}/assessments/answer/${id}/`, data);
+    }
+    static getAnswer(id) {
+        return Axios.get(`${API_ASSESSMENT}/assessments/question/${id}/`);
+    }
+    static deleteAnswer(id){
+        return Axios.delete(`${API_ASSESSMENT}/assessments/answer/${id}/`);
+    }
+
 }
 
 export default WebApiAssessment
