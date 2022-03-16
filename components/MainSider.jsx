@@ -10,7 +10,6 @@ import {
   FormOutlined,
   BugOutlined,
   DollarOutlined,
-  UserAddOutlined,
   BankOutlined,
   SettingOutlined,
   AlertOutlined,
