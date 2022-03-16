@@ -41,6 +41,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [payroll, setPayroll] = useState([]);
   const [expandRow, setExpandRow] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [personId, setPersonId] = useState(null);
 
   useEffect(() => {
     if (props.currentNode) getPaymentCalendars(props.currentNode.id);
@@ -63,18 +64,20 @@ const CalculatePayroll = ({ ...props }) => {
   const changeCalendar = (value) => {
     const calendar = paymentCalendars.find((item) => item.id === value);
     const period = calendar.periods.find((p) => p.active == true);
-    console.log(calendar);
     form.setFieldsValue({
       periodicity: calendar.periodicity.description,
       period: `${period.start_date} - ${period.end_date}`,
       insidences: `${period.incidences.start_date} - ${period.incidences.end_date}`,
       payment_day: period.payment_date,
+      year: calendar.period,
     });
     sendCalculatePayroll({ calendar_id: value });
   };
 
   const sendCalculatePayroll = async (dataToSend) => {
     setLoading(true);
+    setModalVisible(false);
+    setPersonId(null);
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
         setLoading(false);
@@ -86,67 +89,6 @@ const CalculatePayroll = ({ ...props }) => {
         form.resetFields();
         setLoading(false);
       });
-
-    //   let arrar_payroll = [];
-    //   response.data.payroll.map((a) => {
-    //     if (a.payroll_person) {
-    //       let item = {
-    //         person_id: a.payroll_person.person.id,
-    //         key: a.payroll_person.person.id,
-    //         full_name:
-    //           a.payroll_person.person.first_name +
-    //           " " +
-    //           a.payroll_person.person.flast_name +
-    //           " " +
-    //           a.payroll_person.person.mlast_name,
-    //         company: a.payroll_person.person.node_user.name,
-    //         daily_salary: a.payroll_person.daily_salary
-    //           ? `$ ${a.payroll_person.daily_salary}`
-    //           : null,
-    //         perceptions: [],
-    //         deductions: [],
-    //         total_deductions: 0.0,
-    //         other_payments: [],
-    //         total_other_payments: 0.0,
-    //         total_to_pay: 0.0,
-    //       };
-
-    //       if (a.calculation) {
-    //         item["total_perceptions"] = a.calculation.total_perceptions;
-    //         item["total_deductions"] = a.calculation.total_deductions;
-    //         item["total_to_pay"] = a.calculation.net_salary;
-
-    //         if (a.calculation.perceptions) {
-    //           item["perceptions"] = mapConcepts(
-    //             a.calculation.perceptions,
-    //             "perceptions"
-    //           );
-    //         }
-
-    //         if (a.calculation.deductions) {
-    //           item["deductions"] = mapConcepts(
-    //             a.calculation.deductions,
-    //             "deductions"
-    //           );
-    //         }
-
-    //         if (a.calculation.other_payments) {
-    //           item["other_payments"] = mapConcepts(
-    //             a.calculation.other_payments,
-    //             "other_payments"
-    //           );
-    //         }
-    //       }
-    //       arrar_payroll.push(item);
-    //     }
-    //   });
-    //   setPayroll(arrar_payroll);
-    //   setLoading(false);
-    //   return true;
-    // } catch (error) {
-    //   console.log(error);
-    //   return false;
-    // }
   };
 
   const persons = [
@@ -191,8 +133,13 @@ const CalculatePayroll = ({ ...props }) => {
     {
       key: "actions",
       className: "cell-actions",
-      render: () => (
-        <Button size="small" onClick={() => setModalVisible(true)}>
+      render: (item) => (
+        <Button
+          size="small"
+          onClick={() => {
+            setPersonId(item.person.id), setModalVisible(true);
+          }}
+        >
           <PlusOutlined />
         </Button>
       ),
@@ -409,7 +356,7 @@ const CalculatePayroll = ({ ...props }) => {
                   Total percepciones :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  $ {numberFormat(item.total_perceptions)}
+                  $ {numberFormat(item.calculation.total_perceptions)}
                 </Col>
               </Col>
               <Col span={24} style={{ display: "flex" }}>
@@ -417,7 +364,7 @@ const CalculatePayroll = ({ ...props }) => {
                   Total deducciones :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  $ {numberFormat(item.total_deductions)}
+                  $ {numberFormat(item.calculation.total_deductions)}
                 </Col>
               </Col>
               <Col span={24} style={{ display: "flex" }}>
@@ -425,7 +372,7 @@ const CalculatePayroll = ({ ...props }) => {
                   Total a pagar :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  ${numberFormat(item.total_to_pay)}
+                  ${numberFormat(item.calculation.net_salary)}
                 </Col>
               </Col>
             </Row>
@@ -433,27 +380,6 @@ const CalculatePayroll = ({ ...props }) => {
         </Row>
       </>
     );
-  };
-
-  const saveConcepts = (concept) => {
-    const tempPayroll = [...payroll];
-    let payroll_person = tempPayroll.find(
-      (elem) => elem.person_id === concept.person_id
-    );
-    payroll_person.perceptions = concept.perceptions;
-    payroll_person.deductions = concept.deductions;
-    payroll_person.other_payments = concept.other_payments;
-    updPersonsPayroll(payroll_person);
-    sendStampPayroll(payroll_person);
-  };
-
-  const updPersonsPayroll = (object_person) => {
-    let newpayroll = [...payroll];
-    let idx = newpayroll.findIndex(
-      (item) => item.person_id === object_person.person_id
-    );
-    newpayroll[idx] = object_person;
-    setPayroll(newpayroll);
   };
 
   return (
@@ -602,14 +528,20 @@ const CalculatePayroll = ({ ...props }) => {
             </Spin>
           </Col>
         </Row>
-
-        <ModalConceptsPayroll
-          visible={modalVisible}
-          setVisible={setModalVisible}
-          saveConcepts={saveConcepts}
-          payroll={payroll}
-          setLoading={setLoading}
-        />
+        {personId && (
+          <ModalConceptsPayroll
+            visible={modalVisible}
+            setVisible={setModalVisible}
+            calendar={{
+              node: props.currentNode.id,
+              period: form.getFieldValue("year"),
+            }}
+            person_id={personId}
+            payroll={payroll}
+            setLoading={setLoading}
+            sendCalculatePayroll={sendCalculatePayroll}
+          />
+        )}
       </MainLayout>
     </>
   );
