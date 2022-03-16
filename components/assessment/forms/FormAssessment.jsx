@@ -44,7 +44,7 @@ const FormAssessment = ({ ...props }) => {
       setDescripcion("");
       setInstruccions("");
     }
-  }, []);
+  }, [props.loadData]);
 
   useEffect(() => {
     setLoading(props.assessmentStore.fetching);
@@ -72,7 +72,13 @@ const FormAssessment = ({ ...props }) => {
     // values.categories && data.append("categories", values.categories);
     // descripcion && data.append("description_es", descripcion);
     // instruccions && data.append("instructions_es", instruccions);
-    const body = {...values, image: imagen, description_es: descripcion, instructions_es: instruccions }
+    const body = {
+      ...values,
+       image: imagen, 
+       companies: [nodeId],
+       description_es: descripcion, 
+       instructions_es: instruccions 
+      }
     const params = createData(body);
     if (props.loadData) {
       props
@@ -88,10 +94,9 @@ const FormAssessment = ({ ...props }) => {
           props.close();
         });
     } else {
-      const data = {...params, companies: [nodeId]}
       // data.append("companies", [nodeId]);
       props
-        .assessmentCreateAction(data)
+        .assessmentCreateAction(params)
         .then((response) => {
           response
             ? message.success("Agregado correctamente")
@@ -143,7 +148,7 @@ const FormAssessment = ({ ...props }) => {
       visible={props.visible}
       footer={null}
       onCancel={() => props.close()}
-      width={window.innerWidth > 1000 ? "60%" : "80%"}
+      // width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[
         <Button key="back" onClick={() => props.close()}>
           {" "}
@@ -193,7 +198,7 @@ const FormAssessment = ({ ...props }) => {
           <Input maxLength={200} allowClear={true} placeholder="Nombre" />
         </Form.Item>
         
-        <Form.Item name="categories" label={"Categoría"}  >
+        <Form.Item name="categories" label={"Categoría"} rules={[ruleRequired]}>
         <Select
           mode="multiple"
           allowClear
