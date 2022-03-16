@@ -549,7 +549,7 @@ const homeScreen = ({ ...props }) => {
       <Menu>
         {permissions.create && (
           <Menu.Item key="1" onClick={() => HandleModalAssign(item)}>
-            Asignar evaluaciónes
+            Asignar evaluaciones
           </Menu.Item>
         )}
         {permissions.edit && (

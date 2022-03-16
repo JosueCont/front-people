@@ -153,7 +153,7 @@ const PersonsTable = ({permissions, ...props}) => {
         setShowModalAssign(true)
       }else{
         setOpenModalAssign(false)
-        message.error("Selecciona al menos una grupo")
+        message.error("Selecciona al menos un grupo")
       }
     }
   },[openModalAssign])
@@ -197,12 +197,11 @@ const PersonsTable = ({permissions, ...props}) => {
       group_person_assessments: ids
     }
     try {
-      let response = await WebApiAssessment.deleteAssignByGroup(data)
-      console.log('si se elimina------>', response)
+      await WebApiAssessment.deleteAssignByGroup(data)
       successMessages(ids)
       getAssigns(itemGroup.id, "", type)
     } catch (e) {
-      console.log('no se elimina----->',e.response)
+      console.log(e)
       errorMessages(ids)
       setLoadAssign(false)
     }
@@ -211,18 +210,11 @@ const PersonsTable = ({permissions, ...props}) => {
   const menuTable = () => {
     return (
       <Menu>
-        {permissions.create && (
-          <Menu.Item
-            key={3}
-            onClick={() =>  groupsToDelete.length < 0 ? message.error("Selecciona al menos un grupo") : setOpenModalAssign(true) }>
-            Asignar evaluaciónes
-          </Menu.Item>
-        )}
         {permissions?.delete && (
           <Menu.Item
             key={1}
             onClick={() => setOpenModalAssign(true)}>
-            Asignar evaluaciónes
+            Asignar evaluaciones
           </Menu.Item>
         )}
         {permissions?.delete && (
@@ -245,7 +237,7 @@ const PersonsTable = ({permissions, ...props}) => {
           <Menu.Item
             key={3}
             onClick={() => HandleModalAssign(item)}>
-            Asignar evaluaciónes
+            Asignar evaluaciones
           </Menu.Item>
         )}
         {permissions?.edit && (
