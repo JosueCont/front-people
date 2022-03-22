@@ -30,6 +30,8 @@ import {
   EllipsisOutlined,
   ExclamationCircleOutlined,
   EyeOutlined,
+  EditOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 import FormPerson from "../../../components/person/FormPerson";
@@ -529,7 +531,7 @@ const homeScreen = ({ ...props }) => {
           </>
         )}
         {permissions.delete && (
-          <Menu.Item key="2" onClick={() => showModalDelete()}>
+          <Menu.Item key="2" onClick={() => showModalDelete()} icon={<DeleteOutlined/>} >
             Eliminar
           </Menu.Item>
         )}
@@ -549,16 +551,17 @@ const homeScreen = ({ ...props }) => {
       <Menu>
         {permissions.create && (
           <Menu.Item key="1" onClick={() => HandleModalAssign(item)}>
-            Asignar evaluaciónes
+            Asignar evaluaciones
           </Menu.Item>
         )}
         {permissions.edit && (
-          <Menu.Item key="2">
+          <Menu.Item key="2" icon={<EditOutlined/>}>
             <Link href={`/home/persons/${item.id}`}>Editar</Link>
           </Menu.Item>
         )}
         {permissions.delete && (
           <Menu.Item
+            icon={<DeleteOutlined/>}
             key="3"
             onClick={() => {
               setPersonsToDelete([item]), showModalDelete();

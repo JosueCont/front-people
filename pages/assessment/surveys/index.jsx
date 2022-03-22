@@ -50,6 +50,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
   //   edit: true,
   //   delete: true,
   // });
+  const [listCategories, setListCategories] = useState([]);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateAssessment, setShowCreateAssessment] = useState(false);
@@ -70,6 +71,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
 
   useEffect(() => {
     if(assessmentStore.assessments?.length > 0){
+      getCategories();
       setAssessments(assessmentStore.assessments);
       setLoading(assessmentStore.fetching);
       assessmentStore.active_modal === types.CREATE_ASSESSMENTS
@@ -80,6 +82,17 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
         : setShowUpdateAssessment(false);
     }
   }, [assessmentStore]);
+
+
+  const getCategories = async () =>{
+    try {
+        let response = await WebApiAssessment.getCategoriesAssessment();
+        setListCategories(response.data?.results)
+    } catch (e) {
+        setListCategories([])
+        console.log(e)
+    }
+}
 
   const HandleCreateAssessment = () => {
     setAssessmentData(false);
@@ -273,7 +286,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
             <Row key={"actions-" + item.id}>
               {props.permissions?.edit && (
                 <Col span={6}>
-                  <EditOutlined onClick={() => HandleUpdateAssessment(item)} />
+                  <EditOutlined onClick={() => HandleUpdateAssessment(item)}/>
                 </Col>
               )}
               {props.permissions?.delete && (
@@ -379,22 +392,13 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
           </Col>
         </Row>
       </div>
-      {showCreateAssessment && (
-        <FormAssessment
-          title="Agregar nueva encuesta"
-          visible={showCreateAssessment}
+      <FormAssessment
+          title= {showCreateAssessment? "Agregar nueva encuesta": "Modificar encuesta"} 
+          visible={showCreateAssessment || showUpdateAssessment}
           close={HandleCloseModal}
           loadData={assessmentData}
+          listCategories={listCategories}
         />
-      )}
-      {showUpdateAssessment && (
-        <FormAssessment
-          title="Modificar encuesta"
-          visible={showUpdateAssessment}
-          close={HandleCloseModal}
-          loadData={assessmentData}
-        />
-      )}
       {showModalCreateGroup && (
         <AssessmentsGroup
             loadData={{name: '', assessments: testsSelected}}
@@ -406,6 +410,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
         />
       )}
     </MainLayout>
+    
   );
 };
 
