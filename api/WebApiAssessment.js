@@ -68,7 +68,7 @@ class WebApiAssessment {
         return WebApi.ApisType(`/person/group-person-assessment/`, "post", data);
     }
     static assessmentLoadAssessment(id) {
-        return WebApi.ApisType(`/assessments/assessment/?companies=${id}`, "get");
+        return Axios.get(`${API_ASSESSMENT}/assessments/assessment/?companies=${id}`);
     }
     static createAssessments (data) {
         return WebApi.ApisType(`/person/assessment/`, "post", data);

@@ -286,7 +286,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
             <Row key={"actions-" + item.id}>
               {props.permissions?.edit && (
                 <Col span={6}>
-                  <EditOutlined onClick={() => HandleUpdateAssessment(item)} />
+                  <EditOutlined onClick={() => HandleUpdateAssessment(item)}/>
                 </Col>
               )}
               {props.permissions?.delete && (

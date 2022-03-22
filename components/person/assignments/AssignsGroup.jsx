@@ -104,9 +104,7 @@ const AssignsGroup = ({getAssigns, itemId, listAssigns, loading, actionDelete, .
             width: 50,
             render: (item) => {
                 return (
-                    <ButtonDanger
-                        size={'small'}
-                        icon={<DeleteOutlined/>}
+                    <DeleteOutlined
                         onClick={()=>deleteOneAssign(item)}
                     />
                 );
