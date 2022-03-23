@@ -7,7 +7,7 @@ import {
   UserOutlined,
   UserSwitchOutlined,
   FileOutlined,
-  BankOutlined,
+  PicRightOutlined,
 } from "@ant-design/icons";
 import Title from "antd/lib/typography/Title";
 import Router from "next/router";
@@ -21,6 +21,7 @@ import TabJobs from "../../../components/catalogs/Jobs";
 import PersonTypes from "../../../components/catalogs/PersonTypes";
 import Relationship from "../../../components/catalogs/Relationship";
 import DocumentsTypes from "../../../components/catalogs/DocumentsTypes";
+import FixedConcepts from "../../../components/catalogs/FixedConcepts";
 
 const { Content } = Layout;
 
@@ -39,9 +40,7 @@ const configBusiness = ({ ...props }) => {
           </Breadcrumb.Item>
           <Breadcrumb.Item>Catálogos</Breadcrumb.Item>
         </Breadcrumb>
-        <Content className="site-layout">
-          <div style={{ padding: "1%", float: "right" }}></div>
-        </Content>
+
         <div
           className="site-layout-background"
           style={{ minHeight: 380, height: "100%" }}
@@ -186,6 +185,23 @@ const configBusiness = ({ ...props }) => {
                   key="tab_8"
                 >
                   <WorkTitle
+                    currentNode={props.currentNode}
+                    doCompanySelectedCatalog={doCompanySelectedCatalog}
+                  />
+                </TabPane>
+                <TabPane
+                  tab={
+                    <Tooltip title="Conceptos fijos">
+                      <div className="container-title-tab">
+                        <PicRightOutlined />
+                        <div className="text-title-tab">Conceptos fijos</div>
+                      </div>
+                    </Tooltip>
+                  }
+                  key="tab_9"
+                >
+                  <FixedConcepts
+                    permissions={props.permissions.document_type}
                     currentNode={props.currentNode}
                     doCompanySelectedCatalog={doCompanySelectedCatalog}
                   />
