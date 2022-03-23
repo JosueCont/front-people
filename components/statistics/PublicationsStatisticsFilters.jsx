@@ -8,7 +8,7 @@ import {
   DatePicker,
   Select,
   message,
-  Form
+  Form,
 } from "antd";
 import styled from "styled-components";
 import { connect } from "react-redux";
@@ -17,10 +17,10 @@ import {
   SearchOutlined,
   DownloadOutlined,
   ClearOutlined,
-  FileExcelOutlined
+  FileExcelOutlined,
 } from "@ant-design/icons";
 import { statusActivePost } from "../../utils/constant";
-import SelectCollaborator from '../selects/SelectCollaborator'
+import SelectCollaborator from "../selects/SelectCollaborator";
 
 import {
   getUsersList,
@@ -98,15 +98,15 @@ const PublicationsStatisticsFilters = (props) => {
   const optionsActions = [
     {
       label: "Pendiente",
-      value: '2',
+      value: "2",
     },
     {
       label: "Publicada",
-      value: '1',
+      value: "1",
     },
     {
       label: "Bloqueada",
-      value: '0',
+      value: "0",
     },
   ];
 
@@ -156,14 +156,19 @@ const PublicationsStatisticsFilters = (props) => {
   }, [props.groupList]);
 
   const getPostsByFilter = () => {
-
     const values = form.getFieldValue();
 
-    let userParam = values.user && values.user != "" ? `&owner__khonnect_id=${values.user}` : "";
-    let groupParam = values.group && values.group != "" ? `&group=${values.group}` : "";
+    let userParam =
+      values.user && values.user != ""
+        ? `&owner__khonnect_id=${values.user}`
+        : "";
+    let groupParam =
+      values.group && values.group != "" ? `&group=${values.group}` : "";
     let dateRange = "";
-    if(values.datePickerValue){
-      dateRange = `&start_date=${moment(values.datePickerValue[0]).format('YYYY-MM-DD')}&end_date=${moment(values.datePickerValue[1]).format('YYYY-MM-DD')}`
+    if (values.datePickerValue) {
+      dateRange = `&start_date=${moment(values.datePickerValue[0]).format(
+        "YYYY-MM-DD"
+      )}&end_date=${moment(values.datePickerValue[1]).format("YYYY-MM-DD")}`;
     }
 
     let statusParam =
@@ -173,19 +178,27 @@ const PublicationsStatisticsFilters = (props) => {
 
     // seteamos parámetros globales para el paginado
     props.setParameters(`${userParam}${groupParam}${dateRange}${statusParam}`);
-    props.getPostsByFilter( props.companyId, "", `${userParam}${groupParam}${dateRange}${statusParam}&is_moderator_view=true` );
-
-    console.log(`${userParam}${groupParam}${dateRange}${statusParam}`);
+    props.getPostsByFilter(
+      props.companyId,
+      "",
+      `${userParam}${groupParam}${dateRange}${statusParam}&is_moderator_view=true`
+    );
   };
 
   const getExcelFile = () => {
     const values = form.getFieldValue();
 
-    let userParam = values.user && values.user != "" ? `&owner__khonnect_id=${values.user}` : "";
-    let groupParam = values.group && values.group != "" ? `&group=${values.group}` : "";
+    let userParam =
+      values.user && values.user != ""
+        ? `&owner__khonnect_id=${values.user}`
+        : "";
+    let groupParam =
+      values.group && values.group != "" ? `&group=${values.group}` : "";
     let dateRange = "";
-    if(values.datePickerValue){
-      dateRange = `&start_date=${moment(values.datePickerValue[0]).format('YYYY-MM-DD')}&end_date=${moment(values.datePickerValue[1]).format('YYYY-MM-DD')}`
+    if (values.datePickerValue) {
+      dateRange = `&start_date=${moment(values.datePickerValue[0]).format(
+        "YYYY-MM-DD"
+      )}&end_date=${moment(values.datePickerValue[1]).format("YYYY-MM-DD")}`;
     }
 
     let statusParam =
@@ -215,131 +228,121 @@ const PublicationsStatisticsFilters = (props) => {
     setEndDate("");
     setDatePickerValue();
     setStatusFilter("") */
-    props.getPostsByFilter(props.companyId, 1, "?is_moderator_view=true", false);
+    props.getPostsByFilter(
+      props.companyId,
+      1,
+      "?is_moderator_view=true",
+      false
+    );
   };
-
-
 
   return (
     <>
       <CustomCard>
         <Row gutter={10}>
           <Form form={form} name="name_form" layout="inline">
-            <Form.Item name={'group'}>
+            <Form.Item name={"group"}>
               <CustomSelect
-                  /* value={group ? group : null} */
-                  placeholder="Seleccionar grupo"
-                  /* onChange={(value) => setGroup(value)} */
-                  allowClear
+                /* value={group ? group : null} */
+                placeholder="Seleccionar grupo"
+                /* onChange={(value) => setGroup(value)} */
+                allowClear
               >
                 {groupList &&
-                    groupList.map((group) => (
-                        <Option value={group.id}>{group.name}</Option>
-                    ))}
+                  groupList.map((group) => (
+                    <Option value={group.id}>{group.name}</Option>
+                  ))}
               </CustomSelect>
             </Form.Item>
 
-            <Form.Item name={'datePickerValue'}>
+            <Form.Item name={"datePickerValue"}>
               <RangePicker
-                  /* value={datePickerValue ? datePickerValue : null} */
-                  /* onChange={getSelectedDate} */
-                  format={"YYYY-MM-DD"}
+                /* value={datePickerValue ? datePickerValue : null} */
+                /* onChange={getSelectedDate} */
+                format={"YYYY-MM-DD"}
               />
             </Form.Item>
 
-            
-              <SelectCollaborator
-                name={'user'}
-                  showLabel={false}
-                  /* value={user ? user : null} */
-                  placeholder="Seleccionar un autor"
-                  /* onChange={(value) => setUser(value)} */
-                  val='khonnect_id'
-                  showSearch
-             />
-              
-            <Form.Item name={'status'}>
+            <SelectCollaborator
+              name={"user"}
+              showLabel={false}
+              /* value={user ? user : null} */
+              placeholder="Seleccionar un autor"
+              /* onChange={(value) => setUser(value)} */
+              val="khonnect_id"
+              showSearch
+            />
+
+            <Form.Item name={"status"}>
               <CustomSelect
-                  allowClear
-                  placeholder="Seleccionar un status"
-                  /* value={statusFilter} */
-                  /* onChange={(value) => setStatusFilter(value)} */
-                  options={optionsActions}
+                allowClear
+                placeholder="Seleccionar un status"
+                /* value={statusFilter} */
+                /* onChange={(value) => setStatusFilter(value)} */
+                options={optionsActions}
               />
             </Form.Item>
-
-
 
             <Form.Item>
-              <CustomButton
-                  title={'Filtrar'}
-                  onClick={getPostsByFilter}
-              >
+              <CustomButton title={"Filtrar"} onClick={getPostsByFilter}>
                 <SearchOutlined />
               </CustomButton>
             </Form.Item>
 
-
             <Form.Item>
-              <CustomButton
-                  title={'Descargar'}
-                  onClick={getExcelFile}
-              >
+              <CustomButton title={"Descargar"} onClick={getExcelFile}>
                 <FileExcelOutlined />
               </CustomButton>
             </Form.Item>
 
             <Form.Item>
-              <CustomButton title={'Limpiar'}  onClick={clearFilter}>
+              <CustomButton title={"Limpiar"} onClick={clearFilter}>
                 <ClearOutlined />
               </CustomButton>
             </Form.Item>
-
-
-
           </Form>
         </Row>
 
-        <Row gutter={10} style={{display:'none'}}>
+        <Row gutter={10} style={{ display: "none" }}>
           <Col xs={24} sm={12} md={8} lg={6} xl={4}>
             <Form.Item label="Grupo">
               <CustomSelect
-                  /* value={group ? group : null} */
-                  placeholder="Seleccionar grupo"
-                  /* onChange={(value) => setGroup(value)} */
-                >
-                  {groupList &&
-                    groupList.map((group) => (
-                      <Option value={group.id}>{group.name}</Option>
-                    ))}
-                </CustomSelect>
+                /* value={group ? group : null} */
+                placeholder="Seleccionar grupo"
+                /* onChange={(value) => setGroup(value)} */
+              >
+                {groupList &&
+                  groupList.map((group) => (
+                    <Option value={group.id}>{group.name}</Option>
+                  ))}
+              </CustomSelect>
             </Form.Item>
           </Col>
           <Col xs={24} sm={12} md={8} lg={5} xl={5}>
             <Form.Item label="Grupo">
-                <RangePicker
-                  /* value={datePickerValue ? datePickerValue : null}
+              <RangePicker
+                /* value={datePickerValue ? datePickerValue : null}
                   onChange={getSelectedDate} */
-                  format={"YYYY-MM-DD"}
-                />
+                format={"YYYY-MM-DD"}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12} md={8} lg={6} xl={4}>
             <Form.Item label="Autor">
               <CustomSelect
-                  /* value={user ? user : null} */
-                  placeholder="Seleccionar un autor"
-                  /* onChange={(value) => setUser(value)} */
-                >
-                  {usersList &&
-                    usersList.map((user) => (
-                      <Option
-                        value={user.khonnect_id}
-                      >{`${user.first_name} ${user.flast_name}`}</Option>
-                    ))}
-                  {/* <Option value="HiumanLab">HiumanLab</Option>
+                /* value={user ? user : null} */
+                placeholder="Seleccionar un autor"
+                /* onChange={(value) => setUser(value)} */
+              >
+                {usersList &&
+                  usersList.map((user) => (
+                    <Option
+                      value={user.khonnect_id}
+                    >{`${user.first_name} ${user.flast_name}`}</Option>
+                  ))}
+                {/* <Option value="HiumanLab">HiumanLab</Option>
                                 <Option value="Pakal">Pakal</Option> */}
-                </CustomSelect>
+              </CustomSelect>
             </Form.Item>
             {/* <Row>
               <Col span={24}>
@@ -351,7 +354,6 @@ const PublicationsStatisticsFilters = (props) => {
             </Row> */}
           </Col>
           <Col xs={24} sm={12} md={8} lg={6} xl={3}>
-            
             {/* <Form.Item label="Estatus">
               <CustomSelect
                   allowClear

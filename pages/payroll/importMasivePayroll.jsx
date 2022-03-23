@@ -112,7 +112,6 @@ const ImportMasivePayroll = ({ ...props }) => {
           active: false,
         });
         setCompanyImport(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         setLoading(false);
