@@ -108,9 +108,7 @@ const AssignsIndividuales = ({getAssigns, itemId, actionDelete, loading, listAss
             width: 50,
             render: (item) => {
                 return (
-                    <ButtonDanger
-                        size={'small'}
-                        icon={<DeleteOutlined/>}
+                    <DeleteOutlined
                         onClick={()=>deleteOneAssign(item)}
                     />   
                 )
