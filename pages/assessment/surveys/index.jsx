@@ -83,7 +83,6 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
     }
   }, [assessmentStore]);
 
-
   const getCategories = async () =>{
     try {
         let response = await WebApiAssessment.getCategoriesAssessment();
