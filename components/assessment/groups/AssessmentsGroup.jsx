@@ -56,6 +56,7 @@ const AssessmentsGroup = ({ ...props }) => {
         select.push(a);
       }
     });
+
     setSurveysSelect(select);
     setSurveysTable(table);
   };
@@ -99,13 +100,7 @@ const AssessmentsGroup = ({ ...props }) => {
       title: "Acciones",
       width: 50,
       render: (item, record, index) => {
-        return (
-          <ButtonDanger
-            size={"small"}
-            icon={<DeleteOutlined />}
-            onClick={() => deleteItem(index)}
-          />
-        );
+        return <DeleteOutlined onClick={() => deleteItem(index)} />;
       },
     },
   ];
@@ -113,6 +108,7 @@ const AssessmentsGroup = ({ ...props }) => {
   const onChangeSurvey = async (value) => {
     let result = props.surveyList.filter((item) => item.id === value);
     let newList = [...surveysTable, result.at(-1)];
+    console.log("newList", newList);
     filterSurveys(newList);
     formGroup.setFieldsValue({ assessment: null });
   };

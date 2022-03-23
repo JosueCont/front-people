@@ -106,10 +106,6 @@ const GroupsKuiz = () => {
     getListGroups(currenNode?.id, name, "");
   };
 
-  useEffect(() => {
-    console.log("surveyList___", surveyList);
-  }, [surveyList]);
-
   return (
     <MainLayout currentKey="groups_kuiz">
       <Breadcrumb>

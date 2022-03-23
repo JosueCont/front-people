@@ -14,6 +14,7 @@ import {
   Space,
   List,
   Avatar,
+  Badge,
 } from "antd";
 import {
   EditOutlined,
@@ -39,14 +40,14 @@ const AssessmentsTable = ({ ...props }) => {
   const [showModalSurveys, setShowModalSurveys] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [itemGroup, setItemGroup] = useState({});
-  const [itemGroupPeople, setItemGroupPeople] = useState();
+  // const [itemGroupPeople, setItemGroupPeople] = useState();
   const [groupsToDelete, setGroupsToDelete] = useState([]);
   const [groupsKeys, setGroupsKeys] = useState([]);
 
   const HandleUpdateGroup = async (item) => {
     /* let resp = await getOnlyGroup(item.group_kuiz_id); */
-    setItemGroupPeople(item);
-    setItemGroup(item.group_assessment);
+    // setItemGroupPeople(item)
+    setItemGroup(item);
     setShowModalEdit(true);
   };
 
@@ -62,7 +63,7 @@ const AssessmentsTable = ({ ...props }) => {
 
   const openModalSurveys = async (item) => {
     // let resp = await getOnlyGroup(item.group_kuiz_id);
-    if (item.group_assessment.assessments.length > 0) {
+    if (item.assessments?.length > 0) {
       setItemGroup(item);
       setShowModalSurveys(true);
     } else {
@@ -107,8 +108,6 @@ const AssessmentsTable = ({ ...props }) => {
     }
   }, [openModalDelete]);
 
-  useEffect(() => {}, [props]);
-
   const removeGroups = async (ids) => {
     props.setLoading(true);
     props.deteleGroup(ids);
@@ -117,7 +116,7 @@ const AssessmentsTable = ({ ...props }) => {
 
   const onFinishEdit = async (values) => {
     props.setLoading(true);
-    props.updateGroup(values, itemGroupPeople.id);
+    props.updateGroup(values, itemGroup.id);
   };
 
   const getOnlyGroup = async (id) => {
@@ -174,32 +173,29 @@ const AssessmentsTable = ({ ...props }) => {
   const columns = [
     {
       title: "Nombre",
-      key: "Name",
-      dataIndex: ["group_assessment", "name"],
+      key: "name",
+      dataIndex: "name",
     },
     {
       title: "Encuestas",
       render: (item) => {
         return (
-          <Space>
-            <Tag
-              icon={<FileTextOutlined style={{ color: "#52c41a" }} />}
-              color={"green"}
-              style={{ fontSize: "14px" }}
-            >
-              {item.group_assessment
-                ? item.group_assessment.assessments.length
-                : 0}
-            </Tag>
-            {item.group_assessment?.assessments.length > 0 && (
-              <Tooltip title="Ver integrantes">
-                <EyeOutlined
-                  style={{ cursor: "pointer" }}
+          <div style={{ justifyContent: "center", cursor: "pointer" }}>
+            {item.assessments && item.assessments.length > 0 && (
+              <Tooltip title="Ver encuenstas">
+                <Badge
                   onClick={() => openModalSurveys(item)}
+                  style={{ backgroundColor: "#52c41a" }}
+                  count={
+                    <>
+                      <FileTextOutlined style={{ color: "#52c41a" }} />
+                      {item.assessments ? item.assessments.length : 0}
+                    </>
+                  }
                 />
               </Tooltip>
             )}
-          </Space>
+          </div>
         );
       },
     },
@@ -251,6 +247,8 @@ const AssessmentsTable = ({ ...props }) => {
             pagination={{
               pageSize: 10,
               total: props.dataGroups?.count,
+              hideOnSinglePage: true,
+              showSizeChanger: false,
             }}
             onChange={onChangePage}
             rowSelection={rowSelectionGroup}
