@@ -54,7 +54,6 @@ const AssignAssessments = ({...props}) =>{
         }
     },[props.visible])
 
-
     const getCategories = async () =>{
         try {
             let response = await WebApiAssessment.getCategoriesAssessment();
@@ -88,6 +87,7 @@ const AssignAssessments = ({...props}) =>{
         }
         try {
             let response = await WebApiAssessment.getGroupsAssessments(data);
+            console.log('grpos------->', response)
             setListSurveys(response.data)
             setCopyList(response.data)
             setLoading(false)
@@ -198,7 +198,7 @@ const AssignAssessments = ({...props}) =>{
             render: (item) => {
                 return (
                     <div>
-                        {item.group_assessment?.name}
+                        {item.name}
                     </div>
                 );
             },
@@ -213,7 +213,7 @@ const AssignAssessments = ({...props}) =>{
                         color={'green'}
                         style={{fontSize: '14px'}}
                     >
-                        {item.group_assessment ? item.group_assessment.assessments.length : 0}
+                        {item.assessments ? item.assessments.length : 0}
                     </Tag>
                 );
             },
@@ -396,7 +396,8 @@ const AssignAssessments = ({...props}) =>{
                                     listSurveys.count :
                                     listSurveys.length,
                                 position: ['bottomLeft'],
-                                hideOnSinglePage: true
+                                hideOnSinglePage: true,
+                                showSizeChanger: false
                             }}
                         />
                     </Col>
