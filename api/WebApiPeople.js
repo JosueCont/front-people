@@ -252,12 +252,7 @@ class WebApiPeople {
   }
 
   static assignmentCompanyPerson(url, data) {
-    return WebApi.ApisType(
-      `/business/node-person/
-      ${url}`,
-      "post",
-      data
-    );
+    return WebApi.ApisType(`/business/node-person/${url}`, "post", data);
   }
 
   static deleteNode(data) {

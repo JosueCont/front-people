@@ -199,7 +199,6 @@ const MainSider = ({
               icon={<BankOutlined />}
               onClick={() => router.push({ pathname: "/business" })}
             >
-              {" "}
               Empresas
             </Menu.Item>
           )}
@@ -211,7 +210,7 @@ const MainSider = ({
           >
             <Menu.Item
               key="catalogos"
-              onClick={() => router.push({ pathname: "/config/business" })}
+              onClick={() => router.push({ pathname: "/config/catalogs" })}
             >
               Catálogos
             </Menu.Item>

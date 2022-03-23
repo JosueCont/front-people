@@ -4,7 +4,7 @@ import { withAuthSync } from "../../../libs/auth";
 import moment from "moment";
 import { ConfigProvider, notification } from "antd";
 import esES from "antd/lib/locale/es_ES";
-import _ from 'lodash'
+import _ from "lodash";
 import MainLayout from "../../../layout/MainLayout";
 import WebApiIntranet from "../../../api/WebApiIntranet";
 import { publicationsListAction } from "../../../redux/IntranetDuck";
@@ -25,19 +25,13 @@ const index = (props) => {
     }
   }, [props.currentNode]);
 
-  useEffect(() => {
-    console.log("publicationsList", publicationsList);
-  }, [publicationsList]);
+  useEffect(() => {}, [publicationsList]);
 
   useEffect(() => {
     setLoadingData(true);
     if (props.publicationsList && props.publicationsList.results) {
       let publicationsFiltered = [];
       try {
-        console.log(
-          "props.publicationsList.results",
-          props.publicationsList.results
-        );
         props.publicationsList.results.map((publication) => {
           // Se filtran las propiedades a utilizar en la tabla
           publicationsFiltered.push({
@@ -46,11 +40,11 @@ const index = (props) => {
               "DD MMMM hh:mm a"
             ),
             publication: publication.content,
-            group:_.get(publication ,'group.name', ''),
+            group: _.get(publication, "group.name", ""),
             owner: `${publication.owner.first_name} ${publication.owner.flast_name}`,
             comments: publication.comments ? publication.comments.length : 0,
             clicks: publication.clicks ? publication.clicks : 0,
-            group: publication.group ? publication.group : '',
+            group: publication.group ? publication.group : "",
             prints: publication.prints ? publication.prints : 0,
             reactions: publication.count_by_reaction_type
               ? publication.count_by_reaction_type
@@ -113,10 +107,10 @@ const index = (props) => {
             getPostsByFilter={props.publicationsListAction}
             setParameters={setParameters}
           />
-          <br/>
+          <br />
           <PublicationsStatisticsTable
-            style={{marginTop:20}}
-            currentNode={ props.currentNode ? props.currentNode.id: null }
+            style={{ marginTop: 20 }}
+            currentNode={props.currentNode ? props.currentNode.id : null}
             current={publicationsList.data ? publicationsList.data.page : 1}
             total={publicationsList.data ? publicationsList.data.count : 1}
             fetching={loadingData}

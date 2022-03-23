@@ -18,8 +18,8 @@ import {
   AutoComplete,
 } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
-import WebApiPeople from '../../api/WebApiPeople'
-import SelectCollaborator from '../selects/SelectCollaborator';
+import WebApiPeople from "../../api/WebApiPeople";
+import SelectCollaborator from "../selects/SelectCollaborator";
 
 const arrayConfigType = [
   { id: 1, name: "Me gusta", emoji: "👍🏻" },
@@ -28,7 +28,7 @@ const arrayConfigType = [
   { id: 4, name: "Me encanta", emoji: "❤️" },
   { id: 5, name: "Me divierte", emoji: "😂" },
   { id: 6, name: "Me entristece", emoji: "😔" },
-  { id: 7, name: "Me interesa", emoji: "🤓"},
+  { id: 7, name: "Me interesa", emoji: "🤓" },
 ];
 const getConfig = [{ id: 1, name: "Por Wellness Coins" }];
 
@@ -45,24 +45,23 @@ const beforeUpload = (file) => {
 };
 
 const FormConfig = (props) => {
-  console.log('props',props);
-  const [personsSelected, setPersonsSelected] = useState([])
+  const [personsSelected, setPersonsSelected] = useState([]);
   const [formConfigIntranet] = Form.useForm();
   const [photo, setPhoto] = useState(
     props.getImage ? props.getImage + "?" + new Date() : null
   );
-  const {nodeId} = props;
+  const { nodeId } = props;
   const [imageUpdate, setImageUpdate] = useState(null);
 
   const [loading, setLoading] = useState(false);
-  const [showPersons, setShowPersons] = useState(false)
+  const [showPersons, setShowPersons] = useState(false);
 
   const [interactionsAPI, setInteractionsAPI] = useState(arrayConfigType);
   const [interactionsSelected, setInteractionsSelected] = useState([]);
   const interactionsFilteredOptions = interactionsAPI.filter(
     (o) => !interactionsSelected.includes(o)
   );
-  const [persons, setPersons] = useState([])
+  const [persons, setPersons] = useState([]);
 
   const [autoCompleteResult, setAutoCompleteResult] = useState([]);
 
@@ -117,16 +116,15 @@ const FormConfig = (props) => {
             : [],
       });
 
-      if(props.config.intranet_moderator_enabled){
-        setShowPersons(props.config.intranet_moderator_enabled)
-        let valuesPerson = props.config.intranet_moderator_person.map(item =>{
-          return item.id
-        })
-        console.log('valuesPerson',valuesPerson);
-        setPersonsSelected(valuesPerson)
-
+      if (props.config.intranet_moderator_enabled) {
+        setShowPersons(props.config.intranet_moderator_enabled);
+        let valuesPerson = props.config.intranet_moderator_person.map(
+          (item) => {
+            return item.id;
+          }
+        );
+        setPersonsSelected(valuesPerson);
       }
-
 
       if (props.config.intranet_logo) {
         setPhoto(props.config.intranet_logo + "?" + new Date());
@@ -152,12 +150,11 @@ const FormConfig = (props) => {
   }));
 
   const onFinish = (values) => {
-    
-    if(showPersons){
-      values['intranet_moderator_person'] = personsSelected;
+    if (showPersons) {
+      values["intranet_moderator_person"] = personsSelected;
     }
 
-    console.log(values)
+    console.log(values);
     saveConfig(values);
   };
 
@@ -181,7 +178,7 @@ const FormConfig = (props) => {
           ? data.intranet_enable_post_reaction
           : null,
       intranet_moderator_enabled: data.intranet_moderator_enabled,
-      intranet_moderator_person: data.intranet_moderator_person
+      intranet_moderator_person: data.intranet_moderator_person,
     };
     let params = new FormData();
     let image = data.image ? data.image.file.originFileObj : "";
@@ -228,18 +225,14 @@ const FormConfig = (props) => {
   const getPersons = async () => {
     /* setLoading(true); */
     try {
-      let response = await WebApiPeople.filterPerson({node: nodeId});
+      let response = await WebApiPeople.filterPerson({ node: nodeId });
       setPersons([]);
       let personList = response.data.map((a) => {
         a.key = a.khonnect_id;
         return a;
       });
-      console.log('object');
-      console.log('nodeID', nodeId);
-      let list2 = personList.filter( (item) => item.node === nodeId );
-      console.log('list2',list2);
+      let list2 = personList.filter((item) => item.node === nodeId);
 
-      console.log('persons',personList);
       setPersons(personList);
     } catch (error) {
       setPersons([]);
@@ -247,20 +240,13 @@ const FormConfig = (props) => {
     }
   };
 
-  const changeSwitch = (checked, e) =>{
-    setShowPersons(checked)
-    /* console.log('checked =>', checked) */
-  }
-  
-  useEffect(() => {
-    console.log('showPersons',showPersons)
-  }, [showPersons])
-  
+  const changeSwitch = (checked, e) => {
+    setShowPersons(checked);
+  };
 
-  const onChangePerson = (values) =>{
-    console.log('values',values);
-    setPersonsSelected(values)
-  }
+  const onChangePerson = (values) => {
+    setPersonsSelected(values);
+  };
 
   return (
     <>
@@ -284,7 +270,7 @@ const FormConfig = (props) => {
                   label="Nombre"
                   onChange={onWebsiteChange}
                 > */}
-                  <Input />
+                <Input />
                 {/* </AutoComplete> */}
               </Form.Item>
             </Col>
@@ -387,17 +373,20 @@ const FormConfig = (props) => {
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
-              <Form.Item name={'intranet_moderator_enabled'} label="Las publicaciones requieren moderación">
+              <Form.Item
+                name={"intranet_moderator_enabled"}
+                label="Las publicaciones requieren moderación"
+              >
                 <Switch checked={showPersons} onChange={changeSwitch} />
               </Form.Item>
             </Col>
 
-            { showPersons && 
+            {showPersons && (
               <Col lg={6} xs={22} offset={1}>
-                <SelectCollaborator 
-                  label="Usuarios" 
-                  mode="multiple" 
-                  showSearch 
+                <SelectCollaborator
+                  label="Usuarios"
+                  mode="multiple"
+                  showSearch
                   placeholder="Selecciona una opción"
                   onChange={onChangePerson}
                   value={personsSelected}
@@ -422,7 +411,7 @@ const FormConfig = (props) => {
                   </Select>
                 </Form.Item> */}
               </Col>
-            } 
+            )}
           </Row>
           <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
             <Col>
