@@ -124,7 +124,8 @@ const AssignAssessments = ({...props}) =>{
     }
 
     const onFinish = (values) =>{
-        if(itemsSelected.length > 0){
+        console.log('itemsKeys =>',itemsKeys)
+        /* if(itemsSelected.length > 0){
             setLoadAdd(true)
             setTimeout(()=>{
                 onCloseModal()
@@ -137,7 +138,7 @@ const AssignAssessments = ({...props}) =>{
             },2000)
         }else{
             message.error("Selecciona al menos una encuesta")
-        }
+        } */
     }
 
     const columnsInvidual = [

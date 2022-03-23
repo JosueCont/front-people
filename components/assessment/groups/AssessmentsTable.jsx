@@ -13,7 +13,8 @@ import {
     Button,
     Space,
     List,
-    Avatar
+    Avatar,
+    Badge
 } from "antd";
 import {
     EditOutlined,
@@ -184,23 +185,28 @@ const AssessmentsTable = ({...props}) => {
         title: "Encuestas",
         render: (item) => {
           return (
-             <Space>
-              <Tag
-                icon={<FileTextOutlined style={{color:'#52c41a'}} />}
-                color={'green'}
-                style={{fontSize: '14px'}}
-              >
-                {item.group_assessment ? item.group_assessment.assessments.length : 0}
-              </Tag>
+            <div style={{justifyContent:'center', cursor:'pointer'}}>
               {item.group_assessment?.assessments.length > 0 && (
-                <Tooltip title='Ver integrantes'>
-                  <EyeOutlined
-                    style={{cursor: 'pointer'}}
-                    onClick={()=>openModalSurveys(item)}
-                  />
+                <Tooltip title='Ver encuenstas'>
+                  <Badge onClick={()=>openModalSurveys(item)} 
+                    style={{ backgroundColor: '#52c41a' }}
+                  count={
+                    <>
+                      <FileTextOutlined style={{ color: '#52c41a' }} />
+                      {item.group_assessment ? item.group_assessment.assessments.length : 0}
+                    </>} />
+
+                  {/* <Tag
+                    icon={<FileTextOutlined style={{color:'#52c41a'}} />}
+                    color={'green'}
+                    style={{fontSize: '14px'}}
+                    
+                  >
+                    
+                  </Tag> */}
                 </Tooltip>
               )}
-            </Space>
+            </div>
           )
         }
       },

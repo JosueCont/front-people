@@ -25,8 +25,11 @@ const GroupsKuiz = () =>{
     const getSurveys = async (nodeId, queryParam) => {
         try {
           let response = await WebApiAssessment.getListSurveys(nodeId, queryParam);
-          console.log('response', response)
-          setSurveyList(response.data);
+          let list = response.data.map((item,idx) => {
+              item['order'] = idx;
+              return item;
+          })
+          setSurveyList(list);
         } catch (error) {
           console.log(error);
         }
