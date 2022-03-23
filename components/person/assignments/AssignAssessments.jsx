@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from '@emotion/styled';
 import { useSelector } from "react-redux";
+import axiosApi from "../../../api/axiosApi";
 import {
     Form,
     Input,
@@ -35,7 +36,8 @@ const AssignAssessments = ({...props}) =>{
     const {Option} = Select;
     const currentNode = useSelector(state => state.userStore.current_node)
     const [itemsSelected, setItemsSelected] = useState([]);
-    const [itemsKeys, setItemsKeys] = useState([]);
+    const [groupsKeys, setGroupsKeys] = useState([]);
+    const [surveysKeys, setSurveysKeys] = useState([]);
     const [listSurveys, setListSurveys] = useState([]);
     const [loadAdd, setLoadAdd] = useState(false);
     const [isIndividual, setIsIndividual] = useState(true);
@@ -43,6 +45,7 @@ const AssignAssessments = ({...props}) =>{
     const [listCategories, setListCategories] = useState([]);
     const [isSelectAll, setIsSelectAll] = useState(false);
     const [copyList, setCopyList] = useState([]);
+    const [copyKeys, setCopyKeys] = useState([]);
 
     useEffect(()=>{
         if(currentNode?.id){
@@ -50,7 +53,6 @@ const AssignAssessments = ({...props}) =>{
             getSurveys(currentNode.id, "")
         }
     },[props.visible])
-
 
     const getCategories = async () =>{
         try {
@@ -85,6 +87,7 @@ const AssignAssessments = ({...props}) =>{
         }
         try {
             let response = await WebApiAssessment.getGroupsAssessments(data);
+            console.log('grpos------->', response)
             setListSurveys(response.data)
             setCopyList(response.data)
             setLoading(false)
@@ -92,6 +95,21 @@ const AssignAssessments = ({...props}) =>{
         console.log(e);
             setListSurveys([])
             setLoading(false)
+        }
+    }    
+
+    const onChangePage = (pagination) => {
+        if(!isIndividual){
+            if (pagination.current > 1) {
+                const offset = (pagination.current - 1) * 10;
+                const queryParam = `&limit=10&offset=${offset}`;
+                getGroupsSurveys(currentNode.id, queryParam)
+            } else if (pagination.current == 1) {
+                getGroupsSurveys(currentNode.id, "")
+            }
+            setCopyKeys(groupsKeys)
+        }else{
+            console.log(pagination.current)
         }
     }
 
@@ -112,7 +130,9 @@ const AssignAssessments = ({...props}) =>{
     }
 
     const resetValues = () =>{
-        setItemsKeys([])
+        setCopyKeys([])
+        setSurveysKeys([])
+        setGroupsKeys([])
         setItemsSelected([])
         setIsSelectAll(false)
     }
@@ -123,20 +143,28 @@ const AssignAssessments = ({...props}) =>{
         resetValues()
     }
 
+    const createData = (obj) =>{
+        let newObj = Object.assign(obj)
+        if(newObj.assessments.length <= 0){
+            delete newObj.assessments
+        }
+        if(newObj.group_assessment.length <= 0){
+            delete newObj.group_assessment
+        }
+        return newObj;
+    }
+
     const onFinish = (values) =>{
+        const data = createData({assessments: surveysKeys, group_assessment: groupsKeys})
         if(itemsSelected.length > 0){
             setLoadAdd(true)
             setTimeout(()=>{
                 onCloseModal()
                 setLoadAdd(false)
-                if(isIndividual){
-                    props.actionForm({assessments: itemsKeys})
-                }else if(!isIndividual){
-                    props.actionForm({groups_assessment: itemsKeys})
-                }
+                props.actionForm(data)
             },2000)
         }else{
-            message.error("Selecciona al menos una encuesta")
+            message.error("Selecciona al menos un grupo o una encuesta")
         }
     }
 
@@ -146,11 +174,7 @@ const AssignAssessments = ({...props}) =>{
             render: (item) => {
                 return (
                     <div>
-                        {
-                            isIndividual ? 
-                            item.name :
-                            item.group_assessment ? item.group_assessment.name : ''
-                        }
+                        {item.name}
                     </div>
                 );
             },
@@ -174,7 +198,7 @@ const AssignAssessments = ({...props}) =>{
             render: (item) => {
                 return (
                     <div>
-                        {item.group_assessment?.name}
+                        {item.name}
                     </div>
                 );
             },
@@ -189,7 +213,7 @@ const AssignAssessments = ({...props}) =>{
                         color={'green'}
                         style={{fontSize: '14px'}}
                     >
-                        {item.group_assessment ? item.group_assessment.assessments.length : 0}
+                        {item.assessments ? item.assessments.length : 0}
                     </Tag>
                 );
             },
@@ -200,9 +224,14 @@ const AssignAssessments = ({...props}) =>{
     const rowSelection = {
         columnTitle: 'Seleccionar',
         columnWidth: 100,
-        selectedRowKeys: itemsKeys,
+        selectedRowKeys: isIndividual ? surveysKeys : groupsKeys,
         onChange: (selectedRowKeys, selectedRows) => {
-            setItemsKeys(selectedRowKeys)
+            if(isIndividual){
+                setSurveysKeys(selectedRowKeys)
+            }else{
+                let list = [...copyKeys, ...selectedRowKeys]
+                setGroupsKeys(list)
+            }
             setItemsSelected(selectedRows)
         }
     }
@@ -216,7 +245,11 @@ const AssignAssessments = ({...props}) =>{
                 keys.push(item.id)
                 items.push(item)
             })
-            setItemsKeys(keys)
+            if(isIndividual){
+                setSurveysKeys(keys)
+            }else{
+                setGroupsKeys(keys)
+            }
             setItemsSelected(items)
             setIsSelectAll(true)
         }else{
@@ -225,7 +258,6 @@ const AssignAssessments = ({...props}) =>{
     }
 
     const onChangeType = (e) =>{
-        resetValues()
         if(e.target.value){
             getSurveys(currentNode.id, "")
             setIsIndividual(true)
@@ -356,6 +388,7 @@ const AssignAssessments = ({...props}) =>{
                             }}
                             scroll={{y: 200}}
                             rowSelection={rowSelection}
+                            onChange={onChangePage}
                             pagination={{
                                 pageSize: 10,
                                 total:
@@ -363,7 +396,8 @@ const AssignAssessments = ({...props}) =>{
                                     listSurveys.count :
                                     listSurveys.length,
                                 position: ['bottomLeft'],
-                                hideOnSinglePage: true
+                                hideOnSinglePage: true,
+                                showSizeChanger: false
                             }}
                         />
                     </Col>

@@ -24,11 +24,11 @@ const ViewSurveys = ({...props}) =>{
             <List
                 size={'small'}
                 itemLayout="horizontal"
-                dataSource={props.item.group_assessment.assessments}
+                dataSource={props.item?.assessments}
                 renderItem={item => (
                     <List.Item key={item.id}>
                         <List.Item.Meta
-                            title={item.name_es}
+                            title={item.name}
                             description={
                                 <div>
                                     Categoría: {item.category === "A" ? "Assessment" : "Quiz"},
