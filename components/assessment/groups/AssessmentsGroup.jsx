@@ -104,9 +104,7 @@ const AssessmentsGroup = ({...props}) =>{
             width: 50,
             render: (item, record, index) => {
                 return (
-                    <ButtonDanger
-                        size={'small'}
-                        icon={<DeleteOutlined/>}
+                    <DeleteOutlined
                         onClick={()=>deleteItem(index)}
                     />
                 )

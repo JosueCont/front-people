@@ -322,9 +322,7 @@ const AssignAssessments = ({...props}) =>{
                             Seleccionar todos
                         </CustomCheck>
                         <Tooltip title={'Borrar filtros'} placement={'right'}>
-                            <ButtonDanger
-                                size={'small'}
-                                icon={<ClearOutlined/>}
+                            <ClearOutlined
                                 onClick={()=>resetFilters()}
                             />
                         </Tooltip>

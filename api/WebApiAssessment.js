@@ -67,9 +67,11 @@ class WebApiAssessment {
     static assignAssessmentsGroup (data) {
         return WebApi.ApisType(`/person/group-person-assessment/`, "post", data);
     }
+
     static assessmentLoadAssessment(id) { 
         return WebApi.ApisType(`/person/assessment/?companies=${id}`, "get");
     }
+    
     static createAssessments (data) {
         return WebApi.ApisType(`/person/assessment/`, "post", data);
     }
