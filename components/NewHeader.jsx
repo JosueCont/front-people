@@ -20,6 +20,7 @@ import { css, Global } from "@emotion/core";
 import Cookie from "js-cookie";
 import WebApiPeople from "../api/WebApiPeople";
 import { logoutAuth } from "../libs/auth";
+import CardApps from "./dashboards-cards/CardApp";
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Text } = Typography;
@@ -54,6 +55,12 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
     }
   };
 
+  const editProfile = () =>{
+    !person.nodes && props.currentNode
+    ? router.push(`/ac/urn/${props.currentNode.permanent_code}`)
+    : router.push(`/home/persons/${person.id}`);
+  }
+
   const userCardDisplay = () => (
     <>
       <Card className="card_menu">
@@ -81,7 +88,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         </div>
         <Row>
           <Col span={24} style={{ padding: 10 }}>
-            <p
+            {/* <p
               className="text-menu"
               onClick={() => {
                 !person.nodes && props.currentNode
@@ -90,7 +97,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               }}
             >
               <Text>Editar perfil</Text>
-            </p>
+            </p> */}
             {pathname !== "/select-company" && (
               <p
                 className="text-menu"
@@ -178,13 +185,17 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 key={"menu_user_" + props.currentKey}
               >
                 <Space size={"middle"}>
-                  <Badge dot>
+                  {/* <Badge dot>
                     <BellOutlined
                       style={{ color: "white", fontSize: 20 }}
                       onClick={() => props.setShowEvents(true)}
                     />
-                  </Badge>
-                  <MenuOutlined style={{ color: "white", fontSize: 20 }} />
+                  </Badge> */}
+                  <Dropdown overlay={<CardApps profile={editProfile}/>} key="dropdown_apps">
+                    <div key="menu_apps_content">
+                      <MenuOutlined style={{ color: "white", fontSize: 20 }} />
+                    </div>
+                  </Dropdown>
                   <Dropdown overlay={userCardDisplay} key="dropdown_user">
                     <div key="menu_user_content">
                       <Avatar

@@ -11,10 +11,10 @@ class WebApiAssessment {
         return WebApi.ApisType(`/person/group-assessments/?node=${data.nodeId}${data.name}${data.queryParam}`, "get");
     }
     static getOnlyGroupAssessment(id) {
-        return Axios.get(`${API_ASSESSMENT}/assessments/group/${id}/`);
+        return WebApi.ApisType(`/person/group-assessments/${id}`, "get");
     }
     static getListSurveys(nodeId, queryParam){
-        return Axios.get(`${API_ASSESSMENT}/assessments/assessment/?companies=${nodeId}${queryParam}`);
+        return WebApi.ApisType(`/person/assessment/?companies=${nodeId}${queryParam}`, "get")
     }
     static createGroupAssessments(data){
         return WebApi.ApisType(`/person/group-assessments/`, "post", data)
@@ -52,7 +52,7 @@ class WebApiAssessment {
         return WebApi.ApisType(`/person/person-assessments/delete_by_ids/`, "post", data);
     }
     static getDetailsAssessment (id) {
-        return Axios.get(`${API_ASSESSMENT}/assessments/assessment/${id}/`);
+        return WebApi.ApisType(`/person/assessment/${id}/`, "get");
     }
 
     static getAssignByPerson (id, queryParam, type) {
@@ -62,11 +62,16 @@ class WebApiAssessment {
         return WebApi.ApisType(`/person/group-person-assessment/?group_person=${id}${queryParam}${type}`, "get");
     }
     static getCategoriesAssessment () {
-        return Axios.get(`${API_ASSESSMENT}/assessments/category-assessment/`);
+        return WebApi.ApisType(`/person/assessment/categories/`, "get");
     }
     static assignAssessmentsGroup (data) {
         return WebApi.ApisType(`/person/group-person-assessment/`, "post", data);
     }
+
+    static assessmentLoadAssessment(id) { 
+        return WebApi.ApisType(`/person/assessment/?companies=${id}`, "get")
+    }
+    
     static createAssessments (data) {
         return WebApi.ApisType(`/person/assessment/`, "post", data);
     }
@@ -78,13 +83,7 @@ class WebApiAssessment {
     }
     static deleteAssignByGroup (data) {
         return WebApi.ApisType(`/person/group-person-assessment/delete_by_ids/`, "post", data);
-    }
-    static getOnlyGroupAssessment(id) {
-        return Axios.get(`${API_ASSESSMENT}/assessments/group/${id}/`);
-    }
-    static assessmentLoadAssessment(id) {
-        return  Axios.get( `${API_ASSESSMENT}/assessments/assessment/?companies=${id}`);
-    }
+    }   
     static assessmentSections(id) {
         return  Axios.get(`${API_ASSESSMENT}/assessments/section/?assessment=${id}`);
     }

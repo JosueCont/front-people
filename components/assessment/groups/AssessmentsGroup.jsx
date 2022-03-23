@@ -45,6 +45,15 @@ const AssessmentsGroup = ({ ...props }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (props.surveyList && props.loadData.assessments) {
+      formGroup.setFieldsValue({ name: props.loadData.name });
+      filterSurveys(props.loadData.assessments);
+    } else if (props.surveyList) {
+      setSurveysSelect(props.surveyList);
+    }
+  }, []);
+
   const filterSurveys = (dataTable) => {
     let select = [];
     let table = [];
@@ -59,12 +68,6 @@ const AssessmentsGroup = ({ ...props }) => {
 
     setSurveysSelect(select);
     setSurveysTable(table);
-  };
-
-  const onCloseModal = () => {
-    props.close();
-    setSurveysSelect([]);
-    setSurveysTable([]);
   };
 
   const getOnlyIds = () => {
