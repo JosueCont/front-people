@@ -61,7 +61,6 @@ const AssessmentsTable = ({...props}) => {
 
   const openModalSurveys = async (item)=>{
     // let resp = await getOnlyGroup(item.group_kuiz_id);
-    console.log('item seleccionado---------->', item)
     if(item.group_assessment.assessments.length > 0){
       setItemGroup(item)
       setShowModalSurveys(true)
