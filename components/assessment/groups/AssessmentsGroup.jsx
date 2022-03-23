@@ -27,11 +27,6 @@ const AssessmentsGroup = ({...props}) =>{
     const [surveysTable, setSurveysTable] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadAdd, setLoadAdd] = useState(false);
-    const [idxSelected, setIdxSelected] = useState(0);
-
-    useEffect(() => {
-      console.log('props',props)
-    }, [props])
     
 
     useEffect(() => {

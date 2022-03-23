@@ -193,17 +193,8 @@ const AssessmentsTable = ({...props}) => {
                   count={
                     <>
                       <FileTextOutlined style={{ color: '#52c41a' }} />
-                      {item.group_assessment ? item.group_assessment.assessments.length : 0}
+                      {item.assessments ? item.assessments.length : 0}
                     </>} />
-
-                  {/* <Tag
-                    icon={<FileTextOutlined style={{color:'#52c41a'}} />}
-                    color={'green'}
-                    style={{fontSize: '14px'}}
-                    
-                  >
-                    
-                  </Tag> */}
                 </Tooltip>
               )}
             </div>

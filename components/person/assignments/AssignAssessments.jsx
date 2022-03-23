@@ -54,9 +54,6 @@ const AssignAssessments = ({...props}) =>{
         }
     },[props.visible])
 
-    useEffect(()=>{
-        console.log('keys------------>', groupsKeys)
-    },[groupsKeys])
 
     const getCategories = async () =>{
         try {
