@@ -26,12 +26,7 @@ const AssessmentsGroup = ({...props}) =>{
     const [surveysSelect, setSurveysSelect] = useState([]);
     const [surveysTable, setSurveysTable] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [loadAdd, setLoadAdd] = useState(false);
-
-    useEffect(() => {
-      console.log('props',props)
-    }, [props])
-    
+    const [loadAdd, setLoadAdd] = useState(false);   
 
     useEffect(() => {
         if(props.surveyList && props.loadData.assessments){

@@ -14,7 +14,7 @@ class WebApiAssessment {
         return Axios.get(`${API_ASSESSMENT}/assessments/group/${id}/`);
     }
     static getListSurveys(nodeId, queryParam){
-        return Axios.get(`${API_ASSESSMENT}/assessments/assessment/?companies=${nodeId}${queryParam}`);
+        return WebApi.ApisType(`/person/assessment/?companies=${nodeId}${queryParam}`, "get")
     }
     static createGroupAssessments(data){
         return WebApi.ApisType(`/person/group-assessments/`, "post", data)
@@ -68,7 +68,7 @@ class WebApiAssessment {
         return WebApi.ApisType(`/person/group-person-assessment/`, "post", data);
     }
     static assessmentLoadAssessment(id) {
-        return Axios.get(`${API_ASSESSMENT}/assessments/assessment/?companies=${id}`);
+        return WebApi.ApisType(`/person/assessment/?companies=${id}`, "get")
     }
     static createAssessments (data) {
         return WebApi.ApisType(`/person/assessment/`, "post", data);
