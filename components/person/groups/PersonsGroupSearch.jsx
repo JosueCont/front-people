@@ -15,15 +15,7 @@ import {
 } from "@ant-design/icons";
 import PersonsGroup from "./PersonsGroup";
 
-const PersonsGroupSearch = ({
-    hiddenMembers = true,
-    hiddenSurveys = true,
-    hiddenCategories = true, 
-    hiddenName = true,
-    multipleSurveys = true,
-    multipleMembers = true,
-    multipleCategories = true,
-    ...props}) =>{
+const PersonsGroupSearch = ({...props}) =>{
     const [form] = Form.useForm();
     const permissions = useSelector(state => state.userStore.permissions.person);
     const currenNode = useSelector(state => state.userStore.current_node);
@@ -32,6 +24,7 @@ const PersonsGroupSearch = ({
     const HandleFilterReset = () => {
         form.resetFields();
         props.searchGroup("")
+        props.setNumPage(1)
     };
 
     const HandleCreateGroup = () =>{
@@ -55,7 +48,7 @@ const PersonsGroupSearch = ({
             name = "";
             form.resetFields();
         }
-        props.searchGroup(name)
+        props.searchGroup(name, "")
     }
 
     return(

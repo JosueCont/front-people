@@ -68,6 +68,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
     onFilterActive,
     onFilterReset,
   ] = useFilter();
+  const [numPage, setNumPage] = useState(1);
 
   useEffect(() => {
     if(assessmentStore.assessments?.length > 0){
@@ -86,7 +87,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
   const getCategories = async () =>{
     try {
         let response = await WebApiAssessment.getCategoriesAssessment();
-        setListCategories(response.data?.results)
+        setListCategories(response.data)
     } catch (e) {
         setListCategories([])
         console.log(e)
@@ -130,9 +131,13 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
   };
 
   const HandleFilterReset = (assessments) => {
+    setNumPage(1);
     form.resetFields();
     onFilterReset(assessments);
   };
+  const onChangeTable =(page)=>{
+    setNumPage(page.current);
+  }
 
   const HandleChangeStatus = (value) => {
     value.is_active ? (value.is_active = false) : (value.is_active = true);
@@ -387,6 +392,8 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
                   : "No se encontraron resultados.",
               }}
               rowSelection={rowSelectionGroup}
+              pagination={{current: numPage}}
+              onChange={onChangeTable}
             />
           </Col>
         </Row>

@@ -1,76 +1,44 @@
 import { React, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
-import {
-  Row,
-  Col,
-  Typography,
-  Breadcrumb,
-  Form,
-  Select,
-  notification,
-} from "antd";
+import { Row, Col, Breadcrumb, notification } from "antd";
 import { useRouter } from "next/router";
-import moment from "moment";
 import Incapacityform from "../../components/forms/IncapacityForm";
 import { withAuthSync } from "../../libs/auth";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const IncapacityNew = () => {
   const route = useRouter();
-  const [form] = Form.useForm();
-  const { Title } = Typography;
   const [sending, setSending] = useState(false);
-  const { Option } = Select;
 
-  /* Dates */
   const [departure_date, setDepartureDate] = useState(null);
   const [return_date, setReturnDate] = useState(null);
-
-  /* Selects */
-  const [allPersons, setAllPersons] = useState(null);
-
-  /* file */
   const [file, setFile] = useState(null);
-
-  const onCancel = () => {
-    route.push("/incapacity");
-  };
-
-  const changePerson = (value) => {
-    let index = allPersons.find((data) => data.khonnect_id === value);
-    setDateOfAdmission(moment(index.date_of_admission).format("DD/MM/YYYY"));
-    if (index.job_department.job) {
-      setJob(index.job_department.job.name);
-      setAvailableDays(index.Available_days_vacation);
-      setAntiquity(index.antiquity);
-    }
-  };
 
   const saveRequest = async (values) => {
     setSending(true);
-    values["departure_date"] = departure_date;
-    values["return_date"] = return_date;
-    file ? console.log(file["originFileObj"]) : null;
 
     let data = new FormData();
     data.append("departure_date", departure_date);
     data.append("return_date", return_date);
     data.append("person", values.person);
-    data.append("document", file["originFileObj"]);
-    try {
-      let response = await Axios.post(API_URL + `/person/incapacity/`, data);
-      let resData = response.data;
-      route.push("/incapacity");
-      notification["success"]({
-        message: "Aviso",
-        description: "Información enviada correctamente.",
+    data.append("document", file ? file["originFileObj"] : null);
+
+    WebApiPeople.saveDisabilitiesRequest(data)
+      .then(function (response) {
+        route.push("/incapacity");
+        notification["success"]({
+          message: "Aviso",
+          description: "Información enviada correctamente.",
+        });
+      })
+      .catch(function (error) {
+        setLoading(false);
+        console.log(error);
       });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setSending(false);
-    }
+  };
+
+  const onCancel = () => {
+    route.push("/incapacity");
   };
 
   const onChangeDepartureDate = (date, dateString) => {
