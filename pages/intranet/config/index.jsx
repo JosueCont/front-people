@@ -8,16 +8,14 @@ import FormConfig from "../../../components/intranet/FormConfig";
 import axios from "axios";
 import { API_URL } from "../../../config/config";
 import { connect } from "react-redux";
-import WebApiIntranet from '../../../api/WebApiIntranet';
-
+import WebApiIntranet from "../../../api/WebApiIntranet";
 
 const configIntranet = (props) => {
-  const {currentNode} = props;
+  const { currentNode } = props;
   const router = useRouter();
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(null);
   const [getImage, setImage] = useState(null);
-
 
   useEffect(() => {
     getConfig();
@@ -26,14 +24,12 @@ const configIntranet = (props) => {
   /* useEffect(() => {
       console.log('currentNode =>',props.currentNode);
   }, [props]) */
-  
 
   const getConfig = async () => {
     setLoading(true);
 
     await WebApiIntranet.getConfig()
       .then((res) => {
-        console.log('res =>',res);
         setConfig(res.data);
         setLoading(false);
       })
@@ -47,10 +43,10 @@ const configIntranet = (props) => {
   const saveData = async (data, type, id = 0) => {
     if (type === "add") {
       await WebApiIntranet.saveIntranetConfig(data)
-      .then((res) => {
+        .then((res) => {
           getConfig();
-          notification['success']({
-            message: 'Información guardada'
+          notification["success"]({
+            message: "Información guardada",
           });
         })
         .catch((e) => {
@@ -60,8 +56,8 @@ const configIntranet = (props) => {
       await WebApiIntranet.updIntranetConfig(id, data)
         .then((res) => {
           getConfig();
-          notification['success']({
-            message: 'Información actualizada'
+          notification["success"]({
+            message: "Información actualizada",
           });
         })
         .catch((e) => {
@@ -114,7 +110,7 @@ const configIntranet = (props) => {
         style={{ padding: 24, minHeight: 380, height: "100%" }}
       >
         <FormConfig
-          nodeId={currentNode ? currentNode.id : ''}
+          nodeId={currentNode ? currentNode.id : ""}
           config={config}
           save={saveData}
           saveImage={saveImage}
@@ -125,7 +121,6 @@ const configIntranet = (props) => {
     </MainLayout>
   );
 };
-
 
 const mapState = (state) => {
   return {

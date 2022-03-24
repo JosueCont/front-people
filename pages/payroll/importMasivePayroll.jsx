@@ -13,7 +13,6 @@ import {
   Radio,
   Space,
   Switch,
-  Select,
 } from "antd";
 import { DollarCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
@@ -24,7 +23,11 @@ import { connect } from "react-redux";
 import ModalUploadFileDrag from "../../components/modal/ModalUploadFileDrag";
 import { useEffect } from "react";
 import WebApiPayroll from "../../api/WebApiPayroll";
-import { messageError, messageUploadSuccess } from "../../utils/constant";
+import {
+  messageError,
+  messageSaveSuccess,
+  messageUploadSuccess,
+} from "../../utils/constant";
 import SelectTypeTax from "../../components/selects/SelectTypeTax";
 import { ruleRequired } from "../../utils/rules";
 
@@ -36,8 +39,7 @@ const ImportMasivePayroll = ({ ...props }) => {
   const [files, setFiles] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
-  const [periodSelcted, setPeriodSelected] = useState(null);
-  const [activeCalendar, setActiveCalendar] = useState(false);
+  const [startDate, setStartDate] = useState(null);
 
   const columns = [
     {
@@ -107,9 +109,9 @@ const ImportMasivePayroll = ({ ...props }) => {
         message.success(messageUploadSuccess);
         calendar.setFieldsValue({
           period: response.data.cfdis[0].headers.payment_date.substring(0, 4),
+          active: false,
         });
         setCompanyImport(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         setLoading(false);
@@ -126,17 +128,16 @@ const ImportMasivePayroll = ({ ...props }) => {
       });
   };
 
-  const sendCreateCompany = (data) => {
-    data.active = activeCalendar;
-  };
-
   const PrintPeriods = ({ periods }) => {
     return (
       <>
-        {periods.map((item) => {
+        {periods.map((item, i) => {
           return (
             <Col>
-              <Radio value={item.payment_start_date}>
+              <Radio
+                key={item.payment_start_date + i}
+                value={item.payment_start_date}
+              >
                 {item.payment_start_date} - {item.payment_end_date}
               </Radio>
             </Col>
@@ -147,7 +148,26 @@ const ImportMasivePayroll = ({ ...props }) => {
   };
 
   const onChangePeriod = (item) => {
-    setPeriodSelected(item.target.value);
+    setStartDate(item.target.value);
+  };
+
+  const sendCreateCompany = async (data) => {
+    data.periodicity = props.payment_periodicity.find(
+      (item) => item.id === companyImport.periodicity
+    ).id;
+    data.start_date = startDate;
+    data.perception_type = "8110942bdff9432aaf603f23006e2378";
+    data.period = Number(data.period);
+    companyImport.payment_calendar = data;
+    delete companyImport["periodicity"];
+    await WebApiPayroll.savePayrollMasiveXml(companyImport)
+      .then((response) => {
+        message.success(messageSaveSuccess);
+      })
+      .catch((error) => {
+        message.error(messageError);
+        console.log(error);
+      });
   };
 
   return (
@@ -263,15 +283,13 @@ const ImportMasivePayroll = ({ ...props }) => {
                           </Col>
                           <Col style={{ display: "flex" }}>
                             <Form.Item name="period" label="Periodo">
-                              <Input readOnly />
+                              <Input type={"number"} readOnly />
                             </Form.Item>
                           </Col>
 
                           <Col style={{ display: "flex" }}>
                             <Form.Item name={"active"} label="¿Activo?">
-                              <Switch
-                                onChange={(value) => setActiveCalendar(value)}
-                              />
+                              <Switch />
                             </Form.Item>
                           </Col>
                         </Row>
