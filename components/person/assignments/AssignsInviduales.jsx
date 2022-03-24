@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import { DeleteOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import {
     Row,
@@ -19,20 +19,36 @@ import {
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import DeleteAssigns from './DeleteAssigns';
 
-const AssignsIndividuales = ({getAssigns, itemId, actionDelete, loading, listAssigns, ...props}) =>{
+const AssignsIndividuales = ({
+    getAssigns,
+    itemId,
+    actionDelete,
+    loading,
+    listAssigns,
+    isClosed,
+    ...props
+}) =>{
 
     const { confirm } = Modal;
     const [isSelectAll, setIsSelectAll] = useState(false);
     const [itemsKeys, setItemsKeys] = useState([]);
+    const [copyKeys, setCopyKeys] = useState([]);
+    const [copyRows, setCopyRows] = useState([]);
     const [itemsSelected, setItemsSelected] = useState([]);
     const [showModalDelete, setShowModalDelete] = useState(false);
+
+    useEffect(()=>{
+        if(isClosed) resetValues();
+    },[isClosed])
 
     const rowSelection = {
         columnWidth: 50,
         selectedRowKeys: itemsKeys,
         onChange: (selectedRowKeys, selectedRows) => {
-            setItemsKeys(selectedRowKeys)
-            setItemsSelected(selectedRows)
+            let keys = [...copyKeys, ...selectedRowKeys]
+            let rows = [...copyRows, ...selectedRows]
+            setItemsKeys(keys)
+            setItemsSelected(rows)
         }
     }
 
@@ -44,9 +60,26 @@ const AssignsIndividuales = ({getAssigns, itemId, actionDelete, loading, listAss
         } else if (pagination.current == 1) {
             getAssigns(itemId, "", "")
         }
+        validateKeysAndRows()
+    }
+
+    const validateKeysAndRows = () =>{
+        let keys = [];
+        let rows = [];
+        itemsSelected.map((a)=>{
+            let result = copyRows.some(b => a.id === b.id)
+            if(!result){
+                keys.push(a.id)
+                rows.push(a)
+            }
+        })
+        setCopyKeys(keys)
+        setCopyRows(rows)
     }
 
     const resetValues = () =>{
+        setCopyRows([])
+        setCopyKeys([])
         setItemsKeys([])
         setItemsSelected([])
         setIsSelectAll(false)
@@ -89,23 +122,25 @@ const AssignsIndividuales = ({getAssigns, itemId, actionDelete, loading, listAss
 
     const columns = [
         {
-            title: "Nombre",
+            title: "Evaluación",
             render: (item) => {
                 return (
                     <div>
-                        { 
-                            item.assessment ? 
-                            item.assessment.name :
-                            item.group_assessment ? item.group_assessment.name : ''
-                        }
+                        {item.assessment?.name}
                     </div>
                 );
             },
             
         },
         {
-            title: "Acciones",
-            width: 50,
+            title: ()=>{
+                return(
+                    <DeleteOutlined
+                        onClick={()=>deleteAssigns()}
+                    />
+                )
+            },
+            width: 100,
             render: (item) => {
                 return (
                     <DeleteOutlined
@@ -119,7 +154,7 @@ const AssignsIndividuales = ({getAssigns, itemId, actionDelete, loading, listAss
     return(
         <>
             <Row gutter={[8,16]}>
-                {!loading && listAssigns && listAssigns.results && listAssigns.results.length > 0 && (
+                {/* {!loading && listAssigns && listAssigns.results && listAssigns.results.length > 0 && (
                     <>
                         <Col span={12}>
                             <CheckAll checked={isSelectAll} onChange={onSelectAll}>
@@ -132,11 +167,11 @@ const AssignsIndividuales = ({getAssigns, itemId, actionDelete, loading, listAss
                             </DeleteAll>
                         </Col>
                     </>
-                )}
+                )} */}
                 <Col span={24}>
                     <CustomTable
                         dataSource={listAssigns?.results}
-                        showHeader={false}
+                        // showHeader={false}
                         columns={columns}
                         loading={loading}
                         scroll={{y:300}}

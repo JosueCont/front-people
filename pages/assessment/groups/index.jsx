@@ -14,6 +14,7 @@ const GroupsKuiz = () =>{
     const [listGroups, setLisGroups] = useState({});
     const [surveyList, setSurveyList] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(currenNode?.id){
@@ -123,6 +124,7 @@ const GroupsKuiz = () =>{
                     createGroup={createGroup}
                     searchGroup={searchGroup}
                     surveyList={surveyList}
+                    setNumPage={setNumPage}
                 />
                 <AssessmentsTable
                     dataGroups={listGroups}
@@ -132,6 +134,8 @@ const GroupsKuiz = () =>{
                     updateGroup={updateGroup}
                     deteleGroup={deleteGroup}
                     surveyList={surveyList}
+                    setNumPage={setNumPage}
+                    numPage={numPage}
                 />
             </div>
         </MainLayout>

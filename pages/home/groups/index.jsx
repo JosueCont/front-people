@@ -14,6 +14,7 @@ const GroupsPeople = () =>{
     const [listGroups, setLisGroups] = useState([]);
     const [personList, setPersonList] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [numPage, setNumPage] = useState(1);
 
     useEffect(()=>{
         if(currenNode?.id){
@@ -136,6 +137,7 @@ const GroupsPeople = () =>{
                     createGroup={createGroup}
                     searchGroup={searchGroup}
                     personList={personList}
+                    setNumPage={setNumPage}
                 />
                 <PersonsTable
                     dataGroups={listGroups}
@@ -146,6 +148,8 @@ const GroupsPeople = () =>{
                     deteleGroup={deleteGroup}
                     personList={personList}
                     onFinishAssign={onFinishAssign}
+                    setNumPage={setNumPage}
+                    numPage={numPage}
                 />
             </div>
         </MainLayout>
