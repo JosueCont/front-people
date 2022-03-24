@@ -42,7 +42,7 @@ const AssessmentsSearch = ({...props}) =>{
     const onFinishSearch = (values) =>{
         let name = "";
         if((values.name).trim()){
-            name = `&name__icontains=${values.name}`;
+            name = `&name=${values.name}`;
         }else{
             name = "";
             form.resetFields();
