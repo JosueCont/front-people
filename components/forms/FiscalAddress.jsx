@@ -49,12 +49,7 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
       });
   };
 
-  
-  const submitForm = (values) =>{
-    console.log('values=>',values)
-  }
-
-
+  const submitForm = (values) => {};
 
   return (
     <Form layout={"vertical"} form={formAddress} onFinish={submitForm}>
@@ -112,10 +107,10 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
             <Input maxLength={10} />
           </Form.Item>
         </Col>
-        <Col span={24} style={{ textAlign:'end' }} >
-        <Form.Item>
-          <Button type="submit" >Guardar</Button>
-        </Form.Item>
+        <Col span={24} style={{ textAlign: "end" }}>
+          <Form.Item>
+            <Button type="submit">Guardar</Button>
+          </Form.Item>
         </Col>
       </Row>
     </Form>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { render } from "react-dom";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -13,12 +12,10 @@ import {
 } from "antd";
 import { useRouter } from "next/router";
 import moment from "moment";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
-import { connect } from 'react-redux'
-
+import { connect } from "react-redux";
+import WebApiPeople from "../../api/WebApiPeople";
 
 import {
   EditOutlined,
@@ -31,21 +28,14 @@ import {
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
 
-const Incapacity = ({permissions, ...props}) => {
+const Incapacity = ({ permissions, ...props }) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
-  const { Option } = Select;
+  let nodeId = userCompanyId();
 
   const [loading, setLoading] = useState(false);
-  const [sending, setSending] = useState(false);
   const [incapacityList, setIncapacityList] = useState([]);
-  const [personList, setPersonList] = useState(null);
-
-  /* Variables */
-  const [departamentId, setDepartamentId] = useState(null);
-  /* const [permissions, setPermissions] = useState({}); */
-  let nodeId = userCompanyId();
 
   /* Select estatus */
   const optionStatus = [
@@ -54,25 +44,6 @@ const Incapacity = ({permissions, ...props}) => {
     { value: 3, label: "Rechazado", key: "opt_3" },
   ];
 
-  const getAllPersons = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/person/person/`);
-      let data = response.data.results;
-      let list = [];
-      data = data.map((a, index) => {
-        let item = {
-          label: a.first_name + " " + a.flast_name,
-          value: a.id,
-          key: a.id + index,
-        };
-        list.push(item);
-      });
-      setPersonList(list);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const getIncapacity = async (
     collaborator = null,
     department = null,
@@ -80,7 +51,7 @@ const Incapacity = ({permissions, ...props}) => {
   ) => {
     setLoading(true);
     try {
-      let url = `/person/incapacity/?person__node__id=${nodeId}&`;
+      let url = `?person__node__id=${nodeId}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -91,19 +62,25 @@ const Incapacity = ({permissions, ...props}) => {
       if (department) {
         url += `person__person_department__id=${department}&`;
       }
-      let response = await Axios.get(API_URL + url);
-      let data = response.data.results;
-      data = data.map((item) => {
-        item.key = item.id;
-        return item;
-      });
-
-      setIncapacityList(data);
+      WebApiPeople.geDisabilitiesRequest(url)
+        .then(function (response) {
+          let data = [];
+          if (response.data && response.data.length > 0) {
+            data = response.data.map((item) => {
+              item.key = item.id;
+              return item;
+            });
+          }
+          setIncapacityList(data);
+        })
+        .catch(function (error) {
+          setLoading(false);
+          console.log(error);
+        });
     } catch (e) {
       console.log(e);
     } finally {
       setLoading(false);
-      setSending(false);
     }
   };
 
@@ -112,26 +89,17 @@ const Incapacity = ({permissions, ...props}) => {
   };
 
   const filter = async (values) => {
-    setSending(true);
     setIncapacityList([]);
-
     getIncapacity(values.collaborator, values.department, values.status);
-  };
-
-  const changeDepartament = (val) => {
-    setDepartamentId(val);
   };
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     getIncapacity();
-    getAllPersons();
   }, [route]);
-
 
   const resetFilter = () => {
     form.resetFields();
-    getAllPersons();
     getIncapacity();
   };
 
@@ -269,13 +237,11 @@ const Incapacity = ({permissions, ...props}) => {
                   />
                   <Column
                     title="Departamento"
-                    dataIndex="collaborator"
+                    dataIndex="department"
                     key="department"
-                    render={(collaborator, record) =>
-                      collaborator && collaborator.department
-                        ? collaborator.department.name
-                        : null
-                    }
+                    render={(department) => (
+                      <>{department ? department.name : null}</>
+                    )}
                   />
                   <Column
                     title="Fecha inicio de incapacidad"
@@ -342,7 +308,7 @@ const Incapacity = ({permissions, ...props}) => {
 };
 
 const mapState = (state) => {
-  return { 
+  return {
     permissions: state.userStore.permissions.incapacity,
   };
 };

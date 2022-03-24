@@ -252,12 +252,7 @@ class WebApiPeople {
   }
 
   static assignmentCompanyPerson(url, data) {
-    return WebApi.ApisType(
-      `/business/node-person/
-      ${url}`,
-      "post",
-      data
-    );
+    return WebApi.ApisType(`/business/node-person/${url}`, "post", data);
   }
 
   static deleteNode(data) {
@@ -310,6 +305,27 @@ class WebApiPeople {
 
   static trainingPerson(type, url = "", data = null) {
     return WebApi.ApisType(`/person/person/${url}`, type, data);
+  }
+
+  /* Solicitudes */
+  static geDisabilitiesRequest(url = "") {
+    return WebApi.ApisType(`/person/incapacity/${url}`, "get");
+  }
+
+  static saveDisabilitiesRequest(data) {
+    return WebApi.ApisType(`/person/incapacity/`, "post", data);
+  }
+
+  static updateDisabilitiesRequest(id, data) {
+    return WebApi.ApisType(`/person/incapacity/${id}/`, "patch", data);
+  }
+
+  static rejectDisabilitiesRequest(data) {
+    return WebApi.ApisType(`/person/incapacity/reject_request/`, "post", data);
+  }
+
+  static approveDisabilitiesRequest(data) {
+    return WebApi.ApisType(`/person/incapacity/approve_request/`, "post", data);
   }
 }
 export default WebApiPeople;

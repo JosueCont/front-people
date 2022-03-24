@@ -1,4 +1,5 @@
 import { getGroups } from "../api/apiKhonnect";
+import WebApiPayroll from "../api/WebApiPayroll";
 import WebApiPeople from "../api/WebApiPeople";
 import { userCompanyId } from "../libs/auth";
 
@@ -18,6 +19,8 @@ const initialData = {
   people_company: [],
   cat_level: [],
   cat_work_title: [],
+  cat_fixed_concept: [],
+  cat_group_fixed_concept: [],
 };
 2;
 
@@ -34,7 +37,9 @@ const PROFILE_GROUP = "PROFILE_GROUP";
 const PEOPLE_COMPANY = "PEOPLE_COMPANY";
 const JOB = "JOB";
 const LEVEL = "LEVEL";
-const WORK_TITLE = "WORKTITLE";
+const WORK_TITLE = "WORK_TITLE";
+const FIXED_CONCEPT = "FIXED_CONCEPT";
+const GROUP_FIXED_CONCEPT = "GROUP_FIXED_CONCEPT";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -69,6 +74,10 @@ const webReducer = (state = initialData, action) => {
       return { ...state, cat_level: action.payload };
     case WORK_TITLE:
       return { ...state, cat_work_title: action.payload };
+    case FIXED_CONCEPT:
+      return { ...state, cat_fixed_concept: action.payload };
+    case GROUP_FIXED_CONCEPT:
+      return { ...state, cat_group_fixed_concept: action.payload };
     default:
       return state;
   }
@@ -92,6 +101,8 @@ export const doCompanySelectedCatalog =
         dispatch(getPeopleCompany(data));
         dispatch(getLevel(data));
         dispatch(getWorkTitle(data));
+        dispatch(getFixedConcept(data));
+        dispatch(getGroupFixedConcept(data));
         return true;
       }
     } catch (error) {
@@ -238,5 +249,36 @@ export const getWorkTitle = (data) => async (dispatch, getState) => {
     })
     .catch((error) => {
       dispatch({ type: WORK_TITLE, payload: [] });
+    });
+};
+
+export const getFixedConcept = (data) => async (dispatch, getState) => {
+  await WebApiPayroll.fixedConcept("get", null, `?node=${data}`)
+    .then((response) => {
+      const datas = response.data.results.map((item) => {
+        item.key = item.id;
+        return item;
+      });
+      dispatch({
+        type: FIXED_CONCEPT,
+        payload: datas,
+      });
+    })
+    .catch((error) => {
+      dispatch({ type: FIXED_CONCEPT, payload: [] });
+    });
+};
+
+export const getGroupFixedConcept = (data) => async (dispatch, getState) => {
+  await WebApiPayroll.groupFixedConcept("get", null, `?node=${data}`)
+    .then((response) => {
+      dispatch({
+        type: GROUP_FIXED_CONCEPT,
+        payload: response.data.results,
+      });
+    })
+    .catch((error) => {
+      console.log("error: ", error);
+      dispatch({ type: GROUP_FIXED_CONCEPT, payload: [] });
     });
 };

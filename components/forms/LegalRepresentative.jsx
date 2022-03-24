@@ -10,8 +10,6 @@ const LegalRepresentative = ({ node, ...props }) => {
   const [states, setStates] = useState([]);
   const [form] = Form.useForm();
 
-  console.log('node ====>', node);
-
   onchange = (value) => {
     getStates(value);
   };
@@ -77,9 +75,7 @@ const LegalRepresentative = ({ node, ...props }) => {
       .catch((e) => {
         console.log(e);
       });
-  }
-
-  
+  };
 
   return (
     <Form layout={"vertical"} form={form}>
