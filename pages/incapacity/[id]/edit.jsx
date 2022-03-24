@@ -1,66 +1,38 @@
 import { React, useEffect, useState } from "react";
 import MainLayout from "../../../layout/MainLayout";
-import {
-  Row,
-  Col,
-  Typography,
-  Breadcrumb,
-  Form,
-  Select,
-  notification,
-} from "antd";
+import { Row, Col, Breadcrumb, notification } from "antd";
 import { useRouter } from "next/router";
 import Incapacityform from "../../../components/forms/IncapacityForm";
 import { withAuthSync } from "../../../libs/auth";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
+import WebApiPeople from "../../../api/WebApiPeople";
 
 const IncapacityEdit = () => {
   const route = useRouter();
-  const [form] = Form.useForm();
-  const { Title } = Typography;
-  const { Option } = Select;
-
-  const [details, setDetails] = useState(null);
   const { id } = route.query;
-  const [loading, setLoading] = useState(false);
+  const [details, setDetails] = useState(null);
   const [sending, setSending] = useState(false);
-
-  /* Dates */
   const [departure_date, setDepartureDate] = useState(null);
   const [return_date, setReturnDate] = useState(null);
-
-  /* Selects */
-  const [allPersons, setAllPersons] = useState(null);
-
-  /* file */
   const [file, setFile] = useState(null);
 
-  const onCancel = () => {
-    route.push("/incapacity");
-  };
-
   const getDetails = async () => {
-    setLoading(true);
-    try {
-      let response = await Axios.get(API_URL + `/person/incapacity/${id}/`);
-      let data = response.data;
-      setDetails(data);
-      setDepartureDate(data.departure_date);
-      setReturnDate(data.return_date);
-
-      setLoading(false);
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-    }
+    setSending(true);
+    WebApiPeople.geDisabilitiesRequest(id)
+      .then(function (response) {
+        let data = response.data;
+        setDetails(data);
+        setDepartureDate(data.departure_date);
+        setReturnDate(data.return_date);
+        setSending(false);
+      })
+      .catch(function (error) {
+        setSending(false);
+        console.log(error);
+      });
   };
 
   const saveRequest = async (values) => {
     setSending(true);
-    values["departure_date"] = departure_date;
-    values["return_date"] = return_date;
-    file ? console.log(file["originFileObj"]) : null;
 
     let data = new FormData();
     data.append("departure_date", departure_date);
@@ -70,22 +42,22 @@ const IncapacityEdit = () => {
       data.append("document", file["originFileObj"]);
     }
 
-    try {
-      let response = await Axios.patch(
-        API_URL + `/person/incapacity/${id}/`,
-        data
-      );
-      let resData = response.data;
-      route.push("/incapacity");
-      notification["success"]({
-        message: "Aviso",
-        description: "Información enviada correctamente.",
+    WebApiPeople.updateDisabilitiesRequest(id, data)
+      .then(function (response) {
+        route.push("/incapacity");
+        notification["success"]({
+          message: "Aviso",
+          description: "Información enviada correctamente.",
+        });
+      })
+      .catch(function (error) {
+        setSending(false);
+        console.log(error);
       });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setSending(false);
-    }
+  };
+
+  const onCancel = () => {
+    route.push("/incapacity");
   };
 
   const onChangeDepartureDate = (date, dateString) => {
