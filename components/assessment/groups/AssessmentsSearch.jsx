@@ -15,15 +15,7 @@ import {
 } from "@ant-design/icons";
 import AssessmentsGroup from "./AssessmentsGroup";
 
-const AssessmentsSearch = ({
-    hiddenMembers = true,
-    hiddenSurveys = true,
-    hiddenCategories = true, 
-    hiddenName = true,
-    multipleSurveys = true,
-    multipleMembers = true,
-    multipleCategories = true,
-    ...props}) =>{
+const AssessmentsSearch = ({...props}) =>{
     const [form] = Form.useForm();
     const permissions = useSelector(state => state.userStore.permissions.person);
     const [showModalCreate, setShowModalCreate] = useState(false);
@@ -31,6 +23,7 @@ const AssessmentsSearch = ({
     const HandleFilterReset = () => {
         form.resetFields();
         props.searchGroup("")
+        props.setNumPage(1)
     };
 
     const HandleCreateGroup = () =>{

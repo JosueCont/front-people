@@ -107,8 +107,6 @@ const AssignAssessments = ({...props}) =>{
                 getGroupsSurveys(currentNode.id, "")
             }
             setCopyKeys(groupsKeys)
-        }else{
-            console.log(pagination.current)
         }
     }
 
@@ -269,13 +267,8 @@ const AssignAssessments = ({...props}) =>{
     const onSearchByName = (e) =>{
         const list = getListCopy();
         if((e.target.value).trim()){
-            if(isIndividual){
-                let results = list.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
-                setListSurveys(results)
-            }else if(!isIndividual){
-                let results = list.filter(item => item.group_assessment.name.toLowerCase().includes(e.target.value.toLowerCase()));
-                setListSurveys(results)
-            }
+            let results = list.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
+            setListSurveys(results)
         }else{
             setListSurveys(list)
         }
@@ -335,7 +328,7 @@ const AssignAssessments = ({...props}) =>{
                                         optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
                                     }
                                 >
-                                    {listCategories.map(item =>(
+                                    {listCategories?.map(item =>(
                                         <Option key={item.id} value={item.id}>
                                             {item.name}
                                         </Option>
