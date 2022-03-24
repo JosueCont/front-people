@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import {
   Typography,
   Button,
@@ -8,53 +8,45 @@ import {
   Upload,
   Input,
   Image,
-  Select,
   DatePicker,
   Modal,
+  Spin,
 } from "antd";
 import moment from "moment";
 import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import jsCookie from "js-cookie";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { withAuthSync } from "../../libs/auth";
+import { connect } from "react-redux";
+import { ruleRequired } from "../../utils/rules";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const Incapacityform = (props) => {
   const { Title } = Typography;
-
   const [form] = Form.useForm();
-
-  const { Option } = Select;
-  const { TextArea } = Input;
-
   const [fileList, setFileList] = useState([]);
-  const [allPersons, setAllPersons] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
   const [permissions, setPermissions] = useState({});
 
-  /* For input file */
-  const inputFileRef = useRef(null);
-  const [file, setFile] = useState();
-  const [fileName, setfileName] = useState("");
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
 
-  /* const [person, setPerson] = useState(null); */
-  /* const [job, setJob] = useState(null); */
-  /* const [dateOfAdmission, setDateOfAdmission] = useState(null); */
-  /* const [antiquity, setAntiquity] = useState(null); */
-  /* const [availableDays, setAvailableDays] = useState(null); */
-
-  const changePerson = (value) => {
+  const changePerson = async (value) => {
     if (value) {
-      let index = allPersons.find((data) => data.id === value);
-      if (index && index.job) {
-        form.setFieldsValue({
-          job: index.job.name,
+      WebApiPeople.getPerson(value)
+        .then(function (response) {
+          let index = response.data;
+          form.setFieldsValue({
+            job: index.work_title.job ? index.work_title.job.name : null,
+          });
+          setUrlPhoto(index.photo ? index.photo : null);
+        })
+        .catch(function (error) {
+          console.log(error);
         });
-      } else {
-        form.setFieldsValue({
-          job: null,
-        });
-      }
-      setUrlPhoto(index.photo ? index.photo : null);
     } else {
       form.setFieldsValue({
         job: null,
@@ -69,7 +61,6 @@ const Incapacityform = (props) => {
   };
 
   const showMoalapprove = () => {
-    /* props.onApprove */
     Modal.confirm({
       title: "¿Está seguro de aprobar la siguiente solicitud de incapacidad?",
       icon: <ExclamationCircleOutlined />,
@@ -94,21 +85,9 @@ const Incapacityform = (props) => {
         return_date: props.details.return_date
           ? moment(props.details.return_date, "YYYY-MM-DD")
           : null,
-        job:
-          props.details.collaborator &&
-          props.details.collaborator.job &&
-          props.details.collaborator.job
-            ? props.details.collaborator.job.name
-            : null,
+        document: props.details.document ? props.details.document : null,
       });
-      /* if (
-                            props.details.collaborator &&
-                            props.details.collaborator.job_department.job
-                        ) {
-                            form.setFieldsValue({
-                                job: props.details.collaborator.job_department.job.name,
-                            });
-                        } */
+      changePerson(props.details.collaborator.id);
 
       setUrlPhoto(
         props.details.collaborator && props.details.collaborator.photo
@@ -128,27 +107,7 @@ const Incapacityform = (props) => {
         setFileList(fileDefault);
       }
     }
-  }, [allPersons]);
-
-  useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
-  }, []);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.incapacity.can.view")) perms.view = true;
-      if (a.includes("people.incapacity.can.create")) perms.create = true;
-      if (a.includes("people.incapacity.can.edit")) perms.edit = true;
-      if (a.includes("people.incapacity.can.delete")) perms.delete = true;
-      if (a.includes("people.incapacity.function.approve_incapacity"))
-        perms.approve = true;
-      if (a.includes("people.incapacity.function.reject_incapacity"))
-        perms.reject = true;
-    });
-    setPermissions(perms);
-  };
+  }, [props.details]);
 
   return (
     <Form
@@ -178,18 +137,23 @@ const Incapacityform = (props) => {
           <Col lg={20} md={20} sm={24} xs={24}>
             <Row gutter={24}>
               <Col lg={12} md={12} sm={24} xs={24}>
-                <SelectCollaborator
-                  label="Empleado"
-                  name="person"
-                  disabled={props.readOnly || props.sending}
-                  onChange={changePerson}
-                  setAllPersons={setAllPersons}
-                />
+                <Form.Item name="person" rules={[ruleRequired]}>
+                  <SelectCollaborator
+                    label="Empleado"
+                    name="person"
+                    onChange={changePerson}
+                    isDisabled={props.readOnly || props.sending}
+                  />
+                </Form.Item>
 
                 <Form.Item label="Puesto" name="job" readOnly>
                   <Input readOnly />
                 </Form.Item>
-                <Form.Item label="Documentación" name="document">
+                <Form.Item
+                  label="Documentación"
+                  name="document"
+                  rules={[ruleRequired]}
+                >
                   <Upload
                     disabled={props.readOnly || props.sending}
                     listType="picture-card"
@@ -205,7 +169,11 @@ const Incapacityform = (props) => {
                 </Form.Item>
               </Col>
               <Col lg={12} md={12} sm={24} xs={24}>
-                <Form.Item name="departure_date" label="Fecha de salida">
+                <Form.Item
+                  name="departure_date"
+                  label="Fecha de salida"
+                  rules={[ruleRequired]}
+                >
                   <DatePicker
                     disabled={props.readOnly || props.sending}
                     key="departure_date"
@@ -213,7 +181,11 @@ const Incapacityform = (props) => {
                     onChange={props.onChangeDepartureDate}
                   />
                 </Form.Item>
-                <Form.Item name="return_date" label="Fecha de regreso">
+                <Form.Item
+                  name="return_date"
+                  label="Fecha de regreso"
+                  rules={[ruleRequired]}
+                >
                   <DatePicker
                     disabled={props.readOnly || props.sending}
                     key="return_date"
@@ -230,40 +202,37 @@ const Incapacityform = (props) => {
                 >
                   Regresar
                 </Button>
-                {permissions.reject
-                  ? props.toApprove && (
-                      <Button
-                        danger
-                        onClick={props.onReject}
-                        key="reject"
-                        type="primary"
-                        style={{
-                          padding: "0 50px",
-                          marginLeft: 15,
-                          marginBottom: "10px",
-                        }}
-                      >
-                        Rechazar
-                      </Button>
-                    )
-                  : null}
-                {permissions.approve
-                  ? props.toApprove && (
-                      <Button
-                        onClick={showMoalapprove}
-                        type="primary"
-                        key="aprove"
-                        className={"btn-success"}
-                        style={{
-                          padding: "0 50px",
-                          marginLeft: 15,
-                          marginBottom: "10px",
-                        }}
-                      >
-                        Aprobar permiso
-                      </Button>
-                    )
-                  : null}
+                {permissions.reject_incapacity && props.toApprove && (
+                  <Button
+                    danger
+                    onClick={props.onReject}
+                    key="reject"
+                    type="primary"
+                    style={{
+                      padding: "0 50px",
+                      marginLeft: 15,
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Rechazar
+                  </Button>
+                )}
+                {permissions.approve_incapacity && props.toApprove && (
+                  <Button
+                    onClick={showMoalapprove}
+                    type="primary"
+                    key="aprove"
+                    className={"btn-success"}
+                    loading={props.sending}
+                    style={{
+                      padding: "0 50px",
+                      marginLeft: 15,
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Aprobar permiso
+                  </Button>
+                )}
                 {!props.toApprove ? (
                   <Button
                     key="save"
@@ -288,4 +257,10 @@ const Incapacityform = (props) => {
   );
 };
 
-export default withAuthSync(Incapacityform);
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.incapacity,
+  };
+};
+
+export default connect(mapState)(withAuthSync(Incapacityform));
