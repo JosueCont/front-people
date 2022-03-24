@@ -57,7 +57,7 @@ const AssignAssessments = ({...props}) =>{
     const getCategories = async () =>{
         try {
             let response = await WebApiAssessment.getCategoriesAssessment();
-            setListCategories(response.data?.results)
+            setListCategories(response.data)
         } catch (e) {
             setListCategories([])
             console.log(e)
@@ -87,7 +87,6 @@ const AssignAssessments = ({...props}) =>{
         }
         try {
             let response = await WebApiAssessment.getGroupsAssessments(data);
-            console.log('grpos------->', response)
             setListSurveys(response.data)
             setCopyList(response.data)
             setLoading(false)

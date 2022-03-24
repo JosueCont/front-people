@@ -87,7 +87,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
   const getCategories = async () =>{
     try {
         let response = await WebApiAssessment.getCategoriesAssessment();
-        setListCategories(response.data?.results)
+        setListCategories(response.data)
     } catch (e) {
         setListCategories([])
         console.log(e)
