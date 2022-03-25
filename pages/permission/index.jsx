@@ -7,16 +7,9 @@ import {
   Breadcrumb,
   Button,
   Form,
-  Select,
   Tooltip,
+  Select,
 } from "antd";
-import { useRouter } from "next/router";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
-
-import SelectDepartment from "../../components/selects/SelectDepartment";
-import SelectCollaborator from "../../components/selects/SelectCollaborator";
-
 import {
   EditOutlined,
   SearchOutlined,
@@ -24,27 +17,22 @@ import {
   EyeOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
+import { useRouter } from "next/router";
+import SelectDepartment from "../../components/selects/SelectDepartment";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
+import WebApiPeople from "../../api/WebApiPeople";
 
-
-const Permission = ({permissions, ...props}) => {
+const Permission = ({ permissions, ...props }) => {
+  let nodeId = userCompanyId();
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
-  const { Option } = Select;
-
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [permissionsList, setPermissionsList] = useState([]);
-  const [personList, setPersonList] = useState(null);
-
-  /* Variables */
-  const [companyId, setCompanyId] = useState(null);
-  const [departamentId, setDepartamentId] = useState(null);
-  /* const [permissions, setPermissions] = useState({}); */
-  let nodeId = userCompanyId();
 
   /* Select estatus */
   const optionStatus = [
@@ -53,53 +41,35 @@ const Permission = ({permissions, ...props}) => {
     { value: 3, label: "Rechazado", key: "opt_3" },
   ];
 
-  const getAllPersons = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/person/person/`);
-      let data = response.data.results;
-      let list = [];
-      data = data.map((a, index) => {
-        let item = {
-          label: a.first_name + " " + a.flast_name,
-          value: a.id,
-          key: a.id + index,
-        };
-        list.push(item);
-      });
-      setPersonList(list);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const getPermissions = async (
     collaborator = null,
-    company = null,
     department = null,
     status = null
   ) => {
     setLoading(true);
-    try {
-      let url = `/person/permit/?person__node__id=${nodeId}&`;
-      if (collaborator) {
-        url += `person__id=${collaborator}&`;
-      }
-      if (status) {
-        url += `status=${status}&`;
-      }
-
-      if (department) {
-        url += `person__person_department__id=${department}&`;
-      }
-      let response = await Axios.get(API_URL + url);
-      let data = response.data.results;
-      setPermissionsList(data);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-      setSending(false);
+    let url = `?person__node__id=${nodeId}&`;
+    if (collaborator) {
+      url += `person__id=${collaborator}&`;
     }
+    if (status) {
+      url += `status=${status}&`;
+    }
+
+    if (department) {
+      url += `department__id=${department}&`;
+    }
+    WebApiPeople.gePermitsRequest(url)
+      .then(function (response) {
+        let data = response.data;
+        setPermissionsList(data);
+        setLoading(false);
+        setSending(false);
+      })
+      .catch(function (error) {
+        setLoading(false);
+        setSending(false);
+        console.log(error);
+      });
   };
 
   const GotoDetails = (data) => {
@@ -108,35 +78,17 @@ const Permission = ({permissions, ...props}) => {
 
   const filterPermission = async (values) => {
     setSending(true);
-    getPermissions(
-      values.collaborator,
-      values.company,
-      departamentId,
-      values.status
-    );
-  };
-
-  /* Eventos de componentes */
-  const onChangeCompany = (val) => {
-    form.setFieldsValue({
-      department: null,
-    });
-    setCompanyId(val);
-  };
-
-  const changeDepartament = (val) => {
-    setDepartamentId(val);
+    setPermissionsList([]);
+    getPermissions(values.collaborator, values.department, values.status);
   };
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     getPermissions();
-    getAllPersons();
   }, [route]);
 
   const resetFilter = () => {
     form.resetFields();
-    getAllPersons();
     getPermissions();
   };
 
@@ -172,15 +124,6 @@ const Permission = ({permissions, ...props}) => {
                           style={{ width: 150 }}
                         />
                       </Col>
-                      {/* <Col>
-                      <SelectCompany
-                        name="company"
-                        label="Empresa"
-                        onChange={onChangeCompany}
-                        key="SelectCompany"
-                        style={{ width: 150 }}
-                      />
-                    </Col> */}
                       <Col>
                         <SelectDepartment
                           companyId={nodeId}
@@ -282,15 +225,8 @@ const Permission = ({permissions, ...props}) => {
                     )}
                   />
                   <Column
-                    title="Departamentos"
-                    dataIndex="collaborator"
-                    render={(collaborator, record) => (
-                      <>
-                        {collaborator.department &&
-                          collaborator.department.name &&
-                          collaborator.department.name}
-                      </>
-                    )}
+                    title="Departamento"
+                    dataIndex="department"
                     key="department"
                   />
                   <Column
@@ -345,7 +281,7 @@ const Permission = ({permissions, ...props}) => {
 };
 
 const mapState = (state) => {
-  return { 
+  return {
     permissions: state.userStore.permissions.permit,
   };
 };
