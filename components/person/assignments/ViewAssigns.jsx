@@ -30,6 +30,11 @@ const ViewAssigns = ({
 
     const { TabPane } = Tabs;
     const [defaultKey, setDefaultKey] = useState("1");
+    const [isClosed, setIsClosed] = useState(false);
+
+    useEffect(()=>{
+        setIsClosed(visible)
+    },[visible])
 
     const onChangeTab = (key) =>{
         onChangeType(key)
@@ -41,9 +46,18 @@ const ViewAssigns = ({
         setDefaultKey("1")
     }
 
+    const properties = {
+        listAssigns: itemList,
+        itemId: itemSelected?.id,
+        getAssigns: getAssigns,
+        loading: loadAssign,
+        actionDelete: actionDelete,
+        isClosed: isClosed
+    }
+
     return(
         <CustomModal
-            onCancel={() => onCloseModal(false)}
+            onCancel={() => onCloseModal()}
             maskClosable={false}
             visible={visible}
             footer={null}
@@ -56,22 +70,10 @@ const ViewAssigns = ({
                 <ColTabs xs={24}>
                     <Tabs activeKey={defaultKey} onChange={onChangeTab} centered>
                         <TabPane tab="Inviduales" key="1">
-                            <AssignsIndividuales
-                                listAssigns={itemList}
-                                itemId={itemSelected?.id}
-                                getAssigns={getAssigns}
-                                loading={loadAssign}
-                                actionDelete={actionDelete}
-                            />
+                            <AssignsIndividuales {...properties} />
                         </TabPane>
                         <TabPane tab="Grupales" key="2">
-                            <AssignsGroup
-                                listAssigns={itemList}
-                                itemId={itemSelected?.id}
-                                getAssigns={getAssigns}
-                                loading={loadAssign}
-                                actionDelete={actionDelete}
-                            />
+                            <AssignsGroup {...properties} />
                         </TabPane>
                     </Tabs>
                 </ColTabs>

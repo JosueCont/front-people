@@ -134,6 +134,7 @@ const PersonsTable = ({permissions, ...props}) => {
     } else if (pagination.current == 1) {
       props.getListGroups(currenNode?.id,"","")
     }
+    props.setNumPage(pagination.current)
   }
 
   useEffect(()=>{
@@ -357,7 +358,9 @@ const PersonsTable = ({permissions, ...props}) => {
                   }}
                   pagination={{
                       pageSize: 10,
+                      current: props.numPage,
                       total: props.dataGroups?.count,
+                      hideOnSinglePage: true
                   }}
                   onChange={onChangePage}
                   rowSelection={rowSelectionGroup}
