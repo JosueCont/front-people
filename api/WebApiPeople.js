@@ -327,5 +327,21 @@ class WebApiPeople {
   static approveDisabilitiesRequest(data) {
     return WebApi.ApisType(`/person/incapacity/approve_request/`, "post", data);
   }
+
+  static gePermitsRequest(url = "") {
+    return WebApi.ApisType(`/person/permit/${url}`, "get");
+  }
+
+  static savePermitsRequest(data) {
+    return WebApi.ApisType(`/person/permit/`, "post", data);
+  }
+
+  static updatePermitsRequest(id, data) {
+    return WebApi.ApisType(`/person/permit/${id}/`, "patch", data);
+  }
+
+  static changeStatusPermitsRequest(data) {
+    return WebApi.ApisType(`/person/permit/change_status/`, "post", data);
+  }
 }
 export default WebApiPeople;

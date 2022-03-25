@@ -1,48 +1,22 @@
 import { React, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
-import {
-  Row,
-  Col,
-  Typography,
-  Breadcrumb,
-  Form,
-  Select,
-  notification,
-} from "antd";
+import { Row, Col, Breadcrumb, notification } from "antd";
 import { useRouter } from "next/router";
 import moment from "moment";
 import Permissionform from "../../components/forms/PermissionForm";
 import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const PermissionNew = () => {
   const route = useRouter();
-  const [form] = Form.useForm();
-  const { Title } = Typography;
   const [sending, setSending] = useState(false);
-  const { Option } = Select;
   const [departure_date, setDepartureDate] = useState(null);
   const [return_date, setReturnDate] = useState(null);
-  const [job, setJob] = useState(null);
-  const [dateOfAdmission, setDateOfAdmission] = useState(null);
-  const [availableDays, setAvailableDays] = useState(null);
-  const [personList, setPersonList] = useState(null);
-  const [allPersons, setAllPersons] = useState(null);
-  const [antiquity, setAntiquity] = useState(null);
 
   const onCancel = () => {
     route.push("/permission");
-  };
-
-  const changePerson = (value) => {
-    let index = allPersons.find((data) => data.khonnect_id === value);
-    setDateOfAdmission(moment(index.date_of_admission).format("DD/MM/YYYY"));
-    if (index.job_department.job) {
-      setJob(index.job_department.job.name);
-      setAvailableDays(index.Available_days_vacation);
-      setAntiquity(index.antiquity);
-    }
   };
 
   const saveRequest = async (values) => {
@@ -50,19 +24,17 @@ const PermissionNew = () => {
     values["return_date"] = return_date;
 
     setSending(true);
-    try {
-      let response = await Axios.post(API_URL + `/person/permit/`, values);
-      let data = response.data;
-      route.push("/permission");
-      notification["success"]({
-        message: "Aviso",
-        description: "Información enviada correctamente.",
+    WebApiPeople.savePermitsRequest(values)
+      .then(function (response) {
+        route.push("/permission");
+        notification["success"]({
+          message: "Aviso",
+          description: "Información enviada correctamente.",
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setSending(false);
-    }
   };
 
   const onChangeDepartureDate = (date, dateString) => {
