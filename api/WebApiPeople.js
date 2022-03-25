@@ -343,5 +343,24 @@ class WebApiPeople {
   static changeStatusPermitsRequest(data) {
     return WebApi.ApisType(`/person/permit/change_status/`, "post", data);
   }
+
+  static geVacationRequest(url = "") {
+    return WebApi.ApisType(`/person/vacation/${url}`, "get");
+  }
+
+  static saveVacationRequest(data) {
+    return WebApi.ApisType(`/person/vacation/`, "post", data);
+  }
+
+  static updateVacationRequest(id, data) {
+    return WebApi.ApisType(`/person/vacation/${id}/`, "patch", data);
+  }
+
+  static vacationRejectRequest(data) {
+    return WebApi.ApisType(`/person/vacation/reject_request/`, "post", data);
+  }
+  static vacationApproveRequest(data) {
+    return WebApi.ApisType(`/person/vacation/approve_request/`, "post", data);
+  }
 }
 export default WebApiPeople;

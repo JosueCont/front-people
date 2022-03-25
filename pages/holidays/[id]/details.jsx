@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import {
   Tabs,
   Row,
@@ -20,18 +20,16 @@ import cookie from "js-cookie";
 import { withAuthSync } from "../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
-import jsCookie from "js-cookie";
+import { connect } from "react-redux";
+import WebApiPeople from "../../../api/WebApiPeople";
 
-const HolidaysDetails = () => {
+const HolidaysDetails = (props) => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
 
   const route = useRouter();
-
-  const { TabPane } = Tabs;
+  const { id } = route.query;
   const { TextArea } = Input;
   const { Text, Title } = Typography;
-  const [details, setDetails] = useState(null);
-  const { id } = route.query;
   const { confirm } = Modal;
 
   const [visibleModalReject, setVisibleModalReject] = useState(false);
@@ -46,6 +44,13 @@ const HolidaysDetails = () => {
   const [urlPhoto, setUrlPhoto] = useState(null);
   const [permissions, setPermissions] = useState({});
 
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
+
   let json = JSON.parse(userToken);
 
   const rejectCancel = () => {
@@ -58,49 +63,40 @@ const HolidaysDetails = () => {
   };
 
   const getDetails = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/person/vacation/${id}/`);
-      let data = response.data;
-      setDaysRequested(data.days_requested);
-      setDepartureDate(moment(data.departure_date).format("DD/MM/YYYY"));
-      setReturnDate(moment(data.return_date).format("DD/MM/YYYY"));
-      setAvailableDays(data.collaborator.Available_days_vacation);
+    WebApiPeople.geVacationRequest(id)
+      .then(function (response) {
+        let data = response.data;
+        setDaysRequested(data.days_requested);
+        setDepartureDate(moment(data.departure_date).format("DD/MM/YYYY"));
+        setReturnDate(moment(data.return_date).format("DD/MM/YYYY"));
+        setAvailableDays(data.collaborator.Available_days_vacation);
 
-      if (data.collaborator && data.collaborator.first_name) {
-        setFisrtName(data.collaborator.first_name);
-      }
-      if (data.collaborator && data.collaborator.flast_name) {
-        setLastName(data.collaborator.flast_name);
-      }
+        if (data.collaborator && data.collaborator.first_name) {
+          setFisrtName(data.collaborator.first_name);
+        }
+        if (data.collaborator && data.collaborator.flast_name) {
+          setLastName(data.collaborator.flast_name);
+        }
 
-      if (data.collaborator && data.collaborator.flast_name) {
-        setUrlPhoto(data.collaborator.photo);
-      }
-
-      /* setNameCollaborator(nameCollaborator); */
-
-      /* setLoading(false); */
-      //setList(data.results)
-    } catch (e) {
-      console.log(e);
-      /* setLoading(false); */
-    }
+        if (data.collaborator && data.collaborator.flast_name) {
+          setUrlPhoto(data.collaborator.photo);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoading(false);
+      });
   };
 
   const rejectRequest = async () => {
     if (json) {
-      try {
-        let values = {
-          khonnect_id: json.user_id,
-          id: id,
-          comment: message,
-        };
-
-        let response = await Axios.post(
-          API_URL + `/person/vacation/reject_request/`,
-          values
-        );
-        if (response.status == 200) {
+      let values = {
+        khonnect_id: json.user_id,
+        id: id,
+        comment: message,
+      };
+      WebApiPeople.vacationRejectRequest(values)
+        .then(function (response) {
           setVisibleModalReject(false);
           Modal.success({
             keyboard: false,
@@ -112,15 +108,14 @@ const HolidaysDetails = () => {
             },
           });
           setMessage(null);
-        }
-      } catch (e) {
-        console.log(e);
-      }
+        })
+        .catch(function (error) {
+          console.log(e);
+        });
     }
   };
 
   const showMoalapprove = () => {
-    /* props.onApprove */
     confirm({
       title: "¿Está seguro de aprobar la siguiente solicitud de vacaciones?",
       icon: <ExclamationCircleOutlined />,
@@ -135,16 +130,14 @@ const HolidaysDetails = () => {
   const approveRequest = async () => {
     if (json) {
       setSending(true);
-      try {
-        let values = {
-          khonnect_id: json.user_id,
-          id: id,
-        };
-        let response = await Axios.post(
-          API_URL + `/person/vacation/approve_request/`,
-          values
-        );
-        if (response.status == 200) {
+      let values = {
+        khonnect_id: json.user_id,
+        id: id,
+      };
+
+      WebApiPeople.vacationApproveRequest(values)
+        .then(function (response) {
+          setVisibleModalReject(false);
           Modal.success({
             keyboard: false,
             maskClosable: false,
@@ -154,42 +147,18 @@ const HolidaysDetails = () => {
               route.push("/holidays");
             },
           });
-
-          /* notification["success"]({
-                                  message: "Notification Title",
-                                  description: "Solicitud aprobada.",
-                              });
-                              route.push('/holidays') */
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setSending(false);
-      }
+          setSending(false);
+        })
+        .catch(function (error) {
+          setSending(false);
+          console.log(e);
+        });
     }
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
-
     getDetails();
   }, [route]);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.vacation.can.view")) perms.view = true;
-      if (a.includes("people.vacation.can.create")) perms.create = true;
-      if (a.includes("people.vacation.can.edit")) perms.edit = true;
-      if (a.includes("people.vacation.can.delete")) perms.delete = true;
-      if (a.includes("people.vacation.function.reject_vacation"))
-        perms.reject = true;
-      if (a.includes("people.vacation.function.approve_vacation"))
-        perms.approve = true;
-    });
-    setPermissions(perms);
-  };
 
   return (
     <MainLayout currentKey="5">
@@ -204,8 +173,6 @@ const HolidaysDetails = () => {
         <Breadcrumb.Item>Detalles</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container-border-radius">
-        {/* <Tabs type="card">
-          <TabPane tab="Detalle de la solicitud" key="1"> */}
         <Row justify={"center"}>
           <Col span={24} style={{ padding: "20px 0px" }}>
             <Row>
@@ -255,7 +222,7 @@ const HolidaysDetails = () => {
                 >
                   Regresar
                 </Button>
-                {permissions.reject && (
+                {permissions.reject_vacation && (
                   <Button
                     key="reject"
                     type="primary"
@@ -266,7 +233,7 @@ const HolidaysDetails = () => {
                     Rechazar
                   </Button>
                 )}
-                {permissions.approve && (
+                {permissions.approve_vacation && (
                   <Button
                     className={"btn-success"}
                     key="save"
@@ -282,8 +249,6 @@ const HolidaysDetails = () => {
             </Row>
           </Col>
         </Row>
-        {/* </TabPane>
-        </Tabs> */}
       </div>
       <Modal
         title="Rechazar solicitud de vacaciones"
@@ -316,4 +281,11 @@ const HolidaysDetails = () => {
   );
 };
 
-export default withAuthSync(HolidaysDetails);
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+    permissions: state.userStore.permissions.vacation,
+  };
+};
+
+export default connect(mapState)(withAuthSync(HolidaysDetails));
