@@ -1,33 +1,26 @@
 import React, { useEffect, useState } from "react";
 import {
-  Tabs,
-  Radio,
   Row,
   Col,
   Breadcrumb,
   Typography,
   Button,
   Modal,
-  Select,
   Input,
+  notification,
 } from "antd";
 import MainLayout from "../../../layout/MainLayout";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import PermissionForm from "../../../components/forms/PermissionForm";
 import { withAuthSync } from "../../../libs/auth";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
 import cookie from "js-cookie";
+import WebApiPeople from "../../../api/WebApiPeople";
 
 const PermissionDetails = () => {
   const route = useRouter();
   let userToken = cookie.get("token") ? cookie.get("token") : null;
   let json = JSON.parse(userToken);
-
-  const { TabPane } = Tabs;
-  const { Title } = Typography;
-  const { Options } = Select;
   const [details, setDetails] = useState(null);
   const { id } = route.query;
   const { TextArea } = Input;
@@ -39,36 +32,27 @@ const PermissionDetails = () => {
   const [visibleModalReject, setVisibleModalReject] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
-  const [departure_date, setDepartureDate] = useState(null);
-  const [return_date, setReturnDate] = useState(null);
+
   const [message, setMessage] = useState(null);
 
   const onCancel = () => {
     route.push("/permission");
   };
 
-  const onChangeDepartureDate = (date, dateString) => {
-    setDepartureDate(dateString);
-  };
-
-  const onChangeReturnDate = (date, dateString) => {
-    setReturnDate(dateString);
-  };
-
   const getDetails = async () => {
     setLoading(true);
-    try {
-      let response = await Axios.get(API_URL + `/person/permit/${id}/`);
-      let data = response.data;
-      setDetails(data);
-      setDepartureDate(data.departure_date);
-      setReturnDate(data.return_date);
-
-      setLoading(false);
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-    }
+    WebApiPeople.gePermitsRequest(id)
+      .then(function (response) {
+        let data = response.data;
+        setDetails(data);
+        setDepartureDate(data.departure_date);
+        setReturnDate(data.return_date);
+        setLoading(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoading(false);
+      });
   };
 
   const rejectCancel = () => {
@@ -98,6 +82,7 @@ const PermissionDetails = () => {
   };
 
   const changeStatus = async (statusID) => {
+    setLoading(true);
     let values = {
       id: id,
       status: statusID,
@@ -112,26 +97,20 @@ const PermissionDetails = () => {
     if (statusID === 3) {
       msg = "Solicitud de permiso rechazada";
     }
-    try {
-      let response = await Axios.post(
-        API_URL + `/person/permit/change_status/`,
-        values
-      );
-      setVisibleModalReject(false);
-      Modal.success({
-        keyboard: false,
-        maskClosable: false,
-        content: msg,
-        okText: "Aceptar",
-        onOk() {
-          route.push("/permission");
-        },
+    WebApiPeople.changeStatusPermitsRequest(values)
+      .then(function (response) {
+        setVisibleModalReject(false);
+        setLoading(false);
+        route.push("/permission");
+        notification["success"]({
+          message: "Aviso",
+          description: msg,
+        });
+      })
+      .catch(function (error) {
+        console.log("Error", error);
+        setLoading(false);
       });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setSending(false);
-    }
   };
 
   useEffect(() => {
