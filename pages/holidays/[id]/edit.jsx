@@ -1,31 +1,15 @@
 import React, { useEffect, useState } from "react";
-import {
-  Tabs,
-  Row,
-  Col,
-  Breadcrumb,
-  Typography,
-  notification,
-  Select,
-  Form,
-} from "antd";
+import { Row, Col, Breadcrumb, notification } from "antd";
 import MainLayout from "../../../layout/MainLayout";
 import { useRouter } from "next/router";
 import Vacationform from "../../../components/forms/Vacationform";
 import { withAuthSync } from "../../../libs/auth";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
+import WebApiPeople from "../../../api/WebApiPeople";
 
 const HolidaysDetails = () => {
   const route = useRouter();
-  const [formVacation] = Form.useForm();
-
-  const { TabPane } = Tabs;
-  const { Title } = Typography;
-  const { Options } = Select;
-  const [details, setDetails] = useState(null);
   const { id } = route.query;
-
+  const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [departure_date, setDepartureDate] = useState(null);
@@ -37,18 +21,17 @@ const HolidaysDetails = () => {
 
   const getDetails = async () => {
     setLoading(true);
-    try {
-      let response = await Axios.get(API_URL + `/person/vacation/${id}/`);
-      let data = response.data;
-      setDetails(data);
-      setDepartureDate(data.departure_date);
-      setReturnDate(data.return_date);
-
-      setLoading(false);
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-    }
+    WebApiPeople.geVacationRequest(id)
+      .then(function (response) {
+        let data = response.data;
+        setDetails(data);
+        setDepartureDate(data.departure_date);
+        setReturnDate(data.return_date);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoading(false);
+      });
   };
 
   const onChangeDepartureDate = (date, dateString) => {
@@ -63,22 +46,19 @@ const HolidaysDetails = () => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
 
-    try {
-      let response = await Axios.patch(
-        API_URL + `/person/vacation/${id}/`,
-        values
-      );
-      let data = response.data;
-      notification["success"]({
-        message: "Aviso",
-        description: "Información enviada correctamente.",
+    WebApiPeople.updateVacationRequest(id, values)
+      .then(function (response) {
+        setSending(false);
+        notification["success"]({
+          message: "Aviso",
+          description: "Información enviada correctamente.",
+        });
+        route.push("/holidays");
+      })
+      .catch(function (error) {
+        console.log(error);
+        setSending(false);
       });
-      route.push("/holidays");
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setSending(false);
-    }
   };
 
   useEffect(() => {
@@ -110,10 +90,6 @@ const HolidaysDetails = () => {
       >
         <Row justify={"center"}>
           <Col span={23}>
-            {/* initialValues={{ 
-                            'availableDays': collaborator ? collaborator.Available_days_vacation : null,
-                            'khonnect_id' : collaborator ? collaborator.id : null
-                             }} */}
             <Vacationform
               details={details}
               onFinish={saveRequest}
