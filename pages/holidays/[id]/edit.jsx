@@ -1,20 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  Tabs,
-  Row,
-  Col,
-  Breadcrumb,
-  Typography,
-  notification,
-  Select,
-  Form,
-} from "antd";
+import { Row, Col, Breadcrumb, notification } from "antd";
 import MainLayout from "../../../layout/MainLayout";
 import { useRouter } from "next/router";
 import Vacationform from "../../../components/forms/Vacationform";
 import { withAuthSync } from "../../../libs/auth";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
 import WebApiPeople from "../../../api/WebApiPeople";
 
 const HolidaysDetails = () => {
