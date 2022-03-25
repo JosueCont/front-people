@@ -40,9 +40,17 @@ const PersonsGroup = ({...props}) =>{
         }
     },[]);
 
+    const orderElements = (array)=>{
+        const order =(x, y) =>{
+            return x.first_name.localeCompare(y.first_name);
+        }
+        let ordered = array.sort(order);
+        return ordered;
+    }
+
     const filterMembers = (dataTable) =>{
         let select = [];
-        let table = [];        
+        let table = [];       
         props.personList.map((a)=>{
             let result = dataTable.some(b => a.id === b.id);
             if(result){
@@ -51,8 +59,10 @@ const PersonsGroup = ({...props}) =>{
                 select.push(a)
             }
         })
-        setMembersSelect(select)
-        setMembersTable(table)
+        let orderedSelect = orderElements(select)
+        let orderedTable = orderElements(table)
+        setMembersSelect(orderedSelect)
+        setMembersTable(orderedTable)
     }
 
     const onCloseModal = () =>{
