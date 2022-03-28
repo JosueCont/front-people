@@ -18,6 +18,7 @@ import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { ruleRequired } from "../../utils/rules";
+import { getDifferenceDays } from "../../utils/functions";
 
 const Permissionform = (props) => {
   const { Title } = Typography;
@@ -83,19 +84,12 @@ const Permissionform = (props) => {
       endDate !== null &&
       endDate !== ""
     ) {
-      console.log("start", startDate);
-      console.log("end", endDate);
       calculateDays(startDate, endDate);
     }
   }, [startDate, endDate]);
 
   const calculateDays = (startDate, endDate) => {
-    var date1 = new Date(startDate);
-    var date2 = new Date(endDate);
-    // To calculate the time difference of two dates
-    var Difference_In_Time = date2.getTime() - date1.getTime();
-    // To calculate the no. of days between two dates
-    var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+    let Difference_In_Days = getDifferenceDays(startDate, endDate);
 
     formPermission.setFieldsValue({
       requested_days: Difference_In_Days > 0 ? Difference_In_Days + 1 : 0,
@@ -297,7 +291,6 @@ const Permissionform = (props) => {
 };
 
 const mapState = (state) => {
-  console.log("Permits", state.userStore.permissions.permit);
   return {
     permissions: state.userStore.permissions.permit,
   };

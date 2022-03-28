@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -10,13 +10,6 @@ import {
   Select,
   Tooltip,
 } from "antd";
-import { useRouter } from "next/router";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
-
-import SelectDepartment from "../../components/selects/SelectDepartment";
-import SelectCollaborator from "../../components/selects/SelectCollaborator";
-
 import {
   EditOutlined,
   SearchOutlined,
@@ -24,26 +17,28 @@ import {
   EyeOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { userCompanyId, withAuthSync } from "../../libs/auth";
-import jsCookie from "js-cookie";
+import { useRouter } from "next/router";
+import SelectDepartment from "../../components/selects/SelectDepartment";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
+import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 
-const Holidays = ({ permissions, ...props }) => {
+const Holidays = (props) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
-  const { Option } = Select;
-
   const [holidayList, setHolidayList] = useState([]);
-
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
-  /* const [permissions, setPermissions] = useState({}); */
-  let nodeId = userCompanyId();
+  const [permissions, setPermissions] = useState({});
 
-  /* Variables */
-  const [companyId, setCompanyId] = useState(null);
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
 
   /* Select estatus */
   const optionStatus = [
@@ -58,32 +53,34 @@ const Holidays = ({ permissions, ...props }) => {
     status = null
   ) => {
     setLoading(true);
-    try {
-      let url = `person__node__id=${props.currentNode.id}`;
-      if (collaborator) {
-        url += `&person__id=${collaborator}`;
-      }
-      if (status) {
-        url += `&status=${status}&`;
-      }
-      if (department) {
-        url += `&person__person_department__id=${department}`;
-      }
 
-      let response = await WebApiPeople.getVacationRequest(url);
-      let data = response.data.results;
-      data.map((item, index) => {
-        item.key = index;
-        return item;
-      });
-
-      setHolidayList(data);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-      setSearching(false);
+    let url = `person__node__id=${props.currentNode.id}`;
+    if (collaborator) {
+      url += `&person__id=${collaborator}`;
     }
+    if (status) {
+      url += `&status=${status}&`;
+    }
+    if (department) {
+      url += `&department__id=${department}`;
+    }
+
+    WebApiPeople.getVacationRequest(url)
+      .then(function (response) {
+        let data = response.data;
+        data.map((item, index) => {
+          item.key = index;
+          return item;
+        });
+        setHolidayList(data);
+        setLoading(false);
+        setSearching(false);
+      })
+      .catch(function (error) {
+        setHolidayList([]);
+        setLoading(false);
+        setSearching(false);
+      });
   };
 
   const GotoDetails = (data) => {
@@ -96,7 +93,6 @@ const Holidays = ({ permissions, ...props }) => {
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
     if (props.currentNode) {
       getAllHolidays();
     }
@@ -143,7 +139,7 @@ const Holidays = ({ permissions, ...props }) => {
                       <Col>
                         <SelectDepartment
                           name="department"
-                          companyId={companyId}
+                          companyId={props.currentNode}
                           key="selectDepartament"
                         />
                       </Col>

@@ -4,8 +4,7 @@ import { Row, Col, Breadcrumb, notification } from "antd";
 import { useRouter } from "next/router";
 import Vacationform from "../../../components/forms/Vacationform";
 import { withAuthSync } from "../../../libs/auth";
-import { API_URL } from "../../../config/config";
-import Axios from "axios";
+import WebApiPeople from "../../../api/WebApiPeople";
 
 const HolidaysNew = () => {
   const route = useRouter();
@@ -21,19 +20,19 @@ const HolidaysNew = () => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
     setSending(true);
-    try {
-      let response = await Axios.post(API_URL + `/person/vacation/`, values);
-      let data = response.data;
-      notification["success"]({
-        message: "Aviso",
-        description: "Información enviada correctamente.",
+    WebApiPeople.saveVacationRequest(values)
+      .then(function (response) {
+        setSending(false);
+        notification["success"]({
+          message: "Aviso",
+          description: "Información enviada correctamente.",
+        });
+        route.push("/holidays");
+      })
+      .catch(function (error) {
+        console.log(error);
+        setSending(false);
       });
-      route.push("/holidays");
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setSending(false);
-    }
   };
 
   const onChangeDepartureDate = (date, dateString) => {
