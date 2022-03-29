@@ -88,7 +88,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         </div>
         <Row>
           <Col span={24} style={{ padding: 10 }}>
-            {/* <p
+            <p
               className="text-menu"
               onClick={() => {
                 !person.nodes && props.currentNode
@@ -97,7 +97,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               }}
             >
               <Text>Editar perfil</Text>
-            </p> */}
+            </p>
             {pathname !== "/select-company" && (
               <p
                 className="text-menu"
@@ -191,7 +191,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                       onClick={() => props.setShowEvents(true)}
                     />
                   </Badge> */}
-                  <Dropdown overlay={<CardApps profile={editProfile}/>} key="dropdown_apps">
+                  <Dropdown overlay={<CardApps/>} key="dropdown_apps">
                     <div key="menu_apps_content">
                       <MenuOutlined style={{ color: "white", fontSize: 20 }} />
                     </div>
