@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from '@emotion/styled';
 import { Card, Row, Col, Space, Button, Divider } from 'antd';
 import { logoutAuth } from '../../libs/auth';
@@ -8,6 +8,9 @@ import {
     AppstoreOutlined,
     LogoutOutlined
 } from '@ant-design/icons';
+import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
+import WebApiPeople from '../../api/WebApiPeople';
 
 const ContentApps = styled.div`
     & .ant-card{
@@ -48,10 +51,13 @@ const ContentApps = styled.div`
         :hover{
             background-color: rgba(25, 25, 25, 0.5);
         }
+        & a{
+            text-decoration: none;
+        }
     }
-    & .ant-space{
+    /* & .ant-space{
         cursor: pointer;
-    }
+    } */
     & img{
         width: 46px;
         height: 46px;
@@ -71,6 +77,9 @@ const ContentApps = styled.div`
 `;
 
 const CardApps = ({...props}) => {
+
+    const [tokenUser, setTokenUser] = useState();
+    
     const defaultPhoto =
     "https://cdn-icons-png.flaticon.com/512/219/219986.png";
 
@@ -80,6 +89,31 @@ const CardApps = ({...props}) => {
     const imgNomina =
     "https://www.masadmin.net/imgs/icon12.png";
 
+    const imgSocial =
+    "https://cdn-icons-png.flaticon.com/512/236/236822.png";
+
+    useEffect(()=>{
+        const user = Cookies.get("token_user");
+        setTokenUser(user)
+    },[])
+
+    const linkToProfile = () =>{
+        const url = `http://demo.localhost:3001/validation?token=${tokenUser}`;
+        redirectTo(url);
+    }
+
+    const linktToIsysa = () =>{
+        const url = `https://isysa.social.hiumanlab.com/validation?token=${tokenUser}`;
+        redirectTo(url);
+    }
+
+    const redirectTo = (url) =>{
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.click();
+    }
+
   return (
     <ContentApps>
         <Card bordered={false}>
@@ -88,16 +122,20 @@ const CardApps = ({...props}) => {
                     <Space
                         direction='vertical'
                         align='center'
-                        onClick={() => props.profile()}
+                        onClick={()=>linkToProfile()}
                     >
                         <img src={defaultPhoto}/>
                         <p style={{marginBottom: '0px'}}>Mi perfil</p>
                     </Space>
                 </Col>
                 <Col span={8} >
-                    <Space direction='vertical' align='center'>
-                        <img src={imgPsicometria}/>
-                        <p style={{marginBottom: '0px'}}>Psicometría</p>
+                    <Space
+                        direction='vertical'
+                        align='center'
+                        onClick={()=>linktToIsysa()}
+                    >
+                        <img src={imgSocial}/>
+                        <p style={{marginBottom: '0px'}}>Isysa</p>
                     </Space>
                 </Col>
                 <Col span={8} >
