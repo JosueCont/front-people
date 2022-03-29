@@ -43,5 +43,9 @@ class WebApiIntranet {
   static updIntranetConfig(id, data) {
     return WebApi.ApisType(`/setup/site-configuration/${id}/`, "put", data);
   }
+
+  static getUserIntranet(id) {
+      return WebApi.ApisType(`/intranet/person-profile/?khonnect_id=${id}`, "get");
+  }
 }
 export default WebApiIntranet;
