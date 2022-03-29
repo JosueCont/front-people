@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import styled from '@emotion/styled';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -10,7 +9,8 @@ import { setUserPermissions } from '../redux/UserDuck';
 import {
     LoadingOutlined,
     CloseCircleFilled,
-    CheckCircleFilled
+    CheckCircleFilled,
+    InfoCircleFilled
 } from '@ant-design/icons';
 import {
     Content,
@@ -33,8 +33,10 @@ const validation = ({general_config, setUserPermissions}) => {
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [infoExist, setInfoExist] = useState(false);
+    const [userExist, setUserExist] = useState(false);
 
-    useLayoutEffect(()=>{
+    useEffect(()=>{
         if(token){
             validateToken(token)
         }
@@ -42,7 +44,6 @@ const validation = ({general_config, setUserPermissions}) => {
 
     const validateToken = async (token) =>{
         let response = await validateTokenKhonnect(general_config, {token: token});
-        console.log('response validate token-------->', response)
         if(response.status == 200){
             let jwt = jwtDecode(response.data.data.token);
             setStorage("token", response.data.data.token);
@@ -56,7 +57,6 @@ const validation = ({general_config, setUserPermissions}) => {
 
     const validateIntranet = async (id) =>{
         let response = await WebApiIntranet.getUserIntranet(id);
-        console.log('response validate intranet------->', response)
         if(response.status == 200){
             validateProfile(response.data.at(-1).person.id)
         }else{
@@ -67,7 +67,6 @@ const validation = ({general_config, setUserPermissions}) => {
 
     const validateProfile = async (id) =>{
         let response = await WebApiPeople.getPerson(id);
-        console.log('response validate profile---------->', response)
         if(response.status == 200){
             validateJWT()
         }else{
@@ -78,13 +77,11 @@ const validation = ({general_config, setUserPermissions}) => {
 
     const validateJWT = async () =>{
         let jwt = JSON.parse(getStorage("jwt"))
-        console.log('el jwt --------->', jwt)
         const data = {
             khonnect_id: jwt.user_id,
             jwt: jwt
         }
         let response = await WebApiPeople.saveJwt(data);
-        console.log('response validate jwt--------->', response)
         if(response.status == 200){
             validatePermissions()
         }else{
@@ -97,7 +94,6 @@ const validation = ({general_config, setUserPermissions}) => {
         let token = getStorage("token");
         let jwt = JSON.parse(getStorage("jwt"))
         let resp = await setUserPermissions(jwt.perms);
-        console.log('response validate permissions-------->', resp)
         if(resp){
             delete jwt.perms;
             Cookies.set("token", jwt)
@@ -133,6 +129,12 @@ const validation = ({general_config, setUserPermissions}) => {
                     <p>Acceso correcto</p>
                 </ContentVertical>
             )}
+            {/* {infoExist && (
+                <ContentVertical>
+                    <InfoCircleFilled style={{fontSize:50, color:"#17a2b8"}}/>
+                    <p>Información no encontrada</p>
+                </ContentVertical>
+            )} */}
         </Content>
     )
 }
