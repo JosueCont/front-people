@@ -116,6 +116,7 @@ const LoginForm = ({
         .then(function (response) {
           if (response.status === 200) {
             let token = jwt_decode(response.data.token);
+            Cookies.set("token_user", response.data.token)
             if (setKhonnectId) {
               setKhonnectId(token.user_id);
               return;
