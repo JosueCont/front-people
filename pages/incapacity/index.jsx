@@ -35,6 +35,7 @@ const Incapacity = ({ permissions, ...props }) => {
   let nodeId = userCompanyId();
 
   const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
   const [incapacityList, setIncapacityList] = useState([]);
 
   /* Select estatus */
@@ -50,38 +51,35 @@ const Incapacity = ({ permissions, ...props }) => {
     status = null
   ) => {
     setLoading(true);
-    try {
-      let url = `?person__node__id=${nodeId}&`;
-      if (collaborator) {
-        url += `person__id=${collaborator}&`;
-      }
-      if (status) {
-        url += `status=${status}&`;
-      }
-
-      if (department) {
-        url += `person__person_department__id=${department}&`;
-      }
-      WebApiPeople.geDisabilitiesRequest(url)
-        .then(function (response) {
-          let data = [];
-          if (response.data && response.data.length > 0) {
-            data = response.data.map((item) => {
-              item.key = item.id;
-              return item;
-            });
-          }
-          setIncapacityList(data);
-        })
-        .catch(function (error) {
-          setLoading(false);
-          console.log(error);
-        });
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
+    let url = `?person__node__id=${nodeId}&`;
+    if (collaborator) {
+      url += `person__id=${collaborator}&`;
     }
+    if (status) {
+      url += `status=${status}&`;
+    }
+
+    if (department) {
+      url += `department__id=${department}&`;
+    }
+    WebApiPeople.geDisabilitiesRequest(url)
+      .then(function (response) {
+        let data = [];
+        if (response.data && response.data.length > 0) {
+          data = response.data.map((item) => {
+            item.key = item.id;
+            return item;
+          });
+        }
+        setIncapacityList(data);
+        setLoading(false);
+        setSending(false);
+      })
+      .catch(function (error) {
+        setLoading(false);
+        setSending(false);
+        console.log(error);
+      });
   };
 
   const GotoDetails = (data) => {
@@ -89,6 +87,7 @@ const Incapacity = ({ permissions, ...props }) => {
   };
 
   const filter = async (values) => {
+    setSending(true);
     setIncapacityList([]);
     getIncapacity(values.collaborator, values.department, values.status);
   };
@@ -166,7 +165,7 @@ const Incapacity = ({ permissions, ...props }) => {
                           }}
                           key="buttonFilter"
                           htmlType="submit"
-                          loading={loading}
+                          loading={sending}
                         >
                           <SearchOutlined />
                         </Button>

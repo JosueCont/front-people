@@ -7,27 +7,29 @@ import {
   Col,
   Input,
   Image,
-  Select,
   InputNumber,
   DatePicker,
 } from "antd";
 import moment from "moment";
-
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import WebApiPeople from "../../api/WebApiPeople";
+import { ruleRequired } from "../../utils/rules";
+import { getDifferenceDays } from "../../utils/functions";
 
 const Vacationform = (props) => {
   const { Title } = Typography;
 
   const [formVacation] = Form.useForm();
-
-  const [allPersons, setAllPersons] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
+  const [availableDays, setAvailableDays] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState();
 
   const changePerson = async (value) => {
     if (value) {
       let index = await getCollaborator(value);
       if (index) {
+        setAvailableDays(index.Available_days_vacation);
         formVacation.setFieldsValue({
           antiquity: index.antiquity,
           availableDays: index.Available_days_vacation,
@@ -35,11 +37,10 @@ const Vacationform = (props) => {
             ? moment(index.date_of_admission).format("DD-MM-YYYY")
             : null,
         });
-        if (index.job) {
-          formVacation.setFieldsValue({
-            job: index.job.name,
-          });
-        }
+        formVacation.setFieldsValue({
+          job: index.work_title.job ? index.work_title.job.name : null,
+        });
+
         setUrlPhoto(index.photo ? index.photo : null);
       }
     } else {
@@ -65,6 +66,10 @@ const Vacationform = (props) => {
 
   useEffect(() => {
     if (props.details) {
+      changePerson(props.details.collaborator.id);
+      setStartDate(props.details.departure_date);
+      setEndDate(props.details.return_date);
+      setAvailableDays(props.details.collaborator.Available_days_vacation);
       formVacation.setFieldsValue({
         person: props.details.collaborator
           ? props.details.collaborator.id
@@ -91,27 +96,10 @@ const Vacationform = (props) => {
           ? moment(props.details.return_date, "YYYY-MM-DD")
           : null,
         job:
-          props.details.collaborator &&
-          props.details.collaborator.job &&
-          props.details.collaborator.job.length > 0
+          props.details && props.details.work_title
             ? props.details.collaborator.job.name
             : null,
       });
-      if (
-        props.details.collaborator &&
-        props.details.collaborator.job &&
-        props.details.collaborator.job.lenght > 0
-      ) {
-        formVacation.setFieldsValue({
-          job: props.details.collaborator.job.name,
-        });
-      }
-
-      if (props.details.collaborator && props.details.collaborator.job) {
-        formVacation.setFieldsValue({
-          job: props.details.collaborator.job.name,
-        });
-      }
 
       setUrlPhoto(
         props.details.collaborator && props.details.collaborator.photo
@@ -120,6 +108,41 @@ const Vacationform = (props) => {
       );
     }
   }, [props.details]);
+
+  const changeDepartureDate = (date, dateString) => {
+    setStartDate(dateString);
+    props.onChangeDepartureDate(date, dateString);
+  };
+
+  const changeReturnDate = (date, dateString) => {
+    setEndDate(dateString);
+    props.onChangeReturnDate(date, dateString);
+  };
+
+  const calculateDays = (startDate, endDate) => {
+    let difference_days = getDifferenceDays(startDate, endDate);
+    let days =
+      difference_days + 1 > 0 && difference_days + 1 <= availableDays
+        ? difference_days + 1
+        : null;
+
+    formVacation.setFieldsValue({
+      days_requested: days,
+    });
+  };
+
+  useEffect(() => {
+    if (
+      startDate !== undefined &&
+      startDate !== null &&
+      startDate !== "" &&
+      endDate !== undefined &&
+      endDate !== null &&
+      endDate !== ""
+    ) {
+      calculateDays(startDate, endDate);
+    }
+  }, [startDate, endDate]);
 
   return (
     <Form form={formVacation} layout="vertical" onFinish={props.onFinish}>
@@ -143,39 +166,68 @@ const Vacationform = (props) => {
         <Col span={20} style={{ padding: 20 }}>
           <Row gutter={24}>
             <Col sm={24} md={12} lg={12}>
-              <SelectCollaborator
-                label="Empleado"
-                name="person"
-                onChange={changePerson}
-                setAllPersons={setAllPersons}
-              />
-
-              <Form.Item label="Puesto" name="job" readOnly>
-                <Input readOnly />
-              </Form.Item>
-              <Form.Item name="days_requested" label="Días solicitados">
-                <InputNumber min={1} max={20} style={{ width: "100%" }} />
+              <Form.Item rules={[ruleRequired]}>
+                <SelectCollaborator
+                  label="Empleado"
+                  name="person"
+                  onChange={changePerson}
+                  // setAllPersons={setAllPersons}
+                />
               </Form.Item>
             </Col>
             <Col sm={24} md={12} lg={12}>
-              <Form.Item name="departure_date" label="Fecha de salida">
+              <Form.Item
+                label="Puesto"
+                name="job"
+                readOnly
+                rules={[ruleRequired]}
+              >
+                <Input readOnly />
+              </Form.Item>
+            </Col>
+            <Col sm={24} md={12} lg={12}>
+              <Form.Item
+                name="departure_date"
+                label="Fecha de salida"
+                rules={[ruleRequired]}
+              >
                 <DatePicker
                   key="departure_date"
                   style={{ width: "100%" }}
-                  onChange={props.onChangeDepartureDate}
+                  onChange={changeDepartureDate}
                 />
               </Form.Item>
-              <Form.Item name="return_date" label="Fecha de regreso">
+            </Col>
+            <Col sm={24} md={12} lg={12}>
+              <Form.Item
+                name="return_date"
+                label="Fecha de regreso"
+                rules={[ruleRequired]}
+              >
                 <DatePicker
                   key="return_date"
                   style={{ width: "100%" }}
-                  onChange={props.onChangeReturnDate}
+                  onChange={changeReturnDate}
                 />
               </Form.Item>
-              <Form.Item name="availableDays" label="Días disponibles">
-                <Input
-                  /* defaultValue={availableDays} */ /* value={availableDays} */ readOnly
+            </Col>
+            <Col sm={24} md={12} lg={12}>
+              <Form.Item
+                name="days_requested"
+                label="Días solicitados"
+                rules={[ruleRequired]}
+              >
+                <InputNumber
+                  readOnly
+                  min={1}
+                  max={20}
+                  style={{ width: "100%" }}
                 />
+              </Form.Item>
+            </Col>
+            <Col sm={24} md={12} lg={12}>
+              <Form.Item name="availableDays" label="Días disponibles">
+                <Input readOnly />
               </Form.Item>
             </Col>
             <Col span={20} offset={4}>
@@ -185,9 +237,7 @@ const Vacationform = (props) => {
             </Col>
             <Col sm={24} md={12} lg={12}>
               <Form.Item label="Fecha de ingreso" name="dateOfAdmission">
-                <Input
-                  readOnly /* defaultValue={dateOfAdmission ? moment(dateOfAdmission, 'YYYY-MM-DD'): null} */
-                />
+                <Input readOnly />
               </Form.Item>
             </Col>
             <Col sm={24} md={12} lg={12}>
