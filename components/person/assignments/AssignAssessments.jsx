@@ -153,7 +153,7 @@ const AssignAssessments = ({...props}) =>{
     }
 
     const onFinish = (values) =>{
-        const data = createData({assessments: surveysKeys, group_assessment: groupsKeys})
+        const data = createData({assessments: surveysKeys, groups_assessment: groupsKeys})
         if(itemsSelected.length > 0){
             setLoadAdd(true)
             setTimeout(()=>{
