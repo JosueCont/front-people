@@ -154,7 +154,6 @@ const AssignAssessments = ({...props}) =>{
 
     const onFinish = (values) =>{
         const data = createData({assessments: surveysKeys, groups_assessment: groupsKeys})
-        console.log("gripos-----",data)
         if(itemsSelected.length > 0){
             setLoadAdd(true)
             setTimeout(()=>{
