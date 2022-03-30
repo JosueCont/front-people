@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   Typography,
   Button,
@@ -15,7 +15,10 @@ import moment from "moment";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
+import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
+import { ruleRequired } from "../../utils/rules";
+import { getDifferenceDays } from "../../utils/functions";
 
 const Permissionform = (props) => {
   const { Title } = Typography;
@@ -26,17 +29,23 @@ const Permissionform = (props) => {
   const [allPersons, setAllPersons] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
   const [permissions, setPermissions] = useState({});
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
 
   const changePerson = async (value) => {
     if (value) {
       let index = await getCollaborator(value);
-      if (index.job) {
-        formPermission.setFieldsValue({
-          job: index.job.name,
-        });
-      }
+      formPermission.setFieldsValue({
+        job: index.work_title.job ? index.work_title.job.name : null,
+      });
       setUrlPhoto(index.photo ? index.photo : null);
-
       setUrlPhoto(index.photo ? index.photo : null);
     } else {
       formPermission.setFieldsValue({
@@ -54,6 +63,37 @@ const Permissionform = (props) => {
       collaborator = response.data;
     }
     return collaborator;
+  };
+
+  const changeDepartureDate = (date, dateString) => {
+    setStartDate(dateString);
+    props.onChangeDepartureDate(date, dateString);
+  };
+
+  const changeReturnDate = (date, dateString) => {
+    setEndDate(dateString);
+    props.onChangeReturnDate(date, dateString);
+  };
+
+  useEffect(() => {
+    if (
+      startDate !== undefined &&
+      startDate !== null &&
+      startDate !== "" &&
+      endDate !== undefined &&
+      endDate !== null &&
+      endDate !== ""
+    ) {
+      calculateDays(startDate, endDate);
+    }
+  }, [startDate, endDate]);
+
+  const calculateDays = (startDate, endDate) => {
+    let Difference_In_Days = getDifferenceDays(startDate, endDate);
+
+    formPermission.setFieldsValue({
+      requested_days: Difference_In_Days > 0 ? Difference_In_Days + 1 : 0,
+    });
   };
 
   useEffect(() => {
@@ -82,28 +122,15 @@ const Permissionform = (props) => {
           ? props.details.collaborator.photo
           : null
       );
+      changePerson(props.details.collaborator.id);
+      setStartDate(props.details.departure_date);
+      setEndDate(props.details.return_date);
     }
   }, [props.details]);
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
   }, []);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.permit.can.view")) perms.view = true;
-      if (a.includes("people.permit.can.create")) perms.create = true;
-      if (a.includes("people.permit.can.edit")) perms.edit = true;
-      if (a.includes("people.permit.can.delete")) perms.delete = true;
-      if (a.includes("people.permit.function.approve_permit"))
-        perms.approve = true;
-      if (a.includes("people.permit.function.reject_permit"))
-        perms.reject = true;
-    });
-    setPermissions(perms);
-  };
 
   return (
     <Form
@@ -134,48 +161,65 @@ const Permissionform = (props) => {
           <Col xs={24} sm={24} md={20} lg={20}>
             <Row gutter={24}>
               <Col xs={24} sm={24} md={12} lg={12}>
-                <SelectCollaborator
-                  label="Empleado"
-                  name="person"
-                  onChange={changePerson}
-                  setAllPersons={setAllPersons}
-                />
+                <Form.Item name="person" rules={[ruleRequired]}>
+                  <SelectCollaborator
+                    label="Empleado"
+                    name="person"
+                    onChange={changePerson}
+                    setAllPersons={setAllPersons}
+                    isDisabled={props.readOnly}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={24} md={12} lg={12}>
                 <Form.Item label="Puesto" name="job" readOnly>
                   <Input readOnly />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={24} md={12} lg={12}>
-                <Form.Item name="requested_days" label="Días solicitados">
-                  <InputNumber
-                    disabled={props.readOnly}
-                    /* defaultValue={props.daysRequested ? props.daysRequested : null } */ min={
-                      1
-                    }
-                    max={20}
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-                <Form.Item name="departure_date" label="Fecha de salida">
+                <Form.Item
+                  name="departure_date"
+                  label="Fecha de salida"
+                  rules={[ruleRequired]}
+                >
                   <DatePicker
                     disabled={props.readOnly}
                     key="departure_date"
                     style={{ width: "100%" }}
-                    onChange={props.onChangeDepartureDate}
+                    onChange={changeDepartureDate}
                   />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={24} md={12} lg={12}>
-                <Form.Item name="return_date" label="Fecha de regreso">
+                <Form.Item
+                  name="return_date"
+                  label="Fecha de regreso"
+                  rules={[ruleRequired]}
+                >
                   <DatePicker
                     disabled={props.readOnly}
                     key="return_date"
                     style={{ width: "100%" }}
-                    onChange={props.onChangeReturnDate}
+                    onChange={changeReturnDate}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={24} md={12} lg={12}>
+                <Form.Item
+                  name="requested_days"
+                  label="Días solicitados"
+                  rules={[ruleRequired]}
+                >
+                  <InputNumber
+                    disabled={true}
+                    min={1}
+                    max={20}
+                    style={{ width: "100%" }}
                   />
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item name="reason" label="Motivo">
+                <Form.Item name="reason" label="Motivo" rules={[ruleRequired]}>
                   <TextArea
                     rows="4"
                     disabled={props.readOnly}
@@ -184,6 +228,7 @@ const Permissionform = (props) => {
                   />
                 </Form.Item>
               </Col>
+
               <Col span={24} style={{ textAlign: "right" }}>
                 <Button
                   onClick={props.onCancel}
@@ -192,7 +237,7 @@ const Permissionform = (props) => {
                 >
                   Regresar
                 </Button>
-                {permissions.reject
+                {permissions.reject_permit
                   ? props.toApprove && (
                       <Button
                         danger
@@ -209,7 +254,7 @@ const Permissionform = (props) => {
                       </Button>
                     )
                   : null}
-                {permissions.approve
+                {permissions.approve_permit
                   ? props.toApprove && (
                       <Button
                         onClick={props.onApprove}
@@ -239,19 +284,16 @@ const Permissionform = (props) => {
               </Col>
             </Row>
           </Col>
-
-          {/* <Col xs={24} sm={24} md={10} lg={10}></Col>
-          <Col
-            xs={24}
-            sm={24}
-            md={20}
-            lg={20}
-            style={{ textAlign: "right" }}
-          ></Col> */}
         </Row>
       </Col>
     </Form>
   );
 };
 
-export default withAuthSync(Permissionform);
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.permit,
+  };
+};
+
+export default connect(mapState)(withAuthSync(Permissionform));

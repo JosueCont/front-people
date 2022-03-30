@@ -122,7 +122,7 @@ const AssignsGroup = ({
 
     const columns = [
         {
-            title: "Nombre",
+            title: "Seleccionar lista actual",
             render: (item) => {
                 return (
                     <div>

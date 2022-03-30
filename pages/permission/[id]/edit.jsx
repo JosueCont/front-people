@@ -1,32 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Tabs,
-  Radio,
-  Row,
-  Col,
-  Breadcrumb,
-  Typography,
-  notification,
-  Button,
-  Select,
-  Form,
-  Image,
-  Input,
-} from "antd";
+import { Row, Col, Breadcrumb, notification } from "antd";
 import MainLayout from "../../../layout/MainLayout";
 import { useRouter } from "next/router";
 import PermissionForm from "../../../components/forms/PermissionForm";
 import { withAuthSync } from "../../../libs/auth";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
+import WebApiPeople from "../../../api/WebApiPeople";
 
 const PermissionEdit = () => {
   const route = useRouter();
-  /* const [formVacation] = Form.useForm(); */
-
-  const { TabPane } = Tabs;
-  const { Title } = Typography;
-  const { Options } = Select;
   const [details, setDetails] = useState(null);
   const { id } = route.query;
 
@@ -49,40 +30,36 @@ const PermissionEdit = () => {
 
   const getDetails = async () => {
     setLoading(true);
-    try {
-      let response = await Axios.get(API_URL + `/person/permit/${id}/`);
-      let data = response.data;
-      setDetails(data);
-      setDepartureDate(data.departure_date);
-      setReturnDate(data.return_date);
-
-      setLoading(false);
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-    }
+    WebApiPeople.gePermitsRequest(id)
+      .then(function (response) {
+        let data = response.data;
+        setDetails(data);
+        setDepartureDate(data.departure_date);
+        setReturnDate(data.return_date);
+        setLoading(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoading(false);
+      });
   };
 
   const saveRequest = async (values) => {
     values["departure_date"] = departure_date;
     values["return_date"] = return_date;
-
-    try {
-      let response = await Axios.patch(
-        API_URL + `/person/permit/${id}/`,
-        values
-      );
-      let data = response.data;
-      route.push("/permission");
-      notification["success"]({
-        message: "Aviso",
-        description: "Información actualizada correctamente.",
+    WebApiPeople.updatePermitsRequest(id, values)
+      .then(function (response) {
+        route.push("/permission");
+        notification["success"]({
+          message: "Aviso",
+          description: "Información actualizada correctamente.",
+        });
+        setSending(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setSending(false);
       });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setSending(false);
-    }
   };
 
   useEffect(() => {
