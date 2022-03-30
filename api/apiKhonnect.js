@@ -111,3 +111,19 @@ export const getGroupById = async (config, data) => {
     });
   return return_data;
 };
+
+
+export const validateTokenKhonnect = async (config, data) =>{
+  let return_data = false;
+  await axios.
+    post(config.url_server_khonnect + "/session/validate-token/", data, {
+      headers: headersApiKhonnect(config.client_khonnect_id),
+    })
+    .then((response) => {
+      return_data = response;
+    })
+    .catch((e) => {
+      return_data = false;
+    })
+  return return_data;
+}

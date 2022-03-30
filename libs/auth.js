@@ -84,6 +84,7 @@ export const loginAuth = async (token) => {
 
 export const logoutAuth = async () => {
   cookie.remove("token");
+  cookie.remove("token_user");
   sessionStorage.clear();
   //console.log("Logout");
   await Router.push("/");
@@ -130,3 +131,25 @@ export const userId = () => {
     return null;
   }
 };
+
+export function setStorage(key,value){
+  if (typeof window !== "undefined") {
+      return localStorage.setItem(key, value)
+  }
+  return null
+}
+
+
+export function getStorage(key){
+  if (typeof window !== "undefined") {
+      return localStorage.getItem(key)
+  }
+  return null
+}
+
+export function delStorage(key){
+  if (typeof window !== "undefined") {
+      return localStorage.removeItem(key)
+  }
+  return null
+}
