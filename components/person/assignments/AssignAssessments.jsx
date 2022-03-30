@@ -146,14 +146,14 @@ const AssignAssessments = ({...props}) =>{
         if(newObj.assessments.length <= 0){
             delete newObj.assessments
         }
-        if(newObj.group_assessment.length <= 0){
+        if(newObj.groups_assessment.length <= 0){
             delete newObj.groups_assessment
         }
         return newObj;
     }
 
     const onFinish = (values) =>{
-        const data = createData({assessments: surveysKeys, group_assessment: groupsKeys})
+        const data = createData({assessments: surveysKeys, groups_assessment: groupsKeys})
         if(itemsSelected.length > 0){
             setLoadAdd(true)
             setTimeout(()=>{
