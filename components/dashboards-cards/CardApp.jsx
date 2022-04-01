@@ -77,8 +77,6 @@ const ContentApps = styled.div`
 `;
 
 const CardApps = ({...props}) => {
-
-    const [tokenUser, setTokenUser] = useState();
     
     const defaultPhoto =
     "https://cdn-icons-png.flaticon.com/512/219/219986.png";
@@ -92,18 +90,15 @@ const CardApps = ({...props}) => {
     const imgSocial =
     "https://cdn-icons-png.flaticon.com/512/236/236822.png";
 
-    useEffect(()=>{
-        const user = Cookies.get("token_user");
-        setTokenUser(user)
-    },[])
-
     const linkToProfile = () =>{
-        const url = `http://demo.localhost:3001/validation?token=${tokenUser}`;
+        const token = Cookies.get("token_user");
+        const url = `https://demo.myaccount.hiumanlab.com/validation?token=${token}`;
         redirectTo(url);
     }
 
     const linktToIsysa = () =>{
-        const url = `https://isysa.social.hiumanlab.com/validation?token=${tokenUser}`;
+        const token = Cookies.get("token_user");
+        const url = `https://isysa.social.hiumanlab.com/validation?token=${token}`;
         redirectTo(url);
     }
 
@@ -136,75 +131,6 @@ const CardApps = ({...props}) => {
                     >
                         <img src={imgSocial}/>
                         <p style={{marginBottom: '0px'}}>Isysa</p>
-                    </Space>
-                </Col>
-                <Col span={8} >
-                    <Space direction='vertical' align='center'>
-                        <img src={imgNomina}/>
-                        <p style={{marginBottom: '0px'}}>Nómina</p>
-                    </Space>
-                </Col>
-                <Col span={8} >
-                    <Space
-                        direction='vertical'
-                        align='center'
-                    >
-                        <img src={defaultPhoto}/>
-                        <p style={{marginBottom: '0px'}}>Mi perfil</p>
-                    </Space>
-                </Col>
-                <Col span={8} >
-                    <Space direction='vertical' align='center'>
-                        <img src={imgPsicometria}/>
-                        <p style={{marginBottom: '0px'}}>Psicometría</p>
-                    </Space>
-                </Col>
-                <Col span={8} >
-                    <Space direction='vertical' align='center'>
-                        <img src={imgNomina}/>
-                        <p style={{marginBottom: '0px'}}>Nómina</p>
-                    </Space>
-                </Col>
-                <Col span={8} >
-                    <Space
-                        direction='vertical'
-                        align='center'
-                    >
-                        <img src={defaultPhoto}/>
-                        <p style={{marginBottom: '0px'}}>Mi perfil</p>
-                    </Space>
-                </Col>
-                <Col span={8} >
-                    <Space direction='vertical' align='center'>
-                        <img src={imgPsicometria}/>
-                        <p style={{marginBottom: '0px'}}>Psicometría</p>
-                    </Space>
-                </Col>
-                <Col span={8} >
-                    <Space direction='vertical' align='center'>
-                        <img src={imgNomina}/>
-                        <p style={{marginBottom: '0px'}}>Nómina</p>
-                    </Space>
-                </Col>
-                <Col span={8} >
-                    <Space
-                        direction='vertical'
-                        align='center'
-                    >
-                        <img src={defaultPhoto}/>
-                        <p style={{marginBottom: '0px'}}>Mi perfil</p>
-                    </Space>
-                </Col>
-                <Col span={8} >
-                    <Space direction='vertical' align='center'>
-                        <img src={imgPsicometria}/>
-                        <p style={{marginBottom: '0px'}}>Psicometría</p>
-                    </Space>
-                </Col>
-                <Col span={8} >
-                    <Space direction='vertical' align='center'>
-                        <img src={imgNomina}/>
-                        <p style={{marginBottom: '0px'}}>Nómina</p>
                     </Space>
                 </Col>
             </Row>
