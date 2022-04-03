@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { render } from "react-dom";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -8,16 +7,9 @@ import {
   Breadcrumb,
   Button,
   Form,
-  Input,
   Select,
   Tooltip,
 } from "antd";
-import { useRouter } from "next/router";
-import SelectCollaborator from "../../components/selects/SelectCollaborator";
-
-import Axios from "axios";
-import { API_URL } from "./../../config/config";
-import moment from "moment";
 import {
   EditOutlined,
   SearchOutlined,
@@ -25,22 +17,30 @@ import {
   EyeOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
+import { useRouter } from "next/router";
+import SelectCollaborator from "../../components/selects/SelectCollaborator";
+import moment from "moment";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
-import jsCookie from "js-cookie";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
+import WebApiPayroll from "../../api/WebApiPayroll";
 
-
-const Lending = ({permissions, configPermissions, ...props}) => {
+const Lending = (props) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
-  const { Option } = Select;
-
   const [lendingList, setLendingList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searching, setSearching] = useState(false);
-  /* const [permissions, setPermissions] = useState({}); */
+  const [permissions, setPermissions] = useState({});
+  const [configPermissions, setConfigPermissions] = useState({});
   let nodeId = userCompanyId();
+
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setConfigPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions, props.configPermissions]);
 
   const optionStatus = [
     { value: 1, label: "Pendiente", key: "opt_1" },
@@ -53,29 +53,27 @@ const Lending = ({permissions, configPermissions, ...props}) => {
 
   const getLending = async (personID = null, type = null, status = null) => {
     setLoading(true);
-    try {
-      let url =
-        API_URL + `/payroll/loan/?person__job__department__node__id=${nodeId}&`;
-      if (personID) {
-        url += `person__id=${personID}&`;
-      }
-
-      if (type) {
-        url += `type=${type}&`;
-      }
-
-      if (status) {
-        url += `status=${status}`;
-      }
-      let response = await Axios.get(url);
-      let data = response.data.results;
-
-      setLendingList(data);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
+    let url = `?node__id=${nodeId}&`;
+    if (personID) {
+      url += `person__id=${personID}&`;
     }
+
+    if (type) {
+      url += `type=${type}&`;
+    }
+
+    if (status) {
+      url += `status=${status}`;
+    }
+    WebApiPayroll.getLoanRequest(url)
+      .then(function (response) {
+        setLendingList(response.data.results);
+        setLoading(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoading(false);
+      });
   };
 
   const filter = async (values) => {
@@ -87,10 +85,8 @@ const Lending = ({permissions, configPermissions, ...props}) => {
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
     getLending();
   }, [route]);
-
 
   const resetFilter = () => {
     form.resetFields();
@@ -334,11 +330,10 @@ const Lending = ({permissions, configPermissions, ...props}) => {
   );
 };
 
-
 const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.loan,
-    configPermissions: state.userStore.permissions.loanconfigure
+    configPermissions: state.userStore.permissions.loanconfigure,
   };
 };
 

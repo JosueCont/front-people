@@ -82,6 +82,22 @@ class WebApiPayroll {
   static groupFixedConcept(type, data = null, url = "") {
     return WebApi.ApisType(`/payroll/group-fixed-concept/${url}`, type, data);
   }
+
+  // Loan
+  static getLoanRequest(url = "") {
+    return WebApi.ApisType(`/payroll/loan/${url}`, "get");
+  }
+
+  static getConfigLoan(url) {
+    return WebApi.ApisType(`/payroll/loan-config/${url}`, "get");
+  }
+  static saveConfigLoan(data) {
+    return WebApi.ApisType(`/payroll/loan-config/`, "post", data);
+  }
+
+  static updateConfigLoan(id, data) {
+    return WebApi.ApisType(`/payroll/loan-config/${id}/`, "patch", data);
+  }
 }
 
 export default WebApiPayroll;
