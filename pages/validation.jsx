@@ -22,25 +22,44 @@ import Cookies from 'js-cookie';
 import {
     setStorage,
     getStorage,
-    delStorage
+    delStorage,
+    logoutAuth
 } from '../libs/auth';
 
 
 const validation = ({general_config, setUserPermissions}) => {
 
     const router = useRouter();
-    const { token } = router.query;
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [infoExist, setInfoExist] = useState(false);
-    const [userExist, setUserExist] = useState(false);
 
     useEffect(()=>{
-        if(token){
-            validateToken(token)
+        if(router.query.token){
+            validateToken(router.query.token)
         }
-    },[token])
+    },[router.query])
+
+    const accessDenied = () =>{
+        setLoading(false)
+        setError(true)
+        setTimeout(()=>{
+          logoutAuth()
+        },2000)
+    }
+
+    const accessSuccess = (token, jwt) =>{
+        delete jwt.perms;
+        Cookies.set("token", jwt)
+        Cookies.set("token_user", token)
+        setLoading(false)
+        setSuccess(true)
+        delStorage("token")
+        delStorage("jwt")
+        setTimeout(()=>{
+            router.push({pathname: "/select-company"})
+        },2000)
+    }
 
     const validateToken = async (token) =>{
         let response = await validateTokenKhonnect(general_config, {token: token});
@@ -50,8 +69,7 @@ const validation = ({general_config, setUserPermissions}) => {
             setStorage("jwt", JSON.stringify(jwt));
             validateIntranet(jwt.user_id)
         }else{
-            setLoading(false)
-            setError(true)
+            accessDenied()
         }
     }
 
@@ -60,8 +78,7 @@ const validation = ({general_config, setUserPermissions}) => {
         if(response.status == 200){
             validateProfile(response.data.at(-1).person.id)
         }else{
-            setLoading(false)
-            setError(true)
+            accessDenied()
         }
     }
 
@@ -70,8 +87,7 @@ const validation = ({general_config, setUserPermissions}) => {
         if(response.status == 200){
             validateJWT()
         }else{
-            setLoading(false)
-            setError(true)
+            accessDenied()
         }
     }
 
@@ -85,8 +101,7 @@ const validation = ({general_config, setUserPermissions}) => {
         if(response.status == 200){
             validatePermissions()
         }else{
-            setLoading(false)
-            setError(true)
+            accessDenied()
         }
     }
 
@@ -95,17 +110,9 @@ const validation = ({general_config, setUserPermissions}) => {
         let jwt = JSON.parse(getStorage("jwt"))
         let resp = await setUserPermissions(jwt.perms);
         if(resp){
-            delete jwt.perms;
-            Cookies.set("token", jwt)
-            Cookies.set("token_user", token)
-            setSuccess(true)
-            setLoading(false)
-            delStorage("token")
-            delStorage("jwt")
-            router.push({pathname: "/select-company"})
+            accessSuccess(token, jwt)
         }else{
-            setLoading(false)
-            setError(true)
+            accessDenied()
         }
     }
 
@@ -129,12 +136,6 @@ const validation = ({general_config, setUserPermissions}) => {
                     <p>Acceso correcto</p>
                 </ContentVertical>
             )}
-            {/* {infoExist && (
-                <ContentVertical>
-                    <InfoCircleFilled style={{fontSize:50, color:"#17a2b8"}}/>
-                    <p>Información no encontrada</p>
-                </ContentVertical>
-            )} */}
         </Content>
     )
 }

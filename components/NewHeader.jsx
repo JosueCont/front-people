@@ -17,6 +17,7 @@ import {
 import { UserOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { css, Global } from "@emotion/core";
+import { BsFillGrid3X3GapFill } from "react-icons/bs";
 import Cookie from "js-cookie";
 import WebApiPeople from "../api/WebApiPeople";
 import { logoutAuth } from "../libs/auth";
@@ -193,7 +194,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                   </Badge> */}
                   <Dropdown overlay={<CardApps/>} key="dropdown_apps">
                     <div key="menu_apps_content">
-                      <MenuOutlined style={{ color: "white", fontSize: 20 }} />
+                      <BsFillGrid3X3GapFill style={{ color: "white", fontSize: 30, display: 'flex', margin: 'auto'}} />
                     </div>
                   </Dropdown>
                   <Dropdown overlay={userCardDisplay} key="dropdown_user">
