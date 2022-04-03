@@ -30,16 +30,15 @@ import {
 const validation = ({general_config, setUserPermissions}) => {
 
     const router = useRouter();
-    const { token } = router.query;
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
-        if(token){
-            validateToken(token)
+        if(router.query.token){
+            validateToken(router.query.token)
         }
-    },[token])
+    },[router.query])
 
     const accessDenied = () =>{
         setLoading(false)
