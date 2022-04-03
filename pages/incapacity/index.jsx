@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -26,9 +26,8 @@ import {
   SyncOutlined,
 } from "@ant-design/icons";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
-import jsCookie from "js-cookie";
 
-const Incapacity = ({ permissions, ...props }) => {
+const Incapacity = (props) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -37,6 +36,7 @@ const Incapacity = ({ permissions, ...props }) => {
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [incapacityList, setIncapacityList] = useState([]);
+  const [permissions, setPermissions] = useState([]);
 
   /* Select estatus */
   const optionStatus = [
@@ -44,6 +44,13 @@ const Incapacity = ({ permissions, ...props }) => {
     { value: 2, label: "Aprobado", key: "opt_2" },
     { value: 3, label: "Rechazado", key: "opt_3" },
   ];
+
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
 
   const getIncapacity = async (
     collaborator = null,
@@ -93,7 +100,6 @@ const Incapacity = ({ permissions, ...props }) => {
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
     getIncapacity();
   }, [route]);
 
@@ -221,16 +227,14 @@ const Incapacity = ({ permissions, ...props }) => {
                 >
                   <Column
                     title="Colaborador"
-                    dataIndex="collaborator"
+                    dataIndex="person"
                     key="id"
-                    render={(collaborator, record) => (
+                    render={(person, record) => (
                       <>
-                        {collaborator && collaborator.first_name
-                          ? collaborator.first_name + " "
+                        {person && person.first_name
+                          ? person.first_name + " "
                           : null}
-                        {collaborator && collaborator.flast_name
-                          ? collaborator.flast_name
-                          : null}
+                        {person && person.flast_name ? person.flast_name : null}
                       </>
                     )}
                   />

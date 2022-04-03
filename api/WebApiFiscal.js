@@ -72,6 +72,10 @@ class WebApiFiscal {
   static getInternalOtherPayments() {
     return WebApi.ApisType(`/fiscal/internal-other-payment-type/`, "get");
   }
+
+  static getDisabilityType() {
+    return WebApi.ApisType(`/fiscal/disability-type/`, "get");
+  }
 }
 
 export default WebApiFiscal;

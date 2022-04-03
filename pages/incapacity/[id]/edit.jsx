@@ -14,6 +14,7 @@ const IncapacityEdit = () => {
   const [departure_date, setDepartureDate] = useState(null);
   const [return_date, setReturnDate] = useState(null);
   const [file, setFile] = useState(null);
+  const [payrollApplyDate, setPayrollApplyDate] = useState(null);
 
   const getDetails = async () => {
     setSending(true);
@@ -23,6 +24,7 @@ const IncapacityEdit = () => {
         setDetails(data);
         setDepartureDate(data.departure_date);
         setReturnDate(data.return_date);
+        setPayrollApplyDate(data.payroll_apply_date);
         setSending(false);
       })
       .catch(function (error) {
@@ -35,8 +37,14 @@ const IncapacityEdit = () => {
     setSending(true);
 
     let data = new FormData();
+    data.append("incapacity_type", values.incapacity_type);
+    data.append("imss_classification", values.imss_classification);
+    data.append("category", values.category);
+    data.append("subcategory", values.subcategory);
+    data.append("requested_days", values.requested_days);
     data.append("departure_date", departure_date);
     data.append("return_date", return_date);
+    data.append("payroll_apply_date", payrollApplyDate);
     data.append("person", values.person);
     if (file) {
       data.append("document", file["originFileObj"]);
@@ -66,6 +74,10 @@ const IncapacityEdit = () => {
 
   const onChangeReturnDate = (date, dateString) => {
     setReturnDate(dateString);
+  };
+
+  const onChangePayrollApplyDate = (date, dateString) => {
+    setPayrollApplyDate(dateString);
   };
 
   useEffect(() => {
@@ -106,6 +118,7 @@ const IncapacityEdit = () => {
               sending={sending}
               onChangeDepartureDate={onChangeDepartureDate}
               onChangeReturnDate={onChangeReturnDate}
+              onChangePayrollApplyDate={onChangePayrollApplyDate}
               onCancel={onCancel}
             />
           </Col>
