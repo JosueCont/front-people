@@ -55,9 +55,9 @@ const ContentApps = styled.div`
             text-decoration: none;
         }
     }
-    /* & .ant-space{
+    & .ant-space{
         cursor: pointer;
-    } */
+    }
     & img{
         width: 46px;
         height: 46px;
@@ -93,6 +93,7 @@ const CardApps = ({...props}) => {
     const linkToProfile = () =>{
         const token = Cookies.get("token_user");
         const url = `https://demo.myaccount.hiumanlab.com/validation?token=${token}`;
+        // const url = `http://demo.localhost:3001/validation?token=${token}`;
         redirectTo(url);
     }
 
