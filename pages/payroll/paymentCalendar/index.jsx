@@ -200,6 +200,7 @@ const PaymentCalendars = () => {
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
+        maskClosable={false}
       >
         <FormPaymentCalendar
           idPaymentCalendar={idPaymentCalendar}

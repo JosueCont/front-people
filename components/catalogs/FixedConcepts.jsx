@@ -33,7 +33,7 @@ import {
 } from "../../utils/constant";
 import WebApiPayroll from "../../api/WebApiPayroll";
 
-const Departaments = ({ permissions, currentNode, ...props }) => {
+const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
   const [edit, setEdit] = useState(false);
   const [form] = Form.useForm();
@@ -448,8 +448,8 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
   };
 
   useEffect(() => {
-    console.log(props.cat_group_fixed_concept);
-  }, [props.cat_group_fixed_concept]);
+    console.log(props.group_fixed_concept);
+  }, [props.group_fixed_concept]);
 
   return (
     <>
@@ -579,9 +579,7 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
         </Row>
         <Table
           columns={columns}
-          dataSource={
-            groups ? props.cat_group_fixed_concept : props.cat_fixed_concept
-          }
+          dataSource={groups ? props.group_fixed_concept : props.fixed_concept}
           locale={{
             emptyText: loading
               ? "Cargando..."
@@ -617,14 +615,14 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
 
 const mapState = (state) => {
   return {
-    cat_fixed_concept: state.catalogStore.cat_fixed_concept,
+    fixed_concept: state.payrollStore.fixed_concept,
     perceptions_int: state.fiscalStore.perceptions_int,
     deductions_int: state.fiscalStore.deductions_int,
     other_payments_int: state.fiscalStore.other_payments_int,
-    cat_group_fixed_concept: state.catalogStore.cat_group_fixed_concept,
+    group_fixed_concept: state.payrollStore.group_fixed_concept,
   };
 };
 
 export default connect(mapState, { getFixedConcept, getGroupFixedConcept })(
-  Departaments
+  FixedConcepts
 );
