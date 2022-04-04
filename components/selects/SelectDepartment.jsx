@@ -6,7 +6,6 @@ const SelectDepartment = ({
   disabled,
   viewLabel = true,
   rules = [],
-  companyId,
   ...props
 }) => {
   const [options, setOptions] = useState([]);

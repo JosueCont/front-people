@@ -52,16 +52,15 @@ const webReducer = (state = initialData, action) => {
 };
 export default webReducer;
 
-export const doFiscalSelectedData = () => async (dispatch, getState) => {
+export const doFiscalCatalogs = (data) => async (dispatch, getState) => {
   try {
-    dispatch(getFiscalBanks());
     dispatch(getFiscalTaxRegime());
     dispatch(getPerceptions());
     dispatch(getDeductions());
     dispatch(getOtherPayments());
-    dispatch(getInternalPerceptions());
-    dispatch(getInternalDeductions());
-    dispatch(getInternalOtherPayments());
+    dispatch(getInternalPerceptions(data));
+    dispatch(getInternalDeductions(data));
+    dispatch(getInternalOtherPayments(data));
     dispatch(getTypeTax());
     dispatch(getPaymentPeriodicity());
   } catch (error) {
@@ -119,35 +118,36 @@ export const getOtherPayments = () => async (dispatch, getState) => {
     });
 };
 
-export const getInternalPerceptions = () => async (dispatch, getState) => {
-  await WebApiFiscal.getInternalPerceptions()
+export const getInternalPerceptions = (data) => async (dispatch, getState) => {
+  await WebApiFiscal.getInternalPerceptions(data)
     .then((response) => {
-      dispatch({ type: PERCEPTIONS_INT, payload: response.data.results });
+      dispatch({ type: PERCEPTIONS_INT, payload: response.data });
     })
     .catch((error) => {
       console.log(error);
     });
 };
 
-export const getInternalDeductions = () => async (dispatch, getState) => {
-  await WebApiFiscal.getInternalDeductions()
+export const getInternalDeductions = (data) => async (dispatch, getState) => {
+  await WebApiFiscal.getInternalDeductions(data)
     .then((response) => {
-      dispatch({ type: DEDUCTIONS_INT, payload: response.data.results });
+      dispatch({ type: DEDUCTIONS_INT, payload: response.data });
     })
     .catch((error) => {
       console.log(error);
     });
 };
 
-export const getInternalOtherPayments = () => async (dispatch, getState) => {
-  await WebApiFiscal.getInternalOtherPayments()
-    .then((response) => {
-      dispatch({ type: OTHER_PAYMENTS_INT, payload: response.data.results });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+export const getInternalOtherPayments =
+  (data) => async (dispatch, getState) => {
+    await WebApiFiscal.getInternalOtherPayments(data)
+      .then((response) => {
+        dispatch({ type: OTHER_PAYMENTS_INT, payload: response.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 export const getTypeTax = () => async (dispatch, getState) => {
   await WebApiFiscal.getTypeTax()
