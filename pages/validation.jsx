@@ -35,7 +35,7 @@ const validation = ({general_config, setUserPermissions}) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
-        if(router.query.token){
+        if(router.query.token && general_config){
             validateToken(router.query.token)
         }
     },[router.query])
