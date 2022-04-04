@@ -17,6 +17,7 @@ import {
 import { UserOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { css, Global } from "@emotion/core";
+import { BsFillGrid3X3GapFill } from "react-icons/bs";
 import Cookie from "js-cookie";
 import WebApiPeople from "../api/WebApiPeople";
 import { logoutAuth } from "../libs/auth";
@@ -88,7 +89,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         </div>
         <Row>
           <Col span={24} style={{ padding: 10 }}>
-            {/* <p
+            <p
               className="text-menu"
               onClick={() => {
                 !person.nodes && props.currentNode
@@ -97,7 +98,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               }}
             >
               <Text>Editar perfil</Text>
-            </p> */}
+            </p>
             {pathname !== "/select-company" && (
               <p
                 className="text-menu"
@@ -191,9 +192,9 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                       onClick={() => props.setShowEvents(true)}
                     />
                   </Badge> */}
-                  <Dropdown overlay={<CardApps profile={editProfile}/>} key="dropdown_apps">
+                  <Dropdown overlay={<CardApps/>} key="dropdown_apps">
                     <div key="menu_apps_content">
-                      <MenuOutlined style={{ color: "white", fontSize: 20 }} />
+                      <BsFillGrid3X3GapFill style={{ color: "white", fontSize: 30, display: 'flex', margin: 'auto'}} />
                     </div>
                   </Dropdown>
                   <Dropdown overlay={userCardDisplay} key="dropdown_user">

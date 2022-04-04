@@ -66,6 +66,12 @@ export const ButtonDanger = styled(Button)`
     border-radius: 10px!important;
 `;
 
+export const ButtonTransparent = styled(Button)`
+    background: transparent;
+    border: none;
+    border-radius: 5px!important;
+`;
+
 export const DeleteAll = styled(Button)`
     background: #dc3545!important;
     border: none;

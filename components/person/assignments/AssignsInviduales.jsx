@@ -122,7 +122,7 @@ const AssignsIndividuales = ({
 
     const columns = [
         {
-            title: "Evaluación",
+            title: "Seleccionar lista actual",
             render: (item) => {
                 return (
                     <div>

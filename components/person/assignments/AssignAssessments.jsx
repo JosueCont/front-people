@@ -24,6 +24,7 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import {
     CustomInput,
     ColButtons,
+    ButtonTransparent,
     CustomCheck,
     ButtonDanger,
     CompactSelect,
@@ -145,14 +146,14 @@ const AssignAssessments = ({...props}) =>{
         if(newObj.assessments.length <= 0){
             delete newObj.assessments
         }
-        if(newObj.group_assessment.length <= 0){
-            delete newObj.group_assessment
+        if(newObj.groups_assessment.length <= 0){
+            delete newObj.groups_assessment
         }
         return newObj;
     }
 
     const onFinish = (values) =>{
-        const data = createData({assessments: surveysKeys, group_assessment: groupsKeys})
+        const data = createData({assessments: surveysKeys, groups_assessment: groupsKeys})
         if(itemsSelected.length > 0){
             setLoadAdd(true)
             setTimeout(()=>{
@@ -167,7 +168,7 @@ const AssignAssessments = ({...props}) =>{
 
     const columnsInvidual = [
         {
-            title: "Encuesta",
+            title: "Encuestas",
             render: (item) => {
                 return (
                     <div>
@@ -178,7 +179,7 @@ const AssignAssessments = ({...props}) =>{
             
         },
         {
-            title: "Categoría",
+            title: "Categorías",
             render: (item) => {
                 return (
                     <div>
@@ -191,7 +192,7 @@ const AssignAssessments = ({...props}) =>{
 
     const columnsGroup = [
         {
-            title: "Grupo",
+            title: "Grupos",
             render: (item) => {
                 return (
                     <div>
@@ -219,7 +220,6 @@ const AssignAssessments = ({...props}) =>{
 
 
     const rowSelection = {
-        columnTitle: 'Seleccionar',
         columnWidth: 100,
         selectedRowKeys: isIndividual ? surveysKeys : groupsKeys,
         onChange: (selectedRowKeys, selectedRows) => {
@@ -338,7 +338,14 @@ const AssignAssessments = ({...props}) =>{
                         </Col>
                     )}
                     <Col span={12}>
-                        <CustomCheck
+                    <ButtonTransparent
+                            onClick={()=>resetFilters()}
+                            icon={<ClearOutlined />} 
+                            size={"small"}
+                        >
+                            Borrar filtros
+                        </ButtonTransparent>
+                        {/* <CustomCheck
                             checked={isSelectAll}
                             onChange={onSelectAll}
                         >
@@ -348,7 +355,7 @@ const AssignAssessments = ({...props}) =>{
                             <ClearOutlined
                                 onClick={()=>resetFilters()}
                             />
-                        </Tooltip>
+                        </Tooltip> */}
                     </Col>
                     <ColButtons span={12}>
                         <Radio.Group
@@ -369,7 +376,6 @@ const AssignAssessments = ({...props}) =>{
                                 columnsInvidual :
                                 columnsGroup
                             }
-                            showHeader={false}
                             dataSource={getListAssigned()}
                             loading={loading}
                             size={'small'}
