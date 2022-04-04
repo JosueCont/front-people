@@ -82,6 +82,13 @@ class WebApiPayroll {
   static groupFixedConcept(type, data = null, url = "") {
     return WebApi.ApisType(`/payroll/group-fixed-concept/${url}`, type, data);
   }
+
+  static getPayrollReport() {
+    return WebApi.ApisType(
+      `/payroll/payroll-report?start_date=2022-01-01&end_date=2022-01-15`,
+      "get"
+    );
+  }
 }
 
 export default WebApiPayroll;

@@ -20,6 +20,7 @@ import { useRouter } from "next/router";
 import { messageSaveSuccess } from "../../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../../utils/rules";
 import { css, Global } from "@emotion/core";
+import SelectFixedConcept from "../../selects/SelectFixedConcept";
 
 const FormPaymentCalendar = ({
   title,
@@ -69,9 +70,11 @@ const FormPaymentCalendar = ({
   const getPerceptionType = async () => {
     try {
       let response = await WebApiFiscal.getPerseptions();
-      let perception_types = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
+      let perception_types = response.data.results
+        .filter((item) => item.code == "001" || item.code == "046")
+        .map((a) => {
+          return { value: a.id, label: a.description };
+        });
       setPerceptionType(perception_types);
     } catch (error) {
       console.log(error);
@@ -98,6 +101,7 @@ const FormPaymentCalendar = ({
       );
       if (response.data) {
         let item = response.data;
+        console.log(item);
         formPaymentCalendar.setFieldsValue({
           name: item.name,
           periodicity: item.periodicity.id,
@@ -105,12 +109,15 @@ const FormPaymentCalendar = ({
           perception_type: item.perception_type,
           start_date: item.start_date ? moment(item.start_date) : "",
           period: item.period ? moment().year(item.period) : "",
-          start_incidence: item.start_incidence,
-          end_incidence: item.end_incidence,
+          start_incidence: item.start_incidence
+            ? moment(item.start_incidence)
+            : "",
+          // end_incidence: item.end_incidence,
           pay_before: item.pay_before ? parseInt(item.pay_before) : 0,
           activation_date: item.activation_date
             ? moment(item.activation_date)
             : "",
+          group_fixed_concept: item.group_fixed_concept,
         });
         setAdjustmentApply(item.adjustment);
         setPeriodActive(item.active);
@@ -343,6 +350,7 @@ const FormPaymentCalendar = ({
                   onChange={onChangePeriod}
                   picker="year"
                   moment={"YYYY"}
+                  placeholder=""
                 />
               </Form.Item>
             </Col>
@@ -356,6 +364,7 @@ const FormPaymentCalendar = ({
                   style={{ width: "100%" }}
                   onChange={onChangeLastDayPaid}
                   moment={"YYYY-MM-DD"}
+                  placeholder=""
                 />
               </Form.Item>
             </Col>
@@ -365,6 +374,7 @@ const FormPaymentCalendar = ({
                   style={{ width: "100%" }}
                   onChange={onChangeActivationDate}
                   moment={"YYYY-MM-DD"}
+                  placeholder=""
                 />
               </Form.Item>
             </Col>
@@ -415,13 +425,16 @@ const FormPaymentCalendar = ({
                 name="start_incidence"
                 label="Inicio de incidencia"
                 maxLength={2}
-                type="number"
-                rules={[onlyNumeric]}
               >
-                <Input maxLength={10} />
+                <DatePicker
+                  style={{ width: "100%" }}
+                  onChange={onChangePeriod}
+                  placeholder=""
+                  moment={"YYYY"}
+                />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22}>
+            {/* <Col lg={8} xs={22}>
               <Form.Item
                 name="end_incidence"
                 label="Fin de incidencia"
@@ -431,6 +444,9 @@ const FormPaymentCalendar = ({
               >
                 <Input maxLength={10} />
               </Form.Item>
+            </Col> */}
+            <Col lg={8} xs={22}>
+              <SelectFixedConcept type={2} name={"group_fixed_concept"} />
             </Col>
           </Row>
           <Row justify={"center"} gutter={10}>

@@ -4,12 +4,10 @@ import {
   Tooltip,
   Row,
   Col,
-  List,
   Input,
   Select,
   Switch,
   Button,
-  Typography,
   Form,
   Avatar,
   message,
@@ -57,10 +55,7 @@ import SelectAccessIntranet from "../../../components/selects/SelectAccessIntran
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
-import {
-  downloadTemplateImportPerson,
-  getDomain,
-} from "../../../utils/functions";
+import { getDomain } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
 import AssignAssessments from "../../../components/person/assignments/AssignAssessments";
 import PersonsGroup from "../../../components/person/groups/PersonsGroup";
@@ -68,7 +63,6 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 
 const homeScreen = ({ ...props }) => {
-  const { Text } = Typography;
   const route = useRouter();
 
   const [person, setPerson] = useState([]);
@@ -78,15 +72,11 @@ const homeScreen = ({ ...props }) => {
   const [showModalGroup, setShowModalGroup] = useState(false);
   const [openAssignTest, setOpenAssignTest] = useState(false);
   const [showModalAssignTest, setShowModalAssignTest] = useState(false);
-  const [openAssignToPerson, setOpenAssignToPerson] = useState(false);
-  const [showAssignToPerson, setShowAssignToPerson] = useState(false);
   const [showModalAssigns, setShowModalAssigns] = useState(false);
   const [personSelected, setPersonSelected] = useState(false);
   const [personsKeys, setPersonsKeys] = useState([]);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
-  const inputFileRef2 = useRef(null);
-  const { Option } = Select;
 
   let filters = { node: "" };
   const defaulPhoto =
@@ -100,13 +90,10 @@ const homeScreen = ({ ...props }) => {
 
   // Constantes para eliminar.
   const [modalDelete, setModalDelete] = useState(false);
-  const [idsDelete, setIdsDelete] = useState("");
   const [personsToDelete, setPersonsToDelete] = useState([]);
   const [stringToDelete, setStringToDelete] = useState(null);
   let urlFilter = "/person/person/?";
 
-  const [listUserCompanies, setListUserCompanies] = useState("");
-  const [showModalCompanies, setShowModalCompanies] = useState(false);
   const [userSession, setUserSession] = useState({});
   const [deactivateTrigger, setDeactivateTrigger] = useState(false);
   const [permissions, setPermissions] = useState({});
@@ -171,23 +158,6 @@ const homeScreen = ({ ...props }) => {
         message.error("Error al desactivar");
       });
   };
-
-  useEffect(() => {
-    if (showModalCompanies && listUserCompanies) {
-      Modal.info({
-        title: "Empresas Asignadas",
-        content: (
-          <List
-            locale={{ emptyText: "No se encontraron datos" }}
-            dataSource={listUserCompanies}
-            renderItem={(item) => <List.Item>{item}</List.Item>}
-          />
-        ),
-        icon: "",
-        onOk() {},
-      });
-    }
-  }, [showModalCompanies]);
 
   const getModalPerson = (value) => {
     setModalAddPerson(value);
@@ -531,7 +501,11 @@ const homeScreen = ({ ...props }) => {
           </>
         )}
         {permissions.delete && (
-          <Menu.Item key="2" onClick={() => showModalDelete()} icon={<DeleteOutlined/>} >
+          <Menu.Item
+            key="2"
+            onClick={() => showModalDelete()}
+            icon={<DeleteOutlined />}
+          >
             Eliminar
           </Menu.Item>
         )}
@@ -555,13 +529,13 @@ const homeScreen = ({ ...props }) => {
           </Menu.Item>
         )}
         {permissions.edit && (
-          <Menu.Item key="2" icon={<EditOutlined/>}>
+          <Menu.Item key="2" icon={<EditOutlined />}>
             <Link href={`/home/persons/${item.id}`}>Editar</Link>
           </Menu.Item>
         )}
         {permissions.delete && (
           <Menu.Item
-            icon={<DeleteOutlined/>}
+            icon={<DeleteOutlined />}
             key="3"
             onClick={() => {
               setPersonsToDelete([item]), showModalDelete();
@@ -772,15 +746,12 @@ const homeScreen = ({ ...props }) => {
     setModalCreateGroup(false);
     setOpenAssignTest(false);
     setShowModalAssignTest(false);
-    // setOpenAssignToPerson(false)
-    // setShowAssignToPerson(false)
     setPersonsToDelete([]);
     setPersonsKeys([]);
   };
 
   const HandleModalAssign = (item) => {
     setPersonsToDelete([item]);
-    // setOpenAssignToPerson(true)
     setOpenAssignTest(true);
   };
 
@@ -794,7 +765,6 @@ const homeScreen = ({ ...props }) => {
 
   const onFinishCreateGroup = async (values) => {
     setLoading(true);
-    // const ids = getOnlyIds();
     const body = { ...values, node: props.currentNode?.id };
     try {
       await WebApiAssessment.createGroupPersons(body);
@@ -849,25 +819,6 @@ const homeScreen = ({ ...props }) => {
     }
   };
 
-  // const onFinishAssignOneTest = async (value) =>{
-  //   setLoading(true)
-  //   const ids = getOnlyIds();
-  //   const body = {
-  //     id_assessment: value.assessments,
-  //     person: ids.at(-1),
-  //     node: props.currentNode?.id
-  //   }
-  //   try {
-  //     await WebApiAssessment.assignOneTest(body)
-  //     filterPersonName();
-  //     message.success("Evaluación asignada")
-  //   } catch (e) {
-  //     console.log(e)
-  //     setLoading(false)
-  //     message.error("Evaluación no asignada")
-  //   }
-  // };
-
   useEffect(() => {
     if (modalCreateGroup) {
       if (personsToDelete.length > 0) {
@@ -894,17 +845,6 @@ const homeScreen = ({ ...props }) => {
       }
     }
   }, [openAssignTest]);
-
-  // useEffect(()=>{
-  //   if(openAssignToPerson){
-  //     if(personsToDelete.length > 0){
-  //       setShowAssignToPerson(true)
-  //     }else{
-  //       setOpenAssignToPerson(false)
-  //       message.error("Selecciona al menos una persona")
-  //     }
-  //   }
-  // },[openAssignToPerson])
 
   const showModalDelete = () => {
     modalDelete ? setModalDelete(false) : setModalDelete(true);
@@ -1205,7 +1145,6 @@ const homeScreen = ({ ...props }) => {
                 }
                 dataSource={person}
                 loading={loading}
-                // scroll={{ x: 1300 }}
                 locale={{
                   emptyText: loading
                     ? "Cargando..."

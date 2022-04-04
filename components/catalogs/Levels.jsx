@@ -206,13 +206,13 @@ const Levels = ({ currentNode, ...props }) => {
         form={form}
         onFinish={(values) => onFinishForm(values, "/business/level/")}
       >
-        <Row>
-          <Col lg={6} xs={22} offset={1}>
+        <Row gutter={20}>
+          <Col lg={6} xs={22}>
             <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
               <Input />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} offset={1}>
+          <Col lg={6} xs={22}>
             <SelectLevel
               name={"order"}
               value_form={"order"}

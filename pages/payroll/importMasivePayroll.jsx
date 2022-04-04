@@ -40,6 +40,8 @@ const ImportMasivePayroll = ({ ...props }) => {
   const [viewModal, setViewModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
   const [startDate, setStartDate] = useState(null);
+  const [report, setReport] = useState(false);
+  const [periodicityDesc, setPeriodicityDesc] = useState(null);
 
   const columns = [
     {
@@ -47,42 +49,54 @@ const ImportMasivePayroll = ({ ...props }) => {
       render: (item) => {
         return <span>{item.headers.reason_receiver}</span>;
       },
-      key: "reason_receiver",
+      key: (item) => {
+        return item.headers.reason_receiver;
+      },
     },
     {
       title: "RFC",
       render: (item) => {
         return <span>{item.headers.rfc_receiver}</span>;
       },
-      key: "rfc",
+      key: (item) => {
+        return item.headers.rfc;
+      },
     },
     {
       title: "Fecha inicio de pago",
       render: (item) => {
         return <span>{item.headers.payment_start_date}</span>;
       },
-      key: "payment_start_date",
+      key: (item) => {
+        return item.headers.curp;
+      },
     },
     {
       title: "Fecha fin de pago",
       render: (item) => {
         return <span>{item.headers.payment_end_date}</span>;
       },
-      key: "payment_end_date",
+      key: (item) => {
+        return item.headers.curp + 1;
+      },
     },
     {
       title: "Departamento",
       render: (item) => {
         return <span>{item.headers.department}</span>;
       },
-      key: "department",
+      key: (item) => {
+        return item.headers.department;
+      },
     },
     {
       title: "Puesto",
       render: (item) => {
         return <span>{item.headers.job}</span>;
       },
-      key: "job",
+      key: (item) => {
+        return item.headers.job;
+      },
     },
   ];
 
@@ -111,6 +125,11 @@ const ImportMasivePayroll = ({ ...props }) => {
           period: response.data.cfdis[0].headers.payment_date.substring(0, 4),
           active: false,
         });
+        setPeriodicityDesc(
+          props.payment_periodicity.find(
+            (item) => item.id === response.data.periodicity
+          ).description
+        );
         setCompanyImport(response.data);
       })
       .catch((error) => {
@@ -151,7 +170,7 @@ const ImportMasivePayroll = ({ ...props }) => {
     setStartDate(item.target.value);
   };
 
-  const sendCreateCompany = async (data) => {
+  const sendImportPayrroll = async (data) => {
     data.periodicity = props.payment_periodicity.find(
       (item) => item.id === companyImport.periodicity
     ).id;
@@ -163,10 +182,29 @@ const ImportMasivePayroll = ({ ...props }) => {
     await WebApiPayroll.savePayrollMasiveXml(companyImport)
       .then((response) => {
         message.success(messageSaveSuccess);
+        setReport(true);
       })
       .catch((error) => {
         message.error(messageError);
         console.log(error);
+      });
+  };
+
+  const downloadReport = () => {
+    WebApiPayroll.getPayrollReport()
+      .then((response) => {
+        const type = response.headers["content-type"];
+        const blob = new Blob([response.data], {
+          type: type,
+          encoding: "UTF-8",
+        });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "Personas.xlsx";
+        link.click();
+      })
+      .catch((error) => {
+        message.error(messageError);
       });
   };
 
@@ -198,11 +236,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                 {companyImport ? (
                   <>
                     <Col>
-                      <Form
-                        layout="vertical"
-                        key="formFilter"
-                        className={"formFilter"}
-                      >
+                      <Form layout="vertical" className={"formFilter"}>
                         <Row gutter={[16, 6]}>
                           <Col style={{ display: "flex" }}>
                             <Form.Item label="Razon social">
@@ -251,9 +285,8 @@ const ImportMasivePayroll = ({ ...props }) => {
                       <Form
                         form={calendar}
                         layout="vertical"
-                        key="formFilter"
                         className={"formFilter"}
-                        onFinish={sendCreateCompany}
+                        onFinish={sendImportPayrroll}
                       >
                         <Row gutter={[16, 6]}>
                           <Col style={{ display: "flex" }}>
@@ -267,15 +300,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                           </Col>
                           <Col style={{ display: "flex" }}>
                             <Form.Item label="Periocidad">
-                              <Input
-                                readOnly
-                                value={
-                                  props.payment_periodicity.find(
-                                    (item) =>
-                                      item.id === companyImport.periodicity
-                                  ).description
-                                }
-                              />
+                              <Input readOnly value={periodicityDesc} />
                             </Form.Item>
                           </Col>
                           <Col style={{ display: "flex" }}>
@@ -288,7 +313,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                           </Col>
 
                           <Col style={{ display: "flex" }}>
-                            <Form.Item name={"active"} label="¿Activo?">
+                            <Form.Item name="active" label="¿Activo?">
                               <Switch />
                             </Form.Item>
                           </Col>
@@ -357,6 +382,9 @@ const ImportMasivePayroll = ({ ...props }) => {
             </Card>
           </Col>
           <Col span={24}>
+            {report && (
+              <Button onClick={downloadReport}>Descargar reporte</Button>
+            )}
             {companyImport ? (
               <Card className="card_table">
                 <Table
