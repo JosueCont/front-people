@@ -115,8 +115,9 @@ const LoginForm = ({
       })
         .then(function (response) {
           if (response.status === 200) {
+            let data_token  = response['data']['token']
+            console.log('token =>,', response['data']['token']);
             let token = jwt_decode(response.data.token);
-            Cookies.set("token_user", response.data.token)
             if (setKhonnectId) {
               setKhonnectId(token.user_id);
               return;
@@ -127,13 +128,20 @@ const LoginForm = ({
                   props
                     .setUserPermissions(token.perms)
                     .then((response) => {
+                      console.log('tokenn', data_token);
                       message.success("Acceso correcto.");
                       delete token.perms;
+                      Cookies.set("token_user", data_token)
                       Cookies.set("token", token);
-                      setLoading(false);
-                      router.push({
-                        pathname: "/select-company",
-                      });
+
+                      setTimeout(()=>{
+                        setLoading(false);
+                        router.push({
+                          pathname: "/select-company",
+                        });
+                    },2000)
+
+                      
                     })
                     .catch((error) => {
                       message.error("Acceso denegado");
