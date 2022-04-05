@@ -1,6 +1,6 @@
 import { withAuthSync } from "../../../libs/auth";
 import MainLayout from "../../../layout/MainLayout";
-import { Breadcrumb, Tabs, Layout, Card, Tooltip } from "antd";
+import { Breadcrumb, Tabs, Card, Tooltip } from "antd";
 import {
   ApartmentOutlined,
   GoldOutlined,
@@ -22,8 +22,7 @@ import PersonTypes from "../../../components/catalogs/PersonTypes";
 import Relationship from "../../../components/catalogs/Relationship";
 import DocumentsTypes from "../../../components/catalogs/DocumentsTypes";
 import FixedConcepts from "../../../components/catalogs/FixedConcepts";
-
-const { Content } = Layout;
+import InternalConcepts from "../../../components/catalogs/InternalConcepts";
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
@@ -158,23 +157,6 @@ const configBusiness = ({ ...props }) => {
 
                 <TabPane
                   tab={
-                    <Tooltip title="Niveles">
-                      <div className="container-title-tab">
-                        <GoldOutlined />
-                        <div className="text-title-tab">Niveles</div>
-                      </div>
-                    </Tooltip>
-                  }
-                  key="tab_7"
-                >
-                  <Levels
-                    currentNode={props.currentNode}
-                    doCompanySelectedCatalog={doCompanySelectedCatalog}
-                  />
-                </TabPane>
-
-                <TabPane
-                  tab={
                     <Tooltip title="Departamentos">
                       <div className="container-title-tab">
                         <GoldOutlined />
@@ -182,11 +164,39 @@ const configBusiness = ({ ...props }) => {
                       </div>
                     </Tooltip>
                   }
-                  key="tab_8"
+                  key="tab_6"
                 >
-                  <WorkTitle
+                  <Tabs defaultActiveKey="1" type="card" size={"small"}>
+                    <TabPane tab="Plazas" key={"1"}>
+                      <WorkTitle
+                        style={{ marginTop: "10px" }}
+                        currentNode={props.currentNode}
+                        doCompanySelectedCatalog={doCompanySelectedCatalog}
+                      />
+                    </TabPane>
+                    <TabPane tab="Niveles" key={"2"}>
+                      <Levels
+                        style={{ marginTop: "10px" }}
+                        currentNode={props.currentNode}
+                        doCompanySelectedCatalog={doCompanySelectedCatalog}
+                      />
+                    </TabPane>
+                  </Tabs>
+                </TabPane>
+                <TabPane
+                  tab={
+                    <Tooltip title="Conceptos internos">
+                      <div className="container-title-tab">
+                        <PicRightOutlined />
+                        <div className="text-title-tab">Conceptos internos</div>
+                      </div>
+                    </Tooltip>
+                  }
+                  key="tab_7"
+                >
+                  <InternalConcepts
+                    permissions={props.permissions.document_type}
                     currentNode={props.currentNode}
-                    doCompanySelectedCatalog={doCompanySelectedCatalog}
                   />
                 </TabPane>
                 <TabPane
@@ -198,7 +208,7 @@ const configBusiness = ({ ...props }) => {
                       </div>
                     </Tooltip>
                   }
-                  key="tab_9"
+                  key="tab_8"
                 >
                   <FixedConcepts
                     permissions={props.permissions.document_type}

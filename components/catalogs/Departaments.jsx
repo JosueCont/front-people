@@ -12,7 +12,6 @@ import {
   message,
   Modal,
 } from "antd";
-import MassiveImportDepartments from "../business/MassiveImportDepartments";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
 import {

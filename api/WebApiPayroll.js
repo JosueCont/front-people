@@ -116,6 +116,12 @@ class WebApiPayroll {
   static getPaymentPlan(id) {
     return WebApi.ApisType(`/payroll/payment-plan/?loan__id=${id}`, "get");
   }
+  static getPayrollReport() {
+    return WebApi.ApisType(
+      `/payroll/payroll-report?start_date=2022-01-01&end_date=2022-01-15`,
+      "get"
+    );
+  }
 }
 
 export default WebApiPayroll;

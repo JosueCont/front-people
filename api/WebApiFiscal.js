@@ -61,16 +61,29 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/state/?country=${data}`, "get");
   }
 
-  static getInternalPerceptions() {
-    return WebApi.ApisType(`/fiscal/internal-perception-type/`, "get");
+  static getInternalPerceptions(data) {
+    return WebApi.ApisType(
+      `/fiscal/internal-perception-type/?node=${data}`,
+      "get"
+    );
   }
 
-  static getInternalDeductions() {
-    return WebApi.ApisType(`/fiscal/internal-deduction-type/`, "get");
+  static getInternalDeductions(data) {
+    return WebApi.ApisType(
+      `/fiscal/internal-deduction-type/?node=${data}`,
+      "get"
+    );
   }
 
-  static getInternalOtherPayments() {
-    return WebApi.ApisType(`/fiscal/internal-other-payment-type/`, "get");
+  static getInternalOtherPayments(data) {
+    return WebApi.ApisType(
+      `/fiscal/internal-other-payment-type/?node=${data}`,
+      "get"
+    );
+  }
+
+  static crudInternalConcept(url, type, data = null) {
+    return WebApi.ApisType(`/fiscal/${url}`, type, data);
   }
 
   static getDisabilityType() {

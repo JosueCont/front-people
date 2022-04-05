@@ -27,18 +27,40 @@ import {
 } from '../libs/auth';
 
 
-const validation = ({general_config, setUserPermissions}) => {
+const validation = ({general_config, setUserPermissions, ...props}) => {
 
     const router = useRouter();
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [generalConfig, setGeneralConfig] = useState({});
 
     useEffect(()=>{
-        if(router.query.token){
-            validateToken(router.query.token)
+        getConfigApp()
+    },[])
+
+    // useEffect(()=>{
+    //     if(router.query.token && general_config){
+    //         validateToken(router.query.token)
+    //     }
+    // },[router.query])
+
+    useEffect(()=>{
+        if(Object.keys(generalConfig).length > 0){
+            if(router.query.token){
+                validateToken(router.query.token)
+            }
         }
-    },[router.query])
+    },[generalConfig])
+
+    const getConfigApp = async () =>{
+        try {
+            let response = await WebApiPeople.getGeneralConfig();
+            setGeneralConfig(response.data);
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     const accessDenied = () =>{
         setLoading(false)
@@ -62,45 +84,48 @@ const validation = ({general_config, setUserPermissions}) => {
     }
 
     const validateToken = async (token) =>{
-        let response = await validateTokenKhonnect(general_config, {token: token});
-        if(response.status == 200){
+        try {
+            let response = await validateTokenKhonnect(general_config, {token: token});
             let jwt = jwtDecode(response.data.data.token);
             setStorage("token", response.data.data.token);
             setStorage("jwt", JSON.stringify(jwt));
             validateIntranet(jwt.user_id)
-        }else{
+        } catch (e) {
+            console.log(e)
             accessDenied()
         }
     }
 
     const validateIntranet = async (id) =>{
-        let response = await WebApiIntranet.getUserIntranet(id);
-        if(response.status == 200){
+        try {
+            let response = await WebApiIntranet.getUserIntranet(id);
             validateProfile(response.data.at(-1).person.id)
-        }else{
+        } catch (e) {
+            console.log(e)
             accessDenied()
         }
     }
 
     const validateProfile = async (id) =>{
-        let response = await WebApiPeople.getPerson(id);
-        if(response.status == 200){
+        try {
+            await WebApiPeople.getPerson(id);
             validateJWT()
-        }else{
+        } catch (e) {
+            console.log(e)
             accessDenied()
         }
     }
 
     const validateJWT = async () =>{
-        let jwt = JSON.parse(getStorage("jwt"))
-        const data = {
-            khonnect_id: jwt.user_id,
-            jwt: jwt
-        }
-        let response = await WebApiPeople.saveJwt(data);
-        if(response.status == 200){
+        try {
+            let jwt = JSON.parse(getStorage("jwt"))
+            await WebApiPeople.saveJwt({
+                khonnect_id: jwt.user_id,
+                jwt: jwt
+            });
             validatePermissions()
-        }else{
+        } catch (e) {
+            console.log(e)
             accessDenied()
         }
     }
