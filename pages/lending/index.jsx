@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -30,17 +30,7 @@ const Lending = (props) => {
   const [form] = Form.useForm();
   const [lendingList, setLendingList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [permissions, setPermissions] = useState({});
-  const [configPermissions, setConfigPermissions] = useState({});
   let nodeId = userCompanyId();
-
-  useLayoutEffect(() => {
-    setPermissions(props.permissions);
-    setConfigPermissions(props.permissions);
-    setTimeout(() => {
-      permissions;
-    }, 5000);
-  }, [props.permissions, props.configPermissions]);
 
   const optionStatus = [
     { value: 1, label: "Pendiente", key: "opt_1" },
@@ -67,7 +57,7 @@ const Lending = (props) => {
     }
     WebApiPayroll.getLoanRequest(url)
       .then(function (response) {
-        setLendingList(response.data.results);
+        setLendingList(response.data);
         setLoading(false);
       })
       .catch(function (error) {
@@ -94,239 +84,254 @@ const Lending = (props) => {
   };
 
   return (
-    <MainLayout currentKey={["prestamos"]} defaultOpenKeys={["solicitudes"]}>
-      <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
+    <>
+      {props.permissions && props.configPermissions && (
+        <MainLayout
+          currentKey={["prestamos"]}
+          defaultOpenKeys={["solicitudes"]}
         >
-          Inicio
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Préstamos</Breadcrumb.Item>
-      </Breadcrumb>
-      <div className="container" style={{ width: "100%" }}>
-        {permissions.view ? (
-          <>
-            <div className="top-container-border-radius">
-              <Row
-                justify="space-between"
-                key="row1"
-                style={{ paddingBottom: 20 }}
-              >
-                <Col>
-                  <Form
-                    form={form}
-                    className={"formFilter"}
-                    name="filter"
-                    onFinish={filter}
-                    layout="vertical"
-                    key="form"
+          <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
+            <Breadcrumb.Item
+              className={"pointer"}
+              onClick={() => route.push({ pathname: "/home" })}
+            >
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>Préstamos</Breadcrumb.Item>
+          </Breadcrumb>
+          <div className="container" style={{ width: "100%" }}>
+            {props.permissions.view ? (
+              <>
+                <div className="top-container-border-radius">
+                  <Row
+                    justify="space-between"
+                    key="row1"
+                    style={{ paddingBottom: 20 }}
                   >
-                    <Row gutter={[24, 8]}>
-                      <Col>
-                        <SelectCollaborator
-                          name="person"
-                          style={{ width: 150 }}
-                        />
-                      </Col>
-                      <Col>
-                        <Form.Item key="type" name="type" label="Tipo">
-                          <Select
-                            placeholder="Todos"
-                            style={{ width: 150 }}
-                            key="select_type"
-                            options={typeOptions}
-                            allowClear
-                            notFoundContent={"No se encontraron resultados."}
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col>
-                        <Form.Item
-                          key="estatus_filter"
-                          name="status"
-                          label="Estatus"
-                        >
-                          <Select
-                            style={{ width: 150 }}
-                            key="select_status"
-                            options={optionStatus}
-                            placeholder="Todos"
-                            allowClear
-                            notFoundContent={"No se encontraron resultados."}
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col style={{ display: "flex" }}>
+                    <Col>
+                      <Form
+                        form={form}
+                        className={"formFilter"}
+                        name="filter"
+                        onFinish={filter}
+                        layout="vertical"
+                        key="form"
+                      >
+                        <Row gutter={[24, 8]}>
+                          <Col>
+                            <SelectCollaborator
+                              name="person"
+                              style={{ width: 150 }}
+                            />
+                          </Col>
+                          <Col>
+                            <Form.Item key="type" name="type" label="Tipo">
+                              <Select
+                                placeholder="Todos"
+                                style={{ width: 150 }}
+                                key="select_type"
+                                options={typeOptions}
+                                allowClear
+                                notFoundContent={
+                                  "No se encontraron resultados."
+                                }
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col>
+                            <Form.Item
+                              key="estatus_filter"
+                              name="status"
+                              label="Estatus"
+                            >
+                              <Select
+                                style={{ width: 150 }}
+                                key="select_status"
+                                options={optionStatus}
+                                placeholder="Todos"
+                                allowClear
+                                notFoundContent={
+                                  "No se encontraron resultados."
+                                }
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Button
+                              loading={loading}
+                              htmlType="submit"
+                              key="filter"
+                              style={{
+                                background: "#fa8c16",
+                                fontWeight: "bold",
+                                color: "white",
+                                marginTop: "auto",
+                              }}
+                            >
+                              <SearchOutlined />
+                            </Button>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Tooltip
+                              title="Limpiar filtros"
+                              color={"#3d78b9"}
+                              key={"#3d78b9"}
+                            >
+                              <Button
+                                onClick={() => resetFilter()}
+                                style={{ marginTop: "auto", marginLeft: 10 }}
+                              >
+                                <SyncOutlined />
+                              </Button>
+                            </Tooltip>
+                          </Col>
+                        </Row>
+                      </Form>
+                    </Col>
+                    <Col style={{ display: "flex" }}>
+                      {props.configPermissions.view && (
                         <Button
-                          loading={loading}
-                          htmlType="submit"
-                          key="filter"
+                          key="config"
                           style={{
                             background: "#fa8c16",
                             fontWeight: "bold",
                             color: "white",
                             marginTop: "auto",
                           }}
+                          onClick={() => route.push("lending/config")}
                         >
-                          <SearchOutlined />
+                          Configuración
                         </Button>
-                      </Col>
-                      <Col style={{ display: "flex" }}>
-                        <Tooltip
-                          title="Limpiar filtros"
-                          color={"#3d78b9"}
-                          key={"#3d78b9"}
+                      )}
+                      {props.permissions.create && (
+                        <Button
+                          key="btnnvo"
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginLeft: 20,
+                            marginTop: "auto",
+                          }}
+                          onClick={() => route.push("lending/new")}
                         >
-                          <Button
-                            onClick={() => resetFilter()}
-                            style={{ marginTop: "auto", marginLeft: 10 }}
-                          >
-                            <SyncOutlined />
-                          </Button>
-                        </Tooltip>
-                      </Col>
-                    </Row>
-                  </Form>
-                </Col>
-                <Col style={{ display: "flex" }}>
-                  {configPermissions.view && (
-                    <Button
-                      key="config"
-                      style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                        marginTop: "auto",
+                          <PlusOutlined />
+                          Agregar préstamo
+                        </Button>
+                      )}
+                    </Col>
+                  </Row>
+                </div>
+                <Row justify={"end"}>
+                  <Col span={24}>
+                    <Table
+                      dataSource={lendingList}
+                      key="table_holidays"
+                      loading={loading}
+                      scroll={{ x: 350 }}
+                      locale={{
+                        emptyText: loading
+                          ? "Cargando..."
+                          : "No se encontraron resultados.",
                       }}
-                      onClick={() => route.push("lending/config")}
                     >
-                      Configuración
-                    </Button>
-                  )}
-                  {permissions.create && (
-                    <Button
-                      key="btnnvo"
-                      style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                        marginLeft: 20,
-                        marginTop: "auto",
-                      }}
-                      onClick={() => route.push("lending/new")}
-                    >
-                      <PlusOutlined />
-                      Agregar préstamo
-                    </Button>
-                  )}
-                </Col>
-              </Row>
-            </div>
-            <Row justify={"end"}>
-              <Col span={24}>
-                <Table
-                  dataSource={lendingList}
-                  key="table_holidays"
-                  loading={loading}
-                  scroll={{ x: 350 }}
-                  locale={{
-                    emptyText: loading
-                      ? "Cargando..."
-                      : "No se encontraron resultados.",
-                  }}
-                >
-                  <Column
-                    title="Colaborador"
-                    dataIndex="person"
-                    key="id"
-                    render={(person) =>
-                      person.first_name + " " + person.flast_name
-                    }
-                  ></Column>
-                  <Column
-                    title="Tipo de préstamo"
-                    dataIndex="type"
-                    key="type"
-                    render={(type) => (type === "EMP" ? "Empresa" : "E-Pesos")}
-                  ></Column>
-                  <Column
-                    title="Cantidad"
-                    dataIndex="amount"
-                    key="amount"
-                  ></Column>
-                  <Column
-                    title="Plazos"
-                    dataIndex="deadline"
-                    key="deadline"
-                  ></Column>
-                  <Column
-                    title="Periodicidad"
-                    dataIndex="periodicity"
-                    key="periodicity"
-                    render={(periodicity) =>
-                      periodicity === 1
-                        ? "Semanal"
-                        : periodicity === 2
-                        ? "Catorcenal"
-                        : periodicity === 3
-                        ? "Quincenal"
-                        : "Mensual"
-                    }
-                  ></Column>
-                  <Column
-                    title="Fecha solicitada"
-                    dataIndex="timestamp"
-                    key="timestamp"
-                    render={(timestamp) =>
-                      moment(timestamp).format("DD/MM/YYYY")
-                    }
-                  />
-                  <Column
-                    title="Estatus"
-                    dataIndex="status"
-                    key="status"
-                    render={(status) =>
-                      status === 1
-                        ? "Pendiente"
-                        : status === 2
-                        ? "Aprobado"
-                        : status === 3
-                        ? "Rechazado"
-                        : "Pagado"
-                    }
-                  />
-                  <Column
-                    title="Acciones"
-                    key="actions"
-                    render={(text, record) => (
-                      <>
-                        <EyeOutlined
-                          className="icon_actions"
-                          key={"goDetails_" + record.id}
-                          onClick={() => GotoDetails(record)}
-                        />
-                        {permissions.edit && record.status == 1 ? (
-                          <EditOutlined
-                            className="icon_actions"
-                            key={"edit_" + record.id}
-                            onClick={() =>
-                              route.push("lending/" + record.id + "/edit")
-                            }
-                          />
-                        ) : null}
-                      </>
-                    )}
-                  ></Column>
-                </Table>
-              </Col>
-            </Row>
-          </>
-        ) : (
-          <div className="notAllowed" />
-        )}
-      </div>
-    </MainLayout>
+                      <Column
+                        title="Colaborador"
+                        dataIndex="person"
+                        key="id"
+                        render={(person) =>
+                          person.first_name + " " + person.flast_name
+                        }
+                      ></Column>
+                      <Column
+                        title="Tipo de préstamo"
+                        dataIndex="type"
+                        key="type"
+                        render={(type) =>
+                          type === "EMP" ? "Empresa" : "E-Pesos"
+                        }
+                      ></Column>
+                      <Column
+                        title="Cantidad"
+                        dataIndex="amount"
+                        key="amount"
+                      ></Column>
+                      <Column
+                        title="Plazos"
+                        dataIndex="deadline"
+                        key="deadline"
+                      ></Column>
+                      <Column
+                        title="Periodicidad"
+                        dataIndex="periodicity"
+                        key="periodicity"
+                        render={(periodicity) =>
+                          periodicity === 2
+                            ? "Semanal"
+                            : periodicity === 3
+                            ? "Catorcenal"
+                            : periodicity === 4
+                            ? "Quincenal"
+                            : periodicity === 10
+                            ? "Decenal"
+                            : "Mensual"
+                        }
+                      ></Column>
+                      <Column
+                        title="Fecha solicitada"
+                        dataIndex="timestamp"
+                        key="timestamp"
+                        render={(timestamp) =>
+                          moment(timestamp).format("DD/MM/YYYY")
+                        }
+                      />
+                      <Column
+                        title="Estatus"
+                        dataIndex="status"
+                        key="status"
+                        render={(status) =>
+                          status === 1
+                            ? "Pendiente"
+                            : status === 2
+                            ? "Aprobado"
+                            : status === 3
+                            ? "Rechazado"
+                            : "Pagado"
+                        }
+                      />
+                      <Column
+                        title="Acciones"
+                        key="actions"
+                        render={(text, record) => (
+                          <>
+                            <EyeOutlined
+                              className="icon_actions"
+                              key={"goDetails_" + record.id}
+                              onClick={() => GotoDetails(record)}
+                            />
+                            {props.permissions.edit && record.status == 1 ? (
+                              <EditOutlined
+                                className="icon_actions"
+                                key={"edit_" + record.id}
+                                onClick={() =>
+                                  route.push("lending/" + record.id + "/edit")
+                                }
+                              />
+                            ) : null}
+                          </>
+                        )}
+                      ></Column>
+                    </Table>
+                  </Col>
+                </Row>
+              </>
+            ) : (
+              <div className="notAllowed" />
+            )}
+          </div>
+        </MainLayout>
+      )}
+    </>
   );
 };
 

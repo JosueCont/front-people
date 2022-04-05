@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   Typography,
   Button,
@@ -8,52 +8,92 @@ import {
   Input,
   Select,
   Modal,
-  InputNumber,
+  DatePicker,
 } from "antd";
 import { useRouter } from "next/router";
 import SelectCollaborator from "../selects/SelectCollaborator";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import jsCookie from "js-cookie";
+import { ruleRequired, onlyNumeric } from "../../utils/rules";
+import { withAuthSync } from "../../libs/auth";
+import { connect } from "react-redux";
+import WebApiPayroll from "../../api/WebApiPayroll";
+import moment from "moment";
 
 const Lendingform = (props) => {
   const [form] = Form.useForm();
   const { Title } = Typography;
   const { TextArea } = Input;
-  const { Option } = Select;
   const { confirm } = Modal;
 
   const route = useRouter();
-
   const [permissions, setPermissions] = useState({});
-
+  const [disbPeriodicity, setDisbPeriodicity] = useState(false);
   const TypeOptions = [{ value: "EMP", label: "Empresa", key: "type1" }];
 
   const periodicityOptions = [
-    { value: 1, label: "Semanal", key: "p1" },
-    { value: 2, label: "Catorcenal", key: "p2" },
-    { value: 3, label: "Quincenal", key: "p3" },
-    { value: 4, label: "Mensual", key: "p4" },
+    { value: 2, label: "Semanal", key: "p1" },
+    { value: 10, label: "Decenal", key: "p2" },
+    { value: 3, label: "Catorcenal", key: "p3" },
+    { value: 4, label: "Quincenal", key: "p4" },
+    { value: 5, label: "Mensual", key: "p5" },
   ];
 
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
+
   const getPayment = () => {
-    let formAmount = form.getFieldValue("amount");
-    let formDeadline = form.getFieldValue("deadline");
+    let formAmount = Number(form.getFieldValue("amount"));
+    let formDeadline = Number(form.getFieldValue("deadline"));
+    if (formAmount && formDeadline) {
+      formAmount = formAmount ? parseFloat(formAmount) : 0;
+      formDeadline = formDeadline ? parseInt(formDeadline) : 1;
+      let paym = 0;
 
-    formAmount = formAmount ? parseFloat(formAmount) : 0;
-    formDeadline = formDeadline ? parseInt(formDeadline) : 1;
-    let paym = 0;
-
-    if (props.config && props.config.interest === 0) {
-      paym = formAmount / formDeadline;
+      if (props.config && props.config.interest === 0) {
+        paym = formAmount / formDeadline;
+      } else {
+        paym =
+          (formAmount + formAmount * (props.config.interest / 100)) /
+          formDeadline;
+      }
+      form.setFieldsValue({
+        periodicity_amount: paym,
+      });
     } else {
-      paym =
-        (formAmount + formAmount * (props.config.interest / 100)) /
-        formDeadline;
+      form.setFieldsValue({
+        periodicity_amount: "",
+      });
     }
+  };
 
-    form.setFieldsValue({
-      periodicity_amount: paym,
-    });
+  const changePerson = async (value) => {
+    if (value) {
+      WebApiPayroll.getPayrollPerson(value)
+        .then(function (response) {
+          if (response.data) {
+            form.setFieldsValue({
+              periodicity: parseInt(response.data.periodicity),
+            });
+            setDisbPeriodicity(true);
+          }
+        })
+        .catch(function (error) {
+          form.setFieldsValue({
+            periodicity: null,
+          });
+          setDisbPeriodicity(false);
+          console.log("Error", error);
+        });
+    } else {
+      form.setFieldsValue({
+        periodicity: null,
+      });
+      setDisbPeriodicity(false);
+    }
   };
 
   const showMoalapprove = () => {
@@ -69,9 +109,8 @@ const Lendingform = (props) => {
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     if (props.details) {
+      changePerson(props.details.person.id);
       form.setFieldsValue({
         person: props.details.person.id,
         type: props.details.type,
@@ -80,65 +119,83 @@ const Lendingform = (props) => {
         periodicity: props.details.periodicity,
         periodicity_amount: props.details.periodicity_amount,
         reason: props.details.reason,
+        reference: props.details.reference,
+        date_apply_discount: props.details.date_apply_discount
+          ? moment(props.details.date_apply_discount, "YYYY-MM-DD")
+          : null,
+        discount_start_date: props.details.discount_start_date
+          ? moment(props.details.discount_start_date, "YYYY-MM-DD")
+          : null,
+        loan_granting_date: props.details.discount_start_date
+          ? moment(props.details.loan_granting_date, "YYYY-MM-DD")
+          : "",
       });
+
       getPayment();
     }
   }, [route]);
 
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.loan.can.view")) perms.view = true;
-      if (a.includes("people.loan.can.create")) perms.create = true;
-      if (a.includes("people.loan.can.edit")) perms.edit = true;
-      if (a.includes("people.loan.can.delete")) perms.delete = true;
-      if (a.includes("people.loan.function.configure_loan"))
-        perms.config = true;
-      if (a.includes("people.loan.function.approve_loan")) perms.approve = true;
-      if (a.includes("people.loan.function.reject_loan")) perms.reject = true;
-    });
-    setPermissions(perms);
-  };
-
-  const ruleRequired = {
-    required: true,
-    message: "Este campo es requerido",
-  };
   const ruleAmount = ({ getFieldValue }) => ({
     validator() {
-      if (
-        getFieldValue("amount") >= props.config.min_amount &&
-        getFieldValue("amount") <= props.config.max_amount
-      ) {
-        return Promise.resolve();
+      if (Number(getFieldValue("amount"))) {
+        let amount = Number(getFieldValue("amount"));
+        if (
+          amount >= Number(props.config.min_amount) &&
+          amount <= Number(props.config.max_amount)
+        ) {
+          return Promise.resolve();
+        } else {
+          if (amount < Number(props.config.min_amount)) {
+            form.setFieldsValue({
+              periodicity_amount: "",
+            });
+            return Promise.reject(
+              `La cantidad no puede ser menor a ${props.config.min_amount}`
+            );
+          }
+          if (amount > props.config.max_amount) {
+            form.setFieldsValue({
+              periodicity_amount: "",
+            });
+            return Promise.reject(
+              `La cantidad no puede ser mayor a ${props.config.max_amount}`
+            );
+          }
+        }
       } else {
-        if (getFieldValue("amount") < props.config.min_amount)
-          return Promise.reject(
-            `La cantidad no puede ser menor a ${props.config.min_amount}`
-          );
-        if (getFieldValue("amount") > props.config.max_amount)
-          return Promise.reject(
-            `La cantidad no puede ser mayor a ${props.config.max_amount}`
-          );
+        return Promise.reject(`Ingrese valores numericos`);
       }
     },
   });
   const ruleDeadline = ({ getFieldValue }) => ({
     validator() {
-      if (
-        getFieldValue("deadline") >= props.config.min_deadline &&
-        getFieldValue("deadline") <= props.config.max_deadline
-      ) {
-        return Promise.resolve();
+      if (Number(getFieldValue("deadline"))) {
+        let amount = Number(getFieldValue("deadline"));
+        if (
+          amount >= props.config.min_deadline &&
+          amount <= props.config.max_deadline
+        ) {
+          return Promise.resolve();
+        } else {
+          if (amount < props.config.min_deadline) {
+            form.setFieldsValue({
+              periodicity_amount: "",
+            });
+            return Promise.reject(
+              `El plazo no puede ser menor a ${props.config.min_deadline}`
+            );
+          }
+          if (amount > props.config.max_deadline) {
+            form.setFieldsValue({
+              periodicity_amount: "",
+            });
+            return Promise.reject(
+              `El plazo no puede ser mayor a ${props.config.max_deadline}`
+            );
+          }
+        }
       } else {
-        if (getFieldValue("deadline") < props.config.min_deadline)
-          return Promise.reject(
-            `El plazo no puede ser menor a ${props.config.min_deadline}`
-          );
-        if (getFieldValue("deadline") > props.config.max_deadline)
-          return Promise.reject(
-            `El plazo no puede ser mayor a ${props.config.max_deadline}`
-          );
+        return Promise.reject(`Ingrese valores numericos`);
       }
     },
   });
@@ -156,6 +213,7 @@ const Lendingform = (props) => {
             label="Colaborador"
             name="person"
             labelCol={{ span: 24 }}
+            onChange={changePerson}
             rules={[ruleRequired]}
           />
         </Col>
@@ -173,6 +231,58 @@ const Lendingform = (props) => {
             />
           </Form.Item>
         </Col>
+        <Col xs={24} sm={24} md={12} lg={12}>
+          <Form.Item
+            name="date_apply_discount"
+            label="Fecha para aplicar descuento"
+            rules={[ruleRequired]}
+          >
+            <DatePicker
+              disabled={props.readOnly}
+              key="date_apply_discount"
+              style={{ width: "100%" }}
+              onChange={props.changeDateApplyDiscount}
+            />
+          </Form.Item>
+        </Col>
+        <Col xs={24} sm={24} md={12} lg={12}>
+          <Form.Item
+            name="discount_start_date"
+            label="Fecha de inicio de descuento"
+            rules={[ruleRequired]}
+          >
+            <DatePicker
+              disabled={props.readOnly}
+              key="discount_start_date"
+              style={{ width: "100%" }}
+              onChange={props.changeDiscountStartDate}
+            />
+          </Form.Item>
+        </Col>
+        <Col xs={24} sm={24} md={12} lg={12}>
+          <Form.Item
+            name="loan_granting_date"
+            label="Fecha de otorgamiento de prestamo"
+            rules={[ruleRequired]}
+          >
+            <DatePicker
+              disabled={props.readOnly}
+              key="loan_granting_date"
+              style={{ width: "100%" }}
+              onChange={props.changeLoanGratingDate}
+            />
+          </Form.Item>
+        </Col>
+        <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
+          <Form.Item
+            name="reference"
+            label="Referencia"
+            labelCol={{ span: 24 }}
+            rules={[ruleRequired]}
+          >
+            <Input style={{ width: "100%" }} />
+          </Form.Item>
+        </Col>
         <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
           <Form.Item
             name="amount"
@@ -180,14 +290,7 @@ const Lendingform = (props) => {
             labelCol={{ span: 24 }}
             rules={[ruleRequired, ruleAmount]}
           >
-            <InputNumber
-              onChange={getPayment}
-              style={{ width: "100%" }}
-              formatter={(value) =>
-                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-              }
-              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-            />
+            <Input onChange={getPayment} style={{ width: "100%" }} />
           </Form.Item>
         </Col>
         <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
@@ -197,7 +300,7 @@ const Lendingform = (props) => {
             labelCol={{ span: 24 }}
             rules={[ruleRequired, ruleDeadline]}
           >
-            <InputNumber style={{ width: "100%" }} onChange={getPayment} />
+            <Input style={{ width: "100%" }} onChange={getPayment} />
           </Form.Item>
         </Col>
         <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
@@ -208,6 +311,7 @@ const Lendingform = (props) => {
             rules={[ruleRequired]}
           >
             <Select
+              disabled={disbPeriodicity}
               options={periodicityOptions}
               notFoundContent={"No se encontraron resultados."}
             />
@@ -219,7 +323,7 @@ const Lendingform = (props) => {
             label="Pago"
             labelCol={{ span: 24 }}
           >
-            <InputNumber
+            <Input
               style={{ width: "100%" }}
               readOnly
               precision={2}
@@ -239,11 +343,11 @@ const Lendingform = (props) => {
           <Button
             onClick={() => route.push("/lending")}
             key="cancel"
-            style={{ padding: "0 50px" }}
+            style={{ padding: "0 30px", marginBottom: 5 }}
           >
             {props.edit ? "Regresar" : "Cancelar"}
           </Button>
-          {permissions.reject
+          {permissions.reject_loan
             ? props.edit && (
                 <Button
                   disabled={props.sending}
@@ -251,13 +355,13 @@ const Lendingform = (props) => {
                   onClick={props.onReject}
                   key="reject"
                   type="primary"
-                  style={{ padding: "0 50px", marginLeft: 15 }}
+                  style={{ padding: "0 30px", marginLeft: 15, marginBottom: 5 }}
                 >
                   Rechazar
                 </Button>
               )
             : null}
-          {permissions.approve
+          {permissions.approve_loan
             ? props.edit && (
                 <Button
                   disabled={props.sending}
@@ -265,7 +369,7 @@ const Lendingform = (props) => {
                   type="primary"
                   className={"btn-success"}
                   key="aprove"
-                  style={{ padding: "0 50px", marginLeft: 15 }}
+                  style={{ padding: "0 30px", marginLeft: 15, marginBottom: 5 }}
                 >
                   Aprobar préstamo
                 </Button>
@@ -277,7 +381,7 @@ const Lendingform = (props) => {
             key="save"
             htmlType="submit"
             type="primary"
-            style={{ padding: "0 50px", marginLeft: 15 }}
+            style={{ padding: "0 30px", marginLeft: 15 }}
           >
             {props.edit ? "Actualizar" : "Guardar"}
           </Button>
@@ -287,4 +391,10 @@ const Lendingform = (props) => {
   );
 };
 
-export default Lendingform;
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.loan,
+  };
+};
+
+export default connect(mapState)(withAuthSync(Lendingform));

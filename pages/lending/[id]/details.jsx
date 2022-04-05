@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import MainLayout from "../../../layout/MainLayout";
 import {
   Row,
@@ -6,7 +6,6 @@ import {
   Typography,
   Table,
   Breadcrumb,
-  Descriptions,
   Button,
   Switch,
   Spin,
@@ -14,16 +13,12 @@ import {
 } from "antd";
 import { useRouter } from "next/router";
 import moment from "moment";
-import {
-  ExclamationCircleOutlined,
-  CheckCircleOutlined,
-} from "@ant-design/icons";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { withAuthSync } from "../../../libs/auth";
-import { API_URL } from "../../../config/config";
-import Axios from "axios";
-import jsCookie from "js-cookie";
+import { connect } from "react-redux";
+import WebApiPayroll from "../../../api/WebApiPayroll";
 
-const HolidaysNew = () => {
+const LendingDetails = (props) => {
   const { Title, Text } = Typography;
   const route = useRouter();
   const { confirm, success } = Modal;
@@ -34,6 +29,13 @@ const HolidaysNew = () => {
   const [plan, setPlan] = useState([]);
   const [strStatus, SetStrStatus] = useState(null);
   const [permissions, setPermissions] = useState({});
+
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
 
   const onCancel = () => {
     route.push("/lending");
@@ -72,7 +74,7 @@ const HolidaysNew = () => {
       render: (is_paid, row) => {
         return (
           <>
-            {permissions.pay && (
+            {permissions.approve_loan_pay && (
               <Switch
                 key={row.id}
                 onClick={(e) => paid(e, row)}
@@ -88,37 +90,35 @@ const HolidaysNew = () => {
 
   const confirmPaid = async (id) => {
     setSending(true);
-    try {
-      let data = {
-        is_paid: true,
-      };
-      let response = await Axios.patch(
-        API_URL + `/payroll/payment-plan/${id}/`,
-        data
-      );
-      let res = response.data;
-      /* Setear nuevos datos al plan */
-      const newData = [...plan];
-      const index = newData.findIndex((item) => item.id === id);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...res,
+    let data = {
+      is_paid: true,
+    };
+    WebApiPayroll.confirmPaidLoan(id, data)
+      .then(function (response) {
+        let res = response.data;
+        /* Setear nuevos datos al plan */
+        const newData = [...plan];
+        const index = newData.findIndex((item) => item.id === id);
+        if (index > -1) {
+          const item = newData[index];
+          newData.splice(index, 1, {
+            ...item,
+            ...res,
+          });
+          setPlan(newData);
+        }
+        getPlan();
+        success({
+          keyboard: false,
+          maskClosable: false,
+          content: "Pago realizado",
+          okText: "Aceptar",
         });
-        setPlan(newData);
-      }
-      getPlan();
-      success({
-        keyboard: false,
-        maskClosable: false,
-        content: "Pago realizado",
-        okText: "Aceptar",
+      })
+      .catch(function (error) {
+        console.log("Error", error);
+        setSending(false);
       });
-    } catch (error) {
-    } finally {
-      setSending(false);
-    }
   };
 
   const paid = (event, row) => {
@@ -139,53 +139,42 @@ const HolidaysNew = () => {
   };
   const getDetails = async () => {
     setLoading(true);
-    try {
-      let response = await Axios.get(API_URL + `/payroll/loan/${id}`);
-      let data = response.data;
-      setDetails(data);
-      SetStrStatus(
-        data.status === 1
-          ? "Pendiente"
-          : data.status === 2
-          ? "Aprobado"
-          : "Rechazado"
-      );
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
+    WebApiPayroll.getLoanRequest(id)
+      .then(function (response) {
+        let data = response.data;
+        setDetails(data);
+        SetStrStatus(
+          data.status === 1
+            ? "Pendiente"
+            : data.status === 2
+            ? "Aprobado"
+            : "Rechazado"
+        );
+        setLoading(false);
+      })
+      .catch(function (error) {
+        console.log("error", error);
+        setLoading(false);
+      });
   };
 
   const getPlan = async () => {
-    try {
-      let response = await Axios.get(
-        API_URL + `/payroll/payment-plan/?loan__id=${id}`
-      );
-      let data = response.data.results;
-
-      setPlan(data);
-    } catch (e) {
-      console.log(e);
-    }
+    WebApiPayroll.getPaymentPlan(id)
+      .then(function (response) {
+        let data = response.data.results;
+        setPlan(data);
+      })
+      .catch(function (error) {
+        console.log("error", error);
+      });
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     if (id) {
       getDetails();
       getPlan();
     }
   }, [route]);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.loan.function.approve_loan_pay")) perms.pay = true;
-    });
-    setPermissions(perms);
-  };
 
   return (
     <MainLayout currentKey="7.1">
@@ -272,7 +261,7 @@ const HolidaysNew = () => {
               >
                 <Row>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                    <Text strong>Fecha autorizada:</Text>
+                    <Text strong>Fecha Autorizacion/Rechazo:</Text>
                   </Col>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     {details.date_confirm
@@ -423,4 +412,10 @@ const HolidaysNew = () => {
   );
 };
 
-export default withAuthSync(HolidaysNew);
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.loan,
+  };
+};
+
+export default connect(mapState)(withAuthSync(LendingDetails));
