@@ -3,35 +3,62 @@ import {
   FilePdfTwoTone,
   FileTextTwoTone,
   SearchOutlined,
-  SyncOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Button, Col, Form, Row, Table, Tooltip } from "antd";
-import { useState } from "react";
+import {
+  Breadcrumb,
+  Button,
+  Col,
+  Form,
+  message,
+  Row,
+  Select,
+  Table,
+  Tooltip,
+} from "antd";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import SelectPaymentCalendar from "../../components/selects/SelectPaymentCalendar";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
-import SelectDepartment from "../../components/selects/SelectDepartment";
-import SelectJob from "../../components/selects/SelectJob";
 import MainLayout from "../../layout/MainLayout";
+import WebApiPayroll from "../../api/WebApiPayroll";
+import { messageError } from "../../utils/constant";
 
-const PayrollVaucher = () => {
+const PayrollVaucher = ({ ...props }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [cfdis, setCfdis] = useState([]);
+  const [periods, setPeriods] = useState([]);
+  const [calendar, setCalendar] = useState(null);
 
   const columns = [
     {
       title: "Num. trabajador",
       key: "code",
-      dataIndex: "code",
+      render: (item) => {
+        return item.payroll_person.person.code;
+      },
     },
     {
       title: "Colaborador",
       key: "collaborator",
-      dataIndex: "collaborator",
+      render: (item) => {
+        return !item.payroll_person.person.mlast_name
+          ? item.payroll_person.person.first_name +
+              " " +
+              item.payroll_person.person.flast_name
+          : item.payroll_person.person.first_name +
+              " " +
+              item.payroll_person.person.flast_name +
+              " " +
+              item.payroll_person.person.mlast_name;
+      },
     },
     {
       title: "Fecha emisión",
       key: "timestamp",
+      render: (item) => {
+        return item.emission_date;
+      },
     },
     {
       title: "Acciones",
@@ -45,7 +72,9 @@ const PayrollVaucher = () => {
               </Tooltip>
             )}
             <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
-              <FileTextTwoTone href={item.file} style={{ fontSize: "25px" }} />
+              <a href={item.xml_file}>
+                <FileTextTwoTone style={{ fontSize: "25px" }} />
+              </a>
             </Tooltip>
           </>
         );
@@ -54,12 +83,46 @@ const PayrollVaucher = () => {
   ];
 
   const onFinish = (value) => {
-    console.log(value);
+    setLoading(true);
+    let url = "";
+    if (value.calendar && value.calendar != "")
+      url = `calendar=${value.calendar}`;
+    if (value.period && value.period != "") url = `&period=${value.period}`;
+    if (value.person && value.person != "") url = `&person=${value.person}`;
+    WebApiPayroll.getCfdiPayrrol(url)
+      .then((response) => {
+        setCfdis(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        message.error(messageError);
+        console.log(error);
+        setLoading(false);
+      });
   };
 
   const clearFilter = () => {
     form.resetFields();
+    setPeriods([]);
+    setCalendar(null);
+    setCfdis([]);
   };
+
+  useEffect(() => {
+    let period = [];
+    if (calendar)
+      period = props.payment_calendar.find(
+        (item) => item.id == calendar
+      ).periods;
+    setPeriods(
+      period.map((item) => {
+        return {
+          value: item.id,
+          label: `${item.start_date} - ${item.end_date}`,
+        };
+      })
+    );
+  }, [calendar]);
 
   return (
     <MainLayout currentKey={["persons"]}>
@@ -80,21 +143,24 @@ const PayrollVaucher = () => {
             <Row gutter={[10]}>
               <Col>
                 <SelectPaymentCalendar
-                  name="collaborator"
-                  style={{ width: 150 }}
+                  setCalendarId={(value) => setCalendar(value)}
+                  name="calendar"
+                  style={{ width: 200 }}
                 />
               </Col>
+              {calendar && (
+                <Col>
+                  <Form.Item name="period" label="Periodo">
+                    <Select
+                      options={periods}
+                      style={{ width: 200 }}
+                      placeholder="Periodo"
+                    />
+                  </Form.Item>
+                </Col>
+              )}
               <Col>
-                <SelectCollaborator
-                  name="collaborator"
-                  style={{ width: 150 }}
-                />
-              </Col>
-              <Col>
-                <SelectDepartment key="selectDepartament" />
-              </Col>
-              <Col>
-                <SelectJob style={{ width: 120 }} />
+                <SelectCollaborator name="person" style={{ width: 200 }} />
               </Col>
               <Col style={{ display: "flex" }}>
                 <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
@@ -137,7 +203,7 @@ const PayrollVaucher = () => {
         <Row>
           <Col span={24}>
             <Table
-              dataSource={[{ code: "0001", collaborator: "Jasson" }]}
+              dataSource={cfdis}
               key="tableHolidays"
               columns={columns}
               loading={loading}
@@ -157,6 +223,7 @@ const PayrollVaucher = () => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    payment_calendar: state.payrollStore.payment_calendar,
   };
 };
 

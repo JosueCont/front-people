@@ -122,6 +122,10 @@ class WebApiPayroll {
       "get"
     );
   }
+
+  static getCfdiPayrrol(data) {
+    return WebApi.ApisType(`/payroll/cfdi-voucher?${data}`, "get");
+  }
 }
 
 export default WebApiPayroll;
