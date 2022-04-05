@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import MainLayout from "../../layout/MainLayout";
 import {
   Row,
@@ -7,17 +7,18 @@ import {
   Breadcrumb,
   Button,
   Form,
-  InputNumber,
+  Input,
   notification,
   message,
+  Spin,
 } from "antd";
 import { useRouter } from "next/router";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
-import jsCookie from "js-cookie";
+import { connect } from "react-redux";
+import WebApiPayroll from "../../api/WebApiPayroll";
+import { ruleRequired, onlyNumeric } from "../../utils/rules";
 
-const HolidaysNew = () => {
+const LendingConfig = (props) => {
   const route = useRouter();
   const [form] = Form.useForm();
   const { Title } = Typography;
@@ -27,55 +28,62 @@ const HolidaysNew = () => {
   const [permissions, setPermissions] = useState({});
   let nodeId = userCompanyId();
 
+  useLayoutEffect(() => {
+    setPermissions(props.permissions);
+    setTimeout(() => {
+      permissions;
+    }, 5000);
+  }, [props.permissions]);
+
   const getConfig = async () => {
     setLoading(true);
-    try {
-      let repsonse = await Axios.get(
-        API_URL + `/payroll/loan-config/get_config_for_node/?node=${nodeId}`
-      );
-      let data = repsonse.data;
-      setConfig(data);
-      form.setFieldsValue({
-        min_amount: data.min_amount ? parseInt(data.min_amount) : "",
-        max_amount: data.max_amount ? parseInt(data.max_amount) : "",
-        min_deadline: data.min_deadline ? data.min_deadline : "",
-        max_deadline: data.max_deadline ? data.max_deadline : "",
+    let url = `get_config_for_node/?node=${nodeId}`;
+    WebApiPayroll.getConfigLoan(url)
+      .then(function (response) {
+        console.log("response", response);
+        let data = response.data;
+        setConfig(data);
+        form.setFieldsValue({
+          min_amount: data.min_amount ? parseInt(data.min_amount) : "",
+          max_amount: data.max_amount ? parseInt(data.max_amount) : "",
+          min_deadline: data.min_deadline ? data.min_deadline : "",
+          max_deadline: data.max_deadline ? data.max_deadline : "",
+        });
+        setLoading(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoading(false);
       });
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const saveConfig = async (values) => {
     setSending(true);
     if (config && config.id) {
-      try {
-        let response = await Axios.patch(
-          API_URL + `/payroll/loan-config/${config.id}/`,
-          values
-        );
-
-        route.push("/lending");
-        notification["success"]({
-          message: "Aviso",
-          description: "Información guardada correctamente.",
-        });
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setSending(false);
-      }
-    } else {
-      values.node = nodeId;
-      Axios.post(API_URL + `/payroll/loan-config/`, values)
-        .then((response) => {
+      WebApiPayroll.updateConfigLoan(config.id, values)
+        .then(function (response) {
           route.push("/lending");
           notification["success"]({
             message: "Aviso",
             description: "Información guardada correctamente.",
           });
         })
-        .catch((error) => {
+        .catch(function (error) {
+          console.log(error);
+          setSending(false);
+        });
+    } else {
+      values.node = nodeId;
+      WebApiPayroll.saveConfigLoan(values)
+        .then(function (response) {
+          route.push("/lending");
+          notification["success"]({
+            message: "Aviso",
+            description: "Información guardada correctamente.",
+          });
+        })
+        .catch(function (error) {
+          setSending(false);
           console.log(error);
           message.error("Ocurrio un error, intente de nuevo.");
         });
@@ -84,21 +92,8 @@ const HolidaysNew = () => {
 
   useEffect(() => {
     nodeId = userCompanyId();
-    const jwt = JSON.parse(jsCookie.get("token"));
-    searchPermissions(jwt.perms);
     getConfig();
-  }, []);
-
-  const searchPermissions = (data) => {
-    const perms = {};
-    data.map((a) => {
-      if (a.includes("people.loanconfigure.can.create")) perms.create = true;
-      if (a.includes("people.loanconfigure.can.edit")) perms.edit = true;
-      if (a.includes("people.loanconfigure.can.delete")) perms.delete = true;
-      if (a.includes("people.loanconfigure.can.view")) perms.view = true;
-    });
-    setPermissions(perms);
-  };
+  }, [route]);
 
   return (
     <MainLayout currentKey="7.1">
@@ -119,76 +114,96 @@ const HolidaysNew = () => {
         {permissions.view && (
           <Row>
             <Col span={24}>
-              <Form layout="vertical" onFinish={saveConfig} form={form}>
-                <Row gutter={24}>
-                  <Col span={24}>
-                    <Title key="dats_gnrl" level={4}>
-                      Cantidad
-                    </Title>
-                  </Col>
-                  <Col xl={12} md={12} sm={24}>
-                    <Form.Item name="min_amount" label="Mínimo">
-                      <InputNumber style={{ width: "100%" }} />
-                    </Form.Item>
-                  </Col>
-                  <Col xl={12} md={12} sm={24}>
-                    <Form.Item label="Máximo" name="max_amount">
-                      <InputNumber style={{ width: "100%" }} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Title key="dats_gnrl" level={4}>
-                      Plazos
-                    </Title>
-                  </Col>
-                  <Col xl={12} md={12} sm={24}>
-                    <Form.Item label="Mínimo" name="min_deadline">
-                      <InputNumber style={{ width: "100%" }} />
-                    </Form.Item>
-                  </Col>
-                  <Col xl={12} md={12} sm={24}>
-                    <Form.Item label="Máximo" name="max_deadline">
-                      <InputNumber style={{ width: "100%" }} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row style={{ paddingTop: 20 }} justify={"end"}>
-                  <Col span={24} style={{ textAlign: "right" }}>
-                    <Button
-                      onClick={() => route.push("/lending")}
-                      style={{ padding: "0 40px", margin: "0 10px" }}
-                    >
-                      Cancelar
-                    </Button>
-
-                    {config &&
-                    config.id != 0 &&
-                    config.id != "" &&
-                    config.id != undefined &&
-                    permissions.edit ? (
+              <Spin tip="Cargando..." spinning={loading}>
+                <Form layout="vertical" onFinish={saveConfig} form={form}>
+                  <Row gutter={24}>
+                    <Col span={24}>
+                      <Title key="dats_gnrl" level={4}>
+                        Monto
+                      </Title>
+                    </Col>
+                    <Col xl={12} md={12} sm={24}>
+                      <Form.Item
+                        name="min_amount"
+                        label="Mínimo"
+                        rules={[ruleRequired, onlyNumeric]}
+                      >
+                        <Input style={{ width: "100%" }} />
+                      </Form.Item>
+                    </Col>
+                    <Col xl={12} md={12} sm={24}>
+                      <Form.Item
+                        label="Máximo"
+                        name="max_amount"
+                        rules={[ruleRequired, onlyNumeric]}
+                      >
+                        <Input style={{ width: "100%" }} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                      <Title key="dats_gnrl" level={4}>
+                        Plazos
+                      </Title>
+                    </Col>
+                    <Col xl={12} md={12} sm={24}>
+                      <Form.Item
+                        label="Mínimo"
+                        name="min_deadline"
+                        rules={[ruleRequired, onlyNumeric]}
+                      >
+                        <Input style={{ width: "100%" }} />
+                      </Form.Item>
+                    </Col>
+                    <Col xl={12} md={12} sm={24}>
+                      <Form.Item
+                        label="Máximo"
+                        name="max_deadline"
+                        rules={[ruleRequired, onlyNumeric]}
+                      >
+                        <Input style={{ width: "100%" }} />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  <Row style={{ paddingTop: 20 }} justify={"end"}>
+                    <Col span={24} style={{ textAlign: "right" }}>
                       <Button
-                        loading={sending}
-                        htmlType="submit"
-                        type={"primary"}
+                        onClick={() => route.push("/lending")}
                         style={{ padding: "0 40px", margin: "0 10px" }}
                       >
-                        Guardar
+                        Cancelar
                       </Button>
-                    ) : (
-                      permissions.create && (
+
+                      {config &&
+                      config.id != 0 &&
+                      config.id != "" &&
+                      config.id != undefined &&
+                      permissions.edit ? (
                         <Button
                           loading={sending}
+                          key="update"
                           htmlType="submit"
-                          type={"primary"}
+                          type="primary"
                           style={{ padding: "0 40px", margin: "0 10px" }}
                         >
                           Guardar
                         </Button>
-                      )
-                    )}
-                  </Col>
-                </Row>
-              </Form>
+                      ) : (
+                        permissions.create && (
+                          <Button
+                            loading={sending}
+                            key="save"
+                            htmlType="submit"
+                            type="primary"
+                            style={{ padding: "0 40px", margin: "0 10px" }}
+                          >
+                            Guardar
+                          </Button>
+                        )
+                      )}
+                    </Col>
+                  </Row>
+                </Form>
+              </Spin>
             </Col>
           </Row>
         )}
@@ -196,5 +211,10 @@ const HolidaysNew = () => {
     </MainLayout>
   );
 };
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions.loanconfigure,
+  };
+};
 
-export default withAuthSync(HolidaysNew);
+export default connect(mapState)(withAuthSync(LendingConfig));

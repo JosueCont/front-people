@@ -85,6 +85,10 @@ class WebApiFiscal {
   static crudInternalConcept(url, type, data = null) {
     return WebApi.ApisType(`/fiscal/${url}`, type, data);
   }
+
+  static getDisabilityType() {
+    return WebApi.ApisType(`/fiscal/disability-type/`, "get");
+  }
 }
 
 export default WebApiFiscal;

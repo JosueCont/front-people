@@ -12,14 +12,21 @@ const IncapacityNew = () => {
 
   const [departure_date, setDepartureDate] = useState(null);
   const [return_date, setReturnDate] = useState(null);
+  const [payrollApplyDate, setPayrollApplyDate] = useState(null);
   const [file, setFile] = useState(null);
 
   const saveRequest = async (values) => {
     setSending(true);
-
     let data = new FormData();
+    data.append("invoice", values.invoice);
+    data.append("incapacity_type", values.incapacity_type);
+    data.append("imss_classification", values.imss_classification);
+    data.append("category", values.category);
+    data.append("subcategory", values.subcategory);
+    data.append("requested_days", values.requested_days);
     data.append("departure_date", departure_date);
     data.append("return_date", return_date);
+    data.append("payroll_apply_date", payrollApplyDate);
     data.append("person", values.person);
     data.append("document", file ? file["originFileObj"] : null);
 
@@ -49,6 +56,10 @@ const IncapacityNew = () => {
     setReturnDate(dateString);
   };
 
+  const onChangePayrollApplyDate = (date, dateString) => {
+    setPayrollApplyDate(dateString);
+  };
+
   return (
     <MainLayout currentKey="5">
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
@@ -75,6 +86,7 @@ const IncapacityNew = () => {
               sending={sending}
               onChangeDepartureDate={onChangeDepartureDate}
               onChangeReturnDate={onChangeReturnDate}
+              onChangePayrollApplyDate={onChangePayrollApplyDate}
               onCancel={onCancel}
             />
           </Col>

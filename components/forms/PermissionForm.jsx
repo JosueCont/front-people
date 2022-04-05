@@ -14,7 +14,6 @@ import {
 import moment from "moment";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import { withAuthSync } from "../../libs/auth";
-import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { ruleRequired } from "../../utils/rules";
@@ -25,8 +24,6 @@ const Permissionform = (props) => {
 
   const [formPermission] = Form.useForm();
   const { TextArea } = Input;
-
-  const [allPersons, setAllPersons] = useState(null);
   const [urlPhoto, setUrlPhoto] = useState(null);
   const [permissions, setPermissions] = useState({});
   const [startDate, setStartDate] = useState(null);
@@ -57,11 +54,14 @@ const Permissionform = (props) => {
 
   const getCollaborator = async (id) => {
     let collaborator = {};
-    let response = await WebApiPeople.getPerson(id);
+    if (id) {
+      let response = await WebApiPeople.getPerson(id);
 
-    if (response.status == 200) {
-      collaborator = response.data;
+      if (response.status == 200) {
+        collaborator = response.data;
+      }
     }
+
     return collaborator;
   };
 
@@ -97,6 +97,7 @@ const Permissionform = (props) => {
   };
 
   useEffect(() => {
+    console.log("Entrando al useEffect");
     if (props.details) {
       formPermission.setFieldsValue({
         person: props.details.collaborator
@@ -127,10 +128,6 @@ const Permissionform = (props) => {
       setEndDate(props.details.return_date);
     }
   }, [props.details]);
-
-  useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-  }, []);
 
   return (
     <Form
@@ -166,7 +163,7 @@ const Permissionform = (props) => {
                     label="Empleado"
                     name="person"
                     onChange={changePerson}
-                    setAllPersons={setAllPersons}
+                    // setAllPersons={setAllPersons}
                     isDisabled={props.readOnly}
                   />
                 </Form.Item>

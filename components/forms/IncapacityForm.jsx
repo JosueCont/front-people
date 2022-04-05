@@ -10,6 +10,7 @@ import {
   Image,
   DatePicker,
   Modal,
+  Select,
 } from "antd";
 import moment from "moment";
 import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
@@ -18,6 +19,8 @@ import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import { ruleRequired } from "../../utils/rules";
 import WebApiPeople from "../../api/WebApiPeople";
+import WebApiFiscal from "../../api/WebApiFiscal";
+import { getDifferenceDays } from "../../utils/functions";
 
 const Incapacityform = (props) => {
   const { Title } = Typography;
@@ -25,6 +28,30 @@ const Incapacityform = (props) => {
   const [fileList, setFileList] = useState([]);
   const [urlPhoto, setUrlPhoto] = useState(null);
   const [permissions, setPermissions] = useState({});
+  const [disabilitys, setDisabilitys] = useState([]);
+  const [classification, setClassification] = useState([]);
+  const [categorys, setCategorys] = useState([]);
+  const [subCategorys, setSubCategorys] = useState([]);
+  const [incapacityType, setIncapacityType] = useState(null);
+  const [classific, setClassific] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const clasification_imss = [
+    { value: 0, label: "No aplica" },
+    { value: 1, label: "Accidente de trabajo" },
+    { value: 2, label: "Accidente en trayecto" },
+    { value: 3, label: "Enfermedad de trabajo" },
+    { value: 4, label: "Pre" },
+    { value: 5, label: "Enlace" },
+    { value: 6, label: "Post" },
+    { value: 7, label: "Unica" },
+  ];
+  const category = [
+    { value: 0, label: "No aplica" },
+    { value: 1, label: "Inicial" },
+    { value: 2, label: "Unica" },
+  ];
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -59,6 +86,172 @@ const Incapacityform = (props) => {
     props.setFile(file.file);
   };
 
+  const changeIncapacity = (value) => {
+    let selected = disabilitys.find((element) => element.value == value);
+    if (selected) {
+      setIncapacityType(selected.code);
+      let values = [];
+      switch (selected.code) {
+        case "01":
+          values = clasification_imss.filter(
+            (element) => element.value >= 1 && element.value <= 3
+          );
+          setClassification(values);
+          form.setFieldsValue({
+            imss_classification: "",
+            category: "",
+            subcategory: "",
+          });
+          break;
+        case "02":
+          values = clasification_imss.filter((element) => element.value == 0);
+          setClassification(values);
+          values[0].value;
+          let _categorys = category.filter((x) => x.value !== 2);
+          setClassific(values[0].value);
+          form.setFieldsValue({
+            imss_classification: values[0].value,
+            category: "",
+            subcategory: "",
+          });
+          setCategorys(_categorys);
+          break;
+        case "03":
+          values = clasification_imss.filter(
+            (element) => element.value >= 4 && element.value <= 7
+          );
+          setClassification(values);
+          form.setFieldsValue({
+            imss_classification: "",
+            category: "",
+            subcategory: "",
+          });
+          break;
+        case "04":
+          values = clasification_imss.filter((element) => element.value == 0);
+          setClassification(values);
+          setClassific(values[0].value);
+          let cats = category.filter((x) => x.value == 0);
+          setCategorys(cats);
+          let subcats = category.filter((x) => x.value == 2);
+          setSubCategorys(subcats);
+          form.setFieldsValue({
+            imss_classification: values[0].value,
+            category: cats[0].value,
+            subcategory: subcats[0].value,
+          });
+
+        default:
+          break;
+      }
+    }
+  };
+
+  const changeClassification = (value) => {
+    if (value) {
+      setClassific(value);
+      let values = [];
+      //Riezgo de trabajo
+      if (incapacityType == "01") {
+        if (value == 1) {
+          values = category.filter((x) => x.value === 0);
+          setCategorys(values);
+          setSubCategorys(values);
+          form.setFieldsValue({
+            category: category[0].value,
+            subcategory: category[0].value,
+          });
+        }
+        if (value == 2 || value == 3) {
+          values = category.filter((x) => x.value === 1);
+          setCategorys(values);
+          let sub_categorys = category.filter((x) => x.value !== 0);
+          setSubCategorys(sub_categorys);
+          form.setFieldsValue({
+            category: values[0].value,
+            subcategory: "",
+          });
+        }
+      }
+      //Enfermedad general
+      if (incapacityType == "02") {
+        if (value == 0) {
+          values = category.filter((x) => x.value !== 1);
+          setCategorys(values);
+        }
+      }
+      //Maternidad
+      if (incapacityType == "03") {
+        if (value == 4 || value == 5 || value == 6 || value == 7) {
+          values = category.filter((x) => x.value == 0);
+          setCategorys(values);
+          form.setFieldsValue({ category: category[0].value });
+
+          let sub_categorys = category.filter((x) => x.value == 2);
+          setSubCategorys(sub_categorys);
+          form.setFieldsValue({ subcategory: sub_categorys[0].value });
+        }
+      }
+      //Licencia cuidados medicos
+      if (incapacityType == "04") {
+        values = category.filter((x) => x.value == 0);
+        setCategorys(values);
+        let sub_categorys = category.filter((x) => x.value == 1);
+        setSubCategorys(sub_categorys);
+        form.setFieldsValue({
+          category: category[0].value,
+          subcategory: sub_categorys[0].value,
+        });
+      }
+    }
+  };
+
+  const changeCategorys = (value) => {
+    let values = [];
+
+    if (incapacityType == "02" && classific == 0 && value == 0) {
+      values = category.filter((x) => x.value == 2);
+      setSubCategorys(values);
+      form.setFieldsValue({ subcategory: values[0].value });
+    }
+    if (incapacityType == "02" && classific == 0 && value == 1) {
+      values = category.filter((x) => x.value !== 0);
+      setSubCategorys(values);
+      form.setFieldsValue({ subcategory: values[1].value });
+    }
+  };
+
+  const calculateDays = (startDate, endDate) => {
+    let difference_days = getDifferenceDays(startDate, endDate);
+
+    form.setFieldsValue({
+      requested_days: difference_days > 0 ? difference_days + 1 : 0,
+    });
+  };
+
+  const changeDepartureDate = (date, dateString) => {
+    setStartDate(dateString);
+    props.onChangeDepartureDate(date, dateString);
+  };
+
+  const changeReturnDate = (date, dateString) => {
+    setEndDate(dateString);
+    props.onChangeReturnDate(date, dateString);
+  };
+
+  useEffect(() => {
+    if (
+      startDate !== undefined &&
+      startDate !== null &&
+      startDate !== "" &&
+      endDate !== undefined &&
+      endDate !== null &&
+      endDate !== ""
+    ) {
+      calculateDays(startDate, endDate);
+    }
+  }, [startDate, endDate]);
+
   const showMoalapprove = () => {
     Modal.confirm({
       title: "¿Está seguro de aprobar la siguiente solicitud de incapacidad?",
@@ -71,12 +264,33 @@ const Incapacityform = (props) => {
     });
   };
 
+  const getDisabilitys = async () => {
+    WebApiFiscal.getDisabilityType()
+      .then(function (response) {
+        let datas = response.data.results.map((a) => {
+          return { label: a.description, value: a.id, code: a.code };
+        });
+        setDisabilitys(datas);
+      })
+      .catch(function (error) {
+        console.log("error", error);
+      });
+  };
+
   useEffect(() => {
+    getDisabilitys();
     if (props.details) {
+      setStartDate(props.details.departure_date);
+      setEndDate(props.details.return_date);
+      setClassific(props.details.imss_classification);
+      changeIncapacity(props.details.incapacity_type);
       form.setFieldsValue({
-        person: props.details.collaborator
-          ? props.details.collaborator.id
-          : null,
+        invoice: props.details.invoice,
+        person: props.details.person ? props.details.person.id : null,
+        incapacity_type: props.details.incapacity_type,
+        imss_classification: props.details.imss_classification,
+        category: props.details.category,
+        subcategory: props.details.subcategory,
         requested_days: props.details.days_requested,
         departure_date: props.details.departure_date
           ? moment(props.details.departure_date, "YYYY-MM-DD")
@@ -84,13 +298,16 @@ const Incapacityform = (props) => {
         return_date: props.details.return_date
           ? moment(props.details.return_date, "YYYY-MM-DD")
           : null,
+        payroll_apply_date: props.details.payroll_apply_date
+          ? moment(props.details.payroll_apply_date, "YYYY-MM-DD")
+          : null,
         document: props.details.document ? props.details.document : null,
       });
-      changePerson(props.details.collaborator.id);
+      changePerson(props.details.person.id);
 
       setUrlPhoto(
-        props.details.collaborator && props.details.collaborator.photo
-          ? props.details.collaborator.photo
+        props.details.person && props.details.person.photo
+          ? props.details.person.photo
           : null
       );
       /* File */
@@ -107,6 +324,18 @@ const Incapacityform = (props) => {
       }
     }
   }, [props.details]);
+
+  useEffect(() => {
+    if (incapacityType && (props.edit || props.view)) {
+      changeClassification(props.details.imss_classification);
+    }
+    if (incapacityType && classific && (props.edit || props.view)) {
+      changeCategorys(props.details.category);
+      form.setFieldsValue({
+        subcategory: props.details.subcategory,
+      });
+    }
+  }, [incapacityType, classific]);
 
   return (
     <Form
@@ -134,8 +363,22 @@ const Incapacityform = (props) => {
             )}
           </Col>
           <Col lg={20} md={20} sm={24} xs={24}>
+            <Row span={24}>
+              <Col lg={12} sm={24}>
+                <Form.Item
+                  label="Folio"
+                  name="invoice"
+                  style={{ width: "100%" }}
+                >
+                  <Input
+                    rules={[ruleRequired]}
+                    disabled={props.readOnly || props.sending || props.edit}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
             <Row gutter={24}>
-              <Col lg={12} md={12} sm={24} xs={24}>
+              <Col lg={12} sm={24}>
                 <Form.Item name="person" rules={[ruleRequired]}>
                   <SelectCollaborator
                     label="Empleado"
@@ -144,10 +387,120 @@ const Incapacityform = (props) => {
                     isDisabled={props.readOnly || props.sending}
                   />
                 </Form.Item>
-
+              </Col>
+              <Col lg={12} sm={24}>
                 <Form.Item label="Puesto" name="job" readOnly>
-                  <Input readOnly />
+                  <Input readOnly style={{ width: "100%" }} />
                 </Form.Item>
+              </Col>
+              <Col lg={12} sm={24}>
+                <Form.Item
+                  name="incapacity_type"
+                  label="Tipo de incapacidad"
+                  rules={[ruleRequired]}
+                >
+                  <Select
+                    disabled={props.readOnly || props.sending}
+                    style={{ width: "100%" }}
+                    onChange={changeIncapacity}
+                    options={disabilitys}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={12} sm={24}>
+                <Form.Item
+                  name="imss_classification"
+                  label="Clasificación (IMSS)"
+                  rules={[ruleRequired]}
+                >
+                  <Select
+                    disabled={props.readOnly || props.sending}
+                    style={{ width: "100%" }}
+                    options={classification}
+                    onChange={changeClassification}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={12} sm={24}>
+                <Form.Item
+                  name="category"
+                  label="Categoría"
+                  rules={[ruleRequired]}
+                >
+                  <Select
+                    disabled={props.readOnly || props.sending}
+                    style={{ width: "100%" }}
+                    options={categorys}
+                    onChange={changeCategorys}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={12} sm={24}>
+                <Form.Item
+                  name="subcategory"
+                  label="Subcategoría"
+                  rules={[ruleRequired]}
+                >
+                  <Select
+                    style={{ width: "100%" }}
+                    disabled={props.readOnly || props.sending}
+                    options={subCategorys}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={12} sm={24}>
+                <Form.Item
+                  name="departure_date"
+                  label="Fecha de inicio"
+                  rules={[ruleRequired]}
+                >
+                  <DatePicker
+                    disabled={props.readOnly || props.sending}
+                    key="departure_date"
+                    style={{ width: "100%" }}
+                    onChange={changeDepartureDate}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={12} sm={24}>
+                <Form.Item
+                  name="return_date"
+                  label="Fecha final"
+                  rules={[ruleRequired]}
+                >
+                  <DatePicker
+                    disabled={props.readOnly || props.sending}
+                    key="return_date"
+                    style={{ width: "100%" }}
+                    onChange={changeReturnDate}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={12} sm={24}>
+                <Form.Item
+                  label="Dias solicitados"
+                  name="requested_days"
+                  readOnly
+                  style={{ width: "100%" }}
+                >
+                  <Input rules={[ruleRequired]} readOnly />
+                </Form.Item>
+              </Col>
+              <Col lg={12} sm={24}>
+                <Form.Item
+                  name="payroll_apply_date"
+                  label="Fecha de aplicación en Nomina"
+                  rules={[ruleRequired]}
+                >
+                  <DatePicker
+                    disabled={props.readOnly || props.sending}
+                    key="payroll_apply_date"
+                    style={{ width: "100%" }}
+                    onChange={props.onChangePayrollApplyDate}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={12} sm={24}>
                 <Form.Item
                   label="Documentación"
                   name="document"
@@ -167,32 +520,7 @@ const Incapacityform = (props) => {
                   </Upload>
                 </Form.Item>
               </Col>
-              <Col lg={12} md={12} sm={24} xs={24}>
-                <Form.Item
-                  name="departure_date"
-                  label="Fecha de salida"
-                  rules={[ruleRequired]}
-                >
-                  <DatePicker
-                    disabled={props.readOnly || props.sending}
-                    key="departure_date"
-                    style={{ width: "100%" }}
-                    onChange={props.onChangeDepartureDate}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="return_date"
-                  label="Fecha de regreso"
-                  rules={[ruleRequired]}
-                >
-                  <DatePicker
-                    disabled={props.readOnly || props.sending}
-                    key="return_date"
-                    style={{ width: "100%" }}
-                    onChange={props.onChangeReturnDate}
-                  />
-                </Form.Item>
-              </Col>
+
               <Col span={24} style={{ textAlign: "right" }}>
                 <Button
                   onClick={props.onCancel}
