@@ -2,11 +2,8 @@ import { React, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { Row, Col, Breadcrumb, notification } from "antd";
 import { useRouter } from "next/router";
-import moment from "moment";
 import Permissionform from "../../components/forms/PermissionForm";
 import { withAuthSync } from "../../libs/auth";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
 import WebApiPeople from "../../api/WebApiPeople";
 
 const PermissionNew = () => {

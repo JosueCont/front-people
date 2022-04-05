@@ -14,8 +14,6 @@ import {
 import { useRouter } from "next/router";
 import Incapacityform from "../../../components/forms/IncapacityForm";
 import { withAuthSync } from "../../../libs/auth";
-// import Axios from "axios";
-// import { API_URL } from "../../../config/config";
 import cookie from "js-cookie";
 import WebApiPeople from "../../../api/WebApiPeople";
 
@@ -156,8 +154,8 @@ const IncapacityDetails = () => {
               details={details}
               file={file}
               setFile={setFile}
-              // onFinish={saveRequest}
               sending={sending}
+              view={true}
               onChangeDepartureDate={onChangeDepartureDate}
               onChangeReturnDate={onChangeReturnDate}
               onCancel={onCancel}
