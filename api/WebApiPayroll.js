@@ -88,7 +88,7 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/loan/${url}`, "get");
   }
 
-  static getConfigLoan(url) {
+  static getConfigLoan(url = "") {
     return WebApi.ApisType(`/payroll/loan-config/${url}`, "get");
   }
   static saveConfigLoan(data) {
@@ -97,6 +97,24 @@ class WebApiPayroll {
 
   static updateConfigLoan(id, data) {
     return WebApi.ApisType(`/payroll/loan-config/${id}/`, "patch", data);
+  }
+  static saveLoanRequest(data) {
+    return WebApi.ApisType(`/payroll/loan/`, "post", data);
+  }
+  static updateLoanRequest(id, data) {
+    return WebApi.ApisType(`/payroll/loan/${id}/`, "patch", data);
+  }
+  static rejectLoanRequest(data) {
+    return WebApi.ApisType(`/payroll/loan/reject_request/`, "post", data);
+  }
+  static approveLoanRequest(data) {
+    return WebApi.ApisType(`/payroll/loan/approve_request/`, "post", data);
+  }
+  static confirmPaidLoan(id, data) {
+    return WebApi.ApisType(`/payroll/payment-plan/${id}/`, "patch", data);
+  }
+  static getPaymentPlan(id) {
+    return WebApi.ApisType(`/payroll/payment-plan/?loan__id=${id}`, "get");
   }
 }
 
