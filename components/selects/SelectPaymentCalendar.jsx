@@ -20,9 +20,17 @@ const SelectPaymentCalendar = ({
     }
   }, [props.payment_alendar]);
 
+  const setCalendarSelect = (value) => {
+    props.setCalendarId(value);
+  };
+
   return (
     <Form.Item name="calendar" label={viewLabel ? "Calendario de pago" : ""}>
-      <Select options={calendar} placeholder="Calendario de pago" />
+      <Select
+        onChange={(value) => setCalendarSelect(value)}
+        options={calendar}
+        placeholder="Calendario de pago"
+      />
     </Form.Item>
   );
 };

@@ -42,15 +42,16 @@ const LoginForm = ({
     login(values.email, values.password);
   };
 
+  let data_token  = "";
+
   const saveJWT = async (jwt) => {
     try {
       let data = {
         khonnect_id: jwt.user_id,
-        jwt: jwt,
+        jwt: {...jwt, metadata:[{token: data_token}]},
       };
 
       let response = await WebApiPeople.saveJwt(data);
-
       if (response.status == 200) {
         if (response.data.is_active) return true;
         return false;
@@ -115,8 +116,7 @@ const LoginForm = ({
       })
         .then(function (response) {
           if (response.status === 200) {
-            let data_token  = response['data']['token']
-            console.log('token =>,', response['data']['token']);
+            data_token  = response['data']['token'];
             let token = jwt_decode(response.data.token);
             if (setKhonnectId) {
               setKhonnectId(token.user_id);
@@ -128,12 +128,9 @@ const LoginForm = ({
                   props
                     .setUserPermissions(token.perms)
                     .then((response) => {
-                      console.log('tokenn', data_token);
                       message.success("Acceso correcto.");
                       delete token.perms;
-                      Cookies.set("token_user", data_token)
                       Cookies.set("token", token);
-
                       setTimeout(()=>{
                         setLoading(false);
                         router.push({

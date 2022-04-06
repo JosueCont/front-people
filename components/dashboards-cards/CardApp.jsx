@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styled from '@emotion/styled';
 import { Card, Row, Col, Space, Button, Divider } from 'antd';
-import { logoutAuth } from '../../libs/auth';
-import {
-    MenuUnfoldOutlined,
-    UserOutlined,
-    AppstoreOutlined,
-    LogoutOutlined
-} from '@ant-design/icons';
 import Cookies from "js-cookie";
-import jwt_decode from "jwt-decode";
-import WebApiPeople from '../../api/WebApiPeople';
+import { connect } from 'react-redux';
 
 const ContentApps = styled.div`
     & .ant-card{
@@ -76,7 +68,7 @@ const ContentApps = styled.div`
     }
 `;
 
-const CardApps = ({...props}) => {
+const CardApps = ({user, ...props}) => {
     
     const defaultPhoto =
     "https://cdn-icons-png.flaticon.com/512/219/219986.png";
@@ -91,14 +83,14 @@ const CardApps = ({...props}) => {
     "https://cdn-icons-png.flaticon.com/512/236/236822.png";
 
     const linkToProfile = () =>{
-        const token = Cookies.get("token_user");
+        const token = user.jwt_data.metadata.at(-1).token;
         const url = `https://demo.myaccount.hiumanlab.com/validation?token=${token}`;
         // const url = `http://demo.localhost:3001/validation?token=${token}`;
         redirectTo(url);
     }
 
     const linktToIsysa = () =>{
-        const token = Cookies.get("token_user");
+        const token = user.jwt_data.metadata.at(-1).token;
         const url = `https://isysa.social.hiumanlab.com/validation?token=${token}`;
         redirectTo(url);
     }
@@ -150,4 +142,10 @@ const CardApps = ({...props}) => {
   )
 }
 
-export default CardApps
+const mapState = (state) => {
+    return {
+        user: state.userStore.user
+    }
+}
+
+export default connect(mapState)(CardApps);

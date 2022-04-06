@@ -12,6 +12,7 @@ import {
   Modal,
   Select,
   Checkbox,
+  Tabs,
 } from "antd";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
@@ -21,10 +22,7 @@ import {
   ExclamationCircleOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import {
-  getFixedConcept,
-  getGroupFixedConcept,
-} from "../../redux/catalogCompany";
+import { getFixedConcept, getGroupFixedConcept } from "../../redux/payrollDuck";
 import {
   messageDeleteSuccess,
   messageError,
@@ -35,8 +33,10 @@ import WebApiPayroll from "../../api/WebApiPayroll";
 
 const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
+  const { TabPane } = Tabs;
   const [edit, setEdit] = useState(false);
   const [form] = Form.useForm();
+  const [formG] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [deleted, setDeleted] = useState({});
   const [id, setId] = useState("");
@@ -44,11 +44,9 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   const [perceptionsCat, setPerceptionsCat] = useState([]);
   const [deductionsCat, setDeductionsCat] = useState([]);
   const [otherPaymentsCat, setOtherPaymentsCat] = useState([]);
-  const [visible, setVisible] = useState(false);
-  const [concepKeys, setConcepKeys] = useState([]);
   const [concepSelect, setConcepSelect] = useState([]);
-  const [nameGroup, setNameGroup] = useState(null);
-  const [groups, setGroups] = useState(false);
+  const [key, setKey] = useState(1);
+  const [catalog, setCat] = useState([]);
 
   const data = [
     {
@@ -100,51 +98,53 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                   <EyeOutlined
                     onClick={() =>
                       Modal.info({
-                        title: groups
-                          ? "Detalle del grupo"
-                          : "Detalle del concepto",
-                        content: groups ? (
-                          <>
-                            <Row>
-                              <span style={{ fontWeight: "bold" }}>
-                                Nombre:
-                              </span>
-                              {item.name}
-                            </Row>
-                            <Row>
-                              <span style={{ fontWeight: "bold" }}>
-                                Conceptos
-                              </span>
-                            </Row>
-                            {item.fixed_concept.map((a) => {
-                              return (
-                                <>
-                                  <Row>{a.name}</Row>
-                                </>
-                              );
-                            })}
-                          </>
-                        ) : (
-                          <>
-                            <Row>
-                              <span style={{ fontWeight: "bold" }}>
-                                Nombre:
-                              </span>
-                              {item.name}
-                            </Row>
-                            {data.map((a) => {
-                              console.log(item);
-                              return (
-                                <Row>
-                                  <span style={{ fontWeight: "bold" }}>
-                                    {a.label}:
-                                  </span>
-                                  {item[a.name] ? "Si" : "No"}
-                                </Row>
-                              );
-                            })}
-                          </>
-                        ),
+                        title:
+                          key == 2
+                            ? "Detalle del grupo"
+                            : "Detalle del concepto",
+                        content:
+                          key == 2 ? (
+                            <>
+                              <Row>
+                                <span style={{ fontWeight: "bold" }}>
+                                  Nombre:
+                                </span>
+                                {item.name}
+                              </Row>
+                              <Row>
+                                <span style={{ fontWeight: "bold" }}>
+                                  Conceptos
+                                </span>
+                              </Row>
+                              {item.fixed_concept.map((a) => {
+                                return (
+                                  <>
+                                    <Row>{a.name}</Row>
+                                  </>
+                                );
+                              })}
+                            </>
+                          ) : (
+                            <>
+                              <Row>
+                                <span style={{ fontWeight: "bold" }}>
+                                  Nombre:
+                                </span>
+                                {item.name}
+                              </Row>
+                              {data.map((a) => {
+                                console.log(item);
+                                return (
+                                  <Row>
+                                    <span style={{ fontWeight: "bold" }}>
+                                      {a.label}:
+                                    </span>
+                                    {item[a.name] ? "Si" : "No"}
+                                  </Row>
+                                );
+                              })}
+                            </>
+                          ),
                       })
                     }
                   />
@@ -164,7 +164,9 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
               {permissions.edit && (
                 <Col className="gutter-row" offset={1}>
                   <EditOutlined
-                    onClick={() => (groups ? null : editRegister(item, "dep"))}
+                    onClick={() =>
+                      key == 2 ? editGroup(item) : editRegister(item)
+                    }
                   />
                 </Col>
               )}
@@ -209,11 +211,19 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       );
     }
   }, [props.perceptions_int, props.deductions_int, props.other_payments_int]);
+
   const resetForm = () => {
     form.resetFields();
+    formG.resetFields();
     setEdit(false);
     setId("");
   };
+
+  useEffect(() => {
+    if (props.fixed_concept && key == 1) setCat(props.fixed_concept);
+    if (props.group_fixed_concept && key == 2)
+      setCat(props.group_fixed_concept);
+  }, [props.fixed_concept, props.group_fixed_concept, key]);
 
   const onFinishForm = (value) => {
     value.node = currentNode.id;
@@ -246,7 +256,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
     }
   };
 
-  const editRegister = (item, param) => {
+  const editRegister = (item) => {
     data.map((a) => {
       let checked = document.getElementById(a.name);
       if (item[a.name]) checked.click();
@@ -312,7 +322,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
         },
         cancelText: "Cancelar",
         onOk() {
-          groups ? deleteGroup() : deleteRegister();
+          key == 2 ? deleteGroup() : deleteRegister();
         },
       });
     }
@@ -378,237 +388,235 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
     });
   };
 
-  const selectItem = {
-    selectedRowKeys: concepKeys,
-    onChange: (selectedRowKeys, selectedRows) => {
-      setConcepKeys(selectedRowKeys);
-      setConcepSelect(selectedRows);
-    },
+  const editGroup = (item) => {
+    formG.setFieldsValue({
+      name: item.name,
+      fixed_concept: item.fixed_concept.map((i) => {
+        return i.id;
+      }),
+    });
+    setEdit(true);
+    setId(item.id);
   };
-
-  const SelectRows = ({ data }) => {
-    return (
-      <>
-        {data.map((item, i) => {
-          return (
-            <Row>
-              {i + 1}.- {item.name}
-            </Row>
-          );
-        })}
-      </>
-    );
-  };
-
-  const viewModal = () => {
-    visible ? setVisible(false) : setVisible(true);
-  };
-
-  const saveGroup = async () => {
+  const saveGroup = async (value) => {
     setLoading(true);
-    const data = {
-      node: currentNode.id,
-      name: nameGroup,
-      fixed_concept: concepKeys,
-    };
-    await WebApiPayroll.groupFixedConcept("post", data)
-      .then((response) => {
-        setLoading(false);
-        message.success(messageSaveSuccess);
-        props.getGroupFixedConcept(currentNode.id);
-        setVisible(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-        setNameGroup(null);
-        setConcepKeys([]);
-        setConcepSelect([]);
-        message.error(messageError);
-        setVisible(false);
-      });
+    let url = "";
+    if (!edit) value.node = currentNode.id;
+    else url = `${id}/`;
+    try {
+      await WebApiPayroll.groupFixedConcept(edit ? "put" : "post", value, url);
+      props
+        .getGroupFixedConcept(currentNode.id)
+        .then((response) => {
+          setLoading(false);
+          resetForm();
+          message.success(messageSaveSuccess);
+        })
+        .catch((error) => {
+          setLoading(false);
+          setConcepSelect([]);
+          message.error(messageError);
+        });
+    } catch (error) {
+      setId("");
+      setEdit(false);
+      setLoading(false);
+      resetForm();
+      message.error("Ocurrio un error intente de nuevo.");
+    }
   };
 
-  const deleteGroup = async (id) => {
-    setLoading(true);
-    await WebApiPayroll.groupFixedConcept("delete", null, `${deleted.id}/`)
-      .then((response) => {
-        setLoading(false);
-        message.success(messageSaveSuccess);
-        props.getGroupFixedConcept(currentNode.id);
-        setDeleted({});
-      })
-      .catch((error) => {
-        setLoading(false);
-        setNameGroup(null);
-        setConcepKeys([]);
-        setConcepSelect([]);
-        message.error(messageError);
-        setDeleted({});
-      });
+  const deleteGroup = async () => {
+    try {
+      await WebApiPayroll.groupFixedConcept("delete", null, `${deleted.id}/`);
+      props
+        .getGroupFixedConcept(currentNode.id)
+        .then((response) => {
+          resetForm();
+          message.success(messageDeleteSuccess);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+          message.error(messageError);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
-
-  useEffect(() => {
-    console.log(props.group_fixed_concept);
-  }, [props.group_fixed_concept]);
 
   return (
     <>
       {edit ? <Title style={{ fontSize: "20px" }}>Editar</Title> : <></>}
-      {permissions.create && (
-        <Form layout={"vertical"} form={form} onFinish={onFinishForm}>
-          <Row gutter={20}>
-            <Col lg={6} xs={22} md={12}>
-              <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} md={12}>
-              <Form.Item
-                name=""
-                label="Tipo de concepto"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  options={concept_type}
-                  onChange={(value) => setConceptType(value)}
-                />
-              </Form.Item>
-            </Col>
-            {conceptType > 0 && (
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item
-                  name={
-                    conceptType == 1
-                      ? "perception_type"
-                      : conceptType == 2
-                      ? "deduction_type"
-                      : "other_payment_type"
-                  }
-                  label={
-                    conceptType == 1
-                      ? "Percepcion"
-                      : conceptType == 2
-                      ? "Deduccion"
-                      : "Otro pago"
-                  }
-                  rules={[ruleRequired]}
-                >
-                  <Select
-                    options={
-                      conceptType == 1
-                        ? perceptionsCat
-                        : conceptType == 2
-                        ? deductionsCat
-                        : otherPaymentsCat
-                    }
-                  />
-                </Form.Item>
-              </Col>
-            )}
-            <Col lg={6} xs={22} md={12}>
-              <Form.Item
-                name="data_type"
-                label="Tipo de dato"
-                rules={[ruleRequired]}
-              >
-                <Select options={data_type} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} md={12}>
-              <Form.Item name="datum" label="Valor" rules={[ruleRequired]}>
-                <Input type={"number"} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} md={12}>
-              <Form.Item
-                initialValue={1}
-                name="based_on"
-                label="Basado en"
-                rules={[ruleRequired]}
-              >
-                <Select options={based_on} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} md={12}>
-              <Form.Item
-                initialValue={0}
-                name="salary_type"
-                label="Typo de sueldo"
-              >
-                <Select options={type_salary} />
-              </Form.Item>
-            </Col>
-            <Col lg={6} xs={22} md={12}>
-              <Form.Item
-                initialValue={0}
-                name="max_delays"
-                label="Maximo de retardos"
-              >
-                <Input type={"number"} />
-              </Form.Item>
-            </Col>
-            <RenderConditions data={data} />
-          </Row>
-          <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
-            <Col>
-              <Button onClick={resetForm}>Cancelar</Button>
-            </Col>
-            <Col>
-              <Button type="primary" htmlType="submit">
-                Guardar
-              </Button>
-            </Col>
-            {concepKeys.length > 0 && (
-              <Col>
-                <Button type="primary" onClick={viewModal}>
-                  Crear Grupo
-                </Button>
-              </Col>
-            )}
-          </Row>
-        </Form>
-      )}
+      <Tabs
+        defaultActiveKey="1"
+        type="card"
+        size={"small"}
+        onChange={(value) => setKey(parseInt(value))}
+      >
+        <TabPane tab="Conceptos fijos" key={"1"}>
+          {key == 1 && (
+            <Form layout={"vertical"} form={form} onFinish={onFinishForm}>
+              <Row gutter={20}>
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    name=""
+                    label="Tipo de concepto"
+                    rules={[ruleRequired]}
+                  >
+                    <Select
+                      options={concept_type}
+                      onChange={(value) => setConceptType(value)}
+                    />
+                  </Form.Item>
+                </Col>
+                {conceptType > 0 && (
+                  <Col lg={6} xs={22} md={12}>
+                    <Form.Item
+                      name={
+                        conceptType == 1
+                          ? "perception_type"
+                          : conceptType == 2
+                          ? "deduction_type"
+                          : "other_payment_type"
+                      }
+                      label={
+                        conceptType == 1
+                          ? "Percepcion"
+                          : conceptType == 2
+                          ? "Deduccion"
+                          : "Otro pago"
+                      }
+                      rules={[ruleRequired]}
+                    >
+                      <Select
+                        options={
+                          conceptType == 1
+                            ? perceptionsCat
+                            : conceptType == 2
+                            ? deductionsCat
+                            : otherPaymentsCat
+                        }
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    name="data_type"
+                    label="Tipo de dato"
+                    rules={[ruleRequired]}
+                  >
+                    <Select options={data_type} />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item name="datum" label="Valor" rules={[ruleRequired]}>
+                    <Input type={"number"} />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    initialValue={1}
+                    name="based_on"
+                    label="Basado en"
+                    rules={[ruleRequired]}
+                  >
+                    <Select options={based_on} />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    initialValue={0}
+                    name="salary_type"
+                    label="Typo de sueldo"
+                  >
+                    <Select options={type_salary} />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} md={12}>
+                  <Form.Item
+                    initialValue={0}
+                    name="max_delays"
+                    label="Maximo de retardos"
+                  >
+                    <Input type={"number"} />
+                  </Form.Item>
+                </Col>
+                <RenderConditions data={data} />
+              </Row>
+              <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
+                <Col>
+                  <Button onClick={resetForm}>Cancelar</Button>
+                </Col>
+                <Col>
+                  <Button type="primary" htmlType="submit">
+                    Guardar
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
+        </TabPane>
+        <TabPane tab="Grupos" key={"2"}>
+          {key == 2 && (
+            <>
+              <Form layout={"vertical"} form={formG} onFinish={saveGroup}>
+                <Row gutter={20} style={{ marginBottom: "10px" }}>
+                  <Col span={8}>
+                    <Form.Item name="name">
+                      <Input placeholder="Nombre del grupo" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item name="fixed_concept">
+                      <Select
+                        placeholder="Conceptos fijos"
+                        style={{ width: "100%" }}
+                        mode="multiple"
+                        allowClear
+                        options={props.fixed_concept.map((item) => {
+                          return { label: item.name, value: item.id };
+                        })}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
+                  <Col>
+                    <Button type="primary" onClick={resetForm}>
+                      Cancelar
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button type="primary" htmlType="submit">
+                      Guardar
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </>
+          )}
+        </TabPane>
+      </Tabs>
+
       <Spin tip="Cargando..." spinning={loading}>
-        <Row justify="end">
-          <Col style={{ marginBottom: "10px" }}>
-            <Button onClick={() => setGroups(!groups)}>
-              <EyeOutlined />
-              {groups ? "Conceptos" : "Grupos"}
-            </Button>
-          </Col>
-        </Row>
         <Table
           columns={columns}
-          dataSource={groups ? props.group_fixed_concept : props.fixed_concept}
+          dataSource={catalog}
           locale={{
             emptyText: loading
               ? "Cargando..."
               : "No se encontraron resultados.",
           }}
-          rowSelection={!groups && selectItem}
         />
       </Spin>
-      <Modal
-        onCancel={() => {
-          viewModal(), setConcepKeys([]), setConcepSelect([]);
-        }}
-        title="Grupo de conceptos fijos"
-        visible={visible}
-        okText="Guardar"
-        onOk={saveGroup}
-        okButtonProps={{
-          disabled: nameGroup && nameGroup.trim() != "" ? false : true,
-          loading: loading,
-        }}
-      >
-        <Row style={{ marginBottom: "10px" }}>
-          <Input
-            placeholder="Nombre del grupo"
-            onChange={(value) => setNameGroup(value.target.value)}
-          />
-        </Row>
-        <SelectRows data={concepSelect} />
-      </Modal>
     </>
   );
 };
@@ -616,10 +624,10 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
 const mapState = (state) => {
   return {
     fixed_concept: state.payrollStore.fixed_concept,
+    group_fixed_concept: state.payrollStore.group_fixed_concept,
     perceptions_int: state.fiscalStore.perceptions_int,
     deductions_int: state.fiscalStore.deductions_int,
     other_payments_int: state.fiscalStore.other_payments_int,
-    group_fixed_concept: state.payrollStore.group_fixed_concept,
   };
 };
 
