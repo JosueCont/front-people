@@ -108,7 +108,7 @@ const GroupsKuiz = () =>{
     }    
 
     return(
-        <MainLayout currentKey="groups_kuiz">
+        <MainLayout currentKey="groups_kuiz" defaultOpenKeys={["kuiss"]}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={"pointer"}
