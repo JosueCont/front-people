@@ -121,7 +121,7 @@ const GroupsPeople = () =>{
     };
 
     return(
-        <MainLayout currentKey="groups_people">
+        <MainLayout currentKey="groups_people" defaultOpenKeys={["people"]}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={"pointer"}
