@@ -308,7 +308,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
   ];
 
   return (
-    <MainLayout currentKey="surveys">
+    <MainLayout currentKey="surveys" defaultOpenKeys={["kuiss"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -317,7 +317,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
           {" "}
           Inicio{" "}
         </Breadcrumb.Item>
-        <Breadcrumb.Item> Encuestas </Breadcrumb.Item>
+        <Breadcrumb.Item> Evaluaciones </Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row>
