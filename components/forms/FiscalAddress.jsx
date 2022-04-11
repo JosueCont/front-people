@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import WebApiFiscal from "../../api/WebApiFiscal";
 
-const FiscalAddress = ({ node, formAddress, ...props }) => {
+const FiscalAddress = ({ node, form, ...props }) => {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
 
@@ -52,7 +52,7 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
   const submitForm = (values) => {};
 
   return (
-    <Form layout={"vertical"} form={formAddress} onFinish={submitForm}>
+    <Form layout={"vertical"} form={form}>
       <Row gutter={30}>
         <Col lg={8} xs={22} md={6}>
           <Form.Item name="postal_code" label="Codigo postal">
@@ -105,11 +105,6 @@ const FiscalAddress = ({ node, formAddress, ...props }) => {
         <Col lg={8} xs={22} md={6}>
           <Form.Item name="interior_number" label="Numero interior">
             <Input maxLength={10} />
-          </Form.Item>
-        </Col>
-        <Col span={24} style={{ textAlign: "end" }}>
-          <Form.Item>
-            <Button type="submit">Guardar</Button>
           </Form.Item>
         </Col>
       </Row>

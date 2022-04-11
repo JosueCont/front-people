@@ -6,19 +6,14 @@ import { withAuthSync } from "../../libs/auth";
 import FiscalInformationNode from "../../components/payroll/forms/FiscalInformationNode";
 import { connect } from "react-redux";
 import GeneralData from "../../components/business/GeneralData";
-import LegalRepresentative from "../../components/forms/LegalRepresentative";
-import PatronalRegistration from "../../components/forms/PatronalRegistration";
+import WebApiPeople from "../../api/WebApiPeople";
 
 const ConfigCompany = ({ ...props }) => {
   let router = useRouter();
+  const [loading, setLoading] = useState(true);
   const [company, setCompany] = useState();
-  const [fiscal, setFiscal] = useState(false);
   const { Title } = Typography;
   const { TabPane } = Tabs;
-
-  useLayoutEffect(() => {
-    if (props.config) setFiscal(props.config.nomina_enabled);
-  }, [props.config]);
 
   return (
     <MainLayout currentKey="2">
@@ -39,30 +34,28 @@ const ConfigCompany = ({ ...props }) => {
           Datos de la empresa
         </Breadcrumb.Item>
       </Breadcrumb>
-      <Spin tip="Cargando..." spinning={false}>
+      <Spin tip="Cargando..." spinning={loading}>
         <div
           className="container-border-radius"
           style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
           {company && <Title level={3}>{company}</Title>}
-
-          <Tabs tabPosition={"left"}>
-            <TabPane tab="General" key="tab_1">
-              <GeneralData config={props.config} setCompany={setCompany} />
-            </TabPane>
-            <TabPane tab="Fiscal" key="tab_2">
-              <FiscalInformationNode
-                node_id={router.query.id}
-                fiscal={fiscal}
-              />
-            </TabPane>
-            <TabPane tab="Representante legal" key="tab_3">
+          {!loading && (
+            <Tabs tabPosition={"left"}>
+              <TabPane tab="General" key="tab_1">
+                <GeneralData setCompany={setCompany} />
+              </TabPane>
+              <TabPane tab="Informacion fiscal" key="tab_2">
+                <FiscalInformationNode node_id={router.query.id} />
+              </TabPane>
+              {/* <TabPane tab="Representante legal" key="tab_3">
               <LegalRepresentative node={router.query.id} />
             </TabPane>
             <TabPane tab="Registro patronal" key="tab_4">
               <PatronalRegistration />
-            </TabPane>
-          </Tabs>
+            </TabPane> */}
+            </Tabs>
+          )}
         </div>
       </Spin>
     </MainLayout>

@@ -29,6 +29,31 @@ export const asyncForEach = async (array, callback) => {
     await callback(array[index], index, array);
   }
 };
+export const downLoadFileUri = async (url, name = "example.xls") => {
+  // const type = response.headers["content-type"];
+  // const blob = new Blob([response.data], {
+  //   type: type,
+  //   encoding: "UTF-8",
+  // });
+  const link = document.createElement("a");
+  link.href = window.URL.createObjectURL(url);
+  link.download = name;
+  link.click();
+};
+export const downLoadFileBlob = async (
+  data,
+  contentType,
+  name = "example.xlsx"
+) => {
+  const blob = new Blob([data], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    encoding: "UTF-8",
+  });
+  const link = document.createElement("a");
+  link.href = window.URL.createObjectURL(blob);
+  link.download = name;
+  link.click();
+};
 
 export const UserPermissions = (permits = null, is_admin = false) => {
   let perms = {

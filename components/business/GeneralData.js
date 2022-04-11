@@ -14,11 +14,6 @@ const GeneralData = ({ setCompany, ...props }) => {
 
   useEffect(() => {
     {
-      Axios.get(API_URL + "/business/node/" + router.query.id + "/")
-        .then(function (response) {
-          setCompany(response.data.name);
-        })
-        .catch();
       Axios.get(API_URL + `/business/node-information/?node=${router.query.id}`)
         .then(function (response) {
           if (response.data.results.length > 0) {
