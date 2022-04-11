@@ -39,6 +39,7 @@ const FormPaymentCalendar = ({
   const [activationDate, setActivationtDate] = useState("");
   const [period, setPeriod] = useState("");
   const [paymentPeriodicity, setPaymentPeriodicity] = useState([]);
+  const [incidenceStart, setIncidenceStart] = useState("");
 
   /* Const switchs */
   const [adjustmentAppy, setAdjustmentApply] = useState(false);
@@ -109,8 +110,8 @@ const FormPaymentCalendar = ({
           perception_type: item.perception_type,
           start_date: item.start_date ? moment(item.start_date) : "",
           period: item.period ? moment().year(item.period) : "",
-          start_incidence: item.start_incidence
-            ? moment(item.start_incidence)
+          incidence_start: item.incidence_start
+            ? moment(item.incidence_start)
             : "",
           // end_incidence: item.end_incidence,
           pay_before: item.pay_before ? parseInt(item.pay_before) : 0,
@@ -125,6 +126,7 @@ const FormPaymentCalendar = ({
         setPaymentSunday(item.payment_sunday);
         setStartDate(item.start_date);
         setActivationtDate(item.activation_date);
+        setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
       }
       setLoading(false);
@@ -168,6 +170,9 @@ const FormPaymentCalendar = ({
   const onChangeActivationDate = (date, dateString) => {
     setActivationtDate(dateString);
   };
+  const onChangeIncidenceStart = (date, dateString) => {
+    setIncidenceStart(dateString);
+  };
 
   const onChangePeriod = (date, dateString) => {
     setPeriod(dateString);
@@ -190,16 +195,16 @@ const FormPaymentCalendar = ({
     if (period) {
       value.period = parseInt(period);
     }
-    if (value.start_incidence) {
-      value.start_incidence = parseInt(value.start_incidence);
+    if (incidenceStart) {
+      value.incidence_start = incidenceStart;
     } else {
-      value.start_incidence = 0;
+      value.incidence_start = 0;
     }
-    if (value.end_incidence) {
-      value.end_incidence = parseInt(value.end_incidence);
-    } else {
-      value.end_incidence = 0;
-    }
+    // if (value.end_incidence) {
+    //   value.end_incidence = parseInt(value.end_incidence);
+    // } else {
+    //   value.end_incidence = 0;
+    // }
 
     if (idPaymentCalendar) {
       value.id = idPaymentCalendar;
@@ -422,13 +427,13 @@ const FormPaymentCalendar = ({
             </Col>
             <Col lg={8} xs={22}>
               <Form.Item
-                name="start_incidence"
+                name="incidence_start"
                 label="Inicio de incidencia"
                 maxLength={2}
               >
                 <DatePicker
                   style={{ width: "100%" }}
-                  onChange={onChangePeriod}
+                  onChange={onChangeIncidenceStart}
                   placeholder=""
                   moment={"YYYY"}
                 />

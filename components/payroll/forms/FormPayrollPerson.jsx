@@ -183,16 +183,23 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const savePayrollPerson = async (data) => {
     try {
       let response = await WebApiPayroll.createPayrollPerson(data);
-      message.success({
-        content: "Guardado correctamente.",
-        className: "custom-class",
-      });
-      if (response.data) {
-        formPayrollPerson.setFieldsValue({
-          integrated_daily_salary: response.data.integrated_daily_salary,
+      if (response.status == 200) {
+        message.success({
+          content: "Guardado correctamente.",
+          className: "custom-class",
+        });
+        if (response.data) {
+          formPayrollPerson.setFieldsValue({
+            integrated_daily_salary: response.data.integrated_daily_salary,
+          });
+        }
+        getPayrollPerson();
+      } else {
+        message.warning({
+          content: response.data.message,
+          className: "custom-class",
         });
       }
-      getPayrollPerson();
     } catch (error) {
       console.log(error);
     }

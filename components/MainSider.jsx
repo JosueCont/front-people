@@ -355,14 +355,6 @@ const MainSider = ({
                 >
                   Calculo de nómina
                 </Menu.Item>
-                <Menu.Item
-                  key="cfdi"
-                  onClick={() =>
-                    router.push({ pathname: "/payroll/payrollVaucher" })
-                  }
-                >
-                  Comprobantes fiscales
-                </Menu.Item>
               </>
             </SubMenu>
           )}
@@ -431,13 +423,13 @@ const MainSider = ({
 
           {props.config && props.config.kuiz_enabled && (
             <SubMenu
-              key="kuis"
+              key="kuiss"
               title="Kuiz"
               className="subMainMenu"
               icon={<QuestionCircleOutlined />}
             >
               <Menu.Item
-                key="suverys"
+                key="surveys"
                 onClick={() => router.push({ pathname: "/assessment/surveys" })}
               >
                 Encuestas

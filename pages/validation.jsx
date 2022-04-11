@@ -5,7 +5,10 @@ import { useRouter } from 'next/router';
 import { validateTokenKhonnect } from '../api/apiKhonnect';
 import WebApiIntranet from '../api/WebApiIntranet';
 import WebApiPeople from '../api/WebApiPeople';
-import { setUserPermissions } from '../redux/UserDuck';
+import {
+    doGetGeneralConfig,
+    setUserPermissions
+} from '../redux/UserDuck';
 import {
     LoadingOutlined,
     CloseCircleFilled,
@@ -27,40 +30,24 @@ import {
 } from '../libs/auth';
 
 
-const validation = ({general_config, setUserPermissions, ...props}) => {
+const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...props}) => {
 
     const router = useRouter();
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [generalConfig, setGeneralConfig] = useState({});
 
     useEffect(()=>{
-        getConfigApp()
+        doGetGeneralConfig()
     },[])
 
-    // useEffect(()=>{
-    //     if(router.query.token && general_config){
-    //         validateToken(router.query.token)
-    //     }
-    // },[router.query])
-
     useEffect(()=>{
-        if(Object.keys(generalConfig).length > 0){
+        if(Object.keys(general_config).length > 0){
             if(router.query.token){
                 validateToken(router.query.token)
             }
         }
-    },[generalConfig])
-
-    const getConfigApp = async () =>{
-        try {
-            let response = await WebApiPeople.getGeneralConfig();
-            setGeneralConfig(response.data);
-        } catch (e) {
-            console.log(e)
-        }
-    }
+    },[general_config])
 
     const accessDenied = () =>{
         setLoading(false)
@@ -70,13 +57,12 @@ const validation = ({general_config, setUserPermissions, ...props}) => {
         },2000)
     }
 
-    const accessSuccess = (token, jwt) =>{
-        delete jwt.perms;
+    const accessSuccess = (jwt) =>{
+        if(jwt.perms) delete jwt.perms;
+        Cookies.remove("token")
         Cookies.set("token", jwt)
-        Cookies.set("token_user", token)
         setLoading(false)
         setSuccess(true)
-        delStorage("token")
         delStorage("jwt")
         setTimeout(()=>{
             router.push({pathname: "/select-company"})
@@ -86,10 +72,26 @@ const validation = ({general_config, setUserPermissions, ...props}) => {
     const validateToken = async (token) =>{
         try {
             let response = await validateTokenKhonnect(general_config, {token: token});
-            let jwt = jwtDecode(response.data.data.token);
-            setStorage("token", response.data.data.token);
+            // let jwt = jwtDecode(response.data.data.token);
+            // setStorage("token", response.data.data.token);
+            // setStorage("jwt", JSON.stringify(jwt));
+            // validateIntranet(jwt.user_id)
+            validateJWT(response.data.data.token)
+        } catch (e) {
+            console.log(e)
+            accessDenied()
+        }
+    }
+
+    const validateJWT = async (token) =>{
+        try {
+            let jwt = jwtDecode(token);
             setStorage("jwt", JSON.stringify(jwt));
-            validateIntranet(jwt.user_id)
+            let response = await WebApiPeople.saveJwt({
+                khonnect_id: jwt.user_id,
+                jwt: {...jwt, metadata: [{token: token}]}
+            });
+            validateIntranet(jwt.user_id);
         } catch (e) {
             console.log(e)
             accessDenied()
@@ -109,20 +111,6 @@ const validation = ({general_config, setUserPermissions, ...props}) => {
     const validateProfile = async (id) =>{
         try {
             await WebApiPeople.getPerson(id);
-            validateJWT()
-        } catch (e) {
-            console.log(e)
-            accessDenied()
-        }
-    }
-
-    const validateJWT = async () =>{
-        try {
-            let jwt = JSON.parse(getStorage("jwt"))
-            await WebApiPeople.saveJwt({
-                khonnect_id: jwt.user_id,
-                jwt: jwt
-            });
             validatePermissions()
         } catch (e) {
             console.log(e)
@@ -131,11 +119,10 @@ const validation = ({general_config, setUserPermissions, ...props}) => {
     }
 
     const validatePermissions = async () =>{
-        let token = getStorage("token");
         let jwt = JSON.parse(getStorage("jwt"))
         let resp = await setUserPermissions(jwt.perms);
         if(resp){
-            accessSuccess(token, jwt)
+            accessSuccess(jwt)
         }else{
             accessDenied()
         }
@@ -171,4 +158,9 @@ const mapState = (state) => {
     }
 };
 
-export default connect(mapState, {setUserPermissions})(validation);
+export default connect(
+    mapState, {
+        setUserPermissions,
+        doGetGeneralConfig
+    }
+)(validation);
