@@ -229,6 +229,9 @@ const MainLayout = ({
               box-shadow: none;
             }
 
+            .tableAssesmentsSelected{
+              border: solid 1px #8e88e7;
+            }
 
               `}
       />

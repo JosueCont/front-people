@@ -16,6 +16,7 @@ const initialData = {
   temp: [],
   active_modal: "",
   fetching: true,
+  categories_assessment: []
 };
 
 const assessmentReducer = (state = initialData, action) => {
@@ -109,6 +110,12 @@ const assessmentReducer = (state = initialData, action) => {
         active_modal: "",
         fetching: false,
       };
+    case types.GET_CATEGORIES_SUCCESS:
+      console.log("action.payload", action.payload);
+        return {
+          ...state,
+          categories_assessment: action.payload,
+        };
     default:
       return state;
   }
@@ -557,5 +564,21 @@ export const answerDeleteAction = (item) => {
     }
   };
 };
+
+export const getCategories = () => {
+  console.log("getCategories");
+  return async (dispatch) => {
+    dispatch({ type: types.FETCHING, payload: true });
+    try {
+      let response = await WebApiAssessment.getCategoriesAssessment();
+      console.log("response =>", response);
+      if(response.status === 200){
+        dispatch({ type: types.GET_CATEGORIES_SUCCESS, payload: response.data });
+      }
+    } catch (error) {
+      
+    }
+  }
+}
 
 export default assessmentReducer;

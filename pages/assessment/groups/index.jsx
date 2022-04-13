@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from "react";
 import MainLayout from "../../../layout/MainLayout";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { Breadcrumb, message } from "antd";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsSearch from "../../../components/assessment/groups/AssessmentsSearch";
 import AssessmentsTable from "../../../components/assessment/groups/AssessmentsTable";
+import { getCategories } from '../../../redux/assessmentDuck'
 
-const GroupsKuiz = () =>{
+const GroupsKuiz = ({getCategories,assessmentStore , ...props}) =>{
     const router = useRouter();
     const currenNode = useSelector(state => state.userStore.current_node)
     const [listGroups, setLisGroups] = useState({});
     const [surveyList, setSurveyList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [numPage, setNumPage] = useState(1);
+
+    useEffect(() => {
+      getCategories()
+    }, [])
+    
 
     useEffect(()=>{
         if(currenNode?.id){
@@ -142,4 +148,10 @@ const GroupsKuiz = () =>{
     )
 }
 
-export default withAuthSync(GroupsKuiz)
+const mapState = (state) => {
+  return {
+    assessmentStore: state.assessmentStore,
+  };
+};
+
+export default  connect(mapState,{getCategories})(withAuthSync(GroupsKuiz))

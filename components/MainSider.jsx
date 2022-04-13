@@ -432,7 +432,7 @@ const MainSider = ({
                 key="surveys"
                 onClick={() => router.push({ pathname: "/assessment/surveys" })}
               >
-                Encuestas
+                Evaluaciones
               </Menu.Item>
               <Menu.Item
                 key="groups_kuiz"

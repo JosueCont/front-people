@@ -12,14 +12,19 @@ import {
     Checkbox,
     message,
     Radio,
-    Tooltip
+    Tooltip,
+    List
 } from "antd";
-import { DeleteOutlined, SearchOutlined, PlusOutlined} from "@ant-design/icons";
+import { DeleteOutlined, SearchOutlined, PlusOutlined, PlusCircleOutlined, CloseOutlined} from "@ant-design/icons";
 import MyModal from "../../../common/MyModal";
 import { ruleRequired } from "../../../utils/rules";
 import { CustomInput, ButtonDanger, CompactSelect, CompactButton } from "./Styled";
+import { connect } from "react-redux";
+/* import {getListSurveys} from '../../../redux/assessmentDuck'; */
+import WebApiAssessment from '../../../api/WebApiAssessment';
 
-const AssessmentsGroup = ({...props}) =>{
+
+const AssessmentsGroup = ({ assessmentStore, userStore,  ...props}) =>{
 
     const [formGroup] = Form.useForm();
     const { Option } = Select;
@@ -27,17 +32,19 @@ const AssessmentsGroup = ({...props}) =>{
     const [surveysTable, setSurveysTable] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadAdd, setLoadAdd] = useState(false);
+    const [surveyList, setSurveyList] = useState([]);
+    const [fetchingAssessment, setFetchingAssessment] = useState(false)
 
-    useEffect(() => {
+    /* useEffect(() => {
         if(props.surveyList && props.loadData.assessments){
             formGroup.setFieldsValue({name: props.loadData.name})
             filterSurveys(props.loadData.assessments)
         }else if(props.surveyList){
             setSurveysSelect(props.surveyList)
         }
-    },[]);
+    },[]); */
 
-    const filterSurveys = (dataTable) =>{
+    /* const filterSurveys = (dataTable) =>{
         let select = [];
         let table = [];        
         props.surveyList.map((a)=>{
@@ -51,12 +58,12 @@ const AssessmentsGroup = ({...props}) =>{
 
         setSurveysSelect(select)
         setSurveysTable(table)
-    }
+    } */
 
     const onCloseModal = () =>{
         props.close();
-        setSurveysSelect([])
-        setSurveysTable([])
+        /* setSurveysSelect([])
+        setSurveysTable([]) */
     }
 
     const getOnlyIds = () => {
@@ -77,9 +84,41 @@ const AssessmentsGroup = ({...props}) =>{
                 props.actionForm({name: values.name, assessments: ids})
             },2000)
         }else{
-            message.error("Selecciona al menos dos encuestas")
+            message.error("Selecciona al menos dos Evaluaciones")
         }
     }
+
+    const columnsAssessment = [
+        {
+            title: "Nombre",
+            render: (item) => {
+                return (
+                    <div>
+                        {item.name}
+                    </div>
+                );
+            },
+            
+        },
+        {
+            title: "Agregar",
+            width: 50,
+            render: (item, record, index) => {
+                return (
+                    <PlusCircleOutlined style={{ cursor:'pointer' }} onClick={()=>addAssessment(item)} />
+                )
+            },
+        }
+    ]
+
+    const addAssessment = (assessment) =>{
+        setSurveysTable([...surveysTable, assessment])
+    }
+
+    useEffect(() => {
+      console.log(surveysTable);
+    }, [surveysTable])
+    
 
     const colums = [
         {
@@ -98,7 +137,7 @@ const AssessmentsGroup = ({...props}) =>{
             width: 50,
             render: (item, record, index) => {
                 return (
-                    <DeleteOutlined
+                    <CloseOutlined
                         onClick={()=>deleteItem(index)}
                     />
                 )
@@ -116,14 +155,72 @@ const AssessmentsGroup = ({...props}) =>{
     const deleteItem = (index) =>{
         let newList = [...surveysTable];
         newList.splice(index, 1);
-        filterSurveys(newList);
+        setSurveysTable(newList);
     }
+
+    useEffect(()=>{
+        console.log('userStore',userStore);
+        if(userStore.current_node?.id){
+            getSurveys(userStore.current_node.id, "");
+        }
+    },[])
+    
+
+    const onChangeCategory = (categoryId) => {
+        console.log('categoryId',categoryId);
+        console.log(userStore);
+        if(userStore['current_node'] && userStore['current_node']['id']){
+            getSurveys(userStore.current_node.id,categoryId ? `&categories=${categoryId}` : '')
+        }
+        
+    }
+
+    const getSurveys = async (nodeId, queryParam) => {
+        console.log('nodeId',nodeId);
+        console.log('queryParam',queryParam);
+        setSurveyList([])
+        setFetchingAssessment(true);
+        try {
+          let response = await WebApiAssessment.getListSurveys(nodeId, queryParam);
+          console.log('response___',response);
+          
+          setSurveyList(response.data);
+          
+          setFetchingAssessment(false);
+        } catch (error) {
+          console.log(error);
+        }
+    }
+
+    const getFilterAssessments = () =>{
+        let prevList = [...surveyList];
+        let newList = [];
+
+        prevList.map(item =>{ 
+            let found = false;
+            if(surveysTable.length < 1){
+                found = false;
+            }else{
+                surveysTable.map(record => {
+                    if ( record.id === item.id ){
+                        found = true;
+                    }
+                })
+            }
+            if(!found){
+                newList.push(item);
+            }
+        })
+        return newList;
+    }
+    
 
     return(
         <MyModal
             title={props.title}
             visible={props.visible}
             close={onCloseModal}
+            widthModal={800}
         >
             <Form
                 onFinish={onFinish}
@@ -131,7 +228,7 @@ const AssessmentsGroup = ({...props}) =>{
                 requiredMark={false}
                 layout={'vertical'}
             >
-                <Row gutter={[8,16]}>
+                <Row gutter={[25,16]}>
                     <Col span={12}>
                         <Form.Item
                             name={'name'}
@@ -147,7 +244,25 @@ const AssessmentsGroup = ({...props}) =>{
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item name={'assessment'} label={'Seleccionar encuesta'} style={{marginBottom: '0px'}}>
+                        <Form.Item label={'Categoria'}>
+                            <Select
+                                placeholder="Seleccionar encuesta"
+                                onChange={onChangeCategory}
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp="children"
+                                defaultValue={''}
+                            >
+                                <Option value={''}>
+                                    Todas
+                                </Option>
+                                {assessmentStore.categories_assessment?.map(item =>(
+                                    <Option key={item.id} value={item.id}>
+                                        {item.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        {/* <Form.Item name={'assessment'} label={'Seleccionar encuesta'} style={{marginBottom: '0px'}}>
                             <Select
                                 showSearch
                                 placeholder="Seleccionar encuesta"
@@ -167,17 +282,37 @@ const AssessmentsGroup = ({...props}) =>{
                                     </Option>
                                 ))}
                             </Select>
+                        </Form.Item> */}
+                    </Col>
+                    <Col md={12}>
+                        <Form.Item label={'Agregar evaluaciones'}>
+                            <Table
+                                columns={columnsAssessment}
+                                dataSource={getFilterAssessments()}
+                                /* dataSource={
+                                    surveyList.filter(item => !surveysTable.includes(item))
+                                } */
+                                size={'small'}
+                                locale={{
+                                    emptyText: fetchingAssessment ?
+                                    "Cargando..." :
+                                    "No se encontraron resultados."
+                                }}
+                                scroll={{y: 200}}
+                                showHeader={false}
+                                pagination={false}
+                                loading={fetchingAssessment}
+                            />
                         </Form.Item>
                     </Col>
-                    <Col span={24}>
-                        <Form.Item label={'Encuestas seleccionadas'}>
-                            <Table
+                    <Col md={12}>
+                        <Form.Item label={`Evaluaciones seleccionadas (${surveysTable.length})`}>
+                        <Table
                                 rowKey={'id'}
                                 columns={colums}
                                 showHeader={false}
                                 dataSource={surveysTable}
                                 size={'small'}
-                                loading={loading}
                                 locale={{
                                     emptyText: loading ?
                                     "Cargando..." :
@@ -185,6 +320,7 @@ const AssessmentsGroup = ({...props}) =>{
                                 }}
                                 scroll={{y: 200}}
                                 pagination={{ position: ['bottomLeft'], hideOnSinglePage: true }}
+                                className="tableAssesmentsSelected"
                             />
                         </Form.Item>
                     </Col>
@@ -206,5 +342,11 @@ const AssessmentsGroup = ({...props}) =>{
         </MyModal>
     )
 }
+const mapState = (state) => {
+  return {
+    assessmentStore: state.assessmentStore,
+    userStore: state.userStore
+  };
+};
 
-export default AssessmentsGroup
+export default  connect(mapState)(AssessmentsGroup)
