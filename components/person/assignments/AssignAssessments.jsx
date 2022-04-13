@@ -168,7 +168,7 @@ const AssignAssessments = ({...props}) =>{
 
     const columnsInvidual = [
         {
-            title: "Encuestas",
+            title: "Evaluaciones",
             render: (item) => {
                 return (
                     <div>
@@ -203,7 +203,7 @@ const AssignAssessments = ({...props}) =>{
             
         },
         {
-            title: "Encuestas",
+            title: "Evaluaciones",
             render: (item) => {
                 return (
                     <Tag

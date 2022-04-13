@@ -95,7 +95,7 @@ export const companySelected = (data, config) => async (dispatch, getState) => {
         dispatch(doCompanySelectedPayroll(response.data.id));
         dispatch(doFiscalCatalogs(response.data.id));
       }
-      if (config.kuiz_enabled) dispatch(assessmentLoadAction(response.data.id));
+      /* if (config.kuiz_enabled) dispatch(assessmentLoadAction(response.data.id)); */
 
       return true;
     }

@@ -11,7 +11,7 @@ import {
 } from "../../../redux/assessmentDuck";
 import { ruleRequired } from "../../../utils/rules";
 
-const FormAssessment = ({ ...props }) => {
+const FormAssessment = ({assessmentStore,  ...props }) => {
   const dispatch = useDispatch();
   const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 } };
   const [formAssessment] = Form.useForm();
@@ -47,8 +47,9 @@ const FormAssessment = ({ ...props }) => {
   }, [props.loadData]);
 
   useEffect(() => {
-    setLoading(props.assessmentStore.fetching);
-  }, [props.assessmentStore]);
+    console.log('assessmentStore',assessmentStore)
+    setLoading(assessmentStore.fetching);
+  }, [assessmentStore]);
   
   const createData = (obj )=>{
     let newObj = Object.assign(obj)
@@ -213,7 +214,7 @@ const FormAssessment = ({ ...props }) => {
               optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
           }
         >
-          {props.listCategories?.map(item =>(
+          {assessmentStore.categories_assessment?.map(item =>(
               <Option key={item.id} value={item.id}>
                   {item.name}
               </Option>

@@ -67,7 +67,7 @@ const AssessmentsTable = ({...props}) => {
       setShowModalSurveys(true)
     }else{
       setItemGroup({})
-      message.error("El grupo aún no tiene encuestas")
+      message.error("El grupo aún no tiene evaluaciones")
     }
   }
 
@@ -177,7 +177,7 @@ const AssessmentsTable = ({...props}) => {
         dataIndex: 'name'
       },
       {
-        title: "Encuestas",
+        title: "Evaluaciones",
         render: (item) => {
           return (
             <div style={{justifyContent:'center', cursor:'pointer'}}>
@@ -269,7 +269,7 @@ const AssessmentsTable = ({...props}) => {
         )}
         {showModalSurveys && (
           <ViewSurveys
-            title={'Lista de encuestas'}
+            title={'Lista de evaluaciones'}
             visible={showModalSurveys}
             setVisible={setShowModalSurveys}
             item={itemGroup}
