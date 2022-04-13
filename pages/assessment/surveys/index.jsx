@@ -34,12 +34,15 @@ import {
   assessmentModalAction,
   assessmentDeleteAction,
   assessmentStatusAction,
+  assessmentLoadAction,
+  getCategories
 } from "../../../redux/assessmentDuck";
 import { useFilter } from "../../../components/assessment/useFilter";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
+import { userCompanyId } from "../../../libs/auth";
 
-const AssessmentScreen = ({ assessmentStore, ...props }) => {
+const AssessmentScreen = ({ assessmentStore, getCategories, ...props }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [form] = Form.useForm();
@@ -71,8 +74,13 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
   const [numPage, setNumPage] = useState(1);
 
   useEffect(() => {
+    let nodeId = userCompanyId();
+    props.assessmentLoadAction(nodeId)
+    getCategories();
+  }, [])
+
+  useEffect(() => {
     if(assessmentStore.assessments?.length > 0){
-      getCategories();
       setAssessments(assessmentStore.assessments);
       setLoading(assessmentStore.fetching);
       assessmentStore.active_modal === types.CREATE_ASSESSMENTS
@@ -84,7 +92,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
     }
   }, [assessmentStore]);
 
-  const getCategories = async () =>{
+  /* const getCategories = async () =>{
     try {
         let response = await WebApiAssessment.getCategoriesAssessment();
         setListCategories(response.data)
@@ -92,7 +100,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
         setListCategories([])
         console.log(e)
     }
-}
+} */
 
   const HandleCreateAssessment = () => {
     setAssessmentData(false);
@@ -193,10 +201,10 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
           setShowModalCreateGroup(true)
         }else{
           setOpenModalAddGroup(false)
-          message.error("Selecciona al menos 2 encuestas")
+          message.error("Selecciona al menos 2 evaluaciones")
         }
       }else{
-        message.error("Selecciona las encuestas")
+        message.error("Selecciona las evaluaciones")
         setOpenModalAddGroup(false)
       }
     }
@@ -259,6 +267,8 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
       render: (item) => {
         return (
           <>
+          {
+            item.category !== 'K' && 
             <Switch
               key={"status-" + item.id}
               defaultChecked={item.is_active}
@@ -266,6 +276,8 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
               unCheckedChildren="Inactivo"
               onChange={() => HandleChangeStatus(item)}
             />
+          }
+            
           </>
         );
       },
@@ -287,7 +299,10 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
       render: (item) => {
         return (
           <>
-            <Row key={"actions-" + item.id}>
+          {
+            item.category !== 'K' &&
+            <>
+              <Row key={"actions-" + item.id}>
               {props.permissions?.edit && (
                 <Col span={6}>
                   <EditOutlined onClick={() => HandleUpdateAssessment(item)}/>
@@ -301,6 +316,8 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
                 </Col>
               )}
             </Row>
+            </>
+          }
           </>
         );
       },
@@ -327,7 +344,7 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
                 <Col span={16}>
                   <Form.Item name="Filter" label="Filter">
                     <Input
-                      placeholder="Filtra las encuestas"
+                      placeholder="Filtra las evaluaciones"
                       maxLength={200}
                       onChange={onFilterChange}
                     />
@@ -403,7 +420,6 @@ const AssessmentScreen = ({ assessmentStore, ...props }) => {
           visible={showCreateAssessment || showUpdateAssessment}
           close={HandleCloseModal}
           loadData={assessmentData}
-          listCategories={listCategories}
         />
       {showModalCreateGroup && (
         <AssessmentsGroup
@@ -432,4 +448,6 @@ const mapState = (state) => {
 export default connect(mapState, {
   assessmentDeleteAction,
   assessmentStatusAction,
+  assessmentLoadAction,
+  getCategories
 })(withAuthSync(AssessmentScreen));
