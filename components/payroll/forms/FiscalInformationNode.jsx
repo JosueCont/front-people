@@ -1,4 +1,5 @@
 import { Spin, Row, Col, Typography, Divider, Form, Button } from "antd";
+import { useLayoutEffect, useState } from "react";
 import WebApiPeople from "../../../api/WebApiPeople";
 
 import FiscalAddress from "../../forms/FiscalAddress";
@@ -8,15 +9,16 @@ const FiscalInformationNode = ({ node_id = nuull, fiscal }) => {
   const { Title } = Typography;
   const [formFiscal] = Form.useForm();
   const [formAddress] = Form.useForm();
+  const [fiscalData, setFiscalData] = useState(null);
 
   useLayoutEffect(() => {
     if (node_id) {
       WebApiPeople.getfiscalInformationNode(node_id)
         .then((response) => {
-          console.log("EMPRESA-->> ", response.data);
-          setCompany(response.data.name);
+          console.log(response.data);
+          setFiscalData(response.data);
         })
-        .catch(() => {
+        .catch((error) => {
           console.error(error);
         });
     }
@@ -24,35 +26,29 @@ const FiscalInformationNode = ({ node_id = nuull, fiscal }) => {
 
   const saveForms = () => {
     console.log("FISCAL-->> ", formFiscal.getFieldsValue());
-  };
-
-  const setForms = (data) => {
-    form.setFieldsValue({
-      person_type: data.person_type,
-      curp: data.curp,
-      rfc: data.rfc,
-      tax_regime: data.tax_regime,
-      assimilated_pay: data.assimilated_pay,
-      has_personnel_outsourcing: data.has_personnel_outsourcing,
-    });
+    console.log("FISCAL-->> ", formAddress.getFieldsValue());
   };
 
   return (
     <>
-      <Spin tip="Cargando..." spinning={false}>
-        <Row>
-          <Col span={24}>
-            <Divider style={{ marginTop: "2px" }} />
-            <FiscalInformation form={formFiscal} node={node_id} />
-            <Row>
-              <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
-            </Row>
-            <Divider style={{ marginTop: "2px" }} />
-            <FiscalAddress node={node_id} form={formAddress} />
-          </Col>
-        </Row>
-        <Button onClick={saveForms}>Click</Button>
-      </Spin>
+      <Row>
+        <Col span={24}>
+          <Divider style={{ marginTop: "2px" }} />
+          <FiscalInformation
+            form={formFiscal}
+            fiscalData={fiscalData && fiscalData}
+          />
+          <Row>
+            <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
+          </Row>
+          <Divider style={{ marginTop: "2px" }} />
+          <FiscalAddress
+            fiscalAddress={fiscalData && fiscalData.fiscal_address}
+            form={formAddress}
+          />
+        </Col>
+      </Row>
+      <Button onClick={saveForms}>Click</Button>
     </>
   );
 };

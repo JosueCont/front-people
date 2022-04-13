@@ -5,7 +5,7 @@ import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-const GeneralData = ({ setCompany, ...props }) => {
+const GeneralData = ({ company, ...props }) => {
   let router = useRouter();
   const [update, setUpdate] = useState(false);
   const [companyInfo, setCompanyInfo] = useState();

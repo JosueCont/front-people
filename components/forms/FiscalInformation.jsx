@@ -6,64 +6,32 @@ import WebApiPeople from "../../api/WebApiPeople";
 import SelectTaxRegime from "../selects/SelectTaxRegime";
 import { messageError, messageSaveSuccess } from "../../utils/constant";
 
-const FiscalInformation = ({ form, node, ...props }) => {
+const FiscalInformation = ({ form, fiscalData, ...props }) => {
   const [pTypeSelected, setPTypeSelected] = useState(false);
-  const [id, setId] = useState(null);
   const personType = [
     { value: 1, label: "Fisica" },
     { value: 2, label: "Moral" },
   ];
+  useEffect(() => {
+    if (fiscalData) setForm(fiscalData);
+  }, [fiscalData]);
 
-  // useEffect(() => {
-  //   if (node) getInfo(node);
-  // }, [node]);
-
-  // const getInfo = async () => {
-  //   await WebApiPeople.fiscalInformationNode("get", null, `?node__id=${node}`)
-  //     .then((response) => {
-  //       if (response.data) {
-  //         setId(response.data.id);
-  //         setForm(response.data);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
-
-  // const saveInfo = async (data) => {
-  //   data.node = parseInt(node);
-  //   if (id) data.id = id;
-  //   await WebApiPeople.fiscalInformationNode(
-  //     id ? "put" : "post",
-  //     data,
-  //     `${id}/`
-  //   )
-  //     .then((response) => {
-  //       message.success(messageSaveSuccess);
-  //       setForm(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       message.error(messageError);
-  //     });
-  // };
-
-  // const setForm = (data) => {
-  //   form.setFieldsValue({
-  //     person_type: data.person_type,
-  //     curp: data.curp,
-  //     rfc: data.rfc,
-  //     tax_regime: data.tax_regime,
-  //     assimilated_pay: data.assimilated_pay,
-  //   });
-  // };
+  const setForm = (data) => {
+    form.setFieldsValue({
+      company_sector: data.company_sector,
+      person_type: data.person_type,
+      curp: data.curp,
+      rfc: data.rfc,
+      tax_regime: data.tax_regime,
+      assimilated_pay: data.assimilated_pay,
+    });
+  };
 
   return (
     <Form form={form} layout={"vertical"}>
       <Row gutter={20}>
         <Col lg={4} xs={22} md={12}>
-          <Form.Item name="comapny_sector" label="Sector">
+          <Form.Item name="company_sector" label="Sector">
             <Select
               options={[
                 { value: 1, label: "Publica" },

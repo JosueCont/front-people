@@ -1,6 +1,6 @@
 import { Breadcrumb, Spin, Typography, Tabs } from "antd";
 import { useRouter } from "next/router";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { withAuthSync } from "../../libs/auth";
 import FiscalInformationNode from "../../components/payroll/forms/FiscalInformationNode";
@@ -14,6 +14,20 @@ const ConfigCompany = ({ ...props }) => {
   const [company, setCompany] = useState();
   const { Title } = Typography;
   const { TabPane } = Tabs;
+
+  useEffect(() => {
+    {
+      WebApiPeople.getCompany(router.query.id)
+        .then(function (response) {
+          console.log("COMPANY-->> ", response.data);
+          setCompany(response.data);
+          setLoading(false);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+  }, [router.query.id]);
 
   return (
     <MainLayout currentKey="2">
@@ -39,21 +53,21 @@ const ConfigCompany = ({ ...props }) => {
           className="container-border-radius"
           style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
-          {company && <Title level={3}>{company}</Title>}
+          {company && <Title level={3}>{company.name}</Title>}
           {!loading && (
             <Tabs tabPosition={"left"}>
               <TabPane tab="General" key="tab_1">
-                <GeneralData setCompany={setCompany} />
+                <GeneralData />
               </TabPane>
               <TabPane tab="Informacion fiscal" key="tab_2">
-                <FiscalInformationNode node_id={router.query.id} />
+                <FiscalInformationNode node_id={company.id} />
               </TabPane>
-              {/* <TabPane tab="Representante legal" key="tab_3">
-              <LegalRepresentative node={router.query.id} />
-            </TabPane>
-            <TabPane tab="Registro patronal" key="tab_4">
-              <PatronalRegistration />
-            </TabPane> */}
+              <TabPane tab="Representante legal" key="tab_3">
+                {/* <LegalRepresentative node_id={company.id} /> */}
+              </TabPane>
+              <TabPane tab="Registro patronal" key="tab_4">
+                {/* <PatronalRegistration node_id={company.id} /> */}
+              </TabPane>
             </Tabs>
           )}
         </div>
