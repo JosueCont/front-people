@@ -42,6 +42,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [expandRow, setExpandRow] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [personId, setPersonId] = useState(null);
+  const [closePayroll, setClosePayroll] = useState(false);
 
   useEffect(() => {
     if (props.currentNode) getPaymentCalendars(props.currentNode.id);
@@ -51,6 +52,7 @@ const CalculatePayroll = ({ ...props }) => {
     await WebApiPayroll.getPaymentCalendar(value)
       .then((response) => {
         setPaymentCalendars(response.data.results);
+        console.log("CALENDAR-->> ", response.data.results);
         let calendars = response.data.results.map((item, index) => {
           return { key: item.id, label: item.name, value: item.id };
         });
@@ -498,7 +500,7 @@ const CalculatePayroll = ({ ...props }) => {
                 htmlType="button"
                 onClick={() => sendStampPayroll()}
               >
-                Consolidar nomina
+                {closePayroll ? "Timbrar nomina" : "Cerrar nomina"}
               </Button>
             </Col>
           )}

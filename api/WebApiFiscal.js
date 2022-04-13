@@ -61,6 +61,14 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/state/?country=${data}`, "get");
   }
 
+  static getMunicipality(data) {
+    return WebApi.ApisType(`/fiscal/municipality/?state=${data}`, "get");
+  }
+
+  static getSuburb(data) {
+    return WebApi.ApisType(`/fiscal/suburb/?postal_code=${data}`, "get");
+  }
+
   static getInternalPerceptions(data) {
     return WebApi.ApisType(
       `/fiscal/internal-perception-type/?node=${data}`,
@@ -88,6 +96,10 @@ class WebApiFiscal {
 
   static getDisabilityType() {
     return WebApi.ApisType(`/fiscal/disability-type/`, "get");
+  }
+
+  static getPostalCode(data) {
+    return WebApi.ApisType(`/fiscal/postal-code?code=${data}`, "get");
   }
 }
 

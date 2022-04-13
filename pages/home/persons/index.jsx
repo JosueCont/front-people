@@ -55,7 +55,7 @@ import SelectAccessIntranet from "../../../components/selects/SelectAccessIntran
 import { useRouter } from "next/router";
 import SelectWorkTitle from "../../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
-import { getDomain } from "../../../utils/functions";
+import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
 import AssignAssessments from "../../../components/person/assignments/AssignAssessments";
 import PersonsGroup from "../../../components/person/groups/PersonsGroup";
@@ -598,24 +598,13 @@ const homeScreen = ({ ...props }) => {
   const exportPersons = () => {
     setLoading(true);
     filter(formFilter.getFieldsValue());
-    filters.format = "data";
-    Axios.post(API_URL + `/person/person/export_csv/`, filters)
-      .then((response) => {
-        const type = response.headers["content-type"];
-        const blob = new Blob([response.data], {
-          type: type,
-          encoding: "UTF-8",
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = "Personas.csv";
-        link.click();
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
+    downLoadFileBlob(
+      `${getDomain(API_URL_TENANT)}/person/person/export_person/`,
+      "Personas.xlsx",
+      "POST",
+      filters
+    );
+    setLoading(false);
   };
 
   const importPersonFileExtend = async (e) => {
@@ -930,22 +919,25 @@ const homeScreen = ({ ...props }) => {
 
   const menuExportTemplate = (
     <Menu>
-      <Menu.Item key="1">
-        <a
-          href={`https://${getDomain(
-            API_URL_TENANT
-          )}/person/person/generate_template/`}
-        >
-          Plantilla básica
-        </a>
+      <Menu.Item
+        key="1"
+        onClick={() =>
+          downLoadFileBlob(
+            `${getDomain(API_URL_TENANT)}/person/person/generate_template/`,
+            "platilla_personas.xlsx",
+            "GET"
+          )
+        }
+      >
+        Plantilla básica
       </Menu.Item>
-      {props.config && props.config.enabled_nomina && (
+      {/* {props.config && props.config.enabled_nomina && (
         <Menu.Item key="2">
           <a href={`${API_URL_TENANT}/static/plantillaExtendidaPersonas.xlsx`}>
             Plantilla Extensa
           </a>
         </Menu.Item>
-      )}
+      )} */}
     </Menu>
   );
 
