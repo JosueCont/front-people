@@ -17,3 +17,7 @@ export const APP_ID = process.browser
 export const API_ASSESSMENT = process.browser
   ? process.env.NEXT_PUBLIC_APP_ASSESSMENT_BASE
   : process.env.NEXT_PUBLIC_APP_ASSESSMENT_BASE;
+
+export const typeHttp = process.browser
+  ? process.env.NEXT_PUBLIC_USE_HTTPS
+  : process.env.USE_HTTPS;

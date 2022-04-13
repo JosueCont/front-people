@@ -74,12 +74,12 @@ const businessForm = ({ permissions, ...props }) => {
   };
   const deleteBusiness = async (id, name, description) => {
     setLoading(true);
-    WebApiPeople.PeopledeleteNode(id)
+    WebApiPeople.deleteNode(id)
       .then(function (response) {
         if (response.status === 200) {
           Router.push("/business");
         }
-        getBusiness();
+        getCopaniesList();
         setIsModalVisible(false);
         setIsModalDeleteVisible(false);
         setLoading(false);
@@ -213,7 +213,7 @@ const businessForm = ({ permissions, ...props }) => {
         if (response.data.is_admin) {
           getCopaniesList();
         } else {
-          getBusiness();
+          getCopaniesList();
         }
       })
       .catch((e) => {
@@ -343,7 +343,7 @@ const businessForm = ({ permissions, ...props }) => {
   const changeView = () => {
     treeTable ? setTreeTable(false) : setTreeTable(true);
     if (admin) getCopaniesList();
-    else getBusiness();
+    else getCopaniesList();
   };
 
   const modalUpdate = (value) => {
