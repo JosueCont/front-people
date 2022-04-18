@@ -66,6 +66,7 @@ const PayrollVaucher = ({ ...props }) => {
       title: "Acciones",
       key: "actions",
       render: (item) => {
+        console.log("ITEM-->> ", item);
         return (
           <>
             {item.id_facturama && (
@@ -129,21 +130,23 @@ const PayrollVaucher = ({ ...props }) => {
 
   useEffect(() => {
     let period = [];
-    if (calendar)
+    console.log("calendars--->> ", props.payment_calendar);
+    if (calendar && props.payment_calendar) {
       period = props.payment_calendar.find(
         (item) => item.id == calendar
       ).periods;
-    setPeriods(
-      period
-        .sort((a, b) => a.name - b.name)
-        .map((item) => {
-          return {
-            value: item.id,
-            label: `${item.name}.- ${item.start_date} - ${item.end_date}`,
-          };
-        })
-    );
-  }, [calendar]);
+      setPeriods(
+        period
+          .sort((a, b) => a.name - b.name)
+          .map((item) => {
+            return {
+              value: item.id,
+              label: `${item.name}.- ${item.start_date} - ${item.end_date}`,
+            };
+          })
+      );
+    }
+  }, [calendar, props.payment_calendar]);
 
   return (
     <MainLayout currentKey={["persons"]}>
@@ -166,7 +169,7 @@ const PayrollVaucher = ({ ...props }) => {
                 <SelectPaymentCalendar
                   setCalendarId={(value) => setCalendar(value)}
                   name="calendar"
-                  style={{ width: 200 }}
+                  style={{ width: 300 }}
                 />
               </Col>
               {calendar && (
@@ -174,14 +177,15 @@ const PayrollVaucher = ({ ...props }) => {
                   <Form.Item name="period" label="Periodo">
                     <Select
                       options={periods}
-                      style={{ width: 200 }}
+                      style={{ width: 250 }}
                       placeholder="Periodo"
+                      allowClear
                     />
                   </Form.Item>
                 </Col>
               )}
               <Col>
-                <SelectCollaborator name="person" style={{ width: 200 }} />
+                <SelectCollaborator name="person" style={{ width: 250 }} />
               </Col>
               <Col style={{ display: "flex" }}>
                 <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
