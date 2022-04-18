@@ -246,7 +246,7 @@ const Detail = ({ assessmentStore, ...props }) => {
         </Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"} href="/assessment/surveys">
           {" "}
-          Encuestas{" "}
+          Evaluaciones{" "}
         </Breadcrumb.Item>
         <Breadcrumb.Item>
           {assessmentStore.assessment_selected.name}

@@ -77,7 +77,6 @@ export const getFixedConcept = (data) => async (dispatch, getState) => {
 export const getGroupFixedConcept = (data) => async (dispatch, getState) => {
   await WebApiPayroll.groupFixedConcept("get", null, `?node=${data}`)
     .then((response) => {
-      console.log("GET-->> ", response.data.results);
       dispatch({
         type: GROUP_FIXED_CONCEPT,
         payload: response.data.results,

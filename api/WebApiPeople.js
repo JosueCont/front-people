@@ -287,8 +287,8 @@ class WebApiPeople {
     return WebApi.ApisType(`/person/person/generate_template/`, "get");
   }
 
-  static fiscalInformationNode(type, data = "", url = "") {
-    return WebApi.ApisType(`/business/fiscal-information/${url}`, type, data);
+  static getfiscalInformationNode(data) {
+    return WebApi.ApisType(`/business/fiscal-information/?node=${data}`, "get");
   }
 
   static changeIntranetAccess(data) {
@@ -359,7 +359,12 @@ class WebApiPeople {
   static vacationRejectRequest(data) {
     return WebApi.ApisType(`/person/vacation/reject_request/`, "post", data);
   }
+
   static vacationApproveRequest(data) {
+    return WebApi.ApisType(`/person/vacation/approve_request/`, "post", data);
+  }
+
+  static informationNode(data) {
     return WebApi.ApisType(`/person/vacation/approve_request/`, "post", data);
   }
 }
