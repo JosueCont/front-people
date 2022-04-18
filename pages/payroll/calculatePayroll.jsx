@@ -16,7 +16,7 @@ import {
   Typography,
   Form,
 } from "antd";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import {
   PlusOutlined,
   RightOutlined,
@@ -29,7 +29,11 @@ import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsP
 import { Global } from "@emotion/core";
 import { numberFormat } from "../../utils/functions";
 import { connect } from "react-redux";
-import { messageError } from "../../utils/constant";
+import {
+  messageError,
+  messageSaveSuccess,
+  messageSendSuccess,
+} from "../../utils/constant";
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -42,7 +46,10 @@ const CalculatePayroll = ({ ...props }) => {
   const [expandRow, setExpandRow] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [personId, setPersonId] = useState(null);
-  const [closePayroll, setClosePayroll] = useState(false);
+  const [payrollType, setPayrollType] = useState(null);
+  const [consolidated, setConsolidated] = useState(false);
+  const [viewCfdi, setViewCfdi] = useState(false);
+  const [activePeriod, setActivePeriod] = useState(null);
 
   useEffect(() => {
     if (props.currentNode) getPaymentCalendars(props.currentNode.id);
@@ -52,7 +59,6 @@ const CalculatePayroll = ({ ...props }) => {
     await WebApiPayroll.getPaymentCalendar(value)
       .then((response) => {
         setPaymentCalendars(response.data.results);
-        console.log("CALENDAR-->> ", response.data.results);
         let calendars = response.data.results.map((item, index) => {
           return { key: item.id, label: item.name, value: item.id };
         });
@@ -66,14 +72,19 @@ const CalculatePayroll = ({ ...props }) => {
   const changeCalendar = (value) => {
     const calendar = paymentCalendars.find((item) => item.id === value);
     const period = calendar.periods.find((p) => p.active == true);
-    form.setFieldsValue({
-      periodicity: calendar.periodicity.description,
-      period: `${period.start_date} - ${period.end_date}`,
-      insidences: `${period.incidences.start_date} - ${period.incidences.end_date}`,
-      payment_day: period.payment_date,
-      year: calendar.period,
-    });
-    sendCalculatePayroll({ calendar_id: value });
+    if (period) {
+      setActivePeriod(period.id);
+      setPayrollType(calendar.perception_type.code);
+      console.log(calendar.periods);
+      form.setFieldsValue({
+        periodicity: calendar.periodicity.description,
+        period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
+        insidences: `${period.incidences.start_date} - ${period.incidences.end_date}`,
+        payment_day: period.payment_date,
+        year: calendar.period,
+      });
+      sendCalculatePayroll({ calendar_id: value });
+    }
   };
 
   const sendCalculatePayroll = async (dataToSend) => {
@@ -83,6 +94,7 @@ const CalculatePayroll = ({ ...props }) => {
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
         setLoading(false);
+        setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
       })
       .catch((error) => {
@@ -136,14 +148,18 @@ const CalculatePayroll = ({ ...props }) => {
       key: "actions",
       className: "cell-actions",
       render: (item) => (
-        <Button
-          size="small"
-          onClick={() => {
-            setPersonId(item.person.id), setModalVisible(true);
-          }}
-        >
-          <PlusOutlined />
-        </Button>
+        <>
+          {!consolidated && (
+            <Button
+              size="small"
+              onClick={() => {
+                setPersonId(item.person.id), setModalVisible(true);
+              }}
+            >
+              <PlusOutlined />
+            </Button>
+          )}
+        </>
       ),
     },
   ];
@@ -384,10 +400,46 @@ const CalculatePayroll = ({ ...props }) => {
     );
   };
 
+  const sendClosePayroll = () => {
+    setLoading(true);
+    WebApiPayroll.closePayroll({
+      calendar_id: form.getFieldValue("calendar"),
+      payroll: payroll,
+    })
+      .then((response) => {
+        sendCalculatePayroll({ calendar_id: form.getFieldValue("calendar") });
+        message.success(messageSaveSuccess);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        message.error(messageError);
+        console.log(error);
+      });
+  };
+
+  const stampPayroll = () => {
+    setLoading(true);
+    WebApiPayroll.stampPayroll({
+      payment_calendar_id: form.getFieldValue("calendar"),
+    })
+      .then((response) => {
+        setLoading(false);
+        setViewCfdi(true);
+        message.success(messageSendSuccess);
+      })
+      .catch((error) => {
+        setLoading(false);
+        message.error(messageError);
+        console.log(error);
+      });
+  };
+
   return (
     <>
-      <Global
-        styles={`
+      <Spin tip="Cargando..." spinning={loading}>
+        <Global
+          styles={`
           
           .column_arrow{
             width: 10px !important;
@@ -419,93 +471,116 @@ const CalculatePayroll = ({ ...props }) => {
             text-align: center;
           }
         `}
-      />
-      <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["nómina"]}>
-        <Breadcrumb className={"mainBreadcrumb"}>
-          <Breadcrumb.Item
-            className={"pointer"}
-            onClick={() => route.push({ pathname: "/home" })}
-          >
-            Inicio
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>Timbrado de nómina</Breadcrumb.Item>
-        </Breadcrumb>
+        />
+        <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["nómina"]}>
+          <Breadcrumb className={"mainBreadcrumb"}>
+            <Breadcrumb.Item
+              className={"pointer"}
+              onClick={() => route.push({ pathname: "/home" })}
+            >
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>Timbrado de nómina</Breadcrumb.Item>
+          </Breadcrumb>
 
-        <Row justify="end" gutter={[10, 10]}>
-          <Col span={24}>
-            <Card className="form_header">
-              <Form form={form} layout="vertical">
-                <Row gutter={[16, 8]}>
-                  <Col xxs={24} xl={4}>
-                    <Form.Item label="Calendario">
-                      <Select
-                        size="large"
-                        style={{ width: "100%" }}
-                        options={optionspPaymentCalendars}
-                        onChange={changeCalendar}
-                        placeholder="Calendarios"
-                        notFoundContent={"No se encontraron resultados."}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xxs={24} xl={4}>
-                    <Form.Item name="periodicity" label="Periocidad">
-                      <Input
-                        size="large"
-                        key="periodicity"
-                        placeholder="Periodicidad"
-                        disabled={true}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xxs={24} xl={6}>
-                    <Form.Item name="period" label="Periodo">
-                      <Input
-                        size="large"
-                        key="period"
-                        placeholder="Período"
-                        disabled={true}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xxs={24} xl={6}>
-                    <Form.Item name="insidences" label="Fecha de incidencias">
-                      <Input
-                        size="large"
-                        key="insidence_period"
-                        placeholder="Período de incidencia"
-                        disabled={true}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xxs={24} xl={4}>
-                    <Form.Item name="payment_day" label="Fecha de pago">
-                      <Input
-                        size="large"
-                        key="payment_day"
-                        placeholder="Dia de pago"
-                        disabled={true}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form>
-            </Card>
-          </Col>
-          {payroll.length > 0 && (
-            <Col md={4}>
-              <Button
-                size="large"
-                block
-                htmlType="button"
-                onClick={() => sendStampPayroll()}
-              >
-                {closePayroll ? "Timbrar nomina" : "Cerrar nomina"}
-              </Button>
+          <Row justify="end" gutter={[10, 10]}>
+            <Col span={24}>
+              <Card className="form_header">
+                <Form form={form} layout="vertical">
+                  <Row gutter={[16, 8]}>
+                    <Col xxs={24} xl={4}>
+                      <Form.Item name="calendar" label="Calendario">
+                        <Select
+                          size="large"
+                          style={{ width: "100%" }}
+                          options={optionspPaymentCalendars}
+                          onChange={changeCalendar}
+                          placeholder="Calendarios"
+                          notFoundContent={"No se encontraron resultados."}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col xxs={24} xl={4}>
+                      <Form.Item name="periodicity" label="Periocidad">
+                        <Input
+                          size="large"
+                          key="periodicity"
+                          placeholder="Periodicidad"
+                          disabled={true}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col xxs={24} xl={6}>
+                      <Form.Item name="period" label="Periodo">
+                        <Input
+                          size="large"
+                          key="period"
+                          placeholder="Período"
+                          disabled={true}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col xxs={24} xl={6}>
+                      <Form.Item name="insidences" label="Fecha de incidencias">
+                        <Input
+                          size="large"
+                          key="insidence_period"
+                          placeholder="Período de incidencia"
+                          disabled={true}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col xxs={24} xl={4}>
+                      <Form.Item name="payment_day" label="Fecha de pago">
+                        <Input
+                          size="large"
+                          key="payment_day"
+                          placeholder="Dia de pago"
+                          disabled={true}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Form>
+              </Card>
             </Col>
-          )}
-          <Col span={24}>
-            <Spin tip="Cargando..." spinning={loading}>
+
+            {viewCfdi ? (
+              <Col md={5}>
+                <Button
+                  size="large"
+                  block
+                  htmlType="button"
+                  onClick={() =>
+                    router.push({
+                      pathname: "/payroll/payrollVaucher",
+                      query: {
+                        calendar: form.getFieldValue("calendar"),
+                        period: activePeriod,
+                      },
+                    })
+                  }
+                >
+                  {"Ver CFDI's"}
+                </Button>
+              </Col>
+            ) : (
+              payroll.length > 0 && (
+                <Col md={5}>
+                  <Button
+                    size="large"
+                    block
+                    htmlType="button"
+                    onClick={() =>
+                      consolidated ? stampPayroll() : sendClosePayroll()
+                    }
+                  >
+                    {consolidated ? "Timbrar nomina" : "Cerrar nomina"}
+                  </Button>
+                </Col>
+              )
+            )}
+            <Col span={24}>
               <Card className="card_table">
                 <Table
                   className="headers_transparent"
@@ -527,24 +602,25 @@ const CalculatePayroll = ({ ...props }) => {
                   locale={{ emptyText: "No se encontraron resultados" }}
                 />
               </Card>
-            </Spin>
-          </Col>
-        </Row>
-        {personId && (
-          <ModalConceptsPayroll
-            visible={modalVisible}
-            setVisible={setModalVisible}
-            calendar={{
-              node: props.currentNode.id,
-              period: form.getFieldValue("year"),
-            }}
-            person_id={personId}
-            payroll={payroll}
-            setLoading={setLoading}
-            sendCalculatePayroll={sendCalculatePayroll}
-          />
-        )}
-      </MainLayout>
+            </Col>
+          </Row>
+          {personId && (
+            <ModalConceptsPayroll
+              visible={modalVisible}
+              setVisible={setModalVisible}
+              calendar={{
+                node: props.currentNode.id,
+                period: form.getFieldValue("year"),
+              }}
+              person_id={personId}
+              payroll={payroll}
+              setLoading={setLoading}
+              sendCalculatePayroll={sendCalculatePayroll}
+              payrollType={payrollType}
+            />
+          )}
+        </MainLayout>
+      </Spin>
     </>
   );
 };

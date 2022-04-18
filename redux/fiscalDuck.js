@@ -121,7 +121,14 @@ export const getOtherPayments = () => async (dispatch, getState) => {
 export const getInternalPerceptions = (data) => async (dispatch, getState) => {
   await WebApiFiscal.getInternalPerceptions(data)
     .then((response) => {
-      dispatch({ type: PERCEPTIONS_INT, payload: response.data });
+      dispatch({
+        type: PERCEPTIONS_INT,
+        payload: response.data.filter(
+          (item) =>
+            item.perception_type.code != "001" &&
+            item.perception_type.code != "046"
+        ),
+      });
     })
     .catch((error) => {
       console.log(error);
@@ -131,7 +138,14 @@ export const getInternalPerceptions = (data) => async (dispatch, getState) => {
 export const getInternalDeductions = (data) => async (dispatch, getState) => {
   await WebApiFiscal.getInternalDeductions(data)
     .then((response) => {
-      dispatch({ type: DEDUCTIONS_INT, payload: response.data });
+      dispatch({
+        type: DEDUCTIONS_INT,
+        payload: response.data.filter(
+          (item) =>
+            item.deduction_type.code != "001" &&
+            item.deduction_type.code != "002"
+        ),
+      });
     })
     .catch((error) => {
       console.log(error);

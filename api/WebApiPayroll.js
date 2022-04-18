@@ -98,24 +98,31 @@ class WebApiPayroll {
   static updateConfigLoan(id, data) {
     return WebApi.ApisType(`/payroll/loan-config/${id}/`, "patch", data);
   }
+
   static saveLoanRequest(data) {
     return WebApi.ApisType(`/payroll/loan/`, "post", data);
   }
+
   static updateLoanRequest(id, data) {
     return WebApi.ApisType(`/payroll/loan/${id}/`, "patch", data);
   }
+
   static rejectLoanRequest(data) {
     return WebApi.ApisType(`/payroll/loan/reject_request/`, "post", data);
   }
+
   static approveLoanRequest(data) {
     return WebApi.ApisType(`/payroll/loan/approve_request/`, "post", data);
   }
+
   static confirmPaidLoan(id, data) {
     return WebApi.ApisType(`/payroll/payment-plan/${id}/`, "patch", data);
   }
+
   static getPaymentPlan(id) {
     return WebApi.ApisType(`/payroll/payment-plan/?loan__id=${id}`, "get");
   }
+
   static getPayrollReport() {
     return WebApi.ApisType(
       `/payroll/payroll-report?start_date=2022-01-01&end_date=2022-01-15`,
@@ -125,6 +132,22 @@ class WebApiPayroll {
 
   static getCfdiPayrrol(data) {
     return WebApi.ApisType(`/payroll/cfdi-voucher?${data}`, "get");
+  }
+
+  static closePayroll(data) {
+    return WebApi.ApisType(
+      `/payroll/consolidated_payroll/save_calculation/`,
+      "post",
+      data
+    );
+  }
+
+  static stampPayroll(data) {
+    return WebApi.ApisType(
+      `/payroll/cfdi_multi_emitter_facturama/send_invoice_facturama/`,
+      "post",
+      data
+    );
   }
 }
 
