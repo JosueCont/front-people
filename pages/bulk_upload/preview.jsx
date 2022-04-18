@@ -124,7 +124,6 @@ const PreviewBulkUpload = ({ ...props }) => {
           };
           WebApiPeople.saveMassivePerson(data)
             .then((response) => {
-              console.log("Data", response.data);
               setDataUpload(response.data.persons);
               if (response.data.saved_persons > 0) {
                 message.success("Cargado correctamente");
