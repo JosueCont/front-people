@@ -125,8 +125,14 @@ const PreviewBulkUpload = ({ ...props }) => {
           WebApiPeople.saveMassivePerson(data)
             .then((response) => {
               setDataUpload(response.data.persons);
-              message.success("Cargado correctamente");
-              setMessageSave(response.data.message);
+              if (response.data.saved_persons > 0) {
+                message.success("Cargado correctamente");
+                setMessageSave(response.data.message);
+              } else {
+                message.error("Error al guardar");
+                setMessageSave(response.data.message + ", revise los detalles");
+              }
+
               setLoading(false);
             })
             .catch((response) => {
