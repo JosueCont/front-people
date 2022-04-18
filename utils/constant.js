@@ -273,6 +273,7 @@ const conceptPayroll = [
 ];
 
 export const messageSaveSuccess = "Agregado correctamente.";
+export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
 export const messageDeleteSuccess = "Eliminado correctamente.";
 export const messageError = "Ocurrio un error, intente de nuevo.";
