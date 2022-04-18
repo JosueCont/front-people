@@ -15,7 +15,7 @@ const initialData = {
   user: null,
   permissions: UserPermissions(),
   current_node: null,
-  general_config: {}
+  general_config: {},
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -63,6 +63,8 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
     sessionStorage.setItem("aid", response.data.client_khonnect_id);
     sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
     dispatch({ type: GENERAL_CONFIG, payload: response.data });
+    if (response.data.nomina_enabled)
+      dispatch(getFiscalTaxRegime(), getTypeTax(), getPaymentPeriodicity());
     dispatch(setUser());
   } catch (error) {}
 };
