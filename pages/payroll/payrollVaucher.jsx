@@ -22,6 +22,7 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import MainLayout from "../../layout/MainLayout";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import { messageError } from "../../utils/constant";
+import router from "next/router";
 
 const PayrollVaucher = ({ ...props }) => {
   const [form] = Form.useForm();
@@ -82,6 +83,19 @@ const PayrollVaucher = ({ ...props }) => {
     },
   ];
 
+  useEffect(() => {
+    if (router.query && router.query.calendar && router.query.period) {
+      form.setFieldsValue({
+        calendar: router.query.calendar,
+        period: router.query.period,
+      });
+      setCalendar(router.query.calendar);
+      getVoucher(
+        `calendar=${router.query.calendar}&period=${router.query.period}`
+      );
+    }
+  }, [router.query]);
+
   const onFinish = (value) => {
     setLoading(true);
     let url = "";
@@ -89,7 +103,11 @@ const PayrollVaucher = ({ ...props }) => {
       url = `calendar=${value.calendar}`;
     if (value.period && value.period != "") url = `&period=${value.period}`;
     if (value.person && value.person != "") url = `&person=${value.person}`;
-    WebApiPayroll.getCfdiPayrrol(url)
+    getVoucher(url);
+  };
+
+  const getVoucher = (data) => {
+    WebApiPayroll.getCfdiPayrrol(data)
       .then((response) => {
         setCfdis(response.data);
         setLoading(false);
@@ -115,12 +133,14 @@ const PayrollVaucher = ({ ...props }) => {
         (item) => item.id == calendar
       ).periods;
     setPeriods(
-      period.map((item) => {
-        return {
-          value: item.id,
-          label: `${item.start_date} - ${item.end_date}`,
-        };
-      })
+      period
+        .sort((a, b) => a.name - b.name)
+        .map((item) => {
+          return {
+            value: item.id,
+            label: `${item.name}.- ${item.start_date} - ${item.end_date}`,
+          };
+        })
     );
   }, [calendar]);
 
