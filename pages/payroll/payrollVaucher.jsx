@@ -22,9 +22,10 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import MainLayout from "../../layout/MainLayout";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import { messageError } from "../../utils/constant";
-import router from "next/router";
+import { useRouter } from "next/router";
 
 const PayrollVaucher = ({ ...props }) => {
+  const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [cfdis, setCfdis] = useState([]);
@@ -90,7 +91,7 @@ const PayrollVaucher = ({ ...props }) => {
         period: router.query.period,
       });
       setCalendar(router.query.calendar);
-      getVoucher(
+      getVaucher(
         `calendar=${router.query.calendar}&period=${router.query.period}`
       );
     }
@@ -103,10 +104,10 @@ const PayrollVaucher = ({ ...props }) => {
       url = `calendar=${value.calendar}`;
     if (value.period && value.period != "") url = `&period=${value.period}`;
     if (value.person && value.person != "") url = `&person=${value.person}`;
-    getVoucher(url);
+    getVaucher(url);
   };
 
-  const getVoucher = (data) => {
+  const getVaucher = (data) => {
     WebApiPayroll.getCfdiPayrrol(data)
       .then((response) => {
         setCfdis(response.data);
