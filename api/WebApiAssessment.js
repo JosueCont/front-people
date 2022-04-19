@@ -13,7 +13,7 @@ class WebApiAssessment {
     static getOnlyGroupAssessment(id) {
         return WebApi.ApisType(`/person/group-assessments/${id}`, "get");
     }
-    static getListSurveys(nodeId, queryParam){
+    static getListSurveys(nodeId, queryParam = ""){
         return WebApi.ApisType(`/person/assessment/?companies=${nodeId}${queryParam}`, "get")
     }
     static createGroupAssessments(data){
@@ -53,6 +53,10 @@ class WebApiAssessment {
     }
     static getDetailsAssessment (id) {
         return WebApi.ApisType(`/person/assessment/${id}/`, "get");
+    }
+
+    static getAllAssignments(data) {
+        return WebApi.ApisType(`/person/group-person-assessment/get_all_assignments/`, "post",data);
     }
 
     static getAssignByPerson (id, queryParam, type) {

@@ -31,6 +31,18 @@ const FormItemHTML = ({ html = "", setHTML, getLabel,  getName, getRule, ...prop
         }
     }, []);
 
+    useEffect(() => {
+      if(html === "<p></p>"){
+          let value = EditorState.createWithContent(
+                ContentState.createFromBlockArray(
+                    convertFromHTML(html)
+                )
+            );
+            setEditorState(value)
+      }
+    }, [html])
+    
+
     const onEditorStateChange = (editorState) => {
         const MAX_LENGTH = 1000; 
         const lenght = editorState.getCurrentContent().getPlainText().length;
