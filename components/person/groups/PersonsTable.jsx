@@ -70,6 +70,7 @@ const PersonsTable = ({permissions, ...props}) => {
   const HandleModalAssign = (item) =>{
     setGroupsToDelete([item])
     setShowModalAssign(true)
+    setItemGroup(item)
   }
 
   const OpenModalAssigns = (item) =>{
@@ -177,9 +178,11 @@ const PersonsTable = ({permissions, ...props}) => {
     resetValuesDelete();
   }
 
-  const getAssigns = async (id, queryParam, type) =>{
+  const getAssigns = async (id, queryParam, type, openModal=true) =>{
     setLoadAssign(true)
-    setModalViewAssign(true)
+    if(openModal === true){
+      setModalViewAssign(true)
+    }
     try {
       let response = await WebApiAssessment.getAssignByGroup(id, queryParam, type)
       setListAssignGroup(response.data)
@@ -398,6 +401,9 @@ const PersonsTable = ({permissions, ...props}) => {
           visible={showModalAssign}
           close={resetValuesDelete}
           actionForm={onFinishAssign}
+          getAssigns={getAssigns}
+          assignList={listAssignGroup}
+          itemGroup={itemGroup}
         />
         <ViewAssigns
           visible={modalViewAssign}

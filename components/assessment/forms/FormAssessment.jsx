@@ -41,10 +41,15 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
       onReset();
       setImagen(null);
       setImageUrl(null);
-      setDescripcion("");
-      setInstruccions("");
+      setDescripcion("<p></p>");
+      setInstruccions("<p></p>");
     }
   }, [props.loadData]);
+
+  useEffect(() => {
+    console.log('descripcion',descripcion)
+  }, [descripcion])
+  
 
   useEffect(() => {
     console.log('assessmentStore',assessmentStore)
@@ -88,7 +93,11 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
           response
             ? message.success("Actualizado correctamente")
             : message.error("Hubo un error"),
+            formAssessment.resetFields();
+            setDescripcion("<p></p>");
+            setInstruccions("<p></p>");
             props.close();
+            
         })
         .catch((e) => {
           message.error("Hubo un error");
@@ -102,6 +111,9 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
           response
             ? message.success("Agregado correctamente")
             : message.error("Hubo un error"),
+            formAssessment.resetFields();
+            setDescripcion("<p></p>");
+            setInstruccions("<p></p>");
             props.close();
         })
         .catch((e) => {

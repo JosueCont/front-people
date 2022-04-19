@@ -35,14 +35,15 @@ import {
   assessmentDeleteAction,
   assessmentStatusAction,
   assessmentLoadAction,
-  getCategories
+  getCategories,
+  updPagination
 } from "../../../redux/assessmentDuck";
 import { useFilter } from "../../../components/assessment/useFilter";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
 import { userCompanyId } from "../../../libs/auth";
 
-const AssessmentScreen = ({ assessmentStore, getCategories, ...props }) => {
+const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...props }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [form] = Form.useForm();
@@ -75,7 +76,7 @@ const AssessmentScreen = ({ assessmentStore, getCategories, ...props }) => {
 
   useEffect(() => {
     let nodeId = userCompanyId();
-    props.assessmentLoadAction(nodeId)
+    props.assessmentLoadAction(nodeId, "&paginate=true&limit=10&offset=0")
     getCategories();
   }, [])
 
@@ -143,8 +144,20 @@ const AssessmentScreen = ({ assessmentStore, getCategories, ...props }) => {
     form.resetFields();
     onFilterReset(assessments);
   };
-  const onChangeTable =(page)=>{
-    setNumPage(page.current);
+  
+
+  const onChangeTable = (pagination) => {
+    let nodeId = userCompanyId();
+    if (pagination.current > 1) {
+      const offset = (pagination.current - 1) * 10;
+      let queryParam = `&paginate=true&limit=10&offset=${offset}`;
+      props.assessmentLoadAction(nodeId, queryParam)
+      updPagination(pagination.current)
+
+    } else if (pagination.current == 1) {
+      props.assessmentLoadAction(nodeId, "&paginate=true&limit=10&offset=0")
+      updPagination(pagination.current)
+    }
   }
 
   const HandleChangeStatus = (value) => {
@@ -409,7 +422,7 @@ const AssessmentScreen = ({ assessmentStore, getCategories, ...props }) => {
                   : "No se encontraron resultados.",
               }}
               rowSelection={rowSelectionGroup}
-              pagination={{current: numPage}}
+              pagination={assessmentStore.pagination}
               onChange={onChangeTable}
             />
           </Col>
@@ -449,5 +462,6 @@ export default connect(mapState, {
   assessmentDeleteAction,
   assessmentStatusAction,
   assessmentLoadAction,
-  getCategories
+  getCategories,
+  updPagination
 })(withAuthSync(AssessmentScreen));
