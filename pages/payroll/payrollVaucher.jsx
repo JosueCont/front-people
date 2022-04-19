@@ -22,8 +22,10 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import MainLayout from "../../layout/MainLayout";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import { messageError } from "../../utils/constant";
+import { useRouter } from "next/router";
 
 const PayrollVaucher = ({ ...props }) => {
+  const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [cfdis, setCfdis] = useState([]);
@@ -64,6 +66,7 @@ const PayrollVaucher = ({ ...props }) => {
       title: "Acciones",
       key: "actions",
       render: (item) => {
+        console.log("ITEM-->> ", item);
         return (
           <>
             {item.id_facturama && (
@@ -82,6 +85,19 @@ const PayrollVaucher = ({ ...props }) => {
     },
   ];
 
+  useEffect(() => {
+    if (router.query && router.query.calendar && router.query.period) {
+      form.setFieldsValue({
+        calendar: router.query.calendar,
+        period: router.query.period,
+      });
+      setCalendar(router.query.calendar);
+      getVaucher(
+        `calendar=${router.query.calendar}&period=${router.query.period}`
+      );
+    }
+  }, [router.query]);
+
   const onFinish = (value) => {
     setLoading(true);
     let url = "";
@@ -89,7 +105,11 @@ const PayrollVaucher = ({ ...props }) => {
       url = `calendar=${value.calendar}`;
     if (value.period && value.period != "") url = `&period=${value.period}`;
     if (value.person && value.person != "") url = `&person=${value.person}`;
-    WebApiPayroll.getCfdiPayrrol(url)
+    getVaucher(url);
+  };
+
+  const getVaucher = (data) => {
+    WebApiPayroll.getCfdiPayrrol(data)
       .then((response) => {
         setCfdis(response.data);
         setLoading(false);
@@ -110,19 +130,23 @@ const PayrollVaucher = ({ ...props }) => {
 
   useEffect(() => {
     let period = [];
-    if (calendar)
+    console.log("calendars--->> ", props.payment_calendar);
+    if (calendar && props.payment_calendar) {
       period = props.payment_calendar.find(
         (item) => item.id == calendar
       ).periods;
-    setPeriods(
-      period.map((item) => {
-        return {
-          value: item.id,
-          label: `${item.start_date} - ${item.end_date}`,
-        };
-      })
-    );
-  }, [calendar]);
+      setPeriods(
+        period
+          .sort((a, b) => a.name - b.name)
+          .map((item) => {
+            return {
+              value: item.id,
+              label: `${item.name}.- ${item.start_date} - ${item.end_date}`,
+            };
+          })
+      );
+    }
+  }, [calendar, props.payment_calendar]);
 
   return (
     <MainLayout currentKey={["persons"]}>
@@ -145,7 +169,7 @@ const PayrollVaucher = ({ ...props }) => {
                 <SelectPaymentCalendar
                   setCalendarId={(value) => setCalendar(value)}
                   name="calendar"
-                  style={{ width: 200 }}
+                  style={{ width: 300 }}
                 />
               </Col>
               {calendar && (
@@ -153,14 +177,15 @@ const PayrollVaucher = ({ ...props }) => {
                   <Form.Item name="period" label="Periodo">
                     <Select
                       options={periods}
-                      style={{ width: 200 }}
+                      style={{ width: 250 }}
                       placeholder="Periodo"
+                      allowClear
                     />
                   </Form.Item>
                 </Col>
               )}
               <Col>
-                <SelectCollaborator name="person" style={{ width: 200 }} />
+                <SelectCollaborator name="person" style={{ width: 250 }} />
               </Col>
               <Col style={{ display: "flex" }}>
                 <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>

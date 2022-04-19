@@ -1,4 +1,6 @@
+import axios from "axios";
 import WebApiPeople from "../api/WebApiPeople";
+import { typeHttp } from "../config/config";
 
 export const generateYear = () => {
   let yearsArray = [];
@@ -28,6 +30,30 @@ export const asyncForEach = async (array, callback) => {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
   }
+};
+
+export const downLoadFileBlob = async (
+  url,
+  name = "Example.xlsx",
+  type = "POST",
+  params = null
+) => {
+  let headers = {
+    method: type,
+    responseType: "blob",
+  };
+  if (params) headers.data = params;
+  axios(`${typeHttp}://` + url, headers)
+    .then((response) => {
+      const blob = new Blob([response.data]);
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = name;
+      link.click();
+    })
+    .catch((e) => {
+      console.log(e);
+    });
 };
 
 export const UserPermissions = (permits = null, is_admin = false) => {

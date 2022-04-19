@@ -5,7 +5,7 @@ import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 
-const GeneralData = ({ setCompany, ...props }) => {
+const GeneralData = ({ company, ...props }) => {
   let router = useRouter();
   const [update, setUpdate] = useState(false);
   const [companyInfo, setCompanyInfo] = useState();
@@ -14,11 +14,6 @@ const GeneralData = ({ setCompany, ...props }) => {
 
   useEffect(() => {
     {
-      Axios.get(API_URL + "/business/node/" + router.query.id + "/")
-        .then(function (response) {
-          setCompany(response.data.name);
-        })
-        .catch();
       Axios.get(API_URL + `/business/node-information/?node=${router.query.id}`)
         .then(function (response) {
           if (response.data.results.length > 0) {

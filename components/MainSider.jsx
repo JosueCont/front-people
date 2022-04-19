@@ -355,6 +355,14 @@ const MainSider = ({
                 >
                   Calculo de nómina
                 </Menu.Item>
+                <Menu.Item
+                  key="cfdi"
+                  onClick={() =>
+                    router.push({ pathname: "/payroll/payrollVaucher" })
+                  }
+                >
+                  Comprobantes fiscales
+                </Menu.Item>
               </>
             </SubMenu>
           )}
