@@ -82,11 +82,21 @@ const CardApps = ({user, ...props}) => {
     const imgSocial =
     "https://cdn-icons-png.flaticon.com/512/236/236822.png";
 
+    const imgPeople =
+    "https://www.ird.lk/wp-content/uploads/2018/11/kisspng-crowd-drawing-cartoon-community-5abe5e8dc735f1.335904791522425485816.png";
+
     const linkToProfile = () =>{
         const token = user.jwt_data.metadata.at(-1).token;
         const url = `https://demo.myaccount.hiumanlab.com/validation?token=${token}`;
         // const url = `http://demo.localhost:3001/validation?token=${token}`;
         redirectTo(url);
+    }
+
+    const linkToPeople = () =>{
+        const token = user.jwt_data.metadata.at(-1).token;
+        const url = `https://demo.people.hiumanlab.com/validation?token=${token}`;
+        // const url = `http://demo.localhost:3000/validation?token=${token}`;
+        redirectTo(url)
     }
 
     const linktToIsysa = () =>{
@@ -120,10 +130,10 @@ const CardApps = ({user, ...props}) => {
                     <Space
                         direction='vertical'
                         align='center'
-                        onClick={()=>linktToIsysa()}
+                        onClick={()=>linkToPeople()}
                     >
-                        <img src={imgSocial}/>
-                        <p style={{marginBottom: '0px'}}>Isysa</p>
+                        <img src={imgPeople}/>
+                        <p style={{marginBottom: '0px'}}>People</p>
                     </Space>
                 </Col>
             </Row>
