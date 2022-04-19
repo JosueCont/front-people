@@ -44,6 +44,18 @@ const FormSections = ({ assessmentStore, ...props }) => {
   }, [assessmentStore]);
 
   const onFinish = (values) => {
+    console.log('first', `-${values.code}-`)
+    const regex = /^\s+$/;
+    const invalid = regex.test(values.code);
+    if(invalid){
+      formSections.setFields([
+        {
+          "name": "code",
+          "errors": ["Este campo no puede estar vacío"]
+        }
+    ])
+    }
+    return;
     values.instructions_es = instruccions;
     values.short_instructions_es = instruccionCorta;
     values.assessment = assessment_selected.id;
