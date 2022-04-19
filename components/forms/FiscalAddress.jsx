@@ -41,7 +41,6 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
   };
 
   const setPostalCodeSelected = (data) => {
-    console.log("SET DAtA-->> ", data);
     setPostalCodeSelect(data);
     form.setFieldsValue({
       postal_code: data.code,

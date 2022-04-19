@@ -66,7 +66,6 @@ const PayrollVaucher = ({ ...props }) => {
       title: "Acciones",
       key: "actions",
       render: (item) => {
-        console.log("ITEM-->> ", item);
         return (
           <>
             {item.id_facturama && (
@@ -130,8 +129,7 @@ const PayrollVaucher = ({ ...props }) => {
 
   useEffect(() => {
     let period = [];
-    console.log("calendars--->> ", props.payment_calendar);
-    if (calendar && props.payment_calendar) {
+    if (calendar && props.payment_calendar.length > 0) {
       period = props.payment_calendar.find(
         (item) => item.id == calendar
       ).periods;

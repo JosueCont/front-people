@@ -19,7 +19,6 @@ const ConfigCompany = ({ ...props }) => {
     {
       WebApiPeople.getCompany(router.query.id)
         .then(function (response) {
-          console.log("COMPANY-->> ", response.data);
           setCompany(response.data);
           setLoading(false);
         })

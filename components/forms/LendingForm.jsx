@@ -86,7 +86,7 @@ const Lendingform = (props) => {
             periodicity: null,
           });
           setDisbPeriodicity(false);
-          console.log("Error", error);
+          console.log(error);
         });
     } else {
       form.setFieldsValue({

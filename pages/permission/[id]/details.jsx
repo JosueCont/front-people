@@ -108,7 +108,7 @@ const PermissionDetails = () => {
         });
       })
       .catch(function (error) {
-        console.log("Error", error);
+        console.log(error);
         setLoading(false);
       });
   };

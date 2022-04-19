@@ -58,7 +58,7 @@ const HolidaysNew = () => {
         });
       })
       .catch(function (error) {
-        console.log("error", error);
+        console.log(error);
         setSending(false);
       });
   };
@@ -84,7 +84,7 @@ const HolidaysNew = () => {
         setMessage(null);
       })
       .catch(function (error) {
-        console.log("error", error);
+        console.log(error);
         setSending(false);
       });
   };
@@ -124,7 +124,7 @@ const HolidaysNew = () => {
         });
       })
       .catch(function (error) {
-        console.log("Error", error);
+        console.log(error);
         setSending(false);
       });
   };
