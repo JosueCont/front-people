@@ -40,7 +40,6 @@ const LendingConfig = (props) => {
     let url = `get_config_for_node/?node=${nodeId}`;
     WebApiPayroll.getConfigLoan(url)
       .then(function (response) {
-        console.log("response", response);
         let data = response.data;
         setConfig(data);
         form.setFieldsValue({

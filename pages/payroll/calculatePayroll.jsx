@@ -34,6 +34,7 @@ import {
   messageSaveSuccess,
   messageSendSuccess,
 } from "../../utils/constant";
+import GenericModal from "../../components/modal/genericModal";
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -408,13 +409,17 @@ const CalculatePayroll = ({ ...props }) => {
     })
       .then((response) => {
         sendCalculatePayroll({ calendar_id: form.getFieldValue("calendar") });
-        message.success(messageSaveSuccess);
-        setLoading(false);
+        setTimeout(() => {
+          message.success(messageSaveSuccess);
+          setLoading(false);
+        }, 1000);
       })
       .catch((error) => {
         setLoading(false);
-        message.error(messageError);
-        console.log(error);
+        setTimeout(() => {
+          message.error(messageError);
+          console.log(error);
+        }, 1000);
       });
   };
 
@@ -545,40 +550,19 @@ const CalculatePayroll = ({ ...props }) => {
               </Card>
             </Col>
 
-            {viewCfdi ? (
+            {payroll.length > 0 && !viewCfdi && (
               <Col md={5}>
                 <Button
                   size="large"
                   block
                   htmlType="button"
                   onClick={() =>
-                    router.push({
-                      pathname: "/payroll/payrollVaucher",
-                      query: {
-                        calendar: form.getFieldValue("calendar"),
-                        period: activePeriod,
-                      },
-                    })
+                    consolidated ? stampPayroll() : sendClosePayroll()
                   }
                 >
-                  {"Ver CFDI's"}
+                  {consolidated ? "Timbrar nomina" : "Cerrar nomina"}
                 </Button>
               </Col>
-            ) : (
-              payroll.length > 0 && (
-                <Col md={5}>
-                  <Button
-                    size="large"
-                    block
-                    htmlType="button"
-                    onClick={() =>
-                      consolidated ? stampPayroll() : sendClosePayroll()
-                    }
-                  >
-                    {consolidated ? "Timbrar nomina" : "Cerrar nomina"}
-                  </Button>
-                </Col>
-              )
             )}
             <Col span={24}>
               <Card className="card_table">
@@ -604,23 +588,47 @@ const CalculatePayroll = ({ ...props }) => {
               </Card>
             </Col>
           </Row>
-          {personId && (
-            <ModalConceptsPayroll
-              visible={modalVisible}
-              setVisible={setModalVisible}
-              calendar={{
-                node: props.currentNode.id,
-                period: form.getFieldValue("year"),
-              }}
-              person_id={personId}
-              payroll={payroll}
-              setLoading={setLoading}
-              sendCalculatePayroll={sendCalculatePayroll}
-              payrollType={payrollType}
-            />
-          )}
         </MainLayout>
       </Spin>
+      {personId && (
+        <ModalConceptsPayroll
+          visible={modalVisible}
+          setVisible={setModalVisible}
+          calendar={{
+            node: props.currentNode.id,
+            period: form.getFieldValue("year"),
+          }}
+          person_id={personId}
+          payroll={payroll}
+          setLoading={setLoading}
+          sendCalculatePayroll={sendCalculatePayroll}
+          payrollType={payrollType}
+        />
+      )}
+      {viewCfdi && (
+        <GenericModal
+          visible={viewCfdi}
+          setVisible={setViewCfdi}
+          title="Timbrado de nomina"
+          content={
+            <Col md={5}>
+              <Button size="large" block htmlType="button">
+                Ver CFDI's
+              </Button>
+            </Col>
+          }
+          actionButton={() => {
+            router.push({
+              pathname: "/payroll/payrollVaucher",
+              query: {
+                calendar: form.getFieldValue("calendar"),
+                period: activePeriod,
+              },
+            });
+          }}
+          titleActionButton={"Ver comprobantes"}
+        />
+      )}
     </>
   );
 };

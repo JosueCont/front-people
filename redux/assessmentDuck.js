@@ -123,15 +123,14 @@ const assessmentReducer = (state = initialData, action) => {
         fetching: false,
       };
     case types.GET_CATEGORIES_SUCCESS:
-      console.log("action.payload", action.payload);
-        return {
-          ...state,
-          categories_assessment: action.payload,
-        };
+      return {
+        ...state,
+        categories_assessment: action.payload,
+      };
     case types.UPD_PAGINATION:
       return {
         ...state,
-        pagination: {...state.pagination, current: action.payload}
+        pagination: { ...state.pagination, current: action.payload },
       };
     default:
       return state;
@@ -171,7 +170,9 @@ export const assessmentDetailsAction = (id) => {
       dispatch({ type: types.LOAD_SECTIONS, payload: sections });
       sections.length > 0 &&
         sections.forEach(async (element) => {
-          let questions_ = await WebApiAssessment.assessmentQuestions(element.id);
+          let questions_ = await WebApiAssessment.assessmentQuestions(
+            element.id
+          );
           // let questions_ = await Axios.get(
           //   `${API_ASSESSMENT}/assessments/question/?section=${element.id}`
           // );
@@ -195,11 +196,11 @@ export const assessmentDetailsAction = (id) => {
   };
 };
 
-export const updPagination = (currentPage) =>{
+export const updPagination = (currentPage) => {
   return async (dispatch) => {
     dispatch({ type: types.UPD_PAGINATION, payload: currentPage });
   };
-}
+};
 
 //GET ACTIVE MODAL
 export const assessmentModalAction = (modal) => {
@@ -228,7 +229,9 @@ export const sectionOrderAction = (method, item) => {
   return async (dispatch) => {
     try {
       await getOrderApi(method, item.id);
-      let sections_ = await WebApiAssessment.assessmentSections(item.assessment.id);
+      let sections_ = await WebApiAssessment.assessmentSections(
+        item.assessment.id
+      );
       // let sections_ = await Axios.get(
       //   `${API_ASSESSMENT}/assessments/section/?assessment=${item.assessment.id}`
       // );
@@ -237,7 +240,7 @@ export const sectionOrderAction = (method, item) => {
       let questions_ = [];
       sections.length > 0 &&
         (await asyncForEach(sections, async (element) => {
-          let { data } = await WebApiAssessment.assessmentQuestions(element.id)
+          let { data } = await WebApiAssessment.assessmentQuestions(element.id);
           // let { data } = await Axios.get(
           //   `${API_ASSESSMENT}/assessments/question/?section=${element.id}`
           // );
@@ -337,7 +340,6 @@ export const assessmentCreateAction = (data) => {
   return async (dispatch) => {
     dispatch({ type: types.FETCHING, payload: true });
     try {
-
       // let response = await Axios.post(
       //   API_ASSESSMENT + "/assessments/assessment/",
       //   data
@@ -375,7 +377,7 @@ export const assessmentDeleteAction = (id) => {
     dispatch({ type: types.FETCHING, payload: true });
     try {
       // await Axios.delete(`${API_ASSESSMENT}/assessments/assessment/${id}`);
-      await WebApiAssessment.assessmentDelete(id)
+      await WebApiAssessment.assessmentDelete(id);
       dispatch({ type: types.DELETE_ASSESSMENTS, payload: id });
       return true;
     } catch (e) {
@@ -391,8 +393,9 @@ export const assessmentStatusAction = (id, status) => {
   return async (dispatch) => {
     dispatch({ type: types.FETCHING, payload: true });
     try {
-
-      let { data } = await WebApiAssessment.assessmentStatus(id,{ is_active: status });
+      let { data } = await WebApiAssessment.assessmentStatus(id, {
+        is_active: status,
+      });
       // let { data } = await Axios.patch(
       //   `${API_ASSESSMENT}/assessments/assessment/${id}/`,
       //   { is_active: status }
@@ -551,7 +554,7 @@ export const answerUpdateAction = (id, values) => {
   return async (dispatch) => {
     dispatch({ type: types.FETCHING, payload: true });
     try {
-      let response = await WebApiAssessment.updateAnswer(id, values)
+      let response = await WebApiAssessment.updateAnswer(id, values);
       // let response = await Axios.patch(
       //   `${API_ASSESSMENT}/assessments/answer/${id}/`,
       //   values
@@ -575,9 +578,9 @@ export const answerDeleteAction = (item) => {
   return async (dispatch) => {
     dispatch({ type: types.FETCHING, payload: true });
     try {
-      await WebApiAssessment.deleteAnswer(item.id)
+      await WebApiAssessment.deleteAnswer(item.id);
       // await Axios.delete(`${API_ASSESSMENT}/assessments/answer/${item.id}/`);
-      let {data} = await WebApiAssessment.getAnswer(item.question);
+      let { data } = await WebApiAssessment.getAnswer(item.question);
       // let { data } = await Axios.get(
       //   `${API_ASSESSMENT}/assessments/question/${item.question}/`
       // );
@@ -592,19 +595,18 @@ export const answerDeleteAction = (item) => {
 };
 
 export const getCategories = () => {
-  console.log("getCategories");
   return async (dispatch) => {
     dispatch({ type: types.FETCHING, payload: true });
     try {
       let response = await WebApiAssessment.getCategoriesAssessment();
-      console.log("response =>", response);
-      if(response.status === 200){
-        dispatch({ type: types.GET_CATEGORIES_SUCCESS, payload: response.data });
+      if (response.status === 200) {
+        dispatch({
+          type: types.GET_CATEGORIES_SUCCESS,
+          payload: response.data,
+        });
       }
-    } catch (error) {
-      
-    }
-  }
-}
+    } catch (error) {}
+  };
+};
 
 export default assessmentReducer;

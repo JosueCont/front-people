@@ -51,7 +51,7 @@ const AddPeopleGroup = (props) => {
         props.setVisible();
       })
       .catch((e) => {
-        console.log("error", e);
+        console.log(e);
         props.setVisible();
       });
   };

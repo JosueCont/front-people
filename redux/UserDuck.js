@@ -63,9 +63,12 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
     sessionStorage.setItem("aid", response.data.client_khonnect_id);
     sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
     dispatch({ type: GENERAL_CONFIG, payload: response.data });
-    if (response.data.nomina_enabled)
-      dispatch(getFiscalTaxRegime(), getTypeTax(), getPaymentPeriodicity());
     dispatch(setUser());
+    if (response.data.nomina_enabled) {
+      dispatch(getFiscalTaxRegime());
+      dispatch(getTypeTax());
+      dispatch(getPaymentPeriodicity());
+    }
   } catch (error) {}
 };
 
