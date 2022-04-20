@@ -234,7 +234,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
       let calendar = calendars.find((calendar) => calendar.id == value);
       if (calendar) {
         formPayrollPerson.setFieldsValue({
-          perception_type: calendar.perception_type,
+          perception_type: calendar.perception_type.id,
           type_tax: calendar.type_tax.id,
         });
       }
