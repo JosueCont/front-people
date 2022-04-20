@@ -28,10 +28,10 @@ import {
     CustomCheck,
     ButtonDanger,
     CompactSelect,
-    CompactButton
+    CompactButton,
 } from "../../assessment/groups/Styled";
 
-const AssignAssessments = ({...props}) =>{
+const AssignAssessments = ({itemGroup, ...props}) =>{
 
     const [formGroup] = Form.useForm();
     const {Option} = Select;
@@ -47,13 +47,45 @@ const AssignAssessments = ({...props}) =>{
     const [isSelectAll, setIsSelectAll] = useState(false);
     const [copyList, setCopyList] = useState([]);
     const [copyKeys, setCopyKeys] = useState([]);
+    const [currentAssigned, setCurrentAssigned] = useState([])
 
     useEffect(()=>{
-        if(currentNode?.id){
+        if(props.visible){
+            if(currentNode?.id){
             getCategories()
             getSurveys(currentNode.id, "")
-        }
+            
+            }
+            if(itemGroup){
+                console.log('itemGroup ==>',itemGroup);
+                if(itemGroup){
+                    getAllAssignments();
+                }
+            }
+        }        
     },[props.visible])
+
+    
+
+    
+    const getAllAssignments = async () => {
+        let dataSend = {}
+
+        if(itemGroup){
+            dataSend['groupPerson_id'] = itemGroup.id;
+        }
+        try {
+            let response = await WebApiAssessment.getAllAssignments(dataSend);
+            setCurrentAssigned(response.data)
+            console.log('response',response);
+        } catch (e) { 
+            console.log(e)
+        }
+    }
+
+
+    
+    
 
     const getCategories = async () =>{
         try {
@@ -116,7 +148,36 @@ const AssignAssessments = ({...props}) =>{
             listSurveys.results ?
             listSurveys.results :
             listSurveys;
-        return list;
+
+    
+        let newList = [];
+
+        list.map(item =>{ 
+            let found = false;
+            if(currentAssigned.length < 1){
+                found = false;
+            }else{
+                currentAssigned.map(record => {
+                    if ( isIndividual &&  record.assessment === item.id){
+                        found = true;
+                    }
+                    if(!isIndividual && record['group_assessment']){
+                        if(record['group_assessment']['id'] === item.id){
+                            found = true;
+                        }
+                        
+                    }
+                })
+            }
+            if(!found){
+                newList.push(item);
+            }
+        })
+
+        console.log('currentAssigned =>',currentAssigned);
+        console.log('list =>',list)
+
+        return newList;
     }
 
     const getListCopy = () =>{
@@ -179,11 +240,13 @@ const AssignAssessments = ({...props}) =>{
             
         },
         {
-            title: "Categorías",
+            title: "Tipo de Evaluación",
             render: (item) => {
                 return (
                     <div>
-                        {item.category}
+                        {
+                            item.category === 'Q' ? 'Quiz' : item.category === 'A' ? 'Assessment' : item.category === 'K' ? 'Khor' : '' 
+                        }
                     </div>
                 );
             },
@@ -258,9 +321,11 @@ const AssignAssessments = ({...props}) =>{
         if(e.target.value){
             getSurveys(currentNode.id, "")
             setIsIndividual(true)
+            /* getAssigns */
         }else{
             getGroupsSurveys(currentNode.id, "")
             setIsIndividual(false)
+            /* getAssigns */
         }
     }
 

@@ -116,7 +116,7 @@ const LendingDetails = (props) => {
         });
       })
       .catch(function (error) {
-        console.log("Error", error);
+        console.log(error);
         setSending(false);
       });
   };
@@ -153,7 +153,7 @@ const LendingDetails = (props) => {
         setLoading(false);
       })
       .catch(function (error) {
-        console.log("error", error);
+        console.log(error);
         setLoading(false);
       });
   };
@@ -165,7 +165,7 @@ const LendingDetails = (props) => {
         setPlan(data);
       })
       .catch(function (error) {
-        console.log("error", error);
+        console.log(error);
       });
   };
 

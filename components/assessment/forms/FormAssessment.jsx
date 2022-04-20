@@ -41,10 +41,15 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
       onReset();
       setImagen(null);
       setImageUrl(null);
-      setDescripcion("");
-      setInstruccions("");
+      setDescripcion("<p></p>");
+      setInstruccions("<p></p>");
     }
   }, [props.loadData]);
+
+  useEffect(() => {
+    console.log('descripcion',descripcion)
+  }, [descripcion])
+  
 
   useEffect(() => {
     console.log('assessmentStore',assessmentStore)
@@ -85,10 +90,22 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
       props
         .assessmentUpdateAction(assessmentId, params)
         .then((response) => {
-          response
-            ? message.success("Actualizado correctamente")
-            : message.error("Hubo un error"),
+          if(response.status === 201){
+            message.success("Agregado correctamente")
+          }else if(response.status === 200){
+            if(response.data && response.data['code']){
+              message.error(response.data['code'][0]);
+            }else{
+              message.error("Hubo un error");
+            }
+          }else{
+            message.error("Hubo un error");
+          }
+            formAssessment.resetFields();
+            setDescripcion("<p></p>");
+            setInstruccions("<p></p>");
             props.close();
+            
         })
         .catch((e) => {
           message.error("Hubo un error");
@@ -99,9 +116,20 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
       props
         .assessmentCreateAction(params)
         .then((response) => {
-          response
-            ? message.success("Agregado correctamente")
-            : message.error("Hubo un error"),
+          console.log('response',response)
+          if(response.status === 201){
+            message.success("Agregado correctamente")
+          }else if(response.status === 200){
+            if(response.data && response.data['code']){
+              message.error(response.data['code'][0]);
+            }else{
+              message.error("Hubo un error");
+            }
+          }else{
+            message.error("Hubo un error");
+          }
+            setDescripcion("<p></p>");
+            setInstruccions("<p></p>");
             props.close();
         })
         .catch((e) => {

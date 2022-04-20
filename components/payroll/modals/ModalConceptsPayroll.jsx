@@ -27,6 +27,7 @@ const ModalConceptsPayroll = ({
   payroll = null,
   calendar,
   sendCalculatePayroll,
+  payrollType,
   ...props
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -44,6 +45,27 @@ const ModalConceptsPayroll = ({
       props.deductions_int &&
       props.other_payments_int
     ) {
+      if (payrollType === "046") {
+        props.perceptions_int = props.perceptions_int.filter(
+          (item) => item.perception_type.is_assimilated
+        );
+        props.deductions_int = props.deductions_int.filter(
+          (item) => item.deduction_type.is_assimilated
+        );
+        props.other_payments_int = props.other_payments_int.filter(
+          (item) => item.other_type_payment.is_assimilated
+        );
+      } else {
+        props.perceptions_int = props.perceptions_int.filter(
+          (item) => !item.perception_type.is_assimilated
+        );
+        props.deductions_int = props.deductions_int.filter(
+          (item) => !item.deduction_type.is_assimilated
+        );
+        props.other_payments_int = props.other_payments_int.filter(
+          (item) => !item.other_type_payment.is_assimilated
+        );
+      }
       setPerceptionsCat(
         props.perceptions_int.map((item) => {
           return {
@@ -56,6 +78,7 @@ const ModalConceptsPayroll = ({
           };
         })
       );
+
       setDeductionsCat(
         props.deductions_int.map((item) => {
           return {
@@ -68,6 +91,8 @@ const ModalConceptsPayroll = ({
           };
         })
       );
+      console.log(props.other_payments_int);
+
       setOtherPaymentsCat(
         props.other_payments_int.map((item) => {
           return {
@@ -175,7 +200,7 @@ const ModalConceptsPayroll = ({
           person_id: person_id,
           perceptions: perceptions,
           deductions: deductions,
-          otherPayments: otherPayments,
+          other_payments: otherPayments,
         });
       } else {
         data.push({
@@ -184,7 +209,7 @@ const ModalConceptsPayroll = ({
           deductions: item.deductions.filter(
             (item) => item.code != "D201" && item.code != "D202"
           ),
-          otherPayments: item.otherPayments,
+          other_payments: item.otherPayments,
         });
       }
     });
@@ -237,14 +262,24 @@ const ModalConceptsPayroll = ({
             >
               Cancelar
             </Button>
-            <Button
-              size="large"
-              htmlType="button"
-              onClick={() => createObjectSend()}
-              style={{ paddingLeft: 50, paddingRight: 50 }}
-            >
-              Guardar
-            </Button>
+            {perceptions.length > 0 ||
+            deductions.length > 0 ||
+            otherPayments.length > 0 ? (
+              <Button
+                size="large"
+                htmlType="button"
+                onClick={() =>
+                  currentStep == 2
+                    ? createObjectSend()
+                    : setCurrentStep(currentStep + 1)
+                }
+                style={{ paddingLeft: 50, paddingRight: 50 }}
+              >
+                {currentStep == 2 ? "Guardar" : "Siguiente"}
+              </Button>
+            ) : (
+              <></>
+            )}
           </Space>
         </Col>
       }
@@ -263,8 +298,28 @@ const ModalConceptsPayroll = ({
           }}
         >
           <Step title="Conceptos" description="Agregar conceptos" />
-          <Step title="Montos" description="Capturar valores" />
-          <Step title="Finalizar" description="Finalizar" />
+          <Step
+            disabled={
+              perceptions.length > 0 ||
+              deductions.length > 0 ||
+              otherPayments.length > 0
+                ? false
+                : true
+            }
+            title="Montos"
+            description="Capturar valores"
+          />
+          <Step
+            disabled={
+              perceptions.length > 0 ||
+              deductions.length > 0 ||
+              otherPayments.length > 0
+                ? false
+                : true
+            }
+            title="Finalizar"
+            description="Finalizar"
+          />
         </Steps>
         <Card hoverable style={{ width: "100%" }}>
           {currentStep == 0 ? (

@@ -273,7 +273,7 @@ const Incapacityform = (props) => {
         setDisabilitys(datas);
       })
       .catch(function (error) {
-        console.log("error", error);
+        console.log(error);
       });
   };
 

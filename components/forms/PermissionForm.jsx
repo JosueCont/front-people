@@ -97,7 +97,6 @@ const Permissionform = (props) => {
   };
 
   useEffect(() => {
-    console.log("Entrando al useEffect");
     if (props.details) {
       formPermission.setFieldsValue({
         person: props.details.collaborator

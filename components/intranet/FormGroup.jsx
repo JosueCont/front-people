@@ -16,7 +16,7 @@ import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { API_URL } from "../../config/config";
 import { ruleRequired } from "../../utils/rules";
-import WebApiIntranet from '../../api/WebApiIntranet'
+import WebApiIntranet from "../../api/WebApiIntranet";
 
 const beforeUpload = (file) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -79,13 +79,13 @@ const FormGroup = (props) => {
     if (props.isEdit) {
       setLoadingGroup(true);
       await WebApiIntranet.updGroup(props.group.id, params)
-      .then((res) => {
+        .then((res) => {
           closeDialog();
           setLoadingGroup(false);
         })
         .catch((e) => {
           setLoadingGroup(false);
-          console.log("error", e);
+          console.log(e);
           closeDialog();
         });
     } else {
@@ -96,7 +96,7 @@ const FormGroup = (props) => {
           setLoadingGroup(false);
         })
         .catch((e) => {
-          console.log("error", e);
+          console.log(e);
           setLoadingGroup(false);
           closeDialog();
         });
@@ -172,7 +172,7 @@ const FormGroup = (props) => {
                 name="image"
                 // labelAlign={"left"}
                 style={{ marginTop: 15 }}
-                rules={!photo? [ruleRequired]:[]}
+                rules={!photo ? [ruleRequired] : []}
               >
                 <Upload
                   label="avatar"

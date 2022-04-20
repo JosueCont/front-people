@@ -51,16 +51,16 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
       response.data.fullName = personName;
       setPerson(response.data);
     } catch (error) {
-      console.log("error", error);
+      console.log(error);
       setPerson({ photo: defaulPhoto });
     }
   };
 
-  const editProfile = () =>{
+  const editProfile = () => {
     !person.nodes && props.currentNode
-    ? router.push(`/ac/urn/${props.currentNode.permanent_code}`)
-    : router.push(`/home/persons/${person.id}`);
-  }
+      ? router.push(`/ac/urn/${props.currentNode.permanent_code}`)
+      : router.push(`/home/persons/${person.id}`);
+  };
 
   const userCardDisplay = () => (
     <>
@@ -192,9 +192,16 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                       onClick={() => props.setShowEvents(true)}
                     />
                   </Badge> */}
-                  <Dropdown overlay={<CardApps/>} key="dropdown_apps">
+                  <Dropdown overlay={<CardApps />} key="dropdown_apps">
                     <div key="menu_apps_content">
-                      <BsFillGrid3X3GapFill style={{ color: "white", fontSize: 30, display: 'flex', margin: 'auto'}} />
+                      <BsFillGrid3X3GapFill
+                        style={{
+                          color: "white",
+                          fontSize: 30,
+                          display: "flex",
+                          margin: "auto",
+                        }}
+                      />
                     </div>
                   </Dropdown>
                   <Dropdown overlay={userCardDisplay} key="dropdown_user">

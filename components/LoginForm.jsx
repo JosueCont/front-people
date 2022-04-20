@@ -42,13 +42,13 @@ const LoginForm = ({
     login(values.email, values.password);
   };
 
-  let data_token  = "";
+  let data_token = "";
 
   const saveJWT = async (jwt) => {
     try {
       let data = {
         khonnect_id: jwt.user_id,
-        jwt: {...jwt, metadata:[{token: data_token}]},
+        jwt: { ...jwt, metadata: [{ token: data_token }] },
       };
 
       let response = await WebApiPeople.saveJwt(data);
@@ -86,10 +86,10 @@ const LoginForm = ({
           });
         })
         .catch((err) => {
-          console.log("error", error);
+          console.log(error);
         });
     } catch (error) {
-      console.log("error", error);
+      console.log(error);
     }
   };
 
@@ -116,7 +116,7 @@ const LoginForm = ({
       })
         .then(function (response) {
           if (response.status === 200) {
-            data_token  = response['data']['token'];
+            data_token = response["data"]["token"];
             let token = jwt_decode(response.data.token);
             if (setKhonnectId) {
               setKhonnectId(token.user_id);
@@ -131,14 +131,12 @@ const LoginForm = ({
                       message.success("Acceso correcto.");
                       delete token.perms;
                       Cookies.set("token", token);
-                      setTimeout(()=>{
+                      setTimeout(() => {
                         setLoading(false);
                         router.push({
                           pathname: "/select-company",
                         });
-                    },2000)
-
-                      
+                      }, 2000);
                     })
                     .catch((error) => {
                       message.error("Acceso denegado");
