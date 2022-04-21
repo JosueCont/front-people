@@ -1,10 +1,8 @@
-import { Form, Row, Col, Input, Button, Switch, Select, message } from "antd";
+import { Form, Row, Col, Input, Switch, Select } from "antd";
 import React, { useState, useEffect } from "react";
 import { curpFormat, rfcFormat, ruleRequired } from "../../utils/rules";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
-import WebApiPeople from "../../api/WebApiPeople";
 import SelectTaxRegime from "../selects/SelectTaxRegime";
-import { messageError, messageSaveSuccess } from "../../utils/constant";
 
 const FiscalInformation = ({ form, fiscalData, ...props }) => {
   const [pTypeSelected, setPTypeSelected] = useState(false);
@@ -24,6 +22,7 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
       rfc: data.rfc,
       tax_regime: data.tax_regime,
       assimilated_pay: data.assimilated_pay,
+      business_name: data.business_name,
     });
   };
 
@@ -64,10 +63,14 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
             </Form.Item>
           </Col>
         )}
-
         <Col lg={8} xs={22} md={12}>
           <Form.Item name="rfc" label="RFC" rules={[rfcFormat, ruleRequired]}>
             <Input maxLength={13} />
+          </Form.Item>
+        </Col>{" "}
+        <Col lg={8} xs={22} md={12}>
+          <Form.Item name="business_name" label="Razon social">
+            <Input />
           </Form.Item>
         </Col>
         <Col lg={13} xs={22}>
@@ -78,6 +81,7 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
             name="assimilated_pay"
             label="Pago asimilados"
             valuePropName="checked"
+            initialValue={true}
           >
             <Switch
               checkedChildren={<CheckOutlined />}
@@ -90,6 +94,7 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
             name="has_personnel_outsourcing"
             label="Subcontratacion de personal"
             valuePropName="checked"
+            initialValue={true}
           >
             <Switch
               checkedChildren={<CheckOutlined />}
@@ -97,9 +102,6 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
             />
           </Form.Item>
         </Col>
-        {/* <Col span={24} style={{ textAlign: "end" }}>
-          <Button htmlType="submit">Guardar</Button>
-        </Col> */}
       </Row>
     </Form>
   );
