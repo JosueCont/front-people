@@ -1,60 +1,77 @@
-import React from 'react';
-import { Table, Select } from 'antd';
-import styled from 'styled-components';
-import { Row, Col, Badge } from 'antd';
-import _ from 'lodash'
+import React from "react";
+import { Table, Select } from "antd";
+import styled from "styled-components";
+import { Row, Col, Badge } from "antd";
+import _ from "lodash";
 
 const ReactionsImg = styled.img`
-    max-width: 20px;
-    margin: auto;
+  max-width: 20px;
+  margin: auto;
 `;
 const ReactionsCount = styled.p`
-    margin: 0px 0px 0px 10px;
-    font-size: 1em;
-    font-weight: bold;
-    display: inline;
-    width: fit-content;
+  margin: 0px 0px 0px 10px;
+  font-size: 1em;
+  font-weight: bold;
+  display: inline;
+  width: fit-content;
 `;
 const CustomTable = styled(Table)`
-    & .ant-table-cell{
-        padding-left: 5px;
-        padding-right: 5px;
-        text-align: center;
-    }
-    & .publication-column{
-        width: 20%;
-    }
-    & .small-column{
-        width: 9%;
-        min-width: 110px;
-    }
-    & .date-column{
-        width: 16%;
-    }
+  & .ant-table-cell {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+  }
+  & .publication-column {
+    width: 20%;
+  }
+  & .small-column {
+    width: 9%;
+    min-width: 110px;
+  }
+  & .date-column {
+    width: 16%;
+  }
 `;
-const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processedPublicationsList, changePage, parameters, changeStatus, ...props}) => {
+const PublicationsStatisticsTable = ({
+  current = 1,
+  total = 1,
+  fetching,
+  processedPublicationsList,
+  changePage,
+  parameters,
+  changeStatus,
+  ...props
+}) => {
+  const { Option } = Select;
 
-    const {Option} = Select
+  const optionsActions = [
+    {
+      label: "Pendiente",
+      value: 2,
+    },
+    {
+      label: "Publicada",
+      value: 1,
+    },
+    {
+      label: "Bloqueada",
+      value: 0,
+    },
+  ];
 
-    const optionsActions = [
-        {
-            label: 'Pendiente',
-            value: 2
-        },
-        {
-            label: 'Publicada',
-            value: 1
-        },
-        {
-            label: 'Bloqueada',
-            value: 0
-        }
-    ]
-
-    console.log('processedPublicationsList =>',processedPublicationsList)
-    const ReactionByType = ({reactions = [{1: '0'}, {2:'0'}, {3: '0'}, {4: '0'}, {5: '0'}, {6: '0'}, {7: '0'}]}) => (
-        <>
-            {/* <Row>
+  const ReactionByType = ({
+    reactions = [
+      { 1: "0" },
+      { 2: "0" },
+      { 3: "0" },
+      { 4: "0" },
+      { 5: "0" },
+      { 6: "0" },
+      { 7: "0" },
+    ],
+  }) => (
+    <>
+      {/* <Row>
                 <Col span={8}>
                         <ReactionsImg src='/images/reactionsIcons/me_gusta.svg' alt='img' /> tipo 1
                 </Col>
@@ -77,116 +94,136 @@ const PublicationsStatisticsTable = ({current = 1, total = 1, fetching, processe
                     <ReactionsImg src='/images/reactionsIcons/me_interesa.svg' alt='mg' /> tipo 7
                 </Col>
             </Row> */}
-            <Row>
-                {reactions ? 
-                <>
-                    {reactions.map((reaction, index) => (
-                        <Col span={8} style={{textAlign: 'center', marginBottom: '10px'}} key={`col_${index}`}>
-                            <ReactionsImg src={`/images/reactionsIcons/${index + 1}.svg`} alt='icon' key={`reaction_${index}`}/>
-                            <ReactionsCount key={`count_${index}`}>{reaction[index + 1]}</ReactionsCount>
-                        </Col>
-                    ))}
-                </>: ''}
-            </Row>
-        </>
-    );
+      <Row>
+        {reactions ? (
+          <>
+            {reactions.map((reaction, index) => (
+              <Col
+                span={8}
+                style={{ textAlign: "center", marginBottom: "10px" }}
+                key={`col_${index}`}
+              >
+                <ReactionsImg
+                  src={`/images/reactionsIcons/${index + 1}.svg`}
+                  alt="icon"
+                  key={`reaction_${index}`}
+                />
+                <ReactionsCount key={`count_${index}`}>
+                  {reaction[index + 1]}
+                </ReactionsCount>
+              </Col>
+            ))}
+          </>
+        ) : (
+          ""
+        )}
+      </Row>
+    </>
+  );
 
-    
-
-    const columns = [
-        {
-            title: 'Fecha',
-            dataIndex: 'date',
-            key: 'date',
-            className: 'date-column'
-        },
-        {
-            title: 'Publicación',
-            dataIndex: 'publication',
-            key: 'publication',
-            className: 'publication-column',
-            render: publication => (
-                <>
-                    { publication && publication != '' ?  publication : <i>*Esta publicación es de contenido multimedia</i>}
-                </>
-            )
-        },
-        {
-            title: 'Publicado por',
-            dataIndex: 'owner',
-            key: 'owner'
-        },
-        {
-            title: 'Grupo',
-            key: 'owner',
-            render: row => (
-                row.group && row.group.name ? row.group.name : "--"
-            )
-        },
-        {
-            title: 'Comentarios',
-            dataIndex: 'comments',
-            key: 'comments',
-            className: 'small-column'
-        },
-        {
-            title: 'Impresiones',
-            dataIndex: 'prints',
-            key: 'prints',
-            className: 'small-column'
-        },
-        {
-            title: 'Clics',
-            dataIndex: 'clicks',
-            key: 'clicks'
-        },
-        {
-            title: 'Estatus',
-            key: 'status',
-            render: (row) => (
-                <Select value={row.status} options={optionsActions} onChange={(e) => changeStatus(row, e)} placeholder="Estatus">
-                </Select>
-            )
-        },
-        {
-            title: 'Reacciones por tipo',
-            dataIndex: 'reactions',
-            key: 'reactions',
-            render: reactions => (
-                <>
-                    <ReactionByType reactions={reactions}/>
-                </>
-            )
-        }
-    ];
-
-    const handleChange = (pagination) => {
-        console.log(pagination);
-        // if(props.parameters && props.parameters != '')
-        if(pagination.current === 1){
-            changePage('', parameters+"&is_moderator_view=true");
-        }else{
-            changePage( props.currentNode, pagination.current, parameters+"&is_moderator_view=true");
-        }
-        
-    }
-
-    return(
+  const columns = [
+    {
+      title: "Fecha",
+      dataIndex: "date",
+      key: "date",
+      className: "date-column",
+    },
+    {
+      title: "Publicación",
+      dataIndex: "publication",
+      key: "publication",
+      className: "publication-column",
+      render: (publication) => (
         <>
-        
-            <CustomTable columns={columns} scroll={{ x: 800 }} pagination={{
-                current: current, 
-                pageSize: 10, 
-                total: total,
-             }} 
-                dataSource={processedPublicationsList}
-                onChange={handleChange}
-                loading={fetching}
-            />
-      
-            
+          {publication && publication != "" ? (
+            publication
+          ) : (
+            <i>*Esta publicación es de contenido multimedia</i>
+          )}
         </>
-    )
-}
+      ),
+    },
+    {
+      title: "Publicado por",
+      dataIndex: "owner",
+      key: "owner",
+    },
+    {
+      title: "Grupo",
+      key: "owner",
+      render: (row) => (row.group && row.group.name ? row.group.name : "--"),
+    },
+    {
+      title: "Comentarios",
+      dataIndex: "comments",
+      key: "comments",
+      className: "small-column",
+    },
+    {
+      title: "Impresiones",
+      dataIndex: "prints",
+      key: "prints",
+      className: "small-column",
+    },
+    {
+      title: "Clics",
+      dataIndex: "clicks",
+      key: "clicks",
+    },
+    {
+      title: "Estatus",
+      key: "status",
+      render: (row) => (
+        <Select
+          value={row.status}
+          options={optionsActions}
+          onChange={(e) => changeStatus(row, e)}
+          placeholder="Estatus"
+        ></Select>
+      ),
+    },
+    {
+      title: "Reacciones por tipo",
+      dataIndex: "reactions",
+      key: "reactions",
+      render: (reactions) => (
+        <>
+          <ReactionByType reactions={reactions} />
+        </>
+      ),
+    },
+  ];
 
-export default PublicationsStatisticsTable
+  const handleChange = (pagination) => {
+    console.log(pagination);
+    // if(props.parameters && props.parameters != '')
+    if (pagination.current === 1) {
+      changePage("", parameters + "&is_moderator_view=true");
+    } else {
+      changePage(
+        props.currentNode,
+        pagination.current,
+        parameters + "&is_moderator_view=true"
+      );
+    }
+  };
+
+  return (
+    <>
+      <CustomTable
+        columns={columns}
+        scroll={{ x: 800 }}
+        pagination={{
+          current: current,
+          pageSize: 10,
+          total: total,
+        }}
+        dataSource={processedPublicationsList}
+        onChange={handleChange}
+        loading={fetching}
+      />
+    </>
+  );
+};
+
+export default PublicationsStatisticsTable;

@@ -291,6 +291,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/fiscal-information/?node=${data}`, "get");
   }
 
+  static savefiscalInformation(data) {
+    return WebApi.ApisType(`/business/fiscal_information`, "post", data);
+  }
+
   static changeIntranetAccess(data) {
     return WebApi.ApisType(
       `/person/person/change-intranet-access`,
