@@ -71,7 +71,9 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
           />
         </Col>
       </Row>
-      <Button onClick={saveForms}>Click</Button>
+      <Row justify="end">
+        <Button onClick={saveForms}>Guardar</Button>
+      </Row>
     </>
   );
 };
