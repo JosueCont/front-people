@@ -346,7 +346,7 @@ export const assessmentCreateAction = (data) => {
       // );
       let response = await WebApiAssessment.createAssessments(data);
       dispatch({ type: types.CREATE_ASSESSMENTS, payload: response.data });
-      return true;
+      return response;
     } catch (e) {
       dispatch({ type: types.FETCHING, payload: false });
       console.error(e.name + ": " + e.message);
@@ -362,7 +362,7 @@ export const assessmentUpdateAction = (id, data) => {
     try {
       let response = await WebApiAssessment.updateAssessments(id, data);
       dispatch({ type: types.UPDATE_ASSESSMENTS, payload: response.data });
-      return true;
+      return response;
     } catch (e) {
       dispatch({ type: types.FETCHING, payload: false });
       console.error(e.name + ": " + e.message);

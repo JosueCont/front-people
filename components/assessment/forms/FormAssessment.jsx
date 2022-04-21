@@ -84,10 +84,18 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
       props
         .assessmentUpdateAction(assessmentId, params)
         .then((response) => {
-          response
-            ? message.success("Actualizado correctamente")
-            : message.error("Hubo un error"),
-            formAssessment.resetFields();
+          if (response.status === 201) {
+            message.success("Agregado correctamente");
+          } else if (response.status === 200) {
+            if (response.data && response.data["code"]) {
+              message.error(response.data["code"][0]);
+            } else {
+              message.error("Hubo un error");
+            }
+          } else {
+            message.error("Hubo un error");
+          }
+          formAssessment.resetFields();
           setDescripcion("<p></p>");
           setInstruccions("<p></p>");
           props.close();
@@ -101,10 +109,17 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
       props
         .assessmentCreateAction(params)
         .then((response) => {
-          response
-            ? message.success("Agregado correctamente")
-            : message.error("Hubo un error"),
-            formAssessment.resetFields();
+          if (response.status === 201) {
+            message.success("Agregado correctamente");
+          } else if (response.status === 200) {
+            if (response.data && response.data["code"]) {
+              message.error(response.data["code"][0]);
+            } else {
+              message.error("Hubo un error");
+            }
+          } else {
+            message.error("Hubo un error");
+          }
           setDescripcion("<p></p>");
           setInstruccions("<p></p>");
           props.close();
@@ -152,13 +167,11 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
     <Modal
       title={props.title}
       visible={props.visible}
-      footer={null}
       onCancel={() => props.close()}
       // width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[
         <Button key="back" onClick={() => props.close()}>
-          {" "}
-          Cancelar{" "}
+          Cancelar
         </Button>,
         <Button
           form="formAssessment"
