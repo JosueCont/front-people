@@ -61,12 +61,6 @@ const ConfigCompany = ({ ...props }) => {
             <TabPane tab="Informacion fiscal" key="tab_2">
               <FiscalInformationNode node_id={company && company.id} />
             </TabPane>
-            <TabPane tab="Representante legal" key="tab_3">
-              {/* <LegalRepresentative node_id={company.id} /> */}
-            </TabPane>
-            <TabPane tab="Registro patronal" key="tab_4">
-              {/* <PatronalRegistration node_id={company.id} /> */}
-            </TabPane>
           </Tabs>
         </div>
       </Spin>

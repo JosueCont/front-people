@@ -65,9 +65,7 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
     dispatch({ type: GENERAL_CONFIG, payload: response.data });
     dispatch(setUser());
     if (response.data.nomina_enabled) {
-      dispatch(getFiscalTaxRegime());
-      dispatch(getTypeTax());
-      dispatch(getPaymentPeriodicity());
+      dispatch(doFiscalCatalogs());
     }
   } catch (error) {}
 };
