@@ -21,10 +21,6 @@ const configIntranet = (props) => {
     getConfig();
   }, []);
 
-  /* useEffect(() => {
-      console.log('currentNode =>',props.currentNode);
-  }, [props]) */
-
   const getConfig = async () => {
     setLoading(true);
 

@@ -8,19 +8,24 @@ const SelectMunicipality = ({
   disabled = false,
   rules = [],
   labelText = "Municipio",
-  name,
+  name = "municipality",
   state = null,
   ...props
 }) => {
   const [options, setOptions] = useState(null);
+  const [municipality, setMunicipality] = useState([]);
 
   useEffect(() => {
-    getMunicipality();
-  }, []);
+    if (state) {
+      getMunicipality();
+    }
+  }, [state]);
 
   const getMunicipality = () => {
     WebApiFiscal.getMunicipality(state)
       .then((response) => {
+        console.log(response.data.results);
+        setMunicipality(response.data.results);
         let municipalities = response.data.results.map((item) => {
           return { value: item.id, label: item.description };
         });
@@ -34,7 +39,7 @@ const SelectMunicipality = ({
   return (
     <Form.Item
       key="itemPlace"
-      name={name ? name : "municipality"}
+      name={name}
       label={viewLabel ? labelText : ""}
       rules={rules}
     >

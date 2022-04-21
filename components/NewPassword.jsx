@@ -7,7 +7,6 @@ import Axios from "axios";
 import { ruleRequired } from "../utils/rules";
 
 const NewPasswordForm = (props) => {
-  consoe.log("newpasswordform");
   const router = useRouter();
   const { token } = router.query;
 
