@@ -13,8 +13,14 @@ import {
   Radio,
   Space,
   Switch,
+  Tooltip,
 } from "antd";
-import { DollarCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import Link from "next/link";
+import {
+  DollarCircleOutlined,
+  EyeOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -42,6 +48,7 @@ const ImportMasivePayroll = ({ ...props }) => {
   const [startDate, setStartDate] = useState(null);
   const [report, setReport] = useState(false);
   const [periodicityDesc, setPeriodicityDesc] = useState(null);
+  const [nodeCreated, setNodeCreated] = useState(null);
 
   const columns = [
     {
@@ -193,6 +200,7 @@ const ImportMasivePayroll = ({ ...props }) => {
       form_data.append("calendar", JSON.stringify(data));
       WebApiPayroll.importPayrollMasiveXml(form_data)
         .then((response) => {
+          setNodeCreated(response.data.node_id);
           message.success(messageSaveSuccess);
           setReport(true);
           setLoading(false);
@@ -200,6 +208,7 @@ const ImportMasivePayroll = ({ ...props }) => {
         .catch((error) => {
           message.error(messageError);
           console.log(error);
+          setLoading(false);
         });
     }
   };
@@ -332,34 +341,36 @@ const ImportMasivePayroll = ({ ...props }) => {
                             </Form.Item>
                           </Col>
                         </Row>
-                        <Row gutter={24} justify="end">
-                          <Space>
-                            <Button
-                              style={{
-                                background: "#fa8c16",
-                                fontWeight: "bold",
-                                color: "white",
-                                marginTop: "auto",
-                              }}
-                              onClick={() => {
-                                setCompanyImport(null), setFiles([]);
-                              }}
-                            >
-                              Cancelar
-                            </Button>
-                            <Button
-                              style={{
-                                background: "#fa8c16",
-                                fontWeight: "bold",
-                                color: "white",
-                                marginTop: "auto",
-                              }}
-                              htmlType="submit"
-                            >
-                              Guardar
-                            </Button>
-                          </Space>
-                        </Row>
+                        {!report && (
+                          <Row gutter={24} justify="end">
+                            <Space>
+                              <Button
+                                style={{
+                                  background: "#fa8c16",
+                                  fontWeight: "bold",
+                                  color: "white",
+                                  marginTop: "auto",
+                                }}
+                                onClick={() => {
+                                  setCompanyImport(null), setFiles([]);
+                                }}
+                              >
+                                Cancelar
+                              </Button>
+                              <Button
+                                style={{
+                                  background: "#fa8c16",
+                                  fontWeight: "bold",
+                                  color: "white",
+                                  marginTop: "auto",
+                                }}
+                                htmlType="submit"
+                              >
+                                Guardar
+                              </Button>
+                            </Space>
+                          </Row>
+                        )}
                       </Form>
                     </Col>
                   </>
@@ -396,8 +407,28 @@ const ImportMasivePayroll = ({ ...props }) => {
             </Card>
           </Col>
           <Col span={24}>
-            {report && (
-              <Button onClick={downloadReport}>Descargar reporte</Button>
+            {report && nodeCreated && (
+              <>
+                <Button onClick={downloadReport}>Descargar reporte</Button>
+                <Alert
+                  style={{ margin: "10px" }}
+                  message="Verifica tu informacion"
+                  description="Para poder calcular y timbrar nominas futuras verifica la informacion fiscal de tu empresa."
+                  action={
+                    <Space direction="horizontal">
+                      <Link href={`/business/${nodeCreated}`}>
+                        <Tooltip title="Ver informacion fiscal">
+                          <Button>
+                            <EyeOutlined /> Informacion fiscal
+                          </Button>
+                        </Tooltip>
+                      </Link>
+                    </Space>
+                  }
+                  type="info"
+                  showIcon
+                />
+              </>
             )}
             {companyImport ? (
               <Card className="card_table">
@@ -418,7 +449,7 @@ const ImportMasivePayroll = ({ ...props }) => {
             ) : (
               <Card>
                 <div className={"ImportPayroll"}></div>
-                <Row justify="center" style={{ marginTop: "-40px" }}>
+                <Row justify="center" style={{ marginTop: "-30px" }}>
                   <div style={{ width: "50%", textAlign: "center" }}>
                     <span style={{ fontSize: "20px" }}>
                       <b>Importa tus recibos aquí</b>
