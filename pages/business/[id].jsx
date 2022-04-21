@@ -31,23 +31,25 @@ const ConfigCompany = ({ ...props }) => {
 
   return (
     <MainLayout currentKey="2">
-      <Breadcrumb>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => router.push({ pathname: "/home" })}
-        >
-          Inicio
-        </Breadcrumb.Item>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => router.push({ pathname: "/business" })}
-        >
-          Empresas
-        </Breadcrumb.Item>
-        <Breadcrumb.Item className={"pointer"}>
-          Datos de la empresa
-        </Breadcrumb.Item>
-      </Breadcrumb>
+      {props.currentNode && (
+        <Breadcrumb>
+          <Breadcrumb.Item
+            className={"pointer"}
+            onClick={() => router.push({ pathname: "/home" })}
+          >
+            Inicio
+          </Breadcrumb.Item>
+          <Breadcrumb.Item
+            className={"pointer"}
+            onClick={() => router.push({ pathname: "/business" })}
+          >
+            Empresas
+          </Breadcrumb.Item>
+          <Breadcrumb.Item className={"pointer"}>
+            Datos de la empresa
+          </Breadcrumb.Item>
+        </Breadcrumb>
+      )}
       <Spin tip="Cargando..." spinning={loading}>
         <div
           className="container-border-radius"
@@ -71,6 +73,7 @@ const ConfigCompany = ({ ...props }) => {
 const mapState = (state) => {
   return {
     config: state.userStore.general_config,
+    currentNode: state.userStore.current_node,
   };
 };
 
