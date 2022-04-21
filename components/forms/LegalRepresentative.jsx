@@ -1,110 +1,51 @@
-import { Form, Input, Button, message, Row, Col, Select } from "antd";
-import Title from "antd/lib/skeleton/Title";
-import axios from "axios";
+import { Form, Input, Row, Col } from "antd";
 import { useEffect } from "react";
-import { useState } from "react";
-import { API_URL } from "../../config/config";
+import SelectWorkTitle from "../selects/SelectWorkTitle";
 
-const LegalRepresentative = ({ node, ...props }) => {
-  const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
-  const [form] = Form.useForm();
-
-  onchange = (value) => {
-    getStates(value);
-  };
-
+const LegalRepresentative = ({ form, legalRepresentative }) => {
   useEffect(() => {
-    getCountries();
-    getLegalRepresentative();
-  }, []);
+    if (legalRepresentative) setForm(legalRepresentative);
+  }, [legalRepresentative]);
 
-  const getCountries = async () => {
-    axios
-      .get(API_URL + `/fiscal/country/`)
-      .then((response) => {
-        if (response.status === 200) {
-          if (response.data.results.length > 0) {
-            let countries = response.data.results.map((st) => {
-              return { value: st.id, label: st.description };
-            });
-            setCountries(countries);
-          }
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const getStates = async (country) => {
-    axios
-      .get(API_URL + `/fiscal/state/?country=${country}`)
-      .then((response) => {
-        if (response.status === 200) {
-          if (response.data.results.length > 0) {
-            let states = response.data.results.map((a) => {
-              return { value: a.id, label: a.name_state };
-            });
-            setStates(states);
-          }
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const getLegalRepresentative = async () => {
-    axios
-      .get(API_URL + `/business/legal-representative/?node=${node}`)
-      .then((response) => {
-        if (response.status === 200) {
-          if (response.data.results.length > 0) {
-            form.setFieldsValue({
-              curp: "",
-              tax_regime: "",
-            });
-            /* let states = response.data.results.map((a) => {
-              return { value: a.id, label: a.name_state };
-            });
-            setStates(states); */
-          }
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+  const setForm = (data) => {
+    form.setFieldsValue({
+      name: data.name,
+      work_title: data.work_title,
+      email: data.email,
+      phone: data.phone,
+      contact_name: data.contact_name,
+      contact_email: data.contact_email,
+    });
   };
 
   return (
     <Form layout={"vertical"} form={form}>
       <Row>
-        <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="name_representative" label="Nombre">
+        <Col lg={6} xs={22}>
+          <Form.Item name="name" label="Nombre">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="position_representative" label="Plaza">
-            <Select
-              options={states}
-              notFoundContent={"No se encontraron resultados."}
-            />
-          </Form.Item>
+          <SelectWorkTitle />
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="email_representative" label="Email">
+          <Form.Item name="email" label="Email">
             <Input />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="country" label="Telefono">
+        <Col lg={6} xs={22}>
+          <Form.Item name="phone" label="Telefono">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={13} xs={22} offset={1}>
-          <Form.Item name="country" label="Direccion">
+          <Form.Item name="contact_name" label="Nombre de contacto">
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col lg={13} xs={22}>
+          <Form.Item name="contact_email" label="Correo de contacto">
             <Input />
           </Form.Item>
         </Col>

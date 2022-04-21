@@ -42,6 +42,7 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
 
   const setPostalCodeSelected = (data) => {
     setPostalCodeSelect(data);
+    setState(data.state.id);
     form.setFieldsValue({
       postal_code: data.code,
       country: data.state.country.id,
@@ -49,6 +50,7 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
       municipality: data.municipality.id,
     });
   };
+
   return (
     <>
       <Form layout={"vertical"} form={form}>
@@ -90,9 +92,7 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
             <SelectState setState={setState} />
           </Col>
           <Col lg={8} xs={22} md={6}>
-            <SelectMunicipality
-              state={postalCodeSelect && postalCodeSelect.municipality.id}
-            />
+            <SelectMunicipality state={state && state} />
           </Col>
           <Col lg={8} xs={22} md={6}>
             <SelectSuburb

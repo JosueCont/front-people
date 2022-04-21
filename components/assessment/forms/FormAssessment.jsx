@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Modal, message, Upload, Select,Col } from "antd";
+import { Form, Input, Button, Modal, message, Upload, Select, Col } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { connect, useDispatch } from "react-redux";
 import { withAuthSync, userCompanyId } from "../../../libs/auth";
@@ -11,7 +11,7 @@ import {
 } from "../../../redux/assessmentDuck";
 import { ruleRequired } from "../../../utils/rules";
 
-const FormAssessment = ({assessmentStore,  ...props }) => {
+const FormAssessment = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();
   const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 } };
   const [formAssessment] = Form.useForm();
@@ -47,28 +47,22 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
   }, [props.loadData]);
 
   useEffect(() => {
-    console.log('descripcion',descripcion)
-  }, [descripcion])
-  
-
-  useEffect(() => {
-    console.log('assessmentStore',assessmentStore)
     setLoading(assessmentStore.fetching);
   }, [assessmentStore]);
-  
-  const createData = (obj )=>{
-    let newObj = Object.assign(obj)
-    if(!newObj.image || newObj.image == "" ){
-      delete newObj.image
+
+  const createData = (obj) => {
+    let newObj = Object.assign(obj);
+    if (!newObj.image || newObj.image == "") {
+      delete newObj.image;
     }
-    if(!newObj.description_es || newObj.description_es == "" ){
-      delete newObj.description_es
+    if (!newObj.description_es || newObj.description_es == "") {
+      delete newObj.description_es;
     }
-    if(!newObj.instructions_es || newObj.instructions_es == "" ){
-      delete newObj.instructions_es
+    if (!newObj.instructions_es || newObj.instructions_es == "") {
+      delete newObj.instructions_es;
     }
     return newObj;
-  }
+  };
 
   const onFinish = (values) => {
     // let data = new FormData();
@@ -80,32 +74,31 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
     // instruccions && data.append("instructions_es", instruccions);
     const body = {
       ...values,
-       image: imagen, 
-       companies: [nodeId],
-       description_es: descripcion, 
-       instructions_es: instruccions 
-      }
+      image: imagen,
+      companies: [nodeId],
+      description_es: descripcion,
+      instructions_es: instruccions,
+    };
     const params = createData(body);
     if (props.loadData) {
       props
         .assessmentUpdateAction(assessmentId, params)
         .then((response) => {
-          if(response.status === 201){
-            message.success("Agregado correctamente")
-          }else if(response.status === 200){
-            if(response.data && response.data['code']){
-              message.error(response.data['code'][0]);
-            }else{
+          if (response.status === 201) {
+            message.success("Agregado correctamente");
+          } else if (response.status === 200) {
+            if (response.data && response.data["code"]) {
+              message.error(response.data["code"][0]);
+            } else {
               message.error("Hubo un error");
             }
-          }else{
+          } else {
             message.error("Hubo un error");
           }
-            formAssessment.resetFields();
-            setDescripcion("<p></p>");
-            setInstruccions("<p></p>");
-            props.close();
-            
+          formAssessment.resetFields();
+          setDescripcion("<p></p>");
+          setInstruccions("<p></p>");
+          props.close();
         })
         .catch((e) => {
           message.error("Hubo un error");
@@ -116,21 +109,20 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
       props
         .assessmentCreateAction(params)
         .then((response) => {
-          console.log('response',response)
-          if(response.status === 201){
-            message.success("Agregado correctamente")
-          }else if(response.status === 200){
-            if(response.data && response.data['code']){
-              message.error(response.data['code'][0]);
-            }else{
+          if (response.status === 201) {
+            message.success("Agregado correctamente");
+          } else if (response.status === 200) {
+            if (response.data && response.data["code"]) {
+              message.error(response.data["code"][0]);
+            } else {
               message.error("Hubo un error");
             }
-          }else{
+          } else {
             message.error("Hubo un error");
           }
-            setDescripcion("<p></p>");
-            setInstruccions("<p></p>");
-            props.close();
+          setDescripcion("<p></p>");
+          setInstruccions("<p></p>");
+          props.close();
         })
         .catch((e) => {
           message.error("Hubo un error");
@@ -175,13 +167,11 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
     <Modal
       title={props.title}
       visible={props.visible}
-      footer={null}
       onCancel={() => props.close()}
       // width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[
         <Button key="back" onClick={() => props.close()}>
-          {" "}
-          Cancelar{" "}
+          Cancelar
         </Button>,
         <Button
           form="formAssessment"
@@ -226,30 +216,32 @@ const FormAssessment = ({assessmentStore,  ...props }) => {
         <Form.Item name="name" label={"Nombre"} rules={[ruleRequired]}>
           <Input maxLength={200} allowClear={true} placeholder="Nombre" />
         </Form.Item>
-        
+
         <Form.Item name="categories" label={"Categoría"} rules={[ruleRequired]}>
-        <Select
-          mode="multiple"
-          allowClear
-          showSearch
-          placeholder={'Seleccionar categoría'}
-          notFoundContent='No se encontraron resultados'
-          optionFilterProp="children"
-          filterOption={(input, option) =>
+          <Select
+            mode="multiple"
+            allowClear
+            showSearch
+            placeholder={"Seleccionar categoría"}
+            notFoundContent="No se encontraron resultados"
+            optionFilterProp="children"
+            filterOption={(input, option) =>
               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-          filterSort={(optionA, optionB) =>
-              optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
-          }
-        >
-          {assessmentStore.categories_assessment?.map(item =>(
+            }
+            filterSort={(optionA, optionB) =>
+              optionA.children
+                .toLowerCase()
+                .localeCompare(optionB.children.toLowerCase())
+            }
+          >
+            {assessmentStore.categories_assessment?.map((item) => (
               <Option key={item.id} value={item.id}>
-                  {item.name}
+                {item.name}
               </Option>
-          ))}
-        </Select>
+            ))}
+          </Select>
         </Form.Item>
-        
+
         <FormItemHTML
           html={descripcion}
           setHTML={setDescripcion}
