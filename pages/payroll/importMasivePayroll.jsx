@@ -142,7 +142,7 @@ const ImportMasivePayroll = ({ ...props }) => {
         )
           setAlertMessage(error.response.data.message);
         else message.error(messageError);
-        setFiles([]);
+        // setFiles([]);
         console.log(error);
       });
   };
@@ -175,19 +175,33 @@ const ImportMasivePayroll = ({ ...props }) => {
       (item) => item.id === companyImport.periodicity
     ).id;
     data.start_date = startDate;
-    data.perception_type = "8110942bdff9432aaf603f23006e2378";
+    data.perception_type = props.perceptions_type.find(
+      (item) => item.code === "046"
+    ).id;
     data.period = Number(data.period);
     companyImport.payment_calendar = data;
     delete companyImport["periodicity"];
-    await WebApiPayroll.savePayrollMasiveXml(companyImport)
-      .then((response) => {
-        message.success(messageSaveSuccess);
-        setReport(true);
-      })
-      .catch((error) => {
-        message.error(messageError);
-        console.log(error);
+
+    if (files.length > 0) {
+      setLoading(true);
+      let form_data = new FormData();
+      files.map((item) => {
+        form_data.append("File", item.originFileObj);
       });
+      form_data.append("export", "False");
+      form_data.append("save", "True");
+      form_data.append("calendar", JSON.stringify(data));
+      WebApiPayroll.importPayrollMasiveXml(form_data)
+        .then((response) => {
+          message.success(messageSaveSuccess);
+          setReport(true);
+          setLoading(false);
+        })
+        .catch((error) => {
+          message.error(messageError);
+          console.log(error);
+        });
+    }
   };
 
   const downloadReport = () => {
@@ -451,6 +465,7 @@ const mapState = (state) => {
     taxRegime: state.fiscalStore.tax_regime,
     payment_periodicity: state.fiscalStore.payment_periodicity,
     type_tax: state.fiscalStore.type_tax,
+    perceptions_type: state.fiscalStore.cat_perceptions,
   };
 };
 
