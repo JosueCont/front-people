@@ -107,7 +107,7 @@ const FormPaymentCalendar = ({
           name: item.name,
           periodicity: item.periodicity.id,
           type_tax: item.type_tax.id,
-          perception_type: item.perception_type,
+          perception_type: item.perception_type.id,
           start_date: item.start_date ? moment(item.start_date) : "",
           period: item.period ? moment().year(item.period) : "",
           incidence_start: item.incidence_start
