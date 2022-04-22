@@ -50,7 +50,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [personId, setPersonId] = useState(null);
   const [payrollType, setPayrollType] = useState(null);
   const [consolidated, setConsolidated] = useState(false);
-  const [viewCfdi, setViewCfdi] = useState(true);
+  const [viewCfdi, setViewCfdi] = useState(false);
   const [activePeriod, setActivePeriod] = useState(null);
 
   useEffect(() => {
