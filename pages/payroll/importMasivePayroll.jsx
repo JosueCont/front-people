@@ -236,7 +236,7 @@ const ImportMasivePayroll = ({ ...props }) => {
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({ pathname: "/home" })}
+          onClick={() => router.push({ pathname: "/home/persons/" })}
         >
           Inicio
         </Breadcrumb.Item>

@@ -31,10 +31,9 @@ import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 import { API_URL } from "../../../config/config";
 import jsCookie from "js-cookie";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 
-
-const Events = ({permissions, ...props}) => {
+const Events = ({ permissions, ...props }) => {
   const { Column } = Table;
   const { confirm } = Modal;
   const route = useRouter();
@@ -123,10 +122,9 @@ const Events = ({permissions, ...props}) => {
 
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
-    
+
     getAllEvents();
   }, [route]);
-
 
   const filter = (value) => {
     let tit = false;
@@ -159,7 +157,7 @@ const Events = ({permissions, ...props}) => {
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
+          onClick={() => route.push({ pathname: "/home/persons/" })}
         >
           Inicio
         </Breadcrumb.Item>
@@ -304,8 +302,8 @@ const Events = ({permissions, ...props}) => {
 
 const mapState = (state) => {
   return {
-    permissions: state.userStore.permissions.event
-  }
-}
+    permissions: state.userStore.permissions.event,
+  };
+};
 
 export default connect(mapState)(withAuthSync(Events));

@@ -25,7 +25,7 @@ const PasswordRecover = (props) => {
         email: email,
         send_via_email: true,
       };
-      /* router.push({ pathname: "/home" }); */
+      /* router.push({ pathname: "/home/persons/" }); */
       let response = await Axios.post(
         props.generalConfig.url_server_khonnect + "/password/reset/token/",
         data,
