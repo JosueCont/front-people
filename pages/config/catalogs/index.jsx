@@ -33,7 +33,7 @@ const configBusiness = ({ ...props }) => {
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item
             className={"pointer"}
-            onClick={() => Router.push({ pathname: "/home" })}
+            onClick={() => Router.push({ pathname: "/home/persons/" })}
           >
             Inicio
           </Breadcrumb.Item>

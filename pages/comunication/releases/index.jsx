@@ -23,10 +23,9 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import Cookies from "js-cookie";
 import jsCookie from "js-cookie";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 
-
-const Releases = ({permissions, ...props}) => {
+const Releases = ({ permissions, ...props }) => {
   /* React */
   const { Column } = Table;
   const { Option } = Select;
@@ -147,7 +146,7 @@ const Releases = ({permissions, ...props}) => {
       <Breadcrumb key="Breadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
+          onClick={() => route.push({ pathname: "/home/persons/" })}
         >
           Inicio
         </Breadcrumb.Item>
@@ -361,8 +360,8 @@ const Releases = ({permissions, ...props}) => {
 
 const mapState = (state) => {
   return {
-    permissions: state.userStore.permissions.comunication
-  }
-}
+    permissions: state.userStore.permissions.comunication,
+  };
+};
 
 export default connect(mapState)(withAuthSync(Releases));

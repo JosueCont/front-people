@@ -153,7 +153,7 @@ const PreviewBulkUpload = ({ ...props }) => {
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
+          onClick={() => route.push({ pathname: "/home/persons/" })}
         >
           Inicio
         </Breadcrumb.Item>
