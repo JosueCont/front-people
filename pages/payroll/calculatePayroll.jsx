@@ -77,7 +77,6 @@ const CalculatePayroll = ({ ...props }) => {
     if (period) {
       setActivePeriod(period.id);
       setPayrollType(calendar.perception_type.code);
-      console.log(calendar.periods);
       form.setFieldsValue({
         periodicity: calendar.periodicity.description,
         period: `${period.name}.- ${period.start_date} - ${period.end_date}`,

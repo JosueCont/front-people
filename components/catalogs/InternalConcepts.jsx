@@ -155,7 +155,6 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
 
   const updateRegister = async (value) => {
     try {
-      console.log(value);
       delete value["id"];
       delete value[""];
       await WebApiFiscal.crudInternalConcept(`${url}${id}/`, "put", value);
