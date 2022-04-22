@@ -21,10 +21,9 @@ import SelectBank from "../../components/selects/SelectBank";
 import { SearchOutlined, EyeOutlined, SyncOutlined } from "@ant-design/icons";
 import { userCompanyId, withAuthSync } from "../../libs/auth";
 import jsCookie from "js-cookie";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 
-
-const BankAccounts = ({permissions, ...props}) => {
+const BankAccounts = ({ permissions, ...props }) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -33,7 +32,6 @@ const BankAccounts = ({permissions, ...props}) => {
   const [loading, setLoading] = useState(false);
 
   const [backsAccountsList, setBanksAccountsList] = useState([]);
-  
 
   /* Variables */
   const [companyId, setCompanyId] = useState(null);
@@ -198,7 +196,7 @@ const BankAccounts = ({permissions, ...props}) => {
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
+          onClick={() => route.push({ pathname: "/home/persons/" })}
         >
           Inicio
         </Breadcrumb.Item>
@@ -328,7 +326,7 @@ const BankAccounts = ({permissions, ...props}) => {
 };
 
 const mapState = (state) => {
-  return { 
+  return {
     permissions: state.userStore.permissions.bank,
   };
 };

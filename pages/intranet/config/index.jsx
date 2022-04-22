@@ -93,7 +93,7 @@ const configIntranet = (props) => {
       <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({ pathname: "/home" })}
+          onClick={() => router.push({ pathname: "/home/persons/" })}
         >
           <FormattedMessage defaultMessage="Inicio" id="web.init" />
         </Breadcrumb.Item>

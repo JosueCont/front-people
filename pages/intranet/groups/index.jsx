@@ -16,7 +16,7 @@ import DetailGroup from "../../../components/intranet/DetailGroup";
 import { useRouter } from "next/router";
 import { withAuthSync } from "../../../libs/auth";
 import AddPeopleGroup from "../../../components/intranet/AddPeopleGroup";
-import WebApiIntranet from '../../../api/WebApiIntranet'
+import WebApiIntranet from "../../../api/WebApiIntranet";
 
 const GroupView = ({ ...props }) => {
   const router = useRouter();
@@ -108,7 +108,7 @@ const GroupView = ({ ...props }) => {
       <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({ pathname: "/home" })}
+          onClick={() => router.push({ pathname: "/home/persons/" })}
         >
           <FormattedMessage defaultMessage="Inicio" id="web.init" />
         </Breadcrumb.Item>

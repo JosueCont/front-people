@@ -24,11 +24,11 @@ const Reports = () => {
   const { TabPane } = Tabs;
 
   return (
-    <MainLayout currentKey={["reportes"]} >
+    <MainLayout currentKey={["reportes"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => route.push({ pathname: "/home" })}
+          onClick={() => route.push({ pathname: "/home/persons/" })}
         >
           Inicio
         </Breadcrumb.Item>
