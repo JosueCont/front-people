@@ -122,9 +122,7 @@ const AssessmentsGroup = ({ assessmentStore, userStore, ...props }) => {
     setSurveysTable([...surveysTable, assessment]);
   };
 
-  useEffect(() => {
-    console.log(surveysTable);
-  }, [surveysTable]);
+  useEffect(() => {}, [surveysTable]);
 
   const colums = [
     {

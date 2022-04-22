@@ -18,7 +18,6 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
     if (node_id) {
       WebApiPeople.getfiscalInformationNode(node_id)
         .then((response) => {
-          console.log(response.data);
           setFiscalData(response.data);
         })
         .catch((error) => {

@@ -91,7 +91,6 @@ const ModalConceptsPayroll = ({
           };
         })
       );
-      console.log(props.other_payments_int);
 
       setOtherPaymentsCat(
         props.other_payments_int.map((item) => {

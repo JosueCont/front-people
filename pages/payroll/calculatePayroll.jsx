@@ -15,6 +15,7 @@ import {
   Space,
   Typography,
   Form,
+  Alert,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -49,7 +50,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [personId, setPersonId] = useState(null);
   const [payrollType, setPayrollType] = useState(null);
   const [consolidated, setConsolidated] = useState(false);
-  const [viewCfdi, setViewCfdi] = useState(false);
+  const [viewCfdi, setViewCfdi] = useState(true);
   const [activePeriod, setActivePeriod] = useState(null);
 
   useEffect(() => {
@@ -76,7 +77,6 @@ const CalculatePayroll = ({ ...props }) => {
     if (period) {
       setActivePeriod(period.id);
       setPayrollType(calendar.perception_type.code);
-      console.log(calendar.periods);
       form.setFieldsValue({
         periodicity: calendar.periodicity.description,
         period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
@@ -611,11 +611,15 @@ const CalculatePayroll = ({ ...props }) => {
           setVisible={setViewCfdi}
           title="Timbrado de nomina"
           content={
-            <Col md={5}>
-              <Button size="large" block htmlType="button">
-                Ver CFDI's
-              </Button>
-            </Col>
+            <Row>
+              <Alert
+                message="Timbrado de nomina exitoso"
+                description="La nomina fue timbrada correctamente, puede visualizar los comprobantes 
+                fiscales o continuar calculando otras nominas."
+                type="success"
+                showIcon
+              />
+            </Row>
           }
           actionButton={() => {
             router.push({
