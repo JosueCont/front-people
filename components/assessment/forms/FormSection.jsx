@@ -44,16 +44,15 @@ const FormSections = ({ assessmentStore, ...props }) => {
   }, [assessmentStore]);
 
   const onFinish = (values) => {
-    console.log('first', `-${values.code}-`)
     const regex = /^\s+$/;
     const invalid = regex.test(values.code);
-    if(invalid){
+    if (invalid) {
       formSections.setFields([
         {
-          "name": "code",
-          "errors": ["Este campo no puede estar vacío"]
-        }
-    ])
+          name: "code",
+          errors: ["Este campo no puede estar vacío"],
+        },
+      ]);
     }
     return;
     values.instructions_es = instruccions;
@@ -96,7 +95,6 @@ const FormSections = ({ assessmentStore, ...props }) => {
     <Modal
       title={props.title}
       visible={props.visible}
-      footer={null}
       onCancel={() => props.close()}
       width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[
