@@ -466,26 +466,26 @@ const CalculatePayroll = ({ ...props }) => {
 
   const setMessageModal = (data) => {
     setInfoGenericModal({
-      title: data.toLowerCase().includes("fiscal")
+      title: data.toLowerCase().includes("fiscal information")
         ? "Información fiscal"
-        : data.toLowerCase().includes("address")
+        : data.toLowerCase().includes("fiscal address")
         ? "Dirección fiscal"
         : "Folios",
 
-      title_message: data.toLowerCase().includes("fiscal")
+      title_message: data.toLowerCase().includes("fiscal information")
         ? "Información fiscal faltante"
-        : data.toLowerCase().includes("address")
+        : data.toLowerCase().includes("fiscal address")
         ? "Dirección fiscal faltante"
         : "Folios insuficientes",
-      description: data.toLowerCase().includes("fiscal")
+      description: data.toLowerCase().includes("fiscal information")
         ? "Falta información relevante para poder generar los cfdi, verifique la información de la empresa he intente de nuevo."
-        : data.toLowerCase().includes("address")
+        : data.toLowerCase().includes("fiscal address")
         ? "Datos en la dirección fiscal faltantes, verifique la informacion he intente de nuevo"
-        : "No cuenta con los folios suficinetes para poder timbrar su nomina, contacte con soporte.",
+        : "No cuenta con los folios suficientes para poder timbrar su nomina, contacte con soporte.",
       type_alert: "warning",
       action: () =>
-        data.toLowerCase().includes("fiscal") ||
-        data.toLowerCase().includes("address")
+        data.toLowerCase().includes("fiscal information") ||
+        data.toLowerCase().includes("fiscal address")
           ? router.push({
               pathname: `/business/${props.currentNode.id}`,
               query: {
@@ -494,8 +494,8 @@ const CalculatePayroll = ({ ...props }) => {
             })
           : "Folios insuficientes",
       title_action_button:
-        data.toLowerCase().includes("fiscal") ||
-        data.toLowerCase().includes("address")
+        data.toLowerCase().includes("fiscal information") ||
+        data.toLowerCase().includes("fiscal address")
           ? "Ver información fiscal"
           : "Continuar",
     });
