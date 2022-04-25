@@ -75,7 +75,7 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
     const body = {
       ...values,
       image: imagen,
-      companies: [nodeId],
+      node: nodeId,
       description_es: descripcion,
       instructions_es: instruccions,
     };
