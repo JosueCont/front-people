@@ -450,6 +450,8 @@ const CalculatePayroll = ({ ...props }) => {
       .then((response) => {
         setLoading(false);
         setMessageModal(4);
+        form.resetFields();
+        setPayroll([]);
         message.success(messageSendSuccess);
       })
       .catch(async (error) => {
@@ -467,7 +469,6 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const setMessageModal = (type, data) => {
-    console.log("SWITCH-->> ", type, data);
     switch (type) {
       case 1:
         setInfoGenericModal({
