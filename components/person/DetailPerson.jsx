@@ -68,7 +68,7 @@ const DetailPerson = ({
         setLoading(false);
         showModal();
         message.success("Eliminado correctamente.");
-        Router.push("/home");
+        Router.push("/home/persons/");
       })
       .catch((error) => {
         setLoading(false);
@@ -226,6 +226,22 @@ const DetailPerson = ({
               khonnectId={person.khonnect_id}
             />
           </TabPane>
+
+          {config.nomina_enabled && (
+            <TabPane
+              tab={
+                <Tooltip title="Nomina">
+                  <div className="container-title-tab">
+                    <DollarOutlined />
+                    <div className="text-title-tab">Nomina</div>
+                  </div>
+                </Tooltip>
+              }
+              key="tab_10"
+            >
+              <FormPayrollPerson person_id={person.id} node={person.node} />
+            </TabPane>
+          )}
           {deletePerson && (
             <TabPane
               tab={
@@ -236,7 +252,7 @@ const DetailPerson = ({
                   </div>
                 </Tooltip>
               }
-              key="tab_10"
+              key="tab_11"
             >
               Al eliminar a una persona perderá todos los datos relacionados a
               ella de manera permanente.
@@ -257,21 +273,6 @@ const DetailPerson = ({
                   </Button>
                 </Col>
               </Row>
-            </TabPane>
-          )}
-          {config.nomina_enabled && (
-            <TabPane
-              tab={
-                <Tooltip title="Nomina">
-                  <div className="container-title-tab">
-                    <DollarOutlined />
-                    <div className="text-title-tab">Nomina</div>
-                  </div>
-                </Tooltip>
-              }
-              key="tab_11"
-            >
-              <FormPayrollPerson person_id={person.id} node={person.node} />
             </TabPane>
           )}
         </Tabs>

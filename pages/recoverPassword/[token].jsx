@@ -8,9 +8,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import Axios from "axios";
 import { connect } from "react-redux";
 
-
 const PasswordRecovery = (...props) => {
-  
   const router = useRouter();
   const { token } = router.query;
   const { Text, Title } = Typography;
@@ -92,7 +90,9 @@ const PasswordRecovery = (...props) => {
                       </Title>
                       <p
                         className={"font-color-khor pointer"}
-                        onClick={() => router.push({ pathname: "/home" })}
+                        onClick={() =>
+                          router.push({ pathname: "/home/persons/" })
+                        }
                       >
                         <ArrowLeftOutlined />
                         <Text className={"font-color-khor"}>
