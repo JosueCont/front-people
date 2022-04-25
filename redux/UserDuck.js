@@ -3,7 +3,6 @@ import jsCookie from "js-cookie";
 import { userCompanyId } from "../libs/auth";
 import { UserPermissions } from "../utils/functions";
 import { doCompanySelectedCatalog, getProfileGroups } from "./catalogCompany";
-import { assessmentLoadAction } from "./assessmentDuck";
 import { doCompanySelectedPayroll } from "./payrollDuck";
 import { doFiscalCatalogs } from "./fiscalDuck";
 
@@ -157,3 +156,11 @@ export const setUserPermissions =
       return false;
     }
   };
+
+export const resetCurrentnode = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: COMPANY_SELCTED, payload: response.data });
+  } catch (error) {
+    dispatch({ type: COMPANY_SELCTED, payload: response.data });
+  }
+};
