@@ -15,7 +15,6 @@ import {
   Switch,
   Tooltip,
 } from "antd";
-import Link from "next/link";
 import {
   DollarCircleOutlined,
   EyeOutlined,
@@ -36,6 +35,7 @@ import {
 } from "../../utils/constant";
 import SelectTypeTax from "../../components/selects/SelectTypeTax";
 import { ruleRequired } from "../../utils/rules";
+import GenericModal from "../../components/modal/genericModal";
 
 const ImportMasivePayroll = ({ ...props }) => {
   const router = useRouter();
@@ -49,6 +49,23 @@ const ImportMasivePayroll = ({ ...props }) => {
   const [report, setReport] = useState(false);
   const [periodicityDesc, setPeriodicityDesc] = useState(null);
   const [nodeCreated, setNodeCreated] = useState(null);
+  const [genericModal, setGenericModal] = useState(false);
+  const [infoGenericModal, setInfoGenericModal] = useState({
+    title: "Cerrar nomina",
+    title_message: "¿Esta seguro de cerrar la nomina?",
+    description:
+      "Una vez cerrada la nomina no podra realizar cambios o modificaciones.",
+    type_alert: "warning",
+    action: () =>
+      router.push({
+        pathname: "/payroll/payrollVaucher",
+        query: {
+          calendar: form.getFieldValue("calendar"),
+          period: activePeriod,
+        },
+      }),
+    title_action_button: "Ver comprobantes",
+  });
 
   const columns = [
     {
@@ -409,20 +426,25 @@ const ImportMasivePayroll = ({ ...props }) => {
           <Col span={24}>
             {report && nodeCreated && (
               <>
-                <Button onClick={downloadReport}>Descargar reporte</Button>
+                {/* <Button onClick={downloadReport}>Descargar reporte</Button> */}
                 <Alert
                   style={{ margin: "10px" }}
                   message="Verifica tu informacion"
                   description="Para poder calcular y timbrar nominas futuras verifica la informacion fiscal de tu empresa."
                   action={
                     <Space direction="horizontal">
-                      <Link href={`/business/${nodeCreated}`}>
-                        <Tooltip title="Ver informacion fiscal">
-                          <Button>
-                            <EyeOutlined /> Informacion fiscal
-                          </Button>
-                        </Tooltip>
-                      </Link>
+                      <Tooltip title="Ver informacion fiscal">
+                        <Button
+                          onClick={() =>
+                            router.push({
+                              pathname: `/business/${nodeCreated}`,
+                              query: { tab: 2 },
+                            })
+                          }
+                        >
+                          <EyeOutlined /> Informacion fiscal
+                        </Button>
+                      </Tooltip>
                     </Space>
                   }
                   type="info"
@@ -484,6 +506,25 @@ const ImportMasivePayroll = ({ ...props }) => {
           visible={viewModal}
           setVisible={setModal}
           setFiles={setFiles}
+        />
+      )}
+      {genericModal && (
+        <GenericModal
+          visible={genericModal}
+          setVisible={setGenericModal}
+          title={infoGenericModal.title}
+          content={
+            <Row>
+              <Alert
+                message={infoGenericModal.title_message}
+                description={infoGenericModal.description}
+                type={infoGenericModal.type_alert}
+                showIcon
+              />
+            </Row>
+          }
+          actionButton={infoGenericModal.action}
+          titleActionButton={infoGenericModal.title_action_button}
         />
       )}
     </MainLayout>

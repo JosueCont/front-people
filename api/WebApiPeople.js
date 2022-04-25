@@ -288,7 +288,10 @@ class WebApiPeople {
   }
 
   static getfiscalInformationNode(data) {
-    return WebApi.ApisType(`/business/fiscal-information/?node=${data}`, "get");
+    return WebApi.ApisType(
+      `/business/fiscal-information/?node=${data}&active=True`,
+      "get"
+    );
   }
 
   static savefiscalInformation(data) {
