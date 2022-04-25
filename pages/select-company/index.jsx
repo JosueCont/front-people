@@ -16,7 +16,11 @@ import useRouter from "next/router";
 import { userId } from "../../libs/auth";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
-import { companySelected, setUser } from "../../redux/UserDuck";
+import {
+  companySelected,
+  setUser,
+  resetCurrentnode,
+} from "../../redux/UserDuck";
 import { doCompanySelectedCatalog } from "../../redux/catalogCompany";
 import WebApiPeople from "../../api/WebApiPeople";
 import { Global, css } from "@emotion/core";
@@ -46,6 +50,7 @@ const SelectCompany = ({ ...props }) => {
   const isBrowser = () => typeof window !== "undefined";
 
   useEffect(() => {
+    props.resetCurrentnode();
     try {
       setJwt(JSON.parse(jsCookie.get("token")));
     } catch (error) {
@@ -223,8 +228,7 @@ const SelectCompany = ({ ...props }) => {
           hideLogo={true}
         >
           <Breadcrumb className={"mainBreadcrumb"}>
-            <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-            <Breadcrumb.Item>Empresas</Breadcrumb.Item>
+            <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>
           </Breadcrumb>
           <div className="container" style={{ width: "100%", padding: 20 }}>
             <Spin tip="Cargando..." spinning={loading}>
@@ -379,4 +383,5 @@ export default connect(mapState, {
   companySelected,
   doCompanySelectedCatalog,
   setUser,
+  resetCurrentnode,
 })(SelectCompany);
