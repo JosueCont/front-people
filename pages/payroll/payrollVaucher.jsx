@@ -25,7 +25,6 @@ import { messageError } from "../../utils/constant";
 import { useRouter } from "next/router";
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
-import Link from "next/link";
 
 const PayrollVaucher = ({ ...props }) => {
   const router = useRouter();
@@ -80,7 +79,7 @@ const PayrollVaucher = ({ ...props }) => {
               </Tooltip>
             ) : (
               item.xml_file && (
-                <a href={`${item.xml_file}`} target="_blank" download>
+                <a href={item.xml_file} target="_blank" download>
                   <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
                     <FileTextTwoTone style={{ fontSize: "25px" }} />
                   </Tooltip>
@@ -96,7 +95,7 @@ const PayrollVaucher = ({ ...props }) => {
               </Tooltip>
             ) : (
               item.pdf_file && (
-                <a href={`${item.pdf_file}`} target="_blank" download>
+                <a href={item.pdf_file} target="_blank" download>
                   <Tooltip title="PDF" color={"#3d78b9"} key={"#3d78b9"}>
                     <FilePdfTwoTone style={{ fontSize: "25px" }} />
                   </Tooltip>
