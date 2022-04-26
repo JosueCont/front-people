@@ -25,6 +25,7 @@ import { messageError } from "../../utils/constant";
 import { useRouter } from "next/router";
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
+import Link from "next/link";
 
 const PayrollVaucher = ({ ...props }) => {
   const router = useRouter();
@@ -70,19 +71,37 @@ const PayrollVaucher = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-            <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
-              <FileTextTwoTone
-                onClick={() => downLoadFile(item, 1)}
-                style={{ fontSize: "25px" }}
-              />
-            </Tooltip>
-            {item.id_facturama && (
+            {item.id_facturama ? (
+              <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
+                <FileTextTwoTone
+                  onClick={() => downLoadFile(item, 1)}
+                  style={{ fontSize: "25px" }}
+                />
+              </Tooltip>
+            ) : (
+              item.xml_file && (
+                <a href={`${item.xml_file}`} target="_blank" download>
+                  <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
+                    <FileTextTwoTone style={{ fontSize: "25px" }} />
+                  </Tooltip>
+                </a>
+              )
+            )}
+            {item.id_facturama ? (
               <Tooltip title="PDF" color={"#3d78b9"} key={"#3d78b9"}>
                 <FilePdfTwoTone
                   onClick={() => downLoadFile(item, 2)}
                   style={{ fontSize: "25px" }}
                 />
               </Tooltip>
+            ) : (
+              item.pdf_file && (
+                <a href={`${item.pdf_file}`} target="_blank" download>
+                  <Tooltip title="PDF" color={"#3d78b9"} key={"#3d78b9"}>
+                    <FilePdfTwoTone style={{ fontSize: "25px" }} />
+                  </Tooltip>
+                </a>
+              )
             )}
           </>
         );
@@ -96,23 +115,16 @@ const PayrollVaucher = ({ ...props }) => {
       type_file: file,
       id_facturama: item.id_facturama,
     };
-    let method = "POST";
     let url = `${getDomain(
       API_URL_TENANT
     )}/payroll/cfdi_multi_emitter_facturama/cfdi_multi_emitter/`;
-
-    if (item.pdf_file || item.xml_file) {
-      data = null;
-      url = file == 1 ? item.xml_file : item.pdf_file;
-      method = "GET";
-    }
 
     downLoadFileBlob(
       url,
       `${item.payroll_person.person.rfc}_${item.payment_period.start_date}_${
         item.payment_period.end_date
       }.${file == 1 ? "xml" : "pdf"}`,
-      method,
+      "POST",
       data
     );
   };
