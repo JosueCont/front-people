@@ -14,9 +14,11 @@ const ConfigCompany = ({ ...props }) => {
   const [company, setCompany] = useState();
   const { Title } = Typography;
   const { TabPane } = Tabs;
+  const [activeKey, setActiveKey] = useState("1");
 
   useEffect(() => {
-    {
+    if (router.query.tab) setActiveKey(String(router.query.tab));
+    if (router.query.id)
       WebApiPeople.getCompany(router.query.id)
         .then(function (response) {
           setCompany(response.data);
@@ -26,8 +28,7 @@ const ConfigCompany = ({ ...props }) => {
           setLoading(false);
           console.log(error);
         });
-    }
-  }, [router.query.id]);
+  }, [router.query]);
 
   return (
     <MainLayout currentKey="2">
@@ -56,11 +57,15 @@ const ConfigCompany = ({ ...props }) => {
           style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
           {company && <Title level={3}>{company.name}</Title>}
-          <Tabs tabPosition={"left"}>
-            <TabPane tab="General" key="tab_1">
+          <Tabs
+            tabPosition={"left"}
+            onChange={(value) => setActiveKey(value)}
+            activeKey={activeKey}
+          >
+            <TabPane tab="General" key={"1"}>
               <GeneralData />
             </TabPane>
-            <TabPane tab="Informacion fiscal" key="tab_2">
+            <TabPane tab="Informacion fiscal" key={"2"}>
               <FiscalInformationNode node_id={company && company.id} />
             </TabPane>
           </Tabs>

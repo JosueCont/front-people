@@ -50,8 +50,25 @@ const CalculatePayroll = ({ ...props }) => {
   const [personId, setPersonId] = useState(null);
   const [payrollType, setPayrollType] = useState(null);
   const [consolidated, setConsolidated] = useState(false);
-  const [viewCfdi, setViewCfdi] = useState(false);
+  const [genericModal, setGenericModal] = useState(false);
   const [activePeriod, setActivePeriod] = useState(null);
+
+  const [infoGenericModal, setInfoGenericModal] = useState({
+    title: "Timbrado de nomina",
+    title_message: "Timbrado de nomina exitoso",
+    description:
+      "La nomina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
+    type_alert: "success",
+    action: () =>
+      router.push({
+        pathname: "/payroll/payrollVaucher",
+        query: {
+          calendar: form.getFieldValue("calendar"),
+          period: activePeriod,
+        },
+      }),
+    title_action_button: "Ver comprobantes",
+  });
 
   useEffect(() => {
     if (props.currentNode) getPaymentCalendars(props.currentNode.id);
@@ -402,6 +419,7 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const sendClosePayroll = () => {
+    setGenericModal(false);
     setLoading(true);
     WebApiPayroll.closePayroll({
       calendar_id: form.getFieldValue("calendar"),
@@ -424,20 +442,116 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const stampPayroll = () => {
+    setGenericModal(false);
     setLoading(true);
     WebApiPayroll.stampPayroll({
       payment_calendar_id: form.getFieldValue("calendar"),
     })
       .then((response) => {
         setLoading(false);
-        setViewCfdi(true);
+        setMessageModal(4);
+        form.resetFields();
+        setPayroll([]);
         message.success(messageSendSuccess);
       })
-      .catch((error) => {
-        setLoading(false);
-        message.error(messageError);
+      .catch(async (error) => {
         console.log(error);
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          let dialog = await setMessageModal(1, error.response.data.message);
+          setGenericModal(true);
+        } else message.error(messageError);
+        setLoading(false);
       });
+  };
+
+  const setMessageModal = (type, data) => {
+    switch (type) {
+      case 1:
+        setInfoGenericModal({
+          title: data.toLowerCase().includes("fiscal information")
+            ? "Información fiscal"
+            : data.toLowerCase().includes("fiscal address")
+            ? "Dirección fiscal"
+            : "Folios",
+
+          title_message: data.toLowerCase().includes("fiscal information")
+            ? "Información fiscal faltante"
+            : data.toLowerCase().includes("fiscal address")
+            ? "Dirección fiscal faltante"
+            : "Folios insuficientes",
+          description: data.toLowerCase().includes("fiscal information")
+            ? "Falta información relevante para poder generar los cfdi, verifique la información de la empresa he intente de nuevo."
+            : data.toLowerCase().includes("fiscal address")
+            ? "Datos en la dirección fiscal faltantes, verifique la informacion he intente de nuevo"
+            : "No cuenta con los folios suficientes para poder timbrar su nomina, contacte con soporte.",
+          type_alert: "warning",
+          action: () =>
+            data.toLowerCase().includes("fiscal information") ||
+            data.toLowerCase().includes("fiscal address")
+              ? router.push({
+                  pathname: `/business/${props.currentNode.id}`,
+                  query: {
+                    tab: 2,
+                  },
+                })
+              : setGenericModal(false),
+          title_action_button:
+            data.toLowerCase().includes("fiscal information") ||
+            data.toLowerCase().includes("fiscal address")
+              ? "Ver información fiscal"
+              : "Continuar",
+        });
+        break;
+      case 2:
+        setInfoGenericModal({
+          title: "Cerrar nomina",
+          title_message: "¿Esta seguro de cerrar la nomina?",
+          description:
+            "Una vez cerrada la nomina no podra realizar cambios o modificaciones.",
+          type_alert: "warning",
+          action: () => sendClosePayroll(),
+          title_action_button: "Si, cerrar nomina",
+        });
+        setGenericModal(true);
+        break;
+      case 3:
+        setInfoGenericModal({
+          title: "Timbrar nomina",
+          title_message: "¿Esta seguro de timbrar la nomina?",
+          description:
+            "Se emitiran todos los cfdi correspondientes ante el SAT",
+          type_alert: "warning",
+          action: () => stampPayroll(),
+          title_action_button: "Si, timbrar",
+        });
+        setGenericModal(true);
+        break;
+      case 4:
+        setInfoGenericModal({
+          title: "Timbrado de nomina",
+          title_message: "Timbrado de nomina exitoso",
+          description:
+            "La nomina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
+          type_alert: "success",
+          action: () =>
+            router.push({
+              pathname: "/payroll/payrollVaucher",
+              query: {
+                calendar: form.getFieldValue("calendar"),
+                period: activePeriod,
+              },
+            }),
+          title_action_button: "Ver comprobantes",
+        });
+        setGenericModal(true);
+        break;
+    }
+
+    return;
   };
 
   return (
@@ -550,14 +664,14 @@ const CalculatePayroll = ({ ...props }) => {
               </Card>
             </Col>
 
-            {payroll.length > 0 && !viewCfdi && (
+            {payroll.length > 0 && !genericModal && (
               <Col md={5}>
                 <Button
                   size="large"
                   block
                   htmlType="button"
                   onClick={() =>
-                    consolidated ? stampPayroll() : sendClosePayroll()
+                    consolidated ? setMessageModal(3) : setMessageModal(2)
                   }
                 >
                   {consolidated ? "Timbrar nomina" : "Cerrar nomina"}
@@ -605,32 +719,24 @@ const CalculatePayroll = ({ ...props }) => {
           payrollType={payrollType}
         />
       )}
-      {viewCfdi && (
+      {genericModal && (
         <GenericModal
-          visible={viewCfdi}
-          setVisible={setViewCfdi}
-          title="Timbrado de nomina"
+          visible={genericModal}
+          setVisible={setGenericModal}
+          title={infoGenericModal.title}
           content={
             <Row>
               <Alert
-                message="Timbrado de nomina exitoso"
-                description="La nomina fue timbrada correctamente, puede visualizar los comprobantes 
-                fiscales o continuar calculando otras nominas."
-                type="success"
+                style={{ width: "100%" }}
+                message={infoGenericModal.title_message}
+                description={infoGenericModal.description}
+                type={infoGenericModal.type_alert}
                 showIcon
               />
             </Row>
           }
-          actionButton={() => {
-            router.push({
-              pathname: "/payroll/payrollVaucher",
-              query: {
-                calendar: form.getFieldValue("calendar"),
-                period: activePeriod,
-              },
-            });
-          }}
-          titleActionButton={"Ver comprobantes"}
+          actionButton={infoGenericModal.action}
+          titleActionButton={infoGenericModal.title_action_button}
         />
       )}
     </>
