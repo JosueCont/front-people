@@ -573,15 +573,6 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Input maxLength={11} />
                 </Form.Item>
               </Col>
-              <Col lg={8} xs={24} md={12}>
-                <Form.Item name="periodicity" label="Periodicidad">
-                  <Select
-                    options={periodicity}
-                    placeholder="Selecciona una opción"
-                    notFoundContent={"No se encontraron resultados."}
-                  />
-                </Form.Item>
-              </Col>
             </Row>
           </Col>
         </Row>
