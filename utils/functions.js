@@ -36,15 +36,13 @@ export const downLoadFileBlob = async (
   url,
   name = "Example.xlsx",
   type = "POST",
-  params = null,
-  content_type = null
+  params = null
 ) => {
   let headers = {
     method: type,
     responseType: "blob",
   };
   if (params) headers.data = params;
-  if (content_type) headers = { method: "GET", content_type: content_type };
   axios(
     url.toLowerCase().includes("http") ? url : `${typeHttp}://` + url,
     headers
