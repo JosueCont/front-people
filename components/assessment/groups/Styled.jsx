@@ -32,20 +32,27 @@ export const CustomInput = styled(Input)`
 export const ColButtons = styled(Col)`
     display: flex;
     justify-content: flex-end;
-    & .ant-radio-group-solid{
-        & .ant-radio-button-wrapper-checked{
-            background: #252837;
-            color: white!important;
-            :hover{
-                background: #252837;
-                opacity: 0.7;
-            }
-        }
+    & .ant-radio-group{
         & .ant-radio-button-wrapper{
-            color: black;
+            color: #000000;
             :hover{
                 color: #1890ff;
             }
+        }
+        .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+            background-color: transparent;
+        }
+        & .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
+            border-right-color: #8e88e7;
+            background-color: #8e88e7;
+            color: white!important;
+            border-color: #8e88e7;
+        }
+        & .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:last-child {
+            border-right-color: #e7b488;
+            background-color: #e7b488;
+            color: white!important;
+            border-color: #e7b488;
         }
     }
 `;

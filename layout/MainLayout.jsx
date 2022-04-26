@@ -155,6 +155,7 @@ const MainLayout = ({
                 ? props.config.concierge_font_secondary_color
                 : "#000"
             };
+          }
             
 
             .ant-layout-content{

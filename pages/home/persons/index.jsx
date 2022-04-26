@@ -737,11 +737,14 @@ const homeScreen = ({ ...props }) => {
     setShowModalAssignTest(false);
     setPersonsToDelete([]);
     setPersonsKeys([]);
+    setItemPerson({})
   };
 
   const HandleModalAssign = (item) => {
     setPersonsToDelete([item]);
-    setOpenAssignTest(true);
+    // setOpenAssignTest(true);
+    setShowModalAssignTest(true);
+    setItemPerson(item)
   };
 
   const getOnlyIds = () => {
@@ -828,6 +831,7 @@ const homeScreen = ({ ...props }) => {
     if (openAssignTest) {
       if (personsToDelete.length > 0) {
         setShowModalAssignTest(true);
+        setItemPerson({})
       } else {
         setOpenAssignTest(false);
         message.error("Selecciona al menos una persona");
@@ -1175,6 +1179,7 @@ const homeScreen = ({ ...props }) => {
             visible={showModalAssignTest}
             close={HandleCloseGroup}
             actionForm={onFinishAssignAssessments}
+            itemSelected={{}}
           />
         )}
         {showModalAssigns && (

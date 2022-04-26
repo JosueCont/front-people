@@ -284,11 +284,53 @@ li.ant-menu-submenu-selected {
 }
 
 .ant-table-container table > thead > tr:first-child th:last-child {
-  border-top-right-radius: 10px !important;
+  border-top-right-radius: 10px;
 }
 .ant-table-container table > thead > tr:first-child th:first-child {
-  border-top-left-radius: 10px !important;
+  border-top-left-radius: 10px;
 }
+
+.item-is-individual{
+  color: #8e88e7;
+  font-size: 10px;
+}
+
+.item-not-individual{
+  color: #e7b488;
+  font-size: 10px;
+}
+
+/* .table-assignments .ant-table-tbody > tr > td {
+  border-bottom: none;
+} */
+
+.table-assignments .ant-table-container table > tbody > tr:nth-child(2) {
+  border-top-left-radius: 10px;
+}
+
+.table-assignments .ant-table-container table > tbody > tr:nth-child(2) td:first-child{
+  border-top-left-radius: 10px;
+}
+
+.table-assignments .ant-table-container table > tbody > tr:nth-child(2) td:last-child{
+  border-top-right-radius: 10px;
+}
+
+.table-assignments .ant-table-container table > tbody > tr:last-child {
+  border-bottom-left-radius: 10px;
+}
+
+.table-assignments .ant-table-container table > tbody > tr:last-child td:first-child{
+  border-bottom-left-radius: 10px;
+}
+
+.table-assignments .ant-table-container table > tbody > tr:last-child td:last-child{
+  border-bottom-right-radius: 10px;
+}
+
+/* .ant-table-container table > tbody > tr:hover > td{
+  border-radius: 10px!important;
+} */
 
 .container-items-center {
   display: flex;
