@@ -159,8 +159,8 @@ export const setUserPermissions =
 
 export const resetCurrentnode = () => async (dispatch, getState) => {
   try {
-    dispatch({ type: COMPANY_SELCTED, payload: response.data });
+    dispatch({ type: COMPANY_SELCTED, payload: null });
   } catch (error) {
-    dispatch({ type: COMPANY_SELCTED, payload: response.data });
+    dispatch({ type: COMPANY_SELCTED, payload: null });
   }
 };

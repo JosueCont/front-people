@@ -23,6 +23,7 @@ import MainLayout from "../../layout/MainLayout";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import { messageError } from "../../utils/constant";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 const PayrollVaucher = ({ ...props }) => {
   const router = useRouter();
@@ -68,14 +69,18 @@ const PayrollVaucher = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-            {item.id_facturama && (
-              <Tooltip title="PDF" color={"#3d78b9"} key={"#3d78b9"}>
-                <FilePdfTwoTone style={{ fontSize: "25px" }} />
-              </Tooltip>
-            )}
+            <Tooltip title="PDF" color={"#3d78b9"} key={"#3d78b9"}>
+              <FilePdfTwoTone
+                onClick={() => downLoadFile(item, 2)}
+                style={{ fontSize: "25px" }}
+              />
+            </Tooltip>
             <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
               <a href={item.xml_file}>
-                <FileTextTwoTone style={{ fontSize: "25px" }} />
+                <FileTextTwoTone
+                  onClick={() => downLoadFile(item, 1)}
+                  style={{ fontSize: "25px" }}
+                />
               </a>
             </Tooltip>
           </>
@@ -83,6 +88,34 @@ const PayrollVaucher = ({ ...props }) => {
       },
     },
   ];
+
+  const downLoadFile = (data, file) => {
+    let headers = {
+      method: "POST",
+      responseType: "blob",
+      data: {
+        type_request: 3,
+        type_file: file,
+        id_facturama: data.id_facturama,
+      },
+    };
+    axios(
+      `https://demo.api.people.hiumanlab.com/payroll/cfdi_multi_emitter_facturama/cfdi_multi_emitter/`,
+      headers
+    )
+      .then((response) => {
+        const blob = new Blob([response.data]);
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `${data.payroll_person.person.rfc}_${
+          data.payment_period.start_date
+        }_${data.payment_period.end_date}.${file == 1 ? "xml" : "pdf"}`;
+        link.click();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   useEffect(() => {
     if (router.query && router.query.calendar && router.query.period) {
