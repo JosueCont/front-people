@@ -929,7 +929,8 @@ const homeScreen = ({ ...props }) => {
           downLoadFileBlob(
             `${getDomain(API_URL_TENANT)}/person/person/generate_template/`,
             "platilla_personas.xlsx",
-            "GET"
+            "GET",
+            { type: 2 }
           )
         }
       >
