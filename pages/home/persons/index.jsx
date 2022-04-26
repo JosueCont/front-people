@@ -923,22 +923,16 @@ const homeScreen = ({ ...props }) => {
         key="1"
         onClick={() =>
           downLoadFileBlob(
-            `${getDomain(API_URL_TENANT)}/person/person/generate_template/`,
+            `${getDomain(
+              API_URL_TENANT
+            )}/person/person/generate_template/?type=2`,
             "platilla_personas.xlsx",
-            "GET",
-            { type: 2 }
+            "GET"
           )
         }
       >
         Plantilla básica
       </Menu.Item>
-      {/* {props.config && props.config.enabled_nomina && (
-        <Menu.Item key="2">
-          <a href={`${API_URL_TENANT}/static/plantillaExtendidaPersonas.xlsx`}>
-            Plantilla Extensa
-          </a>
-        </Menu.Item>
-      )} */}
     </Menu>
   );
 
