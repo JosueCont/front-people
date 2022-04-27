@@ -245,7 +245,7 @@ const SelectCompany = ({ ...props }) => {
                         {treeTable ? (
                           <>
                             <AppstoreOutlined />
-                            Grid
+                            Tarjetas
                           </>
                         ) : (
                           <>

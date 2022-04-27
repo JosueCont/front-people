@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { EyeOutlined, CheckCircleTwoTone } from "@ant-design/icons";
+import { withAuthSync } from "../../libs/auth";
 
 const DocumentLog = ({ ...props }) => {
   const route = useRouter();
@@ -134,4 +135,4 @@ const DocumentLog = ({ ...props }) => {
   );
 };
 
-export default DocumentLog;
+export default withAuthSync(DocumentLog);
