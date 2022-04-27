@@ -333,7 +333,6 @@ const calculatorSalary = () => {
                                 </Col>
                                 <Col span={18}>
                                   <span>
-                                    {" "}
                                     {salary.retention_isr
                                       ? "ISR a retener"
                                       : "SUBSIDIO PARA EL EMPLEO A ENTREGAR"}

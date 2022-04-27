@@ -96,7 +96,6 @@ const PasswordRecovery = (...props) => {
                       >
                         <ArrowLeftOutlined />
                         <Text className={"font-color-khor"}>
-                          {" "}
                           Regresar al login
                         </Text>
                       </p>

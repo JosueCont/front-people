@@ -30,11 +30,10 @@ import SelectJob from "../selects/SelectJob";
 import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
-import SelectWorkTitle from '../selects/SelectWorkTitle';
-import { connect } from 'react-redux'
+import SelectWorkTitle from "../selects/SelectWorkTitle";
+import { connect } from "react-redux";
 
-
-const PayrollReport = ({ permissions, ...props}) => {
+const PayrollReport = ({ permissions, ...props }) => {
   const route = useRouter();
   const { Option } = Select;
   const { Title, Text } = Typography;
@@ -52,7 +51,7 @@ const PayrollReport = ({ permissions, ...props}) => {
 
   const [departmentId, setDepartmentId] = useState(null);
   const [job, setJob] = useState(null);
-  
+
   let nodeId = userCompanyId();
 
   /* Columnas de tabla */
@@ -69,8 +68,8 @@ const PayrollReport = ({ permissions, ...props}) => {
       render: (person) => {
         return (
           <>
-            {person.first_name ? person.first_name : null}{" "}
-            {person.flast_name ? person.flast_name : null}{" "}
+            {person.first_name ? person.first_name : null}
+            {person.flast_name ? person.flast_name : null}
             {person.mlast_name ? person.mlast_name : null}
           </>
         );
@@ -426,7 +425,7 @@ const PayrollReport = ({ permissions, ...props}) => {
 
 const mapState = (state) => {
   return {
-    permissions: state.userStore.permissions.report
+    permissions: state.userStore.permissions.report,
   };
 };
 
