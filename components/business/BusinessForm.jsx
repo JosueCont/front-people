@@ -33,6 +33,10 @@ import { userId } from "../../libs/auth";
 import Clipboard from "../Clipboard";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
+import {
+  messageDeleteSuccess,
+  messageUpdateSuccess,
+} from "../../utils/constant";
 
 const { TextArea } = Input;
 const { Content } = Layout;
@@ -72,6 +76,7 @@ const businessForm = ({ permissions, ...props }) => {
       }
     }
   };
+
   const deleteBusiness = async (id, name, description) => {
     setLoading(true);
     WebApiPeople.deleteNode(id)
@@ -79,6 +84,7 @@ const businessForm = ({ permissions, ...props }) => {
         if (response.status === 200) {
           Router.push("/business");
         }
+        message.success(messageDeleteSuccess);
         getCopaniesList();
         setIsModalVisible(false);
         setIsModalDeleteVisible(false);
@@ -109,7 +115,7 @@ const businessForm = ({ permissions, ...props }) => {
         setIsModalVisible(false);
         setLoading(false);
         getCopaniesList();
-        message.success("Empresa actualizada correctamente");
+        message.success(messageUpdateSuccess);
 
         if (response.status === 200) {
           sessionStorage.setItem("image", response.data.image);
@@ -124,6 +130,7 @@ const businessForm = ({ permissions, ...props }) => {
         console.log(error);
       });
   };
+
   const addBusiness = async (name, description, fNode) => {
     let data = new FormData();
     data.append("name", name);
@@ -357,6 +364,7 @@ const businessForm = ({ permissions, ...props }) => {
     setUpdateModal(false);
     person();
   };
+
   const updateStatus = (value) => {
     setIsEdit(true);
     value.active = value.active ? false : true;

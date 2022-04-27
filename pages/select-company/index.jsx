@@ -346,8 +346,9 @@ const SelectCompany = ({ ...props }) => {
             <Alert
               message={
                 <span>
-                  <b>Importar xml:</b> Se crea la empresa y el historico de
-                  nomina a base de una carga masiva de xml (nominas por persona)
+                  <b>Importar xml:</b> Se crea la empresa y el histórico de
+                  nómina a base de una carga masiva de xml (nominas por
+                  persona).
                 </span>
               }
               type="warning"
@@ -356,8 +357,8 @@ const SelectCompany = ({ ...props }) => {
             <Alert
               message={
                 <span>
-                  <b>Crear manualmente:</b> Se crea de manera manual una epresa
-                  con la informacion basica necesaria
+                  <b>Crear manualmente:</b> Se crea de manera manual una empresa
+                  con la información basica necesaria.
                 </span>
               }
               type="warning"

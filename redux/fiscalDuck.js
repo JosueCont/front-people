@@ -52,19 +52,21 @@ const webReducer = (state = initialData, action) => {
 };
 export default webReducer;
 
-export const doFiscalCatalogs = (data) => async (dispatch, getState) => {
+export const doFiscalCatalogs = (node_id) => async (dispatch, getState) => {
   try {
     dispatch(getFiscalTaxRegime());
     dispatch(getPerceptions());
     dispatch(getDeductions());
     dispatch(getOtherPayments());
-    dispatch(getInternalPerceptions(data));
-    dispatch(getInternalDeductions(data));
-    dispatch(getInternalOtherPayments(data));
+    if (node_id) {
+      dispatch(getInternalPerceptions(node_id));
+      dispatch(getInternalDeductions(node_id));
+      dispatch(getInternalOtherPayments(node_id));
+    }
     dispatch(getTypeTax());
     dispatch(getPaymentPeriodicity());
   } catch (error) {
-    console.log(error);
+    console.log("CATCH: ", error);
   }
 };
 
@@ -131,7 +133,7 @@ export const getInternalPerceptions = (data) => async (dispatch, getState) => {
       });
     })
     .catch((error) => {
-      console.log(error);
+      if (error.response.status !== 400) console.log("PERCEPTION: ", error);
     });
 };
 
@@ -148,7 +150,7 @@ export const getInternalDeductions = (data) => async (dispatch, getState) => {
       });
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
     });
 };
 
