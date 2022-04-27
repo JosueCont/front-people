@@ -67,7 +67,7 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
           <Form.Item name="rfc" label="RFC" rules={[rfcFormat, ruleRequired]}>
             <Input maxLength={13} />
           </Form.Item>
-        </Col>{" "}
+        </Col>
         <Col lg={8} xs={22} md={12}>
           <Form.Item name="business_name" label="Razon social">
             <Input />

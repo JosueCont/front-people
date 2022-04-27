@@ -111,6 +111,7 @@ const PersonsTable = ({permissions, ...props}) => {
   }
 
   const resetValuesDelete = ()=>{
+    setItemGroup({})
     setGroupsKeys([])
     setGroupsToDelete([])
     setShowModalDelete(false)
@@ -153,6 +154,7 @@ const PersonsTable = ({permissions, ...props}) => {
     if(openModalAssign){
       if(groupsToDelete.length > 0){
         setShowModalAssign(true)
+        setItemGroup({})
       }else{
         setOpenModalAssign(false)
         message.error("Selecciona al menos un grupo")
@@ -401,9 +403,7 @@ const PersonsTable = ({permissions, ...props}) => {
           visible={showModalAssign}
           close={resetValuesDelete}
           actionForm={onFinishAssign}
-          getAssigns={getAssigns}
-          assignList={listAssignGroup}
-          itemGroup={itemGroup}
+          itemSelected={itemGroup}
         />
         <ViewAssigns
           visible={modalViewAssign}

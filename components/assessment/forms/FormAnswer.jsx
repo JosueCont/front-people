@@ -81,8 +81,7 @@ const FormAnswer = ({ assessmentStore, ...props }) => {
       width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[
         <Button key="back" onClick={() => props.close()}>
-          {" "}
-          Cancelar{" "}
+          Cancelar
         </Button>,
         <Button
           form="formAnswers"

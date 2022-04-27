@@ -59,7 +59,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
           <FiscalAddress
             fiscalAddress={fiscalData && fiscalData.fiscal_address}
             form={formAddress}
-          />{" "}
+          />
           <Row>
             <Title style={{ fontSize: "15px" }}>Representante legal</Title>
           </Row>

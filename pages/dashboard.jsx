@@ -29,6 +29,7 @@ import ChartBars from "../components/dashboards-cards/ChartBars";
 import Info from "../components/dashboards-cards/Info";
 import ChartDoughnut from "../components/dashboards-cards/ChartDoughnut";
 import WeekCard from "../components/dashboards-cards/WeekCard";
+import { withAuthSync } from "../libs/auth";
 
 const index = () => {
   const { Title, Text } = Typography;
@@ -268,4 +269,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default withAuthSync(index);

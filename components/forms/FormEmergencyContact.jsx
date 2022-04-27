@@ -161,9 +161,7 @@ const FormEmergencyContact = ({ person_id = null }) => {
       onOk() {
         if (id !== undefined) deleteContEm(id);
       },
-      onCancel() {
-        console.log("Cancel");
-      },
+      onCancel() {},
     });
   };
 

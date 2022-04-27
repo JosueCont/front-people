@@ -1,8 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import MainLayout from "../../../layout/MainLayout";
 import { Breadcrumb, Spin } from "antd";
-import { useState } from "react";
 import DetailPerson from "../../../components/person/DetailPerson";
 import WebApiPeople from "../../../api/WebApiPeople";
 import { connect } from "react-redux";
@@ -14,17 +13,9 @@ const userRegister = ({ ...props }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [visibleForm, setVisibleForm] = useState(false);
-  const [person, setPerson] = useState();
+  const [person, setPerson] = useState(null);
   const [khonnectId, setKhonnectId] = useState();
   const [modal, setModal] = useState(false);
-  const [hideProfile, setHideProfile] = useState(false);
-
-  useEffect(() => {
-    try {
-      const user = JSON.parse(jsCookie.get("token"));
-      if (user) setHideProfile(true);
-    } catch (error) {}
-  }, []);
 
   useEffect(() => {
     if (router.query.uid) {
@@ -35,21 +26,22 @@ const userRegister = ({ ...props }) => {
   }, [router.query.uid]);
 
   const getCompany = async (data) => {
-    try {
-      let response = await WebApiPeople.getCompanyPermanentCode(data);
-      if (response.data.results.length > 0)
-        props
-          .companySelected(response.data.results[0].id)
-          .then((res) => {
-            if (!person) setVisibleForm(true);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-    } catch (error) {
-      console.log(error);
-    }
+    await WebApiPeople.getCompanyPermanentCode(data)
+      .then((response) => {
+        if (response.data.results.length > 0)
+          props
+            .companySelected(response.data.results[0].id, props.config)
+            .then((res) => {
+              if (!person) setVisibleForm(true);
+              setLoading(false);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const getPerson = async (data) => {
@@ -99,12 +91,8 @@ const userRegister = ({ ...props }) => {
           logoNode={props.currentNode.image}
           companyName={props.currentNode.name}
           hideMenu={true}
-          hideProfile={hideProfile}
           onClickImage={false}
         >
-          <Breadcrumb className={"mainBreadcrumb"}>
-            <Breadcrumb.Item>/Registro</Breadcrumb.Item>
-          </Breadcrumb>
           <Spin tip="Cargando..." spinning={loading}>
             {props.currentNode && !person ? (
               <FormSelfRegistration

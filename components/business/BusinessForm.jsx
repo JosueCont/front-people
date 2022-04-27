@@ -1,5 +1,4 @@
 import {
-  Layout,
   Breadcrumb,
   Table,
   Row,
@@ -33,12 +32,16 @@ import { userId } from "../../libs/auth";
 import Clipboard from "../Clipboard";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
+import {
+  messageDeleteSuccess,
+  messageError,
+  messageUpdateSuccess,
+} from "../../utils/constant";
 
 const { TextArea } = Input;
-const { Content } = Layout;
 const { Option } = Select;
 
-const businessForm = ({ permissions, ...props }) => {
+const businessForm = ({ ...props }) => {
   let router = useRouter();
   const [business, setBusiness] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
@@ -53,10 +56,8 @@ const businessForm = ({ permissions, ...props }) => {
   const [isDeleted, setIsDeleted] = useState(false);
   const [businessName, setBusinessName] = useState("");
   const [treeTable, setTreeTable] = useState(true);
-  const [nodesTree, setNodesTree] = useState([]);
   const [updateModal, setUpdateModal] = useState(false);
-  const [businessUpdate, setBusinessUpdate] = useState({});
-  /* const [permissions, setPermissions] = useState({}); */
+  const [businessUpdate, setBusinessUpdate] = useState(null);
   let personId = userId();
   const [admin, setAdmin] = useState(false);
   const [addB, setAddB] = useState(false);
@@ -72,6 +73,7 @@ const businessForm = ({ permissions, ...props }) => {
       }
     }
   };
+
   const deleteBusiness = async (id, name, description) => {
     setLoading(true);
     WebApiPeople.deleteNode(id)
@@ -79,6 +81,7 @@ const businessForm = ({ permissions, ...props }) => {
         if (response.status === 200) {
           Router.push("/business");
         }
+        message.success(messageDeleteSuccess);
         getCopaniesList();
         setIsModalVisible(false);
         setIsModalDeleteVisible(false);
@@ -89,6 +92,7 @@ const businessForm = ({ permissions, ...props }) => {
         console.log(error);
       });
   };
+
   const updateBusiness = async (values) => {
     setLoading(true);
 
@@ -105,11 +109,10 @@ const businessForm = ({ permissions, ...props }) => {
 
     WebApiPeople.updateNode(values.id, data)
       .then(function (response) {
-        person();
         setIsModalVisible(false);
         setLoading(false);
         getCopaniesList();
-        message.success("Empresa actualizada correctamente");
+        message.success(messageUpdateSuccess);
 
         if (response.status === 200) {
           sessionStorage.setItem("image", response.data.image);
@@ -119,11 +122,11 @@ const businessForm = ({ permissions, ...props }) => {
         }
       })
       .catch(function (error) {
-        person();
         setLoading(false);
         console.log(error);
       });
   };
+
   const addBusiness = async (name, description, fNode) => {
     let data = new FormData();
     data.append("name", name);
@@ -144,7 +147,6 @@ const businessForm = ({ permissions, ...props }) => {
         if (response.status === 200) {
           Router.push("/business");
         }
-        person();
         setIsModalVisible(false);
         setLoading(false);
         setAddB(false);
@@ -158,6 +160,7 @@ const businessForm = ({ permissions, ...props }) => {
         console.log(error);
       });
   };
+
   const showModal = (type, item) => {
     if (type === "add") {
       setIsDeleted(false);
@@ -197,41 +200,20 @@ const businessForm = ({ permissions, ...props }) => {
   };
 
   useEffect(() => {
-    personId = userId();
-    const jwt = JSON.parse(Cookie.get("token"));
-    person();
-    getNodesTree();
-  }, []);
-
-  const person = () => {
-    const jwt = JSON.parse(Cookie.get("token"));
-    WebApiPeople.personForKhonnectId({
-      id: jwt.user_id,
-    })
-      .then((response) => {
-        setAdmin(response.data.is_admin);
-        if (response.data.is_admin) {
-          getCopaniesList();
-        } else {
-          getCopaniesList();
-        }
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-      });
-  };
+    if (props.user) getCopaniesList();
+  }, [props.user]);
 
   const getCopaniesList = async () => {
-    try {
-      let response = await WebApiPeople.getCompanys();
-      let data = response.data.results;
-      setBusiness(data);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    }
+    setBusiness([]);
+    await WebApiPeople.getCompanys()
+      .then((response) => {
+        setBusiness(response.data.results);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
   };
 
   const getBusiness = () => {
@@ -282,11 +264,15 @@ const businessForm = ({ permissions, ...props }) => {
         return (
           <>
             <Switch
-              disabled={permissions.change_is_active ? false : true}
+              disabled={
+                props.permissions && props.permissions.change_is_active
+                  ? false
+                  : true
+              }
               defaultChecked={item.active}
               checkedChildren="Activo"
               unCheckedChildren="Inactivo"
-              onChange={() => modalUpdate(item)}
+              onChange={(value) => modalUpdate(item, value)}
             />
           </>
         );
@@ -295,11 +281,12 @@ const businessForm = ({ permissions, ...props }) => {
     {
       title: "Acciones",
       align: "center",
+      key: "id",
       render: (item) => {
         return (
           <div>
             <Row gutter={24}>
-              {permissions.edit && (
+              {props.permissions && props.permissions.edit && (
                 <Col className="gutter-row" span={6}>
                   <Link href={`/business/${item.id}`}>
                     <Tooltip title="Configuración">
@@ -308,25 +295,26 @@ const businessForm = ({ permissions, ...props }) => {
                   </Link>
                 </Col>
               )}
-              {permissions.edit && (
+              {props.permissions && props.permissions.edit && (
                 <Col className="gutter-row" span={6}>
                   <Tooltip title="Editar">
                     <EditOutlined onClick={() => showModal("edit", item)} />
                   </Tooltip>
                 </Col>
               )}
-              {permissions.delete && (
+              {props.permissions && props.permissions.delete && (
                 <Col className="gutter-row" span={6}>
                   <Tooltip title="Eliminar">
                     <DeleteOutlined onClick={() => showModal("delete", item)} />
                   </Tooltip>
                 </Col>
               )}
-              <Col className="gutter-row" span={6}>
+              <Col style={{ zIndex: 1 }} className="gutter-row" span={6}>
                 <Clipboard
                   text={
                     window.location.origin + "/ac/urn/" + item.permanent_code
                   }
+                  tooltipView={false}
                   border={false}
                   type={"button"}
                   msg={"Copiado en portapapeles"}
@@ -346,17 +334,18 @@ const businessForm = ({ permissions, ...props }) => {
     else getCopaniesList();
   };
 
-  const modalUpdate = (value) => {
-    setBusinessUpdate(value);
-    if (value.active)
-      updateModal ? setUpdateModal(false) : setUpdateModal(true);
-    else updateStatus(value);
+  const modalUpdate = (node, status) => {
+    setBusinessUpdate(node);
+    if (!status) setUpdateModal(true);
+    else {
+      updateStatus(node);
+    }
   };
 
   const closeModalUpdate = () => {
     setUpdateModal(false);
-    person();
   };
+
   const updateStatus = (value) => {
     setIsEdit(true);
     value.active = value.active ? false : true;
@@ -370,11 +359,12 @@ const businessForm = ({ permissions, ...props }) => {
       WebApiPeople.changeStatusNode(value.id, value)
         .then((response) => {
           closeModalUpdate();
+          message.success(messageUpdateSuccess);
         })
         .catch((error) => {
-          message.error("Error al actualizar, intente de nuevo");
-          console.log(error);
           closeModalUpdate();
+          message.error(messageError);
+          console.log(error);
         });
     }
   };
@@ -385,26 +375,44 @@ const businessForm = ({ permissions, ...props }) => {
     reader.readAsDataURL(img);
   }
 
-  const handleChange = (info) => {
-    if (info.file.status === "uploading") {
-      setLoadingLogo(true);
-      return;
-    }
-    if (info.fileList.length > 0) {
-      setLogo(info.file.originFileObj);
-      getBase64(info.file.originFileObj, (imageUrl) => {
-        setLoadingLogo(false);
-        setImageUrl(imageUrl);
-      });
-    }
-  };
-
   const uploadButton = (
     <div>
       {loadingLogo ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+
+  const configUpload = {
+    label: "Logo",
+
+    listType: "picture-card",
+
+    className: "avatar-uploader",
+    showUploadList: false,
+
+    beforeUpload: (file) => {
+      const isPNG = file.type === "image/png" || file.type === "image/jpg";
+      if (!isPNG) {
+        message.error(`${file.name} , No es una imagen.`);
+      }
+      return isPNG || Upload.LIST_IGNORE;
+    },
+    onChange: (image) => {
+      if (image.file.status === "uploading") {
+        setLoadingLogo(true);
+        return;
+      }
+      if (image.file.status === "done") {
+        if (image.fileList.length > 0) {
+          setLogo(image.file.originFileObj);
+          getBase64(image.file.originFileObj, (imageUrl) => {
+            setLoadingLogo(false);
+            setImageUrl(imageUrl);
+          });
+        }
+      }
+    },
+  };
 
   return (
     <MainLayout currentKey={["business"]}>
@@ -425,7 +433,7 @@ const businessForm = ({ permissions, ...props }) => {
       <div className="container" style={{ width: "100%" }}>
         <Row justify={"end"}>
           <Col>
-            {permissions.create && (
+            {props.permissions && props.permissions.create && (
               <Button
                 style={{
                   background: "#fa8c16",
@@ -507,13 +515,15 @@ const businessForm = ({ permissions, ...props }) => {
           <Form.Item name="id" label="id" style={{ display: "none" }}>
             <Input type="text" />
           </Form.Item>
-          <Form.Item label="Logo" required>
+          <Form.Item label="Logo">
             <Upload
-              label="Logo"
-              listType="picture-card"
-              className="avatar-uploader"
-              showUploadList={false}
-              onChange={handleChange}
+              {...configUpload}
+              // label="Logo"
+              // listType="picture-card"
+              // className="avatar-uploader"
+              // showUploadList={false}
+              // onChange={chargerImge}
+              // // beforeUpload={beforeUpload}
             >
               {imageUrl ? (
                 <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />
@@ -592,7 +602,10 @@ const businessForm = ({ permissions, ...props }) => {
         title="Desactivar empresa"
         visible={updateModal}
         onOk={() => updateStatus(businessUpdate)}
-        onCancel={() => closeModalUpdate()}
+        onCancel={() => {
+          setUpdateModal(false), setBusinessUpdate(null);
+          getCopaniesList();
+        }}
         okText="Si, Desactivar"
         cancelText="Cancelar"
       >
@@ -606,6 +619,7 @@ const businessForm = ({ permissions, ...props }) => {
 const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.company,
+    user: state.userStore.user,
   };
 };
 
