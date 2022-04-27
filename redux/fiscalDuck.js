@@ -66,7 +66,7 @@ export const doFiscalCatalogs = (node_id) => async (dispatch, getState) => {
     dispatch(getTypeTax());
     dispatch(getPaymentPeriodicity());
   } catch (error) {
-    console.log("CATCH: ", error);
+    console.log(error);
   }
 };
 
@@ -133,7 +133,7 @@ export const getInternalPerceptions = (data) => async (dispatch, getState) => {
       });
     })
     .catch((error) => {
-      if (error.response.status !== 400) console.log("PERCEPTION: ", error);
+      console.log(error);
     });
 };
 

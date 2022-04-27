@@ -375,19 +375,6 @@ const businessForm = ({ ...props }) => {
     reader.readAsDataURL(img);
   }
 
-  const beforeUpload = (image) => {
-    console.log("TYPE-->> ", image.file.type);
-    if (
-      image.file.type !== "image/jpeg" &&
-      image.file.type !== "image/png" &&
-      image.file.type !== "image/jpeg"
-    ) {
-      message.error("Solo es posible subir imagenes JPG,JPEG,PNG.");
-      return false;
-    }
-    return true;
-  };
-
   const uploadButton = (
     <div>
       {loadingLogo ? <LoadingOutlined /> : <PlusOutlined />}

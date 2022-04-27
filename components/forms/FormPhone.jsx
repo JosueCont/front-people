@@ -146,9 +146,7 @@ const FormPhone = ({ person_id = null }) => {
       onOk() {
         if (id !== undefined) deletePhone(id);
       },
-      onCancel() {
-        console.log("Cancel");
-      },
+      onCancel() {},
     });
   };
 
@@ -219,77 +217,82 @@ const FormPhone = ({ person_id = null }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Teléfono</Title>
       </Row>
-      <Form layout={"vertical"} form={formPhone} onFinish={formFinishPhone} className="inputs_form_responsive">
+      <Form
+        layout={"vertical"}
+        form={formPhone}
+        onFinish={formFinishPhone}
+        className="inputs_form_responsive"
+      >
         <Row justify="center">
           <Col span={23}>
-            <Row  gutter={20}>
-          <Col lg={6} xs={22} md={12}>
-            <Form.Item
-              name="phone_type"
-              label="Tipo de teléfono"
-              rules={[ruleRequired]}
-              style={{width: '100%'}}
-            >
-              <Select
-                options={typePhones}
-                notFoundContent={"No se encontraron resultados."}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} md={12}>
-            <Form.Item
-              name="line_type"
-              label="Tipo de línea"
-              rules={[ruleRequired]}
-              style={{width: '100%'}}
-            >
-              <Select
-                options={typeLines}
-                notFoundContent={"No se encontraron resultados."}
-              />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} md={12}>
-            <Form.Item
-              name="international_code"
-              label="Código internacional"
-              rules={[ruleRequired, onlyNumeric]}
-              style={{width: '100%'}}
-            >
-              <Input maxLength={10} />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} md={12}>
-            <Form.Item
-              name="national_code"
-              label="Código de país"
-              rules={[ruleRequired, onlyNumeric]}
-              style={{width: '100%'}}
-            >
-              <Input maxLength={10} />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} md={12}>
-            <Form.Item
-              name="country_code"
-              label="Código de ciudad"
-              rules={[ruleRequired, onlyNumeric]}
-              style={{width: '100%'}}
-            >
-              <Input maxLength={10} />
-            </Form.Item>
-          </Col>
-          <Col lg={6} xs={22} md={12}>
-            <Form.Item
-              name="phone"
-              label="Número telefónico"
-              rules={[ruleRequired, onlyNumeric]}
-              style={{width: '100%'}}
-            >
-              <Input maxLength={10} />
-            </Form.Item>
-          </Col>
-        </Row>
+            <Row gutter={20}>
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                  name="phone_type"
+                  label="Tipo de teléfono"
+                  rules={[ruleRequired]}
+                  style={{ width: "100%" }}
+                >
+                  <Select
+                    options={typePhones}
+                    notFoundContent={"No se encontraron resultados."}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                  name="line_type"
+                  label="Tipo de línea"
+                  rules={[ruleRequired]}
+                  style={{ width: "100%" }}
+                >
+                  <Select
+                    options={typeLines}
+                    notFoundContent={"No se encontraron resultados."}
+                  />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                  name="international_code"
+                  label="Código internacional"
+                  rules={[ruleRequired, onlyNumeric]}
+                  style={{ width: "100%" }}
+                >
+                  <Input maxLength={10} />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                  name="national_code"
+                  label="Código de país"
+                  rules={[ruleRequired, onlyNumeric]}
+                  style={{ width: "100%" }}
+                >
+                  <Input maxLength={10} />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                  name="country_code"
+                  label="Código de ciudad"
+                  rules={[ruleRequired, onlyNumeric]}
+                  style={{ width: "100%" }}
+                >
+                  <Input maxLength={10} />
+                </Form.Item>
+              </Col>
+              <Col lg={6} xs={22} md={12}>
+                <Form.Item
+                  name="phone"
+                  label="Número telefónico"
+                  rules={[ruleRequired, onlyNumeric]}
+                  style={{ width: "100%" }}
+                >
+                  <Input maxLength={10} />
+                </Form.Item>
+              </Col>
+            </Row>
           </Col>
         </Row>
         <Row justify={"end"}>
