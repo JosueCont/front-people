@@ -100,7 +100,6 @@ const AssessmentsSearch = ({...props}) =>{
                     visible={showModalCreate}
                     close={HandleClose}
                     actionForm={onFinishAdd}
-                    surveyList={props.surveyList}
                 />
             )}
         </>
