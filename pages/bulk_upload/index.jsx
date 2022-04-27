@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { EyeOutlined } from "@ant-design/icons";
+import { withAuthSync } from "../../libs/auth";
 
 const ListBulkUpload = ({ ...props }) => {
   const route = useRouter();
@@ -100,4 +101,4 @@ const ListBulkUpload = ({ ...props }) => {
   );
 };
 
-export default ListBulkUpload;
+export default withAuthSync(ListBulkUpload);

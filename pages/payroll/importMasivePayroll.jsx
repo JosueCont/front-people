@@ -51,10 +51,10 @@ const ImportMasivePayroll = ({ ...props }) => {
   const [nodeCreated, setNodeCreated] = useState(null);
   const [genericModal, setGenericModal] = useState(false);
   const [infoGenericModal, setInfoGenericModal] = useState({
-    title: "Cerrar nomina",
-    title_message: "¿Esta seguro de cerrar la nomina?",
+    title: "Cerrar nómina",
+    title_message: "¿Esta seguro de cerrar la nómina?",
     description:
-      "Una vez cerrada la nomina no podra realizar cambios o modificaciones.",
+      "Una vez cerrada la nómina no podra realizar cambios o modificaciones.",
     type_alert: "warning",
     action: () =>
       router.push({
@@ -429,11 +429,11 @@ const ImportMasivePayroll = ({ ...props }) => {
                 {/* <Button onClick={downloadReport}>Descargar reporte</Button> */}
                 <Alert
                   style={{ margin: "10px" }}
-                  message="Verifica tu informacion"
-                  description="Para poder calcular y timbrar nominas futuras verifica la informacion fiscal de tu empresa."
+                  message="Verifica tu información"
+                  description="Para poder calcular y timbrar nominas futuras verifica la información fiscal de tu empresa."
                   action={
                     <Space direction="horizontal">
-                      <Tooltip title="Ver informacion fiscal">
+                      <Tooltip title="Ver información fiscal">
                         <Button
                           onClick={() =>
                             router.push({

@@ -1,9 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Layout, Row, Col, Menu, Drawer, Typography, Divider } from "antd";
-import { useRouter } from "next/router";
+import { Layout, Row, Col, Drawer, Typography, Divider } from "antd";
 import { DollarCircleOutlined } from "@ant-design/icons";
 import { Helmet } from "react-helmet";
-import { userCompanyName } from "../libs/auth";
 import { connect } from "react-redux";
 import { companySelected } from "../redux/UserDuck";
 import { css, Global } from "@emotion/core";
@@ -11,7 +9,7 @@ import { getFlavor, getRouteFlavor } from "../utils/brand";
 import NewHeader from "../components/NewHeader";
 import MainSider from "../components/MainSider";
 
-const { Header, Content, Sider } = Layout;
+const { Content } = Layout;
 
 const MainLayout = ({
   currentKey,
@@ -25,17 +23,10 @@ const MainLayout = ({
   nómina = false,
   ...props
 }) => {
-  const router = useRouter();
-  const defaulPhoto =
-    "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
-
-  const { Text, Title } = Typography;
-  let nodeName = userCompanyName();
+  const { Title } = Typography;
   const [mainLogo, setMainLogo] = useState("");
-  const [company, setCompany] = useState("");
   const isBrowser = () => typeof window !== "undefined";
   const [flavor, setFlavor] = useState({});
-  const [routeFlavor, setRouteFlavor] = useState({});
   const [showEvents, setShowEvents] = useState(false);
 
   useLayoutEffect(() => {
@@ -43,7 +34,6 @@ const MainLayout = ({
       const vflavor = getFlavor();
       const routeFlavor = getRouteFlavor();
       setFlavor(vflavor);
-      setRouteFlavor(routeFlavor);
 
       var head = document.head;
       var link = document.createElement("link");
@@ -53,12 +43,6 @@ const MainLayout = ({
       link.async = true;
       head.appendChild(link);
     } catch (error) {}
-  }, []);
-
-  useEffect(() => {
-    if (company == "" || company == undefined) {
-      setCompany(nodeName);
-    }
   }, []);
 
   useEffect(() => {
@@ -285,27 +269,10 @@ const MainLayout = ({
                 Proximos eventos
               </Title>
               <Divider style={{ margin: "10px 0px 15px 0px" }} />
-              {/* <WeekCard /> */}
             </Col>
           </Row>
         </Drawer>
       )}
-
-      {/* </Layout> */}
-
-      {/* <HeaderCustom
-        key="main_header"
-        currentKey={props.currentKey}
-        hideMenu={hideMenu}
-        mainLogo={mainLogo}
-        hideProfile={hideProfile}
-        onClickImage={onClickImage}
-      /> */}
-
-      {/* <div style={{ marginLeft: "50px" }}>
-        <h1> {company != undefined && company}</h1>
-      </div> */}
-      {/* <Footer /> */}
     </Layout>
   );
 };

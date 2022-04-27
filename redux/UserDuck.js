@@ -14,7 +14,7 @@ const initialData = {
   user: null,
   permissions: UserPermissions(),
   current_node: null,
-  general_config: {},
+  general_config: null,
 };
 
 const LOADING_WEB = "LOADING_WEB";

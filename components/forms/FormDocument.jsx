@@ -77,9 +77,7 @@ const FormDocument = ({ person_id, node }) => {
       onOk() {
         if (id !== undefined) deleteDocument(id);
       },
-      onCancel() {
-        console.log("Cancel");
-      },
+      onCancel() {},
     });
   };
 

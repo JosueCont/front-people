@@ -29,7 +29,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { pathname } = router;
   const { Header } = Layout;
   const [logOut, setLogOut] = useState(false);
-  const [person, setPerson] = useState({});
+  const [person, setPerson] = useState();
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -38,21 +38,24 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   }, []);
 
   const getPerson = async () => {
-    try {
-      const user = JSON.parse(Cookie.get("token"));
-      let response = await WebApiPeople.personForKhonnectId({
+    let user = Cookie.get();
+    if (user && user != undefined && user.token) {
+      user = JSON.parse(user.token);
+      await WebApiPeople.personForKhonnectId({
         id: user.user_id,
-      });
-      if (!response.data.photo) response.data.photo = defaulPhoto;
-      let personName =
-        response.data.first_name + " " + response.data.flast_name;
-      if (response.data.mlast_name)
-        personName = personName + " " + response.data.mlast_name;
-      response.data.fullName = personName;
-      setPerson(response.data);
-    } catch (error) {
-      console.log(error);
-      setPerson({ photo: defaulPhoto });
+      })
+        .then((response) => {
+          if (!response.data.photo) response.data.photo = defaulPhoto;
+          let personName =
+            response.data.first_name + " " + response.data.flast_name;
+          if (response.data.mlast_name)
+            personName = personName + " " + response.data.mlast_name;
+          response.data.fullName = personName;
+          setPerson(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
@@ -180,48 +183,37 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
               </object>
             </Col>
             <Col style={{ width: 250, textAlign: "end" }}>
-              <div
-                className={"pointer"}
-                style={{ float: "right" }}
-                key={"menu_user_" + props.currentKey}
-              >
-                <Space size={"middle"}>
-                  {/* <Badge dot>
-                    <BellOutlined
-                      style={{ color: "white", fontSize: 20 }}
-                      onClick={() => props.setShowEvents(true)}
-                    />
-                  </Badge> */}
-                  <Dropdown overlay={<CardApps />} key="dropdown_apps">
-                    <div key="menu_apps_content">
-                      <BsFillGrid3X3GapFill
-                        style={{
-                          color: "white",
-                          fontSize: 30,
-                          display: "flex",
-                          margin: "auto",
-                        }}
-                      />
-                    </div>
-                  </Dropdown>
-                  <Dropdown overlay={userCardDisplay} key="dropdown_user">
-                    <div key="menu_user_content">
-                      <Avatar
-                        key="avatar_key"
-                        icon={<UserOutlined />}
-                        src={person.photo}
-                      />
-                    </div>
-                  </Dropdown>
-                </Space>
-              </div>
-
-              {/* <Avatar
-                        style={{margin:'0 20px'}}
-                            key="avatar_key"
-                            icon={<UserOutlined />}
-                            src={'https://d500.epimg.net/cincodias/imagenes/2016/07/04/lifestyle/1467646262_522853_1467646344_noticia_normal.jpg'}
-                        /> */}
+              {person && (
+                <div
+                  className={"pointer"}
+                  style={{ float: "right" }}
+                  key={"menu_user_" + props.currentKey}
+                >
+                  <Space size={"middle"}>
+                    <Dropdown overlay={<CardApps />} key="dropdown_apps">
+                      <div key="menu_apps_content">
+                        <BsFillGrid3X3GapFill
+                          style={{
+                            color: "white",
+                            fontSize: 30,
+                            display: "flex",
+                            margin: "auto",
+                          }}
+                        />
+                      </div>
+                    </Dropdown>
+                    <Dropdown overlay={userCardDisplay} key="dropdown_user">
+                      <div key="menu_user_content">
+                        <Avatar
+                          key="avatar_key"
+                          icon={<UserOutlined />}
+                          src={person.photo}
+                        />
+                      </div>
+                    </Dropdown>
+                  </Space>
+                </div>
+              )}
             </Col>
           </Row>
         </div>

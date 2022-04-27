@@ -151,9 +151,7 @@ const FormBanckAccount = ({ person_id = null }) => {
       onOk() {
         if (id !== undefined) deleteBankAcc(id);
       },
-      onCancel() {
-        console.log("Cancel");
-      },
+      onCancel() {},
     });
   };
 
@@ -262,13 +260,18 @@ const FormBanckAccount = ({ person_id = null }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Cuentas bancarias</Title>
       </Row>
-      <Form layout="vertical" form={formBank} onFinish={formBankAcc} className="inputs_form_responsive">
+      <Form
+        layout="vertical"
+        form={formBank}
+        onFinish={formBankAcc}
+        className="inputs_form_responsive"
+      >
         <Row>
           <Col lg={8} xs={22} md={12}>
             <SelectBank
               name="bank"
               bankSelected={selectedBank}
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             />
           </Col>
           <Col lg={8} xs={22} md={12}>

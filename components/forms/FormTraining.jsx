@@ -183,9 +183,7 @@ const FormTraining = ({ person_id = null }) => {
       onOk() {
         if (id !== undefined) deleteTraining(id);
       },
-      onCancel() {
-        console.log("Cancel");
-      },
+      onCancel() {},
     });
   };
 

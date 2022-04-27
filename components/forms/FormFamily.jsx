@@ -191,9 +191,7 @@ const FormFamily = ({ person_id = null }) => {
       onOk() {
         if (id !== undefined) deleteFamily(id);
       },
-      onCancel() {
-        console.log("Cancel");
-      },
+      onCancel() {},
     });
   };
 

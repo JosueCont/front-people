@@ -287,7 +287,7 @@ const ModalConceptsPayroll = ({
       onCancel={() => {
         clearConcept(), setVisible(false);
       }}
-      title="Conceptos de nomina"
+      title="Conceptos de nómina"
     >
       <Row>
         <Steps

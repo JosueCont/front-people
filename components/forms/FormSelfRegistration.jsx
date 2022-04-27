@@ -16,8 +16,8 @@ import LoginModal from "../modal/LoginModal";
 import { genders } from "../../utils/constant";
 
 import moment from "moment";
-import { ruleRequired } from "../../utils/rules";
-import SelectPersonType from "../selects/SelectPersonType";
+import { ruleEmail, ruleRequired } from "../../utils/rules";
+import router from "next/router";
 
 const FormSelfRegistration = ({
   hideProfileSecurity = true,
@@ -99,10 +99,10 @@ const FormSelfRegistration = ({
               layout={"vertical"}
             >
               <Row>
-                <Col lg={7} xs={22} offset={1}>
+                {/* <Col lg={7} xs={22} offset={1}>
                   <SelectPersonType />
-                </Col>
-                <Col lg={14} xs={22} offset={1}>
+                </Col> */}
+                <Col lg={22} xs={22} offset={1}>
                   <Form.Item rules={[ruleRequired]} label="Empresa">
                     <Input disabled readOnly value={nameNode} />
                   </Form.Item>
@@ -206,9 +206,22 @@ const FormSelfRegistration = ({
                     <Input.Password type="text" placeholder="Contraseña" />
                   </Form.Item>
                 </Col>
+                <Col style={{ paddingTop: "20px" }} lg={22} xs={22} offset={1}>
+                  <Button
+                    disabled={disabled}
+                    onClick={() => router.push("/")}
+                    type="primary"
+                    style={{ marginRight: "10px" }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button disabled={disabled} type="primary" htmlType="submit">
+                    Guardar
+                  </Button>
+                </Col>
                 <Col
                   style={{ paddingTop: "20px" }}
-                  lg={19}
+                  lg={22}
                   xs={22}
                   offset={1}
                   className="center-content font-color-khor"
@@ -221,17 +234,6 @@ const FormSelfRegistration = ({
                   >
                     <Link href="">haz clic aquí</Link>
                   </span>
-                </Col>
-                <Col
-                  style={{ paddingTop: "20px" }}
-                  lg={2}
-                  xs={22}
-                  offset={1}
-                  className="center-content"
-                >
-                  <Button disabled={disabled} type="primary" htmlType="submit">
-                    Guardar
-                  </Button>
                 </Col>
               </Row>
             </Form>

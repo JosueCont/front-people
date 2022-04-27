@@ -19,10 +19,9 @@ import moment from "moment-timezone";
 import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import { userCompanyId } from "../../libs/auth";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 
-
-const LoanReport = ({ permissions, ...props}) => {
+const LoanReport = ({ permissions, ...props }) => {
   const route = useRouter();
   const { Option } = Select;
   const [form] = Form.useForm();
@@ -51,7 +50,7 @@ const LoanReport = ({ permissions, ...props}) => {
       render: (person, item) => {
         return (
           <>
-            {item.person.first_name}{" "}
+            {item.person.first_name}
             {item.person.mlast_name ? item.person.mlast_name : null}
           </>
         );
@@ -331,7 +330,6 @@ const LoanReport = ({ permissions, ...props}) => {
     getLending();
   }, []);
 
-
   return (
     <>
       <Row justify="space-between" style={{ paddingRight: 20 }}>
@@ -469,7 +467,7 @@ const LoanReport = ({ permissions, ...props}) => {
 
 const mapState = (state) => {
   return {
-    permissions: state.userStore.permissions.report
+    permissions: state.userStore.permissions.report,
   };
 };
 
