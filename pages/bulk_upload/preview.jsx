@@ -32,6 +32,7 @@ const PreviewBulkUpload = ({ ...props }) => {
   const [disabledButton, setDisabledButton] = useState(false);
   const [arrColumns, setArrColumns] = useState([]);
   const [messageSave, setMessageSave] = useState(null);
+  const [templateType, setTemplateType] = useState(null);
 
   /* Columns */
   const columns = [
@@ -85,8 +86,10 @@ const PreviewBulkUpload = ({ ...props }) => {
     if (props.formData) {
       WebApiPeople.BulkMassivePerson(props.formData)
         .then((response) => {
+          console.log("Return=>", response.data);
           setArrColumns(columns);
           setDataUpload(response.data.data);
+          setTemplateType(response.data.type);
           setLoading(false);
           message.success("Excel importado correctamente.");
         })
@@ -121,6 +124,7 @@ const PreviewBulkUpload = ({ ...props }) => {
           setDisabledButton(true);
           const data = {
             persons: dataUpload,
+            type: templateType,
           };
           WebApiPeople.saveMassivePerson(data)
             .then((response) => {
