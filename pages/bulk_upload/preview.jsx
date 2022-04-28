@@ -86,7 +86,6 @@ const PreviewBulkUpload = ({ ...props }) => {
     if (props.formData) {
       WebApiPeople.BulkMassivePerson(props.formData)
         .then((response) => {
-          console.log("Return=>", response.data);
           setArrColumns(columns);
           setDataUpload(response.data.data);
           setTemplateType(response.data.type);
