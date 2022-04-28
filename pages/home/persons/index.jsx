@@ -932,7 +932,7 @@ const homeScreen = ({ ...props }) => {
           downLoadFileBlob(
             `${getDomain(
               API_URL_TENANT
-            )}/person/person/generate_template/?type=2`,
+            )}/person/person/generate_template/?type=1`,
             "platilla_personas.xlsx",
             "GET"
           )
@@ -940,6 +940,22 @@ const homeScreen = ({ ...props }) => {
       >
         Plantilla básica
       </Menu.Item>
+      {props.config && props.config.nomina_enabled && (
+        <Menu.Item
+          key="2"
+          onClick={() =>
+            downLoadFileBlob(
+              `${getDomain(
+                API_URL_TENANT
+              )}/person/person/generate_template/?type=2`,
+              "platilla_personas.xlsx",
+              "GET"
+            )
+          }
+        >
+          Plantilla con Nomina Asimilados
+        </Menu.Item>
+      )}
     </Menu>
   );
 
