@@ -311,7 +311,7 @@ class WebApiPeople {
   }
 
   static trainingPerson(type, url = "", data = null) {
-    return WebApi.ApisType(`/person/person/${url}`, type, data);
+    return WebApi.ApisType(`/person/${url}`, type, data);
   }
 
   /* Solicitudes */

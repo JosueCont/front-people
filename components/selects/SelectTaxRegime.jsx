@@ -23,11 +23,11 @@ const SelectTaxRegime = ({ taxRegimeSelected = null, ...props }) => {
     <Form.Item
       key={"SelectTaxRegime"}
       name={props.name ? props.name : "tax_regime"}
-      label={props.label ? props.label : "Regimen fiscal"}
+      label={props.label ? props.label : "Régimen fiscal"}
     >
       <Select
         key="SelectTaxRegime"
-        placeholder="Regimen Fical"
+        placeholder="Régimen Fical"
         style={props.style ? props.style : null}
         options={options}
         onChange={props.onChange ? props.onChange : null}

@@ -24,8 +24,9 @@ import { genders } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../utils/rules";
+import { connect } from "react-redux";
 
-const FormFamily = ({ person_id = null }) => {
+const FormFamily = ({ person_id = null, ...props }) => {
   const { Title } = Typography;
   const [formFamily] = Form.useForm();
   const { confirm } = Modal;
@@ -34,24 +35,10 @@ const FormFamily = ({ person_id = null }) => {
   const [idFamily, setIdFamily] = useState("");
   const [upFamily, setUpFamily] = useState(false);
   const [family, setFamily] = useState([]);
-  const [relationship, setRelationship] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
 
   useEffect(() => {
     getFamily();
-    WebApiPeople.getRelationShip()
-      .then((response) => {
-        if (response.status === 200) {
-          let relation = response.data.results;
-          relation = relation.map((a) => {
-            return { label: a.name, value: a.id };
-          });
-          setRelationship(relation);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   }, []);
 
   const getFamily = async () => {
@@ -256,7 +243,9 @@ const FormFamily = ({ person_id = null }) => {
               rules={[ruleRequired]}
             >
               <Select
-                options={relationship}
+                options={props.relationship.map((item) => {
+                  return { value: item.id, label: item.name };
+                })}
                 notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
@@ -363,4 +352,8 @@ const FormFamily = ({ person_id = null }) => {
   );
 };
 
-export default FormFamily;
+const mapState = (state) => {
+  return { relationship: state.catalogStore.cat_relationship };
+};
+
+export default connect(mapState)(FormFamily);

@@ -27,7 +27,6 @@ import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import MainLayout from "../../layout/MainLayout";
 import NodeTreeView from "./TreeView/treeview";
-import Cookie from "js-cookie";
 import { userId } from "../../libs/auth";
 import Clipboard from "../Clipboard";
 import { connect } from "react-redux";
@@ -35,6 +34,7 @@ import WebApiPeople from "../../api/WebApiPeople";
 import {
   messageDeleteSuccess,
   messageError,
+  messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../utils/constant";
 
@@ -151,11 +151,11 @@ const businessForm = ({ ...props }) => {
         setLoading(false);
         setAddB(false);
         getCopaniesList();
-        message.success("Agregado correctamente.");
+        message.success(messageSaveSuccess);
       })
       .catch(function (error) {
         setAddB(false);
-        message.error("Ocurrio un error, intente de nuevo");
+        message.error(messageError);
         setLoading(false);
         console.log(error);
       });
@@ -516,15 +516,7 @@ const businessForm = ({ ...props }) => {
             <Input type="text" />
           </Form.Item>
           <Form.Item label="Logo">
-            <Upload
-              {...configUpload}
-              // label="Logo"
-              // listType="picture-card"
-              // className="avatar-uploader"
-              // showUploadList={false}
-              // onChange={chargerImge}
-              // // beforeUpload={beforeUpload}
-            >
+            <Upload {...configUpload}>
               {imageUrl ? (
                 <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />
               ) : (

@@ -275,7 +275,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     <>
       <Spin tip="Cargando..." spinning={loading}>
         <Row>
-          <Title style={{ fontSize: "20px" }}>Nomina</Title>
+          <Title style={{ fontSize: "20px" }}>Nómina</Title>
         </Row>
         <Form
           layout={"vertical"}
@@ -319,7 +319,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
             <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="hiring_regime_type"
-                label="Tipo de regimen de contratación"
+                label="Tipo de régimen de contratación"
                 rules={[ruleRequired]}
               >
                 <Select
