@@ -47,7 +47,10 @@ const FormTraining = ({ person_id = null }) => {
 
   const getTraining = async () => {
     setLoadingTable(true);
-    await WebApiPeople.trainingPerson("get", `${person_id}/training_person/`)
+    await WebApiPeople.trainingPerson(
+      "get",
+      `person/${person_id}/training_person/`
+    )
       .then((response) => {
         setTraining(response.data);
         setTimeout(() => {
@@ -64,7 +67,7 @@ const FormTraining = ({ person_id = null }) => {
   };
 
   const saveTraining = async (data) => {
-    await WebApiPeople.trainingPerson("post", "", data)
+    await WebApiPeople.trainingPerson("post", "training/", data)
       .then((response) => {
         message.success(messageSaveSuccess);
         getTraining();
@@ -83,7 +86,7 @@ const FormTraining = ({ person_id = null }) => {
   };
   const updateTraining = async (data) => {
     setLoadingTable(true);
-    await WebApiPeople.trainingPerson("put", `${data.id}/`, data)
+    await WebApiPeople.trainingPerson("put", `training/${data.id}/`, data)
       .then((response) => {
         message.success({
           content: "Actualizado correctamente.",
@@ -108,7 +111,7 @@ const FormTraining = ({ person_id = null }) => {
       });
   };
   const deleteTraining = async (id) => {
-    await WebApiPeople.trainingPerson("delete", `${id}/`)
+    await WebApiPeople.trainingPerson("delete", `training/${id}/`)
       .then((response) => {
         message.success({
           content: "Eliminado con éxito.",

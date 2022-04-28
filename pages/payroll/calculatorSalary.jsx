@@ -261,7 +261,7 @@ const calculatorSalary = () => {
                           <Row className="table-grid-title">
                             <Col span={16}>
                               <Text strong>
-                                {changeType ? "Nomina" : "Asimilado"}
+                                {changeType ? "Nómina" : "Asimilado"}
                               </Text>
                             </Col>
                             <Col span={8} className="border-results">

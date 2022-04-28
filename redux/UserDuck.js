@@ -57,16 +57,18 @@ const webReducer = (state = initialData, action) => {
 export default webReducer;
 
 export const doGetGeneralConfig = () => async (dispatch, getState) => {
-  try {
-    let response = await WebApiPeople.getGeneralConfig();
-    sessionStorage.setItem("aid", response.data.client_khonnect_id);
-    sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
-    dispatch({ type: GENERAL_CONFIG, payload: response.data });
-    dispatch(setUser());
-    if (response.data.nomina_enabled) {
-      dispatch(doFiscalCatalogs());
-    }
-  } catch (error) {}
+  await WebApiPeople.getGeneralConfig()
+    .then((response) => {
+      sessionStorage.setItem("aid", response.data.client_khonnect_id);
+      sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
+      dispatch({ type: GENERAL_CONFIG, payload: response.data });
+      dispatch(setUser());
+      if (response.data.nomina_enabled) {
+        dispatch(doFiscalCatalogs());
+      }
+    })
+
+    .catch((error) => {});
 };
 
 export const showScreenError = () => async (dispatch, getState) => {

@@ -298,7 +298,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                             </Form.Item>
                           </Col>
                           <Col style={{ display: "flex" }}>
-                            <Form.Item label="Regimen fiscal">
+                            <Form.Item label="Régimen fiscal">
                               <Input
                                 value={
                                   props.taxRegime.find(

@@ -121,7 +121,7 @@ const DetailPerson = ({
           </TabPane>
           <TabPane
             tab={
-              <Tooltip title="Telefono">
+              <Tooltip title="Teléfono">
                 <div className="container-title-tab">
                   <PhoneOutlined />
                   <div className="text-title-tab">Telefono</div>
@@ -230,7 +230,7 @@ const DetailPerson = ({
           {config.nomina_enabled && (
             <TabPane
               tab={
-                <Tooltip title="Nomina">
+                <Tooltip title="Nómina">
                   <div className="container-title-tab">
                     <DollarOutlined />
                     <div className="text-title-tab">Nomina</div>
