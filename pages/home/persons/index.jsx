@@ -740,14 +740,14 @@ const homeScreen = ({ ...props }) => {
     setShowModalAssignTest(false);
     setPersonsToDelete([]);
     setPersonsKeys([]);
-    setItemPerson({})
+    setItemPerson({});
   };
 
   const HandleModalAssign = (item) => {
     setPersonsToDelete([item]);
     // setOpenAssignTest(true);
     setShowModalAssignTest(true);
-    setItemPerson(item)
+    setItemPerson(item);
   };
 
   const getOnlyIds = () => {
@@ -834,7 +834,7 @@ const homeScreen = ({ ...props }) => {
     if (openAssignTest) {
       if (personsToDelete.length > 0) {
         setShowModalAssignTest(true);
-        setItemPerson({})
+        setItemPerson({});
       } else {
         setOpenAssignTest(false);
         message.error("Selecciona al menos una persona");
@@ -962,7 +962,7 @@ const homeScreen = ({ ...props }) => {
           onChange={(e) => importPersonFileExtend(e, 1)}
         />
       </Menu.Item>
-      {props.config.nomina_enabled && (
+      {props.config && props.config.nomina_enabled && (
         <>
           <Menu.Item key="2">
             <a
