@@ -245,7 +245,6 @@ const FormBanckAccount = ({ person_id = null }) => {
         type_validation: 3,
       });
       if (response.data.level == "success") {
-        //formBank.setFieldsValue({bank:response.data.bank_id})
         return Promise.resolve();
       } else {
         return Promise.reject(
@@ -274,7 +273,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               style={{ width: "100%" }}
             />
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={8} xs={22} md={12} offset={1}>
             <Form.Item
               name="account_number"
               label="Número de cuenta"
@@ -296,7 +295,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input minLength={18} maxLength={18} />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={8} xs={22} md={12} offset={1}>
             <Form.Item
               name="card_number"
               label="Número de tarjeta"
@@ -315,7 +314,7 @@ const FormBanckAccount = ({ person_id = null }) => {
               <Input maxLength={2} />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={8} xs={22} md={12} offset={1}>
             <Form.Item
               name="expiration_year"
               label="Año de vencimiento"
