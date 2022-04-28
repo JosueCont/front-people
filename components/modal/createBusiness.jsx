@@ -1,21 +1,72 @@
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Modal, Select, Upload } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Select,
+  Spin,
+  Upload,
+} from "antd";
 import { useState } from "react";
+import WebApiPeople from "../../api/WebApiPeople";
+import { messageError, messageSaveSuccess } from "../../utils/constant";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const ModalCreateBusiness = ({ visible, setVisible, ...props }) => {
+const ModalCreateBusiness = ({
+  visible,
+  setVisible,
+  user,
+  afterAction = null,
+  ...props
+}) => {
   const [form] = Form.useForm();
   const [business, setBusiness] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
   const [loadingLogo, setLoadingLogo] = useState(false);
+  const [logo, setLogo] = useState(null);
+  const [addB, setAddB] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const closeDialog = () => {
-    props.close(false);
+  const onFinish = (value) => {
+    let data = new FormData();
+    data.append("name", value.name);
+    data.append("description", value.description);
+    data.append("active", true);
+    if (value.FNode) {
+      data.append("parent", value.FNode ? value.FNode : null);
+    }
+    setAddB(true);
+    data.append("image", logo);
+    data.append("person", user.id);
+    setLoading(true);
+    if (logo == null || logo == undefined) {
+      message.error("Agregue una imagen");
+      setAddB(false);
+      return;
+    }
+    WebApiPeople.createNode(data)
+      .then((response) => {
+        setLoading(false);
+        setAddB(false);
+        setLogo(null);
+        setImageUrl(null);
+        setLoadingLogo(false);
+        afterAction(user.khonnect_id);
+        setVisible(false);
+        form.resetFields();
+        message.success(messageSaveSuccess);
+      })
+      .catch(function (error) {
+        setAddB(false);
+        message.error(messageError);
+        setLoading(false);
+        console.log(error);
+      });
   };
-
-  const onFinish = (value) => {};
 
   function getBase64(img, callback) {
     const reader = new FileReader();
@@ -23,26 +74,44 @@ const ModalCreateBusiness = ({ visible, setVisible, ...props }) => {
     reader.readAsDataURL(img);
   }
 
-  const handleChange = (info) => {
-    if (info.file.status === "uploading") {
-      setLoadingLogo(true);
-      return;
-    }
-    if (info.fileList.length > 0) {
-      setLogo(info.file.originFileObj);
-      getBase64(info.file.originFileObj, (imageUrl) => {
-        setLoadingLogo(false);
-        setImageUrl(imageUrl);
-      });
-    }
-  };
-
   const uploadButton = (
     <div>
       {loadingLogo ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+
+  const configUpload = {
+    label: "Logo",
+
+    listType: "picture-card",
+
+    className: "avatar-uploader",
+    showUploadList: false,
+
+    beforeUpload: (file) => {
+      const isPNG = file.type === "image/png" || file.type === "image/jpg";
+      if (!isPNG) {
+        message.error(`${file.name} , No es una imagen.`);
+      }
+      return isPNG || Upload.LIST_IGNORE;
+    },
+    onChange: (image) => {
+      if (image.file.status === "uploading") {
+        setLoadingLogo(true);
+        return;
+      }
+      if (image.file.status === "done") {
+        if (image.fileList.length > 0) {
+          setLogo(image.file.originFileObj);
+          getBase64(image.file.originFileObj, (imageUrl) => {
+            setLoadingLogo(false);
+            setImageUrl(imageUrl);
+          });
+        }
+      }
+    },
+  };
 
   return (
     <Modal
@@ -58,68 +127,62 @@ const ModalCreateBusiness = ({ visible, setVisible, ...props }) => {
           type="primary"
           key="submit"
           htmlType="submit"
+          disabled={addB}
         >
           Guardar
         </Button>,
       ]}
     >
-      <Form
-        id="addBusinessForm"
-        name="normal_login"
-        onFinish={onFinish}
-        layout={"vertical"}
-        form={form}
-      >
-        <Form.Item name="id" label="id" style={{ display: "none" }}>
-          <Input type="text" />
-        </Form.Item>
-        <Form.Item label="Logo" required>
-          <Upload
-            label="Logo"
-            listType="picture-card"
-            className="avatar-uploader"
-            showUploadList={false}
-            // onChange={handleChange}
-          >
-            {imageUrl ? (
-              <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />
-            ) : (
-              uploadButton
-            )}
-          </Upload>
-        </Form.Item>
-        <Form.Item
-          name="name"
-          label="Nombre"
-          rules={[{ required: true, message: "Ingresa un nombre" }]}
+      <Spin spinning={loading}>
+        <Form
+          id="addBusinessForm"
+          name="normal_login"
+          onFinish={onFinish}
+          layout={"vertical"}
+          form={form}
         >
-          <Input placeholder="Nombre de la empresa" />
-        </Form.Item>
-        <Form.Item
-          name="description"
-          label="Descripción"
-          rules={[{ required: true, message: "Ingresa una descripción" }]}
-        >
-          <TextArea rows={4} showCount maxLength={200} />
-        </Form.Item>
-        <Form.Item name="FNode" label="Nodo padre">
-          <Select
-            allowClear
-            showSearch
-            placeholder="Select a person"
-            optionFilterProp="children"
-            name={"fNode"}
-            notFoundContent={"No se encontraron resultados."}
-            filterOption={(input, option) =>
-              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            }
+          <Form.Item label="Logo">
+            <Upload {...configUpload}>
+              {imageUrl ? (
+                <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />
+              ) : (
+                uploadButton
+              )}
+            </Upload>
+          </Form.Item>
+          <Form.Item
+            name="name"
+            label="Nombre"
+            rules={[{ required: true, message: "Ingresa un nombre" }]}
           >
-            {business.map((bus) => (
-              <Option value={bus.id}>{bus.name}</Option>
-            ))}
-          </Select>
-        </Form.Item>
-      </Form>
+            <Input placeholder="Nombre de la empresa" />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Descripción"
+            rules={[{ required: true, message: "Ingresa una descripción" }]}
+          >
+            <TextArea rows={4} showCount maxLength={200} />
+          </Form.Item>
+          <Form.Item name="FNode" label="Nodo padre">
+            <Select
+              allowClear
+              showSearch
+              placeholder="Select a person"
+              optionFilterProp="children"
+              name={"fNode"}
+              notFoundContent={"No se encontraron resultados."}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {business.map((bus) => (
+                <Option value={bus.id}>{bus.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Spin>
     </Modal>
   );
 };

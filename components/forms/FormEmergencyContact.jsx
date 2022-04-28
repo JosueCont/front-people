@@ -18,115 +18,101 @@ import {
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import WebApiPeople from "../../api/WebApiPeople";
-import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
+import {
+  messageDeleteSuccess,
+  messageDialogDelete,
+  messageSaveSuccess,
+  messageUpdateSuccess,
+  titleDialogDelete,
+} from "../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../utils/rules";
+import { connect } from "react-redux";
 
-const FormEmergencyContact = ({ person_id = null }) => {
+const FormEmergencyContact = ({ person_id = null, ...props }) => {
   const { Title } = Typography;
   const [formContactEmergency] = Form.useForm();
   const { confirm } = Modal;
   const [idContEm, setIdContEm] = useState("");
   const [upContEm, setUpContEm] = useState(false);
   const [contactEmergency, setContactEmergency] = useState([]);
-  const [relationship, setRelationship] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
 
   useEffect(() => {
     getContactEmergency();
-    getRelationShip();
   }, []);
-
-  const getRelationShip = async () => {
-    try {
-      let response = await WebApiPeople.getRelationShip();
-      let relation = response.data.results;
-      relation = relation.map((a) => {
-        return { label: a.name, value: a.id };
-      });
-      setRelationship(relation);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const getContactEmergency = async () => {
     setContactEmergency([]);
-    try {
-      let response = await WebApiPeople.getContactEmergency(person_id);
-      setContactEmergency(response.data);
-      setTimeout(() => {
-        setLoadingTable(false);
-      }, 1000);
-    } catch (error) {
-      console.log(error);
-      setContactEmergency([]);
-      setTimeout(() => {
-        setLoadingTable(false);
-      }, 1000);
-    }
+    await WebApiPeople.getContactEmergency(person_id)
+      .then((response) => {
+        console.log(response.data);
+        setContactEmergency(response.data);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.log(error);
+        setContactEmergency([]);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      });
   };
 
   const saveContactE = async (data) => {
-    try {
-      let response = await WebApiPeople.createContactEmergency(data);
-      message.success({
-        content: "Guardado correctamente.",
-        className: "custom-class",
+    await WebApiPeople.createContactEmergency(data)
+      .then((response) => {
+        message.success(messageSaveSuccess);
+        getContactEmergency();
+        formContactEmergency.resetFields();
+      })
+      .catch((error) => {
+        console.log(error);
       });
-      getContactEmergency();
-      formContactEmergency.resetFields();
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const updateContEm = async (data) => {
     setLoadingTable(true);
-    try {
-      let response = await WebApiPeople.updateContactEmergency(data);
-      message.success({
-        content: "Actualizado correctamente.",
-        className: "custom-class",
+    await WebApiPeople.updateContactEmergency(data)
+      .then((response) => {
+        message.success(messageUpdateSuccess);
+        setUpContEm(false);
+        setIdContEm(null);
+        getContactEmergency();
+        formContactEmergency.resetFields();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
       });
-      setUpContEm(false);
-      setIdContEm(null);
-      getContactEmergency();
-      formContactEmergency.resetFields();
-      setTimeout(() => {
-        setLoadingTable(false);
-      }, 1000);
-    } catch (error) {
-      console.log(error);
-      setTimeout(() => {
-        setLoadingTable(false);
-      }, 1000);
-    }
   };
 
   const deleteContEm = async (data) => {
     setLoadingTable(true);
-    try {
-      let response = await WebApiPeople.deleteContactEmergency(data);
-      message.success({
-        content: "Eliminado correctamente.",
-        className: "custom-class",
+    await WebApiPeople.deleteContactEmergency(data)
+      .then((response) => {
+        message.success(messageDeleteSuccess);
+        if (upContEm) {
+          formContactEmergency.resetFields();
+          setUpContEm(false);
+        }
+        getContactEmergency();
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.log(error);
+        setTimeout(() => {
+          setLoadingTable(false);
+        }, 1000);
       });
-
-      if (upContEm) {
-        formContactEmergency.resetFields();
-        setUpContEm(false);
-      }
-
-      getContactEmergency();
-      setTimeout(() => {
-        setLoadingTable(false);
-      }, 1000);
-    } catch (error) {
-      console.log(error);
-      setTimeout(() => {
-        setLoadingTable(false);
-      }, 1000);
-    }
   };
 
   /* Events */
@@ -166,6 +152,13 @@ const FormEmergencyContact = ({ person_id = null }) => {
   };
 
   const colContact = [
+    {
+      title: "Parentesco",
+      width: 300,
+      render: (item) => {
+        return <div style={{ maxWidth: 300 }}>{item.relationship.name}</div>;
+      },
+    },
     {
       title: "Nombre",
       width: 300,
@@ -241,7 +234,9 @@ const FormEmergencyContact = ({ person_id = null }) => {
               rules={[ruleRequired]}
             >
               <Select
-                options={relationship}
+                options={props.relationship.map((item) => {
+                  return { value: item.id, label: item.name };
+                })}
                 notFoundContent={"No se encontraron resultados."}
               />
             </Form.Item>
@@ -303,4 +298,9 @@ const FormEmergencyContact = ({ person_id = null }) => {
     </>
   );
 };
-export default FormEmergencyContact;
+
+const mapState = (state) => {
+  return { relationship: state.catalogStore.cat_relationship };
+};
+
+export default connect(mapState)(FormEmergencyContact);

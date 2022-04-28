@@ -214,8 +214,8 @@ const LoginForm = ({
 
           {errorLogin && (
             <Alert
-              message="Error al iniciar sesión,"
-              description="la contraseña y/o correo electrónico son incorrectos"
+              message="Error al iniciar sesión."
+              description="La contraseña y/o correo electrónico son incorrectos."
               type="error"
               style={{ textAlign: "center", marginBottom: "10px" }}
               closable
