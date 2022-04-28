@@ -1,15 +1,6 @@
-import {
-  Form,
-  Modal,
-  message,
-  Layout,
-  Select,
-  Upload,
-  Button,
-  Space,
-} from "antd";
+import { Form, Modal, message, Layout, Select, Button, Space } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import {
   UploadOutlined,
@@ -26,7 +17,6 @@ const documentModal = ({ person_id, node, ...props }) => {
   const [form] = Form.useForm();
   const [file, setFile] = useState();
   const [disabled, setDisabled] = useState(true);
-  const [documentType, setDocumentType] = useState([]);
   const inputFileRef = useRef(null);
   const [fileName, setfileName] = useState("");
   let nodeId = userCompanyId();
@@ -34,23 +24,7 @@ const documentModal = ({ person_id, node, ...props }) => {
   const closeDialog = () => {
     props.close(false);
     form.resetFields();
-    ///setFile(null)
   };
-
-  useEffect(() => {
-    nodeId = userCompanyId();
-    Axios.get(API_URL + `/setup/document-type/?node=${node}`)
-      .then((response) => {
-        let dt = response.data;
-        dt = dt.map((a) => {
-          return { label: a.name, value: a.id };
-        });
-        setDocumentType(dt);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
 
   const selectedFile = (file) => {
     if (file.target.files.length > 0) {
@@ -110,7 +84,9 @@ const documentModal = ({ person_id, node, ...props }) => {
           <Form onFinish={onFinish} form={form}>
             <Form.Item name="document_type" rules={[ruleRequired]}>
               <Select
-                options={documentType}
+                options={props.cat_document_type.map((item) => {
+                  return { label: item.name, value: item.id };
+                })}
                 placeholder="Tipo de documento"
                 notFoundContent={"No se encontraron resultados."}
               />
@@ -173,4 +149,8 @@ const documentModal = ({ person_id, node, ...props }) => {
   );
 };
 
-export default documentModal;
+const mapState = (state) => {
+  return { cat_document_type: state.catalogStore.cat_document_type };
+};
+
+export default connect(mapState)(documentModal);
