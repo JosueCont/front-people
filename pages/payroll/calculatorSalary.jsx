@@ -24,6 +24,7 @@ import webApiFiscal from "../../api/WebApiFiscal";
 import { Global } from "@emotion/core";
 import { ruleRequired } from "../../utils/rules";
 import { numberFormat } from "../../utils/functions";
+import { withAuthSync } from "../../libs/auth";
 const { TabPane } = Tabs;
 
 const calculatorSalary = () => {
@@ -333,7 +334,6 @@ const calculatorSalary = () => {
                                 </Col>
                                 <Col span={18}>
                                   <span>
-                                    {" "}
                                     {salary.retention_isr
                                       ? "ISR a retener"
                                       : "SUBSIDIO PARA EL EMPLEO A ENTREGAR"}
@@ -404,4 +404,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(calculatorSalary);
+export default connect(mapState)(withAuthSync(calculatorSalary));

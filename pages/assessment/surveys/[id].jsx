@@ -241,12 +241,10 @@ const Detail = ({ assessmentStore, ...props }) => {
     <MainLayout currentKey="2">
       <Breadcrumb>
         <Breadcrumb.Item className={"pointer"} href="/home/">
-          {" "}
-          Inicio{" "}
+          Inicio
         </Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"} href="/assessment/surveys">
-          {" "}
-          Evaluaciones{" "}
+          Evaluaciones
         </Breadcrumb.Item>
         <Breadcrumb.Item>
           {assessmentStore.assessment_selected.name}

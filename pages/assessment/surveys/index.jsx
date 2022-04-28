@@ -13,7 +13,7 @@ import {
   message,
   Switch,
   Dropdown,
-  Menu
+  Menu,
 } from "antd";
 import {
   SearchOutlined,
@@ -22,7 +22,7 @@ import {
   DeleteOutlined,
   SyncOutlined,
   ExclamationCircleOutlined,
-  EllipsisOutlined
+  EllipsisOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../../libs/auth";
 import jsCookie from "js-cookie";
@@ -36,14 +36,19 @@ import {
   assessmentStatusAction,
   assessmentLoadAction,
   getCategories,
-  updPagination
+  updPagination,
 } from "../../../redux/assessmentDuck";
 import { useFilter } from "../../../components/assessment/useFilter";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
 import { userCompanyId } from "../../../libs/auth";
 
-const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...props }) => {
+const AssessmentScreen = ({
+  assessmentStore,
+  getCategories,
+  updPagination,
+  ...props
+}) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [form] = Form.useForm();
@@ -76,12 +81,12 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
 
   useEffect(() => {
     let nodeId = userCompanyId();
-    props.assessmentLoadAction(nodeId, "&paginate=true&limit=10&offset=0")
+    props.assessmentLoadAction(nodeId, "&paginate=true&limit=10&offset=0");
     getCategories();
-  }, [])
+  }, []);
 
   useEffect(() => {
-    if(assessmentStore.assessments?.length > 0){
+    if (assessmentStore.assessments?.length > 0) {
       setAssessments(assessmentStore.assessments);
       setLoading(assessmentStore.fetching);
       assessmentStore.active_modal === types.CREATE_ASSESSMENTS
@@ -144,21 +149,19 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
     form.resetFields();
     onFilterReset(assessments);
   };
-  
 
   const onChangeTable = (pagination) => {
     let nodeId = userCompanyId();
     if (pagination.current > 1) {
       const offset = (pagination.current - 1) * 10;
       let queryParam = `&paginate=true&limit=10&offset=${offset}`;
-      props.assessmentLoadAction(nodeId, queryParam)
-      updPagination(pagination.current)
-
+      props.assessmentLoadAction(nodeId, queryParam);
+      updPagination(pagination.current);
     } else if (pagination.current == 1) {
-      props.assessmentLoadAction(nodeId, "&paginate=true&limit=10&offset=0")
-      updPagination(pagination.current)
+      props.assessmentLoadAction(nodeId, "&paginate=true&limit=10&offset=0");
+      updPagination(pagination.current);
     }
-  }
+  };
 
   const HandleChangeStatus = (value) => {
     value.is_active ? (value.is_active = false) : (value.is_active = true);
@@ -186,42 +189,43 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
     return ids;
   };
 
-  const onFinishCreateGroup = async (values) =>{3
-    setLoading(true)
-    const body = {...values, node: props.currentNode?.id}
+  const onFinishCreateGroup = async (values) => {
+    3;
+    setLoading(true);
+    const body = { ...values, node: props.currentNode?.id };
     try {
-      await WebApiAssessment.createGroupAssessments(body)
-      message.success("Grupo agregado")
-      setLoading(false)
+      await WebApiAssessment.createGroupAssessments(body);
+      message.success("Grupo agregado");
+      setLoading(false);
     } catch (e) {
-      console.log(e)
-      setLoading(false)
-      message.error("Grupo no agregado")
+      console.log(e);
+      setLoading(false);
+      message.error("Grupo no agregado");
     }
   };
 
-  const HandleCloseGroup = ()=>{
-    setTestsKeys([])
-    setTestsSelected([])
-    setOpenModalAddGroup(false)
-    setShowModalCreateGroup(false)
-  }
+  const HandleCloseGroup = () => {
+    setTestsKeys([]);
+    setTestsSelected([]);
+    setOpenModalAddGroup(false);
+    setShowModalCreateGroup(false);
+  };
 
-  useEffect(()=>{
-    if(openModalAddGroup){
-      if(testsSelected.length > 0){
-        if(testsSelected.length >=2){
-          setShowModalCreateGroup(true)
-        }else{
-          setOpenModalAddGroup(false)
-          message.error("Selecciona al menos 2 evaluaciones")
+  useEffect(() => {
+    if (openModalAddGroup) {
+      if (testsSelected.length > 0) {
+        if (testsSelected.length >= 2) {
+          setShowModalCreateGroup(true);
+        } else {
+          setOpenModalAddGroup(false);
+          message.error("Selecciona al menos 2 evaluaciones");
         }
-      }else{
-        message.error("Selecciona las evaluaciones")
-        setOpenModalAddGroup(false)
+      } else {
+        message.error("Selecciona las evaluaciones");
+        setOpenModalAddGroup(false);
       }
     }
-  },[openModalAddGroup])
+  }, [openModalAddGroup]);
 
   const menuTable = () => {
     return (
@@ -229,8 +233,8 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
         {props.permissions?.delete && (
           <Menu.Item
             key={1}
-            icon={<PlusOutlined/>}
-            onClick={()=>setOpenModalAddGroup(true)}
+            icon={<PlusOutlined />}
+            onClick={() => setOpenModalAddGroup(true)}
           >
             Crear grupo
           </Menu.Item>
@@ -242,10 +246,10 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
   const rowSelectionGroup = {
     selectedRowKeys: testsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      setTestsKeys(selectedRowKeys)
-      setTestsSelected(selectedRows)
-    }
-  }
+      setTestsKeys(selectedRowKeys);
+      setTestsSelected(selectedRows);
+    },
+  };
 
   const columns = [
     {
@@ -256,11 +260,10 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
             className={"pointer"}
             key={"name_" + item.id + item.order_position}
             onClick={() => {
-              router.push({pathname: `/assessment/surveys/${item.id}`});
+              router.push({ pathname: `/assessment/surveys/${item.id}` });
             }}
           >
-            {" "}
-            {item.name}{" "}
+            {item.name}
           </div>
         );
       },
@@ -280,17 +283,15 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
       render: (item) => {
         return (
           <>
-          {
-            item.category !== 'K' && 
-            <Switch
-              key={"status-" + item.id}
-              defaultChecked={item.is_active}
-              checkedChildren="Activo"
-              unCheckedChildren="Inactivo"
-              onChange={() => HandleChangeStatus(item)}
-            />
-          }
-            
+            {item.category !== "K" && (
+              <Switch
+                key={"status-" + item.id}
+                defaultChecked={item.is_active}
+                checkedChildren="Activo"
+                unCheckedChildren="Inactivo"
+                onChange={() => HandleChangeStatus(item)}
+              />
+            )}
           </>
         );
       },
@@ -307,30 +308,31 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
               </Dropdown>
             )}
           </>
-        )
+        );
       },
       render: (item) => {
         return (
           <>
-          {
-            item.category !== 'K' &&
-            <>
-              <Row key={"actions-" + item.id}>
-              {props.permissions?.edit && (
-                <Col span={6}>
-                  <EditOutlined onClick={() => HandleUpdateAssessment(item)}/>
-                </Col>
-              )}
-              {props.permissions?.delete && (
-                <Col span={6}>
-                  <DeleteOutlined
-                    onClick={() => HandleDeleteAssessment(item.id)}
-                  />
-                </Col>
-              )}
-            </Row>
-            </>
-          }
+            {item.category !== "K" && (
+              <>
+                <Row key={"actions-" + item.id}>
+                  {props.permissions?.edit && (
+                    <Col span={6}>
+                      <EditOutlined
+                        onClick={() => HandleUpdateAssessment(item)}
+                      />
+                    </Col>
+                  )}
+                  {props.permissions?.delete && (
+                    <Col span={6}>
+                      <DeleteOutlined
+                        onClick={() => HandleDeleteAssessment(item.id)}
+                      />
+                    </Col>
+                  )}
+                </Row>
+              </>
+            )}
           </>
         );
       },
@@ -342,10 +344,9 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({pathname: "/assessments/surveys" })}
+          onClick={() => router.push({ pathname: "/assessments/surveys" })}
         >
-          {" "}
-          Inicio{" "}
+          Inicio
         </Breadcrumb.Item>
         <Breadcrumb.Item> Evaluaciones </Breadcrumb.Item>
       </Breadcrumb>
@@ -412,7 +413,7 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
         <Row>
           <Col span={24}>
             <Table
-              rowKey={'id'}
+              rowKey={"id"}
               columns={columns}
               dataSource={filterActive ? filterValues : assessments}
               loading={loading}
@@ -429,23 +430,24 @@ const AssessmentScreen = ({ assessmentStore, getCategories, updPagination, ...pr
         </Row>
       </div>
       <FormAssessment
-          title= {showCreateAssessment? "Agregar nueva encuesta": "Modificar encuesta"} 
-          visible={showCreateAssessment || showUpdateAssessment}
-          close={HandleCloseModal}
-          loadData={assessmentData}
-        />
+        title={
+          showCreateAssessment ? "Agregar nueva encuesta" : "Modificar encuesta"
+        }
+        visible={showCreateAssessment || showUpdateAssessment}
+        close={HandleCloseModal}
+        loadData={assessmentData}
+      />
       {showModalCreateGroup && (
         <AssessmentsGroup
-            loadData={{name: '', assessments: testsSelected}}
-            title={'Crear nuevo grupo'}
-            visible={showModalCreateGroup}
-            close={HandleCloseGroup}
-            actionForm={onFinishCreateGroup}
-            surveyList={assessments}
+          loadData={{ name: "", assessments: testsSelected }}
+          title={"Crear nuevo grupo"}
+          visible={showModalCreateGroup}
+          close={HandleCloseGroup}
+          actionForm={onFinishCreateGroup}
+          surveyList={assessments}
         />
       )}
     </MainLayout>
-    
   );
 };
 
@@ -454,7 +456,7 @@ const mapState = (state) => {
     config: state.userStore.general_config,
     permissions: state.userStore.permissions.person,
     assessmentStore: state.assessmentStore,
-    currentNode: state.userStore.current_node
+    currentNode: state.userStore.current_node,
   };
 };
 
@@ -463,5 +465,5 @@ export default connect(mapState, {
   assessmentStatusAction,
   assessmentLoadAction,
   getCategories,
-  updPagination
+  updPagination,
 })(withAuthSync(AssessmentScreen));

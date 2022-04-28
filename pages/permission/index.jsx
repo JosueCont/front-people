@@ -274,7 +274,7 @@ const Permission = ({ permissions, ...props }) => {
           </>
         ) : (
           <div className="notAllowed" />
-        )}{" "}
+        )}
       </div>
     </MainLayout>
   );

@@ -11,7 +11,7 @@ import {
   CalendarOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import { userCompanyId } from "../../../libs/auth";
+import { userCompanyId, withAuthSync } from "../../../libs/auth";
 // import jsCookie from "js-cookie";
 import { css, Global } from "@emotion/core";
 import FormPaymentCalendar from "../../../components/payroll/forms/FormPaymentCalendar";
@@ -215,4 +215,4 @@ const PaymentCalendars = () => {
   );
 };
 
-export default PaymentCalendars;
+export default withAuthSync(PaymentCalendars);

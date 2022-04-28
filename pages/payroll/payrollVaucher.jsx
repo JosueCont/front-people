@@ -23,7 +23,8 @@ import MainLayout from "../../layout/MainLayout";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import { messageError } from "../../utils/constant";
 import { useRouter } from "next/router";
-import axios from "axios";
+import { downLoadFileBlob, getDomain } from "../../utils/functions";
+import { API_URL_TENANT } from "../../config/config";
 
 const PayrollVaucher = ({ ...props }) => {
   const router = useRouter();
@@ -69,52 +70,62 @@ const PayrollVaucher = ({ ...props }) => {
       render: (item) => {
         return (
           <>
-            <Tooltip title="PDF" color={"#3d78b9"} key={"#3d78b9"}>
-              <FilePdfTwoTone
-                onClick={() => downLoadFile(item, 2)}
-                style={{ fontSize: "25px" }}
-              />
-            </Tooltip>
-            <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
-              <a href={item.xml_file}>
+            {item.id_facturama ? (
+              <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
                 <FileTextTwoTone
                   onClick={() => downLoadFile(item, 1)}
                   style={{ fontSize: "25px" }}
                 />
-              </a>
-            </Tooltip>
+              </Tooltip>
+            ) : (
+              item.xml_file && (
+                <a href={item.xml_file} target="_blank" download>
+                  <Tooltip title="XML" color={"#3d78b9"} key={"#3d78b9"}>
+                    <FileTextTwoTone style={{ fontSize: "25px" }} />
+                  </Tooltip>
+                </a>
+              )
+            )}
+            {item.id_facturama ? (
+              <Tooltip title="PDF" color={"#3d78b9"} key={"#3d78b9"}>
+                <FilePdfTwoTone
+                  onClick={() => downLoadFile(item, 2)}
+                  style={{ fontSize: "25px" }}
+                />
+              </Tooltip>
+            ) : (
+              item.pdf_file && (
+                <a href={item.pdf_file} target="_blank" download>
+                  <Tooltip title="PDF" color={"#3d78b9"} key={"#3d78b9"}>
+                    <FilePdfTwoTone style={{ fontSize: "25px" }} />
+                  </Tooltip>
+                </a>
+              )
+            )}
           </>
         );
       },
     },
   ];
 
-  const downLoadFile = (data, file) => {
-    let headers = {
-      method: "POST",
-      responseType: "blob",
-      data: {
-        type_request: 3,
-        type_file: file,
-        id_facturama: data.id_facturama,
-      },
+  const downLoadFile = (item, file) => {
+    let data = {
+      type_request: 3,
+      type_file: file,
+      id_facturama: item.id_facturama,
     };
-    axios(
-      `https://demo.api.people.hiumanlab.com/payroll/cfdi_multi_emitter_facturama/cfdi_multi_emitter/`,
-      headers
-    )
-      .then((response) => {
-        const blob = new Blob([response.data]);
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = `${data.payroll_person.person.rfc}_${
-          data.payment_period.start_date
-        }_${data.payment_period.end_date}.${file == 1 ? "xml" : "pdf"}`;
-        link.click();
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    let url = `${getDomain(
+      API_URL_TENANT
+    )}/payroll/cfdi_multi_emitter_facturama/cfdi_multi_emitter/`;
+
+    downLoadFileBlob(
+      url,
+      `${item.payroll_person.person.rfc}_${item.payment_period.start_date}_${
+        item.payment_period.end_date
+      }.${file == 1 ? "xml" : "pdf"}`,
+      "POST",
+      data
+    );
   };
 
   useEffect(() => {

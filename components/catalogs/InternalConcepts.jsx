@@ -298,7 +298,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
               Guardar
             </Button>
           </Col>
-        </Row>{" "}
+        </Row>
         <Row justify={"start"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
             <Switch

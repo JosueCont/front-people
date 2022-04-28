@@ -43,7 +43,10 @@ export const downLoadFileBlob = async (
     responseType: "blob",
   };
   if (params) headers.data = params;
-  axios(`${typeHttp}://` + url, headers)
+  axios(
+    url.toLowerCase().includes("http") ? url : `${typeHttp}://` + url,
+    headers
+  )
     .then((response) => {
       const blob = new Blob([response.data]);
       const link = document.createElement("a");

@@ -14,6 +14,7 @@ const GroupsKuiz = ({getCategories,assessmentStore , ...props}) =>{
     const currenNode = useSelector(state => state.userStore.current_node)
     const [listGroups, setLisGroups] = useState({});
     const [surveyList, setSurveyList] = useState([]);
+    const [loadSurvey, setLoadSurvey] = useState(false);
     const [loading, setLoading] = useState(false);
     const [numPage, setNumPage] = useState(1);
 
@@ -129,7 +130,6 @@ const GroupsKuiz = ({getCategories,assessmentStore , ...props}) =>{
                     setLoading={setLoading}
                     createGroup={createGroup}
                     searchGroup={searchGroup}
-                    surveyList={surveyList}
                     setNumPage={setNumPage}
                 />
                 <AssessmentsTable
@@ -139,7 +139,6 @@ const GroupsKuiz = ({getCategories,assessmentStore , ...props}) =>{
                     getListGroups={getListGroups}
                     updateGroup={updateGroup}
                     deteleGroup={deleteGroup}
-                    surveyList={surveyList}
                     setNumPage={setNumPage}
                     numPage={numPage}
                 />

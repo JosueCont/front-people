@@ -24,6 +24,7 @@ const LoginForm = ({
   recoveryPsw = true,
   setPerson = null,
   setKhonnectId = null,
+  generalConfig,
   ...props
 }) => {
   const router = useRouter();
@@ -66,14 +67,14 @@ const LoginForm = ({
   const getIfno = async () => {
     const headers = {
       headers: {
-        "client-id": props.generalConfig.client_khonnect_id,
+        "client-id": generalConfig.client_khonnect_id,
         "Content-Type": "application/json",
       },
     };
     try {
       await Axios.get(
-        props.generalConfig.url_server_khonnect +
-          `/appstore/app/get/id=${props.generalConfig.client_khonnect_id}`,
+        generalConfig.url_server_khonnect +
+          `/appstore/app/get/id=${generalConfig.client_khonnect_id}`,
         headers
       )
         .then((res) => {
@@ -94,24 +95,24 @@ const LoginForm = ({
   };
 
   useEffect(() => {
-    if (props.generalConfig) {
+    if (generalConfig) {
       getIfno();
     }
-  }, [props.generalConfig]);
+  }, [generalConfig]);
 
   const login = async (email, password) => {
     try {
       setErrorLogin(false);
       setLoading(true);
       const headers = {
-        "client-id": props.generalConfig.client_khonnect_id,
+        "client-id": generalConfig.client_khonnect_id,
         "Content-Type": "application/json",
       };
       const data = {
         email: email,
         password: password,
       };
-      Axios.post(props.generalConfig.url_server_khonnect + "/login/", data, {
+      Axios.post(generalConfig.url_server_khonnect + "/login/", data, {
         headers: headers,
       })
         .then(function (response) {
@@ -226,6 +227,7 @@ const LoginForm = ({
               <span
                 onClick={() => props.setRecoverPasswordShow(true)}
                 className={"pointer text-link"}
+                style={{ color: "blue", textDecoration: "underline" }}
               >
                 haz clic aquí
               </span>
@@ -236,7 +238,7 @@ const LoginForm = ({
               <Checkbox
                 onChange={(e) => setTermsAndConditionsAccept(e.target.checked)}
               >
-                Acepto los términos y condiciones{" "}
+                Acepto los términos y condiciones
               </Checkbox>
               |
               <a href={infoSite.terms_and_conditions_link} target="_blank">

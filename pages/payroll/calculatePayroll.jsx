@@ -54,10 +54,10 @@ const CalculatePayroll = ({ ...props }) => {
   const [activePeriod, setActivePeriod] = useState(null);
 
   const [infoGenericModal, setInfoGenericModal] = useState({
-    title: "Timbrado de nomina",
-    title_message: "Timbrado de nomina exitoso",
+    title: "Timbrado de nómina",
+    title_message: "Timbrado de nómina exitoso",
     description:
-      "La nomina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
+      "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
     type_alert: "success",
     action: () =>
       router.push({
@@ -486,8 +486,8 @@ const CalculatePayroll = ({ ...props }) => {
           description: data.toLowerCase().includes("fiscal information")
             ? "Falta información relevante para poder generar los cfdi, verifique la información de la empresa he intente de nuevo."
             : data.toLowerCase().includes("fiscal address")
-            ? "Datos en la dirección fiscal faltantes, verifique la informacion he intente de nuevo"
-            : "No cuenta con los folios suficientes para poder timbrar su nomina, contacte con soporte.",
+            ? "Datos en la dirección fiscal faltantes, verifique la información he intente de nuevo"
+            : "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte.",
           type_alert: "warning",
           action: () =>
             data.toLowerCase().includes("fiscal information") ||
@@ -508,20 +508,20 @@ const CalculatePayroll = ({ ...props }) => {
         break;
       case 2:
         setInfoGenericModal({
-          title: "Cerrar nomina",
-          title_message: "¿Esta seguro de cerrar la nomina?",
+          title: "Cerrar nómina",
+          title_message: "¿Esta seguro de cerrar la nómina?",
           description:
-            "Una vez cerrada la nomina no podra realizar cambios o modificaciones.",
+            "Una vez cerrada la nómina no podra realizar cambios o modificaciones.",
           type_alert: "warning",
           action: () => sendClosePayroll(),
-          title_action_button: "Si, cerrar nomina",
+          title_action_button: "Si, cerrar nómina",
         });
         setGenericModal(true);
         break;
       case 3:
         setInfoGenericModal({
-          title: "Timbrar nomina",
-          title_message: "¿Esta seguro de timbrar la nomina?",
+          title: "Timbrar nómina",
+          title_message: "¿Esta seguro de timbrar la nómina?",
           description:
             "Se emitiran todos los cfdi correspondientes ante el SAT",
           type_alert: "warning",
@@ -532,10 +532,10 @@ const CalculatePayroll = ({ ...props }) => {
         break;
       case 4:
         setInfoGenericModal({
-          title: "Timbrado de nomina",
-          title_message: "Timbrado de nomina exitoso",
+          title: "Timbrado de nómina",
+          title_message: "Timbrado de nómina exitoso",
           description:
-            "La nomina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
+            "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
           type_alert: "success",
           action: () =>
             router.push({
@@ -674,7 +674,7 @@ const CalculatePayroll = ({ ...props }) => {
                     consolidated ? setMessageModal(3) : setMessageModal(2)
                   }
                 >
-                  {consolidated ? "Timbrar nomina" : "Cerrar nomina"}
+                  {consolidated ? "Timbrar nómina" : "Cerrar nómina"}
                 </Button>
               </Col>
             )}

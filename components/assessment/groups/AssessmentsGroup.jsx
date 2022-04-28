@@ -31,10 +31,13 @@ import {
   CompactButton,
 } from "./Styled";
 import { connect } from "react-redux";
-/* import {getListSurveys} from '../../../redux/assessmentDuck'; */
 import WebApiAssessment from "../../../api/WebApiAssessment";
 
-const AssessmentsGroup = ({ assessmentStore, userStore, ...props }) => {
+const AssessmentsGroup = ({
+  assessmentStore,
+  userStore,
+  ...props
+}) => {
   const [formGroup] = Form.useForm();
   const { Option } = Select;
   const [surveysSelect, setSurveysSelect] = useState([]);
@@ -44,35 +47,47 @@ const AssessmentsGroup = ({ assessmentStore, userStore, ...props }) => {
   const [surveyList, setSurveyList] = useState([]);
   const [fetchingAssessment, setFetchingAssessment] = useState(false);
 
-  /* useEffect(() => {
-        if(props.surveyList && props.loadData.assessments){
-            formGroup.setFieldsValue({name: props.loadData.name})
-            filterSurveys(props.loadData.assessments)
-        }else if(props.surveyList){
-            setSurveysSelect(props.surveyList)
-        }
-    },[]); */
+  useEffect(() => {
+    if (props.loadData.assessments){
+      formGroup.setFieldsValue({name: props.loadData.name})
+      setSurveysTable(props.loadData.assessments)
+    }
+    if (userStore.current_node?.id) {
+      getSurveys(userStore.current_node.id, "");
+    }
+  },[]);
 
-  /* const filterSurveys = (dataTable) =>{
-        let select = [];
-        let table = [];        
-        props.surveyList.map((a)=>{
-            let result = dataTable?.some(b => a.id === b.id);
-            if(result){
-                table.push(a)
-            }else{
-                select.push(a)
-            }
-        })
+  const getSurveys = async (nodeId, queryParam) => {
+    setSurveyList([]);
+    setFetchingAssessment(true);
+    try {
+      let response = await WebApiAssessment.getListSurveys(nodeId, queryParam);
+      setSurveyList(response.data);
+      setFetchingAssessment(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-        setSurveysSelect(select)
-        setSurveysTable(table)
-    } */
+  const filterSurveys = () =>{
+    let prevList = [...surveyList];
+    let newList = [];     
+    prevList.map((item)=>{
+      let result = surveysTable.some(record => item.id === record.id);
+      if(!result){
+        newList.push(item)
+      }
+    })
+    return newList;
+  }
+
+  const addAssessment = (assessment) => {
+    setSurveysTable([...surveysTable, assessment]);
+  };
 
   const onCloseModal = () => {
     props.close();
-    /* setSurveysSelect([])
-        setSurveysTable([]) */
+    setSurveysTable([])
   };
 
   const getOnlyIds = () => {
@@ -118,12 +133,6 @@ const AssessmentsGroup = ({ assessmentStore, userStore, ...props }) => {
     },
   ];
 
-  const addAssessment = (assessment) => {
-    setSurveysTable([...surveysTable, assessment]);
-  };
-
-  useEffect(() => {}, [surveysTable]);
-
   const colums = [
     {
       title: "Nombre",
@@ -140,24 +149,11 @@ const AssessmentsGroup = ({ assessmentStore, userStore, ...props }) => {
     },
   ];
 
-  const onChangeSurvey = async (value) => {
-    let result = props.surveyList.filter((item) => item.id === value);
-    let newList = [...surveysTable, result.at(-1)];
-    filterSurveys(newList);
-    formGroup.setFieldsValue({ assessment: null });
-  };
-
   const deleteItem = (index) => {
     let newList = [...surveysTable];
     newList.splice(index, 1);
     setSurveysTable(newList);
   };
-
-  useEffect(() => {
-    if (userStore.current_node?.id) {
-      getSurveys(userStore.current_node.id, "");
-    }
-  }, []);
 
   const onChangeCategory = (categoryId) => {
     if (userStore["current_node"] && userStore["current_node"]["id"]) {
@@ -166,42 +162,6 @@ const AssessmentsGroup = ({ assessmentStore, userStore, ...props }) => {
         categoryId ? `&categories=${categoryId}` : ""
       );
     }
-  };
-
-  const getSurveys = async (nodeId, queryParam) => {
-    setSurveyList([]);
-    setFetchingAssessment(true);
-    try {
-      let response = await WebApiAssessment.getListSurveys(nodeId, queryParam);
-
-      setSurveyList(response.data);
-
-      setFetchingAssessment(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getFilterAssessments = () => {
-    let prevList = [...surveyList];
-    let newList = [];
-
-    prevList.map((item) => {
-      let found = false;
-      if (surveysTable.length < 1) {
-        found = false;
-      } else {
-        surveysTable.map((record) => {
-          if (record.id === item.id) {
-            found = true;
-          }
-        });
-      }
-      if (!found) {
-        newList.push(item);
-      }
-    });
-    return newList;
   };
 
   return (
@@ -249,36 +209,12 @@ const AssessmentsGroup = ({ assessmentStore, userStore, ...props }) => {
                 ))}
               </Select>
             </Form.Item>
-            {/* <Form.Item name={'assessment'} label={'Seleccionar encuesta'} style={{marginBottom: '0px'}}>
-                            <Select
-                                showSearch
-                                placeholder="Seleccionar encuesta"
-                                onChange={onChangeSurvey}
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp="children"
-                                filterOption={(input, option) =>
-                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                }
-                                filterSort={(optionA, optionB) =>
-                                    optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
-                                }
-                            >
-                                {surveysSelect.length > 0 && surveysSelect.map((item) => (
-                                    <Option key={item.id} value={item.id}>
-                                        {item.name}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </Form.Item> */}
           </Col>
           <Col md={12}>
             <Form.Item label={"Agregar evaluaciones"}>
               <Table
                 columns={columnsAssessment}
-                dataSource={getFilterAssessments()}
-                /* dataSource={
-                                    surveyList.filter(item => !surveysTable.includes(item))
-                                } */
+                dataSource={filterSurveys()}
                 size={"small"}
                 locale={{
                   emptyText: fetchingAssessment
@@ -308,11 +244,8 @@ const AssessmentsGroup = ({ assessmentStore, userStore, ...props }) => {
                     : "No se encontraron resultados.",
                 }}
                 scroll={{ y: 200 }}
-                pagination={{
-                  position: ["bottomLeft"],
-                  hideOnSinglePage: true,
-                }}
-                className="tableAssesmentsSelected"
+                pagination={false}
+                // className="tableAssesmentsSelected"
               />
             </Form.Item>
           </Col>

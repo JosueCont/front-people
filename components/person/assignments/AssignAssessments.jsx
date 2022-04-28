@@ -18,7 +18,13 @@ import {
     Tooltip,
     Tag
 } from "antd";
-import { ClearOutlined, SearchOutlined, FileTextOutlined} from "@ant-design/icons";
+import {
+    ClearOutlined,
+    SearchOutlined,
+    FileTextOutlined,
+    PlusCircleOutlined,
+    CloseOutlined
+} from "@ant-design/icons";
 import MyModal from "../../../common/MyModal";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import {
@@ -30,8 +36,9 @@ import {
     CompactSelect,
     CompactButton,
 } from "../../assessment/groups/Styled";
+import { BsCircleFill } from 'react-icons/bs';
 
-const AssignAssessments = ({itemGroup, ...props}) =>{
+const AssignAssessments = ({itemSelected, ...props}) =>{
 
     const [formGroup] = Form.useForm();
     const {Option} = Select;
@@ -47,46 +54,49 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
     const [isSelectAll, setIsSelectAll] = useState(false);
     const [copyList, setCopyList] = useState([]);
     const [copyKeys, setCopyKeys] = useState([]);
-    const [currentAssigned, setCurrentAssigned] = useState([])
-    const [textForSearch, setTextForSearch] = useState('')
+    const [currentAssigned, setCurrentAssigned] = useState([]);
+    const [textForSearch, setTextForSearch] = useState('');
+    const [surveySelected, setSurveySelected] = useState([]);
+    const [loadSelected, setLoadSelected] = useState(false);
 
     useEffect(()=>{
         if(props.visible){
             if(currentNode?.id){
-            getCategories()
-            getSurveys(currentNode.id, "")
-            
-            }
-            if(itemGroup){
-                console.log('itemGroup ==>',itemGroup);
-                if(itemGroup){
-                    getAllAssignments();
-                }
+                getCategories()
+                getSurveys(currentNode.id, "")
             }
         }        
     },[props.visible])
 
-    
-
-    
-    const getAllAssignments = async () => {
-        let dataSend = {}
-
-        if(itemGroup){
-            dataSend['groupPerson_id'] = itemGroup.id;
+    useEffect(()=>{
+        if(Object.keys(itemSelected).length > 0){
+            getAllAssignments()
         }
+    },[itemSelected])
+
+    useEffect(()=>{
+        if(surveySelected.length > 0){
+            getIdsByType()
+        }
+    },[surveySelected])
+
+    const getAllAssignments = async () => {
+        setLoadSelected(true)
         try {
-            let response = await WebApiAssessment.getAllAssignments(dataSend);
-            setCurrentAssigned(response.data)
-            console.log('response',response);
+            let { data } = await WebApiAssessment.getAllAssignments({groupPerson_id: itemSelected.id});
+            if(data.length > 0){
+                let currentList = [];
+                data.map(item =>{
+                    currentList.push({id: item.assessment})
+                })
+                setCurrentAssigned(currentList);
+            }        
+            setLoadSelected(false)
         } catch (e) { 
             console.log(e)
+            setLoadSelected(false)
         }
     }
-
-
-    
-    
 
     const getCategories = async () =>{
         try {
@@ -102,10 +112,8 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
         setLoading(true)
         try {
             let response = await WebApiAssessment.getListSurveys(nodeId, queryParam);
-            
-            setCopyList(response.data)
             setLoading(false)
-
+            setCopyList(response.data);
             const list = response.data;
             if((textForSearch).trim()){
                 let results = list.filter(item => item.name.toLowerCase().includes(textForSearch.toLowerCase()));
@@ -113,8 +121,6 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
             }else{
                 setListSurveys(list)
             }
-
-
         } catch (e) {
             console.log(e);
             setListSurveys([])
@@ -139,7 +145,12 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
             setListSurveys([])
             setLoading(false)
         }
-    }    
+    }
+    
+    const addAssessment = (assessment) => {
+        let item = {...assessment, is_individual: isIndividual };
+        setSurveySelected([...surveySelected, item]);
+    };
 
     const onChangePage = (pagination) => {
         if(!isIndividual){
@@ -150,45 +161,44 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
             } else if (pagination.current == 1) {
                 getGroupsSurveys(currentNode.id, "")
             }
-            setCopyKeys(groupsKeys)
+            // setCopyKeys(groupsKeys)
         }
     }
 
-    const getListAssigned = () =>{
+    const filterSurveys = () =>{
+        let prevList = getList();
+        let newList = [];
+        let newCurrent = [...surveySelected, ...currentAssigned];
+        prevList.map((item)=>{
+          let result = newCurrent.some(record => item.id === record.id);
+          if(!result){
+            newList.push(item)
+          }
+        })
+        return newList;
+    }
+
+    const getIdsByType = () =>{
+        let individual = [];
+        let group = [];
+        surveySelected.map(item =>{
+            if(item.is_individual){
+                individual.push(item.id)
+            }
+            if(!item.is_individual){
+                group.push(item.id)
+            }
+        })
+        setGroupsKeys(group)
+        setSurveysKeys(individual)
+    }
+
+    const getList = () =>{
         let list =
             listSurveys.results ?
             listSurveys.results :
             listSurveys;
-
-    
-        let newList = [];
-
-        list.map(item =>{ 
-            let found = false;
-            if(currentAssigned.length < 1){
-                found = false;
-            }else{
-                currentAssigned.map(record => {
-                    if ( isIndividual &&  record.assessment === item.id){
-                        found = true;
-                    }
-                    if(!isIndividual && record['group_assessment']){
-                        if(record['group_assessment']['id'] === item.id){
-                            found = true;
-                        }
-                        
-                    }
-                })
-            }
-            if(!found){
-                newList.push(item);
-            }
-        })
-
-        console.log('currentAssigned =>',currentAssigned);
-        console.log('list =>',list)
-
-        return newList;
+        return list;
     }
 
     const getListCopy = () =>{
@@ -199,12 +209,27 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
         return list;
     }
 
+    const getListTotal = () =>{
+        let size = listSurveys.count ?
+        listSurveys.count :
+        listSurveys.length;
+        return size;
+    }
+
+    const deleteItem = (index) => {
+        let newList = [...surveySelected];
+        newList.splice(index, 1);
+        setSurveySelected(newList);
+    };
+
     const resetValues = () =>{
-        setCopyKeys([])
+        // setCopyKeys([])
         setSurveysKeys([])
         setGroupsKeys([])
-        setItemsSelected([])
-        setIsSelectAll(false)
+        setCurrentAssigned([])
+        setSurveySelected([])
+        // setItemsSelected([])
+        // setIsSelectAll(false)
     }
 
     const onCloseModal = () =>{
@@ -226,7 +251,7 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
 
     const onFinish = (values) =>{
         const data = createData({assessments: surveysKeys, groups_assessment: groupsKeys})
-        if(itemsSelected.length > 0){
+        if(surveySelected.length > 0){
             setLoadAdd(true)
             setTimeout(()=>{
                 onCloseModal()
@@ -238,7 +263,7 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
         }
     }
 
-    const columnsInvidual = [
+    const columnSelected = [
         {
             title: "Evaluaciones",
             render: (item) => {
@@ -251,22 +276,31 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
             
         },
         {
-            title: "Tipo de Evaluación",
-            render: (item) => {
+            title: "Tipo",
+            width: 30,
+            render: (item) =>{
+                return(
+                    <BsCircleFill className={item.is_individual ? 'item-is-individual' : 'item-not-individual'}/>
+                )
+            }
+        },
+        {
+            title: "Borrar",
+            width: 50,
+            render: (item, record, index) => {
                 return (
-                    <div>
-                        {
-                            item.category === 'Q' ? 'Quiz' : item.category === 'A' ? 'Assessment' : item.category === 'K' ? 'Khor' : '' 
-                        }
-                    </div>
+                    <CloseOutlined
+                        style={{ cursor: "pointer" }}
+                        onClick={() => deleteItem(index)}
+                    />
                 );
             },
         }
     ]
 
-    const columnsGroup = [
+    const columns = [
         {
-            title: "Grupos",
+            title: "Evaluaciones",
             render: (item) => {
                 return (
                     <div>
@@ -277,21 +311,18 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
             
         },
         {
-            title: "Evaluaciones",
-            render: (item) => {
+            title: "Agregar",
+            width: 50,
+            render: (item, record, index) => {
                 return (
-                    <Tag
-                        icon={<FileTextOutlined style={{color:'#52c41a'}} />}
-                        color={'green'}
-                        style={{fontSize: '14px'}}
-                    >
-                        {item.assessments ? item.assessments.length : 0}
-                    </Tag>
+                    <PlusCircleOutlined
+                        style={{ cursor: "pointer" }}
+                        onClick={() => addAssessment(item)}
+                    />
                 );
             },
         }
     ]
-
 
     const rowSelection = {
         columnWidth: 100,
@@ -307,36 +338,13 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
         }
     }
 
-    const onSelectAll = (e) =>{
-        const list = getListAssigned();
-        if(e.target.checked){
-            let keys  = [];
-            let items = [];
-            list.map((item)=>{
-                keys.push(item.id)
-                items.push(item)
-            })
-            if(isIndividual){
-                setSurveysKeys(keys)
-            }else{
-                setGroupsKeys(keys)
-            }
-            setItemsSelected(items)
-            setIsSelectAll(true)
-        }else{
-            resetValues()
-        }
-    }
-
     const onChangeType = (e) =>{
         if(e.target.value){
             getSurveys(currentNode.id, "")
             setIsIndividual(true)
-            /* getAssigns */
         }else{
             getGroupsSurveys(currentNode.id, "")
             setIsIndividual(false)
-            /* getAssigns */
         }
     }
 
@@ -353,7 +361,7 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
 
     const onChangeCategory = (value) =>{
         let category = `&categories=${value}`;
-        getSurveys(currentNode.id, category)
+        getSurveys(currentNode.id, value ? category : "")
     }
 
     const resetFilters = () =>{
@@ -377,7 +385,7 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
                 requiredMark={false}
                 layout={'vertical'}
             >
-                <Row gutter={[8,16]}>
+                <Row gutter={[16,16]}>
                     <Col span={isIndividual ? 12 : 24}>
                         <Form.Item name="name" style={{marginBottom: '0px'}}>
                             <CustomInput
@@ -394,18 +402,13 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
                         <Col span={12}>
                             <Form.Item name="category" style={{marginBottom: '0px'}}>
                                 <Select
-                                    showSearch
                                     onChange={onChangeCategory}
                                     placeholder={'Seleccionar categoría'}
                                     notFoundContent='No se encontraron resultados'
                                     optionFilterProp="children"
-                                    filterOption={(input, option) =>
-                                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                    }
-                                    filterSort={(optionA, optionB) =>
-                                        optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
-                                    }
+                                    defaultValue={""}
                                 >
+                                    <Option value={""}>Todas</Option>
                                     {listCategories?.map(item =>(
                                         <Option key={item.id} value={item.id}>
                                             {item.name}
@@ -416,24 +419,13 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
                         </Col>
                     )}
                     <Col span={12}>
-                    <ButtonTransparent
+                        <ButtonTransparent
                             onClick={()=>resetFilters()}
                             icon={<ClearOutlined />} 
                             size={"small"}
                         >
                             Borrar filtros
                         </ButtonTransparent>
-                        {/* <CustomCheck
-                            checked={isSelectAll}
-                            onChange={onSelectAll}
-                        >
-                            Seleccionar todos
-                        </CustomCheck>
-                        <Tooltip title={'Borrar filtros'} placement={'right'}>
-                            <ClearOutlined
-                                onClick={()=>resetFilters()}
-                            />
-                        </Tooltip> */}
                     </Col>
                     <ColButtons span={12}>
                         <Radio.Group
@@ -446,36 +438,59 @@ const AssignAssessments = ({itemGroup, ...props}) =>{
                             <Radio.Button value={false}>Grupales</Radio.Button>
                         </Radio.Group>
                     </ColButtons>
-                    <Col span={24}>
-                        <Table
-                            rowKey={'id'}
-                            columns={
-                                isIndividual ?
-                                columnsInvidual :
-                                columnsGroup
-                            }
-                            dataSource={getListAssigned()}
-                            loading={loading}
-                            size={'small'}
-                            locale={{
-                                emptyText: loading ?
-                                "Cargando..." :
-                                "No se encontraron resultados."
-                            }}
-                            scroll={{y: 200}}
-                            rowSelection={rowSelection}
-                            onChange={onChangePage}
-                            pagination={{
-                                pageSize: 10,
-                                total:
-                                    listSurveys.count ?
-                                    listSurveys.count :
-                                    listSurveys.length,
-                                position: ['bottomLeft'],
-                                hideOnSinglePage: true,
-                                showSizeChanger: false
-                            }}
-                        />
+                    <Col span={12}>
+                        <Form.Item label={"Agregar evaluaciones"}>
+                            <Table
+                                rowKey={'id'}
+                                columns={columns}
+                                showHeader={false}
+                                dataSource={filterSurveys()}
+                                loading={loading}
+                                size={'small'}
+                                locale={{
+                                    emptyText: loading ?
+                                    "Cargando..." :
+                                    "No se encontraron resultados."
+                                }}
+                                scroll={{y: 200}}
+                                // rowSelection={rowSelection}
+                                onChange={onChangePage}
+                                pagination={isIndividual ? false : {
+                                    pageSize: 10,
+                                    total: getListTotal(),
+                                    position: ['bottomLeft'],
+                                    hideOnSinglePage: true,
+                                    showSizeChanger: false
+                                }}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12} style={{marginBottom: 'auto'}}>
+                        <Form.Item label={`Evaluaciones seleccionadas (${surveySelected.length})`}>
+                            <Table
+                                rowKey={'id'}
+                                columns={columnSelected}
+                                showHeader={false}
+                                dataSource={surveySelected}
+                                loading={loadSelected}
+                                size={'small'}
+                                locale={{
+                                    emptyText: loadSelected ?
+                                    "Cargando..." :
+                                    "No se encontraron resultados."
+                                }}
+                                // rowClassName={(item, index) => {
+                                //     if(item.is_individual){
+                                //         return "item-is-individual"
+                                //     }else{
+                                //         return "item-not-individual"
+                                //     }
+                                // }}
+                                className={'table-assignments'}
+                                scroll={{y: 200}}
+                                pagination={false}
+                            />
+                        </Form.Item>
                     </Col>
                 </Row>
                 <Row align={'end'} style={{marginTop: '16px'}}>

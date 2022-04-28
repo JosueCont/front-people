@@ -272,7 +272,7 @@ class WebApiPeople {
   }
 
   static changeStatusNode(id, data) {
-    return WebApi.ApisType(`/business/node/id}/`, "put", data);
+    return WebApi.ApisType(`/business/node/${id}/`, "put", data);
   }
 
   static getDocumentPerson(data) {
