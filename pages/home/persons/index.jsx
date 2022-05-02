@@ -61,6 +61,7 @@ import AssignAssessments from "../../../components/person/assignments/AssignAsse
 import PersonsGroup from "../../../components/person/groups/PersonsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
+import SelectJob from "../../../components/selects/SelectJob";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -101,6 +102,8 @@ const homeScreen = ({ ...props }) => {
   const [permissions, setPermissions] = useState({});
   const [itemPerson, setItemPerson] = useState({});
   const [loadAssign, setLoadAssign] = useState(false);
+  const [depSelect, setDepSelect] = useState(null);
+  const [wtSelct, setWtSelct] = useState(null);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -1075,10 +1078,10 @@ const homeScreen = ({ ...props }) => {
                           </Form.Item>
                         </Col>
                         <Col>
-                          <SelectDepartment />
+                          <SelectDepartment onChange={setDepSelect} />
                         </Col>
                         <Col>
-                          <SelectWorkTitle />
+                          <SelectJob department={depSelect} />
                         </Col>
                         <Col>
                           <Form.Item name="is_active" label="Estatus">

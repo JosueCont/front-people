@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 
-const SelectBank =  ({ bankSelected=null, ...props }) => {
+const SelectBank = ({ rules = [], bankSelected = null, ...props }) => {
   const [options, setOptions] = useState(null);
   const route = useRouter();
 
@@ -28,6 +28,7 @@ const SelectBank =  ({ bankSelected=null, ...props }) => {
       key={"SelectBank"}
       name={props.name ? props.name : "bank"}
       label={props.label ? props.label : "Banco"}
+      rules={rules}
     >
       <Select
         key="SelectBank"
