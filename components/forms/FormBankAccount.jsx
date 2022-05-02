@@ -224,33 +224,47 @@ const FormBanckAccount = ({ person_id = null }) => {
 
   const validateInterbankKey = ({ getFieldValue }) => ({
     async validator() {
-      let response = await webApiFiscal.validateAccountNumber({
-        number_account: getFieldValue("interbank_key"),
-        type_validation: 1,
-      });
-      if (response.data.level == "success") {
-        formBank.setFieldsValue({ bank: response.data.bank_id });
-        return Promise.resolve();
-      } else {
-        return Promise.reject("Clave Interbancaria incorrecta");
-      }
+      if (
+        getFieldValue("interbank_key") &&
+        getFieldValue("interbank_key") !== undefined &&
+        getFieldValue("interbank_key") !== ""
+      )
+        await webApiFiscal
+          .validateAccountNumber({
+            number_account: getFieldValue("interbank_key"),
+            type_validation: 1,
+          })
+          .then((response) => {
+            ormBank.setFieldsValue({ bank: response.data.bank_id });
+            return Promise.resolve();
+          })
+          .catch((error) => {
+            return Promise.reject("Clave Interbancaria incorrecta");
+          });
     },
   });
 
   const validateAccountNumberWithInterbankKey = ({ getFieldValue }) => ({
     async validator() {
-      let response = await webApiFiscal.validateAccountNumber({
-        number_account: getFieldValue("account_number"),
-        number_account_clabe: getFieldValue("interbank_key"),
-        type_validation: 3,
-      });
-      if (response.data.level == "success") {
-        return Promise.resolve();
-      } else {
-        return Promise.reject(
-          "EL número de cuenta no correspon de con la Clave Interbancaria"
-        );
-      }
+      if (
+        getFieldValue("account_number") &&
+        getFieldValue("account_number") !== undefined &&
+        getFieldValue("account_number") !== ""
+      )
+        await webApiFiscal
+          .validateAccountNumber({
+            number_account: getFieldValue("account_number"),
+            number_account_clabe: getFieldValue("interbank_key"),
+            type_validation: 3,
+          })
+          .then((response) => {
+            return Promise.resolve();
+          })
+          .catch((error) => {
+            return Promise.reject(
+              "EL número de cuenta no correspon de con la Clave Interbancaria"
+            );
+          });
     },
   });
 
@@ -268,6 +282,7 @@ const FormBanckAccount = ({ person_id = null }) => {
         <Row>
           <Col lg={8} xs={22} md={12}>
             <SelectBank
+              rules={[ruleRequired]}
               name="bank"
               bankSelected={selectedBank}
               style={{ width: "100%" }}
@@ -277,11 +292,7 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="account_number"
               label="Número de cuenta"
-              rules={[
-                ruleRequired,
-                onlyNumeric,
-                validateAccountNumberWithInterbankKey,
-              ]}
+              rules={[onlyNumeric, validateAccountNumberWithInterbankKey]}
             >
               <Input minLength={11} maxLength={11} />
             </Form.Item>
