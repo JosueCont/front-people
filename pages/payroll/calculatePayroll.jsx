@@ -52,6 +52,8 @@ const CalculatePayroll = ({ ...props }) => {
   const [consolidated, setConsolidated] = useState(false);
   const [genericModal, setGenericModal] = useState(false);
   const [activePeriod, setActivePeriod] = useState(null);
+  const [totalSalary, setTotalSalary] = useState(null);
+  const [totalIsr, setTotalIsr] = useState(null);
 
   const [infoGenericModal, setInfoGenericModal] = useState({
     title: "Timbrado de nómina",
@@ -114,6 +116,8 @@ const CalculatePayroll = ({ ...props }) => {
         setLoading(false);
         setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
+        setTotalSalary(response.data.total_salary);
+        setTotalIsr(response.data.total_isr);
       })
       .catch((error) => {
         console.log(error);
@@ -699,6 +703,20 @@ const CalculatePayroll = ({ ...props }) => {
                   hideExpandIcon
                   locale={{ emptyText: "No se encontraron resultados" }}
                 />
+                {totalSalary && totalIsr && (
+                  <Col sm={24} md={18} lg={12}>
+                    <Row>
+                      <Col span={12} style={{ fontWeight: "bold" }}>
+                        <div>Total de sueldos:</div>
+                        <div>Total de ISR:</div>
+                      </Col>
+                      <Col span={12} style={{ fontWeight: "bold" }}>
+                        <div>${totalSalary}</div>
+                        <div>${totalIsr}</div>
+                      </Col>
+                    </Row>
+                  </Col>
+                )}
               </Card>
             </Col>
           </Row>
