@@ -374,5 +374,9 @@ class WebApiPeople {
   static informationNode(data) {
     return WebApi.ApisType(`/person/vacation/approve_request/`, "post", data);
   }
+
+  static generalInfoNode(type, data = null, url = "") {
+    return WebApi.ApisType(`/business/node-information/${url}`, type, data);
+  }
 }
 export default WebApiPeople;

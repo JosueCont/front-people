@@ -1,301 +1,126 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import {
-  Table,
-  Row,
-  Col,
-  Select,
-  Form,
-  DatePicker,
-  Button,
-  Input,
-  Typography,
-  Tooltip,
-} from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-  SyncOutlined,
-  SearchOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
-import { API_URL } from "../../config/config";
-import Axios from "axios";
-import moment from "moment";
-import { DownloadOutlined } from "@ant-design/icons";
-import SelectCompany from "../selects/SelectCompany";
-import SelectDepartment from "../selects/SelectDepartment";
-import SelectJob from "../selects/SelectJob";
-import SelectCollaborator from "../selects/SelectCollaborator";
-import jsCookie from "js-cookie";
-import { userCompanyId } from "../../libs/auth";
-import SelectWorkTitle from "../selects/SelectWorkTitle";
+import React, { useState } from "react";
+import { Table, Row, Col, Form, Button, Typography, Tooltip } from "antd";
 import { connect } from "react-redux";
+import WebApiPayroll from "../../api/WebApiPayroll";
+import SelectPaymentCalendar from "../selects/SelectPaymentCalendar";
+import { ClearOutlined, SearchOutlined } from "@ant-design/icons";
+import SelectYear from "../selects/SelectYear";
+import moment from "moment";
+import { downLoadFileBlob, getDomain } from "../../utils/functions";
+import { API_URL_TENANT } from "../../config/config";
 
 const PayrollReport = ({ permissions, ...props }) => {
-  const route = useRouter();
-  const { Option } = Select;
-  const { Title, Text } = Typography;
+  const { Title } = Typography;
   const [form] = Form.useForm();
-
   const [loading, setLoading] = useState(false);
-  const [personList, setPersonList] = useState([]);
+  const [calendar, setCalendar] = useState(null);
   const [payrollList, setPayrollList] = useState([]);
-  const [jobList, setJobList] = useState([]);
 
-  /* Variables para el filtro */
-  const [collaborator, setCollaborator] = useState(null);
-  const [code, setCode] = useState(null);
-  const [companyId, setCompanyId] = useState(null);
-
-  const [departmentId, setDepartmentId] = useState(null);
-  const [job, setJob] = useState(null);
-
-  let nodeId = userCompanyId();
-
-  /* Columnas de tabla */
   const columns = [
     {
       title: "Num. trabajador",
-      dataIndex: "code",
+      width: 1,
+      render: (payroll) => {
+        return <>{payroll.payroll_person.person.code}</>;
+      },
       key: "code",
     },
     {
       title: "Colaborador",
-      dataIndex: "person",
+      width: 3,
       key: "collaborator",
-      render: (person) => {
+      render: (payroll) => {
         return (
           <>
-            {person.first_name ? person.first_name : null}
-            {person.flast_name ? person.flast_name : null}
-            {person.mlast_name ? person.mlast_name : null}
+            {payroll.payroll_person.person.first_name
+              ? payroll.payroll_person.person.first_name
+              : null}
+            {payroll.payroll_person.person.flast_name
+              ? payroll.payroll_person.person.flast_name
+              : null}
+            {payroll.payroll_person.person.mlast_name
+              ? payroll.payroll_person.person.mlast_name
+              : null}
           </>
         );
       },
     },
     {
-      title: "Empresa",
-      dataIndex: "node",
-      key: "node",
-    },
-    {
       title: "Departamento",
-      dataIndex: "department",
+      width: 3,
+      render: (payroll) => {
+        return (
+          <>
+            {payroll.payroll_person.person.work_title.department
+              ? payroll.payroll_person.person.work_title.department.name
+              : ""}
+          </>
+        );
+      },
       key: "department",
     },
     {
       title: "Puesto",
-      dataIndex: "job",
+      width: 3,
+      render: (payroll) => {
+        return (
+          <>
+            {payroll.payroll_person.person.work_title.job
+              ? payroll.payroll_person.person.work_title.job.name
+              : ""}
+          </>
+        );
+      },
       key: "job",
     },
     {
       title: "Fecha emisión",
-      dataIndex: "timestamp",
       key: "timestamp",
-
-      render: (date) => {
-        return moment(date).format("DD-MMM-YYYY");
-      },
-    },
-    {
-      title: "Percepción",
-      dataIndex: "total_perceptions",
-      key: "total_perceptions",
-    },
-    {
-      title: "Deducción",
-      dataIndex: "total_deductions",
-      key: "total_deductions",
-    },
-    {
-      title: "Total",
-      dataIndex: "amount",
-      key: "amount",
-    },
-    {
-      title: "Días trabajados",
-      dataIndex: "number_of_days_paid",
-      key: "number_of_days_paid",
-      render: (number) => {
-        return parseInt(number);
-      },
-    },
-    {
-      title: "IMSS",
-      dataIndex: "imss",
-      key: "imss",
-    },
-    {
-      title: "ISR",
-      dataIndex: "Dias disponibles",
-      key: "Dias disponibles",
-    },
-    {
-      title: "Acciones",
-      dataIndex: "actions",
-      key: "actions",
-      render: (record, item) => {
-        return (
-          <>
-            {permissions.export_payrolls && (
-              <DownloadOutlined onClick={() => download(item)} />
-            )}
-          </>
-        );
+      width: 1,
+      render: (payroll) => {
+        return moment(payroll.timestamp).format("DD-MMM-YYYY");
       },
     },
   ];
 
-  const onChangeCompany = (val) => {
-    form.setFieldsValue({
-      department: null,
-      job: null,
-    });
-    setCompanyId(val);
-  };
-
-  const onChangeDepartment = (val) => {
-    form.setFieldsValue({
-      job: null,
-    });
-    setDepartmentId(val);
-  };
-
   const clearFilter = () => {
-    form.setFieldsValue({
-      collaborator: null,
-      code: null,
-      department: null,
-      job: null,
-    });
-    getPayroll();
+    form.resetFields();
+    setCalendar(null);
   };
 
-  const filterReport = (values) => {
-    setCollaborator(values.collaborator);
-    setCode(values.code);
-    setDepartmentId(values.department);
-    setJob(values.job);
-
-    getPayroll(values.collaborator, values.code, values.department, values.job);
-    /* let d1 = null;
-                let d2 = null;
-                if (dateLoan) {
-                    d1 = moment(`${dateLoan} 00:00:01`).tz("America/Merida").format();
-                    d2 = moment(`${dateLoan} 23:59:00`).tz("America/Merida").format();
-                    setTimestampGte(d1);
-                    setTimestampLte(d2);
-                }
-                getPatroll(values.person__id, values.type, values.periodicity, d1, d2); */
+  const onFinish = (value, exporter = "False") => {
+    let url = `node=${props.currentNode.id}&export=${exporter}`;
+    if (value.calendar && value.calendar != "")
+      url = url + `&calendar=${value.calendar}`;
+    if (value.period && value.period != "")
+      url = url + `&period=${value.period}`;
+    if (exporter === "False") getReportPayroll(url);
+    else
+      downLoadFileBlob(
+        `${getDomain(API_URL_TENANT)}/payroll/payroll-report?${url}`,
+        "historico_nomina.xlsx",
+        "GET"
+      );
   };
 
-  const getPayroll = async (
-    collaborator = null,
-    code = null,
-    department = null,
-    job = null
-  ) => {
+  const getReportPayroll = (url) => {
     setLoading(true);
-    setPayrollList([]);
-    try {
-      let info = { node: nodeId };
-      if (collaborator) {
-        info["collaborator"] = collaborator;
-      }
-      if (code) {
-        info["code"] = code;
-      }
-      if (department) {
-        info["department"] = department;
-      }
-      if (job) {
-        info["job"] = job;
-      }
-
-      let response = await Axios.post(
-        API_URL + `/payroll/payroll-voucher/get_report/`,
-        info
-      );
-
-      let data = response.data;
-      data = data.map((item) => {
-        item.key = item.id;
-        return item;
+    WebApiPayroll.getReportPayroll(url)
+      .then((response) => {
+        setLoading(false);
+        setPayrollList(response.data);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
       });
-      setPayrollList(data);
-      /* setLendingList(data); */
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
   };
-
-  const download = async (item = null) => {
-    let dataId = { node: nodeId };
-
-    if (item) {
-      dataId = {
-        id: item.id,
-      };
-    } else {
-      if (collaborator) {
-        dataId.collaborator = collaborator;
-      }
-      if (code) {
-        dataId.code = code;
-      }
-      /* if (company) {
-                            dataId.company = company;
-                        } */
-      if (departmentId) {
-        dataId.department = departmentId;
-      }
-      if (job) {
-        dataId.job = job;
-      }
-    }
-
-    try {
-      let response = await Axios.post(
-        API_URL + `/payroll/payroll-voucher/export_report/`,
-        dataId
-      );
-      const type = response.headers["content-type"];
-      const blob = new Blob([response.data], {
-        type: type,
-        encoding: "UTF-8",
-      });
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = item
-        ? "Reporte_de_nomina(" +
-          (item.person.first_name ? item.person.first_name : null) +
-          "_" +
-          (item.person.flast_name ? item.person.flast_name : null) +
-          "_" +
-          (item.person.mlast_name ? item.person.mlast_name : null) +
-          ").csv"
-        : "Reporte_de_nomina.csv";
-      link.click();
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    /* getAllPersons(); */
-    getPayroll();
-  }, []);
 
   return (
     <>
       <Row justify="space-between" style={{ padding: "10px 20px 10px 0px" }}>
         <Col span={24}>
-          <Title level={5}>Nóminas</Title>
+          <Title level={5}>Nómina</Title>
           <hr />
         </Col>
         <Col>
@@ -305,50 +130,21 @@ const PayrollReport = ({ permissions, ...props }) => {
             layout="vertical"
             key="formFilter"
             className="formFilterReports"
-            onFinish={filterReport}
+            onFinish={onFinish}
           >
             <Row gutter={[10]}>
               <Col>
-                <SelectCollaborator
-                  name="collaborator"
-                  style={{ width: 150 }}
+                <SelectPaymentCalendar
+                  setCalendarId={(value) => setCalendar(value)}
+                  name="calendar"
+                  style={{ width: 300 }}
                 />
               </Col>
-              <Col>
-                <Form.Item key="numUSer" name="code" label="Num. trabajador">
-                  <Input style={{ width: 120 }} allowClear />
-                </Form.Item>
-              </Col>
-              {/* <Col>
-                                <SelectCompany
-                                    onChange={onChangeCompany}
-                                    style={{ width: 150 }}
-                                    key="company"
-                                    name="company"
-                                    label="Empresa"
-                                />
-                            </Col> */}
-              <Col>
-                <SelectDepartment
-                  name="department"
-                  companyId={nodeId}
-                  key="selectDepartament"
-                />
-              </Col>
-              <Col>
-                <SelectWorkTitle />
-              </Col>
-              <Col>
-                <SelectJob
-                  name="job"
-                  departmentId={departmentId}
-                  label="Puesto"
-                  style={{ width: 120 }}
-                />
-                {/* <Form.Item key="job" name="job" label="Puesto">
-                                    <Select style={{ width: 120 }} options={jobList} allowClear />
-                                </Form.Item> */}
-              </Col>
+              {calendar && (
+                <Col>
+                  <SelectYear size="large" />
+                </Col>
+              )}
               <Col style={{ display: "flex" }}>
                 <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
                   <Button
@@ -380,7 +176,7 @@ const PayrollReport = ({ permissions, ...props }) => {
                     }}
                     key="buttonClearFilter"
                   >
-                    <SyncOutlined />
+                    <ClearOutlined />
                   </Button>
                 </Tooltip>
               </Col>
@@ -395,7 +191,7 @@ const PayrollReport = ({ permissions, ...props }) => {
                 fontWeight: "bold",
                 color: "white",
               }}
-              onClick={() => download()}
+              onClick={() => onFinish(form.getFieldsValue(), "True")}
               key="btn_new"
             >
               Descargar
@@ -409,7 +205,6 @@ const PayrollReport = ({ permissions, ...props }) => {
             dataSource={payrollList}
             key="tableHolidays"
             columns={columns}
-            scroll={{ x: 1300 }}
             loading={loading}
             locale={{
               emptyText: loading
@@ -426,6 +221,8 @@ const PayrollReport = ({ permissions, ...props }) => {
 const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.report,
+    currentNode: state.userStore.current_node,
+    payment_calendar: state.payrollStore.payment_calendar,
   };
 };
 
