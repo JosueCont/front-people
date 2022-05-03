@@ -19,7 +19,7 @@ const FormDocument = ({ person_id, node }) => {
   const [modalDoc, setModalDoc] = useState(false);
   const [loadingTable, setLoadingTable] = useState(true);
   const [showModalSelectDoc, setShowModalSelectDoc] = useState(false);
-  const [idDoc, setIdDoc] = useState(null);
+  const [editDocument, setEditDocument] = useState(null);
 
   useEffect(() => {
     getDocument();
@@ -47,13 +47,6 @@ const FormDocument = ({ person_id, node }) => {
   const getModalDoc = (value) => {
     setModalDoc(value);
     getDocument();
-  };
-
-  const getModalSelectDoc = (value, id) => {
-    if (id) {
-      setIdDoc(id);
-    }
-    setShowModalSelectDoc(value);
   };
 
   const deleteDocument = async (value) => {
@@ -123,20 +116,13 @@ const FormDocument = ({ person_id, node }) => {
                   }}
                 />
               </Col>
-              <Col className="gutter-row" offset={1}>
-                <EditOutlined
-                  style={{ fontSize: "20px" }}
-                  onClick={() => {
-                    getModalSelectDoc(true, item.id);
-                  }}
-                />
-              </Col>
             </Row>
           </div>
         );
       },
     },
   ];
+
   return (
     <>
       <Row>
@@ -166,32 +152,12 @@ const FormDocument = ({ person_id, node }) => {
       </Spin>
       {modalDoc && (
         <DocumentModal
+          document={editDocument}
           close={getModalDoc}
           visible={modalDoc}
           person_id={person_id}
           node={node}
         />
-      )}
-      {showModalSelectDoc == true && idDoc == null ? (
-        <DocumentSelectModal
-          close={getModalSelectDoc}
-          visible={showModalSelectDoc}
-          person_id={person_id}
-          node={node}
-          title={"Cargar documento"}
-        />
-      ) : (
-        showModalSelectDoc &&
-        idDoc && (
-          <DocumentSelectModal
-            close={getModalSelectDoc}
-            visible={showModalSelectDoc}
-            person_id={person_id}
-            node={node}
-            title={"Reemplazar documento"}
-            idDoc={idDoc}
-          />
-        )
       )}
     </>
   );

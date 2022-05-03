@@ -311,7 +311,7 @@ class WebApiPeople {
   }
 
   static trainingPerson(type, url = "", data = null) {
-    return WebApi.ApisType(`/person/person/${url}`, type, data);
+    return WebApi.ApisType(`/person/${url}`, type, data);
   }
 
   /* Solicitudes */
@@ -373,6 +373,10 @@ class WebApiPeople {
 
   static informationNode(data) {
     return WebApi.ApisType(`/person/vacation/approve_request/`, "post", data);
+  }
+
+  static generalInfoNode(type, data = null, url = "") {
+    return WebApi.ApisType(`/business/node-information/${url}`, type, data);
   }
 }
 export default WebApiPeople;

@@ -61,6 +61,7 @@ import AssignAssessments from "../../../components/person/assignments/AssignAsse
 import PersonsGroup from "../../../components/person/groups/PersonsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
+import SelectJob from "../../../components/selects/SelectJob";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -77,6 +78,8 @@ const homeScreen = ({ ...props }) => {
   const [personsKeys, setPersonsKeys] = useState([]);
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
+  const inputFileRefAsim = useRef(null);
+  const inputFileRefImss = useRef(null);
 
   let filters = { node: "" };
   const defaulPhoto =
@@ -99,6 +102,8 @@ const homeScreen = ({ ...props }) => {
   const [permissions, setPermissions] = useState({});
   const [itemPerson, setItemPerson] = useState({});
   const [loadAssign, setLoadAssign] = useState(false);
+  const [depSelect, setDepSelect] = useState(null);
+  const [wtSelct, setWtSelct] = useState(null);
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -607,12 +612,13 @@ const homeScreen = ({ ...props }) => {
     setLoading(false);
   };
 
-  const importPersonFileExtend = async (e) => {
+  const importPersonFileExtend = async (e, template_type) => {
     let extension = getFileExtension(e.target.files[0].name);
     if (extension === "xlsx") {
       let formData = new FormData();
       formData.append("File", e.target.files[0]);
       formData.append("node_id", props.currentNode.id);
+      formData.append("type", template_type);
       formData.append(
         "saved_by",
         userSession.first_name + " " + userSession.last_name
@@ -737,14 +743,14 @@ const homeScreen = ({ ...props }) => {
     setShowModalAssignTest(false);
     setPersonsToDelete([]);
     setPersonsKeys([]);
-    setItemPerson({})
+    setItemPerson({});
   };
 
   const HandleModalAssign = (item) => {
     setPersonsToDelete([item]);
     // setOpenAssignTest(true);
     setShowModalAssignTest(true);
-    setItemPerson(item)
+    setItemPerson(item);
   };
 
   const getOnlyIds = () => {
@@ -831,7 +837,7 @@ const homeScreen = ({ ...props }) => {
     if (openAssignTest) {
       if (personsToDelete.length > 0) {
         setShowModalAssignTest(true);
-        setItemPerson({})
+        setItemPerson({});
       } else {
         setOpenAssignTest(false);
         message.error("Selecciona al menos una persona");
@@ -929,7 +935,7 @@ const homeScreen = ({ ...props }) => {
           downLoadFileBlob(
             `${getDomain(
               API_URL_TENANT
-            )}/person/person/generate_template/?type=2`,
+            )}/person/person/generate_template/?type=1`,
             "platilla_personas.xlsx",
             "GET"
           )
@@ -937,6 +943,22 @@ const homeScreen = ({ ...props }) => {
       >
         Plantilla básica
       </Menu.Item>
+      {props.config && props.config.nomina_enabled && (
+        <Menu.Item
+          key="2"
+          onClick={() =>
+            downLoadFileBlob(
+              `${getDomain(
+                API_URL_TENANT
+              )}/person/person/generate_template/?type=2`,
+              "platilla_personas.xlsx",
+              "GET"
+            )
+          }
+        >
+          Plantilla con Nomina Asimilados
+        </Menu.Item>
+      )}
     </Menu>
   );
 
@@ -956,9 +978,47 @@ const homeScreen = ({ ...props }) => {
           ref={inputFileRef}
           type="file"
           style={{ display: "none" }}
-          onChange={(e) => importPersonFileExtend(e)}
+          onChange={(e) => importPersonFileExtend(e, 1)}
         />
       </Menu.Item>
+      {props.config && props.config.nomina_enabled && (
+        <>
+          <Menu.Item key="2">
+            <a
+              className={"ml-20"}
+              icon={<UploadOutlined />}
+              onClick={() => {
+                inputFileRefAsim.current.click();
+              }}
+            >
+              Datos con nomina Asimilados
+            </a>
+            <input
+              ref={inputFileRefAsim}
+              type="file"
+              style={{ display: "none" }}
+              onChange={(e) => importPersonFileExtend(e, 2)}
+            />
+          </Menu.Item>
+          {/* <Menu.Item key="3"> Se descomentará cuando se implemete nomina normal
+            <a
+              className={"ml-20"}
+              icon={<UploadOutlined />}
+              onClick={() => {
+                inputFileRefImss.current.click();
+              }}
+            >
+              Datos con nómina e IMSS
+            </a>
+            <input
+              ref={inputFileRefImss}
+              type="file"
+              style={{ display: "none" }}
+              onChange={(e) => importPersonFileExtend(e, 3)}
+            />
+          </Menu.Item> */}
+        </>
+      )}
     </Menu>
   );
 
@@ -1018,10 +1078,10 @@ const homeScreen = ({ ...props }) => {
                           </Form.Item>
                         </Col>
                         <Col>
-                          <SelectDepartment />
+                          <SelectDepartment onChange={setDepSelect} />
                         </Col>
                         <Col>
-                          <SelectWorkTitle />
+                          <SelectJob department={depSelect} />
                         </Col>
                         <Col>
                           <Form.Item name="is_active" label="Estatus">

@@ -288,17 +288,19 @@ const ImportMasivePayroll = ({ ...props }) => {
                               <Input value={companyImport.company.rfc} />
                             </Form.Item>
                           </Col>
+                          {companyImport.company.patronal_registration && (
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item label="Registro patronal">
+                                <Input
+                                  value={
+                                    companyImport.company.patronal_registration
+                                  }
+                                />
+                              </Form.Item>
+                            </Col>
+                          )}
                           <Col style={{ display: "flex" }}>
-                            <Form.Item label="Registro patronal">
-                              <Input
-                                value={
-                                  companyImport.company.patronal_registration
-                                }
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col style={{ display: "flex" }}>
-                            <Form.Item label="Regimen fiscal">
+                            <Form.Item label="Régimen fiscal">
                               <Input
                                 value={
                                   props.taxRegime.find(

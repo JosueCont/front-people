@@ -161,12 +161,13 @@ export const getTreatment = (data) => async (dispatch, getState) => {
 };
 
 export const getDocumentType = (data) => async (dispatch, getState) => {
-  try {
-    let response = await WebApiPeople.getCatalogs("document-type", data);
-    dispatch({ type: DOCUMENT_TYPE, payload: response.data });
-  } catch (error) {
-    dispatch({ type: DOCUMENT_TYPE, payload: [] });
-  }
+  await WebApiPeople.getCatalogs("document-type", data)
+    .then((response) => {
+      dispatch({ type: DOCUMENT_TYPE, payload: response.data });
+    })
+    .catch((error) => {
+      dispatch({ type: DOCUMENT_TYPE, payload: [] });
+    });
 };
 
 export const getDepartmets = (data) => async (dispatch, getState) => {

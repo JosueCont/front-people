@@ -8,8 +8,8 @@ import {
 } from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import { userCompanyId } from "../../libs/auth";
 import { ruleRequired } from "../../utils/rules";
+import { connect } from "react-redux";
 
 const ModalSelectDocument = ({
   person_id,
@@ -21,31 +21,14 @@ const ModalSelectDocument = ({
   const [form] = Form.useForm();
   const [file, setFile] = useState();
   const [disabled, setDisabled] = useState(true);
-  const [documentType, setDocumentType] = useState([]);
   const [documents, setDocuments] = useState([]);
   const inputFileRef = useRef(null);
   const [fileName, setfileName] = useState("");
-  let nodeId = userCompanyId();
 
   const closeDialog = () => {
     props.close(false);
     form.resetFields();
   };
-
-  useEffect(() => {
-    nodeId = userCompanyId();
-    Axios.get(API_URL + `/setup/document-type/get_external_types/?node=${node}`)
-      .then((response) => {
-        let dt = response.data;
-        dt = dt.map((a) => {
-          return { label: a.name, value: a.id };
-        });
-        setDocumentType(dt);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
 
   useEffect(() => {
     if (idDoc) {
@@ -189,7 +172,10 @@ const ModalSelectDocument = ({
           <Form onFinish={onFinish} form={form}>
             <Form.Item name="document_type" rules={[ruleRequired]}>
               <Select
-                options={documentType}
+                options={props.document_type.map((item) => {
+                  console.log(item);
+                  return { value: item.id, label: item.name };
+                })}
                 placeholder="Tipo de documento"
                 onChange={onChangeType}
                 notFoundContent={"No se encontraron resultados."}
@@ -252,4 +238,8 @@ const ModalSelectDocument = ({
   );
 };
 
-export default ModalSelectDocument;
+const mapState = (state) => {
+  return { document_type: state.catalogStore.cat_document_type };
+};
+
+export default connect(mapState)(ModalSelectDocument);

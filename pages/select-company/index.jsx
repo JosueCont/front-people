@@ -33,6 +33,7 @@ import {
 import ModalCreateBusiness from "../../components/modal/createBusiness";
 import Modal from "antd/lib/modal/Modal";
 import router from "next/router";
+import { messageError } from "../../utils/constant";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
@@ -51,6 +52,8 @@ const SelectCompany = ({ ...props }) => {
 
   useEffect(() => {
     props.resetCurrentnode();
+    sessionStorage.removeItem("data");
+    console.log(props.user);
     try {
       setJwt(JSON.parse(jsCookie.get("token")));
     } catch (error) {
@@ -63,11 +66,16 @@ const SelectCompany = ({ ...props }) => {
   }, []);
 
   useEffect(async () => {
-    try {
-      if (jwt) {
-        let response = await WebApiPeople.personForKhonnectId({
-          id: jwt.user_id,
-        });
+    if (jwt) {
+      personForKhonnectId(jwt.user_id);
+    }
+  }, [jwt]);
+
+  const personForKhonnectId = async (user_id) => {
+    await WebApiPeople.personForKhonnectId({
+      id: user_id,
+    })
+      .then((response) => {
         props
           .setUser()
           .then((response) => {
@@ -96,12 +104,12 @@ const SelectCompany = ({ ...props }) => {
             }
         }
         setLoading(false);
-      }
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  }, [jwt]);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  };
 
   const getCopaniesList = async () => {
     await WebApiPeople.getCompanys()
@@ -119,13 +127,15 @@ const SelectCompany = ({ ...props }) => {
   const setCompanySelect = async (item) => {
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
-    let response = await props.companySelected(item.id, props.config);
-    if (response) {
-      props.doCompanySelectedCatalog();
-      useRouter.push("home/persons");
-    } else {
-      message.error("Ocurrio un error, intente de nuevo.");
-    }
+    await props
+      .companySelected(item.id, props.config)
+      .then((response) => {
+        props.doCompanySelectedCatalog();
+        useRouter.push("home/persons");
+      })
+      .catch((error) => {
+        message.error(messageError);
+      });
   };
 
   const changeView = () => {
@@ -365,8 +375,10 @@ const SelectCompany = ({ ...props }) => {
             />
           </Modal>
           <ModalCreateBusiness
+            user={props.user}
             visible={createNode}
             setVisible={setCreateNode}
+            afterAction={(value) => personForKhonnectId(value)}
           />
         </MainLayout>
       ) : (
@@ -377,7 +389,10 @@ const SelectCompany = ({ ...props }) => {
 };
 
 const mapState = (state) => {
-  return { config: state.userStore.general_config };
+  return {
+    config: state.userStore.general_confi,
+    user: state.userStore.user,
+  };
 };
 
 export default connect(mapState, {

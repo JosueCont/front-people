@@ -149,6 +149,10 @@ class WebApiPayroll {
       data
     );
   }
+
+  static getReportPayroll(url) {
+    return WebApi.ApisType(`/payroll/payroll-report?${url}`, "get");
+  }
 }
 
 export default WebApiPayroll;
