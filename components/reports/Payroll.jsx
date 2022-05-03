@@ -86,6 +86,7 @@ const PayrollReport = ({ permissions, ...props }) => {
   const clearFilter = () => {
     form.resetFields();
     setCalendar(null);
+    setLoading(false);
   };
 
   const onFinish = (value, exporter = "False") => {
