@@ -273,7 +273,11 @@ const AssessmentScreen = ({
       render: (item) => {
         return (
           <div key={"category-" + item.id}>
-            {item.category === "A" ? "Assessment" : item.category === "Q" ? "Quiz" : "Khor" }
+            {item.category === "A"
+              ? "Assessment"
+              : item.category === "Q"
+              ? "Quiz"
+              : "Khor"}
           </div>
         );
       },
@@ -282,14 +286,14 @@ const AssessmentScreen = ({
       title: "Estatus",
       render: (item) => {
         return (
-              <Switch
-                disabled={item.category === "K"}
-                key={"status-" + item.id}
-                defaultChecked={item.is_active}
-                checkedChildren="Activo"
-                unCheckedChildren="Inactivo"
-                onChange={() => HandleChangeStatus(item)}
-              />
+          <Switch
+            disabled={item.category === "K"}
+            key={"status-" + item.id}
+            defaultChecked={item.is_active}
+            checkedChildren="Activo"
+            unCheckedChildren="Inactivo"
+            onChange={() => HandleChangeStatus(item)}
+          />
         );
       },
     },
@@ -341,7 +345,7 @@ const AssessmentScreen = ({
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({ pathname: "/assessments/surveys" })}
+          onClick={() => router.push({ pathname: "/home/persons/" })}
         >
           Inicio
         </Breadcrumb.Item>

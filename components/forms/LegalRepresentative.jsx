@@ -35,7 +35,7 @@ const LegalRepresentative = ({ form, legalRepresentative }) => {
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <Form.Item name="phone" label="Telefono">
+          <Form.Item name="phone" label="Teléfono">
             <Input />
           </Form.Item>
         </Col>

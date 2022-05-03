@@ -162,7 +162,7 @@ const calculatorSalary = ({ ...props }) => {
       <Content className="site-layout">
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
-          <Breadcrumb.Item>Nomina</Breadcrumb.Item>
+          <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Calculadora</Breadcrumb.Item>
         </Breadcrumb>
         <Row>

@@ -489,7 +489,7 @@ const Incapacityform = (props) => {
               <Col lg={12} sm={24}>
                 <Form.Item
                   name="payroll_apply_date"
-                  label="Fecha de aplicación en Nomina"
+                  label="Fecha de aplicación en Nómina"
                   rules={[ruleRequired]}
                 >
                   <DatePicker
