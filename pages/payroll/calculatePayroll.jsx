@@ -52,6 +52,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [consolidated, setConsolidated] = useState(false);
   const [genericModal, setGenericModal] = useState(false);
   const [activePeriod, setActivePeriod] = useState(null);
+  const [calculate, setCalculate] = useState(false);
 
   const [infoGenericModal, setInfoGenericModal] = useState({
     title: "Timbrado de nómina",
@@ -109,18 +110,39 @@ const CalculatePayroll = ({ ...props }) => {
     setLoading(true);
     setModalVisible(false);
     setPersonId(null);
+    console.log("SEND-->> ".dataToSend);
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
         setLoading(false);
         setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
+        setCalculate(false);
       })
       .catch((error) => {
+        setCalculate(false);
         console.log(error);
         setPayroll([]);
         form.resetFields();
         setLoading(false);
       });
+  };
+
+  const reCalculatePayroll = (data) => {
+    data.map((item) => {
+      item.person_id = item.person.id;
+      delete item["person"];
+      return item;
+    });
+    data.map((item) => {
+      item.deductions = item.deductions.filter(
+        (a) => a.type !== "001" && a.type !== "002"
+      );
+    });
+    sendCalculatePayroll({
+      node: props.currentNode.id,
+      period: form.getFieldValue("year"),
+      payroll: data,
+    });
   };
 
   const persons = [
@@ -208,7 +230,7 @@ const CalculatePayroll = ({ ...props }) => {
         key: "description",
         dataIndex: "description",
         className: "cell-concept",
-        width: "50%",
+        width: "45%",
       },
       {
         title: "Dato",
@@ -242,12 +264,26 @@ const CalculatePayroll = ({ ...props }) => {
       {
         title: "Importe",
         key: "amount",
-        dataIndex: "amount",
-        width: "10%",
-        render: (amount) => (
-          <Space size="middle">
-            <Text>${numberFormat(amount)}</Text>
-          </Space>
+        width: "20%",
+        render: (item) => (
+          <>
+            {item.type === "046" && !consolidated ? (
+              <Space size="middle">
+                <Input
+                  key={item.type}
+                  onChange={(value) => {
+                    (item.value = Number(value.target.value)),
+                      setCalculate(true);
+                  }}
+                  defaultValue={numberFormat(item.amount)}
+                />
+              </Space>
+            ) : (
+              <Space size="middle">
+                <Text>${numberFormat(item.amount)}</Text>
+              </Space>
+            )}
+          </>
         ),
       },
     ];
@@ -671,10 +707,18 @@ const CalculatePayroll = ({ ...props }) => {
                   block
                   htmlType="button"
                   onClick={() =>
-                    consolidated ? setMessageModal(3) : setMessageModal(2)
+                    calculate
+                      ? reCalculatePayroll([...payroll])
+                      : consolidated
+                      ? setMessageModal(3)
+                      : setMessageModal(2)
                   }
                 >
-                  {consolidated ? "Timbrar nómina" : "Cerrar nómina"}
+                  {calculate
+                    ? "Calcular"
+                    : consolidated
+                    ? "Timbrar nómina"
+                    : "Cerrar nómina"}
                 </Button>
               </Col>
             )}
@@ -682,7 +726,9 @@ const CalculatePayroll = ({ ...props }) => {
               <Card className="card_table">
                 <Table
                   className="headers_transparent"
-                  dataSource={payroll}
+                  dataSource={
+                    payroll.length > 0 && payroll[0].person ? payroll : []
+                  }
                   columns={persons}
                   expandable={{
                     expandedRowRender: (item) => renderConceptsTable(item),

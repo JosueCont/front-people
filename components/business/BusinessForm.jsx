@@ -259,11 +259,12 @@ const businessForm = ({ ...props }) => {
     },
     {
       title: "Estatus",
-      key: "active",
+      key: "id",
       render: (item) => {
         return (
           <>
             <Switch
+              key={item.id}
               disabled={
                 props.permissions && props.permissions.change_is_active
                   ? false
@@ -391,7 +392,11 @@ const businessForm = ({ ...props }) => {
     showUploadList: false,
 
     beforeUpload: (file) => {
-      const isPNG = file.type === "image/png" || file.type === "image/jpg";
+      console.log("FILE TYPE-> ", file.type);
+      const isPNG =
+        file.type === "image/png" ||
+        file.type === "image/jpg" ||
+        file.type === "image/jpeg";
       if (!isPNG) {
         message.error(`${file.name} , No es una imagen.`);
       }

@@ -202,11 +202,14 @@ const ModalConceptsPayroll = ({
           other_payments: otherPayments,
         });
       } else {
+        console.log("PERECEPTIONS-> ", item.perceptions);
         data.push({
           person_id: item.person.id,
-          perceptions: item.perceptions.filter((item) => item.code != "P101"),
+          perceptions: item.perceptions.filter(
+            (item) => item.type != "001" && item.type != "046"
+          ),
           deductions: item.deductions.filter(
-            (item) => item.code != "D201" && item.code != "D202"
+            (item) => item.type != "001" && item.type != "002"
           ),
           other_payments: item.otherPayments,
         });

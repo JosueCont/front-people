@@ -383,7 +383,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
               </Form.Item>
             </Col>
             <Col lg={8} xs={22} md={12}>
-              <Form.Item name="last_day_paid" label="Ultimo día de pago">
+              <Form.Item name="last_day_paid" label="Último día de pago">
                 <DatePicker
                   style={{ width: "100%" }}
                   onChange={onChangeLastDayPaid}

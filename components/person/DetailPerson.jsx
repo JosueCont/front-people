@@ -124,7 +124,7 @@ const DetailPerson = ({
               <Tooltip title="Teléfono">
                 <div className="container-title-tab">
                   <PhoneOutlined />
-                  <div className="text-title-tab">Telefono</div>
+                  <div className="text-title-tab">Teléfono</div>
                 </div>
               </Tooltip>
             }
@@ -233,7 +233,7 @@ const DetailPerson = ({
                 <Tooltip title="Nómina">
                   <div className="container-title-tab">
                     <DollarOutlined />
-                    <div className="text-title-tab">Nomina</div>
+                    <div className="text-title-tab">Nómina</div>
                   </div>
                 </Tooltip>
               }
