@@ -202,7 +202,6 @@ const ModalConceptsPayroll = ({
           other_payments: otherPayments,
         });
       } else {
-        console.log("PERECEPTIONS-> ", item.perceptions);
         data.push({
           person_id: item.person.id,
           perceptions: item.perceptions.filter(

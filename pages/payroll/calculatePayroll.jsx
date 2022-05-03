@@ -53,6 +53,8 @@ const CalculatePayroll = ({ ...props }) => {
   const [genericModal, setGenericModal] = useState(false);
   const [activePeriod, setActivePeriod] = useState(null);
   const [calculate, setCalculate] = useState(false);
+  const [totalSalary, setTotalSalary] = useState(null);
+  const [totalIsr, setTotalIsr] = useState(null);
 
   const [infoGenericModal, setInfoGenericModal] = useState({
     title: "Timbrado de nómina",
@@ -110,13 +112,14 @@ const CalculatePayroll = ({ ...props }) => {
     setLoading(true);
     setModalVisible(false);
     setPersonId(null);
-    console.log("SEND-->> ".dataToSend);
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
         setLoading(false);
         setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
         setCalculate(false);
+        setTotalSalary(response.data.total_salary);
+        setTotalIsr(response.data.total_isr);
       })
       .catch((error) => {
         setCalculate(false);
@@ -745,6 +748,20 @@ const CalculatePayroll = ({ ...props }) => {
                   hideExpandIcon
                   locale={{ emptyText: "No se encontraron resultados" }}
                 />
+                {totalSalary && totalIsr && (
+                  <Col sm={24} md={18} lg={12}>
+                    <Row>
+                      <Col span={12} style={{ fontWeight: "bold" }}>
+                        <div>Total de sueldos:</div>
+                        <div>Total de ISR:</div>
+                      </Col>
+                      <Col span={12} style={{ fontWeight: "bold" }}>
+                        <div>${totalSalary}</div>
+                        <div>${totalIsr}</div>
+                      </Col>
+                    </Row>
+                  </Col>
+                )}
               </Card>
             </Col>
           </Row>

@@ -392,7 +392,6 @@ const businessForm = ({ ...props }) => {
     showUploadList: false,
 
     beforeUpload: (file) => {
-      console.log("FILE TYPE-> ", file.type);
       const isPNG =
         file.type === "image/png" ||
         file.type === "image/jpg" ||
