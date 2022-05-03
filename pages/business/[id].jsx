@@ -63,7 +63,7 @@ const ConfigCompany = ({ ...props }) => {
             activeKey={activeKey}
           >
             <TabPane tab="General" key={"1"}>
-              <GeneralData />
+              <GeneralData node_id={company && company.id} />
             </TabPane>
             <TabPane tab="Informacion fiscal" key={"2"}>
               <FiscalInformationNode node_id={company && company.id} />
