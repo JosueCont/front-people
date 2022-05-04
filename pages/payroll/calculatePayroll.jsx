@@ -55,6 +55,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [calculate, setCalculate] = useState(false);
   const [totalSalary, setTotalSalary] = useState(null);
   const [totalIsr, setTotalIsr] = useState(null);
+  const [calendarSelect, setCalendarSelect] = useState(null);
 
   const [infoGenericModal, setInfoGenericModal] = useState({
     title: "Timbrado de nómina",
@@ -94,6 +95,7 @@ const CalculatePayroll = ({ ...props }) => {
   const changeCalendar = (value) => {
     const calendar = paymentCalendars.find((item) => item.id === value);
     const period = calendar.periods.find((p) => p.active == true);
+    setCalendarSelect(calendar.id);
     if (period) {
       setActivePeriod(period.id);
       setPayrollType(calendar.perception_type.code);
@@ -576,14 +578,16 @@ const CalculatePayroll = ({ ...props }) => {
           description:
             "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
           type_alert: "success",
-          action: () =>
-            router.push({
-              pathname: "/payroll/payrollVaucher",
-              query: {
-                calendar: form.getFieldValue("calendar"),
-                period: activePeriod,
-              },
-            }),
+          action: () => {
+            console.log(calendarSelect),
+              router.push({
+                pathname: "/payroll/payrollVaucher",
+                query: {
+                  calendar: calendarSelect,
+                  period: activePeriod,
+                },
+              });
+          },
           title_action_button: "Ver comprobantes",
         });
         setGenericModal(true);

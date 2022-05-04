@@ -130,6 +130,7 @@ const PayrollVaucher = ({ ...props }) => {
 
   useEffect(() => {
     if (router.query && router.query.calendar && router.query.period) {
+      console.log("DATaS-->> ", router.query.calendar, router.query.period);
       form.setFieldsValue({
         calendar: router.query.calendar,
         period: router.query.period,
