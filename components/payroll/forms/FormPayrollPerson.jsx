@@ -66,9 +66,11 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
           let item = response.data;
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
-            contract_type: item.contract_type.id,
-            hiring_regime_type: item.hiring_regime_type.id,
-            type_tax: item.type_tax.id,
+            contract_type: item.contract_type ? item.contract_type.id : null,
+            hiring_regime_type: item.hiring_regime_type
+              ? item.hiring_regime_type.id
+              : null,
+            type_tax: item.type_tax ? item.type_tax.id : null,
             unionized: item.unionized ? item.unionized : false,
             payment_type: item.payment_type,
             bank: item.bank,

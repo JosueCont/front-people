@@ -455,6 +455,8 @@ const CalculatePayroll = ({ ...props }) => {
         setLoading(false);
         setMessageModal(4);
         form.resetFields();
+        setTotalSalary(null);
+        setTotalIsr(null);
         setPayroll([]);
         message.success(messageSendSuccess);
       })
@@ -703,7 +705,7 @@ const CalculatePayroll = ({ ...props }) => {
                   hideExpandIcon
                   locale={{ emptyText: "No se encontraron resultados" }}
                 />
-                {totalSalary && totalIsr && (
+                {totalSalary != null && totalIsr != null ? (
                   <Col sm={24} md={18} lg={12}>
                     <Row>
                       <Col span={12} style={{ fontWeight: "bold" }}>
@@ -716,7 +718,7 @@ const CalculatePayroll = ({ ...props }) => {
                       </Col>
                     </Row>
                   </Col>
-                )}
+                ) : null}
               </Card>
             </Col>
           </Row>
