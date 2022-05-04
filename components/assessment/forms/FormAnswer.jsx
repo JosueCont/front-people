@@ -76,7 +76,6 @@ const FormAnswer = ({ assessmentStore, ...props }) => {
     <Modal
       title={props.title}
       visible={props.visible}
-      footer={null}
       onCancel={() => props.close()}
       width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[

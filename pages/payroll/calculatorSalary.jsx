@@ -25,9 +25,10 @@ import { Global } from "@emotion/core";
 import { ruleRequired } from "../../utils/rules";
 import { numberFormat } from "../../utils/functions";
 import { withAuthSync } from "../../libs/auth";
+import WebApiPayroll from "../../api/WebApiPayroll";
 const { TabPane } = Tabs;
 
-const calculatorSalary = () => {
+const calculatorSalary = ({ ...props }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [salary, setSalary] = useState(null);
@@ -42,6 +43,7 @@ const calculatorSalary = () => {
     value.salary = parseFloat(value.salary);
     setSalary(null);
     setLoading(true);
+    if (value.person_id) delete value["person_id"];
     await webApiFiscal
       .calculatorSalary(value)
       .then((response) => {
@@ -72,6 +74,19 @@ const calculatorSalary = () => {
       setAllowance(false);
     } else {
       setChangeType(true), setAllowance(true);
+    }
+  };
+
+  const setPerson = (value) => {
+    if (props.peopleCompany) {
+      WebApiPayroll.getPayrollPerson(value)
+        .then((response) => {
+          form.setFieldsValue({ salary: response.data.daily_salary });
+        })
+        .catch((e) => {
+          setLoading(false);
+          console.log(e);
+        });
     }
   };
 
@@ -147,7 +162,7 @@ const calculatorSalary = () => {
       <Content className="site-layout">
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
-          <Breadcrumb.Item>Nomina</Breadcrumb.Item>
+          <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Calculadora</Breadcrumb.Item>
         </Breadcrumb>
         <Row>
@@ -174,6 +189,7 @@ const calculatorSalary = () => {
                           placeholder="Colaboradores"
                           name="person_id"
                           size={"large"}
+                          onChange={(value) => setPerson(value)}
                         />
                       </Col>
                       <Col span={12}>
@@ -230,18 +246,6 @@ const calculatorSalary = () => {
                           Calcular
                         </Button>
                       </Col>
-                      {/* <Col
-                        className="button-filter-person"
-                        style={{ display: "flex" }}
-                      >
-                        <Button
-                          className="btn-generate"
-                          onClick={() => generateCfdi()}
-                          size="large"
-                        >
-                          Guardar PDF
-                        </Button>
-                      </Col> */}
                     </Row>
                   </Form>
                 </Col>
@@ -401,6 +405,7 @@ const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     permissions: state.userStore.permissions,
+    peopleCompany: state.catalogStore.people_company,
   };
 };
 

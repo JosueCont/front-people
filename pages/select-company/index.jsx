@@ -156,19 +156,19 @@ const SelectCompany = ({ ...props }) => {
         </div>
       ),
     },
-    {
-      title: "Nombre comercial",
-      key: "tradename",
-      render: (text, record) => (
-        <div
-          style={{ cursor: "pointer" }}
-          size="middle"
-          onClick={() => setCompanySelect(record)}
-        >
-          <a>{record.tradename}</a>
-        </div>
-      ),
-    },
+    // {
+    //   title: "Nombre comercial",
+    //   key: "tradename",
+    //   render: (text, record) => (
+    //     <div
+    //       style={{ cursor: "pointer" }}
+    //       size="middle"
+    //       onClick={() => setCompanySelect(record)}
+    //     >
+    //       <a>{record.tradename ? record.tradename : record.name}</a>
+    //     </div>
+    //   ),
+    // },
   ];
 
   const switchModal = () => {
@@ -299,12 +299,12 @@ const SelectCompany = ({ ...props }) => {
                         }}
                         onClick={() => setCompanySelect(item)}
                       >
-                        <span
+                        {/* <span
                           className="buttonEditCompany"
                           style={{ position: "absolute" }}
                         >
                           <EditOutlined />
-                        </span>
+                        </span> */}
                         <Meta
                           className="meta_company"
                           title={item.name}
