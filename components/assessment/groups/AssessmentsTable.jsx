@@ -180,23 +180,23 @@ const AssessmentsTable = ({...props}) => {
         title: "Evaluaciones",
         render: (item) => {
           return (
-            <div style={{justifyContent:'center', cursor:'pointer'}}>
-              {
-                item.assessments && item.assessments.length > 0 && (
-                  <Tooltip title='Ver encuenstas'>
-                    <Badge onClick={()=>openModalSurveys(item)} 
-                      style={{ backgroundColor: '#52c41a' }}
-                    count={
-                        <>
-                        <FileTextOutlined style={{ color: '#52c41a' }} />
-                        {item.assessments ? item.assessments.length : 0}
-                        </>
-                      }
-                    />
-                  </Tooltip>
-                )
-              }
-            </div>
+            <Space>
+              {item.assessments?.length > 0 && (
+                <Tooltip title='Ver evaluaciones'>
+                  <EyeOutlined
+                    style={{cursor: 'pointer'}}
+                    onClick={()=>openModalSurveys(item)}
+                  />
+                </Tooltip>
+              )}
+              <Tag
+                icon={<FileTextOutlined style={{color:'#52c41a'}} />}
+                color={'green'}
+                style={{fontSize: '14px'}}
+              >
+                {item.assessments ? item.assessments.length : 0}
+              </Tag>
+            </Space>
           )
         }
       },

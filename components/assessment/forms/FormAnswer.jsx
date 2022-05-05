@@ -36,35 +36,46 @@ const FormAnswer = ({ assessmentStore, ...props }) => {
     setLoading(assessmentStore.fetching);
   }, [assessmentStore]);
 
+  const setFieldError = (name) =>{
+    formAnswers.setFields([{name: name, errors: ["Este campo no puede estar vacío"]}])
+  }
+
   const onFinish = (values) => {
-    values.description_es = descripcion;
-    if (props.loadData) {
-      props
-        .answerUpdateAction(answerId, values)
-        .then((response) => {
-          response
-            ? message.success("Actualizado correctamente")
-            : message.error("Hubo un error"),
+    const regex = /^\s+$/;
+    if(regex.test(values.title)){
+      setFieldError('title')
+    }else if(regex.test(values.value)){
+      setFieldError('value')
+    }else{
+      values.description_es = descripcion;
+      if (props.loadData) {
+        props
+          .answerUpdateAction(answerId, values)
+          .then((response) => {
+            response
+              ? message.success("Actualizado correctamente")
+              : message.error("Hubo un error"),
+              props.close();
+          })
+          .catch((e) => {
+            message.error("Hubo un error");
             props.close();
-        })
-        .catch((e) => {
-          message.error("Hubo un error");
-          props.close();
-        });
-    } else {
-      values.question = props.idQuestion;
-      props
-        .answerCreateAction(values)
-        .then((response) => {
-          response
-            ? message.success("Agregado correctamente")
-            : message.error("Hubo un error"),
+          });
+      } else {
+        values.question = props.idQuestion;
+        props
+          .answerCreateAction(values)
+          .then((response) => {
+            response
+              ? message.success("Agregado correctamente")
+              : message.error("Hubo un error"),
+              props.close();
+          })
+          .catch((e) => {
+            message.error("Hubo un error");
             props.close();
-        })
-        .catch((e) => {
-          message.error("Hubo un error");
-          props.close();
-        });
+          });
+      }
     }
   };
 
@@ -76,9 +87,8 @@ const FormAnswer = ({ assessmentStore, ...props }) => {
     <Modal
       title={props.title}
       visible={props.visible}
-      footer={null}
       onCancel={() => props.close()}
-      width={window.innerWidth > 1000 ? "60%" : "80%"}
+      // width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[
         <Button key="back" onClick={() => props.close()}>
           Cancelar
@@ -94,7 +104,14 @@ const FormAnswer = ({ assessmentStore, ...props }) => {
         </Button>,
       ]}
     >
-      <Form {...layout} onFinish={onFinish} id="formAnswers" form={formAnswers}>
+      <Form
+        // {...layout}
+        onFinish={onFinish}
+        id="formAnswers"
+        form={formAnswers}
+        layout={'vertical'}
+        requiredMark={false}
+      >
         <Form.Item name="title" label={"Título"} rules={[ruleRequired]}>
           <Input maxLength={200} allowClear={true} placeholder="Título" />
         </Form.Item>

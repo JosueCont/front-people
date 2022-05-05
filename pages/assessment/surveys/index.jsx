@@ -52,13 +52,6 @@ const AssessmentScreen = ({
   const dispatch = useDispatch();
   const router = useRouter();
   const [form] = Form.useForm();
-
-  // const [permissions, setPermissions] = useState({
-  //   view: true,
-  //   create: true,
-  //   edit: true,
-  //   delete: true,
-  // });
   const [listCategories, setListCategories] = useState([]);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -77,18 +70,19 @@ const AssessmentScreen = ({
     onFilterActive,
     onFilterReset,
   ] = useFilter();
-  const [numPage, setNumPage] = useState(1);
 
   useEffect(() => {
-    let nodeId = userCompanyId();
-    props.assessmentLoadAction(nodeId, "&paginate=true&limit=10&offset=0");
-    getCategories();
-  }, []);
+    if(props.currentNode){
+      props.assessmentLoadAction(props.currentNode.id, "&paginate=true&limit=10&offset=0");
+      getCategories();
+      updPagination(1);
+    }
+  }, [props.currentNode]);
 
   useEffect(() => {
+    setLoading(assessmentStore.fetching);
     if (assessmentStore.assessments?.length > 0) {
       setAssessments(assessmentStore.assessments);
-      setLoading(assessmentStore.fetching);
       assessmentStore.active_modal === types.CREATE_ASSESSMENTS
         ? setShowCreateAssessment(true)
         : setShowCreateAssessment(false);
@@ -97,16 +91,6 @@ const AssessmentScreen = ({
         : setShowUpdateAssessment(false);
     }
   }, [assessmentStore]);
-
-  /* const getCategories = async () =>{
-    try {
-        let response = await WebApiAssessment.getCategoriesAssessment();
-        setListCategories(response.data)
-    } catch (e) {
-        setListCategories([])
-        console.log(e)
-    }
-} */
 
   const HandleCreateAssessment = () => {
     setAssessmentData(false);
@@ -145,7 +129,6 @@ const AssessmentScreen = ({
   };
 
   const HandleFilterReset = (assessments) => {
-    setNumPage(1);
     form.resetFields();
     onFilterReset(assessments);
   };
@@ -190,7 +173,6 @@ const AssessmentScreen = ({
   };
 
   const onFinishCreateGroup = async (values) => {
-    3;
     setLoading(true);
     const body = { ...values, node: props.currentNode?.id };
     try {
@@ -230,13 +212,38 @@ const AssessmentScreen = ({
   const menuTable = () => {
     return (
       <Menu>
-        {props.permissions?.delete && (
+        {props.permissions?.create && (
           <Menu.Item
             key={1}
             icon={<PlusOutlined />}
             onClick={() => setOpenModalAddGroup(true)}
           >
             Crear grupo
+          </Menu.Item>
+        )}
+      </Menu>
+    );
+  };
+
+  const menuSurvey = (item) => {
+    return (
+      <Menu>
+        {props.permissions?.edit && (
+          <Menu.Item
+            key={1}
+            icon={<EditOutlined />}
+            onClick={() => HandleUpdateAssessment(item)}
+          >
+            Editar
+          </Menu.Item>
+        )}
+        {props.permissions?.create && (
+          <Menu.Item
+            key={1}
+            icon={<DeleteOutlined />}
+            onClick={() => HandleDeleteAssessment(item.id)}
+          >
+            Eliminar
           </Menu.Item>
         )}
       </Menu>
@@ -300,7 +307,7 @@ const AssessmentScreen = ({
       title: () => {
         return (
           <>
-            {props.permissions?.delete && (
+            {props.permissions?.create && (
               <Dropdown overlay={menuTable}>
                 <Button size="small">
                   <EllipsisOutlined />
@@ -315,22 +322,13 @@ const AssessmentScreen = ({
           <>
             {item.category !== "K" && (
               <>
-                <Row key={"actions-" + item.id}>
-                  {props.permissions?.edit && (
-                    <Col span={6}>
-                      <EditOutlined
-                        onClick={() => HandleUpdateAssessment(item)}
-                      />
-                    </Col>
-                  )}
-                  {props.permissions?.delete && (
-                    <Col span={6}>
-                      <DeleteOutlined
-                        onClick={() => HandleDeleteAssessment(item.id)}
-                      />
-                    </Col>
-                  )}
-                </Row>
+                {(props.permissions?.edit || props.permissions?.delete) && (
+                  <Dropdown overlay={()=>menuSurvey(item)}>
+                    <Button size="small">
+                      <EllipsisOutlined />
+                    </Button>
+                  </Dropdown>
+                )}
               </>
             )}
           </>
@@ -344,11 +342,11 @@ const AssessmentScreen = ({
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({ pathname: "/assessments/surveys" })}
+          onClick={() => router.push({ pathname: "/home/persons" })}
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item> Evaluaciones </Breadcrumb.Item>
+        <Breadcrumb.Item> Evaluaciones</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row>
@@ -356,7 +354,7 @@ const AssessmentScreen = ({
             <Form form={form} scrollToFirstError>
               <Row>
                 <Col span={16}>
-                  <Form.Item name="Filter" label="Filter">
+                  <Form.Item name="Filter" label="Filtrar">
                     <Input
                       placeholder="Filtra las evaluaciones"
                       maxLength={200}
@@ -364,16 +362,11 @@ const AssessmentScreen = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col span={8}>
+                <Col span={8} style={{display: 'flex', gap:'8px'}}>
                   <div style={{ float: "left", marginLeft: "5px" }}>
                     <Form.Item>
                       <Button
                         onClick={() => onFilterActive(assessments)}
-                        style={{
-                          background: "#fa8c16",
-                          fontWeight: "bold",
-                          color: "white",
-                        }}
                         htmlType="submit"
                       >
                         <SearchOutlined />
@@ -382,10 +375,7 @@ const AssessmentScreen = ({
                   </div>
                   <div style={{ float: "left", marginLeft: "5px" }}>
                     <Form.Item>
-                      <Button
-                        onClick={() => HandleFilterReset(assessments)}
-                        style={{ marginTop: "auto", marginLeft: 10 }}
-                      >
+                      <Button onClick={() => HandleFilterReset(assessments)}>
                         <SyncOutlined />
                       </Button>
                     </Form.Item>
@@ -394,28 +384,22 @@ const AssessmentScreen = ({
               </Row>
             </Form>
           </Col>
-          <Col span={6} style={{ display: "flex", justifyContent: "flex-end" }}>
-            {props.permissions?.create && (
-              <Button
-                style={{
-                  background: "#fa8c16",
-                  fontWeight: "bold",
-                  color: "white",
-                }}
-                loading={loading}
-                onClick={() => HandleCreateAssessment()}
-              >
-                <PlusOutlined /> Agregar Encuesta
+          {props.permissions?.create && (
+            <Col span={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button onClick={() => HandleCreateAssessment()}>
+                <PlusOutlined /> Agregar encuesta
               </Button>
-            )}
-          </Col>
+            </Col>
+          )}
         </Row>
         <Row>
           <Col span={24}>
             <Table
               rowKey={"id"}
+              size={"small"}
               columns={columns}
               dataSource={filterActive ? filterValues : assessments}
+              className={'table-surveys'}
               loading={loading}
               locale={{
                 emptyText: loading
@@ -429,14 +413,15 @@ const AssessmentScreen = ({
           </Col>
         </Row>
       </div>
-      <FormAssessment
-        title={
-          showCreateAssessment ? "Agregar nueva encuesta" : "Modificar encuesta"
-        }
-        visible={showCreateAssessment || showUpdateAssessment}
-        close={HandleCloseModal}
-        loadData={assessmentData}
-      />
+      {(showCreateAssessment || showUpdateAssessment) && (
+        <FormAssessment
+          title={showCreateAssessment ? "Agregar nueva encuesta" : "Modificar encuesta"}
+          visible={showCreateAssessment || showUpdateAssessment}
+          close={HandleCloseModal}
+          loadData={assessmentData}
+          onChangeTable={onChangeTable}
+        />
+      )}
       {showModalCreateGroup && (
         <AssessmentsGroup
           loadData={{ name: "", assessments: testsSelected }}
@@ -444,7 +429,6 @@ const AssessmentScreen = ({
           visible={showModalCreateGroup}
           close={HandleCloseGroup}
           actionForm={onFinishCreateGroup}
-          surveyList={assessments}
         />
       )}
     </MainLayout>

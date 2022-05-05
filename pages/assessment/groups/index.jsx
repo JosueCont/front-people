@@ -119,7 +119,7 @@ const GroupsKuiz = ({getCategories,assessmentStore , ...props}) =>{
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={"pointer"}
-                    onClick={() => router.push({ pathname: "/assessments/groups" })}
+                    onClick={() => router.push({ pathname: "/home/persons" })}
                 >
                     Inicio
                 </Breadcrumb.Item>

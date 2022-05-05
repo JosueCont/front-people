@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Modal, message } from "antd";
+import { Form, Input, Button, Modal, message, Row, Col } from "antd";
 import { connect, useDispatch } from "react-redux";
 import { withAuthSync, userCompanyId } from "../../../libs/auth";
 import FormItemHTML from "./FormItemHtml";
@@ -43,49 +43,67 @@ const FormSections = ({ assessmentStore, ...props }) => {
     setLoading(assessmentStore.fetching);
   }, [assessmentStore]);
 
+  const validateVoid = (obj) =>{
+    const regex = /^\s+$/;
+    let fieldsValidate = Object.entries(obj).map(([key, val])=>{
+      if(key == 'code' || key == 'name'){
+        let invalid = regex.test(val);
+        if(invalid){
+          formSections.setFields([{name: key, errors: ["Este campo no puede estar vacío"]}])
+          return true;
+        }else{
+          return false;
+        }
+      }else{
+        return false;
+      }
+    })
+    return fieldsValidate.some(item => item === true);
+  }
+
+  const setFieldError = (name) =>{
+    formSections.setFields([{name: name, errors: ["Este campo no puede estar vacío"]}])
+  }
+
   const onFinish = (values) => {
     const regex = /^\s+$/;
-    const invalid = regex.test(values.code);
-    if (invalid) {
-      formSections.setFields([
-        {
-          name: "code",
-          errors: ["Este campo no puede estar vacío"],
-        },
-      ]);
-    }
-    return;
-    values.instructions_es = instruccions;
-    values.short_instructions_es = instruccionCorta;
-    values.assessment = assessment_selected.id;
-    if (props.loadData) {
-      props
-        .sectionUpdateAction(sectionId, values)
-        .then((response) => {
-          response
-            ? message.success("Actualizado correctamente")
-            : message.error("Hubo un error"),
+    if(regex.test(values.code)){
+      setFieldError('code')
+    }else if(regex.test(values.name)){
+      setFieldError('name')
+    }else{
+      values.instructions_es = instruccions;
+      values.short_instructions_es = instruccionCorta;
+      values.assessment = assessment_selected.id;
+      if (props.loadData) {
+        props
+          .sectionUpdateAction(sectionId, values)
+          .then((response) => {
+            response
+              ? message.success("Actualizado correctamente")
+              : message.error("Hubo un error"),
+              props.close();
+          })
+          .catch((e) => {
+            message.error("Hubo un error");
             props.close();
-        })
-        .catch((e) => {
-          message.error("Hubo un error");
-          props.close();
-        });
-    } else {
-      props
-        .sectionCreateAction(values)
-        .then((response) => {
-          response
-            ? message.success("Creado correctamente")
-            : message.error("Hubo un error"),
+          });
+      } else {
+        props
+          .sectionCreateAction(values)
+          .then((response) => {
+            response
+              ? message.success("Creado correctamente")
+              : message.error("Hubo un error"),
+              props.close();
+          })
+          .catch((e) => {
+            message.error("Hubo un error");
             props.close();
-        })
-        .catch((e) => {
-          message.error("Hubo un error");
-          props.close();
-        });
+          });
+      }
     }
-  };
+  }
 
   const onReset = () => {
     formSections.resetFields();
@@ -96,7 +114,7 @@ const FormSections = ({ assessmentStore, ...props }) => {
       title={props.title}
       visible={props.visible}
       onCancel={() => props.close()}
-      width={window.innerWidth > 1000 ? "60%" : "80%"}
+      width={800}
       footer={[
         <Button key="back" onClick={() => props.close()}>
           Cancelar
@@ -113,29 +131,41 @@ const FormSections = ({ assessmentStore, ...props }) => {
       ]}
     >
       <Form
-        {...layout}
+        // {...layout}
         onFinish={onFinish}
         id="formSections"
         form={formSections}
+        layout={'vertical'}
+        requiredMark={false}
       >
-        <Form.Item name="code" label={"Código"} rules={[ruleRequired]}>
-          <Input maxLength={200} allowClear={true} placeholder="Código" />
-        </Form.Item>
-        <Form.Item name="name" label={"Nombre"} rules={[ruleRequired]}>
-          <Input maxLength={200} allowClear={true} placeholder="Nombre" />
-        </Form.Item>
-        <FormItemHTML
-          html={instruccions}
-          setHTML={setInstruccions}
-          getLabel="Instrucciones"
-          getName="instructions_es"
-        />
-        <FormItemHTML
-          html={instruccionCorta}
-          setHTML={setInstruccionCorta}
-          getLabel="Instrucción corta"
-          getName="short_instructions_es"
-        />
+        <Row gutter={[16,16]}>
+          <Col span={12}>
+            <Form.Item name="code" label={"Código"} rules={[ruleRequired]}>
+              <Input maxLength={200} allowClear={true} placeholder="Código" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item name="name" label={"Nombre"} rules={[ruleRequired]}>
+              <Input maxLength={200} allowClear={true} placeholder="Nombre" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <FormItemHTML
+              html={instruccions}
+              setHTML={setInstruccions}
+              getLabel="Instrucciones"
+              getName="instructions_es"
+            />
+          </Col>
+          <Col span={12}>
+            <FormItemHTML
+              html={instruccionCorta}
+              setHTML={setInstruccionCorta}
+              getLabel="Instrucción corta"
+              getName="short_instructions_es"
+            />
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );
