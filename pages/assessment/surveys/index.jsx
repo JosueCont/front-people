@@ -225,6 +225,14 @@ const AssessmentScreen = ({
     );
   };
 
+  const rowSelectionGroup = {
+    selectedRowKeys: testsKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setTestsKeys(selectedRowKeys);
+      setTestsSelected(selectedRows);
+    },
+  };
+
   const menuSurvey = (item) => {
     return (
       <Menu>
@@ -250,14 +258,6 @@ const AssessmentScreen = ({
     );
   };
 
-  const rowSelectionGroup = {
-    selectedRowKeys: testsKeys,
-    onChange: (selectedRowKeys, selectedRows) => {
-      setTestsKeys(selectedRowKeys);
-      setTestsSelected(selectedRows);
-    },
-  };
-
   const columns = [
     {
       title: "Nombre",
@@ -280,7 +280,11 @@ const AssessmentScreen = ({
       render: (item) => {
         return (
           <div key={"category-" + item.id}>
-            {item.category === "A" ? "Assessment" : "Quiz"}
+            {item.category === "A"
+              ? "Assessment"
+              : item.category === "Q"
+              ? "Quiz"
+              : "Khor"}
           </div>
         );
       },
@@ -342,11 +346,11 @@ const AssessmentScreen = ({
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
-          onClick={() => router.push({ pathname: "/home/persons" })}
+          onClick={() => router.push({ pathname: "/home/persons/" })}
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item> Evaluaciones</Breadcrumb.Item>
+        <Breadcrumb.Item> Evaluaciones </Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row>
@@ -354,7 +358,7 @@ const AssessmentScreen = ({
             <Form form={form} scrollToFirstError>
               <Row>
                 <Col span={16}>
-                  <Form.Item name="Filter" label="Filtrar">
+                  <Form.Item name="Filter" label="Filter">
                     <Input
                       placeholder="Filtra las evaluaciones"
                       maxLength={200}
@@ -362,7 +366,7 @@ const AssessmentScreen = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col span={8} style={{display: 'flex', gap:'8px'}}>
+                <Col span={8}>
                   <div style={{ float: "left", marginLeft: "5px" }}>
                     <Form.Item>
                       <Button
@@ -375,7 +379,10 @@ const AssessmentScreen = ({
                   </div>
                   <div style={{ float: "left", marginLeft: "5px" }}>
                     <Form.Item>
-                      <Button onClick={() => HandleFilterReset(assessments)}>
+                      <Button
+                        onClick={() => HandleFilterReset(assessments)}
+                        style={{ marginTop: "auto", marginLeft: 10 }}
+                      >
                         <SyncOutlined />
                       </Button>
                     </Form.Item>
@@ -397,9 +404,9 @@ const AssessmentScreen = ({
             <Table
               rowKey={"id"}
               size={"small"}
+              className={"table-surveys"}
               columns={columns}
               dataSource={filterActive ? filterValues : assessments}
-              className={'table-surveys'}
               loading={loading}
               locale={{
                 emptyText: loading
@@ -415,7 +422,7 @@ const AssessmentScreen = ({
       </div>
       {(showCreateAssessment || showUpdateAssessment) && (
         <FormAssessment
-          title={showCreateAssessment ? "Agregar nueva encuesta" : "Modificar encuesta"}
+          title={ showCreateAssessment ? "Agregar nueva encuesta" : "Modificar encuesta"}
           visible={showCreateAssessment || showUpdateAssessment}
           close={HandleCloseModal}
           loadData={assessmentData}
@@ -429,6 +436,7 @@ const AssessmentScreen = ({
           visible={showModalCreateGroup}
           close={HandleCloseGroup}
           actionForm={onFinishCreateGroup}
+          surveyList={assessments}
         />
       )}
     </MainLayout>

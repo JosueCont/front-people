@@ -66,9 +66,11 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
           let item = response.data;
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
-            contract_type: item.contract_type.id,
-            hiring_regime_type: item.hiring_regime_type.id,
-            type_tax: item.type_tax.id,
+            contract_type: item.contract_type ? item.contract_type.id : null,
+            hiring_regime_type: item.hiring_regime_type
+              ? item.hiring_regime_type.id
+              : null,
+            type_tax: item.type_tax ? item.type_tax.id : null,
             unionized: item.unionized ? item.unionized : false,
             payment_type: item.payment_type,
             bank: item.bank,
@@ -383,7 +385,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
               </Form.Item>
             </Col>
             <Col lg={8} xs={22} md={12}>
-              <Form.Item name="last_day_paid" label="Ultimo día de pago">
+              <Form.Item name="last_day_paid" label="Último día de pago">
                 <DatePicker
                   style={{ width: "100%" }}
                   onChange={onChangeLastDayPaid}

@@ -4,40 +4,43 @@ import React, { useEffect, useState } from "react";
 import { withAuthSync } from "../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import WebApiPeople from "../../api/WebApiPeople";
+import {
+  messageError,
+  messageSaveSuccess,
+  messageUpdateSuccess,
+} from "../../utils/constant";
 
-const GeneralData = ({ company, ...props }) => {
+const GeneralData = ({ node_id, ...props }) => {
   let router = useRouter();
-  const [update, setUpdate] = useState(false);
-  const [companyInfo, setCompanyInfo] = useState();
+  const [companyInfo, setCompanyInfo] = useState(null);
   const [form] = Form.useForm();
   const { TextArea } = Input;
 
   useEffect(() => {
-    {
-      Axios.get(API_URL + `/business/node-information/?node=${router.query.id}`)
-        .then(function (response) {
-          if (response.data.results.length > 0) {
-            setUpdate(true);
-            setCompanyInfo(response.data.results[0]);
-            form.setFieldsValue({
-              address: response.data.results[0].address,
-              contact_email: response.data.results[0].contact_email,
-              contact_phone: response.data.results[0].contact_phone,
-              about_us: response.data.results[0].about_us,
-              policies: response.data.results[0].policies,
-              business_rules: response.data.results[0].business_rules,
-            });
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
+    if (node_id) getNodeInformation();
+  }, [node_id]);
+
+  const getNodeInformation = () => {
+    WebApiPeople.generalInfoNode("get", null, `?node=${node_id}`)
+      .then((response) => {
+        setCompanyInfo(response.data);
+        form.setFieldsValue({
+          contact_email: response.data.contact_email,
+          contact_phone: response.data.contact_phone,
+          about_us: response.data.about_us,
+          policies: response.data.policies,
+          business_rules: response.data.business_rules,
         });
-    }
-  }, [router.query.id]);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const onFinish = (data) => {
-    data.node = company.id;
-    if (update) {
+    data.node = node_id;
+    if (companyInfo) {
       updateInfo(data);
     } else {
       createInfo(data);
@@ -45,23 +48,24 @@ const GeneralData = ({ company, ...props }) => {
   };
 
   const createInfo = (data) => {
-    Axios.post(API_URL + `/business/node-information/`, data)
-      .then(function (response) {
-        message.success("Agregado correctamente.");
+    WebApiPeople.generalInfoNode("post", data)
+      .then((response) => {
+        message.success(messageSaveSuccess);
+        setCompanyInfo(response.data);
       })
-      .catch(function (error) {
-        message.error("Ocurrio un error, intente de nuevo");
+      .catch((error) => {
+        message.error(messageError);
         console.log(error);
       });
   };
 
   const updateInfo = (data) => {
-    Axios.put(API_URL + `/business/node-information/${companyInfo.id}/`, data)
+    WebApiPeople.generalInfoNode("put", data, `${companyInfo.id}/`)
       .then(function (response) {
-        message.success("Actualizado correctamente.");
+        message.success(messageUpdateSuccess);
       })
       .catch(function (error) {
-        message.error("Ocurrio un error, intente de nuevo");
+        message.error(messageError);
         console.log(error);
       });
   };

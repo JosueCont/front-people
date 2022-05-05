@@ -967,7 +967,7 @@ const homeScreen = ({ ...props }) => {
             )
           }
         >
-          Plantilla con Nomina Asimilados
+          Plantilla con Nómina Asimilados
         </Menu.Item>
       )}
     </Menu>
