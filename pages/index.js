@@ -279,10 +279,12 @@ const Home = ({ ...props }) => {
 
             <Col xs={24} md={12} sm={24}>
               {recoverPasswordShow ? (
-                <PasswordRecover
-                  generalConfig={props.config}
-                  setRecoverPasswordShow={setRecoverPasswordShow}
-                />
+                <div className={"divform"}>
+                  <PasswordRecover
+                    generalConfig={props.config}
+                    setRecoverPasswordShow={setRecoverPasswordShow}
+                  />
+                </div>
               ) : (
                 <div className={"divform"}>
                   <LoginForm

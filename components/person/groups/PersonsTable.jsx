@@ -22,6 +22,7 @@ import {
     UserOutlined,
     EllipsisOutlined
 } from "@ant-design/icons";
+import { BsHandIndex } from 'react-icons/bs';
 import { connect } from "react-redux";
 import ViewMembers from "./ViewMembers";
 import DeleteGroups from "../../assessment/groups/DeleteGroups";
@@ -218,6 +219,7 @@ const PersonsTable = ({permissions, ...props}) => {
       <Menu>
         {permissions?.delete && (
           <Menu.Item
+            icon={<BsHandIndex/>}
             key={1}
             onClick={() => setOpenModalAssign(true)}>
             Asignar evaluaciones
@@ -241,6 +243,7 @@ const PersonsTable = ({permissions, ...props}) => {
       <Menu>
         {permissions.create && (
           <Menu.Item
+            icon={<BsHandIndex/>}
             key={3}
             onClick={() => HandleModalAssign(item)}>
             Asignar evaluaciones
@@ -284,13 +287,6 @@ const PersonsTable = ({permissions, ...props}) => {
         render: (item) => {
           return (
             <Space>
-              <Tag
-                icon={<UserOutlined style={{color:'#52c41a'}} />}
-                color={'green'}
-                style={{fontSize: '14px'}}
-              >
-                {item.persons ? item.persons.length : 0}
-              </Tag>
               {item.persons?.length > 0 && (
                 <Tooltip title='Ver integrantes'>
                   <EyeOutlined
@@ -299,6 +295,13 @@ const PersonsTable = ({permissions, ...props}) => {
                   />
                 </Tooltip>
               )}
+              <Tag
+                icon={<UserOutlined style={{color:'#52c41a'}} />}
+                color={'green'}
+                style={{fontSize: '14px'}}
+              >
+                {item.persons ? item.persons.length : 0}
+              </Tag>
             </Space>
           )
         },
@@ -354,6 +357,7 @@ const PersonsTable = ({permissions, ...props}) => {
                   rowKey={'id'}
                   columns={columns}
                   size={'small'}
+                  className={'table-group-persons'}
                   loading={props.loading}
                   dataSource={props.dataGroups?.results}
                   locale={{

@@ -257,12 +257,6 @@ const Detail = ({ assessmentStore, ...props }) => {
             style={{ display: "flex", justifyContent: "flex-end" }}
           >
             <Button
-              style={{
-                background: "#fa8c16",
-                fontWeight: "bold",
-                color: "white",
-              }}
-              loading={loading}
               onClick={() => HandleCreateSection(true)}
             >
               <PlusOutlined /> Agregar nueva sección
@@ -365,7 +359,7 @@ const Detail = ({ assessmentStore, ...props }) => {
                 })
               ) : (
                 <NoCollapseContent
-                  contentTitle="encuesta"
+                  contentTitle="evaluación"
                   itemTitle="secciones"
                 />
               )}

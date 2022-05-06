@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState } from "react";
+import { valueToFilter } from "../../utils/functions";
 
 /* 
 Ejemplo de uso 
@@ -15,12 +16,12 @@ export const useFilter = () => {
     }
 
     const handleFilterActive = (values) => {
-        if (filterString.trim() === "") {
-            setFilterActive(false);
-        }else{
-            let filtradas = values.filter( filtro => filtro.name.toLowerCase().includes(filterString) );
+        if (filterString.trim()){
+            let filtradas = values.filter(item => valueToFilter(item.name).includes(valueToFilter(filterString)));
             setFilterValues(filtradas);
             setFilterActive(true);
+        }else{
+            setFilterActive(false);
         }
     }
 

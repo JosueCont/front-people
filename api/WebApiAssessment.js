@@ -131,6 +131,10 @@ class WebApiAssessment {
         return Axios.delete(`${API_ASSESSMENT}/assessments/answer/${id}/`);
     }
 
+    static getAssessmentsByPerson(data) {
+        return WebApi.ApisType(`/person/person-assessments/my_profile/`, "post", data);
+    }
+
 }
 
 export default WebApiAssessment
