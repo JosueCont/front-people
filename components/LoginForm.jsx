@@ -180,7 +180,7 @@ const LoginForm = ({
         >
           <Form.Item>
             <p className={"form-title"}>A new people management system</p>
-            <p className={"form-subtitle"}>Inicio de Sesión</p>
+            <p className={"form-subtitle"}>Inicio de sesión</p>
           </Form.Item>
           <Form.Item
             name="email"

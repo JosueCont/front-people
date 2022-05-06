@@ -51,10 +51,18 @@ const PasswordRecover = (props) => {
           initialValues={{ remember: true }}
           onFinish={onFinish}
         >
+          <Form.Item>
+            <p className={"form-title"}>A new people management system</p>
+            <p className={"form-subtitle"}>Recuperar contraseña</p>
+          </Form.Item>
           {sendSuccess ? (
-            <Title level={4} className={"font-color-khor"}>
-              Correo electrónico enviado correctamente
-            </Title>
+            <Alert
+              message="Correo electrónico enviado correctamente"
+              description="Seguir las instrucciones para poder recuperar la contraseña"
+              type="success"
+              style={{ textAlign: "center", marginBottom: "10px" }}
+              closable
+            />
           ) : (
             <>
               <Form.Item

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MainLayout from "../../../layout/MainLayout";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { Breadcrumb, message } from "antd";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiAssessment from "../../../api/WebApiAssessment";
@@ -154,4 +154,11 @@ const GroupsPeople = () => {
   );
 };
 
-export default withAuthSync(GroupsPeople);
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+    config: state.userStore.general_config,
+  };
+};
+
+export default connect(mapState)(withAuthSync(GroupsPeople));

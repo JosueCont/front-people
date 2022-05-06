@@ -31,6 +31,7 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
+import { BsHandIndex } from 'react-icons/bs';
 import MainLayout from "../../../layout/MainLayout";
 import FormPerson from "../../../components/person/FormPerson";
 import {
@@ -528,8 +529,13 @@ const homeScreen = ({ ...props }) => {
   const menuPerson = (item) => {
     return (
       <Menu>
+        {permissions.view && (
+          <Menu.Item key="4" icon={<EyeOutlined />}>
+            <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
+          </Menu.Item>
+        )}
         {permissions.create && (
-          <Menu.Item key="1" onClick={() => HandleModalAssign(item)}>
+          <Menu.Item key="1" icon={<BsHandIndex/>} onClick={() => HandleModalAssign(item)}>
             Asignar evaluaciones
           </Menu.Item>
         )}
@@ -714,10 +720,15 @@ const homeScreen = ({ ...props }) => {
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
+      console.log('los keys----->', selectedRowKeys)
       setPersonsKeys(selectedRowKeys);
       setPersonsToDelete(selectedRows);
     },
   };
+
+  useEffect(()=>{
+    console.log('si cambie------>', personsKeys)
+  },[personsKeys])
 
   const ListElementsToDelete = ({ personsDelete }) => {
     return (
@@ -972,7 +983,7 @@ const homeScreen = ({ ...props }) => {
             inputFileRef.current.click();
           }}
         >
-          Datos basicos
+          Datos básicos
         </a>
         <input
           ref={inputFileRef}
@@ -991,7 +1002,7 @@ const homeScreen = ({ ...props }) => {
                 inputFileRefAsim.current.click();
               }}
             >
-              Datos con nomina Asimilados
+              Datos con nómina Asimilados
             </a>
             <input
               ref={inputFileRefAsim}
@@ -1187,7 +1198,8 @@ const homeScreen = ({ ...props }) => {
                 </Row>
               </div>
               <Table
-                className={"mainTable"}
+                className={"mainTable table-persons"}
+                rowKey={"id"}
                 size="small"
                 columns={
                   props.config && props.config.intranet_enabled
