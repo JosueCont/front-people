@@ -37,6 +37,7 @@ import {
     CompactButton,
 } from "../../assessment/groups/Styled";
 import { BsCircleFill } from 'react-icons/bs';
+import { valueToFilter } from "../../../utils/functions";
 
 const AssignAssessments = ({itemSelected, ...props}) =>{
 
@@ -87,7 +88,8 @@ const AssignAssessments = ({itemSelected, ...props}) =>{
             if(data.length > 0){
                 let currentList = [];
                 data.map(item =>{
-                    currentList.push({id: item.assessment})
+                    let valueId = item.assessment ? item.assessment : item.group_assessment?.id;
+                    currentList.push({id: valueId})
                 })
                 setCurrentAssigned(currentList);
             }        
@@ -116,7 +118,7 @@ const AssignAssessments = ({itemSelected, ...props}) =>{
             setCopyList(response.data);
             const list = response.data;
             if((textForSearch).trim()){
-                let results = list.filter(item => item.name.toLowerCase().includes(textForSearch.toLowerCase()));
+                let results = list.filter(item => valueToFilter(item.name).includes(valueToFilter(textForSearch)));
                 setListSurveys(results)
             }else{
                 setListSurveys(list)
@@ -228,6 +230,7 @@ const AssignAssessments = ({itemSelected, ...props}) =>{
         setGroupsKeys([])
         setCurrentAssigned([])
         setSurveySelected([])
+        setTextForSearch('')
         // setItemsSelected([])
         // setIsSelectAll(false)
     }
@@ -352,7 +355,7 @@ const AssignAssessments = ({itemSelected, ...props}) =>{
         setTextForSearch(e.target.value);
         const list = getListCopy();
         if((e.target.value).trim()){
-            let results = list.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
+            let results = list.filter(item => valueToFilter(item.name).includes(valueToFilter(e.target.value)));
             setListSurveys(results)
         }else{
             setListSurveys(list)
