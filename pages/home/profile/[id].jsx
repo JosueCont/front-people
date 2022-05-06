@@ -24,7 +24,7 @@ const ProfileUser = () => {
             getPerson(router.query.id);
             getAssessments(router.query.id);
         }
-    },[router.query])
+    },[router])
 
     const getPerson = async (id) =>{
         setLoadUser(true)
