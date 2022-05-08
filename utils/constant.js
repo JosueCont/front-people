@@ -159,6 +159,19 @@ export const headersApiKhonnect = (app_id) => {
   };
 };
 
+export const popupWindow = (url, name) =>{
+  if(typeof window !== "undefined"){
+    window.open(url, name,'toolbars=0')
+  }
+}
+
+export const getCurrentURL = () =>{
+  if(typeof window !== "undefined"){
+      let url = window.location.href;
+      return url;
+  }
+}
+
 export const monthsName = [
   {
     label: "Enero",

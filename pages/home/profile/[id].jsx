@@ -78,6 +78,7 @@ const ProfileUser = () => {
                         <Col span={24}>
                             <TableAssessments
                                 loading={loadAssessment}
+                                user_profile={person}
                                 user_assessments={assessments}
                             />
                         </Col>
