@@ -62,6 +62,7 @@ const AssessmentScreen = ({
   const [testsKeys, setTestsKeys] = useState([]);
   const [openModalAddGroup, setOpenModalAddGroup] = useState(false);
   const [showModalCreateGroup, setShowModalCreateGroup] = useState(false);
+  const [nameSearch, setNameSearch] = useState('');
   const [
     filterValues,
     filterActive,
@@ -135,13 +136,14 @@ const AssessmentScreen = ({
 
   const onChangeTable = (pagination) => {
     let nodeId = userCompanyId();
+    let nameFilter = nameSearch ? `&name=${nameSearch}` : '';
     if (pagination.current > 1) {
       const offset = (pagination.current - 1) * 10;
-      let queryParam = `&paginate=true&limit=10&offset=${offset}`;
+      let queryParam = `&paginate=true&limit=10&offset=${offset}${nameFilter}`;
       props.assessmentLoadAction(nodeId, queryParam);
       updPagination(pagination.current);
     } else if (pagination.current == 1) {
-      props.assessmentLoadAction(nodeId, "&paginate=true&limit=10&offset=0");
+      props.assessmentLoadAction(nodeId, `&paginate=true&limit=10&offset=0${nameFilter}`);
       updPagination(pagination.current);
     }
   };
@@ -208,6 +210,21 @@ const AssessmentScreen = ({
       }
     }
   }, [openModalAddGroup]);
+
+  const onFinishSearch = ({name}) =>{
+    if(name.trim()){
+      setNameSearch(name)
+      props.assessmentLoadAction(props.currentNode?.id, `&paginate=true&limit=10&offset=0&name=${name}`)
+    }else{
+      resetSearch()
+    }
+  }
+  
+  const resetSearch = () =>{
+    form.resetFields()
+    setNameSearch('')
+    props.assessmentLoadAction(props.currentNode?.id, "&paginate=true&limit=10&offset=0")
+  }
 
   const menuTable = () => {
     return (
@@ -355,14 +372,14 @@ const AssessmentScreen = ({
       <div className="container" style={{ width: "100%" }}>
         <Row>
           <Col span={18}>
-            <Form form={form} scrollToFirstError>
+            <Form form={form} onFinish={onFinishSearch} scrollToFirstError>
               <Row>
                 <Col span={16}>
-                  <Form.Item name="Filter" label="Filter">
+                  <Form.Item name="name" label="Filtrar">
                     <Input
                       placeholder="Filtra las evaluaciones"
                       maxLength={200}
-                      onChange={onFilterChange}
+                      // onChange={onFilterChange}
                     />
                   </Form.Item>
                 </Col>
@@ -370,7 +387,7 @@ const AssessmentScreen = ({
                   <div style={{ float: "left", marginLeft: "5px" }}>
                     <Form.Item>
                       <Button
-                        onClick={() => onFilterActive(assessments)}
+                        // onClick={() => onFilterActive(assessments)}
                         htmlType="submit"
                       >
                         <SearchOutlined />
@@ -380,7 +397,7 @@ const AssessmentScreen = ({
                   <div style={{ float: "left", marginLeft: "5px" }}>
                     <Form.Item>
                       <Button
-                        onClick={() => HandleFilterReset(assessments)}
+                        // onClick={() => HandleFilterReset(assessments)}
                         style={{ marginTop: "auto", marginLeft: 10 }}
                       >
                         <SyncOutlined />

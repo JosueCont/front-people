@@ -22,6 +22,7 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
       rfc: data.rfc,
       tax_regime: data.tax_regime,
       assimilated_pay: data.assimilated_pay,
+      has_personnel_outsourcing: data.has_personnel_outsourcing,
       business_name: data.business_name,
     });
   };
@@ -81,7 +82,6 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
             name="assimilated_pay"
             label="Pago asimilados"
             valuePropName="checked"
-            initialValue={true}
           >
             <Switch
               checkedChildren={<CheckOutlined />}
@@ -94,7 +94,6 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
             name="has_personnel_outsourcing"
             label="Subcontratacion de personal"
             valuePropName="checked"
-            initialValue={true}
           >
             <Switch
               checkedChildren={<CheckOutlined />}
