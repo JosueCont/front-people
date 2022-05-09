@@ -10,7 +10,8 @@ const LegalRepresentative = ({ form, legalRepresentative }) => {
   const setForm = (data) => {
     form.setFieldsValue({
       name: data.name,
-      work_title: data.work_title,
+      // work_title: data.work_title,
+      position: data.position,
       email: data.email,
       phone: data.phone,
       contact_name: data.contact_name,
@@ -27,7 +28,10 @@ const LegalRepresentative = ({ form, legalRepresentative }) => {
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <SelectWorkTitle />
+          {/* <SelectWorkTitle /> */}
+          <Form.Item name="position" label="Puesto de trabajo">
+            <Input />
+          </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
           <Form.Item name="email" label="Email">

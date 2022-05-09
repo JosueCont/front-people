@@ -37,34 +37,39 @@ const FormQuestion = ({ assessmentStore, ...props }) => {
   }, [assessmentStore]);
 
   const onFinish = (values) => {
-    values.description_es = descripcion;
-    if (props.loadData) {
-      props
-        .questionUpdateAction(questionId, values)
-        .then((response) => {
-          response
-            ? message.success("Actualizado correctamente")
-            : message.error("Hubo un error"),
+    const regex = /^\s+$/;
+    if(regex.test(values.title)){
+      formQuestions.setFields([{name: 'title', errors: ["Este campo no puede estar vacío"]}]);
+    }else{
+      values.description_es = descripcion;
+      if (props.loadData) {
+        props
+          .questionUpdateAction(questionId, values)
+          .then((response) => {
+            response
+              ? message.success("Actualizado correctamente")
+              : message.error("Hubo un error"),
+              props.close();
+          })
+          .catch((e) => {
+            message.error("Hubo un error");
             props.close();
-        })
-        .catch((e) => {
-          message.error("Hubo un error");
-          props.close();
-        });
-    } else {
-      values.section = props.idSection;
-      props
-        .questionCreateAction(values)
-        .then((response) => {
-          response
-            ? message.success("Agregado correctamente")
-            : message.error("Hubo un error"),
+          });
+      } else {
+        values.section = props.idSection;
+        props
+          .questionCreateAction(values)
+          .then((response) => {
+            response
+              ? message.success("Agregado correctamente")
+              : message.error("Hubo un error"),
+              props.close();
+          })
+          .catch((e) => {
+            message.error("Hubo un error");
             props.close();
-        })
-        .catch((e) => {
-          message.error("Hubo un error");
-          props.close();
-        });
+          });
+      }
     }
   };
 
@@ -77,7 +82,7 @@ const FormQuestion = ({ assessmentStore, ...props }) => {
       title={props.title}
       visible={props.visible}
       onCancel={() => props.close()}
-      width={window.innerWidth > 1000 ? "60%" : "80%"}
+      // width={window.innerWidth > 1000 ? "60%" : "80%"}
       footer={[
         <Button key="back" onClick={() => props.close()}>
           Cancelar
@@ -94,10 +99,12 @@ const FormQuestion = ({ assessmentStore, ...props }) => {
       ]}
     >
       <Form
-        {...layout}
+        // {...layout}
         onFinish={onFinish}
         id="formQuestions"
         form={formQuestions}
+        layout={'vertical'}
+        requiredMark={false}
       >
         <Form.Item name="title" label={"Título"} rules={[ruleRequired]}>
           <Input maxLength={200} allowClear={true} placeholder="Título" />

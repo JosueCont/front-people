@@ -390,3 +390,8 @@ export const getDifferenceDays = (startDate, endDate) => {
 
   return Difference_In_Days;
 };
+
+export const valueToFilter = (value) => {
+  let newVal = value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  return newVal;
+}
