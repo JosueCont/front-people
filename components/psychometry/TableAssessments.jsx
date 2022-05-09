@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {Row, Col, Progress, Card, Table } from 'antd';
 import moment from "moment";
+import jwtEncode from "jwt-encode";
+import { popupWindow, getCurrentURL } from '../../utils/constant';
 import {
   ContentTitle,
   ContentEnd,
@@ -8,10 +10,12 @@ import {
   ProgressPurple,
   CustomBtn,
 } from "./Styled";
+import WebApiAssessment from '../../api/WebApiAssessment';
 
-const TableAssessments = ({user_assessments, loading, ...props}) => {
+const TableAssessments = ({user_assessments, loading, user_profile,...props}) => {
 
   const [generalPercent, setGeneralPercent] = useState(0);
+  const [loadResults, setLoadResults] = useState(false);
 
   useEffect(()=>{
     if(user_assessments.length > 0){
@@ -31,6 +35,40 @@ const TableAssessments = ({user_assessments, loading, ...props}) => {
     setGeneralPercent(total.toFixed(2))
   }
 
+  const getResults = async (item) => {
+    setLoadResults(true)
+    try {
+      let data = {
+        user_id: user_profile.id,
+        assessment_code: item.code
+      }
+      let response = await WebApiAssessment.getAssessmentResults(data);
+      tokenToResults(item, response.data)
+    } catch (e) {
+      setLoadResults(false)
+      console.log(e)
+    }
+  }
+
+  const tokenToResults = (item, data) =>{
+    const body = {
+      assessment: item.id,
+      user_id: user_profile.id,
+      firstname: user_profile.first_name,
+      lastname: `${user_profile.flast_name} ${user_profile.mlast_name ? user_profile.mlast_name : ''}`,
+      user_photo_url: user_profile.photo,
+      company_id: user_profile.node,
+      url: getCurrentURL(),
+      assessment_date: item.apply?.end_date,
+      assessment_results: data.resultados,
+      assessment_xtras: { stage: 2 }
+    }
+    const token = jwtEncode(body, 'secret', 'HS256');
+    const url = `https://humand.kuiz.hiumanlab.com/?token=${token}`;
+    setLoadResults(false)
+    popupWindow(url, 'Resultados')
+  }
+
   const columns = [
     {
       title: 'NOMBRE',
@@ -43,7 +81,6 @@ const TableAssessments = ({user_assessments, loading, ...props}) => {
         return(
           <>
             {item.apply?.progress == 100 ? (
-              // <Moment format='LLL' date={item.apply?.end_date} locale={'es-mx'}/>
               <span>{moment(item.apply?.end_date).format('LLL').toString()}</span>
             ):(
               <span>Pendiente</span>
@@ -64,13 +101,15 @@ const TableAssessments = ({user_assessments, loading, ...props}) => {
       title: 'ACCIONES',
       width: 150,
       render: (item)=>{
-        return(
+        return (
           <>
             {item.apply?.progress == 100 ? (
               <CustomBtn
                 size={'small'}
                 bg={'#ed6432'}
                 wd={'150px'}
+                loading={loadResults}
+                onClick={()=>getResults(item)}
               >
                   Ver resultados
               </CustomBtn>
@@ -79,7 +118,6 @@ const TableAssessments = ({user_assessments, loading, ...props}) => {
                 size={'small'}
                 bg={'#814cf2'}
                 wd={'150px'}
-                // onClick={()=>startAssessment(item)}
               >
                 <span>Pendiente</span>
               </CustomBtn>
