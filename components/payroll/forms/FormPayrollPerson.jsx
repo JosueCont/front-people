@@ -8,14 +8,12 @@ import {
   Row,
   Col,
   Typography,
-  Modal,
   Select,
   Switch,
+  Table,
 } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
@@ -24,7 +22,6 @@ import { ruleRequired, fourDecimal } from "../../../utils/rules";
 const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const { Title } = Typography;
   const [formPayrollPerson] = Form.useForm();
-  const { confirm } = Modal;
   const [contrctsType, setContractsType] = useState([]);
   const [hiringRegimeType, setHiringRegimeType] = useState([]);
   const [typeTax, setTypeTax] = useState([]);
@@ -44,7 +41,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   ];
   const [idPayroll, setIdPayroll] = useState(null);
   const [loading, setLoading] = useState(false);
-  // const [payrollPerson, setPayrolPerson] = useState(null);
+  const [payrollPersonList, setPayrolPersonList] = useState([]);
   const [perceptionTypes, setPerceptionTypes] = useState([]);
 
   useEffect(() => {
@@ -56,6 +53,7 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     getPaymentCalendar();
     getTypeworkingday();
     getPerceptionTypes();
+    PayrollList();
   }, []);
 
   const getPayrollPerson = async () => {
@@ -271,8 +269,50 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
       savePayrollPerson(value);
     }
   };
-  const setFormValues = (item) => {};
 
+  const columns = [
+    {
+      title: "Colaborador",
+      key: "name",
+      render: (item) => {
+        return <>{item.person.first_name}</>;
+      },
+    },
+    {
+      title: "Salario diario",
+      dataIndex: "daily_salary",
+      key: "name",
+    },
+    {
+      title: "Salario diario integrado",
+      dataIndex: "integrated_daily_salary",
+      key: "name",
+    },
+    {
+      title: "Estatus",
+      key: "id",
+      render: (item) => {
+        return (
+          <Switch
+            checkedChildren="Activo"
+            unCheckedChildren="Inactivo"
+            disabled={true}
+            defaultChecked={item.active}
+          />
+        );
+      },
+    },
+  ];
+
+  const PayrollList = () => {
+    WebApiPayroll.getPayrollList({ person_id: person_id })
+      .then((response) => {
+        setPayrolPersonList(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <>
       <Spin tip="Cargando..." spinning={loading}>
@@ -430,6 +470,9 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
             </Form.Item>
           </Row>
         </Form>
+        <Row>
+          <Table dataSource={payrollPersonList} columns={columns} />
+        </Row>
       </Spin>
     </>
   );

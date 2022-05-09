@@ -714,46 +714,48 @@ const CalculatePayroll = ({ ...props }) => {
             </Col>
 
             {payroll.length > 0 && !genericModal && (
-              <Col md={5}>
+              <>
                 {consolidated && (
+                  <Col md={5}>
+                    <Button
+                      size="large"
+                      block
+                      htmlType="button"
+                      onClick={() =>
+                        downLoadFileBlob(
+                          `${getDomain(
+                            API_URL_TENANT
+                          )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
+                          "hoja_rayas.xlsx",
+                          "GET"
+                        )
+                      }
+                    >
+                      Descargar hoja de raya
+                    </Button>
+                  </Col>
+                )}
+                <Col md={5}>
                   <Button
                     size="large"
                     block
                     htmlType="button"
                     onClick={() =>
-                      downLoadFileBlob(
-                        `${getDomain(
-                          API_URL_TENANT
-                        )}/payroll/cosolidated-payroll-report?period=${form.getFieldValue(
-                          "period"
-                        )}`,
-                        "hoja_rayas.xlsx",
-                        "GET"
-                      )
+                      calculate
+                        ? reCalculatePayroll([...payroll])
+                        : consolidated
+                        ? setMessageModal(3)
+                        : setMessageModal(2)
                     }
                   >
-                    Descargar hoja de raya
-                  </Button>
-                )}
-                <Button
-                  size="large"
-                  block
-                  htmlType="button"
-                  onClick={() =>
-                    calculate
-                      ? reCalculatePayroll([...payroll])
+                    {calculate
+                      ? "Calcular"
                       : consolidated
-                      ? setMessageModal(3)
-                      : setMessageModal(2)
-                  }
-                >
-                  {calculate
-                    ? "Calcular"
-                    : consolidated
-                    ? "Timbrar nómina"
-                    : "Cerrar nómina"}
-                </Button>
-              </Col>
+                      ? "Timbrar nómina"
+                      : "Cerrar nómina"}
+                  </Button>
+                </Col>
+              </>
             )}
             <Col span={24}>
               <Card className="card_table">
