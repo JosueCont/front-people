@@ -726,10 +726,6 @@ const homeScreen = ({ ...props }) => {
     },
   };
 
-  useEffect(()=>{
-    console.log('si cambie------>', personsKeys)
-  },[personsKeys])
-
   const ListElementsToDelete = ({ personsDelete }) => {
     return (
       <div>
