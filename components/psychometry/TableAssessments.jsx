@@ -15,7 +15,7 @@ import WebApiAssessment from '../../api/WebApiAssessment';
 const TableAssessments = ({user_assessments, loading, user_profile,...props}) => {
 
   const [generalPercent, setGeneralPercent] = useState(0);
-  const [loadResults, setLoadResults] = useState(false);
+  const [loadResults, setLoadResults] = useState({});
 
   useEffect(()=>{
     if(user_assessments.length > 0){
@@ -35,8 +35,28 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
     setGeneralPercent(total.toFixed(2))
   }
 
+  const getFieldResults = (item, data) =>{
+    if(item.code == '7_KHOR_EST_SOC'){
+      return data.resultados;
+    }else if(item.code == '4_KHOR_PERF_MOT'){
+      return data.summary_results;
+    }else if(item.code == '16_KHOR_INT_EMO'){
+      let result = data.results_string.split('.');
+      // let result = data.results_string.replace('.','');
+      return result[0];
+    }
+  }
+
+  const getFieldDate = (item) =>{
+    let endDate = item.apply?.end_date;
+    let applyDate = item.apply?.apply_date;
+    return endDate ?
+      moment(endDate).format('LLL') :
+      moment(applyDate).format('LLL');
+  }
+
   const getResults = async (item) => {
-    setLoadResults(true)
+    setLoadResults({...loadResults, [item.code]: true})
     try {
       let data = {
         user_id: user_profile.id,
@@ -45,7 +65,7 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
       let response = await WebApiAssessment.getAssessmentResults(data);
       tokenToResults(item, response.data)
     } catch (e) {
-      setLoadResults(false)
+      setLoadResults({...loadResults, [item.code]: false})
       console.log(e)
     }
   }
@@ -59,13 +79,13 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
       user_photo_url: user_profile.photo,
       company_id: user_profile.node,
       url: getCurrentURL(),
-      assessment_date: item.apply?.end_date,
-      assessment_results: data.resultados,
+      assessment_date: getFieldDate(item),
+      assessment_results: getFieldResults(item,data),
       assessment_xtras: { stage: 2 }
     }
     const token = jwtEncode(body, 'secret', 'HS256');
     const url = `https://humand.kuiz.hiumanlab.com/?token=${token}`;
-    setLoadResults(false)
+    setLoadResults({...loadResults, [item.code]: false})
     popupWindow(url, 'Resultados')
   }
 
@@ -81,7 +101,7 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
         return(
           <>
             {item.apply?.progress == 100 ? (
-              <span>{moment(item.apply?.end_date).format('LLL').toString()}</span>
+              <span>{getFieldDate(item)}</span>
             ):(
               <span>Pendiente</span>
             )}
@@ -101,14 +121,15 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
       title: 'ACCIONES',
       width: 150,
       render: (item)=>{
-        return (
+        let show = (item.code == '5_KHOR_DOM_CER' || item.code == '48_KHOR_INV_VAL_ORG') ? true : false;
+        return !show && (
           <>
             {item.apply?.progress == 100 ? (
               <CustomBtn
                 size={'small'}
                 bg={'#ed6432'}
                 wd={'150px'}
-                loading={loadResults}
+                loading={loadResults[item.code]}
                 onClick={()=>getResults(item)}
               >
                   Ver resultados
@@ -129,34 +150,26 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
   ]
 
   return (
-    // <Card bordered={false} style={{borderRadius: '12px'}}>
-      <Row gutter={[24,24]} align={'middle'}>
-        {/* <Col span={24}>
-          <ContentTitle>
-            <p>Psicometría</p>
-            <p>Evaluaciones individuales o grupales</p>
-          </ContentTitle>
-        </Col> */}
-        <Col span={24}>
-          <ProgressPurple percent={generalPercent}/>
-        </Col>
-        <Col span={24}>
-          <Table
-            className={'custom-tbl-assessment'}
-            // size={'small'}
-            rowKey={'id'}
-            showHeader={false}
-            columns={columns}
-            loading={loading}
-            dataSource={user_assessments}
-            pagination={{
-                pageSize: 10,
-                total: user_assessments?.length
-            }}
-          />
-        </Col>
-      </Row>
-    // </Card>
+    <Row gutter={[24,24]} align={'middle'}>
+      <Col span={24}>
+        <ProgressPurple percent={generalPercent}/>
+      </Col>
+      <Col span={24}>
+        <Table
+          className={'custom-tbl-assessment'}
+          // size={'small'}
+          rowKey={'id'}
+          showHeader={false}
+          columns={columns}
+          loading={loading}
+          dataSource={user_assessments}
+          pagination={{
+              pageSize: 10,
+              total: user_assessments?.length
+          }}
+        />
+      </Col>
+    </Row>
   )
 }
 
