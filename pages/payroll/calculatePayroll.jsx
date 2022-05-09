@@ -28,7 +28,11 @@ import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsPayroll";
 import { Global } from "@emotion/core";
-import { numberFormat } from "../../utils/functions";
+import {
+  downLoadFileBlob,
+  getDomain,
+  numberFormat,
+} from "../../utils/functions";
 import { connect } from "react-redux";
 import {
   messageError,
@@ -36,6 +40,7 @@ import {
   messageSendSuccess,
 } from "../../utils/constant";
 import GenericModal from "../../components/modal/genericModal";
+import { API_URL_TENANT } from "../../config/config";
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -598,7 +603,6 @@ const CalculatePayroll = ({ ...props }) => {
 
     return;
   };
-
   return (
     <>
       <Spin tip="Cargando..." spinning={loading}>
@@ -710,26 +714,48 @@ const CalculatePayroll = ({ ...props }) => {
             </Col>
 
             {payroll.length > 0 && !genericModal && (
-              <Col md={5}>
-                <Button
-                  size="large"
-                  block
-                  htmlType="button"
-                  onClick={() =>
-                    calculate
-                      ? reCalculatePayroll([...payroll])
+              <>
+                {consolidated && (
+                  <Col md={5}>
+                    <Button
+                      size="large"
+                      block
+                      htmlType="button"
+                      onClick={() =>
+                        downLoadFileBlob(
+                          `${getDomain(
+                            API_URL_TENANT
+                          )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
+                          "hoja_rayas.xlsx",
+                          "GET"
+                        )
+                      }
+                    >
+                      Descargar hoja de raya
+                    </Button>
+                  </Col>
+                )}
+                <Col md={5}>
+                  <Button
+                    size="large"
+                    block
+                    htmlType="button"
+                    onClick={() =>
+                      calculate
+                        ? reCalculatePayroll([...payroll])
+                        : consolidated
+                        ? setMessageModal(3)
+                        : setMessageModal(2)
+                    }
+                  >
+                    {calculate
+                      ? "Calcular"
                       : consolidated
-                      ? setMessageModal(3)
-                      : setMessageModal(2)
-                  }
-                >
-                  {calculate
-                    ? "Calcular"
-                    : consolidated
-                    ? "Timbrar nómina"
-                    : "Cerrar nómina"}
-                </Button>
-              </Col>
+                      ? "Timbrar nómina"
+                      : "Cerrar nómina"}
+                  </Button>
+                </Col>
+              </>
             )}
             <Col span={24}>
               <Card className="card_table">

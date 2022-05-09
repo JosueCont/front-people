@@ -324,6 +324,30 @@ const MainSider = ({
             >
               <>
                 <Menu.Item
+                  key="timbrar"
+                  onClick={() =>
+                    router.push({ pathname: "/payroll/calculatePayroll" })
+                  }
+                >
+                  Calculo de nómina
+                </Menu.Item>
+                <Menu.Item
+                  key="calendario"
+                  onClick={() =>
+                    router.push({ pathname: "/payroll/paymentCalendar" })
+                  }
+                >
+                  Calendario de pagos
+                </Menu.Item>
+                <Menu.Item
+                  key="cfdi"
+                  onClick={() =>
+                    router.push({ pathname: "/payroll/payrollVaucher" })
+                  }
+                >
+                  Comprobantes fiscales
+                </Menu.Item>
+                <Menu.Item
                   key="asimilado"
                   onClick={() =>
                     router.push({ pathname: "/payroll/calculatorSalary" })
@@ -338,30 +362,6 @@ const MainSider = ({
                   }
                 >
                   Importar nómina con xml
-                </Menu.Item>
-                <Menu.Item
-                  key="calendario"
-                  onClick={() =>
-                    router.push({ pathname: "/payroll/paymentCalendar" })
-                  }
-                >
-                  Calendario de pagos
-                </Menu.Item>
-                <Menu.Item
-                  key="timbrar"
-                  onClick={() =>
-                    router.push({ pathname: "/payroll/calculatePayroll" })
-                  }
-                >
-                  Calculo de nómina
-                </Menu.Item>
-                <Menu.Item
-                  key="cfdi"
-                  onClick={() =>
-                    router.push({ pathname: "/payroll/payrollVaucher" })
-                  }
-                >
-                  Comprobantes fiscales
                 </Menu.Item>
               </>
             </SubMenu>
