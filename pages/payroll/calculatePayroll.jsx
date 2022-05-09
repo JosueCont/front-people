@@ -28,7 +28,11 @@ import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsPayroll";
 import { Global } from "@emotion/core";
-import { numberFormat } from "../../utils/functions";
+import {
+  downLoadFileBlob,
+  getDomain,
+  numberFormat,
+} from "../../utils/functions";
 import { connect } from "react-redux";
 import {
   messageError,
@@ -36,6 +40,7 @@ import {
   messageSendSuccess,
 } from "../../utils/constant";
 import GenericModal from "../../components/modal/genericModal";
+import { API_URL_TENANT } from "../../config/config";
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -596,7 +601,6 @@ const CalculatePayroll = ({ ...props }) => {
 
     return;
   };
-
   return (
     <>
       <Spin tip="Cargando..." spinning={loading}>
@@ -709,6 +713,26 @@ const CalculatePayroll = ({ ...props }) => {
 
             {payroll.length > 0 && !genericModal && (
               <Col md={5}>
+                {consolidated && (
+                  <Button
+                    size="large"
+                    block
+                    htmlType="button"
+                    onClick={() =>
+                      downLoadFileBlob(
+                        `${getDomain(
+                          API_URL_TENANT
+                        )}/payroll/cosolidated-payroll-report?period=${form.getFieldValue(
+                          "period"
+                        )}`,
+                        "hoja_rayas.xlsx",
+                        "GET"
+                      )
+                    }
+                  >
+                    Descargar hoja de raya
+                  </Button>
+                )}
                 <Button
                   size="large"
                   block

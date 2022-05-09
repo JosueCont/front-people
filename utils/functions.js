@@ -5,7 +5,7 @@ import { typeHttp } from "../config/config";
 export const generateYear = () => {
   let yearsArray = [];
   let currentYear = new Date().getFullYear();
-  let startYear = currentYear - 10;
+  let startYear = 2020;
   while (startYear < currentYear) {
     startYear++;
     yearsArray.push({ label: `${startYear}`, value: startYear });
