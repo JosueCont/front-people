@@ -130,7 +130,6 @@ const PayrollVaucher = ({ ...props }) => {
 
   useEffect(() => {
     if (router.query && router.query.calendar && router.query.period) {
-      console.log("DATaS-->> ", router.query.calendar, router.query.period);
       form.setFieldsValue({
         calendar: router.query.calendar,
         period: router.query.period,
@@ -147,8 +146,10 @@ const PayrollVaucher = ({ ...props }) => {
     let url = "";
     if (value.calendar && value.calendar != "")
       url = `calendar=${value.calendar}`;
-    if (value.period && value.period != "") url = `&period=${value.period}`;
-    if (value.person && value.person != "") url = `&person=${value.person}`;
+    if (value.period && value.period != "")
+      url = url + `&period=${value.period}`;
+    if (value.person && value.person != "")
+      url = url + `&person=${value.person}`;
     getVaucher(url);
   };
 
