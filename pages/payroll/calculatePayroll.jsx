@@ -283,9 +283,10 @@ const CalculatePayroll = ({ ...props }) => {
                   key={item.type}
                   onChange={(value) => {
                     (item.value = Number(value.target.value)),
-                      setCalculate(true);
+                      setCalculate(true),
+                      console.log(item);
                   }}
-                  defaultValue={numberFormat(item.amount)}
+                  defaultValue={item.amount}
                 />
               </Space>
             ) : (
