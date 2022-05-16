@@ -165,10 +165,15 @@ export const popupWindow = (url) =>{
   }
 }
 
-export const getCurrentURL = () =>{
-  if(typeof window !== "undefined"){
+export const getCurrentURL = (tenant = false) =>{
+  if (typeof window !== "undefined"){
       let url = window.location.href;
-      return url;
+      if (tenant){
+          let link = url.split('.');
+          return link[0];
+      }else{
+          return url;
+      }
   }
 }
 
