@@ -35,15 +35,22 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
     setGeneralPercent(total.toFixed(2))
   }
 
-  const getFieldResults = (item, data) =>{
+  const getFieldResults = (item, resp) =>{
     if(item.code == '7_KHOR_EST_SOC'){
-      return data.resultados;
+      return resp.data.resultados;
     }else if(item.code == '4_KHOR_PERF_MOT'){
-      return data.summary_results;
+      return resp.data.summary_results;
     }else if(item.code == '16_KHOR_INT_EMO'){
-      let result = data.results_string.split('.');
+      let result = resp.data.results_string.split('.');
       // let result = data.results_string.replace('.','');
       return result[0];
+    }else if(item.code == '48_KHOR_INV_VAL_ORG'){
+      return resp.data.resultado;
+    }else if(item.code == '5_KHOR_DOM_CER'){
+      return {
+        interpretation: resp.data.dominant_factor,
+        results: { factors: resp.data.factors}
+      }
     }
   }
 
@@ -63,14 +70,14 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
         assessment_code: item.code
       }
       let response = await WebApiAssessment.getAssessmentResults(data);
-      tokenToResults(item, response.data)
+      tokenToResults(item, response)
     } catch (e) {
       setLoadResults({...loadResults, [item.code]: false})
       console.log(e)
     }
   }
 
-  const tokenToResults = (item, data) =>{
+  const tokenToResults = (item, resp) =>{
     const body = {
       assessment: item.id,
       user_id: user_profile.id,
@@ -80,13 +87,15 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
       company_id: user_profile.node,
       url: getCurrentURL(),
       assessment_date: getFieldDate(item),
-      assessment_results: getFieldResults(item,data),
-      assessment_xtras: { stage: 2 }
+      assessment_results: getFieldResults(item,resp),
+      assessment_xtras: { stage: 2 },
+
     }
     const token = jwtEncode(body, 'secret', 'HS256');
     const url = `https://humand.kuiz.hiumanlab.com/?token=${token}`;
+    // const url = `http://humand.localhost:3002/?token=${token}`;
     setLoadResults({...loadResults, [item.code]: false})
-    popupWindow(url, 'Resultados')
+    popupWindow(url)
   }
 
   const columns = [
@@ -121,8 +130,7 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
       title: 'ACCIONES',
       width: 150,
       render: (item)=>{
-        let show = (item.code == '5_KHOR_DOM_CER' || item.code == '48_KHOR_INV_VAL_ORG') ? true : false;
-        return !show && (
+        return(
           <>
             {item.apply?.progress == 100 ? (
               <CustomBtn

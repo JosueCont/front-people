@@ -159,9 +159,9 @@ export const headersApiKhonnect = (app_id) => {
   };
 };
 
-export const popupWindow = (url, name) =>{
+export const popupWindow = (url) =>{
   if(typeof window !== "undefined"){
-    window.open(url, name,'toolbars=0')
+    window.open(url, 'Resultados','toolbars=0,width=800,height=400')
   }
 }
 
