@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from '@emotion/styled';
 import { Card, Row, Col, Space, Button, Divider } from 'antd';
 import Cookies from "js-cookie";
+import { getCurrentURL } from '../../utils/constant';
 import { connect } from 'react-redux';
 
 const ContentApps = styled.div`
@@ -87,15 +88,15 @@ const CardApps = ({user, ...props}) => {
 
     const linkToProfile = () =>{
         const token = user.jwt_data.metadata.at(-1).token;
-        const url = `https://demo.myaccount.hiumanlab.com/validation?token=${token}`;
-        // const url = `http://demo.localhost:3001/validation?token=${token}`;
+        const url = `${getCurrentURL(true)}.myaccount.hiumanlab.com/validation?token=${token}`;
+        // const url = `${getCurrentURL(true)}.localhost:3001/validation?token=${token}`;
         redirectTo(url);
     }
 
     const linkToPeople = () =>{
         const token = user.jwt_data.metadata.at(-1).token;
-        const url = `https://demo.people.hiumanlab.com/validation?token=${token}`;
-        // const url = `http://demo.localhost:3000/validation?token=${token}`;
+        const url = `${getCurrentURL(true)}.people.hiumanlab.com/validation?token=${token}`;
+        // const url = `${getCurrentURL(true)}.localhost:3000/validation?token=${token}`;
         redirectTo(url)
     }
 
