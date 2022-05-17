@@ -26,11 +26,10 @@ export const config = {
 export const axiosApi = axios.create(config);
 
 axiosApi.interceptors.response.use(
-  (response) => {
-    return Promise.resolve(response);
+  async function (config) {
+    return config;
   },
-
-  (error) => {
+  function (error) {
     return Promise.reject(error);
   }
 );
