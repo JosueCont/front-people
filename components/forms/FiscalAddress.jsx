@@ -28,6 +28,7 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
   };
 
   const setForm = (data) => {
+    setState(data.state.id);
     form.setFieldsValue({
       postal_code: data.postal_code.code,
       country: data.country.id,
@@ -41,8 +42,9 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
   };
 
   const setPostalCodeSelected = (data) => {
-    setPostalCodeSelect(data);
     setState(data.state.id);
+    setPostalCodeSelect(data);
+
     form.setFieldsValue({
       postal_code: data.code,
       country: data.state.country.id,
