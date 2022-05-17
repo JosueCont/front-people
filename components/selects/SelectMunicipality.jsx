@@ -17,7 +17,6 @@ const SelectMunicipality = ({
 
   useEffect(() => {
     if (state) {
-      console.log("ESTADO-->> ", state);
       getMunicipality();
     }
   }, [state]);

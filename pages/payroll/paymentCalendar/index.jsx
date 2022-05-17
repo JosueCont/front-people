@@ -1,71 +1,61 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../../layout/MainLayout";
-import { Row, Col, Table, Breadcrumb, Button, Tooltip, Modal } from "antd";
+import { Row, Col, Table, Breadcrumb, Button, Modal } from "antd";
 import { useRouter } from "next/router";
-import Axios from "axios";
-import { API_URL } from "../../../config/config";
 import {
   EditOutlined,
-  PlusOutlined,
-  EyeOutlined,
   CalendarOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import { userCompanyId, withAuthSync } from "../../../libs/auth";
-// import jsCookie from "js-cookie";
-import { css, Global } from "@emotion/core";
+import { withAuthSync } from "../../../libs/auth";
+import { Global } from "@emotion/core";
 import FormPaymentCalendar from "../../../components/payroll/forms/FormPaymentCalendar";
+import WebApiPayroll from "../../../api/WebApiPayroll";
+import { connect } from "react-redux";
 
-const PaymentCalendars = () => {
+const PaymentCalendars = ({ ...props }) => {
   const { Column } = Table;
   const route = useRouter();
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [loading, setLoading] = useState(false);
-  let nodeId = userCompanyId();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [titleModal, setTitleModal] = useState("Crear");
   const [idPaymentCalendar, setIdPaymentCalendar] = useState(null);
 
-  const getPaymentCalendars = async () => {
+  useEffect(() => {
+    if (props.currentNode && props.currentNode != undefined)
+      getPaymentCalendars();
+  }, [props.currentNode]);
+
+  const getPaymentCalendars = () => {
     setLoading(true);
-    try {
-      let url = `/payroll/payment-calendar/?node=${nodeId}`;
-      let response = await Axios.get(API_URL + url);
-      let data = response.data.results;
-      data.map((item, index) => {
-        item.key = index;
-        return item;
+
+    WebApiPayroll.getPaymentCalendar(props.currentNode.id)
+      .then((response) => {
+        let data = response.data.results.map((item, index) => {
+          item.key = index;
+          return item;
+        });
+        setPaymentCalendars(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
       });
-      setPaymentCalendars(data);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const GotoEdit = (data) => {
     setIsModalVisible(true);
     setTitleModal("Editar");
     setIdPaymentCalendar(data.id);
-    /* route.push("paymentCalendar/" + data.id + "/edit"); */
   };
   const GotoCalendar = (data) => {
     route.push("paymentCalendar/" + data.id + "/calendar");
   };
 
-  useEffect(() => {
-    // const jwt = JSON.parse(jsCookie.get("token"));
-    // searchPermissions(jwt.perms);
-    getPaymentCalendars();
-  }, [route]);
-
   const handleOk = () => {
     setIsModalVisible(false);
-  };
-
-  const showModal = () => {
-    setIsModalVisible(true);
   };
 
   const handleCancel = () => {
@@ -207,7 +197,7 @@ const PaymentCalendars = () => {
           getPaymentCalendars={getPaymentCalendars}
           setIsModalVisible={setIsModalVisible}
           title={titleModal}
-          nodeId={nodeId}
+          nodeId={props.currentNode && props.currentNode.id}
           onCancel={handleCancel}
         />
       </Modal>
@@ -215,4 +205,10 @@ const PaymentCalendars = () => {
   );
 };
 
-export default withAuthSync(PaymentCalendars);
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(withAuthSync(PaymentCalendars));
