@@ -16,10 +16,9 @@ import { useState, useEffect } from "react";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
-import { useRouter } from "next/router";
 import { messageSaveSuccess } from "../../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../../utils/rules";
-import { css, Global } from "@emotion/core";
+import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 
 const FormPaymentCalendar = ({
@@ -29,7 +28,6 @@ const FormPaymentCalendar = ({
   onCancel,
   ...props
 }) => {
-  const route = useRouter();
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
   const [typeTax, setTypeTax] = useState([]);
@@ -136,31 +134,33 @@ const FormPaymentCalendar = ({
   };
 
   const savePaymentCalendar = async (data) => {
-    try {
-      let response = await WebApiPayroll.createPaymentCalendar(data);
-      message.success({
-        content: messageSaveSuccess,
-        className: "custom-class",
+    await WebApiPayroll.createPaymentCalendar(data)
+      .then((response) => {
+        setLoading(false);
+        message.success({
+          content: messageSaveSuccess,
+          className: "custom-class",
+        });
+        closeModal();
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
       });
-      closeModal();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const updatePaymentCalendar = async (data) => {
-    try {
-      let response = await WebApiPayroll.updatePaymentCalendar(data);
-      message.success({
-        content: "Guardado correctamente.",
-        className: "custom-class",
+    let response = await WebApiPayroll.updatePaymentCalendar(data)
+      .then((response) => {
+        message.success({
+          content: "Guardado correctamente.",
+          className: "custom-class",
+        });
+        closeModal();
+      })
+      .catch((err) => {
+        console.log(error);
       });
-      closeModal();
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   /* Events */
@@ -200,11 +200,6 @@ const FormPaymentCalendar = ({
     } else {
       value.incidence_start = 0;
     }
-    // if (value.end_incidence) {
-    //   value.end_incidence = parseInt(value.end_incidence);
-    // } else {
-    //   value.end_incidence = 0;
-    // }
 
     if (idPaymentCalendar) {
       value.id = idPaymentCalendar;

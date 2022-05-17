@@ -42,7 +42,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
     },[])
 
     useEffect(()=>{
-        if(Object.keys(general_config).length > 0){
+        if(general_config && Object.keys(general_config).length > 0){
             if(router.query.token){
                 validateToken(router.query.token)
             }

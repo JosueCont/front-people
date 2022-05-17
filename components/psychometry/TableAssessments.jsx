@@ -89,7 +89,7 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
       assessment_date: getFieldDate(item),
       assessment_results: getFieldResults(item,resp),
       assessment_xtras: { stage: 2 },
-
+      profile_results: null
     }
     const token = jwtEncode(body, 'secret', 'HS256');
     const url = `https://humand.kuiz.hiumanlab.com/?token=${token}`;
