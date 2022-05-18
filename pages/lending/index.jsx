@@ -20,17 +20,16 @@ import {
 import { useRouter } from "next/router";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import moment from "moment";
-import { userCompanyId, withAuthSync } from "../../libs/auth";
+import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPayroll from "../../api/WebApiPayroll";
 
-const Lending = (props) => {
+const Lending = ({ ...props }) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
   const [lendingList, setLendingList] = useState([]);
   const [loading, setLoading] = useState(false);
-  let nodeId = userCompanyId();
 
   const optionStatus = [
     { value: 1, label: "Pendiente", key: "opt_1" },
@@ -43,7 +42,7 @@ const Lending = (props) => {
 
   const getLending = async (personID = null, type = null, status = null) => {
     setLoading(true);
-    let url = `?node__id=${nodeId}&`;
+    let url = `?node__id=${props.currentNode.id}&`;
     if (personID) {
       url += `person__id=${personID}&`;
     }
@@ -75,8 +74,8 @@ const Lending = (props) => {
   };
 
   useEffect(() => {
-    getLending();
-  }, [route]);
+    if (props.currentNode) getLending();
+  }, [props.currentNode]);
 
   const resetFilter = () => {
     form.resetFields();
@@ -339,6 +338,7 @@ const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.loan,
     configPermissions: state.userStore.permissions.loanconfigure,
+    currentNode: state.userStore.current_node,
   };
 };
 

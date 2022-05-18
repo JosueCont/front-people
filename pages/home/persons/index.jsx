@@ -16,8 +16,7 @@ import {
   Dropdown,
   notification,
 } from "antd";
-import Axios from "axios";
-import { API_URL, API_URL_TENANT } from "../../../config/config";
+import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
 import {
   SyncOutlined,
@@ -31,14 +30,10 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { BsHandIndex } from 'react-icons/bs';
+import { BsHandIndex } from "react-icons/bs";
 import MainLayout from "../../../layout/MainLayout";
 import FormPerson from "../../../components/person/FormPerson";
-import {
-  withAuthSync,
-  userCompanyId,
-  userCompanyName,
-} from "../../../libs/auth";
+import { withAuthSync } from "../../../libs/auth";
 import { setDataUpload } from "../../../redux/UserDuck";
 
 import Link from "next/link";
@@ -54,7 +49,6 @@ import {
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectAccessIntranet from "../../../components/selects/SelectAccessIntranet";
 import { useRouter } from "next/router";
-import SelectWorkTitle from "../../../components/selects/SelectWorkTitle";
 import { useLayoutEffect } from "react";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
 import WebApiPeople from "../../../api/WebApiPeople";
@@ -80,7 +74,6 @@ const homeScreen = ({ ...props }) => {
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
   const inputFileRefAsim = useRef(null);
-  const inputFileRefImss = useRef(null);
 
   let filters = { node: "" };
   const defaulPhoto =
@@ -235,11 +228,11 @@ const homeScreen = ({ ...props }) => {
         return (
           <>
             {permissions.edit || props.delete ? (
-              <Dropdown overlay={() => menuPerson(item)}>
+              <Link href={`/home/persons/${item.id}`}>
                 <a>
                   <div>{personName}</div>
                 </a>
-              </Dropdown>
+              </Link>
             ) : (
               <div>{personName}</div>
             )}
@@ -365,11 +358,11 @@ const homeScreen = ({ ...props }) => {
         return (
           <>
             {permissions.edit || props.delete ? (
-              <Dropdown overlay={() => menuPerson(item)}>
+              <Link href={`/home/persons/${item.id}`}>
                 <a>
                   <div>{personName}</div>
                 </a>
-              </Dropdown>
+              </Link>
             ) : (
               <div>{personName}</div>
             )}
@@ -535,7 +528,11 @@ const homeScreen = ({ ...props }) => {
           </Menu.Item>
         )}
         {permissions.create && (
-          <Menu.Item key="1" icon={<BsHandIndex/>} onClick={() => HandleModalAssign(item)}>
+          <Menu.Item
+            key="1"
+            icon={<BsHandIndex />}
+            onClick={() => HandleModalAssign(item)}
+          >
             Asignar evaluaciones
           </Menu.Item>
         )}
@@ -720,7 +717,7 @@ const homeScreen = ({ ...props }) => {
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log('los keys----->', selectedRowKeys)
+      console.log("los keys----->", selectedRowKeys);
       setPersonsKeys(selectedRowKeys);
       setPersonsToDelete(selectedRows);
     },
@@ -1007,23 +1004,6 @@ const homeScreen = ({ ...props }) => {
               onChange={(e) => importPersonFileExtend(e, 2)}
             />
           </Menu.Item>
-          {/* <Menu.Item key="3"> Se descomentará cuando se implemete nomina normal
-            <a
-              className={"ml-20"}
-              icon={<UploadOutlined />}
-              onClick={() => {
-                inputFileRefImss.current.click();
-              }}
-            >
-              Datos con nómina e IMSS
-            </a>
-            <input
-              ref={inputFileRefImss}
-              type="file"
-              style={{ display: "none" }}
-              onChange={(e) => importPersonFileExtend(e, 3)}
-            />
-          </Menu.Item> */}
         </>
       )}
     </Menu>
@@ -1221,9 +1201,9 @@ const homeScreen = ({ ...props }) => {
             config={props.config}
             close={getModalPerson}
             visible={modalAddPerson}
-            nameNode={userCompanyName()}
-            node={userCompanyId()}
-            currentNode={props.currentNode}
+            nameNode={props.currentNode && props.currentNode.name}
+            node={props.currentNode && props.currentNode.id}
+            currentNode={props.currentNode && props.currentNode}
           />
         )}
         {showModalGroup && (

@@ -1,15 +1,13 @@
 import { Form, Button, Space, Input, message } from "antd";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
   UploadOutlined,
   CloudUploadOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
 import WebApiPeople from "../../api/WebApiPeople";
-import { userCompanyId } from "../../libs/auth";
 
 const MassiveImportDepartments = ({ nodePeople, setLoadingTable }) => {
-  let nodeId = userCompanyId();
   const [form] = Form.useForm();
   const [file, setFile] = useState();
   const [disabled, setDisabled] = useState(true);
@@ -39,7 +37,7 @@ const MassiveImportDepartments = ({ nodePeople, setLoadingTable }) => {
 
   const onFinish = (value) => {
     let data = new FormData();
-    data.append("node_id", nodeId);
+    // data.append("node_id", nodeId);
     data.append("File", file);
     saveDepartments(data);
   };

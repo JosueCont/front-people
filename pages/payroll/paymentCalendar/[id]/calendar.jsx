@@ -4,14 +4,11 @@ import MainLayout from "../../../../layout/MainLayout";
 import { Row, Col, Breadcrumb, Button, Switch } from "antd";
 import Axios from "axios";
 import { API_URL } from "../../../../config/config";
-import { userCompanyId } from "../../../../libs/auth";
 import { useRouter } from "next/router";
 import moment from "moment";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { LinearScaleOutlined } from "@material-ui/icons";
 
 const Calendars = () => {
-  let nodeId = userCompanyId();
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [minDate, setMinDate] = useState(new Date("01/01/2021"));
   const [maxDate, setMaxDate] = useState(null);

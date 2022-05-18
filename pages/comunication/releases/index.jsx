@@ -173,18 +173,6 @@ const Releases = ({ permissions, ...props }) => {
                           label="Enviado por"
                           style={{ width: 150 }}
                         />
-                        {/* <Form.Item  
-                        key="send_by"
-                        name="send_by"
-                        label="Enviado por"
-                      >
-                        <Select
-                          options={personList}
-                          style={{ width: 150 }}
-                          placeholder={"Todos"}
-                          allowClear
-                        />
-                      </Form.Item> */}
                       </Col>
                       <Col>
                         <Form.Item
@@ -335,13 +323,6 @@ const Releases = ({ permissions, ...props }) => {
                           key={"goDetails_" + record.id}
                           onClick={() => GotoDetails(record)}
                         />
-                        {/* <EditOutlined
-                      className="icon_actions"
-                      key={"edit_" + record.id}
-                      onClick={() =>
-                        route.push("/comunication/releases/" + record.id + "/edit")
-                      }
-                    /> */}
                       </>
                     )}
                   />
@@ -353,7 +334,6 @@ const Releases = ({ permissions, ...props }) => {
           <div className="notAllowed" />
         )}
       </div>
-      {/* <ModalCreateNotification  reloadData={getNotifications} /> */}
     </MainLayout>
   );
 };
