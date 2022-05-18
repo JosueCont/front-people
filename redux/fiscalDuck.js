@@ -106,13 +106,14 @@ export const doFiscalCatalogs =
   };
 
 export const getFiscalBanks = (version_cfdi) => async (dispatch, getState) => {
-  await WebApiFiscal.getBanks(version_cfdi)
-    .then((response) => {
-      dispatch({ type: BANKS, payload: response.data.results });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  if (version_cfdi)
+    await WebApiFiscal.getBanks(version_cfdi)
+      .then((response) => {
+        dispatch({ type: BANKS, payload: response.data.results });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 };
 
 export const getFiscalTaxRegime =
