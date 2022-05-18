@@ -64,14 +64,15 @@ export const getCfdiVersion = () => async (dispatch, getState) => {
   await WebApiFiscal.getCfdiVersion()
     .then((response) => {
       console.log("VERSIONS-->> ", response.data);
-      dispatch({ type: CFDI_VERSION, payload: response.data.results });
     })
     .catch((error) => {
       console.log(error);
     });
 };
 
-export const setVersionCfdi = (version_id) => async (dispatch, getState) => {};
+export const setVersionCfdi = (version_id) => async (dispatch, getState) => {
+  dispatch({ type: CFDI_VERSION, payload: version_id });
+};
 
 export const doFiscalCatalogs =
   (node_id, version_cfdi) => async (dispatch, getState) => {

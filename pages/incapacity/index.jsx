@@ -25,13 +25,12 @@ import {
   FileDoneOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { userCompanyId, withAuthSync } from "../../libs/auth";
+import { withAuthSync } from "../../libs/auth";
 
-const Incapacity = (props) => {
+const Incapacity = ({ ...props }) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
-  let nodeId = userCompanyId();
 
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
@@ -58,7 +57,7 @@ const Incapacity = (props) => {
     status = null
   ) => {
     setLoading(true);
-    let url = `?person__node__id=${nodeId}&`;
+    let url = `?person__node__id=${props.currentNode.id}&`;
     if (collaborator) {
       url += `person__id=${collaborator}&`;
     }
@@ -142,7 +141,7 @@ const Incapacity = (props) => {
                       </Col>
                       <Col>
                         <SelectDepartment
-                          companyId={nodeId}
+                          companyId={props.currentNode.id}
                           key="SelectDepartment"
                         />
                       </Col>
@@ -313,6 +312,7 @@ const Incapacity = (props) => {
 const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.incapacity,
+    currentNode: state.userStore.current_node,
   };
 };
 

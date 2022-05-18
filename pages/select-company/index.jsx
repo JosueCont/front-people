@@ -53,7 +53,6 @@ const SelectCompany = ({ ...props }) => {
   useEffect(() => {
     props.resetCurrentnode();
     sessionStorage.removeItem("data");
-    console.log(props.user);
     try {
       setJwt(JSON.parse(jsCookie.get("token")));
     } catch (error) {

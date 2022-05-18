@@ -9,7 +9,6 @@ import {
 } from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import { userCompanyId } from "../../libs/auth";
 import { connect } from "react-redux";
 import { ruleRequired } from "../../utils/rules";
 
@@ -19,7 +18,6 @@ const documentModal = ({ person_id, node, ...props }) => {
   const [disabled, setDisabled] = useState(true);
   const inputFileRef = useRef(null);
   const [fileName, setfileName] = useState("");
-  let nodeId = userCompanyId();
 
   const closeDialog = () => {
     props.close(false);

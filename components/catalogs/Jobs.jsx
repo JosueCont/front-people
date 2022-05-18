@@ -11,7 +11,6 @@ import {
   message,
   Modal,
 } from "antd";
-import { userCompanyName } from "../../libs/auth";
 import { ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
 import {
@@ -29,7 +28,6 @@ import {
 } from "../../utils/constant";
 
 const TabJobs = ({ permissions, currentNode, ...props }) => {
-  let nodePeople = userCompanyName();
   const { Title } = Typography;
 
   const [edit, setEdit] = useState(false);

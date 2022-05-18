@@ -78,15 +78,12 @@ export const withAuthSync = (WrappedComponent) =>
 export const loginAuth = async (token) => {
   await cookie.remove("token");
   await cookie.set("token", token, { expires: 1 });
-  // await setConfigAxios(token.token);
-  // Router.push("/");
 };
 
 export const logoutAuth = async () => {
   cookie.remove("token");
   cookie.remove("token_user");
   sessionStorage.clear();
-  //console.log("Logout");
   await Router.push("/");
 };
 
@@ -112,16 +109,6 @@ export const getAccessIntranet = () => {
   }
 };
 
-export const userCompanyName = () => {
-  try {
-    let name = sessionStorage.getItem("name");
-    if (name && name != "" && name != undefined) return name;
-    else null;
-  } catch (error) {
-    return null;
-  }
-};
-
 export const userId = () => {
   try {
     let number = sessionStorage.getItem("number");
@@ -132,24 +119,23 @@ export const userId = () => {
   }
 };
 
-export function setStorage(key,value){
+export function setStorage(key, value) {
   if (typeof window !== "undefined") {
-      return localStorage.setItem(key, value)
+    return localStorage.setItem(key, value);
   }
-  return null
+  return null;
 }
 
-
-export function getStorage(key){
+export function getStorage(key) {
   if (typeof window !== "undefined") {
-      return localStorage.getItem(key)
+    return localStorage.getItem(key);
   }
-  return null
+  return null;
 }
 
-export function delStorage(key){
+export function delStorage(key) {
   if (typeof window !== "undefined") {
-      return localStorage.removeItem(key)
+    return localStorage.removeItem(key);
   }
-  return null
+  return null;
 }

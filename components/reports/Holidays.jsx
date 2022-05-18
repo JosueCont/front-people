@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import {
   Table,
   Row,
@@ -7,48 +6,28 @@ import {
   Tooltip,
   Select,
   Form,
-  DatePicker,
   Button,
-  InputNumber,
   Typography,
 } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-  SyncOutlined,
-  SearchOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
-import moment from "moment";
 import { DownloadOutlined } from "@ant-design/icons";
-import Link from "next/link";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
-import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import jsCookie from "js-cookie";
-import { userCompanyId } from "../../libs/auth";
-import SelectWorkTitle from '../selects/SelectWorkTitle';
-import { connect } from 'react-redux'
+import SelectWorkTitle from "../selects/SelectWorkTitle";
+import { connect } from "react-redux";
 
-
-const HolidaysReport = ({permissions ,...props}) => {
-  const route = useRouter();
-  const { Option } = Select;
+const HolidaysReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
   const { Title } = Typography;
 
   /* Variables para el filtro */
   const [colaborator, setColaborator] = useState(null);
-  const [companyId, setCompanyId] = useState(null);
   const [departmentId, setDepartmentId] = useState(null);
-  const [status, setStatus] = useState(null);
-
   const [loading, setLoading] = useState(false);
   const [holidayList, setHolidayList] = useState([]);
-  let nodeId = userCompanyId();
 
   /* Columnas de tabla */
   const columns = [
@@ -143,8 +122,6 @@ const HolidaysReport = ({permissions ,...props}) => {
   const filterHolidays = async (values) => {
     setColaborator(values.collaborator);
     setDepartmentId(values.department);
-    setStatus(values.status);
-
     getAllHolidays(values.collaborator, values.department, values.status);
   };
 
@@ -156,7 +133,7 @@ const HolidaysReport = ({permissions ,...props}) => {
     setHolidayList([]);
     setLoading(true);
     try {
-      let url = `/person/vacation/?person__node__id=${nodeId}&`;
+      let url = `/person/vacation/?person__node__id=${props.currentNode.id}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -184,7 +161,7 @@ const HolidaysReport = ({permissions ,...props}) => {
   };
 
   const download = async (item = null) => {
-    let dataId = { node: nodeId };
+    let dataId = { node: props.currentNode.id };
 
     if (item) {
       dataId = {
@@ -227,18 +204,10 @@ const HolidaysReport = ({permissions ,...props}) => {
     }
   };
 
-  const onChangeCompany = (val) => {
-    form.setFieldsValue({
-      department: null,
-    });
-    setCompanyId(val);
-  };
-
   useEffect(() => {
     const jwt = JSON.parse(jsCookie.get("token"));
     getAllHolidays();
   }, []);
-
 
   return (
     <>
@@ -263,18 +232,10 @@ const HolidaysReport = ({permissions ,...props}) => {
                   style={{ width: 150 }}
                 />
               </Col>
-              {/* <Col>
-                <SelectCompany
-                  name="company"
-                  onChange={onChangeCompany}
-                  key="SelectCompany"
-                  style={{ width: 150 }}
-                />
-              </Col> */}
               <Col>
                 <SelectDepartment
                   name="department"
-                  companyId={nodeId}
+                  companyId={props.currentNode.id}
                   key="selectDepartament"
                 />
               </Col>
@@ -369,7 +330,8 @@ const HolidaysReport = ({permissions ,...props}) => {
 
 const mapState = (state) => {
   return {
-    permissions: state.userStore.permissions.report
+    permissions: state.userStore.permissions.report,
+    currentNode: state.userStore.current_node,
   };
 };
 

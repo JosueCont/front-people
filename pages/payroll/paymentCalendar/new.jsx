@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MainLayout from "../../../layout/MainLayout";
-import { Breadcrumb, Row, Col } from "antd";
+import { Row, Col } from "antd";
 import { useRouter } from "next/router";
 import FormPaymentCalendar from "../../../components/payroll/forms/FormPaymentCalendar";
-import { userCompanyId } from "../../../libs/auth";
-const NewPaymentCalendar = () => {
-  let nodeId = userCompanyId();
+import { connect } from "react-redux";
+const NewPaymentCalendar = ({ ...props }) => {
   const route = useRouter();
   return (
     <>
@@ -16,7 +15,10 @@ const NewPaymentCalendar = () => {
         >
           <Row justify={"space-between"} className={"formFilter"}>
             <Col span={24}>
-              <FormPaymentCalendar title={"Crear"} nodeId={nodeId} />
+              <FormPaymentCalendar
+                title={"Crear"}
+                nodeId={props.currentNode && props.currentNode.id}
+              />
             </Col>
           </Row>
         </div>
@@ -24,4 +26,11 @@ const NewPaymentCalendar = () => {
     </>
   );
 };
-export default NewPaymentCalendar;
+
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(NewPaymentCalendar);

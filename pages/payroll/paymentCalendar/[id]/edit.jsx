@@ -3,11 +3,11 @@ import MainLayout from "../../../../layout/MainLayout";
 import { Breadcrumb, Row, Col } from "antd";
 import { useRouter } from "next/router";
 import FormPaymentCalendar from "../../../../components/payroll/forms/FormPaymentCalendar";
-import { userCompanyId } from "../../../../libs/auth";
-const EditPaymentCalendar = () => {
+import { connect } from "react-redux";
+
+const EditPaymentCalendar = ({ ...props }) => {
   const route = useRouter();
   const { id } = route.query;
-  let nodeId = userCompanyId();
 
   useEffect(() => {}, [route.query.id]);
 
@@ -36,7 +36,7 @@ const EditPaymentCalendar = () => {
             <Col span={24}>
               <FormPaymentCalendar
                 title={"Editar"}
-                nodeId={nodeId}
+                nodeId={props.currentNode && props.currentNode.id}
                 idPaymentCalendar={id}
               />
             </Col>
@@ -46,4 +46,11 @@ const EditPaymentCalendar = () => {
     </>
   );
 };
-export default EditPaymentCalendar;
+
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(EditPaymentCalendar);

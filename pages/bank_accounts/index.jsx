@@ -19,39 +19,29 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectBank from "../../components/selects/SelectBank";
 
 import { SearchOutlined, EyeOutlined, SyncOutlined } from "@ant-design/icons";
-import { userCompanyId, withAuthSync } from "../../libs/auth";
-import jsCookie from "js-cookie";
+import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 
 const BankAccounts = ({ permissions, ...props }) => {
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
-  const { Option } = Select;
 
   const [loading, setLoading] = useState(false);
 
   const [backsAccountsList, setBanksAccountsList] = useState([]);
 
-  /* Variables */
-  const [companyId, setCompanyId] = useState(null);
-  const [departamentId, setDepartamentId] = useState(null);
-  let nodeId = userCompanyId();
-
-  /* Select estatus */
   const optionStatus = [
     { value: 1, label: "Pendiente", key: "opt_1" },
     { value: 2, label: "Aprobado", key: "opt_2" },
     { value: 3, label: "Rechazado", key: "opt_3" },
   ];
 
-  /* Select type */
   const optionType = [
     { value: 1, label: "Verificación", key: "opt_1" },
     { value: 2, label: "Actualización", key: "opt_2" },
   ];
 
-  /* Columns */
   const columns = [
     {
       title: "Colaborador",
@@ -119,7 +109,7 @@ const BankAccounts = ({ permissions, ...props }) => {
   ) => {
     setLoading(true);
     try {
-      let url = `/person/bank-account-request/?person__job__department__node__id=${nodeId}&`;
+      let url = `/person/bank-account-request/?person__job__department__node__id=${props.currentNode.id}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -165,26 +155,11 @@ const BankAccounts = ({ permissions, ...props }) => {
       values.type,
       values.status
     );
-    /* getIncapacity(
-                values.collaborator,
-                values.company,
-                values.department,
-                values.status
-            ); */
-  };
-
-  const onChangeCompany = (val) => {
-    /* form.setFieldsValue({
-                department: null,
-            }); */
-    setCompanyId(val);
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-
-    getBanksAccountRequest();
-  }, [route]);
+    if (props.currentNode) getBanksAccountRequest();
+  }, [props.currentNode]);
 
   const resetFilter = () => {
     form.resetFields();
@@ -328,7 +303,8 @@ const BankAccounts = ({ permissions, ...props }) => {
 const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.bank,
+    currentNode: state.userStore.current_node,
   };
 };
 
-export default withAuthSync(BankAccounts);
+export default connect(mapState)(withAuthSync(BankAccounts));

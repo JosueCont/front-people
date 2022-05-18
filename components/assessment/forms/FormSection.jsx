@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Modal, message, Row, Col } from "antd";
 import { connect, useDispatch } from "react-redux";
-import { withAuthSync, userCompanyId } from "../../../libs/auth";
+import { withAuthSync } from "../../../libs/auth";
 import FormItemHTML from "./FormItemHtml";
 import {
   sectionCreateAction,
@@ -13,7 +13,6 @@ const FormSections = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();
   const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 } };
   const [formSections] = Form.useForm();
-  const nodeId = Number.parseInt(userCompanyId());
   const sectionId = props.loadData ? props.loadData.id : "";
   const { assessment_selected } = assessmentStore;
   const [instruccionCorta, setInstruccionCorta] = useState(
@@ -43,35 +42,39 @@ const FormSections = ({ assessmentStore, ...props }) => {
     setLoading(assessmentStore.fetching);
   }, [assessmentStore]);
 
-  const validateVoid = (obj) =>{
+  const validateVoid = (obj) => {
     const regex = /^\s+$/;
-    let fieldsValidate = Object.entries(obj).map(([key, val])=>{
-      if(key == 'code' || key == 'name'){
+    let fieldsValidate = Object.entries(obj).map(([key, val]) => {
+      if (key == "code" || key == "name") {
         let invalid = regex.test(val);
-        if(invalid){
-          formSections.setFields([{name: key, errors: ["Este campo no puede estar vacío"]}])
+        if (invalid) {
+          formSections.setFields([
+            { name: key, errors: ["Este campo no puede estar vacío"] },
+          ]);
           return true;
-        }else{
+        } else {
           return false;
         }
-      }else{
+      } else {
         return false;
       }
-    })
-    return fieldsValidate.some(item => item === true);
-  }
+    });
+    return fieldsValidate.some((item) => item === true);
+  };
 
-  const setFieldError = (name) =>{
-    formSections.setFields([{name: name, errors: ["Este campo no puede estar vacío"]}])
-  }
+  const setFieldError = (name) => {
+    formSections.setFields([
+      { name: name, errors: ["Este campo no puede estar vacío"] },
+    ]);
+  };
 
   const onFinish = (values) => {
     const regex = /^\s+$/;
-    if(regex.test(values.code)){
-      setFieldError('code')
-    }else if(regex.test(values.name)){
-      setFieldError('name')
-    }else{
+    if (regex.test(values.code)) {
+      setFieldError("code");
+    } else if (regex.test(values.name)) {
+      setFieldError("name");
+    } else {
       values.instructions_es = instruccions;
       values.short_instructions_es = instruccionCorta;
       values.assessment = assessment_selected.id;
@@ -103,7 +106,7 @@ const FormSections = ({ assessmentStore, ...props }) => {
           });
       }
     }
-  }
+  };
 
   const onReset = () => {
     formSections.resetFields();
@@ -135,10 +138,10 @@ const FormSections = ({ assessmentStore, ...props }) => {
         onFinish={onFinish}
         id="formSections"
         form={formSections}
-        layout={'vertical'}
+        layout={"vertical"}
         requiredMark={false}
       >
-        <Row gutter={[16,16]}>
+        <Row gutter={[16, 16]}>
           <Col span={12}>
             <Form.Item name="code" label={"Código"} rules={[ruleRequired]}>
               <Input maxLength={200} allowClear={true} placeholder="Código" />

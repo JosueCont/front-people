@@ -13,19 +13,6 @@ export const generateYear = () => {
   return yearsArray.reverse();
 };
 
-export const getJobForSelect = async (id) => {
-  try {
-    let response = await WebApiPeople.getJobSelect(id);
-    let job = response.data;
-    job = job.map((a) => {
-      return { label: a.name, value: a.id };
-    });
-    return job;
-  } catch (error) {
-    return [];
-  }
-};
-
 export const asyncForEach = async (array, callback) => {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
@@ -370,10 +357,6 @@ export const getDomain = (api) => {
   }
 };
 
-const getFileExtension = (filename) => {
-  return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
-};
-
 export const numberFormat = (value) =>
   new Intl.NumberFormat("es-MX", {
     minimumFractionDigits: 2,
@@ -392,6 +375,9 @@ export const getDifferenceDays = (startDate, endDate) => {
 };
 
 export const valueToFilter = (value) => {
-  let newVal = value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  let newVal = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
   return newVal;
-}
+};
