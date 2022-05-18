@@ -4,7 +4,7 @@ import { userCompanyId } from "../libs/auth";
 import { UserPermissions } from "../utils/functions";
 import { doCompanySelectedCatalog, getProfileGroups } from "./catalogCompany";
 import { doCompanySelectedPayroll } from "./payrollDuck";
-import { doFiscalCatalogs } from "./fiscalDuck";
+import { doFiscalCatalogs, getCfdiVersion } from "./fiscalDuck";
 
 const initialData = {
   default: true,
@@ -64,7 +64,7 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
       dispatch({ type: GENERAL_CONFIG, payload: response.data });
       dispatch(setUser());
       if (response.data.nomina_enabled) {
-        dispatch(doFiscalCatalogs());
+        dispatch(getCfdiVersion());
       }
     })
 

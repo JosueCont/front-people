@@ -11,6 +11,8 @@ const initialData = {
   other_payments_int: [],
   type_tax: [],
   payment_periodicity: [],
+  cfdi_version: [],
+  version_cfdi: null,
 };
 
 const BANKS = "BANKS";
@@ -23,52 +25,72 @@ const DEDUCTIONS_INT = "DEDUCTIONS_INT";
 const OTHER_PAYMENTS_INT = "OTHER_PAYMENTS_INT";
 const TYPE_TAX = "TYPE_TAX";
 const PAYMENT_PERIODICITY = "PAYMENT_PERIODICITY";
+const CFDI_VERSION = "CFDI_VERSION";
+const VERSION_CFDI = "VERSION_CFDI";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
     case BANKS:
-      return { ...state, banks: action.payload, default: false };
+      return { ...state, banks: action.payload };
     case TAX_REGIME:
-      return { ...state, tax_regime: action.payload, default: false };
+      return { ...state, tax_regime: action.payload };
     case PERCEPTIONS:
-      return { ...state, cat_perceptions: action.payload, default: false };
+      return { ...state, cat_perceptions: action.payload };
     case DEDUCTIONS:
-      return { ...state, cat_deductions: action.payload, default: false };
+      return { ...state, cat_deductions: action.payload };
     case OTHER_PAYMENTS:
-      return { ...state, cat_other_payments: action.payload, default: false };
+      return { ...state, cat_other_payments: action.payload };
     case PERCEPTIONS_INT:
-      return { ...state, perceptions_int: action.payload, default: false };
+      return { ...state, perceptions_int: action.payload };
     case DEDUCTIONS_INT:
-      return { ...state, deductions_int: action.payload, default: false };
+      return { ...state, deductions_int: action.payload };
     case OTHER_PAYMENTS_INT:
-      return { ...state, other_payments_int: action.payload, default: false };
+      return { ...state, other_payments_int: action.payload };
     case TYPE_TAX:
-      return { ...state, type_tax: action.payload, default: false };
+      return { ...state, type_tax: action.payload };
     case PAYMENT_PERIODICITY:
-      return { ...state, payment_periodicity: action.payload, default: false };
+      return { ...state, payment_periodicity: action.payload };
+    case CFDI_VERSION:
+      return { ...state, cfdi_version: action.payload };
+    case VERSION_CFDI:
+      return { ...state, version_cfdi: action.payload };
     default:
       return state;
   }
 };
 export default webReducer;
 
-export const doFiscalCatalogs = (node_id) => async (dispatch, getState) => {
-  try {
-    dispatch(getFiscalTaxRegime());
-    dispatch(getPerceptions());
-    dispatch(getDeductions());
-    dispatch(getOtherPayments());
-    if (node_id) {
-      dispatch(getInternalPerceptions(node_id));
-      dispatch(getInternalDeductions(node_id));
-      dispatch(getInternalOtherPayments(node_id));
-    }
-    dispatch(getTypeTax());
-    dispatch(getPaymentPeriodicity());
-  } catch (error) {
-    console.log(error);
-  }
+export const getCfdiVersion = () => async (dispatch, getState) => {
+  await WebApiFiscal.getCfdiVersion()
+    .then((response) => {
+      console.log("VERSIONS-->> ", response.data);
+      dispatch({ type: CFDI_VERSION, payload: response.data.results });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
+
+export const setVersionCfdi = (version_id) => async (dispatch, getState) => {};
+
+export const doFiscalCatalogs =
+  (node_id, version_cfdi) => async (dispatch, getState) => {
+    try {
+      dispatch(getFiscalTaxRegime(version_cfdi));
+      dispatch(getPerceptions(version_cfdi));
+      dispatch(getDeductions(version_cfdi));
+      dispatch(getOtherPayments(version_cfdi));
+      if (node_id) {
+        dispatch(getInternalPerceptions(node_id));
+        dispatch(getInternalDeductions(node_id));
+        dispatch(getInternalOtherPayments(node_id));
+      }
+      dispatch(getTypeTax(version_cfdi));
+      dispatch(getPaymentPeriodicity(version_cfdi));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 export const getFiscalBanks = () => async (dispatch, getState) => {
   await WebApiFiscal.getBanks()
