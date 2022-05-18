@@ -48,7 +48,7 @@ const SelectCompany = ({ ...props }) => {
   const [treeTable, setTreeTable] = useState(true);
   const [modalSwitch, setModalSwitch] = useState(false);
   const [createNode, setCreateNode] = useState(false);
-  const [modalCfdiVersion, setModalCfdiVersion] = useState(true);
+  const [modalCfdiVersion, setModalCfdiVersion] = useState(false);
   const [versionCfdiSelect, setVersionCfdiSelect] = useState(null);
 
   let personId = userId();
