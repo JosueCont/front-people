@@ -4,11 +4,11 @@ import BusinessForm from "../../components/business/BusinessForm";
 import { withAuthSync } from "../../libs/auth";
 
 const Home = () => {
-    return (
-        <>
-            <BusinessForm />
-        </>
-    );
+  return (
+    // <>
+    <BusinessForm />
+    // </>
+  );
 };
 
 export default withAuthSync(Home);

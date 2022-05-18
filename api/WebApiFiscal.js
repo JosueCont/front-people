@@ -14,7 +14,7 @@ class WebApiFiscal {
   }
 
   static getTaxRegime() {
-    return WebApi.ApisType(`/fiscal/tax-regime/`, "get");
+    return WebApi.ApisType(`/fiscal/tax-regime/?version_cfdi=`, "get");
   }
 
   static getBanks() {
@@ -100,6 +100,10 @@ class WebApiFiscal {
 
   static getPostalCode(data) {
     return WebApi.ApisType(`/fiscal/postal-code?code=${data}`, "get");
+  }
+
+  static getCfdiVersion() {
+    return WebApi.ApisType(`/fiscal/cfdi-version/`, "get");
   }
 }
 
