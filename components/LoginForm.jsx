@@ -18,6 +18,7 @@ import WebApiPeople from "../api/WebApiPeople";
 import { EyeOutlined, MailOutlined, LinkOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { setUserPermissions } from "../redux/UserDuck";
+import { getCfdiVersion } from "../redux/fiscalDuck";
 import { ruleEmail, ruleRequired } from "../utils/rules";
 
 const LoginForm = ({
@@ -126,6 +127,7 @@ const LoginForm = ({
             if (token) {
               saveJWT(token).then(function (responseJWT) {
                 if (responseJWT) {
+                  props.getCfdiVersion();
                   props
                     .setUserPermissions(token.perms)
                     .then((response) => {
@@ -282,4 +284,6 @@ const mapState = () => {
   return {};
 };
 
-export default connect(mapState, { setUserPermissions })(LoginForm);
+export default connect(mapState, { setUserPermissions, getCfdiVersion })(
+  LoginForm
+);

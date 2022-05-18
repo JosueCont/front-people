@@ -63,7 +63,12 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
       sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
       dispatch({ type: GENERAL_CONFIG, payload: response.data });
       dispatch(setUser());
-      if (response.data.nomina_enabled) {
+      if (
+        response.data.applications &&
+        response.data.applications.find(
+          (item) => item.app === "PAYROLL" && item.is_active
+        )
+      ) {
         dispatch(getCfdiVersion());
       }
     })

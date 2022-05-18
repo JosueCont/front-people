@@ -84,6 +84,7 @@ export const logoutAuth = async () => {
   cookie.remove("token");
   cookie.remove("token_user");
   sessionStorage.clear();
+  localStorage.clear();
   await Router.push("/");
 };
 
