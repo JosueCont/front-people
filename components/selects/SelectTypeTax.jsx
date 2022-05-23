@@ -7,6 +7,7 @@ const SelectTypeTax = ({ ...props }) => {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
+    console.log("TAX-->> ", props.type_tax);
     if (props.type_tax) {
       let data = props.type_tax.map((item) => {
         return {
