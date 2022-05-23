@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import {
   Table,
   Row,
@@ -11,50 +10,30 @@ import {
   Typography,
   Tooltip,
 } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-  SyncOutlined,
-  SearchOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import SelectCollaborator from "../selects/SelectCollaborator";
-import SelectCompany from "../selects/SelectCompany";
 import SelectDepartment from "../selects/SelectDepartment";
 import Axios from "axios";
 import { DownloadOutlined } from "@ant-design/icons";
 import { API_URL } from "../../config/config";
 import moment from "moment";
-import jsCookie from "js-cookie";
-import { userCompanyId, userCompanyName } from "../../libs/auth";
-import SelectWorkTitle from '../selects/SelectWorkTitle';
-import { connect } from 'react-redux'
+import SelectWorkTitle from "../selects/SelectWorkTitle";
+import { connect } from "react-redux";
 
-
-const InabilityReport = ({permissions, ...props}) => {
-  const route = useRouter();
-  const { Option } = Select;
+const InabilityReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
   const { RangePicker } = DatePicker;
-  const { Title, Text } = Typography;
+  const { Title } = Typography;
 
   const [incapacityList, setIncapacityList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [collaborator, setCollaborator] = useState(null);
-  const [companyId, setCompanyId] = useState(null);
   const [departmentId, setDepartmentId] = useState(null);
   const [status, setStatus] = useState(null);
   const [dateOne, setDateOne] = useState(null);
   const [dateTwo, setDateTwo] = useState(null);
 
-  const [personList, setPersonList] = useState([]);
-  const [collaboratorList, setCollaboratorList] = useState([]);
-
-  let nodeId = userCompanyId();
-
-  /* Columnas de tabla */
   const columns = [
     {
       title: "Colaborador",
@@ -74,7 +53,7 @@ const InabilityReport = ({permissions, ...props}) => {
       dataIndex: "collaborator",
       key: "company",
       render: (collaborator) => {
-        return <>{userCompanyName()}</>;
+        return <>{props.currenNode.name}</>;
       },
     },
     {
@@ -142,7 +121,7 @@ const InabilityReport = ({permissions, ...props}) => {
   ];
 
   const download = async (item = null) => {
-    let dataId = { business_id: nodeId };
+    let dataId = { business_id: props.currenNode.id };
     if (item) {
       dataId = {
         incapacity_id: item.id,
@@ -207,7 +186,7 @@ const InabilityReport = ({permissions, ...props}) => {
     setLoading(true);
     try {
       setLoading(true);
-      let url = `/person/incapacity/?person__node__id=${nodeId}&`;
+      let url = `/person/incapacity/?person__node__id=${props.currenNode.id}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -264,17 +243,9 @@ const InabilityReport = ({permissions, ...props}) => {
     );
   };
 
-  const onChangeCompany = (val) => {
-    form.setFieldsValue({
-      department: null,
-    });
-    setCompanyId(val);
-  };
-
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    getIncapacity();
-  }, []);
+    if (props.currentNode) getIncapacity();
+  }, [props.currenNode]);
 
   return (
     <>
@@ -299,20 +270,11 @@ const InabilityReport = ({permissions, ...props}) => {
                   style={{ width: 150 }}
                 />
               </Col>
-              {/* <Col>
-                                <SelectCompany
-                                    name="company"
-                                    label="Empresa"
-                                    onChange={onChangeCompany}
-                                    key="SelectCompany"
-                                    style={{ width: 150 }}
-                                />
-                            </Col> */}
               <Col>
                 <SelectDepartment
                   style={{ width: 100 }}
                   name="department"
-                  companyId={nodeId}
+                  companyId={props.currenNode && props.currenNode.id}
                   key="selectDepartament"
                 />
               </Col>
@@ -415,7 +377,8 @@ const InabilityReport = ({permissions, ...props}) => {
 
 const mapState = (state) => {
   return {
-    permissions: state.userStore.permissions.report
+    permissions: state.userStore.permissions.report,
+    currentNode: state.userStore.current_node,
   };
 };
 

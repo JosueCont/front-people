@@ -13,7 +13,7 @@ import {
   Spin,
 } from "antd";
 import { useRouter } from "next/router";
-import { userCompanyId, withAuthSync } from "../../libs/auth";
+import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import { ruleRequired, onlyNumeric } from "../../utils/rules";
@@ -26,7 +26,6 @@ const LendingConfig = (props) => {
   const [loading, setLoading] = useState(false);
   const [config, setConfig] = useState(null);
   const [permissions, setPermissions] = useState({});
-  let nodeId = userCompanyId();
 
   useLayoutEffect(() => {
     setPermissions(props.permissions);
@@ -37,7 +36,7 @@ const LendingConfig = (props) => {
 
   const getConfig = async () => {
     setLoading(true);
-    let url = `get_config_for_node/?node=${nodeId}`;
+    let url = `get_config_for_node/?node=${props.currentNode.id}`;
     WebApiPayroll.getConfigLoan(url)
       .then(function (response) {
         let data = response.data;
@@ -72,7 +71,7 @@ const LendingConfig = (props) => {
           setSending(false);
         });
     } else {
-      values.node = nodeId;
+      values.node = props.currentNode.id;
       WebApiPayroll.saveConfigLoan(values)
         .then(function (response) {
           route.push("/lending");
@@ -90,9 +89,8 @@ const LendingConfig = (props) => {
   };
 
   useEffect(() => {
-    nodeId = userCompanyId();
-    getConfig();
-  }, [route]);
+    if (props.currentNode) getConfig();
+  }, [props.currentNode]);
 
   return (
     <MainLayout currentKey="7.1">

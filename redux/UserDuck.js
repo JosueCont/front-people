@@ -4,7 +4,7 @@ import { userCompanyId } from "../libs/auth";
 import { UserPermissions } from "../utils/functions";
 import { doCompanySelectedCatalog, getProfileGroups } from "./catalogCompany";
 import { doCompanySelectedPayroll } from "./payrollDuck";
-import { doFiscalCatalogs } from "./fiscalDuck";
+import { doFiscalCatalogs, getCfdiVersion } from "./fiscalDuck";
 
 const initialData = {
   default: true,
@@ -63,8 +63,13 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
       sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
       dispatch({ type: GENERAL_CONFIG, payload: response.data });
       dispatch(setUser());
-      if (response.data.nomina_enabled) {
-        dispatch(doFiscalCatalogs());
+      if (
+        response.data.applications &&
+        response.data.applications.find(
+          (item) => item.app === "PAYROLL" && item.is_active
+        )
+      ) {
+        dispatch(getCfdiVersion());
       }
     })
 

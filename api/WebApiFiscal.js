@@ -1,44 +1,62 @@
 import WebApi from "./webApi";
 
 class WebApiFiscal {
-  static getContractTypes() {
-    return WebApi.ApisType(`/fiscal/contract-type/`, "get");
+  static getContractTypes(data) {
+    return WebApi.ApisType(
+      `/fiscal/contract-type/?version_cfdi=${data}`,
+      "get"
+    );
   }
 
-  static getHiringRegimes() {
-    return WebApi.ApisType(`/fiscal/hiring-regime/`, "get");
+  static getHiringRegimes(data) {
+    return WebApi.ApisType(
+      `/fiscal/hiring-regime/?version_cfdi=${data}`,
+      "get"
+    );
   }
 
-  static getTypeTax() {
-    return WebApi.ApisType(`/fiscal/type-tax/`, "get");
+  static getTypeTax(data) {
+    return WebApi.ApisType(`/fiscal/type-tax/?version_cfdi=${data}`, "get");
   }
 
-  static getTaxRegime() {
-    return WebApi.ApisType(`/fiscal/tax-regime/`, "get");
+  static getTaxRegime(data) {
+    return WebApi.ApisType(`/fiscal/tax-regime/?version_cfdi=${data}`, "get");
   }
 
-  static getBanks() {
+  static getBanks(data) {
     return WebApi.ApisType(`/fiscal/bank/`, "get");
   }
 
-  static getPaymentPeriodicity() {
-    return WebApi.ApisType(`/fiscal/periodicity/`, "get");
+  static getPaymentPeriodicity(data) {
+    return WebApi.ApisType(`/fiscal/periodicity/?version_cfdi=${data}`, "get");
   }
 
-  static getPerseptions() {
-    return WebApi.ApisType(`/fiscal/perception-type/`, "get");
+  static getPerseptions(data) {
+    return WebApi.ApisType(
+      `/fiscal/perception-type/?version_cfdi=${data}`,
+      "get"
+    );
   }
 
-  static getDeductions() {
-    return WebApi.ApisType(`/fiscal/deduction-type/`, "get");
+  static getDeductions(data) {
+    return WebApi.ApisType(
+      `/fiscal/deduction-type/?version_cfdi=${data}`,
+      "get"
+    );
   }
 
-  static getOtherPayments() {
-    return WebApi.ApisType(`/fiscal/other-payment-type/`, "get");
+  static getOtherPayments(data) {
+    return WebApi.ApisType(
+      `/fiscal/other-payment-type/?version_cfdi=${data}`,
+      "get"
+    );
   }
 
-  static getTypeworkingday() {
-    return WebApi.ApisType(`/fiscal/type-working-day/`, "get");
+  static getTypeworkingday(data) {
+    return WebApi.ApisType(
+      `/fiscal/type-working-day/?version_cfdi=${data}`,
+      "get"
+    );
   }
 
   static validateAccountNumber() {
@@ -53,8 +71,8 @@ class WebApiFiscal {
     );
   }
 
-  static getCountries() {
-    return WebApi.ApisType(`/fiscal/country/`, "get");
+  static getCountries(data) {
+    return WebApi.ApisType(`/fiscal/country/?version_cfdi=${data}`, "get");
   }
 
   static getStates(data) {
@@ -100,6 +118,10 @@ class WebApiFiscal {
 
   static getPostalCode(data) {
     return WebApi.ApisType(`/fiscal/postal-code?code=${data}`, "get");
+  }
+
+  static getCfdiVersion() {
+    return WebApi.ApisType(`/fiscal/cfdi-version/`, "get");
   }
 }
 

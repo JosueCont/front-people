@@ -20,13 +20,11 @@ import {
 import { useRouter } from "next/router";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
-import { userCompanyId, withAuthSync } from "../../libs/auth";
-import jsCookie from "js-cookie";
+import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 
 const Permission = ({ permissions, ...props }) => {
-  let nodeId = userCompanyId();
   const { Column } = Table;
   const route = useRouter();
   const [form] = Form.useForm();
@@ -34,7 +32,6 @@ const Permission = ({ permissions, ...props }) => {
   const [sending, setSending] = useState(false);
   const [permissionsList, setPermissionsList] = useState([]);
 
-  /* Select estatus */
   const optionStatus = [
     { value: 1, label: "Pendiente", key: "opt_1" },
     { value: 2, label: "Aprobado", key: "opt_2" },
@@ -47,7 +44,7 @@ const Permission = ({ permissions, ...props }) => {
     status = null
   ) => {
     setLoading(true);
-    let url = `?person__node__id=${nodeId}&`;
+    let url = `?person__node__id=${props.currentNode.id}&`;
     if (collaborator) {
       url += `person__id=${collaborator}&`;
     }
@@ -83,9 +80,8 @@ const Permission = ({ permissions, ...props }) => {
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    getPermissions();
-  }, [route]);
+    if (props.currentNode) getPermissions();
+  }, [props.currentNode]);
 
   const resetFilter = () => {
     form.resetFields();
@@ -126,7 +122,7 @@ const Permission = ({ permissions, ...props }) => {
                       </Col>
                       <Col>
                         <SelectDepartment
-                          companyId={nodeId}
+                          companyId={props.currentNode.id}
                           key="SelectDepartment"
                         />
                       </Col>
@@ -283,6 +279,7 @@ const Permission = ({ permissions, ...props }) => {
 const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.permit,
+    currentNode: state.userStore.current_node,
   };
 };
 

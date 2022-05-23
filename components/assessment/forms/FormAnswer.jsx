@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Modal, message } from "antd";
-import { connect, useDispatch } from "react-redux";
-import { withAuthSync, userCompanyId } from "../../../libs/auth";
+import { connect } from "react-redux";
+import { withAuthSync } from "../../../libs/auth";
 import FormItemHTML from "./FormItemHtml";
 import {
   answerCreateAction,
@@ -10,10 +10,7 @@ import {
 import { ruleRequired } from "../../../utils/rules";
 
 const FormAnswer = ({ assessmentStore, ...props }) => {
-  const dispatch = useDispatch();
-  const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 } };
   const [formAnswers] = Form.useForm();
-  const nodeId = Number.parseInt(userCompanyId());
   const answerId = props.loadData ? props.loadData.id : "";
   const [descripcion, setDescripcion] = useState(
     props.loadData.description_es ? props.loadData.description_es : ""
@@ -36,17 +33,19 @@ const FormAnswer = ({ assessmentStore, ...props }) => {
     setLoading(assessmentStore.fetching);
   }, [assessmentStore]);
 
-  const setFieldError = (name) =>{
-    formAnswers.setFields([{name: name, errors: ["Este campo no puede estar vacío"]}])
-  }
+  const setFieldError = (name) => {
+    formAnswers.setFields([
+      { name: name, errors: ["Este campo no puede estar vacío"] },
+    ]);
+  };
 
   const onFinish = (values) => {
     const regex = /^\s+$/;
-    if(regex.test(values.title)){
-      setFieldError('title')
-    }else if(regex.test(values.value)){
-      setFieldError('value')
-    }else{
+    if (regex.test(values.title)) {
+      setFieldError("title");
+    } else if (regex.test(values.value)) {
+      setFieldError("value");
+    } else {
       values.description_es = descripcion;
       if (props.loadData) {
         props
@@ -109,7 +108,7 @@ const FormAnswer = ({ assessmentStore, ...props }) => {
         onFinish={onFinish}
         id="formAnswers"
         form={formAnswers}
-        layout={'vertical'}
+        layout={"vertical"}
         requiredMark={false}
       >
         <Form.Item name="title" label={"Título"} rules={[ruleRequired]}>

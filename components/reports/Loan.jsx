@@ -17,31 +17,22 @@ import { API_URL } from "../../config/config";
 import { DownloadOutlined } from "@ant-design/icons";
 import moment from "moment-timezone";
 import SelectCollaborator from "../selects/SelectCollaborator";
-import jsCookie from "js-cookie";
-import { userCompanyId } from "../../libs/auth";
 import { connect } from "react-redux";
 
 const LoanReport = ({ permissions, ...props }) => {
-  const route = useRouter();
-  const { Option } = Select;
   const [form] = Form.useForm();
   const { Title } = Typography;
 
   const [dateLoan, setDateLoan] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [personList, setPersonList] = useState([]);
   const [lendingList, setLendingList] = useState([]);
 
-  /* PAra la descarga */
   const [person_id, setPerson_id] = useState(null);
   const [type, setType] = useState(null);
   const [periodicity, setPeriodicity] = useState(null);
   const [timestampGte, setTimestampGte] = useState(null);
   const [timestampLte, setTimestampLte] = useState(null);
-  const [status, setStatus] = useState(null);
-  let nodeId = userCompanyId();
 
-  /* Columnas de tabla */
   const columns = [
     {
       title: "Colaborador",
@@ -201,7 +192,7 @@ const LoanReport = ({ permissions, ...props }) => {
   };
 
   const download = async (item = null) => {
-    let dataId = { person__node__id: nodeId };
+    let dataId = { person__node__id: props.currentNode.id };
 
     if (item) {
       dataId = {
@@ -261,7 +252,8 @@ const LoanReport = ({ permissions, ...props }) => {
   ) => {
     setLoading(true);
     try {
-      let url = API_URL + `/payroll/loan/?person__node__id=${nodeId}&`;
+      let url =
+        API_URL + `/payroll/loan/?person__node__id=${props.currentNode.id}&`;
       if (personID) {
         url += `person__id=${personID}&`;
       }
@@ -304,7 +296,6 @@ const LoanReport = ({ permissions, ...props }) => {
     setPerson_id(values.person__id);
     setType(values.type);
     setPeriodicity(values.periodicity);
-    setStatus(values.status);
     setLendingList([]);
 
     let d1 = null;
@@ -326,9 +317,8 @@ const LoanReport = ({ permissions, ...props }) => {
   };
 
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-    getLending();
-  }, []);
+    if (props.currentNode) getLending();
+  }, [props.currentNode]);
 
   return (
     <>
@@ -468,6 +458,7 @@ const LoanReport = ({ permissions, ...props }) => {
 const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.report,
+    currentNode: state.userStore.current_node,
   };
 };
 
