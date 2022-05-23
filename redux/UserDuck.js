@@ -102,7 +102,7 @@ export const companySelected = (data, config) => async (dispatch, getState) => {
       dispatch(getProfileGroups(response.data.id, config));
       if (config.nomina_enabled) {
         dispatch(doCompanySelectedPayroll(response.data.id));
-        dispatch(doFiscalCatalogs(response.data.id));
+        dispatch(getCfdiVersion());
       }
       return true;
     }

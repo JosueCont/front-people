@@ -79,34 +79,42 @@ export const getCfdiVersion = () => async (dispatch, getState) => {
 };
 
 export const setVersionCfdi = (version_id) => async (dispatch, getState) => {
-  setStorage("v", version_id);
-  dispatch({ type: VERSION_CFDI, payload: version_id });
-  let current_node = getState().userStore.current_node;
-  dispatch(doFiscalCatalogs(current_node ? current_node.id : null, version_id));
+  console.log("VERSION--->> ", version_id);
+  if (version_id && version_id != undefined) {
+    setStorage("v", version_id);
+    dispatch({ type: VERSION_CFDI, payload: version_id });
+    let current_node = getState().userStore.current_node;
+    dispatch(
+      doFiscalCatalogs(current_node ? current_node.id : null, version_id)
+    );
+  }
 };
 
 export const doFiscalCatalogs =
-  (node_id, version_cfdi) => async (dispatch, getState) => {
+  (node_id, versionCfdi) => async (dispatch, getState) => {
     try {
-      dispatch(getFiscalBanks(version_cfdi));
-      dispatch(getFiscalTaxRegime(version_cfdi));
-      dispatch(getPerceptions(version_cfdi));
-      dispatch(getDeductions(version_cfdi));
-      dispatch(getOtherPayments(version_cfdi));
-      if (node_id) {
-        dispatch(getInternalPerceptions(node_id));
-        dispatch(getInternalDeductions(node_id));
-        dispatch(getInternalOtherPayments(node_id));
+      if (versionCfdi && versionCfdi != undefined) {
+        console.log("catalog version-->> ", versionCfdi);
+        dispatch(getFiscalBanks(versionCfdi));
+        dispatch(getFiscalTaxRegime(versionCfdi));
+        dispatch(getPerceptions(versionCfdi));
+        dispatch(getDeductions(versionCfdi));
+        dispatch(getOtherPayments(versionCfdi));
+        if (node_id) {
+          dispatch(getInternalPerceptions(node_id));
+          dispatch(getInternalDeductions(node_id));
+          dispatch(getInternalOtherPayments(node_id));
+        }
+        dispatch(getTypeTax(versionCfdi));
+        dispatch(getPaymentPeriodicity(versionCfdi));
       }
-      dispatch(getTypeTax(version_cfdi));
-      dispatch(getPaymentPeriodicity(version_cfdi));
     } catch (error) {
       console.log(error);
     }
   };
 
-export const getFiscalBanks = (version_cfdi) => async (dispatch, getState) => {
-  await WebApiFiscal.getBanks(version_cfdi)
+export const getFiscalBanks = (versionCfdi) => async (dispatch, getState) => {
+  await WebApiFiscal.getBanks(versionCfdi)
     .then((response) => {
       dispatch({ type: BANKS, payload: response.data.results });
     })
@@ -116,8 +124,8 @@ export const getFiscalBanks = (version_cfdi) => async (dispatch, getState) => {
 };
 
 export const getFiscalTaxRegime =
-  (version_cfdi) => async (dispatch, getState) => {
-    await WebApiFiscal.getTaxRegime(version_cfdi)
+  (versionCfdi) => async (dispatch, getState) => {
+    await WebApiFiscal.getTaxRegime(versionCfdi)
       .then((response) => {
         dispatch({ type: TAX_REGIME, payload: response.data.results });
       })
@@ -126,8 +134,8 @@ export const getFiscalTaxRegime =
       });
   };
 
-export const getPerceptions = (version_cfdi) => async (dispatch, getState) => {
-  await WebApiFiscal.getPerseptions(version_cfdi)
+export const getPerceptions = (versionCfdi) => async (dispatch, getState) => {
+  await WebApiFiscal.getPerseptions(versionCfdi)
     .then((response) => {
       dispatch({ type: PERCEPTIONS, payload: response.data.results });
     })
@@ -136,8 +144,8 @@ export const getPerceptions = (version_cfdi) => async (dispatch, getState) => {
     });
 };
 
-export const getDeductions = (version_cfdi) => async (dispatch, getState) => {
-  await WebApiFiscal.getDeductions(version_cfdi)
+export const getDeductions = (versionCfdi) => async (dispatch, getState) => {
+  await WebApiFiscal.getDeductions(versionCfdi)
     .then((response) => {
       dispatch({ type: DEDUCTIONS, payload: response.data.results });
     })
@@ -146,16 +154,15 @@ export const getDeductions = (version_cfdi) => async (dispatch, getState) => {
     });
 };
 
-export const getOtherPayments =
-  (version_cfdi) => async (dispatch, getState) => {
-    await WebApiFiscal.getOtherPayments(version_cfdi)
-      .then((response) => {
-        dispatch({ type: OTHER_PAYMENTS, payload: response.data.results });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+export const getOtherPayments = (versionCfdi) => async (dispatch, getState) => {
+  await WebApiFiscal.getOtherPayments(versionCfdi)
+    .then((response) => {
+      dispatch({ type: OTHER_PAYMENTS, payload: response.data.results });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 export const getInternalPerceptions = (data) => async (dispatch, getState) => {
   await WebApiFiscal.getInternalPerceptions(data)
@@ -202,8 +209,8 @@ export const getInternalOtherPayments =
       });
   };
 
-export const getTypeTax = (version_cfdi) => async (dispatch, getState) => {
-  await WebApiFiscal.getTypeTax(version_cfdi)
+export const getTypeTax = (versionCfdi) => async (dispatch, getState) => {
+  await WebApiFiscal.getTypeTax(versionCfdi)
     .then((response) => {
       dispatch({ type: TYPE_TAX, payload: response.data.results });
     })
@@ -213,8 +220,8 @@ export const getTypeTax = (version_cfdi) => async (dispatch, getState) => {
     });
 };
 export const getPaymentPeriodicity =
-  (version_cfdi) => async (dispatch, getState) => {
-    await WebApiFiscal.getPaymentPeriodicity(version_cfdi)
+  (versionCfdi) => async (dispatch, getState) => {
+    await WebApiFiscal.getPaymentPeriodicity(versionCfdi)
       .then((response) => {
         dispatch({ type: PAYMENT_PERIODICITY, payload: response.data.results });
       })

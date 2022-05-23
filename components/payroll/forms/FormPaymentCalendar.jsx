@@ -40,7 +40,8 @@ const FormPaymentCalendar = ({
   const [incidenceStart, setIncidenceStart] = useState("");
 
   /* Const switchs */
-  const [adjustmentAppy, setAdjustmentApply] = useState(false);
+  const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
+  const [annualAdjustment, setAnnualAdjustment] = useState(false);
   const [periodActive, setPeriodActive] = useState(true);
   const [paymentSaturday, setPaymentSaturday] = useState(false);
   const [paymentSunday, setPaymentSunday] = useState(false);
@@ -181,7 +182,8 @@ const FormPaymentCalendar = ({
     setLoading(true);
     value.node = parseInt(nodeId);
     value.active = periodActive;
-    value.adjustment = adjustmentAppy;
+    value.monthly_adjustment = monthlyAdjustment;
+    value.annual_adjustment = annualAdjustment;
     value.pay_before = value.pay_before ? parseInt(value.pay_before) : 0;
     value.payment_saturday = paymentSaturday;
     value.payment_sunday = paymentSunday;
@@ -209,8 +211,14 @@ const FormPaymentCalendar = ({
     }
   };
 
-  const changeAdjustmentAppy = (checked) => {
-    setAdjustmentApply(checked);
+  const changeMonthlyAdjustment = (checked) => {
+    setMonthlyAdjustment(checked);
+    setAnnualAdjustment(false);
+  };
+
+  const changeAnnualAdjustment = (checked) => {
+    setAnnualAdjustment(checked);
+    setMonthlyAdjustment(false);
   };
 
   const changePeriodActive = (checked) => {
@@ -274,14 +282,14 @@ const FormPaymentCalendar = ({
                 rules={[ruleRequired]}
                 extra={
                   <>
-                    Aplicar ajuste
+                    Activo
                     <Switch
                       size="small"
-                      checked={adjustmentAppy}
+                      checked={periodActive}
+                      onChange={changePeriodActive}
                       checkedChildren={<CheckOutlined />}
                       unCheckedChildren={<CloseOutlined />}
                       style={{ marginLeft: 10 }}
-                      onChange={changeAdjustmentAppy}
                     />
                   </>
                 }
@@ -333,15 +341,35 @@ const FormPaymentCalendar = ({
                 rules={[ruleRequired]}
                 extra={
                   <>
-                    Activo
-                    <Switch
-                      size="small"
-                      checked={periodActive}
-                      onChange={changePeriodActive}
-                      checkedChildren={<CheckOutlined />}
-                      unCheckedChildren={<CloseOutlined />}
-                      style={{ marginLeft: 10 }}
-                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span>
+                        <small>Ajuste mensual</small>
+                        <Switch
+                          size="small"
+                          checked={monthlyAdjustment}
+                          checkedChildren={<CheckOutlined />}
+                          unCheckedChildren={<CloseOutlined />}
+                          style={{ marginLeft: 10 }}
+                          onChange={changeMonthlyAdjustment}
+                        />
+                      </span>
+                      <span>
+                        <small>Ajuste anual</small>
+                        <Switch
+                          size="small"
+                          checked={annualAdjustment}
+                          checkedChildren={<CheckOutlined />}
+                          unCheckedChildren={<CloseOutlined />}
+                          style={{ marginLeft: 10 }}
+                          onChange={changeAnnualAdjustment}
+                        />
+                      </span>
+                    </div>
                   </>
                 }
               >

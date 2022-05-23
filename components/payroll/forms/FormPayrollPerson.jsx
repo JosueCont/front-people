@@ -414,6 +414,18 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
             </Col>
             <Col lg={8} xs={22} md={12}>
               <Form.Item
+                name="apply_monthly_adjustment"
+                label="¿Aplicar ajuste mensual?"
+                valuePropName="checked"
+              >
+                <Switch
+                  checkedChildren={<CheckOutlined />}
+                  unCheckedChildren={<CloseOutlined />}
+                />
+              </Form.Item>
+            </Col>
+            <Col lg={8} xs={22} md={12}>
+              <Form.Item
                 name="apply_annual_adjustment"
                 label="¿Aplicar ajuste anual?"
                 valuePropName="checked"
