@@ -11,6 +11,7 @@ import {
   DatePicker,
   Modal,
   Select,
+  InputNumber,
 } from "antd";
 import moment from "moment";
 import { PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
@@ -221,14 +222,6 @@ const Incapacityform = (props) => {
     }
   };
 
-  const calculateDays = (startDate, endDate) => {
-    let difference_days = getDifferenceDays(startDate, endDate);
-
-    form.setFieldsValue({
-      requested_days: difference_days > 0 ? difference_days + 1 : 0,
-    });
-  };
-
   const changeDepartureDate = (date, dateString) => {
     setStartDate(dateString);
     props.onChangeDepartureDate(date, dateString);
@@ -238,19 +231,6 @@ const Incapacityform = (props) => {
     setEndDate(dateString);
     props.onChangeReturnDate(date, dateString);
   };
-
-  useEffect(() => {
-    if (
-      startDate !== undefined &&
-      startDate !== null &&
-      startDate !== "" &&
-      endDate !== undefined &&
-      endDate !== null &&
-      endDate !== ""
-    ) {
-      calculateDays(startDate, endDate);
-    }
-  }, [startDate, endDate]);
 
   const showMoalapprove = () => {
     Modal.confirm({
@@ -284,6 +264,7 @@ const Incapacityform = (props) => {
       setEndDate(props.details.return_date);
       setClassific(props.details.imss_classification);
       changeIncapacity(props.details.incapacity_type);
+      console.log("requested", props.details);
       form.setFieldsValue({
         invoice: props.details.invoice,
         person: props.details.person ? props.details.person.id : null,
@@ -291,7 +272,7 @@ const Incapacityform = (props) => {
         imss_classification: props.details.imss_classification,
         category: props.details.category,
         subcategory: props.details.subcategory,
-        requested_days: props.details.days_requested,
+        requested_days: props.details.requested_days,
         departure_date: props.details.departure_date
           ? moment(props.details.departure_date, "YYYY-MM-DD")
           : null,
@@ -336,6 +317,22 @@ const Incapacityform = (props) => {
       });
     }
   }, [incapacityType, classific]);
+
+  const sumDays = (days) => {
+    if (days && startDate) {
+      let date = new Date(startDate);
+      date.setDate(date.getDate() + (days - 1));
+      let end_date = date.toISOString().substring(0, 10);
+      changeReturnDate(end_date, end_date.toString());
+      form.setFieldsValue({
+        return_date: moment(end_date, "YYYY-MM-DD"),
+      });
+    } else {
+      form.setFieldsValue({
+        return_date: null,
+      });
+    }
+  };
 
   return (
     <Form
@@ -469,7 +466,7 @@ const Incapacityform = (props) => {
                   rules={[ruleRequired]}
                 >
                   <DatePicker
-                    disabled={props.readOnly || props.sending}
+                    disabled={true}
                     key="return_date"
                     style={{ width: "100%" }}
                     onChange={changeReturnDate}
@@ -480,10 +477,13 @@ const Incapacityform = (props) => {
                 <Form.Item
                   label="Dias solicitados"
                   name="requested_days"
-                  readOnly
                   style={{ width: "100%" }}
                 >
-                  <Input rules={[ruleRequired]} readOnly />
+                  <InputNumber
+                    style={{ width: "100%" }}
+                    onChange={sumDays}
+                    rules={[ruleRequired]}
+                  />
                 </Form.Item>
               </Col>
               <Col lg={12} sm={24}>
