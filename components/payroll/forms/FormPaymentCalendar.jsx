@@ -20,6 +20,9 @@ import { messageSaveSuccess } from "../../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../../utils/rules";
 import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
+import SelectPeriodicity from "../../selects/SelectPeriodicity";
+import SelectTypeTax from "../../selects/SelectTypeTax";
+import { connect } from "react-redux";
 
 const FormPaymentCalendar = ({
   title,
@@ -47,51 +50,21 @@ const FormPaymentCalendar = ({
   const [paymentSunday, setPaymentSunday] = useState(false);
 
   useEffect(() => {
-    getTypeTax();
-    getPaymentPeriodicity();
-    getPerceptionType();
     if (idPaymentCalendar) {
       getPaymentCalendar();
     }
   }, [idPaymentCalendar]);
 
-  const getTypeTax = async () => {
-    try {
-      let response = await WebApiFiscal.getTypeTax();
-      let tax_types = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-      setTypeTax(tax_types);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getPerceptionType = async () => {
-    try {
-      let response = await WebApiFiscal.getPerseptions();
-      let perception_types = response.data.results
+  useEffect(() => {
+    if (props.catPerception) {
+      let perception_types = props.catPerception
         .filter((item) => item.code == "001" || item.code == "046")
         .map((a) => {
           return { value: a.id, label: a.description };
         });
       setPerceptionType(perception_types);
-    } catch (error) {
-      console.log(error);
     }
-  };
-
-  const getPaymentPeriodicity = async () => {
-    try {
-      let response = await WebApiFiscal.getPaymentPeriodicity();
-      let periodicity = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-      setPaymentPeriodicity(periodicity);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  }, [props.catPerception]);
 
   const getPaymentCalendar = async () => {
     setLoading(true);
@@ -142,6 +115,7 @@ const FormPaymentCalendar = ({
           content: messageSaveSuccess,
           className: "custom-class",
         });
+        props.getPaymentCalendars();
         closeModal();
       })
       .catch((err) => {
@@ -298,28 +272,10 @@ const FormPaymentCalendar = ({
               </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
-              <Form.Item
-                name="periodicity"
-                label="Periodicidad"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  options={paymentPeriodicity}
-                  notFoundContent={"No se encontraron resultados."}
-                />
-              </Form.Item>
+              <SelectPeriodicity />
             </Col>
             <Col lg={8} xs={22}>
-              <Form.Item
-                name="type_tax"
-                label="Tipo de impuesto"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  options={typeTax}
-                  notFoundContent={"No se encontraron resultados."}
-                />
-              </Form.Item>
+              <SelectTypeTax />
             </Col>
             <Col lg={8} xs={22}>
               <Form.Item
@@ -500,4 +456,11 @@ const FormPaymentCalendar = ({
     </>
   );
 };
-export default FormPaymentCalendar;
+
+const mapState = (state) => {
+  return {
+    catPerception: state.fiscalStore.cat_perceptions,
+  };
+};
+
+export default connect(mapState)(FormPaymentCalendar);

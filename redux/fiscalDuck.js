@@ -79,7 +79,6 @@ export const getCfdiVersion = () => async (dispatch, getState) => {
 };
 
 export const setVersionCfdi = (version_id) => async (dispatch, getState) => {
-  console.log("VERSION--->> ", version_id);
   if (version_id && version_id != undefined) {
     setStorage("v", version_id);
     dispatch({ type: VERSION_CFDI, payload: version_id });
@@ -94,7 +93,6 @@ export const doFiscalCatalogs =
   (node_id, versionCfdi) => async (dispatch, getState) => {
     try {
       if (versionCfdi && versionCfdi != undefined) {
-        console.log("catalog version-->> ", versionCfdi);
         dispatch(getFiscalBanks(versionCfdi));
         dispatch(getFiscalTaxRegime(versionCfdi));
         dispatch(getPerceptions(versionCfdi));
