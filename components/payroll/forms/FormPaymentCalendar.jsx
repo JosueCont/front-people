@@ -20,6 +20,9 @@ import { messageSaveSuccess } from "../../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../../utils/rules";
 import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
+import SelectPeriodicity from "../../selects/SelectPeriodicity";
+import SelectTypeTax from "../../selects/SelectTypeTax";
+import { connect } from "react-redux";
 
 const FormPaymentCalendar = ({
   title,
@@ -40,57 +43,28 @@ const FormPaymentCalendar = ({
   const [incidenceStart, setIncidenceStart] = useState("");
 
   /* Const switchs */
-  const [adjustmentAppy, setAdjustmentApply] = useState(false);
+  const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
+  const [annualAdjustment, setAnnualAdjustment] = useState(false);
   const [periodActive, setPeriodActive] = useState(true);
   const [paymentSaturday, setPaymentSaturday] = useState(false);
   const [paymentSunday, setPaymentSunday] = useState(false);
 
   useEffect(() => {
-    getTypeTax();
-    getPaymentPeriodicity();
-    getPerceptionType();
     if (idPaymentCalendar) {
       getPaymentCalendar();
     }
   }, [idPaymentCalendar]);
 
-  const getTypeTax = async () => {
-    try {
-      let response = await WebApiFiscal.getTypeTax();
-      let tax_types = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-      setTypeTax(tax_types);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getPerceptionType = async () => {
-    try {
-      let response = await WebApiFiscal.getPerseptions();
-      let perception_types = response.data.results
+  useEffect(() => {
+    if (props.catPerception) {
+      let perception_types = props.catPerception
         .filter((item) => item.code == "001" || item.code == "046")
         .map((a) => {
           return { value: a.id, label: a.description };
         });
       setPerceptionType(perception_types);
-    } catch (error) {
-      console.log(error);
     }
-  };
-
-  const getPaymentPeriodicity = async () => {
-    try {
-      let response = await WebApiFiscal.getPaymentPeriodicity();
-      let periodicity = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-      setPaymentPeriodicity(periodicity);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  }, [props.catPerception]);
 
   const getPaymentCalendar = async () => {
     setLoading(true);
@@ -141,6 +115,7 @@ const FormPaymentCalendar = ({
           content: messageSaveSuccess,
           className: "custom-class",
         });
+        props.getPaymentCalendars();
         closeModal();
       })
       .catch((err) => {
@@ -181,7 +156,8 @@ const FormPaymentCalendar = ({
     setLoading(true);
     value.node = parseInt(nodeId);
     value.active = periodActive;
-    value.adjustment = adjustmentAppy;
+    value.monthly_adjustment = monthlyAdjustment;
+    value.annual_adjustment = annualAdjustment;
     value.pay_before = value.pay_before ? parseInt(value.pay_before) : 0;
     value.payment_saturday = paymentSaturday;
     value.payment_sunday = paymentSunday;
@@ -209,8 +185,14 @@ const FormPaymentCalendar = ({
     }
   };
 
-  const changeAdjustmentAppy = (checked) => {
-    setAdjustmentApply(checked);
+  const changeMonthlyAdjustment = (checked) => {
+    setMonthlyAdjustment(checked);
+    setAnnualAdjustment(false);
+  };
+
+  const changeAnnualAdjustment = (checked) => {
+    setAnnualAdjustment(checked);
+    setMonthlyAdjustment(false);
   };
 
   const changePeriodActive = (checked) => {
@@ -274,14 +256,14 @@ const FormPaymentCalendar = ({
                 rules={[ruleRequired]}
                 extra={
                   <>
-                    Aplicar ajuste
+                    Activo
                     <Switch
                       size="small"
-                      checked={adjustmentAppy}
+                      checked={periodActive}
+                      onChange={changePeriodActive}
                       checkedChildren={<CheckOutlined />}
                       unCheckedChildren={<CloseOutlined />}
                       style={{ marginLeft: 10 }}
-                      onChange={changeAdjustmentAppy}
                     />
                   </>
                 }
@@ -290,28 +272,10 @@ const FormPaymentCalendar = ({
               </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
-              <Form.Item
-                name="periodicity"
-                label="Periodicidad"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  options={paymentPeriodicity}
-                  notFoundContent={"No se encontraron resultados."}
-                />
-              </Form.Item>
+              <SelectPeriodicity />
             </Col>
             <Col lg={8} xs={22}>
-              <Form.Item
-                name="type_tax"
-                label="Tipo de impuesto"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  options={typeTax}
-                  notFoundContent={"No se encontraron resultados."}
-                />
-              </Form.Item>
+              <SelectTypeTax />
             </Col>
             <Col lg={8} xs={22}>
               <Form.Item
@@ -333,15 +297,35 @@ const FormPaymentCalendar = ({
                 rules={[ruleRequired]}
                 extra={
                   <>
-                    Activo
-                    <Switch
-                      size="small"
-                      checked={periodActive}
-                      onChange={changePeriodActive}
-                      checkedChildren={<CheckOutlined />}
-                      unCheckedChildren={<CloseOutlined />}
-                      style={{ marginLeft: 10 }}
-                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span>
+                        <small>Ajuste mensual</small>
+                        <Switch
+                          size="small"
+                          checked={monthlyAdjustment}
+                          checkedChildren={<CheckOutlined />}
+                          unCheckedChildren={<CloseOutlined />}
+                          style={{ marginLeft: 10 }}
+                          onChange={changeMonthlyAdjustment}
+                        />
+                      </span>
+                      <span>
+                        <small>Ajuste anual</small>
+                        <Switch
+                          size="small"
+                          checked={annualAdjustment}
+                          checkedChildren={<CheckOutlined />}
+                          unCheckedChildren={<CloseOutlined />}
+                          style={{ marginLeft: 10 }}
+                          onChange={changeAnnualAdjustment}
+                        />
+                      </span>
+                    </div>
                   </>
                 }
               >
@@ -472,4 +456,11 @@ const FormPaymentCalendar = ({
     </>
   );
 };
-export default FormPaymentCalendar;
+
+const mapState = (state) => {
+  return {
+    catPerception: state.fiscalStore.cat_perceptions,
+  };
+};
+
+export default connect(mapState)(FormPaymentCalendar);

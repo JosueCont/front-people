@@ -166,9 +166,9 @@ const SelectCompany = ({ ...props }) => {
   };
 
   useEffect(() => {
-    if (props.config && props.config.applicatons)
+    if (props.config && props.config.applications)
       if (
-        props.config.aplications.find(
+        props.config.applications.find(
           (item) => item.app === "PAYROLL" && item.is_active
         )
       )
