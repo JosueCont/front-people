@@ -111,14 +111,15 @@ const FormPaymentCalendar = ({
     await WebApiPayroll.createPaymentCalendar(data)
       .then((response) => {
         setLoading(false);
+        props.getPaymentCalendars();
         message.success({
           content: messageSaveSuccess,
           className: "custom-class",
         });
-        props.getPaymentCalendars();
         closeModal();
       })
       .catch((err) => {
+        props.getPaymentCalendars();
         console.log(err);
         setLoading(false);
       });
@@ -418,17 +419,35 @@ const FormPaymentCalendar = ({
                 />
               </Form.Item>
             </Col>
-            {/* <Col lg={8} xs={22}>
+            <Col lg={8} xs={22}>
               <Form.Item
-                name="end_incidence"
-                label="Fin de incidencia"
+                name="version_cfdi"
+                label="Version de cfdi"
                 maxLength={2}
-                type="number"
-                rules={[onlyNumeric]}
+                rules={[ruleRequired]}
               >
-                <Input maxLength={10} />
+                <Select
+                  onChange={(value) => setVersionCfdiSelect(value)}
+                  placeholder="Seleccione la version"
+                  defaultValue={
+                    props.cfdiVersion
+                      ? props.cfdiVersion.find((item) => item.active === true)
+                          .id
+                      : null
+                  }
+                  options={
+                    props.cfdiVersion
+                      ? props.cfdiVersion.map((item) => {
+                          return {
+                            label: `Versión - ${item.version}`,
+                            value: item.id,
+                          };
+                        })
+                      : []
+                  }
+                />
               </Form.Item>
-            </Col> */}
+            </Col>
             <Col lg={8} xs={22}>
               <SelectFixedConcept type={2} name={"group_fixed_concept"} />
             </Col>
@@ -460,6 +479,7 @@ const FormPaymentCalendar = ({
 const mapState = (state) => {
   return {
     catPerception: state.fiscalStore.cat_perceptions,
+    cfdiVersion: state.fiscalStore.cfdi_version,
   };
 };
 
