@@ -148,7 +148,8 @@ const FormPaymentCalendar = ({
         });
         closeModal();
       })
-      .catch((err) => {
+      .catch((error) => {
+        setLoading(false);
         console.log(error);
       });
   };
@@ -180,9 +181,8 @@ const FormPaymentCalendar = ({
     if (startDate) {
       value.start_date = startDate;
     }
-    if (activationDate) {
-      value.activation_date = activationDate;
-    }
+    value.activation_date = activationDate != "" ? activationDate : null;
+
     if (period) {
       value.period = parseInt(period);
     }
