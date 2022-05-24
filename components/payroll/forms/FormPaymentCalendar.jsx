@@ -41,6 +41,7 @@ const FormPaymentCalendar = ({
   const [period, setPeriod] = useState("");
   const [paymentPeriodicity, setPaymentPeriodicity] = useState([]);
   const [incidenceStart, setIncidenceStart] = useState("");
+  const [versions, setVersions] = useState([]);
 
   /* Const switchs */
   const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
@@ -54,6 +55,18 @@ const FormPaymentCalendar = ({
       getPaymentCalendar();
     }
   }, [idPaymentCalendar]);
+
+  useEffect(() => {
+    if (props.cfdiVersion) {
+      let data = props.cfdiVersion.map((item) => {
+        return {
+          label: `Versión - ${item.version}`,
+          value: item.id,
+        };
+      });
+      setVersions(data);
+    }
+  }, [props.cfdiVersion]);
 
   useEffect(() => {
     if (props.catPerception) {
@@ -427,24 +440,8 @@ const FormPaymentCalendar = ({
                 rules={[ruleRequired]}
               >
                 <Select
-                  onChange={(value) => setVersionCfdiSelect(value)}
                   placeholder="Seleccione la version"
-                  defaultValue={
-                    props.cfdiVersion
-                      ? props.cfdiVersion.find((item) => item.active === true)
-                          .id
-                      : null
-                  }
-                  options={
-                    props.cfdiVersion
-                      ? props.cfdiVersion.map((item) => {
-                          return {
-                            label: `Versión - ${item.version}`,
-                            value: item.id,
-                          };
-                        })
-                      : []
-                  }
+                  options={versions}
                 />
               </Form.Item>
             </Col>
