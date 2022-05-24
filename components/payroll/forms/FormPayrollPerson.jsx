@@ -18,8 +18,9 @@ import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import WebApiFiscal from "../../../api/WebApiFiscal";
 import { ruleRequired, fourDecimal } from "../../../utils/rules";
+import { connect } from "react-redux";
 
-const FormPayrollPerson = ({ person_id = null, node = null }) => {
+const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
   const { Title } = Typography;
   const [formPayrollPerson] = Form.useForm();
   const [contrctsType, setContractsType] = useState([]);
@@ -45,14 +46,80 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   const [perceptionTypes, setPerceptionTypes] = useState([]);
 
   useEffect(() => {
+    if (props.catPerception) {
+      let data = props.catPerception.map((item) => {
+        return {
+          label: item.description,
+          value: item.id,
+        };
+      });
+      setPerceptionTypes(data);
+    }
+  }, [props.catPerception]);
+
+  useEffect(() => {
+    if (props.catHiringRegime) {
+      let data = props.catHiringRegime.map((item) => {
+        return {
+          label: item.description,
+          value: item.id,
+        };
+      });
+      setHiringRegimeType(data);
+    }
+  }, [props.catTaxRegime]);
+
+  useEffect(() => {
+    if (props.catContracType) {
+      let data = props.catContracType.map((item) => {
+        return {
+          label: item.description,
+          value: item.id,
+        };
+      });
+      setContractsType(data);
+    }
+  }, [props.catContracType]);
+
+  useEffect(() => {
+    if (props.catJourneyType) {
+      let data = props.catJourneyType.map((item) => {
+        return {
+          label: item.description,
+          value: item.id,
+        };
+      });
+      setTypeworkingday(data);
+    }
+  }, [props.catJourneyType]);
+
+  useEffect(() => {
+    if (props.catTypeTax) {
+      let data = props.catTypeTax.map((item) => {
+        return {
+          label: item.description,
+          value: item.id,
+        };
+      });
+      setTypeTax(data);
+    }
+  }, [props.catJourneyType]);
+
+  useEffect(() => {
+    if (props.catBanks) {
+      let data = props.catBanks.map((item) => {
+        return {
+          label: item.description,
+          value: item.id,
+        };
+      });
+      setBanks(data);
+    }
+  }, [props.catBanks]);
+
+  useEffect(() => {
     getPayrollPerson();
-    getContractTypes();
-    getHiringRegimes();
-    getTypeTax();
-    getBanks();
     getPaymentCalendar();
-    getTypeworkingday();
-    getPerceptionTypes();
     PayrollList();
   }, []);
 
@@ -81,6 +148,8 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
             perception_type: item.perception_type,
             last_day_paid: item.last_day_paid ? moment(item.last_day_paid) : "",
             integrated_daily_salary: item.integrated_daily_salary,
+            apply_annual_adjustment: item.apply_annual_adjustment,
+            apply_monthly_adjustment: item.apply_monthly_adjustment,
           });
           setLastDayPaid(item.last_day_paid);
           if (item.id) {
@@ -96,54 +165,6 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
       });
   };
 
-  const getContractTypes = async () => {
-    try {
-      let response = await WebApiFiscal.getContractTypes();
-      let contract_types = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-      setContractsType(contract_types);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getHiringRegimes = async () => {
-    try {
-      let response = await WebApiFiscal.getHiringRegimes();
-      let hiring_regime_types = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-      setHiringRegimeType(hiring_regime_types);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getTypeTax = async () => {
-    try {
-      let response = await WebApiFiscal.getTypeTax();
-      let tax_types = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-      setTypeTax(tax_types);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getBanks = async () => {
-    try {
-      let response = await WebApiFiscal.getBanks();
-      let banks = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-      setBanks(banks);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const getPaymentCalendar = async () => {
     try {
       let response = await WebApiPayroll.getPaymentCalendar(node);
@@ -155,29 +176,6 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const getPerceptionTypes = async () => {
-    try {
-      let response = await WebApiFiscal.getPerseptions();
-      let payment_perceptions = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-
-      setPerceptionTypes(payment_perceptions);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getTypeworkingday = async () => {
-    try {
-      let response = await WebApiFiscal.getTypeworkingday();
-      let type_working_days = response.data.results.map((a) => {
-        return { value: a.id, label: a.description };
-      });
-      setTypeworkingday(type_working_days);
-    } catch (error) {}
   };
 
   const savePayrollPerson = async (data) => {
@@ -490,4 +488,15 @@ const FormPayrollPerson = ({ person_id = null, node = null }) => {
   );
 };
 
-export default FormPayrollPerson;
+const mapState = (state) => {
+  return {
+    catPerception: state.fiscalStore.cat_perceptions,
+    catContracType: state.fiscalStore.cat_contract_type,
+    catHiringRegime: state.fiscalStore.cat_hiring_regime,
+    catJourneyType: state.fiscalStore.cat_journey_type,
+    catTypeTax: state.fiscalStore.type_tax,
+    catBanks: state.fiscalStore.banks,
+  };
+};
+
+export default connect(mapState)(FormPayrollPerson);
