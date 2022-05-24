@@ -98,6 +98,8 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const changeCalendar = (value) => {
+    setTotalSalary(null);
+    setTotalIsr(null);
     const calendar = paymentCalendars.find((item) => item.id === value);
     const period = calendar.periods.find((p) => p.active == true);
     setCalendarSelect(calendar.id);
