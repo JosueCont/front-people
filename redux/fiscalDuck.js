@@ -28,6 +28,9 @@ const TYPE_TAX = "TYPE_TAX";
 const PAYMENT_PERIODICITY = "PAYMENT_PERIODICITY";
 const CFDI_VERSION = "CFDI_VERSION";
 const VERSION_CFDI = "VERSION_CFDI";
+const CONTRACT_TYPE = "CONTRACT_TYPE";
+const JOURNEY_TYPE = "JOURNEY_TYPE";
+const HIRING_REGIME = "HIRING_REGIME";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -55,6 +58,12 @@ const webReducer = (state = initialData, action) => {
       return { ...state, cfdi_version: action.payload };
     case VERSION_CFDI:
       return { ...state, version_cfdi: action.payload };
+    case CONTRACT_TYPE:
+      return { ...state, cat_contract_type: action.payload };
+    case JOURNEY_TYPE:
+      return { ...state, cat_journey_type: action.payload };
+    case HIRING_REGIME:
+      return { ...state, cat_hiring_regime: action.payload };
     default:
       return state;
   }
@@ -105,6 +114,9 @@ export const doFiscalCatalogs =
         }
         dispatch(getTypeTax(versionCfdi));
         dispatch(getPaymentPeriodicity(versionCfdi));
+        dispatch(getJourneyType(versionCfdi));
+        dispatch(getContractType(versionCfdi));
+        dispatch(getHiringRegime(versionCfdi));
       }
     } catch (error) {
       console.log(error);
@@ -227,3 +239,33 @@ export const getPaymentPeriodicity =
         console.log(error);
       });
   };
+
+export const getContractType = (versionCfdi) => async (dispatch, getState) => {
+  await WebApiFiscal.getContractTypes(versionCfdi)
+    .then((response) => {
+      dispatch({ type: CONTRACT_TYPE, payload: response.data.results });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getJourneyType = (versionCfdi) => async (dispatch, getState) => {
+  await WebApiFiscal.getTypeworkingday(versionCfdi)
+    .then((response) => {
+      dispatch({ type: JOURNEY_TYPE, payload: response.data.results });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getHiringRegime = (versionCfdi) => async (dispatch, getState) => {
+  await WebApiFiscal.getHiringRegimes(versionCfdi)
+    .then((response) => {
+      dispatch({ type: HIRING_REGIME, payload: response.data.results });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};

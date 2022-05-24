@@ -87,7 +87,6 @@ const FormPaymentCalendar = ({
       );
       if (response.data) {
         let item = response.data;
-        console.log(item);
         formPaymentCalendar.setFieldsValue({
           name: item.name,
           periodicity: item.periodicity.id,
@@ -104,8 +103,10 @@ const FormPaymentCalendar = ({
             ? moment(item.activation_date)
             : "",
           group_fixed_concept: item.group_fixed_concept,
+          version_cfdi: item.version_cfdi,
         });
-        setAdjustmentApply(item.adjustment);
+        setAnnualAdjustment(item.annual_adjustemnt);
+        setMonthlyAdjustment(item.monthly_adjustment);
         setPeriodActive(item.active);
         setPaymentSaturday(item.payment_saturday);
         setPaymentSunday(item.payment_sunday);
@@ -139,7 +140,7 @@ const FormPaymentCalendar = ({
   };
 
   const updatePaymentCalendar = async (data) => {
-    let response = await WebApiPayroll.updatePaymentCalendar(data)
+    WebApiPayroll.updatePaymentCalendar(data)
       .then((response) => {
         message.success({
           content: "Guardado correctamente.",
@@ -225,7 +226,8 @@ const FormPaymentCalendar = ({
     props.setIsModalVisible(false);
     setPaymentSunday(false);
     setPaymentSaturday(false);
-    setAdjustmentApply(false);
+    setAnnualAdjustment(false);
+    setMonthlyAdjustment(false);
     setPeriodActive(false);
     props.getPaymentCalendars();
   };
