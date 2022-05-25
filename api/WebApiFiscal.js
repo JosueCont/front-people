@@ -116,8 +116,11 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/disability-type/`, "get");
   }
 
-  static getPostalCode(data) {
-    return WebApi.ApisType(`/fiscal/postal-code?code=${data}`, "get");
+  static getPostalCode(data, version) {
+    return WebApi.ApisType(
+      `/fiscal/postal-code?code=${data}&version_cfdi=${version}`,
+      "get"
+    );
   }
 
   static getCfdiVersion() {

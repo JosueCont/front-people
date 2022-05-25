@@ -1,6 +1,7 @@
 import { Form, Input, Row, Col, Select } from "antd";
 import { useEffect } from "react";
 import { useState } from "react";
+import { connect } from "react-redux";
 import WebApiFiscal from "../../api/WebApiFiscal";
 import SelectCountry from "../selects/SelectCountry";
 import SelectMunicipality from "../selects/SelectMunicipality";
@@ -18,13 +19,14 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
   }, [fiscalAddress]);
 
   const getPostalCode = (value) => {
-    WebApiFiscal.getPostalCode(value)
-      .then((response) => {
-        setPostalCode(response.data.results);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    if (props.versionCfdi)
+      WebApiFiscal.getPostalCode(value, props.versionCfdi)
+        .then((response) => {
+          setPostalCode(response.data.results);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
   };
 
   const setForm = (data) => {
@@ -121,4 +123,11 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
     </>
   );
 };
-export default FiscalAddress;
+
+const mapState = (state) => {
+  return {
+    versionCfdi: state.fiscalStore.version_cfdi,
+  };
+};
+
+export default connect(mapState)(FiscalAddress);

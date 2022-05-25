@@ -57,8 +57,8 @@ const FormPaymentCalendar = ({
   }, [idPaymentCalendar]);
 
   useEffect(() => {
-    if (props.cfdiVersion) {
-      let data = props.cfdiVersion.map((item) => {
+    if (props.catCfdiVersion) {
+      let data = props.catCfdiVersion.map((item) => {
         return {
           label: `Versión - ${item.version}`,
           value: item.id,
@@ -66,7 +66,7 @@ const FormPaymentCalendar = ({
       });
       setVersions(data);
     }
-  }, [props.cfdiVersion]);
+  }, [props.catCfdiVersion]);
 
   useEffect(() => {
     if (props.catPerception) {
@@ -478,7 +478,7 @@ const FormPaymentCalendar = ({
 const mapState = (state) => {
   return {
     catPerception: state.fiscalStore.cat_perceptions,
-    cfdiVersion: state.fiscalStore.cfdi_version,
+    catCfdiVersion: state.fiscalStore.cat_cfdi_version,
   };
 };
 
