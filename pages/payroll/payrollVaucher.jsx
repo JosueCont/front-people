@@ -58,6 +58,13 @@ const PayrollVaucher = ({ ...props }) => {
       },
     },
     {
+      title: "Periodo",
+      key: "timestamp",
+      render: (item) => {
+        return `${item.payment_period.name}.- ${item.payment_period.start_date} - ${item.payment_period.end_date}`;
+      },
+    },
+    {
       title: "Fecha emisión",
       key: "timestamp",
       render: (item) => {
