@@ -13,6 +13,8 @@ import {
   Modal,
   Space,
   Badge,
+  Alert,
+  Select,
 } from "antd";
 import { UserOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
@@ -22,6 +24,9 @@ import Cookie from "js-cookie";
 import WebApiPeople from "../api/WebApiPeople";
 import { logoutAuth } from "../libs/auth";
 import CardApps from "./dashboards-cards/CardApp";
+import { connect } from "react-redux";
+import { setVersionCfdi } from "../redux/fiscalDuck";
+import GenericModal from "./modal/genericModal";
 
 const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Text } = Typography;
@@ -30,6 +35,8 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   const { Header } = Layout;
   const [logOut, setLogOut] = useState(false);
   const [person, setPerson] = useState();
+  const [modalCfdiVersion, setModalCfdiVersion] = useState(false);
+  const [versionCfdiSelect, setVersionCfdiSelect] = useState(null);
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -57,12 +64,6 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           console.log(error);
         });
     }
-  };
-
-  const editProfile = () => {
-    !person.nodes && props.currentNode
-      ? router.push(`/ac/urn/${props.currentNode.permanent_code}`)
-      : router.push(`/home/persons/${person.id}`);
   };
 
   const userCardDisplay = () => (
@@ -110,6 +111,18 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 <Text>Cambiar de empresa</Text>
               </p>
             )}
+            {props.config &&
+              props.config.applications &&
+              props.config.applications.find(
+                (item) => item.app === "PAYROLL" && item.is_active
+              ) && (
+                <p
+                  className="text-menu"
+                  onClick={() => setModalCfdiVersion(true)}
+                >
+                  <Text>Cambiar version de CDFI</Text>
+                </p>
+              )}
             <p className="text-menu" onClick={() => setLogOut(true)}>
               <Text>Cerrar sesión</Text>
             </p>
@@ -245,8 +258,59 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
       >
         ¿Está seguro de cerrar sesión?
       </Modal>
+
+      {modalCfdiVersion && (
+        <GenericModal
+          visible={modalCfdiVersion}
+          setVisible={(value) => setModalCfdiVersion(value)}
+          title="Versión CFDI"
+          titleActionButton="Aceptar"
+          width="50%"
+          content={
+            <>
+              <Alert
+                message={
+                  <span>
+                    <b>Versión de CFDI:</b> Seleccione la version con la cual
+                    trabajara su nómina (los catalogos fiscales varian entre
+                    versiones).
+                  </span>
+                }
+                type="info"
+              />
+              <br />
+              <Select
+                onChange={(value) => setVersionCfdiSelect(value)}
+                placeholder="Seleccione la version"
+                defaultValue={
+                  props.versionCfdi
+                    ? props.versionCfdi
+                    : props.catCfdiVersion.find((item) => item.active === true)
+                        .id
+                }
+                options={props.catCfdiVersion.map((item) => {
+                  return {
+                    label: `Versión - ${item.version}`,
+                    value: item.id,
+                  };
+                })}
+              />
+            </>
+          }
+          actionButton={() => {
+            props.setVersionCfdi(versionCfdiSelect), setModalCfdiVersion(false);
+          }}
+        />
+      )}
     </>
   );
 };
 
-export default NewHeader;
+const mapState = (state) => {
+  return {
+    catCfdiVersion: state.fiscalStore.cat_cfdi_version,
+    versionCfdi: state.fiscalStore.version_cfdi,
+  };
+};
+
+export default connect(mapState, { setVersionCfdi })(NewHeader);
