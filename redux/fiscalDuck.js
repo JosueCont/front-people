@@ -12,7 +12,7 @@ const initialData = {
   other_payments_int: [],
   type_tax: [],
   payment_periodicity: [],
-  cfdi_version: [],
+  cat_cfdi_version: [],
   version_cfdi: null,
 };
 
@@ -26,7 +26,7 @@ const DEDUCTIONS_INT = "DEDUCTIONS_INT";
 const OTHER_PAYMENTS_INT = "OTHER_PAYMENTS_INT";
 const TYPE_TAX = "TYPE_TAX";
 const PAYMENT_PERIODICITY = "PAYMENT_PERIODICITY";
-const CFDI_VERSION = "CFDI_VERSION";
+const CAT_CFDI_VERSION = "CAT_CFDI_VERSION";
 const VERSION_CFDI = "VERSION_CFDI";
 const CONTRACT_TYPE = "CONTRACT_TYPE";
 const JOURNEY_TYPE = "JOURNEY_TYPE";
@@ -54,8 +54,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, type_tax: action.payload };
     case PAYMENT_PERIODICITY:
       return { ...state, payment_periodicity: action.payload };
-    case CFDI_VERSION:
-      return { ...state, cfdi_version: action.payload };
+    case CAT_CFDI_VERSION:
+      return { ...state, cat_cfdi_version: action.payload };
     case VERSION_CFDI:
       return { ...state, version_cfdi: action.payload };
     case CONTRACT_TYPE:
@@ -73,7 +73,7 @@ export default webReducer;
 export const getCfdiVersion = () => async (dispatch, getState) => {
   await WebApiFiscal.getCfdiVersion()
     .then((response) => {
-      dispatch({ type: CFDI_VERSION, payload: response.data.results });
+      dispatch({ type: CAT_CFDI_VERSION, payload: response.data.results });
       dispatch(
         getStorage("v")
           ? setVersionCfdi(getStorage("v"))

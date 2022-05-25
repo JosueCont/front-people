@@ -379,7 +379,7 @@ const SelectCompany = ({ ...props }) => {
             setVisible={setCreateNode}
             afterAction={(value) => personForKhonnectId(value)}
           />
-          {modalCfdiVersion && props.cfdiVersion && (
+          {modalCfdiVersion && props.catCfdiVersion && (
             <GenericModal
               visible={modalCfdiVersion}
               setVisible={(value) => setModalCfdiVersion(value)}
@@ -403,9 +403,10 @@ const SelectCompany = ({ ...props }) => {
                     onChange={(value) => setVersionCfdiSelect(value)}
                     placeholder="Seleccione la version"
                     defaultValue={
-                      props.cfdiVersion.find((item) => item.active === true).id
+                      props.catCfdiVersion.find((item) => item.active === true)
+                        .id
                     }
-                    options={props.cfdiVersion.map((item) => {
+                    options={props.catCfdiVersion.map((item) => {
                       return {
                         label: `Versión - ${item.version}`,
                         value: item.id,
@@ -432,7 +433,7 @@ const mapState = (state) => {
   return {
     config: state.userStore.general_config,
     user: state.userStore.user,
-    cfdiVersion: state.fiscalStore.cfdi_version,
+    catCfdiVersion: state.fiscalStore.cat_cfdi_version,
     versionCfdi: state.fiscalStore.version_cfdi,
   };
 };

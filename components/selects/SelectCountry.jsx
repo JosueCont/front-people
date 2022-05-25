@@ -14,11 +14,11 @@ const SelectCountry = ({
   const [options, setOptions] = useState(null);
 
   useEffect(() => {
-    getCountries();
-  }, []);
+    if (props.versionCfdi) getCountries();
+  }, [props.versionCfdi]);
 
   const getCountries = () => {
-    WebApiFiscal.getCountries()
+    WebApiFiscal.getCountries(props.versionCfdi)
       .then((response) => {
         let countries = response.data.results.map((item) => {
           return { value: item.id, label: item.description };
@@ -51,4 +51,10 @@ const SelectCountry = ({
   );
 };
 
-export default SelectCountry;
+const mapState = (state) => {
+  return {
+    versionCfdi: state.fiscalStore.version_cfdi,
+  };
+};
+
+export default connect(mapState)(SelectCountry);
