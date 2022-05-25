@@ -379,7 +379,7 @@ const SelectCompany = ({ ...props }) => {
             setVisible={setCreateNode}
             afterAction={(value) => personForKhonnectId(value)}
           />
-          {modalCfdiVersion && props.catCfdiVersion && (
+          {/* {modalCfdiVersion && props.catCfdiVersion && (
             <GenericModal
               visible={modalCfdiVersion}
               setVisible={(value) => setModalCfdiVersion(value)}
@@ -420,7 +420,7 @@ const SelectCompany = ({ ...props }) => {
                   setModalCfdiVersion(false);
               }}
             />
-          )}
+          )} */}
         </MainLayout>
       ) : (
         <div className="notAllowed" />
