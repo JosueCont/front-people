@@ -32,15 +32,13 @@ const ConfigCompany = ({ ...props }) => {
 
   return (
     <MainLayout currentKey="2">
-      {
-        (props.currentNode = null && (
-          <Row align="end">
-            <Button onClick={() => Router.push("/select-company")}>
-              Regresar
-            </Button>
-          </Row>
-        ))
-      }
+      {props.currentNode == null && (
+        <Row align="end">
+          <Button onClick={() => Router.push("/select-company")}>
+            Regresar
+          </Button>
+        </Row>
+      )}
       {props.currentNode && (
         <Breadcrumb>
           <Breadcrumb.Item
