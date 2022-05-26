@@ -1,6 +1,6 @@
 import { Breadcrumb, Spin, Typography, Tabs, Row, Button } from "antd";
-import { Router, useRouter } from "next/router";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { withAuthSync } from "../../libs/auth";
 import FiscalInformationNode from "../../components/payroll/forms/FiscalInformationNode";
@@ -34,7 +34,7 @@ const ConfigCompany = ({ ...props }) => {
     <MainLayout currentKey="2">
       {props.currentNode == null && (
         <Row align="end">
-          <Button onClick={() => Router.push("/select-company")}>
+          <Button onClick={() => router.push("/select-company")}>
             Regresar
           </Button>
         </Row>
