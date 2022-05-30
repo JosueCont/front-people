@@ -18,7 +18,12 @@ import {
   CustomBtn
 } from './Styled';
 
-const CardUser = ({user_profile, user_assessments, loading, ...props}) => {
+const CardUser = ({
+  user_profile,
+  user_assessments,
+  loading,
+  // filterBy,
+  ...props}) => {
 
   const [user, setUser] = useState({});
   const [toAnswer, setToAnswer] = useState(0);
@@ -49,7 +54,10 @@ const CardUser = ({user_profile, user_assessments, loading, ...props}) => {
     let completed = 0;
     user_assessments.map((item)=> {
       if (item.apply){
-        if(item.apply.progress == 100){
+        if(
+          item.apply.progress == 100 ||
+          item.apply.status == 2
+        ){
           completed = completed + 1;
         }else{
           toAnswer = toAnswer + 1;
@@ -103,18 +111,20 @@ const CardUser = ({user_profile, user_assessments, loading, ...props}) => {
         </Col>
         <Col xs={12} sm={12} md={12} lg={5} xl={4}>
           <CardGeneric
-              title={'Evaluaciones completadas'}
-              icon={<FileDoneOutlined />}
-              color={'#ec6532'}
-              numcard={completed}
+            // filter={()=> filterBy(false, true, false)}
+            title={'Evaluaciones completadas'}
+            icon={<FileDoneOutlined />}
+            color={'#ec6532'}
+            numcard={completed}
           />
         </Col>
         <Col xs={12} sm={12} md={12} lg={5} xl={4}>
           <CardGeneric
-              title={'Evaluaciones por contestar'}
-              icon={<FileSyncOutlined />}
-              color={'#1c1a28'}
-              numcard={toAnswer}
+            // filter={()=> filterBy(true, false, false)}
+            title={'Evaluaciones por contestar'}
+            icon={<FileSyncOutlined />}
+            color={'#1c1a28'}
+            numcard={toAnswer}
           />
         </Col>
     </Row>

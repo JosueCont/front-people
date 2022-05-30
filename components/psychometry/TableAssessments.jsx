@@ -1,8 +1,18 @@
 import React, {useState, useEffect} from 'react';
-import {Row, Col, Progress, Card, Table } from 'antd';
+import {
+  Row,
+  Col,
+  Progress,
+  Card,
+  Table,
+  Input,
+  Tooltip
+} from 'antd';
 import moment from "moment";
 import jwtEncode from "jwt-encode";
+import { ClearOutlined } from "@ant-design/icons";
 import { popupWindow, getCurrentURL } from '../../utils/constant';
+import { valueToFilter } from '../../utils/functions';
 import {
   ContentTitle,
   ContentEnd,
@@ -11,15 +21,28 @@ import {
   CustomBtn,
 } from "./Styled";
 import WebApiAssessment from '../../api/WebApiAssessment';
+import {
+  BsPlayCircleFill,
+  BsFillCheckCircleFill
+} from "react-icons/bs";
 
-const TableAssessments = ({user_assessments, loading, user_profile,...props}) => {
+const TableAssessments = ({
+  user_assessments,
+  loading,
+  user_profile,
+  // filterBy,
+  ...props}) => {
 
+  moment.locale('es-mx');
   const [generalPercent, setGeneralPercent] = useState(0);
   const [loadResults, setLoadResults] = useState({});
+  const [lisAssessments, setListAssessments] = useState([]);
+  const [nameAssessment, setNameAssessment] = useState('');
 
   useEffect(()=>{
     if(user_assessments.length > 0){
       calculatePercent()
+      setListAssessments(user_assessments)
     }
   },[user_assessments])
 
@@ -57,9 +80,10 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
   const getFieldDate = (item) =>{
     let endDate = item.apply?.end_date;
     let applyDate = item.apply?.apply_date;
+    let formatDate = 'DD/MM/YYYY hh:mm a';
     return endDate ?
-      moment(endDate).format('LLL') :
-      moment(applyDate).format('LLL');
+      moment(endDate).format(formatDate) :
+      moment(applyDate).format(formatDate);
   }
 
   const getResults = async (item) => {
@@ -98,6 +122,22 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
     popupWindow(url)
   }
 
+  const onFilter = ({target}) => {
+    setNameAssessment(target.value)
+    if((target.value).trim()){
+      let results = user_assessments.filter((item)=> valueToFilter(item.name).includes(valueToFilter(target.value)));
+      setListAssessments(results)
+    }else{
+      setListAssessments(user_assessments)
+    }
+  }
+
+  const onReset = () =>{
+    setNameAssessment('');
+    setListAssessments(user_assessments);
+    // filterBy(false, false, true)
+  }
+
   const columns = [
     {
       title: 'NOMBRE',
@@ -109,7 +149,10 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
       render: (item) =>{
         return(
           <>
-            {item.apply?.progress == 100 ? (
+            {(
+              item.apply?.progress == 100 ||
+              item.apply?.status == 2
+            ) ? (
               <span>{getFieldDate(item)}</span>
             ):(
               <span>Pendiente</span>
@@ -132,11 +175,15 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
       render: (item)=>{
         return(
           <>
-            {item.apply?.progress == 100 ? (
+            {(
+              item.apply?.progress == 100 ||
+              item.apply?.status == 2
+            ) ? (
               <CustomBtn
                 size={'small'}
                 bg={'#ed6432'}
                 wd={'150px'}
+                icon={<BsFillCheckCircleFill/>}
                 loading={loadResults[item.code]}
                 onClick={()=>getResults(item)}
               >
@@ -147,6 +194,7 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
                 size={'small'}
                 bg={'#814cf2'}
                 wd={'150px'}
+                icon={<BsPlayCircleFill/>}
               >
                 <span>Pendiente</span>
               </CustomBtn>
@@ -159,7 +207,31 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
 
   return (
     <Row gutter={[24,24]} align={'middle'}>
-      <Col span={24}>
+      <Col
+        xs={24}
+        md={12}
+        lg={12}
+        style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+        }}
+      >
+         <Input
+            placeholder={'Buscar por nombre'}
+            style={{borderRadius: '12px'}}
+            value={nameAssessment}
+            onChange={onFilter}
+          />
+          <Tooltip title={'Borrar filtros'}>
+            <CustomBtn
+              wd={'50px'}
+              icon={<ClearOutlined/>}
+              onClick={()=> onReset()}
+            />
+          </Tooltip>
+      </Col>
+      <Col xs={24} md={12} lg={12}>
         <ProgressPurple percent={generalPercent}/>
       </Col>
       <Col span={24}>
@@ -170,11 +242,13 @@ const TableAssessments = ({user_assessments, loading, user_profile,...props}) =>
           showHeader={false}
           columns={columns}
           loading={loading}
-          dataSource={user_assessments}
+          dataSource={lisAssessments}
           pagination={{
-              pageSize: 10,
-              total: user_assessments?.length
+            pageSize: 10,
+            total: lisAssessments?.length,
+            hideOnSinglePage: true
           }}
+          scroll={{x: 600}}
         />
       </Col>
     </Row>
