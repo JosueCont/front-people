@@ -15,6 +15,7 @@ const ProfileUser = () => {
     const { Option } = Select;
     const [person, setPerson] = useState({});
     const [assessments, setAssessments] = useState([]);
+    const [copyAssessments, setCopyAssessments] = useState([]);
     const [fullName, setFullName] = useState();
     const [loadAssessment, setLoadAssessment] = useState(false);
     const [loadUser, setLoadUser] = useState(false);
@@ -45,16 +46,37 @@ const ProfileUser = () => {
     }
 
     const getAssessments = async (id) =>{
-        setLoadAssessment(true)
+        setLoadAssessment(true);
         try {
             let response = await WebApiAssessment.getAssessmentsByPerson({person: id});
-            setAssessments(response.data)
-            setLoadAssessment(false)
+            setAssessments(response.data);
+            // setCopyAssessments(response.data);
+            setLoadAssessment(false);
         } catch (e) {
-            setLoadAssessment(false)
+            setLoadAssessment(false);
             console.log(e)
         }
     }
+
+    // const filterBy = (toAnswer, completed, reset) => {
+    //     if(toAnswer){
+    //         let results = copyAssessments.filter(item =>(
+    //             item.apply?.status !== 2 ||
+    //             item.apply?.progress !== 100
+    //         ))
+    //         setAssessments(results)
+    //     }
+    //     if(completed){
+    //         let results = copyAssessments.filter(item => (
+    //             item.apply?.status == 2 ||
+    //             item.apply?.progress == 100
+    //         ))
+    //         setAssessments(results)
+    //     }
+    //     if(reset){
+    //         setAssessments(copyAssessments)
+    //     }
+    // }
 
     return (
         <MainLayout currentKey="1">
@@ -73,6 +95,7 @@ const ProfileUser = () => {
                                 loading={loadUser}
                                 user_profile={person}
                                 user_assessments={assessments}
+                                // filterBy={filterBy}
                             />
                         </Col>
                         <Col span={24}>
@@ -80,6 +103,7 @@ const ProfileUser = () => {
                                 loading={loadAssessment}
                                 user_profile={person}
                                 user_assessments={assessments}
+                                // filterBy={filterBy}
                             />
                         </Col>
                     </Row>
