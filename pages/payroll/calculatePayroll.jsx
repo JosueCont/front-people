@@ -284,9 +284,8 @@ const CalculatePayroll = ({ ...props }) => {
                 <Input
                   key={item.type}
                   onChange={(value) => {
-                    (item.value = Number(value.target.value)),
-                      setCalculate(true),
-                      console.log(item);
+                    item.value = Number(value.target.value.replace(",", ""));
+                    setCalculate(true);
                   }}
                   defaultValue={item.amount}
                 />

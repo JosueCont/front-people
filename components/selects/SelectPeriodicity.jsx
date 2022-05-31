@@ -11,7 +11,6 @@ const SelectPeriodicity = ({
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    console.log("PERIODICITY---->> ", props.periodicity);
     if (props.periodicity) {
       let data = props.periodicity.map((item) => {
         return {

@@ -717,7 +717,6 @@ const homeScreen = ({ ...props }) => {
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log("los keys----->", selectedRowKeys);
       setPersonsKeys(selectedRowKeys);
       setPersonsToDelete(selectedRows);
     },

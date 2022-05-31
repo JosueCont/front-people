@@ -6,6 +6,7 @@ import {
   EditOutlined,
   CalendarOutlined,
   PlusCircleOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../../libs/auth";
 import { Global } from "@emotion/core";
@@ -141,34 +142,48 @@ const PaymentCalendars = ({ ...props }) => {
                 )}
               />
               <Column
-                title="Tipo de impuesto"
-                dataIndex="type_tax"
-                key="type_tax"
-                render={(type_tax, record) => (
-                  <>
-                    {type_tax && type_tax.description
-                      ? type_tax.description
-                      : ""}
-                  </>
-                )}
+                title="Periodo actual"
+                render={(type_tax, record) => {
+                  const period = record.periods.find(
+                    (item) => item.active === true
+                  );
+                  return `${period.name}.- ${period.start_date} - ${period.end_date}`;
+                }}
               />
               <Column
-                title="Fecha de inicio de pago"
-                dataIndex="start_date"
-                key="start_date"
+                title="Tipo de percepción"
+                key="perception_type"
+                render={(text, record) => {
+                  return (
+                    <>
+                      {record.perception_type.code == "046"
+                        ? "Asimilado"
+                        : "Nómina"}
+                    </>
+                  );
+                }}
               />
-              <Column title="Período" dataIndex="period" key="period" />
+              <Column title="Año" dataIndex="period" key="period" />
               <Column
                 title="Acciones"
                 key="actions"
                 render={(text, record) => (
                   <>
-                    <EditOutlined
-                      className="icon_actions"
-                      key={"goEdit" + record.id}
-                      onClick={() => GotoEdit(record)}
-                      style={{ color: "#fd893d" }}
-                    />
+                    {record.locked ? (
+                      <EyeOutlined
+                        className="icon_actions"
+                        key={"goEdit" + record.id}
+                        onClick={() => GotoEdit(record)}
+                        style={{ color: "#fd893d" }}
+                      />
+                    ) : (
+                      <EditOutlined
+                        className="icon_actions"
+                        key={"goEdit" + record.id}
+                        onClick={() => GotoEdit(record)}
+                        style={{ color: "#fd893d" }}
+                      />
+                    )}
                     <CalendarOutlined
                       className="icon_actions"
                       key={"goCalendar" + record.id}
