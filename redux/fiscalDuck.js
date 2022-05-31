@@ -108,9 +108,9 @@ export const doFiscalCatalogs =
         dispatch(getDeductions(versionCfdi));
         dispatch(getOtherPayments(versionCfdi));
         if (node_id) {
-          dispatch(getInternalPerceptions(node_id));
-          dispatch(getInternalDeductions(node_id));
-          dispatch(getInternalOtherPayments(node_id));
+          dispatch(getInternalPerceptions(node_id, versionCfdi));
+          dispatch(getInternalDeductions(node_id, versionCfdi));
+          dispatch(getInternalOtherPayments(node_id, versionCfdi));
         }
         dispatch(getTypeTax(versionCfdi));
         dispatch(getPaymentPeriodicity(versionCfdi));
@@ -174,43 +174,45 @@ export const getOtherPayments = (versionCfdi) => async (dispatch, getState) => {
     });
 };
 
-export const getInternalPerceptions = (data) => async (dispatch, getState) => {
-  await WebApiFiscal.getInternalPerceptions(data)
-    .then((response) => {
-      dispatch({
-        type: PERCEPTIONS_INT,
-        payload: response.data.filter(
-          (item) =>
-            item.perception_type.code != "001" &&
-            item.perception_type.code != "046"
-        ),
+export const getInternalPerceptions =
+  (data, versionCfdi) => async (dispatch, getState) => {
+    await WebApiFiscal.getInternalPerceptions(data, versionCfdi)
+      .then((response) => {
+        dispatch({
+          type: PERCEPTIONS_INT,
+          payload: response.data.filter(
+            (item) =>
+              item.perception_type.code != "001" &&
+              item.perception_type.code != "046"
+          ),
+        });
+      })
+      .catch((error) => {
+        console.log(error);
       });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+  };
 
-export const getInternalDeductions = (data) => async (dispatch, getState) => {
-  await WebApiFiscal.getInternalDeductions(data)
-    .then((response) => {
-      dispatch({
-        type: DEDUCTIONS_INT,
-        payload: response.data.filter(
-          (item) =>
-            item.deduction_type.code != "001" &&
-            item.deduction_type.code != "002"
-        ),
+export const getInternalDeductions =
+  (data, versionCfdi) => async (dispatch, getState) => {
+    await WebApiFiscal.getInternalDeductions(data, versionCfdi)
+      .then((response) => {
+        dispatch({
+          type: DEDUCTIONS_INT,
+          payload: response.data.filter(
+            (item) =>
+              item.deduction_type.code != "001" &&
+              item.deduction_type.code != "002"
+          ),
+        });
+      })
+      .catch((error) => {
+        // console.log(error);
       });
-    })
-    .catch((error) => {
-      // console.log(error);
-    });
-};
+  };
 
 export const getInternalOtherPayments =
-  (data) => async (dispatch, getState) => {
-    await WebApiFiscal.getInternalOtherPayments(data)
+  (data, versionCfdi) => async (dispatch, getState) => {
+    await WebApiFiscal.getInternalOtherPayments(data, versionCfdi)
       .then((response) => {
         dispatch({ type: OTHER_PAYMENTS_INT, payload: response.data });
       })

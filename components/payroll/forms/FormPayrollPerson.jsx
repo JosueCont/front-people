@@ -351,6 +351,7 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
                 rules={[ruleRequired]}
               >
                 <Select
+                  dropdownStyle={{ wordBreak: "break-word" }}
                   options={contrctsType}
                   notFoundContent={"No se encontraron resultados."}
                 />

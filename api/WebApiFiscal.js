@@ -87,23 +87,23 @@ class WebApiFiscal {
     return WebApi.ApisType(`/fiscal/suburb/?postal_code=${data}`, "get");
   }
 
-  static getInternalPerceptions(data) {
+  static getInternalPerceptions(data, version_cfdi) {
     return WebApi.ApisType(
-      `/fiscal/internal-perception-type/?node=${data}`,
+      `/fiscal/internal-perception-type/?node=${data}&version_cfdi=${version_cfdi}`,
       "get"
     );
   }
 
-  static getInternalDeductions(data) {
+  static getInternalDeductions(data, version_cfdi) {
     return WebApi.ApisType(
-      `/fiscal/internal-deduction-type/?node=${data}`,
+      `/fiscal/internal-deduction-type/?node=${data}&version_cfdi=${version_cfdi}`,
       "get"
     );
   }
 
-  static getInternalOtherPayments(data) {
+  static getInternalOtherPayments(data, version_cfdi) {
     return WebApi.ApisType(
-      `/fiscal/internal-other-payment-type/?node=${data}`,
+      `/fiscal/internal-other-payment-type/?node=${data}&version_cfdi=${version_cfdi}`,
       "get"
     );
   }

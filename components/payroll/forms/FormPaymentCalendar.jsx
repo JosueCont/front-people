@@ -15,7 +15,6 @@ import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
-import WebApiFiscal from "../../../api/WebApiFiscal";
 import { messageSaveSuccess } from "../../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../../utils/rules";
 import { Global } from "@emotion/core";
@@ -33,13 +32,11 @@ const FormPaymentCalendar = ({
 }) => {
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
-  const [typeTax, setTypeTax] = useState([]);
   const [perceptionType, setPerceptionType] = useState([]);
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [activationDate, setActivationtDate] = useState("");
   const [period, setPeriod] = useState("");
-  const [paymentPeriodicity, setPaymentPeriodicity] = useState([]);
   const [incidenceStart, setIncidenceStart] = useState("");
   const [versions, setVersions] = useState([]);
 
@@ -49,10 +46,13 @@ const FormPaymentCalendar = ({
   const [periodActive, setPeriodActive] = useState(true);
   const [paymentSaturday, setPaymentSaturday] = useState(false);
   const [paymentSunday, setPaymentSunday] = useState(false);
+  const [paymentCalendar, setPaymentCalendar] = useState(null);
+  const [locked, setLocked] = useState(false);
 
   useEffect(() => {
     if (idPaymentCalendar) {
       getPaymentCalendar();
+      setLocked(true);
     }
   }, [idPaymentCalendar]);
 
@@ -86,6 +86,7 @@ const FormPaymentCalendar = ({
         idPaymentCalendar
       );
       if (response.data) {
+        setPaymentCalendar(response.data);
         let item = response.data;
         formPaymentCalendar.setFieldsValue({
           name: item.name,
@@ -114,6 +115,7 @@ const FormPaymentCalendar = ({
         setActivationtDate(item.activation_date);
         setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
+        setLocked(item.locked);
       }
       setLoading(false);
     } catch (error) {
@@ -451,7 +453,7 @@ const FormPaymentCalendar = ({
               <SelectFixedConcept type={2} name={"group_fixed_concept"} />
             </Col>
           </Row>
-          <Row justify={"center"} gutter={10}>
+          <Row justify={"end"} gutter={10}>
             <Col md={5}>
               <Button
                 block
@@ -460,14 +462,16 @@ const FormPaymentCalendar = ({
                 style={{ marginRight: 10 }}
                 onClick={() => onCancel()}
               >
-                Cancelar
+                {locked ? "Cerrar" : "Cancelar"}
               </Button>
             </Col>
-            <Col md={5}>
-              <Button block className="" type="primary" htmlType="submit">
-                Guardar
-              </Button>
-            </Col>
+            {!locked && (
+              <Col md={5}>
+                <Button block className="" type="primary" htmlType="submit">
+                  Guardar
+                </Button>
+              </Col>
+            )}
           </Row>
         </Form>
       </Spin>

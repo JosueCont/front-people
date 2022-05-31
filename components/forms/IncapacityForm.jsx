@@ -264,7 +264,6 @@ const Incapacityform = (props) => {
       setEndDate(props.details.return_date);
       setClassific(props.details.imss_classification);
       changeIncapacity(props.details.incapacity_type);
-      console.log("requested", props.details);
       form.setFieldsValue({
         invoice: props.details.invoice,
         person: props.details.person ? props.details.person.id : null,

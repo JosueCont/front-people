@@ -290,12 +290,12 @@ li.ant-menu-submenu-selected {
   border-top-left-radius: 10px;
 }
 
-.item-is-individual{
+.item-is-individual {
   color: #8e88e7;
   font-size: 10px;
 }
 
-.item-not-individual{
+.item-not-individual {
   color: #e7b488;
   font-size: 10px;
 }
@@ -308,11 +308,21 @@ li.ant-menu-submenu-selected {
   border-top-left-radius: 10px;
 }
 
-.table-assignments .ant-table-container table > tbody > tr:nth-child(2) td:first-child{
+.table-assignments
+  .ant-table-container
+  table
+  > tbody
+  > tr:nth-child(2)
+  td:first-child {
   border-top-left-radius: 10px;
 }
 
-.table-assignments .ant-table-container table > tbody > tr:nth-child(2) td:last-child{
+.table-assignments
+  .ant-table-container
+  table
+  > tbody
+  > tr:nth-child(2)
+  td:last-child {
   border-top-right-radius: 10px;
 }
 
@@ -320,11 +330,21 @@ li.ant-menu-submenu-selected {
   border-bottom-left-radius: 10px;
 }
 
-.table-assignments .ant-table-container table > tbody > tr:last-child td:first-child{
+.table-assignments
+  .ant-table-container
+  table
+  > tbody
+  > tr:last-child
+  td:first-child {
   border-bottom-left-radius: 10px;
 }
 
-.table-assignments .ant-table-container table > tbody > tr:last-child td:last-child{
+.table-assignments
+  .ant-table-container
+  table
+  > tbody
+  > tr:last-child
+  td:last-child {
   border-bottom-right-radius: 10px;
 }
 
@@ -737,4 +757,9 @@ textarea {
 .CheckGroup .ant-checkbox-wrapper {
   color: #000 !important;
   margin: 2%;
+}
+
+.ant-select-item-option-content {
+  white-space: normal;
+  word-break: break-all;
 }
