@@ -379,5 +379,5 @@ export const valueToFilter = (value) => {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
-  return newVal;
+  return newVal.trim();
 };

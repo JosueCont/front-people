@@ -23,3 +23,18 @@
     margin: 5px;
   }
 }
+
+@media screen and (max-width: 884px) {
+  .custom-tbl-assessment .ant-table-container table > tbody > tr > td:nth-child(3) > .ant-progress .ant-progress-outer {
+      display: none;
+  }
+  .custom-tbl-assessment .ant-table-container table > tbody > tr > td:last-child > button {
+      width: 50px;
+  }
+  .custom-tbl-assessment .ant-table-container table > tbody > tr > td:last-child > button span {
+      display: none;
+  }
+  .custom-tbl-assessment .ant-table-container table > tbody > tr > td:last-child > button svg {
+      display: block!important;
+  }
+}

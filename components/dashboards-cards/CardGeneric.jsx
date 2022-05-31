@@ -47,9 +47,13 @@ export const ColTwo = styled(Col)`
   }
 `;
 
-const CardGeneric = ({title, numcard, icon, color}) => {
+const CardGeneric = ({title, numcard, icon, color, filter}) => {
     return (
-        <CustomCard color={color} bordered={false}>
+        <CustomCard
+          color={color}
+          bordered={false}
+          // onClick={()=> filter()}
+        >
             <Row gutter={[32,0]}>
             <ColOne span={24}>
                 <div>{icon}</div>
