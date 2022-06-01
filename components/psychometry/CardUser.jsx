@@ -22,7 +22,6 @@ const CardUser = ({
   user_profile,
   user_assessments,
   loading,
-  // filterBy,
   ...props}) => {
 
   const [user, setUser] = useState({});
@@ -111,7 +110,6 @@ const CardUser = ({
         </Col>
         <Col xs={12} sm={12} md={12} lg={5} xl={4}>
           <CardGeneric
-            // filter={()=> filterBy(false, true, false)}
             title={'Evaluaciones completadas'}
             icon={<FileDoneOutlined />}
             color={'#ec6532'}
@@ -120,7 +118,6 @@ const CardUser = ({
         </Col>
         <Col xs={12} sm={12} md={12} lg={5} xl={4}>
           <CardGeneric
-            // filter={()=> filterBy(true, false, false)}
             title={'Evaluaciones por contestar'}
             icon={<FileSyncOutlined />}
             color={'#1c1a28'}

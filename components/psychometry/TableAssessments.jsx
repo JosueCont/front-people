@@ -30,7 +30,6 @@ const TableAssessments = ({
   user_assessments,
   loading,
   user_profile,
-  // filterBy,
   ...props}) => {
 
   moment.locale('es-mx');
@@ -58,6 +57,21 @@ const TableAssessments = ({
     setGeneralPercent(total.toFixed(2))
   }
 
+  const validateGetResults = (item) =>{
+    setLoadResults({...loadResults, [item.code]: true})
+    if(
+      item.code == '7_KHOR_EST_SOC' ||
+      item.code == '4_KHOR_PERF_MOT' ||
+      item.code == '16_KHOR_INT_EMO' ||
+      item.code == '48_KHOR_INV_VAL_ORG' ||
+      item.code == '5_KHOR_DOM_CER'
+    ){
+      getResults(item)
+    }else{
+      tokenToResults(item, item.apply)
+    }
+  }
+
   const getFieldResults = (item, resp) =>{
     if(item.code == '7_KHOR_EST_SOC'){
       return resp.data.resultados;
@@ -74,6 +88,9 @@ const TableAssessments = ({
         interpretation: resp.data.dominant_factor,
         results: { factors: resp.data.factors}
       }
+    }else{
+      let obj = JSON.parse(resp.results);
+      return obj.assessment_results;
     }
   }
 
@@ -87,7 +104,6 @@ const TableAssessments = ({
   }
 
   const getResults = async (item) => {
-    setLoadResults({...loadResults, [item.code]: true})
     try {
       let data = {
         user_id: user_profile.id,
@@ -135,7 +151,6 @@ const TableAssessments = ({
   const onReset = () =>{
     setNameAssessment('');
     setListAssessments(user_assessments);
-    // filterBy(false, false, true)
   }
 
   const columns = [
@@ -185,7 +200,7 @@ const TableAssessments = ({
                 wd={'150px'}
                 icon={<BsFillCheckCircleFill/>}
                 loading={loadResults[item.code]}
-                onClick={()=>getResults(item)}
+                onClick={()=>validateGetResults(item)}
               >
                   Ver resultados
               </CustomBtn>
