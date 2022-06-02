@@ -30,6 +30,7 @@ const SelectPaymentCalendar = ({
         onChange={(value) => setCalendarSelect(value)}
         options={calendar}
         placeholder="Calendario de pago"
+        allowClear
       />
     </Form.Item>
   );

@@ -29,7 +29,7 @@ const MainLayout = ({
   const [flavor, setFlavor] = useState({});
   const [showEvents, setShowEvents] = useState(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     try {
       const vflavor = getFlavor();
       const routeFlavor = getRouteFlavor();

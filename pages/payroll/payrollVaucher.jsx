@@ -25,6 +25,7 @@ import { messageError } from "../../utils/constant";
 import { useRouter } from "next/router";
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
+import SelectYear from "../../components/selects/SelectYear";
 
 const PayrollVaucher = ({ ...props }) => {
   const router = useRouter();
@@ -157,6 +158,7 @@ const PayrollVaucher = ({ ...props }) => {
       url = url + `&period=${value.period}`;
     if (value.person && value.person != "")
       url = url + `&person=${value.person}`;
+    if (value.year && value.year != "") url = url + `&year=${value.year}`;
     getVaucher(url);
   };
 
@@ -178,6 +180,7 @@ const PayrollVaucher = ({ ...props }) => {
     setPeriods([]);
     setCalendar(null);
     setCfdis([]);
+    getVaucher("");
   };
 
   useEffect(() => {
@@ -238,6 +241,16 @@ const PayrollVaucher = ({ ...props }) => {
               <Col>
                 <SelectCollaborator name="person" style={{ width: 250 }} />
               </Col>
+              {!calendar && (
+                <Col>
+                  <SelectYear
+                    size="middle"
+                    name={"year"}
+                    label={"Año"}
+                    placeholder={"Año"}
+                  />
+                </Col>
+              )}
               <Col style={{ display: "flex" }}>
                 <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
                   <Button

@@ -139,7 +139,9 @@ const DataPerson = ({ config, person = null, ...props }) => {
     value.is_active = isActive;
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
-    if (value.groups && value.groups != "") value.groups = [value.groups];
+    value.groups && value.groups
+      ? (value.groups = [value.groups])
+      : delete value["groups"];
     updatePerson(value);
   };
 
@@ -509,7 +511,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                 </Col>
               )}
               <Col lg={8} xs={24} md={12}>
-                <SelectGroup viewLabel={true} />
+                <SelectGroup viewLabel={true} required={false} />
               </Col>
             </Row>
             <Row gutter={20}>
