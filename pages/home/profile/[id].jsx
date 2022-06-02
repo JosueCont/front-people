@@ -58,26 +58,6 @@ const ProfileUser = () => {
         }
     }
 
-    // const filterBy = (toAnswer, completed, reset) => {
-    //     if(toAnswer){
-    //         let results = copyAssessments.filter(item =>(
-    //             item.apply?.status !== 2 ||
-    //             item.apply?.progress !== 100
-    //         ))
-    //         setAssessments(results)
-    //     }
-    //     if(completed){
-    //         let results = copyAssessments.filter(item => (
-    //             item.apply?.status == 2 ||
-    //             item.apply?.progress == 100
-    //         ))
-    //         setAssessments(results)
-    //     }
-    //     if(reset){
-    //         setAssessments(copyAssessments)
-    //     }
-    // }
-
     return (
         <MainLayout currentKey="1">
             <ConfigProvider locale={esES}>
@@ -95,7 +75,6 @@ const ProfileUser = () => {
                                 loading={loadUser}
                                 user_profile={person}
                                 user_assessments={assessments}
-                                // filterBy={filterBy}
                             />
                         </Col>
                         <Col span={24}>
@@ -103,7 +82,6 @@ const ProfileUser = () => {
                                 loading={loadAssessment}
                                 user_profile={person}
                                 user_assessments={assessments}
-                                // filterBy={filterBy}
                             />
                         </Col>
                     </Row>
