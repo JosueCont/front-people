@@ -212,9 +212,9 @@ export const getPersonType = (idCompany) => async (dispatch, getState) => {
 };
 
 export const getProfileGroups =
-  (idCompany, config) => async (dispatch, getState) => {
+  (idCompany, config, filter) => async (dispatch, getState) => {
     try {
-      let response = await getGroups(idCompany, config);
+      let response = await getGroups(idCompany, config, filter);
       if (response) dispatch({ type: PROFILE_GROUP, payload: response });
     } catch (error) {
       dispatch({ type: PROFILE_GROUP, payload: [] });
