@@ -89,8 +89,12 @@ const TableAssessments = ({
         results: { factors: resp.data.factors}
       }
     }else{
-      let obj = JSON.parse(resp.results);
-      return obj.assessment_results;
+      if(typeof(resp.results) == 'string'){
+        let obj = JSON.parse(resp.results);
+        return obj.assessment_results;
+      }else{
+        return resp.results?.assessment_results;
+      }
     }
   }
 
