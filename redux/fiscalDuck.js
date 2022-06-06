@@ -126,7 +126,6 @@ export const doFiscalCatalogs =
 export const getFiscalBanks = (versionCfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getBanks(versionCfdi)
     .then((response) => {
-      console.log("fiscal banks", response.data.results);
       dispatch({ type: BANKS, payload: response.data.results });
     })
     .catch((error) => {
