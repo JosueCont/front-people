@@ -82,6 +82,7 @@ const ProfileUser = () => {
                                 loading={loadAssessment}
                                 user_profile={person}
                                 user_assessments={assessments}
+                                getAssessments={getAssessments}
                             />
                         </Col>
                     </Row>
