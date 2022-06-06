@@ -239,7 +239,7 @@ const DetailPerson = ({
               }
               key="tab_10"
             >
-              <FormPayrollPerson person_id={person.id} node={person.node} />
+              <FormPayrollPerson person={person} node={person.node} />
             </TabPane>
           )}
           {deletePerson && (

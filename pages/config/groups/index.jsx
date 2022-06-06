@@ -75,7 +75,6 @@ const Groups = ({ ...props }) => {
     if (value.name != "" && value.name != undefined) {
       filt = "&name=" + value.name;
     }
-    console.log("FILTER-->> ", filt);
     props.getProfileGroups(props.currentNode.id, props.config, filt);
   };
 

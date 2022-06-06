@@ -292,7 +292,7 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="account_number"
               label="Número de cuenta"
-              rules={[onlyNumeric, validateAccountNumberWithInterbankKey]}
+              rules={[onlyNumeric]}
             >
               <Input minLength={11} maxLength={11} />
             </Form.Item>
@@ -301,7 +301,7 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="interbank_key"
               label="Clabe interbancaria"
-              rules={[onlyNumeric, validateInterbankKey]}
+              rules={[onlyNumeric]}
             >
               <Input minLength={18} maxLength={18} />
             </Form.Item>
@@ -310,7 +310,7 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="card_number"
               label="Número de tarjeta"
-              rules={[ruleRequired, onlyNumeric]}
+              rules={[onlyNumeric]}
             >
               <Input maxLength={16} />
             </Form.Item>
@@ -319,7 +319,7 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="expiration_month"
               label="Mes de vencimiento"
-              rules={[ruleRequired, twoDigit]}
+              rules={[twoDigit]}
               validateTrigger="onBlur"
             >
               <Input maxLength={2} />
@@ -329,13 +329,18 @@ const FormBanckAccount = ({ person_id = null }) => {
             <Form.Item
               name="expiration_year"
               label="Año de vencimiento"
-              rules={[ruleRequired, twoDigit]}
+              rules={[twoDigit]}
             >
               <Input maxLength={2} />
             </Form.Item>
           </Col>
         </Row>
         <Row justify={"end"}>
+          <Form.Item>
+            <Button type="primary" onClick={() => formBank.resetFields()}>
+              Cancelar
+            </Button>
+          </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Guardar

@@ -16,11 +16,16 @@ import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
-import WebApiFiscal from "../../../api/WebApiFiscal";
 import { ruleRequired, fourDecimal } from "../../../utils/rules";
 import { connect } from "react-redux";
+import {
+  messageError,
+  messageSaveSuccess,
+  messageUpdateSuccess,
+  movementType,
+} from "../../../utils/constant";
 
-const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
+const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const { Title } = Typography;
   const [formPayrollPerson] = Form.useForm();
   const [contrctsType, setContractsType] = useState([]);
@@ -125,7 +130,7 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
 
   const getPayrollPerson = async () => {
     setLoading(true);
-    await WebApiPayroll.getPayrollPerson(person_id)
+    await WebApiPayroll.getPayrollPerson(person.id)
       .then((response) => {
         if (response.data) {
           let item = response.data;
@@ -143,7 +148,9 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
             apply_annual_adjustment: item.apply_annual_adjustment
               ? item.apply_annual_adjustment
               : false,
-            payment_calendar: item.payment_calendar,
+            payment_calendar: item.payment_calendar
+              ? item.payment_calendar.id
+              : null,
             payment_period: item.payment_period,
             perception_type: item.perception_type,
             last_day_paid: item.last_day_paid ? moment(item.last_day_paid) : "",
@@ -151,10 +158,12 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
             apply_annual_adjustment: item.apply_annual_adjustment,
             apply_monthly_adjustment: item.apply_monthly_adjustment,
           });
+          changePaymentType(item.payment_type);
           setLastDayPaid(item.last_day_paid);
           if (item.id) {
             setIdPayroll(item.id);
-            setDisabledCalendar(true);
+            if (item.payment_calendar)
+              setDisabledCalendar(item.payment_calendar.locked);
           }
         }
         setLoading(false);
@@ -180,17 +189,18 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
 
   const savePayrollPerson = async (data) => {
     try {
+      setLoading(true);
+      if (!data.last_day_paid) data.last_day_paid = null;
+      data.modified_by = props.user.id;
       let response = await WebApiPayroll.createPayrollPerson(data);
       if (response.status == 200) {
-        message.success({
-          content: "Guardado correctamente.",
-          className: "custom-class",
-        });
+        message.success(messageSaveSuccess);
         if (response.data) {
           formPayrollPerson.setFieldsValue({
             integrated_daily_salary: response.data.integrated_daily_salary,
           });
         }
+        PayrollList();
         getPayrollPerson();
       } else {
         message.warning({
@@ -198,27 +208,31 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
           className: "custom-class",
         });
       }
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
+      message.error(messageError);
       console.log(error);
     }
   };
 
   const updatePayrollPerson = async (data) => {
     try {
+      data.modified_by = props.user.id;
       setLoading(true);
       let response = await WebApiPayroll.updatePayrollPerson(data);
-      message.success({
-        content: "Actualizado correctamente.",
-        className: "custom-class",
-      });
+      message.success(messageUpdateSuccess);
       if (response.data) {
         formPayrollPerson.setFieldsValue({
           integrated_daily_salary: response.data.integrated_daily_salary,
         });
       }
-
+      getPayrollPerson();
+      PayrollList();
       setLoading(false);
     } catch (error) {
+      setLoading(false);
+      message.error(messageError);
       console.log(error);
     }
   };
@@ -254,14 +268,14 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
 
   const formFinish = (value) => {
     if (idPayroll) {
-      value.person = person_id;
+      value.person = person.id;
       value.id = idPayroll;
       value.last_day_paid = lastDayPaid;
       value.payment_type = parseInt(value.payment_type);
       value.daily_salary = parseFloat(value.daily_salary);
       updatePayrollPerson(value);
     } else {
-      value.person = person_id;
+      value.person = person.id;
       value.last_day_paid = lastDayPaid;
       value.daily_salary = parseFloat(value.daily_salary);
       savePayrollPerson(value);
@@ -278,32 +292,41 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
     },
     {
       title: "Salario diario",
-      dataIndex: "daily_salary",
+      render: (item) => {
+        return <>{item.daily_salary ? item.daily_salary : "$ 0.00"}</>;
+      },
       key: "name",
     },
     {
       title: "Salario diario integrado",
-      dataIndex: "integrated_daily_salary",
+      render: (item) => {
+        return (
+          <>
+            {item.integrated_daily_salary
+              ? item.integrated_daily_salary
+              : "$ 0.00"}
+          </>
+        );
+      },
       key: "name",
     },
     {
-      title: "Estatus",
+      title: "Movimiento",
       key: "id",
       render: (item) => {
         return (
-          <Switch
-            checkedChildren="Activo"
-            unCheckedChildren="Inactivo"
-            disabled={true}
-            defaultChecked={item.active}
-          />
+          <>
+            {item.movement
+              ? movementType.find((a) => a.value === item.movement).label
+              : ""}
+          </>
         );
       },
     },
   ];
 
   const PayrollList = () => {
-    WebApiPayroll.getPayrollList({ person_id: person_id })
+    WebApiPayroll.getPayrollList({ person_id: person.id })
       .then((response) => {
         setPayrolPersonList(response.data);
       })
@@ -329,7 +352,7 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
                 name="daily_salary"
                 label="Salario diario"
                 maxLength={13}
-                rules={[fourDecimal]}
+                rules={[fourDecimal, ruleRequired]}
               >
                 <Input maxLength={10} />
               </Form.Item>
@@ -394,7 +417,11 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
               </Form.Item>
             </Col>
             <Col lg={8} xs={22} md={12}>
-              <Form.Item name="payment_type" label="Forma de pago">
+              <Form.Item
+                name="payment_type"
+                label="Forma de pago"
+                rules={[ruleRequired]}
+              >
                 <Select
                   options={PaymentTypes}
                   notFoundContent={"No se encontraron resultados."}
@@ -402,15 +429,16 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item name="bank" label="Banco">
-                <Select
-                  options={banks}
-                  notFoundContent={"No se encontraron resultados."}
-                  disabled={bankDisabled}
-                />
-              </Form.Item>
-            </Col>
+            {!bankDisabled && (
+              <Col lg={8} xs={22} md={12}>
+                <Form.Item name="bank" label="Banco" rules={[ruleRequired]}>
+                  <Select
+                    options={banks}
+                    notFoundContent={"No se encontraron resultados."}
+                  />
+                </Form.Item>
+              </Col>
+            )}
             <Col lg={8} xs={22} md={12}>
               <Form.Item
                 name="apply_monthly_adjustment"
@@ -444,34 +472,38 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item name="payment_calendar" label="Calendario de pago">
-                <Select
-                  options={paymentCalendars}
-                  notFoundContent={"No se encontraron resultados."}
-                  onChange={selectCalendar}
-                  disabled={disabledCalendar}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item name="perception_type" label="Tipo de percepción">
-                <Select
-                  options={perceptionTypes}
-                  notFoundContent={"No se encontraron resultados."}
-                  disabled
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item name="type_tax" label="Tipo de impuesto">
-                <Select
-                  options={typeTax}
-                  notFoundContent={"No se encontraron resultados."}
-                  disabled
-                />
-              </Form.Item>
-            </Col>
+            {paymentCalendars.length > 0 && (
+              <>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item name="payment_calendar" label="Calendario de pago">
+                    <Select
+                      options={paymentCalendars}
+                      notFoundContent={"No se encontraron resultados."}
+                      onChange={selectCalendar}
+                      disabled={disabledCalendar}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item name="perception_type" label="Tipo de percepción">
+                    <Select
+                      options={perceptionTypes}
+                      notFoundContent={"No se encontraron resultados."}
+                      disabled
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item name="type_tax" label="Tipo de impuesto">
+                    <Select
+                      options={typeTax}
+                      notFoundContent={"No se encontraron resultados."}
+                      disabled
+                    />
+                  </Form.Item>
+                </Col>
+              </>
+            )}
           </Row>
           <Row justify={"end"}>
             <Form.Item>
@@ -497,6 +529,7 @@ const mapState = (state) => {
     catJourneyType: state.fiscalStore.cat_journey_type,
     catTypeTax: state.fiscalStore.type_tax,
     catBanks: state.fiscalStore.banks,
+    user: state.userStore.user,
   };
 };
 

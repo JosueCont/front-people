@@ -143,7 +143,7 @@ const PayrollReport = ({ permissions, ...props }) => {
               </Col>
               {calendar && (
                 <Col>
-                  <SelectYear size="large" />
+                  <SelectYear size="middle" />
                 </Col>
               )}
               <Col style={{ display: "flex" }}>
