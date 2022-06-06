@@ -5,7 +5,7 @@ import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 
 const SelectBank = ({ rules = [], bankSelected = null, ...props }) => {
-  const [options, setOptions] = useState(null);
+  const [options, setOptions] = useState([]);
   const route = useRouter();
 
   useEffect(() => {}, [route]);
@@ -31,15 +31,25 @@ const SelectBank = ({ rules = [], bankSelected = null, ...props }) => {
       rules={rules}
     >
       <Select
+        showSearch
         key="SelectBank"
         placeholder="Banco"
         style={props.style ? props.style : null}
-        options={options}
+        // options={options}
+        optionFilterProp="children"
         onChange={props.onChange ? props.onChange : null}
         allowClear
         notFoundContent={"No se encontraron resultados."}
         value={bankSelected}
-      />
+      >
+        {options.map((item) => {
+          return (
+            <>
+              <Option key={item.value}>{item.label}</Option>;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };

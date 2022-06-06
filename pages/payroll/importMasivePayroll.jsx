@@ -35,7 +35,6 @@ import {
 } from "../../utils/constant";
 import SelectTypeTax from "../../components/selects/SelectTypeTax";
 import { ruleRequired } from "../../utils/rules";
-import GenericModal from "../../components/modal/genericModal";
 
 const ImportMasivePayroll = ({ ...props }) => {
   const router = useRouter();
@@ -158,11 +157,9 @@ const ImportMasivePayroll = ({ ...props }) => {
     return (
       <>
         {periods.map((item, i) => {
-          console.log("I-> ", i);
           return (
             <Col>
               <Radio
-                defaultChecked={i === 0 ? false : true}
                 key={item.payment_start_date + i}
                 value={item.payment_start_date}
               >
@@ -349,7 +346,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                             </Form.Item>
                           </Col>
                           <Col style={{ display: "flex" }}>
-                            <SelectTypeTax />
+                            <SelectTypeTax rules={[ruleRequired]} />
                           </Col>
                           <Col style={{ display: "flex" }}>
                             <Form.Item name="period" label="Periodo">

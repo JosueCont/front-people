@@ -159,23 +159,23 @@ export const headersApiKhonnect = (app_id) => {
   };
 };
 
-export const popupWindow = (url) =>{
-  if(typeof window !== "undefined"){
-    window.open(url, 'Resultados','toolbars=0,width=800,height=400')
+export const popupWindow = (url) => {
+  if (typeof window !== "undefined") {
+    window.open(url, "Resultados", "toolbars=0,width=800,height=400");
   }
-}
+};
 
-export const getCurrentURL = (tenant = false) =>{
-  if (typeof window !== "undefined"){
-      let url = window.location.href;
-      if (tenant){
-          let link = url.split('.');
-          return link[0];
-      }else{
-          return url;
-      }
+export const getCurrentURL = (tenant = false) => {
+  if (typeof window !== "undefined") {
+    let url = window.location.href;
+    if (tenant) {
+      let link = url.split(".");
+      return link[0];
+    } else {
+      return url;
+    }
   }
-}
+};
 
 export const monthsName = [
   {
@@ -284,10 +284,12 @@ export const workTitleStatus = [
   },
 ];
 
-const conceptPayroll = [
-  { value: 1, label: "Percepciones" },
-  { value: 2, label: "Deducciones" },
-  { value: 3, label: "Otros tipos de pagos" },
+export const movementType = [
+  { value: 1, label: "Alta manual" },
+  { value: 2, label: "Importación" },
+  { value: 3, label: "Cambio de salario" },
+  { value: 4, label: "Cierre de calendario" },
+  { value: 5, label: "Alta de calendario" },
 ];
 
 export const messageSaveSuccess = "Agregado correctamente.";

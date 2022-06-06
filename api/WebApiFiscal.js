@@ -24,7 +24,7 @@ class WebApiFiscal {
   }
 
   static getBanks(data) {
-    return WebApi.ApisType(`/fiscal/bank/`, "get");
+    return WebApi.ApisType(`/fiscal/bank/?version_cfdi=${data}`, "get");
   }
 
   static getPaymentPeriodicity(data) {
