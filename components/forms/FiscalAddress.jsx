@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { connect } from "react-redux";
 import WebApiFiscal from "../../api/WebApiFiscal";
+import { ruleRequired } from "../../utils/rules";
 import SelectCountry from "../selects/SelectCountry";
 import SelectMunicipality from "../selects/SelectMunicipality";
 import SelectState from "../selects/SelectState";
@@ -60,7 +61,11 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
       <Form layout={"vertical"} form={form}>
         <Row gutter={30}>
           <Col lg={8} xs={22} md={6}>
-            <Form.Item name="postal_code" label="Codigo postal">
+            <Form.Item
+              rules={[ruleRequired]}
+              name="postal_code"
+              label="Codigo postal"
+            >
               <Select
                 showSearch
                 showArrow={false}

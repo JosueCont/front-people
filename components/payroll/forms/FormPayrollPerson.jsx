@@ -45,6 +45,13 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
   const [payrollPersonList, setPayrolPersonList] = useState([]);
   const [perceptionTypes, setPerceptionTypes] = useState([]);
 
+  const movementType = [
+    { value: 1, label: "Alta manual" },
+    { value: 2, label: "Importación" },
+    { value: 3, label: "Cambio de salario" },
+    { value: 4, label: "Cierre de calendario" },
+  ];
+
   useEffect(() => {
     if (props.catPerception) {
       let data = props.catPerception.map((item) => {
@@ -470,6 +477,15 @@ const FormPayrollPerson = ({ person_id = null, node = null, ...props }) => {
                   notFoundContent={"No se encontraron resultados."}
                   disabled
                 />
+              </Form.Item>
+            </Col>
+            <Col lg={8} xs={22} md={12}>
+              <Form.Item
+                name="movement"
+                initialValue={1}
+                label="Tipo de movimiento"
+              >
+                <Select options={movementType} />
               </Form.Item>
             </Col>
           </Row>
