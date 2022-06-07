@@ -332,15 +332,14 @@ const homeScreen = ({ ...props }) => {
   let columns2 = [
     {
       title: "Núm. Empleado",
-      width: 2,
-      fixed: "left",
+      show: true,
       render: (item) => {
         return <div>{item.code ? item.code : ""}</div>;
       },
     },
     {
       title: "Foto",
-      width: 42,
+      show: true,
       render: (item) => {
         return (
           <div>
@@ -351,7 +350,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Nombre",
-      width: 200,
+      show: true,
       render: (item) => {
         let personName = item.first_name + " " + item.flast_name;
         if (item.mlast_name) personName = personName + " " + item.mlast_name;
@@ -372,6 +371,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Estatus",
+      show: true,
       render: (item) => {
         return (
           <>
@@ -388,6 +388,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Asignaciones",
+      show: props.config?.kuiz_enabled,
       render: (item) => {
         return (
           <Tooltip title="Ver asignaciones">
@@ -401,6 +402,7 @@ const homeScreen = ({ ...props }) => {
     },
     {
       title: "Acceso a intranet",
+      show: props.config?.intranet_enabled,
       render: (item) => {
         return (
           <>
@@ -428,7 +430,7 @@ const homeScreen = ({ ...props }) => {
           </>
         );
       },
-      width: 44,
+      show: true,
       render: (item) => {
         return (
           <>
@@ -489,7 +491,7 @@ const homeScreen = ({ ...props }) => {
             />
           </Menu.Item>
         )}
-        {permissions.create && (
+        {permissions.create && props.config?.kuiz_enabled && (
           <>
             <Menu.Item key="5" onClick={() => setOpenAssignTest(true)}>
               Asignar evaluaciones
@@ -522,19 +524,23 @@ const homeScreen = ({ ...props }) => {
   const menuPerson = (item) => {
     return (
       <Menu>
-        {permissions.view && (
-          <Menu.Item key="4" icon={<EyeOutlined />}>
-            <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
-          </Menu.Item>
-        )}
-        {permissions.create && (
-          <Menu.Item
-            key="1"
-            icon={<BsHandIndex />}
-            onClick={() => HandleModalAssign(item)}
-          >
-            Asignar evaluaciones
-          </Menu.Item>
+        {props.config?.kuiz_enabled && (
+          <>
+            {permissions.view && (
+              <Menu.Item key="4" icon={<EyeOutlined />}>
+                <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
+              </Menu.Item>
+            )}
+            {permissions.create && (
+              <Menu.Item
+                key="1"
+                icon={<BsHandIndex />}
+                onClick={() => HandleModalAssign(item)}
+              >
+                Asignar evaluaciones
+              </Menu.Item>
+            )}
+          </>
         )}
         {permissions.edit && (
           <Menu.Item key="2" icon={<EditOutlined />}>
@@ -1176,11 +1182,7 @@ const homeScreen = ({ ...props }) => {
                 className={"mainTable table-persons"}
                 rowKey={"id"}
                 size="small"
-                columns={
-                  props.config && props.config.intranet_enabled
-                    ? columns2
-                    : columns
-                }
+                columns={columns2.filter(item=> item.show)}
                 dataSource={person}
                 loading={loading}
                 locale={{

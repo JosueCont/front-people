@@ -39,7 +39,7 @@ import {
 import { BsCircleFill } from 'react-icons/bs';
 import { valueToFilter } from "../../../utils/functions";
 
-const AssignAssessments = ({itemSelected, ...props}) =>{
+const AssignAssessments = ({itemSelected = {}, listAssigned = [],...props}) =>{
 
     const [formGroup] = Form.useForm();
     const {Option} = Select;
@@ -70,8 +70,10 @@ const AssignAssessments = ({itemSelected, ...props}) =>{
     },[props.visible])
 
     useEffect(()=>{
-        if(Object.keys(itemSelected).length > 0){
+        if(Object.keys(itemSelected).length > 0 && listAssigned.length == 0){
             getAllAssignments()
+        }else if(listAssigned.length > 0){
+            setCurrentAssigned(listAssigned)
         }
     },[itemSelected])
 

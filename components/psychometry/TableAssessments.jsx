@@ -6,9 +6,11 @@ import {
   Card,
   Table,
   Input,
-  Tooltip
+  Tooltip,
+  message
 } from 'antd';
 import moment from "moment";
+import { connect } from 'react-redux';
 import jwtEncode from "jwt-encode";
 import { ClearOutlined } from "@ant-design/icons";
 import { popupWindow, getCurrentURL } from '../../utils/constant';
@@ -23,20 +25,26 @@ import {
 import WebApiAssessment from '../../api/WebApiAssessment';
 import {
   BsPlayCircleFill,
-  BsFillCheckCircleFill
+  BsFillCheckCircleFill,
+  BsHandIndex
 } from "react-icons/bs";
+import AssignAssessments from '../person/assignments/AssignAssessments';
 
 const TableAssessments = ({
   user_assessments,
   loading,
   user_profile,
-  ...props}) => {
+  currentNode,
+  getAssessments,
+  ...props
+}) => {
 
   moment.locale('es-mx');
   const [generalPercent, setGeneralPercent] = useState(0);
   const [loadResults, setLoadResults] = useState({});
   const [lisAssessments, setListAssessments] = useState([]);
   const [nameAssessment, setNameAssessment] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(()=>{
     if(user_assessments.length > 0){
@@ -157,6 +165,22 @@ const TableAssessments = ({
     setListAssessments(user_assessments);
   }
 
+  const onFinishAssigned = async (values) =>{
+    try {
+      const body = {
+        ...values,
+        persons: [`${user_profile.id}`],
+        node: currentNode?.id
+      };
+      await WebApiAssessment.assignAssessments(body);
+      getAssessments(user_profile.id)
+      message.success("Evaluaciones asignadas");
+    } catch (e) {
+      message.error("Evaluaciones no asignadas");
+      console.log()
+    } 
+  }
+
   const columns = [
     {
       title: 'NOMBRE',
@@ -225,53 +249,75 @@ const TableAssessments = ({
   ]
 
   return (
-    <Row gutter={[24,24]} align={'middle'}>
-      <Col
-        xs={24}
-        md={12}
-        lg={12}
-        style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-        }}
-      >
-         <Input
-            placeholder={'Buscar por nombre'}
-            style={{borderRadius: '12px'}}
-            value={nameAssessment}
-            onChange={onFilter}
-          />
-          <Tooltip title={'Borrar filtros'}>
-            <CustomBtn
-              wd={'50px'}
-              icon={<ClearOutlined/>}
-              onClick={()=> onReset()}
-            />
-          </Tooltip>
-      </Col>
-      <Col xs={24} md={12} lg={12}>
-        <ProgressPurple percent={generalPercent}/>
-      </Col>
-      <Col span={24}>
-        <Table
-          className={'custom-tbl-assessment'}
-          // size={'small'}
-          rowKey={'id'}
-          showHeader={false}
-          columns={columns}
-          loading={loading}
-          dataSource={lisAssessments}
-          pagination={{
-            pageSize: 10,
-            total: lisAssessments?.length,
-            hideOnSinglePage: true
+    <>
+      <Row gutter={[24,24]} align={'middle'}>
+        <Col
+          xs={24}
+          md={12}
+          lg={12}
+          style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
           }}
-          scroll={{x: 600}}
-        />
-      </Col>
-    </Row>
+        >
+          <Input
+              placeholder={'Buscar por nombre'}
+              style={{borderRadius: '12px'}}
+              value={nameAssessment}
+              onChange={onFilter}
+            />
+            <Tooltip title={'Borrar filtros'}>
+              <CustomBtn
+                wd={'50px'}
+                icon={<ClearOutlined/>}
+                onClick={()=> onReset()}
+              />
+            </Tooltip>
+            <Tooltip title={'Asignar evaluaciones'}>
+              <CustomBtn
+                wd={'50px'}
+                icon={<BsHandIndex/>}
+                onClick={()=> setShowModal(true)}
+              />
+            </Tooltip>
+        </Col>
+        <Col xs={24} md={12} lg={12}>
+          <ProgressPurple percent={generalPercent}/>
+        </Col>
+        <Col span={24}>
+          <Table
+            className={'custom-tbl-assessment'}
+            // size={'small'}
+            rowKey={'id'}
+            showHeader={false}
+            columns={columns}
+            loading={loading}
+            dataSource={lisAssessments}
+            pagination={{
+              pageSize: 10,
+              total: lisAssessments?.length,
+              hideOnSinglePage: true
+            }}
+            scroll={{x: 600}}
+          />
+        </Col>
+      </Row>
+      <AssignAssessments
+        title={"Asignar evaluaciones"}
+        visible={showModal}
+        close={()=> setShowModal(false)}
+        actionForm={onFinishAssigned}
+        listAssigned={user_assessments}
+      />
+    </>
   )
 }
 
-export default TableAssessments;
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node
+  }
+};
+
+export default connect(mapState)(TableAssessments);
