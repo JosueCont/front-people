@@ -21,12 +21,25 @@ const SelectGender = ({
         <Select
           size={size ? size : "middle"}
           key="SelectGender"
-          options={genders}
+          // options={genders}
           placeholder="Género"
           allowClear
           style={style ? style : {}}
           notFoundContent={"No se encontraron resultados."}
-        />
+          showSearch
+          optionFilterProp="children"
+        >
+          {genders.map((item) => {
+            return (
+              <>
+                <Option key={item.value} value={item.value}>
+                  {item.label}
+                </Option>
+                ;
+              </>
+            );
+          })}
+        </Select>
       </Form.Item>
     </>
   );

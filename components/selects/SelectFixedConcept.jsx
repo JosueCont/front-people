@@ -31,9 +31,22 @@ const SelectFixedConcept = ({
   return (
     <Form.Item name={name} label={viewLabel ? "Conceptos fijos" : ""}>
       <Select
-        options={concept}
+        // options={concept}
         placeholder={placeholder && "Conceptos fijos"}
-      />
+        showSearch
+        optionFilterProp="children"
+      >
+        {concept.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };

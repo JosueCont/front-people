@@ -5,7 +5,7 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 
 export default function SelectCompany(props) {
-  const [options, setOptions] = useState(null);
+  const [options, setOptions] = useState([]);
   const route = useRouter();
 
   const getCompanies = async () => {
@@ -42,11 +42,24 @@ export default function SelectCompany(props) {
         key="SelectCompany"
         placeholder="Empresa"
         style={props.style ? props.style : null}
-        options={options}
+        // options={options}
         onChange={props.onChange ? props.onChange : null}
         allowClear
-        notFoundContent={"No se encontraron resultado."}
-      />
+        notFoundContent={"No se encontraron resultados."}
+        showSearch
+        optionFilterProp="children"
+      >
+        {options.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 }

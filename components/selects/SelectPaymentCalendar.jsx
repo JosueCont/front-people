@@ -28,10 +28,23 @@ const SelectPaymentCalendar = ({
     <Form.Item name="calendar" label={viewLabel ? "Calendario de pago" : ""}>
       <Select
         onChange={(value) => setCalendarSelect(value)}
-        options={calendar}
+        // options={calendar}
         placeholder="Calendario de pago"
         allowClear
-      />
+        showSearch
+        optionFilterProp="children"
+      >
+        {calendar.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };

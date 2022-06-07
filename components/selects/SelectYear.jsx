@@ -1,4 +1,5 @@
 import { Select, Form } from "antd";
+import { Option } from "antd/lib/mentions";
 import { generateYear } from "../../utils/functions";
 
 const SelectYear = ({
@@ -7,6 +8,7 @@ const SelectYear = ({
   placeholder = "Periodo",
   ...props
 }) => {
+  const options = generateYear();
   return (
     <>
       <Form.Item
@@ -18,12 +20,25 @@ const SelectYear = ({
         <Select
           size={props.size ? props.size : "middle"}
           key="SelectPeriod"
-          options={generateYear()}
+          // options={generateYear()}
           placeholder={placeholder}
           allowClear
           style={props.style ? props.style : {}}
           notFoundContent={"No se encontraron resultados."}
-        />
+          showSearch
+          optionFilterProp="children"
+        >
+          {options.map((item) => {
+            return (
+              <>
+                <Option key={item.value} value={item.value}>
+                  {item.label}
+                </Option>
+                ;
+              </>
+            );
+          })}
+        </Select>
       </Form.Item>
     </>
   );

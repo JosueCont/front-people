@@ -31,21 +31,24 @@ const SelectBank = ({ rules = [], bankSelected = null, ...props }) => {
       rules={rules}
     >
       <Select
-        showSearch
         key="SelectBank"
         placeholder="Banco"
         style={props.style ? props.style : null}
         // options={options}
-        optionFilterProp="children"
         onChange={props.onChange ? props.onChange : null}
         allowClear
         notFoundContent={"No se encontraron resultados."}
         value={bankSelected}
+        showSearch
+        optionFilterProp="children"
       >
         {options.map((item) => {
           return (
             <>
-              <Option key={item.value}>{item.label}</Option>;
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
             </>
           );
         })}

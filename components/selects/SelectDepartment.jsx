@@ -37,13 +37,26 @@ const SelectDepartment = ({
         <Select
           disabled={disabled}
           key="SelectDepartament"
-          options={options}
+          // options={options}
           placeholder="Departamento"
           allowClear
           style={props.style ? props.style : {}}
           onChange={props.onChange ? props.onChange : null}
           notFoundContent={"No se encontraron resultados."}
-        />
+          showSearch
+          optionFilterProp="children"
+        >
+          {options.map((item) => {
+            return (
+              <>
+                <Option key={item.value} value={item.value}>
+                  {item.label}
+                </Option>
+                ;
+              </>
+            );
+          })}
+        </Select>
       </Form.Item>
     </>
   );

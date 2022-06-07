@@ -29,11 +29,24 @@ const SelectTaxRegime = ({ taxRegimeSelected = null, ...props }) => {
         key="SelectTaxRegime"
         placeholder="Régimen Fical"
         style={props.style ? props.style : null}
-        options={options}
+        // options={options}
         onChange={props.onChange ? props.onChange : null}
         allowClear
         notFoundContent={"No se encontraron resultados."}
-      />
+        showSearch
+        optionFilterProp="children"
+      >
+        {options.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };
