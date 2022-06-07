@@ -1195,7 +1195,7 @@ const homeScreen = ({ ...props }) => {
             <div className="notAllowed" />
           )}
         </div>
-        {props.config && (
+        {props.config && modalAddPerson && (
           <FormPerson
             config={props.config}
             close={getModalPerson}
