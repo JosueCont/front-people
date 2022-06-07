@@ -30,11 +30,24 @@ const SelectTypeTax = ({ rules = [], ...props }) => {
         key="SelectTypeTax"
         placeholder="Tipo de impuesto"
         style={props.style ? props.style : { width: "100% !important" }}
-        options={options}
+        // options={options}
         onChange={props.onChange ? props.onChange : null}
         allowClear
         notFoundContent={"No se encontraron resultados."}
-      />
+        showSearch
+        optionFilterProp="children"
+      >
+        {options.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };

@@ -10,7 +10,7 @@ const SelectLevel = ({
   textLabel = null,
   ...props
 }) => {
-  const [options, setOptions] = useState(null);
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
     setOptions([]);
@@ -37,13 +37,26 @@ const SelectLevel = ({
         <Select
           disabled={disabled}
           key="SelectLevel"
-          options={options}
+          // options={options}
           placeholder="Nivel"
           allowClear
           style={props.style ? props.style : {}}
           onChange={props.onChange ? props.onChange : null}
           notFoundContent={"No se encontraron resultados."}
-        />
+          showSearch
+          optionFilterProp="children"
+        >
+          {options.map((item) => {
+            return (
+              <>
+                <Option key={item.value} value={item.value}>
+                  {item.label}
+                </Option>
+                ;
+              </>
+            );
+          })}
+        </Select>
       </Form.Item>
     </>
   );

@@ -34,12 +34,25 @@ const SelectPeriodicity = ({
         <Select
           size={props.size ? props.size : "middle"}
           key="SelectPeriodicity"
-          options={options}
+          // options={options}
           placeholder="Periocidad"
           allowClear
           style={props.style ? props.style : {}}
           notFoundContent={"No se encontraron resultados."}
-        />
+          showSearch
+          optionFilterProp="children"
+        >
+          {options.map((item) => {
+            return (
+              <>
+                <Option key={item.value} value={item.value}>
+                  {item.label}
+                </Option>
+                ;
+              </>
+            );
+          })}
+        </Select>
       </Form.Item>
     </>
   );

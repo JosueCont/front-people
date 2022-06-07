@@ -3,7 +3,7 @@ import { Select, Form } from "antd";
 import { connect } from "react-redux";
 
 const SelectJob = ({ disabled, viewLabel = true, rules = [], ...props }) => {
-  const [options, setOptions] = useState(null);
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
     setOptions([]);
@@ -30,13 +30,26 @@ const SelectJob = ({ disabled, viewLabel = true, rules = [], ...props }) => {
         <Select
           disabled={disabled}
           key="SelectJob"
-          options={options}
+          // options={options}
           placeholder="Puesto de trabajo"
           allowClear
           style={props.style ? props.style : {}}
           onChange={props.onChange ? props.onChange : null}
           notFoundContent={"No se encontraron resultados."}
-        />
+          showSearch
+          optionFilterProp="children"
+        >
+          {options.map((item) => {
+            return (
+              <>
+                <Option key={item.value} value={item.value}>
+                  {item.label}
+                </Option>
+                ;
+              </>
+            );
+          })}
+        </Select>
       </Form.Item>
     </>
   );

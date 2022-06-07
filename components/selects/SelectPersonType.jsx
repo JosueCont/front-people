@@ -17,7 +17,23 @@ const SelectPersonType = ({ ...props }) => {
 
   return (
     <Form.Item name="person_type" label={props.label ? props.label : null}>
-      <Select options={personType} placeholder="Tipo de persona" />
+      <Select
+        // options={personType}
+        placeholder="Tipo de persona"
+        showSearch
+        optionFilterProp="children"
+      >
+        {personType.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };

@@ -12,7 +12,7 @@ const SelectWorkTitle = ({
   name = "cat_work_title",
   ...props
 }) => {
-  const [options, setOptions] = useState(null);
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
     setOptions([]);
@@ -51,13 +51,26 @@ const SelectWorkTitle = ({
       <Select
         disabled={disabled}
         key="SelectPlace"
-        options={options}
+        // options={options}
         placeholder="Plaza laboral"
         allowClear
         style={props.style ? props.style : {}}
         onChange={props.onChange ? props.onChange : null}
         notFoundContent={"No se encontraron resultados."}
-      />
+        showSearch
+        optionFilterProp="children"
+      >
+        {options.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };
