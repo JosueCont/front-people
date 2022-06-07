@@ -13,7 +13,7 @@ const SelectState = ({
   country = null,
   ...props
 }) => {
-  const [options, setOptions] = useState(null);
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
     getStates();
@@ -44,13 +44,26 @@ const SelectState = ({
       <Select
         disabled={disabled}
         key="SelectState"
-        options={options}
+        // options={options}
         placeholder="Estado"
         allowClear
         style={props.style ? props.style : {}}
         onChange={(value) => (setState ? setState(value) : null)}
         notFoundContent={"No se encontraron resultados."}
-      />
+        showSearch
+        optionFilterProp="children"
+      >
+        {options.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };

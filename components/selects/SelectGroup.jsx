@@ -23,11 +23,24 @@ const SelectGroup = ({ viewLabel, required = true, ...props }) => {
       label={viewLabel ? "Perfil de seguridad" : ""}
     >
       <Select
-        options={groups}
+        // options={groups}
         showArrow
         style={{ width: "100%" }}
         placeholder="Perfiles de seguridad"
-      ></Select>
+        showSearch
+        optionFilterProp="children"
+      >
+        {groups.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };

@@ -18,13 +18,26 @@ const SelectWorkTitleStatus = ({
       <Select
         disabled={disabled}
         key="SelectWorkTitleStatus"
-        options={workTitleStatus}
+        // options={workTitleStatus}
         placeholder="Estatus de Plaza laboral"
         allowClear
         style={props.style ? props.style : {}}
         onChange={props.onChange ? props.onChange : null}
         notFoundContent={"No se encontraron resultados."}
-      />
+        showSearch
+        optionFilterProp="children"
+      >
+        {workTitleStatus.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };
