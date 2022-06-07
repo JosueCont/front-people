@@ -217,7 +217,7 @@ const calculatorSalary = ({ ...props }) => {
                         <SelectPeriodicity size="large" />
                       </Col>
                       <Col md={12}>
-                        <SelectYear size="large" />
+                        <SelectYear size="large" label={"Periodo"} />
                       </Col>
 
                       {changeType && (

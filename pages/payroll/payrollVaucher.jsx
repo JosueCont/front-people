@@ -151,9 +151,9 @@ const PayrollVaucher = ({ ...props }) => {
 
   const onFinish = (value) => {
     setLoading(true);
-    let url = "";
+    let url = `node=${props.currentNode.id}`;
     if (value.calendar && value.calendar != "")
-      url = `calendar=${value.calendar}`;
+      url = url + `&calendar=${value.calendar}`;
     if (value.period && value.period != "")
       url = url + `&period=${value.period}`;
     if (value.person && value.person != "")
