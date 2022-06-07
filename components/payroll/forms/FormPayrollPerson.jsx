@@ -11,6 +11,7 @@ import {
   Select,
   Switch,
   Table,
+  Alert,
 } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
@@ -340,182 +341,199 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
         <Row>
           <Title style={{ fontSize: "20px" }}>Nómina</Title>
         </Row>
-        <Form
-          layout={"vertical"}
-          form={formPayrollPerson}
-          onFinish={formFinish}
-          className="inputs_form_responsive"
-        >
-          <Row gutter={20}>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item
-                name="daily_salary"
-                label="Salario diario"
-                maxLength={13}
-                rules={[fourDecimal, ruleRequired]}
-              >
-                <Input maxLength={10} />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item
-                name="integrated_daily_salary"
-                label="Salario diario integrado"
-                maxLength={13}
-                rules={[fourDecimal]}
-              >
-                <Input maxLength={10} disabled />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item
-                name="contract_type"
-                label="Tipo de contrato"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  dropdownStyle={{ wordBreak: "break-word" }}
-                  options={contrctsType}
-                  notFoundContent={"No se encontraron resultados."}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item
-                name="hiring_regime_type"
-                label="Tipo de régimen de contratación"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  options={hiringRegimeType}
-                  notFoundContent={"No se encontraron resultados."}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item
-                name="type_working_day"
-                label="Tipo de jornada"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  options={typeworkingday}
-                  notFoundContent={"No se encontraron resultados."}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item
-                name="unionized"
-                label="¿Sindicalizado?"
-                valuePropName="checked"
-              >
-                <Switch
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item
-                name="payment_type"
-                label="Forma de pago"
-                rules={[ruleRequired]}
-              >
-                <Select
-                  options={PaymentTypes}
-                  notFoundContent={"No se encontraron resultados."}
-                  onChange={changePaymentType}
-                />
-              </Form.Item>
-            </Col>
-            {!bankDisabled && (
-              <Col lg={8} xs={22} md={12}>
-                <Form.Item name="bank" label="Banco" rules={[ruleRequired]}>
-                  <Select
-                    options={banks}
-                    notFoundContent={"No se encontraron resultados."}
-                  />
+        {person.date_of_admission ? (
+          <>
+            <Form
+              layout={"vertical"}
+              form={formPayrollPerson}
+              onFinish={formFinish}
+              className="inputs_form_responsive"
+            >
+              <Row gutter={20}>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item
+                    name="daily_salary"
+                    label="Salario diario"
+                    maxLength={13}
+                    rules={[fourDecimal, ruleRequired]}
+                  >
+                    <Input maxLength={10} />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item
+                    name="integrated_daily_salary"
+                    label="Salario diario integrado"
+                    maxLength={13}
+                    rules={[fourDecimal]}
+                  >
+                    <Input maxLength={10} disabled />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item
+                    name="contract_type"
+                    label="Tipo de contrato"
+                    rules={[ruleRequired]}
+                  >
+                    <Select
+                      dropdownStyle={{ wordBreak: "break-word" }}
+                      options={contrctsType}
+                      notFoundContent={"No se encontraron resultados."}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item
+                    name="hiring_regime_type"
+                    label="Tipo de régimen de contratación"
+                    rules={[ruleRequired]}
+                  >
+                    <Select
+                      options={hiringRegimeType}
+                      notFoundContent={"No se encontraron resultados."}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item
+                    name="type_working_day"
+                    label="Tipo de jornada"
+                    rules={[ruleRequired]}
+                  >
+                    <Select
+                      options={typeworkingday}
+                      notFoundContent={"No se encontraron resultados."}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item
+                    name="unionized"
+                    label="¿Sindicalizado?"
+                    valuePropName="checked"
+                  >
+                    <Switch
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item
+                    name="payment_type"
+                    label="Forma de pago"
+                    rules={[ruleRequired]}
+                  >
+                    <Select
+                      options={PaymentTypes}
+                      notFoundContent={"No se encontraron resultados."}
+                      onChange={changePaymentType}
+                    />
+                  </Form.Item>
+                </Col>
+                {!bankDisabled && (
+                  <Col lg={8} xs={22} md={12}>
+                    <Form.Item name="bank" label="Banco" rules={[ruleRequired]}>
+                      <Select
+                        options={banks}
+                        notFoundContent={"No se encontraron resultados."}
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item
+                    name="apply_monthly_adjustment"
+                    label="¿Aplicar ajuste mensual?"
+                    valuePropName="checked"
+                  >
+                    <Switch
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item
+                    name="apply_annual_adjustment"
+                    label="¿Aplicar ajuste anual?"
+                    valuePropName="checked"
+                  >
+                    <Switch
+                      checkedChildren={<CheckOutlined />}
+                      unCheckedChildren={<CloseOutlined />}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <Form.Item name="last_day_paid" label="Último día de pago">
+                    <DatePicker
+                      style={{ width: "100%" }}
+                      onChange={onChangeLastDayPaid}
+                      moment={"YYYY-MM-DD"}
+                    />
+                  </Form.Item>
+                </Col>
+                {paymentCalendars.length > 0 && (
+                  <>
+                    <Col lg={8} xs={22} md={12}>
+                      <Form.Item
+                        name="payment_calendar"
+                        label="Calendario de pago"
+                      >
+                        <Select
+                          options={paymentCalendars}
+                          notFoundContent={"No se encontraron resultados."}
+                          onChange={selectCalendar}
+                          disabled={disabledCalendar}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={8} xs={22} md={12}>
+                      <Form.Item
+                        name="perception_type"
+                        label="Tipo de percepción"
+                      >
+                        <Select
+                          options={perceptionTypes}
+                          notFoundContent={"No se encontraron resultados."}
+                          disabled
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={8} xs={22} md={12}>
+                      <Form.Item name="type_tax" label="Tipo de impuesto">
+                        <Select
+                          options={typeTax}
+                          notFoundContent={"No se encontraron resultados."}
+                          disabled
+                        />
+                      </Form.Item>
+                    </Col>
+                  </>
+                )}
+              </Row>
+              <Row justify={"end"}>
+                <Form.Item>
+                  <Button type="primary" htmlType="submit">
+                    Guardar
+                  </Button>
                 </Form.Item>
-              </Col>
-            )}
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item
-                name="apply_monthly_adjustment"
-                label="¿Aplicar ajuste mensual?"
-                valuePropName="checked"
-              >
-                <Switch
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item
-                name="apply_annual_adjustment"
-                label="¿Aplicar ajuste anual?"
-                valuePropName="checked"
-              >
-                <Switch
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                />
-              </Form.Item>
-            </Col>
-            <Col lg={8} xs={22} md={12}>
-              <Form.Item name="last_day_paid" label="Último día de pago">
-                <DatePicker
-                  style={{ width: "100%" }}
-                  onChange={onChangeLastDayPaid}
-                  moment={"YYYY-MM-DD"}
-                />
-              </Form.Item>
-            </Col>
-            {paymentCalendars.length > 0 && (
-              <>
-                <Col lg={8} xs={22} md={12}>
-                  <Form.Item name="payment_calendar" label="Calendario de pago">
-                    <Select
-                      options={paymentCalendars}
-                      notFoundContent={"No se encontraron resultados."}
-                      onChange={selectCalendar}
-                      disabled={disabledCalendar}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={8} xs={22} md={12}>
-                  <Form.Item name="perception_type" label="Tipo de percepción">
-                    <Select
-                      options={perceptionTypes}
-                      notFoundContent={"No se encontraron resultados."}
-                      disabled
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={8} xs={22} md={12}>
-                  <Form.Item name="type_tax" label="Tipo de impuesto">
-                    <Select
-                      options={typeTax}
-                      notFoundContent={"No se encontraron resultados."}
-                      disabled
-                    />
-                  </Form.Item>
-                </Col>
-              </>
-            )}
-          </Row>
-          <Row justify={"end"}>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Guardar
-              </Button>
-            </Form.Item>
-          </Row>
-        </Form>
-        <Row>
-          <Table dataSource={payrollPersonList} columns={columns} />
-        </Row>
+              </Row>
+            </Form>
+            <Row>
+              <Table dataSource={payrollPersonList} columns={columns} />
+            </Row>
+          </>
+        ) : (
+          <Alert
+            message="Información necesaria"
+            description="Para continuar con la nómina de la persona es necesario capturar su fecha de inicio laboral."
+            type="info"
+            showIcon
+          />
+        )}
       </Spin>
     </>
   );

@@ -45,6 +45,7 @@ const DetailPerson = ({
   setLoading,
   deletePerson = true,
   hideProfileSecurity = true,
+  setPerson,
   ...props
 }) => {
   const { Title } = Typography;
@@ -99,6 +100,7 @@ const DetailPerson = ({
               person.mlast_name}
         </Title>
         <DataPerson
+          setPerson={setPerson}
           config={config}
           person={person}
           setLoading={setLoading}

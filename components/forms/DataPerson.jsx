@@ -40,7 +40,7 @@ import SelectGroup from "../../components/selects/SelectGroup";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 
-const DataPerson = ({ config, person = null, ...props }) => {
+const DataPerson = ({ config, person = null, setPerson, ...props }) => {
   const { Title } = Typography;
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
@@ -150,6 +150,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
     await WebApiPeople.updatePerson(data, person.id)
       .then((response) => {
         setFormPerson(response.data);
+        setPerson(response.data);
         message.success({
           content: "Actualizado correctamente.",
           className: "custom-class",
@@ -396,7 +397,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Col lg={24} md={12} xs={24} xl={12}>
                     <Form.Item
                       name="date_of_admission"
-                      label="Fecha de ingreso"
+                      label="Fecha de ingreso laboral"
                     >
                       <DatePicker
                         onChange={onChangeDateAdmission}

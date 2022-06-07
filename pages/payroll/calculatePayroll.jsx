@@ -175,24 +175,32 @@ const CalculatePayroll = ({ ...props }) => {
       ),
     },
     {
-      title: "Empresa",
-      dataIndex: "company",
+      title: "Total percepciones",
       key: "company",
       className: "cursor_pointer",
       render: (item) => (
         <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
-          {props.currentNode.name}
+          $ {numberFormat(item.calculation.total_perceptions)}
         </div>
       ),
     },
     {
-      title: "Salario Diario",
-      dataIndex: "daily_salary",
+      title: "Total deducciones",
       key: "daily_salary",
       className: "cursor_pointer",
       render: (item) => (
         <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
-          {item.salary}
+          $ {numberFormat(item.calculation.total_deductions)}
+        </div>
+      ),
+    },
+    {
+      title: "Total a pagar",
+      key: "daily_salary",
+      className: "cursor_pointer",
+      render: (item) => (
+        <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
+          $ {numberFormat(item.calculation.net_salary)}
         </div>
       ),
     },
@@ -763,9 +771,7 @@ const CalculatePayroll = ({ ...props }) => {
               <Card className="card_table">
                 <Table
                   className="headers_transparent"
-                  dataSource={
-                    payroll.length > 0 && payroll[0].person ? payroll : []
-                  }
+                  dataSource={payroll.length > 0 ? payroll : []}
                   columns={persons}
                   expandable={{
                     expandedRowRender: (item) => renderConceptsTable(item),

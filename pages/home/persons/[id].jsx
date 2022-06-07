@@ -50,6 +50,7 @@ const EmployeeDetailPage = (...props) => {
           </Breadcrumb>
           {person ? (
             <DetailPerson
+              setPerson={setPerson}
               config={props[0].config}
               person={person}
               setLoading={setLoading}
