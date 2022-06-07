@@ -3,35 +3,51 @@ import { Select, Form } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+import { userCompanyId } from "../../libs/auth";
 
-export default function SelectPerson(props) {
+export default function SelectCollaborator({ setAllPersons, ...props }) {
   const { Option } = Select;
 
   const route = useRouter();
 
   const [personList, setPersonList] = useState([]);
+  let nodeId = userCompanyId();
 
-  const getPersons = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/person/person/`);
-      let data = response.data.results;
-      let list = [];
-      data = data.map((a, index) => {
-        let item = {
-          label: a.first_name + " " + a.flast_name,
-          value: props.khonnect_id ? a.khonnect_id : a.id,
-          key: a.id + index,
-        };
-        list.push(item);
+  const filterPerson = () => {
+    Axios.post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
+      .then((response) => {
+        let list = [];
+        if (setAllPersons) {
+          setAllPersons(response.data);
+        }
+        response.data.map((a, i) => {
+          let item = {
+            label: a.first_name + " " + a.flast_name,
+            value: a.id,
+            key: a.id + i,
+          };
+          list.push(item);
+        });
+        setPersonList(list);
+      })
+      .catch((e) => {
+        console.log(e);
       });
-      setPersonList(list);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
-  const DropDownList = () => {
-    return (
+  useEffect(() => {
+    // getPersons();
+    filterPerson();
+  }, [route]);
+
+  return (
+    <Form.Item
+      label={props.label ? props.label : "Colaborador"}
+      name={props.name ? props.name : "collaborator"}
+      labelCol={props.labelCol ? props.labelCol : { span: 24 }}
+      labelAlign={"left"}
+      rules={props.rules ? props.rules : null}
+    >
       <Select
         key="selectPerson"
         showSearch
@@ -39,7 +55,6 @@ export default function SelectPerson(props) {
         allowClear
         optionFilterProp="children"
         placeholder="Todos"
-        value={props.defaultValue}
         notFoundContent={"No se encontraron resultado."}
         filterOption={(input, option) =>
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -49,6 +64,7 @@ export default function SelectPerson(props) {
             .toLowerCase()
             .localeCompare(optionB.children.toLowerCase())
         }
+        onChange={props.onChange ? props.onChange : null}
       >
         {personList
           ? personList.map((item) => {
@@ -60,23 +76,6 @@ export default function SelectPerson(props) {
             })
           : null}
       </Select>
-    );
-  };
-
-  useEffect(() => {
-    getPersons();
-  }, [route]);
-
-  return props.withLabel ? (
-    <Form.Item
-      label="Colaborador"
-      name={props.name ? props.name : "khonnect_id"}
-      labelCol={{ span: 10 }}
-      labelAlign={"left"}
-    >
-      <DropDownList />
     </Form.Item>
-  ) : (
-    <DropDownList />
   );
 }

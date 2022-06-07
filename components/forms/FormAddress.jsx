@@ -9,22 +9,25 @@ import {
   Select,
 } from "antd";
 import { useState, useEffect } from "react";
-import { typeStreet } from "../../utils/constant";
-import WebApiPeople from "../../api/WebApiPeople";
-import { ruleRequired } from "../../utils/rules";
+import Axios from "axios";
+import { API_URL } from "../../config/config";
+import { typeStreet } from "../../utils/functions";
+import WebApi from "../../api/webApi";
 
 const FormAddress = ({ person_id }) => {
   const { Title } = Typography;
   const [formAddress] = Form.useForm();
   const [idAddress, setIdAddress] = useState("");
+  const ruleRequired = { required: true, message: "Este campo es requerido" };
 
   useEffect(() => {
     getAddress();
   }, []);
 
+  /*functions CRUD */
   const getAddress = async () => {
     try {
-      let response = await WebApiPeople.getAddress(person_id);
+      let response = await WebApi.getAddress(person_id);
       formAddress.setFieldsValue({
         street_type: response.data[0].street_type,
         street: response.data[0].street,
@@ -43,7 +46,7 @@ const FormAddress = ({ person_id }) => {
   };
   const saveAddress = async (data) => {
     try {
-      let response = await WebApiPeople.createAddress(data);
+      let response = await WebApi.createAddress(data);
       message.success({
         content: "Guardado correctamente.",
         className: "custom-class",
@@ -55,7 +58,7 @@ const FormAddress = ({ person_id }) => {
   };
   const updateAddress = async (data) => {
     try {
-      let response = await WebApiPeople.updateAddress(idAddress, data);
+      let response = await WebApi.updateAddress(idAddress, data);
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",
@@ -80,9 +83,9 @@ const FormAddress = ({ person_id }) => {
       <Row>
         <Title style={{ fontSize: "20px" }}>Dirección</Title>
       </Row>
-      <Form layout={"vertical"} form={formAddress} onFinish={formAddressPerson} className="inputs_form_responsive">
-        <Row gutter={20}>
-          <Col lg={8} xs={22} md={12}>
+      <Form layout={"vertical"} form={formAddress} onFinish={formAddressPerson}>
+        <Row>
+          <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="street_type"
               label="Tipo de calle"
@@ -90,56 +93,56 @@ const FormAddress = ({ person_id }) => {
             >
               <Select
                 options={typeStreet}
-                notFoundContent={"No se encontraron resultados."}
+                notFoundContent={"No se encontraron resultado."}
               />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={6} xs={22} offset={1}>
             <Form.Item name="street" label="Calle" rules={[ruleRequired]}>
-              <Input maxLength={50} />
+              <Input />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="numberOne"
               label="Número exterior"
               rules={[ruleRequired]}
             >
-              <Input maxLength={20} />
+              <Input />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={6} xs={22} offset={1}>
             <Form.Item name="numberTwo" label="Número interior">
-              <Input maxLength={20} />
+              <Input />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={6} xs={22} offset={1}>
             <Form.Item name="building" label="Edificio">
-              <Input maxLength={50} />
+              <Input />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={6} xs={22} offset={1}>
             <Form.Item
               name="postalCode"
               label="Código postal"
               rules={[ruleRequired]}
             >
-              <Input maxLength={10} />
+              <Input />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={6} xs={22} offset={1}>
             <Form.Item name="suburb" label="Suburbio" rules={[ruleRequired]}>
-              <Input maxLength={50} />
+              <Input />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={6} xs={22} offset={1}>
             <Form.Item name="location" label="Ubicación" rules={[ruleRequired]}>
-              <Input maxLength={50} />
+              <Input />
             </Form.Item>
           </Col>
-          <Col lg={8} xs={22} md={12}>
+          <Col lg={6} xs={22} offset={1}>
             <Form.Item name="reference" label="Referencia">
-              <Input maxLength={50} />
+              <Input />
             </Form.Item>
           </Col>
         </Row>
