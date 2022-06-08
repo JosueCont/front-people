@@ -52,7 +52,7 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
       postal_code: data.code,
       country: data.state.country.id,
       state: data.state.id,
-      municipality: data.municipality.id,
+      municipality: data.municipality ? data.municipality.id : null,
     });
   };
 
