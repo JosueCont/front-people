@@ -163,6 +163,7 @@ const PayrollVaucher = ({ ...props }) => {
   };
 
   const getVaucher = (data) => {
+    setCfdis([]);
     WebApiPayroll.getCfdiPayrrol(data)
       .then((response) => {
         setCfdis(response.data);
