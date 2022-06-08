@@ -102,6 +102,10 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
 
   useEffect(() => {
     if (props.perceptions_int) {
+      console.log(
+        "INTERNOS-->> ",
+        props.perceptions_int.filter((item) => item.node != null)
+      );
       setCat(props.perceptions_int.filter((item) => item.node != null));
     }
   }, [props.perceptions_int]);
