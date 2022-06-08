@@ -16,6 +16,7 @@ import {
   Typography,
   Form,
   Alert,
+  InputNumber,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -61,6 +62,8 @@ const CalculatePayroll = ({ ...props }) => {
   const [totalSalary, setTotalSalary] = useState(null);
   const [totalIsr, setTotalIsr] = useState(null);
   const [calendarSelect, setCalendarSelect] = useState(null);
+  const defaulPhoto =
+    "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
   const [infoGenericModal, setInfoGenericModal] = useState({
     title: "Timbrado de nómina",
@@ -167,9 +170,13 @@ const CalculatePayroll = ({ ...props }) => {
           <Space>
             <Avatar
               icon={<UserOutlined />}
-              src={item.person.photo ? item.person.photo : null}
+              src={
+                item.person && item.person.photo
+                  ? item.person.photo
+                  : defaulPhoto
+              }
             />
-            {item.person.full_name}
+            {item.person && item.person.full_name}
           </Space>
         </div>
       ),
@@ -213,7 +220,8 @@ const CalculatePayroll = ({ ...props }) => {
             <Button
               size="small"
               onClick={() => {
-                setPersonId(item.person.id), setModalVisible(true);
+                setPersonId(item.person && item.person.id),
+                  setModalVisible(true);
               }}
             >
               <PlusOutlined />
@@ -289,12 +297,14 @@ const CalculatePayroll = ({ ...props }) => {
           <>
             {item.type === "046" && !consolidated ? (
               <Space size="middle">
-                <Input
+                <InputNumber
                   key={item.type}
+                  type="number"
                   onChange={(value) => {
-                    item.value = Number(value.target.value.replace(",", ""));
+                    item.value = value;
                     setCalculate(true);
                   }}
+                  controls={false}
                   defaultValue={item.amount}
                 />
               </Space>
