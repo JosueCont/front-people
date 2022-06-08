@@ -15,6 +15,7 @@ const initialData = {
   permissions: UserPermissions(),
   current_node: null,
   general_config: null,
+  applications: {},
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -27,6 +28,7 @@ const PEOPLE_COMPANY = "PEOPLE_COMPANY";
 const DATA_UPLOAD = "DATA_UPLOAD";
 const USER = "USER";
 const PERMISSIONS = "PERMISSIONS";
+const APPLICATIONS = "APPLICATIONS";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -50,6 +52,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, user: action.payload };
     case PERMISSIONS:
       return { ...state, permissions: action.payload };
+    case APPLICATIONS:
+      return { ...state, applications: action.payload };
     default:
       return state;
   }
@@ -63,13 +67,19 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
       sessionStorage.setItem("accessIntranet", response.data.intranet_enabled);
       dispatch({ type: GENERAL_CONFIG, payload: response.data });
       dispatch(setUser());
-      if (
-        response.data.applications &&
-        response.data.applications.find(
-          (item) => item.app === "PAYROLL" && item.is_active
-        )
-      ) {
-        dispatch(getCfdiVersion());
+      const apps = {};
+      if (response.data.applications) {
+        response.data.applications.map((item) => {
+          apps[item.app.toLowerCase()] = {
+            active: item.is_active,
+            back: item.url_backend,
+            front: item.url_frontend,
+          };
+        });
+        dispatch({ type: APPLICATIONS, payload: apps });
+        if (apps.payroll && apps.payroll.is_active) {
+          dispatch(getCfdiVersion());
+        }
       }
     })
 

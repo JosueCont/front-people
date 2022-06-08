@@ -519,7 +519,7 @@ const CalculatePayroll = ({ ...props }) => {
           error.response.data &&
           error.response.data.message
         ) {
-          let dialog = await setMessageModal(1, error.response.data.message);
+          await setMessageModal(1, error.response.data.message);
           setGenericModal(true);
         } else message.error(messageError);
         setLoading(false);
@@ -534,19 +534,27 @@ const CalculatePayroll = ({ ...props }) => {
             ? "Información fiscal"
             : data.toLowerCase().includes("fiscal address")
             ? "Dirección fiscal"
-            : "Folios",
+            : data.toLowerCase().includes("folios")
+            ? "Folios"
+            : "Error",
 
           title_message: data.toLowerCase().includes("fiscal information")
             ? "Información fiscal faltante"
             : data.toLowerCase().includes("fiscal address")
             ? "Dirección fiscal faltante"
-            : "Folios insuficientes",
+            : data.toLowerCase().includes("folios")
+            ? "Folios insuficientes"
+            : "Error",
           description: data.toLowerCase().includes("fiscal information")
             ? "Falta información relevante para poder generar los cfdi, verifique la información de la empresa he intente de nuevo."
             : data.toLowerCase().includes("fiscal address")
             ? "Datos en la dirección fiscal faltantes, verifique la información he intente de nuevo"
-            : "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte.",
-          type_alert: "warning",
+            : data.toLowerCase().includes("folios")
+            ? "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte."
+            : data,
+          type_alert: data.toLowerCase().includes("error")
+            ? "error"
+            : "warning",
           action: () =>
             data.toLowerCase().includes("fiscal information") ||
             data.toLowerCase().includes("fiscal address")
