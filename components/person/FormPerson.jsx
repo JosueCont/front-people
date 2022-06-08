@@ -51,7 +51,8 @@ const FormPerson = ({
       message.error("Las contraseñas no coinciden.");
     else {
       delete value["passwordTwo"];
-      value.groups = [value.groups];
+      if (value.groups) value.groups = [value.groups];
+      else delete value["groups"];
       if (currentNode) value.node = currentNode.id;
       else value.node = node;
       createPerson(value);
@@ -186,6 +187,22 @@ const FormPerson = ({
                     <Input type="text" placeholder="Núm. empleado" />
                   </Form.Item>
                 </Col>
+                <Col lg={8} xs={24}>
+                  <Form.Item
+                    rules={[ruleEmail, payrrollActive && ruleRequired]}
+                    name="email"
+                  >
+                    <Input
+                      type="email"
+                      placeholder="E-mail"
+                      onBlur={(value) =>
+                        form.setFieldsValue({
+                          email: value.target.value.toLowerCase(),
+                        })
+                      }
+                    />
+                  </Form.Item>
+                </Col>
 
                 <Col lg={20} xs={24} style={{ padding: "10px" }}>
                   {config &&
@@ -201,25 +218,9 @@ const FormPerson = ({
                       </>
                     )}
                 </Col>
+
                 {payrrollActive && (
                   <>
-                    {" "}
-                    <Col lg={8} xs={24}>
-                      <Form.Item
-                        rules={[ruleEmail, payrrollActive && ruleRequired]}
-                        name="email"
-                      >
-                        <Input
-                          type="email"
-                          placeholder="E-mail"
-                          onBlur={(value) =>
-                            form.setFieldsValue({
-                              email: value.target.value.toLowerCase(),
-                            })
-                          }
-                        />
-                      </Form.Item>
-                    </Col>
                     <Col lg={8} xs={24}>
                       <Form.Item rules={[ruleRequired]} name="password">
                         <Input.Password type="text" placeholder="Contraseña" />
