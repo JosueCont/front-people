@@ -77,7 +77,7 @@ export const doGetGeneralConfig = () => async (dispatch, getState) => {
           };
         });
         dispatch({ type: APPLICATIONS, payload: apps });
-        if (apps.payroll && apps.payroll.is_active) {
+        if (apps.payroll && apps.payroll.active) {
           dispatch(getCfdiVersion());
         }
       }
