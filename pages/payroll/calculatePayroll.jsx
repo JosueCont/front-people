@@ -511,6 +511,7 @@ const CalculatePayroll = ({ ...props }) => {
         setTotalIsr(null);
         setPayroll([]);
         message.success(messageSendSuccess);
+        getPaymentCalendars(props.currentNode.id);
       })
       .catch(async (error) => {
         console.log(error);
