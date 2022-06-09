@@ -12,6 +12,7 @@ import {
   Form,
   message,
   Tooltip,
+  Alert,
 } from "antd";
 import { useEffect, useState } from "react";
 import {
@@ -585,12 +586,12 @@ const businessForm = ({ ...props }) => {
           layout={"vertical"}
           form={formBusiness}
         >
-          <div className="float-label">
-            <label>¿Está seguro de eliminar esta empresa?</label>
-          </div>
-          <Form.Item name="id" label="id" style={{ display: "none" }}>
-            <Input type="text" />
-          </Form.Item>
+          <Alert
+            type="warning"
+            showIcon
+            message="¿Está seguro de eliminar esta empresa?"
+            description="Al eliminar esta empresa perdera todos los datos relacionados a la misma."
+          />
         </Form>
       </Modal>
 
