@@ -290,7 +290,7 @@ const FormPaymentCalendar = ({
               </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
-              <SelectPeriodicity />
+              <SelectPeriodicity size={"large"} />
             </Col>
             <Col lg={8} xs={22}>
               <SelectTypeTax />
@@ -370,7 +370,7 @@ const FormPaymentCalendar = ({
                 />
               </Form.Item>
             </Col>
-            <Col lg={8} xs={22}>
+            {/* <Col lg={8} xs={22}>
               <Form.Item name="activation_date" label="Fecha de activación">
                 <DatePicker
                   style={{ width: "100%" }}
@@ -379,7 +379,7 @@ const FormPaymentCalendar = ({
                   placeholder=""
                 />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col lg={8} xs={22}>
               <Form.Item
                 name="pay_before"
