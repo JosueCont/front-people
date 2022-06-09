@@ -265,7 +265,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                           fontWeight: "bold",
                         }}
                       >
-                        Enpresa
+                        Empresa
                       </span>
                       <Form layout="vertical" className={"formFilter"}>
                         <Row gutter={[16, 6]}>

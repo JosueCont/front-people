@@ -24,6 +24,10 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/payment-calendar/?node=${data}`, "get");
   }
 
+  static deletePaymentCalendar(data) {
+    return WebApi.ApisType(`/payroll/payment-calendar/${data}/`, "delete");
+  }
+
   static createPaymentCalendar(data) {
     return WebApi.ApisType(
       `/payroll/payment-calendar/payment_calendar/`,

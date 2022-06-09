@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../../layout/MainLayout";
-import { Row, Col, Table, Breadcrumb, Button, Modal } from "antd";
+import { Row, Col, Table, Breadcrumb, Button, Modal, message } from "antd";
 import { useRouter } from "next/router";
 import {
   EditOutlined,
@@ -13,6 +13,9 @@ import { Global } from "@emotion/core";
 import FormPaymentCalendar from "../../../components/payroll/forms/FormPaymentCalendar";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { connect } from "react-redux";
+import { DeleteOutline } from "@material-ui/icons";
+import WebApi from "../../../api/webApi";
+import { messageDeleteSuccess, messageError } from "../../../utils/constant";
 
 const PaymentCalendars = ({ ...props }) => {
   const { Column } = Table;
@@ -61,6 +64,20 @@ const PaymentCalendars = ({ ...props }) => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const deleteCalednar = (id) => {
+    setLoading(true);
+    WebApiPayroll.deletePaymentCalendar(id)
+      .then((response) => {
+        message.success(messageDeleteSuccess);
+        getPaymentCalendars();
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        message.error(messageError);
+      });
   };
 
   return (
@@ -189,6 +206,14 @@ const PaymentCalendars = ({ ...props }) => {
                       key={"goCalendar" + record.id}
                       onClick={() => GotoCalendar(record)}
                     />
+                    {!record.locked && (
+                      <DeleteOutline
+                        style={{ fontSize: "22px", marginBottom: "-5px" }}
+                        className="icon_actions"
+                        key={"delCalendar" + record.id}
+                        onClick={() => deleteCalednar(record.id)}
+                      />
+                    )}
                   </>
                 )}
               />
