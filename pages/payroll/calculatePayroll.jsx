@@ -29,11 +29,7 @@ import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsPayroll";
 import { Global } from "@emotion/core";
-import {
-  downLoadFileBlob,
-  getDomain,
-  numberFormat,
-} from "../../utils/functions";
+import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { connect } from "react-redux";
 import {
   messageError,
@@ -42,6 +38,7 @@ import {
 } from "../../utils/constant";
 import GenericModal from "../../components/modal/genericModal";
 import { API_URL_TENANT } from "../../config/config";
+import NumberFormat from "../../components/formatter/numberFormat";
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -187,7 +184,10 @@ const CalculatePayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
-          $ {numberFormat(item.calculation.total_perceptions)}
+          <NumberFormat
+            prefix={"$"}
+            number={item.calculation.total_perceptions}
+          />
         </div>
       ),
     },
@@ -197,7 +197,10 @@ const CalculatePayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
-          $ {numberFormat(item.calculation.total_deductions)}
+          <NumberFormat
+            prefix={"$"}
+            number={item.calculation.total_deductions}
+          />
         </div>
       ),
     },
@@ -207,7 +210,7 @@ const CalculatePayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
-          $ {numberFormat(item.calculation.net_salary)}
+          <NumberFormat prefix={"$"} number={item.calculation.net_salary} />
         </div>
       ),
     },
@@ -274,7 +277,7 @@ const CalculatePayroll = ({ ...props }) => {
         width: "10%",
         render: (taxed_amount) => (
           <Space size="middle">
-            <span>${numberFormat(taxed_amount)}</span>
+            <NumberFormat prefix={"$"} number={taxed_amount} />
           </Space>
         ),
       },
@@ -285,7 +288,7 @@ const CalculatePayroll = ({ ...props }) => {
         width: "10%",
         render: (exempt_amount) => (
           <Space size="middle">
-            <Text>${numberFormat(exempt_amount)}</Text>
+            <NumberFormat prefix={"$"} number={exempt_amount} />
           </Space>
         ),
       },
@@ -310,7 +313,7 @@ const CalculatePayroll = ({ ...props }) => {
               </Space>
             ) : (
               <Space size="middle">
-                <Text>${numberFormat(item.amount)}</Text>
+                <NumberFormat prefix={"$"} number={item.amount} />
               </Space>
             )}
           </>
@@ -347,7 +350,9 @@ const CalculatePayroll = ({ ...props }) => {
         width: "10%",
         render: (amount) => (
           <Space size="middle">
-            <Text>${numberFormat(amount)}</Text>
+            <Text>
+              <NumberFormat prefix={"$"} number={amount} />
+            </Text>
           </Space>
         ),
       },
@@ -375,7 +380,7 @@ const CalculatePayroll = ({ ...props }) => {
         width: "10%",
         render: (amount) => (
           <Space size="middle">
-            <Text>${numberFormat(amount)}</Text>
+            <NumberFormat prefix={"$"} number={amount} />
           </Space>
         ),
       },
@@ -458,7 +463,10 @@ const CalculatePayroll = ({ ...props }) => {
                   Total percepciones :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  $ {numberFormat(item.calculation.total_perceptions)}
+                  <NumberFormat
+                    prefix={"$"}
+                    number={item.calculation.total_perceptions}
+                  />
                 </Col>
               </Col>
               <Col span={24} style={{ display: "flex" }}>
@@ -466,7 +474,10 @@ const CalculatePayroll = ({ ...props }) => {
                   Total deducciones :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  $ {numberFormat(item.calculation.total_deductions)}
+                  <NumberFormat
+                    prefix={"$"}
+                    number={item.calculation.total_deductions}
+                  />
                 </Col>
               </Col>
               <Col span={24} style={{ display: "flex" }}>
@@ -474,7 +485,10 @@ const CalculatePayroll = ({ ...props }) => {
                   Total a pagar :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  ${numberFormat(item.calculation.net_salary)}
+                  <NumberFormat
+                    prefix={"$"}
+                    number={item.calculation.net_salary}
+                  />
                 </Col>
               </Col>
             </Row>
@@ -632,6 +646,7 @@ const CalculatePayroll = ({ ...props }) => {
 
     return;
   };
+
   return (
     <>
       <Spin tip="Cargando..." spinning={loading}>
@@ -808,15 +823,26 @@ const CalculatePayroll = ({ ...props }) => {
                   locale={{ emptyText: "No se encontraron resultados" }}
                 />
                 {totalSalary != null && totalIsr != null ? (
-                  <Col sm={24} md={18} lg={12}>
-                    <Row>
-                      <Col span={12} style={{ fontWeight: "bold" }}>
+                  <Col sm={24} md={24} lg={24}>
+                    <Row justify="end">
+                      <Col span={4} style={{ fontWeight: "bold" }}>
                         <div>Total de sueldos:</div>
                         <div>Total de ISR:</div>
+                        <div>Total a pagar:</div>
                       </Col>
-                      <Col span={12} style={{ fontWeight: "bold" }}>
-                        <div>${totalSalary}</div>
-                        <div>${totalIsr}</div>
+                      <Col span={3} style={{ fontWeight: "bold" }}>
+                        <div>
+                          <NumberFormat prefix={"$"} number={totalSalary} />
+                        </div>
+                        <div>
+                          <NumberFormat prefix={"$"} number={totalIsr} />
+                        </div>
+                        <div>
+                          <NumberFormat
+                            prefix={"$"}
+                            number={totalSalary - totalIsr}
+                          />
+                        </div>
                       </Col>
                     </Row>
                   </Col>
