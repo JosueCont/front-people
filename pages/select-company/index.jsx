@@ -379,48 +379,6 @@ const SelectCompany = ({ ...props }) => {
             setVisible={setCreateNode}
             afterAction={(value) => personForKhonnectId(value)}
           />
-          {/* {modalCfdiVersion && props.catCfdiVersion && (
-            <GenericModal
-              visible={modalCfdiVersion}
-              setVisible={(value) => setModalCfdiVersion(value)}
-              title="Versión CFDI"
-              titleActionButton="Aceptar"
-              width="50%"
-              content={
-                <>
-                  <Alert
-                    message={
-                      <span>
-                        <b>Versión de CFDI:</b> Seleccione la version con la
-                        cual trabajara su nómina (los catalogos fiscales varian
-                        entre versiones).
-                      </span>
-                    }
-                    type="info"
-                  />{" "}
-                  <br />
-                  <Select
-                    onChange={(value) => setVersionCfdiSelect(value)}
-                    placeholder="Seleccione la version"
-                    defaultValue={
-                      props.catCfdiVersion.find((item) => item.active === true)
-                        .id
-                    }
-                    options={props.catCfdiVersion.map((item) => {
-                      return {
-                        label: `Versión - ${item.version}`,
-                        value: item.id,
-                      };
-                    })}
-                  />
-                </>
-              }
-              actionButton={() => {
-                props.setVersionCfdi(versionCfdiSelect),
-                  setModalCfdiVersion(false);
-              }}
-            />
-          )} */}
         </MainLayout>
       ) : (
         <div className="notAllowed" />

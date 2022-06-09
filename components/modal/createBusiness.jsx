@@ -40,14 +40,15 @@ const ModalCreateBusiness = ({
       data.append("parent", value.FNode ? value.FNode : null);
     }
     setAddB(true);
-    data.append("image", logo);
+
     data.append("person", user.id);
     setLoading(true);
     if (logo == null || logo == undefined) {
-      message.error("Agregue una imagen");
-      setAddB(false);
-      return;
-    }
+      // message.error("Agregue una imagen");
+      // setAddB(false);
+      // setLoading(false);
+      // return;
+    } else data.append("image", logo);
     WebApiPeople.createNode(data)
       .then((response) => {
         setLoading(false);
@@ -58,6 +59,7 @@ const ModalCreateBusiness = ({
         afterAction(user.khonnect_id);
         setVisible(false);
         form.resetFields();
+        setLoading(false);
         message.success(messageSaveSuccess);
       })
       .catch(function (error) {
