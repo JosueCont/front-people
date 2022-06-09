@@ -130,6 +130,8 @@ const ImportMasivePayroll = ({ ...props }) => {
         calendar.setFieldsValue({
           period: response.data.cfdis[0].headers.payment_date.substring(0, 4),
           active: false,
+          monthly_adjustment: false,
+          annual_adjustment: false,
         });
         setPeriodicityDesc(
           props.payment_periodicity.find(
@@ -345,18 +347,52 @@ const ImportMasivePayroll = ({ ...props }) => {
                               <Input readOnly value={periodicityDesc} />
                             </Form.Item>
                           </Col>
-                          <Col style={{ display: "flex" }}>
-                            <SelectTypeTax rules={[ruleRequired]} />
+                          <Col
+                            style={{
+                              display: "flex",
+                            }}
+                          >
+                            <SelectTypeTax
+                              style={{ width: 240 }}
+                              rules={[ruleRequired]}
+                            />
                           </Col>
+                        </Row>
+
+                        <Row gutter={[16, 6]} style={{ marginTop: "5px" }}>
                           <Col style={{ display: "flex" }}>
                             <Form.Item name="period" label="Periodo">
                               <Input type={"number"} readOnly />
                             </Form.Item>
                           </Col>
-
                           <Col style={{ display: "flex" }}>
                             <Form.Item name="active" label="¿Activo?">
-                              <Switch />
+                              <Switch
+                                checkedChildren="Si"
+                                unCheckedChildren="No"
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item
+                              name="monthly_adjustment"
+                              label="Ajuste mensual"
+                            >
+                              <Switch
+                                checkedChildren="Si"
+                                unCheckedChildren="No"
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item
+                              name="annual_adjustment"
+                              label="Ajuste anual"
+                            >
+                              <Switch
+                                checkedChildren="Si"
+                                unCheckedChildren="No"
+                              />
                             </Form.Item>
                           </Col>
                         </Row>

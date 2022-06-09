@@ -106,7 +106,7 @@ const FormPaymentCalendar = ({
           group_fixed_concept: item.group_fixed_concept,
           version_cfdi: item.version_cfdi,
         });
-        setAnnualAdjustment(item.annual_adjustemnt);
+        setAnnualAdjustment(item.annual_adjustment);
         setMonthlyAdjustment(item.monthly_adjustment);
         setPeriodActive(item.active);
         setPaymentSaturday(item.payment_saturday);
@@ -204,12 +204,12 @@ const FormPaymentCalendar = ({
 
   const changeMonthlyAdjustment = (checked) => {
     setMonthlyAdjustment(checked);
-    setAnnualAdjustment(false);
+    // setAnnualAdjustment(false);
   };
 
   const changeAnnualAdjustment = (checked) => {
     setAnnualAdjustment(checked);
-    setMonthlyAdjustment(false);
+    // setMonthlyAdjustment(false);
   };
 
   const changePeriodActive = (checked) => {
