@@ -135,7 +135,7 @@ const ModalConceptsPayroll = ({
           return (
             <Col span={12}>
               <Row style={{ marginBottom: "8px" }}>
-                <Col span={18}>-{item.description}</Col>
+                <Col span={18}>{item.description}</Col>
                 <Col span={4}>
                   <Input
                     type="number"

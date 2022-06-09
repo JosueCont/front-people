@@ -367,7 +367,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     maxLength={13}
                     rules={[fourDecimal]}
                   >
-                    <Input maxLength={10} disabled />
+                    <Input disabled />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={22} md={12}>
