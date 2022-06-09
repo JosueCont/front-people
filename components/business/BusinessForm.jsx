@@ -586,6 +586,9 @@ const businessForm = ({ ...props }) => {
           layout={"vertical"}
           form={formBusiness}
         >
+          <Form.Item name="id" label="id" style={{ display: "none" }}>
+            <Input type="text" />
+          </Form.Item>
           <Alert
             type="warning"
             showIcon
