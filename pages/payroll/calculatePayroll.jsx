@@ -70,7 +70,7 @@ const CalculatePayroll = ({ ...props }) => {
     type_alert: "success",
     action: () =>
       router.push({
-        pathname: "/payroll/payrollVaucher",
+        pathname: "/payroll/payrollVoucher",
         query: {
           calendar: form.getFieldValue("calendar"),
           period: activePeriod,
@@ -631,7 +631,7 @@ const CalculatePayroll = ({ ...props }) => {
           action: () => {
             console.log(calendarSelect),
               router.push({
-                pathname: "/payroll/payrollVaucher",
+                pathname: "/payroll/payrollVoucher",
                 query: {
                   calendar: calendarSelect,
                   period: activePeriod,
@@ -684,7 +684,7 @@ const CalculatePayroll = ({ ...props }) => {
           }
         `}
         />
-        <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["nómina"]}>
+        <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["payroll"]}>
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item
               className={"pointer"}

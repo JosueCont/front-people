@@ -97,7 +97,7 @@ const PaymentCalendars = ({ ...props }) => {
         }
       `}
       />
-      <MainLayout currentKey={["calendario"]} defaultOpenKeys={["nómina"]}>
+      <MainLayout currentKey={["calendario"]} defaultOpenKeys={["payroll"]}>
         <Breadcrumb className={"mainBreadcrumb"}>
           <Breadcrumb.Item
             className={"pointer"}
@@ -161,9 +161,10 @@ const PaymentCalendars = ({ ...props }) => {
               <Column
                 title="Periodo actual"
                 render={(type_tax, record) => {
-                  const period = record.periods.find(
+                  let period = record.periods.find(
                     (item) => item.active === true
                   );
+                  if (!period) period = record.periods.pop();
                   return `${period.name}.- ${period.start_date} - ${period.end_date}`;
                 }}
               />

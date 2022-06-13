@@ -27,7 +27,7 @@ import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
 import SelectYear from "../../components/selects/SelectYear";
 
-const PayrollVaucher = ({ ...props }) => {
+const PayrollVoucher = ({ ...props }) => {
   const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -143,7 +143,7 @@ const PayrollVaucher = ({ ...props }) => {
         period: router.query.period,
       });
       setCalendar(router.query.calendar);
-      getVaucher(
+      getVoucher(
         `calendar=${router.query.calendar}&period=${router.query.period}`
       );
     }
@@ -159,10 +159,10 @@ const PayrollVaucher = ({ ...props }) => {
     if (value.person && value.person != "")
       url = url + `&person=${value.person}`;
     if (value.year && value.year != "") url = url + `&year=${value.year}`;
-    getVaucher(url);
+    getVoucher(url);
   };
 
-  const getVaucher = (data) => {
+  const getVoucher = (data) => {
     setCfdis([]);
     WebApiPayroll.getCfdiPayrrol(data)
       .then((response) => {
@@ -181,7 +181,7 @@ const PayrollVaucher = ({ ...props }) => {
     setPeriods([]);
     setCalendar(null);
     setCfdis([]);
-    getVaucher("");
+    getVoucher("");
   };
 
   useEffect(() => {
@@ -204,7 +204,7 @@ const PayrollVaucher = ({ ...props }) => {
   }, [calendar, props.payment_calendar]);
 
   return (
-    <MainLayout currentKey={["persons"]}>
+    <MainLayout currentKey={["voucher"]} defaultOpenKeys={["payroll"]}>
       <Breadcrumb>
         <Breadcrumb.Item href="/home/persons">Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Comprobantes fiscales</Breadcrumb.Item>
@@ -317,4 +317,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(PayrollVaucher);
+export default connect(mapState)(PayrollVoucher);
