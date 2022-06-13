@@ -32,15 +32,13 @@ const PayrollReport = ({ permissions, ...props }) => {
       render: (payroll) => {
         return (
           <>
-            {payroll.payroll_person.person.first_name
-              ? payroll.payroll_person.person.first_name
-              : null}
-            {payroll.payroll_person.person.flast_name
-              ? payroll.payroll_person.person.flast_name
-              : null}
-            {payroll.payroll_person.person.mlast_name
-              ? payroll.payroll_person.person.mlast_name
-              : null}
+            {`${payroll.payroll_person.person.first_name} ${
+              payroll.payroll_person.person.flast_name
+            } ${
+              payroll.payroll_person.person.mlast_name
+                ? payroll.payroll_person.person.mlast_name
+                : null
+            }`}
           </>
         );
       },
@@ -143,7 +141,12 @@ const PayrollReport = ({ permissions, ...props }) => {
               </Col>
               {calendar && (
                 <Col>
-                  <SelectYear size="middle" />
+                  <SelectYear
+                    viewLabel={true}
+                    size="middle"
+                    label={"Año"}
+                    placeholder={"Año"}
+                  />
                 </Col>
               )}
               <Col style={{ display: "flex" }}>

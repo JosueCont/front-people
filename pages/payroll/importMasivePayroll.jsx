@@ -233,7 +233,7 @@ const ImportMasivePayroll = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["recibos_nomina"]} defaultOpenKeys={["nómina"]}>
+    <MainLayout currentKey={["importxml"]} defaultOpenKeys={["payroll"]}>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}

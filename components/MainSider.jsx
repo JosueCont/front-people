@@ -317,7 +317,7 @@ const MainSider = ({
           )}
           {props.config && props.config.nomina_enabled && (
             <SubMenu
-              key="nómina"
+              key="payroll"
               title="Nómina"
               className="subMainMenu"
               icon={<DollarOutlined />}
@@ -340,9 +340,9 @@ const MainSider = ({
                   Calendario de pagos
                 </Menu.Item>
                 <Menu.Item
-                  key="cfdi"
+                  key="voucher"
                   onClick={() =>
-                    router.push({ pathname: "/payroll/payrollVaucher" })
+                    router.push({ pathname: "/payroll/payrollVoucher" })
                   }
                 >
                   Comprobantes fiscales
@@ -356,7 +356,7 @@ const MainSider = ({
                   Calculadora
                 </Menu.Item>
                 <Menu.Item
-                  key="recibos_nomina"
+                  key="importxml"
                   onClick={() =>
                     router.push({ pathname: "/payroll/importMasivePayroll" })
                   }
