@@ -381,3 +381,21 @@ export const valueToFilter = (value) => {
     .toLowerCase();
   return newVal.trim();
 };
+
+export const arrayToSelect = (
+  data = [],
+  valueItem = "id",
+  keyitem = "",
+  labelItem = "Item"
+) => {
+  console.log("DATAS-->> ", data);
+  const newData = data.map((item) => {
+    return {
+      value: item[valueItem],
+      key: item[keyitem],
+      label: item[labelItem],
+    };
+  });
+  console.log("Array select-->> ", newData);
+  return newData;
+};
