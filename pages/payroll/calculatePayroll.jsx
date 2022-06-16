@@ -29,7 +29,11 @@ import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsPayroll";
 import { Global } from "@emotion/core";
-import { downLoadFileBlob, getDomain } from "../../utils/functions";
+import {
+  arrayToSelect,
+  downLoadFileBlob,
+  getDomain,
+} from "../../utils/functions";
 import { connect } from "react-redux";
 import {
   messageError,
@@ -88,6 +92,7 @@ const CalculatePayroll = ({ ...props }) => {
       .then((response) => {
         setPaymentCalendars(response.data.results);
         let calendars = response.data.results.map((item, index) => {
+          console.log("Calendar-->> ", item);
           return { key: item.id, label: item.name, value: item.id };
         });
         setOptionsPaymentCalendars(calendars);
@@ -101,20 +106,20 @@ const CalculatePayroll = ({ ...props }) => {
     setTotalSalary(null);
     setTotalIsr(null);
     const calendar = paymentCalendars.find((item) => item.id === value);
-    const period = calendar.periods.find((p) => p.active == true);
-    setCalendarSelect(calendar.id);
-    if (period) {
-      setActivePeriod(period.id);
-      setPayrollType(calendar.perception_type.code);
-      form.setFieldsValue({
-        periodicity: calendar.periodicity.description,
-        period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
-        insidences: `${period.incidences.start_date} - ${period.incidences.end_date}`,
-        payment_day: period.payment_date,
-        year: calendar.period,
-      });
-      sendCalculatePayroll({ calendar_id: value });
-    }
+    let period = calendar.periods.find((p) => p.active == true);
+    if (!period) period = calendar.periods[0];
+    console.log("Calendar-->> ", calendar);
+    setCalendarSelect(calendar);
+    setActivePeriod(period.id);
+    setPayrollType(calendar.perception_type.code);
+    form.setFieldsValue({
+      periodicity: calendar.periodicity.description,
+      period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
+      insidences: `${period.incidences.start_date} - ${period.incidences.end_date}`,
+      payment_day: period.payment_date,
+      year: calendar.period,
+    });
+    sendCalculatePayroll({ calendar_id: value });
   };
 
   const sendCalculatePayroll = async (dataToSend) => {
@@ -629,14 +634,13 @@ const CalculatePayroll = ({ ...props }) => {
             "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
           type_alert: "success",
           action: () => {
-            console.log(calendarSelect),
-              router.push({
-                pathname: "/payroll/payrollVoucher",
-                query: {
-                  calendar: calendarSelect,
-                  period: activePeriod,
-                },
-              });
+            router.push({
+              pathname: "/payroll/payrollVoucher",
+              query: {
+                calendar: calendarSelect.id,
+                period: activePeriod,
+              },
+            });
           },
           title_action_button: "Ver comprobantes",
         });
@@ -724,11 +728,22 @@ const CalculatePayroll = ({ ...props }) => {
                     </Col>
                     <Col xxs={24} xl={6}>
                       <Form.Item name="period" label="Periodo">
-                        <Input
+                        <Select
+                          placeholder="Periodo"
                           size="large"
-                          key="period"
-                          placeholder="Período"
-                          disabled={true}
+                          options={
+                            calendarSelect
+                              ? calendarSelect.periods
+                                  .sort((a, b) => a.name - b.name)
+                                  .map((item) => {
+                                    return {
+                                      value: item.id,
+                                      label: `${item.name}.- ${item.start_date} - ${item.end_date}`,
+                                      key: item.id,
+                                    };
+                                  })
+                              : []
+                          }
                         />
                       </Form.Item>
                     </Col>
