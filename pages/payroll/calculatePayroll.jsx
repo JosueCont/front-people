@@ -17,6 +17,7 @@ import {
   Form,
   Alert,
   InputNumber,
+  Steps,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -43,6 +44,8 @@ import {
 import GenericModal from "../../components/modal/genericModal";
 import { API_URL_TENANT } from "../../config/config";
 import NumberFormat from "../../components/formatter/numberFormat";
+import CfdiVaucher from "../../components/payroll/cfdiVaucher";
+// import PayrollVaucher from "./payrollVaucher";
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -63,6 +66,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [totalSalary, setTotalSalary] = useState(null);
   const [totalIsr, setTotalIsr] = useState(null);
   const [calendarSelect, setCalendarSelect] = useState(null);
+  const [step, setStep] = useState(0);
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -699,7 +703,7 @@ const CalculatePayroll = ({ ...props }) => {
             <Breadcrumb.Item>Timbrado de nómina</Breadcrumb.Item>
           </Breadcrumb>
 
-          <Row justify="end" gutter={[10, 10]}>
+          <Row gutter={[10, 10]}>
             <Col span={24}>
               <Card className="form_header">
                 <Form form={form} layout="vertical">
@@ -771,100 +775,141 @@ const CalculatePayroll = ({ ...props }) => {
                 </Form>
               </Card>
             </Col>
-
-            {payroll.length > 0 && !genericModal && (
-              <>
-                {consolidated && (
+          </Row>
+          <div style={{ marginTop: "10px" }}>
+            <Steps current={step}>
+              <Steps.Step title="Calcular" description="Calculo de nomina." />
+              <Steps.Step title="Cerrar" description="Cierre de nomina." />
+              <Steps.Step title="Timbrar" description="Timbre fiscal." />
+              <Steps.Step title="Comprobantes" description="XML y PDF." />
+            </Steps>
+            <div
+              style={{
+                // marginTop: "8px",
+                // paddingTop: "40px",
+                textAlign: "center",
+                backgroundColor: "#fafafa",
+                border: "1px dashed #e9e9e9",
+                borderRadius: "2px",
+              }}
+            >
+              {payroll.length > 0 && !genericModal && (
+                <>
+                  {consolidated && (
+                    <Col md={5}>
+                      <Button
+                        size="large"
+                        block
+                        htmlType="button"
+                        onClick={() =>
+                          downLoadFileBlob(
+                            `${getDomain(
+                              API_URL_TENANT
+                            )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
+                            "hoja_rayas.xlsx",
+                            "GET"
+                          )
+                        }
+                      >
+                        Descargar hoja de raya
+                      </Button>
+                    </Col>
+                  )}
                   <Col md={5}>
                     <Button
                       size="large"
                       block
                       htmlType="button"
                       onClick={() =>
-                        downLoadFileBlob(
-                          `${getDomain(
-                            API_URL_TENANT
-                          )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
-                          "hoja_rayas.xlsx",
-                          "GET"
-                        )
+                        calculate
+                          ? reCalculatePayroll([...payroll])
+                          : consolidated
+                          ? setMessageModal(3)
+                          : setMessageModal(2)
                       }
                     >
-                      Descargar hoja de raya
+                      {calculate
+                        ? "Calcular"
+                        : consolidated
+                        ? "Timbrar nómina"
+                        : "Cerrar nómina"}
                     </Button>
                   </Col>
-                )}
-                <Col md={5}>
-                  <Button
-                    size="large"
-                    block
-                    htmlType="button"
-                    onClick={() =>
-                      calculate
-                        ? reCalculatePayroll([...payroll])
-                        : consolidated
-                        ? setMessageModal(3)
-                        : setMessageModal(2)
-                    }
-                  >
-                    {calculate
-                      ? "Calcular"
-                      : consolidated
-                      ? "Timbrar nómina"
-                      : "Cerrar nómina"}
-                  </Button>
-                </Col>
-              </>
+                </>
+              )}
+            </div>
+            {step < 3 && (
+              <Button
+                style={{ margin: "8px" }}
+                onClick={() => setStep(step + 1)}
+              >
+                Siguiente
+              </Button>
             )}
-            <Col span={24}>
-              <Card className="card_table">
-                <Table
-                  className="headers_transparent"
-                  dataSource={payroll.length > 0 ? payroll : []}
-                  columns={persons}
-                  expandable={{
-                    expandedRowRender: (item) => renderConceptsTable(item),
-                    onExpand: (expanded, item) => rowExpand(expanded, item),
-                    expandIconAsCell: false,
-                    expandedRowKeys: [expandRow],
-                    expandIcon: ({ expanded, onExpand, item }) =>
-                      expanded ? (
-                        <DownOutlined onClick={(e) => onExpand(item, e)} />
-                      ) : (
-                        <RightOutlined onClick={(e) => onExpand(item, e)} />
-                      ),
-                  }}
-                  hideExpandIcon
-                  locale={{ emptyText: "No se encontraron resultados" }}
-                />
-                {totalSalary != null && totalIsr != null ? (
-                  <Col sm={24} md={24} lg={24}>
-                    <Row justify="end">
-                      <Col span={4} style={{ fontWeight: "bold" }}>
-                        <div>Total de sueldos:</div>
-                        <div>Total de ISR:</div>
-                        <div>Total a pagar:</div>
-                      </Col>
-                      <Col span={3} style={{ fontWeight: "bold" }}>
-                        <div>
-                          <NumberFormat prefix={"$"} number={totalSalary} />
-                        </div>
-                        <div>
-                          <NumberFormat prefix={"$"} number={totalIsr} />
-                        </div>
-                        <div>
-                          <NumberFormat
-                            prefix={"$"}
-                            number={totalSalary - totalIsr}
-                          />
-                        </div>
-                      </Col>
-                    </Row>
-                  </Col>
-                ) : null}
-              </Card>
-            </Col>
-          </Row>
+            {step > 0 && (
+              <Button
+                style={{ margin: "8px" }}
+                onClick={() => setStep(step - 1)}
+              >
+                Previo
+              </Button>
+            )}
+          </div>
+
+          <Col span={24}>
+            <Card className="card_table">
+              {step == 3 ? (
+                <CfdiVaucher viewFilter={false} />
+              ) : (
+                <>
+                  <Table
+                    className="headers_transparent"
+                    dataSource={payroll.length > 0 ? payroll : []}
+                    columns={persons}
+                    expandable={{
+                      expandedRowRender: (item) => renderConceptsTable(item),
+                      onExpand: (expanded, item) => rowExpand(expanded, item),
+                      expandIconAsCell: false,
+                      expandedRowKeys: [expandRow],
+                      expandIcon: ({ expanded, onExpand, item }) =>
+                        expanded ? (
+                          <DownOutlined onClick={(e) => onExpand(item, e)} />
+                        ) : (
+                          <RightOutlined onClick={(e) => onExpand(item, e)} />
+                        ),
+                    }}
+                    hideExpandIcon
+                    locale={{ emptyText: "No se encontraron resultados" }}
+                  />
+                  {totalSalary != null && totalIsr != null ? (
+                    <Col sm={24} md={24} lg={24}>
+                      <Row justify="end">
+                        <Col span={4} style={{ fontWeight: "bold" }}>
+                          <div>Total de sueldos:</div>
+                          <div>Total de ISR:</div>
+                          <div>Total a pagar:</div>
+                        </Col>
+                        <Col span={3} style={{ fontWeight: "bold" }}>
+                          <div>
+                            <NumberFormat prefix={"$"} number={totalSalary} />
+                          </div>
+                          <div>
+                            <NumberFormat prefix={"$"} number={totalIsr} />
+                          </div>
+                          <div>
+                            <NumberFormat
+                              prefix={"$"}
+                              number={totalSalary - totalIsr}
+                            />
+                          </div>
+                        </Col>
+                      </Row>
+                    </Col>
+                  ) : null}
+                </>
+              )}
+            </Card>
+          </Col>
         </MainLayout>
       </Spin>
       {personId && (
