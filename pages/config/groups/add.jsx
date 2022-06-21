@@ -650,7 +650,13 @@ const GroupAdd = ({ ...props }) => {
                             },
                           ]}
                         >
-                          <Input placeholder="Nombre" />
+                          <Input
+                            placeholder="Nombre"
+                            onChange={(value) =>
+                              value.target.value.trim() === "" &&
+                              form.resetFields()
+                            }
+                          />
                         </Form.Item>
                       </Col>
                       <Col lg={12} md={12} xs={24}>

@@ -22,16 +22,17 @@ import MainLayout from "../../../layout/MainLayout";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import moment from "moment";
-import { userCompanyId, withAuthSync } from "../../../libs/auth";
+import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 import TextArea from "antd/lib/input/TextArea";
+import { connect } from "react-redux";
 
 const { Content } = Layout;
 const { Title } = Typography;
 const { RangePicker } = TimePicker;
 const { Option } = Select;
 
-const addEvent = () => {
+const addEvent = ({ ...props }) => {
   const [form] = Form.useForm();
   const router = useRouter();
   const [loading, setLoading] = useState(null);
@@ -44,8 +45,6 @@ const addEvent = () => {
   const [nodes, setNodes] = useState([]);
   const [edit, setEdit] = useState(false);
   const [description, setDescription] = useState(null);
-
-  let nodeId = userCompanyId();
 
   const onChangeDate = (value) => {
     setDateEvent(moment(value).format("YYYY-MM-DD"));
@@ -71,7 +70,9 @@ const addEvent = () => {
 
   const getPersons = async () => {
     axios
-      .post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
+      .post(API_URL + `/person/person/get_list_persons/`, {
+        node: props.currentNode.id,
+      })
       .then((response) => {
         response.data = response.data.map((a) => {
           return { label: a.first_name + " " + a.flast_name, value: a.id };
@@ -85,7 +86,7 @@ const addEvent = () => {
 
   const getNodes = async () => {
     axios
-      .get(API_URL + `/business/node/?id=${nodeId}`)
+      .get(API_URL + `/business/node/?id=${props.currentNode.id}`)
       .then((response) => {
         let data = response.data.results;
         data = data.map((a) => {
@@ -175,19 +176,18 @@ const addEvent = () => {
   };
 
   useEffect(() => {
-    getPersons();
-    getNodes();
-    const { id } = router.query;
-    let type = router.query.type;
-    if (type === "edit") {
-      setEdit(true);
-      if (id !== undefined) {
-        getEvent(id);
+    if (props.currentNode) {
+      getPersons();
+      getNodes();
+      let type = router.query.type;
+      if (type === "edit") {
+        setEdit(true);
+        getEvent(props.currentNode.id);
+      } else {
+        setEdit(false);
       }
-    } else {
-      setEdit(false);
     }
-  }, [router]);
+  }, [props.currentNode]);
 
   return (
     <MainLayout currentKey="4.2">
@@ -390,4 +390,11 @@ const addEvent = () => {
     </MainLayout>
   );
 };
-export default withAuthSync(addEvent);
+
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(withAuthSync(addEvent));

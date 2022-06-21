@@ -20,20 +20,19 @@ import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import FormItemHTMLPlace from "../../../components/draft";
 
-import { withAuthSync, userCompanyId } from "../../../libs/auth";
+import { withAuthSync } from "../../../libs/auth";
 import SelectJob from "../../../components/selects/SelectJob";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectPersonType from "../../../components/selects/SelectPersonType";
 import { ruleRequired } from "../../../utils/rules";
 import { typeMessage } from "../../../utils/constant";
 import SelectGender from "../../../components/selects/SelectGender";
+import { connect } from "react-redux";
 
-const Newrelease = () => {
-  let nodeId = userCompanyId();
+const Newrelease = ({ ...props }) => {
   let userToken = cookie.get("token") ? cookie.get("token") : null;
   const [form] = Form.useForm();
   const { Title } = Typography;
-  const { TextArea } = Input;
   const route = useRouter();
 
   const [message, setMessage] = useState(null);
@@ -74,7 +73,7 @@ const Newrelease = () => {
     datos.append("title", values.title);
     datos.append("message", message);
     datos.append("khonnect_id", userId);
-    datos.append("target_company", nodeId);
+    datos.append("target_company", props.currentNode.id);
 
     if (values.send_to_all) {
       datos.append("send_to_all", values.send_to_all);
@@ -267,5 +266,9 @@ const Newrelease = () => {
     </MainLayout>
   );
 };
-
-export default withAuthSync(Newrelease);
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+export default connect(mapState)(withAuthSync(Newrelease));

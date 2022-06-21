@@ -21,6 +21,10 @@
     border-top-left-radius: 12px;
 }
 
+.custom-tbl-assessment .ant-table-container table > tbody > tr > td:last-child > button svg {
+    display: none;
+}
+
 .table-persons .ant-table-tbody > tr.ant-table-row-selected > td:nth-child(4) {
     cursor: not-allowed;
 }

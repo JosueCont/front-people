@@ -45,6 +45,7 @@ const DetailPerson = ({
   setLoading,
   deletePerson = true,
   hideProfileSecurity = true,
+  setPerson,
   ...props
 }) => {
   const { Title } = Typography;
@@ -99,6 +100,7 @@ const DetailPerson = ({
               person.mlast_name}
         </Title>
         <DataPerson
+          setPerson={setPerson}
           config={config}
           person={person}
           setLoading={setLoading}
@@ -239,7 +241,7 @@ const DetailPerson = ({
               }
               key="tab_10"
             >
-              <FormPayrollPerson person_id={person.id} node={person.node} />
+              <FormPayrollPerson person={person} node={person.node} />
             </TabPane>
           )}
           {deletePerson && (

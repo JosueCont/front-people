@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Modal, message, Select } from "antd";
 import { connect, useDispatch } from "react-redux";
-import { withAuthSync, userCompanyId } from "../../../libs/auth";
+import { withAuthSync } from "../../../libs/auth";
 import FormItemHTML from "./FormItemHtml";
 import {
   questionCreateAction,
@@ -13,7 +13,6 @@ const FormQuestion = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();
   const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 } };
   const [formQuestions] = Form.useForm();
-  const nodeId = Number.parseInt(userCompanyId());
   const questionId = props.loadData ? props.loadData.id : "";
   const [descripcion, setDescripcion] = useState(
     props.loadData.description_es ? props.loadData.description_es : ""
@@ -38,9 +37,11 @@ const FormQuestion = ({ assessmentStore, ...props }) => {
 
   const onFinish = (values) => {
     const regex = /^\s+$/;
-    if(regex.test(values.title)){
-      formQuestions.setFields([{name: 'title', errors: ["Este campo no puede estar vacío"]}]);
-    }else{
+    if (regex.test(values.title)) {
+      formQuestions.setFields([
+        { name: "title", errors: ["Este campo no puede estar vacío"] },
+      ]);
+    } else {
       values.description_es = descripcion;
       if (props.loadData) {
         props
@@ -103,7 +104,7 @@ const FormQuestion = ({ assessmentStore, ...props }) => {
         onFinish={onFinish}
         id="formQuestions"
         form={formQuestions}
-        layout={'vertical'}
+        layout={"vertical"}
         requiredMark={false}
       >
         <Form.Item name="title" label={"Título"} rules={[ruleRequired]}>

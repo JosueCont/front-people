@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ruleRequired } from "../../utils/rules";
 
-const SelectGroup = ({ viewLabel, ...props }) => {
+const SelectGroup = ({ viewLabel, required = true, ...props }) => {
   const [groups, setGroups] = useState([]);
 
   useEffect(() => {
@@ -18,17 +18,29 @@ const SelectGroup = ({ viewLabel, ...props }) => {
 
   return (
     <Form.Item
-      rules={[ruleRequired]}
+      rules={[required && ruleRequired]}
       name="groups"
-      label="Perfil de seguridad"
       label={viewLabel ? "Perfil de seguridad" : ""}
     >
       <Select
-        options={groups}
+        // options={groups}
         showArrow
         style={{ width: "100%" }}
         placeholder="Perfiles de seguridad"
-      ></Select>
+        showSearch
+        optionFilterProp="children"
+      >
+        {groups.map((item) => {
+          return (
+            <>
+              <Option key={item.value} value={item.value}>
+                {item.label}
+              </Option>
+              ;
+            </>
+          );
+        })}
+      </Select>
     </Form.Item>
   );
 };

@@ -40,7 +40,7 @@ import SelectGroup from "../../components/selects/SelectGroup";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 
-const DataPerson = ({ config, person = null, ...props }) => {
+const DataPerson = ({ config, person = null, setPerson, ...props }) => {
   const { Title } = Typography;
   const [loadImge, setLoadImage] = useState(false);
   const [formPerson] = Form.useForm();
@@ -139,7 +139,9 @@ const DataPerson = ({ config, person = null, ...props }) => {
     value.is_active = isActive;
     if (value.node) delete value["node"];
     if (value.department) delete value["department"];
-    if (value.groups && value.groups != "") value.groups = [value.groups];
+    value.groups && value.groups
+      ? (value.groups = [value.groups])
+      : delete value["groups"];
     updatePerson(value);
   };
 
@@ -148,6 +150,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
     await WebApiPeople.updatePerson(data, person.id)
       .then((response) => {
         setFormPerson(response.data);
+        setPerson(response.data);
         message.success({
           content: "Actualizado correctamente.",
           className: "custom-class",
@@ -394,7 +397,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                   <Col lg={24} md={12} xs={24} xl={12}>
                     <Form.Item
                       name="date_of_admission"
-                      label="Fecha de ingreso"
+                      label="Fecha de ingreso laboral"
                     >
                       <DatePicker
                         onChange={onChangeDateAdmission}
@@ -509,7 +512,7 @@ const DataPerson = ({ config, person = null, ...props }) => {
                 </Col>
               )}
               <Col lg={8} xs={24} md={12}>
-                <SelectGroup viewLabel={true} />
+                <SelectGroup viewLabel={true} required={false} />
               </Col>
             </Row>
             <Row gutter={20}>

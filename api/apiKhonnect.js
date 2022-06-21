@@ -1,10 +1,10 @@
 import axios from "axios";
 import { headersApiKhonnect } from "../utils/constant";
 
-export const getGroups = async (node, config) => {
+export const getGroups = async (node, config, filter = "") => {
   let group = [];
   await axios
-    .get(config.url_server_khonnect + `/group/list/?company=${node}`, {
+    .get(config.url_server_khonnect + `/group/list/?company=${node}${filter}`, {
       headers: headersApiKhonnect(config.client_khonnect_id),
     })
     .then((response) => {
@@ -112,11 +112,10 @@ export const getGroupById = async (config, data) => {
   return return_data;
 };
 
-
-export const validateTokenKhonnect = async (config, data) =>{
+export const validateTokenKhonnect = async (config, data) => {
   let return_data = false;
-  await axios.
-    post(config.url_server_khonnect + "/session/validate-token/", data, {
+  await axios
+    .post(config.url_server_khonnect + "/session/validate-token/", data, {
       headers: headersApiKhonnect(config.client_khonnect_id),
     })
     .then((response) => {
@@ -124,6 +123,6 @@ export const validateTokenKhonnect = async (config, data) =>{
     })
     .catch((e) => {
       return_data = false;
-    })
+    });
   return return_data;
-}
+};

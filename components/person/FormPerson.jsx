@@ -9,8 +9,9 @@ import {
   message,
   Row,
   Col,
+  Switch,
 } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { genders } from "../../utils/constant";
@@ -38,6 +39,7 @@ const FormPerson = ({
   const [departmentSelected, setDepartmentSelected] = useState(null);
   const [jobSelected, setJobSelected] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [payrrollActive, setPayrrollActive] = useState(true);
 
   const onFinish = (value) => {
     if (date !== "") {
@@ -49,7 +51,8 @@ const FormPerson = ({
       message.error("Las contraseñas no coinciden.");
     else {
       delete value["passwordTwo"];
-      value.groups = [value.groups];
+      if (value.groups) value.groups = [value.groups];
+      else delete value["groups"];
       if (currentNode) value.node = currentNode.id;
       else value.node = node;
       createPerson(value);
@@ -111,9 +114,14 @@ const FormPerson = ({
           <Row justify="center">
             <Col span={23}>
               <Row gutter={20}>
-                <Col lg={8} xs={24}>
-                  <SelectPersonType />
-                </Col>
+                {config &&
+                  config.applications.find(
+                    (item) => item.app === "PAYROLL" && !item.is_active
+                  ) && (
+                    <Col lg={8} xs={24}>
+                      <SelectPersonType />
+                    </Col>
+                  )}
                 <Col lg={8} xs={24}>
                   <SelectDepartment
                     viewLabel={false}
@@ -180,7 +188,10 @@ const FormPerson = ({
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item rules={[ruleEmail, ruleRequired]} name="email">
+                  <Form.Item
+                    rules={[ruleEmail, payrrollActive && ruleRequired]}
+                    name="email"
+                  >
                     <Input
                       type="email"
                       placeholder="E-mail"
@@ -192,49 +203,70 @@ const FormPerson = ({
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
-                  <Form.Item rules={[ruleRequired]} name="password">
-                    <Input.Password type="text" placeholder="Contraseña" />
-                  </Form.Item>
+
+                <Col lg={20} xs={24} style={{ padding: "10px" }}>
+                  {config &&
+                    config.applications.find(
+                      (item) => item.app === "PAYROLL" && item.is_active
+                    ) && (
+                      <>
+                        {"Crear usuario "}
+                        <Switch
+                          checked={payrrollActive}
+                          onChange={(value) => setPayrrollActive(value)}
+                        />
+                      </>
+                    )}
                 </Col>
-                <Col lg={8} xs={24}>
-                  <Form.Item
-                    rules={[
-                      ruleRequired,
-                      ({ getFieldValue }) => ({
-                        validator() {
-                          if (
-                            getFieldValue("password") ==
-                            getFieldValue("passwordTwo")
-                          ) {
-                            return Promise.resolve();
-                          } else {
-                            return Promise.reject(
-                              "Las contraseñas no coinciden"
-                            );
-                          }
-                        },
-                      }),
-                    ]}
-                    name="passwordTwo"
-                  >
-                    <Input.Password type="text" placeholder="Contraseña" />
-                  </Form.Item>
-                </Col>
-                {config.intranet_enabled && (
-                  <Col lg={8} xs={24}>
-                    <Form.Item
-                      key="itemAccessIntranet"
-                      name="intranet_access"
-                      rules={[ruleRequired]}
-                    >
-                      <SelectAccessIntranet />
-                    </Form.Item>
-                  </Col>
+
+                {payrrollActive && (
+                  <>
+                    <Col lg={8} xs={24}>
+                      <Form.Item rules={[ruleRequired]} name="password">
+                        <Input.Password type="text" placeholder="Contraseña" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={8} xs={24}>
+                      <Form.Item
+                        rules={[
+                          ruleRequired,
+                          ({ getFieldValue }) => ({
+                            validator() {
+                              if (
+                                getFieldValue("password") ==
+                                getFieldValue("passwordTwo")
+                              ) {
+                                return Promise.resolve();
+                              } else {
+                                return Promise.reject(
+                                  "Las contraseñas no coinciden"
+                                );
+                              }
+                            },
+                          }),
+                        ]}
+                        name="passwordTwo"
+                      >
+                        <Input.Password type="text" placeholder="Contraseña" />
+                      </Form.Item>
+                    </Col>
+                    {config.intranet_enabled && (
+                      <Col lg={8} xs={24}>
+                        <Form.Item
+                          key="itemAccessIntranet"
+                          name="intranet_access"
+                          rules={[ruleRequired]}
+                        >
+                          <SelectAccessIntranet />
+                        </Form.Item>
+                      </Col>
+                    )}
+                    <Col lg={8} xs={24}>
+                      <SelectGroup />
+                    </Col>
+                  </>
                 )}
-                <Col lg={8} xs={24}>
-                  <SelectGroup />
-                </Col>
+
                 <Col lg={22} xs={24}>
                   <Form.Item labelAlign="right">
                     <Space style={{ float: "right" }}>

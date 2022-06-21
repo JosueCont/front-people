@@ -1,12 +1,9 @@
-import { userCompanyId } from "../libs/auth";
 import Axios from "axios";
 import { types } from "../types/assessments";
 import _ from "lodash";
 import { asyncForEach } from "../utils/functions";
 import { API_ASSESSMENT } from "../config/config";
 import WebApiAssessment from "../api/WebApiAssessment";
-
-const nodeId = Number.parseInt(userCompanyId());
 
 const initialData = {
   assessments: [],

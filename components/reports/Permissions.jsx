@@ -6,50 +6,32 @@ import {
   Col,
   Select,
   Form,
-  DatePicker,
   Tooltip,
   Button,
   Typography,
-  InputNumber,
 } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-  SyncOutlined,
-  SearchOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
 import moment from "moment";
 import { DownloadOutlined } from "@ant-design/icons";
-import Link from "next/link";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
-import SelectCompany from "../../components/selects/SelectCompany";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import jsCookie from "js-cookie";
-import { userCompanyId } from "../../libs/auth";
-import SelectWorkTitle from '../selects/SelectWorkTitle';
-import { connect } from 'react-redux'
+import SelectWorkTitle from "../selects/SelectWorkTitle";
+import { connect } from "react-redux";
 
-
-const PermissionsReport = ({ permissions ,...props}) => {
-  const route = useRouter();
-  const { Option } = Select;
+const PermissionsReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
   const { Title } = Typography;
 
   /* Variables para el filtro */
   const [colaborator, setColaborator] = useState(null);
-  const [companyId, setCompanyId] = useState(null);
   const [departmentId, setDepartmentId] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [permissionsList, setPermissionsList] = useState([]);
-  let nodeId = userCompanyId();
 
-  /* Columnas de tabla */
   const columns = [
     {
       title: "Colaborador",
@@ -158,7 +140,7 @@ const PermissionsReport = ({ permissions ,...props}) => {
     setLoading(true);
     setPermissionsList([]);
     try {
-      let url = `/person/permit/?person__node__id=${nodeId}&`;
+      let url = `/person/permit/?person__node__id=${props.currentNode.id}&`;
       if (collaborator) {
         url += `person__id=${collaborator}&`;
       }
@@ -181,7 +163,7 @@ const PermissionsReport = ({ permissions ,...props}) => {
   };
 
   const download = async (item = null) => {
-    let dataId = { business_id: nodeId };
+    let dataId = { business_id: props.currentNode.id };
     if (item) {
       dataId = { permit_id: item.id };
     } else {
@@ -221,20 +203,9 @@ const PermissionsReport = ({ permissions ,...props}) => {
     }
   };
 
-  const onChangeCompany = (val) => {
-    form.setFieldsValue({
-      department: null,
-    });
-    setCompanyId(val);
-  };
-
   useEffect(() => {
-    const jwt = JSON.parse(jsCookie.get("token"));
-
-    getPermissions();
-  }, []);
-
-  
+    if (props.currentNode) getPermissions();
+  }, [props.currentNode]);
 
   return (
     <>
@@ -271,7 +242,7 @@ const PermissionsReport = ({ permissions ,...props}) => {
               <Col>
                 <SelectDepartment
                   name="department"
-                  companyId={nodeId}
+                  companyId={props.currentNode.id}
                   key="selectDepartament"
                 />
               </Col>
@@ -364,7 +335,8 @@ const PermissionsReport = ({ permissions ,...props}) => {
 
 const mapState = (state) => {
   return {
-    permissions: state.userStore.permissions.report
+    permissions: state.userStore.permissions.report,
+    currentNode: state.userStore.current_node,
   };
 };
 

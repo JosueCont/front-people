@@ -16,6 +16,7 @@ import {
   Typography,
   Form,
   Alert,
+  InputNumber,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -28,7 +29,11 @@ import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsPayroll";
 import { Global } from "@emotion/core";
-import { numberFormat } from "../../utils/functions";
+import {
+  arrayToSelect,
+  downLoadFileBlob,
+  getDomain,
+} from "../../utils/functions";
 import { connect } from "react-redux";
 import {
   messageError,
@@ -36,6 +41,8 @@ import {
   messageSendSuccess,
 } from "../../utils/constant";
 import GenericModal from "../../components/modal/genericModal";
+import { API_URL_TENANT } from "../../config/config";
+import NumberFormat from "../../components/formatter/numberFormat";
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -56,6 +63,8 @@ const CalculatePayroll = ({ ...props }) => {
   const [totalSalary, setTotalSalary] = useState(null);
   const [totalIsr, setTotalIsr] = useState(null);
   const [calendarSelect, setCalendarSelect] = useState(null);
+  const defaulPhoto =
+    "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
   const [infoGenericModal, setInfoGenericModal] = useState({
     title: "Timbrado de nómina",
@@ -65,7 +74,7 @@ const CalculatePayroll = ({ ...props }) => {
     type_alert: "success",
     action: () =>
       router.push({
-        pathname: "/payroll/payrollVaucher",
+        pathname: "/payroll/payrollVoucher",
         query: {
           calendar: form.getFieldValue("calendar"),
           period: activePeriod,
@@ -83,6 +92,7 @@ const CalculatePayroll = ({ ...props }) => {
       .then((response) => {
         setPaymentCalendars(response.data.results);
         let calendars = response.data.results.map((item, index) => {
+          console.log("Calendar-->> ", item);
           return { key: item.id, label: item.name, value: item.id };
         });
         setOptionsPaymentCalendars(calendars);
@@ -93,21 +103,23 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const changeCalendar = (value) => {
+    setTotalSalary(null);
+    setTotalIsr(null);
     const calendar = paymentCalendars.find((item) => item.id === value);
-    const period = calendar.periods.find((p) => p.active == true);
-    setCalendarSelect(calendar.id);
-    if (period) {
-      setActivePeriod(period.id);
-      setPayrollType(calendar.perception_type.code);
-      form.setFieldsValue({
-        periodicity: calendar.periodicity.description,
-        period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
-        insidences: `${period.incidences.start_date} - ${period.incidences.end_date}`,
-        payment_day: period.payment_date,
-        year: calendar.period,
-      });
-      sendCalculatePayroll({ calendar_id: value });
-    }
+    let period = calendar.periods.find((p) => p.active == true);
+    if (!period) period = calendar.periods[0];
+    console.log("Calendar-->> ", calendar);
+    setCalendarSelect(calendar);
+    setActivePeriod(period.id);
+    setPayrollType(calendar.perception_type.code);
+    form.setFieldsValue({
+      periodicity: calendar.periodicity.description,
+      period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
+      insidences: `${period.incidences.start_date} - ${period.incidences.end_date}`,
+      payment_day: period.payment_date,
+      year: calendar.period,
+    });
+    sendCalculatePayroll({ calendar_id: value });
   };
 
   const sendCalculatePayroll = async (dataToSend) => {
@@ -160,32 +172,50 @@ const CalculatePayroll = ({ ...props }) => {
           <Space>
             <Avatar
               icon={<UserOutlined />}
-              src={item.person.photo ? item.person.photo : null}
+              src={
+                item.person && item.person.photo
+                  ? item.person.photo
+                  : defaulPhoto
+              }
             />
-            {item.person.full_name}
+            {item.person && item.person.full_name}
           </Space>
         </div>
       ),
     },
     {
-      title: "Empresa",
-      dataIndex: "company",
+      title: "Total percepciones",
       key: "company",
       className: "cursor_pointer",
       render: (item) => (
         <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
-          {props.currentNode.name}
+          <NumberFormat
+            prefix={"$"}
+            number={item.calculation.total_perceptions}
+          />
         </div>
       ),
     },
     {
-      title: "Salario Diario",
-      dataIndex: "daily_salary",
+      title: "Total deducciones",
       key: "daily_salary",
       className: "cursor_pointer",
       render: (item) => (
         <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
-          {item.salary}
+          <NumberFormat
+            prefix={"$"}
+            number={item.calculation.total_deductions}
+          />
+        </div>
+      ),
+    },
+    {
+      title: "Total a pagar",
+      key: "daily_salary",
+      className: "cursor_pointer",
+      render: (item) => (
+        <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
+          <NumberFormat prefix={"$"} number={item.calculation.net_salary} />
         </div>
       ),
     },
@@ -198,7 +228,8 @@ const CalculatePayroll = ({ ...props }) => {
             <Button
               size="small"
               onClick={() => {
-                setPersonId(item.person.id), setModalVisible(true);
+                setPersonId(item.person && item.person.id),
+                  setModalVisible(true);
               }}
             >
               <PlusOutlined />
@@ -251,7 +282,7 @@ const CalculatePayroll = ({ ...props }) => {
         width: "10%",
         render: (taxed_amount) => (
           <Space size="middle">
-            <span>${numberFormat(taxed_amount)}</span>
+            <NumberFormat prefix={"$"} number={taxed_amount} />
           </Space>
         ),
       },
@@ -262,7 +293,7 @@ const CalculatePayroll = ({ ...props }) => {
         width: "10%",
         render: (exempt_amount) => (
           <Space size="middle">
-            <Text>${numberFormat(exempt_amount)}</Text>
+            <NumberFormat prefix={"$"} number={exempt_amount} />
           </Space>
         ),
       },
@@ -274,18 +305,20 @@ const CalculatePayroll = ({ ...props }) => {
           <>
             {item.type === "046" && !consolidated ? (
               <Space size="middle">
-                <Input
+                <InputNumber
                   key={item.type}
+                  type="number"
                   onChange={(value) => {
-                    (item.value = Number(value.target.value)),
-                      setCalculate(true);
+                    item.value = value;
+                    setCalculate(true);
                   }}
-                  defaultValue={numberFormat(item.amount)}
+                  controls={false}
+                  defaultValue={item.amount}
                 />
               </Space>
             ) : (
               <Space size="middle">
-                <Text>${numberFormat(item.amount)}</Text>
+                <NumberFormat prefix={"$"} number={item.amount} />
               </Space>
             )}
           </>
@@ -322,7 +355,9 @@ const CalculatePayroll = ({ ...props }) => {
         width: "10%",
         render: (amount) => (
           <Space size="middle">
-            <Text>${numberFormat(amount)}</Text>
+            <Text>
+              <NumberFormat prefix={"$"} number={amount} />
+            </Text>
           </Space>
         ),
       },
@@ -350,7 +385,7 @@ const CalculatePayroll = ({ ...props }) => {
         width: "10%",
         render: (amount) => (
           <Space size="middle">
-            <Text>${numberFormat(amount)}</Text>
+            <NumberFormat prefix={"$"} number={amount} />
           </Space>
         ),
       },
@@ -433,7 +468,10 @@ const CalculatePayroll = ({ ...props }) => {
                   Total percepciones :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  $ {numberFormat(item.calculation.total_perceptions)}
+                  <NumberFormat
+                    prefix={"$"}
+                    number={item.calculation.total_perceptions}
+                  />
                 </Col>
               </Col>
               <Col span={24} style={{ display: "flex" }}>
@@ -441,7 +479,10 @@ const CalculatePayroll = ({ ...props }) => {
                   Total deducciones :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  $ {numberFormat(item.calculation.total_deductions)}
+                  <NumberFormat
+                    prefix={"$"}
+                    number={item.calculation.total_deductions}
+                  />
                 </Col>
               </Col>
               <Col span={24} style={{ display: "flex" }}>
@@ -449,7 +490,10 @@ const CalculatePayroll = ({ ...props }) => {
                   Total a pagar :
                 </Col>
                 <Col style={{ textAlign: "right" }} span={10}>
-                  ${numberFormat(item.calculation.net_salary)}
+                  <NumberFormat
+                    prefix={"$"}
+                    number={item.calculation.net_salary}
+                  />
                 </Col>
               </Col>
             </Row>
@@ -496,6 +540,7 @@ const CalculatePayroll = ({ ...props }) => {
         setTotalIsr(null);
         setPayroll([]);
         message.success(messageSendSuccess);
+        getPaymentCalendars(props.currentNode.id);
       })
       .catch(async (error) => {
         console.log(error);
@@ -504,7 +549,7 @@ const CalculatePayroll = ({ ...props }) => {
           error.response.data &&
           error.response.data.message
         ) {
-          let dialog = await setMessageModal(1, error.response.data.message);
+          await setMessageModal(1, error.response.data.message);
           setGenericModal(true);
         } else message.error(messageError);
         setLoading(false);
@@ -519,19 +564,27 @@ const CalculatePayroll = ({ ...props }) => {
             ? "Información fiscal"
             : data.toLowerCase().includes("fiscal address")
             ? "Dirección fiscal"
-            : "Folios",
+            : data.toLowerCase().includes("folios")
+            ? "Folios"
+            : "Error",
 
           title_message: data.toLowerCase().includes("fiscal information")
             ? "Información fiscal faltante"
             : data.toLowerCase().includes("fiscal address")
             ? "Dirección fiscal faltante"
-            : "Folios insuficientes",
+            : data.toLowerCase().includes("folios")
+            ? "Folios insuficientes"
+            : "Error",
           description: data.toLowerCase().includes("fiscal information")
             ? "Falta información relevante para poder generar los cfdi, verifique la información de la empresa he intente de nuevo."
             : data.toLowerCase().includes("fiscal address")
             ? "Datos en la dirección fiscal faltantes, verifique la información he intente de nuevo"
-            : "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte.",
-          type_alert: "warning",
+            : data.toLowerCase().includes("folios")
+            ? "No cuenta con los folios suficientes para poder timbrar su nómina, contacte con soporte."
+            : data,
+          type_alert: data.toLowerCase().includes("error")
+            ? "error"
+            : "warning",
           action: () =>
             data.toLowerCase().includes("fiscal information") ||
             data.toLowerCase().includes("fiscal address")
@@ -581,14 +634,13 @@ const CalculatePayroll = ({ ...props }) => {
             "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
           type_alert: "success",
           action: () => {
-            console.log(calendarSelect),
-              router.push({
-                pathname: "/payroll/payrollVaucher",
-                query: {
-                  calendar: calendarSelect,
-                  period: activePeriod,
-                },
-              });
+            router.push({
+              pathname: "/payroll/payrollVoucher",
+              query: {
+                calendar: calendarSelect.id,
+                period: activePeriod,
+              },
+            });
           },
           title_action_button: "Ver comprobantes",
         });
@@ -636,7 +688,7 @@ const CalculatePayroll = ({ ...props }) => {
           }
         `}
         />
-        <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["nómina"]}>
+        <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["payroll"]}>
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item
               className={"pointer"}
@@ -676,11 +728,22 @@ const CalculatePayroll = ({ ...props }) => {
                     </Col>
                     <Col xxs={24} xl={6}>
                       <Form.Item name="period" label="Periodo">
-                        <Input
+                        <Select
+                          placeholder="Periodo"
                           size="large"
-                          key="period"
-                          placeholder="Período"
-                          disabled={true}
+                          options={
+                            calendarSelect
+                              ? calendarSelect.periods
+                                  .sort((a, b) => a.name - b.name)
+                                  .map((item) => {
+                                    return {
+                                      value: item.id,
+                                      label: `${item.name}.- ${item.start_date} - ${item.end_date}`,
+                                      key: item.id,
+                                    };
+                                  })
+                              : []
+                          }
                         />
                       </Form.Item>
                     </Col>
@@ -710,34 +773,54 @@ const CalculatePayroll = ({ ...props }) => {
             </Col>
 
             {payroll.length > 0 && !genericModal && (
-              <Col md={5}>
-                <Button
-                  size="large"
-                  block
-                  htmlType="button"
-                  onClick={() =>
-                    calculate
-                      ? reCalculatePayroll([...payroll])
+              <>
+                {consolidated && (
+                  <Col md={5}>
+                    <Button
+                      size="large"
+                      block
+                      htmlType="button"
+                      onClick={() =>
+                        downLoadFileBlob(
+                          `${getDomain(
+                            API_URL_TENANT
+                          )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
+                          "hoja_rayas.xlsx",
+                          "GET"
+                        )
+                      }
+                    >
+                      Descargar hoja de raya
+                    </Button>
+                  </Col>
+                )}
+                <Col md={5}>
+                  <Button
+                    size="large"
+                    block
+                    htmlType="button"
+                    onClick={() =>
+                      calculate
+                        ? reCalculatePayroll([...payroll])
+                        : consolidated
+                        ? setMessageModal(3)
+                        : setMessageModal(2)
+                    }
+                  >
+                    {calculate
+                      ? "Calcular"
                       : consolidated
-                      ? setMessageModal(3)
-                      : setMessageModal(2)
-                  }
-                >
-                  {calculate
-                    ? "Calcular"
-                    : consolidated
-                    ? "Timbrar nómina"
-                    : "Cerrar nómina"}
-                </Button>
-              </Col>
+                      ? "Timbrar nómina"
+                      : "Cerrar nómina"}
+                  </Button>
+                </Col>
+              </>
             )}
             <Col span={24}>
               <Card className="card_table">
                 <Table
                   className="headers_transparent"
-                  dataSource={
-                    payroll.length > 0 && payroll[0].person ? payroll : []
-                  }
+                  dataSource={payroll.length > 0 ? payroll : []}
                   columns={persons}
                   expandable={{
                     expandedRowRender: (item) => renderConceptsTable(item),
@@ -755,15 +838,26 @@ const CalculatePayroll = ({ ...props }) => {
                   locale={{ emptyText: "No se encontraron resultados" }}
                 />
                 {totalSalary != null && totalIsr != null ? (
-                  <Col sm={24} md={18} lg={12}>
-                    <Row>
-                      <Col span={12} style={{ fontWeight: "bold" }}>
+                  <Col sm={24} md={24} lg={24}>
+                    <Row justify="end">
+                      <Col span={4} style={{ fontWeight: "bold" }}>
                         <div>Total de sueldos:</div>
                         <div>Total de ISR:</div>
+                        <div>Total a pagar:</div>
                       </Col>
-                      <Col span={12} style={{ fontWeight: "bold" }}>
-                        <div>${totalSalary}</div>
-                        <div>${totalIsr}</div>
+                      <Col span={3} style={{ fontWeight: "bold" }}>
+                        <div>
+                          <NumberFormat prefix={"$"} number={totalSalary} />
+                        </div>
+                        <div>
+                          <NumberFormat prefix={"$"} number={totalIsr} />
+                        </div>
+                        <div>
+                          <NumberFormat
+                            prefix={"$"}
+                            number={totalSalary - totalIsr}
+                          />
+                        </div>
                       </Col>
                     </Row>
                   </Col>

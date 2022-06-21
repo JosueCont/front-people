@@ -1,10 +1,8 @@
 import {
   Form,
   Input,
-  Layout,
   Table,
   Breadcrumb,
-  Tabs,
   Button,
   Row,
   Col,
@@ -21,8 +19,6 @@ import {
   SyncOutlined,
 } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
-const { Content } = Layout;
-const { TabPane } = Tabs;
 const { confirm } = Modal;
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -77,8 +73,9 @@ const Groups = ({ ...props }) => {
   const filter = (value) => {
     let filt = "";
     if (value.name != "" && value.name != undefined) {
-      filt = "?name=" + value.name;
+      filt = "&name=" + value.name;
     }
+    props.getProfileGroups(props.currentNode.id, props.config, filt);
   };
 
   const columns = [
@@ -128,6 +125,7 @@ const Groups = ({ ...props }) => {
 
   const resetFilter = () => {
     form.resetFields();
+    props.getProfileGroups(props.currentNode.id, props.config);
   };
   return (
     <MainLayout currentKey={["perfiles"]} defaultOpenKeys={["config"]}>

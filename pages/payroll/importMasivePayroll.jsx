@@ -35,7 +35,6 @@ import {
 } from "../../utils/constant";
 import SelectTypeTax from "../../components/selects/SelectTypeTax";
 import { ruleRequired } from "../../utils/rules";
-import GenericModal from "../../components/modal/genericModal";
 
 const ImportMasivePayroll = ({ ...props }) => {
   const router = useRouter();
@@ -49,23 +48,6 @@ const ImportMasivePayroll = ({ ...props }) => {
   const [report, setReport] = useState(false);
   const [periodicityDesc, setPeriodicityDesc] = useState(null);
   const [nodeCreated, setNodeCreated] = useState(null);
-  const [genericModal, setGenericModal] = useState(false);
-  const [infoGenericModal, setInfoGenericModal] = useState({
-    title: "Cerrar nómina",
-    title_message: "¿Esta seguro de cerrar la nómina?",
-    description:
-      "Una vez cerrada la nómina no podra realizar cambios o modificaciones.",
-    type_alert: "warning",
-    action: () =>
-      router.push({
-        pathname: "/payroll/payrollVaucher",
-        query: {
-          calendar: form.getFieldValue("calendar"),
-          period: activePeriod,
-        },
-      }),
-    title_action_button: "Ver comprobantes",
-  });
 
   const columns = [
     {
@@ -148,6 +130,8 @@ const ImportMasivePayroll = ({ ...props }) => {
         calendar.setFieldsValue({
           period: response.data.cfdis[0].headers.payment_date.substring(0, 4),
           active: false,
+          monthly_adjustment: false,
+          annual_adjustment: false,
         });
         setPeriodicityDesc(
           props.payment_periodicity.find(
@@ -249,7 +233,7 @@ const ImportMasivePayroll = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["recibos_nomina"]} defaultOpenKeys={["nómina"]}>
+    <MainLayout currentKey={["importxml"]} defaultOpenKeys={["payroll"]}>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -276,6 +260,15 @@ const ImportMasivePayroll = ({ ...props }) => {
                 {companyImport ? (
                   <>
                     <Col>
+                      <span
+                        style={{
+                          color: "white",
+                          fontSize: "25px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Empresa
+                      </span>
                       <Form layout="vertical" className={"formFilter"}>
                         <Row gutter={[16, 6]}>
                           <Col style={{ display: "flex" }}>
@@ -314,12 +307,21 @@ const ImportMasivePayroll = ({ ...props }) => {
                           </Col>
                         </Row>
                       </Form>
+                      <span
+                        style={{
+                          color: "white",
+                          fontSize: "25px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Calendario
+                      </span>
                       <Row style={{ width: "100%", padding: 10 }}>
                         <Col span={24}>
                           <h4>Fecha de inicio del calendario</h4>
                         </Col>
                         <Col span={24}>
-                          <Radio.Group onChange={onChangePeriod}>
+                          <Radio.Group onChange={onChangePeriod} required>
                             <PrintPeriods periods={companyImport.periods} />
                           </Radio.Group>
                         </Col>
@@ -345,18 +347,52 @@ const ImportMasivePayroll = ({ ...props }) => {
                               <Input readOnly value={periodicityDesc} />
                             </Form.Item>
                           </Col>
-                          <Col style={{ display: "flex" }}>
-                            <SelectTypeTax />
+                          <Col
+                            style={{
+                              display: "flex",
+                            }}
+                          >
+                            <SelectTypeTax
+                              style={{ width: 240 }}
+                              rules={[ruleRequired]}
+                            />
                           </Col>
+                        </Row>
+
+                        <Row gutter={[16, 6]} style={{ marginTop: "5px" }}>
                           <Col style={{ display: "flex" }}>
                             <Form.Item name="period" label="Periodo">
                               <Input type={"number"} readOnly />
                             </Form.Item>
                           </Col>
-
                           <Col style={{ display: "flex" }}>
                             <Form.Item name="active" label="¿Activo?">
-                              <Switch />
+                              <Switch
+                                checkedChildren="Si"
+                                unCheckedChildren="No"
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item
+                              name="monthly_adjustment"
+                              label="Ajuste mensual"
+                            >
+                              <Switch
+                                checkedChildren="Si"
+                                unCheckedChildren="No"
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col style={{ display: "flex" }}>
+                            <Form.Item
+                              name="annual_adjustment"
+                              label="Ajuste anual"
+                            >
+                              <Switch
+                                checkedChildren="Si"
+                                unCheckedChildren="No"
+                              />
                             </Form.Item>
                           </Col>
                         </Row>
@@ -508,25 +544,6 @@ const ImportMasivePayroll = ({ ...props }) => {
           visible={viewModal}
           setVisible={setModal}
           setFiles={setFiles}
-        />
-      )}
-      {genericModal && (
-        <GenericModal
-          visible={genericModal}
-          setVisible={setGenericModal}
-          title={infoGenericModal.title}
-          content={
-            <Row>
-              <Alert
-                message={infoGenericModal.title_message}
-                description={infoGenericModal.description}
-                type={infoGenericModal.type_alert}
-                showIcon
-              />
-            </Row>
-          }
-          actionButton={infoGenericModal.action}
-          titleActionButton={infoGenericModal.title_action_button}
         />
       )}
     </MainLayout>

@@ -11,6 +11,7 @@ import {
   Button,
   Table,
   Alert,
+  Select,
 } from "antd";
 import useRouter from "next/router";
 import { userId } from "../../libs/auth";
@@ -22,11 +23,11 @@ import {
   resetCurrentnode,
 } from "../../redux/UserDuck";
 import { doCompanySelectedCatalog } from "../../redux/catalogCompany";
+import { setVersionCfdi } from "../../redux/fiscalDuck";
 import WebApiPeople from "../../api/WebApiPeople";
 import { Global, css } from "@emotion/core";
 import {
   AppstoreOutlined,
-  EditOutlined,
   PlusOutlined,
   TableOutlined,
 } from "@ant-design/icons";
@@ -34,6 +35,7 @@ import ModalCreateBusiness from "../../components/modal/createBusiness";
 import Modal from "antd/lib/modal/Modal";
 import router from "next/router";
 import { messageError } from "../../utils/constant";
+import GenericModal from "../../components/modal/genericModal";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
@@ -46,6 +48,8 @@ const SelectCompany = ({ ...props }) => {
   const [treeTable, setTreeTable] = useState(true);
   const [modalSwitch, setModalSwitch] = useState(false);
   const [createNode, setCreateNode] = useState(false);
+  const [modalCfdiVersion, setModalCfdiVersion] = useState(false);
+  const [versionCfdiSelect, setVersionCfdiSelect] = useState(null);
 
   let personId = userId();
   const isBrowser = () => typeof window !== "undefined";
@@ -53,7 +57,6 @@ const SelectCompany = ({ ...props }) => {
   useEffect(() => {
     props.resetCurrentnode();
     sessionStorage.removeItem("data");
-    console.log(props.user);
     try {
       setJwt(JSON.parse(jsCookie.get("token")));
     } catch (error) {
@@ -156,29 +159,25 @@ const SelectCompany = ({ ...props }) => {
         </div>
       ),
     },
-    // {
-    //   title: "Nombre comercial",
-    //   key: "tradename",
-    //   render: (text, record) => (
-    //     <div
-    //       style={{ cursor: "pointer" }}
-    //       size="middle"
-    //       onClick={() => setCompanySelect(record)}
-    //     >
-    //       <a>{record.tradename ? record.tradename : record.name}</a>
-    //     </div>
-    //   ),
-    // },
   ];
 
   const switchModal = () => {
     modalSwitch ? setModalSwitch(false) : setModalSwitch(true);
   };
 
-  const addCompany = () => {
-    modalSwitch ? setModalSwitch(false) : setModalSwitch(true);
-    createNode ? setCreateNode(false) : setCreateNode(true);
-  };
+  useEffect(() => {
+    if (props.config && props.config.applications)
+      if (
+        props.config.applications.find(
+          (item) => item.app === "PAYROLL" && item.is_active
+        )
+      )
+        setModalCfdiVersion(true);
+  }, [props.config]);
+
+  useEffect(() => {
+    if (props.versionCfdi) setVersionCfdiSelect(props.versionCfdi);
+  }, [props.versionCfdi]);
 
   return (
     <>
@@ -390,8 +389,10 @@ const SelectCompany = ({ ...props }) => {
 
 const mapState = (state) => {
   return {
-    config: state.userStore.general_confi,
+    config: state.userStore.general_config,
     user: state.userStore.user,
+    catCfdiVersion: state.fiscalStore.cat_cfdi_version,
+    versionCfdi: state.fiscalStore.version_cfdi,
   };
 };
 
@@ -400,4 +401,5 @@ export default connect(mapState, {
   doCompanySelectedCatalog,
   setUser,
   resetCurrentnode,
+  setVersionCfdi,
 })(SelectCompany);

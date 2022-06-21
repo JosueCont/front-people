@@ -83,22 +83,22 @@ const webReducer = (state = initialData, action) => {
 export default webReducer;
 
 export const doCompanySelectedCatalog =
-  (data) => async (dispatch, getState) => {
+  (idCompany) => async (dispatch, getState) => {
     try {
-      if (!data) data = userCompanyId();
-      if (data) {
-        dispatch(getRelationship(data));
-        dispatch(getExperienceType(data));
-        dispatch(getReasonSeparation(data));
-        dispatch(getLaborRelation(data));
-        dispatch(getTreatment(data));
-        dispatch(getDocumentType(data));
-        dispatch(getDepartmets(data));
-        dispatch(getJobs(data));
-        dispatch(getPersonType(data));
-        dispatch(getPeopleCompany(data));
-        dispatch(getLevel(data));
-        dispatch(getWorkTitle(data));
+      if (!idCompany) idCompany = userCompanyId();
+      if (idCompany) {
+        dispatch(getRelationship(idCompany));
+        dispatch(getExperienceType(idCompany));
+        dispatch(getReasonSeparation(idCompany));
+        dispatch(getLaborRelation(idCompany));
+        dispatch(getTreatment(idCompany));
+        dispatch(getDocumentType(idCompany));
+        dispatch(getDepartmets(idCompany));
+        dispatch(getJobs(idCompany));
+        dispatch(getPersonType(idCompany));
+        dispatch(getPeopleCompany(idCompany));
+        dispatch(getLevel(idCompany));
+        dispatch(getWorkTitle(idCompany));
         return true;
       }
     } catch (error) {
@@ -106,62 +106,69 @@ export const doCompanySelectedCatalog =
     }
   };
 
-export const getRelationship = (data) => async (dispatch, getState) => {
+export const getRelationship = (idCompany) => async (dispatch, getState) => {
   try {
-    let response = await WebApiPeople.getCatalogs("relationship", data);
+    let response = await WebApiPeople.getCatalogs("relationship", idCompany);
     dispatch({ type: RELATIONSHIP, payload: response.data.results });
   } catch (error) {
     dispatch({ type: RELATIONSHIP, payload: [] });
   }
 };
 
-export const getBanks = (data) => async (dispatch, getState) => {
+export const getBanks = (idCompany) => async (dispatch, getState) => {
   try {
-    let response = await WebApiPeople.getCatalogs("banks", data);
+    let response = await WebApiPeople.getCatalogs("banks", idCompany);
     dispatch({ type: BANK, payload: response.data.results });
   } catch (error) {
     dispatch({ type: BANK, payload: [] });
   }
 };
 
-export const getExperienceType = (data) => async (dispatch, getState) => {
+export const getExperienceType = (idCompany) => async (dispatch, getState) => {
   try {
-    let response = await WebApiPeople.getCatalogs("experience-type", data);
+    let response = await WebApiPeople.getCatalogs("experience-type", idCompany);
     dispatch({ type: EXPERIENCE_TYPE, payload: response.data.results });
   } catch (error) {
     dispatch({ type: EXPERIENCE_TYPE, payload: [] });
   }
 };
 
-export const getReasonSeparation = (data) => async (dispatch, getState) => {
-  try {
-    let response = await WebApiPeople.getCatalogs("reason-separation", data);
-    dispatch({ type: REASON_SEPARATION, payload: response.data.results });
-  } catch (error) {
-    dispatch({ type: REASON_SEPARATION, payload: [] });
-  }
-};
+export const getReasonSeparation =
+  (idCompany) => async (dispatch, getState) => {
+    try {
+      let response = await WebApiPeople.getCatalogs(
+        "reason-separation",
+        idCompany
+      );
+      dispatch({ type: REASON_SEPARATION, payload: response.data.results });
+    } catch (error) {
+      dispatch({ type: REASON_SEPARATION, payload: [] });
+    }
+  };
 
-export const getLaborRelation = (data) => async (dispatch, getState) => {
+export const getLaborRelation = (idCompany) => async (dispatch, getState) => {
   try {
-    let response = await WebApiPeople.getCatalogs("labor-relationship", data);
+    let response = await WebApiPeople.getCatalogs(
+      "labor-relationship",
+      idCompany
+    );
     dispatch({ type: LABOR_RELATION, payload: response.data.results });
   } catch (error) {
     dispatch({ type: LABOR_RELATION, payload: [] });
   }
 };
 
-export const getTreatment = (data) => async (dispatch, getState) => {
+export const getTreatment = (idCompany) => async (dispatch, getState) => {
   try {
-    let response = await WebApiPeople.getCatalogs("treatment", data);
+    let response = await WebApiPeople.getCatalogs("treatment", idCompany);
     dispatch({ type: TREATMENT, payload: response.data.results });
   } catch (error) {
     dispatch({ type: TREATMENT, payload: [] });
   }
 };
 
-export const getDocumentType = (data) => async (dispatch, getState) => {
-  await WebApiPeople.getCatalogs("document-type", data)
+export const getDocumentType = (idCompany) => async (dispatch, getState) => {
+  await WebApiPeople.getCatalogs("document-type", idCompany)
     .then((response) => {
       dispatch({ type: DOCUMENT_TYPE, payload: response.data });
     })
@@ -170,27 +177,28 @@ export const getDocumentType = (data) => async (dispatch, getState) => {
     });
 };
 
-export const getDepartmets = (data) => async (dispatch, getState) => {
-  try {
-    let response = await WebApiPeople.filterDepartmentByNode(data);
-    dispatch({ type: DEPARTMENT, payload: response.data.results });
-  } catch (error) {
-    dispatch({ type: DEPARTMENT, payload: [] });
-  }
+export const getDepartmets = (idCompany) => async (dispatch, getState) => {
+  await WebApiPeople.filterDepartmentByNode(idCompany)
+    .then((response) => {
+      dispatch({ type: DEPARTMENT, payload: response.data.results });
+    })
+    .catch((err) => {
+      dispatch({ type: DEPARTMENT, payload: [] });
+    });
 };
 
-export const getJobs = (data) => async (dispatch, getState) => {
+export const getJobs = (idCompany) => async (dispatch, getState) => {
   try {
-    let response = await WebApiPeople.getJobs(data);
+    let response = await WebApiPeople.getJobs(idCompany);
     dispatch({ type: JOB, payload: response.data.results });
   } catch (error) {
     dispatch({ type: JOB, payload: [] });
   }
 };
 
-export const getPersonType = (data) => async (dispatch, getState) => {
+export const getPersonType = (idCompany) => async (dispatch, getState) => {
   try {
-    let response = await WebApiPeople.getPersontype(data);
+    let response = await WebApiPeople.getPersontype(idCompany);
     dispatch({
       type: PERSON_TYPE,
       payload: response.data.results,
@@ -204,18 +212,18 @@ export const getPersonType = (data) => async (dispatch, getState) => {
 };
 
 export const getProfileGroups =
-  (node, config) => async (dispatch, getState) => {
+  (idCompany, config, filter) => async (dispatch, getState) => {
     try {
-      let response = await getGroups(node, config);
+      let response = await getGroups(idCompany, config, filter);
       if (response) dispatch({ type: PROFILE_GROUP, payload: response });
     } catch (error) {
       dispatch({ type: PROFILE_GROUP, payload: [] });
     }
   };
 
-export const getPeopleCompany = (data) => async (dispatch, getState) => {
+export const getPeopleCompany = (idCompany) => async (dispatch, getState) => {
   try {
-    let response = await WebApiPeople.filterPerson({ node: data });
+    let response = await WebApiPeople.filterPerson({ node: idCompany });
     let people = response.data.map((a, i) => {
       return {
         label: a.first_name + " " + a.flast_name,
@@ -230,17 +238,17 @@ export const getPeopleCompany = (data) => async (dispatch, getState) => {
   }
 };
 
-export const getLevel = (data) => async (dispatch, getState) => {
+export const getLevel = (idCompany) => async (dispatch, getState) => {
   try {
-    let response = await WebApiPeople.getCatalogs("level", data);
+    let response = await WebApiPeople.getCatalogs("level", idCompany);
     dispatch({ type: LEVEL, payload: response.data.results });
   } catch (error) {
     dispatch({ type: LEVEL, payload: [] });
   }
 };
 
-export const getWorkTitle = (data) => async (dispatch, getState) => {
-  await WebApiPeople.getCatalogs("work-title", data)
+export const getWorkTitle = (idCompany) => async (dispatch, getState) => {
+  await WebApiPeople.getCatalogs("work-title", idCompany)
     .then((response) => {
       dispatch({ type: WORK_TITLE, payload: response.data.results });
     })

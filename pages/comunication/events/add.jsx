@@ -22,8 +22,9 @@ import MainLayout from "../../../layout/MainLayout";
 import Axios from "axios";
 import { API_URL } from "../../../config/config";
 import moment from "moment";
-import { userCompanyId, withAuthSync } from "../../../libs/auth";
+import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
+import { connect } from "react-redux";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -41,7 +42,6 @@ const addEvent = () => {
   const [endTime, setEndTime] = useState(null);
   const [persons, setPersons] = useState([]);
   const [nodes, setNodes] = useState([]);
-  let nodeId = userCompanyId();
 
   const onChangeDate = (value) => {
     setDateEvent(moment(value).format("YYYY-MM-DD"));
@@ -67,7 +67,9 @@ const addEvent = () => {
 
   const getPersons = async () => {
     axios
-      .post(API_URL + `/person/person/get_list_persons/`, { node: nodeId })
+      .post(API_URL + `/person/person/get_list_persons/`, {
+        node: props.currentNode.id,
+      })
       .then((response) => {
         response.data = response.data.map((a) => {
           return { label: a.first_name + " " + a.flast_name, value: a.id };
@@ -80,17 +82,19 @@ const addEvent = () => {
   };
 
   const getNodes = async () => {
-    axios.get(API_URL + `/business/node/?id=${nodeId}`).then((response) => {
-      let data = response.data.results;
-      data = data.map((a) => {
-        return { label: a.name, value: a.id };
+    axios
+      .get(API_URL + `/business/node/?id=${props.currentNode.id}`)
+      .then((response) => {
+        let data = response.data.results;
+        data = data.map((a) => {
+          return { label: a.name, value: a.id };
+        });
+        setNodes(data);
+        form.setFieldsValue({
+          node: data[0].value,
+          guests: [],
+        });
       });
-      setNodes(data);
-      form.setFieldsValue({
-        node: data[0].value,
-        guests: [],
-      });
-    });
   };
   const onFinish = async (values) => {
     let datos = {};
@@ -99,16 +103,8 @@ const addEvent = () => {
     datos.start_time = startTime;
     datos.end_time = endTime;
     datos.description = values.description;
-    datos.node = parseInt(nodeId);
+    datos.node = parseInt(props.currentNode.id);
     if (values.guests) datos.guests = values.guests;
-    // if (value === 1) {
-    //   datos.node = values.node;
-    //   datos.guests = [];
-    // } else {
-    //   datos.guests = values.guests;
-    //   datos.node = null;
-    // }
-    // setLoading(true);
     Axios.post(API_URL + `/person/event/`, datos)
       .then((response) => {
         message.success("Agregado correctamente");
@@ -122,10 +118,11 @@ const addEvent = () => {
   };
 
   useEffect(() => {
-    nodeId = userCompanyId();
-    getPersons();
-    getNodes();
-  }, [router]);
+    if (props.currentNode) {
+      getPersons();
+      getNodes();
+    }
+  }, [props.currentNode]);
 
   return (
     <MainLayout currentKey="4.2">
@@ -309,4 +306,11 @@ const addEvent = () => {
     </MainLayout>
   );
 };
-export default withAuthSync(addEvent);
+
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(mapState)(withAuthSync(addEvent));

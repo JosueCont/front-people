@@ -5,25 +5,12 @@ import { typeHttp } from "../config/config";
 export const generateYear = () => {
   let yearsArray = [];
   let currentYear = new Date().getFullYear();
-  let startYear = currentYear - 10;
+  let startYear = 2020;
   while (startYear < currentYear) {
     startYear++;
     yearsArray.push({ label: `${startYear}`, value: startYear });
   }
   return yearsArray.reverse();
-};
-
-export const getJobForSelect = async (id) => {
-  try {
-    let response = await WebApiPeople.getJobSelect(id);
-    let job = response.data;
-    job = job.map((a) => {
-      return { label: a.name, value: a.id };
-    });
-    return job;
-  } catch (error) {
-    return [];
-  }
 };
 
 export const asyncForEach = async (array, callback) => {
@@ -370,10 +357,6 @@ export const getDomain = (api) => {
   }
 };
 
-const getFileExtension = (filename) => {
-  return /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined;
-};
-
 export const numberFormat = (value) =>
   new Intl.NumberFormat("es-MX", {
     minimumFractionDigits: 2,
@@ -392,6 +375,27 @@ export const getDifferenceDays = (startDate, endDate) => {
 };
 
 export const valueToFilter = (value) => {
-  let newVal = value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  return newVal;
-}
+  let newVal = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  return newVal.trim();
+};
+
+export const arrayToSelect = (
+  data = [],
+  valueItem = "id",
+  keyitem = "",
+  labelItem = "Item"
+) => {
+  console.log("DATAS-->> ", data);
+  const newData = data.map((item) => {
+    return {
+      value: item[valueItem],
+      key: item[keyitem],
+      label: item[labelItem],
+    };
+  });
+  console.log("Array select-->> ", newData);
+  return newData;
+};

@@ -45,7 +45,6 @@ const FormEmergencyContact = ({ person_id = null, ...props }) => {
     setContactEmergency([]);
     await WebApiPeople.getContactEmergency(person_id)
       .then((response) => {
-        console.log(response.data);
         setContactEmergency(response.data);
         setTimeout(() => {
           setLoadingTable(false);

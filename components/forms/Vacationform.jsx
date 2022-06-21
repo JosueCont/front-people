@@ -38,7 +38,7 @@ const Vacationform = (props) => {
             : null,
         });
         formVacation.setFieldsValue({
-          job: index.work_title.job ? index.work_title.job.name : null,
+          job: index.work_title ? index.work_title.job.name : null,
         });
 
         setUrlPhoto(index.photo ? index.photo : null);
@@ -113,36 +113,27 @@ const Vacationform = (props) => {
     setStartDate(dateString);
     props.onChangeDepartureDate(date, dateString);
   };
-
-  const changeReturnDate = (date, dateString) => {
+  const changeEndDate = (date, dateString) => {
     setEndDate(dateString);
     props.onChangeReturnDate(date, dateString);
   };
 
-  const calculateDays = (startDate, endDate) => {
-    let difference_days = getDifferenceDays(startDate, endDate);
-    let days =
-      difference_days + 1 > 0 && difference_days + 1 <= availableDays
-        ? difference_days + 1
-        : null;
+  const sumDays = (days) => {
+    if (days && availableDays > 0 && startDate && days <= availableDays) {
+      let date = new Date(startDate);
+      date.setDate(date.getDate() + (days - 1));
+      let end_date = date.toISOString().substring(0, 10);
+      changeEndDate(end_date, end_date.toString());
 
-    formVacation.setFieldsValue({
-      days_requested: days,
-    });
-  };
-
-  useEffect(() => {
-    if (
-      startDate !== undefined &&
-      startDate !== null &&
-      startDate !== "" &&
-      endDate !== undefined &&
-      endDate !== null &&
-      endDate !== ""
-    ) {
-      calculateDays(startDate, endDate);
+      formVacation.setFieldsValue({
+        return_date: moment(end_date, "YYYY-MM-DD"),
+      });
+    } else {
+      formVacation.setFieldsValue({
+        return_date: null,
+      });
     }
-  }, [startDate, endDate]);
+  };
 
   return (
     <Form form={formVacation} layout="vertical" onFinish={props.onFinish}>
@@ -188,26 +179,27 @@ const Vacationform = (props) => {
             <Col sm={24} md={12} lg={12}>
               <Form.Item
                 name="departure_date"
-                label="Fecha de salida"
+                label="Fecha inicio"
                 rules={[ruleRequired]}
               >
                 <DatePicker
                   key="departure_date"
                   style={{ width: "100%" }}
                   onChange={changeDepartureDate}
+                  disabled={availableDays > 0 ? false : true}
                 />
               </Form.Item>
             </Col>
             <Col sm={24} md={12} lg={12}>
               <Form.Item
                 name="return_date"
-                label="Fecha de regreso"
+                label="Fecha fin"
                 rules={[ruleRequired]}
               >
                 <DatePicker
                   key="return_date"
                   style={{ width: "100%" }}
-                  onChange={changeReturnDate}
+                  disabled={true}
                 />
               </Form.Item>
             </Col>
@@ -218,10 +210,11 @@ const Vacationform = (props) => {
                 rules={[ruleRequired]}
               >
                 <InputNumber
-                  readOnly
                   min={1}
-                  max={20}
+                  max={availableDays}
                   style={{ width: "100%" }}
+                  onChange={sumDays}
+                  disabled={availableDays > 0 ? false : true}
                 />
               </Form.Item>
             </Col>

@@ -1,17 +1,13 @@
-import { useEffect, useState } from "react";
-import Calendar from "rc-year-calendar";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../../../layout/MainLayout";
 import { Row, Col, Breadcrumb, Button, Switch } from "antd";
-import Axios from "axios";
-import { API_URL } from "../../../../config/config";
-import { userCompanyId } from "../../../../libs/auth";
 import { useRouter } from "next/router";
 import moment from "moment";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { LinearScaleOutlined } from "@material-ui/icons";
+import WebApiPayroll from "../../../../api/WebApiPayroll";
+import Calendar from "rc-year-calendar";
 
 const Calendars = () => {
-  let nodeId = userCompanyId();
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [minDate, setMinDate] = useState(new Date("01/01/2021"));
   const [maxDate, setMaxDate] = useState(null);
@@ -25,10 +21,9 @@ const Calendars = () => {
   const [dataSource, setDataSource] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
   const route = useRouter();
-  const { id } = route.query;
 
   useEffect(() => {
-    getPaymentCalendars();
+    if (route.query.id) getPaymentCalendars();
   }, [route.query.id]);
 
   useEffect(() => {}, [style]);
@@ -42,39 +37,39 @@ const Calendars = () => {
     setIsChecked(!isChecked);
   };
   const getPaymentCalendars = async () => {
-    try {
-      let url = `/payroll/payment-calendar/${id}`;
-      let response = await Axios.get(API_URL + url);
-      let data = response.data;
-      let dataSource = [];
-      data.periods.map((a) => {
-        dataSource.push({
-          startDate: new Date(moment(a.start_date).format("MM/DD/YYYY")),
-          endDate: new Date(moment(a.end_date).format("MM/DD/YYYY")),
-        });
-
-        if (a.incidences) {
+    await WebApiPayroll.getDetailPaymentCalendar(route.query.id)
+      .then((response) => {
+        let data = response.data;
+        let dataSource = [];
+        data.periods.map((a) => {
           dataSource.push({
-            startDate: new Date(
-              moment(a.incidences.start_date).format("MM/DD/YYYY")
-            ),
-            endDate: new Date(
-              moment(a.incidences.end_date).format("MM/DD/YYYY")
-            ),
-            color: "orange",
+            startDate: new Date(moment(a.start_date).format("MM/DD/YYYY")),
+            endDate: new Date(moment(a.end_date).format("MM/DD/YYYY")),
           });
-        }
 
-        dataSource.push({
-          startDate: new Date(moment(a.payment_date).format("MM/DD/YYYY")),
-          endDate: new Date(moment(a.payment_date).format("MM/DD/YYYY")),
-          color: "red",
+          if (a.incidences) {
+            dataSource.push({
+              startDate: new Date(
+                moment(a.incidences.start_date).format("MM/DD/YYYY")
+              ),
+              endDate: new Date(
+                moment(a.incidences.end_date).format("MM/DD/YYYY")
+              ),
+              color: "orange",
+            });
+          }
+
+          dataSource.push({
+            startDate: new Date(moment(a.payment_date).format("MM/DD/YYYY")),
+            endDate: new Date(moment(a.payment_date).format("MM/DD/YYYY")),
+            color: "red",
+          });
         });
+        setDataSource(dataSource);
+      })
+      .catch((error) => {
+        console.log(error);
       });
-      setDataSource(dataSource);
-    } catch (e) {
-      console.log(e);
-    }
   };
 
   return (
@@ -134,10 +129,10 @@ const Calendars = () => {
           <Row justify="center">
             <Col span={24} style={{ display: "flex" }}>
               <Calendar
+                language="es"
                 year={currentYear}
                 minDate={minDate}
                 maxDate={maxDate}
-                language={language}
                 style={style}
                 allowOverlap={allowOverlap}
                 enableRangeSelection={enableRangeSelection}

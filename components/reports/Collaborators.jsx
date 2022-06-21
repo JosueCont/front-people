@@ -19,12 +19,10 @@ import SelectDepartment from "../selects/SelectDepartment";
 import SelectJob from "../selects/SelectJob";
 import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
-import { userCompanyId } from "../../libs/auth";
-import SelectWorkTitle from '../selects/SelectWorkTitle';
-import { connect } from 'react-redux'
+import SelectWorkTitle from "../selects/SelectWorkTitle";
+import { connect } from "react-redux";
 
-
-const CollaboratorsReport = ({permissions, ...props}) => {
+const CollaboratorsReport = ({ permissions, ...props }) => {
   const route = useRouter();
   const [form] = Form.useForm();
   const { Title } = Typography;
@@ -33,15 +31,10 @@ const CollaboratorsReport = ({permissions, ...props}) => {
   const [dateOfAdmission, SetDateOfAdmission] = useState(null);
   const [collaboratorList, setCollaboratorList] = useState([]);
 
-  /* for filter */
   const [collaborator, setCollaborator] = useState(null);
   const [department, setDepartment] = useState(null);
   const [job, setJob] = useState(null);
 
-  /* for selects */
-  const [departmentId, setDepartmentId] = useState(null);
-  let nodeId = userCompanyId();
-  /* Columnas de tabla */
   const columns = [
     {
       title: "Colaborador",
@@ -92,24 +85,8 @@ const CollaboratorsReport = ({permissions, ...props}) => {
     },
   ];
 
-  /* Events for selects  */
-  const onChangeCompany = (val) => {
-    form.setFieldsValue({
-      department: null,
-      job: null,
-    });
-    setCompanyId(nodeId);
-  };
-
-  const onChangeDepartment = (val) => {
-    form.setFieldsValue({
-      job: null,
-    });
-    setDepartmentId(val);
-  };
-
   const download = async (item = null) => {
-    let dataId = { node: nodeId };
+    let dataId = { node: props.currentNode.id };
     if (item) {
       dataId = {
         id: item.id,
@@ -151,28 +128,10 @@ const CollaboratorsReport = ({permissions, ...props}) => {
     }
   };
 
-  const getAllPersons = async () => {
-    try {
-      let response = await Axios.get(API_URL + `/person/person/`);
-      let data = response.data.results;
-      data = data.map((a, index) => {
-        return {
-          label: a.first_name + " " + a.flast_name,
-          value: a.id,
-          /* value: a.id, */
-          key: a.id + index,
-        };
-      });
-      setPersonList(data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const getCollaborators = async (values = null) => {
     setCollaboratorList([]);
     setLoading(true);
-    let QueryData = { node: nodeId };
+    let QueryData = { node: props.currentNode.id };
     if (values && values.collaborator) {
       QueryData["collaborator"] = values.collaborator;
     }
@@ -247,14 +206,9 @@ const CollaboratorsReport = ({permissions, ...props}) => {
   };
 
   useEffect(() => {
-    nodeId = userCompanyId();
-    const jwt = JSON.parse(jsCookie.get("token"));
-    getCollaborators();
-    // getAllPersons();
-    // getDepartaments();
-  }, [route]);
+    if (props.currentNode) getCollaborators();
+  }, [props.currentNode]);
 
-  
   return (
     <>
       <Row justify="space-between" style={{ paddingRight: 20 }}>
@@ -278,7 +232,7 @@ const CollaboratorsReport = ({permissions, ...props}) => {
               <Col>
                 <SelectDepartment
                   name="department"
-                  companyId={nodeId}
+                  companyId={props.currentNode && props.currentNode.id}
                   style={{ maxWidth: 150 }}
                 />
               </Col>
@@ -377,7 +331,8 @@ const CollaboratorsReport = ({permissions, ...props}) => {
 
 const mapState = (state) => {
   return {
-    permissions: state.userStore.permissions.report
+    permissions: state.userStore.permissions.report,
+    currentNode: state.userStore.current_node,
   };
 };
 

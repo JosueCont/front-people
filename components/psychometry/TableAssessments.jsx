@@ -1,6 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import {Row, Col, Progress, Card, Table } from 'antd';
+import {
+  Row,
+  Col,
+  Progress,
+  Card,
+  Table,
+  Input,
+  Tooltip,
+  message
+} from 'antd';
 import moment from "moment";
+import { connect } from 'react-redux';
+import jwtEncode from "jwt-encode";
+import { ClearOutlined } from "@ant-design/icons";
+import { popupWindow, getCurrentURL } from '../../utils/constant';
+import { valueToFilter } from '../../utils/functions';
 import {
   ContentTitle,
   ContentEnd,
@@ -8,14 +22,34 @@ import {
   ProgressPurple,
   CustomBtn,
 } from "./Styled";
+import WebApiAssessment from '../../api/WebApiAssessment';
+import {
+  BsPlayCircleFill,
+  BsFillCheckCircleFill,
+  BsHandIndex
+} from "react-icons/bs";
+import AssignAssessments from '../person/assignments/AssignAssessments';
 
-const TableAssessments = ({user_assessments, loading, ...props}) => {
+const TableAssessments = ({
+  user_assessments,
+  loading,
+  user_profile,
+  currentNode,
+  getAssessments,
+  ...props
+}) => {
 
+  moment.locale('es-mx');
   const [generalPercent, setGeneralPercent] = useState(0);
+  const [loadResults, setLoadResults] = useState({});
+  const [lisAssessments, setListAssessments] = useState([]);
+  const [nameAssessment, setNameAssessment] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(()=>{
     if(user_assessments.length > 0){
       calculatePercent()
+      setListAssessments(user_assessments)
     }
   },[user_assessments])
 
@@ -31,6 +65,122 @@ const TableAssessments = ({user_assessments, loading, ...props}) => {
     setGeneralPercent(total.toFixed(2))
   }
 
+  const validateGetResults = (item) =>{
+    setLoadResults({...loadResults, [item.code]: true})
+    if(
+      item.code == '7_KHOR_EST_SOC' ||
+      item.code == '4_KHOR_PERF_MOT' ||
+      item.code == '16_KHOR_INT_EMO' ||
+      item.code == '48_KHOR_INV_VAL_ORG' ||
+      item.code == '5_KHOR_DOM_CER'
+    ){
+      getResults(item)
+    }else{
+      tokenToResults(item, item.apply)
+    }
+  }
+
+  const getFieldResults = (item, resp) =>{
+    if(item.code == '7_KHOR_EST_SOC'){
+      return resp.data.resultados;
+    }else if(item.code == '4_KHOR_PERF_MOT'){
+      return resp.data.summary_results;
+    }else if(item.code == '16_KHOR_INT_EMO'){
+      let result = resp.data.results_string.split('.');
+      // let result = data.results_string.replace('.','');
+      return result[0];
+    }else if(item.code == '48_KHOR_INV_VAL_ORG'){
+      return resp.data.resultado;
+    }else if(item.code == '5_KHOR_DOM_CER'){
+      return {
+        interpretation: resp.data.dominant_factor,
+        results: { factors: resp.data.factors}
+      }
+    }else{
+      if(typeof(resp.results) == 'string'){
+        let obj = JSON.parse(resp.results);
+        return obj.assessment_results;
+      }else{
+        return resp.results?.assessment_results;
+      }
+    }
+  }
+
+  const getFieldDate = (item) =>{
+    let endDate = item.apply?.end_date;
+    let applyDate = item.apply?.apply_date;
+    let formatDate = 'DD/MM/YYYY hh:mm a';
+    return endDate ?
+      moment(endDate).format(formatDate) :
+      moment(applyDate).format(formatDate);
+  }
+
+  const getResults = async (item) => {
+    try {
+      let data = {
+        user_id: user_profile.id,
+        assessment_code: item.code
+      }
+      let response = await WebApiAssessment.getAssessmentResults(data);
+      tokenToResults(item, response)
+    } catch (e) {
+      setLoadResults({...loadResults, [item.code]: false})
+      console.log(e)
+    }
+  }
+
+  const tokenToResults = (item, resp) =>{
+    const body = {
+      assessment: item.id,
+      user_id: user_profile.id,
+      firstname: user_profile.first_name,
+      lastname: `${user_profile.flast_name} ${user_profile.mlast_name ? user_profile.mlast_name : ''}`,
+      user_photo_url: user_profile.photo,
+      company_id: user_profile.node,
+      url: getCurrentURL(),
+      assessment_date: getFieldDate(item),
+      assessment_results: getFieldResults(item,resp),
+      assessment_xtras: { stage: 2 },
+      profile_results: null
+    }
+    const token = jwtEncode(body, 'secret', 'HS256');
+    const url = `https://humand.kuiz.hiumanlab.com/?token=${token}`;
+    // const url = `http://humand.localhost:3002/?token=${token}`;
+    setLoadResults({...loadResults, [item.code]: false})
+    popupWindow(url)
+  }
+
+  const onFilter = ({target}) => {
+    setNameAssessment(target.value)
+    if((target.value).trim()){
+      let results = user_assessments.filter((item)=> valueToFilter(item.name).includes(valueToFilter(target.value)));
+      setListAssessments(results)
+    }else{
+      setListAssessments(user_assessments)
+    }
+  }
+
+  const onReset = () =>{
+    setNameAssessment('');
+    setListAssessments(user_assessments);
+  }
+
+  const onFinishAssigned = async (values) =>{
+    try {
+      const body = {
+        ...values,
+        persons: [`${user_profile.id}`],
+        node: currentNode?.id
+      };
+      await WebApiAssessment.assignAssessments(body);
+      getAssessments(user_profile.id)
+      message.success("Evaluaciones asignadas");
+    } catch (e) {
+      message.error("Evaluaciones no asignadas");
+      console.log()
+    } 
+  }
+
   const columns = [
     {
       title: 'NOMBRE',
@@ -42,9 +192,11 @@ const TableAssessments = ({user_assessments, loading, ...props}) => {
       render: (item) =>{
         return(
           <>
-            {item.apply?.progress == 100 ? (
-              // <Moment format='LLL' date={item.apply?.end_date} locale={'es-mx'}/>
-              <span>{moment(item.apply?.end_date).format('LLL').toString()}</span>
+            {(
+              item.apply?.progress == 100 ||
+              item.apply?.status == 2
+            ) ? (
+              <span>{getFieldDate(item)}</span>
             ):(
               <span>Pendiente</span>
             )}
@@ -66,11 +218,17 @@ const TableAssessments = ({user_assessments, loading, ...props}) => {
       render: (item)=>{
         return(
           <>
-            {item.apply?.progress == 100 ? (
+            {(
+              item.apply?.progress == 100 ||
+              item.apply?.status == 2
+            ) ? (
               <CustomBtn
                 size={'small'}
                 bg={'#ed6432'}
                 wd={'150px'}
+                icon={<BsFillCheckCircleFill/>}
+                loading={loadResults[item.code]}
+                onClick={()=>validateGetResults(item)}
               >
                   Ver resultados
               </CustomBtn>
@@ -79,7 +237,7 @@ const TableAssessments = ({user_assessments, loading, ...props}) => {
                 size={'small'}
                 bg={'#814cf2'}
                 wd={'150px'}
-                // onClick={()=>startAssessment(item)}
+                icon={<BsPlayCircleFill/>}
               >
                 <span>Pendiente</span>
               </CustomBtn>
@@ -91,15 +249,40 @@ const TableAssessments = ({user_assessments, loading, ...props}) => {
   ]
 
   return (
-    // <Card bordered={false} style={{borderRadius: '12px'}}>
+    <>
       <Row gutter={[24,24]} align={'middle'}>
-        {/* <Col span={24}>
-          <ContentTitle>
-            <p>Psicometría</p>
-            <p>Evaluaciones individuales o grupales</p>
-          </ContentTitle>
-        </Col> */}
-        <Col span={24}>
+        <Col
+          xs={24}
+          md={12}
+          lg={12}
+          style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+          }}
+        >
+          <Input
+              placeholder={'Buscar por nombre'}
+              style={{borderRadius: '12px'}}
+              value={nameAssessment}
+              onChange={onFilter}
+            />
+            <Tooltip title={'Borrar filtros'}>
+              <CustomBtn
+                wd={'50px'}
+                icon={<ClearOutlined/>}
+                onClick={()=> onReset()}
+              />
+            </Tooltip>
+            <Tooltip title={'Asignar evaluaciones'}>
+              <CustomBtn
+                wd={'50px'}
+                icon={<BsHandIndex/>}
+                onClick={()=> setShowModal(true)}
+              />
+            </Tooltip>
+        </Col>
+        <Col xs={24} md={12} lg={12}>
           <ProgressPurple percent={generalPercent}/>
         </Col>
         <Col span={24}>
@@ -110,16 +293,31 @@ const TableAssessments = ({user_assessments, loading, ...props}) => {
             showHeader={false}
             columns={columns}
             loading={loading}
-            dataSource={user_assessments}
+            dataSource={lisAssessments}
             pagination={{
-                pageSize: 10,
-                total: user_assessments?.length
+              pageSize: 10,
+              total: lisAssessments?.length,
+              hideOnSinglePage: true
             }}
+            scroll={{x: 600}}
           />
         </Col>
       </Row>
-    // </Card>
+      <AssignAssessments
+        title={"Asignar evaluaciones"}
+        visible={showModal}
+        close={()=> setShowModal(false)}
+        actionForm={onFinishAssigned}
+        listAssigned={user_assessments}
+      />
+    </>
   )
 }
 
-export default TableAssessments;
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node
+  }
+};
+
+export default connect(mapState)(TableAssessments);

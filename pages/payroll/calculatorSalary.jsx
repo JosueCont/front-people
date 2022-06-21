@@ -91,7 +91,7 @@ const calculatorSalary = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["asimilado"]} defaultOpenKeys={["nómina"]}>
+    <MainLayout currentKey={["asimilado"]} defaultOpenKeys={["payroll"]}>
       <Global
         styles={`
           .card-calculator .ant-card-body{
@@ -217,7 +217,7 @@ const calculatorSalary = ({ ...props }) => {
                         <SelectPeriodicity size="large" />
                       </Col>
                       <Col md={12}>
-                        <SelectYear size="large" />
+                        <SelectYear size="large" label={"Periodo"} />
                       </Col>
 
                       {changeType && (

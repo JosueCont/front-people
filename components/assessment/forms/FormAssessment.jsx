@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Modal, message, Upload, Select, Col, Row } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Modal,
+  message,
+  Upload,
+  Select,
+  Col,
+  Row,
+} from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { connect, useDispatch } from "react-redux";
-import { withAuthSync, userCompanyId } from "../../../libs/auth";
+import { withAuthSync } from "../../../libs/auth";
 import FormItemHTML from "./FormItemHtml";
 import {
   assessmentCreateAction,
-  assessmentUpdateAction
+  assessmentUpdateAction,
 } from "../../../redux/assessmentDuck";
 import { ruleRequired } from "../../../utils/rules";
 
@@ -14,7 +24,6 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
   const dispatch = useDispatch();
   const layout = { labelCol: { span: 6 }, wrapperCol: { span: 17 } };
   const [formAssessment] = Form.useForm();
-  const nodeId = Number.parseInt(userCompanyId());
   const assessmentId = props.loadData ? props.loadData.id : "";
   const [descripcion, setDescripcion] = useState(
     props.loadData.description_es ? props.loadData.description_es : ""
@@ -66,54 +75,60 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
     const body = {
       ...values,
       image: imagen,
-      node: nodeId,
+      node: props.currentNode.id,
       description_es: descripcion,
       instructions_es: instruccions,
     };
     const params = createData(body);
     if (props.loadData) {
-      props.assessmentUpdateAction(assessmentId, params).then((response) => {
-        if (response.status === 201) {
-          message.success("Actualizado correctamente");
-        } else if (response.status === 200) {
-          if (response.data && response.data["code"]) {
-            message.error(response.data["code"][0]);
-          }else{
-            message.error("Hubo un error");
-          }
-        }else{
-          message.error("Hubo un error");
-        }
-        formAssessment.resetFields();
-        setDescripcion("<p></p>");
-        setInstruccions("<p></p>");
-        props.close();
-        props.onChangeTable({current: 1});
-      }).catch((e) => {
-        message.error("Hubo un error");
-        props.close();
-      });
-    } else {
-      props.assessmentCreateAction(params).then((response) => {
-        if (response.status === 201) {
-          message.success("Agregado correctamente");
-        } else if (response.status === 200) {
-          if (response.data && response.data["code"]) {
-            message.error(response.data["code"][0]);
+      props
+        .assessmentUpdateAction(assessmentId, params)
+        .then((response) => {
+          if (response.status === 201) {
+            message.success("Actualizado correctamente");
+          } else if (response.status === 200) {
+            if (response.data && response.data["code"]) {
+              message.error(response.data["code"][0]);
+            } else {
+              message.error("Hubo un error");
+            }
           } else {
             message.error("Hubo un error");
           }
-        } else {
+          formAssessment.resetFields();
+          setDescripcion("<p></p>");
+          setInstruccions("<p></p>");
+          props.close();
+          props.onChangeTable({ current: 1 });
+        })
+        .catch((e) => {
           message.error("Hubo un error");
-        }
-        setDescripcion("<p></p>");
-        setInstruccions("<p></p>");
-        props.close();
-        props.onChangeTable({current: 1});
-      }).catch((e) => {
-        message.error("Hubo un error");
-        props.close();
-      });
+          props.close();
+        });
+    } else {
+      props
+        .assessmentCreateAction(params)
+        .then((response) => {
+          if (response.status === 201) {
+            message.success("Agregado correctamente");
+          } else if (response.status === 200) {
+            if (response.data && response.data["code"]) {
+              message.error(response.data["code"][0]);
+            } else {
+              message.error("Hubo un error");
+            }
+          } else {
+            message.error("Hubo un error");
+          }
+          setDescripcion("<p></p>");
+          setInstruccions("<p></p>");
+          props.close();
+          props.onChangeTable({ current: 1 });
+        })
+        .catch((e) => {
+          message.error("Hubo un error");
+          props.close();
+        });
     }
   };
 
@@ -149,20 +164,20 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
     </div>
   );
 
-  const deleteValues = () =>{
+  const deleteValues = () => {
     onReset();
     setImagen(null);
     setImageUrl(null);
     setDescripcion("<p></p>");
     setInstruccions("<p></p>");
-  }
+  };
 
   return (
     <Modal
       title={props.title}
       visible={props.visible}
       onCancel={() => props.close()}
-      afterClose={()=> deleteValues()}
+      afterClose={() => deleteValues()}
       width={800}
       footer={[
         <Button key="back" onClick={() => props.close()}>
@@ -185,10 +200,10 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
         onFinish={onFinish}
         id="formAssessment"
         form={formAssessment}
-        layout={'vertical'}
+        layout={"vertical"}
         requiredMark={false}
       >
-        <Row gutter={[16,16]}>
+        <Row gutter={[16, 16]}>
           <Col span={12}>
             <Form.Item name="code" label={"Código"} rules={[ruleRequired]}>
               <Input maxLength={200} allowClear={true} placeholder="Código" />
@@ -196,7 +211,11 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
             <Form.Item name="name" label={"Nombre"} rules={[ruleRequired]}>
               <Input maxLength={200} allowClear={true} placeholder="Nombre" />
             </Form.Item>
-            <Form.Item name="categories" label={"Categoría"} rules={[ruleRequired]}>
+            <Form.Item
+              name="categories"
+              label={"Categoría"}
+              rules={[ruleRequired]}
+            >
               <Select
                 mode="multiple"
                 allowClear
@@ -205,7 +224,7 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
                 notFoundContent="No se encontraron resultados"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  option.children.toCase().indexOf(input.toLowerCase()) >= 0
                 }
                 filterSort={(optionA, optionB) =>
                   optionA.children
@@ -267,10 +286,11 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
 const mapState = (state) => {
   return {
     assessmentStore: state.assessmentStore,
+    currentNode: state.userStore.current_node,
   };
 };
 
 export default connect(mapState, {
   assessmentCreateAction,
-  assessmentUpdateAction
+  assessmentUpdateAction,
 })(withAuthSync(FormAssessment));

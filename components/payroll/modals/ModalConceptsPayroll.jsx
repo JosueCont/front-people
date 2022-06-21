@@ -11,6 +11,7 @@ import {
   Checkbox,
   Input,
   Spin,
+  Alert,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { numberFormat } from "../../../utils/functions";
@@ -38,6 +39,7 @@ const ModalConceptsPayroll = ({
   const [perceptions, setPerceptions] = useState([]);
   const [deductions, setDeductions] = useState([]);
   const [otherPayments, setOtherPayments] = useState([]);
+  const [ceros, setCeros] = useState(false);
 
   useEffect(() => {
     if (
@@ -133,7 +135,7 @@ const ModalConceptsPayroll = ({
           return (
             <Col span={12}>
               <Row style={{ marginBottom: "8px" }}>
-                <Col span={18}>-{item.description}</Col>
+                <Col span={18}>{item.description}</Col>
                 <Col span={4}>
                   <Input
                     type="number"
@@ -175,18 +177,23 @@ const ModalConceptsPayroll = ({
   };
 
   const listConcepts = () => {
+    setCeros(false);
+    setConcepts([]);
     let data = [];
     if (perceptions.length > 0)
       perceptions.map((item) => {
         data.push(item);
+        if (item.value <= 0) setCeros(true);
       });
     if (deductions.length > 0)
       deductions.map((item) => {
         data.push(item);
+        if (item.value <= 0) setCeros(true);
       });
     if (otherPayments.length > 0)
       otherPayments.map((item) => {
         data.push(item);
+        if (item.value <= 0) setCeros(true);
       });
     setConcepts(data);
   };
@@ -269,10 +276,11 @@ const ModalConceptsPayroll = ({
               <Button
                 size="large"
                 htmlType="button"
+                disabled={ceros && currentStep == 2 ? true : false}
                 onClick={() =>
                   currentStep == 2
                     ? createObjectSend()
-                    : setCurrentStep(currentStep + 1)
+                    : (listConcepts(), setCurrentStep(currentStep + 1))
                 }
                 style={{ paddingLeft: 50, paddingRight: 50 }}
               >
@@ -389,51 +397,63 @@ const ModalConceptsPayroll = ({
               )}
             </Row>
           ) : (
-            <Table
-              dataSource={concepts}
-              locale={{ emptyText: "No hay datos aún" }}
-              width={30}
-            >
-              <Column
-                title="Concepto"
-                key="perception"
-                render={(record) => <div>{record.description}</div>}
-              />
-              <Column
-                title="Monto"
-                align="center"
-                key="amount"
-                render={(record) => <div>{numberFormat(record.value)}</div>}
-              />
-              <Column
-                title="Monto"
-                align="center"
-                key="amount"
-                render={(text, record, index) => (
-                  <div>
-                    <>
-                      <EditOutlined
-                        style={{ marginRight: "10px" }}
-                        key={"edit" + record.perception}
-                        onClick={() => setCurrentStep(1)}
-                      />
-                      <DeleteOutlined
-                        key={"delete" + record.perception}
-                        onClick={() => {
-                          concepts.filter((item) => item.id != record.id)
-                            .length < 1
-                            ? setCurrentStep(0)
-                            : setConcepts(
-                                concepts.filter((item) => item.id != record.id)
-                              ),
-                            removeItem(record, index);
-                        }}
-                      />
-                    </>
-                  </div>
-                )}
-              />
-            </Table>
+            <>
+              {ceros && (
+                <Alert
+                  message="Importante"
+                  description="No puede tener conceptos con valor cero."
+                  type="warning"
+                  showIcon
+                />
+              )}
+              <Table
+                dataSource={concepts}
+                locale={{ emptyText: "No hay datos aún" }}
+                width={30}
+              >
+                <Column
+                  title="Concepto"
+                  key="perception"
+                  render={(record) => <div>{record.description}</div>}
+                />
+                <Column
+                  title="Monto"
+                  align="center"
+                  key="amount"
+                  render={(record) => <div>{numberFormat(record.value)}</div>}
+                />
+                <Column
+                  title="Monto"
+                  align="center"
+                  key="amount"
+                  render={(text, record, index) => (
+                    <div>
+                      <>
+                        <EditOutlined
+                          style={{ marginRight: "10px" }}
+                          key={"edit" + record.perception}
+                          onClick={() => setCurrentStep(1)}
+                        />
+                        <DeleteOutlined
+                          key={"delete" + record.perception}
+                          onClick={() => {
+                            concepts.filter((item) => item.id != record.id)
+                              .length < 1
+                              ? setCurrentStep(0)
+                              : setConcepts(
+                                  concepts.filter(
+                                    (item) => item.id != record.id
+                                  )
+                                ),
+                              removeItem(record, index);
+                          }}
+                        />
+                      </>
+                    </div>
+                  )}
+                />
+              </Table>
+            </>
           )}
         </Card>
       </Row>

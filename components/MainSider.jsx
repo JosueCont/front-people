@@ -317,27 +317,19 @@ const MainSider = ({
           )}
           {props.config && props.config.nomina_enabled && (
             <SubMenu
-              key="nómina"
+              key="payroll"
               title="Nómina"
               className="subMainMenu"
               icon={<DollarOutlined />}
             >
               <>
                 <Menu.Item
-                  key="asimilado"
+                  key="timbrar"
                   onClick={() =>
-                    router.push({ pathname: "/payroll/calculatorSalary" })
+                    router.push({ pathname: "/payroll/calculatePayroll" })
                   }
                 >
-                  Calculadora
-                </Menu.Item>
-                <Menu.Item
-                  key="recibos_nomina"
-                  onClick={() =>
-                    router.push({ pathname: "/payroll/importMasivePayroll" })
-                  }
-                >
-                  Importar nómina con xml
+                  Calculo de nómina
                 </Menu.Item>
                 <Menu.Item
                   key="calendario"
@@ -348,20 +340,28 @@ const MainSider = ({
                   Calendario de pagos
                 </Menu.Item>
                 <Menu.Item
-                  key="timbrar"
+                  key="voucher"
                   onClick={() =>
-                    router.push({ pathname: "/payroll/calculatePayroll" })
-                  }
-                >
-                  Calculo de nómina
-                </Menu.Item>
-                <Menu.Item
-                  key="cfdi"
-                  onClick={() =>
-                    router.push({ pathname: "/payroll/payrollVaucher" })
+                    router.push({ pathname: "/payroll/payrollVoucher" })
                   }
                 >
                   Comprobantes fiscales
+                </Menu.Item>
+                <Menu.Item
+                  key="asimilado"
+                  onClick={() =>
+                    router.push({ pathname: "/payroll/calculatorSalary" })
+                  }
+                >
+                  Calculadora
+                </Menu.Item>
+                <Menu.Item
+                  key="importxml"
+                  onClick={() =>
+                    router.push({ pathname: "/payroll/importMasivePayroll" })
+                  }
+                >
+                  Importar nómina con xml
                 </Menu.Item>
               </>
             </SubMenu>

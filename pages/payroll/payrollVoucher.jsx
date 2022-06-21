@@ -25,8 +25,9 @@ import { messageError } from "../../utils/constant";
 import { useRouter } from "next/router";
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
+import SelectYear from "../../components/selects/SelectYear";
 
-const PayrollVaucher = ({ ...props }) => {
+const PayrollVoucher = ({ ...props }) => {
   const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -55,6 +56,13 @@ const PayrollVaucher = ({ ...props }) => {
               item.payroll_person.person.flast_name +
               " " +
               item.payroll_person.person.mlast_name;
+      },
+    },
+    {
+      title: "Periodo",
+      key: "timestamp",
+      render: (item) => {
+        return `${item.payment_period.name}.- ${item.payment_period.start_date} - ${item.payment_period.end_date}`;
       },
     },
     {
@@ -130,13 +138,12 @@ const PayrollVaucher = ({ ...props }) => {
 
   useEffect(() => {
     if (router.query && router.query.calendar && router.query.period) {
-      console.log("DATaS-->> ", router.query.calendar, router.query.period);
       form.setFieldsValue({
         calendar: router.query.calendar,
         period: router.query.period,
       });
       setCalendar(router.query.calendar);
-      getVaucher(
+      getVoucher(
         `calendar=${router.query.calendar}&period=${router.query.period}`
       );
     }
@@ -144,15 +151,19 @@ const PayrollVaucher = ({ ...props }) => {
 
   const onFinish = (value) => {
     setLoading(true);
-    let url = "";
+    let url = `node=${props.currentNode.id}`;
     if (value.calendar && value.calendar != "")
-      url = `calendar=${value.calendar}`;
-    if (value.period && value.period != "") url = `&period=${value.period}`;
-    if (value.person && value.person != "") url = `&person=${value.person}`;
-    getVaucher(url);
+      url = url + `&calendar=${value.calendar}`;
+    if (value.period && value.period != "")
+      url = url + `&period=${value.period}`;
+    if (value.person && value.person != "")
+      url = url + `&person=${value.person}`;
+    if (value.year && value.year != "") url = url + `&year=${value.year}`;
+    getVoucher(url);
   };
 
-  const getVaucher = (data) => {
+  const getVoucher = (data) => {
+    setCfdis([]);
     WebApiPayroll.getCfdiPayrrol(data)
       .then((response) => {
         setCfdis(response.data);
@@ -170,6 +181,7 @@ const PayrollVaucher = ({ ...props }) => {
     setPeriods([]);
     setCalendar(null);
     setCfdis([]);
+    getVoucher("");
   };
 
   useEffect(() => {
@@ -192,7 +204,7 @@ const PayrollVaucher = ({ ...props }) => {
   }, [calendar, props.payment_calendar]);
 
   return (
-    <MainLayout currentKey={["persons"]}>
+    <MainLayout currentKey={["voucher"]} defaultOpenKeys={["payroll"]}>
       <Breadcrumb>
         <Breadcrumb.Item href="/home/persons">Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Comprobantes fiscales</Breadcrumb.Item>
@@ -230,6 +242,16 @@ const PayrollVaucher = ({ ...props }) => {
               <Col>
                 <SelectCollaborator name="person" style={{ width: 250 }} />
               </Col>
+              {!calendar && (
+                <Col>
+                  <SelectYear
+                    size="middle"
+                    name={"year"}
+                    label={"Año"}
+                    placeholder={"Año"}
+                  />
+                </Col>
+              )}
               <Col style={{ display: "flex" }}>
                 <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
                   <Button
@@ -295,4 +317,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(PayrollVaucher);
+export default connect(mapState)(PayrollVoucher);

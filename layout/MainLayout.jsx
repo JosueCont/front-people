@@ -29,7 +29,7 @@ const MainLayout = ({
   const [flavor, setFlavor] = useState({});
   const [showEvents, setShowEvents] = useState(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     try {
       const vflavor = getFlavor();
       const routeFlavor = getRouteFlavor();
@@ -76,103 +76,87 @@ const MainLayout = ({
       <Global
         styles={css`
           :root {
-            --primaryColor: ${
-              props.config && props.config.theme_color
-                ? props.config.theme_color.primary_color
-                : "#252837"
-            };
-            --primaryAlternativeColor: ${
-              props.config && props.config.theme_color
-                ? props.config.theme_color.primary_alternative_color
-                : "#252837"
-            };
+            --primaryColor: ${props.config && props.config.theme_color
+              ? props.config.theme_color.primary_color
+              : "#252837"};
+            --primaryAlternativeColor: ${props.config &&
+            props.config.theme_color
+              ? props.config.theme_color.primary_alternative_color
+              : "#252837"};
 
-            --secondaryColor: ${
-              props.config && props.config.theme_color
-                ? props.config.theme_color.secondary_color
-                : "#1C1B2B"
-            };
-            --secondaryAlternativeColor: ${
-              props.config && props.config.theme_color
-                ? props.config.theme_color.secondary_alternative_color
-                : "#1C1B2B"
-            };
+            --secondaryColor: ${props.config && props.config.theme_color
+              ? props.config.theme_color.secondary_color
+              : "#1C1B2B"};
+            --secondaryAlternativeColor: ${props.config &&
+            props.config.theme_color
+              ? props.config.theme_color.secondary_alternative_color
+              : "#1C1B2B"};
 
             --fontPrimaryColor: ${props.config ? "#ffff" : "#ffff"};
 
             --fontSecondaryColor: ${props.config ? "#ffff" : "#ffff"};
 
-            --login_image: ${
-              props.config && props.config.concierge_logo_login
-                ? "url(" + props.config.concierge_logo_login + ")"
-                : 'url("/images/login.jpg")'
-            }; 
-            --logo_login: ${
-              props.config && props.config.concierge_logo
-                ? "url(" + props.config.concierge_logo + ")"
-                : 'url("/images/Grupo Industrial Roche-Color.png")'
-            }; 
-            --fontFamily: ${
-              flavor && flavor.font_family
-                ? flavor.font_family
-                : " -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif"
-            }; 
-            --fontStyle: ${
-              flavor && flavor.font_family ? flavor.font_style : "normal"
-            }; 
-            --srcFontFamily: ${
-              flavor && flavor.font_family
-                ? flavor.font_family
-                : 'url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf")'
-            }; 
-            --fontFormColor: ${
-              flavor && flavor.fontFormColor ? flavor.font_family : "#000"
-            };
-            --fontSpanColor: ${
-              props.config && props.config.concierge_font_primary_color
-                ? props.config.concierge_font_primary_color
-                : "#000"
-            };
+            --login_image: ${props.config && props.config.concierge_logo_login
+              ? "url(" + props.config.concierge_logo_login + ")"
+              : 'url("/images/login.jpg")'};
+            --logo_login: ${props.config && props.config.concierge_logo
+              ? "url(" + props.config.concierge_logo + ")"
+              : 'url("/images/Grupo Industrial Roche-Color.png")'};
+            --fontFamily: ${flavor && flavor.font_family
+              ? flavor.font_family
+              : " -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif"};
+            --fontStyle: ${flavor && flavor.font_family
+              ? flavor.font_style
+              : "normal"};
+            --srcFontFamily: ${flavor && flavor.font_family
+              ? flavor.font_family
+              : 'url("/flavors/demo/fonts/HelveticaRoundedLTStd-Bd.ttf")'};
+            --fontFormColor: ${flavor && flavor.fontFormColor
+              ? flavor.font_family
+              : "#000"};
+            --fontSpanColor: ${props.config &&
+            props.config.concierge_font_primary_color
+              ? props.config.concierge_font_primary_color
+              : "#000"};
 
-            --fontColorSecondary: ${
-              props.config && props.config.concierge_font_secondary_color
-                ? props.config.concierge_font_secondary_color
-                : "#000"
-            };
+            --fontColorSecondary: ${props.config &&
+            props.config.concierge_font_secondary_color
+              ? props.config.concierge_font_secondary_color
+              : "#000"};
           }
-            
 
-            .ant-layout-content{
-                // background: var(--primaryColor) !important;
-                backGround: #F0F0F0 !important
-            }
+          .ant-layout-content {
+            // background: var(--primaryColor) !important;
+            background: #f0f0f0 !important;
+          }
 
-            /* .ant-layout-content{
+          /* .ant-layout-content{
               background: #2E303C;
             } */
-            /* .ant-form-item-label label{
+          /* .ant-form-item-label label{
               color: #ffffff99;
             } */
-            /* .ant-table-small .ant-table-thead > tr > th{
+          /* .ant-table-small .ant-table-thead > tr > th{
               background: var(--primaryColor);
               color: #ffffff99;
             } */
 
-            .ant-breadcrumb span{
-              // color: var(--fontSpanColor);
-              color: #000
-            }
-            .ant-menu-item, .ant-menu-submenu{
-              color: var(--fontSpanColor);
-            }
-            label{
-              color: var(--fontSpanColor);
-            }
-            .divider-primary{
-              border-bottom: solid 1px var(--primaryColor);
-              opacity: 0.5;
-            }
-            /* .ant-form-item  label {
+          .ant-breadcrumb span {
+            // color: var(--fontSpanColor);
+            color: #000;
+          }
+          .ant-menu-item,
+          .ant-menu-submenu {
+            color: var(--fontSpanColor);
+          }
+          label {
+            color: var(--fontSpanColor);
+          }
+          .divider-primary {
+            border-bottom: solid 1px var(--primaryColor);
+            opacity: 0.5;
+          }
+          /* .ant-form-item  label {
               color: var(--fontColorSecondary) !important;
             }
 
@@ -180,7 +164,7 @@ const MainLayout = ({
               color: var(--fontColorSecondary) !important;
             } */
 
-            /* .ant-table, table.ant-table td, table th,
+          /* .ant-table, table.ant-table td, table th,
             table.ant-table td.ant-table-cell-fix-left{
               background: transparent !important;
             }
@@ -196,29 +180,28 @@ const MainLayout = ({
               background: var(--secondaryColor) !important;
             } */
 
-            /* .ant-table-body > tr.ant-table-row:hover > td,
+          /* .ant-table-body > tr.ant-table-row:hover > td,
             .ant-table-body > tr.ant-table-row > td:hover{
               background-color: red !important;
             } */
-            /* th, td{
+          /* th, td{
               background: transparent;
             } */
-            .form_header{
-              background: #7B25F1 !important;
-            }
+          .form_header {
+            background: #7b25f1 !important;
+          }
 
-            .headers_transparent .ant-table-thead tr th{
-              background-color:transparent !important;
-            }
-            .card_table .ant-table{
-              box-shadow: none;
-            }
+          .headers_transparent .ant-table-thead tr th {
+            background-color: transparent !important;
+          }
+          .card_table .ant-table {
+            box-shadow: none;
+          }
 
-            .tableAssesmentsSelected{
-              border: solid 1px #8e88e7;
-            }
-
-              `}
+          .tableAssesmentsSelected {
+            border: solid 1px #8e88e7;
+          }
+        `}
       />
       <Helmet>
         {props.config && props.config.concierge_icon ? (
@@ -243,6 +226,7 @@ const MainLayout = ({
           hideSearch={hideSearch}
           hideLogo={hideLogo}
           setShowEvents={setShowEvents}
+          config={props.config}
         />
         <Layout>
           {!hideMenu && props.currentNode && (
@@ -281,6 +265,7 @@ const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
+    versionCfdi: state.fiscalStore.version_cfdi,
   };
 };
 

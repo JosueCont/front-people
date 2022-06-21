@@ -25,7 +25,6 @@ import {
   EllipsisOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../../libs/auth";
-import jsCookie from "js-cookie";
 import FormAssessment from "../../../components/assessment/forms/FormAssessment";
 import { connect, useDispatch } from "react-redux";
 const { confirm } = Modal;
@@ -41,7 +40,6 @@ import {
 import { useFilter } from "../../../components/assessment/useFilter";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
-import { userCompanyId } from "../../../libs/auth";
 
 const AssessmentScreen = ({
   assessmentStore,
@@ -52,7 +50,6 @@ const AssessmentScreen = ({
   const dispatch = useDispatch();
   const router = useRouter();
   const [form] = Form.useForm();
-  const [listCategories, setListCategories] = useState([]);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateAssessment, setShowCreateAssessment] = useState(false);
@@ -62,18 +59,15 @@ const AssessmentScreen = ({
   const [testsKeys, setTestsKeys] = useState([]);
   const [openModalAddGroup, setOpenModalAddGroup] = useState(false);
   const [showModalCreateGroup, setShowModalCreateGroup] = useState(false);
-  const [
-    filterValues,
-    filterActive,
-    filterString,
-    onFilterChange,
-    onFilterActive,
-    onFilterReset,
-  ] = useFilter();
+  const [nameSearch, setNameSearch] = useState("");
+  const [filterValues, filterActive, onFilterReset] = useFilter();
 
   useEffect(() => {
-    if(props.currentNode){
-      props.assessmentLoadAction(props.currentNode.id, "&paginate=true&limit=10&offset=0");
+    if (props.currentNode) {
+      props.assessmentLoadAction(
+        props.currentNode.id,
+        "&paginate=true&limit=10&offset=0"
+      );
       getCategories();
       updPagination(1);
     }
@@ -128,20 +122,18 @@ const AssessmentScreen = ({
     });
   };
 
-  const HandleFilterReset = (assessments) => {
-    form.resetFields();
-    onFilterReset(assessments);
-  };
-
   const onChangeTable = (pagination) => {
-    let nodeId = userCompanyId();
+    let nameFilter = nameSearch ? `&name=${nameSearch}` : "";
     if (pagination.current > 1) {
       const offset = (pagination.current - 1) * 10;
-      let queryParam = `&paginate=true&limit=10&offset=${offset}`;
-      props.assessmentLoadAction(nodeId, queryParam);
+      let queryParam = `&paginate=true&limit=10&offset=${offset}${nameFilter}`;
+      props.assessmentLoadAction(props.currentNode.id, queryParam);
       updPagination(pagination.current);
     } else if (pagination.current == 1) {
-      props.assessmentLoadAction(nodeId, "&paginate=true&limit=10&offset=0");
+      props.assessmentLoadAction(
+        props.currentNode.id,
+        `&paginate=true&limit=10&offset=0${nameFilter}`
+      );
       updPagination(pagination.current);
     }
   };
@@ -208,6 +200,27 @@ const AssessmentScreen = ({
       }
     }
   }, [openModalAddGroup]);
+
+  const onFinishSearch = ({ name }) => {
+    if (name.trim()) {
+      setNameSearch(name);
+      props.assessmentLoadAction(
+        props.currentNode?.id,
+        `&paginate=true&limit=10&offset=0&name=${name}`
+      );
+    } else {
+      resetSearch();
+    }
+  };
+
+  const resetSearch = () => {
+    form.resetFields();
+    setNameSearch("");
+    props.assessmentLoadAction(
+      props.currentNode?.id,
+      "&paginate=true&limit=10&offset=0"
+    );
+  };
 
   const menuTable = () => {
     return (
@@ -372,7 +385,7 @@ const AssessmentScreen = ({
             {item.category !== "K" && (
               <>
                 {(props.permissions?.edit || props.permissions?.delete) && (
-                  <Dropdown overlay={()=>menuSurvey(item)}>
+                  <Dropdown overlay={() => menuSurvey(item)}>
                     <Button size="small">
                       <EllipsisOutlined />
                     </Button>
@@ -400,14 +413,14 @@ const AssessmentScreen = ({
       <div className="container" style={{ width: "100%" }}>
         <Row>
           <Col span={18}>
-            <Form form={form} scrollToFirstError>
+            <Form form={form} onFinish={onFinishSearch} scrollToFirstError>
               <Row>
                 <Col span={16}>
-                  <Form.Item name="Filter" label="Filter">
+                  <Form.Item name="name" label="Filtrar">
                     <Input
                       placeholder="Filtra las evaluaciones"
                       maxLength={200}
-                      onChange={onFilterChange}
+                      // onChange={onFilterChange}
                     />
                   </Form.Item>
                 </Col>
@@ -415,7 +428,7 @@ const AssessmentScreen = ({
                   <div style={{ float: "left", marginLeft: "5px" }}>
                     <Form.Item>
                       <Button
-                        onClick={() => onFilterActive(assessments)}
+                        // onClick={() => onFilterActive(assessments)}
                         htmlType="submit"
                       >
                         <SearchOutlined />
@@ -425,7 +438,7 @@ const AssessmentScreen = ({
                   <div style={{ float: "left", marginLeft: "5px" }}>
                     <Form.Item>
                       <Button
-                        onClick={() => HandleFilterReset(assessments)}
+                        // onClick={() => HandleFilterReset(assessments)}
                         style={{ marginTop: "auto", marginLeft: 10 }}
                       >
                         <SyncOutlined />
@@ -437,7 +450,10 @@ const AssessmentScreen = ({
             </Form>
           </Col>
           {props.permissions?.create && (
-            <Col span={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Col
+              span={6}
+              style={{ display: "flex", justifyContent: "flex-end" }}
+            >
               <Button onClick={() => HandleCreateAssessment()}>
                 <PlusOutlined /> Agregar encuesta
               </Button>
@@ -467,7 +483,11 @@ const AssessmentScreen = ({
       </div>
       {(showCreateAssessment || showUpdateAssessment) && (
         <FormAssessment
-          title={ showCreateAssessment ? "Agregar nueva encuesta" : "Modificar encuesta"}
+          title={
+            showCreateAssessment
+              ? "Agregar nueva encuesta"
+              : "Modificar encuesta"
+          }
           visible={showCreateAssessment || showUpdateAssessment}
           close={HandleCloseModal}
           loadData={assessmentData}

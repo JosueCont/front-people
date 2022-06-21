@@ -15,6 +15,7 @@ const ProfileUser = () => {
     const { Option } = Select;
     const [person, setPerson] = useState({});
     const [assessments, setAssessments] = useState([]);
+    const [copyAssessments, setCopyAssessments] = useState([]);
     const [fullName, setFullName] = useState();
     const [loadAssessment, setLoadAssessment] = useState(false);
     const [loadUser, setLoadUser] = useState(false);
@@ -24,7 +25,7 @@ const ProfileUser = () => {
             getPerson(router.query.id);
             getAssessments(router.query.id);
         }
-    },[router.query])
+    },[router])
 
     const getPerson = async (id) =>{
         setLoadUser(true)
@@ -45,13 +46,14 @@ const ProfileUser = () => {
     }
 
     const getAssessments = async (id) =>{
-        setLoadAssessment(true)
+        setLoadAssessment(true);
         try {
             let response = await WebApiAssessment.getAssessmentsByPerson({person: id});
-            setAssessments(response.data)
-            setLoadAssessment(false)
+            setAssessments(response.data);
+            // setCopyAssessments(response.data);
+            setLoadAssessment(false);
         } catch (e) {
-            setLoadAssessment(false)
+            setLoadAssessment(false);
             console.log(e)
         }
     }
@@ -78,7 +80,9 @@ const ProfileUser = () => {
                         <Col span={24}>
                             <TableAssessments
                                 loading={loadAssessment}
+                                user_profile={person}
                                 user_assessments={assessments}
+                                getAssessments={getAssessments}
                             />
                         </Col>
                     </Row>
