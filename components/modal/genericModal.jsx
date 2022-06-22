@@ -5,9 +5,10 @@ const GenericModal = ({
   visible = false,
   width = "50%",
   title = "Ejemplo",
-  content,
+  children,
   actionButton,
   titleActionButton = "Aceptar",
+  viewActionButton = true,
 }) => {
   return (
     <Modal
@@ -21,17 +22,19 @@ const GenericModal = ({
               onClick={() => setVisible(false)}
               style={{ paddingLeft: 50, paddingRight: 50 }}
             >
-              Cerrar
+              Cancelar
             </Button>
 
-            <Button
-              size="large"
-              htmlType="button"
-              onClick={actionButton}
-              style={{ paddingLeft: 50, paddingRight: 50 }}
-            >
-              {titleActionButton}
-            </Button>
+            {viewActionButton && (
+              <Button
+                size="large"
+                htmlType="button"
+                onClick={actionButton}
+                style={{ paddingLeft: 50, paddingRight: 50 }}
+              >
+                {titleActionButton}
+              </Button>
+            )}
           </Space>
         </Col>
       }
@@ -40,7 +43,7 @@ const GenericModal = ({
       onCancel={() => setVisible(false)}
       title={title}
     >
-      {content}
+      {children}
     </Modal>
   );
 };

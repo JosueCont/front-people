@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import { connect } from "react-redux";
 
-const SelectJob = ({ disabled, viewLabel = true, rules = [], ...props }) => {
+const SelectJob = ({
+  disabled,
+  viewLabel = true,
+  rules = [],
+  size = "middle",
+  ...props
+}) => {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
@@ -31,6 +37,7 @@ const SelectJob = ({ disabled, viewLabel = true, rules = [], ...props }) => {
           disabled={disabled}
           key="SelectJob"
           // options={options}
+          size={size}
           placeholder="Puesto de trabajo"
           allowClear
           style={props.style ? props.style : {}}

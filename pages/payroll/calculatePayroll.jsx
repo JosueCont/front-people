@@ -40,12 +40,15 @@ import {
   messageError,
   messageSaveSuccess,
   messageSendSuccess,
+  messageUpdateSuccess,
 } from "../../utils/constant";
 import GenericModal from "../../components/modal/genericModal";
 import { API_URL_TENANT } from "../../config/config";
 import NumberFormat from "../../components/formatter/numberFormat";
 import CfdiVaucher from "../../components/payroll/cfdiVaucher";
-// import PayrollVaucher from "./payrollVaucher";
+import SelectDepartment from "../../components/selects/SelectDepartment";
+import SelectJob from "../../components/selects/SelectJob";
+import { useCallback } from "react";
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -59,14 +62,24 @@ const CalculatePayroll = ({ ...props }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [personId, setPersonId] = useState(null);
   const [payrollType, setPayrollType] = useState(null);
-  const [consolidated, setConsolidated] = useState(false);
+  const [consolidated, setConsolidated] = useState(null);
   const [genericModal, setGenericModal] = useState(false);
   const [activePeriod, setActivePeriod] = useState(null);
   const [calculate, setCalculate] = useState(false);
   const [totalSalary, setTotalSalary] = useState(null);
   const [totalIsr, setTotalIsr] = useState(null);
   const [calendarSelect, setCalendarSelect] = useState(null);
+  const [periodSelected, setPeriodSelcted] = useState(null);
   const [step, setStep] = useState(0);
+  const [nextStep, setNextStep] = useState(true);
+  const [previousStep, setPreviuosStep] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const [job, setJob] = useState(null);
+  const [department, setDepartment] = useState(null);
+  const [personsKeys, setPersonsKeys] = useState([]);
+  const [personStamp, setPersonsStamp] = useState([]);
+  const [partial, setPartial] = useState(false);
+  const [motive, setMotive] = useState("");
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -80,7 +93,7 @@ const CalculatePayroll = ({ ...props }) => {
       router.push({
         pathname: "/payroll/payrollVoucher",
         query: {
-          calendar: form.getFieldValue("calendar"),
+          calendar: calendarSelect.id,
           period: activePeriod,
         },
       }),
@@ -90,63 +103,6 @@ const CalculatePayroll = ({ ...props }) => {
   useEffect(() => {
     if (props.currentNode) getPaymentCalendars(props.currentNode.id);
   }, [props.currentNode]);
-
-  const getPaymentCalendars = async (value) => {
-    await WebApiPayroll.getPaymentCalendar(value)
-      .then((response) => {
-        setPaymentCalendars(response.data.results);
-        let calendars = response.data.results.map((item, index) => {
-          console.log("Calendar-->> ", item);
-          return { key: item.id, label: item.name, value: item.id };
-        });
-        setOptionsPaymentCalendars(calendars);
-      })
-      .catch((error) => {
-        message.error(messageError);
-      });
-  };
-
-  const changeCalendar = (value) => {
-    setTotalSalary(null);
-    setTotalIsr(null);
-    const calendar = paymentCalendars.find((item) => item.id === value);
-    let period = calendar.periods.find((p) => p.active == true);
-    if (!period) period = calendar.periods[0];
-    console.log("Calendar-->> ", calendar);
-    setCalendarSelect(calendar);
-    setActivePeriod(period.id);
-    setPayrollType(calendar.perception_type.code);
-    form.setFieldsValue({
-      periodicity: calendar.periodicity.description,
-      period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
-      insidences: `${period.incidences.start_date} - ${period.incidences.end_date}`,
-      payment_day: period.payment_date,
-      year: calendar.period,
-    });
-    sendCalculatePayroll({ calendar_id: value });
-  };
-
-  const sendCalculatePayroll = async (dataToSend) => {
-    setLoading(true);
-    setModalVisible(false);
-    setPersonId(null);
-    await WebApiPayroll.calculatePayroll(dataToSend)
-      .then((response) => {
-        setLoading(false);
-        setConsolidated(response.data.consolidated);
-        setPayroll(response.data.payroll);
-        setCalculate(false);
-        setTotalSalary(response.data.total_salary);
-        setTotalIsr(response.data.total_isr);
-      })
-      .catch((error) => {
-        setCalculate(false);
-        console.log(error);
-        setPayroll([]);
-        form.resetFields();
-        setLoading(false);
-      });
-  };
 
   const reCalculatePayroll = (data) => {
     data.map((item) => {
@@ -172,7 +128,7 @@ const CalculatePayroll = ({ ...props }) => {
       className: "column_name cursor_pointer",
       key: "name",
       render: (item) => (
-        <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
+        <div>
           <Space>
             <Avatar
               icon={<UserOutlined />}
@@ -192,7 +148,7 @@ const CalculatePayroll = ({ ...props }) => {
       key: "company",
       className: "cursor_pointer",
       render: (item) => (
-        <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
+        <div>
           <NumberFormat
             prefix={"$"}
             number={item.calculation.total_perceptions}
@@ -205,7 +161,7 @@ const CalculatePayroll = ({ ...props }) => {
       key: "daily_salary",
       className: "cursor_pointer",
       render: (item) => (
-        <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
+        <div>
           <NumberFormat
             prefix={"$"}
             number={item.calculation.total_deductions}
@@ -218,7 +174,7 @@ const CalculatePayroll = ({ ...props }) => {
       key: "daily_salary",
       className: "cursor_pointer",
       render: (item) => (
-        <div onClick={() => setExpandRow(expandRow ? null : item.person.id)}>
+        <div>
           <NumberFormat prefix={"$"} number={item.calculation.net_salary} />
         </div>
       ),
@@ -228,7 +184,7 @@ const CalculatePayroll = ({ ...props }) => {
       className: "cell-actions",
       render: (item) => (
         <>
-          {!consolidated && (
+          {step == 0 && (
             <Button
               size="small"
               onClick={() => {
@@ -307,7 +263,7 @@ const CalculatePayroll = ({ ...props }) => {
         width: "20%",
         render: (item) => (
           <>
-            {item.type === "046" && !consolidated ? (
+            {item.type === "046" && isOpen ? (
               <Space size="middle">
                 <InputNumber
                   key={item.type}
@@ -507,15 +463,86 @@ const CalculatePayroll = ({ ...props }) => {
     );
   };
 
+  const getPaymentCalendars = async (value) => {
+    await WebApiPayroll.getPaymentCalendar(value)
+      .then((response) => {
+        setPaymentCalendars(response.data.results);
+        let calendars = response.data.results.map((item, index) => {
+          return { key: item.id, label: item.name, value: item.id };
+        });
+        setOptionsPaymentCalendars(calendars);
+      })
+      .catch((error) => {
+        console.log(error);
+        message.error(messageError);
+      });
+  };
+
+  useEffect(() => {
+    if (optionspPaymentCalendars.length == 1) {
+      form.setFieldsValue({ calendar: optionspPaymentCalendars[0].value });
+      changeCalendar(optionspPaymentCalendars[0].value);
+    }
+  }, [optionspPaymentCalendars]);
+
+  const changeCalendar = (value) => {
+    setTotalSalary(null);
+    setTotalIsr(null);
+    const calendar = paymentCalendars.find((item) => item.id === value);
+    let period = calendar.periods.find((p) => p.active == true);
+    if (!period) period = calendar.periods[0];
+    setPeriodSelcted(period.id);
+    setCalendarSelect(calendar);
+    setActivePeriod(period.id);
+    setPayrollType(calendar.perception_type.code);
+    form.setFieldsValue({
+      periodicity: calendar.periodicity.description,
+      period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
+      insidences: `${period.incidences.start_date} - ${period.incidences.end_date}`,
+      payment_day: period.payment_date,
+      year: calendar.period,
+    });
+    sendCalculatePayroll({ payment_period: period.id });
+  };
+
+  const sendCalculatePayroll = async (dataToSend) => {
+    setLoading(true);
+    setModalVisible(false);
+    setPersonId(null);
+    await WebApiPayroll.calculatePayroll(dataToSend)
+      .then((response) => {
+        setLoading(false);
+        setConsolidated(
+          response.data.consolidated ? response.data.consolidated : null
+        );
+        setPayroll(response.data.payroll);
+        setCalculate(false);
+        setTotalSalary(response.data.total_salary);
+        setTotalIsr(response.data.total_isr);
+        if (response.data.consolidated)
+          validateStep(response.data.consolidated);
+      })
+      .catch((error) => {
+        setCalculate(false);
+        console.log(error);
+        setPayroll([]);
+        form.resetFields();
+        setLoading(false);
+      });
+  };
+
   const sendClosePayroll = () => {
     setGenericModal(false);
     setLoading(true);
     WebApiPayroll.closePayroll({
-      calendar_id: form.getFieldValue("calendar"),
+      payment_period: periodSelected,
       payroll: payroll,
     })
       .then((response) => {
-        sendCalculatePayroll({ calendar_id: form.getFieldValue("calendar") });
+        changeStep(true);
+        setIsOpen(response.data.consolidated.is_open);
+        setConsolidated(response.data.consolidated);
+        sendCalculatePayroll({ payment_period: periodSelected });
         setTimeout(() => {
           message.success(messageSaveSuccess);
           setLoading(false);
@@ -534,7 +561,7 @@ const CalculatePayroll = ({ ...props }) => {
     setGenericModal(false);
     setLoading(true);
     WebApiPayroll.stampPayroll({
-      payment_calendar_id: form.getFieldValue("calendar"),
+      payment_calendar_id: calendarSelect.id,
     })
       .then((response) => {
         setLoading(false);
@@ -635,7 +662,7 @@ const CalculatePayroll = ({ ...props }) => {
           title: "Timbrado de nómina",
           title_message: "Timbrado de nómina exitoso",
           description:
-            "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
+            "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales y enviarlos.",
           type_alert: "success",
           action: () => {
             router.push({
@@ -647,12 +674,127 @@ const CalculatePayroll = ({ ...props }) => {
             });
           },
           title_action_button: "Ver comprobantes",
+          viewActionButton: false,
+        });
+        setGenericModal(true);
+        break;
+      case 5:
+        setInfoGenericModal({
+          title: data.title,
+          title_message: data.title_message,
+          description: data.description,
+          type_alert: data.type_alert,
+          action: data.action,
+          title_action_button: data.title_action_button,
+          viewActionButton: data.viewActionButton,
+          components: data.components,
         });
         setGenericModal(true);
         break;
     }
 
     return;
+  };
+
+  useEffect(() => {
+    if (calendarSelect) {
+      const filter = {
+        payment_period: periodSelected,
+      };
+
+      if (department) filter.department = department;
+      if (job) filter.job = job;
+      sendCalculatePayroll(filter);
+    }
+  }, [department, job]);
+
+  const rowSelectionPerson = {
+    selectedRowKeys: personsKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log("Select Row Keys-->> ", selectedRowKeys);
+      if (selectedRowKeys.length > 0) setPartial(true);
+      else setPartial(false);
+      setPersonsKeys(selectedRowKeys);
+      setPersonsStamp(selectedRows);
+    },
+  };
+
+  const openPayroll = (type) => {
+    setLoading(true);
+    const inputMotive = document.getElementById("motive");
+    if (inputMotive.value != null && inputMotive.value != "") {
+      switch (type) {
+        case 1:
+          setGenericModal(false);
+          WebApiPayroll.openConsolidationPayroll({
+            payment_period: periodSelected,
+            opening_reason: inputMotive.value,
+          })
+            .then((response) => {
+              message.success(messageUpdateSuccess);
+              sendCalculatePayroll({ payment_period: periodSelected });
+            })
+            .catch((error) => {
+              setLoading(false);
+              message.error(messageError);
+            });
+          break;
+
+        default:
+          break;
+      }
+    } else {
+      message.warning("Motivo requerido");
+    }
+  };
+
+  const validateStep = (data) => {
+    setIsOpen(data.is_open);
+
+    if (data.status == 1 && data.is_open) {
+      setStep(1), setPreviuosStep(true), setNextStep(false);
+      return;
+    }
+    if (data.status == 1 && !data.is_open) {
+      setStep(2), setPreviuosStep(false), setNextStep(false);
+      return;
+    }
+    //   ? (setStep(2), setPreviuosStep(true), setNextStep(true))
+    //   : data && data.status == 2
+    //   ? (setStep(2), setNextStep(false))
+    //   : data && data.status == 3
+    //   ? setStep(3)
+    //   : setStep(0);
+  };
+
+  const changeStep = (next_prev) => {
+    console.log("STEP VALUE-->> ", next_prev);
+    if (next_prev) {
+      if (step == 0) {
+        setStep(step + 1);
+        setPreviuosStep(true);
+        if (isOpen) setNextStep(false);
+      }
+      if (step == 1) {
+        setStep(step + 1);
+        if (!isOpen) setPreviuosStep(false);
+      }
+      if (step == 2) {
+        setStep(step + 1);
+        if (!isOpen) setPreviuosStep(false);
+      }
+    } else {
+      if (step == 1) {
+        setStep(step - 1);
+        setPreviuosStep(false);
+        if (!nextStep) setNextStep(true);
+      }
+      if (step == 2) {
+        setStep(step - 1);
+        setPreviuosStep(false);
+        if (!nextStep) setNextStep(true);
+      }
+    }
   };
 
   return (
@@ -735,6 +877,12 @@ const CalculatePayroll = ({ ...props }) => {
                         <Select
                           placeholder="Periodo"
                           size="large"
+                          onChange={(value) => {
+                            sendCalculatePayroll({
+                              payment_period: value,
+                            }),
+                              setPeriodSelcted(value);
+                          }}
                           options={
                             calendarSelect
                               ? calendarSelect.periods
@@ -771,6 +919,26 @@ const CalculatePayroll = ({ ...props }) => {
                         />
                       </Form.Item>
                     </Col>
+                    <Col xxs={24} xl={4}>
+                      <SelectDepartment
+                        size={"large"}
+                        onChange={(value) =>
+                          value && value != undefined
+                            ? setDepartment(value)
+                            : setDepartment(null)
+                        }
+                      />
+                    </Col>
+                    <Col xxs={24} xl={4}>
+                      <SelectJob
+                        size={"large"}
+                        onChange={(value) =>
+                          value && value != undefined
+                            ? setJob(value)
+                            : setJob(null)
+                        }
+                      />
+                    </Col>
                   </Row>
                 </Form>
               </Card>
@@ -785,17 +953,20 @@ const CalculatePayroll = ({ ...props }) => {
             </Steps>
             <div
               style={{
-                // marginTop: "8px",
-                // paddingTop: "40px",
-                textAlign: "center",
                 backgroundColor: "#fafafa",
                 border: "1px dashed #e9e9e9",
                 borderRadius: "2px",
               }}
             >
               {payroll.length > 0 && !genericModal && (
-                <>
-                  {consolidated && (
+                <Row
+                  justify="end"
+                  style={{
+                    textAlign: "center",
+                    padding: "20px",
+                  }}
+                >
+                  {step == 1 && !isOpen && (
                     <Col md={5}>
                       <Button
                         size="large"
@@ -815,43 +986,106 @@ const CalculatePayroll = ({ ...props }) => {
                       </Button>
                     </Col>
                   )}
-                  <Col md={5}>
-                    <Button
-                      size="large"
-                      block
-                      htmlType="button"
-                      onClick={() =>
-                        calculate
-                          ? reCalculatePayroll([...payroll])
-                          : consolidated
-                          ? setMessageModal(3)
-                          : setMessageModal(2)
-                      }
-                    >
-                      {calculate
-                        ? "Calcular"
-                        : consolidated
-                        ? "Timbrar nómina"
-                        : "Cerrar nómina"}
-                    </Button>
-                  </Col>
-                </>
+                  {step == 0 && calculate && (
+                    <Col md={5}>
+                      <Button
+                        size="large"
+                        block
+                        htmlType="button"
+                        onClick={() => reCalculatePayroll([...payroll])}
+                      >
+                        Calcular
+                      </Button>
+                    </Col>
+                  )}
+                  {!isOpen && step == 2 && (
+                    <Col md={5}>
+                      <Button
+                        size="large"
+                        block
+                        htmlType="button"
+                        onClick={() =>
+                          setMessageModal(5, {
+                            title: "Abrir nómina",
+                            description:
+                              "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                            type_alert: "warning",
+                            action: () => openPayroll(1),
+                            title_action_button: "Abrir nómina",
+                            components: (
+                              <>
+                                <Row
+                                  style={{ width: "100%", marginTop: "5px" }}
+                                >
+                                  <Input.TextArea
+                                    id="motive"
+                                    placeholder="Capture el motivo de reapertura."
+                                  />
+                                </Row>
+                              </>
+                            ),
+                          })
+                        }
+                      >
+                        Abrir
+                      </Button>
+                    </Col>
+                  )}
+                  {step >= 1 && step < 3 && (
+                    <>
+                      <Col md={5}>
+                        <Button
+                          size="large"
+                          block
+                          htmlType="button"
+                          // onClick={() => setMessageModal(2)}
+                        >
+                          Descargar nómina
+                        </Button>
+                      </Col>
+                      {isOpen && (
+                        <Col md={5}>
+                          <Button
+                            size="large"
+                            block
+                            htmlType="button"
+                            onClick={() => setMessageModal(2)}
+                          >
+                            Cerrar nómina
+                          </Button>
+                        </Col>
+                      )}
+                      {!isOpen && step == 2 && (
+                        <Col md={5}>
+                          <Button
+                            size="large"
+                            block
+                            htmlType="button"
+                            onClick={() => setMessageModal(3)}
+                          >
+                            Timbrar nómina
+                          </Button>
+                        </Col>
+                      )}
+                    </>
+                  )}
+                </Row>
               )}
             </div>
-            {step < 3 && (
+            {previousStep && (
               <Button
                 style={{ margin: "8px" }}
-                onClick={() => setStep(step + 1)}
-              >
-                Siguiente
-              </Button>
-            )}
-            {step > 0 && (
-              <Button
-                style={{ margin: "8px" }}
-                onClick={() => setStep(step - 1)}
+                onClick={() => changeStep(false)}
               >
                 Previo
+              </Button>
+            )}
+            {nextStep && (
+              <Button
+                style={{ margin: "8px" }}
+                onClick={() => changeStep(true)}
+              >
+                Siguiente
               </Button>
             )}
           </div>
@@ -864,22 +1098,34 @@ const CalculatePayroll = ({ ...props }) => {
                 <>
                   <Table
                     className="headers_transparent"
-                    dataSource={payroll.length > 0 ? payroll : []}
+                    dataSource={
+                      payroll.length > 0
+                        ? payroll.map((item) => {
+                            item.key = item.person.id;
+                            return item;
+                          })
+                        : []
+                    }
                     columns={persons}
                     expandable={{
                       expandedRowRender: (item) => renderConceptsTable(item),
-                      onExpand: (expanded, item) => rowExpand(expanded, item),
-                      expandIconAsCell: false,
-                      expandedRowKeys: [expandRow],
-                      expandIcon: ({ expanded, onExpand, item }) =>
+                      expandIcon: ({ expanded, onExpand, record }) =>
                         expanded ? (
-                          <DownOutlined onClick={(e) => onExpand(item, e)} />
+                          <DownOutlined onClick={(e) => onExpand(record, e)} />
                         ) : (
-                          <RightOutlined onClick={(e) => onExpand(item, e)} />
+                          <RightOutlined onClick={(e) => onExpand(record, e)} />
                         ),
                     }}
                     hideExpandIcon
-                    locale={{ emptyText: "No se encontraron resultados" }}
+                    loading={loading}
+                    locale={{
+                      emptyText: loading
+                        ? "Cargando..."
+                        : "No se encontraron resultados.",
+                    }}
+                    rowSelection={
+                      consolidated && !isOpen ? rowSelectionPerson : null
+                    }
                   />
                   {totalSalary != null && totalIsr != null ? (
                     <Col sm={24} md={24} lg={24}>
@@ -932,20 +1178,22 @@ const CalculatePayroll = ({ ...props }) => {
           visible={genericModal}
           setVisible={setGenericModal}
           title={infoGenericModal.title}
-          content={
-            <Row>
-              <Alert
-                style={{ width: "100%" }}
-                message={infoGenericModal.title_message}
-                description={infoGenericModal.description}
-                type={infoGenericModal.type_alert}
-                showIcon
-              />
-            </Row>
-          }
+          viewActionButton={infoGenericModal.viewActionButton}
           actionButton={infoGenericModal.action}
           titleActionButton={infoGenericModal.title_action_button}
-        />
+        >
+          {motive}
+          <Row>
+            <Alert
+              style={{ width: "100%" }}
+              message={infoGenericModal.title_message}
+              description={infoGenericModal.description}
+              type={infoGenericModal.type_alert}
+              showIcon
+            />
+            {infoGenericModal.components && infoGenericModal.components}
+          </Row>
+        </GenericModal>
       )}
     </>
   );

@@ -165,6 +165,14 @@ class WebApiPayroll {
       data
     );
   }
+
+  static openConsolidationPayroll(data) {
+    return WebApi.ApisType(
+      `payroll/consolidated_payroll/open_consolidation/`,
+      "post",
+      data
+    );
+  }
 }
 
 export default WebApiPayroll;
