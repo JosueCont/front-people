@@ -238,11 +238,56 @@ const AssessmentScreen = ({
     );
   };
 
+  useEffect(() => {
+    console.log('testsSelected',testsSelected);
+  }, [testsSelected])
+  
+
   const rowSelectionGroup = {
     selectedRowKeys: testsKeys,
-    onChange: (selectedRowKeys, selectedRows) => {
-      setTestsKeys(selectedRowKeys);
-      setTestsSelected(selectedRows);
+    onChange:  (selectedRowKeys, selectedRows) => {
+
+      //Los elementos de la pagina actual
+      let currentList = filterActive ? filterValues : assessments;
+      let temp1 = [...testsKeys];
+      let temp2 = [...testsSelected];
+
+      /* Remover los actuales para volver a setearlos */
+        currentList.map(item => {
+          let idx = temp1.findIndex(element => element === item.id)
+          if(idx > -1){
+            temp1.splice(idx,1);
+          }
+
+          let idz = temp2.findIndex(element => element.id === item.id)
+          if(idz > -1){
+            temp2.splice(idz,1);
+          }
+        })
+
+
+
+        //Recorremos la seleccion actual y la seteamos a la seleccio1n global (solo keys)
+        selectedRowKeys.map(item =>{
+          let idx = temp1.findIndex(element => element === item);
+          if (idx < 0){
+            temp1.push(item)
+          }
+        }); 
+        setTestsKeys(temp1);
+        /* setCurrentKeys(selectedRowKeys); */
+        
+
+        //Recorremos la selección actual de objetos
+        selectedRows.map(item => {
+          let idz = temp2.findIndex(element => element.id === item.id);
+          if(idz < 0){
+            temp2.push(item)
+            /* setTestsSelected([...testsSelected, item]) */
+          }
+        })
+        setTestsSelected(temp2);
+        /* setCurrentSelected(selectedRows); */
     },
   };
 
