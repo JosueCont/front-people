@@ -6,6 +6,7 @@ const SelectDepartment = ({
   disabled,
   viewLabel = true,
   rules = [],
+  size = "middle",
   ...props
 }) => {
   const [options, setOptions] = useState([]);
@@ -38,6 +39,7 @@ const SelectDepartment = ({
           disabled={disabled}
           key="SelectDepartament"
           // options={options}
+          size={size}
           placeholder="Departamento"
           allowClear
           style={props.style ? props.style : {}}
