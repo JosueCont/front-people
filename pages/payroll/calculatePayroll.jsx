@@ -104,24 +104,6 @@ const CalculatePayroll = ({ ...props }) => {
     if (props.currentNode) getPaymentCalendars(props.currentNode.id);
   }, [props.currentNode]);
 
-  const reCalculatePayroll = (data) => {
-    data.map((item) => {
-      item.person_id = item.person.id;
-      delete item["person"];
-      return item;
-    });
-    data.map((item) => {
-      item.deductions = item.deductions.filter(
-        (a) => a.type !== "001" && a.type !== "002"
-      );
-    });
-    sendCalculatePayroll({
-      node: props.currentNode.id,
-      period: form.getFieldValue("year"),
-      payroll: data,
-    });
-  };
-
   const persons = [
     {
       title: "Nombre",
@@ -199,14 +181,6 @@ const CalculatePayroll = ({ ...props }) => {
       ),
     },
   ];
-
-  const rowExpand = (expanded, row) => {
-    if (!expanded) {
-      setExpandRow(false);
-    } else {
-      setExpandRow(row);
-    }
-  };
 
   const renderConceptsTable = (item) => {
     let dataPerceptions = item.perceptions;
@@ -506,9 +480,13 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const sendCalculatePayroll = async (dataToSend) => {
+    setPayroll([]);
     setLoading(true);
     setModalVisible(false);
     setPersonId(null);
+    setTotalSalary(null);
+    setTotalIsr(null);
+    setConsolidated(null);
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
         setLoading(false);
@@ -519,8 +497,7 @@ const CalculatePayroll = ({ ...props }) => {
         setCalculate(false);
         setTotalSalary(response.data.total_salary);
         setTotalIsr(response.data.total_isr);
-        if (response.data.consolidated)
-          validateStep(response.data.consolidated);
+        validatedStatusPayroll(response.data.consolidated);
       })
       .catch((error) => {
         setCalculate(false);
@@ -529,6 +506,23 @@ const CalculatePayroll = ({ ...props }) => {
         form.resetFields();
         setLoading(false);
       });
+  };
+
+  const reCalculatePayroll = (data) => {
+    data.map((item) => {
+      item.person_id = item.person.id;
+      delete item["person"];
+      return item;
+    });
+    data.map((item) => {
+      item.deductions = item.deductions.filter(
+        (a) => a.type !== "001" && a.type !== "002"
+      );
+    });
+    sendCalculatePayroll({
+      payment_period: periodSelected,
+      payroll: data,
+    });
   };
 
   const sendClosePayroll = () => {
@@ -557,21 +551,19 @@ const CalculatePayroll = ({ ...props }) => {
       });
   };
 
-  const stampPayroll = () => {
+  const stampPayroll = (
+    data = {
+      payment_period: periodSelected,
+    }
+  ) => {
     setGenericModal(false);
     setLoading(true);
-    WebApiPayroll.stampPayroll({
-      payment_calendar_id: calendarSelect.id,
-    })
+    WebApiPayroll.stampPayroll(data)
       .then((response) => {
         setLoading(false);
         setMessageModal(4);
-        form.resetFields();
-        setTotalSalary(null);
-        setTotalIsr(null);
-        setPayroll([]);
         message.success(messageSendSuccess);
-        getPaymentCalendars(props.currentNode.id);
+        sendCalculatePayroll({ payment_period: periodSelected });
       })
       .catch(async (error) => {
         console.log(error);
@@ -580,7 +572,7 @@ const CalculatePayroll = ({ ...props }) => {
           error.response.data &&
           error.response.data.message
         ) {
-          await setMessageModal(1, error.response.data.message);
+          setMessageModal(1, error.response.data.message);
           setGenericModal(true);
         } else message.error(messageError);
         setLoading(false);
@@ -717,6 +709,10 @@ const CalculatePayroll = ({ ...props }) => {
       setPersonsKeys(selectedRowKeys);
       setPersonsStamp(selectedRows);
     },
+    getCheckboxProps: (record) => ({
+      disabled:
+        record.payroll_cfdi_person && record.payroll_cfdi_person.status == 2,
+    }),
   };
 
   const openPayroll = (type) => {
@@ -748,7 +744,11 @@ const CalculatePayroll = ({ ...props }) => {
     }
   };
 
-  const validateStep = (data) => {
+  const validatedStatusPayroll = (data) => {
+    if (data == null) {
+      setStep(0), setPreviuosStep(false), setNextStep(true);
+      return;
+    }
     setIsOpen(data.is_open);
 
     if (data.status == 1 && data.is_open) {
@@ -759,16 +759,13 @@ const CalculatePayroll = ({ ...props }) => {
       setStep(2), setPreviuosStep(false), setNextStep(false);
       return;
     }
-    //   ? (setStep(2), setPreviuosStep(true), setNextStep(true))
-    //   : data && data.status == 2
-    //   ? (setStep(2), setNextStep(false))
-    //   : data && data.status == 3
-    //   ? setStep(3)
-    //   : setStep(0);
+    if (data.status == 3 && !data.is_open) {
+      setStep(3), setPreviuosStep(true), setNextStep(false);
+      return;
+    }
   };
 
   const changeStep = (next_prev) => {
-    console.log("STEP VALUE-->> ", next_prev);
     if (next_prev) {
       if (step == 0) {
         setStep(step + 1);
@@ -794,7 +791,24 @@ const CalculatePayroll = ({ ...props }) => {
         setPreviuosStep(false);
         if (!nextStep) setNextStep(true);
       }
+      if (step == 3) {
+        setStep(step - 1);
+        setPreviuosStep(false);
+        if (!nextStep) setNextStep(true);
+      }
     }
+  };
+
+  const partialStamp = () => {
+    console.log(personStamp);
+    const cfdis = personStamp.map((item) => {
+      return item.payroll_cfdi_person.id;
+    });
+    stampPayroll({
+      payment_period: periodSelected,
+      array_cfdi: cfdis,
+      is_partial: true,
+    });
   };
 
   return (
@@ -998,40 +1012,46 @@ const CalculatePayroll = ({ ...props }) => {
                       </Button>
                     </Col>
                   )}
-                  {!isOpen && step == 2 && (
-                    <Col md={5}>
-                      <Button
-                        size="large"
-                        block
-                        htmlType="button"
-                        onClick={() =>
-                          setMessageModal(5, {
-                            title: "Abrir nómina",
-                            description:
-                              "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
-                            type_alert: "warning",
-                            action: () => openPayroll(1),
-                            title_action_button: "Abrir nómina",
-                            components: (
-                              <>
-                                <Row
-                                  style={{ width: "100%", marginTop: "5px" }}
-                                >
-                                  <Input.TextArea
-                                    id="motive"
-                                    placeholder="Capture el motivo de reapertura."
-                                  />
-                                </Row>
-                              </>
-                            ),
-                          })
-                        }
-                      >
-                        Abrir
-                      </Button>
-                    </Col>
-                  )}
-                  {step >= 1 && step < 3 && (
+                  {!isOpen &&
+                    step == 2 &&
+                    consolidated &&
+                    consolidated.status <= 1 && (
+                      <Col md={5}>
+                        <Button
+                          size="large"
+                          block
+                          htmlType="button"
+                          onClick={() =>
+                            setMessageModal(5, {
+                              title: "Abrir nómina",
+                              description:
+                                "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                              type_alert: "warning",
+                              action: () => openPayroll(1),
+                              title_action_button: "Abrir nómina",
+                              components: (
+                                <>
+                                  <Row
+                                    style={{
+                                      width: "100%",
+                                      marginTop: "5px",
+                                    }}
+                                  >
+                                    <Input.TextArea
+                                      id="motive"
+                                      placeholder="Capture el motivo de reapertura."
+                                    />
+                                  </Row>
+                                </>
+                              ),
+                            })
+                          }
+                        >
+                          Abrir
+                        </Button>
+                      </Col>
+                    )}
+                  {step >= 1 && (
                     <>
                       <Col md={5}>
                         <Button
@@ -1055,18 +1075,23 @@ const CalculatePayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-                      {!isOpen && step == 2 && (
-                        <Col md={5}>
-                          <Button
-                            size="large"
-                            block
-                            htmlType="button"
-                            onClick={() => setMessageModal(3)}
-                          >
-                            Timbrar nómina
-                          </Button>
-                        </Col>
-                      )}
+                      {!isOpen &&
+                        step == 2 &&
+                        consolidated &&
+                        consolidated.status < 3 && (
+                          <Col md={5}>
+                            <Button
+                              size="large"
+                              block
+                              htmlType="button"
+                              onClick={() =>
+                                partial ? partialStamp() : setMessageModal(3)
+                              }
+                            >
+                              Timbrar nómina
+                            </Button>
+                          </Col>
+                        )}
                     </>
                   )}
                 </Row>
@@ -1093,19 +1118,19 @@ const CalculatePayroll = ({ ...props }) => {
           <Col span={24}>
             <Card className="card_table">
               {step == 3 ? (
-                <CfdiVaucher viewFilter={false} />
+                <CfdiVaucher
+                  calendar={calendarSelect.id}
+                  period={periodSelected}
+                  viewFilter={false}
+                />
               ) : (
                 <>
                   <Table
                     className="headers_transparent"
-                    dataSource={
-                      payroll.length > 0
-                        ? payroll.map((item) => {
-                            item.key = item.person.id;
-                            return item;
-                          })
-                        : []
-                    }
+                    dataSource={payroll.map((item) => {
+                      item.key = item.person.id;
+                      return item;
+                    })}
                     columns={persons}
                     expandable={{
                       expandedRowRender: (item) => renderConceptsTable(item),
@@ -1124,7 +1149,9 @@ const CalculatePayroll = ({ ...props }) => {
                         : "No se encontraron resultados.",
                     }}
                     rowSelection={
-                      consolidated && !isOpen ? rowSelectionPerson : null
+                      consolidated && step == 2 && consolidated.status < 3
+                        ? rowSelectionPerson
+                        : null
                     }
                   />
                   {totalSalary != null && totalIsr != null ? (
