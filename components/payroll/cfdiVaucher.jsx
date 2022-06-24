@@ -156,6 +156,7 @@ const CfdiVaucher = ({
   };
 
   const getVoucher = (data) => {
+    setLoading(true);
     setCfdis([]);
     WebApiPayroll.getCfdiPayrrol(data)
       .then((response) => {
