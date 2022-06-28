@@ -7,6 +7,7 @@ import {
   CalendarOutlined,
   PlusCircleOutlined,
   EyeOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../../libs/auth";
 import { Global } from "@emotion/core";
@@ -14,7 +15,6 @@ import FormPaymentCalendar from "../../../components/payroll/forms/FormPaymentCa
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { connect } from "react-redux";
 import { DeleteOutline } from "@material-ui/icons";
-import WebApi from "../../../api/webApi";
 import { messageDeleteSuccess, messageError } from "../../../utils/constant";
 
 const PaymentCalendars = ({ ...props }) => {
@@ -195,13 +195,20 @@ const PaymentCalendars = ({ ...props }) => {
                         style={{ color: "#fd893d" }}
                       />
                     ) : (
-                      <EditOutlined
-                        className="icon_actions"
-                        key={"goEdit" + record.id}
-                        onClick={() => GotoEdit(record)}
-                        style={{ color: "#fd893d" }}
-                      />
+                      <>
+                        <EditOutlined
+                          className="icon_actions"
+                          key={"goEdit" + record.id}
+                          onClick={() => GotoEdit(record)}
+                          style={{ color: "#fd893d" }}
+                        />
+                        {/* <UsergroupAddOutlined
+                          className="icon_actions"
+                          key={"goCalendar" + record.id}
+                        /> */}
+                      </>
                     )}
+
                     <CalendarOutlined
                       className="icon_actions"
                       key={"goCalendar" + record.id}
