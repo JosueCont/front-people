@@ -1035,266 +1035,283 @@ const CalculatePayroll = ({ ...props }) => {
               </Card>
             </Col>
           </Row>
-          <div style={{ marginTop: "10px" }}>
-            <Steps current={step}>
-              <Steps.Step title="Calcular" description="Calculo de nomina." />
-              <Steps.Step title="Cerrar" description="Cierre de nomina." />
-              <Steps.Step title="Timbrar" description="Timbre fiscal." />
-              <Steps.Step title="Comprobantes" description="XML y PDF." />
-            </Steps>
-            <div
-              style={{
-                backgroundColor: "#fafafa",
-                border: "1px dashed #e9e9e9",
-                borderRadius: "2px",
-              }}
-            >
-              {payroll.length > 0 && !genericModal && (
-                <Row
-                  justify="end"
+          {calendarSelect && (
+            <>
+              <div style={{ marginTop: "10px" }}>
+                <Steps current={step}>
+                  <Steps.Step
+                    title="Calcular"
+                    description="Calculo de nomina."
+                  />
+                  <Steps.Step title="Cerrar" description="Cierre de nomina." />
+                  <Steps.Step title="Timbrar" description="Timbre fiscal." />
+                  <Steps.Step title="Comprobantes" description="XML y PDF." />
+                </Steps>
+                <div
                   style={{
-                    textAlign: "center",
-                    padding: "20px",
+                    backgroundColor: "#fafafa",
+                    border: "1px dashed #e9e9e9",
+                    borderRadius: "2px",
                   }}
                 >
-                  {step == 1 && !isOpen && (
-                    <Col md={5}>
-                      <Button
-                        size="large"
-                        block
-                        htmlType="button"
-                        onClick={() =>
-                          downLoadFileBlob(
-                            `${getDomain(
-                              API_URL_TENANT
-                            )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
-                            "hoja_rayas.xlsx",
-                            "GET"
-                          )
-                        }
-                      >
-                        Descargar hoja de raya
-                      </Button>
-                    </Col>
-                  )}
-                  {step == 0 && calculate && (
-                    <Col md={5}>
-                      <Button
-                        size="large"
-                        block
-                        htmlType="button"
-                        onClick={() => reCalculatePayroll([...payroll])}
-                      >
-                        Calcular
-                      </Button>
-                    </Col>
-                  )}
-                  {!isOpen &&
-                    step == 2 &&
-                    consolidated &&
-                    consolidated.status <= 1 && (
-                      <Col md={5}>
+                  {payroll.length > 0 && !genericModal && (
+                    <Row
+                      justify="end"
+                      style={{
+                        textAlign: "center",
+                        padding: "20px",
+                      }}
+                    >
+                      <Col md={5} offset={1}>
                         <Button
                           size="large"
                           block
                           htmlType="button"
                           onClick={() =>
-                            setMessageModal(5, {
-                              title: "Abrir nómina",
-                              description:
-                                "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
-                              type_alert: "warning",
-                              action: () => openPayroll(1),
-                              title_action_button: "Abrir nómina",
-                              components: (
-                                <>
-                                  <Row
-                                    style={{
-                                      width: "100%",
-                                      marginTop: "5px",
-                                    }}
-                                  >
-                                    <Input.TextArea
-                                      id="motive"
-                                      placeholder="Capture el motivo de reapertura."
-                                    />
-                                  </Row>
-                                </>
-                              ),
-                            })
+                            downLoadFileBlob(
+                              `${getDomain(
+                                API_URL_TENANT
+                              )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
+                              "hoja_rayas.xlsx",
+                              "GET"
+                            )
                           }
                         >
-                          Abrir
+                          Descargar hoja de raya
                         </Button>
                       </Col>
-                    )}
-                  {step >= 1 && (
+                      {step == 0 && calculate && (
+                        <Col md={5} offset={1}>
+                          <Button
+                            size="large"
+                            block
+                            htmlType="button"
+                            onClick={() => reCalculatePayroll([...payroll])}
+                          >
+                            Calcular
+                          </Button>
+                        </Col>
+                      )}
+                      {!isOpen &&
+                        step == 2 &&
+                        consolidated &&
+                        consolidated.status <= 1 && (
+                          <Col md={5} offset={1}>
+                            <Button
+                              size="large"
+                              block
+                              htmlType="button"
+                              onClick={() =>
+                                setMessageModal(5, {
+                                  title: "Abrir nómina",
+                                  description:
+                                    "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                                  type_alert: "warning",
+                                  action: () => openPayroll(1),
+                                  title_action_button: "Abrir nómina",
+                                  components: (
+                                    <>
+                                      <Row
+                                        style={{
+                                          width: "100%",
+                                          marginTop: "5px",
+                                        }}
+                                      >
+                                        <Input.TextArea
+                                          id="motive"
+                                          placeholder="Capture el motivo de reapertura."
+                                        />
+                                      </Row>
+                                    </>
+                                  ),
+                                })
+                              }
+                            >
+                              Abrir
+                            </Button>
+                          </Col>
+                        )}
+                      {step >= 1 && (
+                        <>
+                          <Col md={5} offset={1}>
+                            <Button
+                              size="large"
+                              block
+                              htmlType="button"
+                              // onClick={() => setMessageModal(2)}
+                            >
+                              Descargar nómina
+                            </Button>
+                          </Col>
+                          {isOpen && !consolidated && (
+                            <Col md={5} offset={1}>
+                              <Button
+                                size="large"
+                                block
+                                htmlType="button"
+                                onClick={() => setMessageModal(2)}
+                              >
+                                Cerrar nómina
+                              </Button>
+                            </Col>
+                          )}
+                          {step == 2 &&
+                            consolidated &&
+                            consolidated.status < 3 && (
+                              <Col md={5} offset={1}>
+                                <Button
+                                  size="large"
+                                  block
+                                  htmlType="button"
+                                  onClick={() =>
+                                    partial
+                                      ? partialStamp()
+                                      : setMessageModal(3)
+                                  }
+                                >
+                                  Timbrar nómina
+                                </Button>
+                              </Col>
+                            )}
+                          {step == 3 && (
+                            <Col md={5} offset={1}>
+                              <Button
+                                size="large"
+                                block
+                                htmlType="button"
+                                onClick={() =>
+                                  setMessageModal(5, {
+                                    title: "Cancelar nómina",
+                                    description:
+                                      "Al cancelar nómina se debera iniciar el proceso de cierre de nomina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
+                                    type_alert: "warning",
+                                    action: () => cancelStamp(),
+                                    title_action_button: "Cancelar nómina",
+                                    components: (
+                                      <>
+                                        <Row
+                                          style={{
+                                            width: "100%",
+                                            marginTop: "5px",
+                                          }}
+                                        >
+                                          <Input.TextArea
+                                            id="motive"
+                                            placeholder="Capture el motivo de cancelacion."
+                                          />
+                                        </Row>
+                                      </>
+                                    ),
+                                  })
+                                }
+                              >
+                                Cancelar todos los cfdis
+                              </Button>
+                            </Col>
+                          )}
+                        </>
+                      )}
+                    </Row>
+                  )}
+                </div>
+                {previousStep && (
+                  <Button
+                    style={{ margin: "8px" }}
+                    onClick={() => changeStep(false)}
+                  >
+                    Previo
+                  </Button>
+                )}
+                {nextStep && (
+                  <Button
+                    style={{ margin: "8px" }}
+                    onClick={() => changeStep(true)}
+                  >
+                    Siguiente
+                  </Button>
+                )}
+              </div>
+
+              <Col span={24}>
+                <Card className="card_table">
+                  {step == 3 ? (
+                    <CfdiVaucher
+                      calendar={calendarSelect.id}
+                      period={periodSelected}
+                      viewFilter={false}
+                      setKeys={setCfdiCancel}
+                      clickCancelStamp={cancelOneStamp}
+                    />
+                  ) : (
                     <>
-                      <Col md={5}>
-                        <Button
-                          size="large"
-                          block
-                          htmlType="button"
-                          // onClick={() => setMessageModal(2)}
-                        >
-                          Descargar nómina
-                        </Button>
-                      </Col>
-                      {isOpen && !consolidated && (
-                        <Col md={5}>
-                          <Button
-                            size="large"
-                            block
-                            htmlType="button"
-                            onClick={() => setMessageModal(2)}
-                          >
-                            Cerrar nómina
-                          </Button>
+                      <Table
+                        className="headers_transparent"
+                        dataSource={payroll.map((item) => {
+                          item.key = item.person.id;
+                          return item;
+                        })}
+                        columns={persons}
+                        expandable={{
+                          expandedRowRender: (item) =>
+                            renderConceptsTable(item),
+                          expandIcon: ({ expanded, onExpand, record }) =>
+                            expanded ? (
+                              <DownOutlined
+                                onClick={(e) => onExpand(record, e)}
+                              />
+                            ) : (
+                              <RightOutlined
+                                onClick={(e) => onExpand(record, e)}
+                              />
+                            ),
+                        }}
+                        hideExpandIcon
+                        loading={loading}
+                        locale={{
+                          emptyText: loading
+                            ? "Cargando..."
+                            : "No se encontraron resultados.",
+                        }}
+                        rowSelection={
+                          consolidated && step == 2 && consolidated.status < 3
+                            ? rowSelectionPerson
+                            : null
+                        }
+                      />
+                      {totalSalary != null && totalIsr != null ? (
+                        <Col sm={24} md={24} lg={24}>
+                          <Row justify="end">
+                            <Col span={4} style={{ fontWeight: "bold" }}>
+                              <div>Total de sueldos:</div>
+                              <div>Total de ISR:</div>
+                              <div>Total a pagar:</div>
+                            </Col>
+                            <Col span={3} style={{ fontWeight: "bold" }}>
+                              <div>
+                                <NumberFormat
+                                  prefix={"$"}
+                                  number={totalSalary}
+                                />
+                              </div>
+                              <div>
+                                <NumberFormat prefix={"$"} number={totalIsr} />
+                              </div>
+                              <div>
+                                <NumberFormat
+                                  prefix={"$"}
+                                  number={totalSalary - totalIsr}
+                                />
+                              </div>
+                            </Col>
+                          </Row>
                         </Col>
-                      )}
-                      {step == 2 && consolidated && consolidated.status < 3 && (
-                        <Col md={5}>
-                          <Button
-                            size="large"
-                            block
-                            htmlType="button"
-                            onClick={() =>
-                              partial ? partialStamp() : setMessageModal(3)
-                            }
-                          >
-                            Timbrar nómina
-                          </Button>
-                        </Col>
-                      )}
-                      {step == 3 && (
-                        <Col md={5}>
-                          <Button
-                            size="large"
-                            block
-                            htmlType="button"
-                            onClick={() =>
-                              setMessageModal(5, {
-                                title: "Cancelar nómina",
-                                description:
-                                  "Al cancelar nómina se debera iniciar el proceso de cierre de nomina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
-                                type_alert: "warning",
-                                action: () => cancelStamp(),
-                                title_action_button: "Cancelar nómina",
-                                components: (
-                                  <>
-                                    <Row
-                                      style={{
-                                        width: "100%",
-                                        marginTop: "5px",
-                                      }}
-                                    >
-                                      <Input.TextArea
-                                        id="motive"
-                                        placeholder="Capture el motivo de cancelacion."
-                                      />
-                                    </Row>
-                                  </>
-                                ),
-                              })
-                            }
-                          >
-                            Cancelar todos los cfdis
-                          </Button>
-                        </Col>
-                      )}
+                      ) : null}
                     </>
                   )}
-                </Row>
-              )}
-            </div>
-            {previousStep && (
-              <Button
-                style={{ margin: "8px" }}
-                onClick={() => changeStep(false)}
-              >
-                Previo
-              </Button>
-            )}
-            {nextStep && (
-              <Button
-                style={{ margin: "8px" }}
-                onClick={() => changeStep(true)}
-              >
-                Siguiente
-              </Button>
-            )}
-          </div>
-
-          <Col span={24}>
-            <Card className="card_table">
-              {step == 3 ? (
-                <CfdiVaucher
-                  calendar={calendarSelect.id}
-                  period={periodSelected}
-                  viewFilter={false}
-                  setKeys={setCfdiCancel}
-                  clickCancelStamp={cancelOneStamp}
-                />
-              ) : (
-                <>
-                  <Table
-                    className="headers_transparent"
-                    dataSource={payroll.map((item) => {
-                      item.key = item.person.id;
-                      return item;
-                    })}
-                    columns={persons}
-                    expandable={{
-                      expandedRowRender: (item) => renderConceptsTable(item),
-                      expandIcon: ({ expanded, onExpand, record }) =>
-                        expanded ? (
-                          <DownOutlined onClick={(e) => onExpand(record, e)} />
-                        ) : (
-                          <RightOutlined onClick={(e) => onExpand(record, e)} />
-                        ),
-                    }}
-                    hideExpandIcon
-                    loading={loading}
-                    locale={{
-                      emptyText: loading
-                        ? "Cargando..."
-                        : "No se encontraron resultados.",
-                    }}
-                    rowSelection={
-                      consolidated && step == 2 && consolidated.status < 3
-                        ? rowSelectionPerson
-                        : null
-                    }
-                  />
-                  {totalSalary != null && totalIsr != null ? (
-                    <Col sm={24} md={24} lg={24}>
-                      <Row justify="end">
-                        <Col span={4} style={{ fontWeight: "bold" }}>
-                          <div>Total de sueldos:</div>
-                          <div>Total de ISR:</div>
-                          <div>Total a pagar:</div>
-                        </Col>
-                        <Col span={3} style={{ fontWeight: "bold" }}>
-                          <div>
-                            <NumberFormat prefix={"$"} number={totalSalary} />
-                          </div>
-                          <div>
-                            <NumberFormat prefix={"$"} number={totalIsr} />
-                          </div>
-                          <div>
-                            <NumberFormat
-                              prefix={"$"}
-                              number={totalSalary - totalIsr}
-                            />
-                          </div>
-                        </Col>
-                      </Row>
-                    </Col>
-                  ) : null}
-                </>
-              )}
-            </Card>
-          </Col>
+                </Card>
+              </Col>
+            </>
+          )}
         </MainLayout>
       </Spin>
       {personId && (
