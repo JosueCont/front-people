@@ -106,13 +106,16 @@ const TableAssessments = ({
     }
   }
 
-  const getFieldDate = (item) =>{
-    let endDate = item.apply?.end_date;
-    let applyDate = item.apply?.apply_date;
-    let formatDate = 'DD/MM/YYYY hh:mm a';
-    return endDate ?
-      moment(endDate).format(formatDate) :
-      moment(applyDate).format(formatDate);
+  const getFieldDate = ({apply}, isObj) =>{
+    let endDate = apply.end_date ? apply.end_date : apply.apply_date;
+    let formatDate = 'DD/MM/YYYY';
+    let formatTime = 'hh:mm a';
+    let objDate = {
+      date: moment(endDate).format(formatDate),
+      time: moment(endDate).format(formatTime)
+    }
+    let stringDate = moment(endDate).format(`${formatDate} ${formatTime}`);
+    return isObj ? objDate : stringDate;
   }
 
   const getResults = async (item) => {
@@ -138,7 +141,7 @@ const TableAssessments = ({
       user_photo_url: user_profile.photo,
       company_id: user_profile.node,
       url: getCurrentURL(),
-      assessment_date: getFieldDate(item),
+      assessment_date: getFieldDate(item, true),
       assessment_results: getFieldResults(item,resp),
       assessment_xtras: { stage: 2 },
       profile_results: null
@@ -196,7 +199,7 @@ const TableAssessments = ({
               item.apply?.progress == 100 ||
               item.apply?.status == 2
             ) ? (
-              <span>{getFieldDate(item)}</span>
+              <span>{getFieldDate(item, false)}</span>
             ):(
               <span>Pendiente</span>
             )}
