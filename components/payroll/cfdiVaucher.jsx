@@ -3,8 +3,23 @@ import {
   FilePdfTwoTone,
   FileTextTwoTone,
   SearchOutlined,
+  StopOutlined,
+  EllipsisOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Form, message, Row, Select, Table, Tooltip } from "antd";
+import {
+  Alert,
+  Button,
+  Col,
+  Dropdown,
+  Form,
+  Input,
+  Menu,
+  message,
+  Row,
+  Select,
+  Table,
+  Tooltip,
+} from "antd";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import SelectPaymentCalendar from "../../components/selects/SelectPaymentCalendar";
@@ -15,11 +30,13 @@ import { useRouter } from "next/router";
 import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
 import SelectYear from "../../components/selects/SelectYear";
+import GenericModal from "../modal/genericModal";
 
 const CfdiVaucher = ({
   calendar = null,
   period = null,
   viewFilter = true,
+  setKeys,
   ...props
 }) => {
   const router = useRouter();
@@ -28,11 +45,13 @@ const CfdiVaucher = ({
   const [cfdis, setCfdis] = useState([]);
   const [periods, setPeriods] = useState([]);
   const [calendarSelect, setCalendarSelect] = useState(null);
+  const [personsKeys, setPersonsKeys] = useState([]);
+  const [genericModal, setGenericModal] = useState(false);
 
   const columns = [
     {
       title: "Num. trabajador",
-      key: "code",
+      key: "key",
       render: (item) => {
         return item.payroll_person.person.code;
       },
@@ -67,7 +86,26 @@ const CfdiVaucher = ({
       },
     },
     {
-      title: "Acciones",
+      // fixed: "right",
+      title: () => {
+        return (
+          <>
+            {!viewFilter && (
+              <Dropdown overlay={menuGeneric}>
+                <Button
+                  style={{
+                    background: "#434343",
+                    color: "#ffff",
+                  }}
+                  size="small"
+                >
+                  <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            )}
+          </>
+        );
+      },
       key: "actions",
       render: (item) => {
         return (
@@ -104,11 +142,40 @@ const CfdiVaucher = ({
                 </a>
               )
             )}
+            {!viewFilter && (
+              <Tooltip title="Cancelar" color={"#3d78b9"} key={"#3d78b9"}>
+                <Button
+                  type="primary"
+                  shape="round"
+                  icon={<StopOutlined />}
+                  size={"large"}
+                  onClick={() => {
+                    props.clickCancelStamp(item.id);
+                  }}
+                />
+              </Tooltip>
+            )}
           </>
         );
       },
     },
   ];
+
+  const menuGeneric = () => {
+    return (
+      <Menu>
+        {personsKeys.length > 0 && (
+          <Menu.Item
+            key="2"
+            onClick={() => props.clickCancelStamp(2)}
+            icon={<StopOutlined />}
+          >
+            Cancelar cfdis seleccionados
+          </Menu.Item>
+        )}
+      </Menu>
+    );
+  };
 
   useEffect(() => {
     if (calendar && period) {
@@ -160,7 +227,11 @@ const CfdiVaucher = ({
     setCfdis([]);
     WebApiPayroll.getCfdiPayrrol(data)
       .then((response) => {
-        setCfdis(response.data);
+        let cfdi_data = response.data.map((item) => {
+          item.key = item.id;
+          return item;
+        });
+        setCfdis(cfdi_data);
         setLoading(false);
       })
       .catch((error) => {
@@ -196,6 +267,15 @@ const CfdiVaucher = ({
       );
     }
   }, [calendarSelect, props.payment_calendar]);
+
+  const rowSelectionPerson = {
+    selectedRowKeys: personsKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setPersonsKeys(selectedRowKeys);
+      setCfdis(selectedRowKeys);
+    },
+  };
+
   return (
     <>
       <div className="container" style={{ width: "100%" }}>
@@ -293,10 +373,43 @@ const CfdiVaucher = ({
                   ? "Cargando..."
                   : "No se encontraron resultados.",
               }}
+              rowSelection={rowSelectionPerson}
             />
           </Col>
         </Row>
       </div>
+      {genericModal && (
+        <GenericModal
+          visible={genericModal}
+          setVisible={setGenericModal}
+          title={"Cancelar nómina"}
+          viewActionButton={true}
+          actionButton={cancelStamp}
+          titleActionButton={"Cancelar nómina"}
+        >
+          <Row>
+            <Alert
+              style={{ width: "100%" }}
+              description={
+                "Al cancelar nómina se debera iniciar el proceso de cierre de nomina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela."
+              }
+              type={"warning"}
+              showIcon
+            />
+            <Row
+              style={{
+                width: "100%",
+                marginTop: "5px",
+              }}
+            >
+              <Input.TextArea
+                id="motive"
+                placeholder="Capture el motivo de cancelacion."
+              />
+            </Row>
+          </Row>
+        </GenericModal>
+      )}
     </>
   );
 };
