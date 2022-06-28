@@ -30,11 +30,7 @@ import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import ModalConceptsPayroll from "../../components/payroll/modals/ModalConceptsPayroll";
 import { Global } from "@emotion/core";
-import {
-  arrayToSelect,
-  downLoadFileBlob,
-  getDomain,
-} from "../../utils/functions";
+import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { connect } from "react-redux";
 import {
   messageError,
@@ -48,7 +44,6 @@ import NumberFormat from "../../components/formatter/numberFormat";
 import CfdiVaucher from "../../components/payroll/cfdiVaucher";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
-import { useCallback } from "react";
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -78,8 +73,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [department, setDepartment] = useState(null);
   const [personsKeys, setPersonsKeys] = useState([]);
   const [personStamp, setPersonsStamp] = useState([]);
-  const [partial, setPartial] = useState(false);
-  const [motive, setMotive] = useState("");
+  const [cfdiCancel, setCfdiCancel] = useState([]);
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -704,8 +698,6 @@ const CalculatePayroll = ({ ...props }) => {
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       console.log("Select Row Keys-->> ", selectedRowKeys);
-      if (selectedRowKeys.length > 0) setPartial(true);
-      else setPartial(false);
       setPersonsKeys(selectedRowKeys);
       setPersonsStamp(selectedRows);
     },
@@ -716,9 +708,9 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const openPayroll = (type) => {
-    setLoading(true);
     const inputMotive = document.getElementById("motive");
     if (inputMotive.value != null && inputMotive.value != "") {
+      setLoading(true);
       switch (type) {
         case 1:
           setGenericModal(false);
@@ -740,6 +732,7 @@ const CalculatePayroll = ({ ...props }) => {
           break;
       }
     } else {
+      setLoading(false);
       message.warning("Motivo requerido");
     }
   };
@@ -751,15 +744,19 @@ const CalculatePayroll = ({ ...props }) => {
     }
     setIsOpen(data.is_open);
 
-    if (data.status == 1 && data.is_open) {
+    if (data.status === 1 && data.is_open) {
       setStep(1), setPreviuosStep(true), setNextStep(false);
       return;
     }
-    if (data.status == 1 && !data.is_open) {
+    if (data.status === 1 && !data.is_open) {
       setStep(2), setPreviuosStep(false), setNextStep(false);
       return;
     }
-    if (data.status == 3 && !data.is_open) {
+    if (data.status === 2 && data.is_open) {
+      setStep(2), setPreviuosStep(false), setNextStep(true);
+      return;
+    }
+    if (data.status === 3 && !data.is_open) {
       setStep(3), setPreviuosStep(true), setNextStep(false);
       return;
     }
@@ -767,6 +764,7 @@ const CalculatePayroll = ({ ...props }) => {
 
   const changeStep = (next_prev) => {
     if (next_prev) {
+      //next
       if (step == 0) {
         setStep(step + 1);
         setPreviuosStep(true);
@@ -779,8 +777,13 @@ const CalculatePayroll = ({ ...props }) => {
       if (step == 2) {
         setStep(step + 1);
         if (!isOpen) setPreviuosStep(false);
+        else if (isOpen) {
+          setPreviuosStep(true);
+          setNextStep(false);
+        }
       }
     } else {
+      //previous
       if (step == 1) {
         setStep(step - 1);
         setPreviuosStep(false);
@@ -807,7 +810,58 @@ const CalculatePayroll = ({ ...props }) => {
     stampPayroll({
       payment_period: periodSelected,
       array_cfdi: cfdis,
-      is_partial: true,
+    });
+  };
+
+  const cancelStamp = (type, id = null) => {
+    const inputMotive = document.getElementById("motive");
+    if (inputMotive.value != null && inputMotive.value != "") {
+      setLoading(true);
+      setGenericModal(false);
+      let data = {
+        motive: inputMotive.value,
+        payment_period: periodSelected,
+      };
+      if (cfdiCancel.length > 0 && type == 2) data.cfdis_id = cfdiCancel;
+      else if (type == 3) data.cfdis_id = [id];
+      WebApiPayroll.cancelCfdi(data)
+        .then((response) => {
+          message.success(messageUpdateSuccess);
+          sendCalculatePayroll({ payment_period: periodSelected });
+        })
+        .catch((error) => {
+          setLoading(false);
+          message.error(messageError);
+        });
+    } else {
+      setLoading(false);
+      message.warning("Motivo requerido");
+    }
+  };
+
+  const cancelOneStamp = (data) => {
+    setMessageModal(5, {
+      title: "Cancelar nómina",
+      description:
+        "Al cancelar se debera timbrar un nuevo cfdi. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
+      type_alert: "warning",
+      action: () => cancelStamp(3, data),
+      title_action_button: "Cancelar cfdi",
+      components: (
+        <>
+          <Row
+            style={{
+              width: "100%",
+              marginTop: "5px",
+            }}
+          >
+            <Input.TextArea
+              id="motive"
+              placeholder="Capture el motivo de cancelacion."
+            />
+          </Row>
+        </>
+      ),
     });
   };
 
@@ -876,83 +930,106 @@ const CalculatePayroll = ({ ...props }) => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col xxs={24} xl={4}>
-                      <Form.Item name="periodicity" label="Periocidad">
-                        <Input
-                          size="large"
-                          key="periodicity"
-                          placeholder="Periodicidad"
-                          disabled={true}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col xxs={24} xl={6}>
-                      <Form.Item name="period" label="Periodo">
-                        <Select
-                          placeholder="Periodo"
-                          size="large"
-                          onChange={(value) => {
-                            sendCalculatePayroll({
-                              payment_period: value,
-                            }),
-                              setPeriodSelcted(value);
-                          }}
-                          options={
-                            calendarSelect
-                              ? calendarSelect.periods
-                                  .sort((a, b) => a.name - b.name)
-                                  .map((item) => {
-                                    return {
-                                      value: item.id,
-                                      label: `${item.name}.- ${item.start_date} - ${item.end_date}`,
-                                      key: item.id,
-                                    };
-                                  })
-                              : []
-                          }
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col xxs={24} xl={6}>
-                      <Form.Item name="insidences" label="Fecha de incidencias">
-                        <Input
-                          size="large"
-                          key="insidence_period"
-                          placeholder="Período de incidencia"
-                          disabled={true}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col xxs={24} xl={4}>
-                      <Form.Item name="payment_day" label="Fecha de pago">
-                        <Input
-                          size="large"
-                          key="payment_day"
-                          placeholder="Dia de pago"
-                          disabled={true}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col xxs={24} xl={4}>
-                      <SelectDepartment
-                        size={"large"}
-                        onChange={(value) =>
-                          value && value != undefined
-                            ? setDepartment(value)
-                            : setDepartment(null)
-                        }
-                      />
-                    </Col>
-                    <Col xxs={24} xl={4}>
-                      <SelectJob
-                        size={"large"}
-                        onChange={(value) =>
-                          value && value != undefined
-                            ? setJob(value)
-                            : setJob(null)
-                        }
-                      />
-                    </Col>
+                    {periodSelected && (
+                      <>
+                        <Col xxs={24} xl={4}>
+                          <Form.Item name="periodicity" label="Periocidad">
+                            <Input
+                              size="large"
+                              key="periodicity"
+                              placeholder="Periodicidad"
+                              disabled={true}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col xxs={24} xl={6}>
+                          <Form.Item name="period" label="Periodo">
+                            <Select
+                              placeholder="Periodo"
+                              size="large"
+                              onChange={(value) => {
+                                sendCalculatePayroll({
+                                  payment_period: value,
+                                }),
+                                  setPeriodSelcted(value);
+                              }}
+                              options={
+                                calendarSelect
+                                  ? calendarSelect.periods
+                                      .sort((a, b) => a.name - b.name)
+                                      .map((item) => {
+                                        return {
+                                          value: item.id,
+                                          label: `${item.name}.- ${item.start_date} - ${item.end_date}`,
+                                          key: item.id,
+                                        };
+                                      })
+                                  : []
+                              }
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col xxs={24} xl={6}>
+                          <Form.Item
+                            name="insidences"
+                            label="Fecha de incidencias"
+                          >
+                            <Input
+                              size="large"
+                              key="insidence_period"
+                              placeholder="Período de incidencia"
+                              disabled={true}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col xxs={24} xl={4}>
+                          <Form.Item name="payment_day" label="Fecha de pago">
+                            <Input
+                              size="large"
+                              key="payment_day"
+                              placeholder="Dia de pago"
+                              disabled={true}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col xxs={24} xl={4}>
+                          <SelectDepartment
+                            size={"large"}
+                            onChange={(value) =>
+                              value && value != undefined
+                                ? setDepartment(value)
+                                : setDepartment(null)
+                            }
+                          />
+                        </Col>
+                        <Col xxs={24} xl={4}>
+                          <SelectJob
+                            size={"large"}
+                            onChange={(value) =>
+                              value && value != undefined
+                                ? setJob(value)
+                                : setJob(null)
+                            }
+                          />
+                        </Col>
+                        <Col xxs={24} xl={4}>
+                          <Button
+                            size="large"
+                            onClick={() =>
+                              downLoadFileBlob(
+                                `${getDomain(
+                                  API_URL_TENANT
+                                )}/payroll/payroll-calculus?payment_period=${periodSelected}`,
+                                "Nomina.xlsx",
+                                "GET"
+                              )
+                            }
+                          >
+                            Descargar plantilla
+                          </Button>
+                        </Col>
+                      </>
+                    )}
                   </Row>
                 </Form>
               </Card>
@@ -1063,7 +1140,7 @@ const CalculatePayroll = ({ ...props }) => {
                           Descargar nómina
                         </Button>
                       </Col>
-                      {isOpen && (
+                      {isOpen && !consolidated && (
                         <Col md={5}>
                           <Button
                             size="large"
@@ -1075,23 +1152,56 @@ const CalculatePayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-                      {!isOpen &&
-                        step == 2 &&
-                        consolidated &&
-                        consolidated.status < 3 && (
-                          <Col md={5}>
-                            <Button
-                              size="large"
-                              block
-                              htmlType="button"
-                              onClick={() =>
-                                partial ? partialStamp() : setMessageModal(3)
-                              }
-                            >
-                              Timbrar nómina
-                            </Button>
-                          </Col>
-                        )}
+                      {step == 2 && consolidated && consolidated.status < 3 && (
+                        <Col md={5}>
+                          <Button
+                            size="large"
+                            block
+                            htmlType="button"
+                            onClick={() =>
+                              partial ? partialStamp() : setMessageModal(3)
+                            }
+                          >
+                            Timbrar nómina
+                          </Button>
+                        </Col>
+                      )}
+                      {step == 3 && (
+                        <Col md={5}>
+                          <Button
+                            size="large"
+                            block
+                            htmlType="button"
+                            onClick={() =>
+                              setMessageModal(5, {
+                                title: "Cancelar nómina",
+                                description:
+                                  "Al cancelar nómina se debera iniciar el proceso de cierre de nomina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
+                                type_alert: "warning",
+                                action: () => cancelStamp(),
+                                title_action_button: "Cancelar nómina",
+                                components: (
+                                  <>
+                                    <Row
+                                      style={{
+                                        width: "100%",
+                                        marginTop: "5px",
+                                      }}
+                                    >
+                                      <Input.TextArea
+                                        id="motive"
+                                        placeholder="Capture el motivo de cancelacion."
+                                      />
+                                    </Row>
+                                  </>
+                                ),
+                              })
+                            }
+                          >
+                            Cancelar todos los cfdis
+                          </Button>
+                        </Col>
+                      )}
                     </>
                   )}
                 </Row>
@@ -1122,6 +1232,8 @@ const CalculatePayroll = ({ ...props }) => {
                   calendar={calendarSelect.id}
                   period={periodSelected}
                   viewFilter={false}
+                  setKeys={setCfdiCancel}
+                  clickCancelStamp={cancelOneStamp}
                 />
               ) : (
                 <>
@@ -1209,7 +1321,6 @@ const CalculatePayroll = ({ ...props }) => {
           actionButton={infoGenericModal.action}
           titleActionButton={infoGenericModal.title_action_button}
         >
-          {motive}
           <Row>
             <Alert
               style={{ width: "100%" }}

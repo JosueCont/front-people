@@ -173,6 +173,14 @@ class WebApiPayroll {
       data
     );
   }
+
+  static cancelCfdi(data) {
+    return WebApi.ApisType(
+      `payroll/cfdi_multi_emitter_facturama/cancel_cfdi/`,
+      "post",
+      data
+    );
+  }
 }
 
 export default WebApiPayroll;
