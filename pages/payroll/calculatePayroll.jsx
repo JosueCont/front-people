@@ -1092,45 +1092,42 @@ const CalculatePayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-                      {!isOpen &&
-                        step == 2 &&
-                        consolidated &&
-                        consolidated.status <= 1 && (
-                          <Col md={5} offset={1}>
-                            <Button
-                              size="large"
-                              block
-                              htmlType="button"
-                              onClick={() =>
-                                setMessageModal(5, {
-                                  title: "Abrir nómina",
-                                  description:
-                                    "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
-                                  type_alert: "warning",
-                                  action: () => openPayroll(1),
-                                  title_action_button: "Abrir nómina",
-                                  components: (
-                                    <>
-                                      <Row
-                                        style={{
-                                          width: "100%",
-                                          marginTop: "5px",
-                                        }}
-                                      >
-                                        <Input.TextArea
-                                          id="motive"
-                                          placeholder="Capture el motivo de reapertura."
-                                        />
-                                      </Row>
-                                    </>
-                                  ),
-                                })
-                              }
-                            >
-                              Abrir
-                            </Button>
-                          </Col>
-                        )}
+                      {step == 2 && consolidated && consolidated.status <= 1 && (
+                        <Col md={5} offset={1}>
+                          <Button
+                            size="large"
+                            block
+                            htmlType="button"
+                            onClick={() =>
+                              setMessageModal(5, {
+                                title: "Abrir nómina",
+                                description:
+                                  "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                                type_alert: "warning",
+                                action: () => openPayroll(1),
+                                title_action_button: "Abrir nómina",
+                                components: (
+                                  <>
+                                    <Row
+                                      style={{
+                                        width: "100%",
+                                        marginTop: "5px",
+                                      }}
+                                    >
+                                      <Input.TextArea
+                                        id="motive"
+                                        placeholder="Capture el motivo de reapertura."
+                                      />
+                                    </Row>
+                                  </>
+                                ),
+                              })
+                            }
+                          >
+                            Abrir
+                          </Button>
+                        </Col>
+                      )}
                       {step >= 1 && (
                         <>
                           <Col md={5} offset={1}>
