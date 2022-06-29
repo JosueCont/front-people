@@ -492,8 +492,12 @@ const CalculatePayroll = ({ ...props }) => {
         setTotalSalary(response.data.total_salary);
         setTotalIsr(response.data.total_isr);
         validatedStatusPayroll(response.data.consolidated);
+        setPersonsKeys([]);
+        setPersonsStamp([]);
       })
       .catch((error) => {
+        setPersonsStamp([]);
+        setPersonsKeys([]);
         setCalculate(false);
         console.log(error);
         setPayroll([]);
@@ -697,7 +701,6 @@ const CalculatePayroll = ({ ...props }) => {
   const rowSelectionPerson = {
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log("Select Row Keys-->> ", selectedRowKeys);
       setPersonsKeys(selectedRowKeys);
       setPersonsStamp(selectedRows);
     },
@@ -1161,7 +1164,7 @@ const CalculatePayroll = ({ ...props }) => {
                                   block
                                   htmlType="button"
                                   onClick={() =>
-                                    partial
+                                    personStamp.length > 0
                                       ? partialStamp()
                                       : setMessageModal(3)
                                   }

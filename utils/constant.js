@@ -152,31 +152,6 @@ export const typeMessage = [
   },
 ];
 
-export const headersApiKhonnect = (app_id) => {
-  return {
-    "client-id": app_id,
-    "Content-Type": "application/json",
-  };
-};
-
-export const popupWindow = (url) => {
-  if (typeof window !== "undefined") {
-    window.open(url, "Resultados", "toolbars=0,width=800,height=400");
-  }
-};
-
-export const getCurrentURL = (tenant = false) => {
-  if (typeof window !== "undefined") {
-    let url = window.location.href;
-    if (tenant) {
-      let link = url.split(".");
-      return link[0];
-    } else {
-      return url;
-    }
-  }
-};
-
 export const monthsName = [
   {
     label: "Enero",
@@ -292,6 +267,19 @@ export const movementType = [
   { value: 5, label: "Alta de calendario" },
 ];
 
+export const pymentDays = [
+  {
+    label: "Dias naturales por mes",
+    value: 1,
+    key: 1,
+  },
+  {
+    label: "30 dias por mes",
+    value: 2,
+    key: 2,
+  },
+];
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
@@ -301,3 +289,28 @@ export const titleDialogDelete = "¿Está seguro de eliminarlo?";
 export const messageDialogDelete =
   "Al eliminar este registro se perderán todos los datos relacionados de manera permanente.";
 export const messageUploadSuccess = "Cargado correctamente.";
+
+export const headersApiKhonnect = (app_id) => {
+  return {
+    "client-id": app_id,
+    "Content-Type": "application/json",
+  };
+};
+
+export const popupWindow = (url) => {
+  if (typeof window !== "undefined") {
+    window.open(url, "Resultados", "toolbars=0,width=800,height=400");
+  }
+};
+
+export const getCurrentURL = (tenant = false) => {
+  if (typeof window !== "undefined") {
+    let url = window.location.href;
+    if (tenant) {
+      let link = url.split(".");
+      return link[0];
+    } else {
+      return url;
+    }
+  }
+};
