@@ -1065,24 +1065,26 @@ const CalculatePayroll = ({ ...props }) => {
                         padding: "20px",
                       }}
                     >
-                      <Col md={5} offset={1}>
-                        <Button
-                          size="large"
-                          block
-                          htmlType="button"
-                          onClick={() =>
-                            downLoadFileBlob(
-                              `${getDomain(
-                                API_URL_TENANT
-                              )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
-                              "hoja_rayas.xlsx",
-                              "GET"
-                            )
-                          }
-                        >
-                          Descargar hoja de raya
-                        </Button>
-                      </Col>
+                      {consolidated && (
+                        <Col md={5} offset={1}>
+                          <Button
+                            size="large"
+                            block
+                            htmlType="button"
+                            onClick={() =>
+                              downLoadFileBlob(
+                                `${getDomain(
+                                  API_URL_TENANT
+                                )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
+                                "hoja_rayas.xlsx",
+                                "GET"
+                              )
+                            }
+                          >
+                            Descargar hoja de raya
+                          </Button>
+                        </Col>
+                      )}
                       {step == 0 && calculate && (
                         <Col md={5} offset={1}>
                           <Button
