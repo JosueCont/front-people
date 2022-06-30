@@ -485,9 +485,7 @@ const CalculatePayroll = ({ ...props }) => {
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
         setLoading(false);
-        setConsolidated(
-          response.data.consolidated ? response.data.consolidated : null
-        );
+        setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
         setCalculate(false);
         setTotalSalary(response.data.total_salary);
@@ -743,7 +741,7 @@ const CalculatePayroll = ({ ...props }) => {
 
   const validatedStatusPayroll = (data) => {
     if (data === null) {
-      setStep(0), setPreviuosStep(false), setNextStep(true);
+      setStep(0), setPreviuosStep(false), setNextStep(true), setIsOpen(true);
       return;
     }
     setIsOpen(data.is_open);
@@ -773,15 +771,18 @@ const CalculatePayroll = ({ ...props }) => {
         setStep(step + 1);
         setPreviuosStep(true);
         if (isOpen) setNextStep(false);
+        return;
       }
       if (step == 1) {
         setStep(step + 1);
         if (!isOpen) setPreviuosStep(false);
+        return;
       }
       if (step == 2) {
         setStep(step + 1);
         setPreviuosStep(true);
         setNextStep(false);
+        return;
       }
     } else {
       //previous
@@ -789,22 +790,24 @@ const CalculatePayroll = ({ ...props }) => {
         setStep(step - 1);
         setPreviuosStep(false);
         if (!nextStep) setNextStep(true);
+        return;
       }
       if (step == 2) {
         setStep(step - 1);
         setPreviuosStep(false);
         if (!nextStep) setNextStep(true);
+        return;
       }
       if (step == 3) {
         setStep(step - 1);
         setPreviuosStep(false);
         if (!nextStep) setNextStep(true);
+        return;
       }
     }
   };
 
   const partialStamp = () => {
-    console.log(personStamp);
     const cfdis = personStamp.map((item) => {
       return item.payroll_cfdi_person.id;
     });
@@ -823,7 +826,6 @@ const CalculatePayroll = ({ ...props }) => {
         motive: inputMotive.value,
         payment_period: periodSelected,
       };
-      console.log("Type-->> ", type, cfdiCancel);
       if (cfdiCancel.length > 0 && type == 2) data.cfdis_id = cfdiCancel;
       else if (type == 3) data.cfdis_id = [id];
       WebApiPayroll.cancelCfdi(data)
@@ -1066,24 +1068,36 @@ const CalculatePayroll = ({ ...props }) => {
                       }}
                     >
                       {consolidated && (
-                        <Col md={5} offset={1}>
-                          <Button
-                            size="large"
-                            block
-                            htmlType="button"
-                            onClick={() =>
-                              downLoadFileBlob(
-                                `${getDomain(
-                                  API_URL_TENANT
-                                )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
-                                "hoja_rayas.xlsx",
-                                "GET"
-                              )
-                            }
-                          >
-                            Descargar hoja de raya
-                          </Button>
-                        </Col>
+                        <>
+                          <Col md={5} offset={1}>
+                            <Button
+                              size="large"
+                              block
+                              htmlType="button"
+                              onClick={() =>
+                                downLoadFileBlob(
+                                  `${getDomain(
+                                    API_URL_TENANT
+                                  )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
+                                  "hoja_rayas.xlsx",
+                                  "GET"
+                                )
+                              }
+                            >
+                              Descargar hoja de raya
+                            </Button>
+                          </Col>
+                          <Col md={5} offset={1}>
+                            <Button
+                              size="large"
+                              block
+                              htmlType="button"
+                              // onClick={() => setMessageModal(2)}
+                            >
+                              Descargar nómina
+                            </Button>
+                          </Col>
+                        </>
                       )}
                       {step == 0 && calculate && (
                         <Col md={5} offset={1}>
@@ -1135,16 +1149,6 @@ const CalculatePayroll = ({ ...props }) => {
                       )}
                       {step >= 1 && (
                         <>
-                          <Col md={5} offset={1}>
-                            <Button
-                              size="large"
-                              block
-                              htmlType="button"
-                              // onClick={() => setMessageModal(2)}
-                            >
-                              Descargar nómina
-                            </Button>
-                          </Col>
                           {isOpen && !consolidated && (
                             <Col md={5} offset={1}>
                               <Button
