@@ -474,6 +474,7 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const sendCalculatePayroll = async (dataToSend) => {
+    setStep(0);
     setPayroll([]);
     setLoading(true);
     setModalVisible(false);
@@ -741,7 +742,7 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const validatedStatusPayroll = (data) => {
-    if (data == null) {
+    if (data === null) {
       setStep(0), setPreviuosStep(false), setNextStep(true);
       return;
     }
@@ -755,7 +756,7 @@ const CalculatePayroll = ({ ...props }) => {
       setStep(2), setPreviuosStep(false), setNextStep(false);
       return;
     }
-    if (data.status === 2 && data.is_open) {
+    if (data.status === 2) {
       setStep(2), setPreviuosStep(false), setNextStep(true);
       return;
     }
@@ -779,11 +780,8 @@ const CalculatePayroll = ({ ...props }) => {
       }
       if (step == 2) {
         setStep(step + 1);
-        if (!isOpen) setPreviuosStep(false);
-        else if (isOpen) {
-          setPreviuosStep(true);
-          setNextStep(false);
-        }
+        setPreviuosStep(true);
+        setNextStep(false);
       }
     } else {
       //previous
@@ -825,6 +823,7 @@ const CalculatePayroll = ({ ...props }) => {
         motive: inputMotive.value,
         payment_period: periodSelected,
       };
+      console.log("Type-->> ", type, cfdiCancel);
       if (cfdiCancel.length > 0 && type == 2) data.cfdis_id = cfdiCancel;
       else if (type == 3) data.cfdis_id = [id];
       WebApiPayroll.cancelCfdi(data)
@@ -846,9 +845,10 @@ const CalculatePayroll = ({ ...props }) => {
     setMessageModal(5, {
       title: "Cancelar nómina",
       description:
-        "Al cancelar se debera timbrar un nuevo cfdi. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
+        "Al cancelar se debera timbrar un nuevo cfdi. Para poder completar la cancelación es necesario capturar el motivo por el cual se cancela.",
       type_alert: "warning",
-      action: () => cancelStamp(3, data),
+      action: () =>
+        cfdiCancel.length > 0 ? cancelStamp(2) : cancelStamp(3, data),
       title_action_button: "Cancelar cfdi",
       components: (
         <>
