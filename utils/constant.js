@@ -267,14 +267,14 @@ export const movementType = [
   { value: 5, label: "Alta de calendario" },
 ];
 
-export const pymentDays = [
+export const salaryDays = [
   {
-    label: "Dias naturales por mes",
+    label: "Dias naturales",
     value: 1,
     key: 1,
   },
   {
-    label: "30 dias por mes",
+    label: "30 dias",
     value: 2,
     key: 2,
   },
