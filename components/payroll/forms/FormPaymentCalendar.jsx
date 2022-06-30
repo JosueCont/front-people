@@ -15,7 +15,7 @@ import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
-import { messageSaveSuccess } from "../../../utils/constant";
+import { messageSaveSuccess, salaryDays } from "../../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../../utils/rules";
 import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
@@ -105,6 +105,7 @@ const FormPaymentCalendar = ({
             : "",
           group_fixed_concept: item.group_fixed_concept,
           version_cfdi: item.version_cfdi,
+          salary_days: item.salary_days,
         });
         setAnnualAdjustment(item.annual_adjustment);
         setMonthlyAdjustment(item.monthly_adjustment);
@@ -291,6 +292,22 @@ const FormPaymentCalendar = ({
             </Col>
             <Col lg={8} xs={22}>
               <SelectPeriodicity size={"large"} />
+            </Col>
+            <Col lg={8} xs={22}>
+              <Form.Item
+                key="SelectSalaryDays"
+                name="salary_days"
+                label="Dias a pagar"
+                rules={[ruleRequired]}
+              >
+                <Select
+                  placeholder="Dias a pagar"
+                  style={
+                    props.style ? props.style : { width: "100% !important" }
+                  }
+                  options={salaryDays}
+                />
+              </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
               <SelectTypeTax />

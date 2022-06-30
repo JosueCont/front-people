@@ -51,7 +51,7 @@ const CfdiVaucher = ({
   const columns = [
     {
       title: "Num. trabajador",
-      key: "key",
+      key: "collaborator",
       render: (item) => {
         return item.payroll_person.person.code;
       },
@@ -272,7 +272,7 @@ const CfdiVaucher = ({
     selectedRowKeys: personsKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setPersonsKeys(selectedRowKeys);
-      setCfdis(selectedRowKeys);
+      setKeys(selectedRowKeys);
     },
   };
 
