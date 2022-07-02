@@ -1073,9 +1073,9 @@ const CalculatePayroll = ({ ...props }) => {
                 <Steps current={step}>
                   <Steps.Step
                     title="Calcular"
-                    description="Calculo de nomina."
+                    description="Calculo de nómina."
                   />
-                  <Steps.Step title="Cerrar" description="Cierre de nomina." />
+                  <Steps.Step title="Cerrar" description="Cierre de nómina." />
                   <Steps.Step title="Timbrar" description="Timbre fiscal." />
                   <Steps.Step title="Comprobantes" description="XML y PDF." />
                 </Steps>
@@ -1178,7 +1178,7 @@ const CalculatePayroll = ({ ...props }) => {
                             }}
                           >
                             <Button size="large" icon={<UploadOutlined />}>
-                              Subir nomina
+                              Subir nómina
                             </Button>
                           </Upload>
                         </Col>
@@ -1273,7 +1273,7 @@ const CalculatePayroll = ({ ...props }) => {
                                   setMessageModal(5, {
                                     title: "Cancelar nómina",
                                     description:
-                                      "Al cancelar nómina se debera iniciar el proceso de cierre de nomina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
+                                      "Al cancelar nómina se debera iniciar el proceso de cierre de nómina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
                                     type_alert: "warning",
                                     action: () => cancelStamp(),
                                     title_action_button: "Cancelar nómina",
