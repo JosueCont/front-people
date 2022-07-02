@@ -391,7 +391,7 @@ const CfdiVaucher = ({
             <Alert
               style={{ width: "100%" }}
               description={
-                "Al cancelar nómina se debera iniciar el proceso de cierre de nomina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela."
+                "Al cancelar nómina se debera iniciar el proceso de cierre de nómina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela."
               }
               type={"warning"}
               showIcon
