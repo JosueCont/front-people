@@ -41,7 +41,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   const [catalog, setCat] = useState(null);
   const [key, setKey] = useState(1);
   const [intConcept, setIntConcept] = useState(false);
-  let url = "internal-perception-type/";
+  const [url, setUrl] = useState("internal-perception-type/");
   const columns = [
     {
       title: "Codigo",
@@ -86,29 +86,33 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   useEffect(() => {
     resetForm();
     setIntConcept(false);
+    console.log("KEY -->> ", key);
     if (key == 1) {
-      url = "internal-perception-type/";
+      setUrl("internal-perception-type/");
       setCat(props.perceptions_int.filter((item) => item.node != null));
     }
     if (key == 2) {
-      url = "internal-deduction-type/";
+      setUrl("internal-deduction-type/");
       setCat(props.deductions_int.filter((item) => item.node != null));
     }
     if (key == 3) {
-      url = "internal-other-payment-type/";
+      setUrl("internal-other-payment-type/");
       setCat(props.other_payments_int.filter((item) => item.node != null));
     }
   }, [key]);
 
   useEffect(() => {
-    if (props.perceptions_int) {
-      console.log(
-        "INTERNOS-->> ",
-        props.perceptions_int.filter((item) => item.node != null)
-      );
-      setCat(props.perceptions_int.filter((item) => item.node != null));
+    if (
+      (props.perceptions_int, props.deductions_int, props.other_payments_int)
+    ) {
+      if (key == 1)
+        setCat(props.perceptions_int.filter((item) => item.node != null));
+      if (key == 2)
+        setCat(props.deductions_int.filter((item) => item.node != null));
+      if (key == 3)
+        setCat(props.other_payments_int.filter((item) => item.node != null));
     }
-  }, [props.perceptions_int]);
+  }, [props.perceptions_int, props.deductions_int, props.other_payments_int]);
 
   const resetForm = () => {
     form.resetFields();
@@ -128,7 +132,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
     try {
       await WebApiFiscal.crudInternalConcept(url, "post", data);
       props
-        .doFiscalCatalogs(currentNode.id)
+        .doFiscalCatalogs(currentNode.id, props.version_cfdi)
         .then((response) => {
           resetForm();
           message.success(messageSaveSuccess);
@@ -163,7 +167,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
       delete value[""];
       await WebApiFiscal.crudInternalConcept(`${url}${id}/`, "put", value);
       props
-        .doFiscalCatalogs(currentNode.id)
+        .doFiscalCatalogs(currentNode.id, props.version_cfdi)
         .then((response) => {
           setId("");
           resetForm();
@@ -210,7 +214,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
     try {
       await WebApiFiscal.crudInternalConcept(`${url}${deleted.id}/`, "delete");
       props
-        .doFiscalCatalogs(currentNode.id)
+        .doFiscalCatalogs(currentNode.id, props.version_cfdi)
         .then((response) => {
           resetForm();
           message.success(messageDeleteSuccess);
@@ -238,7 +242,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
             ? "perception_type"
             : key == 2
             ? "deduction_type"
-            : "other_payment_type"
+            : "other_type_payment"
         }
         label={key == 1 ? "Percepcion" : key == 2 ? "Deduccion" : "Otro pago"}
         rules={[ruleRequired]}
@@ -253,7 +257,6 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   };
 
   const RenderForm = () => {
-    // resetForm();
     return (
       <Form
         style={{ marginTop: "10px" }}
@@ -379,6 +382,7 @@ const mapState = (state) => {
     cat_perceptions: state.fiscalStore.cat_perceptions,
     cat_deductions: state.fiscalStore.cat_deductions,
     cat_other_payments: state.fiscalStore.cat_other_payments,
+    version_cfdi: state.fiscalStore.version_cfdi,
   };
 };
 

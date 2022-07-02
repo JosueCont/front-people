@@ -181,6 +181,10 @@ class WebApiPayroll {
       data
     );
   }
+
+  static importPayrollCaculate(data) {
+    return WebApi.ApisType(`payroll/read-payroll-calculus`, "post", data);
+  }
 }
 
 export default WebApiPayroll;

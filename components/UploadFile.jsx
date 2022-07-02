@@ -64,9 +64,7 @@ const UploadFile = ({
         >
           {textButton}
         </Button>
-        {disabled ? (
-          ""
-        ) : (
+        {!disabled && (
           <span style={{ marginLeft: 8, border: "1px blue solid" }}>
             {fileName + "  "}
             <CloseCircleOutlined
