@@ -114,7 +114,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
               <p>
                 Estoy de acuerdo y doy mi consentimiento para que EL SISTEMA
                 almacene y utilice estos archivos con fines exclusivos para
-                emisión de CFDI para el timbrado de nomina
+                emisión de CFDI para el timbrado de nómina
               </p>
             </Col>
           </Row>
