@@ -284,7 +284,7 @@ const DetailPerson = ({
         visible={modal}
         onOk={deleteRegister}
         onCancel={showModal}
-        okText="SíEliminar"
+        okText="Sí, eliminar"
         cancelText="Cancelar"
       >
         Al eliminar este registro perderá todos los datos relacionados a el de

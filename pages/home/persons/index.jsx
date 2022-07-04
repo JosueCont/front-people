@@ -864,7 +864,7 @@ const homeScreen = ({ ...props }) => {
         title: stringToDelete,
         content: <AlertDeletes />,
         icon: <ExclamationCircleOutlined />,
-        okText: "Síeliminar",
+        okText: "Sí, eliminar",
         okButtonProps: {
           danger: true,
         },
