@@ -1141,14 +1141,11 @@ const CalculatePayroll = ({ ...props }) => {
                             {...{
                               showUploadList: false,
                               beforeUpload: (file) => {
-                                console.log("FILE--->> ", file.type);
-                                const isXML =
-                                  file.type ===
-                                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                                if (!isXML) {
+                                const isXlsx = file.name.includes(".xlsx");
+                                if (!isXlsx) {
                                   message.error(`${file.name} no es un xlsx.`);
                                 }
-                                return isXML || Upload.LIST_IGNORE;
+                                return isXlsx || Upload.LIST_IGNORE;
                               },
                               onChange(info) {
                                 const { status } = info.file;
