@@ -86,7 +86,6 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   useEffect(() => {
     resetForm();
     setIntConcept(false);
-    console.log("KEY -->> ", key);
     if (key == 1) {
       setUrl("internal-perception-type/");
       setCat(props.perceptions_int.filter((item) => item.node != null));

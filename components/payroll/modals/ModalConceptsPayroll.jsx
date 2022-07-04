@@ -181,7 +181,6 @@ const ModalConceptsPayroll = ({
   };
 
   const listConcepts = (value = null) => {
-    console.log("item", value);
     if (value != null) {
       setCurrentStep(value);
       return;
@@ -243,7 +242,6 @@ const ModalConceptsPayroll = ({
         });
       }
     });
-    console.log("DATA SENT-->> ", data);
     clearConcept();
     calendar.payroll = data;
     sendCalculatePayroll(calendar);
