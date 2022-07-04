@@ -151,14 +151,32 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   };
 
   const editRegister = (item, param) => {
+    console.log("Key", key);
     setEdit(true);
     setId(item.id);
-    form.setFieldsValue({
-      code: item.code,
-      description: item.description,
-      data_type: item.data_type,
-      perception_type: item.perception_type.id,
-    });
+
+    if (key == 1) {
+      form.setFieldsValue({
+        code: item.code,
+        description: item.description,
+        data_type: item.data_type,
+        perception_type: item.perception_type.id,
+      });
+    } else if (key == 2) {
+      form.setFieldsValue({
+        code: item.code,
+        description: item.description,
+        data_type: item.data_type,
+        deduction_type: item.deduction_type.id,
+      });
+    } else if (key == 3) {
+      form.setFieldsValue({
+        code: item.code,
+        description: item.description,
+        data_type: item.data_type,
+        other_type_payment: item.other_type_payment.id,
+      });
+    }
   };
 
   const updateRegister = async (value) => {
@@ -258,12 +276,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
 
   const RenderForm = () => {
     return (
-      <Form
-        style={{ marginTop: "10px" }}
-        layout={"vertical"}
-        form={form}
-        onFinish={onFinishForm}
-      >
+      <>
         <Row gutter={20}>
           <Col lg={6} xs={22} md={12}>
             <Form.Item name="code" label="Código" rules={[ruleRequired]}>
@@ -316,7 +329,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
             <b>Ver conceptos del sistema</b>
           </Col>
         </Row>
-      </Form>
+      </>
     );
   };
 
@@ -349,13 +362,40 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         onChange={(value) => setKey(parseInt(value))}
       >
         <TabPane tab="Percepciones" key={"1"}>
-          {key == 1 && <RenderForm />}
+          {key == 1 && (
+            <Form
+              style={{ marginTop: "10px" }}
+              layout={"vertical"}
+              form={form}
+              onFinish={onFinishForm}
+            >
+              <RenderForm />
+            </Form>
+          )}
         </TabPane>
         <TabPane tab="Deducciones" key={"2"}>
-          {key == 2 && <RenderForm />}
+          {key == 2 && (
+            <Form
+              style={{ marginTop: "10px" }}
+              layout={"vertical"}
+              form={form}
+              onFinish={onFinishForm}
+            >
+              <RenderForm />
+            </Form>
+          )}
         </TabPane>
         <TabPane tab="Otros pagos" key={"3"}>
-          {key == 3 && <RenderForm />}
+          {key == 3 && (
+            <Form
+              style={{ marginTop: "10px" }}
+              layout={"vertical"}
+              form={form}
+              onFinish={onFinishForm}
+            >
+              <RenderForm />
+            </Form>
+          )}
         </TabPane>
       </Tabs>
 

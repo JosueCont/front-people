@@ -180,26 +180,40 @@ const ModalConceptsPayroll = ({
       });
   };
 
-  const listConcepts = () => {
+  const listConcepts = (value = null) => {
+    console.log("item", value);
+    if (value != null) {
+      setCurrentStep(value);
+      return;
+    }
+    let is_cero = false;
     setCeros(false);
     setConcepts([]);
     let data = [];
     if (perceptions.length > 0)
       perceptions.map((item) => {
         data.push(item);
-        if (item.value <= 0) setCeros(true);
+        if (item.value <= 0) is_cero = true;
       });
     if (deductions.length > 0)
       deductions.map((item) => {
         data.push(item);
-        if (item.value <= 0) setCeros(true);
+        if (item.value <= 0) is_cero = true;
       });
     if (otherPayments.length > 0)
       otherPayments.map((item) => {
         data.push(item);
-        if (item.value <= 0) setCeros(true);
+        if (item.value <= 0) is_cero = true;
       });
     setConcepts(data);
+    currentStep == 0
+      ? setCurrentStep(currentStep + 1)
+      : is_cero && currentStep == 1
+      ? (setCeros(is_cero),
+        setTimeout(() => {
+          setCeros(false);
+        }, 5000))
+      : setCurrentStep(currentStep + 1);
   };
 
   const createObjectSend = () => {
@@ -261,11 +275,13 @@ const ModalConceptsPayroll = ({
     setOtherPayments([]);
     payroll = null;
     person_id = null;
+    setVisible(false);
   };
 
   return (
     <Modal
       visible={visible}
+      destroyOnClose={true}
       footer={
         <Col>
           <Space>
@@ -273,7 +289,7 @@ const ModalConceptsPayroll = ({
               size="large"
               htmlType="button"
               onClick={() => {
-                clearConcept(), setVisible(false);
+                clearConcept();
               }}
               style={{ paddingLeft: 50, paddingRight: 50 }}
             >
@@ -287,9 +303,7 @@ const ModalConceptsPayroll = ({
                 htmlType="button"
                 disabled={ceros && currentStep == 2 ? true : false}
                 onClick={() =>
-                  currentStep == 2
-                    ? createObjectSend()
-                    : (listConcepts(), setCurrentStep(currentStep + 1))
+                  currentStep == 2 ? createObjectSend() : listConcepts()
                 }
                 style={{ paddingLeft: 50, paddingRight: 50 }}
               >
@@ -312,7 +326,7 @@ const ModalConceptsPayroll = ({
         <Steps
           current={currentStep}
           onChange={(item) => {
-            item === 2 && listConcepts(), setCurrentStep(item);
+            listConcepts(item);
           }}
         >
           <Step title="Conceptos" description="Agregar conceptos" />
@@ -394,18 +408,6 @@ const ModalConceptsPayroll = ({
               )}
             </>
           ) : currentStep == 1 ? (
-            <Row>
-              {perceptions.length > 0 && (
-                <RenderConcept data={perceptions} type={1} />
-              )}
-              {deductions.length > 0 && (
-                <RenderConcept data={deductions} type={2} />
-              )}
-              {otherPayments.length > 0 && (
-                <RenderConcept data={otherPayments} type={3} />
-              )}
-            </Row>
-          ) : (
             <>
               {ceros && (
                 <Alert
@@ -413,8 +415,23 @@ const ModalConceptsPayroll = ({
                   description="No puede tener conceptos con valor cero."
                   type="warning"
                   showIcon
+                  style={{ marginBottom: 10 }}
                 />
               )}
+              <Row>
+                {perceptions.length > 0 && (
+                  <RenderConcept data={perceptions} type={1} />
+                )}
+                {deductions.length > 0 && (
+                  <RenderConcept data={deductions} type={2} />
+                )}
+                {otherPayments.length > 0 && (
+                  <RenderConcept data={otherPayments} type={3} />
+                )}
+              </Row>
+            </>
+          ) : (
+            <>
               <Table
                 dataSource={concepts}
                 locale={{ emptyText: "No hay datos aún" }}
@@ -441,7 +458,7 @@ const ModalConceptsPayroll = ({
                         <EditOutlined
                           style={{ marginRight: "10px" }}
                           key={"edit" + record.perception}
-                          onClick={() => setCurrentStep(1)}
+                          onClick={() => listConcepts()}
                         />
                         <DeleteOutlined
                           key={"delete" + record.perception}

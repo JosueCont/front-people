@@ -409,7 +409,9 @@ const ImportMasivePayroll = ({ ...props }) => {
                                   marginTop: "auto",
                                 }}
                                 onClick={() => {
-                                  setCompanyImport(null), setFiles([]);
+                                  setCompanyImport(null),
+                                    setFiles([]),
+                                    calendar.resetFields();
                                 }}
                               >
                                 Cancelar
