@@ -627,7 +627,7 @@ const CalculatePayroll = ({ ...props }) => {
             "Una vez cerrada la nómina no podra realizar cambios o modificaciones.",
           type_alert: "warning",
           action: () => sendClosePayroll(),
-          title_action_button: "Si, cerrar nómina",
+          title_action_button: "Sí, cerrar nómina",
         });
         setGenericModal(true);
         break;
@@ -639,7 +639,7 @@ const CalculatePayroll = ({ ...props }) => {
             "Se emitiran todos los cfdi correspondientes ante el SAT",
           type_alert: "warning",
           action: () => stampPayroll(),
-          title_action_button: "Si, timbrar",
+          title_action_button: "Sí, timbrar",
         });
         setGenericModal(true);
         break;
@@ -954,7 +954,7 @@ const CalculatePayroll = ({ ...props }) => {
                     {periodSelected && (
                       <>
                         <Col xxs={24} xl={4}>
-                          <Form.Item name="periodicity" label="Periocidad">
+                          <Form.Item name="periodicity" label="Periodicidad">
                             <Input
                               size="large"
                               key="periodicity"

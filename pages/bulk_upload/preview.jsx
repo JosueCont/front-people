@@ -110,7 +110,7 @@ const PreviewBulkUpload = ({ ...props }) => {
       content:
         "Los datos importados correctos se guardarán, los que contengan errores serán omitidos ",
       icon: <ExclamationCircleOutlined />,
-      okText: "Si, guardar",
+      okText: "Síguardar",
       okButtonProps: {
         danger: true,
       },

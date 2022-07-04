@@ -44,7 +44,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   const [url, setUrl] = useState("internal-perception-type/");
   const columns = [
     {
-      title: "Codigo",
+      title: "Código",
       dataIndex: "code",
     },
     {
@@ -198,7 +198,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         title: "¿Está seguro de eliminar este registro?",
         content: "Si lo elimina no podrá recuperarlo",
         icon: <ExclamationCircleOutlined />,
-        okText: "Si, eliminar",
+        okText: "Sí, eliminar",
         okButtonProps: {
           danger: true,
         },
@@ -244,7 +244,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
             ? "deduction_type"
             : "other_type_payment"
         }
-        label={key == 1 ? "Percepcion" : key == 2 ? "Deduccion" : "Otro pago"}
+        label={key == 1 ? "Percepción" : key == 2 ? "Deducción" : "Otro pago"}
         rules={[ruleRequired]}
       >
         <Select
@@ -266,7 +266,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
       >
         <Row gutter={20}>
           <Col lg={6} xs={22} md={12}>
-            <Form.Item name="code" label="Codigo" rules={[ruleRequired]}>
+            <Form.Item name="code" label="Código" rules={[ruleRequired]}>
               <Input />
             </Form.Item>
           </Col>
