@@ -55,7 +55,7 @@ const PatronalRegistration = ({ node, formAddress, ...props }) => {
     <Form layout={"vertical"} form={formAddress}>
       <Row gutter={20}>
         <Col lg={6} xs={22}>
-          <Form.Item name="code" label="Codigo">
+          <Form.Item name="code" label="Código">
             <Input />
           </Form.Item>
         </Col>

@@ -882,7 +882,7 @@ const homeScreen = ({ ...props }) => {
         title: stringToDelete,
         content: <AlertDeletes />,
         icon: <ExclamationCircleOutlined />,
-        okText: "Si, eliminar",
+        okText: "Sí, eliminar",
         okButtonProps: {
           danger: true,
         },
@@ -939,7 +939,7 @@ const homeScreen = ({ ...props }) => {
         title: stringToDeactivate,
         content: <AlertDeactivate />,
         icon: <ExclamationCircleOutlined />,
-        okText: "Si, desactivar",
+        okText: "Sí, Desactivar",
         okButtonProps: {
           danger: true,
         },

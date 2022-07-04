@@ -329,7 +329,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
         title: "¿Está seguro de eliminar este registro?",
         content: "Si lo elimina no podrá recuperarlo",
         icon: <ExclamationCircleOutlined />,
-        okText: "Si, eliminar",
+        okText: "Sí, eliminar",
         okButtonProps: {
           danger: true,
         },
@@ -515,9 +515,9 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                       }
                       label={
                         conceptType == 1
-                          ? "Percepcion"
+                          ? "Percepción"
                           : conceptType == 2
-                          ? "Deduccion"
+                          ? "Deducción"
                           : "Otro pago"
                       }
                       rules={[ruleRequired]}
@@ -562,7 +562,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                   <Form.Item
                     initialValue={0}
                     name="salary_type"
-                    label="Typo de sueldo"
+                    label="Tipo de sueldo"
                   >
                     <Select options={type_salary} />
                   </Form.Item>
@@ -571,7 +571,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                   <Form.Item
                     initialValue={0}
                     name="max_delays"
-                    label="Maximo de retardos"
+                    label="Máximo de retardos"
                   >
                     <Input type={"number"} />
                   </Form.Item>
