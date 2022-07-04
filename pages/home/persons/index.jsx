@@ -921,7 +921,7 @@ const homeScreen = ({ ...props }) => {
         title: stringToDeactivate,
         content: <AlertDeactivate />,
         icon: <ExclamationCircleOutlined />,
-        okText: "Sídesactivar",
+        okText: "Sí, Desactivar",
         okButtonProps: {
           danger: true,
         },

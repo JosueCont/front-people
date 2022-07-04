@@ -606,7 +606,7 @@ const businessForm = ({ ...props }) => {
           setUpdateModal(false), setBusinessUpdate(null);
           getCopaniesList();
         }}
-        okText="SíDesactivar"
+        okText="Sí, Desactivar"
         cancelText="Cancelar"
       >
         Al desactivar esta empresa los usuarios colaboradores que estén
