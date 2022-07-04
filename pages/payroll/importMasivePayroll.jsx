@@ -234,15 +234,17 @@ const ImportMasivePayroll = ({ ...props }) => {
 
   return (
     <MainLayout currentKey={["importxml"]} defaultOpenKeys={["payroll"]}>
-      <Breadcrumb style={{ margin: "16px 0" }}>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => router.push({ pathname: "/home/persons/" })}
-        >
-          Inicio
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Importar nómina</Breadcrumb.Item>
-      </Breadcrumb>
+      {props.currentNode && (
+        <Breadcrumb style={{ margin: "16px 0" }}>
+          <Breadcrumb.Item
+            className={"pointer"}
+            onClick={() => router.push({ pathname: "/home/persons/" })}
+          >
+            Inicio
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Importar nómina</Breadcrumb.Item>
+        </Breadcrumb>
+      )}
       {alertMessage && (
         <Alert
           style={{ margin: "2%" }}
@@ -343,7 +345,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                             </Form.Item>
                           </Col>
                           <Col style={{ display: "flex" }}>
-                            <Form.Item label="Periocidad">
+                            <Form.Item label="Periodicidad">
                               <Input readOnly value={periodicityDesc} />
                             </Form.Item>
                           </Col>

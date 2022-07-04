@@ -64,7 +64,7 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
             <Form.Item
               rules={[ruleRequired]}
               name="postal_code"
-              label="Codigo postal"
+              label="Código postal"
             >
               <Select
                 showSearch
