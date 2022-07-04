@@ -202,6 +202,12 @@ const ModalConceptsPayroll = ({
     let data = [];
     payroll.map((item) => {
       if (item.person.id === person_id) {
+        item.perceptions.map((p) => {
+          if (p.type == "046") {
+            perceptions.push(p);
+            return;
+          }
+        });
         data.push({
           person_id: person_id,
           perceptions: perceptions,
@@ -211,9 +217,7 @@ const ModalConceptsPayroll = ({
       } else {
         data.push({
           person_id: item.person.id,
-          perceptions: item.perceptions.filter(
-            (item) => item.type != "001" && item.type != "046"
-          ),
+          perceptions: item.perceptions,
           deductions: item.deductions.filter(
             (item) => item.type != "001" && item.type != "002"
           ),
@@ -221,6 +225,7 @@ const ModalConceptsPayroll = ({
         });
       }
     });
+    console.log("DATA SENT-->> ", data);
     clearConcept();
     calendar.payroll = data;
     sendCalculatePayroll(calendar);

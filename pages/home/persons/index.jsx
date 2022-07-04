@@ -1163,26 +1163,35 @@ const homeScreen = ({ ...props }) => {
                       </Button>
                     </Dropdown>
                   )}
-                  <Dropdown
+                  {/* <Dropdown
                     overlay={menuExportTemplate}
                     placement="bottomLeft"
                     arrow
                     className={"ml-20"}
+                  > */}
+                  <Button
+                    icon={<DownloadOutlined />}
+                    style={{ marginBottom: "10px" }}
+                    onClick={() =>
+                      downLoadFileBlob(
+                        `${getDomain(
+                          API_URL_TENANT
+                        )}/person/person/generate_template/?type=1`,
+                        "platilla_personas.xlsx",
+                        "GET"
+                      )
+                    }
                   >
-                    <Button
-                      icon={<DownloadOutlined />}
-                      style={{ marginBottom: "10px" }}
-                    >
-                      Descargar plantilla
-                    </Button>
-                  </Dropdown>
+                    Descargar plantilla
+                  </Button>
+                  {/* </Dropdown> */}
                 </Row>
               </div>
               <Table
                 className={"mainTable table-persons"}
                 rowKey={"id"}
                 size="small"
-                columns={columns2.filter(item=> item.show)}
+                columns={columns2.filter((item) => item.show)}
                 dataSource={person}
                 loading={loading}
                 locale={{

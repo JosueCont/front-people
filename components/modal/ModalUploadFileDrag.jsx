@@ -9,6 +9,7 @@ const ModalUploadFileDrag = ({
   setVisible,
   visible,
   setFiles,
+  extensionFile = "text/xml",
   ...porps
 }) => {
   const [upload, setUpload] = useState([]);
@@ -18,9 +19,9 @@ const ModalUploadFileDrag = ({
     multiple: true,
     showUploadList: false,
     beforeUpload: (file) => {
-      const isXML = file.type === "text/xml";
+      const isXML = file.type === extensionFile;
       if (!isXML) {
-        message.error(`${file.name} no es un xml.`);
+        message.error(`${file.name} no es un ${extensionFile}.`);
       }
       return isXML || Upload.LIST_IGNORE;
     },

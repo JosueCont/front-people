@@ -9,6 +9,7 @@ const GenericModal = ({
   actionButton,
   titleActionButton = "Aceptar",
   viewActionButton = true,
+  closeButton = "Cancelar",
 }) => {
   return (
     <Modal
@@ -22,7 +23,7 @@ const GenericModal = ({
               onClick={() => setVisible(false)}
               style={{ paddingLeft: 50, paddingRight: 50 }}
             >
-              Cancelar
+              {closeButton}
             </Button>
 
             {viewActionButton && (
