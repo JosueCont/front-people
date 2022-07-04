@@ -28,14 +28,14 @@ const SelectPeriodicity = ({
       <Form.Item
         key="ItemPeriodicity"
         name={props.name ? props.name : "periodicity"}
-        label={viewLabel ? "Periocidad" : ""}
+        label={viewLabel ? "Periodicidad" : ""}
         rules={rules}
       >
         <Select
           size={props.size ? props.size : "middle"}
           key="SelectPeriodicity"
           // options={options}
-          placeholder="Periocidad"
+          placeholder="Periodicidad"
           allowClear
           style={props.style ? props.style : {}}
           notFoundContent={"No se encontraron resultados."}

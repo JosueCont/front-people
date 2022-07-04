@@ -12,10 +12,12 @@ import {
   Input,
   Spin,
   Alert,
+  InputNumber,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { numberFormat } from "../../../utils/functions";
 import { connect } from "react-redux";
+import { get } from "lodash";
 
 const { Step } = Steps;
 const { Column } = Table;
@@ -137,11 +139,13 @@ const ModalConceptsPayroll = ({
               <Row style={{ marginBottom: "8px" }}>
                 <Col span={18}>{item.description}</Col>
                 <Col span={4}>
-                  <Input
+                  <InputNumber
                     type="number"
                     name={item.id}
                     defaultValue={item.value}
-                    onChange={(e) => changeHandler(type)(e)}
+                    formatter={(value) => value.replace("-", "")}
+                    controls={false}
+                    onChange={(e) => changeHandler(type, item.id)(e)}
                   />
                 </Col>
               </Row>
@@ -158,21 +162,21 @@ const ModalConceptsPayroll = ({
     if (type === 3) setOtherPayments(checkedValues);
   };
 
-  const changeHandler = (type) => (e) => {
+  const changeHandler = (type, name) => (value) => {
     if (type === 1)
       perceptions.map((item) => {
-        if (item.id === e.target.name)
-          item.value = e.target.value != "" ? Number(e.target.value) : 0;
+        if (item.id === name)
+          item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
       });
     if (type === 2)
       deductions.map((item) => {
-        if (item.id === e.target.name)
-          item.value = e.target.value != "" ? Number(e.target.value) : 0;
+        if (item.id === name)
+          item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
       });
     if (type === 3)
       otherPayments.map((item) => {
-        if (item.id === e.target.name)
-          item.value = e.target.value != "" ? Number(e.target.value) : 0;
+        if (item.id === name)
+          item.value = value != "" && Number(value) > 0 ? Number(value) : 0;
       });
   };
 

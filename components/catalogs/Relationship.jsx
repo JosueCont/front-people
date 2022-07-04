@@ -163,7 +163,7 @@ const Relationship = ({ permissions, currentNode, ...props }) => {
         title: "¿Está seguro de eliminar este registro?",
         content: "Si lo elimina no podrá recuperarlo",
         icon: <ExclamationCircleOutlined />,
-        okText: "Si, eliminar",
+        okText: "Sí, eliminar",
         okButtonProps: {
           danger: true,
         },
