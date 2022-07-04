@@ -1141,6 +1141,7 @@ const CalculatePayroll = ({ ...props }) => {
                             {...{
                               showUploadList: false,
                               beforeUpload: (file) => {
+                                console.log("FILE--->> ", file.type);
                                 const isXML =
                                   file.type ===
                                   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
