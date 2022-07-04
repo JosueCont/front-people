@@ -81,6 +81,21 @@ const Levels = ({ currentNode, ...props }) => {
   };
 
   const onFinishForm = (value, url) => {
+
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+    if(!(value?.name && value.name.trim())){
+      form.setFieldsValue({name:undefined})
+      value.name=undefined
+    }
+
+    if(value.name===undefined){
+      form.validateFields()
+      return
+    }
+
+
     if (edit) {
       updateRegister(url, value);
     } else saveRegister(url, value);
@@ -88,7 +103,10 @@ const Levels = ({ currentNode, ...props }) => {
 
   const saveRegister = async (url, data) => {
     data.node = currentNode.id;
-    if (!data.order || data.order == undefined) delete data.order;
+    if(data.order===0){
+      data.order = data.order + 1;
+    }
+    else if (!data.order || data.order === undefined) delete data.order;
     else data.order = data.order + 1;
     setLoading(true);
     try {
