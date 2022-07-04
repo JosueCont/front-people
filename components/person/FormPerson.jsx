@@ -40,7 +40,7 @@ const FormPerson = ({
   const [jobSelected, setJobSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   const [payrrollActive, setPayrrollActive] = useState(true);
-
+  
   const onFinish = (value) => {
     if (date !== "") {
       value.birth_date = date;
@@ -115,6 +115,7 @@ const FormPerson = ({
             <Col span={23}>
               <Row gutter={20}>
                 {config &&
+                  config.applications &&
                   config.applications.find(
                     (item) => item.app === "PAYROLL" && !item.is_active
                   ) && (
@@ -206,6 +207,7 @@ const FormPerson = ({
 
                 <Col lg={20} xs={24} style={{ padding: "10px" }}>
                   {config &&
+                    config.applications &&
                     config.applications.find(
                       (item) => item.app === "PAYROLL" && item.is_active
                     ) && (
