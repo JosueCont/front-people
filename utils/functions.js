@@ -388,7 +388,6 @@ export const arrayToSelect = (
   keyitem = "",
   labelItem = "Item"
 ) => {
-  console.log("DATAS-->> ", data);
   const newData = data.map((item) => {
     return {
       value: item[valueItem],
@@ -396,6 +395,5 @@ export const arrayToSelect = (
       label: item[labelItem],
     };
   });
-  console.log("Array select-->> ", newData);
   return newData;
 };
