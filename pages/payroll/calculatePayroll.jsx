@@ -1000,7 +1000,11 @@ const CalculatePayroll = ({ ...props }) => {
                                 sendCalculatePayroll({
                                   payment_period: value,
                                 }),
-                                  setPeriodSelcted(value);
+                                  setPeriodSelcted(
+                                    calendarSelect.periods.find(
+                                      (p) => p.id == value
+                                    )
+                                  );
                               }}
                               options={
                                 calendarSelect
