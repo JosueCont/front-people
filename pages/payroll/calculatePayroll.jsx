@@ -19,6 +19,7 @@ import {
   InputNumber,
   Steps,
   Upload,
+  DatePicker,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -47,6 +48,7 @@ import NumberFormat from "../../components/formatter/numberFormat";
 import CfdiVaucher from "../../components/payroll/cfdiVaucher";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
+import moment from "moment";
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -456,7 +458,7 @@ const CalculatePayroll = ({ ...props }) => {
     const calendar = paymentCalendars.find((item) => item.id === value);
     let period = calendar.periods.find((p) => p.active == true);
     if (!period) period = calendar.periods[0];
-    setPeriodSelcted(period.id);
+    setPeriodSelcted(period);
     setCalendarSelect(calendar);
     setActivePeriod(period.id);
     setPayrollType(calendar.perception_type.code);
@@ -514,7 +516,7 @@ const CalculatePayroll = ({ ...props }) => {
       );
     });
     sendCalculatePayroll({
-      payment_period: periodSelected,
+      payment_period: periodSelected.id,
       payroll: data,
     });
   };
@@ -523,14 +525,14 @@ const CalculatePayroll = ({ ...props }) => {
     setGenericModal(false);
     setLoading(true);
     WebApiPayroll.closePayroll({
-      payment_period: periodSelected,
+      payment_period: periodSelected.id,
       payroll: payroll,
     })
       .then((response) => {
         changeStep(true);
         setIsOpen(response.data.consolidated.is_open);
         setConsolidated(response.data.consolidated);
-        sendCalculatePayroll({ payment_period: periodSelected });
+        sendCalculatePayroll({ payment_period: periodSelected.id });
         setTimeout(() => {
           message.success(messageSaveSuccess);
           setLoading(false);
@@ -547,30 +549,36 @@ const CalculatePayroll = ({ ...props }) => {
 
   const stampPayroll = (
     data = {
-      payment_period: periodSelected,
+      payment_period: periodSelected.id,
     }
   ) => {
-    setGenericModal(false);
-    setLoading(true);
-    WebApiPayroll.stampPayroll(data)
-      .then((response) => {
-        setLoading(false);
-        setMessageModal(4);
-        message.success(messageSendSuccess);
-        sendCalculatePayroll({ payment_period: periodSelected });
-      })
-      .catch(async (error) => {
-        console.log(error);
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          setMessageModal(1, error.response.data.message);
-          setGenericModal(true);
-        } else message.error(messageError);
-        setLoading(false);
-      });
+    const inputPaymentDate = document.getElementById("payment_date");
+    if (inputPaymentDate.value != null && inputPaymentDate.value != "") {
+      data.pay_date = inputPaymentDate.value;
+      setGenericModal(false);
+      setLoading(true);
+      WebApiPayroll.stampPayroll(data)
+        .then((response) => {
+          setLoading(false);
+          setMessageModal(4);
+          message.success(messageSendSuccess);
+          sendCalculatePayroll({ payment_period: periodSelected.id });
+        })
+        .catch(async (error) => {
+          console.log(error);
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.message
+          ) {
+            setMessageModal(1, error.response.data.message);
+            setGenericModal(true);
+          } else message.error(messageError);
+          setLoading(false);
+        });
+    } else {
+      message.error("Se requeiere una fecha de pago");
+    }
   };
 
   const setMessageModal = (type, data) => {
@@ -636,9 +644,29 @@ const CalculatePayroll = ({ ...props }) => {
           title: "Timbrar nómina",
           title_message: "¿Esta seguro de timbrar la nómina?",
           description:
-            "Se emitiran todos los cfdi correspondientes ante el SAT",
+            "Verifica que la fecha de pago sea correcta, se emitiran todos los cfdi correspondientes ante el SAT.",
           type_alert: "warning",
           action: () => stampPayroll(),
+          components: (
+            <>
+              <Row
+                style={{
+                  width: "100%",
+                  marginTop: "10px",
+                }}
+                justify="center"
+              >
+                <Form.Item label="Fecha de pago" style={{ width: "40%" }}>
+                  <DatePicker
+                    defaultValue={moment(periodSelected.payment_date)}
+                    moment={"YYYY"}
+                    id="payment_date"
+                    placeholder="Fecha de pago."
+                  />
+                </Form.Item>
+              </Row>
+            </>
+          ),
           title_action_button: "Sí, timbrar",
         });
         setGenericModal(true);
@@ -678,7 +706,7 @@ const CalculatePayroll = ({ ...props }) => {
   useEffect(() => {
     if (calendarSelect) {
       const filter = {
-        payment_period: periodSelected,
+        payment_period: periodSelected.id,
       };
 
       if (department) filter.department = department;
@@ -707,12 +735,12 @@ const CalculatePayroll = ({ ...props }) => {
         case 1:
           setGenericModal(false);
           WebApiPayroll.openConsolidationPayroll({
-            payment_period: periodSelected,
+            payment_period: periodSelected.id,
             opening_reason: inputMotive.value,
           })
             .then((response) => {
               message.success(messageUpdateSuccess);
-              sendCalculatePayroll({ payment_period: periodSelected });
+              sendCalculatePayroll({ payment_period: periodSelected.id });
             })
             .catch((error) => {
               setLoading(false);
@@ -802,7 +830,7 @@ const CalculatePayroll = ({ ...props }) => {
       return item.payroll_cfdi_person.id;
     });
     stampPayroll({
-      payment_period: periodSelected,
+      payment_period: periodSelected.id,
       array_cfdi: cfdis,
     });
   };
@@ -814,14 +842,14 @@ const CalculatePayroll = ({ ...props }) => {
       setGenericModal(false);
       let data = {
         motive: inputMotive.value,
-        payment_period: periodSelected,
+        payment_period: periodSelected.id,
       };
       if (cfdiCancel.length > 0 && type == 2) data.cfdis_id = cfdiCancel;
       else if (type == 3) data.cfdis_id = [id];
       WebApiPayroll.cancelCfdi(data)
         .then((response) => {
           message.success(messageUpdateSuccess);
-          sendCalculatePayroll({ payment_period: periodSelected });
+          sendCalculatePayroll({ payment_period: periodSelected.id });
         })
         .catch((error) => {
           setLoading(false);
@@ -880,7 +908,7 @@ const CalculatePayroll = ({ ...props }) => {
         setLoading(false);
       })
       .catch((error) => {
-        sendCalculatePayroll({ payment_period: periodSelected });
+        sendCalculatePayroll({ payment_period: periodSelected.id });
         setLoading(false);
         message.error(messageError);
       });
@@ -1046,7 +1074,7 @@ const CalculatePayroll = ({ ...props }) => {
                                   "Nomina.xlsx",
                                   "POST",
                                   {
-                                    payment_period: periodSelected,
+                                    payment_period: periodSelected.id,
                                     department: department,
                                     job: job,
                                     payroll: payroll.map((item) => {
@@ -1124,7 +1152,9 @@ const CalculatePayroll = ({ ...props }) => {
                                   downLoadFileBlob(
                                     `${getDomain(
                                       API_URL_TENANT
-                                    )}/payroll/payroll-calculus?payment_period=${periodSelected}`,
+                                    )}/payroll/payroll-calculus?payment_period=${
+                                      periodSelected.id
+                                    }`,
                                     "Nomina.xlsx",
                                     "GET"
                                   );
@@ -1158,7 +1188,7 @@ const CalculatePayroll = ({ ...props }) => {
                                     );
                                     data.append(
                                       "payment_period",
-                                      periodSelected
+                                      periodSelected.id
                                     );
                                     importPayrollCaculate(data);
                                     // let files = [];
@@ -1325,7 +1355,7 @@ const CalculatePayroll = ({ ...props }) => {
                   {step == 3 ? (
                     <CfdiVaucher
                       calendar={calendarSelect.id}
-                      period={periodSelected}
+                      period={periodSelected.id}
                       viewFilter={false}
                       setKeys={setCfdiCancel}
                       clickCancelStamp={cancelOneStamp}
@@ -1407,7 +1437,7 @@ const CalculatePayroll = ({ ...props }) => {
           visible={modalVisible}
           setVisible={setModalVisible}
           calendar={{
-            payment_period: periodSelected,
+            payment_period: periodSelected.id,
           }}
           person_id={personId}
           payroll={payroll}
