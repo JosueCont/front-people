@@ -656,6 +656,24 @@ const homeScreen = ({ ...props }) => {
 
   ////SEARCH FILTER
   const filter = (value) => {
+
+
+    if(!(value?.name && value.name.trim())){
+      formFilter.setFieldsValue({name:undefined})
+      value.name=undefined
+    }
+
+    if(!(value?.flast_name && value.flast_name.trim())){
+      formFilter.setFieldsValue({flast_name:undefined})
+      value.flast_name=undefined
+    }
+
+    if(!(value?.code && value.code.trim())){
+      formFilter.setFieldsValue({code:undefined})
+      value.code=undefined
+    }
+
+
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
