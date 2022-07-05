@@ -120,6 +120,28 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   };
 
   const onFinishForm = (value) => {
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+    if (!(value?.description && value.description.trim())) {
+      form.setFieldsValue({ description: undefined });
+      value.description = undefined;
+    }
+
+    if (!(value?.code && value.code.trim())) {
+      form.setFieldsValue({ code: undefined });
+      value.code = undefined;
+    }
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+
+    if (value.description === undefined || value.code === undefined) {
+      form.validateFields();
+      return;
+    }
+
+    console.log(value);
     value.node = currentNode.id;
     if (edit) {
       updateRegister(value);
@@ -150,7 +172,6 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   };
 
   const editRegister = (item, param) => {
-    console.log("Key", key);
     setEdit(true);
     setId(item.id);
 
@@ -265,10 +286,22 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         rules={[ruleRequired]}
       >
         <Select
-          options={data.map((item) => {
-            return { value: item.id, label: item.description };
+          showSearch
+          optionFilterProp="children"
+          allowClear
+          notFoundContent={"No se encontraron resultados."}
+        >
+          {data.map((item) => {
+            return (
+              <>
+                <Option key={item.id} value={item.id}>
+                  {item.description}
+                </Option>
+                ;
+              </>
+            );
           })}
-        />
+        </Select>
       </Form.Item>
     );
   };
@@ -300,9 +333,13 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
             <RenderSelect
               data={
                 key == 1
-                  ? props.cat_perceptions
+                  ? props.cat_perceptions.filter(
+                      (item) => item.code != "046" && item.code != "001"
+                    )
                   : key == 2
-                  ? props.cat_deductions
+                  ? props.cat_deductions.filter(
+                      (item) => item.code != "001" && item.code != "002"
+                    )
                   : props.cat_other_payments
               }
             />
@@ -320,12 +357,12 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         </Row>
         <Row justify={"start"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
+            <b>Ver conceptos del sistema </b>
             <Switch
               title="Conceptos del sistema"
               defaultChecked={intConcept}
               onChange={(value) => setIntConcept(value)}
             />
-            <b>Ver conceptos del sistema</b>
           </Col>
         </Row>
       </>

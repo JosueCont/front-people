@@ -298,19 +298,19 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
       },
       key: "name",
     },
-    {
-      title: "Salario diario integrado",
-      render: (item) => {
-        return (
-          <>
-            {item.integrated_daily_salary
-              ? item.integrated_daily_salary
-              : "$ 0.00"}
-          </>
-        );
-      },
-      key: "name",
-    },
+    // {
+    //   title: "Salario diario integrado",
+    //   render: (item) => {
+    //     return (
+    //       <>
+    //         {item.integrated_daily_salary
+    //           ? item.integrated_daily_salary
+    //           : "$ 0.00"}
+    //       </>
+    //     );
+    //   },
+    //   key: "name",
+    // },
     {
       title: "Movimiento",
       key: "id",
@@ -360,7 +360,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     <Input maxLength={10} />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={22} md={12}>
+                {/* <Col lg={8} xs={22} md={12}>
                   <Form.Item
                     name="integrated_daily_salary"
                     label="Salario diario integrado"
@@ -369,7 +369,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                   >
                     <Input disabled />
                   </Form.Item>
-                </Col>
+                </Col> */}
                 <Col lg={8} xs={22} md={12}>
                   <Form.Item
                     name="contract_type"
