@@ -677,8 +677,8 @@ const homeScreen = ({ ...props }) => {
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
-      filters.flast_name = value.name;
-      filters.mlast_name = value.name;
+      //filters.flast_name = value.name;
+      //filters.mlast_name = value.name;
     }
     if (value && value.flast_name !== undefined) {
       urlFilter = urlFilter + "flast_name=" + value.flast_name + "&";
