@@ -1180,6 +1180,7 @@ const homeScreen = ({ ...props }) => {
                         </Dropdown>
                       )}
                       <Button
+                        className={"ml-20"}
                         icon={<DownloadOutlined />}
                         style={{ marginBottom: "10px" }}
                         onClick={() =>
@@ -1196,30 +1197,6 @@ const homeScreen = ({ ...props }) => {
                       </Button>
                     </Space>
                   </Col>
-
-                  {/* <Dropdown
-                    overlay={menuExportTemplate}
-                    placement="bottomLeft"
-                    arrow
-                    className={"ml-20"}
-                  > */}
-                  <Button
-                    className={"ml-20"}
-                    icon={<DownloadOutlined />}
-                    style={{ marginBottom: "10px" }}
-                    onClick={() =>
-                      downLoadFileBlob(
-                        `${getDomain(
-                          API_URL_TENANT
-                        )}/person/person/generate_template/?type=1`,
-                        "platilla_personas.xlsx",
-                        "GET"
-                      )
-                    }
-                  >
-                    Descargar plantilla
-                  </Button>
-                  {/* </Dropdown> */}
                 </Row>
               </div>
               <Table
