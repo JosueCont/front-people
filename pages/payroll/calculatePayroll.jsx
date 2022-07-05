@@ -1070,23 +1070,22 @@ const CalculatePayroll = ({ ...props }) => {
                             style={{ marginTop: "30px" }}
                             size="large"
                             onClick={() => {
-                              console.log(payroll),
-                                downLoadFileBlob(
-                                  `${getDomain(
-                                    API_URL_TENANT
-                                  )}/payroll/payroll-calculus`,
-                                  "Nomina.xlsx",
-                                  "POST",
-                                  {
-                                    payment_period: periodSelected.id,
-                                    department: department,
-                                    job: job,
-                                    payroll: payroll.map((item) => {
-                                      item.person_id = item.person.id;
-                                      return item;
-                                    }),
-                                  }
-                                );
+                              downLoadFileBlob(
+                                `${getDomain(
+                                  API_URL_TENANT
+                                )}/payroll/payroll-calculus`,
+                                "Nomina.xlsx",
+                                "POST",
+                                {
+                                  payment_period: periodSelected.id,
+                                  department: department,
+                                  job: job,
+                                  payroll: payroll.map((item) => {
+                                    item.person_id = item.person.id;
+                                    return item;
+                                  }),
+                                }
+                              );
                             }}
                           >
                             Descargar plantilla
@@ -1152,16 +1151,15 @@ const CalculatePayroll = ({ ...props }) => {
                               block
                               htmlType="button"
                               onClick={() => {
-                                console.log(payroll),
-                                  downLoadFileBlob(
-                                    `${getDomain(
-                                      API_URL_TENANT
-                                    )}/payroll/payroll-calculus?payment_period=${
-                                      periodSelected.id
-                                    }`,
-                                    "Nomina.xlsx",
-                                    "GET"
-                                  );
+                                downLoadFileBlob(
+                                  `${getDomain(
+                                    API_URL_TENANT
+                                  )}/payroll/payroll-calculus?payment_period=${
+                                    periodSelected.id
+                                  }`,
+                                  "Nomina.xlsx",
+                                  "GET"
+                                );
                               }}
                             >
                               Descargar nómina
