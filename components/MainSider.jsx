@@ -159,15 +159,15 @@ const MainSider = ({
           defaultOpenKeys={defaultOpenKeys ? defaultOpenKeys : [""]}
           mode="inline"
         >
-          {props.config && props.config.nomina_enabled && (
-            <Menu.Item
-              key="dashboard"
-              onClick={() => router.push({ pathname: "/dashboard" })}
-              icon={<AppstoreOutlined />}
-            >
-              Dashboard
-            </Menu.Item>
-          )}
+          {/*{props.config && props.config.nomina_enabled && (*/}
+          {/*  <Menu.Item*/}
+          {/*    key="dashboard"*/}
+          {/*    onClick={() => router.push({ pathname: "/dashboard" })}*/}
+          {/*    icon={<AppstoreOutlined />}*/}
+          {/*  >*/}
+          {/*    Dashboard*/}
+          {/*  </Menu.Item>*/}
+          {/*)}*/}
           {props.permissions.person.view && (
             <SubMenu
               key="people"
