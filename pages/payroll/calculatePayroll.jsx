@@ -240,6 +240,8 @@ const CalculatePayroll = ({ ...props }) => {
                     item.value = value;
                     setCalculate(true);
                   }}
+                  min={0}
+                  formatter={(value) => value.replace("-", "")}
                   controls={false}
                   defaultValue={item.amount}
                 />
