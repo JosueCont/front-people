@@ -270,7 +270,7 @@ const WorkTitle = ({ currentNode, ...props }) => {
         <Row gutter={20}>
           <Col lg={8} xs={22} md={12}>
             <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
-              <Input />
+              <Input maxLength={100} />
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={12}>
