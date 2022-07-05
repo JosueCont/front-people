@@ -120,6 +120,28 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   };
 
   const onFinishForm = (value) => {
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+    if(!(value?.description && value.description.trim())){
+      form.setFieldsValue({description:undefined})
+      value.description=undefined
+    }
+
+    if(!(value?.code && value.code.trim())){
+      form.setFieldsValue({code:undefined})
+      value.code=undefined
+    }
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+
+    if(value.description===undefined || value.code===undefined){
+      form.validateFields()
+      return
+    }
+
+    console.log(value)
     value.node = currentNode.id;
     if (edit) {
       updateRegister(value);
@@ -320,12 +342,13 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         </Row>
         <Row justify={"start"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
+
+            <b>Ver conceptos del sistema </b>
             <Switch
-              title="Conceptos del sistema"
-              defaultChecked={intConcept}
-              onChange={(value) => setIntConcept(value)}
+                title="Conceptos del sistema"
+                defaultChecked={intConcept}
+                onChange={(value) => setIntConcept(value)}
             />
-            <b>Ver conceptos del sistema</b>
           </Col>
         </Row>
       </>
