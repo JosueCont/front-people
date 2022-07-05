@@ -89,6 +89,35 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
   };
 
   const onFinishForm = (value, url) => {
+
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+    if(!(value?.name && value.name.trim())){
+      form.setFieldsValue({name:undefined})
+      value.name=undefined
+    }
+
+    if(!(value?.description && value.description.trim())){
+      form.setFieldsValue({description:undefined})
+      value.description=undefined
+    }
+
+    if(!(value?.code && value.code.trim())){
+      form.setFieldsValue({code:undefined})
+      value.code=undefined
+    }
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+
+    if(value.name===undefined || value.description===undefined){
+      form.validateFields()
+      return
+    }
+
+    console.log(value)
+    return
     if (edit) {
       updateRegister(url, value);
     } else saveRegister(url, value);
