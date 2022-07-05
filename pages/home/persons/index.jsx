@@ -13,6 +13,7 @@ import {
   message,
   Modal,
   Menu,
+  Space,
   Dropdown,
   notification,
 } from "antd";
@@ -677,8 +678,6 @@ const homeScreen = ({ ...props }) => {
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
       filters.first_name = value.name;
-      filters.flast_name = value.name;
-      filters.mlast_name = value.name;
     }
     if (value && value.flast_name !== undefined) {
       urlFilter = urlFilter + "flast_name=" + value.flast_name + "&";
@@ -1154,54 +1153,62 @@ const homeScreen = ({ ...props }) => {
                     </Form>
                   </Col>
                 </Row>
-                <Row justify={"end"} style={{ padding: "1% 0" }}>
-                  {permissions.export_csv_person && (
-                    <Button
-                      type="primary"
-                      icon={<DownloadOutlined />}
-                      size={{ size: "large" }}
-                      onClick={() => exportPersons()}
-                      style={{ marginBottom: "10px" }}
-                    >
-                      Descargar resultados
-                    </Button>
-                  )}
-                  {permissions.import_csv_person && (
-                    <Dropdown
-                      overlay={menuImportPerson}
-                      placement="bottomLeft"
-                      arrow
-                      className={"ml-20"}
-                    >
+                <Row justify={"start"} style={{ padding: "1% 0" }}>
+                  <Col span={24}>
+                    <Space>
+                      {permissions.export_csv_person && (
+                          <Button
+                              type="primary"
+                              icon={<DownloadOutlined />}
+                              size={{ size: "large" }}
+                              onClick={() => exportPersons()}
+                              style={{ marginBottom: "10px" }}
+                          >
+                            Descargar resultados
+                          </Button>
+                      )}
+
+                      {permissions.import_csv_person && (
+                          <Dropdown
+                              overlay={menuImportPerson}
+                              placement="bottomLeft"
+                              arrow
+                          >
+                            <Button
+                                icon={<DownloadOutlined />}
+                                style={{ marginBottom: "10px" }}
+                            >
+                              Importar personas
+                            </Button>
+                          </Dropdown>
+                      )}
                       <Button
-                        icon={<DownloadOutlined />}
-                        style={{ marginBottom: "10px" }}
+                          icon={<DownloadOutlined />}
+                          style={{ marginBottom: "10px" }}
+                          onClick={() =>
+                              downLoadFileBlob(
+                                  `${getDomain(
+                                      API_URL_TENANT
+                                  )}/person/person/generate_template/?type=1`,
+                                  "platilla_personas.xlsx",
+                                  "GET"
+                              )
+                          }
                       >
-                        Importar personas
+                        Descargar plantilla
                       </Button>
-                    </Dropdown>
-                  )}
+                    </Space>
+
+                  </Col>
+
+
                   {/* <Dropdown
                     overlay={menuExportTemplate}
                     placement="bottomLeft"
                     arrow
                     className={"ml-20"}
                   > */}
-                  <Button
-                    icon={<DownloadOutlined />}
-                    style={{ marginBottom: "10px" }}
-                    onClick={() =>
-                      downLoadFileBlob(
-                        `${getDomain(
-                          API_URL_TENANT
-                        )}/person/person/generate_template/?type=1`,
-                        "platilla_personas.xlsx",
-                        "GET"
-                      )
-                    }
-                  >
-                    Descargar plantilla
-                  </Button>
+
                   {/* </Dropdown> */}
                 </Row>
               </div>

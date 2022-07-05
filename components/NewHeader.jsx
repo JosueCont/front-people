@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import {
-  Layout,
-  Row,
-  Col,
-  Avatar,
-  Menu,
-  Dropdown,
-  Card,
-  Button,
-  Typography,
-  Divider,
-  Modal,
-  Space,
-  Badge,
-  Alert,
-  Select,
+    Layout,
+    Row,
+    Col,
+    Avatar,
+    Menu,
+    Dropdown,
+    Card,
+    Button,
+    Typography,
+    Divider,
+    Modal,
+    Space,
+    Badge,
+    Alert,
+    Select, Image
 } from "antd";
 import { UserOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
@@ -183,17 +183,13 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <div className="overlay" />
         <div className="container-fluid">
           <Row justify="space-between">
-            <Col style={{ width: 250, display: "flex" }}>
-              <object
-                style={{ maxWidth: 100, margin: "auto", maxHeight: 50 }}
-                data="/images/LogoKhorconnect.svg"
-                type="image/svg+xml"
-              >
-                <img
-                  style={{ maxWidth: 100, margin: "auto", maxHeight: 50 }}
-                  src={!hideLogo ? mainLogo : "/images/LogoKhorconnect.svg"}
+            <Col>
+                <Image
+                  preview={false}
+                  onClick={() => router.push("/home/persons")}
+                  style={{ maxWidth: 100, margin: "auto", maxHeight: 50, cursor:'pointer' }}
+                  src={(!hideLogo && mainLogo) ? mainLogo : "/images/LogoKhorconnect.svg"}
                 />
-              </object>
             </Col>
             <Col style={{ width: 250, textAlign: "end" }}>
               {person && (
