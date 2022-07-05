@@ -109,7 +109,12 @@ const ModalConceptsPayroll = ({
         })
       );
     }
-  }, [props.perceptions_int, props.deductions_int, props.other_payments_int]);
+  }, [
+    props.perceptions_int,
+    props.deductions_int,
+    props.other_payments_int,
+    visible,
+  ]);
 
   const RenderCheckConcept = ({ data, type }) => {
     return (
