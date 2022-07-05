@@ -657,23 +657,20 @@ const homeScreen = ({ ...props }) => {
 
   ////SEARCH FILTER
   const filter = (value) => {
-
-
-    if(!(value?.name && value.name.trim())){
-      formFilter.setFieldsValue({name:undefined})
-      value.name=undefined
+    if (!(value?.name && value.name.trim())) {
+      formFilter.setFieldsValue({ name: undefined });
+      value.name = undefined;
     }
 
-    if(!(value?.flast_name && value.flast_name.trim())){
-      formFilter.setFieldsValue({flast_name:undefined})
-      value.flast_name=undefined
+    if (!(value?.flast_name && value.flast_name.trim())) {
+      formFilter.setFieldsValue({ flast_name: undefined });
+      value.flast_name = undefined;
     }
 
-    if(!(value?.code && value.code.trim())){
-      formFilter.setFieldsValue({code:undefined})
-      value.code=undefined
+    if (!(value?.code && value.code.trim())) {
+      formFilter.setFieldsValue({ code: undefined });
+      value.code = undefined;
     }
-
 
     if (value && value.name !== undefined) {
       urlFilter = urlFilter + "first_name__icontains=" + value.name + "&";
@@ -1157,59 +1154,49 @@ const homeScreen = ({ ...props }) => {
                   <Col span={24}>
                     <Space>
                       {permissions.export_csv_person && (
-                          <Button
-                              type="primary"
-                              icon={<DownloadOutlined />}
-                              size={{ size: "large" }}
-                              onClick={() => exportPersons()}
-                              style={{ marginBottom: "10px" }}
-                          >
-                            Descargar resultados
-                          </Button>
+                        <Button
+                          type="primary"
+                          icon={<DownloadOutlined />}
+                          size={{ size: "large" }}
+                          onClick={() => exportPersons()}
+                          style={{ marginBottom: "10px" }}
+                        >
+                          Descargar resultados
+                        </Button>
                       )}
 
                       {permissions.import_csv_person && (
-                          <Dropdown
-                              overlay={menuImportPerson}
-                              placement="bottomLeft"
-                              arrow
+                        <Dropdown
+                          overlay={menuImportPerson}
+                          placement="bottomLeft"
+                          arrow
+                        >
+                          <Button
+                            icon={<DownloadOutlined />}
+                            style={{ marginBottom: "10px" }}
                           >
-                            <Button
-                                icon={<DownloadOutlined />}
-                                style={{ marginBottom: "10px" }}
-                            >
-                              Importar personas
-                            </Button>
-                          </Dropdown>
+                            Importar personas
+                          </Button>
+                        </Dropdown>
                       )}
                       <Button
-                          icon={<DownloadOutlined />}
-                          style={{ marginBottom: "10px" }}
-                          onClick={() =>
-                              downLoadFileBlob(
-                                  `${getDomain(
-                                      API_URL_TENANT
-                                  )}/person/person/generate_template/?type=1`,
-                                  "platilla_personas.xlsx",
-                                  "GET"
-                              )
-                          }
+                        className={"ml-20"}
+                        icon={<DownloadOutlined />}
+                        style={{ marginBottom: "10px" }}
+                        onClick={() =>
+                          downLoadFileBlob(
+                            `${getDomain(
+                              API_URL_TENANT
+                            )}/person/person/generate_template/?type=1`,
+                            "platilla_personas.xlsx",
+                            "GET"
+                          )
+                        }
                       >
                         Descargar plantilla
                       </Button>
                     </Space>
-
                   </Col>
-
-
-                  {/* <Dropdown
-                    overlay={menuExportTemplate}
-                    placement="bottomLeft"
-                    arrow
-                    className={"ml-20"}
-                  > */}
-
-                  {/* </Dropdown> */}
                 </Row>
               </div>
               <Table
