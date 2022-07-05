@@ -163,7 +163,7 @@ const ImportMasivePayroll = ({ ...props }) => {
             <Col>
               <Radio
                 key={item.payment_start_date + i}
-                value={item.payment_start_date}
+                value={`${item.payment_start_date},${item.payment_end_date}`}
               >
                 {item.payment_start_date} - {item.payment_end_date}
               </Radio>

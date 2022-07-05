@@ -173,7 +173,6 @@ const ModalSelectDocument = ({
             <Form.Item name="document_type" rules={[ruleRequired]}>
               <Select
                 options={props.document_type.map((item) => {
-                  console.log(item);
                   return { value: item.id, label: item.name };
                 })}
                 placeholder="Tipo de documento"
