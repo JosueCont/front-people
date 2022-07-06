@@ -85,6 +85,28 @@ const PersonTypes = ({ permissions, currentNode, ...props }) => {
   };
 
   const onFinishForm = (value, url) => {
+
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+    if(!(value?.name && value.name.trim())){
+      form.setFieldsValue({name:undefined})
+      value.name=undefined
+    }
+
+    if(!(value?.code && value.code.trim())){
+      form.setFieldsValue({code:undefined})
+      value.code=undefined
+    }
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+
+    if(value.name===undefined || value.code===undefined){
+      form.validateFields()
+      return
+    }
+
     if (edit) {
       updateRegister(url, value);
     } else saveRegister(url, value);

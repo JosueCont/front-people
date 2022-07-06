@@ -86,7 +86,6 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   useEffect(() => {
     resetForm();
     setIntConcept(false);
-    console.log("KEY -->> ", key);
     if (key == 1) {
       setUrl("internal-perception-type/");
       setCat(props.perceptions_int.filter((item) => item.node != null));
@@ -121,6 +120,28 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   };
 
   const onFinishForm = (value) => {
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+    if (!(value?.description && value.description.trim())) {
+      form.setFieldsValue({ description: undefined });
+      value.description = undefined;
+    }
+
+    if (!(value?.code && value.code.trim())) {
+      form.setFieldsValue({ code: undefined });
+      value.code = undefined;
+    }
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+
+    if (value.description === undefined || value.code === undefined) {
+      form.validateFields();
+      return;
+    }
+
+    console.log(value);
     value.node = currentNode.id;
     if (edit) {
       updateRegister(value);
@@ -153,12 +174,29 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   const editRegister = (item, param) => {
     setEdit(true);
     setId(item.id);
-    form.setFieldsValue({
-      code: item.code,
-      description: item.description,
-      data_type: item.data_type,
-      perception_type: item.perception_type.id,
-    });
+
+    if (key == 1) {
+      form.setFieldsValue({
+        code: item.code,
+        description: item.description,
+        data_type: item.data_type,
+        perception_type: item.perception_type.id,
+      });
+    } else if (key == 2) {
+      form.setFieldsValue({
+        code: item.code,
+        description: item.description,
+        data_type: item.data_type,
+        deduction_type: item.deduction_type.id,
+      });
+    } else if (key == 3) {
+      form.setFieldsValue({
+        code: item.code,
+        description: item.description,
+        data_type: item.data_type,
+        other_type_payment: item.other_type_payment.id,
+      });
+    }
   };
 
   const updateRegister = async (value) => {
@@ -248,22 +286,29 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         rules={[ruleRequired]}
       >
         <Select
-          options={data.map((item) => {
-            return { value: item.id, label: item.description };
+          showSearch
+          optionFilterProp="children"
+          allowClear
+          notFoundContent={"No se encontraron resultados."}
+        >
+          {data.map((item) => {
+            return (
+              <>
+                <Option key={item.id} value={item.id}>
+                  {item.description}
+                </Option>
+                ;
+              </>
+            );
           })}
-        />
+        </Select>
       </Form.Item>
     );
   };
 
   const RenderForm = () => {
     return (
-      <Form
-        style={{ marginTop: "10px" }}
-        layout={"vertical"}
-        form={form}
-        onFinish={onFinishForm}
-      >
+      <>
         <Row gutter={20}>
           <Col lg={6} xs={22} md={12}>
             <Form.Item name="code" label="Código" rules={[ruleRequired]}>
@@ -288,9 +333,13 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
             <RenderSelect
               data={
                 key == 1
-                  ? props.cat_perceptions
+                  ? props.cat_perceptions.filter(
+                      (item) => item.code != "046" && item.code != "001"
+                    )
                   : key == 2
-                  ? props.cat_deductions
+                  ? props.cat_deductions.filter(
+                      (item) => item.code != "001" && item.code != "002"
+                    )
                   : props.cat_other_payments
               }
             />
@@ -308,15 +357,15 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         </Row>
         <Row justify={"start"} gutter={20} style={{ marginBottom: 20 }}>
           <Col>
+            <b>Ver conceptos del sistema </b>
             <Switch
               title="Conceptos del sistema"
               defaultChecked={intConcept}
               onChange={(value) => setIntConcept(value)}
             />
-            <b>Ver conceptos del sistema</b>
           </Col>
         </Row>
-      </Form>
+      </>
     );
   };
 
@@ -349,13 +398,40 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         onChange={(value) => setKey(parseInt(value))}
       >
         <TabPane tab="Percepciones" key={"1"}>
-          {key == 1 && <RenderForm />}
+          {key == 1 && (
+            <Form
+              style={{ marginTop: "10px" }}
+              layout={"vertical"}
+              form={form}
+              onFinish={onFinishForm}
+            >
+              <RenderForm />
+            </Form>
+          )}
         </TabPane>
         <TabPane tab="Deducciones" key={"2"}>
-          {key == 2 && <RenderForm />}
+          {key == 2 && (
+            <Form
+              style={{ marginTop: "10px" }}
+              layout={"vertical"}
+              form={form}
+              onFinish={onFinishForm}
+            >
+              <RenderForm />
+            </Form>
+          )}
         </TabPane>
         <TabPane tab="Otros pagos" key={"3"}>
-          {key == 3 && <RenderForm />}
+          {key == 3 && (
+            <Form
+              style={{ marginTop: "10px" }}
+              layout={"vertical"}
+              form={form}
+              onFinish={onFinishForm}
+            >
+              <RenderForm />
+            </Form>
+          )}
         </TabPane>
       </Tabs>
 

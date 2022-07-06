@@ -81,6 +81,21 @@ const Levels = ({ currentNode, ...props }) => {
   };
 
   const onFinishForm = (value, url) => {
+
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+    if(!(value?.name && value.name.trim())){
+      form.setFieldsValue({name:undefined})
+      value.name=undefined
+    }
+
+    if(value.name===undefined){
+      form.validateFields()
+      return
+    }
+
+
     if (edit) {
       updateRegister(url, value);
     } else saveRegister(url, value);
@@ -88,7 +103,10 @@ const Levels = ({ currentNode, ...props }) => {
 
   const saveRegister = async (url, data) => {
     data.node = currentNode.id;
-    if (!data.order || data.order == undefined) delete data.order;
+    if(data.order===0){
+      data.order = data.order + 1;
+    }
+    else if (!data.order || data.order === undefined) delete data.order;
     else data.order = data.order + 1;
     setLoading(true);
     try {
@@ -127,7 +145,10 @@ const Levels = ({ currentNode, ...props }) => {
 
   const updateRegister = async (url, value) => {
     try {
-      if (!value.order || value.order == undefined) value.order = 0;
+      if(value.order===0){
+        value.order = value.order + 1;
+      }
+      else if (!value.order || value.order == undefined) value.order = 0;
       let response = await WebApiPeople.updateRegisterCatalogs(
         `/business/level/${id}/`,
         value
@@ -208,8 +229,8 @@ const Levels = ({ currentNode, ...props }) => {
       >
         <Row gutter={20}>
           <Col lg={6} xs={22}>
-            <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
-              <Input />
+            <Form.Item name="name"   label="Nombre" rules={[ruleRequired]}>
+              <Input maxLength={100} />
             </Form.Item>
           </Col>
           <Col lg={6} xs={22}>

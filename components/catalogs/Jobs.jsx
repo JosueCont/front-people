@@ -87,6 +87,28 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
   };
 
   const onFinishForm = (value, url) => {
+
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+    if(!(value?.name && value.name.trim())){
+      form.setFieldsValue({name:undefined})
+      value.name=undefined
+    }
+
+    if(!(value?.code && value.code.trim())){
+      form.setFieldsValue({code:undefined})
+      value.code=undefined
+    }
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+
+    if(value.name===undefined || value.code===undefined){
+      form.validateFields()
+      return
+    }
+
     if (edit) {
       updateRegister(url, value);
     } else saveRegister(url, value);
@@ -215,7 +237,7 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
           <Row gutter={20}>
             <Col lg={6} xs={22} md={12}>
               <Form.Item name="name" label="Nombre" rules={[ruleRequired]}>
-                <Input />
+                <Input maxLength={150} />
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} md={12}>
