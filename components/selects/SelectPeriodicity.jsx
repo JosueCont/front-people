@@ -6,6 +6,7 @@ const SelectPeriodicity = ({
   viewLabel = true,
   rules = [],
   companyId,
+  disabled = false,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
@@ -41,6 +42,7 @@ const SelectPeriodicity = ({
           notFoundContent={"No se encontraron resultados."}
           showSearch
           optionFilterProp="children"
+          disabled={disabled}
         >
           {options.map((item) => {
             return (

@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../../layout/MainLayout";
-import { Row, Col, Table, Breadcrumb, Button, Modal, message } from "antd";
+import {
+  Row,
+  Col,
+  Table,
+  Breadcrumb,
+  Button,
+  Modal,
+  message,
+  Tooltip,
+} from "antd";
 import { useRouter } from "next/router";
 import {
   EditOutlined,
@@ -188,39 +197,46 @@ const PaymentCalendars = ({ ...props }) => {
                 render={(text, record) => (
                   <>
                     {record.locked ? (
-                      <EyeOutlined
-                        className="icon_actions"
-                        key={"goEdit" + record.id}
-                        onClick={() => GotoEdit(record)}
-                        style={{ color: "#fd893d" }}
-                      />
-                    ) : (
-                      <>
-                        <EditOutlined
+                      <Tooltip title="Ver detalle">
+                        <EyeOutlined
                           className="icon_actions"
                           key={"goEdit" + record.id}
                           onClick={() => GotoEdit(record)}
                           style={{ color: "#fd893d" }}
                         />
+                      </Tooltip>
+                    ) : (
+                      <>
+                        <Tooltip title="Editar">
+                          <EditOutlined
+                            className="icon_actions"
+                            key={"goEdit" + record.id}
+                            onClick={() => GotoEdit(record)}
+                            style={{ color: "#fd893d" }}
+                          />
+                        </Tooltip>
                         {/* <UsergroupAddOutlined
                           className="icon_actions"
                           key={"goCalendar" + record.id}
                         /> */}
                       </>
                     )}
-
-                    <CalendarOutlined
-                      className="icon_actions"
-                      key={"goCalendar" + record.id}
-                      onClick={() => GotoCalendar(record)}
-                    />
-                    {!record.locked && (
-                      <DeleteOutline
-                        style={{ fontSize: "22px", marginBottom: "-5px" }}
+                    <Tooltip title="Ver calendario">
+                      <CalendarOutlined
                         className="icon_actions"
-                        key={"delCalendar" + record.id}
-                        onClick={() => deleteCalednar(record.id)}
+                        key={"goCalendar" + record.id}
+                        onClick={() => GotoCalendar(record)}
                       />
+                    </Tooltip>
+                    {!record.locked && (
+                      <Tooltip title="Eliminar">
+                        <DeleteOutline
+                          style={{ fontSize: "22px", marginBottom: "-5px" }}
+                          className="icon_actions"
+                          key={"delCalendar" + record.id}
+                          onClick={() => deleteCalednar(record.id)}
+                        />
+                      </Tooltip>
                     )}
                   </>
                 )}
