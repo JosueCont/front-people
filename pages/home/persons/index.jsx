@@ -1144,7 +1144,7 @@ const homeScreen = ({ ...props }) => {
                             icon={<UploadOutlined />}
                             style={{ marginBottom: "10px" }}
                           >
-                            Subir nómina
+                            Importar personas
                           </Button>
                         </Upload>
                       )}
