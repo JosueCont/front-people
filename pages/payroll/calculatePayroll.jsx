@@ -79,6 +79,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [personsKeys, setPersonsKeys] = useState([]);
   const [personStamp, setPersonsStamp] = useState([]);
   const [cfdiCancel, setCfdiCancel] = useState([]);
+  const [arrayCfdi, setArrayCfdi] = useState([]);
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -239,6 +240,8 @@ const CalculatePayroll = ({ ...props }) => {
                     item.value = value;
                     setCalculate(true);
                   }}
+                  min={0}
+                  formatter={(value) => value.replace("-", "")}
                   controls={false}
                   defaultValue={item.amount}
                 />
@@ -552,6 +555,13 @@ const CalculatePayroll = ({ ...props }) => {
       payment_period: periodSelected.id,
     }
   ) => {
+    if (personStamp.length > 0)
+      data = {
+        payment_period: periodSelected.id,
+        array_cfdi: personStamp.map((item) => {
+          return item.payroll_cfdi_person.id;
+        }),
+      };
     const inputPaymentDate = document.getElementById("payment_date");
     if (inputPaymentDate.value != null && inputPaymentDate.value != "") {
       data.pay_date = inputPaymentDate.value;
@@ -823,16 +833,6 @@ const CalculatePayroll = ({ ...props }) => {
         return;
       }
     }
-  };
-
-  const partialStamp = () => {
-    const cfdis = personStamp.map((item) => {
-      return item.payroll_cfdi_person.id;
-    });
-    stampPayroll({
-      payment_period: periodSelected.id,
-      array_cfdi: cfdis,
-    });
   };
 
   const cancelStamp = (type, id = null) => {
@@ -1154,7 +1154,7 @@ const CalculatePayroll = ({ ...props }) => {
                                 downLoadFileBlob(
                                   `${getDomain(
                                     API_URL_TENANT
-                                  )}/payroll/payroll-calculus?payment_period=${
+                                  )}/payroll/payroll-report?payment_period=${
                                     periodSelected.id
                                   }`,
                                   "Nomina.xlsx",
@@ -1283,11 +1283,7 @@ const CalculatePayroll = ({ ...props }) => {
                                   size="large"
                                   block
                                   htmlType="button"
-                                  onClick={() =>
-                                    personStamp.length > 0
-                                      ? partialStamp()
-                                      : setMessageModal(3)
-                                  }
+                                  onClick={() => setMessageModal(3)}
                                 >
                                   Timbrar nómina
                                 </Button>
