@@ -113,11 +113,8 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
 
     if(value.name===undefined || value.description===undefined){
       form.validateFields()
-      return
     }
 
-    console.log(value)
-    return
     if (edit) {
       updateRegister(url, value);
     } else saveRegister(url, value);
