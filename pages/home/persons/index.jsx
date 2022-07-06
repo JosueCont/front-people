@@ -1110,7 +1110,7 @@ const homeScreen = ({ ...props }) => {
                           onClick={() => exportPersons()}
                           style={{ marginBottom: "10px" }}
                         >
-                          Descargar resultados
+                          Descargar personas
                         </Button>
                       )}
 
