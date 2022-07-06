@@ -283,15 +283,23 @@ const FormPaymentCalendar = ({
                       checkedChildren={<CheckOutlined />}
                       unCheckedChildren={<CloseOutlined />}
                       style={{ marginLeft: 10 }}
+                      disabled={
+                        paymentCalendar ? paymentCalendar.locked : false
+                      }
                     />
                   </>
                 }
               >
-                <Input />
+                <Input
+                  disabled={paymentCalendar ? paymentCalendar.locked : false}
+                />
               </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
-              <SelectPeriodicity size={"large"} />
+              <SelectPeriodicity
+                size={"large"}
+                disabled={paymentCalendar ? paymentCalendar.locked : false}
+              />
             </Col>
             <Col lg={8} xs={22}>
               <Form.Item
@@ -301,6 +309,7 @@ const FormPaymentCalendar = ({
                 rules={[ruleRequired]}
               >
                 <Select
+                  disabled={paymentCalendar ? paymentCalendar.locked : false}
                   placeholder="Dias a pagar"
                   style={
                     props.style ? props.style : { width: "100% !important" }
@@ -310,7 +319,9 @@ const FormPaymentCalendar = ({
               </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
-              <SelectTypeTax />
+              <SelectTypeTax
+                disabled={paymentCalendar ? paymentCalendar.locked : false}
+              />
             </Col>
             <Col lg={8} xs={22}>
               <Form.Item
@@ -322,6 +333,7 @@ const FormPaymentCalendar = ({
                   options={perceptionType}
                   notFoundContent={"No se encontraron resultados."}
                   optionFilterProp="children"
+                  disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>
             </Col>
@@ -347,6 +359,9 @@ const FormPaymentCalendar = ({
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
                           onChange={changeMonthlyAdjustment}
+                          disabled={
+                            paymentCalendar ? paymentCalendar.locked : false
+                          }
                         />
                       </span>
                       <span>
@@ -358,6 +373,9 @@ const FormPaymentCalendar = ({
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
                           onChange={changeAnnualAdjustment}
+                          disabled={
+                            paymentCalendar ? paymentCalendar.locked : false
+                          }
                         />
                       </span>
                     </div>
@@ -370,6 +388,7 @@ const FormPaymentCalendar = ({
                   picker="year"
                   moment={"YYYY"}
                   placeholder=""
+                  disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>
             </Col>
@@ -384,19 +403,10 @@ const FormPaymentCalendar = ({
                   onChange={onChangeLastDayPaid}
                   moment={"YYYY-MM-DD"}
                   placeholder=""
+                  disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>
             </Col>
-            {/* <Col lg={8} xs={22}>
-              <Form.Item name="activation_date" label="Fecha de activación">
-                <DatePicker
-                  style={{ width: "100%" }}
-                  onChange={onChangeActivationDate}
-                  moment={"YYYY-MM-DD"}
-                  placeholder=""
-                />
-              </Form.Item>
-            </Col> */}
             <Col lg={8} xs={22}>
               <Form.Item
                 name="pay_before"
@@ -419,6 +429,9 @@ const FormPaymentCalendar = ({
                           checkedChildren={<CheckOutlined />}
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
+                          disabled={
+                            paymentCalendar ? paymentCalendar.locked : false
+                          }
                         />
                       </span>
                       <span>
@@ -430,13 +443,19 @@ const FormPaymentCalendar = ({
                           checkedChildren={<CheckOutlined />}
                           unCheckedChildren={<CloseOutlined />}
                           style={{ marginLeft: 10 }}
+                          disabled={
+                            paymentCalendar ? paymentCalendar.locked : false
+                          }
                         />
                       </span>
                     </div>
                   </>
                 }
               >
-                <Input maxLength={10} />
+                <Input
+                  maxLength={10}
+                  disabled={paymentCalendar ? paymentCalendar.locked : false}
+                />
               </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
@@ -450,6 +469,7 @@ const FormPaymentCalendar = ({
                   onChange={onChangeIncidenceStart}
                   placeholder=""
                   moment={"YYYY"}
+                  disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>
             </Col>
@@ -463,11 +483,16 @@ const FormPaymentCalendar = ({
                 <Select
                   placeholder="Seleccione la version"
                   options={versions}
+                  disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>
             </Col>
             <Col lg={8} xs={22}>
-              <SelectFixedConcept type={2} name={"group_fixed_concept"} />
+              <SelectFixedConcept
+                type={2}
+                name={"group_fixed_concept"}
+                disabled={paymentCalendar ? paymentCalendar.locked : false}
+              />
             </Col>
           </Row>
           <Row justify={"end"} gutter={10}>

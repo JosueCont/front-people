@@ -3,7 +3,7 @@ import { Select, Form } from "antd";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 
-const SelectTypeTax = ({ rules = [], ...props }) => {
+const SelectTypeTax = ({ rules = [], disabled = false, ...props }) => {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
@@ -36,6 +36,7 @@ const SelectTypeTax = ({ rules = [], ...props }) => {
         notFoundContent={"No se encontraron resultados."}
         showSearch
         optionFilterProp="children"
+        disabled={disabled}
       >
         {options.map((item) => {
           return (

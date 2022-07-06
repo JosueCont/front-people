@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Form, Select } from "antd";
 
 const SelectFixedConcept = ({
-  disabled,
+  disabled = false,
   viewLabel = true,
   rules = [],
   type = 1,
@@ -35,6 +35,7 @@ const SelectFixedConcept = ({
         placeholder={placeholder && "Conceptos fijos"}
         showSearch
         optionFilterProp="children"
+        disabled={disabled}
       >
         {concept.map((item) => {
           return (
