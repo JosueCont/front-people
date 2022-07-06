@@ -24,7 +24,7 @@ import SelectDepartment from "../selects/SelectDepartment";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import SelectAccessIntranet from "../selects/SelectAccessIntranet";
-import { ruleRequired } from "../../utils/rules";
+import { ruleRequired, nameLastname } from "../../utils/rules";
 
 const FormPerson = ({
   config = null,
@@ -154,17 +154,17 @@ const FormPerson = ({
                 )}
 
                 <Col lg={8} xs={24}>
-                  <Form.Item rules={[ruleRequired]} name="first_name">
+                  <Form.Item rules={[ruleRequired, nameLastname]} name="first_name">
                     <Input type="text" placeholder="Nombre" />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item rules={[ruleRequired]} name="flast_name">
+                  <Form.Item rules={[ruleRequired,nameLastname]} name="flast_name">
                     <Input type="text" placeholder="Apellido paterno" />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item name="mlast_name">
+                  <Form.Item rules={[nameLastname]} name="mlast_name">
                     <Input type="text" placeholder="Apellido materno" />
                   </Form.Item>
                 </Col>

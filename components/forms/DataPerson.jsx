@@ -31,7 +31,7 @@ import {
 import WebApiPeople from "../../api/WebApiPeople";
 import {
   curpFormat,
-  minLengthNumber,
+  minLengthNumber, nameLastname,
   onlyNumeric,
   rfcFormat,
 } from "../../utils/rules";
@@ -320,7 +320,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 <Form.Item
                   name="first_name"
                   label="Nombre(s)"
-                  rules={[{ message: "Ingresa un nombre" }]}
+                  rules={[{ message: "Ingresa un nombre" },nameLastname]}
                 >
                   <Input />
                 </Form.Item>
@@ -329,7 +329,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 <Form.Item
                   name="flast_name"
                   label="Apellido Paterno"
-                  rules={[{ message: "Ingresa un apellido paterno" }]}
+                  rules={[{ message: "Ingresa un apellido paterno" },nameLastname]}
                 >
                   <Input />
                 </Form.Item>
@@ -419,7 +419,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 <Form.Item
                   name="mlast_name"
                   label="Apellido Materno"
-                  rules={[{ message: "Ingresa un apellido paterno" }]}
+                  rules={[{ message: "Ingresa un apellido paterno" },nameLastname]}
                 >
                   <Input />
                 </Form.Item>
