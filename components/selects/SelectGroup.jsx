@@ -27,6 +27,7 @@ const SelectGroup = ({ viewLabel, required = true, ...props }) => {
         showArrow
         style={{ width: "100%" }}
         placeholder="Perfiles de seguridad"
+        notFoundContent="No se encontraron resultados"
         showSearch
         optionFilterProp="children"
       >

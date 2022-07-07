@@ -61,3 +61,9 @@ export const minLengthNumber = {
   pattern: /^[0-9]{11}$/,
   message: "El valor ingresado no puede ser menor a 11 caracteres.",
 };
+
+
+export const nameLastname = {
+  pattern: /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/,
+  message: "El valor ingresado no puede contener números y/o caracteres especiales.",
+};

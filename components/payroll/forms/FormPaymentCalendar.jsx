@@ -259,7 +259,11 @@ const FormPaymentCalendar = ({
       />
       <Spin tip="Cargando..." spinning={loading}>
         <Row>
-          <Title style={{ fontSize: "20px" }}>{title}</Title>
+          <Title style={{ fontSize: "20px" }}>
+            {paymentCalendar && paymentCalendar.locked
+              ? `Calendario: ${paymentCalendar.name}`
+              : title}
+          </Title>
         </Row>
         <Form
           layout={"vertical"}
