@@ -31,7 +31,7 @@ const { Title } = Typography;
 const { RangePicker } = TimePicker;
 const { Option } = Select;
 
-const addEvent = () => {
+const addEvent = (props) => {
   const { TextArea } = Input;
   const [form] = Form.useForm();
   const router = useRouter();
