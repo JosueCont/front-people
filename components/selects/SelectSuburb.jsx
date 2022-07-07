@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import { Form, Select } from "antd";
 import { useEffect, useState } from "react";
 import WebApiFiscal from "../../api/WebApiFiscal";
-
+const { Option } = Select;
 const SelectSuburb = ({
   viewLabel = true,
   disabled = false,

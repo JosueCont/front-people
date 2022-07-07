@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Form, Select } from "antd";
-
+const { Option } = Select;
 const SelectPaymentCalendar = ({
   disabled,
   viewLabel = true,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import { connect } from "react-redux";
-
+const { Option } = Select;
 const SelectLevel = ({
   disabled,
   viewLabel = true,

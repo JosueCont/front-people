@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { Form, Select } from "antd";
 import { useEffect, useState } from "react";
-
+const { Option } = Select;
 const SelectWorkTitle = ({
   viewLabel = true,
   disabled = false,
