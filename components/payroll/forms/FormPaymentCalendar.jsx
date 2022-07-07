@@ -392,6 +392,7 @@ const FormPaymentCalendar = ({
                   onChange={onChangePeriod}
                   picker="year"
                   moment={"YYYY"}
+                  disabledDate={(currentDate) => currentDate.year() < 2022}
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
