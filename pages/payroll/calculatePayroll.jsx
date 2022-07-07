@@ -757,14 +757,14 @@ const CalculatePayroll = ({ ...props }) => {
 
   const openPayroll = (type) => {
     const inputMotive = document.getElementById("motive");
-    if (inputMotive.value != null && inputMotive.value != "") {
+    if (inputMotive.value != null && inputMotive.value.trim() != "") {
       setLoading(true);
       switch (type) {
         case 1:
           setGenericModal(false);
           WebApiPayroll.openConsolidationPayroll({
             payment_period: periodSelected.id,
-            opening_reason: inputMotive.value,
+            opening_reason: inputMotive.value.trim(),
           })
             .then((response) => {
               message.success(messageUpdateSuccess);
@@ -855,11 +855,11 @@ const CalculatePayroll = ({ ...props }) => {
 
   const cancelStamp = (type, id = null) => {
     const inputMotive = document.getElementById("motive");
-    if (inputMotive.value != null && inputMotive.value != "") {
+    if (inputMotive.value != null && inputMotive.value.trim() != "") {
       setLoading(true);
       setGenericModal(false);
       let data = {
-        motive: inputMotive.value,
+        motive: inputMotive.value.trim(),
         payment_period: periodSelected.id,
       };
       if (cfdiCancel.length > 0 && type == 2) data.cfdis_id = cfdiCancel;
@@ -897,6 +897,7 @@ const CalculatePayroll = ({ ...props }) => {
             }}
           >
             <Input.TextArea
+              maxLength={290}
               id="motive"
               placeholder="Capture el motivo de cancelacion."
             />
@@ -1266,6 +1267,7 @@ const CalculatePayroll = ({ ...props }) => {
                                       }}
                                     >
                                       <Input.TextArea
+                                        maxLength={290}
                                         id="motive"
                                         placeholder="Capture el motivo de reapertura."
                                       />
@@ -1330,6 +1332,7 @@ const CalculatePayroll = ({ ...props }) => {
                                           }}
                                         >
                                           <Input.TextArea
+                                            maxLength={290}
                                             id="motive"
                                             placeholder="Capture el motivo de cancelacion."
                                           />
