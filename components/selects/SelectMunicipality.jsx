@@ -24,7 +24,6 @@ const SelectMunicipality = ({
   const getMunicipality = () => {
     WebApiFiscal.getMunicipality(state)
       .then((response) => {
-        console.log(response.data.results);
         setMunicipality(response.data.results);
         let municipalities = response.data.results.map((item) => {
           return { value: item.id, label: item.description };

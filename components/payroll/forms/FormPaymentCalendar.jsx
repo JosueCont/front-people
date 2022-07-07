@@ -295,6 +295,7 @@ const FormPaymentCalendar = ({
                 }
               >
                 <Input
+                  maxLength={100}
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>

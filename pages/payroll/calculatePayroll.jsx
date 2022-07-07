@@ -49,6 +49,8 @@ import CfdiVaucher from "../../components/payroll/cfdiVaucher";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
 import moment from "moment";
+import NumericInput from "../../components/inputNumeric";
+const formatNumber = (value) => new Intl.NumberFormat().format(value);
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -176,6 +178,26 @@ const CalculatePayroll = ({ ...props }) => {
     },
   ];
 
+  const handleChange = (e) => {
+    const { value: inputValue } = e.target;
+    const reg = /^-?\d*(\.\d*)?$/;
+    if (reg.test(inputValue) || inputValue === "" || inputValue === "-") {
+      // onChange(inputValue);
+      console.log("Input value--->>> ", inputValue);
+    }
+  };
+
+  // '.' at the end or only '-' in the input box.
+  const handleBlur = () => {
+    if (!value) return;
+    let valueTemp = value;
+    if (value.charAt(value.length - 1) === "." || value === "-") {
+      valueTemp = value.slice(0, -1);
+    }
+    // onChange(valueTemp.replace(/0*(\d+)/, "$1"));
+    console.log(valueTemp.replace(/0*(\d+)/, "$1"));
+  };
+
   const renderConceptsTable = (item) => {
     let dataPerceptions = item.perceptions;
     let dataDeductions = item.deductions;
@@ -233,17 +255,13 @@ const CalculatePayroll = ({ ...props }) => {
           <>
             {item.type === "046" && isOpen ? (
               <Space size="middle">
-                <InputNumber
+                <NumericInput
                   key={item.type}
-                  type="number"
-                  onChange={(value) => {
-                    item.value = value;
+                  initValue={item.value}
+                  valueItem={(newValue) => {
+                    item.value = Number(newValue);
                     setCalculate(true);
                   }}
-                  min={0}
-                  formatter={(value) => value.replace("-", "")}
-                  controls={false}
-                  defaultValue={item.amount}
                 />
               </Space>
             ) : (
