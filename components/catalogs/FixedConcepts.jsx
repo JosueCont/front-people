@@ -133,7 +133,6 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                                 {item.name}
                               </Row>
                               {data.map((a) => {
-                                console.log(item);
                                 return (
                                   <Row>
                                     <span style={{ fontWeight: "bold" }}>
@@ -229,14 +228,14 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
     /**
      * Validamos que no puedan meter datos con puros espacios
      */
-    if(!(value?.name && value.name.trim())){
-      form.setFieldsValue({name:undefined})
-      value.name=undefined
+    if (!(value?.name && value.name.trim())) {
+      form.setFieldsValue({ name: undefined });
+      value.name = undefined;
     }
 
-    if(value.name===undefined){
-      form.validateFields()
-      return
+    if (value.name === undefined) {
+      form.validateFields();
+      return;
     }
 
     value.node = currentNode.id;
@@ -412,21 +411,20 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
     setId(item.id);
   };
   const saveGroup = async (value) => {
-
     /**
      * Validamos que no puedan meter datos con puros espacios
      */
-    if(!(value?.name && value.name.trim())){
-      formG.setFieldsValue({name:undefined})
-      value.name=undefined
+    if (!(value?.name && value.name.trim())) {
+      formG.setFieldsValue({ name: undefined });
+      value.name = undefined;
     }
 
-    if(value.name===undefined){
-      formG.validateFields()
-      return
+    if (value.name === undefined) {
+      formG.validateFields();
+      return;
     }
 
-    return
+    return;
     setLoading(true);
     let url = "";
     if (!edit) value.node = currentNode.id;
@@ -597,8 +595,12 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
               <Form layout={"vertical"} form={formG} onFinish={saveGroup}>
                 <Row gutter={20} style={{ marginBottom: "10px" }}>
                   <Col span={8}>
-                    <Form.Item name="name"  label="Nombre del grupo" rules={[ruleRequired]}>
-                      <Input  />
+                    <Form.Item
+                      name="name"
+                      label="Nombre del grupo"
+                      rules={[ruleRequired]}
+                    >
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
