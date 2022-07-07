@@ -1186,7 +1186,11 @@ const CalculatePayroll = ({ ...props }) => {
                           </Col>
                         </>
                       )}
-                      {step === 0 && isOpen && (
+                      {(step === 0 ||
+                        isOpen ||
+                        (consolidated &&
+                          !isOpen &&
+                          consolidated.status != 3)) && (
                         <Col md={5} offset={1}>
                           <Upload
                             {...{
