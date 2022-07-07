@@ -1,84 +1,46 @@
-import { Button, Col } from "antd";
-import { UploadOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import { useState, useEffect, useRef } from "react";
+import { Button, Col, message, Upload } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 
 const UploadFile = ({
-  textButton,
-  setDataFile,
-  file_name,
-  setFileName,
-  set_disabled = null,
+  textButton = "Subir documento",
+  validateExtension = ".xlsx",
+  set_disabled = false,
+  showList = false,
+  setFile,
+  size = "large",
   ...props
 }) => {
-  const inputFileRef = useRef(null);
-  const [disabled, setDisabled] = useState(true);
-  const [file, setFile] = useState();
-  const [fileName, setfileName] = useState("");
-
-  const selectedFile = (file) => {
-    if (file.target.files.length > 0) {
-      setDisabled(false);
-      setFile(file.target.files[0]);
-      setfileName(file.target.files[0].name);
-      /* Funciones componente padre */
-      setDataFile(file.target.files[0]);
-      setFileName(file.target.files[0].name);
-    } else {
-      setDisabled(true);
-      setFile(null);
-      setfileName(null);
-      /* Funciones componente padre */
-      setDataFile(null);
-      setFileName(null);
-    }
-  };
-  const deleteFileSelect = () => {
-    setFile(null);
-    setDisabled(true);
-    setfileName(null);
-    /* Funciones componente padre */
-    setFileName(null);
-  };
-
-  useEffect(() => {}, file);
-
-  useEffect(() => {
-    if (file_name) {
-      setfileName(file_name);
-    }
-  }, [file_name]);
-
-  useEffect(() => {
-    setDisabled(set_disabled);
-  }, [set_disabled]);
-
   return (
     <>
       <Col span={24} offset={1} style={{ marginBottom: "10px" }}>
-        <Button
-          style={{ minWidth: "165px", textAlign: "left" }}
-          onClick={() => {
-            inputFileRef.current.click();
+        <Upload
+          {...{
+            showUploadList: showList,
+            listType: "picture",
+            maxCount: 1,
+            beforeUpload: (file) => {
+              const isValid = file.name.includes(validateExtension);
+              if (!isValid) {
+                message.error(`${file.name} no es un ${validateExtension}.`);
+              }
+              return isValid || Upload.LIST_IGNORE;
+            },
+            onChange(info) {
+              const { status } = info.file;
+              if (status !== "uploading") {
+                if (info.fileList.length > 0) {
+                  setFile(info.fileList[0].originFileObj);
+                  info.file = null;
+                  info.fileList = [];
+                }
+              }
+            },
           }}
-          icon={<UploadOutlined />}
         >
-          {textButton}
-        </Button>
-        {!disabled && (
-          <span style={{ marginLeft: 8, border: "1px blue solid" }}>
-            {fileName + "  "}
-            <CloseCircleOutlined
-              onClick={() => deleteFileSelect()}
-              style={{ color: "red" }}
-            />
-          </span>
-        )}
-        <input
-          ref={inputFileRef}
-          type="file"
-          style={{ display: "none" }}
-          onChange={(e) => selectedFile(e)}
-        />
+          <Button size={size} icon={<UploadOutlined />}>
+            {textButton}
+          </Button>
+        </Upload>
       </Col>
     </>
   );
