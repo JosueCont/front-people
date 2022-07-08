@@ -1287,12 +1287,10 @@ const CalculatePayroll = ({ ...props }) => {
                       )}
                       {step >= 1 && (
                         <>
-                          {(
-                            (isOpen &&
-                              consolidated &&
-                              consolidated.status == 1) ||
-                            (isOpen && !consolidated)
-                          )(
+                          {((isOpen &&
+                            consolidated &&
+                            consolidated.status == 1) ||
+                            (isOpen && !consolidated)) && (
                             <Col md={5} offset={1}>
                               <Button
                                 size="large"
