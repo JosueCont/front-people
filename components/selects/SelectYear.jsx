@@ -1,5 +1,4 @@
 import { Select, Form } from "antd";
-import { Option } from "antd/lib/mentions";
 import { generateYear } from "../../utils/functions";
 const { Option } = Select;
 const SelectYear = ({
