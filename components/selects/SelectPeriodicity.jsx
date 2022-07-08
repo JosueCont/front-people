@@ -1,7 +1,7 @@
 import { Select, Form } from "antd";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-
+const { Option } = Select;
 const SelectPeriodicity = ({
   viewLabel = true,
   rules = [],

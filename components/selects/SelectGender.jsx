@@ -1,5 +1,6 @@
 import { Select, Form } from "antd";
 import { genders } from "../../utils/constant";
+const { Option } = Select;
 
 const SelectGender = ({
   viewLabel = true,

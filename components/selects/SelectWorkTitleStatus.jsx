@@ -1,6 +1,6 @@
 import { Form, Select } from "antd";
 import { workTitleStatus } from "../../utils/constant";
-
+const { Option } = Select;
 const SelectWorkTitleStatus = ({
   viewLabel = true,
   disabled = false,
