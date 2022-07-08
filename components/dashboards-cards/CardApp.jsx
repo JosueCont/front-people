@@ -69,7 +69,7 @@ const ContentApps = styled.div`
     }
 `;
 
-const CardApps = ({user, ...props}) => {
+const CardApps = ({user, config, ...props}) => {
     
     const defaultPhoto =
     "https://cdn-icons-png.flaticon.com/512/219/219986.png";
@@ -117,16 +117,18 @@ const CardApps = ({user, ...props}) => {
     <ContentApps>
         <Card bordered={false}>
             <Row gutter={[8,16]}>
-                <Col span={8} >
-                    <Space
-                        direction='vertical'
-                        align='center'
-                        onClick={()=>linkToProfile()}
-                    >
-                        <img src={defaultPhoto}/>
-                        <p style={{marginBottom: '0px'}}>Mi perfil</p>
-                    </Space>
-                </Col>
+                {config && config.kuiz_enabled ? (
+                    <Col span={8} >
+                        <Space
+                            direction='vertical'
+                            align='center'
+                            onClick={()=>linkToProfile()}
+                        >
+                            <img src={defaultPhoto}/>
+                            <p style={{marginBottom: '0px'}}>Mi perfil</p>
+                        </Space>
+                    </Col>
+                ) : null}
                 <Col span={8} >
                     <Space
                         direction='vertical'
@@ -155,7 +157,8 @@ const CardApps = ({user, ...props}) => {
 
 const mapState = (state) => {
     return {
-        user: state.userStore.user
+        user: state.userStore.user,
+        config: state.userStore.general_config,
     }
 }
 
