@@ -1287,21 +1287,23 @@ const CalculatePayroll = ({ ...props }) => {
                       )}
                       {step >= 1 && (
                         <>
-                          {isOpen &&
-                            consolidated &&
-                            consolidated.status ==
-                              1(
-                                <Col md={5} offset={1}>
-                                  <Button
-                                    size="large"
-                                    block
-                                    htmlType="button"
-                                    onClick={() => setMessageModal(2)}
-                                  >
-                                    Cerrar nómina
-                                  </Button>
-                                </Col>
-                              )}
+                          {(
+                            (isOpen &&
+                              consolidated &&
+                              consolidated.status == 1) ||
+                            (isOpen && !consolidated)
+                          )(
+                            <Col md={5} offset={1}>
+                              <Button
+                                size="large"
+                                block
+                                htmlType="button"
+                                onClick={() => setMessageModal(2)}
+                              >
+                                Cerrar nómina
+                              </Button>
+                            </Col>
+                          )}
                           {step == 2 &&
                             consolidated &&
                             consolidated.status < 3 && (
