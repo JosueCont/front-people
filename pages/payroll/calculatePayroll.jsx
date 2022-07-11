@@ -20,6 +20,7 @@ import {
   Steps,
   Upload,
   DatePicker,
+  Tag,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -28,6 +29,7 @@ import {
   DownOutlined,
   UserOutlined,
   UploadOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -108,6 +110,13 @@ const CalculatePayroll = ({ ...props }) => {
       render: (item) => (
         <div>
           <Space>
+            {item.payroll_cfdi_person && (
+              <Tag color="green">
+                <CheckCircleOutlined style={{ marginRight: "2px" }} />
+                Timbrado
+              </Tag>
+            )}
+
             <Avatar
               icon={<UserOutlined />}
               src={
@@ -1383,6 +1392,7 @@ const CalculatePayroll = ({ ...props }) => {
                     <>
                       <Table
                         className="headers_transparent"
+                        z
                         dataSource={payroll.map((item) => {
                           item.key = item.person.id;
                           return item;
