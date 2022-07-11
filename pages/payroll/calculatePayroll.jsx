@@ -1216,13 +1216,6 @@ const CalculatePayroll = ({ ...props }) => {
                                       periodSelected.id
                                     );
                                     importPayrollCaculate(data);
-                                    // let files = [];
-                                    // info.fileList.forEach((element, i) => {
-                                    //   files.push(element);
-                                    // });
-                                    // if (files.length > 0) {
-                                    //   setUpload(files);
-                                    // }
                                     info.file = null;
                                     info.fileList = [];
                                   }
