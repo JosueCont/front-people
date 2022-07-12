@@ -718,7 +718,7 @@ const homeScreen = ({ ...props }) => {
 
   const AlertDeletes = () => (
     <div>
-      Al eliminar este registro, perderá todos los datos relacionados a el de
+      Al eliminar este registro, perderá todos los datos relacionados a él de
       manera permanente. ¿Está seguro de querer eliminarlo?
       <br />
       <br />
