@@ -287,7 +287,7 @@ const DetailPerson = ({
         okText="Sí, eliminar"
         cancelText="Cancelar"
       >
-        Al eliminar este registro perderá todos los datos relacionados a él de
+        Al eliminar este registro, perderá todos los datos relacionados a el de
         manera permanente. ¿Está seguro de querer eliminarlo?
       </Modal>
     </>

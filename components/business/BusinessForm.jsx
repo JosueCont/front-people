@@ -560,7 +560,7 @@ const businessForm = ({ ...props }) => {
             <Select
               allowClear
               showSearch
-              placeholder="Select a person"
+              placeholder="Selecciona una empresa"
               optionFilterProp="children"
               name={"fNode"}
               notFoundContent={"No se encontraron resultados."}
@@ -578,6 +578,7 @@ const businessForm = ({ ...props }) => {
       <Modal
         title={"Eliminar empresa " + businessName}
         visible={isModalDeleteVisible}
+        onCancel={() => handleCancel()}
         footer={[
           <Button key="back" onClick={handleCancel}>
             Cancelar
@@ -606,7 +607,7 @@ const businessForm = ({ ...props }) => {
             type="warning"
             showIcon
             message="¿Está seguro de eliminar esta empresa?"
-            description="Al eliminar esta empresa perderá todos los datos relacionados a la misma."
+            description="Al eliminar esta empresa perderá todos los datos relacionados a la misma, incluyendo las sub empresas relacionadas a esta."
           />
         </Form>
       </Modal>
