@@ -287,7 +287,7 @@ export const messageDeleteSuccess = "Eliminado correctamente.";
 export const messageError = "Ocurrio un error, intente de nuevo.";
 export const titleDialogDelete = "¿Está seguro de eliminarlo?";
 export const messageDialogDelete =
-  "Al eliminar este registro se perderán todos los datos relacionados de manera permanente.";
+  "Al eliminar este registro, se perderán todos los datos relacionados de manera permanente.";
 export const messageUploadSuccess = "Cargado correctamente.";
 
 export const headersApiKhonnect = (app_id) => {
