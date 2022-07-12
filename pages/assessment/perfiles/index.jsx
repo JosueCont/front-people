@@ -1,0 +1,58 @@
+import React, { useState, useEffect } from "react";
+import MainLayout from "../../../layout/MainLayout";
+import { useRouter } from "next/router";
+import { connect, useDispatch } from "react-redux";
+import { Breadcrumb, message } from "antd";
+import { withAuthSync } from "../../../libs/auth";
+import WebApiAssessment from "../../../api/WebApiAssessment";
+import { getCompetences, getProfiles } from "../../../redux/assessmentDuck";
+import ProfilesSearch from "../../../components/assessment/perfiles/ProfilesSearch";
+import ProfilesTable from "../../../components/assessment/perfiles/ProfilesTable";
+
+const Index = ({
+  currentNode,
+  getCompetences,
+  getProfiles,
+  ...props
+}) => {
+
+  const router = useRouter();
+
+  useEffect(()=>{
+    if(currentNode){
+      getProfiles(currentNode.id)
+      getCompetences()
+    }
+  },[currentNode])
+  
+  return (
+    <MainLayout currentKey="perfiles_kuiz" defaultOpenKeys={["kuiss"]}>
+      <Breadcrumb>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => router.push({ pathname: "/home/persons/" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Perfiles</Breadcrumb.Item>
+      </Breadcrumb>
+      <div className="container" style={{ width: "100%" }}>
+        <ProfilesSearch/>
+        <ProfilesTable/>
+      </div>
+    </MainLayout>
+  );
+};
+
+const mapState = (state) => {
+  return {
+    currentNode: state.userStore.current_node,
+  };
+};
+
+export default connect(
+  mapState, {
+    getCompetences,
+    getProfiles
+  }
+)(withAuthSync(Index));
