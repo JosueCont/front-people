@@ -64,9 +64,6 @@ const businessForm = ({ ...props }) => {
   const [admin, setAdmin] = useState(false);
   const [addB, setAddB] = useState(false);
 
-  useEffect(() => {
-    console.log(props.user);
-  }, [props.user]);
 
 
   const onFinish = (values) => {
@@ -214,7 +211,6 @@ const businessForm = ({ ...props }) => {
     setBusiness([]);
     await WebApiPeople.getCompanys()
       .then((response) => {
-        console.log(response,"response-----");
         setBusiness(response.data.results);
         setLoading(false);
       })
