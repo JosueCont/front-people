@@ -56,3 +56,35 @@
 .table-surveys .ant-table-tbody > tr.ant-table-row-selected > td:last-child > button {
     pointer-events: none;
 }
+
+
+/* Diseño para perfiles de kuiz */
+
+.elements_delete{
+    max-height: 300px;
+    overflow: auto;
+}
+
+.elements_delete .ant-list-sm .ant-list-item {
+    padding: 4px 0px;
+}
+
+.scroll-bar::-webkit-scrollbar {
+    width: 18px;
+}
+
+.scroll-bar::-webkit-scrollbar-track {
+    background: none;
+    border: none;
+}
+
+.scroll-bar::-webkit-scrollbar-thumb {
+    background: #cccccc;
+    background-clip: padding-box;
+    border: 6px solid transparent;
+    border-radius: 10px;
+    box-shadow: none;
+    min-height: 50px;
+}
+
+/* Termina diseño perfiles de kuiz */
