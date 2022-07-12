@@ -547,7 +547,7 @@ const businessForm = ({ ...props }) => {
             <Select
               allowClear
               showSearch
-              placeholder="Select a person"
+              placeholder="Selecciona una empresa"
               optionFilterProp="children"
               name={"fNode"}
               notFoundContent={"No se encontraron resultados."}
