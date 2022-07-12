@@ -565,6 +565,7 @@ const businessForm = ({ ...props }) => {
       <Modal
         title={"Eliminar empresa " + businessName}
         visible={isModalDeleteVisible}
+        onCancel={() => handleCancel()}
         footer={[
           <Button key="back" onClick={handleCancel}>
             Cancelar
