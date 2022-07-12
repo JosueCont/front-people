@@ -30,6 +30,7 @@ import {
   UserOutlined,
   UploadOutlined,
   CheckCircleOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -111,9 +112,20 @@ const CalculatePayroll = ({ ...props }) => {
         <div>
           <Space>
             {item.payroll_cfdi_person && (
-              <Tag color="green">
-                <CheckCircleOutlined style={{ marginRight: "2px" }} />
-                Timbrado
+              <Tag
+                color={item.payroll_cfdi_person.status === 1 ? "gold" : "green"}
+              >
+                {item.payroll_cfdi_person.status === 1 ? (
+                  <>
+                    <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
+                    Sin timbrar
+                  </>
+                ) : (
+                  <>
+                    <CheckCircleOutlined style={{ marginRight: "2px" }} />
+                    Timbrado
+                  </>
+                )}
               </Tag>
             )}
 
