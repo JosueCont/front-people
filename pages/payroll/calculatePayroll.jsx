@@ -30,6 +30,7 @@ import {
   UserOutlined,
   UploadOutlined,
   CheckCircleOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -108,26 +109,44 @@ const CalculatePayroll = ({ ...props }) => {
       className: "column_name cursor_pointer",
       key: "name",
       render: (item) => (
-        <div>
-          <Space>
-            {item.payroll_cfdi_person && (
-              <Tag color="green">
-                <CheckCircleOutlined style={{ marginRight: "2px" }} />
-                Timbrado
-              </Tag>
-            )}
+        console.log(item),
+        (
+          <div>
+            <Space>
+              {item.payroll_cfdi_person && (
+                <Tag
+                  color={
+                    item.payroll_cfdi_person.status === 1 ? "gold" : "green"
+                  }
+                >
+                  {item.payroll_cfdi_person.status === 1 ? (
+                    <>
+                      <ExclamationCircleOutlined
+                        style={{ marginRight: "2px" }}
+                      />
+                      Sin timbrar
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircleOutlined style={{ marginRight: "2px" }} />
+                      Timbrado
+                    </>
+                  )}
+                </Tag>
+              )}
 
-            <Avatar
-              icon={<UserOutlined />}
-              src={
-                item.person && item.person.photo
-                  ? item.person.photo
-                  : defaulPhoto
-              }
-            />
-            {item.person && item.person.full_name}
-          </Space>
-        </div>
+              <Avatar
+                icon={<UserOutlined />}
+                src={
+                  item.person && item.person.photo
+                    ? item.person.photo
+                    : defaulPhoto
+                }
+              />
+              {item.person && item.person.full_name}
+            </Space>
+          </div>
+        )
       ),
     },
     {
