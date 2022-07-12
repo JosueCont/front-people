@@ -23,6 +23,7 @@ import {
   PlusOutlined,
   LoadingOutlined,
   SettingOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
@@ -62,6 +63,11 @@ const businessForm = ({ ...props }) => {
   let personId = userId();
   const [admin, setAdmin] = useState(false);
   const [addB, setAddB] = useState(false);
+
+  useEffect(() => {
+    console.log(props.user);
+  }, [props.user]);
+
 
   const onFinish = (values) => {
     if (isDeleted) {
@@ -208,6 +214,7 @@ const businessForm = ({ ...props }) => {
     setBusiness([]);
     await WebApiPeople.getCompanys()
       .then((response) => {
+        console.log(response,"response-----");
         setBusiness(response.data.results);
         setLoading(false);
       })
@@ -306,9 +313,15 @@ const businessForm = ({ ...props }) => {
               )}
               {props.permissions && props.permissions.delete && (
                 <Col className="gutter-row" span={6}>
-                  <Tooltip title="Eliminar">
-                    <DeleteOutlined onClick={() => showModal("delete", item)} />
-                  </Tooltip>
+                  {item.id == props.user.node ? (
+                    <Tooltip title="No puedes eliminar la empresa a la que estas registrada">
+                      <StopOutlined />
+                    </Tooltip>
+                  ):(
+                    <Tooltip title="Eliminar">
+                      <DeleteOutlined onClick={() => showModal("delete", item)} />
+                    </Tooltip>
+                  )}
                 </Col>
               )}
               <Col style={{ zIndex: 1 }} className="gutter-row" span={6}>
@@ -575,7 +588,7 @@ const businessForm = ({ ...props }) => {
             key="submit"
             htmlType="submit"
           >
-            Si, Eliminar
+            Si, eliminar
           </Button>,
         ]}
       >
@@ -593,7 +606,7 @@ const businessForm = ({ ...props }) => {
             type="warning"
             showIcon
             message="¿Está seguro de eliminar esta empresa?"
-            description="Al eliminar esta empresa perdera todos los datos relacionados a la misma."
+            description="Al eliminar esta empresa perderá todos los datos relacionados a la misma."
           />
         </Form>
       </Modal>
