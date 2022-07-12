@@ -4,7 +4,7 @@ import { userCompanyId } from "../libs/auth";
 import { UserPermissions } from "../utils/functions";
 import { doCompanySelectedCatalog, getProfileGroups } from "./catalogCompany";
 import { doCompanySelectedPayroll } from "./payrollDuck";
-import { doFiscalCatalogs, getCfdiVersion } from "./fiscalDuck";
+import { getCfdiVersion } from "./fiscalDuck";
 
 const initialData = {
   default: true,

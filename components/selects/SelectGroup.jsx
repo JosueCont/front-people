@@ -2,6 +2,7 @@ import { Select, Form } from "antd";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ruleRequired } from "../../utils/rules";
+const { Option } = Select;
 
 const SelectGroup = ({ viewLabel, required = true, ...props }) => {
   const [groups, setGroups] = useState([]);
@@ -27,6 +28,7 @@ const SelectGroup = ({ viewLabel, required = true, ...props }) => {
         showArrow
         style={{ width: "100%" }}
         placeholder="Perfiles de seguridad"
+        notFoundContent="No se encontraron resultados"
         showSearch
         optionFilterProp="children"
       >

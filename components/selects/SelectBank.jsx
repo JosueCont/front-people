@@ -3,6 +3,7 @@ import { Select, Form } from "antd";
 import { useRouter } from "next/router";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
+const { Option } = Select;
 
 const SelectBank = ({ rules = [], bankSelected = null, ...props }) => {
   const [options, setOptions] = useState([]);

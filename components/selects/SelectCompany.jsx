@@ -3,6 +3,7 @@ import { Select, Form } from "antd";
 import { useRouter } from "next/router";
 import Axios from "axios";
 import { API_URL } from "../../config/config";
+const { Option } = Select;
 
 export default function SelectCompany(props) {
   const [options, setOptions] = useState([]);

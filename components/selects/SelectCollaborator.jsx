@@ -1,7 +1,7 @@
 import React from "react";
 import { Select, Form } from "antd";
 import { connect } from "react-redux";
-
+const { Option } = Select;
 const SelectCollaborator = ({
   showLabel = true,
   setAllPersons,

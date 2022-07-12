@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import { Form, Select } from "antd";
 import { useEffect, useState } from "react";
 import WebApiFiscal from "../../api/WebApiFiscal";
-
+const { Option } = Select;
 const SelectMunicipality = ({
   viewLabel = true,
   disabled = false,
@@ -24,7 +24,6 @@ const SelectMunicipality = ({
   const getMunicipality = () => {
     WebApiFiscal.getMunicipality(state)
       .then((response) => {
-        console.log(response.data.results);
         setMunicipality(response.data.results);
         let municipalities = response.data.results.map((item) => {
           return { value: item.id, label: item.description };

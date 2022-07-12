@@ -20,6 +20,7 @@ import {
   Steps,
   Upload,
   DatePicker,
+  Tag,
 } from "antd";
 import router, { useRouter } from "next/router";
 import {
@@ -28,6 +29,8 @@ import {
   DownOutlined,
   UserOutlined,
   UploadOutlined,
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -49,6 +52,8 @@ import CfdiVaucher from "../../components/payroll/cfdiVaucher";
 import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
 import moment from "moment";
+import NumericInput from "../../components/inputNumeric";
+const formatNumber = (value) => new Intl.NumberFormat().format(value);
 
 const CalculatePayroll = ({ ...props }) => {
   const { Text } = Typography;
@@ -106,6 +111,24 @@ const CalculatePayroll = ({ ...props }) => {
       render: (item) => (
         <div>
           <Space>
+            {item.payroll_cfdi_person && (
+              <Tag
+                color={item.payroll_cfdi_person.status === 1 ? "gold" : "green"}
+              >
+                {item.payroll_cfdi_person.status === 1 ? (
+                  <>
+                    <ExclamationCircleOutlined style={{ marginRight: "2px" }} />
+                    Sin timbrar
+                  </>
+                ) : (
+                  <>
+                    <CheckCircleOutlined style={{ marginRight: "2px" }} />
+                    Timbrado
+                  </>
+                )}
+              </Tag>
+            )}
+
             <Avatar
               icon={<UserOutlined />}
               src={
@@ -176,6 +199,26 @@ const CalculatePayroll = ({ ...props }) => {
     },
   ];
 
+  const handleChange = (e) => {
+    const { value: inputValue } = e.target;
+    const reg = /^-?\d*(\.\d*)?$/;
+    if (reg.test(inputValue) || inputValue === "" || inputValue === "-") {
+      // onChange(inputValue);
+      console.log("Input value--->>> ", inputValue);
+    }
+  };
+
+  // '.' at the end or only '-' in the input box.
+  const handleBlur = () => {
+    if (!value) return;
+    let valueTemp = value;
+    if (value.charAt(value.length - 1) === "." || value === "-") {
+      valueTemp = value.slice(0, -1);
+    }
+    // onChange(valueTemp.replace(/0*(\d+)/, "$1"));
+    console.log(valueTemp.replace(/0*(\d+)/, "$1"));
+  };
+
   const renderConceptsTable = (item) => {
     let dataPerceptions = item.perceptions;
     let dataDeductions = item.deductions;
@@ -233,17 +276,13 @@ const CalculatePayroll = ({ ...props }) => {
           <>
             {item.type === "046" && isOpen ? (
               <Space size="middle">
-                <InputNumber
+                <NumericInput
                   key={item.type}
-                  type="number"
-                  onChange={(value) => {
-                    item.value = value;
+                  initValue={item.value}
+                  valueItem={(newValue) => {
+                    item.value = Number(newValue);
                     setCalculate(true);
                   }}
-                  min={0}
-                  formatter={(value) => value.replace("-", "")}
-                  controls={false}
-                  defaultValue={item.amount}
                 />
               </Space>
             ) : (
@@ -739,14 +778,14 @@ const CalculatePayroll = ({ ...props }) => {
 
   const openPayroll = (type) => {
     const inputMotive = document.getElementById("motive");
-    if (inputMotive.value != null && inputMotive.value != "") {
+    if (inputMotive.value != null && inputMotive.value.trim() != "") {
       setLoading(true);
       switch (type) {
         case 1:
           setGenericModal(false);
           WebApiPayroll.openConsolidationPayroll({
             payment_period: periodSelected.id,
-            opening_reason: inputMotive.value,
+            opening_reason: inputMotive.value.trim(),
           })
             .then((response) => {
               message.success(messageUpdateSuccess);
@@ -837,11 +876,11 @@ const CalculatePayroll = ({ ...props }) => {
 
   const cancelStamp = (type, id = null) => {
     const inputMotive = document.getElementById("motive");
-    if (inputMotive.value != null && inputMotive.value != "") {
+    if (inputMotive.value != null && inputMotive.value.trim() != "") {
       setLoading(true);
       setGenericModal(false);
       let data = {
-        motive: inputMotive.value,
+        motive: inputMotive.value.trim(),
         payment_period: periodSelected.id,
       };
       if (cfdiCancel.length > 0 && type == 2) data.cfdis_id = cfdiCancel;
@@ -879,6 +918,7 @@ const CalculatePayroll = ({ ...props }) => {
             }}
           >
             <Input.TextArea
+              maxLength={290}
               id="motive"
               placeholder="Capture el motivo de cancelacion."
             />
@@ -1154,7 +1194,7 @@ const CalculatePayroll = ({ ...props }) => {
                                 downLoadFileBlob(
                                   `${getDomain(
                                     API_URL_TENANT
-                                  )}/payroll/payroll-calculus?payment_period=${
+                                  )}/payroll/payroll-report?payment_period=${
                                     periodSelected.id
                                   }`,
                                   "Nomina.xlsx",
@@ -1167,7 +1207,11 @@ const CalculatePayroll = ({ ...props }) => {
                           </Col>
                         </>
                       )}
-                      {step === 0 && isOpen && (
+                      {(step === 0 ||
+                        isOpen ||
+                        (consolidated &&
+                          !isOpen &&
+                          consolidated.status != 3)) && (
                         <Col md={5} offset={1}>
                           <Upload
                             {...{
@@ -1193,13 +1237,6 @@ const CalculatePayroll = ({ ...props }) => {
                                       periodSelected.id
                                     );
                                     importPayrollCaculate(data);
-                                    // let files = [];
-                                    // info.fileList.forEach((element, i) => {
-                                    //   files.push(element);
-                                    // });
-                                    // if (files.length > 0) {
-                                    //   setUpload(files);
-                                    // }
                                     info.file = null;
                                     info.fileList = [];
                                   }
@@ -1248,6 +1285,7 @@ const CalculatePayroll = ({ ...props }) => {
                                       }}
                                     >
                                       <Input.TextArea
+                                        maxLength={290}
                                         id="motive"
                                         placeholder="Capture el motivo de reapertura."
                                       />
@@ -1263,7 +1301,10 @@ const CalculatePayroll = ({ ...props }) => {
                       )}
                       {step >= 1 && (
                         <>
-                          {isOpen && (
+                          {((isOpen &&
+                            consolidated &&
+                            consolidated.status == 1) ||
+                            (isOpen && !consolidated)) && (
                             <Col md={5} offset={1}>
                               <Button
                                 size="large"
@@ -1312,6 +1353,7 @@ const CalculatePayroll = ({ ...props }) => {
                                           }}
                                         >
                                           <Input.TextArea
+                                            maxLength={290}
                                             id="motive"
                                             placeholder="Capture el motivo de cancelacion."
                                           />

@@ -1,4 +1,5 @@
 import { CheckOutlined, CloseOutlined } from "@material-ui/icons";
+import { EyeOutlined } from "@ant-design/icons";
 import {
   Row,
   Col,
@@ -12,26 +13,31 @@ import {
 } from "antd";
 import { useLayoutEffect, useState } from "react";
 import WebApiPeople from "../../../api/WebApiPeople";
-import { messageError, messageSaveSuccess } from "../../../utils/constant";
+import {
+  messageError,
+  messageSaveSuccess,
+  messageUploadSuccess,
+} from "../../../utils/constant";
 import UploadFile from "../../UploadFile";
 import FiscalAddress from "../../forms/FiscalAddress";
 import FiscalInformation from "../../forms/FiscalInformation";
 import LegalRepresentative from "../../forms/LegalRepresentative";
+import { useEffect } from "react";
+import { ruleRequired } from "../../../utils/rules";
+import WebApiFiscal from "../../../api/WebApiFiscal";
 
 const FiscalInformationNode = ({ node_id = null, fiscal }) => {
   const { Title } = Typography;
+  const [form] = Form.useForm();
   const [formFiscal] = Form.useForm();
   const [formAddress] = Form.useForm();
   const [formLegalRep] = Form.useForm();
   const [fiscalData, setFiscalData] = useState(null);
   const [acceptAgreement, setAcceptAgreement] = useState(false);
 
-  const [taxStamp, setTaxStamp] = useState(null);
-  const [nameTaxStamp, setNameTaxStamp] = useState(null);
   const [key, setKey] = useState(null);
-  const [nameKey, setNameKey] = useState(null);
   const [certificate, setCertificate] = useState(null);
-  const [nameCertificate, setNameCertificate] = useState(null);
+  const [password, setPassword] = useState("");
 
   useLayoutEffect(() => {
     if (node_id) {
@@ -60,6 +66,31 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
         console.log(error);
         message.error(messageError);
       });
+  };
+
+  const validatedPass = (value) => {
+    console.log("PASSWORD-- >>> ", value);
+    if (value && value != "") {
+      setPassword(value.trim());
+      form.setFieldsValue({ passcer: value.trim() });
+    }
+  };
+
+  const uploadCsds = () => {
+    if (password && certificate && key) {
+      let data = new FormData();
+      data.append("node", node_id);
+      data.append("cer", certificate);
+      data.append("key", key);
+      data.append("password", password);
+      WebApiFiscal.uploadCsds(data)
+        .then((response) => {
+          message.success(messageUploadSuccess);
+        })
+        .catch((error) => {
+          message.error(messageError);
+        });
+    }
   };
 
   return (
@@ -102,63 +133,70 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
           <Divider style={{ marginTop: "2px" }} />
           <Row>
             <Col lg={2} xs={22} offset={1}>
-              <Form.Item name="consent" label="" valuePropName="checked">
-                <Switch
-                  onChange={(value) => setAcceptAgreement(value)}
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                />
-              </Form.Item>
+              <Form form={form}>
+                <Form.Item name="consent" label="" valuePropName="checked">
+                  <Switch
+                    onChange={(value) => setAcceptAgreement(value)}
+                    checkedChildren={<CheckOutlined />}
+                    unCheckedChildren={<CloseOutlined />}
+                  />
+                </Form.Item>
+              </Form>
             </Col>
             <Col lg={14} xs={22} offset={1}>
               <p>
                 Estoy de acuerdo y doy mi consentimiento para que EL SISTEMA
                 almacene y utilice estos archivos con fines exclusivos para
-                emisión de CFDI para el timbrado de nómina
+                emisión de CFDI para el timbrado de nómina.
               </p>
             </Col>
           </Row>
-          <Row>
+          <div style={{ width: "100%" }}>
             {acceptAgreement && (
-              <Form layout={"vertical"}>
-                <Col offset={1} style={{ marginBottom: "15px", width: "100%" }}>
-                  <Form.Item name="password" label="Contraseña">
-                    <Input.Password maxLength={12} />
+              <Form layout={"vertical"} form={form}>
+                <Col
+                  style={{
+                    marginBottom: "15px",
+                    marginLeft: "15px",
+                    width: "50%",
+                  }}
+                >
+                  <Form.Item name="passcer">
+                    <Input.Password
+                      type="password"
+                      placeholder="Contraseña"
+                      maxLength={12}
+                      onChange={(value) => validatedPass(value.target.value)}
+                    />
                   </Form.Item>
                 </Col>
                 <Col lg={12} xs={22}>
                   <UploadFile
-                    textButton={"Cargar sello fiscal"}
-                    setDataFile={setTaxStamp}
-                    file_name={nameTaxStamp}
-                    setFileName={setNameTaxStamp}
-                    set_disabled={nameTaxStamp ? false : true}
+                    textButton={"Cargar certificado"}
+                    setFile={setCertificate}
+                    validateExtension={".cer"}
+                    showList={true}
                   />
                 </Col>
                 <Col lg={12} xs={22}>
                   <UploadFile
                     textButton={"Cargar llave"}
-                    setDataFile={setKey}
-                    file_name={nameKey}
-                    setFileName={setNameKey}
-                    set_disabled={nameKey ? false : true}
-                  />
-                </Col>
-                <Col lg={12} xs={22}>
-                  <UploadFile
-                    textButton={"Cargar certificado"}
-                    setDataFile={setCertificate}
-                    file_name={nameCertificate}
-                    setFileName={setNameCertificate}
-                    set_disabled={nameCertificate ? false : true}
+                    setFile={setKey}
+                    validateExtension={".key"}
+                    showList={true}
                   />
                 </Col>
                 <Row justify="end">
-                  <Button onClick={saveForms}>Guardar</Button>
+                  <Button
+                    disabled={password && certificate && key ? false : true}
+                    onClick={() => uploadCsds()}
+                  >
+                    Guardar certificados
+                  </Button>
                 </Row>
               </Form>
             )}
-          </Row>
+          </div>
         </Col>
       </Row>
     </>

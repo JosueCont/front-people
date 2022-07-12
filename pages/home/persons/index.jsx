@@ -16,6 +16,7 @@ import {
   Space,
   Dropdown,
   notification,
+  Upload,
 } from "antd";
 import { API_URL_TENANT } from "../../../config/config";
 import { useEffect, useState, useRef, React } from "react";
@@ -622,33 +623,24 @@ const homeScreen = ({ ...props }) => {
     setLoading(false);
   };
 
-  const importPersonFileExtend = async (e, template_type) => {
-    let extension = getFileExtension(e.target.files[0].name);
-    if (extension === "xlsx") {
-      let formData = new FormData();
-      formData.append("File", e.target.files[0]);
-      formData.append("node_id", props.currentNode.id);
-      formData.append("type", template_type);
-      formData.append(
-        "saved_by",
-        userSession.first_name + " " + userSession.last_name
-      );
-      setLoading(true);
-      props
-        .setDataUpload(formData)
-        .then((response) => {
-          if (response) {
-            route.push({ pathname: "/bulk_upload/preview" });
-          } else {
-            message.error("Ocurrió un error ");
-          }
-        })
-        .catch((error) => {
+  const importPersonFileExtend = async (e) => {
+    let formData = new FormData();
+    formData.append("File", e);
+    formData.append("node_id", props.currentNode.id);
+    formData.append("saved_by", userSession.user_id);
+    setLoading(true);
+    props
+      .setDataUpload(formData)
+      .then((response) => {
+        if (response) {
+          route.push({ pathname: "/bulk_upload/preview" });
+        } else {
           message.error("Ocurrió un error ");
-        });
-    } else {
-      message.error("Formato incorrecto, suba un archivo .xlsx");
-    }
+        }
+      })
+      .catch((error) => {
+        message.error("Ocurrió un error ");
+      });
   };
 
   const getFileExtension = (filename) => {
@@ -726,7 +718,7 @@ const homeScreen = ({ ...props }) => {
 
   const AlertDeletes = () => (
     <div>
-      Al eliminar este registro perderá todos los datos relacionados a el de
+      Al eliminar este registro, perderá todos los datos relacionados a el de
       manera permanente. ¿Está seguro de querer eliminarlo?
       <br />
       <br />
@@ -985,49 +977,6 @@ const homeScreen = ({ ...props }) => {
     </Menu>
   );
 
-  const menuImportPerson = (
-    <Menu>
-      <Menu.Item key="1">
-        <a
-          className={"ml-20"}
-          icon={<UploadOutlined />}
-          onClick={() => {
-            inputFileRef.current.click();
-          }}
-        >
-          Datos básicos
-        </a>
-        <input
-          ref={inputFileRef}
-          type="file"
-          style={{ display: "none" }}
-          onChange={(e) => importPersonFileExtend(e, 1)}
-        />
-      </Menu.Item>
-      {props.config && props.config.nomina_enabled && (
-        <>
-          <Menu.Item key="2">
-            <a
-              className={"ml-20"}
-              icon={<UploadOutlined />}
-              onClick={() => {
-                inputFileRefAsim.current.click();
-              }}
-            >
-              Datos con nómina Asimilados
-            </a>
-            <input
-              ref={inputFileRefAsim}
-              type="file"
-              style={{ display: "none" }}
-              onChange={(e) => importPersonFileExtend(e, 2)}
-            />
-          </Menu.Item>
-        </>
-      )}
-    </Menu>
-  );
-
   return (
     <>
       <MainLayout currentKey={["persons"]} defaultOpenKeys={["people"]}>
@@ -1161,24 +1110,45 @@ const homeScreen = ({ ...props }) => {
                           onClick={() => exportPersons()}
                           style={{ marginBottom: "10px" }}
                         >
-                          Descargar resultados
+                          Descargar personas
                         </Button>
                       )}
 
                       {permissions.import_csv_person && (
-                        <Dropdown
-                          overlay={menuImportPerson}
-                          placement="bottomLeft"
-                          arrow
+                        <Upload
+                          {...{
+                            showUploadList: false,
+                            beforeUpload: (file) => {
+                              const isXlsx = file.name.includes(".xlsx");
+                              if (!isXlsx) {
+                                message.error(`${file.name} no es un xlsx.`);
+                              }
+                              return isXlsx || Upload.LIST_IGNORE;
+                            },
+                            onChange(info) {
+                              const { status } = info.file;
+                              if (status !== "uploading") {
+                                if (info.fileList.length > 0) {
+                                  importPersonFileExtend(
+                                    info.fileList[0].originFileObj
+                                  );
+                                  info.file = null;
+                                  info.fileList = [];
+                                }
+                              }
+                            },
+                          }}
                         >
                           <Button
-                            icon={<DownloadOutlined />}
+                            size="middle"
+                            icon={<UploadOutlined />}
                             style={{ marginBottom: "10px" }}
                           >
                             Importar personas
                           </Button>
-                        </Dropdown>
+                        </Upload>
                       )}
+
                       <Button
                         className={"ml-20"}
                         icon={<DownloadOutlined />}

@@ -3,21 +3,21 @@ export const ruleRequired = {
   message: "Este campo es requerido",
 };
 
-export const ruleMinArray = (min) =>{
+export const ruleMinArray = (min) => {
   return {
     min: min,
-    type: 'array',
-    message: `Seleciona ${min} registros`
-  }
-}
+    type: "array",
+    message: `Seleciona ${min} registros`,
+  };
+};
 
-export const ruleMaxArray = (max) =>{
+export const ruleMaxArray = (max) => {
   return {
     max: max,
-    type: 'array',
-    message: `Máximo a seleccionar ${max} registros`
-  }
-}
+    type: "array",
+    message: `Máximo a seleccionar ${max} registros`,
+  };
+};
 
 export const ruleEmail = {
   type: "email",
@@ -25,7 +25,7 @@ export const ruleEmail = {
 };
 
 export const onlyNumeric = {
-  pattern: /^[0-9]*$/,
+  pattern: /^[0-9]+$/,
   message: "Ingrese un valor numérico.",
 };
 
@@ -60,4 +60,10 @@ export const rfcFormat = {
 export const minLengthNumber = {
   pattern: /^[0-9]{11}$/,
   message: "El valor ingresado no puede ser menor a 11 caracteres.",
+};
+
+export const nameLastname = {
+  pattern: /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/,
+  message:
+    "El valor ingresado no puede contener números y/o caracteres especiales.",
 };

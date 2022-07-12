@@ -259,7 +259,11 @@ const FormPaymentCalendar = ({
       />
       <Spin tip="Cargando..." spinning={loading}>
         <Row>
-          <Title style={{ fontSize: "20px" }}>{title}</Title>
+          <Title style={{ fontSize: "20px" }}>
+            {paymentCalendar && paymentCalendar.locked
+              ? `Calendario: ${paymentCalendar.name}`
+              : title}
+          </Title>
         </Row>
         <Form
           layout={"vertical"}
@@ -291,6 +295,7 @@ const FormPaymentCalendar = ({
                 }
               >
                 <Input
+                  maxLength={100}
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>
@@ -387,6 +392,7 @@ const FormPaymentCalendar = ({
                   onChange={onChangePeriod}
                   picker="year"
                   moment={"YYYY"}
+                  disabledDate={(currentDate) => currentDate.year() < 2022}
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />

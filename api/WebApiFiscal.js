@@ -126,6 +126,10 @@ class WebApiFiscal {
   static getCfdiVersion() {
     return WebApi.ApisType(`/fiscal/cfdi-version/`, "get");
   }
+
+  static uploadCsdsMultiEmmiter(data) {
+    return WebApi.ApisType(`fiscal/csd-multi-emitter`, "post", data);
+  }
 }
 
 export default WebApiFiscal;

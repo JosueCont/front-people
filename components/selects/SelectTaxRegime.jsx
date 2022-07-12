@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
-
+const { Option } = Select;
 const SelectTaxRegime = ({ taxRegimeSelected = null, ...props }) => {
   const [options, setOptions] = useState([]);
 
