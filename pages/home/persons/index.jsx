@@ -709,7 +709,7 @@ const homeScreen = ({ ...props }) => {
   const AlertDeactivate = () => (
     <div>
       Al desactivar este registro ya no podra accerder a el hasta que lo vuelva
-      a activar. ¿Está seguro de querer desactivarlo?
+      a activar. ¿Está seguro de querer desactivarlo?  
       <br />
       <br />
       <ListElementsToDeactivate personsDeactivate={personsToDeactivate} />
