@@ -593,7 +593,7 @@ const businessForm = ({ ...props }) => {
             type="warning"
             showIcon
             message="¿Está seguro de eliminar esta empresa?"
-            description="Al eliminar esta empresa perdera todos los datos relacionados a la misma."
+            description="Al eliminar esta empresa perderá todos los datos relacionados a la misma, incluyendo las sub empresas relacionadas a esta."
           />
         </Form>
       </Modal>
