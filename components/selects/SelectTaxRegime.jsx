@@ -27,7 +27,7 @@ const SelectTaxRegime = ({ taxRegimeSelected = null, ...props }) => {
     >
       <Select
         key="SelectTaxRegime"
-        placeholder="Régimen Fical"
+        placeholder="Régimen fiscal"
         style={props.style ? props.style : null}
         // options={options}
         onChange={props.onChange ? props.onChange : null}

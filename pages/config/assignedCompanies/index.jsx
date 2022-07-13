@@ -68,7 +68,7 @@ const SelectCompany = ({ ...props }) => {
       if (props.user.is_admin) {
         getCopaniesList();
       } else {
-        let data = props.user.nodes.filter((a) => a.active);
+        let data = props.user.nodes?.filter((a) => a.active);
         setDataList(data);
       }
     }
@@ -109,9 +109,7 @@ const SelectCompany = ({ ...props }) => {
     let companies = [];
     setShowTable(false);
     try {
-      let response = await Axios.get(
-        API_URL + `/business/node-person/get_assignment/?person__id=${id}`
-      );
+      let response = await WebApiPeople.getCompaniesPeople(id);
       let res = response.data;
       res.map((item) => {
         companies.push(item.id);
