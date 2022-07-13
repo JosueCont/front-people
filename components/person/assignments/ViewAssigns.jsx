@@ -69,7 +69,7 @@ const ViewAssigns = ({
                 </Col>
                 <ColTabs xs={24}>
                     <Tabs activeKey={defaultKey} onChange={onChangeTab} centered>
-                        <TabPane tab="Inviduales" key="1">
+                        <TabPane tab="Individuales" key="1">
                             <AssignsIndividuales {...properties} />
                         </TabPane>
                         <TabPane tab="Grupales" key="2">
