@@ -182,12 +182,23 @@ const CalculatePayroll = ({ ...props }) => {
       key: "actions",
       className: "cell-actions",
       render: (item) => (
-        console.log(item),
-        (
-          <>
-            {item.payroll_cfdi_person &&
-            item.payroll_cfdi_person.is_open &&
-            step == 0 ? (
+        <>
+          {item.payroll_cfdi_person &&
+          item.payroll_cfdi_person.is_open &&
+          step == 0 ? (
+            <Button
+              size="small"
+              onClick={() => {
+                setPersonId(item.person && item.person.id),
+                  setModalVisible(true);
+              }}
+            >
+              <PlusOutlined />
+            </Button>
+          ) : (
+            isOpen &&
+            step == 0 &&
+            !consolidated && (
               <Button
                 size="small"
                 onClick={() => {
@@ -197,23 +208,9 @@ const CalculatePayroll = ({ ...props }) => {
               >
                 <PlusOutlined />
               </Button>
-            ) : (
-              isOpen &&
-              step == 0 &&
-              !consolidated && (
-                <Button
-                  size="small"
-                  onClick={() => {
-                    setPersonId(item.person && item.person.id),
-                      setModalVisible(true);
-                  }}
-                >
-                  <PlusOutlined />
-                </Button>
-              )
-            )}
-          </>
-        )
+            )
+          )}
+        </>
       ),
     },
   ];
@@ -585,9 +582,6 @@ const CalculatePayroll = ({ ...props }) => {
       payroll: payroll,
     })
       .then((response) => {
-        changeStep(true);
-        setIsOpen(response.data.consolidated.is_open);
-        setConsolidated(response.data.consolidated);
         sendCalculatePayroll({ payment_period: periodSelected.id });
         setTimeout(() => {
           message.success(messageSaveSuccess);
@@ -596,6 +590,7 @@ const CalculatePayroll = ({ ...props }) => {
       })
       .catch((error) => {
         setLoading(false);
+        sendCalculatePayroll({ payment_period: periodSelected.id });
         setTimeout(() => {
           message.error(messageError);
           console.log(error);
@@ -818,6 +813,7 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const validatedStatusPayroll = (data) => {
+    console.log(data);
     if (data === null) {
       setStep(0), setPreviuosStep(false), setNextStep(true), setIsOpen(true);
       return;
