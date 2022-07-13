@@ -218,26 +218,6 @@ const CalculatePayroll = ({ ...props }) => {
     },
   ];
 
-  const handleChange = (e) => {
-    const { value: inputValue } = e.target;
-    const reg = /^-?\d*(\.\d*)?$/;
-    if (reg.test(inputValue) || inputValue === "" || inputValue === "-") {
-      // onChange(inputValue);
-      console.log("Input value--->>> ", inputValue);
-    }
-  };
-
-  // '.' at the end or only '-' in the input box.
-  const handleBlur = () => {
-    if (!value) return;
-    let valueTemp = value;
-    if (value.charAt(value.length - 1) === "." || value === "-") {
-      valueTemp = value.slice(0, -1);
-    }
-    // onChange(valueTemp.replace(/0*(\d+)/, "$1"));
-    console.log(valueTemp.replace(/0*(\d+)/, "$1"));
-  };
-
   const renderConceptsTable = (data) => {
     let dataPerceptions = data.perceptions;
     let dataDeductions = data.deductions;
@@ -293,7 +273,6 @@ const CalculatePayroll = ({ ...props }) => {
         width: "20%",
         render: (item) => (
           <>
-            {console.log("item-->>", data)}
             {data.payroll_cfdi_person &&
             data.payroll_cfdi_person.is_open &&
             step === 0 ? (
@@ -329,24 +308,6 @@ const CalculatePayroll = ({ ...props }) => {
         ),
       },
     ];
-
-    //   item.type === "046" && isOpen ? (
-    //   <Space size="middle">
-    //     <NumericInput
-    //       key={item.type}
-    //       initValue={item.value}
-    //       valueItem={(newValue) => {
-    //         item.value = Number(newValue);
-    //         setCalculate(true);
-    //       }}
-    //       disabled={false}
-    //     />
-    //   </Space>
-    // ) : (
-    //   <Space size="middle">
-    //     <NumberFormat prefix={"$"} number={item.amount} />
-    //   </Space>
-    // )}
 
     const columnsDeductions = [
       {
@@ -578,7 +539,6 @@ const CalculatePayroll = ({ ...props }) => {
     setConsolidated(null);
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
-        console.log("RESPONSE-->> ", response.data);
         setLoading(false);
         setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
