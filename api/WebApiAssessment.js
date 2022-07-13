@@ -174,6 +174,21 @@ class WebApiAssessment {
   static getAssessmentResults(data) {
     return Axios.post(`${API_ASSESSMENT}/sittings/assessment-results`, data);
   }
+  static getCompetences () {
+    return Axios.get(`${API_ASSESSMENT}/sittings/competences`)
+  }
+  static getProfiles (node) {
+    return Axios.get(`${API_ASSESSMENT}/sittings/skills-profile/?node=${node}`)
+  }
+  static addProfile (data) {
+    return Axios.post(`${API_ASSESSMENT}/sittings/skills-profile/`, data)
+  }
+  static editProfile (id, data){
+    return Axios.patch(`${API_ASSESSMENT}/sittings/skills-profile/${id}/`, data)
+  }
+  static deleteProfile (data) {
+    return Axios.post(`${API_ASSESSMENT}/sittings/skills-profile/delete_by_ids/`, data)
+  }
 }
 
 export default WebApiAssessment;
