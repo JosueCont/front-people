@@ -20,7 +20,7 @@ const Index = ({
 
   useEffect(()=>{
     if(currentNode){
-      getProfiles(currentNode.id)
+      getProfiles(currentNode.id,'')
       getCompetences()
     }
   },[currentNode])

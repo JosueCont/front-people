@@ -450,7 +450,7 @@ const MainSider = ({
               </Menu.Item>
               <Menu.Item
                 key="perfiles_kuiz"
-                onClick={() => router.push({ pathname: "/assessment/perfiles" })}
+                onClick={() => router.push({ pathname: "/assessment/profiles" })}
               >
                 Perfiles
               </Menu.Item>
