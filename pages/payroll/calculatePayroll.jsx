@@ -183,7 +183,9 @@ const CalculatePayroll = ({ ...props }) => {
       className: "cell-actions",
       render: (item) => (
         <>
-          {step == 0 && (
+          {item.payroll_cfdi_person &&
+          item.payroll_cfdi_person.is_open &&
+          step == 0 ? (
             <Button
               size="small"
               onClick={() => {
@@ -193,36 +195,30 @@ const CalculatePayroll = ({ ...props }) => {
             >
               <PlusOutlined />
             </Button>
+          ) : (
+            isOpen &&
+            step == 0 &&
+            !consolidated && (
+              <Button
+                size="small"
+                onClick={() => {
+                  setPersonId(item.person && item.person.id),
+                    setModalVisible(true);
+                }}
+              >
+                <PlusOutlined />
+              </Button>
+            )
           )}
         </>
       ),
     },
   ];
 
-  const handleChange = (e) => {
-    const { value: inputValue } = e.target;
-    const reg = /^-?\d*(\.\d*)?$/;
-    if (reg.test(inputValue) || inputValue === "" || inputValue === "-") {
-      // onChange(inputValue);
-      console.log("Input value--->>> ", inputValue);
-    }
-  };
-
-  // '.' at the end or only '-' in the input box.
-  const handleBlur = () => {
-    if (!value) return;
-    let valueTemp = value;
-    if (value.charAt(value.length - 1) === "." || value === "-") {
-      valueTemp = value.slice(0, -1);
-    }
-    // onChange(valueTemp.replace(/0*(\d+)/, "$1"));
-    console.log(valueTemp.replace(/0*(\d+)/, "$1"));
-  };
-
-  const renderConceptsTable = (item) => {
-    let dataPerceptions = item.perceptions;
-    let dataDeductions = item.deductions;
-    let dataOtherPayments = item.other_payments;
+  const renderConceptsTable = (data) => {
+    let dataPerceptions = data.perceptions;
+    let dataDeductions = data.deductions;
+    let dataOtherPayments = data.other_payments;
 
     const columnsPerceptions = [
       {
@@ -274,7 +270,9 @@ const CalculatePayroll = ({ ...props }) => {
         width: "20%",
         render: (item) => (
           <>
-            {item.type === "046" && isOpen ? (
+            {data.payroll_cfdi_person &&
+            data.payroll_cfdi_person.is_open &&
+            step === 0 ? (
               <Space size="middle">
                 <NumericInput
                   key={item.type}
@@ -283,6 +281,19 @@ const CalculatePayroll = ({ ...props }) => {
                     item.value = Number(newValue);
                     setCalculate(true);
                   }}
+                  disabled={false}
+                />
+              </Space>
+            ) : item.type === "046" && isOpen && !consolidated && step === 0 ? (
+              <Space size="middle">
+                <NumericInput
+                  key={item.type}
+                  initValue={item.value}
+                  valueItem={(newValue) => {
+                    item.value = Number(newValue);
+                    setCalculate(true);
+                  }}
+                  disabled={false}
                 />
               </Space>
             ) : (
@@ -439,7 +450,7 @@ const CalculatePayroll = ({ ...props }) => {
                 <Col style={{ textAlign: "right" }} span={10}>
                   <NumberFormat
                     prefix={"$"}
-                    number={item.calculation.total_perceptions}
+                    number={data.calculation.total_perceptions}
                   />
                 </Col>
               </Col>
@@ -450,7 +461,7 @@ const CalculatePayroll = ({ ...props }) => {
                 <Col style={{ textAlign: "right" }} span={10}>
                   <NumberFormat
                     prefix={"$"}
-                    number={item.calculation.total_deductions}
+                    number={data.calculation.total_deductions}
                   />
                 </Col>
               </Col>
@@ -461,7 +472,7 @@ const CalculatePayroll = ({ ...props }) => {
                 <Col style={{ textAlign: "right" }} span={10}>
                   <NumberFormat
                     prefix={"$"}
-                    number={item.calculation.net_salary}
+                    number={data.calculation.net_salary}
                   />
                 </Col>
               </Col>
@@ -571,9 +582,6 @@ const CalculatePayroll = ({ ...props }) => {
       payroll: payroll,
     })
       .then((response) => {
-        changeStep(true);
-        setIsOpen(response.data.consolidated.is_open);
-        setConsolidated(response.data.consolidated);
         sendCalculatePayroll({ payment_period: periodSelected.id });
         setTimeout(() => {
           message.success(messageSaveSuccess);
@@ -582,6 +590,7 @@ const CalculatePayroll = ({ ...props }) => {
       })
       .catch((error) => {
         setLoading(false);
+        sendCalculatePayroll({ payment_period: periodSelected.id });
         setTimeout(() => {
           message.error(messageError);
           console.log(error);
@@ -777,29 +786,26 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const openPayroll = (type) => {
+    let data = {
+      payment_period: periodSelected.id,
+    };
+    if (personStamp.length > 0)
+      data.cfdis = personStamp.map((item) => {
+        return item.payroll_cfdi_person.id;
+      });
     const inputMotive = document.getElementById("motive");
     if (inputMotive.value != null && inputMotive.value.trim() != "") {
-      setLoading(true);
-      switch (type) {
-        case 1:
-          setGenericModal(false);
-          WebApiPayroll.openConsolidationPayroll({
-            payment_period: periodSelected.id,
-            opening_reason: inputMotive.value.trim(),
-          })
-            .then((response) => {
-              message.success(messageUpdateSuccess);
-              sendCalculatePayroll({ payment_period: periodSelected.id });
-            })
-            .catch((error) => {
-              setLoading(false);
-              message.error(messageError);
-            });
-          break;
-
-        default:
-          break;
-      }
+      (data.opening_reason = inputMotive.value.trim()), setLoading(true);
+      setGenericModal(false);
+      WebApiPayroll.openConsolidationPayroll(data)
+        .then((response) => {
+          message.success(messageUpdateSuccess);
+          sendCalculatePayroll({ payment_period: periodSelected.id });
+        })
+        .catch((error) => {
+          setLoading(false);
+          message.error(messageError);
+        });
     } else {
       setLoading(false);
       message.warning("Motivo requerido");
@@ -807,6 +813,7 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const validatedStatusPayroll = (data) => {
+    console.log(data);
     if (data === null) {
       setStep(0), setPreviuosStep(false), setNextStep(true), setIsOpen(true);
       return;
@@ -819,6 +826,10 @@ const CalculatePayroll = ({ ...props }) => {
     }
     if (data.status === 1 && !data.is_open) {
       setStep(2), setPreviuosStep(false), setNextStep(false);
+      return;
+    }
+    if (data.status === 2 && data.is_open) {
+      setStep(1), setPreviuosStep(true), setNextStep(true);
       return;
     }
     if (data.status === 2) {
@@ -1262,7 +1273,7 @@ const CalculatePayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-                      {step == 2 && consolidated && consolidated.status <= 1 && (
+                      {step == 2 && consolidated && consolidated.status <= 2 && (
                         <Col md={5} offset={1}>
                           <Button
                             size="large"
@@ -1303,7 +1314,7 @@ const CalculatePayroll = ({ ...props }) => {
                         <>
                           {((isOpen &&
                             consolidated &&
-                            consolidated.status == 1) ||
+                            consolidated.status <= 2) ||
                             (isOpen && !consolidated)) && (
                             <Col md={5} offset={1}>
                               <Button
