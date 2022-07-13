@@ -182,19 +182,38 @@ const CalculatePayroll = ({ ...props }) => {
       key: "actions",
       className: "cell-actions",
       render: (item) => (
-        <>
-          {step == 0 && (
-            <Button
-              size="small"
-              onClick={() => {
-                setPersonId(item.person && item.person.id),
-                  setModalVisible(true);
-              }}
-            >
-              <PlusOutlined />
-            </Button>
-          )}
-        </>
+        console.log(item),
+        (
+          <>
+            {item.payroll_cfdi_person &&
+            item.payroll_cfdi_person.is_open &&
+            step == 0 ? (
+              <Button
+                size="small"
+                onClick={() => {
+                  setPersonId(item.person && item.person.id),
+                    setModalVisible(true);
+                }}
+              >
+                <PlusOutlined />
+              </Button>
+            ) : (
+              isOpen &&
+              step == 0 &&
+              !consolidated && (
+                <Button
+                  size="small"
+                  onClick={() => {
+                    setPersonId(item.person && item.person.id),
+                      setModalVisible(true);
+                  }}
+                >
+                  <PlusOutlined />
+                </Button>
+              )
+            )}
+          </>
+        )
       ),
     },
   ];
@@ -219,10 +238,10 @@ const CalculatePayroll = ({ ...props }) => {
     console.log(valueTemp.replace(/0*(\d+)/, "$1"));
   };
 
-  const renderConceptsTable = (item) => {
-    let dataPerceptions = item.perceptions;
-    let dataDeductions = item.deductions;
-    let dataOtherPayments = item.other_payments;
+  const renderConceptsTable = (data) => {
+    let dataPerceptions = data.perceptions;
+    let dataDeductions = data.deductions;
+    let dataOtherPayments = data.other_payments;
 
     const columnsPerceptions = [
       {
@@ -274,7 +293,10 @@ const CalculatePayroll = ({ ...props }) => {
         width: "20%",
         render: (item) => (
           <>
-            {item.type === "046" && isOpen ? (
+            {console.log("item-->>", data)}
+            {data.payroll_cfdi_person &&
+            data.payroll_cfdi_person.is_open &&
+            step === 0 ? (
               <Space size="middle">
                 <NumericInput
                   key={item.type}
@@ -283,6 +305,19 @@ const CalculatePayroll = ({ ...props }) => {
                     item.value = Number(newValue);
                     setCalculate(true);
                   }}
+                  disabled={false}
+                />
+              </Space>
+            ) : item.type === "046" && isOpen && !consolidated && step === 0 ? (
+              <Space size="middle">
+                <NumericInput
+                  key={item.type}
+                  initValue={item.value}
+                  valueItem={(newValue) => {
+                    item.value = Number(newValue);
+                    setCalculate(true);
+                  }}
+                  disabled={false}
                 />
               </Space>
             ) : (
@@ -294,6 +329,24 @@ const CalculatePayroll = ({ ...props }) => {
         ),
       },
     ];
+
+    //   item.type === "046" && isOpen ? (
+    //   <Space size="middle">
+    //     <NumericInput
+    //       key={item.type}
+    //       initValue={item.value}
+    //       valueItem={(newValue) => {
+    //         item.value = Number(newValue);
+    //         setCalculate(true);
+    //       }}
+    //       disabled={false}
+    //     />
+    //   </Space>
+    // ) : (
+    //   <Space size="middle">
+    //     <NumberFormat prefix={"$"} number={item.amount} />
+    //   </Space>
+    // )}
 
     const columnsDeductions = [
       {
@@ -439,7 +492,7 @@ const CalculatePayroll = ({ ...props }) => {
                 <Col style={{ textAlign: "right" }} span={10}>
                   <NumberFormat
                     prefix={"$"}
-                    number={item.calculation.total_perceptions}
+                    number={data.calculation.total_perceptions}
                   />
                 </Col>
               </Col>
@@ -450,7 +503,7 @@ const CalculatePayroll = ({ ...props }) => {
                 <Col style={{ textAlign: "right" }} span={10}>
                   <NumberFormat
                     prefix={"$"}
-                    number={item.calculation.total_deductions}
+                    number={data.calculation.total_deductions}
                   />
                 </Col>
               </Col>
@@ -461,7 +514,7 @@ const CalculatePayroll = ({ ...props }) => {
                 <Col style={{ textAlign: "right" }} span={10}>
                   <NumberFormat
                     prefix={"$"}
-                    number={item.calculation.net_salary}
+                    number={data.calculation.net_salary}
                   />
                 </Col>
               </Col>
@@ -525,6 +578,7 @@ const CalculatePayroll = ({ ...props }) => {
     setConsolidated(null);
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
+        console.log("RESPONSE-->> ", response.data);
         setLoading(false);
         setConsolidated(response.data.consolidated);
         setPayroll(response.data.payroll);
@@ -777,29 +831,26 @@ const CalculatePayroll = ({ ...props }) => {
   };
 
   const openPayroll = (type) => {
+    let data = {
+      payment_period: periodSelected.id,
+    };
+    if (personStamp.length > 0)
+      data.cfdis = personStamp.map((item) => {
+        return item.payroll_cfdi_person.id;
+      });
     const inputMotive = document.getElementById("motive");
     if (inputMotive.value != null && inputMotive.value.trim() != "") {
-      setLoading(true);
-      switch (type) {
-        case 1:
-          setGenericModal(false);
-          WebApiPayroll.openConsolidationPayroll({
-            payment_period: periodSelected.id,
-            opening_reason: inputMotive.value.trim(),
-          })
-            .then((response) => {
-              message.success(messageUpdateSuccess);
-              sendCalculatePayroll({ payment_period: periodSelected.id });
-            })
-            .catch((error) => {
-              setLoading(false);
-              message.error(messageError);
-            });
-          break;
-
-        default:
-          break;
-      }
+      (data.opening_reason = inputMotive.value.trim()), setLoading(true);
+      setGenericModal(false);
+      WebApiPayroll.openConsolidationPayroll(data)
+        .then((response) => {
+          message.success(messageUpdateSuccess);
+          sendCalculatePayroll({ payment_period: periodSelected.id });
+        })
+        .catch((error) => {
+          setLoading(false);
+          message.error(messageError);
+        });
     } else {
       setLoading(false);
       message.warning("Motivo requerido");
@@ -819,6 +870,10 @@ const CalculatePayroll = ({ ...props }) => {
     }
     if (data.status === 1 && !data.is_open) {
       setStep(2), setPreviuosStep(false), setNextStep(false);
+      return;
+    }
+    if (data.status === 2 && data.is_open) {
+      setStep(1), setPreviuosStep(true), setNextStep(true);
       return;
     }
     if (data.status === 2) {
@@ -1262,7 +1317,7 @@ const CalculatePayroll = ({ ...props }) => {
                           </Button>
                         </Col>
                       )}
-                      {step == 2 && consolidated && consolidated.status <= 1 && (
+                      {step == 2 && consolidated && consolidated.status <= 2 && (
                         <Col md={5} offset={1}>
                           <Button
                             size="large"
@@ -1303,7 +1358,7 @@ const CalculatePayroll = ({ ...props }) => {
                         <>
                           {((isOpen &&
                             consolidated &&
-                            consolidated.status == 1) ||
+                            consolidated.status <= 2) ||
                             (isOpen && !consolidated)) && (
                             <Col md={5} offset={1}>
                               <Button

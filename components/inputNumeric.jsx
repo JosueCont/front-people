@@ -6,6 +6,7 @@ const NumericInput = ({
   valueItem,
   initValue = 0,
   placeholder = "Monto",
+  disabled = false,
   ...props
 }) => {
   const [value, setValue] = useState(0);
@@ -16,6 +17,7 @@ const NumericInput = ({
 
   return (
     <Input
+      disabled={disabled}
       value={value}
       onChange={(e) => {
         const { value: inputValue } = e.target;
