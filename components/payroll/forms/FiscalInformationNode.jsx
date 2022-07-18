@@ -69,7 +69,6 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
   };
 
   const validatedPass = (value) => {
-    console.log("PASSWORD-- >>> ", value);
     if (value && value != "") {
       setPassword(value.trim());
       form.setFieldsValue({ passcer: value.trim() });
