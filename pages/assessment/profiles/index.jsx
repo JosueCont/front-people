@@ -6,8 +6,8 @@ import { Breadcrumb, message } from "antd";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import { getCompetences, getProfiles } from "../../../redux/assessmentDuck";
-import ProfilesSearch from "../../../components/assessment/perfiles/ProfilesSearch";
-import ProfilesTable from "../../../components/assessment/perfiles/ProfilesTable";
+import ProfilesSearch from "../../../components/assessment/profiles/ProfilesSearch";
+import ProfilesTable from "../../../components/assessment/profiles/ProfilesTable";
 
 const Index = ({
   currentNode,
