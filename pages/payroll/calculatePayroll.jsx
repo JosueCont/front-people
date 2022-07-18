@@ -1168,6 +1168,44 @@ const CalculatePayroll = ({ ...props }) => {
                     borderRadius: "2px",
                   }}
                 >
+                  <Col md={5} offset={1}>
+                    <Button
+                      size="large"
+                      block
+                      htmlType="button"
+                      onClick={() => {
+                        isOpen
+                          ? downLoadFileBlob(
+                              `${getDomain(
+                                API_URL_TENANT
+                              )}/payroll/payroll-calculus`,
+                              "Nomina.xlsx",
+                              "POST",
+                              {
+                                payment_period: periodSelected.id,
+                                extended_report: "True",
+                                department: department,
+                                job: job,
+                                payroll: payroll.map((item) => {
+                                  item.person_id = item.person.id;
+                                  return item;
+                                }),
+                              }
+                            )
+                          : downLoadFileBlob(
+                              (`${getDomain(
+                                API_URL_TENANT
+                              )}/payroll/payroll-report?payment_period=${
+                                periodSelected.id
+                              }`,
+                              "Nomina.xlsx",
+                              "GET")
+                            );
+                      }}
+                    >
+                      Descargar nómina
+                    </Button>
+                  </Col>
                   {payroll.length > 0 && !genericModal && (
                     <Row
                       justify="end"
@@ -1194,26 +1232,6 @@ const CalculatePayroll = ({ ...props }) => {
                               }
                             >
                               Descargar hoja de raya
-                            </Button>
-                          </Col>
-                          <Col md={5} offset={1}>
-                            <Button
-                              size="large"
-                              block
-                              htmlType="button"
-                              onClick={() => {
-                                downLoadFileBlob(
-                                  `${getDomain(
-                                    API_URL_TENANT
-                                  )}/payroll/payroll-report?payment_period=${
-                                    periodSelected.id
-                                  }`,
-                                  "Nomina.xlsx",
-                                  "GET"
-                                );
-                              }}
-                            >
-                              Descargar nómina
                             </Button>
                           </Col>
                         </>
