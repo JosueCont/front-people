@@ -12,16 +12,18 @@ import {
 } from "@ant-design/icons";
 import CreateProfile from './CreateProfile';
 import { connect } from 'react-redux';
-import { addProfile } from '../../../redux/assessmentDuck';
+import { addProfile, getProfiles } from '../../../redux/assessmentDuck';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 
 const PerfilesSearch = ({
     currentNode,
     addProfile,
+    getProfiles,
     ...props
 }) => {
 
     const [openModal, setOpenModal] = useState(false);
+    const [nameToSearch, setNameToSearch] = useState('');
 
     const onFinishAdd = async (values) =>{
         let data = {
@@ -37,13 +39,33 @@ const PerfilesSearch = ({
         }
     }
 
+    const onFinishSearch = () =>{
+        let query = '';
+        if(nameToSearch.trim()){
+            query = `&name__icontains=${nameToSearch.trim()}`
+        }else{
+            query = '';
+            setNameToSearch('')
+        }
+        getProfiles(currentNode.id, query)
+    }
+
+    const deleteFilter = () =>{
+        setNameToSearch('')
+        getProfiles(currentNode.id, '')
+    }
+
     return (
         <>
             <Row gutter={[24,24]}>
                 <Col span={12} style={{display:'flex', gap: '16px'}}>
-                    <Input placeholder={'Buscar por nombre del perfil'}/>
-                    <Button icon={<SearchOutlined />}/>
-                    <Button icon={<SyncOutlined />}/>
+                    <Input
+                        placeholder={'Buscar por nombre del perfil'}
+                        onChange={({target})=> setNameToSearch(target.value)}
+                        value={nameToSearch}
+                    />
+                    <Button icon={<SearchOutlined />} onClick={()=> onFinishSearch()}/>
+                    <Button icon={<SyncOutlined />} onClick={()=> deleteFilter()} />
                 </Col>
                 <Col span={12} style={{display: 'flex', justifyContent: 'flex-end'}}>
                     <Button onClick={()=>setOpenModal(true)}>Agregar perfil</Button>
@@ -66,5 +88,8 @@ const mapState = (state) => {
 };
   
 export default connect(
-    mapState, {addProfile}
+    mapState, {
+        addProfile,
+        getProfiles
+    }
 )(PerfilesSearch);

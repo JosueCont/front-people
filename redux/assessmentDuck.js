@@ -650,7 +650,7 @@ export const getCompetences = () => {
   };
 };
 
-export const getProfiles = (node) => {
+export const getProfiles = (node, query) => {
   return async (dispatch) => {
     dispatch({
       type: types.GET_PROFILES,
@@ -658,7 +658,7 @@ export const getProfiles = (node) => {
       payload: {}
     });
     try {
-      let response = await WebApiAssessment.getProfiles(node);
+      let response = await WebApiAssessment.getProfiles(node, query);
       dispatch({
         type: types.GET_PROFILES,
         fetching: false,
