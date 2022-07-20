@@ -424,7 +424,6 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       return;
     }
 
-    return;
     setLoading(true);
     let url = "";
     if (!edit) value.node = currentNode.id;
