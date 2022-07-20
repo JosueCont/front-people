@@ -375,10 +375,10 @@ export const getDifferenceDays = (startDate, endDate) => {
 };
 
 export const valueToFilter = (value) => {
-  let newVal = value
+  let newVal = value ? value
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+    .toLowerCase() : '';
   return newVal.trim();
 };
 
@@ -397,3 +397,24 @@ export const arrayToSelect = (
   });
   return newData;
 };
+
+export const getFullName = (item) =>{
+  let {first_name, flast_name, mlast_name, email} = item;
+  if(first_name && flast_name && mlast_name){
+    return `${first_name} ${flast_name} ${mlast_name}`;
+  }else if(first_name && flast_name){
+    return `${first_name} ${flast_name}`;
+  }else if(first_name && mlast_name){
+    return `${first_name} ${mlast_name}`;
+  }else{
+    return email;
+  }
+}
+
+export const getPhoto = ({photo}) =>{
+  return photo ? photo : '/images/usuario.png';
+}
+
+export const getWork = ({work_title}) =>{
+  return work_title ? work_title.job ? work_title.job.name : 'N/A' : 'N/A';
+}

@@ -16,6 +16,8 @@ const initialData = {
   current_node: null,
   general_config: null,
   applications: {},
+  persons_company: [],
+  load_persons: false
 };
 
 const LOADING_WEB = "LOADING_WEB";
@@ -29,6 +31,7 @@ const DATA_UPLOAD = "DATA_UPLOAD";
 const USER = "USER";
 const PERMISSIONS = "PERMISSIONS";
 const APPLICATIONS = "APPLICATIONS";
+const PERSONS_COMPANY = "PERSONS_COMPANY";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -54,6 +57,12 @@ const webReducer = (state = initialData, action) => {
       return { ...state, permissions: action.payload };
     case APPLICATIONS:
       return { ...state, applications: action.payload };
+    case PERSONS_COMPANY:
+      return {
+        ...state,
+        persons_company: action.payload,
+        load_persons: action.fetching
+      }
     default:
       return state;
   }
@@ -179,5 +188,16 @@ export const resetCurrentnode = () => async (dispatch, getState) => {
     dispatch({ type: COMPANY_SELCTED, payload: null });
   } catch (error) {
     dispatch({ type: COMPANY_SELCTED, payload: null });
+  }
+};
+
+export const getPersonsCompany = (data) => async (dispatch, getState) => {
+  dispatch({ type: PERSONS_COMPANY, payload: [], fetching: true });
+  try {
+    let response = await WebApiPeople.filterPerson({ node: data });
+    dispatch({ type: PERSONS_COMPANY, payload: response.data, fetching: false });
+  } catch (error) {
+    dispatch({ type: PERSONS_COMPANY, payload: [], fetching: false });
+    console.log(error);
   }
 };

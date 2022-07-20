@@ -56,3 +56,182 @@
 .table-surveys .ant-table-tbody > tr.ant-table-row-selected > td:last-child > button {
     pointer-events: none;
 }
+
+
+/* Diseño para perfiles de kuiz */
+
+.elements_delete{
+    max-height: 300px;
+    overflow: auto;
+}
+
+.elements_delete .ant-list-sm .ant-list-item{
+    padding: 4px 0px;
+}
+
+.scroll-bar::-webkit-scrollbar {
+    width: 18px;
+}
+
+.scroll-bar::-webkit-scrollbar-track {
+    background: none;
+    border: none;
+}
+
+.scroll-bar::-webkit-scrollbar-thumb {
+    background: #cccccc;
+    background-clip: padding-box;
+    border: 6px solid transparent;
+    border-radius: 10px;
+    box-shadow: none;
+    min-height: 50px;
+}
+
+/* Termina diseño perfiles de kuiz */
+
+/* Diseño reportes kuiz */
+
+.content_header{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+}
+
+.content_inputs{
+    display: flex;
+    gap: 16px;
+}
+
+.content_inputs_element p{
+    margin-bottom: 0px;
+}
+
+.content_inputs_element{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.content_inputs_element .ant-radio-button-wrapper{
+    width: 50%;
+    text-align: center;
+    color: #000000;
+}
+
+.content_inputs_element .ant-radio-button-wrapper:first-of-type{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.content_inputs_element .ant-radio-button-wrapper:last-of-type{
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.content_inputs_element .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+    background-color: transparent;
+}
+
+.content_inputs_element .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
+    border-right-color: #8e88e7;
+    background-color: #8e88e7;
+    color: white!important;
+    border-color: #8e88e7;
+}
+
+.content_inputs_element .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:last-child {
+    border-right-color: #e7b488;
+    background-color: #e7b488;
+    color: white!important;
+    border-color: #e7b488;
+}
+
+.items_selected .ant-table{
+    background: #f0f0f0;
+    box-shadow: none;
+}
+
+.items_selected .ant-table-cell-fix-left,
+.items_selected .ant-table-cell-fix-right{
+    background: #f0f0f0;
+}
+
+.items_selected .ant-table-tbody > tr > td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.items_selected .ant-table-tbody > tr.ant-table-expanded-row > td{
+    background: #f0f0f0;
+}
+
+.items_selected .ant-table-tbody > tr.ant-table-expanded-row .ant-table{
+    background: #fafafa;
+}
+
+.items_selected .ant-table-tbody > tr.ant-table-expanded-row .ant-table-thead > tr > th{
+    background: #fafafa;
+}
+
+.items_selected .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder{
+    color: #000000;
+}
+
+.items_selected .ant-table-tbody > tr.ant-table-expanded-row .ant-table-tbody > tr.ant-table-row:hover > td, .ant-table-tbody > tr > td.ant-table-cell-row-hover {
+    background: #f0f0f0;
+}
+
+.items_selected .ant-table-thead > tr > th{
+    background: #f0f0f0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.info_user {
+    /* background-color: #8e88e7; */
+    background-color: #f0f0f0;
+    /* border: 1px solid #cccccc; */
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: -3px 3px 5px 0px rgb(0 0 0 / 20%);
+}
+
+/* .info_user .ant-avatar{
+    box-shadow: -1px 3px 5px 2px rgb(0 0 0 / 20%);
+} */
+
+.info_user_text{
+    width: calc(100% - 106px);
+}
+
+.info_user_text p{
+    margin-bottom: 0px;
+    /* color: #ffffff; */
+    line-height: 1.3;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.info_user_text p:first-of-type{
+    font-size: 24px;
+}
+
+.info_user_text p:last-of-type{
+    font-size: 16px;
+    color: #cccccc;
+}
+
+.fade_in{
+    animation: fade-in 0.5s ease-in;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }   
+}
+
+/* Termina diseño reportes kuiz */

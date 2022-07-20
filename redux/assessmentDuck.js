@@ -21,6 +21,10 @@ const initialData = {
   active_modal: "",
   fetching: true,
   categories_assessment: [],
+  competences: {},
+  load_competences: false,
+  load_profiles: false,
+  profiles: {}
 };
 
 const assessmentReducer = (state = initialData, action) => {
@@ -129,6 +133,21 @@ const assessmentReducer = (state = initialData, action) => {
         ...state,
         pagination: { ...state.pagination, current: action.payload },
       };
+    case types.GET_COMPETENCES:
+      return {...state,
+        load_competences: action.fetching,
+        competences: action.payload
+      }
+    case types.GET_PROFILES:
+      return {...state,
+        load_profiles: action.fetching,
+        profiles: action.payload
+      }
+    case types.ADD_PROFILE:
+      return {
+        ...state,
+        profiles: [...state.profiles, action.payload]
+      }
     default:
       return state;
   }
@@ -603,6 +622,95 @@ export const getCategories = () => {
         });
       }
     } catch (error) {}
+  };
+};
+
+export const getCompetences = () => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.GET_COMPETENCES,
+      fetching: true,
+      payload: {}
+    });
+    try {
+      let response = await WebApiAssessment.getCompetences();
+      dispatch({
+        type: types.GET_COMPETENCES,
+        fetching: false,
+        payload: response.data
+      });
+    } catch (e) {
+      dispatch({
+        type: types.GET_COMPETENCES,
+        fetching: false,
+        payload: {}
+      });
+      console.error(e.name + ": " + e.message);
+    }
+  };
+};
+
+export const getProfiles = (node, query) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.GET_PROFILES,
+      fetching: true,
+      payload: {}
+    });
+    try {
+      let response = await WebApiAssessment.getProfiles(node, query);
+      dispatch({
+        type: types.GET_PROFILES,
+        fetching: false,
+        payload: response.data
+      });
+    } catch (e) {
+      dispatch({
+        type: types.GET_PROFILES,
+        fetching: false,
+        payload: {}
+      });
+      console.error(e.name + ": " + e.message);
+    }
+  };
+};
+
+export const addProfile = (data) => {
+  return async (dispatch) => {
+    try {
+      await WebApiAssessment.addProfile(data);
+      dispatch(getProfiles(data.node_id));
+      return true;
+    } catch (e) {
+      console.error(e.name + ": " + e.message);
+      return false;
+    }
+  };
+};
+
+export const editProfile = (id, data) => {
+  return async (dispatch) => {
+    try {
+      await WebApiAssessment.editProfile(id, data);
+      dispatch(getProfiles(data.node_id));
+      return true;
+    } catch (e) {
+      console.error(e.name + ": " + e.message);
+      return false;
+    }
+  };
+};
+
+export const deleteProfile = (id, node) => {
+  return async (dispatch) => {
+    try {
+      await WebApiAssessment.deleteProfile(id);
+      dispatch(getProfiles(node));
+      return true;
+    } catch (e) {
+      console.error(e.name + ": " + e.message);
+      return false;
+    }
   };
 };
 

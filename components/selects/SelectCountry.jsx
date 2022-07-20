@@ -6,7 +6,7 @@ const SelectCountry = ({
   viewLabel = true,
   disabled = false,
   rules = [],
-  labelText = "Pais",
+  labelText = "País",
   name,
   ...props
 }) => {
@@ -40,7 +40,7 @@ const SelectCountry = ({
         disabled={disabled}
         key="SelectCountry"
         options={options}
-        placeholder="Pais"
+        placeholder="País"
         allowClear
         style={props.style ? props.style : {}}
         onChange={props.onChange ? props.onChange : null}

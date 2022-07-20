@@ -7,7 +7,7 @@ import SelectTaxRegime from "../selects/SelectTaxRegime";
 const FiscalInformation = ({ form, fiscalData, ...props }) => {
   const [pTypeSelected, setPTypeSelected] = useState(false);
   const personType = [
-    { value: 1, label: "Fisica" },
+    { value: 1, label: "Física" },
     { value: 2, label: "Moral" },
   ];
   useEffect(() => {
@@ -34,7 +34,7 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
           <Form.Item name="company_sector" label="Sector">
             <Select
               options={[
-                { value: 1, label: "Publica" },
+                { value: 1, label: "Pública" },
                 { value: 2, label: "Privada" },
               ]}
             />
@@ -70,7 +70,7 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
           </Form.Item>
         </Col>
         <Col lg={8} xs={22} md={12}>
-          <Form.Item name="business_name" label="Razon social">
+          <Form.Item name="business_name" label="Razón social">
             <Input />
           </Form.Item>
         </Col>
@@ -80,7 +80,7 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
         <Col lg={4} xs={22} md={12}>
           <Form.Item
             name="assimilated_pay"
-            label="Pago asimilados"
+            label="Pagos asimilados"
             valuePropName="checked"
           >
             <Switch

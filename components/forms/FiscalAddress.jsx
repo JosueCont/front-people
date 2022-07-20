@@ -114,12 +114,12 @@ const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={6}>
-            <Form.Item name="outdoor_number" label="Numero exterior">
+            <Form.Item name="outdoor_number" label="Número exterior">
               <Input maxLength={10} />
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={6}>
-            <Form.Item name="interior_number" label="Numero interior">
+            <Form.Item name="interior_number" label="Número interior">
               <Input maxLength={10} />
             </Form.Item>
           </Col>
