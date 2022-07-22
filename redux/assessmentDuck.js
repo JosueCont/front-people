@@ -24,7 +24,9 @@ const initialData = {
   competences: {},
   load_competences: false,
   load_profiles: false,
-  profiles: {}
+  profiles: {},
+  data_report: [],
+  load_report: false
 };
 
 const assessmentReducer = (state = initialData, action) => {
@@ -147,6 +149,12 @@ const assessmentReducer = (state = initialData, action) => {
       return {
         ...state,
         profiles: [...state.profiles, action.payload]
+      }
+    case types.GET_REPORT_COMPETENCES:
+      return {
+        ...state,
+        load_report: action.fetching,
+        data_report: action.payload
       }
     default:
       return state;
@@ -708,6 +716,33 @@ export const deleteProfile = (id, node) => {
       dispatch(getProfiles(node));
       return true;
     } catch (e) {
+      console.error(e.name + ": " + e.message);
+      return false;
+    }
+  };
+};
+
+export const getReportCompetences = (data) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.GET_REPORT_COMPETENCES,
+      fetching: true,
+      payload: []
+    });
+    try {
+      let response = await WebApiAssessment.getReportCompetences(data);
+      dispatch({
+        type: types.GET_REPORT_COMPETENCES,
+        fetching: false,
+        payload: response.data
+      });
+      return true;
+    } catch (e) {
+      dispatch({
+        type: types.GET_REPORT_COMPETENCES,
+        fetching: false,
+        payload: []
+      });
       console.error(e.name + ": " + e.message);
       return false;
     }

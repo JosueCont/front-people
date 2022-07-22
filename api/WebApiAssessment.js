@@ -189,6 +189,9 @@ class WebApiAssessment {
   static deleteProfile (data) {
     return Axios.post(`${API_ASSESSMENT}/sittings/skills-profile/delete_by_ids/`, data)
   }
+  static getReportCompetences (data) {
+    return Axios.post(`${API_ASSESSMENT}/sittings/competence-report/`, data)
+  }
 }
 
 export default WebApiAssessment;
