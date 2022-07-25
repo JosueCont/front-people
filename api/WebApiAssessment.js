@@ -192,6 +192,9 @@ class WebApiAssessment {
   static getReportCompetences (data) {
     return Axios.post(`${API_ASSESSMENT}/sittings/competence-report/`, data)
   }
+  static getReportProfiles (data){
+    return Axios.post(`${API_ASSESSMENT}/sittings/profiles-report/`, data)
+  }
 }
 
 export default WebApiAssessment;
