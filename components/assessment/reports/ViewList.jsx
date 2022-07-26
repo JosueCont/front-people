@@ -75,7 +75,7 @@ const ViewList = ({
         <MyModal
             visible={visible}
             close={close}
-            title={isUsers ? 'Listado de usuarios' : 'Listado de competencias'}
+            title={isUsers ? 'Listado de usuarios' : 'Listado de perfiles'}
             widthModal={400}
         >
             <Row gutter={[24,24]}>
@@ -84,7 +84,7 @@ const ViewList = ({
                         <p>
                             {isUsers
                                 ? <span>Buscar usuario</span>
-                                : <span>Buscar competencia</span>
+                                : <span>Buscar perfil</span>
                             }
                         </p>
                         <Input

@@ -24,7 +24,7 @@ const Index = ({
     if(currentNode){
         getPersonsCompany(currentNode.id)
         getProfiles(currentNode.id, '')
-        getCompetences()
+        // getCompetences()
     }
   },[currentNode])
   
