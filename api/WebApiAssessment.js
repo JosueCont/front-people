@@ -174,8 +174,8 @@ class WebApiAssessment {
   static getAssessmentResults(data) {
     return Axios.post(`${API_ASSESSMENT}/sittings/assessment-results`, data);
   }
-  static getCompetences () {
-    return Axios.get(`${API_ASSESSMENT}/sittings/competences`)
+  static getCompetences (node) {
+    return Axios.get(`${API_ASSESSMENT}/sittings/competences/?competencenode__node_id=${node}`)
   }
   static getProfiles (node, query) {
     return Axios.get(`${API_ASSESSMENT}/sittings/skills-profile/?node=${node}${query}`)

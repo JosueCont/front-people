@@ -18,7 +18,7 @@ import {
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
 import { valueToFilter } from '../../../utils/functions';
-import { ruleRequired } from '../../../utils/rules';
+import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 
 const CreatePerfil = ({
     visible,
@@ -118,7 +118,7 @@ const CreatePerfil = ({
                 setTimeout(() => {
                     onCloseModal();
                     setLoadAdd(false);
-                    actionForm({...values, competences: list})
+                    actionForm({name: values.name.trim(), competences: list})
                 }, 2000);
             }else{
                 message.error("Selecciona los niveles")
@@ -225,6 +225,20 @@ const CreatePerfil = ({
                 <Row gutter={[16,16]}>
                     <Col span={12}>
                         <Form.Item
+                            name="name"
+                            label="Nombre del perfil"
+                            style={{marginBottom: '0px'}}
+                            rules={[ruleRequired, ruleWhiteSpace]}
+                        >
+                            <Input
+                                maxLength={50}
+                                allowClear={true}
+                                placeholder={'Ingrese un nombre'}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
                             label="Buscar competencia"
                             style={{marginBottom: '0px'}}
                         >
@@ -240,15 +254,21 @@ const CreatePerfil = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            name="name"
-                            label="Nombre del perfil"
-                            style={{marginBottom: '0px'}}
-                            rules={[ruleRequired]}
+                            label={`Competencias seleccionadas (${competencesSelected.length})`}
                         >
-                            <Input
-                                maxLength={50}
-                                allowClear={true}
-                                placeholder={'Ingrese un nombre'}
+                            <Table
+                                size={'small'}
+                                rowKey={'id'}
+                                showHeader={false}
+                                columns={columns_selected}
+                                dataSource={competencesSelected}
+                                scroll={{y: 300}}
+                                pagination={false}
+                                locale={{
+                                emptyText: loading
+                                    ? "Cargando..."
+                                    : "No se encontraron resultados.",
+                                }}
                             />
                         </Form.Item>
                     </Col>
@@ -267,26 +287,6 @@ const CreatePerfil = ({
                                 pagination={false}
                                 locale={{
                                 emptyText: load_competences
-                                    ? "Cargando..."
-                                    : "No se encontraron resultados.",
-                                }}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            label={`Competencias seleccionadas (${competencesSelected.length})`}
-                        >
-                            <Table
-                                size={'small'}
-                                rowKey={'id'}
-                                showHeader={false}
-                                columns={columns_selected}
-                                dataSource={competencesSelected}
-                                scroll={{y: 300}}
-                                pagination={false}
-                                locale={{
-                                emptyText: loading
                                     ? "Cargando..."
                                     : "No se encontraron resultados.",
                                 }}
