@@ -9,7 +9,8 @@ import {
     Radio,
     Button,
     Tooltip,
-    message
+    message,
+    Skeleton
 } from 'antd';
 import { connect } from 'react-redux';
 import {
@@ -24,7 +25,7 @@ import {
     getWork
 } from '../../../utils/functions';
 import { FcInfo } from "react-icons/fc";
-import { getReportCompetences } from '../../../redux/assessmentDuck';
+import WebApiAssessment from '../../../api/WebApiAssessment';
 
 const ReportsCompetences = ({
     competences,
@@ -34,9 +35,7 @@ const ReportsCompetences = ({
     profiles,
     load_profiles,
     currentKey,
-    data_report,
-    load_report,
-    getReportCompetences,
+    currentNode,
     ...props
 }) => {
 
@@ -46,9 +45,9 @@ const ReportsCompetences = ({
             align: 'center',
             width: 100,
             show: true,
-            render: (record) =>{
+            render: ({persons}) =>{
                 return (
-                    <Avatar src={getPhoto(record)}/>
+                    <Avatar src={getPhotoPerson(persons.id)}/>
                 )
             }
         },
@@ -58,9 +57,9 @@ const ReportsCompetences = ({
             width: 200,
             show: true,
             ellipsis: true,
-            render: (record) =>{
+            render: ({persons}) =>{
                 return (
-                    <span>{getFullName(record)}</span>
+                    <span>{getFullNamePerson(persons.id)}</span>
                 )
             }
         },
@@ -97,17 +96,38 @@ const ReportsCompetences = ({
         }
     },[currentKey])
 
-    useEffect(()=>{
-        if(data_report.length > 0 && currentTab == currentKey){
-            setListReports(data_report)
-        }else{
-            setListReports([])
-        }
-    },[data_report])
+    // useEffect(()=>{
+    //     console.log('asi cambia----->', listReports)
+    // },[listReports])
 
-    useEffect(()=>{
-        setLoading(load_report)
-    },[load_report])
+    const getReportCompetences = async (data) =>{
+        setLoading(true)
+        try {
+            let response = await WebApiAssessment.getReportCompetences(data);
+            console.log('response--->', response)
+            setListReports(response.data);
+            setLoading(false)
+            message.success('Información obtenida')
+        } catch (e) {
+            setLoading(false)
+            message.error('Información no obtenida')
+            console.log(e)
+        }
+    }
+
+    const getReportProfiles = async (data) =>{
+        setLoading(true)
+        try {
+            let response = await WebApiAssessment.getReportProfiles(data);
+            setListReports(response.data);
+            setLoading(false)
+            message.success('Información obtenida')
+        } catch (e) {
+            setLoading(false)
+            message.error('Información no obtenida')
+            console.log(e)
+        }
+    }
 
     const getOptionsPersons = () =>{
         let options = [];
@@ -195,20 +215,6 @@ const ReportsCompetences = ({
         }
     }
 
-    // const onChangeType = ({target : {value}}) => {
-    //     setIsIndividual(value)
-    //     setUsersSelected([])
-    //     setCompetencesSelected([])
-    //     setListReport([])
-    //     setColumnsMany(columns_many)
-    //     if(value){
-    //         let user = usersSelected.length > 0 ? usersSelected.at(-1) : {};
-    //         let setUser = Object.keys(user).length > 0 ? [user] : [];
-    //         setUsersSelected(setUser)
-    //         setCompetencesSelected([])
-    //     }
-    // }
-
     const validateParameters = () =>{
         if(['p','pp','pps'].includes(currentTab) && usersSelected.length <= 0){
             message.error('Selecciona un usuario')
@@ -226,192 +232,69 @@ const ReportsCompetences = ({
     const validateReport = () =>{
         if(currentTab == 'p'){
             getReportP()
-        }else if(currentTab == 'pp'){
-            setLoading(true)
-            getReportPP()
-        }else if(currentTab == 'psp'){
-            setLoading(true)
-            getReportPSP()
-        }else if(currentTab == 'pps'){
-            setLoading(true)
-            getReportPPS()
+        }else if(['pp','psp','pps'].includes(currentTab)){
+            getReportProfile()
         }else{
-            setLoading(true)
-            generateColumns()
             getReportPSC()
         }
     }
 
     const getReportP = async () =>{
         let data = {
-            competences: [
-                "272143bb7e0844c38c4f8dac331eae75",
-                "bf193cada3e24ebca715db79951cc8dc",
-                "189ef8c8883346c696fa6eecebea9d89"
-            ],
-            users: [
-                {
-                    id: usersSelected.at(-1).id,
-                    fullName: getFullName(usersSelected.at(-1))
-                }
-            ]
+            node_id: currentNode?.id,
+            user_id: usersSelected.at(-1).id
         }
-        let resp = await getReportCompetences(data)
-        if(resp) message.success('Información obtenida');
-        else message.error('Información no obtenida');
+        getReportCompetences(data);
     }
 
-    const getReportPP = async () =>{
-        console.log('persona-perfil')
+    const getReportProfile = () =>{
         let data = {
-            compatibility: '60%',
-            competences: [
-                {
-                    "id": "272143bb7e0844c38c4f8dac331eae75",
-                    "name": "ADAPTABILIDAD",
-                    "level_person": "1",
-                    "desc_level_person": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                    "level_profile": "2",
-                    "desc_level_profile": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                    "compatibility": "37%" 
-                    
-                },
-                {
-                    "id": "bf193cada3e24ebca715db79951cc8dc",
-                    "name": "ANÁLISIS DE PROBLEMAS",
-                    "level_person": "2",
-                    "desc_level_person": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                    "level_profile": "3",
-                    "desc_level_profile": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                    "compatibility": "43%"
-                },
-                {
-                    "id": "189ef8c8883346c696fa6eecebea9d89",
-                    "name": "ANÁLISIS NUMÉRICO",
-                    "level_person": "3",
-                    "desc_level_person": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                    "level_profile": "2",
-                    "desc_level_profile": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                    "compatibility": "56%"
-                }
-            ]
+            profiles: profilesSelected.map(item => item.id),
+            users: usersSelected.map(item=> {return {id: item.id, fullName: getFullName(item)}})
         }
-        setTimeout(()=>{
-            setListReports([data])
-            setLoading(false)
-        },3000)
-    }
-
-    const getReportPSP = () =>{
-        console.log('personas-perfil')
-        let result = usersSelected.map((item, index) => {
-            return {...item, compatibility: (100/(index+1))}
-        })
-        setTimeout(()=>{
-            setListReports(result)
-            setLoading(false)
-        },3000)
-    }
-
-    const getReportPPS = () =>{
-        console.log('persona-perfiles')
-        let result = profilesSelected.map((item, index) =>{
-            return {...item, compatibility: (100/(index+1))}
-        })
-        setTimeout(()=>{
-            setListReports(result)
-            setLoading(false)
-        },3000)
+        getReportProfiles(data);
     }
 
     const getReportPSC = () =>{
-        console.log('persona-competencias')
-        let list = [
-            {
-                "id": "272143bb7e0844c38c4f8dac331eae75",
-                "name": "ADAPTABILIDAD",
-                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                "level": "1",
-
-            },
-            {
-                "id": "bf193cada3e24ebca715db79951cc8dc",
-                "name": "ANÁLISIS DE PROBLEMAS",
-                "description":  "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                "level": "2"
-            },
-            {
-                "id": "189ef8c8883346c696fa6eecebea9d89",
-                "name": "ANÁLISIS NUMÉRICO",
-                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                "level": "3"
-            }
-        ]
-        let result = usersSelected.map((item, index) => {
-            let competences = list.map((record, idx) =>{
-                return {...record, level: (index+idx)}
-            })
-            return {
-                ...item,
-                competences: competences,
-                compatibility: (100/(index+1))
-            }
-        })
-        setTimeout(()=>{
-            setListReports(result)
-            setLoading(false)
-        },3000)
+        generateColumns()
+        getReportProfile()
     }
 
     const generateColumns = () =>{
-        let prueba = [
-            {
-                "id": "272143bb7e0844c38c4f8dac331eae75",
-                "name": "ADAPTABILIDAD",
-                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                "level": "1",
-
-            },
-            {
-                "id": "bf193cada3e24ebca715db79951cc8dc",
-                "name": "ANÁLISIS DE PROBLEMAS",
-                "description":  "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                "level": "2"
-            },
-            {
-                "id": "189ef8c8883346c696fa6eecebea9d89",
-                "name": "ANÁLISIS NUMÉRICO",
-                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                "level": "3"
-            }
-        ]
-        let list = [...columns_many];
-        prueba.map((item, idx) =>{
-            list.push({
-                title: <Tooltip title={item.name}><span>{item.name.substring(0,3)}</span></Tooltip>,
+        let info_columns = profilesSelected?.at(-1).competences;
+        let list_columns = [...columns_many];
+        info_columns.map((item, idx) =>{
+            list_columns.push({
+                title: ()=>{
+                    return (
+                        <Tooltip title={item.competence?.name}>
+                            <span>{item.competence?.name.substring(0,3).toUpperCase()}</span>
+                        </Tooltip>
+                    )
+                },
                 width: 50,
                 align: 'center',
                 show: true,
-                render: ({competences}) =>{
+                render: (record) =>{
                     return (
-                        <span>{competences[idx]?.level}</span>
+                        <span>{getLevelPerson(record, idx)}</span>
                     )
                 }
             })
         })
-        list.push({
+        list_columns.push({
             title: 'Compatibilidad',
             width: 125,
             align: 'center',
             show: true,
             fixed: 'right',
-            render: ({compatibility}) =>{
+            render: (record) =>{
                 return(
-                    <span>{compatibility.toFixed(0)}%</span>
+                    <span>{getCompatibility(record)}</span>
                 )
             }
         })
-        let newList = list.filter(item=> item.show);
+        let newList = list_columns.filter(item=> item.show);
         setColumnsMany(newList)
     }
 
@@ -436,7 +319,17 @@ const ReportsCompetences = ({
     }
 
     const getCompatibility = (item) =>{
-        return item ? item.compatibility : 'Pendiente';
+        return item
+        ? item.profiles
+        ? item.profiles.at(-1).compatibility
+        ? `${item.profiles.at(-1).compatibility}%`
+        : 'N/A'
+        : 'Pendiente'
+        : 'Pendiente';
+    }
+
+    const getLevelPerson = ({profiles}, index) =>{
+        return profiles ? profiles?.at(-1).competences[index]?.level_person : 'N/A';
     }
 
     const getProfile = (item) =>{
@@ -449,6 +342,22 @@ const ReportsCompetences = ({
 
     const getSetListData = () =>{
         return isUsers ? setUsersSelected : setProfilesSelected;
+    }
+
+    const findUser = (id) =>{
+        return persons_company.find(item => item.id === id);
+    }
+
+    const getPhotoPerson = (id) =>{
+        let user = findUser(id);
+        let photo = getPhoto(user);
+        return photo;
+    }
+
+    const getFullNamePerson = (id) =>{
+        let user = findUser(id);
+        let fullName = getFullName(user);
+        return fullName;
     }
 
     const getInfoType = () =>{
@@ -466,27 +375,31 @@ const ReportsCompetences = ({
         if(currentTab == 'p'){
             return {
                 columns: columns_p,
-                rowKey: (item) => item.competence.id,
-                dataSource: listReports.at(-1)?.competences
+                rowKey: (item) => item.competence?.id,
+                dataSource: listReports
             }
         }else if(currentTab == 'pp'){
             return {
                 columns: columns_pp,
-                dataSource: listReports.at(-1)?.competences
+                rowKey: 'id',
+                dataSource: listReports.at(-1)?.profiles.at(-1)?.competences
             }
         }else if(currentTab == 'psp'){
             return {
                 columns: columns_psp,
+                rowKey: (item) => item.persons?.id,
                 dataSource: listReports
             }
         }else if(currentTab == 'pps'){
             return {
                 columns: columns_pps,
-                dataSource: listReports
+                rowKey: 'id',
+                dataSource: listReports.at(-1)?.profiles
             }
         }else{
             return {
                 columns: columnsMany,
+                rowKey: (item) => item.persons?.id,
                 dataSource: listReports,
                 scroll: { x: 1500}
             }
@@ -501,14 +414,16 @@ const ReportsCompetences = ({
         },
         {
             title: 'Nivel',
-            dataIndex: 'level',
-            key: 'level'
+            render: ({level}) =>{
+                return <span>{level == 0 ? 'N/A' : level}</span>
+            }
         },
         {
             title: 'Descripción',
-            dataIndex: 'description',
-            key: 'description',
-            width: 800
+            width: 800,
+            render: ({description}) =>{
+                return <span>{description ? description : 'N/A'}</span>
+            }
         },
     ]
 
@@ -525,8 +440,8 @@ const ReportsCompetences = ({
         },
         {
             title: 'Descripción',
-            dataIndex: 'desc_level_person',
-            key: 'desc_level_person'
+            dataIndex: 'description_person',
+            key: 'description_person'
         },
         {
             title: 'Nivel perfil',
@@ -535,13 +450,14 @@ const ReportsCompetences = ({
         },
         {
             title: 'Descripción',
-            dataIndex: 'desc_level_profile',
-            key: 'desc_level_profile'
+            dataIndex: 'description_profile',
+            key: 'description_profile'
         },
         {
             title: 'Compatibilidad',
-            dataIndex: 'compatibility',
-            key: 'compatibility'
+            render: ({compatibility}) =>{
+                return <span>{compatibility}%</span>;
+            }
         }
     ]
 
@@ -550,25 +466,25 @@ const ReportsCompetences = ({
             title: 'Imagen',
             align: 'center',
             width: 100,
-            render: (record) =>{
+            render: ({persons}) =>{
                 return (
-                    <Avatar src={getPhoto(record)}/>
+                    <Avatar src={getPhotoPerson(persons.id)}/>
                 )
             }
         },
         {
             title: 'Persona',
-            render: (record) =>{
+            render: ({persons}) =>{
                 return (
-                    <span>{getFullName(record)}</span>
+                    <span>{getFullNamePerson(persons.id)}</span>
                 )
             }
         },
         {
             title: 'Compatibilidad',
-            render: ({compatibility}) =>{
+            render: (item) =>{
                 return(
-                    <span>{compatibility.toFixed(0)}%</span>
+                    <span>{getCompatibility(item)}</span>
                 )
             }
         }
@@ -584,7 +500,7 @@ const ReportsCompetences = ({
             title: 'Compatibilidad',
             render: ({compatibility}) =>{
                 return(
-                    <span>{compatibility.toFixed(0)}%</span>
+                    <span>{compatibility ? `${compatibility}%` : 'N/A'} </span>
                 )
             }
         }
@@ -751,9 +667,8 @@ const mapState = (state) => {
         load_persons: state.userStore.load_persons,
         profiles: state.assessmentStore.profiles,
         load_profiles: state.assessmentStore.load_profiles,
-        data_report: state.assessmentStore.data_report,
-        load_report: state.assessmentStore.load_report
+        currentNode: state.userStore.current_node,
     };
 };
 
-export default connect(mapState, {getReportCompetences})(ReportsCompetences);
+export default connect(mapState)(ReportsCompetences);
