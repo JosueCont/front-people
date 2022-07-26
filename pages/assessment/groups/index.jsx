@@ -25,7 +25,7 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
   useEffect(() => {
     if (currenNode?.id) {
       getListGroups(currenNode.id, "", "");
-      getSurveys(currenNode.id, "");
+      // getSurveys(currenNode.id, "");
     }
   }, [currenNode]);
 
