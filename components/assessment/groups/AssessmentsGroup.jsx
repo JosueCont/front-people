@@ -193,7 +193,7 @@ const AssessmentsGroup = ({
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={"Categoria"}>
+            <Form.Item label={"Categoría"}>
               <Select
                 placeholder="Seleccionar encuesta"
                 onChange={onChangeCategory}
