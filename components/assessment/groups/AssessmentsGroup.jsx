@@ -53,7 +53,7 @@ const AssessmentsGroup = ({
       setSurveysTable(props.loadData.assessments)
     }
     if (userStore.current_node?.id) {
-      getSurveys(userStore.current_node.id, "");
+      getSurveys(userStore.current_node.id, "&is_active=true");
     }
   },[]);
 
@@ -159,7 +159,7 @@ const AssessmentsGroup = ({
     if (userStore["current_node"] && userStore["current_node"]["id"]) {
       getSurveys(
         userStore.current_node.id,
-        categoryId ? `&categories=${categoryId}` : ""
+        categoryId ? `&categories=${categoryId}&is_active=true` : "&is_active=true"
       );
     }
   };
