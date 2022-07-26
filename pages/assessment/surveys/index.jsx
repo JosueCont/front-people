@@ -334,7 +334,7 @@ const AssessmentScreen = ({
       },
     },
     {
-      title: "Categoría",
+      title: "Tipo",
       render: (item) => {
         return (
           <div key={"category-" + item.id}>
@@ -438,7 +438,7 @@ const AssessmentScreen = ({
                   <div style={{ float: "left", marginLeft: "5px" }}>
                     <Form.Item>
                       <Button
-                        // onClick={() => HandleFilterReset(assessments)}
+                        onClick={() => resetSearch()}
                         style={{ marginTop: "auto", marginLeft: 10 }}
                       >
                         <SyncOutlined />

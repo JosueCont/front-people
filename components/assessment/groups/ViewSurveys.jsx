@@ -31,7 +31,7 @@ const ViewSurveys = ({...props}) =>{
                             title={item.name}
                             description={
                                 <div>
-                                    Categoría: {item.category === "A" ? "Assessment" : "Quiz"},
+                                    Tipo: {item.category === "A" ? "Assessment" : item.category === "K" ? "Khor" : "Quiz"},
                                     Secciones: {item.total_sections},
                                     Preguntas: {item.total_questions}
                                 </div>
