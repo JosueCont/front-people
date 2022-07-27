@@ -28,14 +28,13 @@ import { FcInfo } from "react-icons/fc";
 import WebApiAssessment from '../../../api/WebApiAssessment';
 
 const ReportsCompetences = ({
-    competences,
-    load_competences,
     persons_company,
     load_persons,
     profiles,
     load_profiles,
     currentKey,
     currentNode,
+    general_config,
     ...props
 }) => {
 
@@ -104,7 +103,6 @@ const ReportsCompetences = ({
         setLoading(true)
         try {
             let response = await WebApiAssessment.getReportCompetences(data);
-            console.log('response--->', response)
             setListReports(response.data);
             setLoading(false)
             message.success('Información obtenida')
@@ -242,7 +240,8 @@ const ReportsCompetences = ({
     const getReportP = async () =>{
         let data = {
             node_id: currentNode?.id,
-            user_id: usersSelected.at(-1).id
+            user_id: usersSelected.at(-1).id,
+            calculation_type: general_config?.calculation_type
         }
         getReportCompetences(data);
     }
@@ -250,7 +249,8 @@ const ReportsCompetences = ({
     const getReportProfile = () =>{
         let data = {
             profiles: profilesSelected.map(item => item.id),
-            users: usersSelected.map(item=> {return {id: item.id, fullName: getFullName(item)}})
+            users: usersSelected.map(item=> {return {id: item.id, fullName: getFullName(item)}}),
+            calculation_type: general_config?.calculation_type
         }
         getReportProfiles(data);
     }
@@ -661,13 +661,12 @@ const ReportsCompetences = ({
 
 const mapState = (state) => {
     return {
-        competences: state.assessmentStore.competences,
-        load_competences: state.assessmentStore.load_competences,
         persons_company: state.userStore.persons_company,
         load_persons: state.userStore.load_persons,
         profiles: state.assessmentStore.profiles,
         load_profiles: state.assessmentStore.load_profiles,
         currentNode: state.userStore.current_node,
+        general_config: state.userStore.general_config
     };
 };
 
