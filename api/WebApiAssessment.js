@@ -178,7 +178,7 @@ class WebApiAssessment {
     return Axios.get(`${API_ASSESSMENT}/sittings/competences/?competencenode__node_id=${node}`)
   }
   static getProfiles (node, query) {
-    return Axios.get(`${API_ASSESSMENT}/sittings/skills-profile/?node=${node}${query}`)
+    return Axios.get(`${API_ASSESSMENT}/sittings/skills-profile/?node_id=${node}${query}`)
   }
   static addProfile (data) {
     return Axios.post(`${API_ASSESSMENT}/sittings/skills-profile/`, data)
