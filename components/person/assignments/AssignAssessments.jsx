@@ -64,7 +64,7 @@ const AssignAssessments = ({itemSelected = {}, listAssigned = [],...props}) =>{
         if(props.visible){
             if(currentNode?.id){
                 getCategories()
-                getSurveys(currentNode.id, "")
+                getSurveys(currentNode.id, "&is_active=true")
             }
         }        
     },[props.visible])
@@ -345,7 +345,7 @@ const AssignAssessments = ({itemSelected = {}, listAssigned = [],...props}) =>{
 
     const onChangeType = (e) =>{
         if(e.target.value){
-            getSurveys(currentNode.id, "")
+            getSurveys(currentNode.id, "&is_active=true")
             setIsIndividual(true)
         }else{
             getGroupsSurveys(currentNode.id, "")
@@ -365,14 +365,14 @@ const AssignAssessments = ({itemSelected = {}, listAssigned = [],...props}) =>{
     }
 
     const onChangeCategory = (value) =>{
-        let category = `&categories=${value}`;
-        getSurveys(currentNode.id, value ? category : "")
+        let category = `&categories=${value}&is_active=true`;
+        getSurveys(currentNode.id, value ? category : "&is_active=true")
     }
 
     const resetFilters = () =>{
         formGroup.resetFields();
         if(isIndividual){
-            getSurveys(currentNode.id, "")
+            getSurveys(currentNode.id, "&is_active=true")
         }else if(!isIndividual){
             getGroupsSurveys(currentNode.id, "")
         }

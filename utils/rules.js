@@ -19,6 +19,11 @@ export const ruleMaxArray = (max) => {
   };
 };
 
+export const ruleWhiteSpace = {
+  whitespace: true,
+  message: 'Este campo no puede estar vacío'
+}
+
 export const ruleEmail = {
   type: "email",
   message: "Ingrese un correo electrónico válido",

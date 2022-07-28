@@ -174,11 +174,11 @@ class WebApiAssessment {
   static getAssessmentResults(data) {
     return Axios.post(`${API_ASSESSMENT}/sittings/assessment-results`, data);
   }
-  static getCompetences () {
-    return Axios.get(`${API_ASSESSMENT}/sittings/competences`)
+  static getCompetences (node) {
+    return Axios.get(`${API_ASSESSMENT}/sittings/competences/?competencenode__node_id=${node}`)
   }
   static getProfiles (node, query) {
-    return Axios.get(`${API_ASSESSMENT}/sittings/skills-profile/?node=${node}${query}`)
+    return Axios.get(`${API_ASSESSMENT}/sittings/skills-profile/?node_id=${node}${query}`)
   }
   static addProfile (data) {
     return Axios.post(`${API_ASSESSMENT}/sittings/skills-profile/`, data)
@@ -188,6 +188,12 @@ class WebApiAssessment {
   }
   static deleteProfile (data) {
     return Axios.post(`${API_ASSESSMENT}/sittings/skills-profile/delete_by_ids/`, data)
+  }
+  static getReportCompetences (data) {
+    return Axios.post(`${API_ASSESSMENT}/sittings/competence-report/`, data)
+  }
+  static getReportProfiles (data){
+    return Axios.post(`${API_ASSESSMENT}/sittings/profiles-report/`, data)
   }
 }
 

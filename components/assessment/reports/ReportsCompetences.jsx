@@ -9,7 +9,8 @@ import {
     Radio,
     Button,
     Tooltip,
-    message
+    message,
+    Skeleton
 } from 'antd';
 import { connect } from 'react-redux';
 import {
@@ -23,25 +24,41 @@ import {
     getPhoto,
     getWork
 } from '../../../utils/functions';
+import { FcInfo } from "react-icons/fc";
+import WebApiAssessment from '../../../api/WebApiAssessment';
 
 const ReportsCompetences = ({
-    competences,
-    load_competences,
     persons_company,
     load_persons,
+    profiles,
+    load_profiles,
+    currentKey,
+    currentNode,
+    general_config,
     ...props
 }) => {
 
     const columns_many = [
+        {
+            title: 'Imagen',
+            align: 'center',
+            width: 100,
+            show: true,
+            render: ({persons}) =>{
+                return (
+                    <Avatar src={getPhotoPerson(persons.id)}/>
+                )
+            }
+        },
         {
             title: 'Persona',
             fixed: 'left',
             width: 200,
             show: true,
             ellipsis: true,
-            render: (record) =>{
+            render: ({persons}) =>{
                 return (
-                    <span>{getFullName(record)}</span>
+                    <span>{getFullNamePerson(persons.id)}</span>
                 )
             }
         },
@@ -56,23 +73,59 @@ const ReportsCompetences = ({
         },
     ]
 
-    const options = [
-        {key: true, value: true, label: 'Sí'},
-        {key: false, value: false, label: 'No'}
-    ]
-
     const [usersSelected, setUsersSelected] = useState([]);
     const [competencesSelected, setCompetencesSelected] = useState([]);
-    const [listReports, setListReport] = useState([]);
+    const [profilesSelected, setProfilesSelected] = useState([]);
+    const [listReports, setListReports] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [isInvidual, setIsIndividual] = useState(true);
     const [openModal, setOpenModal] = useState();
     const [isUsers, setIsUsers] = useState(false);
     const [columnsMany, setColumnsMany] = useState(columns_many);
+    const [currentTab, setCurrentTab] = useState();
+
+    useEffect(()=>{
+        if(currentTab !== currentKey){
+            setCurrentTab(currentKey)
+            setUsersSelected([])
+            setCompetencesSelected([])
+            setProfilesSelected([])
+            setListReports([])
+            setIsUsers(false)
+            setColumnsMany(columns_many)
+        }
+    },[currentKey])
 
     // useEffect(()=>{
-    //     console.log('competencias------->', persons_company)
-    // },[persons_company])
+    //     console.log('asi cambia----->', listReports)
+    // },[listReports])
+
+    const getReportCompetences = async (data) =>{
+        setLoading(true)
+        try {
+            let response = await WebApiAssessment.getReportCompetences(data);
+            setListReports(response.data);
+            setLoading(false)
+            message.success('Información obtenida')
+        } catch (e) {
+            setLoading(false)
+            message.error('Información no obtenida')
+            console.log(e)
+        }
+    }
+
+    const getReportProfiles = async (data) =>{
+        setLoading(true)
+        try {
+            let response = await WebApiAssessment.getReportProfiles(data);
+            setListReports(response.data);
+            setLoading(false)
+            message.success('Información obtenida')
+        } catch (e) {
+            setLoading(false)
+            message.error('Información no obtenida')
+            console.log(e)
+        }
+    }
 
     const getOptionsPersons = () =>{
         let options = [];
@@ -87,6 +140,23 @@ const ReportsCompetences = ({
                     })
                 }
             })
+        }
+        return options;
+    }
+
+    const getOptionsProfiles = () =>{
+        let options = [];
+        if(profiles.results?.length > 0){
+          profiles.results.map(item=>{
+            let exist = profilesSelected.some(record => record.id === item.id)
+            if(!exist){
+              options.push({
+                key: item.id,
+                value: item.id,
+                label: item.name
+              })
+            }
+          })
         }
         return options;
     }
@@ -108,11 +178,24 @@ const ReportsCompetences = ({
         return options;
     }
 
+    const sendProfile = (value) =>{
+        let exist = profilesSelected.some(item => item.id === value);
+        if(!exist) {
+          let profile = profiles.results.find(item => item.id === value);
+          if(currentTab == 'pps'){
+              let list = [...profilesSelected, profile];
+              setProfilesSelected(list);
+          }else{
+              setProfilesSelected([profile])
+          }
+        }
+    }
+
     const sendUser = (value) =>{
         let exists = usersSelected.some(item => item.id === value);
         if(!exists){
             let user = persons_company.find(item => item.id === value);
-            if(!isInvidual){
+            if(['psp','psc'].includes(currentTab)){
                 let list = [...usersSelected, user];
                 setUsersSelected(list);
             }else{
@@ -130,124 +213,96 @@ const ReportsCompetences = ({
         }
     }
 
-    const onChangeType = ({target : {value}}) => {
-        setIsIndividual(value)
-        setUsersSelected([])
-        setCompetencesSelected([])
-        setListReport([])
-        setColumnsMany(columns_many)
-        // if(value){
-        //     let user = usersSelected.length > 0 ? usersSelected.at(-1) : {};
-        //     let setUser = Object.keys(user).length > 0 ? [user] : [];
-        //     setUsersSelected(setUser)
-        //     setCompetencesSelected([])
-        // }
-    }
-
     const validateParameters = () =>{
-        if(isInvidual && usersSelected.length <= 0){
-            message.error('Selecciona un usuario');
-        }else if(!isInvidual && usersSelected.length <=0){
-            message.error('Selecciona los usuarios');
-        }else if(!isInvidual && competencesSelected.length <=0){
-            message.error('Selecciona las competencias');
+        if(['p','pp','pps'].includes(currentTab) && usersSelected.length <= 0){
+            message.error('Selecciona un usuario')
+        }else if(['psp','psc'].includes(currentTab) && usersSelected.length <= 0){
+            message.error('Selecciona los usuarios')
+        }else if(['pp','psp','psc'].includes(currentTab) && profilesSelected.length <= 0){
+            message.error('Selecciona un perfil')
+        }else if(currentTab == 'pps' && profilesSelected.length <=0){
+            message.error('Selecciona los perfiles')
         }else{
             validateReport()
         }
     }
 
     const validateReport = () =>{
-        if(isInvidual){
-            getReportInvidual()
+        if(currentTab == 'p'){
+            getReportP()
+        }else if(['pp','psp','pps'].includes(currentTab)){
+            getReportProfile()
         }else{
-            getReportMany()
-            generateColumns()
+            getReportPSC()
         }
     }
 
-    const getReportInvidual = () =>{
-        setLoading(true)
-        let data = [
-            {
-                "id": "272143bb7e0844c38c4f8dac331eae75",
-                "name": "ADAPTABILIDAD",
-                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                "level": "1",
-
-            },
-            {
-                "id": "bf193cada3e24ebca715db79951cc8dc",
-                "name": "ANÁLISIS DE PROBLEMAS",
-                "description":  "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                "level": "2"
-            },
-            {
-                "id": "189ef8c8883346c696fa6eecebea9d89",
-                "name": "ANÁLISIS NUMÉRICO",
-                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-                "level": "3"
-            }
-        ]
-        setTimeout(()=>{
-            setListReport(data)
-            setLoading(false)
-        },3000)
+    const getReportP = async () =>{
+        let data = {
+            node_id: currentNode?.id,
+            user_id: usersSelected.at(-1).id,
+            calculation_type: general_config?.calculation_type
+        }
+        getReportCompetences(data);
     }
 
-    const getReportMany = () =>{
-        setLoading(true)
-        let result = usersSelected.map((item, index) => {
-            let competences = competencesSelected.map((record, idx) =>{
-                return {...record, level: (index+idx)}
-            })
-            return {
-                ...item,
-                competences: competences,
-                compatibility: (100/(index+1))
-            }
-        })
-        setTimeout(()=>{
-            setListReport(result)
-            setLoading(false)
-        },3000)
+    const getReportProfile = () =>{
+        let data = {
+            profiles: profilesSelected.map(item => item.id),
+            users: usersSelected.map(item=> {return {id: item.id, fullName: getFullName(item)}}),
+            calculation_type: general_config?.calculation_type
+        }
+        getReportProfiles(data);
+    }
+
+    const getReportPSC = () =>{
+        generateColumns()
+        getReportProfile()
     }
 
     const generateColumns = () =>{
-        let list = [...columns_many];
-        competencesSelected.map((item, idx) =>{
-            list.push({
-                title: <Tooltip title={item.name}><span>{item.name.substring(0,3)}</span></Tooltip>,
+        let info_columns = profilesSelected?.at(-1).competences;
+        let list_columns = [...columns_many];
+        info_columns.map((item, idx) =>{
+            list_columns.push({
+                title: ()=>{
+                    return (
+                        <Tooltip title={item.competence?.name}>
+                            <span>{item.competence?.name.substring(0,3).toUpperCase()}</span>
+                        </Tooltip>
+                    )
+                },
                 width: 50,
                 align: 'center',
                 show: true,
-                render: ({competences}) =>{
+                render: (record) =>{
                     return (
-                        <span>{competences[idx]?.level}</span>
+                        <span>{getLevelPerson(record, idx)}</span>
                     )
                 }
             })
         })
-        list.push({
+        list_columns.push({
             title: 'Compatibilidad',
             width: 125,
             align: 'center',
             show: true,
             fixed: 'right',
-            render: ({compatibility}) =>{
+            render: (record) =>{
                 return(
-                    <span>{compatibility.toFixed(0)}%</span>
+                    <span>{getCompatibility(record)}</span>
                 )
             }
         })
-        let newList = list.filter(item=> item.show);
+        let newList = list_columns.filter(item=> item.show);
         setColumnsMany(newList)
     }
 
     const modalList = (isUsers) =>{
         if(isUsers && usersSelected.length <= 0){
             message.error('Selecciona los usuarios');
-        }else if(!isUsers && competencesSelected.length <= 0){
-            message.error('Selecciona las competencias');
+        }else if(!isUsers && profilesSelected.length <= 0){
+            message.error('Selecciona los perfiles');
         }else{
             setIsUsers(isUsers)
             setOpenModal(true)
@@ -259,97 +314,197 @@ const ReportsCompetences = ({
         setOpenModal(false)
     }
 
+    const getDescProfile = ({description}) =>{
+        return description ? description : 'N/A';
+    }
+
+    const getCompatibility = (item) =>{
+        return item
+        ? item.profiles
+        ? item.profiles.at(-1).compatibility
+        ? `${item.profiles.at(-1).compatibility}%`
+        : 'N/A'
+        : 'Pendiente'
+        : 'Pendiente';
+    }
+
+    const getLevelPerson = ({profiles}, index) =>{
+        return profiles ? profiles?.at(-1).competences[index]?.level_person : 'N/A';
+    }
+
+    const getProfile = (item) =>{
+        return item ? item.name : 'Pendiente';
+    }
+
     const getListData = () =>{
-        return isUsers ? usersSelected : competencesSelected;
+        return isUsers ? usersSelected : profilesSelected;
     }
 
     const getSetListData = () =>{
-        return isUsers ? setUsersSelected : setCompetencesSelected;
+        return isUsers ? setUsersSelected : setProfilesSelected;
+    }
+
+    const findUser = (id) =>{
+        return persons_company.find(item => item.id === id);
+    }
+
+    const getPhotoPerson = (id) =>{
+        let user = findUser(id);
+        let photo = getPhoto(user);
+        return photo;
+    }
+
+    const getFullNamePerson = (id) =>{
+        let user = findUser(id);
+        let fullName = getFullName(user);
+        return fullName;
+    }
+
+    const getInfoType = () =>{
+        return currentTab == 'p'
+            ? 'El tipo de reporte actual se trata de seleccionar solo una persona.'
+            : currentTab == 'pp'
+            ? 'El tipo de reporte actual se trata de seleccionar una persona vs un perfil.'
+            : ['psp','psc'].includes(currentTab)
+            ? 'El tipo de reporte actual se trata de seleccionar varias personas vs un perfil.'
+            : currentTab == 'pps'
+            && 'El tipo de reporte actual se trata de seleccionar una persona vs varios perfiles.'
     }
 
     const getProperties = () =>{
-        return isInvidual ? {
-            columns: columns_individual
-        } : {
-            columns: columnsMany,
-            scroll: { x: 1500 },
-            // expandable: {
-            //     expandedRowRender,
-            //     defaultExpandedRowKeys: ['0']
-            // }
+        if(currentTab == 'p'){
+            return {
+                columns: columns_p,
+                rowKey: (item) => item.competence?.id,
+                dataSource: listReports
+            }
+        }else if(currentTab == 'pp'){
+            return {
+                columns: columns_pp,
+                rowKey: 'id',
+                dataSource: listReports.at(-1)?.profiles.at(-1)?.competences
+            }
+        }else if(currentTab == 'psp'){
+            return {
+                columns: columns_psp,
+                rowKey: (item) => item.persons?.id,
+                dataSource: listReports
+            }
+        }else if(currentTab == 'pps'){
+            return {
+                columns: columns_pps,
+                rowKey: 'id',
+                dataSource: listReports.at(-1)?.profiles
+            }
+        }else{
+            return {
+                columns: columnsMany,
+                rowKey: (item) => item.persons?.id,
+                dataSource: listReports,
+                scroll: { x: 1500}
+            }
         }
     }
 
-    const columns_individual = [
+    const columns_p = [
+        {
+            title: 'Competencia',
+            dataIndex: ['competence','name'],
+            key: ['competence','name']
+        },
+        {
+            title: 'Nivel',
+            render: ({level}) =>{
+                return <span>{level == 0 ? 'N/A' : level}</span>
+            }
+        },
+        {
+            title: 'Descripción',
+            width: 800,
+            render: ({description}) =>{
+                return <span>{description ? description : 'N/A'}</span>
+            }
+        },
+    ]
+
+    const columns_pp = [
         {
             title: 'Competencia',
             dataIndex: 'name',
             key: 'name'
         },
         {
-            title: 'Nivel',
-            dataIndex: 'level',
-            key: 'level'
+            title: 'Nivel persona',
+            dataIndex: 'level_person',
+            key: 'level_person'
         },
         {
             title: 'Descripción',
-            dataIndex: 'description',
-            key: 'description'
+            dataIndex: 'description_person',
+            key: 'description_person'
         },
+        {
+            title: 'Nivel perfil',
+            dataIndex: 'level_profile',
+            key: 'level_profile'
+        },
+        {
+            title: 'Descripción',
+            dataIndex: 'description_profile',
+            key: 'description_profile'
+        },
+        {
+            title: 'Compatibilidad',
+            render: ({compatibility}) =>{
+                return <span>{compatibility}%</span>;
+            }
+        }
     ]
 
-    // const columns_many = [
-    //     {
-    //         title: 'Persona',
-    //         show: true,
-    //         render: (item) =>{
-    //             return (
-    //                 <span>{getFullName(item)}</span>
-    //             )
-    //         }
-    //     },
-    //     {
-    //         title: 'Competencias',
-    //         show: false,
-    //         render: (item)=>{
-    //             return (
-    //                 <span>{item.competences?.length}</span>
-    //             )
-    //         }
-    //     },
-    // ]
-
-    const expandedRowRender = ({competences}) =>{
-
-        const columns = [
-            {
-                title: 'Competencia',
-                dataIndex: 'name',
-                key: 'name'
-            },
-            {
-                title: 'Nivel',
-                dataIndex: 'level',
-                key: 'level'
-            },
-            {
-                title: 'Requerido',
-                render: (item) =>{
-                    return(
-                        <span>3</span>
-                    )
-                }
+    const columns_psp = [
+        {
+            title: 'Imagen',
+            align: 'center',
+            width: 100,
+            render: ({persons}) =>{
+                return (
+                    <Avatar src={getPhotoPerson(persons.id)}/>
+                )
             }
-        ]
+        },
+        {
+            title: 'Persona',
+            render: ({persons}) =>{
+                return (
+                    <span>{getFullNamePerson(persons.id)}</span>
+                )
+            }
+        },
+        {
+            title: 'Compatibilidad',
+            render: (item) =>{
+                return(
+                    <span>{getCompatibility(item)}</span>
+                )
+            }
+        }
+    ]
 
-        return <Table
-            rowKey={'id'}
-            size={'small'}
-            columns={columns}
-            dataSource={competences}
-            pagination={false}
-        />
-    }
+    const columns_pps = [
+        {
+            title: 'Perfil',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Compatibilidad',
+            render: ({compatibility}) =>{
+                return(
+                    <span>{compatibility ? `${compatibility}%` : 'N/A'} </span>
+                )
+            }
+        }
+    ]
 
     return (
         <div style={{margin: '20px'}}>
@@ -357,7 +512,12 @@ const ReportsCompetences = ({
                 <Col span={24} className='content_header'>
                     <div className='content_inputs'>
                         <div className='content_inputs_element'>
-                            <p>Seleccionar usuario</p>
+                            <p>
+                                {['psp','psc'].includes(currentTab) ? 
+                                    <span>Seleccionar usuarios</span> :
+                                    <span>Selecionar usuario</span>
+                                }
+                            </p>
                             <Select
                                 placeholder={'Seleccionar usuario'}
                                 notFoundContent={'No se encontraron resultados'}
@@ -367,77 +527,110 @@ const ReportsCompetences = ({
                                 style={{width: 200}}
                             />
                         </div>
-                        {!isInvidual && (
-                            <div className='content_inputs_element fade_in'>
-                                <p>Seleccionar competencias</p>
+                        {['pp','psc','psp','pps'].includes(currentTab) && (
+                            <div className='content_inputs_element'>
+                                <p>
+                                    {currentTab == 'pps' ? 
+                                        <span>Seleccionar perfiles</span> :
+                                        <span>Selecionar perfil</span>
+                                    }
+                                </p>
                                 <Select
-                                    placeholder={'Seleccionar competencia'}
+                                    placeholder={'Seleccionar perfil'}
                                     notFoundContent={'No se encontraron resultados'}
-                                    options={getOptionsCompetences()}
+                                    options={getOptionsProfiles()}
                                     value={null}
-                                    onChange={sendCompetence}
+                                    onChange={sendProfile}
                                     style={{width: 200}}
                                 />
                             </div>
                         )}
+                        {/* <div className='content_inputs_element fade_in'>
+                            <p>Seleccionar competencias</p>
+                            <Select
+                                placeholder={'Seleccionar competencia'}
+                                notFoundContent={'No se encontraron resultados'}
+                                options={getOptionsCompetences()}
+                                value={null}
+                                onChange={sendCompetence}
+                                style={{width: 200}}
+                            />
+                        </div> */}
                         <Button
                             onClick={()=> validateParameters()}
                             style={{marginTop:'auto'}}
+                            loading={loading}
                         >
                             Generar
                         </Button>
                     </div>
                     <div className='content_inputs'>
-                        {!isInvidual && (
-                            <>
-                                <div className='content_inputs_element fade_in'>
-                                    <p>Ver listado</p>
-                                    <Tooltip title='Usuarios seleccionados' placement='bottom'>
-                                        <Button
-                                            onClick={()=> modalList(true)}
-                                            icon={<UserOutlined />}
-                                        >
-                                            ({usersSelected.length})
-                                        </Button>
-                                    </Tooltip>
-                                </div>
-                                <div className='content_inputs_element fade_in'>
-                                    <p>Ver listado</p>
-                                    <Tooltip title='Competencias seleccionadas' placement='bottom'>
-                                        <Button
-                                            onClick={()=> modalList(false)}
-                                            icon={<ProfileOutlined />}
-                                        >
-                                            ({competencesSelected.length})
-                                        </Button>
-                                    </Tooltip>
-                                </div>
-                            </>
+                        {['psp','psc'].includes(currentTab) && (
+                            <div className='content_inputs_element'>
+                                <p>Ver listado</p>
+                                <Tooltip title='Personas seleccionadas' placement='bottom'>
+                                    <Button
+                                        onClick={()=> modalList(true)}
+                                        icon={<UserOutlined />}
+                                    >
+                                        ({usersSelected.length})
+                                    </Button>
+                                </Tooltip>
+                            </div>
+                        )}
+                        {currentTab == 'pps' && (
+                            <div className='content_inputs_element'>
+                                <p>Ver listado</p>
+                                <Tooltip title='Perfiles seleccionados' placement='bottom'>
+                                    <Button
+                                        onClick={()=> modalList(false)}
+                                        icon={<ProfileOutlined />}
+                                    >
+                                        ({profilesSelected.length})
+                                    </Button>
+                                </Tooltip>
+                            </div>
                         )}
                         <div className='content_inputs_element'>
-                            <p>Reporte individual</p>
-                            <Radio.Group
-                                options={options}
-                                onChange={onChangeType}
-                                value={isInvidual}
-                                optionType="button"
-                                buttonStyle="solid"
-                            />
-                        </div>   
+                            <p>Reporte actual</p>
+                            <Tooltip title={getInfoType()} placement='topLeft'>
+                                <FcInfo size={30}/>
+                            </Tooltip>
+                        </div>
                     </div>
                 </Col>
-                {usersSelected.length > 0 && isInvidual && (
+                {(usersSelected.length > 0 || profilesSelected.length > 0 ) && (
                     <Col span={24}>
                         <Row gutter={[24,24]}>
-                            <Col xs={24} sm={18} md={14} lg={12} xl={10} xxl={8}>
-                                <div className='info_user fade_in'>
-                                    <Avatar src={getPhoto(usersSelected.at(-1))} size={80}/>
-                                    <div className='info_user_text'>
-                                        <p>{getFullName(usersSelected.at(-1))}</p>
-                                        <p>{getWork(usersSelected.at(-1))}</p>
+                            {['p','pp','pps'].includes(currentTab) && usersSelected.length > 0 && (
+                                <Col xs={24} sm={12} md={12} lg={12} xl={10} xxl={8} className='fade_in'>
+                                    <div className='info_user'>
+                                        <Avatar src={getPhoto(usersSelected.at(-1))} size={80}/>
+                                        <div className='info_user_text'>
+                                            <p>{getFullName(usersSelected.at(-1))}</p>
+                                            {currentTab == 'pp' && (
+                                                <>
+                                                    <p>Puesto: <span>{getProfile(profilesSelected.at(-1))}</span></p>
+                                                    <p>Compatiblidad: <span>{getCompatibility(listReports.at(-1))}</span></p>
+                                                </>
+                                            )}
+                                            {['p','pps'].includes(currentTab) && (
+                                                <p><span>{getWork(usersSelected.at(-1))}</span></p>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </Col>
+                                </Col>
+                            )}
+                            {['psp','psc'].includes(currentTab) && profilesSelected.length > 0 &&(
+                                <Col xs={24} sm={12} md={12} lg={12} xl={10} xxl={8} className='fade_in'>
+                                    <div className='info_user'>
+                                        <div className='info_user_text'>
+                                            <p>{getProfile(profilesSelected.at(-1))}</p>
+                                            <p><span>{getDescProfile(profilesSelected.at(-1))}</span></p>
+                                        </div>
+                                    </div>
+                                </Col>
+                            )}
                         </Row>
                     </Col>
                 )}
@@ -445,9 +638,7 @@ const ReportsCompetences = ({
                     <Table
                         className='items_selected'
                         {...getProperties()}
-                        dataSource={listReports}
                         loading={loading}
-                        rowKey={'id'}
                         size={'small'}
                         locale={{
                             emptyText: loading
@@ -470,10 +661,12 @@ const ReportsCompetences = ({
 
 const mapState = (state) => {
     return {
-        competences: state.assessmentStore.competences,
-        load_competences: state.assessmentStore.load_competences,
         persons_company: state.userStore.persons_company,
-        load_persons: state.userStore.load_persons
+        load_persons: state.userStore.load_persons,
+        profiles: state.assessmentStore.profiles,
+        load_profiles: state.assessmentStore.load_profiles,
+        currentNode: state.userStore.current_node,
+        general_config: state.userStore.general_config
     };
 };
 

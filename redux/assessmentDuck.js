@@ -625,7 +625,7 @@ export const getCategories = () => {
   };
 };
 
-export const getCompetences = () => {
+export const getCompetences = (node) => {
   return async (dispatch) => {
     dispatch({
       type: types.GET_COMPETENCES,
@@ -633,7 +633,7 @@ export const getCompetences = () => {
       payload: {}
     });
     try {
-      let response = await WebApiAssessment.getCompetences();
+      let response = await WebApiAssessment.getCompetences(node);
       dispatch({
         type: types.GET_COMPETENCES,
         fetching: false,
