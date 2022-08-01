@@ -67,42 +67,56 @@ const TableAssessments = ({
 
   const validateGetResults = (item) =>{
     setLoadResults({...loadResults, [item.code]: true})
-    if(
-      item.code == '7_KHOR_EST_SOC' ||
-      item.code == '4_KHOR_PERF_MOT' ||
-      item.code == '16_KHOR_INT_EMO' ||
-      item.code == '48_KHOR_INV_VAL_ORG' ||
-      item.code == '5_KHOR_DOM_CER'
-    ){
+    let codes = [
+      '7_KHOR_EST_SOC',
+      '4_KHOR_PERF_MOT',
+      '16_KHOR_INT_EMO',
+      '48_KHOR_INV_VAL_ORG',
+      '5_KHOR_DOM_CER'
+    ]
+    if(codes.includes(item.code)){
       getResults(item)
     }else{
-      tokenToResults(item, item.apply)
+      tokenToResults(item)
     }
   }
 
   const getFieldResults = (item, resp) =>{
     if(item.code == '7_KHOR_EST_SOC'){
-      return resp.data.resultados;
+      let { resultados } = resp.data;
+      return resultados ? resultados : '';
     }else if(item.code == '4_KHOR_PERF_MOT'){
-      return resp.data.summary_results;
+      let { summary_results } = resp.data;
+      return summary_results ? summary_results : '';
     }else if(item.code == '16_KHOR_INT_EMO'){
-      let result = resp.data.results_string.split('.');
-      // let result = data.results_string.replace('.','');
-      return result[0];
+      let { results_string } = resp.data;
+      return results_string ? results_string.split('.')[0] : '';
     }else if(item.code == '48_KHOR_INV_VAL_ORG'){
-      return resp.data.resultado;
+      let { resultado } = resp.data;
+      return resultado ? resultado : '';
     }else if(item.code == '5_KHOR_DOM_CER'){
-      return {
-        interpretation: resp.data.dominant_factor,
-        results: { factors: resp.data.factors}
+      let { dominant_factor, factors } = resp.data;
+      return dominant_factor && factors ? {
+        interpretation: dominant_factor,
+        results: { factors: factors}
+      } : '';
+    }
+  }
+
+  const convertResults = ({results}) =>{
+    if(results){
+      if(typeof(results) == 'string'){
+        let obj = JSON.parse(results);
+        return obj.assessment_results
+          ? obj.assessment_results
+          : '';
+      }else{
+        return results.assessment_results
+          ? results.assessment_results
+          : '';
       }
     }else{
-      if(typeof(resp.results) == 'string'){
-        let obj = JSON.parse(resp.results);
-        return obj.assessment_results;
-      }else{
-        return resp.results?.assessment_results;
-      }
+      return '';
     }
   }
 
@@ -123,34 +137,43 @@ const TableAssessments = ({
       let data = {
         user_id: user_profile.id,
         assessment_code: item.code
-      }
+      };
       let response = await WebApiAssessment.getAssessmentResults(data);
-      tokenToResults(item, response)
+      tokenToResults(item, response);
     } catch (e) {
-      setLoadResults({...loadResults, [item.code]: false})
+      message.error('Resultados no encontrados');
+      setLoadResults({...loadResults, [item.code]: false});
       console.log(e)
     }
   }
 
   const tokenToResults = (item, resp) =>{
-    const body = {
-      assessment: item.id,
-      user_id: user_profile.id,
-      firstname: user_profile.first_name,
-      lastname: `${user_profile.flast_name} ${user_profile.mlast_name ? user_profile.mlast_name : ''}`,
-      user_photo_url: user_profile.photo,
-      company_id: user_profile.node,
-      url: getCurrentURL(),
-      assessment_date: getFieldDate(item, true),
-      assessment_results: getFieldResults(item,resp),
-      assessment_xtras: { stage: 2 },
-      profile_results: null
+    let string_results = resp
+      ? getFieldResults(item, resp)
+      : convertResults(item.apply);
+
+    if (string_results){
+      const body = {
+        assessment: item.id,
+        user_id: user_profile.id,
+        firstname: user_profile.first_name,
+        lastname: `${user_profile.flast_name} ${user_profile.mlast_name ? user_profile.mlast_name : ''}`,
+        user_photo_url: user_profile.photo,
+        company_id: user_profile.node,
+        url: getCurrentURL(),
+        assessment_date: getFieldDate(item, true),
+        assessment_results: string_results,
+        assessment_xtras: { stage: 2 },
+        profile_results: null
+      }
+      const token = jwtEncode(body, 'secret', 'HS256');
+      const url = `https://humand.kuiz.hiumanlab.com/?token=${token}`;
+      // const url = `http://humand.localhost:3002/?token=${token}`;
+      popupWindow(url)
+    }else{
+      message.error('Resultados no encontrados');
     }
-    const token = jwtEncode(body, 'secret', 'HS256');
-    const url = `https://humand.kuiz.hiumanlab.com/?token=${token}`;
-    // const url = `http://humand.localhost:3002/?token=${token}`;
-    setLoadResults({...loadResults, [item.code]: false})
-    popupWindow(url)
+    setLoadResults({...loadResults, [item.code]: false});
   }
 
   const onFilter = ({target}) => {
@@ -196,7 +219,7 @@ const TableAssessments = ({
         return(
           <>
             {(
-              item.apply?.progress == 100 ||
+              item.apply?.progress >= 100 ||
               item.apply?.status == 2
             ) ? (
               <span>{getFieldDate(item, false)}</span>
@@ -222,7 +245,7 @@ const TableAssessments = ({
         return(
           <>
             {(
-              item.apply?.progress == 100 ||
+              item.apply?.progress >= 100 ||
               item.apply?.status == 2
             ) ? (
               <CustomBtn
