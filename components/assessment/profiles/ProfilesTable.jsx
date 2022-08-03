@@ -172,7 +172,7 @@ const PerfilesTable = ({
             render: (item) =>{
                 return (
                     <Space>
-                        {item.competences.length > 0 ? (
+                        {item.competences?.length > 0 ? (
                             <Tooltip title='Ver competencias'>
                                 <EyeOutlined
                                     style={{cursor: 'pointer'}}

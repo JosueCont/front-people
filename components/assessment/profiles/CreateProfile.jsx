@@ -55,9 +55,14 @@ const CreatePerfil = ({
 
     useEffect(()=>{
         if(Object.keys(recordProfile).length > 0){
-            formProfile.setFieldsValue({name: recordProfile.name})
-            setCompetencesSelected(recordProfile.competences)
-            getLevelCompetence()
+            formProfile.setFieldsValue({name: recordProfile.name})            
+            if(
+                recordProfile.competences &&
+                recordProfile.competences.length > 0
+            ){
+                setCompetencesSelected(recordProfile.competences)
+                getLevelCompetence()
+            }
         }
     },[recordProfile])
 
@@ -111,22 +116,32 @@ const CreatePerfil = ({
     }
 
     const onFinish = (values) =>{
-        if (competencesSelected.length > 1) {
+        if (competencesSelected.length > 0) {
             if(competencesSelected.length == Object.keys(levelCompetence).length){
-                let list = getLevelSelected();
-                setLoadAdd(true);
-                setTimeout(() => {
-                    onCloseModal();
-                    setLoadAdd(false);
-                    actionForm({name: values.name.trim(), competences: list})
-                }, 2000);
+                let data = {
+                    name: values.name.trim(),
+                    competences: getLevelSelected()
+                }
+                onFinishSave(data)
             }else{
                 message.error("Selecciona los niveles")
             }
         } else {
-            message.error("Selecciona al menos dos competencias");
-        }
-        
+            let data = {
+                name: values.name.trim(),
+                competences: []
+            }
+            onFinishSave(data)
+        } 
+    }
+
+    const onFinishSave = (data) =>{
+        setLoadAdd(true);
+        setTimeout(() => {
+            onCloseModal();
+            setLoadAdd(false);
+            actionForm(data)
+        }, 2000);
     }
 
     const addCompetence = (item) =>{
@@ -254,7 +269,7 @@ const CreatePerfil = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            label={`Competencias seleccionadas (${competencesSelected.length})`}
+                            label={`Competencias seleccionadas (${competencesSelected?.length})`}
                         >
                             <Table
                                 size={'small'}

@@ -679,7 +679,7 @@ export const addProfile = (data) => {
   return async (dispatch) => {
     try {
       await WebApiAssessment.addProfile(data);
-      dispatch(getProfiles(data.node_id));
+      dispatch(getProfiles(data.node_id,""));
       return true;
     } catch (e) {
       console.error(e.name + ": " + e.message);
@@ -692,7 +692,7 @@ export const editProfile = (id, data) => {
   return async (dispatch) => {
     try {
       await WebApiAssessment.editProfile(id, data);
-      dispatch(getProfiles(data.node_id));
+      dispatch(getProfiles(data.node_id,""));
       return true;
     } catch (e) {
       console.error(e.name + ": " + e.message);
@@ -705,7 +705,7 @@ export const deleteProfile = (id, node) => {
   return async (dispatch) => {
     try {
       await WebApiAssessment.deleteProfile(id);
-      dispatch(getProfiles(node));
+      dispatch(getProfiles(node,""));
       return true;
     } catch (e) {
       console.error(e.name + ": " + e.message);
