@@ -2,14 +2,14 @@ import { Form, Input, Row, Col, Select } from "antd";
 import { useEffect } from "react";
 import { useState } from "react";
 import { connect } from "react-redux";
-import WebApiFiscal from "../../api/WebApiFiscal";
-import { ruleRequired } from "../../utils/rules";
-import SelectCountry from "../selects/SelectCountry";
-import SelectMunicipality from "../selects/SelectMunicipality";
-import SelectState from "../selects/SelectState";
-import SelectSuburb from "../selects/SelectSuburb";
+import WebApiFiscal from "../../../api/WebApiFiscal";
+import { ruleRequired } from "../../../utils/rules";
+import SelectCountry from "../../selects/SelectCountry";
+import SelectMunicipality from "../../selects/SelectMunicipality";
+import SelectState from "../../selects/SelectState";
+import SelectSuburb from "../../selects/SelectSuburb";
 
-const FiscalAddress = ({ fiscalAddress, form, ...props }) => {
+const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
   const { Option } = Select;
   const [postalCode, setPostalCode] = useState([]);
   const [postalCodeSelect, setPostalCodeSelect] = useState(null);
@@ -135,4 +135,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(FiscalAddress);
+export default connect(mapState)(FormFiscalAddress);

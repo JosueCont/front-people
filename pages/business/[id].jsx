@@ -3,10 +3,11 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { withAuthSync } from "../../libs/auth";
-import FiscalInformationNode from "../../components/payroll/forms/FiscalInformationNode";
 import { connect } from "react-redux";
 import GeneralData from "../../components/business/GeneralData";
 import WebApiPeople from "../../api/WebApiPeople";
+import FiscalInformationNode from "../../components/payroll/FiscalInformationNode";
+import PatronalRegistration from "../../components/payroll/PatronalRegistration";
 
 const ConfigCompany = ({ ...props }) => {
   let router = useRouter();
@@ -74,6 +75,9 @@ const ConfigCompany = ({ ...props }) => {
             </TabPane>
             <TabPane tab="Información fiscal" key={"2"}>
               <FiscalInformationNode node_id={company && company.id} />
+            </TabPane>
+            <TabPane tab="Registro patronal" key={"3"}>
+              <PatronalRegistration node_id={company && company.id} />
             </TabPane>
           </Tabs>
         </div>

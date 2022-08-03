@@ -378,5 +378,13 @@ class WebApiPeople {
   static generalInfoNode(type, data = null, url = "") {
     return WebApi.ApisType(`/business/node-information/${url}`, type, data);
   }
+
+  static patronalRegistration(data) {
+    return WebApi.ApisType(
+      `/business/patronal-registration/save_patronal_registration/`,
+      "post",
+      data
+    );
+  }
 }
 export default WebApiPeople;

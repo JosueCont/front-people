@@ -1,6 +1,6 @@
 import { Form, Input, Row, Col } from "antd";
 import { useEffect } from "react";
-import SelectWorkTitle from "../selects/SelectWorkTitle";
+import SelectWorkTitle from "../../selects/SelectWorkTitle";
 
 const LegalRepresentative = ({ form, legalRepresentative }) => {
   useEffect(() => {
