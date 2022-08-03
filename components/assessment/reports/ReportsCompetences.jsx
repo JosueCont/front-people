@@ -250,7 +250,8 @@ const ReportsCompetences = ({
         let data = {
             profiles: profilesSelected.map(item => item.id),
             users: usersSelected.map(item=> {return {id: item.id, fullName: getFullName(item)}}),
-            calculation_type: general_config?.calculation_type
+            calculation_type: general_config?.calculation_type,
+            node_id: currentNode?.id
         }
         getReportProfiles(data);
     }
