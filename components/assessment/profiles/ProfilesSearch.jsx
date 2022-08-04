@@ -42,7 +42,7 @@ const PerfilesSearch = ({
     const onFinishSearch = () =>{
         let query = '';
         if(nameToSearch.trim()){
-            query = `&name__icontains=${nameToSearch.trim()}`
+            query = `&name=${nameToSearch.trim()}`
         }else{
             query = '';
             setNameToSearch('')
