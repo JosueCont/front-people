@@ -30,14 +30,20 @@ import {
 import CreateProfile from './CreateProfile';
 import DeleteProfile from './DeleteProfile';
 import { connect } from 'react-redux';
-import { editProfile, deleteProfile} from '../../../redux/assessmentDuck';
+import {
+    editProfile,
+    deleteProfile,
+    setCurrentPage,
+} from '../../../redux/assessmentDuck';
 
 const PerfilesTable = ({
     profiles,
     load_profiles,
+    pagination_profiles,
     currentNode,
     editProfile,
     deleteProfile,
+    setCurrentPage,
     ...props
 }) => {
 
@@ -161,6 +167,10 @@ const PerfilesTable = ({
         }
     }
 
+    const onChangePage = ({current}) =>{
+        setCurrentPage(current)
+    }
+
     const columns_perfiles= [
         {
             title: 'Nombre',
@@ -225,12 +235,20 @@ const PerfilesTable = ({
                         rowKey={'id'}
                         columns={columns_perfiles}
                         loading={load_profiles}
-                        dataSource={profiles?.results}
+                        dataSource={profiles}
                         rowSelection={rowSelection}
+                        onChange={onChangePage}
                         locale={{
                             emptyText: load_profiles
                                 ? "Cargando..."
                                 : "No se encontraron resultados.",
+                        }}
+                        pagination={{
+                            pageSize: 10,
+                            current: pagination_profiles,
+                            total: profiles.length,
+                            hideOnSinglePage: true,
+                            showSizeChanger: false
                         }}
                     />
                 </Col>
@@ -257,6 +275,7 @@ const mapState = (state) => {
     return {
         profiles: state.assessmentStore.profiles,
         load_profiles: state.assessmentStore.load_profiles,
+        pagination_profiles: state.assessmentStore.pagination_profiles,
         currentNode: state.userStore.current_node,
     };
 };
@@ -264,6 +283,7 @@ const mapState = (state) => {
 export default connect(
     mapState,{
         editProfile,
-        deleteProfile
+        deleteProfile,
+        setCurrentPage
     }
 )(PerfilesTable);

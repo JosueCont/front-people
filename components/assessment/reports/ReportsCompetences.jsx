@@ -146,10 +146,10 @@ const ReportsCompetences = ({
 
     const getOptionsProfiles = () =>{
         let options = [];
-        if(profiles.results?.length > 0){
-          profiles.results.map(item=>{
+        if(profiles.length > 0){
+          profiles.map(item=>{
             let exist = profilesSelected.some(record => record.id === item.id)
-            if(!exist){
+            if(!exist && item.competences){
               options.push({
                 key: item.id,
                 value: item.id,
@@ -181,7 +181,7 @@ const ReportsCompetences = ({
     const sendProfile = (value) =>{
         let exist = profilesSelected.some(item => item.id === value);
         if(!exist) {
-          let profile = profiles.results.find(item => item.id === value);
+          let profile = profiles.find(item => item.id === value);
           if(currentTab == 'pps'){
               let list = [...profilesSelected, profile];
               setProfilesSelected(list);
