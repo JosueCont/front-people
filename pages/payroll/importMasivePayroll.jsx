@@ -14,11 +14,14 @@ import {
   Space,
   Switch,
   Tooltip,
+  Select,
 } from "antd";
 import {
   DollarCircleOutlined,
   EyeOutlined,
   PlusOutlined,
+  LeftCircleTwoTone,
+  RightCircleTwoTone,
 } from "@ant-design/icons";
 import MainLayout from "../../layout/MainLayout";
 import { useRouter } from "next/router";
@@ -29,6 +32,7 @@ import ModalUploadFileDrag from "../../components/modal/ModalUploadFileDrag";
 import { useEffect } from "react";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import {
+  ImportCompanys,
   messageError,
   messageSaveSuccess,
   messageUploadSuccess,
@@ -39,7 +43,7 @@ import { ruleRequired } from "../../utils/rules";
 const ImportMasivePayroll = ({ ...props }) => {
   const router = useRouter();
   const [calendar] = Form.useForm();
-  const [companyImport, setCompanyImport] = useState(null);
+  const [xmlImport, setXmlImport] = useState(ImportCompanys);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [viewModal, setViewModal] = useState(false);
@@ -48,6 +52,11 @@ const ImportMasivePayroll = ({ ...props }) => {
   const [report, setReport] = useState(false);
   const [periodicityDesc, setPeriodicityDesc] = useState(null);
   const [nodeCreated, setNodeCreated] = useState(null);
+
+  const [companies, setCompanies] = useState([]);
+  const [patronals, setPatronals] = useState([]);
+  const [companySelect, setCompanySelect] = useState(null);
+  const [patronalSelect, setPatronalSelect] = useState(null);
 
   const columns = [
     {
@@ -111,6 +120,33 @@ const ImportMasivePayroll = ({ ...props }) => {
   };
 
   useEffect(() => {
+    if (xmlImport) {
+      setCompanies(
+        xmlImport.companies.map((item, i) => {
+          return { label: item.company.reason, value: i };
+        })
+      );
+      setCompanySelect(0);
+    }
+  }, [xmlImport]);
+
+  useEffect(() => {
+    setPatronals([]);
+    if (companySelect != null && companySelect != undefined) {
+      console.log("Empresa-->>", xmlImport.companies[companySelect]);
+      if (xmlImport.companies[companySelect].patronal_registrations) {
+        setPatronals(
+          xmlImport.companies[companySelect].patronal_registrations.map(
+            (p, e) => {
+              return { label: p.patronal_registration, value: e };
+            }
+          )
+        );
+      }
+    }
+  }, [companySelect]);
+
+  useEffect(() => {
     if (files.length > 0) {
       setLoading(true);
       let data = new FormData();
@@ -138,7 +174,7 @@ const ImportMasivePayroll = ({ ...props }) => {
             (item) => item.id === response.data.periodicity
           ).description
         );
-        setCompanyImport(response.data);
+        setXmlImport(response.data);
       })
       .catch((error) => {
         setLoading(false);
@@ -180,15 +216,15 @@ const ImportMasivePayroll = ({ ...props }) => {
 
   const sendImportPayrroll = async (data) => {
     data.periodicity = props.payment_periodicity.find(
-      (item) => item.id === companyImport.periodicity
+      (item) => item.id === xmlImport.periodicity
     ).id;
     data.start_date = startDate;
     data.perception_type = props.perceptions_type.find(
       (item) => item.code === "046"
     ).id;
     data.period = Number(data.period);
-    companyImport.payment_calendar = data;
-    delete companyImport["periodicity"];
+    xmlImport.payment_calendar = data;
+    delete xmlImport["periodicity"];
 
     if (files.length > 0) {
       setLoading(true);
@@ -232,6 +268,13 @@ const ImportMasivePayroll = ({ ...props }) => {
       });
   };
 
+  const nextPrev = (value) => {
+    if (value)
+      companySelect < xmlImport.companies.length - 1 &&
+        setCompanySelect(companySelect + 1);
+    else companySelect > 0 && setCompanySelect(companySelect - 1);
+  };
+
   return (
     <MainLayout currentKey={["importxml"]} defaultOpenKeys={["payroll"]}>
       {props.currentNode && (
@@ -254,199 +297,318 @@ const ImportMasivePayroll = ({ ...props }) => {
           closable
         />
       )}
+
+      {xmlImport && (
+        <Form layout="vertical">
+          <Row align="center" style={{ width: "100%", padding: "10px" }}>
+            <Col align="center" span={1}>
+              <Form.Item label="Anterior">
+                <LeftCircleTwoTone
+                  onClick={() => nextPrev(false)}
+                  style={{ fontSize: "32px" }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={5}>
+              <Form.Item label="Empresa">
+                <Select
+                  options={companies}
+                  size="middle"
+                  placeholder="Seleccionar empresa"
+                  value={companySelect}
+                  onChange={(value) => setCompanySelect(value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col align="center" span={1}>
+              <Form.Item label="Siguiente">
+                <RightCircleTwoTone
+                  onClick={() => nextPrev(true)}
+                  style={{ fontSize: "32px" }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          {patronals.length > 0 && (
+            <Row align="center" style={{ width: "100%" }}>
+              <Col span={3}>
+                <Form.Item label="Registro patronal">
+                  <Select
+                    options={patronals}
+                    style={{ width: "100%" }}
+                    size="middle"
+                    placeholder="Seleccionar registro patronal"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
+        </Form>
+      )}
+
       <Spin spinning={loading}>
         <Row justify="end" gutter={[10, 10]}>
-          <Col span={24}>
-            <Card className="form_header">
-              <Row justify="space-between">
-                {companyImport ? (
-                  <>
-                    <Col>
-                      <span
-                        style={{
-                          color: "white",
-                          fontSize: "25px",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Empresa
-                      </span>
-                      <Form layout="vertical" className={"formFilter"}>
-                        <Row gutter={[16, 6]}>
-                          <Col style={{ display: "flex" }}>
-                            <Form.Item label="Razon social">
-                              <Input value={companyImport.company.reason} />
-                            </Form.Item>
-                          </Col>
-                          <Col style={{ display: "flex" }}>
-                            <Form.Item label="RFC">
-                              <Input value={companyImport.company.rfc} />
-                            </Form.Item>
-                          </Col>
-                          {companyImport.company.patronal_registration && (
+          {xmlImport && companySelect != null ? (
+            <>
+              <Col span={24}>
+                <Card className="form_header">
+                  <Row justify="space-between">
+                    <Row style={{ width: "100%" }}>
+                      <Col span={18} style={{ display: "" }}>
+                        <span
+                          style={{
+                            color: "white",
+                            fontSize: "25px",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Empresa
+                        </span>
+                        <Form layout="vertical" className={"formFilter"}>
+                          <Row gutter={[16, 6]}>
                             <Col style={{ display: "flex" }}>
-                              <Form.Item label="Registro patronal">
+                              <Form.Item label="Razon social">
                                 <Input
                                   value={
-                                    companyImport.company.patronal_registration
+                                    xmlImport.companies[companySelect].company
+                                      .reason
                                   }
                                 />
                               </Form.Item>
                             </Col>
-                          )}
-                          <Col style={{ display: "flex" }}>
-                            <Form.Item label="Régimen fiscal">
-                              <Input
-                                value={
-                                  props.taxRegime.find(
-                                    (item) =>
-                                      item.code ===
-                                      companyImport.company.fiscal_regime
-                                  ).description
-                                }
-                              />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Form>
-                      <span
-                        style={{
-                          color: "white",
-                          fontSize: "25px",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Calendario
-                      </span>
-                      <Row style={{ width: "100%", padding: 10 }}>
-                        <Col span={24}>
-                          <h4>Fecha de inicio del calendario</h4>
-                        </Col>
-                        <Col span={24}>
-                          <Radio.Group onChange={onChangePeriod} required>
-                            <PrintPeriods periods={companyImport.periods} />
-                          </Radio.Group>
-                        </Col>
-                      </Row>
-                      <Form
-                        form={calendar}
-                        layout="vertical"
-                        className={"formFilter"}
-                        onFinish={sendImportPayrroll}
-                      >
-                        <Row gutter={[16, 6]}>
-                          <Col style={{ display: "flex" }}>
-                            <Form.Item
-                              name={"name"}
-                              label="Nombre de calendario"
-                              rules={[ruleRequired]}
-                            >
-                              <Input value={companyImport.company.reason} />
-                            </Form.Item>
-                          </Col>
-                          <Col style={{ display: "flex" }}>
-                            <Form.Item label="Periodicidad">
-                              <Input readOnly value={periodicityDesc} />
-                            </Form.Item>
-                          </Col>
-                          <Col
-                            style={{
-                              display: "flex",
-                            }}
-                          >
-                            <SelectTypeTax
-                              style={{ width: 240 }}
-                              rules={[ruleRequired]}
-                            />
-                          </Col>
-                        </Row>
-
-                        <Row gutter={[16, 6]} style={{ marginTop: "5px" }}>
-                          <Col style={{ display: "flex" }}>
-                            <Form.Item name="period" label="Periodo">
-                              <Input type={"number"} readOnly />
-                            </Form.Item>
-                          </Col>
-                          <Col style={{ display: "flex" }}>
-                            <Form.Item name="active" label="¿Activo?">
-                              <Switch
-                                checkedChildren="Si"
-                                unCheckedChildren="No"
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col style={{ display: "flex" }}>
-                            <Form.Item
-                              name="monthly_adjustment"
-                              label="Ajuste mensual"
-                            >
-                              <Switch
-                                checkedChildren="Si"
-                                unCheckedChildren="No"
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col style={{ display: "flex" }}>
-                            <Form.Item
-                              name="annual_adjustment"
-                              label="Ajuste anual"
-                            >
-                              <Switch
-                                checkedChildren="Si"
-                                unCheckedChildren="No"
-                              />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                        {!report && (
-                          <Row gutter={24} justify="end">
-                            <Space>
-                              <Button
-                                style={{
-                                  background: "#fa8c16",
-                                  fontWeight: "bold",
-                                  color: "white",
-                                  marginTop: "auto",
-                                }}
-                                onClick={() => {
-                                  setCompanyImport(null),
-                                    setFiles([]),
-                                    calendar.resetFields();
-                                }}
-                              >
-                                Cancelar
-                              </Button>
-                              <Button
-                                style={{
-                                  background: "#fa8c16",
-                                  fontWeight: "bold",
-                                  color: "white",
-                                  marginTop: "auto",
-                                }}
-                                htmlType="submit"
-                              >
-                                Guardar
-                              </Button>
-                            </Space>
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item label="RFC">
+                                <Input
+                                // value={
+                                //   xmlImport.companies[companySelect].company
+                                //     .rfc
+                                // }
+                                />
+                              </Form.Item>
+                            </Col>
+                            {/* {companySelect.company.patronal_registration && ( */}
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item label="Registro patronal">
+                                <Input
+                                // value={
+                                //   companySelect.company
+                                //     .patronal_registration
+                                // }
+                                />
+                              </Form.Item>
+                            </Col>
+                            {/* )} */}
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item label="Régimen fiscal">
+                                <Input
+                                // value={
+                                //   props.taxRegime.find(
+                                //     (item) =>
+                                //       item.code ===
+                                //       companySelect.company.fiscal_regime
+                                //   ).description
+                                // }
+                                />
+                              </Form.Item>
+                            </Col>
                           </Row>
-                        )}
-                      </Form>
-                    </Col>
-                  </>
-                ) : (
-                  <Row style={{ width: "100%" }}>
-                    <Col span={18} style={{ display: "" }}>
-                      <span
-                        style={{
-                          color: "white",
-                          fontSize: "30px",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        <DollarCircleOutlined /> Recibos de nómina
+                        </Form>
+                        <span
+                          style={{
+                            color: "white",
+                            fontSize: "25px",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Calendario
+                        </span>
+                        {/* <Row style={{ width: "100%", padding: 10 }}>
+                          <Col span={24}>
+                            <h4>Fecha de inicio del calendario</h4>
+                          </Col>
+                          <Col span={24}>
+                            <Radio.Group onChange={onChangePeriod} required>
+                              <PrintPeriods periods={xmlImport.periods} />
+                            </Radio.Group>
+                          </Col>
+                        </Row> */}
+                        {/* <Form
+                          form={calendar}
+                          layout="vertical"
+                          className={"formFilter"}
+                          onFinish={sendImportPayrroll}
+                        >
+                          <Row gutter={[16, 6]}>
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item
+                                name={"name"}
+                                label="Nombre de calendario"
+                                rules={[ruleRequired]}
+                              >
+                                <Input value={xmlImport.company.reason} />
+                              </Form.Item>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item label="Periodicidad">
+                                <Input readOnly value={periodicityDesc} />
+                              </Form.Item>
+                            </Col>
+                            <Col
+                              style={{
+                                display: "flex",
+                              }}
+                            >
+                              <SelectTypeTax
+                                style={{ width: 240 }}
+                                rules={[ruleRequired]}
+                              />
+                            </Col>
+                          </Row>
+
+                          <Row gutter={[16, 6]} style={{ marginTop: "5px" }}>
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item name="period" label="Periodo">
+                                <Input type={"number"} readOnly />
+                              </Form.Item>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item name="active" label="¿Activo?">
+                                <Switch
+                                  checkedChildren="Si"
+                                  unCheckedChildren="No"
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item
+                                name="monthly_adjustment"
+                                label="Ajuste mensual"
+                              >
+                                <Switch
+                                  checkedChildren="Si"
+                                  unCheckedChildren="No"
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col style={{ display: "flex" }}>
+                              <Form.Item
+                                name="annual_adjustment"
+                                label="Ajuste anual"
+                              >
+                                <Switch
+                                  checkedChildren="Si"
+                                  unCheckedChildren="No"
+                                />
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                          {!report && (
+                            <Row gutter={24} justify="end">
+                              <Space>
+                                <Button
+                                  style={{
+                                    background: "#fa8c16",
+                                    fontWeight: "bold",
+                                    color: "white",
+                                    marginTop: "auto",
+                                  }}
+                                  onClick={() => {
+                                    setXmlImport(null),
+                                      setFiles([]),
+                                      calendar.resetFields();
+                                  }}
+                                >
+                                  Cancelar
+                                </Button>
+                                <Button
+                                  style={{
+                                    background: "#fa8c16",
+                                    fontWeight: "bold",
+                                    color: "white",
+                                    marginTop: "auto",
+                                  }}
+                                  htmlType="submit"
+                                >
+                                  Guardar
+                                </Button>
+                              </Space>
+                            </Row>
+                          )}
+                        </Form> */}
+                      </Col>
+                    </Row>
+                  </Row>
+                </Card>
+              </Col>
+              {/* <Col span={24}>
+                <Card className="card_table">
+                  <Table
+                    size="small"
+                    columns={columns}
+                    dataSource={xmlImport.cfdis}
+                    loading={loading}
+                    scroll={{ x: 350 }}
+                    locale={{
+                      emptyText: loading
+                        ? "Cargando..."
+                        : "No se encontraron resultados.",
+                    }}
+                    className={"mainTable headers_transparent"}
+                  />
+                </Card>
+              </Col> */}
+            </>
+          ) : (
+            <>
+              <Col span={24}>
+                <Card className="form_header">
+                  <Row justify="space-between">
+                    <Row style={{ width: "100%" }}>
+                      <Col span={18} style={{ display: "" }}>
+                        <span
+                          style={{
+                            color: "white",
+                            fontSize: "30px",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          <DollarCircleOutlined /> Recibos de nómina
+                        </span>
+                      </Col>
+                      <Col span={2} style={{ display: "flex" }}>
+                        <Button
+                          style={{
+                            background: "#fa8c16",
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "auto",
+                          }}
+                          onClick={() => setModal(true)}
+                        >
+                          <PlusOutlined />
+                          Importar nómina
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={24}>
+                <Card>
+                  <div
+                    onClick={() => setModal(true)}
+                    className={"ImportPayroll"}
+                  ></div>
+                  <Row justify="center" style={{ marginTop: "-30px" }}>
+                    <div style={{ width: "50%", textAlign: "center" }}>
+                      <span style={{ fontSize: "20px" }}>
+                        <b>Importa tus recibos aquí</b>
                       </span>
-                    </Col>
-                    <Col span={2} style={{ display: "flex" }}>
+                      <p style={{ fontSize: "15px" }}>
+                        Se analizará la información de tus archivos, se creará
+                        la empresa, información de los empleados y sus pagos de
+                        nómina.
+                      </p>
                       <Button
                         style={{
                           background: "#fa8c16",
@@ -459,87 +621,12 @@ const ImportMasivePayroll = ({ ...props }) => {
                         <PlusOutlined />
                         Importar nómina
                       </Button>
-                    </Col>
+                    </div>
                   </Row>
-                )}
-              </Row>
-            </Card>
-          </Col>
-          <Col span={24}>
-            {report && nodeCreated && (
-              <>
-                {/* <Button onClick={downloadReport}>Descargar reporte</Button> */}
-                <Alert
-                  style={{ margin: "10px" }}
-                  message="Verifica tu información"
-                  description="Para poder calcular y timbrar nominas futuras verifica la información fiscal de tu empresa."
-                  action={
-                    <Space direction="horizontal">
-                      <Tooltip title="Ver información fiscal">
-                        <Button
-                          onClick={() =>
-                            router.push({
-                              pathname: `/business/${nodeCreated}`,
-                              query: { tab: 2 },
-                            })
-                          }
-                        >
-                          <EyeOutlined /> Informacion fiscal
-                        </Button>
-                      </Tooltip>
-                    </Space>
-                  }
-                  type="info"
-                  showIcon
-                />
-              </>
-            )}
-            {companyImport ? (
-              <Card className="card_table">
-                <Table
-                  size="small"
-                  columns={columns}
-                  dataSource={companyImport.cfdis}
-                  loading={loading}
-                  scroll={{ x: 350 }}
-                  locale={{
-                    emptyText: loading
-                      ? "Cargando..."
-                      : "No se encontraron resultados.",
-                  }}
-                  className={"mainTable headers_transparent"}
-                />
-              </Card>
-            ) : (
-              <Card>
-                <div className={"ImportPayroll"}></div>
-                <Row justify="center" style={{ marginTop: "-30px" }}>
-                  <div style={{ width: "50%", textAlign: "center" }}>
-                    <span style={{ fontSize: "20px" }}>
-                      <b>Importa tus recibos aquí</b>
-                    </span>
-                    <p style={{ fontSize: "15px" }}>
-                      Se analizará la información de tus archivos, se creará la
-                      empresa, información de los empleados y sus pagos de
-                      nómina.
-                    </p>
-                    <Button
-                      style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                        marginTop: "auto",
-                      }}
-                      onClick={() => setModal(true)}
-                    >
-                      <PlusOutlined />
-                      Importar nómina
-                    </Button>
-                  </div>
-                </Row>
-              </Card>
-            )}
-          </Col>
+                </Card>
+              </Col>
+            </>
+          )}
         </Row>
       </Spin>
       {viewModal && (
