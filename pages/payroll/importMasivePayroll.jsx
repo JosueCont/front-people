@@ -36,6 +36,7 @@ import {
   messageError,
   messageSaveSuccess,
   messageUploadSuccess,
+  salaryDays,
 } from "../../utils/constant";
 import SelectTypeTax from "../../components/selects/SelectTypeTax";
 import { ruleRequired } from "../../utils/rules";
@@ -191,7 +192,7 @@ const ImportMasivePayroll = ({ ...props }) => {
       });
   };
 
-  const PrintPeriods = ({ periods }) => {
+  const PrintPeriods = ({ periods = [] }) => {
     return (
       <>
         {periods.map((item, i) => {
@@ -422,17 +423,19 @@ const ImportMasivePayroll = ({ ...props }) => {
                         >
                           Calendario
                         </span>
-                        {/* <Row style={{ width: "100%", padding: 10 }}>
+                        <Row style={{ width: "100%", padding: 10 }}>
                           <Col span={24}>
                             <h4>Fecha de inicio del calendario</h4>
                           </Col>
                           <Col span={24}>
                             <Radio.Group onChange={onChangePeriod} required>
-                              <PrintPeriods periods={xmlImport.periods} />
+                              <PrintPeriods
+                              // periods={xmlImport.periods}
+                              />
                             </Radio.Group>
                           </Col>
-                        </Row> */}
-                        {/* <Form
+                        </Row>
+                        <Form
                           form={calendar}
                           layout="vertical"
                           className={"formFilter"}
@@ -445,7 +448,9 @@ const ImportMasivePayroll = ({ ...props }) => {
                                 label="Nombre de calendario"
                                 rules={[ruleRequired]}
                               >
-                                <Input value={xmlImport.company.reason} />
+                                <Input
+                                // value={xmlImport.company.reason}
+                                />
                               </Form.Item>
                             </Col>
                             <Col style={{ display: "flex" }}>
@@ -501,6 +506,22 @@ const ImportMasivePayroll = ({ ...props }) => {
                                 />
                               </Form.Item>
                             </Col>
+                            <Col lg={8} xs={22}>
+                              <Form.Item
+                                key="SelectSalaryDays"
+                                name="salary_days"
+                                label="Dias a pagar"
+                                rules={[ruleRequired]}
+                              >
+                                <Select
+                                  placeholder="Dias a pagar"
+                                  options={salaryDays}
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col lg={8} xs={22}>
+                              <SelectTypeTax />
+                            </Col>
                           </Row>
                           {!report && (
                             <Row gutter={24} justify="end">
@@ -534,7 +555,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                               </Space>
                             </Row>
                           )}
-                        </Form> */}
+                        </Form>
                       </Col>
                     </Row>
                   </Row>
