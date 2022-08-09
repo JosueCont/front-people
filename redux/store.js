@@ -1,4 +1,4 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
+import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 import webReducerUser, { doGetGeneralConfig } from "./UserDuck";
 import webReducerCatalog, { doCompanySelectedCatalog } from "./catalogCompany";
@@ -17,8 +17,13 @@ const rootReducer = combineReducers({
   payrollStore: PayrollDuck,
   assessmentStore: assessmentReducer,
 });
-
-export const store = createStore(rootReducer, applyMiddleware(thunk));
+const composeEnhancers =
+    typeof window === 'object' &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+          // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
+        }) : compose;
+export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 export default () => {
   doGetGeneralConfig()(store.dispatch);

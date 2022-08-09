@@ -19,7 +19,10 @@ const initialData = {
   cat_level: [],
   cat_work_title: [],
   fixed_concept: [],
-  fixed_concept: [],
+  cat_cost_center:[],
+  cat_tags:[],
+  cat_accounts:[],
+  errorData:null
 };
 
 const RELATIONSHIP = "RELATIONSHIP";
@@ -38,6 +41,9 @@ const LEVEL = "LEVEL";
 const WORK_TITLE = "WORK_TITLE";
 const FIXED_CONCEPT = "FIXED_CONCEPT";
 const GROUP_FIXED_CONCEPT = "GROUP_FIXED_CONCEPT";
+const COST_CENTER = "COST_CENTER";
+const TAGS = "TAGS";
+const ACCOUNT = "ACCOUNT";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -76,6 +82,12 @@ const webReducer = (state = initialData, action) => {
       return { ...state, fixed_concept: action.payload };
     case GROUP_FIXED_CONCEPT:
       return { ...state, fixed_concept: action.payload };
+    case COST_CENTER:
+      return { ...state, cat_cost_center: action.payload };
+    case TAGS:
+      return { ...state, cat_tags: action.payload.data, errorData: action.payload?.error };
+    case ACCOUNT:
+      return { ...state, cat_accounts: action.payload.data, errorData: action.payload?.error };
     default:
       return state;
   }
@@ -99,6 +111,9 @@ export const doCompanySelectedCatalog =
         dispatch(getPeopleCompany(idCompany));
         dispatch(getLevel(idCompany));
         dispatch(getWorkTitle(idCompany));
+        dispatch(getCostCenter(idCompany));
+        dispatch(getTags(idCompany));
+        dispatch(getAccountantAccount(idCompany));
         return true;
       }
     } catch (error) {
@@ -255,4 +270,35 @@ export const getWorkTitle = (idCompany) => async (dispatch, getState) => {
     .catch((error) => {
       dispatch({ type: WORK_TITLE, payload: [] });
     });
+};
+
+export const getCostCenter = (idCompany) => async (dispatch, getState) => {
+  await WebApiPeople.centerCost(idCompany)
+      .then((response) => {
+        dispatch({ type: COST_CENTER, payload: response.data.results });
+      })
+      .catch((error) => {
+        dispatch({ type: COST_CENTER, payload: [] });
+      });
+};
+
+export const getTags = (idCompany) => async (dispatch, getState) => {
+  await WebApiPeople.tags(idCompany)
+      .then((response) => {
+        dispatch({ type: TAGS, payload: {data:response.data.results, error:null} });
+      })
+      .catch((error) => {
+        dispatch({ type: TAGS, payload: {data:[],error:error} });
+      });
+};
+
+
+export const getAccountantAccount = (idCompany) => async (dispatch, getState) => {
+  await WebApiPeople.accountantAccount(idCompany)
+      .then((response) => {
+        dispatch({ type: ACCOUNT, payload: {data:response.data.results, error:null} });
+      })
+      .catch((error) => {
+        dispatch({ type: ACCOUNT, payload: {data:[],error:error} });
+      });
 };
