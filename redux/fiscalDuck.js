@@ -92,12 +92,15 @@ export const setVersionCfdi = (use_cfdi) => async (dispatch, getState) => {
     setStorage("v", use_cfdi);
     dispatch({ type: VERSION_CFDI, payload: use_cfdi });
     let current_node = getState().userStore.current_node;
-    dispatch(doFiscalCatalogs(current_node ? current_node.id : null, use_cfdi));
+    dispatch(
+      doFiscalCatalogs(current_node ? current_node.id : null, Number(use_cfdi))
+    );
   }
 };
 
 export const doFiscalCatalogs =
   (node_id, use_cfdi) => async (dispatch, getState) => {
+    console.log(use_cfdi);
     try {
       if (use_cfdi && use_cfdi != undefined) {
         dispatch(getFiscalBanks(use_cfdi));
@@ -127,7 +130,7 @@ export const getFiscalBanks = (use_cfdi) => async (dispatch, getState) => {
       dispatch({
         type: BANKS,
         payload: response.data.results.filter(
-          (item) => Number(Number(item.version_cfdi)) <= use_cfdi
+          (item) => Number(item.version_cfdi.version) <= use_cfdi
         ),
       });
     })
@@ -142,7 +145,7 @@ export const getFiscalTaxRegime = (use_cfdi) => async (dispatch, getState) => {
       dispatch({
         type: TAX_REGIME,
         payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi) <= use_cfdi
+          (item) => Number(item.version_cfdi.version) <= use_cfdi
         ),
       });
     })
@@ -157,7 +160,7 @@ export const getPerceptions = (use_cfdi) => async (dispatch, getState) => {
       dispatch({
         type: PERCEPTIONS,
         payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi) <= use_cfdi
+          (item) => Number(item.version_cfdi.version) <= use_cfdi
         ),
       });
     })
@@ -172,7 +175,7 @@ export const getDeductions = (use_cfdi) => async (dispatch, getState) => {
       dispatch({
         type: DEDUCTIONS,
         payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi) <= use_cfdi
+          (item) => Number(item.version_cfdi.version) <= use_cfdi
         ),
       });
     })
@@ -187,7 +190,7 @@ export const getOtherPayments = (use_cfdi) => async (dispatch, getState) => {
       dispatch({
         type: OTHER_PAYMENTS,
         payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi) <= use_cfdi
+          (item) => Number(item.version_cfdi.version) <= use_cfdi
         ),
       });
     })
@@ -196,53 +199,47 @@ export const getOtherPayments = (use_cfdi) => async (dispatch, getState) => {
     });
 };
 
-export const getInternalPerceptions =
-  (data, use_cfdi) => async (dispatch, getState) => {
-    await WebApiFiscal.getInternalPerceptions(data)
-      .then((response) => {
-        dispatch({
-          type: PERCEPTIONS_INT,
-          payload: response.data.filter(
-            (item) =>
-              item.perception_type.code != "001" &&
-              item.perception_type.code != "046" &&
-              Number(item.version_cfdi) <= use_cfdi
-          ),
-        });
-      })
-      .catch((error) => {
-        console.log(error);
+export const getInternalPerceptions = (data) => async (dispatch, getState) => {
+  await WebApiFiscal.getInternalPerceptions(data)
+    .then((response) => {
+      dispatch({
+        type: PERCEPTIONS_INT,
+        payload: response.data.filter(
+          (item) =>
+            item.perception_type.code != "001" &&
+            item.perception_type.code != "046"
+        ),
       });
-  };
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
-export const getInternalDeductions =
-  (data, use_cfdi) => async (dispatch, getState) => {
-    await WebApiFiscal.getInternalDeductions(data)
-      .then((response) => {
-        dispatch({
-          type: DEDUCTIONS_INT,
-          payload: response.data.filter(
-            (item) =>
-              item.deduction_type.code != "001" &&
-              item.deduction_type.code != "002" &&
-              Number(item.version_cfdi) <= use_cfdi
-          ),
-        });
-      })
-      .catch((error) => {
-        console.log(error);
+export const getInternalDeductions = (data) => async (dispatch, getState) => {
+  await WebApiFiscal.getInternalDeductions(data)
+    .then((response) => {
+      dispatch({
+        type: DEDUCTIONS_INT,
+        payload: response.data.filter(
+          (item) =>
+            item.deduction_type.code != "001" &&
+            item.deduction_type.code != "002"
+        ),
       });
-  };
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 export const getInternalOtherPayments =
-  (data, use_cfdi) => async (dispatch, getState) => {
+  (data) => async (dispatch, getState) => {
     await WebApiFiscal.getInternalOtherPayments(data)
       .then((response) => {
         dispatch({
           type: OTHER_PAYMENTS_INT,
-          payload: response.data.filter(
-            (item) => Number(item.version_cfdi) <= use_cfdi
-          ),
+          payload: response.data,
         });
       })
       .catch((error) => {
@@ -256,7 +253,7 @@ export const getTypeTax = (use_cfdi) => async (dispatch, getState) => {
       dispatch({
         type: TYPE_TAX,
         payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi) <= use_cfdi
+          (item) => Number(item.version_cfdi.version) <= use_cfdi
         ),
       });
     })
@@ -272,7 +269,7 @@ export const getPaymentPeriodicity =
         dispatch({
           type: PAYMENT_PERIODICITY,
           payload: response.data.results.filter(
-            (item) => Number(item.version_cfdi) <= use_cfdi
+            (item) => Number(item.version_cfdi.version) <= use_cfdi
           ),
         });
       })
@@ -287,7 +284,7 @@ export const getContractType = (use_cfdi) => async (dispatch, getState) => {
       dispatch({
         type: CONTRACT_TYPE,
         payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi) <= use_cfdi
+          (item) => Number(item.version_cfdi.version) <= use_cfdi
         ),
       });
     })
@@ -302,7 +299,7 @@ export const getJourneyType = (use_cfdi) => async (dispatch, getState) => {
       dispatch({
         type: JOURNEY_TYPE,
         payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi) <= use_cfdi
+          (item) => Number(item.version_cfdi.version) <= use_cfdi
         ),
       });
     })
@@ -317,7 +314,7 @@ export const getHiringRegime = (use_cfdi) => async (dispatch, getState) => {
       dispatch({
         type: HIRING_REGIME,
         payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi) <= use_cfdi
+          (item) => Number(item.version_cfdi.version) <= use_cfdi
         ),
       });
     })
