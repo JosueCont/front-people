@@ -240,12 +240,12 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
           }
         >
           <Row>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={6} xs={12} offset={1}>
               <Form.Item name="name" label="Nombre de etiqueta" rules={[ruleRequired]}>
                 <Input />
               </Form.Item>
             </Col>
-            <Col lg={6} xs={22} offset={1}>
+            <Col lg={6} xs={12} offset={1}>
               <Form.Item name="description" label="Descripción">
                 <Input />
               </Form.Item>
@@ -266,7 +266,7 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
       <Spin tip="Cargando..." spinning={loading}>
         <Table
           columns={colsData}
-          dataSource={cat_tags.results}
+          dataSource={cat_tags}
           locale={{
             emptyText: loading
               ? "Cargando..."

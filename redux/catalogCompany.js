@@ -111,6 +111,9 @@ export const doCompanySelectedCatalog =
         dispatch(getPeopleCompany(idCompany));
         dispatch(getLevel(idCompany));
         dispatch(getWorkTitle(idCompany));
+        dispatch(getCostCenter(idCompany));
+        dispatch(getTags(idCompany));
+        dispatch(getAccountantAccount(idCompany));
         return true;
       }
     } catch (error) {
@@ -272,7 +275,7 @@ export const getWorkTitle = (idCompany) => async (dispatch, getState) => {
 export const getCostCenter = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.centerCost(idCompany)
       .then((response) => {
-        dispatch({ type: COST_CENTER, payload: response.data });
+        dispatch({ type: COST_CENTER, payload: response.data.results });
       })
       .catch((error) => {
         dispatch({ type: COST_CENTER, payload: [] });
@@ -282,7 +285,7 @@ export const getCostCenter = (idCompany) => async (dispatch, getState) => {
 export const getTags = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.tags(idCompany)
       .then((response) => {
-        dispatch({ type: TAGS, payload: {data:response.data, error:null} });
+        dispatch({ type: TAGS, payload: {data:response.data.results, error:null} });
       })
       .catch((error) => {
         dispatch({ type: TAGS, payload: {data:[],error:error} });
@@ -293,7 +296,7 @@ export const getTags = (idCompany) => async (dispatch, getState) => {
 export const getAccountantAccount = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.accountantAccount(idCompany)
       .then((response) => {
-        dispatch({ type: ACCOUNT, payload: {data:response.data, error:null} });
+        dispatch({ type: ACCOUNT, payload: {data:response.data.results, error:null} });
       })
       .catch((error) => {
         dispatch({ type: ACCOUNT, payload: {data:[],error:error} });

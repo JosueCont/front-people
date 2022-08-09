@@ -268,7 +268,7 @@ const CostCenterCatalog = ({ permissions,cat_accounts, currentNode,cat_cost_cent
       <Spin tip="Cargando..." spinning={loading}>
         <Table
           columns={colsData}
-          dataSource={cat_accounts.results}
+          dataSource={cat_accounts}
           locale={{
             emptyText: loading
               ? "Cargando..."
