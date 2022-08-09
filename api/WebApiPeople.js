@@ -387,5 +387,10 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/tag/?node=${nodeId}`,'get');
   }
 
+  static accountantAccount(nodeId){
+    return WebApi.ApisType(`/payroll/accountant-account/?node=${nodeId}`,'get');
+  }
+
+
 }
 export default WebApiPeople;

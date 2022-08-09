@@ -21,6 +21,7 @@ const initialData = {
   fixed_concept: [],
   cat_cost_center:[],
   cat_tags:[],
+  cat_accounts:[],
   errorData:null
 };
 
@@ -42,6 +43,7 @@ const FIXED_CONCEPT = "FIXED_CONCEPT";
 const GROUP_FIXED_CONCEPT = "GROUP_FIXED_CONCEPT";
 const COST_CENTER = "COST_CENTER";
 const TAGS = "TAGS";
+const ACCOUNT = "ACCOUNT";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -84,6 +86,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, cat_cost_center: action.payload };
     case TAGS:
       return { ...state, cat_tags: action.payload.data, errorData: action.payload?.error };
+    case ACCOUNT:
+      return { ...state, cat_accounts: action.payload.data, errorData: action.payload?.error };
     default:
       return state;
   }
@@ -282,5 +286,16 @@ export const getTags = (idCompany) => async (dispatch, getState) => {
       })
       .catch((error) => {
         dispatch({ type: TAGS, payload: {data:[],error:error} });
+      });
+};
+
+
+export const getAccountantAccount = (idCompany) => async (dispatch, getState) => {
+  await WebApiPeople.accountantAccount(idCompany)
+      .then((response) => {
+        dispatch({ type: ACCOUNT, payload: {data:response.data, error:null} });
+      })
+      .catch((error) => {
+        dispatch({ type: ACCOUNT, payload: {data:[],error:error} });
       });
 };

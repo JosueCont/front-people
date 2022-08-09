@@ -19,7 +19,7 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { getTags } from "../../redux/catalogCompany";
+import { getAccountantAccount } from "../../redux/catalogCompany";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
   messageDeleteSuccess,
@@ -28,9 +28,9 @@ import {
   messageUpdateSuccess,
 } from "../../utils/constant";
 
-const UrlModel = "/business/tag/";
+const UrlModel = "/payroll/accountant-account/";
 
-const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...props }) => {
+const CostCenterCatalog = ({ permissions,cat_accounts, currentNode,cat_cost_center,getAccountantAccount, ...props }) => {
   const { Title } = Typography;
 
   const [edit, setEdit] = useState(false);
@@ -42,8 +42,9 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
 
   const colsData = [
     {
-      title: "name",
-      dataIndex: "name",
+      title: "Cuenta",
+      dataIndex: "account",
+      key:'key'
     },
     {
       title: "Descripción",
@@ -81,9 +82,8 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
 
 
   useEffect(()=>{
-    if(currentNode?.id)
-    getTags(currentNode.id)
-  },[currentNode])
+    getAccountantAccount(currentNode.id)
+  },[])
 
 
   const resetForm = () => {
@@ -93,20 +93,23 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
   };
 
   const onFinishForm = (value) => {
-
-
-    if(!(value?.name && value.name.trim())){
-      form.setFieldsValue({name:undefined})
-      value.name=undefined
+    /**
+     * Validamos que no puedan meter datos con puros espacios
+     */
+    if(!(value?.description && value.description.trim())){
+      form.setFieldsValue({description:undefined})
+      value.description=undefined
     }
 
-
-
+    if(!(value?.account && value.account.trim())){
+      form.setFieldsValue({account:undefined})
+      value.account=undefined
+    }
     /**
      * Validamos que no puedan meter datos con puros espacios
      */
 
-    if(value.name===undefined){
+    if(value.account===undefined || value.description===undefined){
       form.validateFields()
       return
     }
@@ -129,7 +132,7 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
 
       console.log(response)
 
-      getTags(currentNode.id)
+      getAccountantAccount(currentNode.id)
         .then((response) => {
           resetForm();
           message.success(messageSaveSuccess);
@@ -137,12 +140,12 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
         })
         .catch((error) => {
           setLoading(false);
-          console.log(errorData);
+          console.log(error);
           message.error(messageError);
         });
     } catch (error) {
       setLoading(false);
-      console.log('error',JSON.stringify(errorData));
+      console.log(error);
       message.error(messageError);
     }
   };
@@ -151,20 +154,19 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
     setEdit(true);
     setId(item.id);
     form.setFieldsValue({
-      node: currentNode.id,
+      node: item.node,
       description: item.description,
-      name: item.name,
+      account: item.account,
     });
   };
 
   const updateRegister = async (value) => {
-    console.log(value)
     try {
       let response = await WebApiPeople.updateRegisterCatalogs(
         UrlModel+`${id}/`,
         value
       );
-      getTags(currentNode.id)
+      getAccountantAccount(currentNode.id)
         .then((response) => {
           setId("");
           resetForm();
@@ -212,7 +214,7 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
       let response = await WebApiPeople.deleteRegisterCatalogs(
         UrlModel + `${deleted.id}/`
       );
-        getTags(currentNode.id)
+      getAccountantAccount(currentNode.id)
         .then((response) => {
           resetForm();
           message.success(messageDeleteSuccess);
@@ -241,12 +243,12 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
         >
           <Row>
             <Col lg={6} xs={22} offset={1}>
-              <Form.Item name="name" label="Nombre de etiqueta" rules={[ruleRequired]}>
+              <Form.Item name="account" label="Cuenta" rules={[ruleRequired]}>
                 <Input />
               </Form.Item>
             </Col>
             <Col lg={6} xs={22} offset={1}>
-              <Form.Item name="description" label="Descripción">
+              <Form.Item name="description" label="Descripción" rules={[ruleRequired]}>
                 <Input />
               </Form.Item>
             </Col>
@@ -266,7 +268,7 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
       <Spin tip="Cargando..." spinning={loading}>
         <Table
           columns={colsData}
-          dataSource={cat_tags.results}
+          dataSource={cat_accounts.results}
           locale={{
             emptyText: loading
               ? "Cargando..."
@@ -280,9 +282,8 @@ const TagCatalog = ({ permissions, currentNode,errorData,cat_tags,getTags, ...pr
 
 const mapState = (state) => {
   return {
-    cat_tags: state.catalogStore.cat_tags,
-    errorData: state.catalogStore.errorData
+    cat_accounts: state.catalogStore.cat_accounts,
   };
 };
 
-export default connect(mapState, { getTags })(TagCatalog);
+export default connect(mapState, { getAccountantAccount })(CostCenterCatalog);
