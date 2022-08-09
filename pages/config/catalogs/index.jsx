@@ -8,6 +8,9 @@ import {
   UserSwitchOutlined,
   FileOutlined,
   PicRightOutlined,
+  DollarCircleOutlined,
+  ReadOutlined,
+  TagsOutlined
 } from "@ant-design/icons";
 import Title from "antd/lib/typography/Title";
 import Router from "next/router";
@@ -23,6 +26,9 @@ import Relationship from "../../../components/catalogs/Relationship";
 import DocumentsTypes from "../../../components/catalogs/DocumentsTypes";
 import FixedConcepts from "../../../components/catalogs/FixedConcepts";
 import InternalConcepts from "../../../components/catalogs/InternalConcepts";
+import CostCenterCatalog from "../../../components/catalogs/CostCenterCatalog";
+import TagCatalog from "../../../components/catalogs/TagCatalog";
+import AccountantAccountCatalog from "../../../components/catalogs/AccountantAccountCatalog";
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
@@ -49,7 +55,7 @@ const configBusiness = ({ ...props }) => {
               <Title style={{ fontSize: "25px" }}>
                 Catálogos de {props.currentNode && props.currentNode.name}
               </Title>
-              <Tabs tabPosition={"left"}>
+              <Tabs onChange={(tab)=> console.log(tab)} tabPosition={"left"}>
                 {props.permissions.department.view && (
                   <TabPane
                     tab={
@@ -216,6 +222,65 @@ const configBusiness = ({ ...props }) => {
                     doCompanySelectedCatalog={doCompanySelectedCatalog}
                   />
                 </TabPane>
+
+
+                <TabPane
+                    tab={
+                      <Tooltip title="Cuentas contables">
+                        <div className="container-title-tab">
+                          <ReadOutlined/>
+                          <div className="text-title-tab">
+                            Cuentas contables
+                          </div>
+                        </div>
+                      </Tooltip>
+                    }
+                    key="tab_9"
+                >
+                  <AccountantAccountCatalog
+                      currentNode={props.currentNode}
+                      doCompanySelectedCatalog={doCompanySelectedCatalog}
+                  />
+                </TabPane>
+
+                <TabPane
+                    tab={
+                      <Tooltip title="Centros de costo">
+                        <div className="container-title-tab">
+                          <DollarCircleOutlined/>
+                          <div className="text-title-tab">
+                            Centros de costos
+                          </div>
+                        </div>
+                      </Tooltip>
+                    }
+                    key="tab_10"
+                >
+                  <CostCenterCatalog
+                      currentNode={props.currentNode}
+                      doCompanySelectedCatalog={doCompanySelectedCatalog}
+                  />
+                </TabPane>
+                <TabPane
+                    tab={
+                      <Tooltip title="Etiquetas">
+                        <div className="container-title-tab">
+                          <TagsOutlined />
+                          <div className="text-title-tab">
+                            Etiquetas
+                          </div>
+                        </div>
+                      </Tooltip>
+                    }
+                    key="tab_11"
+                >
+                  <TagCatalog
+                      currentNode={props.currentNode}
+                      doCompanySelectedCatalog={doCompanySelectedCatalog}
+                  />
+                </TabPane>
+                )
+
               </Tabs>
             </>
           </Card>

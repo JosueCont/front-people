@@ -378,5 +378,19 @@ class WebApiPeople {
   static generalInfoNode(type, data = null, url = "") {
     return WebApi.ApisType(`/business/node-information/${url}`, type, data);
   }
+
+  static centerCost(nodeId, method='get', data){
+    return WebApi.ApisType(`/payroll/cost-center/?node=${nodeId}`,method);
+  }
+
+  static tags(nodeId){
+    return WebApi.ApisType(`/business/tag/?node=${nodeId}`,'get');
+  }
+
+  static accountantAccount(nodeId){
+    return WebApi.ApisType(`/payroll/accountant-account/?node=${nodeId}`,'get');
+  }
+
+
 }
 export default WebApiPeople;
