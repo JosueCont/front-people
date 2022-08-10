@@ -230,7 +230,7 @@ const ReportsCompetences = ({
         }
         return {
             value: usersSelected.length > 0
-                ? usersSelected.at(-1).id
+                ? usersSelected?.at(-1)?.id
                 : null
         };
     }
@@ -245,7 +245,7 @@ const ReportsCompetences = ({
         }
         return {
             value: profilesSelected.length > 0
-                ? profilesSelected.at(-1).id
+                ? profilesSelected?.at(-1)?.id
                 : null
         };
     }
