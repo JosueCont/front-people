@@ -26,6 +26,7 @@ import {
 } from '../../../utils/functions';
 import { FcInfo } from "react-icons/fc";
 import WebApiAssessment from '../../../api/WebApiAssessment';
+import { valueToFilter } from '../../../utils/functions';
 
 const ReportsCompetences = ({
     persons_company,
@@ -82,22 +83,32 @@ const ReportsCompetences = ({
     const [isUsers, setIsUsers] = useState(false);
     const [columnsMany, setColumnsMany] = useState(columns_many);
     const [currentTab, setCurrentTab] = useState();
+    const [optionsPersons, setOptionsPersons] = useState([]);
+    const [optionsProfiles, setOptionsProfiles] = useState([]);
 
     useEffect(()=>{
         if(currentTab !== currentKey){
             setCurrentTab(currentKey)
-            setUsersSelected([])
-            setCompetencesSelected([])
-            setProfilesSelected([])
-            setListReports([])
-            setIsUsers(false)
-            setColumnsMany(columns_many)
+            resetValues()
         }
     },[currentKey])
 
-    // useEffect(()=>{
-    //     console.log('asi cambia----->', listReports)
-    // },[listReports])
+    useEffect(()=>{
+        getOptionsPersons();
+    },[persons_company])
+
+    useEffect(()=>{
+        getOptionsProfiles();
+    },[profiles])
+
+    const resetValues = () =>{
+        setUsersSelected([])
+        setCompetencesSelected([])
+        setProfilesSelected([])
+        setListReports([])
+        setIsUsers(false)
+        setColumnsMany(columns_many)
+    }
 
     const getReportCompetences = async (data) =>{
         setLoading(true)
@@ -131,86 +142,112 @@ const ReportsCompetences = ({
         let options = [];
         if(persons_company.length > 0){
             persons_company.map(item =>{
-                let exist = usersSelected.some(record => record.id === item.id);
-                if(!exist){
-                    options.push({
-                        key: item.id,
-                        value: item.id,
-                        label: getFullName(item)
-                    })
-                }
+                options.push({
+                    key: item.id,
+                    value: item.id,
+                    label: getFullName(item)
+                })
             })
         }
-        return options;
+        setOptionsPersons(options);
     }
 
     const getOptionsProfiles = () =>{
         let options = [];
         if(profiles.length > 0){
           profiles.map(item=>{
-            let exist = profilesSelected.some(record => record.id === item.id)
-            if(!exist && item.competences){
-              options.push({
+            options.push({
                 key: item.id,
                 value: item.id,
                 label: item.name
-              })
-            }
+            })
           })
         }
-        return options;
+        setOptionsProfiles(options);
     }
 
-    const getOptionsCompetences = () =>{
-        let options = [];
-        if(competences.length > 0){
-            competences.map(item => {
-                let exist = competencesSelected.some(record => record.id === item.id)
-                if(!exist){
-                    options.push({
-                        key: item.id,
-                        value: item.id,
-                        label: item.name
-                    })
-                }
-            })
-        }
-        return options;
-    }
+    // const getOptionsCompetences = () =>{
+    //     let options = [];
+    //     if(competences.length > 0){
+    //         competences.map(item => {
+    //             let exist = competencesSelected.some(record => record.id === item.id)
+    //             if(!exist){
+    //                 options.push({
+    //                     key: item.id,
+    //                     value: item.id,
+    //                     label: item.name
+    //                 })
+    //             }
+    //         })
+    //     }
+    //     return options;
+    // }
 
     const sendProfile = (value) =>{
-        let exist = profilesSelected.some(item => item.id === value);
-        if(!exist) {
-          let profile = profiles.find(item => item.id === value);
-          if(currentTab == 'pps'){
-              let list = [...profilesSelected, profile];
-              setProfilesSelected(list);
-          }else{
-              setProfilesSelected([profile])
-          }
+        if(currentTab == 'pps'){
+            let list = [];
+            value.map(item =>{
+                let profile = profiles.find(record => record.id === item);
+                list.push(profile);
+            })
+            setProfilesSelected(list);
+        }else{
+            let profile = profiles.find(record => record.id === value);
+            setProfilesSelected([profile])
         }
     }
 
     const sendUser = (value) =>{
-        let exists = usersSelected.some(item => item.id === value);
-        if(!exists){
+        if(['psp','psc'].includes(currentTab)){
+            let list = [];
+            value.map(item =>{
+                let user = persons_company.find(record => record.id === item);
+                list.push(user);
+            })
+            setUsersSelected(list);
+        }else{
             let user = persons_company.find(item => item.id === value);
-            if(['psp','psc'].includes(currentTab)){
-                let list = [...usersSelected, user];
-                setUsersSelected(list);
-            }else{
-                setUsersSelected([user]);
-            }
+            setUsersSelected([user]);
         }
     }
 
-    const sendCompetence = (value) =>{
-        let exists = competencesSelected.some(item => item.id === value);
-        if(!exists){
-            let competence = competences.find(item => item.id == value);
-            let list = [...competencesSelected, competence];
-            setCompetencesSelected(list);
+    // const sendCompetence = (value) =>{
+    //     let exists = competencesSelected.some(item => item.id === value);
+    //     if(!exists){
+    //         let competence = competences.find(item => item.id == value);
+    //         let list = [...competencesSelected, competence];
+    //         setCompetencesSelected(list);
+    //     }
+    // }
+
+    const getPropertiesSelectUser = () =>{
+        if(['psp','psc'].includes(currentTab)){
+            return {
+                mode: 'multiple',
+                value: usersSelected.map(item => item.id),
+                maxTagCount: 'responsive',
+            };
         }
+        return {
+            value: usersSelected.length > 0
+                ? usersSelected.at(-1).id
+                : null
+        };
+    }
+
+    const getPropertiesSelectProfile = () =>{
+        if(currentTab == 'pps'){
+            return {
+                mode: 'multiple',
+                value: profilesSelected.map(item => item.id),
+                maxTagCount: 'responsive',
+            };
+        }
+        return {
+            value: profilesSelected.length > 0
+                ? profilesSelected.at(-1).id
+                : null
+        };
     }
 
     const validateParameters = () =>{
@@ -407,6 +444,10 @@ const ReportsCompetences = ({
         }
     }
 
+    const filterOptionSelect = (input, option) =>{
+        return valueToFilter(option.label).includes(valueToFilter(input))
+    }
+
     const columns_p = [
         {
             title: 'Competencia',
@@ -520,12 +561,16 @@ const ReportsCompetences = ({
                                 }
                             </p>
                             <Select
+                                showSearch
                                 placeholder={'Seleccionar usuario'}
                                 notFoundContent={'No se encontraron resultados'}
-                                options={getOptionsPersons()}
-                                value={null}
+                                options={optionsPersons}
+                                {...getPropertiesSelectUser()}
                                 onChange={sendUser}
+                                loading={load_persons}
                                 style={{width: 200}}
+                                optionFilterProp={'children'}
+                                filterOption={filterOptionSelect}
                             />
                         </div>
                         {['pp','psc','psp','pps'].includes(currentTab) && (
@@ -537,12 +582,16 @@ const ReportsCompetences = ({
                                     }
                                 </p>
                                 <Select
+                                    showSearch
                                     placeholder={'Seleccionar perfil'}
                                     notFoundContent={'No se encontraron resultados'}
-                                    options={getOptionsProfiles()}
-                                    value={null}
+                                    options={optionsProfiles}
+                                    {...getPropertiesSelectProfile()}
+                                    loading={load_profiles}
                                     onChange={sendProfile}
                                     style={{width: 200}}
+                                    optionFilterProp={'children'}
+                                    filterOption={filterOptionSelect}
                                 />
                             </div>
                         )}
@@ -563,6 +612,12 @@ const ReportsCompetences = ({
                             loading={loading}
                         >
                             Generar
+                        </Button>
+                        <Button
+                            onClick={()=> resetValues()}
+                            style={{marginTop:'auto'}}
+                        >
+                            Reiniciar
                         </Button>
                     </div>
                     <div className='content_inputs'>
