@@ -85,6 +85,7 @@ const ReportsCompetences = ({
     const [currentTab, setCurrentTab] = useState();
     const [optionsPersons, setOptionsPersons] = useState([]);
     const [optionsProfiles, setOptionsProfiles] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(()=>{
         if(currentTab !== currentKey){
@@ -260,6 +261,7 @@ const ReportsCompetences = ({
         }else if(currentTab == 'pps' && profilesSelected.length <=0){
             message.error('Selecciona los perfiles')
         }else{
+            setCurrentPage(1)
             validateReport()
         }
     }
@@ -357,13 +359,13 @@ const ReportsCompetences = ({
     }
 
     const getCompatibility = (item) =>{
-        return item
-        ? item.profiles
-        ? item.profiles.at(-1).compatibility
-        ? `${item.profiles.at(-1).compatibility}%`
-        : 'N/A'
-        : 'Pendiente'
-        : 'Pendiente';
+        return item 
+            ? item.profiles
+            ? typeof(item.profiles.at(-1).compatibility) == "string"
+            ? item.profiles.at(-1).compatibility
+            : `${item.profiles.at(-1).compatibility.toFixed(0)}%`
+            : 'Pendiente'
+            : 'Pendiente';
     }
 
     const getLevelPerson = ({profiles}, index) =>{
@@ -448,6 +450,10 @@ const ReportsCompetences = ({
         return valueToFilter(option.label).includes(valueToFilter(input))
     }
 
+    const onChangeTable = ({current}) =>{
+        setCurrentPage(current)
+    }
+
     const columns_p = [
         {
             title: 'Competencia',
@@ -478,27 +484,45 @@ const ReportsCompetences = ({
         {
             title: 'Nivel persona',
             dataIndex: 'level_person',
-            key: 'level_person'
+            key: 'level_person',
+            align: 'center',
         },
         {
             title: 'Descripción',
-            dataIndex: 'description_person',
-            key: 'description_person'
+            key: 'description_person',
+            render: ({description_person}) =>{
+                return (
+                    <span>{description_person ? description_person : 'N/A'}</span>
+                )
+            }
         },
         {
             title: 'Nivel perfil',
             dataIndex: 'level_profile',
-            key: 'level_profile'
+            key: 'level_profile',
+            align: 'center',
         },
         {
             title: 'Descripción',
-            dataIndex: 'description_profile',
-            key: 'description_profile'
+            key: 'description_profile',
+            render: ({description_profile}) =>{
+                return (
+                    <span>{description_profile ? description_profile : 'N/A'}</span>
+                )
+            }
         },
         {
             title: 'Compatibilidad',
+            align: 'center',
             render: ({compatibility}) =>{
-                return <span>{compatibility}%</span>;
+                return (
+                    <span>
+                        {typeof(compatibility) == "string"
+                            ? compatibility
+                            : `${compatibility.toFixed(0)}%`
+                        }
+                    </span>
+                )
             }
         }
     ]
@@ -541,8 +565,13 @@ const ReportsCompetences = ({
         {
             title: 'Compatibilidad',
             render: ({compatibility}) =>{
-                return(
-                    <span>{compatibility ? `${compatibility}%` : 'N/A'} </span>
+                return (
+                    <span>
+                        {typeof(compatibility) == "string"
+                            ? compatibility
+                            : `${compatibility.toFixed(0)}%`
+                        }
+                    </span>
                 )
             }
         }
@@ -700,6 +729,12 @@ const ReportsCompetences = ({
                             emptyText: loading
                                 ? "Cargando..."
                                 : "No se encontraron resultados.",
+                        }}
+                        onChange={onChangeTable}
+                        pagination={{
+                            current: currentPage,
+                            hideOnSinglePage: true,
+                            showSizeChanger: false
                         }}
                     />
                 </Col>
