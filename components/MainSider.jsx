@@ -159,15 +159,48 @@ const MainSider = ({
           defaultOpenKeys={defaultOpenKeys ? defaultOpenKeys : [""]}
           mode="inline"
         >
-          {/*{props.config && props.config.nomina_enabled && (*/}
-          {/*  <Menu.Item*/}
-          {/*    key="dashboard"*/}
-          {/*    onClick={() => router.push({ pathname: "/dashboard" })}*/}
-          {/*    icon={<AppstoreOutlined />}*/}
-          {/*  >*/}
-          {/*    Dashboard*/}
-          {/*  </Menu.Item>*/}
-          {/*)}*/}
+          {/* {props.config && props.config.nomina_enabled && (
+            <Menu.Item
+              key="dashboard"
+              onClick={() => router.push({ pathname: "/dashboard" })}
+              icon={<AppstoreOutlined />}
+            >
+              Dashboard
+            </Menu.Item>
+          )} */}
+          {props.permissions.company.view && (
+            <SubMenu
+              key="company"
+              title="Empresa"
+              className="subMainMenu"
+              icon={<BankOutlined />}
+            >
+              <Menu.Item
+                key="business"
+                onClick={() => router.push({ pathname: "/business" })}
+              >
+                Empresas
+              </Menu.Item>
+              <Menu.Item
+                key="patronal"
+                onClick={() =>
+                  router.push({
+                    pathname: "/business/patronalRegistrationNode",
+                  })
+                }
+              >
+                Registros patronales
+              </Menu.Item>
+              <Menu.Item
+                key="asign"
+                onClick={() =>
+                  router.push({ pathname: "/config/assignedCompanies" })
+                }
+              >
+                Asignar empresa
+              </Menu.Item>
+            </SubMenu>
+          )}
           {props.permissions.person.view && (
             <SubMenu
               key="people"
@@ -193,15 +226,6 @@ const MainSider = ({
               )}
             </SubMenu>
           )}
-          {props.permissions.company.view && (
-            <Menu.Item
-              key="business"
-              icon={<BankOutlined />}
-              onClick={() => router.push({ pathname: "/business" })}
-            >
-              Empresas
-            </Menu.Item>
-          )}
           <SubMenu
             key="config"
             title="Configuración"
@@ -219,14 +243,6 @@ const MainSider = ({
               onClick={() => router.push({ pathname: "/config/groups" })}
             >
               Perfiles de seguridad
-            </Menu.Item>
-            <Menu.Item
-              key="asignar"
-              onClick={() =>
-                router.push({ pathname: "/config/assignedCompanies" })
-              }
-            >
-              Asignar empresa
             </Menu.Item>
           </SubMenu>
           {props.config &&
@@ -366,7 +382,6 @@ const MainSider = ({
               </>
             </SubMenu>
           )}
-
           {intranetAccess && (
             <SubMenu
               key="intranet"
@@ -406,7 +421,6 @@ const MainSider = ({
               </Menu.Item>
             </SubMenu>
           )}
-
           {props.config && props.config.nomina_enabled && (
             <SubMenu
               key="uploads"
@@ -428,7 +442,6 @@ const MainSider = ({
               </Menu.Item>
             </SubMenu>
           )}
-
           {props.config && props.config.kuiz_enabled && (
             <SubMenu
               key="kuiss"
@@ -450,7 +463,9 @@ const MainSider = ({
               </Menu.Item>
               <Menu.Item
                 key="perfiles_kuiz"
-                onClick={() => router.push({ pathname: "/assessment/profiles" })}
+                onClick={() =>
+                  router.push({ pathname: "/assessment/profiles" })
+                }
               >
                 Perfiles
               </Menu.Item>

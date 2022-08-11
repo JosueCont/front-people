@@ -62,11 +62,11 @@ const FormPatronalRegistration = ({
             />
           </Form.Item>
         </Col>
-        <Col lg={6} xs={22}>
+        {/* <Col lg={6} xs={22}>
           <Form.Item name="ledger_account" label="Cuenta contable">
             <Input />
           </Form.Item>
-        </Col>
+        </Col> */}
       </Row>
     </Form>
   );

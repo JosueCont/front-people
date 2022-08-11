@@ -290,9 +290,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             <br />
             <Select
               style={{ width: "150px" }}
-              onChange={(value) => {
-                console.log("Verison--> ", value), setVersionCfdiSelect(value);
-              }}
+              onChange={(value) => setVersionCfdiSelect(value)}
               placeholder="Seleccione la version"
               defaultValue={
                 props.versionCfdi

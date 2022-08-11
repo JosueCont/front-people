@@ -23,33 +23,32 @@ import {
   LeftCircleTwoTone,
   RightCircleTwoTone,
 } from "@ant-design/icons";
-import MainLayout from "../../layout/MainLayout";
+import MainLayout from "../../../layout/MainLayout";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { withAuthSync } from "../../libs/auth";
+import { withAuthSync } from "../../../libs/auth";
 import { connect } from "react-redux";
-import ModalUploadFileDrag from "../../components/modal/ModalUploadFileDrag";
+import ModalUploadFileDrag from "../../../components/modal/ModalUploadFileDrag";
 import { useEffect } from "react";
-import WebApiPayroll from "../../api/WebApiPayroll";
+import WebApiPayroll from "../../../api/WebApiPayroll";
 import {
   ImportCompanys,
   messageError,
   messageSaveSuccess,
   messageUploadSuccess,
   salaryDays,
-} from "../../utils/constant";
-import SelectTypeTax from "../../components/selects/SelectTypeTax";
-import { ruleRequired } from "../../utils/rules";
+} from "../../../utils/constant";
+import SelectTypeTax from "../../../components/selects/SelectTypeTax";
+import { ruleRequired } from "../../../utils/rules";
+import FormCaledanrXml from "./components/formCalendarXml";
 
 const ImportMasivePayroll = ({ ...props }) => {
   const router = useRouter();
-  const [calendar] = Form.useForm();
   const [xmlImport, setXmlImport] = useState(ImportCompanys);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
-  const [startDate, setStartDate] = useState(null);
   const [report, setReport] = useState(false);
   const [periodicityDesc, setPeriodicityDesc] = useState(null);
   const [nodeCreated, setNodeCreated] = useState(null);
@@ -134,7 +133,6 @@ const ImportMasivePayroll = ({ ...props }) => {
   useEffect(() => {
     setPatronals([]);
     if (companySelect != null && companySelect != undefined) {
-      console.log("Empresa-->>", xmlImport.companies[companySelect]);
       if (xmlImport.companies[companySelect].patronal_registrations) {
         setPatronals(
           xmlImport.companies[companySelect].patronal_registrations.map(
@@ -190,29 +188,6 @@ const ImportMasivePayroll = ({ ...props }) => {
         // setFiles([]);
         console.log(error);
       });
-  };
-
-  const PrintPeriods = ({ periods = [] }) => {
-    return (
-      <>
-        {periods.map((item, i) => {
-          return (
-            <Col>
-              <Radio
-                key={item.payment_start_date + i}
-                value={`${item.payment_start_date},${item.payment_end_date}`}
-              >
-                {item.payment_start_date} - {item.payment_end_date}
-              </Radio>
-            </Col>
-          );
-        })}
-      </>
-    );
-  };
-
-  const onChangePeriod = (item) => {
-    setStartDate(item.target.value);
   };
 
   const sendImportPayrroll = async (data) => {
@@ -317,7 +292,9 @@ const ImportMasivePayroll = ({ ...props }) => {
                   size="middle"
                   placeholder="Seleccionar empresa"
                   value={companySelect}
-                  onChange={(value) => setCompanySelect(value)}
+                  onChange={(value) => {
+                    setCompanySelect(value), setPatronalSelect(0);
+                  }}
                 />
               </Form.Item>
             </Col>
@@ -336,9 +313,10 @@ const ImportMasivePayroll = ({ ...props }) => {
                 <Form.Item label="Registro patronal">
                   <Select
                     options={patronals}
-                    style={{ width: "100%" }}
                     size="middle"
                     placeholder="Seleccionar registro patronal"
+                    value={patronalSelect}
+                    onChange={(value) => setPatronalSelect(value)}
                   />
                 </Form.Item>
               </Col>
@@ -366,7 +344,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                           Empresa
                         </span>
                         <Form layout="vertical" className={"formFilter"}>
-                          <Row gutter={[16, 6]}>
+                          <Row gutter={[24, 6]}>
                             <Col style={{ display: "flex" }}>
                               <Form.Item label="Razon social">
                                 <Input
@@ -380,193 +358,60 @@ const ImportMasivePayroll = ({ ...props }) => {
                             <Col style={{ display: "flex" }}>
                               <Form.Item label="RFC">
                                 <Input
-                                // value={
-                                //   xmlImport.companies[companySelect].company
-                                //     .rfc
-                                // }
+                                  value={
+                                    xmlImport.companies[companySelect].company
+                                      .rfc
+                                  }
                                 />
                               </Form.Item>
                             </Col>
-                            {/* {companySelect.company.patronal_registration && ( */}
-                            <Col style={{ display: "flex" }}>
-                              <Form.Item label="Registro patronal">
-                                <Input
-                                // value={
-                                //   companySelect.company
-                                //     .patronal_registration
-                                // }
-                                />
-                              </Form.Item>
-                            </Col>
-                            {/* )} */}
                             <Col style={{ display: "flex" }}>
                               <Form.Item label="Régimen fiscal">
                                 <Input
-                                // value={
-                                //   props.taxRegime.find(
-                                //     (item) =>
-                                //       item.code ===
-                                //       companySelect.company.fiscal_regime
-                                //   ).description
-                                // }
+                                  value={
+                                    props.taxRegime.length > 0
+                                      ? props.taxRegime.find(
+                                          (item) =>
+                                            item.code ===
+                                            xmlImport.companies[companySelect]
+                                              .company.fiscal_regime
+                                        ).description
+                                      : ""
+                                  }
                                 />
                               </Form.Item>
                             </Col>
+                            {xmlImport.companies[companySelect]
+                              .patronal_registrations && (
+                              <Col style={{ display: "flex" }}>
+                                <Form.Item label="Registro patronal">
+                                  <Input
+                                  // // value={
+                                  // //   companySelect.company
+                                  // //     .patronal_registration
+                                  // // }
+                                  />
+                                </Form.Item>
+                              </Col>
+                            )}
                           </Row>
-                        </Form>
-                        <span
-                          style={{
-                            color: "white",
-                            fontSize: "25px",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Calendario
-                        </span>
-                        <Row style={{ width: "100%", padding: 10 }}>
-                          <Col span={24}>
-                            <h4>Fecha de inicio del calendario</h4>
-                          </Col>
-                          <Col span={24}>
-                            <Radio.Group onChange={onChangePeriod} required>
-                              <PrintPeriods
-                              // periods={xmlImport.periods}
-                              />
-                            </Radio.Group>
-                          </Col>
-                        </Row>
-                        <Form
-                          form={calendar}
-                          layout="vertical"
-                          className={"formFilter"}
-                          onFinish={sendImportPayrroll}
-                        >
-                          <Row gutter={[16, 6]}>
-                            <Col style={{ display: "flex" }}>
-                              <Form.Item
-                                name={"name"}
-                                label="Nombre de calendario"
-                                rules={[ruleRequired]}
-                              >
-                                <Input
-                                // value={xmlImport.company.reason}
-                                />
-                              </Form.Item>
-                            </Col>
-                            <Col style={{ display: "flex" }}>
-                              <Form.Item label="Periodicidad">
-                                <Input readOnly value={periodicityDesc} />
-                              </Form.Item>
-                            </Col>
-                            <Col
-                              style={{
-                                display: "flex",
-                              }}
-                            >
-                              <SelectTypeTax
-                                style={{ width: 240 }}
-                                rules={[ruleRequired]}
-                              />
-                            </Col>
-                          </Row>
-
-                          <Row gutter={[16, 6]} style={{ marginTop: "5px" }}>
-                            <Col style={{ display: "flex" }}>
-                              <Form.Item name="period" label="Periodo">
-                                <Input type={"number"} readOnly />
-                              </Form.Item>
-                            </Col>
-                            <Col style={{ display: "flex" }}>
-                              <Form.Item name="active" label="¿Activo?">
-                                <Switch
-                                  checkedChildren="Si"
-                                  unCheckedChildren="No"
-                                />
-                              </Form.Item>
-                            </Col>
-                            <Col style={{ display: "flex" }}>
-                              <Form.Item
-                                name="monthly_adjustment"
-                                label="Ajuste mensual"
-                              >
-                                <Switch
-                                  checkedChildren="Si"
-                                  unCheckedChildren="No"
-                                />
-                              </Form.Item>
-                            </Col>
-                            <Col style={{ display: "flex" }}>
-                              <Form.Item
-                                name="annual_adjustment"
-                                label="Ajuste anual"
-                              >
-                                <Switch
-                                  checkedChildren="Si"
-                                  unCheckedChildren="No"
-                                />
-                              </Form.Item>
-                            </Col>
-                            <Col lg={8} xs={22}>
-                              <Form.Item
-                                key="SelectSalaryDays"
-                                name="salary_days"
-                                label="Dias a pagar"
-                                rules={[ruleRequired]}
-                              >
-                                <Select
-                                  placeholder="Dias a pagar"
-                                  options={salaryDays}
-                                />
-                              </Form.Item>
-                            </Col>
-                            <Col lg={8} xs={22}>
-                              <SelectTypeTax />
-                            </Col>
-                          </Row>
-                          {!report && (
-                            <Row gutter={24} justify="end">
-                              <Space>
-                                <Button
-                                  style={{
-                                    background: "#fa8c16",
-                                    fontWeight: "bold",
-                                    color: "white",
-                                    marginTop: "auto",
-                                  }}
-                                  onClick={() => {
-                                    setXmlImport(null),
-                                      setFiles([]),
-                                      calendar.resetFields();
-                                  }}
-                                >
-                                  Cancelar
-                                </Button>
-                                <Button
-                                  style={{
-                                    background: "#fa8c16",
-                                    fontWeight: "bold",
-                                    color: "white",
-                                    marginTop: "auto",
-                                  }}
-                                  htmlType="submit"
-                                >
-                                  Guardar
-                                </Button>
-                              </Space>
-                            </Row>
-                          )}
                         </Form>
                       </Col>
                     </Row>
                   </Row>
                 </Card>
               </Col>
-              {/* <Col span={24}>
+              <FormCaledanrXml
+                company={xmlImport.companies[companySelect]}
+                periodicity={props.payment_periodicity}
+              />
+
+              <Col span={24}>
                 <Card className="card_table">
                   <Table
                     size="small"
                     columns={columns}
-                    dataSource={xmlImport.cfdis}
+                    dataSource={[]}
                     loading={loading}
                     scroll={{ x: 350 }}
                     locale={{
@@ -577,7 +422,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                     className={"mainTable headers_transparent"}
                   />
                 </Card>
-              </Col> */}
+              </Col>
             </>
           ) : (
             <>

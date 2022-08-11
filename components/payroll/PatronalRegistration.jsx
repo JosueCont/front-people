@@ -22,8 +22,11 @@ import WebApiFiscal from "../../api/WebApiFiscal";
 import LegalRepresentative from "./forms/LegalRepresentative";
 import FormFiscalAddress from "./forms/FormFiscalAddress";
 import FormPatronalRegistration from "./forms/FormPatronalRegistration";
+import { withAuthSync } from "../../libs/auth";
+import { connect } from "react-redux";
+import JobRiskPremium from "./forms/jobRiskPremium";
 
-const ImssInformationNode = ({ node_id = null, fiscal }) => {
+const ImssInformationNode = ({ node_id = null, fiscal, ...props }) => {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [formPatronal] = Form.useForm();
@@ -31,7 +34,7 @@ const ImssInformationNode = ({ node_id = null, fiscal }) => {
   const [formLegalRep] = Form.useForm();
   const [patronalData, setPatronalData] = useState(null);
   const [acceptAgreement, setAcceptAgreement] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [key, setKey] = useState(null);
   const [certificate, setCertificate] = useState(null);
   const [password, setPassword] = useState("");
@@ -94,6 +97,9 @@ const ImssInformationNode = ({ node_id = null, fiscal }) => {
     <>
       <Row>
         <Col span={24}>
+          <Row>
+            <Title style={{ fontSize: "15px" }}>Registro patronal</Title>
+          </Row>
           <Divider style={{ marginTop: "2px" }} />
           <FormPatronalRegistration
             patronalRegistration={
@@ -109,6 +115,11 @@ const ImssInformationNode = ({ node_id = null, fiscal }) => {
             fiscalAddress={patronalData && patronalData.fiscal_address}
             form={formAddress}
           />
+          <Row>
+            <Title style={{ fontSize: "15px" }}>Prima de riezgo laboral</Title>
+          </Row>
+          <Divider style={{ marginTop: "2px" }} />
+          <JobRiskPremium />
           <Row>
             <Title style={{ fontSize: "15px" }}>Representante legal</Title>
           </Row>
@@ -200,4 +211,8 @@ const ImssInformationNode = ({ node_id = null, fiscal }) => {
   );
 };
 
-export default ImssInformationNode;
+const mapState = (state) => {
+  return { currentNode: state.userStore.current_node };
+};
+
+export default connect(mapState)(withAuthSync(ImssInformationNode));

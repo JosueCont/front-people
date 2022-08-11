@@ -32,7 +32,7 @@ const ConfigCompany = ({ ...props }) => {
   }, [router.query]);
 
   return (
-    <MainLayout currentKey="2">
+    <MainLayout currentKey={["business"]} defaultOpenKeys={["company"]}>
       {props.currentNode == null && (
         <Row align="end">
           <Button onClick={() => router.push("/select-company")}>
@@ -76,9 +76,9 @@ const ConfigCompany = ({ ...props }) => {
             <TabPane tab="Información fiscal" key={"2"}>
               <FiscalInformationNode node_id={company && company.id} />
             </TabPane>
-            <TabPane tab="Registro patronal" key={"3"}>
+            {/* <TabPane tab="Registro patronal" key={"3"}>
               <PatronalRegistration node_id={company && company.id} />
-            </TabPane>
+            </TabPane> */}
           </Tabs>
         </div>
       </Spin>
