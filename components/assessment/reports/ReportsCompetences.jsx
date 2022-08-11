@@ -308,7 +308,7 @@ const ReportsCompetences = ({
                 title: ()=>{
                     return (
                         <Tooltip title={item.competence?.name}>
-                            <span>{item.competence?.name.substring(0,3).toUpperCase()}</span>
+                            <span>{item.competence?.name.substring(0,3).toUpperCase()} ({item.level})</span>
                         </Tooltip>
                     )
                 },
@@ -363,7 +363,7 @@ const ReportsCompetences = ({
             ? item.profiles
             ? typeof(item.profiles.at(-1).compatibility) == "string"
             ? item.profiles.at(-1).compatibility
-            : `${item.profiles.at(-1).compatibility.toFixed(0)}%`
+            : `${item.profiles.at(-1).compatibility.toFixed(2)}%`
             : 'Pendiente'
             : 'Pendiente';
     }
@@ -519,7 +519,7 @@ const ReportsCompetences = ({
                     <span>
                         {typeof(compatibility) == "string"
                             ? compatibility
-                            : `${compatibility.toFixed(0)}%`
+                            : `${compatibility.toFixed(2)}%`
                         }
                     </span>
                 )
@@ -569,7 +569,7 @@ const ReportsCompetences = ({
                     <span>
                         {typeof(compatibility) == "string"
                             ? compatibility
-                            : `${compatibility.toFixed(0)}%`
+                            : `${compatibility.toFixed(2)}%`
                         }
                     </span>
                 )
