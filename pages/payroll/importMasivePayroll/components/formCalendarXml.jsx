@@ -1,22 +1,12 @@
-import {
-  Button,
-  Row,
-  Col,
-  Form,
-  Input,
-  Radio,
-  Space,
-  Switch,
-  Select,
-  Card,
-} from "antd";
+import { Row, Col, Form, Input, Radio, Switch, Select } from "antd";
+import { useEffect } from "react";
 import { useState } from "react";
 import SelectTypeTax from "../../../../components/selects/SelectTypeTax";
 import { salaryDays } from "../../../../utils/constant";
 import { ruleRequired } from "../../../../utils/rules";
 
-const FormCaledanrXml = ({ company, periodicity, ...props }) => {
-  const [calendar] = Form.useForm();
+const FormCaledanrXml = ({ calendar, paymentPeriodicity = [], ...props }) => {
+  const [formCalendar] = Form.useForm();
   const [startDate, setStartDate] = useState(null);
 
   const onChangePeriod = (item) => {
@@ -49,144 +39,118 @@ const FormCaledanrXml = ({ company, periodicity, ...props }) => {
     );
   };
 
+  useEffect(() => {
+    formCalendar.setFieldsValue(calendar.calendar);
+  }, [calendar]);
+
   return (
     <>
-      <Col span={24}>
-        <Card className="form_header">
-          <Row justify="space-between">
-            <Row style={{ width: "100%" }}>
-              <span
-                style={{
-                  color: "white",
-                  fontSize: "25px",
-                  fontWeight: "bold",
-                }}
-              >
-                Calendario
-              </span>
-              <Row style={{ width: "100%", padding: 10 }}>
-                <Col span={24}>
-                  <h4>Fecha de inicio del calendario</h4>
-                </Col>
-                <Col span={24}>
-                  <Radio.Group onChange={onChangePeriod} required>
-                    <PrintPeriods periods={company} />
-                  </Radio.Group>
-                </Col>
-              </Row>
-              <Form
-                form={calendar}
-                layout="vertical"
-                className={"formFilter"}
-                // onFinish={sendImportPayrroll}
-              >
-                <Row gutter={[16, 6]}>
-                  <Col style={{ display: "flex" }}>
-                    <Form.Item
-                      name={"name"}
-                      label="Nombre de calendario"
-                      rules={[ruleRequired]}
-                    >
-                      <Input
-                      // value={xmlImport.company.reason}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col style={{ display: "flex" }}>
-                    <Form.Item label="Periodicidad">
-                      <Input
-                        readOnly
-                        value={
-                          periodicity.find(
-                            (item) => item.id === response.data.periodicity
-                          ).description
-                        }
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col
-                    style={{
-                      display: "flex",
-                    }}
-                  >
-                    <SelectTypeTax
-                      style={{ width: 240 }}
-                      rules={[ruleRequired]}
-                    />
-                  </Col>
-                </Row>
+      <Row style={{ width: "100%", padding: 10 }}>
+        <Col span={24}>
+          <h4>Fecha de inicio del calendario</h4>
+        </Col>
+        <Col span={24}>
+          <Radio.Group onChange={onChangePeriod} required>
+            <PrintPeriods periods={[]} />
+          </Radio.Group>
+        </Col>
+      </Row>
+      <Form form={formCalendar} layout="vertical" className={"formFilter"}>
+        <Row gutter={[16, 6]}>
+          <Col style={{ display: "flex" }}>
+            <Form.Item
+              name={"name"}
+              label="Nombre de calendario"
+              rules={[ruleRequired]}
+            >
+              <Input
+                onChange={(value) =>
+                  (calendar.calendar.name = value.target.value)
+                }
+              />
+            </Form.Item>
+          </Col>
+          <Col style={{ display: "flex" }}>
+            <Form.Item label="Periodicidad">
+              <Input
+                readOnly
+                value={
+                  paymentPeriodicity.length > 0 &&
+                  paymentPeriodicity.find(
+                    (item) => item.code == calendar.calendar.periodicity
+                  ).description
+                }
+              />
+            </Form.Item>
+          </Col>
+          <Col
+            style={{
+              display: "flex",
+            }}
+          >
+            <SelectTypeTax style={{ width: 240 }} rules={[ruleRequired]} />
+          </Col>
+        </Row>
 
-                <Row gutter={[16, 6]} style={{ marginTop: "5px" }}>
-                  <Col style={{ display: "flex" }}>
-                    <Form.Item name="period" label="Periodo">
-                      <Input type={"number"} readOnly />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={5} xs={22}>
-                    <Form.Item
-                      key="SelectSalaryDays"
-                      name="salary_days"
-                      label="Dias a pagar"
-                      rules={[ruleRequired]}
-                    >
-                      <Select placeholder="Dias a pagar" options={salaryDays} />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={5} xs={22}>
-                    <SelectTypeTax />
-                  </Col>
-                  <Col style={{ display: "flex" }}>
-                    <Form.Item name="active" label="¿Activo?">
-                      <Switch checkedChildren="Si" unCheckedChildren="No" />
-                    </Form.Item>
-                  </Col>
-                  <Col style={{ display: "flex" }}>
-                    <Form.Item name="monthly_adjustment" label="Ajuste mensual">
-                      <Switch checkedChildren="Si" unCheckedChildren="No" />
-                    </Form.Item>
-                  </Col>
-                  <Col style={{ display: "flex" }}>
-                    <Form.Item name="annual_adjustment" label="Ajuste anual">
-                      <Switch checkedChildren="Si" unCheckedChildren="No" />
-                    </Form.Item>
-                  </Col>
-                </Row>
-
-                {/* <Row gutter={24} justify="end">
-                  <Space>
-                    <Button
-                      style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                        marginTop: "auto",
-                      }}
-                      onClick={() => {
-                        setXmlImport(null),
-                          setFiles([]),
-                          calendar.resetFields();
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button
-                      style={{
-                        background: "#fa8c16",
-                        fontWeight: "bold",
-                        color: "white",
-                        marginTop: "auto",
-                      }}
-                      htmlType="submit"
-                    >
-                      Guardar
-                    </Button>
-                  </Space>
-                </Row> */}
-              </Form>
-            </Row>
-          </Row>
-        </Card>
-      </Col>
+        <Row gutter={[16, 6]} style={{ marginTop: "5px" }}>
+          <Col style={{ display: "flex" }}>
+            <Form.Item name="period" label="Periodo">
+              <Input type={"number"} readOnly />
+            </Form.Item>
+          </Col>
+          <Col lg={5} xs={22}>
+            <Form.Item
+              key="SelectSalaryDays"
+              name="salary_days"
+              label="Dias a pagar"
+              rules={[ruleRequired]}
+            >
+              <Select
+                placeholder="Dias a pagar"
+                options={salaryDays}
+                onChange={(value) => (calendar.calendar.salary_days = value)}
+              />
+            </Form.Item>
+          </Col>
+          <Col lg={5} xs={22}>
+            <SelectTypeTax />
+          </Col>
+          <Col style={{ display: "flex" }}>
+            <Form.Item name="active" label="¿Activo?">
+              <Switch
+                defaultChecked={false}
+                checkedChildren="Si"
+                unCheckedChildren="No"
+                onChange={(value) => (calendar.calendar.active = value)}
+              />
+            </Form.Item>
+          </Col>
+          <Col style={{ display: "flex" }}>
+            <Form.Item name="monthly_adjustment" label="Ajuste mensual">
+              <Switch
+                defaultChecked={false}
+                checkedChildren="Si"
+                unCheckedChildren="No"
+                onChange={(value) =>
+                  (calendar.calendar.monthly_adjustment = value)
+                }
+              />
+            </Form.Item>
+          </Col>
+          <Col style={{ display: "flex" }}>
+            <Form.Item name="annual_adjustment" label="Ajuste anual">
+              <Switch
+                defaultChecked={false}
+                checkedChildren="Si"
+                unCheckedChildren="No"
+                onChange={(value) =>
+                  (calendar.calendar.annual_adjustment = value)
+                }
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
     </>
   );
 };

@@ -10,15 +10,10 @@ import {
   message,
   Input,
   Alert,
-  Radio,
-  Space,
-  Switch,
-  Tooltip,
   Select,
 } from "antd";
 import {
   DollarCircleOutlined,
-  EyeOutlined,
   PlusOutlined,
   LeftCircleTwoTone,
   RightCircleTwoTone,
@@ -32,31 +27,23 @@ import ModalUploadFileDrag from "../../../components/modal/ModalUploadFileDrag";
 import { useEffect } from "react";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import {
-  ImportCompanys,
   messageError,
   messageSaveSuccess,
   messageUploadSuccess,
-  salaryDays,
 } from "../../../utils/constant";
-import SelectTypeTax from "../../../components/selects/SelectTypeTax";
-import { ruleRequired } from "../../../utils/rules";
-import FormCaledanrXml from "./components/formCalendarXml";
+import CalendarImport from "./components/calednarImport";
 
 const ImportMasivePayroll = ({ ...props }) => {
   const router = useRouter();
-  const [xmlImport, setXmlImport] = useState(ImportCompanys);
+  const [xmlImport, setXmlImport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
-  const [report, setReport] = useState(false);
-  const [periodicityDesc, setPeriodicityDesc] = useState(null);
-  const [nodeCreated, setNodeCreated] = useState(null);
-
   const [companies, setCompanies] = useState([]);
   const [patronals, setPatronals] = useState([]);
   const [companySelect, setCompanySelect] = useState(null);
-  const [patronalSelect, setPatronalSelect] = useState(null);
+  const [patronalSelect, setPatronalSelect] = useState(0);
 
   const columns = [
     {
@@ -162,17 +149,6 @@ const ImportMasivePayroll = ({ ...props }) => {
       .then((response) => {
         setLoading(false);
         message.success(messageUploadSuccess);
-        calendar.setFieldsValue({
-          period: response.data.cfdis[0].headers.payment_date.substring(0, 4),
-          active: false,
-          monthly_adjustment: false,
-          annual_adjustment: false,
-        });
-        setPeriodicityDesc(
-          props.payment_periodicity.find(
-            (item) => item.id === response.data.periodicity
-          ).description
-        );
         setXmlImport(response.data);
       })
       .catch((error) => {
@@ -190,18 +166,8 @@ const ImportMasivePayroll = ({ ...props }) => {
       });
   };
 
-  const sendImportPayrroll = async (data) => {
-    data.periodicity = props.payment_periodicity.find(
-      (item) => item.id === xmlImport.periodicity
-    ).id;
-    data.start_date = startDate;
-    data.perception_type = props.perceptions_type.find(
-      (item) => item.code === "046"
-    ).id;
-    data.period = Number(data.period);
-    xmlImport.payment_calendar = data;
-    delete xmlImport["periodicity"];
-
+  const saveImportPayrroll = async (data) => {
+    console.log("SEND-->", data);
     if (files.length > 0) {
       setLoading(true);
       let form_data = new FormData();
@@ -210,12 +176,10 @@ const ImportMasivePayroll = ({ ...props }) => {
       });
       form_data.append("export", "False");
       form_data.append("save", "True");
-      form_data.append("calendar", JSON.stringify(data));
+      form_data.append("payroll", JSON.stringify(xmlImport));
       WebApiPayroll.importPayrollMasiveXml(form_data)
         .then((response) => {
-          setNodeCreated(response.data.node_id);
           message.success(messageSaveSuccess);
-          setReport(true);
           setLoading(false);
         })
         .catch((error) => {
@@ -249,6 +213,18 @@ const ImportMasivePayroll = ({ ...props }) => {
       companySelect < xmlImport.companies.length - 1 &&
         setCompanySelect(companySelect + 1);
     else companySelect > 0 && setCompanySelect(companySelect - 1);
+    setPatronalSelect(0);
+  };
+
+  const onCancel = () => {
+    setXmlImport(null);
+    setLoading(false);
+    setFiles([]);
+    setViewModal(false);
+    setAlertMessage(null);
+    setPatronals([]);
+    setCompanySelect(null);
+    setPatronalSelect(0);
   };
 
   return (
@@ -276,7 +252,7 @@ const ImportMasivePayroll = ({ ...props }) => {
 
       {xmlImport && (
         <Form layout="vertical">
-          <Row align="center" style={{ width: "100%", padding: "10px" }}>
+          <Row align="center" style={{ width: "100%" }}>
             <Col align="center" span={1}>
               <Form.Item label="Anterior">
                 <LeftCircleTwoTone
@@ -327,11 +303,21 @@ const ImportMasivePayroll = ({ ...props }) => {
 
       <Spin spinning={loading}>
         <Row justify="end" gutter={[10, 10]}>
-          {xmlImport && companySelect != null ? (
+          {xmlImport && companySelect != null && patronalSelect != null ? (
             <>
               <Col span={24}>
                 <Card className="form_header">
                   <Row justify="space-between">
+                    <Row style={{ width: "100%" }} justify="end">
+                      <Col span={2}>
+                        <Button onClick={() => onCancel()}>Cancelar</Button>
+                      </Col>
+                      <Col span={2} offset={1}>
+                        <Button onClick={() => saveImportPayrroll(xmlImport)}>
+                          Guardar
+                        </Button>
+                      </Col>
+                    </Row>
                     <Row style={{ width: "100%" }}>
                       <Col span={18} style={{ display: "" }}>
                         <span
@@ -383,16 +369,39 @@ const ImportMasivePayroll = ({ ...props }) => {
                             </Col>
                             {xmlImport.companies[companySelect]
                               .patronal_registrations && (
-                              <Col style={{ display: "flex" }}>
-                                <Form.Item label="Registro patronal">
-                                  <Input
-                                  // // value={
-                                  // //   companySelect.company
-                                  // //     .patronal_registration
-                                  // // }
-                                  />
-                                </Form.Item>
-                              </Col>
+                              <>
+                                <Col style={{ display: "flex" }}>
+                                  <Form.Item label="Registro patronal">
+                                    <Input
+                                      readOnly
+                                      value={
+                                        patronals.length > 0
+                                          ? patronals[patronalSelect].label
+                                          : ""
+                                      }
+                                    />
+                                  </Form.Item>
+                                </Col>
+                                <Col style={{ display: "flex" }}>
+                                  <Form.Item label="Nombre de sucursal">
+                                    <Input
+                                      value={
+                                        xmlImport.companies[companySelect]
+                                          .patronal_registrations[
+                                          patronalSelect
+                                        ].branch_node
+                                      }
+                                      onChange={(value) =>
+                                        (xmlImport.companies[
+                                          companySelect
+                                        ].patronal_registrations[
+                                          patronalSelect
+                                        ].branch_node = value.target.value)
+                                      }
+                                    />
+                                  </Form.Item>
+                                </Col>
+                              </>
                             )}
                           </Row>
                         </Form>
@@ -401,9 +410,10 @@ const ImportMasivePayroll = ({ ...props }) => {
                   </Row>
                 </Card>
               </Col>
-              <FormCaledanrXml
+              <CalendarImport
+                patronalSelect={patronalSelect}
                 company={xmlImport.companies[companySelect]}
-                periodicity={props.payment_periodicity}
+                paymentPeriodicity={props.payment_periodicity}
               />
 
               <Col span={24}>
