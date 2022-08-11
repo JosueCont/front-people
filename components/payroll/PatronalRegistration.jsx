@@ -58,7 +58,6 @@ const ImssInformationNode = ({ node_id = null, fiscal, ...props }) => {
       address: formAddress.getFieldsValue(),
       representative: formLegalRep.getFieldsValue(),
     };
-    console.log("FORMS--->> ", data);
     WebApiPeople.patronalRegistration(data)
       .then((response) => {
         message.success(messageSaveSuccess);

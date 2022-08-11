@@ -167,7 +167,6 @@ const ImportMasivePayroll = ({ ...props }) => {
   };
 
   const saveImportPayrroll = async (data) => {
-    console.log("SEND-->", data);
     if (files.length > 0) {
       setLoading(true);
       let form_data = new FormData();
