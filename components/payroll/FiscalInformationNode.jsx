@@ -1,5 +1,4 @@
-import { CheckOutlined, CloseOutlined } from "@material-ui/icons";
-import { EyeOutlined } from "@ant-design/icons";
+import { useLayoutEffect, useState } from "react";
 import {
   Row,
   Col,
@@ -11,20 +10,18 @@ import {
   Switch,
   Input,
 } from "antd";
-import { useLayoutEffect, useState } from "react";
-import WebApiPeople from "../../../api/WebApiPeople";
+import { CheckOutlined, CloseOutlined } from "@material-ui/icons";
+import WebApiPeople from "../../api/WebApiPeople";
 import {
   messageError,
   messageSaveSuccess,
   messageUploadSuccess,
-} from "../../../utils/constant";
-import UploadFile from "../../UploadFile";
-import FiscalAddress from "../../forms/FiscalAddress";
-import FiscalInformation from "../../forms/FiscalInformation";
-import LegalRepresentative from "../../forms/LegalRepresentative";
-import { useEffect } from "react";
-import { ruleRequired } from "../../../utils/rules";
-import WebApiFiscal from "../../../api/WebApiFiscal";
+} from "../../utils/constant";
+import UploadFile from "../UploadFile";
+import WebApiFiscal from "../../api/WebApiFiscal";
+import FormFiscalInformation from "./forms/FormFiscalInformation";
+import LegalRepresentative from "./forms/LegalRepresentative";
+import FormFiscalAddress from "./forms/FormFiscalAddress";
 
 const FiscalInformationNode = ({ node_id = null, fiscal }) => {
   const { Title } = Typography;
@@ -97,7 +94,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
       <Row>
         <Col span={24}>
           <Divider style={{ marginTop: "2px" }} />
-          <FiscalInformation
+          <FormFiscalInformation
             form={formFiscal}
             fiscalData={fiscalData && fiscalData}
           />
@@ -105,7 +102,7 @@ const FiscalInformationNode = ({ node_id = null, fiscal }) => {
             <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
           </Row>
           <Divider style={{ marginTop: "2px" }} />
-          <FiscalAddress
+          <FormFiscalAddress
             fiscalAddress={fiscalData && fiscalData.fiscal_address}
             form={formAddress}
           />

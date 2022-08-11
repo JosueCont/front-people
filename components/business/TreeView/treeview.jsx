@@ -20,8 +20,9 @@ import { Tooltip, Modal, Button, Form, Select, Input, message } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import jsCookie from "js-cookie";
 import WebApiPeople from "../../../api/WebApiPeople";
+import { connect } from "react-redux";
 
-const NodeTreeView = () => {
+const NodeTreeView = ({ ...props }) => {
   const [nodes, setNodes] = useState([]);
   const [nodeId, setNodeId] = useState(0);
   const [visibleCreate, setVisibleCreate] = useState(false);
@@ -31,7 +32,6 @@ const NodeTreeView = () => {
   const [creUp, setCreup] = useState(false);
   const [nameNode, setNameNode] = useState("");
   const [idNodeUpdate, setIdNodeUpdate] = useState(0);
-  const [permissions, setPermissions] = useState({});
   let personId = userId();
 
   useEffect(() => {
@@ -170,12 +170,13 @@ const NodeTreeView = () => {
                 className="titleFirstLevel"
               >
                 <IconButton className="addButton" color="secondary">
-                  {permissions.delete && (
-                    <Tooltip placement="top" title="Eliminar">
-                      <DeleteOutlined onClick={() => modalDelete(true, p)} />
-                    </Tooltip>
-                  )}
-                  {permissions.edit && (
+                  {props.permissions.company &&
+                    props.permissions.company.delete && (
+                      <Tooltip placement="top" title="Eliminar">
+                        <DeleteOutlined onClick={() => modalDelete(true, p)} />
+                      </Tooltip>
+                    )}
+                  {props.permissions.company && props.permissions.company.edit && (
                     <Tooltip placement="top" title="Editar">
                       <EditOutlined
                         onClick={() =>
@@ -193,35 +194,37 @@ const NodeTreeView = () => {
                 {p.children && p.children.length > 0 ? (
                   <>
                     <NodeTree nodesArray={p.children} parent={p.value} />
-                    {permissions.create && (
-                      <StyledTreeItem
-                        className="titleFirstLevel"
-                        style={{ margin: "1%" }}
-                        nodeId={0}
-                        onHandleClickItem={() =>
-                          modalCreateUpdate({
-                            bool: false,
-                            parent: p.value,
-                            level: level + 1,
-                          })
-                        }
-                        label={"Agregar empresa"}
-                      />
-                    )}
+                    {props.permissions.company &&
+                      props.permissions.company.create && (
+                        <StyledTreeItem
+                          className="titleFirstLevel"
+                          style={{ margin: "1%" }}
+                          nodeId={0}
+                          onHandleClickItem={() =>
+                            modalCreateUpdate({
+                              bool: false,
+                              parent: p.value,
+                              level: level + 1,
+                            })
+                          }
+                          label={"Agregar empresa"}
+                        />
+                      )}
                   </>
                 ) : (
                   <>
-                    {permissions.create && (
-                      <StyledTreeItem
-                        className="titleFirstLevel"
-                        style={{ margin: "1%" }}
-                        nodeId={0}
-                        label={"Agregar empresa"}
-                        onHandleClickItem={() =>
-                          modalCreateUpdate({ bool: false, parent: p.value })
-                        }
-                      />
-                    )}
+                    {props.permissions.company &&
+                      props.permissions.company.create && (
+                        <StyledTreeItem
+                          className="titleFirstLevel"
+                          style={{ margin: "1%" }}
+                          nodeId={0}
+                          label={"Agregar empresa"}
+                          onHandleClickItem={() =>
+                            modalCreateUpdate({ bool: false, parent: p.value })
+                          }
+                        />
+                      )}
                   </>
                 )}
               </StyledTreeItem>
@@ -319,36 +322,20 @@ const NodeTreeView = () => {
           defaultExpandIcon={<PlusSquare />}
           defaultEndIcon={<CloseSquare />}
         >
-          {nodes.length > 0 ? (
-            <>
-              <NodeTree nodesArray={nodes} />
-              {permissions.create && (
-                <StyledTreeItem
-                  className="titleFirstLevel"
-                  style={{ margin: "1%" }}
-                  nodeId={0}
-                  label="Agregar empresa"
-                  onHandleClickItem={() =>
-                    modalCreateUpdate({ bool: false, parent: 0 })
-                  }
-                />
-              )}
-            </>
-          ) : (
-            <>
-              {permissions.create && (
-                <StyledTreeItem
-                  className="titleFirstLevel"
-                  style={{ margin: "1%" }}
-                  nodeId={0}
-                  label="Agregar empresa"
-                  onHandleClickItem={() =>
-                    modalCreateUpdate({ bool: false, parent: 0 })
-                  }
-                />
-              )}
-            </>
-          )}
+          <>
+            {props.permissions.company && props.permissions.company.create && (
+              <StyledTreeItem
+                className="titleFirstLevel"
+                style={{ margin: "1%" }}
+                nodeId={0}
+                label="Agregar empresa"
+                onHandleClickItem={() =>
+                  modalCreateUpdate({ bool: false, parent: 0 })
+                }
+              />
+            )}
+            {nodes.length > 0 && <NodeTree nodesArray={nodes} />}
+          </>
         </TreeView>
       </TreeViewContent>
       <Modal
@@ -408,5 +395,9 @@ const NodeTreeView = () => {
     </div>
   );
 };
-
-export default withAuthSync(NodeTreeView);
+const mapState = (state) => {
+  return {
+    permissions: state.userStore.permissions,
+  };
+};
+export default connect(mapState)(withAuthSync(NodeTreeView));
