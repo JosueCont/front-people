@@ -26,6 +26,7 @@ import {
 } from '../../../utils/functions';
 import { FcInfo } from "react-icons/fc";
 import WebApiAssessment from '../../../api/WebApiAssessment';
+import { valueToFilter } from '../../../utils/functions';
 
 const ReportsCompetences = ({
     persons_company,
@@ -41,8 +42,9 @@ const ReportsCompetences = ({
     const columns_many = [
         {
             title: 'Imagen',
+            fixed: 'left',
             align: 'center',
-            width: 100,
+            width: 50,
             show: true,
             render: ({persons}) =>{
                 return (
@@ -53,7 +55,7 @@ const ReportsCompetences = ({
         {
             title: 'Persona',
             fixed: 'left',
-            width: 200,
+            width: 70,
             show: true,
             ellipsis: true,
             render: ({persons}) =>{
@@ -82,22 +84,33 @@ const ReportsCompetences = ({
     const [isUsers, setIsUsers] = useState(false);
     const [columnsMany, setColumnsMany] = useState(columns_many);
     const [currentTab, setCurrentTab] = useState();
+    const [optionsPersons, setOptionsPersons] = useState([]);
+    const [optionsProfiles, setOptionsProfiles] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(()=>{
         if(currentTab !== currentKey){
             setCurrentTab(currentKey)
-            setUsersSelected([])
-            setCompetencesSelected([])
-            setProfilesSelected([])
-            setListReports([])
-            setIsUsers(false)
-            setColumnsMany(columns_many)
+            resetValues()
         }
     },[currentKey])
 
-    // useEffect(()=>{
-    //     console.log('asi cambia----->', listReports)
-    // },[listReports])
+    useEffect(()=>{
+        getOptionsPersons();
+    },[persons_company])
+
+    useEffect(()=>{
+        getOptionsProfiles();
+    },[profiles])
+
+    const resetValues = () =>{
+        setUsersSelected([])
+        setCompetencesSelected([])
+        setProfilesSelected([])
+        setListReports([])
+        setIsUsers(false)
+        setColumnsMany(columns_many)
+    }
 
     const getReportCompetences = async (data) =>{
         setLoading(true)
@@ -131,86 +144,112 @@ const ReportsCompetences = ({
         let options = [];
         if(persons_company.length > 0){
             persons_company.map(item =>{
-                let exist = usersSelected.some(record => record.id === item.id);
-                if(!exist){
-                    options.push({
-                        key: item.id,
-                        value: item.id,
-                        label: getFullName(item)
-                    })
-                }
+                options.push({
+                    key: item.id,
+                    value: item.id,
+                    label: getFullName(item)
+                })
             })
         }
-        return options;
+        setOptionsPersons(options);
     }
 
     const getOptionsProfiles = () =>{
         let options = [];
-        if(profiles.results?.length > 0){
-          profiles.results.map(item=>{
-            let exist = profilesSelected.some(record => record.id === item.id)
-            if(!exist){
-              options.push({
+        if(profiles.length > 0){
+          profiles.map(item=>{
+            options.push({
                 key: item.id,
                 value: item.id,
                 label: item.name
-              })
-            }
+            })
           })
         }
-        return options;
+        setOptionsProfiles(options);
     }
 
-    const getOptionsCompetences = () =>{
-        let options = [];
-        if(competences.length > 0){
-            competences.map(item => {
-                let exist = competencesSelected.some(record => record.id === item.id)
-                if(!exist){
-                    options.push({
-                        key: item.id,
-                        value: item.id,
-                        label: item.name
-                    })
-                }
-            })
-        }
-        return options;
-    }
+    // const getOptionsCompetences = () =>{
+    //     let options = [];
+    //     if(competences.length > 0){
+    //         competences.map(item => {
+    //             let exist = competencesSelected.some(record => record.id === item.id)
+    //             if(!exist){
+    //                 options.push({
+    //                     key: item.id,
+    //                     value: item.id,
+    //                     label: item.name
+    //                 })
+    //             }
+    //         })
+    //     }
+    //     return options;
+    // }
 
     const sendProfile = (value) =>{
-        let exist = profilesSelected.some(item => item.id === value);
-        if(!exist) {
-          let profile = profiles.results.find(item => item.id === value);
-          if(currentTab == 'pps'){
-              let list = [...profilesSelected, profile];
-              setProfilesSelected(list);
-          }else{
-              setProfilesSelected([profile])
-          }
+        if(currentTab == 'pps'){
+            let list = [];
+            value.map(item =>{
+                let profile = profiles.find(record => record.id === item);
+                list.push(profile);
+            })
+            setProfilesSelected(list);
+        }else{
+            let profile = profiles.find(record => record.id === value);
+            setProfilesSelected([profile])
         }
     }
 
     const sendUser = (value) =>{
-        let exists = usersSelected.some(item => item.id === value);
-        if(!exists){
+        if(['psp','psc'].includes(currentTab)){
+            let list = [];
+            value.map(item =>{
+                let user = persons_company.find(record => record.id === item);
+                list.push(user);
+            })
+            setUsersSelected(list);
+        }else{
             let user = persons_company.find(item => item.id === value);
-            if(['psp','psc'].includes(currentTab)){
-                let list = [...usersSelected, user];
-                setUsersSelected(list);
-            }else{
-                setUsersSelected([user]);
-            }
+            setUsersSelected([user]);
         }
     }
 
-    const sendCompetence = (value) =>{
-        let exists = competencesSelected.some(item => item.id === value);
-        if(!exists){
-            let competence = competences.find(item => item.id == value);
-            let list = [...competencesSelected, competence];
-            setCompetencesSelected(list);
+    // const sendCompetence = (value) =>{
+    //     let exists = competencesSelected.some(item => item.id === value);
+    //     if(!exists){
+    //         let competence = competences.find(item => item.id == value);
+    //         let list = [...competencesSelected, competence];
+    //         setCompetencesSelected(list);
+    //     }
+    // }
+
+    const getPropertiesSelectUser = () =>{
+        if(['psp','psc'].includes(currentTab)){
+            return {
+                mode: 'multiple',
+                value: usersSelected.map(item => item.id),
+                maxTagCount: 'responsive',
+            };
         }
+        return {
+            value: usersSelected.length > 0
+                ? usersSelected?.at(-1)?.id
+                : null
+        };
+    }
+
+    const getPropertiesSelectProfile = () =>{
+        if(currentTab == 'pps'){
+            return {
+                mode: 'multiple',
+                value: profilesSelected.map(item => item.id),
+                maxTagCount: 'responsive',
+            };
+        }
+        return {
+            value: profilesSelected.length > 0
+                ? profilesSelected?.at(-1)?.id
+                : null
+        };
     }
 
     const validateParameters = () =>{
@@ -223,6 +262,7 @@ const ReportsCompetences = ({
         }else if(currentTab == 'pps' && profilesSelected.length <=0){
             message.error('Selecciona los perfiles')
         }else{
+            setCurrentPage(1)
             validateReport()
         }
     }
@@ -269,11 +309,11 @@ const ReportsCompetences = ({
                 title: ()=>{
                     return (
                         <Tooltip title={item.competence?.name}>
-                            <span>{item.competence?.name.substring(0,3).toUpperCase()}</span>
+                            <span>{item.competence?.name.substring(0,3).toUpperCase()} ({item.level})</span>
                         </Tooltip>
                     )
                 },
-                width: 50,
+                width: 30,
                 align: 'center',
                 show: true,
                 render: (record) =>{
@@ -285,10 +325,10 @@ const ReportsCompetences = ({
         })
         list_columns.push({
             title: 'Compatibilidad',
-            width: 125,
+            width: 50,
             align: 'center',
             show: true,
-            fixed: 'right',
+            // fixed: 'right',
             render: (record) =>{
                 return(
                     <span>{getCompatibility(record)}</span>
@@ -320,13 +360,13 @@ const ReportsCompetences = ({
     }
 
     const getCompatibility = (item) =>{
-        return item
-        ? item.profiles
-        ? item.profiles.at(-1).compatibility
-        ? `${item.profiles.at(-1).compatibility}%`
-        : 'N/A'
-        : 'Pendiente'
-        : 'Pendiente';
+        return item 
+            ? item.profiles
+            ? typeof(item.profiles.at(-1).compatibility) == "string"
+            ? item.profiles.at(-1).compatibility
+            : `${item.profiles.at(-1).compatibility.toFixed(2)}%`
+            : 'Pendiente'
+            : 'Pendiente';
     }
 
     const getLevelPerson = ({profiles}, index) =>{
@@ -402,9 +442,19 @@ const ReportsCompetences = ({
                 columns: columnsMany,
                 rowKey: (item) => item.persons?.id,
                 dataSource: listReports,
-                scroll: { x: 1500}
+                scroll: columnsMany.length > 8
+                    ? { x: 1200}
+                    : {}
             }
         }
+    }
+
+    const filterOptionSelect = (input, option) =>{
+        return valueToFilter(option.label).includes(valueToFilter(input))
+    }
+
+    const onChangeTable = ({current}) =>{
+        setCurrentPage(current)
     }
 
     const columns_p = [
@@ -437,27 +487,45 @@ const ReportsCompetences = ({
         {
             title: 'Nivel persona',
             dataIndex: 'level_person',
-            key: 'level_person'
+            key: 'level_person',
+            align: 'center',
         },
         {
             title: 'Descripción',
-            dataIndex: 'description_person',
-            key: 'description_person'
+            key: 'description_person',
+            render: ({description_person}) =>{
+                return (
+                    <span>{description_person ? description_person : 'N/A'}</span>
+                )
+            }
         },
         {
             title: 'Nivel perfil',
             dataIndex: 'level_profile',
-            key: 'level_profile'
+            key: 'level_profile',
+            align: 'center',
         },
         {
             title: 'Descripción',
-            dataIndex: 'description_profile',
-            key: 'description_profile'
+            key: 'description_profile',
+            render: ({description_profile}) =>{
+                return (
+                    <span>{description_profile ? description_profile : 'N/A'}</span>
+                )
+            }
         },
         {
             title: 'Compatibilidad',
+            align: 'center',
             render: ({compatibility}) =>{
-                return <span>{compatibility}%</span>;
+                return (
+                    <span>
+                        {typeof(compatibility) == "string"
+                            ? compatibility
+                            : `${compatibility.toFixed(2)}%`
+                        }
+                    </span>
+                )
             }
         }
     ]
@@ -500,8 +568,13 @@ const ReportsCompetences = ({
         {
             title: 'Compatibilidad',
             render: ({compatibility}) =>{
-                return(
-                    <span>{compatibility ? `${compatibility}%` : 'N/A'} </span>
+                return (
+                    <span>
+                        {typeof(compatibility) == "string"
+                            ? compatibility
+                            : `${compatibility.toFixed(2)}%`
+                        }
+                    </span>
                 )
             }
         }
@@ -520,12 +593,16 @@ const ReportsCompetences = ({
                                 }
                             </p>
                             <Select
+                                showSearch
                                 placeholder={'Seleccionar usuario'}
                                 notFoundContent={'No se encontraron resultados'}
-                                options={getOptionsPersons()}
-                                value={null}
+                                options={optionsPersons}
+                                {...getPropertiesSelectUser()}
                                 onChange={sendUser}
+                                loading={load_persons}
                                 style={{width: 200}}
+                                optionFilterProp={'children'}
+                                filterOption={filterOptionSelect}
                             />
                         </div>
                         {['pp','psc','psp','pps'].includes(currentTab) && (
@@ -537,12 +614,16 @@ const ReportsCompetences = ({
                                     }
                                 </p>
                                 <Select
+                                    showSearch
                                     placeholder={'Seleccionar perfil'}
                                     notFoundContent={'No se encontraron resultados'}
-                                    options={getOptionsProfiles()}
-                                    value={null}
+                                    options={optionsProfiles}
+                                    {...getPropertiesSelectProfile()}
+                                    loading={load_profiles}
                                     onChange={sendProfile}
                                     style={{width: 200}}
+                                    optionFilterProp={'children'}
+                                    filterOption={filterOptionSelect}
                                 />
                             </div>
                         )}
@@ -563,6 +644,12 @@ const ReportsCompetences = ({
                             loading={loading}
                         >
                             Generar
+                        </Button>
+                        <Button
+                            onClick={()=> resetValues()}
+                            style={{marginTop:'auto'}}
+                        >
+                            Reiniciar
                         </Button>
                     </div>
                     <div className='content_inputs'>
@@ -645,6 +732,12 @@ const ReportsCompetences = ({
                             emptyText: loading
                                 ? "Cargando..."
                                 : "No se encontraron resultados.",
+                        }}
+                        onChange={onChangeTable}
+                        pagination={{
+                            current: currentPage,
+                            hideOnSinglePage: true,
+                            showSizeChanger: false
                         }}
                     />
                 </Col>
