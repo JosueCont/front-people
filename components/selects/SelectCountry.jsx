@@ -1,4 +1,3 @@
-import { connect } from "react-redux";
 import { Form, Select } from "antd";
 import { useEffect, useState } from "react";
 import WebApiFiscal from "../../api/WebApiFiscal";
@@ -13,11 +12,11 @@ const SelectCountry = ({
   const [options, setOptions] = useState(null);
 
   useEffect(() => {
-    if (props.versionCfdi) getCountries();
-  }, [props.versionCfdi]);
+    getCountries();
+  }, []);
 
   const getCountries = () => {
-    WebApiFiscal.getCountries(props.versionCfdi)
+    WebApiFiscal.getCountries()
       .then((response) => {
         let countries = response.data.results.map((item) => {
           return { value: item.id, label: item.description };
@@ -50,10 +49,4 @@ const SelectCountry = ({
   );
 };
 
-const mapState = (state) => {
-  return {
-    versionCfdi: state.fiscalStore.version_cfdi,
-  };
-};
-
-export default connect(mapState)(SelectCountry);
+export default SelectCountry;

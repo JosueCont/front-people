@@ -64,8 +64,6 @@ const businessForm = ({ ...props }) => {
   const [admin, setAdmin] = useState(false);
   const [addB, setAddB] = useState(false);
 
-
-
   const onFinish = (values) => {
     if (isDeleted) {
       deleteBusiness(values.id);
@@ -78,7 +76,7 @@ const businessForm = ({ ...props }) => {
     }
   };
 
-  const deleteBusiness = async (id, name, description) => {
+  const deleteBusiness = async (id) => {
     setLoading(true);
     WebApiPeople.deleteNode(id)
       .then(function (response) {
@@ -89,6 +87,7 @@ const businessForm = ({ ...props }) => {
         getCopaniesList();
         setIsModalVisible(false);
         setIsModalDeleteVisible(false);
+        if (currentNode.id === id) Router.push("/select-company");
         setLoading(false);
       })
       .catch(function (error) {
@@ -313,9 +312,11 @@ const businessForm = ({ ...props }) => {
                     <Tooltip title="No puedes eliminar la empresa a la que estas registrada">
                       <StopOutlined />
                     </Tooltip>
-                  ):(
+                  ) : (
                     <Tooltip title="Eliminar">
-                      <DeleteOutlined onClick={() => showModal("delete", item)} />
+                      <DeleteOutlined
+                        onClick={() => showModal("delete", item)}
+                      />
                     </Tooltip>
                   )}
                 </Col>
@@ -630,6 +631,7 @@ const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.company,
     user: state.userStore.user,
+    currentNode: state.userStore.current_node,
   };
 };
 

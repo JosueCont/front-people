@@ -34,9 +34,7 @@ const modalDeleteBusiness = (props) => {
         </Button>,
       ]}
     >
-      <div className="float-label">
-        <label>¿Está seguro de eliminar esta empresa?</label>
-      </div>
+      ¿Está seguro de eliminar esta empresa?
     </Modal>
   );
 };

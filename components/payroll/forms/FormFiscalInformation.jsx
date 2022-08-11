@@ -1,10 +1,10 @@
 import { Form, Row, Col, Input, Switch, Select } from "antd";
 import React, { useState, useEffect } from "react";
-import { curpFormat, rfcFormat, ruleRequired } from "../../utils/rules";
+import { curpFormat, rfcFormat, ruleRequired } from "../../../utils/rules";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
-import SelectTaxRegime from "../selects/SelectTaxRegime";
+import SelectTaxRegime from "../../selects/SelectTaxRegime";
 
-const FiscalInformation = ({ form, fiscalData, ...props }) => {
+const FormFiscalInformation = ({ form, fiscalData, ...props }) => {
   const [pTypeSelected, setPTypeSelected] = useState(false);
   const personType = [
     { value: 1, label: "Física" },
@@ -106,4 +106,4 @@ const FiscalInformation = ({ form, fiscalData, ...props }) => {
   );
 };
 
-export default FiscalInformation;
+export default FormFiscalInformation;

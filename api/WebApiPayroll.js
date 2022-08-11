@@ -72,11 +72,7 @@ class WebApiPayroll {
   }
 
   static importPayrollMasiveXml(data) {
-    return WebApi.ApisType(`/payroll/read-payroll-xml`, "post", data);
-  }
-
-  static savePayrollMasiveXml(data) {
-    return WebApi.ApisType(`/payroll/import-payroll`, "post", data);
+    return WebApi.ApisType(`/payroll/payroll`, "post", data);
   }
 
   static fixedConcept(type, data = null, url = "") {
