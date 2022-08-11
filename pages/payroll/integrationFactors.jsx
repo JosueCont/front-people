@@ -1,5 +1,5 @@
 const IntegrationFactors = () => {
-  return;
+  return <></>;
 };
 
 export default IntegrationFactors;
