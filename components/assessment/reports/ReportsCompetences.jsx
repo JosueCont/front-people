@@ -42,8 +42,9 @@ const ReportsCompetences = ({
     const columns_many = [
         {
             title: 'Imagen',
+            fixed: 'left',
             align: 'center',
-            width: 100,
+            width: 50,
             show: true,
             render: ({persons}) =>{
                 return (
@@ -54,7 +55,7 @@ const ReportsCompetences = ({
         {
             title: 'Persona',
             fixed: 'left',
-            width: 200,
+            width: 70,
             show: true,
             ellipsis: true,
             render: ({persons}) =>{
@@ -312,7 +313,7 @@ const ReportsCompetences = ({
                         </Tooltip>
                     )
                 },
-                width: 50,
+                width: 30,
                 align: 'center',
                 show: true,
                 render: (record) =>{
@@ -324,10 +325,10 @@ const ReportsCompetences = ({
         })
         list_columns.push({
             title: 'Compatibilidad',
-            width: 125,
+            width: 50,
             align: 'center',
             show: true,
-            fixed: 'right',
+            // fixed: 'right',
             render: (record) =>{
                 return(
                     <span>{getCompatibility(record)}</span>
@@ -441,7 +442,9 @@ const ReportsCompetences = ({
                 columns: columnsMany,
                 rowKey: (item) => item.persons?.id,
                 dataSource: listReports,
-                scroll: { x: 1500}
+                scroll: columnsMany.length > 8
+                    ? { x: 1200}
+                    : {}
             }
         }
     }
