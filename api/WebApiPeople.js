@@ -379,18 +379,27 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/node-information/${url}`, type, data);
   }
 
-  static centerCost(nodeId, method='get', data){
-    return WebApi.ApisType(`/payroll/cost-center/?node=${nodeId}`,method);
+  static patronalRegistration(data) {
+    return WebApi.ApisType(
+      `/business/patronal-registration/save_patronal_registration/`,
+      "post",
+      data
+    );
   }
 
-  static tags(nodeId){
-    return WebApi.ApisType(`/business/tag/?node=${nodeId}`,'get');
+  static centerCost(nodeId, method = "get", data) {
+    return WebApi.ApisType(`/payroll/cost-center/?node=${nodeId}`, method);
   }
 
-  static accountantAccount(nodeId){
-    return WebApi.ApisType(`/payroll/accountant-account/?node=${nodeId}`,'get');
+  static tags(nodeId) {
+    return WebApi.ApisType(`/business/tag/?node=${nodeId}`, "get");
   }
 
-
+  static accountantAccount(nodeId) {
+    return WebApi.ApisType(
+      `/payroll/accountant-account/?node=${nodeId}`,
+      "get"
+    );
+  }
 }
 export default WebApiPeople;

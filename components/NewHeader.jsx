@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import {
-    Layout,
-    Row,
-    Col,
-    Avatar,
-    Menu,
-    Dropdown,
-    Card,
-    Button,
-    Typography,
-    Divider,
-    Modal,
-    Space,
-    Badge,
-    Alert,
-    Select, Image
+  Layout,
+  Row,
+  Col,
+  Avatar,
+  Menu,
+  Dropdown,
+  Card,
+  Button,
+  Typography,
+  Divider,
+  Modal,
+  Space,
+  Badge,
+  Alert,
+  Select,
+  Image,
 } from "antd";
 import { UserOutlined, MenuOutlined, BellOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
@@ -184,12 +185,21 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
         <div className="container-fluid">
           <Row justify="space-between">
             <Col>
-                <Image
-                  preview={false}
-                  onClick={() => router.push("/home/persons")}
-                  style={{ maxWidth: 100, margin: "auto", maxHeight: 50, cursor:'pointer' }}
-                  src={(!hideLogo && mainLogo) ? mainLogo : "/images/LogoKhorconnect.svg"}
-                />
+              <Image
+                preview={false}
+                onClick={() => router.push("/home/persons")}
+                style={{
+                  maxWidth: 100,
+                  margin: "auto",
+                  maxHeight: 50,
+                  cursor: "pointer",
+                }}
+                src={
+                  !hideLogo && mainLogo
+                    ? mainLogo
+                    : "/images/LogoKhorconnect.svg"
+                }
+              />
             </Col>
             <Col style={{ width: 250, textAlign: "end" }}>
               {person && (
@@ -262,41 +272,41 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
           title="Versión CFDI"
           titleActionButton="Aceptar"
           width="50%"
-          content={
-            <>
-              <Alert
-                message={
-                  <span>
-                    <b>Versión de CFDI:</b> Seleccione la version con la cual
-                    trabajara su nómina (los catalogos fiscales varian entre
-                    versiones).
-                  </span>
-                }
-                type="info"
-              />
-              <br />
-              <Select
-                onChange={(value) => setVersionCfdiSelect(value)}
-                placeholder="Seleccione la version"
-                defaultValue={
-                  props.versionCfdi
-                    ? props.versionCfdi
-                    : props.catCfdiVersion.find((item) => item.active === true)
-                        .id
-                }
-                options={props.catCfdiVersion.map((item) => {
-                  return {
-                    label: `Versión - ${item.version}`,
-                    value: item.id,
-                  };
-                })}
-              />
-            </>
-          }
           actionButton={() => {
             props.setVersionCfdi(versionCfdiSelect), setModalCfdiVersion(false);
           }}
-        />
+        >
+          <>
+            <Alert
+              message={
+                <span>
+                  <b>Versión de CFDI:</b> Seleccione la version con la cual
+                  trabajara su nómina (los catalogos fiscales varian entre
+                  versiones).
+                </span>
+              }
+              type="info"
+            />
+            <br />
+            <Select
+              style={{ width: "150px" }}
+              onChange={(value) => setVersionCfdiSelect(value)}
+              placeholder="Seleccione la version"
+              defaultValue={
+                props.versionCfdi
+                  ? props.versionCfdi
+                  : props.catCfdiVersion.find((item) => item.active === true)
+                      .version
+              }
+              options={props.catCfdiVersion.map((item) => {
+                return {
+                  label: `Versión - ${item.version}`,
+                  value: item.version,
+                };
+              })}
+            />
+          </>
+        </GenericModal>
       )}
     </>
   );
