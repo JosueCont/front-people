@@ -8,6 +8,7 @@ const CalendarImport = ({
   company,
   paymentPeriodicity,
   patronalSelect,
+  setPerson,
   ...props
 }) => {
   const [periodicities, setPeriodicities] = useState([]);
@@ -19,7 +20,7 @@ const CalendarImport = ({
       company.patronal_registrations[patronalSelect].periodicities.map((p) => {
         if (!p.calendar)
           p.calendar = {
-            periodicity: p.periodicity_code,
+            periodicity: p.periodicity,
             name: "",
             type_tax: "",
             perception_type: "",
@@ -37,7 +38,7 @@ const CalendarImport = ({
       company.periodicities.map((p) => {
         if (!p.calendar)
           p.calendar = {
-            periodicity: p.periodicity_code,
+            periodicity: p.periodicity,
             name: "",
             type_tax: "",
             perception_type: "",
@@ -59,6 +60,11 @@ const CalendarImport = ({
         setCalendarSelect(calendarSelect + 1);
     else calendarSelect > 0 && setCalendarSelect(calendarSelect - 1);
   };
+
+  useEffect(() => {
+    if (calendarSelect != null && periodicities.length > 0)
+      setPerson(periodicities[calendarSelect].cfdis);
+  }, [calendarSelect, periodicities]);
 
   return (
     <Col span={24}>
@@ -96,7 +102,7 @@ const CalendarImport = ({
                   {paymentPeriodicity.length > 0 &&
                     paymentPeriodicity.find(
                       (item) =>
-                        item.code ==
+                        item.id ==
                         periodicities[calendarSelect].calendar.periodicity
                     ).description}
                 </span>

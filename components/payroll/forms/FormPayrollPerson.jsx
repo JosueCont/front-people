@@ -25,6 +25,8 @@ import {
   messageUpdateSuccess,
   movementType,
 } from "../../../utils/constant";
+import SelectCostCenter from "../../selects/SelectCostCenter";
+import SelectTags from "../../selects/SelectTags";
 
 const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const { Title } = Typography;
@@ -156,8 +158,9 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
             perception_type: item.perception_type,
             last_day_paid: item.last_day_paid ? moment(item.last_day_paid) : "",
             integrated_daily_salary: item.integrated_daily_salary,
-            apply_annual_adjustment: item.apply_annual_adjustment,
             apply_monthly_adjustment: item.apply_monthly_adjustment,
+            tag: item?.tag,
+            cost_center: item?.cost_center
           });
           changePaymentType(item.payment_type);
           setLastDayPaid(item.last_day_paid);
@@ -474,6 +477,12 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                       moment={"YYYY-MM-DD"}
                     />
                   </Form.Item>
+                </Col>
+                <Col lg={6} xs={22} md={12}>
+                  <SelectCostCenter required={false} multiple={true} viewLabel={'Centro de costos'}/>
+                </Col>
+                <Col lg={6} xs={22} md={12}>
+                  <SelectTags required={false} multiple={true} viewLabel={'Etiquetas'}/>
                 </Col>
                 {paymentCalendars.length > 0 && (
                   <>
