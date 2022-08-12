@@ -7,7 +7,8 @@ import {
   Table,
   Input,
   Tooltip,
-  message
+  message,
+  Tag
 } from 'antd';
 import moment from "moment";
 import { connect } from 'react-redux';
@@ -45,6 +46,12 @@ const TableAssessments = ({
   const [lisAssessments, setListAssessments] = useState([]);
   const [nameAssessment, setNameAssessment] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const styleBtn = {
+    width:'125px',
+    textAlign: 'center',
+    fontSize: '14px',
+    borderRadius: '50px'
+  }
 
   useEffect(()=>{
     if(user_assessments.length > 0){
@@ -251,7 +258,7 @@ const TableAssessments = ({
               <CustomBtn
                 size={'small'}
                 bg={'#ed6432'}
-                wd={'150px'}
+                wd={'125px'}
                 icon={<BsFillCheckCircleFill/>}
                 loading={loadResults[item.code]}
                 onClick={()=>validateGetResults(item)}
@@ -259,14 +266,12 @@ const TableAssessments = ({
                   Ver resultados
               </CustomBtn>
             ):(
-              <CustomBtn
-                size={'small'}
-                bg={'#814cf2'}
-                wd={'150px'}
-                icon={<BsPlayCircleFill/>}
+              <Tag 
+                color={'#814cf2'}
+                style={styleBtn}
               >
                 <span>Pendiente</span>
-              </CustomBtn>
+              </Tag>
             )}
           </>
         )
