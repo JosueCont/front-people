@@ -60,7 +60,6 @@ const CreatePerfil = ({
                 recordProfile.competences &&
                 recordProfile.competences.length > 0
             ){
-                setCompetencesSelected(recordProfile.competences)
                 getLevelCompetence()
             }
         }
@@ -68,10 +67,13 @@ const CreatePerfil = ({
 
     const getLevelCompetence = () =>{
         let obj = {};
+        let comps = [];
         recordProfile.competences.map((item) =>{
             let record = {competence: item.competence?.id, level: item.level};
             obj = {...obj, [item.competence.id]: record};
+            comps.push(item.competence)
         })
+        setCompetencesSelected(comps)
         setLevelCompetence(obj)
     }
 
@@ -88,7 +90,7 @@ const CreatePerfil = ({
         let newList = [];
         let newCurrent = [...competencesSelected];
         prevList.map((item)=>{
-            let result = newCurrent.some(record => item.id === record.competence.id);
+            let result = newCurrent.some(record => item.id === record.id);
             if(!result){
                 newList.push(item)
             }
@@ -145,14 +147,14 @@ const CreatePerfil = ({
     }
 
     const addCompetence = (item) =>{
-        let record = { level: null, competence: item }
-        let newList = [...competencesSelected, record];
+        let newList = [...competencesSelected, item];
         setCompetencesSelected(newList);
+        onChangeLevel(item, 1)
     }
 
     const deleteLevelSelected = (item) =>{
         let record = {...levelCompetence};
-        if(record[item.competence.id]) delete record[item.competence.id];
+        if(record[item.id]) delete record[item.id];
         setLevelCompetence(record)
     }
 
@@ -164,14 +166,14 @@ const CreatePerfil = ({
     };
 
     const onChangeLevel = (item, val) =>{
-        let record = {competence: item.competence.id, level: val};
-        let newList = {...levelCompetence, [item.competence.id]: record};
+        let record = {competence: item.id, level: val};
+        let newList = {...levelCompetence, [item.id]: record};
         setLevelCompetence(newList)
     }
 
     const getLevel = (item) =>{
-        let record = levelCompetence[item.competence?.id];
-        return record ? record.level : item.level ? item.level : null;
+        let record = levelCompetence[item.id];
+        return record ? record.level : null;
     }
 
     const columns_competencias= [
@@ -194,8 +196,8 @@ const CreatePerfil = ({
     const columns_selected= [
         {
             title: 'Nombre',
-            dataIndex: ['competence','name'],
-            key: ['competence','name']
+            dataIndex: 'name',
+            key: 'name'
         },
         {
             title: 'Level',
@@ -240,20 +242,6 @@ const CreatePerfil = ({
                 <Row gutter={[16,16]}>
                     <Col span={12}>
                         <Form.Item
-                            name="name"
-                            label="Nombre del perfil"
-                            style={{marginBottom: '0px'}}
-                            rules={[ruleRequired, ruleWhiteSpace]}
-                        >
-                            <Input
-                                maxLength={50}
-                                allowClear={true}
-                                placeholder={'Ingrese un nombre'}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
                             label="Buscar competencia"
                             style={{marginBottom: '0px'}}
                         >
@@ -269,21 +257,15 @@ const CreatePerfil = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            label={`Competencias seleccionadas (${competencesSelected?.length})`}
+                            name="name"
+                            label="Nombre del perfil"
+                            style={{marginBottom: '0px'}}
+                            rules={[ruleRequired, ruleWhiteSpace]}
                         >
-                            <Table
-                                size={'small'}
-                                rowKey={'id'}
-                                showHeader={false}
-                                columns={columns_selected}
-                                dataSource={competencesSelected}
-                                scroll={{y: 300}}
-                                pagination={false}
-                                locale={{
-                                emptyText: loading
-                                    ? "Cargando..."
-                                    : "No se encontraron resultados.",
-                                }}
+                            <Input
+                                maxLength={50}
+                                allowClear={true}
+                                placeholder={'Ingrese un nombre'}
                             />
                         </Form.Item>
                     </Col>
@@ -302,6 +284,26 @@ const CreatePerfil = ({
                                 pagination={false}
                                 locale={{
                                 emptyText: load_competences
+                                    ? "Cargando..."
+                                    : "No se encontraron resultados.",
+                                }}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label={`Competencias seleccionadas (${competencesSelected?.length})`}
+                        >
+                            <Table
+                                size={'small'}
+                                rowKey={'id'}
+                                showHeader={false}
+                                columns={columns_selected}
+                                dataSource={competencesSelected}
+                                scroll={{y: 300}}
+                                pagination={false}
+                                locale={{
+                                emptyText: loading
                                     ? "Cargando..."
                                     : "No se encontraron resultados.",
                                 }}

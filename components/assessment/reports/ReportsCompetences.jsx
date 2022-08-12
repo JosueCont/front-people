@@ -44,7 +44,7 @@ const ReportsCompetences = ({
             title: 'Imagen',
             fixed: 'left',
             align: 'center',
-            width: 50,
+            width: 65,
             show: true,
             render: ({persons}) =>{
                 return (
@@ -698,7 +698,7 @@ const ReportsCompetences = ({
                                             <p>{getFullName(usersSelected.at(-1))}</p>
                                             {currentTab == 'pp' && (
                                                 <>
-                                                    <p>Puesto: <span>{getProfile(profilesSelected.at(-1))}</span></p>
+                                                    <p>Perfil: <span>{getProfile(profilesSelected.at(-1))}</span></p>
                                                     <p>Compatiblidad: <span>{getCompatibility(listReports.at(-1))}</span></p>
                                                 </>
                                             )}
