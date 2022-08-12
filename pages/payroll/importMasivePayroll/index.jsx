@@ -31,7 +31,7 @@ import {
   messageSaveSuccess,
   messageUploadSuccess,
 } from "../../../utils/constant";
-import CalendarImport from "./components/calednarImport";
+import CalendarImport from "./components/calendarImport";
 
 const ImportMasivePayroll = ({ ...props }) => {
   const router = useRouter();
@@ -44,15 +44,16 @@ const ImportMasivePayroll = ({ ...props }) => {
   const [patronals, setPatronals] = useState([]);
   const [companySelect, setCompanySelect] = useState(null);
   const [patronalSelect, setPatronalSelect] = useState(0);
+  const [person, setPerson] = useState([]);
 
   const columns = [
     {
       title: "Colaborador",
       render: (item) => {
-        return <span>{item.headers.reason_receiver}</span>;
+        return <span>{item.headers.name}</span>;
       },
       key: (item) => {
-        return item.headers.reason_receiver;
+        return item.headers.name;
       },
     },
     {
@@ -89,15 +90,6 @@ const ImportMasivePayroll = ({ ...props }) => {
       },
       key: (item) => {
         return item.headers.department;
-      },
-    },
-    {
-      title: "Puesto",
-      render: (item) => {
-        return <span>{item.headers.job}</span>;
-      },
-      key: (item) => {
-        return item.headers.job;
       },
     },
   ];
@@ -166,7 +158,7 @@ const ImportMasivePayroll = ({ ...props }) => {
       });
   };
 
-  const saveImportPayrroll = async (data) => {
+  const saveImportPayrroll = async () => {
     if (files.length > 0) {
       setLoading(true);
       let form_data = new FormData();
@@ -176,6 +168,7 @@ const ImportMasivePayroll = ({ ...props }) => {
       form_data.append("export", "False");
       form_data.append("save", "True");
       form_data.append("payroll", JSON.stringify(xmlImport));
+      console.log(xmlImport);
       WebApiPayroll.importPayrollMasiveXml(form_data)
         .then((response) => {
           message.success(messageSaveSuccess);
@@ -312,7 +305,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                         <Button onClick={() => onCancel()}>Cancelar</Button>
                       </Col>
                       <Col span={2} offset={1}>
-                        <Button onClick={() => saveImportPayrroll(xmlImport)}>
+                        <Button onClick={() => saveImportPayrroll()}>
                           Guardar
                         </Button>
                       </Col>
@@ -413,6 +406,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                 patronalSelect={patronalSelect}
                 company={xmlImport.companies[companySelect]}
                 paymentPeriodicity={props.payment_periodicity}
+                setPerson={setPerson}
               />
 
               <Col span={24}>
@@ -420,7 +414,7 @@ const ImportMasivePayroll = ({ ...props }) => {
                   <Table
                     size="small"
                     columns={columns}
-                    dataSource={[]}
+                    dataSource={person}
                     loading={loading}
                     scroll={{ x: 350 }}
                     locale={{

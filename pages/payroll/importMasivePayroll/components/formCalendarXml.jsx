@@ -1,29 +1,20 @@
 import { Row, Col, Form, Input, Radio, Switch, Select } from "antd";
 import { useEffect } from "react";
-import { useState } from "react";
 import SelectTypeTax from "../../../../components/selects/SelectTypeTax";
 import { salaryDays } from "../../../../utils/constant";
 import { ruleRequired } from "../../../../utils/rules";
 
 const FormCaledanrXml = ({ calendar, paymentPeriodicity = [], ...props }) => {
   const [formCalendar] = Form.useForm();
-  const [startDate, setStartDate] = useState(null);
 
   const onChangePeriod = (item) => {
-    setStartDate(item.target.value);
+    calendar.calendar.start_date = item;
   };
 
-  const PrintPeriods = ({ periods = {} }) => {
-    // console.log("EMPRESA-->> ", periods.periodicities.period_list);
-    // const periodos = periods.periodicities.period_list;
-    // ? periods.periodicities.period_list
-    // : periods.patronal_registrations[patronalSelect].periodicities
-    //     .period_list;
-    // console.log(periodos);
+  const PrintPeriods = ({ periods = [] }) => {
     return (
       <>
-        `{" "}
-        {/* {periodos.map((item, i) => {
+        {periods.map((item, i) => {
           return (
             <Col>
               <Radio
@@ -34,13 +25,23 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [], ...props }) => {
               </Radio>
             </Col>
           );
-        })}` */}
+        })}
       </>
     );
   };
 
   useEffect(() => {
-    formCalendar.setFieldsValue(calendar.calendar);
+    formCalendar.setFieldsValue({
+      active: calendar.calendar.active,
+      annual_adjustment: calendar.calendar.annual_adjustment,
+      monthly_adjustment: calendar.calendar.monthly_adjustment,
+      name: calendar.calendar.name,
+      perception_type: calendar.calendar.perception_type,
+      period: calendar.calendar.period,
+      periodicity: calendar.calendar.periodicity,
+      start_date: calendar.calendar.start_date,
+      type_tax: calendar.calendar.type_tax,
+    });
   }, [calendar]);
 
   return (
@@ -51,7 +52,7 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [], ...props }) => {
         </Col>
         <Col span={24}>
           <Radio.Group onChange={onChangePeriod} required>
-            <PrintPeriods periods={[]} />
+            <PrintPeriods periods={calendar.period_list} />
           </Radio.Group>
         </Col>
       </Row>
@@ -62,6 +63,7 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [], ...props }) => {
               name={"name"}
               label="Nombre de calendario"
               rules={[ruleRequired]}
+              initialValue={calendar.calendar.name}
             >
               <Input
                 onChange={(value) =>
@@ -71,32 +73,36 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [], ...props }) => {
             </Form.Item>
           </Col>
           <Col style={{ display: "flex" }}>
+            <Form.Item name="period" label="Periodo">
+              <Input type={"number"} readOnly />
+            </Form.Item>
+          </Col>
+          <Col style={{ display: "flex" }}>
             <Form.Item label="Periodicidad">
               <Input
                 readOnly
                 value={
                   paymentPeriodicity.length > 0 &&
                   paymentPeriodicity.find(
-                    (item) => item.code == calendar.calendar.periodicity
+                    (item) => item.id == calendar.calendar.periodicity
                   ).description
                 }
               />
             </Form.Item>
           </Col>
+        </Row>
+
+        <Row gutter={[16, 6]} style={{ marginTop: "5px" }}>
           <Col
             style={{
               display: "flex",
             }}
           >
-            <SelectTypeTax style={{ width: 240 }} rules={[ruleRequired]} />
-          </Col>
-        </Row>
-
-        <Row gutter={[16, 6]} style={{ marginTop: "5px" }}>
-          <Col style={{ display: "flex" }}>
-            <Form.Item name="period" label="Periodo">
-              <Input type={"number"} readOnly />
-            </Form.Item>
+            <SelectTypeTax
+              style={{ width: 240 }}
+              rules={[ruleRequired]}
+              onChange={(value) => (calendar.calendar.type_tax = value)}
+            />
           </Col>
           <Col lg={5} xs={22}>
             <Form.Item
@@ -111,9 +117,6 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [], ...props }) => {
                 onChange={(value) => (calendar.calendar.salary_days = value)}
               />
             </Form.Item>
-          </Col>
-          <Col lg={5} xs={22}>
-            <SelectTypeTax />
           </Col>
           <Col style={{ display: "flex" }}>
             <Form.Item name="active" label="¿Activo?">
