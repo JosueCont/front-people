@@ -334,13 +334,14 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
               data={
                 key == 1
                   ? props.cat_perceptions.filter(
-                      (item) => item.code != "046" && item.code != "001"
+                      (item) => item.code != "046" //&& item.code != "001"
                     )
                   : key == 2
-                  ? props.cat_deductions.filter(
-                      (item) => item.code != "001" && item.code != "002"
-                    )
-                  : props.cat_other_payments
+                  ? props.cat_deductions
+                  : // .filter(
+                    //     (item) => item.code != "001" && item.code != "002"
+                    //   )
+                    props.cat_other_payments
               }
             />
           </Col>

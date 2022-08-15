@@ -51,23 +51,30 @@ const ModalConceptsPayroll = ({
     ) {
       if (payrollType === "046") {
         props.perceptions_int = props.perceptions_int.filter(
-          (item) => item.perception_type.is_assimilated
+          (item) =>
+            item.perception_type.is_assimilated &&
+            item.perception_type.code !== "046"
         );
         props.deductions_int = props.deductions_int.filter(
-          (item) => item.deduction_type.is_assimilated
+          (item) =>
+            item.deduction_type.is_assimilated &&
+            item.deduction_type.code !== "002"
         );
         props.other_payments_int = props.other_payments_int.filter(
           (item) => item.other_type_payment.is_assimilated
         );
       } else {
         props.perceptions_int = props.perceptions_int.filter(
-          (item) => !item.perception_type.is_assimilated
+          (item) => item.perception_type.is_payroll && item.node != null
         );
         props.deductions_int = props.deductions_int.filter(
-          (item) => !item.deduction_type.is_assimilated
+          (item) =>
+            item.deduction_type.is_payroll &&
+            item.node != null &&
+            item.deduction_type.code !== "002"
         );
         props.other_payments_int = props.other_payments_int.filter(
-          (item) => !item.other_type_payment.is_assimilated
+          (item) => item.other_type_payment.is_payroll && item.node != null
         );
       }
       setPerceptionsCat(
