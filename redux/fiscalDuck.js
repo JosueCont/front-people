@@ -182,7 +182,7 @@ export const getInternalPerceptions =
           type: PERCEPTIONS_INT,
           payload: response.data.filter(
             (item) =>
-              item.perception_type.code != "001" &&
+              // item.perception_type.code != "001" &&
               item.perception_type.code != "046"
           ),
         });
@@ -198,11 +198,12 @@ export const getInternalDeductions =
       .then((response) => {
         dispatch({
           type: DEDUCTIONS_INT,
-          payload: response.data.filter(
-            (item) =>
-              item.deduction_type.code != "001" &&
-              item.deduction_type.code != "002"
-          ),
+          payload: response.data,
+          // .filter(
+          //   (item) =>
+          //     item.deduction_type.code != "001" &&
+          //     item.deduction_type.code != "002"
+          // ),
         });
       })
       .catch((error) => {
