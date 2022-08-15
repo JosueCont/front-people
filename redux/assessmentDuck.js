@@ -24,7 +24,8 @@ const initialData = {
   competences: {},
   load_competences: false,
   load_profiles: false,
-  profiles: {}
+  profiles: [],
+  pagination_profiles: 1
 };
 
 const assessmentReducer = (state = initialData, action) => {
@@ -143,11 +144,8 @@ const assessmentReducer = (state = initialData, action) => {
         load_profiles: action.fetching,
         profiles: action.payload
       }
-    case types.ADD_PROFILE:
-      return {
-        ...state,
-        profiles: [...state.profiles, action.payload]
-      }
+    case types.SET_PAGE:
+      return {...state, pagination_profiles: action.payload}
     default:
       return state;
   }
@@ -655,7 +653,7 @@ export const getProfiles = (node, query) => {
     dispatch({
       type: types.GET_PROFILES,
       fetching: true,
-      payload: {}
+      payload: []
     });
     try {
       let response = await WebApiAssessment.getProfiles(node, query);
@@ -664,11 +662,12 @@ export const getProfiles = (node, query) => {
         fetching: false,
         payload: response.data
       });
+      dispatch(setCurrentPage(1));
     } catch (e) {
       dispatch({
         type: types.GET_PROFILES,
         fetching: false,
-        payload: {}
+        payload: []
       });
       console.error(e.name + ": " + e.message);
     }
@@ -711,6 +710,15 @@ export const deleteProfile = (id, node) => {
       console.error(e.name + ": " + e.message);
       return false;
     }
+  };
+};
+
+export const setCurrentPage = (num) => {
+  return async (dispatch) => {
+    dispatch({
+      type: types.SET_PAGE,
+      payload: num
+    });
   };
 };
 

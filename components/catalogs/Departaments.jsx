@@ -27,6 +27,9 @@ import {
   messageUpdateSuccess,
 } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
+import SelectTags from "../selects/SelectTags";
+import SelectCostCenter from "../selects/SelectCostCenter";
+import ListCatalogData from "../forms/ListCatalogData";
 
 const Departaments = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
@@ -51,6 +54,20 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
     {
       title: "Código",
       dataIndex: "code",
+    },
+    {
+      title: "Centro de costos",
+      dataIndex: "cost_center",
+      render:(item)=>{
+        return <ListCatalogData catalog={'cat_cost_center'} attrName={'code'} items={item} />
+      }
+    },
+    {
+      title: "Etiquetas",
+      dataIndex: "tag",
+      render:(item)=>{
+        return <ListCatalogData catalog={'cat_tags'} attrName={'name'} items={item} />
+      }
     },
     {
       title: "Acciones",
@@ -155,6 +172,8 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
       name: item.name,
       description: item.description,
       code: item.code,
+      tag:item.tag,
+      cost_center: item.cost_center
     });
   };
 
@@ -260,6 +279,13 @@ const Departaments = ({ permissions, currentNode, ...props }) => {
                 <Input />
               </Form.Item>
             </Col>
+            <Col lg={6} xs={22} md={12}>
+              <SelectCostCenter required={false} multiple={true} viewLabel={'Centro de costos'}/>
+            </Col>
+            <Col lg={6} xs={22} md={12}>
+              <SelectTags required={false} multiple={true} viewLabel={'Etiquetas'}/>
+            </Col>
+
           </Row>
           <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
             <Col>

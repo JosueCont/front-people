@@ -26,6 +26,9 @@ import {
   messageSaveSuccess,
   messageUpdateSuccess,
 } from "../../utils/constant";
+import ListCatalogData from "../forms/ListCatalogData";
+import SelectCostCenter from "../selects/SelectCostCenter";
+import SelectTags from "../selects/SelectTags";
 
 const TabJobs = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
@@ -49,6 +52,20 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
       render: (item) => {
         return <>{item.code}</>;
       },
+    },
+    {
+      title: "Centro de costos",
+      dataIndex: "cost_center",
+      render:(item)=>{
+        return <ListCatalogData catalog={'cat_cost_center'} attrName={'code'} items={item} />
+      }
+    },
+    {
+      title: "Etiquetas",
+      dataIndex: "tag",
+      render:(item)=>{
+        return <ListCatalogData catalog={'cat_tags'} attrName={'name'} items={item} />
+      }
     },
     {
       title: "Acciones",
@@ -244,6 +261,12 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
               <Form.Item name="code" label="Código" rules={[ruleRequired]}>
                 <Input />
               </Form.Item>
+            </Col>
+            <Col lg={6} xs={22} md={12}>
+              <SelectCostCenter required={false} multiple={true} viewLabel={'Centro de costos'}/>
+            </Col>
+            <Col lg={6} xs={22} md={12}>
+              <SelectTags required={false} multiple={true} viewLabel={'Etiquetas'}/>
             </Col>
           </Row>
           <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
