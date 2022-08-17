@@ -250,7 +250,7 @@ export const getInternalOtherPayments =
       });
   };
 
-export const getTypeTax = (use_cfdi) => async (dispatch, getState) => {
+export const getTypeTax = (use_cfdi="4") => async (dispatch, getState) => {
   await WebApiFiscal.getTypeTax()
     .then((response) => {
       dispatch({

@@ -7,8 +7,9 @@ import { ruleRequired } from "../../../../utils/rules";
 const FormCaledanrXml = ({ calendar, paymentPeriodicity = [], ...props }) => {
   const [formCalendar] = Form.useForm();
 
-  const onChangePeriod = (item) => {
-    calendar.calendar.start_date = item;
+  const onChangePeriod = (item,perception) => {
+    calendar.calendar.start_date = item.target.value;
+    calendar.calendar.perception_type = perception;
   };
 
   const PrintPeriods = ({ periods = [] }) => {
@@ -53,7 +54,7 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [], ...props }) => {
               <h4>Fecha de inicio del calendario</h4>
             </Col>
             <Col span={24}>
-              <Radio.Group onChange={onChangePeriod} required>
+              <Radio.Group onChange={(e)=>onChangePeriod(e,calendar.perception)} required>
                 <PrintPeriods periods={calendar.period_list} />
               </Radio.Group>
             </Col>
@@ -84,10 +85,10 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [], ...props }) => {
                   <Input
                     readOnly
                     value={
-                      paymentPeriodicity.length > 0 &&
+                      paymentPeriodicity.length > 0 ?
                       paymentPeriodicity.find(
                         (item) => item.id == calendar.calendar.periodicity
-                      ).description
+                      ).description : '--'
                     }
                   />
                 </Form.Item>

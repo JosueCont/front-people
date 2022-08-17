@@ -32,8 +32,12 @@ import {
   messageUploadSuccess,
 } from "../../../utils/constant";
 import CalendarImport from "./components/calendarImport";
+import {getTypeTax} from "../../../redux/fiscalDuck"
+import _ from 'lodash'
 
-const ImportMasivePayroll = ({ ...props }) => {
+
+
+const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const router = useRouter();
   const [xmlImport, setXmlImport] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -98,6 +102,10 @@ const ImportMasivePayroll = ({ ...props }) => {
     setViewModal(value);
   };
 
+  useEffect(()=>{
+    getTypeTax()
+  },[])
+
   useEffect(() => {
     if (xmlImport) {
       setCompanies(
@@ -158,6 +166,28 @@ const ImportMasivePayroll = ({ ...props }) => {
       });
   };
 
+  const processResponseSave=(response)=>{
+
+    let company_list = _.get(response,'data.companies.company_list',[]);
+    let notSaved = [] // empresas no guardadas
+    if(company_list.length>0){
+        notSaved = company_list.filter((ele)=>!ele.saved)
+        console.log(notSaved)
+    }
+
+    if(notSaved.length>0){
+      message.error(`${messageError}, por favor valide los datos requeridos. [detalle: ${_.map(notSaved,'message')}]`);
+    }else{
+      // si no encontramos errores en la lista de saved
+      message.success(messageSaveSuccess);
+    }
+
+
+    console.log(response.data.companies)
+
+    setLoading(false);
+  }
+
   const saveImportPayrroll = async () => {
     if (files.length > 0) {
       setLoading(true);
@@ -171,8 +201,7 @@ const ImportMasivePayroll = ({ ...props }) => {
       console.log(xmlImport);
       WebApiPayroll.importPayrollMasiveXml(form_data)
         .then((response) => {
-          message.success(messageSaveSuccess);
-          setLoading(false);
+          processResponseSave(response)
         })
         .catch((error) => {
           message.error(messageError);
@@ -383,12 +412,15 @@ const ImportMasivePayroll = ({ ...props }) => {
                                           patronalSelect
                                         ].branch_node
                                       }
-                                      onChange={(value) =>
-                                        (xmlImport.companies[
-                                          companySelect
-                                        ].patronal_registrations[
-                                          patronalSelect
-                                        ].branch_node = value.target.value)
+                                      onChange={(value) =>{
+                                        xmlImport.companies[
+                                            companySelect
+                                            ].patronal_registrations[
+                                            patronalSelect
+                                            ].branch_node = value.target.value;
+
+                                        setXmlImport({...xmlImport})
+                                      }
                                       }
                                     />
                                   </Form.Item>
@@ -520,4 +552,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(withAuthSync(ImportMasivePayroll));
+export default connect(mapState, {getTypeTax})(withAuthSync(ImportMasivePayroll));

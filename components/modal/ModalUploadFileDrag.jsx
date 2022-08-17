@@ -1,8 +1,9 @@
-import { InboxOutlined } from "@ant-design/icons";
-import { Button, Col, Layout, message, Modal, Row, Tag, Upload } from "antd";
+import { InboxOutlined, FileTextOutlined } from "@ant-design/icons";
+import { Button, Col, Layout,Spin, message, Modal, Row, Tag, Upload, Typography } from "antd";
 import { useState } from "react";
-
+import _ from 'lodash'
 const { Dragger } = Upload;
+const { Text, Link,Title } = Typography;
 
 const ModalUploadFileDrag = ({
   title,
@@ -10,11 +11,13 @@ const ModalUploadFileDrag = ({
   visible,
   setFiles,
   extensionFile = "text/xml",
-  ...porps
+  ...props
 }) => {
   const [upload, setUpload] = useState([]);
+  const [numFiles, setNumFiles] = useState(null)
+  const [loading, setLoading] = useState(false)
 
-  const props = {
+  const _props = {
     name: "file",
     multiple: true,
     showUploadList: false,
@@ -25,19 +28,25 @@ const ModalUploadFileDrag = ({
       }
       return isXML || Upload.LIST_IGNORE;
     },
+    onDrop(info){
+      setLoading(true)
+    },
     onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
         if (info.fileList.length > 0) {
+          setNumFiles(info.fileList.length)
           let files = [];
           info.fileList.forEach((element, i) => {
             files.push(element);
           });
           if (files.length > 0) {
             setUpload(files);
+            setLoading(false)
           }
           info.file = null;
           info.fileList = [];
+
         }
       }
     },
@@ -49,9 +58,10 @@ const ModalUploadFileDrag = ({
   };
 
   const RenderFileUpload = () => {
-    return upload.map((item, i) => {
+    return _.take(upload, 200).map((item, i) => {
       return (
         <Tag
+          key={i}
           style={{
             minWidth: "125px",
             textAlign: "center",
@@ -65,7 +75,6 @@ const ModalUploadFileDrag = ({
   };
 
   return (
-    <Layout>
       <Modal
         maskClosable={false}
         title={title}
@@ -73,18 +82,24 @@ const ModalUploadFileDrag = ({
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}
+        heigth={200}
         width={"50%"}
       >
         <Row>
-          <Col span={24} style={{ marginBottom: 50 }}>
+          <Col span={24} >
+
             <Dragger
-              {...props}
+              {..._props}
               style={{
-                marginTop: "30px",
               }}
             >
+
+
               {upload.length > 0 ? (
-                <RenderFileUpload />
+                  <>
+                    <FileTextOutlined style={{fontSize:50}} />
+                    { upload.length>0 && <Title level={2}>{ upload.length} elementos</Title>  }
+                  </>
               ) : (
                 <>
                   <p className="ant-upload-drag-icon">
@@ -100,23 +115,29 @@ const ModalUploadFileDrag = ({
                 </>
               )}
             </Dragger>
+
           </Col>
-          <Col span={24} style={{ margin: "10px 0px", textAlign: "right" }}>
+
+        </Row>
+        <Row style={{marginTop:20}}>
+          <Col span={24} style={{ textAlign: "right" }}>
+            {
+                loading && <Spin/>
+            }
             <Button
-              style={{ marginRight: "5px" }}
-              onClick={() => setVisible(false)}
+                style={{ marginRight: "5px" }}
+                onClick={() => setVisible(false)}
             >
               Cancelar
             </Button>
             {upload.length > 0 && (
-              <Button type="primary" onClick={() => setSendFile()}>
-                Enviar
-              </Button>
+                <Button type="primary" onClick={() => setSendFile()}>
+                  Enviar
+                </Button>
             )}
           </Col>
         </Row>
       </Modal>
-    </Layout>
   );
 };
 
