@@ -33,7 +33,6 @@ const ModalUploadFileDrag = ({
     },
     onChange(info) {
       const { status } = info.file;
-      console.log(info)
       if (status !== "uploading") {
         if (info.fileList.length > 0) {
           setNumFiles(info.fileList.length)

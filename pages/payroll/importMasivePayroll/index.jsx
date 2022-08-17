@@ -412,12 +412,15 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                                           patronalSelect
                                         ].branch_node
                                       }
-                                      onChange={(value) =>
-                                        (xmlImport.companies[
-                                          companySelect
-                                        ].patronal_registrations[
-                                          patronalSelect
-                                        ].branch_node = value.target.value)
+                                      onChange={(value) =>{
+                                        xmlImport.companies[
+                                            companySelect
+                                            ].patronal_registrations[
+                                            patronalSelect
+                                            ].branch_node = value.target.value;
+
+                                        setXmlImport({...xmlImport})
+                                      }
                                       }
                                     />
                                   </Form.Item>
