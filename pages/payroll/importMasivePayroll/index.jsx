@@ -7,9 +7,11 @@ import {
   Form,
   Card,
   Spin,
+  Modal,
   message,
   Input,
   Alert,
+  Statistic,
   Select, Space,
 } from "antd";
 import {
@@ -36,7 +38,6 @@ import {getTypeTax} from "../../../redux/fiscalDuck"
 import _ from 'lodash'
 
 
-
 const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const router = useRouter();
   const [xmlImport, setXmlImport] = useState(null);
@@ -49,6 +50,11 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const [companySelect, setCompanySelect] = useState(null);
   const [patronalSelect, setPatronalSelect] = useState(0);
   const [person, setPerson] = useState([]);
+
+  //resumen de datos
+  const [resumeData,setResumeData] = useState(null)
+  const [visibleResumeModal, setVisibleResumemodal] = useState(false)
+  const [visibleSuccessModal, setVisibleSuccessModal] = useState(false)
 
   const columns = [
     {
@@ -144,12 +150,116 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     }
   }, [files]);
 
+  const processResume=(data)=>{
+    let numCompanies = data.companies.length;
+    let numRegPatronales=0;
+    let numXML=0;
+
+    //buscamos cuantos registros patronales se cargaron
+    data.companies.map((company)=>{
+      if(_.get(company,'patronal_registrations',null)){
+        numRegPatronales=numRegPatronales+company.patronal_registrations.length;
+      }
+    })
+
+    //buscamoscuantos xmls se cargaron
+    data.companies.forEach((company)=>{
+      if(_.get(company,'patronal_registrations',null)){
+        company.patronal_registrations.forEach((regPatr,i)=>{
+          regPatr.periodicities.forEach((periodicity,i)=>{
+            console.log(periodicity?.cfdis.length)
+            numXML = numXML + (periodicity?.cfdis ? periodicity?.cfdis.length : 0);
+          });
+        })
+      }
+
+      if(_.get(company,'periodicities',null)){
+        company.periodicities.map((periodicity,i)=>{
+          console.log(periodicity?.cfdis.length)
+          numXML = numXML + (periodicity?.cfdis ? periodicity?.cfdis.length : 0);
+        })
+      }
+
+    })
+
+    let resume = {
+      numCompanies,
+      numRegPatronales,
+      numXML
+    }
+
+    setResumeData(resume)
+    setVisibleResumemodal(true)
+  }
+
+  const DataDetailImport=()=>{
+    return <Row gutter={16}>
+      <Col span={12}>
+        <Statistic title="Empresas" value={resumeData?.numCompanies} />
+      </Col>
+      <Col span={12}>
+        <Statistic title="Registros Patronales" value={resumeData?.numRegPatronales} />
+      </Col>
+      <Col span={12}>
+        <Statistic title="xml Importados" value={resumeData?.numXML} />
+      </Col>
+    </Row>
+  }
+
+  const ModalResumeData=()=>{
+    return (
+        <Modal
+            footer={[
+              <Button key="submit" type="primary" loading={loading} onClick={()=>setVisibleResumemodal(false)}>
+                Aceptar
+              </Button>
+            ]}
+            title="Resumen de datos importados" visible={visibleResumeModal}
+               onOk={()=> setVisibleResumemodal(false)}
+               onCancel={()=> setVisibleResumemodal(false)}>
+          <DataDetailImport />
+        </Modal>
+    )
+  }
+
+
+  const ModalSuccessImport=()=>{
+    return (
+        <Modal
+            footer={[
+              <Button key="submit" type="primary" loading={loading} onClick={()=>{
+                setVisibleSuccessModal(false);
+                router.push({ pathname: "/select-company" })
+              }}>
+                Continuar
+              </Button>
+            ]}
+            title="Importación correcta" visible={visibleSuccessModal}
+            onCancel={()=> {
+              setVisibleSuccessModal(false)
+              router.push({ pathname: "/select-company" })
+            }}>
+          <Alert
+              message="Importación realizada con éxito"
+              description="Serás redireccionado al listado de empresas"
+              type="success"
+          />
+        </Modal>
+    )
+  }
+
+
   const sendFiles = (data) => {
     WebApiPayroll.importPayrollMasiveXml(data)
       .then((response) => {
         setLoading(false);
         message.success(messageUploadSuccess);
         setXmlImport(response.data);
+        console.log('se setea el modal aqui', response.data)
+        processResume(response.data)
+
+
+
       })
       .catch((error) => {
         setLoading(false);
@@ -167,7 +277,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   };
 
   const processResponseSave=(response)=>{
-
     let company_list = _.get(response,'data.companies.company_list',[]);
     let notSaved = [] // empresas no guardadas
     if(company_list.length>0){
@@ -176,10 +285,12 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     }
 
     if(notSaved.length>0){
+      setVisibleSuccessModal(false)
       message.error(`${messageError}, por favor valide los datos requeridos. [detalle: ${_.map(notSaved,'message')}]`);
     }else{
       // si no encontramos errores en la lista de saved
       message.success(messageSaveSuccess);
+      setVisibleSuccessModal(true)
     }
 
 
@@ -277,6 +388,9 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           closable
         />
       )}
+
+      <ModalSuccessImport/>
+      <ModalResumeData/>
 
       {xmlImport && (
         <Form layout="vertical">
