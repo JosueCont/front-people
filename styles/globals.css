@@ -89,6 +89,17 @@ div#__next > section.layout{
 .ant-tabs-nav {
   margin-bottom: 0 !important;
 }
+.form_header_import {
+  background: rgba(16, 16, 16, 0.41) !important;
+}
+
+.form_header_black{
+  background: #393D4A !important;
+}
+
+.form_header_black .ant-form-item-label label{
+  color: white !important;
+}
 
 .icon_actions {
   margin: 0 10px;
