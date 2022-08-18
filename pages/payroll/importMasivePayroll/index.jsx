@@ -10,7 +10,7 @@ import {
   message,
   Input,
   Alert,
-  Select,
+  Select, Space,
 } from "antd";
 import {
   DollarCircleOutlined,
@@ -188,6 +188,13 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     setLoading(false);
   }
 
+  const validateBeforeSubmit=()=>{
+      xmlImport.companies.map((company1,i)=>{
+        console.log(company1.patronal_registrations)
+      })
+    return false;
+  }
+
   const saveImportPayrroll = async () => {
     if (files.length > 0) {
       setLoading(true);
@@ -323,22 +330,26 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       )}
 
       <Spin spinning={loading}>
+
+        {xmlImport && companySelect != null && patronalSelect != null && (
+            <Row justify="end">
+              <Space>
+                <Button onClick={() => onCancel()}>Cancelar</Button>
+                <Button onClick={() => saveImportPayrroll()}>
+                  Guardar
+                </Button>
+              </Space>
+            </Row>
+
+            )}
+
+
         <Row justify="end" gutter={[10, 10]}>
           {xmlImport && companySelect != null && patronalSelect != null ? (
             <>
               <Col span={24}>
-                <Card className="form_header">
+                <Card className={'form_header_black'}>
                   <Row justify="space-between">
-                    <Row style={{ width: "100%" }} justify="end">
-                      <Col span={2}>
-                        <Button onClick={() => onCancel()}>Cancelar</Button>
-                      </Col>
-                      <Col span={2} offset={1}>
-                        <Button onClick={() => saveImportPayrroll()}>
-                          Guardar
-                        </Button>
-                      </Col>
-                    </Row>
                     <Row style={{ width: "100%" }}>
                       <Col span={18} style={{ display: "" }}>
                         <span

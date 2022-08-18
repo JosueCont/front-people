@@ -35,7 +35,7 @@ const CalendarImport = ({
         company.patronal_registrations[patronalSelect].periodicities
       );
     } else if (company && company.periodicities) {
-      company.periodicities.map((p) => {
+      company.periodicities.map((p,i) => {
         if (!p.calendar)
           p.calendar = {
             periodicity: p.periodicity,
@@ -68,7 +68,7 @@ const CalendarImport = ({
 
   return (
     <Col span={24}>
-      <Card className="form_header">
+      <Card className={'form_header_import'}>
         {periodicities.length > 0 && (
           <>
             <Row align="center" style={{ width: "100%", padding: "10px" }}>
