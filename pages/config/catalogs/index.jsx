@@ -29,6 +29,7 @@ import InternalConcepts from "../../../components/catalogs/InternalConcepts";
 import CostCenterCatalog from "../../../components/catalogs/CostCenterCatalog";
 import TagCatalog from "../../../components/catalogs/TagCatalog";
 import AccountantAccountCatalog from "../../../components/catalogs/AccountantAccountCatalog";
+import BranchCatalog from "../../../components/catalogs/BranchCatalog";
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
@@ -278,6 +279,19 @@ const configBusiness = ({ ...props }) => {
                       currentNode={props.currentNode}
                       doCompanySelectedCatalog={doCompanySelectedCatalog}
                   />
+                </TabPane>
+                <TabPane
+                  tab={
+                    <Tooltip title="Departamentos">
+                      <div className="container-title-tab">
+                        <GoldOutlined />
+                        <div className="text-title-tab">Sucursales</div>
+                      </div>
+                    </Tooltip>
+                  }
+                  key="tab_12"
+                >
+                  <BranchCatalog/>
                 </TabPane>
                 )
 
