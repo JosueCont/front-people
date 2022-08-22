@@ -4,8 +4,8 @@ export const useGetCompanyId = () => {
   const [companyId, setCompanyId] = useState(null);
 
   const getCompanyId = () => {
-    if (sessionStorage.getItem("data")) {
-      setCompanyId(sessionStorage.getItem("data"));
+    if (localStorage.getItem("data")) {
+      setCompanyId(localStorage.getItem("data"));
     }
   };
 

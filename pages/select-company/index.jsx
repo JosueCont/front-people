@@ -130,6 +130,7 @@ const SelectCompany = ({ ...props }) => {
   const setCompanySelect = async (item) => {
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
+    localStorage.setItem('data',item.id)
     await props
       .companySelected(item.id, props.config)
       .then((response) => {
