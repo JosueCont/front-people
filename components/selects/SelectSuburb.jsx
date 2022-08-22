@@ -15,8 +15,9 @@ const SelectSuburb = ({
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    getCountries();
-  }, []);
+    if(postal_code) getCountries();
+  }, [postal_code]);
+
 
   const getCountries = () => {
     WebApiFiscal.getSuburb(postal_code)
