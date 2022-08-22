@@ -3,58 +3,50 @@ import { useEffect } from "react";
 import SelectTypeTax from "../../../../components/selects/SelectTypeTax";
 import { salaryDays } from "../../../../utils/constant";
 import { ruleRequired } from "../../../../utils/rules";
-import { connect } from "react-redux";
-import {setDataImport} from "../../../../redux/ImportCalendarDuck"
 
-const FormCaledanrXml = ({ calendar, paymentPeriodicity = [],dataImportCalendar,setDataImport, ...props }) => {
+const FormCaledanrXml = ({
+  calendar,
+  paymentPeriodicity = [],
+  dataImportCalendar,
+  ...props
+}) => {
   const [formCalendar] = Form.useForm();
 
-  useEffect(()=>{
+  useEffect(() => {
     calendar.calendar.perception_type = calendar.perception;
-  },[])
+  }, []);
 
   const onChangePeriod = (item) => {
-    calendar.calendar.start_date = item.target.value.split('|')[0];
-    console.log(item.target.value)
-    setDataImport(item.target.value)
+    calendar.calendar.start_date = item.target.value;
   };
-
-  const isCheched=(item,index)=>{
-    if(!calendar.calendar.start_date){
-      return false
-    }else{
-      if(dataImportCalendar.periodSelected===`${item.payment_start_date},${item.payment_end_date}|${calendar.periodicity}${index}`){
-        return true;
-      }
-    }
-
-  }
 
   const PrintPeriods = ({ periods = [] }) => {
     return (
       <>
-        {periods.map((item, i) => {
-          return (
-            <Col>
-              <Radio
-                key={item.payment_start_date + i}
-                checked={isCheched(item,i)}
-                value={`${item.payment_start_date},${item.payment_end_date}|${calendar.periodicity}${i}`}
-              >
-                {item.payment_start_date} - {item.payment_end_date}
-              </Radio>
-            </Col>
-          );
-        })}
+        <Radio.Group
+          onChange={(e) => onChangePeriod(e)}
+          required
+          defaultValue={calendar.calendar.start_date}
+        >
+          {periods.map((item, i) => {
+            return (
+              <Col>
+                <Radio
+                  key={item.payment_start_date + i}
+                  value={`${item.payment_start_date},${item.payment_end_date}`}
+                >
+                  {item.payment_start_date} - {item.payment_end_date}
+                </Radio>
+              </Col>
+            );
+          })}
+        </Radio.Group>
       </>
     );
   };
 
   useEffect(() => {
     formCalendar.setFieldsValue({
-      active: calendar.calendar.active,
-      annual_adjustment: calendar.calendar.annual_adjustment,
-      monthly_adjustment: calendar.calendar.monthly_adjustment,
       name: calendar.calendar.name,
       perception_type: calendar.calendar.perception_type,
       period: calendar.calendar.period,
@@ -64,21 +56,32 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [],dataImportCalendar,
     });
   }, [calendar]);
 
+  const SwitchCalendar = ({ status = false, name }) => {
+    return (
+      <Switch
+        defaultChecked={status}
+        checkedChildren="Si"
+        unCheckedChildren="No"
+        onChange={(value) => (calendar.calendar[name] = value)}
+      />
+    );
+  };
+
   return (
     <>
       {calendar && (
         <>
           <Row style={{ width: "100%", padding: 10 }}>
             <Col span={24}>
-              <h3><b>Fecha de inicio del calendario</b></h3>
+              <h3>
+                <b>Fecha de inicio del calendario</b>
+              </h3>
             </Col>
             <Col span={24}>
-              <Radio.Group onChange={(e)=>onChangePeriod(e)} required>
-                <PrintPeriods periods={calendar.period_list} />
-              </Radio.Group>
+              <PrintPeriods periods={calendar.period_list} />
             </Col>
           </Row>
-          <Form form={formCalendar} layout="vertical" >
+          <Form form={formCalendar} layout="vertical">
             <Row gutter={[16, 6]}>
               <Col>
                 <Form.Item
@@ -94,20 +97,21 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [],dataImportCalendar,
                   />
                 </Form.Item>
               </Col>
-              <Col >
+              <Col>
                 <Form.Item name="period" label="Periodo">
                   <Input type={"number"} readOnly />
                 </Form.Item>
               </Col>
-              <Col >
+              <Col>
                 <Form.Item label="Periodicidad">
                   <Input
                     readOnly
                     value={
-                      paymentPeriodicity.length > 0 ?
-                      paymentPeriodicity.find(
-                        (item) => item.id == calendar.calendar.periodicity
-                      ).description : '--'
+                      paymentPeriodicity.length > 0
+                        ? paymentPeriodicity.find(
+                            (item) => item.id == calendar.calendar.periodicity
+                          ).description
+                        : "--"
                     }
                   />
                 </Form.Item>
@@ -115,8 +119,7 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [],dataImportCalendar,
             </Row>
 
             <Row gutter={[16, 6]} style={{ marginTop: "5px" }}>
-              <Col span={10}
-              >
+              <Col span={10}>
                 <SelectTypeTax
                   style={{ width: 240 }}
                   rules={[ruleRequired]}
@@ -140,36 +143,26 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [],dataImportCalendar,
                 </Form.Item>
               </Col>
               <Col span={5}>
-                <Form.Item name="active" label="¿Activo?">
-                  <Switch
-                    defaultChecked={false}
-                    checkedChildren="Si"
-                    unCheckedChildren="No"
-                    onChange={(value) => (calendar.calendar.active = value)}
+                <Form.Item label="¿Activo?">
+                  <SwitchCalendar
+                    status={calendar.calendar.active}
+                    name={"active"}
                   />
                 </Form.Item>
               </Col>
               <Col span={5}>
-                <Form.Item name="monthly_adjustment" label="Ajuste mensual">
-                  <Switch
-                    defaultChecked={false}
-                    checkedChildren="Si"
-                    unCheckedChildren="No"
-                    onChange={(value) =>
-                      (calendar.calendar.monthly_adjustment = value)
-                    }
+                <Form.Item label="Ajuste mensual">
+                  <SwitchCalendar
+                    status={calendar.calendar.monthly_adjustment}
+                    name={"monthly_adjustment"}
                   />
                 </Form.Item>
               </Col>
               <Col span={5}>
-                <Form.Item name="annual_adjustment" label="Ajuste anual">
-                  <Switch
-                    defaultChecked={false}
-                    checkedChildren="Si"
-                    unCheckedChildren="No"
-                    onChange={(value) =>
-                      (calendar.calendar.annual_adjustment = value)
-                    }
+                <Form.Item label="Ajuste anual">
+                  <SwitchCalendar
+                    status={calendar.calendar.annual_adjustment}
+                    name={"annual_adjustment"}
                   />
                 </Form.Item>
               </Col>
@@ -181,12 +174,4 @@ const FormCaledanrXml = ({ calendar, paymentPeriodicity = [],dataImportCalendar,
   );
 };
 
-
-const mapState = (state) => {
-  return {
-    dataImportCalendar: state.importCalendarStore,
-  };
-};
-
-
-export default connect(mapState, {setDataImport})(FormCaledanrXml);
+export default FormCaledanrXml;
