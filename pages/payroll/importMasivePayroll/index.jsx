@@ -12,7 +12,8 @@ import {
   Input,
   Alert,
   Statistic,
-  Select, Space,
+  Select,
+  Space,
 } from "antd";
 import {
   DollarCircleOutlined,
@@ -34,9 +35,8 @@ import {
   messageUploadSuccess,
 } from "../../../utils/constant";
 import CalendarImport from "./components/calendarImport";
-import {getTypeTax} from "../../../redux/fiscalDuck"
-import _ from 'lodash'
-
+import { getTypeTax } from "../../../redux/fiscalDuck";
+import _ from "lodash";
 
 const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const router = useRouter();
@@ -52,9 +52,9 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const [person, setPerson] = useState([]);
 
   //resumen de datos
-  const [resumeData,setResumeData] = useState(null)
-  const [visibleResumeModal, setVisibleResumemodal] = useState(false)
-  const [visibleSuccessModal, setVisibleSuccessModal] = useState(false)
+  const [resumeData, setResumeData] = useState(null);
+  const [visibleResumeModal, setVisibleResumemodal] = useState(false);
+  const [visibleSuccessModal, setVisibleSuccessModal] = useState(false);
 
   const columns = [
     {
@@ -69,7 +69,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     {
       title: "RFC",
       render: (item) => {
-        return <span>{item.headers.rfc_receiver}</span>;
+        return <span>{item.headers.rfc}</span>;
       },
       key: (item) => {
         return item.headers.rfc;
@@ -108,9 +108,9 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     setViewModal(value);
   };
 
-  useEffect(()=>{
-    getTypeTax()
-  },[])
+  useEffect(() => {
+    getTypeTax();
+  }, []);
 
   useEffect(() => {
     if (xmlImport) {
@@ -150,104 +150,123 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     }
   }, [files]);
 
-  const processResume=(data)=>{
+  const processResume = (data) => {
     let numCompanies = data.companies.length;
-    let numRegPatronales=0;
-    let numXML=0;
+    let numRegPatronales = 0;
+    let numXML = 0;
 
     //buscamos cuantos registros patronales se cargaron
-    data.companies.map((company)=>{
-      if(_.get(company,'patronal_registrations',null)){
-        numRegPatronales=numRegPatronales+company.patronal_registrations.length;
+    data.companies.map((company) => {
+      if (_.get(company, "patronal_registrations", null)) {
+        numRegPatronales =
+          numRegPatronales + company.patronal_registrations.length;
       }
-    })
+    });
 
     //buscamoscuantos xmls se cargaron
-    data.companies.forEach((company)=>{
-      if(_.get(company,'patronal_registrations',null)){
-        company.patronal_registrations.forEach((regPatr,i)=>{
-          regPatr.periodicities.forEach((periodicity,i)=>{
-            console.log(periodicity?.cfdis.length)
-            numXML = numXML + (periodicity?.cfdis ? periodicity?.cfdis.length : 0);
+    data.companies.forEach((company) => {
+      if (_.get(company, "patronal_registrations", null)) {
+        company.patronal_registrations.forEach((regPatr, i) => {
+          regPatr.periodicities.forEach((periodicity, i) => {
+            console.log(periodicity?.cfdis.length);
+            numXML =
+              numXML + (periodicity?.cfdis ? periodicity?.cfdis.length : 0);
           });
-        })
+        });
       }
 
-      if(_.get(company,'periodicities',null)){
-        company.periodicities.map((periodicity,i)=>{
-          console.log(periodicity?.cfdis.length)
-          numXML = numXML + (periodicity?.cfdis ? periodicity?.cfdis.length : 0);
-        })
+      if (_.get(company, "periodicities", null)) {
+        company.periodicities.map((periodicity, i) => {
+          console.log(periodicity?.cfdis.length);
+          numXML =
+            numXML + (periodicity?.cfdis ? periodicity?.cfdis.length : 0);
+        });
       }
-
-    })
+    });
 
     let resume = {
       numCompanies,
       numRegPatronales,
-      numXML
-    }
+      numXML,
+    };
 
-    setResumeData(resume)
-    setVisibleResumemodal(true)
-  }
+    setResumeData(resume);
+    setVisibleResumemodal(true);
+  };
 
-  const DataDetailImport=()=>{
-    return <Row gutter={16}>
-      <Col span={12}>
-        <Statistic title="Empresas" value={resumeData?.numCompanies} />
-      </Col>
-      <Col span={12}>
-        <Statistic title="Registros Patronales" value={resumeData?.numRegPatronales} />
-      </Col>
-      <Col span={12}>
-        <Statistic title="xml Importados" value={resumeData?.numXML} />
-      </Col>
-    </Row>
-  }
-
-  const ModalResumeData=()=>{
+  const DataDetailImport = () => {
     return (
-        <Modal
-            footer={[
-              <Button key="submit" type="primary" loading={loading} onClick={()=>setVisibleResumemodal(false)}>
-                Aceptar
-              </Button>
-            ]}
-            title="Resumen de datos importados" visible={visibleResumeModal}
-               onOk={()=> setVisibleResumemodal(false)}
-               onCancel={()=> setVisibleResumemodal(false)}>
-          <DataDetailImport />
-        </Modal>
-    )
-  }
-
-
-  const ModalSuccessImport=()=>{
-    return (
-        <Modal
-            footer={[
-              <Button key="submit" type="primary" loading={loading} onClick={()=>{
-                setVisibleSuccessModal(false);
-                router.push({ pathname: "/select-company" })
-              }}>
-                Continuar
-              </Button>
-            ]}
-            title="Importación correcta" visible={visibleSuccessModal}
-            onCancel={()=> {
-              setVisibleSuccessModal(false)
-              router.push({ pathname: "/select-company" })
-            }}>
-          <Alert
-              message="Importación realizada con éxito"
-              description="Serás redireccionado al listado de empresas"
-              type="success"
+      <Row gutter={16}>
+        <Col span={12}>
+          <Statistic title="Empresas" value={resumeData?.numCompanies} />
+        </Col>
+        <Col span={12}>
+          <Statistic
+            title="Registros Patronales"
+            value={resumeData?.numRegPatronales}
           />
-        </Modal>
-    )
-  }
+        </Col>
+        <Col span={12}>
+          <Statistic title="xml Importados" value={resumeData?.numXML} />
+        </Col>
+      </Row>
+    );
+  };
 
+  const ModalResumeData = () => {
+    return (
+      <Modal
+        footer={[
+          <Button
+            key="submit"
+            type="primary"
+            loading={loading}
+            onClick={() => setVisibleResumemodal(false)}
+          >
+            Aceptar
+          </Button>,
+        ]}
+        title="Resumen de datos importados"
+        visible={visibleResumeModal}
+        onOk={() => setVisibleResumemodal(false)}
+        onCancel={() => setVisibleResumemodal(false)}
+      >
+        <DataDetailImport />
+      </Modal>
+    );
+  };
+
+  const ModalSuccessImport = () => {
+    return (
+      <Modal
+        footer={[
+          <Button
+            key="submit"
+            type="primary"
+            loading={loading}
+            onClick={() => {
+              setVisibleSuccessModal(false);
+              router.push({ pathname: "/select-company" });
+            }}
+          >
+            Continuar
+          </Button>,
+        ]}
+        title="Importación correcta"
+        visible={visibleSuccessModal}
+        onCancel={() => {
+          setVisibleSuccessModal(false);
+          router.push({ pathname: "/select-company" });
+        }}
+      >
+        <Alert
+          message="Importación realizada con éxito"
+          description="Serás redireccionado al listado de empresas"
+          type="success"
+        />
+      </Modal>
+    );
+  };
 
   const sendFiles = (data) => {
     WebApiPayroll.importPayrollMasiveXml(data)
@@ -255,11 +274,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         setLoading(false);
         message.success(messageUploadSuccess);
         setXmlImport(response.data);
-        console.log('se setea el modal aqui', response.data)
-        processResume(response.data)
-
-
-
+        console.log("se setea el modal aqui", response.data);
+        processResume(response.data);
       })
       .catch((error) => {
         setLoading(false);
@@ -276,35 +292,39 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       });
   };
 
-  const processResponseSave=(response)=>{
-    let company_list = _.get(response,'data.companies.company_list',[]);
-    let notSaved = [] // empresas no guardadas
-    if(company_list.length>0){
-        notSaved = company_list.filter((ele)=>!ele.saved)
-        console.log(notSaved)
+  const processResponseSave = (response) => {
+    let company_list = _.get(response, "data.companies.company_list", []);
+    let notSaved = []; // empresas no guardadas
+    if (company_list.length > 0) {
+      notSaved = company_list.filter((ele) => !ele.saved);
+      console.log(notSaved);
     }
 
-    if(notSaved.length>0){
-      setVisibleSuccessModal(false)
-      message.error(`${messageError}, por favor valide los datos requeridos. [detalle: ${_.map(notSaved,'message')}]`);
-    }else{
+    if (notSaved.length > 0) {
+      setVisibleSuccessModal(false);
+      message.error(
+        `${messageError}, por favor valide los datos requeridos. [detalle: ${_.map(
+          notSaved,
+          "message"
+        )}]`
+      );
+    } else {
       // si no encontramos errores en la lista de saved
       message.success(messageSaveSuccess);
-      setVisibleSuccessModal(true)
+      setVisibleSuccessModal(true);
     }
 
-
-    console.log(response.data.companies)
+    console.log(response.data.companies);
 
     setLoading(false);
-  }
+  };
 
-  const validateBeforeSubmit=()=>{
-      xmlImport.companies.map((company1,i)=>{
-        console.log(company1.patronal_registrations)
-      })
+  const validateBeforeSubmit = () => {
+    xmlImport.companies.map((company1, i) => {
+      console.log(company1.patronal_registrations);
+    });
     return false;
-  }
+  };
 
   const saveImportPayrroll = async () => {
     if (files.length > 0) {
@@ -319,7 +339,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       console.log(xmlImport);
       WebApiPayroll.importPayrollMasiveXml(form_data)
         .then((response) => {
-          processResponseSave(response)
+          processResponseSave(response);
         })
         .catch((error) => {
           message.error(messageError);
@@ -366,6 +386,21 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
     setPatronalSelect(0);
   };
 
+  const NameSuc = ({ name = "" }) => {
+    return (
+      <Form.Item label="Nombre de sucursal">
+        <Input
+          defaultValue={name}
+          onChange={(value) => {
+            xmlImport.companies[companySelect].patronal_registrations[
+              patronalSelect
+            ].branch_node = value.target.value;
+          }}
+        />
+      </Form.Item>
+    );
+  };
+
   return (
     <MainLayout currentKey={["importxml"]} defaultOpenKeys={["payroll"]}>
       {props.currentNode && (
@@ -389,8 +424,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         />
       )}
 
-      <ModalSuccessImport/>
-      <ModalResumeData/>
+      <ModalSuccessImport />
+      <ModalResumeData />
 
       {xmlImport && (
         <Form layout="vertical">
@@ -444,25 +479,20 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       )}
 
       <Spin spinning={loading}>
-
         {xmlImport && companySelect != null && patronalSelect != null && (
-            <Row justify="end">
-              <Space>
-                <Button onClick={() => onCancel()}>Cancelar</Button>
-                <Button onClick={() => saveImportPayrroll()}>
-                  Guardar
-                </Button>
-              </Space>
-            </Row>
-
-            )}
-
+          <Row justify="end">
+            <Space>
+              <Button onClick={() => onCancel()}>Cancelar</Button>
+              <Button onClick={() => saveImportPayrroll()}>Guardar</Button>
+            </Space>
+          </Row>
+        )}
 
         <Row justify="end" gutter={[10, 10]}>
           {xmlImport && companySelect != null && patronalSelect != null ? (
             <>
               <Col span={24}>
-                <Card className={'form_header_black'}>
+                <Card className={"form_header_black"}>
                   <Row justify="space-between">
                     <Row style={{ width: "100%" }}>
                       <Col span={18} style={{ display: "" }}>
@@ -529,26 +559,13 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                                   </Form.Item>
                                 </Col>
                                 <Col style={{ display: "flex" }}>
-                                  <Form.Item label="Nombre de sucursal">
-                                    <Input
-                                      value={
-                                        xmlImport.companies[companySelect]
-                                          .patronal_registrations[
-                                          patronalSelect
-                                        ].branch_node
-                                      }
-                                      onChange={(value) =>{
-                                        xmlImport.companies[
-                                            companySelect
-                                            ].patronal_registrations[
-                                            patronalSelect
-                                            ].branch_node = value.target.value;
-
-                                        setXmlImport({...xmlImport})
-                                      }
-                                      }
-                                    />
-                                  </Form.Item>
+                                  <NameSuc
+                                    name={
+                                      xmlImport.companies[companySelect]
+                                        .patronal_registrations[patronalSelect]
+                                        .branch_node
+                                    }
+                                  />
                                 </Col>
                               </>
                             )}
@@ -677,4 +694,6 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, {getTypeTax})(withAuthSync(ImportMasivePayroll));
+export default connect(mapState, { getTypeTax })(
+  withAuthSync(ImportMasivePayroll)
+);
