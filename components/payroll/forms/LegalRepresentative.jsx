@@ -1,8 +1,9 @@
 import { Form, Input, Row, Col } from "antd";
 import { useEffect } from "react";
 import SelectWorkTitle from "../../selects/SelectWorkTitle";
+import { onlyNumeric, ruleRequired, ruleWhiteSpace } from "../../../utils/rules";
 
-const LegalRepresentative = ({ form, legalRepresentative }) => {
+const LegalRepresentative = ({ form, legalRepresentative, pushed, ...props }) => {
   useEffect(() => {
     if (legalRepresentative) setForm(legalRepresentative);
   }, [legalRepresentative]);
@@ -23,7 +24,7 @@ const LegalRepresentative = ({ form, legalRepresentative }) => {
     <Form layout={"vertical"} form={form}>
       <Row>
         <Col lg={6} xs={22}>
-          <Form.Item name="name" label="Nombre">
+          <Form.Item name="name" label="Nombre" rules={[ruleRequired, ruleWhiteSpace]}>
             <Input />
           </Form.Item>
         </Col>
@@ -34,12 +35,12 @@ const LegalRepresentative = ({ form, legalRepresentative }) => {
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="email" label="Email">
+          <Form.Item name="email" label="Email" rules={[ruleRequired, ruleWhiteSpace]}>
             <Input />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <Form.Item name="phone" label="Teléfono">
+          <Form.Item name="phone" label="Teléfono" rules={[ruleRequired,onlyNumeric, ruleWhiteSpace]}>
             <Input />
           </Form.Item>
         </Col>

@@ -1,3 +1,4 @@
+import id from "faker/lib/locales/id_ID";
 import { getGroups } from "../api/apiKhonnect";
 import WebApiPeople from "../api/WebApiPeople";
 import { userCompanyId } from "../libs/auth";
@@ -22,7 +23,9 @@ const initialData = {
   cat_cost_center:[],
   cat_tags:[],
   cat_accounts:[],
-  errorData:null
+  errorData:null,
+  cat_branches:[],
+  cat_patronal_registration:[],
 };
 
 const RELATIONSHIP = "RELATIONSHIP";
@@ -44,6 +47,8 @@ const GROUP_FIXED_CONCEPT = "GROUP_FIXED_CONCEPT";
 const COST_CENTER = "COST_CENTER";
 const TAGS = "TAGS";
 const ACCOUNT = "ACCOUNT";
+const BRANCHES = "BRANCHES";
+const PATRONAL_REGISTRATION ="PATRONAL_REGISTRATION";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -88,6 +93,10 @@ const webReducer = (state = initialData, action) => {
       return { ...state, cat_tags: action.payload.data, errorData: action.payload?.error };
     case ACCOUNT:
       return { ...state, cat_accounts: action.payload.data, errorData: action.payload?.error };
+    case BRANCHES:
+      return { ...state, cat_branches: action.payload.data, errorData: action.payload?.error };
+    case PATRONAL_REGISTRATION:
+      return { ...state, cat_patronal_registration: action.payload.data, errorData: action.payload?.error };    
     default:
       return state;
   }
@@ -114,6 +123,8 @@ export const doCompanySelectedCatalog =
         dispatch(getCostCenter(idCompany));
         dispatch(getTags(idCompany));
         dispatch(getAccountantAccount(idCompany));
+        dispatch(getBranches());
+        dispatch(getPatronalRegistration(idCompany));
         return true;
       }
     } catch (error) {
@@ -302,3 +313,24 @@ export const getAccountantAccount = (idCompany) => async (dispatch, getState) =>
         dispatch({ type: ACCOUNT, payload: {data:[],error:error} });
       });
 };
+
+export const getBranches = () => async (dispatch, getState) =>{
+  await WebApiPeople.getBranches()
+  .then((response)=>{
+    dispatch({ type: BRANCHES, payload: {data:response.data.results, error:null}});
+  })
+  .catch((error)=>{
+    dispatch({ type: BRANCHES, payload: {data:[],error:error}});
+  })
+}
+
+export const getPatronalRegistration = (idCompany) => async (dispatch, getState) =>{
+  await WebApiPeople.getPatronalRegistration(idCompany)
+    .then((response) =>{
+      dispatch({ type: PATRONAL_REGISTRATION, payload: {data:response.data, error:null}});
+    })
+    .catch((error)=>{
+      console.log("NO Exitoso", error);
+      dispatch({ type: PATRONAL_REGISTRATION, payload: {data:[],error:error}});
+    })
+}

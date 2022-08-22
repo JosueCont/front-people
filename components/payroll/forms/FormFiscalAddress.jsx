@@ -1,23 +1,24 @@
 import { Form, Input, Row, Col, Select } from "antd";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import WebApiFiscal from "../../../api/WebApiFiscal";
-import { ruleRequired } from "../../../utils/rules";
+import { ruleRequired, ruleWhiteSpace } from "../../../utils/rules";
 import SelectCountry from "../../selects/SelectCountry";
 import SelectMunicipality from "../../selects/SelectMunicipality";
 import SelectState from "../../selects/SelectState";
 import SelectSuburb from "../../selects/SelectSuburb";
 
-const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
+const FormFiscalAddress = ({ fiscalAddress, form, pos_cod, ...props }) => {
   const { Option } = Select;
   const [postalCode, setPostalCode] = useState([]);
   const [postalCodeSelect, setPostalCodeSelect] = useState(null);
   const [state, setState] = useState(null);
+  const [value, setValue] = useState(null);
 
-  useEffect(() => {
-    if (fiscalAddress) setForm(fiscalAddress);
-  }, [fiscalAddress]);
+  // useEffect(() => {
+  //   console.log("fiscal adress",fiscalAddress);
+  //   if (fiscalAddress) setForm(fiscalAddress);
+  // }, [fiscalAddress]);
 
   const getPostalCode = (value) => {
     if (props.versionCfdi)
@@ -30,19 +31,29 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
         });
   };
 
-  const setForm = (data) => {
-    setState(data.state.id);
-    form.setFieldsValue({
-      postal_code: data.postal_code.code,
-      country: data.country.id,
-      state: data.state.id,
-      municipality: data.municipality.id,
-      street: data.street,
-      outdoor_number: data.outdoor_number,
-      interior_number: data.interior_number,
-      suburb: data.suburb,
-    });
-  };
+  // const setForm = (data) => {
+  //   console.log("setfomr data",data);
+  //   setState(data.state.id);
+  //   // setValue(data.postal_code);
+  //   setPostalCodeSelect(data.postal_code);
+  //   form.setFieldsValue({
+  //     postal_code: data.postal_code.code,
+  //     country: data.country.id,
+  //     state: data.state.id,
+  //     municipality: data.municipality.id,
+  //     street: data.street,
+  //     outdoor_number: data.outdoor_number,
+  //     interior_number: data.interior_number,
+  //     suburb: data.suburb,
+  //   });
+  // };
+
+  useEffect(() => {
+    if(pos_cod){
+      setPostalCodeSelect(pos_cod);
+    }
+  }, [pos_cod]);
+
 
   const setPostalCodeSelected = (data) => {
     setState(data.state.id);
@@ -62,7 +73,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
         <Row gutter={30}>
           <Col lg={8} xs={22} md={6}>
             <Form.Item
-              rules={[ruleRequired]}
+              rules={[ruleRequired, ruleWhiteSpace]}
               name="postal_code"
               label="Código postal"
             >
@@ -105,7 +116,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
           </Col>
           <Col lg={8} xs={22} md={6}>
             <SelectSuburb
-              postal_code={postalCodeSelect && postalCodeSelect.id}
+              postal_code={pos_cod}
             />
           </Col>
           <Col lg={8} xs={22} md={6}>
