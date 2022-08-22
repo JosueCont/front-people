@@ -13,7 +13,12 @@ import {
   Modal,
   Spin,
 } from "antd";
-import { CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined } from "@material-ui/icons";
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@material-ui/icons";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
   messageError,
@@ -32,7 +37,12 @@ import { connect } from "react-redux";
 import JobRiskPremium from "./forms/jobRiskPremium";
 import moment from "moment";
 
-const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) => {
+const ImssInformationNode = ({
+  node_id = null,
+  fiscal,
+  currentNode,
+  ...props
+}) => {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const [formPatronal] = Form.useForm();
@@ -60,17 +70,17 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
 
   const columns = [
     {
-      title: 'Código',
-      dataIndex: 'code',
-      key: 'name',
+      title: "Código",
+      dataIndex: "code",
+      key: "name",
     },
     {
-      title: 'Actividad Económica',
-      dataIndex: 'economic_activity',
+      title: "Actividad Económica",
+      dataIndex: "economic_activity",
     },
     {
-      title: 'Razón Social',
-      dataIndex: 'social_reason',
+      title: "Razón Social",
+      dataIndex: "social_reason",
     },
     {
       title: "Acciones",
@@ -78,13 +88,20 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
         return (
           <div>
             <Row gutter={16}>
-                <Col className="gutter-row" offset={1}>
-                  <EditOutlined onClick={() => editRegister(item, "td")} />
-                </Col>
-              
-                <Col className="gutter-row" offset={1}>
-                  <DeleteOutlined onClick={() => { setDeleteRegister({ id: item.id, name: item.social_reason }); }} />
-                </Col>
+              <Col className="gutter-row" offset={1}>
+                <EditOutlined onClick={() => editRegister(item, "td")} />
+              </Col>
+
+              <Col className="gutter-row" offset={1}>
+                <DeleteOutlined
+                  onClick={() => {
+                    setDeleteRegister({
+                      id: item.id,
+                      name: item.social_reason,
+                    });
+                  }}
+                />
+              </Col>
             </Row>
           </div>
         );
@@ -94,79 +111,81 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
 
   //ESPERAMOS EL NODO PARA LUEGO HACER EL GET DE LOS REGISTROS PATRONALES.
   useEffect(() => {
-    if(currentNode){
+    if (currentNode) {
       getPatronalRegistration();
     }
   }, [currentNode]);
 
   //HACEMOS EL GET DE LOS ELEMENTOS Y ENLISTAMOS
-  const getPatronalRegistration = () =>{
+  const getPatronalRegistration = () => {
     setLoadingData(true);
     WebApiPeople.getPatronalRegistrationData(currentNode.id)
-    .then((response) => {
-      setDataPatronalRegistration(response.data)
-      setLoadingData(false);
-    })
-    .catch((error) => {
-      setLoadingData(false);
-      console.log("error",error);
-    });
+      .then((response) => {
+        setDataPatronalRegistration(response.data);
+        setLoadingData(false);
+      })
+      .catch((error) => {
+        setLoadingData(false);
+        console.log("error", error);
+      });
   };
 
   //MÉTODO PARA GUARDAR UN NUEVO REGISTRO
-  const saveRegister = (data) =>{
+  const saveRegister = (data) => {
     WebApiPeople.savePatronalRegistration(currentNode.id, data)
-    .then((response) => {
-      resetForms();
-      message.success(messageSaveSuccess);
-      setVisibleTable(true);
-      getPatronalRegistration();
-      setDisabledSwitch(false);
-    })
-    .catch((error) => {
-      console.log(error);
-      message.error(messageError);
-      setDisabledSwitch(false);
-    });
+      .then((response) => {
+        resetForms();
+        message.success(messageSaveSuccess);
+        setVisibleTable(true);
+        getPatronalRegistration();
+        setDisabledSwitch(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        message.error(messageError);
+        setDisabledSwitch(false);
+      });
   };
 
   //MÉTODO PARA ACTUALIZAR REGISTRO
-  const updateRegister = (data) =>{
+  const updateRegister = (data) => {
     WebApiPeople.updatePatronalRegistration(idRegister, currentNode.id, data)
-    .then((response) => {
-      resetForms();
-      message.success(messageUpdateSuccess);
-      setVisibleTable(true);
-      getPatronalRegistration();
-      setIsEdit(false);
-      setDisabledSwitch(false);
-      setLabelForm("Nuevo Registro Patronal");
-    })
-    .catch((error) => {
-      setIsEdit(false);
-      console.log(error);
-      message.error(messageError);
-      setDisabledSwitch(false);
-    });
+      .then((response) => {
+        resetForms();
+        message.success(messageUpdateSuccess);
+        setVisibleTable(true);
+        getPatronalRegistration();
+        setIsEdit(false);
+        setDisabledSwitch(false);
+        setLabelForm("Nuevo Registro Patronal");
+      })
+      .catch((error) => {
+        setIsEdit(false);
+        console.log(error);
+        message.error(messageError);
+        setDisabledSwitch(false);
+      });
   };
 
   //MÉTODO PARA ELIMINAR REGISTRO
-  const deleteRegister = () =>{
+  const deleteRegister = () => {
     WebApiPeople.deletePatronalRegistration(idRegister, currentNode.id)
-    .then((response) => {
-      console.log("response",response);
-      message.success(messageDeleteSuccess);
-      getPatronalRegistration();
-    })
-    .catch((error) => {
-      console.log(error);
-      message.error("Verifica que el registro no se encuentre vinculada a una sucursal");
-    });
+      .then((response) => {
+        console.log("response", response);
+        message.success(messageDeleteSuccess);
+        getPatronalRegistration();
+      })
+      .catch((error) => {
+        console.log(error);
+        message.error(
+          "Verifica que el registro no se encuentre vinculada a una sucursal"
+        );
+      });
   };
 
   //PASAMOS DATA DEL REGISTRO A ELIMINAR PARA LUEGO ABRIR MODAL
-  const setDeleteRegister = (data) =>{
-    setDeleted(data)
+  const setDeleteRegister = (data) => {
+    setDeleted(data);
     setIdRegister(data.id);
   };
 
@@ -179,36 +198,40 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
       representative: formLegalRep.getFieldsValue(),
       jobRisk: formJobRisk.getFieldValue(),
     };
-    console.log("antes de enviar",data);
-    if(isEdit){
+    console.log("antes de enviar", data);
+    if (isEdit) {
       //PASAMOS DATOS FALTANTES DEL FORM ADRESS.
       data.address.country = country;
       data.address.municipality = municipality;
       data.address.state = state;
       //FORMATEAMOS FECHA QUE VIENE POR OBJETO MOMENT PARA PASARLO CON FORMATO CORRECTO.
-      data.jobRisk.month = data?.jobRisk?.month ?  parseInt(moment(data?.jobRisk?.month?._d).format('MM')): null; 
-      data.jobRisk.year = data?.jobRisk?.year ? parseInt( moment(data?.jobRisk?.year?._d).format('YYYY')): null;
+      data.jobRisk.month = data?.jobRisk?.month
+        ? parseInt(moment(data?.jobRisk?.month?._d).format("MM"))
+        : null;
+      data.jobRisk.year = data?.jobRisk?.year
+        ? parseInt(moment(data?.jobRisk?.year?._d).format("YYYY"))
+        : null;
       updateRegister(data);
-    }else{
+    } else {
       saveRegister(data);
     }
   };
 
   //MODAL PARA CONFIRMAR SI SE VA ELIMINAR EL REGISTRO
   useEffect(() => {
-    if(deleted){
-        if (deleted.id) { 
-            Modal.confirm({
-                title: "¿Está seguro de eliminar este registro?",
-                content: "Si lo elimina no podrá recuperarlo",
-                cancelText: "Cancelar",
-                okText: "Sí, eliminar",
-                onOk: () => {
-                    deleteRegister();
-                }
-            });
-        }            
-    } 
+    if (deleted) {
+      if (deleted.id) {
+        Modal.confirm({
+          title: "¿Está seguro de eliminar este registro?",
+          content: "Si lo elimina no podrá recuperarlo",
+          cancelText: "Cancelar",
+          okText: "Sí, eliminar",
+          onOk: () => {
+            deleteRegister();
+          },
+        });
+      }
+    }
   }, [deleted]);
 
   //METODO PARA VALIDAR CONTRASEÑAS, DESHABILITADO POR EL MOMENTO
@@ -238,24 +261,24 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
   };
 
   //MÉTODO PARA LIMPIAR EL FORMULARIO Y ALGUNOS ESTADOS DE LA VISTA
-  const resetForms = () =>{
+  const resetForms = () => {
     formPatronal.resetFields();
     formJobRisk.resetFields();
     formLegalRep.resetFields();
     formAddress.resetFields();
     setVisibleTable(true);
     setDisabledSwitch(false);
-    setLabelForm("Nuevo Registro Patronal")
+    setLabelForm("Nuevo Registro Patronal");
   };
 
   //MÉTODO PARA ENSEÑAR U OCULTAR TABLA Y ENSEÑAR FORMULARIO
   const onChange = () => {
-      setVisibleTable(false);
-      setDisabledSwitch(true);
+    setVisibleTable(false);
+    setDisabledSwitch(true);
   };
 
   //SE SETEAN LOS VALORES DEL REGISTRO A SUS INPUTS PARA PODER SER EDITADOS
-  const editRegister = (item) =>{
+  const editRegister = (item) => {
     setLabelForm("Editar Registro Patronal");
     setDisabledSwitch(true);
     setIsEdit(true);
@@ -284,8 +307,12 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
       job_risk_class: item?.job_risk_premium?.job_risk_class,
       job_risk_percent: item?.job_risk_premium?.job_risk_percent,
       //FORMATEAMOS LOS DATOS PARA CONVERTIRLOS EN OBJETO DE MOMENT PARA QUE PUEDAN SER LEÍDOS POR EL DATEPICKER.
-      year: moment(item?.job_risk_premium?.year +"-01-15T16:18:56.355272-05:00"), 
-      month: moment("2022-"+item?.job_risk_premium?.month+"-15T16:18:56.355272-05:00"),
+      year: moment(
+        item?.job_risk_premium?.year + "-01-15T16:18:56.355272-05:00"
+      ),
+      month: moment(
+        "2022-" + item?.job_risk_premium?.month + "-15T16:18:56.355272-05:00"
+      ),
       stps_accreditation: item?.job_risk_premium?.stps_accreditation,
       rt_fraction: item?.job_risk_premium?.rt_fraction,
     });
@@ -307,25 +334,23 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
       interior_number: item?.fiscal_address?.interior_number,
       outdoor_number: item?.fiscal_address?.outdoor_number,
     });
-  }
+  };
 
   return (
     <>
-      <Row style={{marginBottom:"15px"}} justify="end" >
-        { !disabledSwitch &&
+      <Row style={{ marginBottom: "15px" }} justify="end">
+        {!disabledSwitch && (
           <>
-            <Button
-            onClick={onChange}
-            >Agregar Registro Patronal</Button>
-          </> 
-        }  
+            <Button onClick={onChange}>Agregar Registro Patronal</Button>
+          </>
+        )}
       </Row>
-      { visibleTable &&
+      {visibleTable && (
         <Spin spinning={loadingData}>
           <Table dataSource={dataPatronalRegistration} columns={columns} />
         </Spin>
-      }
-      { !visibleTable &&
+      )}
+      {!visibleTable && (
         <>
           <Row>
             <Col span={24}>
@@ -349,12 +374,15 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
                 pos_cod={cp}
               />
               <Row>
-                <Title style={{ fontSize: "15px" }}>Prima de riesgo laboral</Title>
+                <Title style={{ fontSize: "15px" }}>
+                  Prima de riesgo laboral
+                </Title>
               </Row>
               <Divider style={{ marginTop: "2px" }} />
               <JobRiskPremium
-                JobRiskPremium={ patronalData && patronalData.job_risk_premium}
-                form={formJobRisk} />
+                JobRiskPremium={patronalData && patronalData.job_risk_premium}
+                form={formJobRisk}
+              />
               <Row>
                 <Title style={{ fontSize: "15px" }}>Representante legal</Title>
               </Row>
@@ -368,10 +396,14 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
             </Col>
           </Row>
           <Row justify="end">
-            <Button onClick={resetForms} style={{marginRight:"5px"}}>Cancelar</Button>
-            <Button onClick={saveForms} form="formGeneric" htmlType="submit">Guardar</Button>
+            <Button onClick={resetForms} style={{ marginRight: "5px" }}>
+              Cancelar
+            </Button>
+            <Button onClick={saveForms} form="formGeneric" htmlType="submit">
+              Guardar
+            </Button>
           </Row>
-          {/* <Row>
+          <Row>
             <Title style={{ fontSize: "15px" }}>Certificados digitales</Title>
           </Row>
           <Row>
@@ -410,7 +442,9 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
                           type="password"
                           placeholder="Contraseña"
                           maxLength={12}
-                          onChange={(value) => validatedPass(value.target.value)}
+                          onChange={(value) =>
+                            validatedPass(value.target.value)
+                          }
                         />
                       </Form.Item>
                     </Col>
@@ -442,9 +476,9 @@ const ImssInformationNode = ({ node_id = null, fiscal, currentNode, ...props }) 
                 )}
               </div>
             </Col>
-          </Row> */}
+          </Row>
         </>
-      }
+      )}
     </>
   );
 };
