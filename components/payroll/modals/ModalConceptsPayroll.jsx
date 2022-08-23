@@ -86,6 +86,7 @@ const ModalConceptsPayroll = ({
             description: item.description,
             datum: 0,
             amount: 0,
+            data_type: item.data_type,
           };
         })
       );
@@ -99,6 +100,7 @@ const ModalConceptsPayroll = ({
             description: item.description,
             datum: 0,
             amount: 0,
+            data_type: item.data_type,
           };
         })
       );
@@ -112,6 +114,7 @@ const ModalConceptsPayroll = ({
             description: item.description,
             datum: 0,
             amount: 0,
+            data_type: item.data_type,
           };
         })
       );
@@ -453,13 +456,27 @@ const ModalConceptsPayroll = ({
                   render={(record) => <div>{record.description}</div>}
                 />
                 <Column
-                  title="Monto"
+                  title="Dato"
                   align="center"
                   key="amount"
-                  render={(record) => <div>{numberFormat(record.value)}</div>}
+                  render={(record) => (
+                    <div>{record.data_type == 2 ? record.value : 0}</div>
+                  )}
                 />
                 <Column
                   title="Monto"
+                  align="center"
+                  key="amount"
+                  render={(record) => (
+                    <div>
+                      {record.data_type == 1
+                        ? `$ ${numberFormat(record.value)}`
+                        : `$ 0.00`}
+                    </div>
+                  )}
+                />
+                <Column
+                  title="Acciones"
                   align="center"
                   key="amount"
                   render={(text, record, index) => (
