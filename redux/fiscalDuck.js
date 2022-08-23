@@ -100,7 +100,6 @@ export const setVersionCfdi = (use_cfdi) => async (dispatch, getState) => {
 
 export const doFiscalCatalogs =
   (node_id, use_cfdi) => async (dispatch, getState) => {
-    console.log(use_cfdi);
     try {
       if (use_cfdi && use_cfdi != undefined) {
         dispatch(getFiscalBanks(use_cfdi));
@@ -250,21 +249,23 @@ export const getInternalOtherPayments =
       });
   };
 
-export const getTypeTax = (use_cfdi="4") => async (dispatch, getState) => {
-  await WebApiFiscal.getTypeTax()
-    .then((response) => {
-      dispatch({
-        type: TYPE_TAX,
-        payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi.version) <= use_cfdi
-        ),
-      });
-    })
+export const getTypeTax =
+  (use_cfdi = "3.3") =>
+  async (dispatch, getState) => {
+    await WebApiFiscal.getTypeTax()
+      .then((response) => {
+        dispatch({
+          type: TYPE_TAX,
+          payload: response.data.results.filter(
+            (item) => Number(item.version_cfdi.version) <= use_cfdi
+          ),
+        });
+      })
 
-    .catch((error) => {
-      console.log(error);
-    });
-};
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 export const getPaymentPeriodicity =
   (use_cfdi) => async (dispatch, getState) => {
     await WebApiFiscal.getPaymentPeriodicity()

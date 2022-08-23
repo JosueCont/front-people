@@ -90,7 +90,7 @@ export const logoutAuth = async () => {
 
 export const userCompanyId = () => {
   try {
-    let company_id = sessionStorage.getItem("data");
+    let company_id = localStorage.getItem("data");
     if (company_id && company_id != "" && company_id != undefined)
       return company_id;
     else null;

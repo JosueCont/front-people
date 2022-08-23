@@ -37,7 +37,7 @@ const GroupView = ({ ...props }) => {
 
   useEffect(() => {
     if (isBrowser()) {
-      setCompanyId(sessionStorage.getItem("data"));
+      setCompanyId(localStorage.getItem("data"));
     }
   }, []);
 

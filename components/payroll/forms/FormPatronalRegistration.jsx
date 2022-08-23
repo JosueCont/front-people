@@ -14,7 +14,7 @@ const FormPatronalRegistration = ({
       <Row gutter={20}>
         <Col lg={6} xs={22}>
           <Form.Item name="code" label="Clave de registro patronal" rules={[ruleRequired, ruleWhiteSpace]}>
-            <Input />
+            <Input maxLength={11} />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
