@@ -29,6 +29,7 @@ import {
 } from "../../utils/constant";
 import { doFiscalCatalogs } from "../../redux/fiscalDuck";
 import WebApiFiscal from "../../api/WebApiFiscal";
+import { CheckOutlined, CloseOutlined } from "@material-ui/icons";
 
 const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   const { TabPane } = Tabs;
@@ -50,6 +51,21 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
     {
       title: "Nombre",
       dataIndex: "description",
+    },
+    {
+      title: "Código SAT",
+      render: (item) => {
+        return (
+          <div>
+            {item.perception_type != null && <>{item.perception_type.code}</>}
+
+            {item.deduction_type != null && <>{item.deduction_type.code}</>}
+            {item.other_type_payment != null && (
+              <>{item.other_type_payment.code}</>
+            )}
+          </div>
+        );
+      },
     },
 
     {
@@ -174,6 +190,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   const editRegister = (item, param) => {
     setEdit(true);
     setId(item.id);
+    console.log("Concepto", item);
 
     if (key == 1) {
       form.setFieldsValue({
@@ -181,6 +198,8 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         description: item.description,
         data_type: item.data_type,
         perception_type: item.perception_type.id,
+
+        show: item.show,
       });
     } else if (key == 2) {
       form.setFieldsValue({
@@ -188,6 +207,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         description: item.description,
         data_type: item.data_type,
         deduction_type: item.deduction_type.id,
+        show: item.show,
       });
     } else if (key == 3) {
       form.setFieldsValue({
@@ -195,6 +215,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
         description: item.description,
         data_type: item.data_type,
         other_type_payment: item.other_type_payment.id,
+        show: item.show,
       });
     }
   };
@@ -344,6 +365,15 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
                     props.cat_other_payments
               }
             />
+          </Col>
+          <Col lg={6} xs={22} md={12}>
+            <Form.Item
+              name="show"
+              label="Mostrar para calcular"
+              valuePropName="checked"
+            >
+              <Switch defaultChecked />
+            </Form.Item>
           </Col>
         </Row>
         <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>

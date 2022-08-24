@@ -49,6 +49,7 @@ const ModalConceptsPayroll = ({
       props.deductions_int &&
       props.other_payments_int
     ) {
+      console.log("Percepciones =>", props.perceptions_int);
       if (payrollType === "046") {
         props.perceptions_int = props.perceptions_int.filter(
           (item) =>
@@ -65,16 +66,19 @@ const ModalConceptsPayroll = ({
         );
       } else {
         props.perceptions_int = props.perceptions_int.filter(
-          (item) => item.perception_type.is_payroll && item.node != null
+          (item) =>
+            item.perception_type.is_payroll && item.node != null && item.show
         );
         props.deductions_int = props.deductions_int.filter(
           (item) =>
             item.deduction_type.is_payroll &&
             item.node != null &&
-            item.deduction_type.code !== "002"
+            item.deduction_type.code !== "002" &&
+            item.show
         );
         props.other_payments_int = props.other_payments_int.filter(
-          (item) => item.other_type_payment.is_payroll && item.node != null
+          (item) =>
+            item.other_type_payment.is_payroll && item.node != null && item.show
         );
       }
       setPerceptionsCat(
