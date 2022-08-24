@@ -29,7 +29,6 @@ import {
 } from "../../utils/constant";
 import { doFiscalCatalogs } from "../../redux/fiscalDuck";
 import WebApiFiscal from "../../api/WebApiFiscal";
-import { CheckOutlined, CloseOutlined } from "@material-ui/icons";
 
 const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   const { TabPane } = Tabs;
