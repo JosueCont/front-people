@@ -240,13 +240,13 @@ const CalculatePayroll = ({ ...props }) => {
         key: "datum",
         dataIndex: "datum",
         className: "cell-concept",
-        width: "10%",
+        width: "5%",
       },
       {
         title: "Grabado",
         key: "taxed_amount",
         dataIndex: "taxed_amount",
-        width: "10%",
+        width: "15%",
         render: (taxed_amount) => (
           <Space size="middle">
             <NumberFormat prefix={"$"} number={taxed_amount} />
@@ -257,7 +257,7 @@ const CalculatePayroll = ({ ...props }) => {
         title: "Exento",
         key: "exempt_amount",
         dataIndex: "exempt_amount",
-        width: "10%",
+        width: "15%",
         render: (exempt_amount) => (
           <Space size="middle">
             <NumberFormat prefix={"$"} number={exempt_amount} />
@@ -267,7 +267,7 @@ const CalculatePayroll = ({ ...props }) => {
       {
         title: "Importe",
         key: "amount",
-        width: "20%",
+        width: "15%",
         render: (item) => (
           <>
             {data.payroll_cfdi_person &&
@@ -319,12 +319,12 @@ const CalculatePayroll = ({ ...props }) => {
         key: "description",
         dataIndex: "description",
         className: "cell-concept",
-        width: "70%",
+        width: "60%",
       },
       {
         title: "Dato",
-        key: "data",
-        dataIndex: "data",
+        key: "datum",
+        dataIndex: "datum",
         className: "cell-concept",
         width: "10%",
       },
@@ -332,7 +332,7 @@ const CalculatePayroll = ({ ...props }) => {
         title: "Importe",
         key: "amount",
         dataIndex: "amount",
-        width: "10%",
+        width: "20%",
         render: (amount) => (
           <Space size="middle">
             <Text>
@@ -349,20 +349,20 @@ const CalculatePayroll = ({ ...props }) => {
         key: "code",
         dataIndex: "code",
         className: "cell-concept",
-        width: "10%",
+        width: "5%",
       },
       {
         title: "Descripción",
         key: "description",
         dataIndex: "description",
         className: "cell-concept",
-        width: "80%",
+        width: "70%",
       },
       {
         title: "Importe",
         key: "amount",
         dataIndex: "amount",
-        width: "10%",
+        width: "20%",
         render: (amount) => (
           <Space size="middle">
             <NumberFormat prefix={"$"} number={amount} />
@@ -440,6 +440,7 @@ const CalculatePayroll = ({ ...props }) => {
               float: "right",
               fontSize: 16,
               fontWeight: "bold",
+              flexDirection: "column-reverse",
             }}
           >
             <Row style={{ border: "1px solid" }}>
