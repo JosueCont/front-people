@@ -189,7 +189,6 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
   const editRegister = (item, param) => {
     setEdit(true);
     setId(item.id);
-    console.log("Concepto", item);
 
     if (key == 1) {
       form.setFieldsValue({
