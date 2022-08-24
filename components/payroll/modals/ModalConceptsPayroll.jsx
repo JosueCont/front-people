@@ -49,7 +49,6 @@ const ModalConceptsPayroll = ({
       props.deductions_int &&
       props.other_payments_int
     ) {
-      console.log("Percepciones =>", props.perceptions_int);
       if (payrollType === "046") {
         props.perceptions_int = props.perceptions_int.filter(
           (item) =>
