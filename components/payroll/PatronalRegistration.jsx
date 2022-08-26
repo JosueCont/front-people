@@ -109,14 +109,12 @@ const ImssInformationNode = ({
     },
   ];
 
-  //ESPERAMOS EL NODO PARA LUEGO HACER EL GET DE LOS REGISTROS PATRONALES.
   useEffect(() => {
     if (currentNode) {
       getPatronalRegistration();
     }
   }, [currentNode]);
 
-  //HACEMOS EL GET DE LOS ELEMENTOS Y ENLISTAMOS
   const getPatronalRegistration = () => {
     setLoadingData(true);
     WebApiPeople.getPatronalRegistrationData(currentNode.id)
@@ -130,7 +128,6 @@ const ImssInformationNode = ({
       });
   };
 
-  //MÉTODO PARA GUARDAR UN NUEVO REGISTRO
   const saveRegister = (data) => {
     WebApiPeople.savePatronalRegistration(currentNode.id, data)
       .then((response) => {
@@ -143,11 +140,10 @@ const ImssInformationNode = ({
       .catch((error) => {
         console.log(error);
         message.error(messageError);
-        setDisabledSwitch(false);
+        // setDisabledSwitch(false);
       });
   };
 
-  //MÉTODO PARA ACTUALIZAR REGISTRO
   const updateRegister = (data) => {
     WebApiPeople.updatePatronalRegistration(idRegister, currentNode.id, data)
       .then((response) => {
@@ -163,11 +159,9 @@ const ImssInformationNode = ({
         setIsEdit(false);
         console.log(error);
         message.error(messageError);
-        setDisabledSwitch(false);
       });
   };
 
-  //MÉTODO PARA ELIMINAR REGISTRO
   const deleteRegister = () => {
     WebApiPeople.deletePatronalRegistration(idRegister, currentNode.id)
       .then((response) => {
@@ -183,13 +177,11 @@ const ImssInformationNode = ({
       });
   };
 
-  //PASAMOS DATA DEL REGISTRO A ELIMINAR PARA LUEGO ABRIR MODAL
   const setDeleteRegister = (data) => {
     setDeleted(data);
     setIdRegister(data.id);
   };
 
-  //RECOPILAMOS LOS DATOS DE LOS FORMULARIOS
   const saveForms = () => {
     const data = {
       node: currentNode.id,
@@ -198,26 +190,18 @@ const ImssInformationNode = ({
       representative: formLegalRep.getFieldsValue(),
       jobRisk: formJobRisk.getFieldValue(),
     };
-    console.log("antes de enviar", data);
     if (isEdit) {
-      //PASAMOS DATOS FALTANTES DEL FORM ADRESS.
       data.address.country = country;
       data.address.municipality = municipality;
       data.address.state = state;
-      //FORMATEAMOS FECHA QUE VIENE POR OBJETO MOMENT PARA PASARLO CON FORMATO CORRECTO.
-      data.jobRisk.month = data?.jobRisk?.month
-        ? parseInt(moment(data?.jobRisk?.month?._d).format("MM"))
-        : null;
-      data.jobRisk.year = data?.jobRisk?.year
-        ? parseInt(moment(data?.jobRisk?.year?._d).format("YYYY"))
-        : null;
+      data.jobRisk.month = data?.jobRisk?.month;
+      data.jobRisk.year = data?.jobRisk?.year;
       updateRegister(data);
     } else {
       saveRegister(data);
     }
   };
 
-  //MODAL PARA CONFIRMAR SI SE VA ELIMINAR EL REGISTRO
   useEffect(() => {
     if (deleted) {
       if (deleted.id) {
@@ -347,11 +331,27 @@ const ImssInformationNode = ({
       </Row>
       {visibleTable && (
         <Spin spinning={loadingData}>
-          <Table dataSource={dataPatronalRegistration} columns={columns} />
+          <Table
+            dataSource={dataPatronalRegistration}
+            columns={columns}
+            locale={{
+              emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
+          />
         </Spin>
       )}
       {!visibleTable && (
         <>
+          <Row justify="end">
+            <Button onClick={resetForms} style={{ marginRight: "5px" }}>
+              Cancelar
+            </Button>
+            <Button onClick={saveForms} form="formGeneric" htmlType="submit">
+              Guardar
+            </Button>
+          </Row>
           <Row>
             <Col span={24}>
               <Row>
@@ -485,7 +485,7 @@ const ImssInformationNode = ({
 
 const mapState = (state) => {
   return {
-    currentNode: state.userStore.current_node
+    currentNode: state.userStore.current_node,
   };
 };
 

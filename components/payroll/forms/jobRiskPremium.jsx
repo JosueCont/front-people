@@ -1,66 +1,71 @@
-import { ContactsOutlined } from "@material-ui/icons";
-import { Form, Input, Row, Col, Select, DatePicker } from "antd";
-import { set } from "lodash";
-import moment from "moment";
+import { Form, Input, Row, Col, Select } from "antd";
 import { useState, useEffect } from "react";
-import { onlyNumeric, ruleRequired, treeDecimal, ruleWhiteSpace } from "../../../utils/rules";
+import {
+  ruleRequired,
+  treeDecimal,
+  ruleWhiteSpace,
+} from "../../../utils/rules";
 import SelectJobRisk from "../../selects/SelectJobRisk";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import SelectFractions from "../../selects/SelectFractions";
+import { monthsName } from "../../../utils/constant";
+import { generateYear } from "../../../utils/functions";
 
-
-const JobRiskPremium = ({node,
+const JobRiskPremium = ({
+  node,
   form,
   cat_job_risk,
   cat_fractions,
   jobRisk = {},
   pushed,
-  ...props}) => {
-
-  const [year, setYear] = useState(null);
-  const [month, setMonth] = useState(null);
+  ...props
+}) => {
   const [jobRiskSelected, setJobRiskSelected] = useState(null);
 
-  const yearFormat = 'YYYY';
-  const monthFormat = 'MM'; 
-
-  const setPercent=(risk)=>{
-    console.log(risk)
-    if(risk?.percent)
+  const setPercent = (risk) => {
+    console.log(risk);
+    if (risk?.percent)
       form.setFieldsValue({
-        job_risk_percent:risk.percent
-      })
-  }
+        job_risk_percent: risk.percent,
+      });
+  };
 
-  useEffect(()=>{
-      if(jobRiskSelected){
-        const found = cat_job_risk.find(element => element.id === jobRiskSelected);
-        console.log(found)
-        setPercent(found)
-      }
-  },[jobRiskSelected, cat_job_risk])
+  useEffect(() => {
+    if (jobRiskSelected) {
+      const found = cat_job_risk.find(
+        (element) => element.id === jobRiskSelected
+      );
+      console.log(found);
+      setPercent(found);
+    }
+  }, [jobRiskSelected, cat_job_risk]);
 
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">
       <Row gutter={20}>
         <Col lg={6} xs={22}>
-           <SelectJobRisk name={'job_risk_class'} onChange={setJobRiskSelected} rules={[ruleRequired]} />
+          <SelectJobRisk
+            name={"job_risk_class"}
+            onChange={setJobRiskSelected}
+            rules={[ruleRequired]}
+          />
         </Col>
         <Col lg={6} xs={22}>
-        <Form.Item name="job_risk_percent" label="Porcentaje de riesgo" rules={[treeDecimal ,ruleRequired, ruleWhiteSpace]}>
+          <Form.Item
+            label="Porcentaje de riesgo"
+            rules={[treeDecimal, ruleRequired, ruleWhiteSpace]}
+          >
             <Input />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <Form.Item name="year" label="Año" rules={[ruleRequired]} >
-            {/* <Input /> */}
-            <DatePicker style={{width:"100%"}} picker="year" format={yearFormat}/>
+          <Form.Item name="year" label="Año" rules={[ruleRequired]}>
+            <Select options={generateYear()} />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
           <Form.Item name="month" label="Mes" rules={[ruleRequired]}>
-            {/* <Input /> */}
-            <DatePicker style={{width:"100%"}} picker="month" format={monthFormat}/>
+            <Select options={monthsName} />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
@@ -72,7 +77,7 @@ const JobRiskPremium = ({node,
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-            <SelectFractions name={'rt_fraction'} rules={[ruleRequired]} />
+          <SelectFractions name={"rt_fraction"} rules={[ruleRequired]} />
         </Col>
       </Row>
     </Form>
