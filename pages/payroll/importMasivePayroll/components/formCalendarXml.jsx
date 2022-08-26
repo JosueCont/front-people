@@ -142,7 +142,7 @@ const FormCaledanrXml = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={5}>
+              <Col span={4}>
                 <Form.Item label="¿Activo?">
                   <SwitchCalendar
                     status={calendar.calendar.active}
@@ -150,7 +150,7 @@ const FormCaledanrXml = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={5}>
+              <Col span={4}>
                 <Form.Item label="Ajuste mensual">
                   <SwitchCalendar
                     status={calendar.calendar.monthly_adjustment}
@@ -158,11 +158,27 @@ const FormCaledanrXml = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={5}>
+              <Col span={4}>
                 <Form.Item label="Ajuste anual">
                   <SwitchCalendar
                     status={calendar.calendar.annual_adjustment}
                     name={"annual_adjustment"}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={5}>
+                <Form.Item label="Desglose del séptimo día">
+                  <SwitchCalendar
+                    status={calendar.calendar.seventh_day_breakdown}
+                    name={"seventh_day_breakdown"}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={5}>
+                <Form.Item label="Descuento séptimo día">
+                  <SwitchCalendar
+                    status={calendar.calendar.seventh_day_discount}
+                    name={"seventh_day_discount"}
                   />
                 </Form.Item>
               </Col>
