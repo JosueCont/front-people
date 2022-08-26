@@ -112,7 +112,7 @@ export const doFiscalCatalogs =
           dispatch(getInternalDeductions(node_id, use_cfdi));
           dispatch(getInternalOtherPayments(node_id, use_cfdi));
         }
-        dispatch(getTypeTax(use_cfdi));
+        dispatch(getTypeTax());
         dispatch(getPaymentPeriodicity(use_cfdi));
         dispatch(getJourneyType(use_cfdi));
         dispatch(getContractType(use_cfdi));
@@ -200,7 +200,7 @@ export const getOtherPayments = (use_cfdi) => async (dispatch, getState) => {
 
 export const getInternalPerceptions =
   (data, versionCfdi) => async (dispatch, getState) => {
-    await WebApiFiscal.getInternalPerceptions(data, versionCfdi)
+    await WebApiFiscal.getInternalPerceptions(data)
       .then((response) => {
         dispatch({
           type: PERCEPTIONS_INT,
@@ -218,7 +218,7 @@ export const getInternalPerceptions =
 
 export const getInternalDeductions =
   (data, versionCfdi) => async (dispatch, getState) => {
-    await WebApiFiscal.getInternalDeductions(data, versionCfdi)
+    await WebApiFiscal.getInternalDeductions(data)
       .then((response) => {
         dispatch({
           type: DEDUCTIONS_INT,
@@ -249,23 +249,18 @@ export const getInternalOtherPayments =
       });
   };
 
-export const getTypeTax =
-  (use_cfdi = "3.3") =>
-  async (dispatch, getState) => {
-    await WebApiFiscal.getTypeTax()
-      .then((response) => {
-        dispatch({
-          type: TYPE_TAX,
-          payload: response.data.results.filter(
-            (item) => Number(item.version_cfdi.version) <= use_cfdi
-          ),
-        });
-      })
-
-      .catch((error) => {
-        console.log(error);
+export const getTypeTax = () => async (dispatch, getState) => {
+  await WebApiFiscal.getTypeTax()
+    .then((response) => {
+      dispatch({
+        type: TYPE_TAX,
+        payload: response.data.results,
       });
-  };
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 export const getPaymentPeriodicity =
   (use_cfdi) => async (dispatch, getState) => {
     await WebApiFiscal.getPaymentPeriodicity()
