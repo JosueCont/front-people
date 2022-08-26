@@ -272,7 +272,8 @@ const CalculatePayroll = ({ ...props }) => {
           <>
             {data.payroll_cfdi_person &&
             data.payroll_cfdi_person.is_open &&
-            step === 0 ? (
+            step === 0 &&
+            item.type === "046" ? (
               <Space size="middle">
                 <NumericInput
                   key={item.type}

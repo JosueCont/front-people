@@ -484,7 +484,9 @@ const ImssInformationNode = ({
 };
 
 const mapState = (state) => {
-  return { currentNode: state.userStore.current_node };
+  return {
+    currentNode: state.userStore.current_node
+  };
 };
 
 export default connect(mapState)(withAuthSync(ImssInformationNode));
