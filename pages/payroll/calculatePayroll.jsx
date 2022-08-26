@@ -1233,7 +1233,9 @@ const CalculatePayroll = ({ ...props }) => {
                                 downLoadFileBlob(
                                   `${getDomain(
                                     API_URL_TENANT
-                                  )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
+                                  )}/payroll/consolidated-payroll-report?period=${
+                                    periodSelected.id
+                                  }`,
                                   "hoja_rayas.xlsx",
                                   "GET"
                                 )
