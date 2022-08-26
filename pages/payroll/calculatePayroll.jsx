@@ -73,6 +73,7 @@ const CalculatePayroll = ({ ...props }) => {
   const [calculate, setCalculate] = useState(false);
   const [totalSalary, setTotalSalary] = useState(null);
   const [totalIsr, setTotalIsr] = useState(null);
+  const [netPay, setNetPay] = useState(null);
   const [calendarSelect, setCalendarSelect] = useState(null);
   const [periodSelected, setPeriodSelcted] = useState(null);
   const [step, setStep] = useState(0);
@@ -510,6 +511,7 @@ const CalculatePayroll = ({ ...props }) => {
   const changeCalendar = (value) => {
     setTotalSalary(null);
     setTotalIsr(null);
+    setNetPay(null);
     const calendar = paymentCalendars.find((item) => item.id === value);
     let period = calendar.periods.find((p) => p.active == true);
     if (!period) period = calendar.periods[0];
@@ -535,6 +537,7 @@ const CalculatePayroll = ({ ...props }) => {
     setPersonId(null);
     setTotalSalary(null);
     setTotalIsr(null);
+    setNetPay(null);
     setConsolidated(null);
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
@@ -544,6 +547,7 @@ const CalculatePayroll = ({ ...props }) => {
         setCalculate(false);
         setTotalSalary(response.data.total_salary);
         setTotalIsr(response.data.total_isr);
+        setNetPay(response.data.total_pay);
         validatedStatusPayroll(response.data.consolidated);
         setPersonsKeys([]);
         setPersonsStamp([]);
@@ -946,6 +950,7 @@ const CalculatePayroll = ({ ...props }) => {
     setPayroll([]);
     setTotalSalary(null);
     setTotalIsr(null);
+    setNetPay(null);
     setConsolidated(null);
     WebApiPayroll.importPayrollCaculate(data)
       .then((response) => {
@@ -953,6 +958,7 @@ const CalculatePayroll = ({ ...props }) => {
         setPayroll(response.data.payroll);
         setCalculate(false);
         setTotalSalary(response.data.total_salary);
+        setNetPay(response.data.total_pay);
         setTotalIsr(response.data.total_isr);
         validatedStatusPayroll(response.data.consolidated);
         setPersonsKeys([]);
@@ -1227,7 +1233,9 @@ const CalculatePayroll = ({ ...props }) => {
                                 downLoadFileBlob(
                                   `${getDomain(
                                     API_URL_TENANT
-                                  )}/payroll/consolidated-payroll-report?period=${activePeriod}`,
+                                  )}/payroll/consolidated-payroll-report?period=${
+                                    periodSelected.id
+                                  }`,
                                   "hoja_rayas.xlsx",
                                   "GET"
                                 )
@@ -1486,10 +1494,7 @@ const CalculatePayroll = ({ ...props }) => {
                                 <NumberFormat prefix={"$"} number={totalIsr} />
                               </div>
                               <div>
-                                <NumberFormat
-                                  prefix={"$"}
-                                  number={totalSalary - totalIsr}
-                                />
+                                <NumberFormat prefix={"$"} number={netPay} />
                               </div>
                             </Col>
                           </Row>
