@@ -1,7 +1,7 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 import webReducerUser, { doGetGeneralConfig } from "./UserDuck";
-import webReducerCatalog, { doCompanySelectedCatalog } from "./catalogCompany";
+import webReducerCatalog, {doCompanySelectedCatalog, senData} from "./catalogCompany";
 import fiscalDuck from "./fiscalDuck";
 import IntranetDuck from "./IntranetDuck";
 import PayrollDuck from "./payrollDuck";
