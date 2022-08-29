@@ -1,4 +1,5 @@
 import WebApi from "./webApi";
+import {getJobRisk} from "../redux/catalogCompany";
 
 class WebApiPeople {
   static getGeneralConfig() {
@@ -410,6 +411,14 @@ class WebApiPeople {
   static getPatronalRegistration(node){
     return WebApi.ApisType(`/business/patronal-registration-data?node=${node}`,'get')
   }
+
+  static getJobRiskClass(node){
+    return WebApi.ApisType(`/fiscal/job-risk-class/?node=${node}`,'get')
+  }
+
+  static getFractions(node){
+    return WebApi.ApisType(`/fiscal/fraction-rt/?node=${node}`,'get')
+  }
   
   static accountantAccount(nodeId) {
     return WebApi.ApisType(
@@ -433,5 +442,12 @@ class WebApiPeople {
   static deletePatronalRegistration(id, idCompany){
     return WebApi.ApisType(`/business/patronal-registration-data/${id}/?node=${idCompany}`,'delete');
   }
-}  
+
+  static sendCatalogData(url,data) {
+    return WebApi.ApisType(url, "post", data);
+  }
+
+}
+
+
 export default WebApiPeople;

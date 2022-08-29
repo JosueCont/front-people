@@ -65,16 +65,19 @@ const ModalConceptsPayroll = ({
         );
       } else {
         props.perceptions_int = props.perceptions_int.filter(
-          (item) => item.perception_type.is_payroll && item.node != null
+          (item) =>
+            item.perception_type.is_payroll && item.node != null && item.show
         );
         props.deductions_int = props.deductions_int.filter(
           (item) =>
             item.deduction_type.is_payroll &&
             item.node != null &&
-            item.deduction_type.code !== "002"
+            item.deduction_type.code !== "002" &&
+            item.show
         );
         props.other_payments_int = props.other_payments_int.filter(
-          (item) => item.other_type_payment.is_payroll && item.node != null
+          (item) =>
+            item.other_type_payment.is_payroll && item.node != null && item.show
         );
       }
       setPerceptionsCat(
@@ -86,6 +89,7 @@ const ModalConceptsPayroll = ({
             description: item.description,
             datum: 0,
             amount: 0,
+            data_type: item.data_type,
           };
         })
       );
@@ -99,6 +103,7 @@ const ModalConceptsPayroll = ({
             description: item.description,
             datum: 0,
             amount: 0,
+            data_type: item.data_type,
           };
         })
       );
@@ -112,6 +117,7 @@ const ModalConceptsPayroll = ({
             description: item.description,
             datum: 0,
             amount: 0,
+            data_type: item.data_type,
           };
         })
       );
@@ -453,13 +459,27 @@ const ModalConceptsPayroll = ({
                   render={(record) => <div>{record.description}</div>}
                 />
                 <Column
-                  title="Monto"
+                  title="Dato"
                   align="center"
                   key="amount"
-                  render={(record) => <div>{numberFormat(record.value)}</div>}
+                  render={(record) => (
+                    <div>{record.data_type == 2 ? record.value : 0}</div>
+                  )}
                 />
                 <Column
                   title="Monto"
+                  align="center"
+                  key="amount"
+                  render={(record) => (
+                    <div>
+                      {record.data_type == 1
+                        ? `$ ${numberFormat(record.value)}`
+                        : `$ 0.00`}
+                    </div>
+                  )}
+                />
+                <Column
+                  title="Acciones"
                   align="center"
                   key="amount"
                   render={(text, record, index) => (

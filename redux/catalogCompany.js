@@ -12,10 +12,12 @@ const initialData = {
   cat_treatment: [],
   cat_document_type: [],
   cat_job: [],
+  cat_job_risk: [],
   cat_departments: [],
   cat_person_type: [],
   person_type_table: [],
   cat_groups: [],
+  cat_fractions:[],
   people_company: [],
   cat_level: [],
   cat_work_title: [],
@@ -40,6 +42,8 @@ const PERSON_TYPE = "PERSON_TYPE";
 const PROFILE_GROUP = "PROFILE_GROUP";
 const PEOPLE_COMPANY = "PEOPLE_COMPANY";
 const JOB = "JOB";
+const JOB_RISK = "JOB_RISK";
+const FRACTIONS = "FRACTIONS";
 const LEVEL = "LEVEL";
 const WORK_TITLE = "WORK_TITLE";
 const FIXED_CONCEPT = "FIXED_CONCEPT";
@@ -96,7 +100,11 @@ const webReducer = (state = initialData, action) => {
     case BRANCHES:
       return { ...state, cat_branches: action.payload.data, errorData: action.payload?.error };
     case PATRONAL_REGISTRATION:
-      return { ...state, cat_patronal_registration: action.payload.data, errorData: action.payload?.error };    
+      return { ...state, cat_patronal_registration: action.payload.data, errorData: action.payload?.error };
+    case JOB_RISK:
+      return { ...state, cat_job_risk: action.payload.data, errorData: action.payload?.error };
+    case FRACTIONS:
+      return { ...state, cat_fractions: action.payload.data, errorData: action.payload?.error };
     default:
       return state;
   }
@@ -109,6 +117,8 @@ export const doCompanySelectedCatalog =
       if (!idCompany) idCompany = userCompanyId();
       if (idCompany) {
         dispatch(getRelationship(idCompany));
+        dispatch(getJobRiskClass(idCompany));
+        dispatch(getFractions(idCompany));
         dispatch(getExperienceType(idCompany));
         dispatch(getReasonSeparation(idCompany));
         dispatch(getLaborRelation(idCompany));
@@ -334,3 +344,28 @@ export const getPatronalRegistration = (idCompany) => async (dispatch, getState)
       dispatch({ type: PATRONAL_REGISTRATION, payload: {data:[],error:error}});
     })
 }
+
+
+export const getJobRiskClass = (idCompany) => async (dispatch, getState) =>{
+  await WebApiPeople.getJobRiskClass(idCompany)
+      .then((response) =>{
+        dispatch({ type: JOB_RISK, payload: {data:response.data.results, error:null}});
+      })
+      .catch((error)=>{
+        console.log("NO Exitoso", error);
+        dispatch({ type: JOB_RISK, payload: {data:[],error:error}});
+      })
+}
+
+
+export const getFractions = (idCompany) => async (dispatch, getState) =>{
+  await WebApiPeople.getFractions(idCompany)
+      .then((response) =>{
+        dispatch({ type: FRACTIONS, payload: {data:response.data.results, error:null}});
+      })
+      .catch((error)=>{
+        console.log("NO Exitoso", error);
+        dispatch({ type: FRACTIONS, payload: {data:[],error:error}});
+      })
+}
+

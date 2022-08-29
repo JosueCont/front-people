@@ -14,6 +14,9 @@ const initialData = {
   payment_periodicity: [],
   cat_cfdi_version: [],
   version_cfdi: null,
+  cat_imss_delegation: [],
+  cat_imss_subdelegation: [],
+  cat_family_medical_unit: [],
 };
 
 const BANKS = "BANKS";
@@ -31,6 +34,9 @@ const VERSION_CFDI = "VERSION_CFDI";
 const CONTRACT_TYPE = "CONTRACT_TYPE";
 const JOURNEY_TYPE = "JOURNEY_TYPE";
 const HIRING_REGIME = "HIRING_REGIME";
+const IMSS_DELEGATION = "IMSS_DELEGATION";
+const IMSS_SUBDELEGATION = "IMSS_SUBDELEGATION";
+const FAMILY_MEDICAL_UNIT = "FAMILY_MEDICAL_UNIT";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -64,6 +70,12 @@ const webReducer = (state = initialData, action) => {
       return { ...state, cat_journey_type: action.payload };
     case HIRING_REGIME:
       return { ...state, cat_hiring_regime: action.payload };
+    case IMSS_DELEGATION:
+      return { ...state, cat_imss_delegation: action.payload };
+    case IMSS_SUBDELEGATION:
+      return { ...state, cat_imss_subdelegation: action.payload };
+    case FAMILY_MEDICAL_UNIT:
+      return { ...state, cat_family_medical_unit: action.payload };
     default:
       return state;
   }
@@ -100,7 +112,6 @@ export const setVersionCfdi = (use_cfdi) => async (dispatch, getState) => {
 
 export const doFiscalCatalogs =
   (node_id, use_cfdi) => async (dispatch, getState) => {
-    console.log(use_cfdi);
     try {
       if (use_cfdi && use_cfdi != undefined) {
         dispatch(getFiscalBanks(use_cfdi));
@@ -113,11 +124,14 @@ export const doFiscalCatalogs =
           dispatch(getInternalDeductions(node_id, use_cfdi));
           dispatch(getInternalOtherPayments(node_id, use_cfdi));
         }
-        dispatch(getTypeTax(use_cfdi));
+        dispatch(getTypeTax());
         dispatch(getPaymentPeriodicity(use_cfdi));
         dispatch(getJourneyType(use_cfdi));
         dispatch(getContractType(use_cfdi));
         dispatch(getHiringRegime(use_cfdi));
+        dispatch(ImssDelegation());
+        dispatch(ImssSubDelegation());
+        dispatch(FamilyMedicalUnit());
       }
     } catch (error) {
       console.log(error);
@@ -201,7 +215,7 @@ export const getOtherPayments = (use_cfdi) => async (dispatch, getState) => {
 
 export const getInternalPerceptions =
   (data, versionCfdi) => async (dispatch, getState) => {
-    await WebApiFiscal.getInternalPerceptions(data, versionCfdi)
+    await WebApiFiscal.getInternalPerceptions(data)
       .then((response) => {
         dispatch({
           type: PERCEPTIONS_INT,
@@ -219,16 +233,11 @@ export const getInternalPerceptions =
 
 export const getInternalDeductions =
   (data, versionCfdi) => async (dispatch, getState) => {
-    await WebApiFiscal.getInternalDeductions(data, versionCfdi)
+    await WebApiFiscal.getInternalDeductions(data)
       .then((response) => {
         dispatch({
           type: DEDUCTIONS_INT,
           payload: response.data,
-          // .filter(
-          //   (item) =>
-          //     item.deduction_type.code != "001" &&
-          //     item.deduction_type.code != "002"
-          // ),
         });
       })
       .catch((error) => {
@@ -250,17 +259,14 @@ export const getInternalOtherPayments =
       });
   };
 
-export const getTypeTax = (use_cfdi="3.3") => async (dispatch, getState) => {
+export const getTypeTax = () => async (dispatch, getState) => {
   await WebApiFiscal.getTypeTax()
     .then((response) => {
       dispatch({
         type: TYPE_TAX,
-        payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi.version) <= use_cfdi
-        ),
+        payload: response.data.results,
       });
     })
-
     .catch((error) => {
       console.log(error);
     });
@@ -319,6 +325,47 @@ export const getHiringRegime = (use_cfdi) => async (dispatch, getState) => {
         payload: response.data.results.filter(
           (item) => Number(item.version_cfdi.version) <= use_cfdi
         ),
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const ImssDelegation = () => async (dispatch, getState) => {
+  await WebApiFiscal.ImssDelegation()
+    .then((response) => {
+      console.log(response.data);
+      dispatch({
+        type: IMSS_DELEGATION,
+        payload: response.data.results,
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const ImssSubDelegation = () => async (dispatch, getState) => {
+  await WebApiFiscal.ImssSubdelegation()
+    .then((response) => {
+      console.log(response.data);
+      dispatch({
+        type: IMSS_SUBDELEGATION,
+        payload: response.data.results,
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const FamilyMedicalUnit = () => async (dispatch, getState) => {
+  await WebApiFiscal.FamilyMedicalUnit()
+    .then((response) => {
+      dispatch({
+        type: FAMILY_MEDICAL_UNIT,
+        payload: response.data.results,
       });
     })
     .catch((error) => {

@@ -109,6 +109,18 @@ class WebApiFiscal {
   static uploadCsdsMultiEmmiter(data) {
     return WebApi.ApisType(`fiscal/csd-multi-emitter`, "post", data);
   }
+
+  static ImssDelegation(data) {
+    return WebApi.ApisType(`fiscal/imss-delegation`, "get");
+  }
+
+  static ImssSubdelegation(data) {
+    return WebApi.ApisType(`fiscal/imss-subdelegation`, "get");
+  }
+
+  static FamilyMedicalUnit(data) {
+    return WebApi.ApisType(`fiscal/family-medical-unit`, "get");
+  }
 }
 
 export default WebApiFiscal;
