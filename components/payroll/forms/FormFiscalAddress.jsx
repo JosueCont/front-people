@@ -15,10 +15,10 @@ const FormFiscalAddress = ({ fiscalAddress, form, pos_cod, ...props }) => {
   const [state, setState] = useState(null);
   const [value, setValue] = useState(null);
 
-  // useEffect(() => {
-  //   console.log("fiscal adress",fiscalAddress);
-  //   if (fiscalAddress) setForm(fiscalAddress);
-  // }, [fiscalAddress]);
+  useEffect(() => {
+    console.log("fiscal adress",fiscalAddress);
+    if (fiscalAddress) setForm(fiscalAddress);
+  }, [fiscalAddress]);
 
   const getPostalCode = (value) => {
     if (props.versionCfdi)
@@ -30,6 +30,19 @@ const FormFiscalAddress = ({ fiscalAddress, form, pos_cod, ...props }) => {
           console.log(e);
         });
   };
+
+  const setForm =(data)=>{
+    form.setFieldsValue({
+      postal_code: data.postal_code.code,
+      country: data?.country?.id,
+      state: data?.state?.id,
+      municipality: data?.municipality?.id,
+      street: data.street,
+      suburb:data.suburb,
+      outdoor_number: data.outdoor_number,
+      interior_number: data.interior_number
+    })
+  }
 
   // const setForm = (data) => {
   //   console.log("setfomr data",data);
