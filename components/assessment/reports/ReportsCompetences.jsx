@@ -200,9 +200,13 @@ const ReportsCompetences = ({
             })
             setProfilesSelected(list);
         }else{
-            let profile = profiles.find(record => record.id === value);
-            setProfilesSelected([profile])
+            getObjProfile(value);
         }
+    }
+
+    const getObjProfile = (id) =>{
+        let profile = profiles.find(record => record.id === id);
+        setProfilesSelected([profile]);
     }
 
     const sendUser = (value) =>{
@@ -215,7 +219,17 @@ const ReportsCompetences = ({
             setUsersSelected(list);
         }else{
             let user = persons_company.find(item => item.id === value);
+            if(['pp','pps'].includes(currentTab)) sendProfileUser(user);
             setUsersSelected([user]);
+        }
+    }
+
+    const sendProfileUser = (user) =>{
+        if(user.work_title &&
+            user.work_title.job &&
+            user.work_title.job.skill_profile_id
+        ){
+            getObjProfile(user.work_title.job.skill_profile_id);
         }
     }
 
