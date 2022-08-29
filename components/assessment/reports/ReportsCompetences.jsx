@@ -16,7 +16,9 @@ import { connect } from 'react-redux';
 import {
     CloseOutlined,
     UserOutlined,
-    ProfileOutlined
+    ProfileOutlined,
+    EyeOutlined,
+    RadarChartOutlined
 } from "@ant-design/icons";
 import ViewList from './ViewList';
 import {
@@ -27,6 +29,7 @@ import {
 import { FcInfo } from "react-icons/fc";
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { valueToFilter } from '../../../utils/functions';
+import ViewChart from './ViewChart';
 
 const ReportsCompetences = ({
     persons_company,
@@ -72,7 +75,7 @@ const ReportsCompetences = ({
                     <span>{competences?.length}</span>
                 )
             }
-        },
+        }
     ]
 
     const [usersSelected, setUsersSelected] = useState([]);
@@ -87,6 +90,9 @@ const ReportsCompetences = ({
     const [optionsPersons, setOptionsPersons] = useState([]);
     const [optionsProfiles, setOptionsProfiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [openModalChart, setOpenModalChart] = useState(false);
+    const [dataChart, setDataChart] = useState([]);
+    const [typeReport, setTypeReport] = useState('p');
 
     useEffect(()=>{
         if(currentTab !== currentKey){
@@ -335,6 +341,19 @@ const ReportsCompetences = ({
                 )
             }
         })
+        list_columns.push({
+            title: 'Ver gráfica',
+            width: 50,
+            align: 'center',
+            show: true,
+            render: (record) => {
+                if(record.profiles.at(-1).compatibility !== 'N/A'){
+                    return(
+                        <EyeOutlined onClick={()=> modalChartInvidual([record],'pp')}/>  
+                    )
+                }
+            }
+        })
         let newList = list_columns.filter(item=> item.show);
         setColumnsMany(newList)
     }
@@ -401,54 +420,6 @@ const ReportsCompetences = ({
         return fullName;
     }
 
-    const getInfoType = () =>{
-        return currentTab == 'p'
-            ? 'El tipo de reporte actual se trata de seleccionar solo una persona.'
-            : currentTab == 'pp'
-            ? 'El tipo de reporte actual se trata de seleccionar una persona vs un perfil.'
-            : ['psp','psc'].includes(currentTab)
-            ? 'El tipo de reporte actual se trata de seleccionar varias personas vs un perfil.'
-            : currentTab == 'pps'
-            && 'El tipo de reporte actual se trata de seleccionar una persona vs varios perfiles.'
-    }
-
-    const getProperties = () =>{
-        if(currentTab == 'p'){
-            return {
-                columns: columns_p,
-                rowKey: (item) => item.competence?.id,
-                dataSource: listReports
-            }
-        }else if(currentTab == 'pp'){
-            return {
-                columns: columns_pp,
-                rowKey: 'id',
-                dataSource: listReports.at(-1)?.profiles.at(-1)?.competences
-            }
-        }else if(currentTab == 'psp'){
-            return {
-                columns: columns_psp,
-                rowKey: (item) => item.persons?.id,
-                dataSource: listReports
-            }
-        }else if(currentTab == 'pps'){
-            return {
-                columns: columns_pps,
-                rowKey: 'id',
-                dataSource: listReports.at(-1)?.profiles
-            }
-        }else{
-            return {
-                columns: columnsMany,
-                rowKey: (item) => item.persons?.id,
-                dataSource: listReports,
-                scroll: columnsMany.length > 8
-                    ? { x: 1200}
-                    : {}
-            }
-        }
-    }
-
     const filterOptionSelect = (input, option) =>{
         return valueToFilter(option.label).includes(valueToFilter(input))
     }
@@ -456,6 +427,96 @@ const ReportsCompetences = ({
     const onChangeTable = ({current}) =>{
         setCurrentPage(current)
     }
+
+    const modalChartGlobal = () =>{
+        if(listReports.length <= 0){
+            message.error('Generar el reporte');
+        }else{
+            validateReportGlobal();
+            setTypeReport(currentTab);
+        }
+    }
+
+    const validateReportGlobal = () =>{
+        if(currentTab == 'p') typeReportP();
+        if(currentTab == 'psp') typeReportPSP();
+        if(currentTab == 'pps') typeReportPPS();
+        if(currentTab == 'psc') typeReportPSP();
+        if(currentTab == 'pp'){
+            setOpenModalChart(true);
+            setDataChart(listReports);
+        }
+    }
+
+    const typeReportP = () =>{
+        const getItem = item => item.level !== 'N/A' && item.level !== 'N/A';
+        let result = listReports.some(getItem);
+        if(result){
+            setDataChart([{
+                fullName: getFullName(usersSelected.at(-1)),
+                data: listReports.filter(getItem)
+            }])
+            setOpenModalChart(true);
+        }else{
+            message.error('Información insuficiente');
+        }
+    }
+
+    const typeReportPSP = () =>{
+        const getItem = item => item.profiles.at(-1).compatibility !== 'N/A';
+        let result = listReports.some(getItem);
+        if(result){
+            setDataChart([{
+                profile: profilesSelected,
+                data: listReports.filter(getItem)
+            }])
+            setOpenModalChart(true);
+        }else{
+            message.error('Información insuficiente');
+        }
+    }
+
+    const typeReportPPS = () =>{
+        const getItem = item => item.compatibility !== 'N/A';
+        let result = listReports.at(-1).profiles.some(getItem);
+        if(result){
+            setDataChart([{
+                fullName: getFullName(usersSelected.at(-1)),
+                data: listReports.at(-1).profiles.filter(getItem)
+            }])
+            setOpenModalChart(true);
+        }else{
+            message.error('Información insuficiente');
+        }
+    }
+
+    const modalChartInvidual = (item, type) =>{
+        setTypeReport(type);
+        validateReportInvidual(item, type);
+        setOpenModalChart(true);
+    }
+
+    const validateReportInvidual = (item, type) =>{
+        if(currentTab == 'pps' && type == 'pp'){
+            setDataChart([{
+                persons: { fullName: getFullName(usersSelected.at(-1)) },
+                profiles: item
+            }])
+        }else{
+            setDataChart(item);
+        }
+    }
+
+    // const getInfoType = () =>{
+    //     return currentTab == 'p'
+    //         ? 'El tipo de reporte actual se trata de seleccionar solo una persona.'
+    //         : currentTab == 'pp'
+    //         ? 'El tipo de reporte actual se trata de seleccionar una persona vs un perfil.'
+    //         : ['psp','psc'].includes(currentTab)
+    //         ? 'El tipo de reporte actual se trata de seleccionar varias personas vs un perfil.'
+    //         : currentTab == 'pps'
+    //         && 'El tipo de reporte actual se trata de seleccionar una persona vs varios perfiles.'
+    // }
 
     const columns_p = [
         {
@@ -556,6 +617,16 @@ const ReportsCompetences = ({
                     <span>{getCompatibility(item)}</span>
                 )
             }
+        },
+        {
+            title: 'Ver gráfica',
+            render: (item) =>{
+                if(item.profiles.at(-1).compatibility !== 'N/A'){
+                    return(
+                        <EyeOutlined onClick={()=> modalChartInvidual([item],'pp')}/>
+                    )
+                }
+            }
         }
     ]
 
@@ -577,8 +648,48 @@ const ReportsCompetences = ({
                     </span>
                 )
             }
+        },
+        {
+            title: 'Ver gráfica',
+            render: (item) =>{
+                if(item.compatibility !== 'N/A'){
+                    return(
+                        <EyeOutlined onClick={()=> modalChartInvidual([item],'pp')}/>
+                    )
+                }
+            }
         }
     ]
+
+    const getDataReport = () =>{
+        if(['p','psp','psc'].includes(currentTab)) return listReports;
+        if(currentTab == 'pp') return listReports.at(-1)?.profiles.at(-1)?.competences;
+        if(currentTab == 'pps') return listReports.at(-1)?.profiles;
+    }
+
+    const getRowKey = () =>{
+        if(['pp','pps'].includes(currentTab)) return 'id';
+        if(currentTab == 'p') return (item) => item.competence?.id;
+        if(['psp','psc'].includes(currentTab)) return (item) => item.persons?.id;
+    }
+
+    const getColumns = () =>{
+        if(currentTab == 'p') return columns_p;
+        if(currentTab == 'pp') return columns_pp;
+        if(currentTab == 'psp') return columns_psp;
+        if(currentTab == 'pps') return columns_pps;
+        if(currentTab == 'psc') return columnsMany;
+    }
+
+    const getProperties = () =>{
+        let params = {
+            columns: getColumns(),
+            rowKey: getRowKey(),
+            dataSource: getDataReport()
+        }
+        if(currentTab == 'psc') params.scroll = columnsMany.length > 8 ? { x: 1200}: {};
+        return params;
+    }
 
     return (
         <div style={{margin: '20px'}}>
@@ -653,6 +764,21 @@ const ReportsCompetences = ({
                         </Button>
                     </div>
                     <div className='content_inputs'>
+                        {/* {['p','pp'].includes(currentTab) && (
+                            
+                        )} */}
+                        {currentTab !== 'p' && (
+                            <div
+                                style={{alignItems:'center'}}
+                                className='content_inputs_element'
+                            >
+                                <p>Ver gráfica</p>
+                                <Button
+                                    onClick={()=> modalChartGlobal()}
+                                    icon={<EyeOutlined />}
+                                />
+                            </div>
+                        )}
                         {['psp','psc'].includes(currentTab) && (
                             <div className='content_inputs_element'>
                                 <p>Ver listado</p>
@@ -679,12 +805,12 @@ const ReportsCompetences = ({
                                 </Tooltip>
                             </div>
                         )}
-                        <div className='content_inputs_element'>
+                        {/* <div className='content_inputs_element'>
                             <p>Reporte actual</p>
                             <Tooltip title={getInfoType()} placement='topLeft'>
                                 <FcInfo size={30}/>
                             </Tooltip>
-                        </div>
+                        </div> */}
                     </div>
                 </Col>
                 {(usersSelected.length > 0 || profilesSelected.length > 0 ) && (
@@ -742,13 +868,23 @@ const ReportsCompetences = ({
                     />
                 </Col>
             </Row>
-            <ViewList
-                visible={openModal}
-                isUsers={isUsers}
-                close={hideModalList}
-                listData={getListData()}
-                setListData={getSetListData()}
-            />
+            {openModal && (
+                <ViewList
+                    visible={openModal}
+                    isUsers={isUsers}
+                    close={hideModalList}
+                    listData={getListData()}
+                    setListData={getSetListData()}
+                />
+            )}
+            {openModalChart && (
+                <ViewChart
+                    visible={openModalChart}
+                    close={setOpenModalChart}
+                    infoReport={dataChart}
+                    typeReport={typeReport}
+                />
+            )}
         </div>
     )
 }
