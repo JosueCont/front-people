@@ -1,5 +1,9 @@
 import axios from "axios";
 
+export const domainKuiz = process.browser
+  ? process.env.NEXT_PUBLIC_APP_ASSESSMENT_BASE_FRONT
+  : process.env.FRONT_BASE_URL_KUIZ;
+
 export const domainApi = process.browser
   ? process.env.NEXT_PUBLIC_API_BASE_URL_TENANT
   : process.env.API_BASE_URL_TENANT;

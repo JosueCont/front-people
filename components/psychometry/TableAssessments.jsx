@@ -16,6 +16,7 @@ import jwtEncode from "jwt-encode";
 import { ClearOutlined } from "@ant-design/icons";
 import { popupWindow, getCurrentURL } from '../../utils/constant';
 import { valueToFilter } from '../../utils/functions';
+import { domainKuiz } from '../../api/axiosApi'
 import {
   ContentTitle,
   ContentEnd,
@@ -174,7 +175,7 @@ const TableAssessments = ({
         profile_results: null
       }
       const token = jwtEncode(body, 'secret', 'HS256');
-      const url = `https://humand.kuiz.hiumanlab.com/?token=${token}`;
+      const url = `${domainKuiz}/?token=${token}`;
       // const url = `http://humand.localhost:3002/?token=${token}`;
       popupWindow(url)
     }else{
