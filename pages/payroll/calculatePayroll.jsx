@@ -1444,7 +1444,7 @@ const CalculatePayroll = ({ ...props }) => {
                       <Table
                         className="headers_transparent"
                         dataSource={payroll.map((item) => {
-                          item.key = item.person.id;
+                          item.key = item?.person?.id;
                           return item;
                         })}
                         columns={persons}
