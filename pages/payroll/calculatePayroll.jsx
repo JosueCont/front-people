@@ -1201,13 +1201,13 @@ const CalculatePayroll = ({ ...props }) => {
                               }
                             )
                           : downLoadFileBlob(
-                              (`${getDomain(
+                              `${getDomain(
                                 API_URL_TENANT
                               )}/payroll/payroll-report?payment_period=${
                                 periodSelected.id
                               }`,
                               "Nomina.xlsx",
-                              "GET")
+                              "GET"
                             );
                       }}
                     >
