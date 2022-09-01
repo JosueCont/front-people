@@ -47,5 +47,9 @@ class WebApiIntranet {
   static getUserIntranet(id) {
       return WebApi.ApisType(`/intranet/person-profile/?khonnect_id=${id}`, "get");
   }
+
+  static deleteGroup(id) {
+    return WebApi.ApisType(`/intranet/group/${id}/`, "delete");
+  }
 }
 export default WebApiIntranet;
