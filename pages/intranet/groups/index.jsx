@@ -78,7 +78,7 @@ const GroupView = ({ ...props }) => {
   };
 
   function confirmDelete(group) {
-    Axios.delete(API_URL + `/intranet/group/${group.id}/`)
+    WebApiIntranet.deleteGroup(group.id)
       .then((res) => {
         getGroups();
         message.success("" + group.name + " fue eliminado");
