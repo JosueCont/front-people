@@ -9,15 +9,14 @@ const SelectSuburb = ({
   rules = [],
   labelText = "Colonia",
   name,
-  postal_code,
+  postal_code = null,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    if(postal_code) getCountries();
+    if (postal_code) getCountries();
   }, [postal_code]);
-
 
   const getCountries = () => {
     WebApiFiscal.getSuburb(postal_code)
@@ -42,7 +41,6 @@ const SelectSuburb = ({
       <Select
         disabled={disabled}
         key="SelectSuburb"
-        // options={options}
         placeholder="Colonia"
         allowClear
         style={props.style ? props.style : {}}
