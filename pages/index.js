@@ -55,7 +55,8 @@ const Home = ({ ...props }) => {
             --secondaryColor: ${props.config
               ? props.config.concierge_secondary_color
               : "#1890ff"};
-            --login_image: ${props.config && props.config.concierge_logo_login
+            --background_image: ${props.config &&
+            props.config.concierge_logo_login
               ? "url(" + props.config.concierge_logo_login + ")"
               : 'url("/images/login.jpg")'};
             --logo_login: ${props.config && props.config.concierge_logo
@@ -76,8 +77,8 @@ const Home = ({ ...props }) => {
           }
 
           body {
-            background: transparent url("/images/banner_staff_iu.jpg") 70% 5%
-              no-repeat padding-box;
+            background: transparent var(--background_image) 70% 5% no-repeat
+              padding-box;
             background-size: cover;
             opacity: 1;
           }
@@ -184,7 +185,7 @@ const Home = ({ ...props }) => {
             }
 
             body {
-              background: transparent url("/images/banner_staff_iu.jpg") 70% 5%
+              background: transparent var(--background_image) 70% 5%
                 no-repeat padding-box;
               background-size: 100% 100%;
             }
@@ -246,7 +247,11 @@ const Home = ({ ...props }) => {
                 >
                   <img
                     className={"logoKhor"}
-                    src={props?.config?.concierge_logo ? props.config.concierge_logo : "/images/iU_Khorplus.png"}
+                    src={
+                      props?.config?.concierge_logo
+                        ? props.config.concierge_logo
+                        : "/images/iU_Khorplus.png"
+                    }
                     width={200}
                     alt=""
                   />
