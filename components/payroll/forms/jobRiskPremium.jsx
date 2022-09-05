@@ -16,29 +16,36 @@ const JobRiskPremium = ({
   form,
   cat_job_risk,
   cat_fractions,
-  jobRisk = {},
+  jobRisk = null,
   pushed,
   ...props
 }) => {
   const [jobRiskSelected, setJobRiskSelected] = useState(null);
-
-  const setPercent = (risk) => {
-    console.log(risk);
-    if (risk?.percent)
-      form.setFieldsValue({
-        job_risk_percent: risk.percent,
-      });
-  };
+  const [percent, setPercent] = useState(null);
 
   useEffect(() => {
     if (jobRiskSelected) {
       const found = cat_job_risk.find(
         (element) => element.id === jobRiskSelected
       );
-      console.log(found);
-      setPercent(found);
+      setPercent(found.percent);
+    } else {
+      setPercent(null);
     }
   }, [jobRiskSelected, cat_job_risk]);
+
+  useEffect(() => {
+    if (jobRisk) {
+      form.setFieldsValue({
+        job_risk_class: jobRisk.job_risk_class.id,
+        year: jobRisk.year,
+        month: jobRisk.month,
+        stps_accreditation: jobRisk.stps_accreditation,
+        rt_fraction: jobRisk.rt_fraction,
+      });
+      setPercent(jobRisk.job_risk_class.percent);
+    }
+  }, [jobRisk]);
 
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">
@@ -55,7 +62,7 @@ const JobRiskPremium = ({
             label="Porcentaje de riesgo"
             rules={[treeDecimal, ruleRequired, ruleWhiteSpace]}
           >
-            <Input />
+            <Input value={percent} />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
@@ -70,7 +77,7 @@ const JobRiskPremium = ({
         </Col>
         <Col lg={6} xs={22}>
           <Form.Item name="stps_accreditation" label="Acreditación STPS">
-            <Select defaultValue={false}>
+            <Select>
               <option value={true}>Si</option>
               <option value={false}>No</option>
             </Select>

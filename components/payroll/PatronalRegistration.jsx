@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Row,
   Col,
@@ -25,7 +25,6 @@ import {
   messageSaveSuccess,
   messageUploadSuccess,
   messageDeleteSuccess,
-  messageUpdateSuccess,
 } from "../../utils/constant";
 import UploadFile from "../UploadFile";
 import WebApiFiscal from "../../api/WebApiFiscal";
@@ -35,7 +34,6 @@ import FormPatronalRegistration from "./forms/FormPatronalRegistration";
 import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import JobRiskPremium from "./forms/jobRiskPremium";
-import moment from "moment";
 
 const ImssInformationNode = ({
   node_id = null,
@@ -55,17 +53,16 @@ const ImssInformationNode = ({
   const [key, setKey] = useState(null);
   const [certificate, setCertificate] = useState(null);
   const [password, setPassword] = useState("");
+
   const [visibleTable, setVisibleTable] = useState(true);
-  const [labelForm, setLabelForm] = useState("Nuevo Registro Patronal");
+
   const [dataPatronalRegistration, setDataPatronalRegistration] = useState([]);
+
   const [isEdit, setIsEdit] = useState(false);
   const [idRegister, setIdRegister] = useState(null);
   const [deleted, setDeleted] = useState({});
   const [disabledSwitch, setDisabledSwitch] = useState(false);
-  const [cp, setCp] = useState(null);
-  const [municipality, setMunicipality] = useState(null);
-  const [state, setState] = useState(null);
-  const [country, setCountry] = useState(null);
+
   const [loadingData, setLoadingData] = useState(false);
 
   const columns = [
@@ -128,8 +125,73 @@ const ImssInformationNode = ({
       });
   };
 
-  const saveRegister = (data) => {
-    WebApiPeople.savePatronalRegistration(currentNode.id, data)
+  const validateForms = async () => {
+    let validformPatronal = await formPatronal
+      .validateFields()
+      .then((result) => {
+        return true;
+      })
+      .catch((err) => {
+        return false;
+      });
+    let validformJobRisk = await formJobRisk
+      .validateFields()
+      .then((response) => {
+        return true;
+      })
+      .catch((error) => {
+        return false;
+      });
+    let validformAddress = await formAddress
+      .validateFields()
+      .then((response) => {
+        return true;
+      })
+      .catch((error) => {
+        return false;
+      });
+    let validformLegalRep = await formLegalRep
+      .validateFields()
+      .then((response) => {
+        return true;
+      })
+      .catch((error) => {
+        return false;
+      });
+    console.log(
+      validformPatronal,
+      validformJobRisk,
+      validformAddress,
+      validformLegalRep
+    );
+    if (
+      validformPatronal &&
+      validformJobRisk &&
+      validformAddress &&
+      validformLegalRep
+    )
+      return true;
+    return false;
+  };
+
+  const saveRegister = async (data) => {
+    if (!(await validateForms())) return;
+    data.node = currentNode.id;
+    if (isEdit) {
+      data.patronal.id = patronalData.id;
+      if (patronalData.job_risk_premium && patronalData.job_risk_premium.id)
+        data.jobRisk.id = patronalData.job_risk_premium.id;
+      if (
+        patronalData.legal_representative &&
+        patronalData.legal_representative.id
+      )
+        data.representative.id = patronalData.legal_representative.id;
+      if (patronalData.fiscal_address && patronalData.fiscal_address.id)
+        data.address.id = patronalData.fiscal_address.id;
+    }
+    console.log("SEND DATA-->> ", data);
+
+    WebApiPeople.patronalRegistration(data)
       .then((response) => {
         resetForms();
         message.success(messageSaveSuccess);
@@ -138,25 +200,6 @@ const ImssInformationNode = ({
         setDisabledSwitch(false);
       })
       .catch((error) => {
-        console.log(error);
-        message.error(messageError);
-        // setDisabledSwitch(false);
-      });
-  };
-
-  const updateRegister = (data) => {
-    WebApiPeople.updatePatronalRegistration(idRegister, currentNode.id, data)
-      .then((response) => {
-        resetForms();
-        message.success(messageUpdateSuccess);
-        setVisibleTable(true);
-        getPatronalRegistration();
-        setIsEdit(false);
-        setDisabledSwitch(false);
-        setLabelForm("Nuevo Registro Patronal");
-      })
-      .catch((error) => {
-        setIsEdit(false);
         console.log(error);
         message.error(messageError);
       });
@@ -190,16 +233,7 @@ const ImssInformationNode = ({
       representative: formLegalRep.getFieldsValue(),
       jobRisk: formJobRisk.getFieldValue(),
     };
-    if (isEdit) {
-      data.address.country = country;
-      data.address.municipality = municipality;
-      data.address.state = state;
-      data.jobRisk.month = data?.jobRisk?.month;
-      data.jobRisk.year = data?.jobRisk?.year;
-      updateRegister(data);
-    } else {
-      saveRegister(data);
-    }
+    saveRegister(data);
   };
 
   useEffect(() => {
@@ -252,7 +286,7 @@ const ImssInformationNode = ({
     formAddress.resetFields();
     setVisibleTable(true);
     setDisabledSwitch(false);
-    setLabelForm("Nuevo Registro Patronal");
+    setPatronalData(null);
   };
 
   //MÉTODO PARA ENSEÑAR U OCULTAR TABLA Y ENSEÑAR FORMULARIO
@@ -263,15 +297,12 @@ const ImssInformationNode = ({
 
   //SE SETEAN LOS VALORES DEL REGISTRO A SUS INPUTS PARA PODER SER EDITADOS
   const editRegister = (item) => {
-    setLabelForm("Editar Registro Patronal");
+    setPatronalData(item);
     setDisabledSwitch(true);
     setIsEdit(true);
     setIdRegister(item.id);
     setVisibleTable(false);
-    setCp(item?.fiscal_address?.postal_code?.id);
-    setCountry(item?.fiscal_address?.country?.id);
-    setMunicipality(item?.fiscal_address?.municipality?.id);
-    setState(item?.fiscal_address?.state?.id);
+
     formPatronal.setFieldsValue({
       node: currentNode?.id,
       code: item?.code,
@@ -285,21 +316,7 @@ const ImssInformationNode = ({
       imss_delegation: item?.imss_delegation,
       imss_subdelegation: item?.imss_subdelegation,
     });
-    formJobRisk.setFieldsValue({
-      patronal_registartion: item?.id,
-      id: item?.job_risk_premium?.id,
-      job_risk_class: item?.job_risk_premium?.job_risk_class,
-      job_risk_percent: item?.job_risk_premium?.job_risk_percent,
-      //FORMATEAMOS LOS DATOS PARA CONVERTIRLOS EN OBJETO DE MOMENT PARA QUE PUEDAN SER LEÍDOS POR EL DATEPICKER.
-      year: moment(
-        item?.job_risk_premium?.year + "-01-15T16:18:56.355272-05:00"
-      ),
-      month: moment(
-        "2022-" + item?.job_risk_premium?.month + "-15T16:18:56.355272-05:00"
-      ),
-      stps_accreditation: item?.job_risk_premium?.stps_accreditation,
-      rt_fraction: item?.job_risk_premium?.rt_fraction,
-    });
+
     formLegalRep.setFieldsValue({
       name: item?.legal_representative?.name,
       position: item?.legal_representative?.position,
@@ -307,16 +324,6 @@ const ImssInformationNode = ({
       phone: item?.legal_representative?.phone,
       contact_name: item?.legal_representative?.contact_name,
       contact_email: item?.legal_representative?.contact_email,
-    });
-    formAddress.setFieldsValue({
-      postal_code: item?.fiscal_address?.postal_code?.code,
-      country: item?.fiscal_address?.country?.description,
-      state: item?.fiscal_address?.state?.name_state,
-      municipality: item?.fiscal_address?.municipality?.description,
-      street: item?.fiscal_address?.street,
-      suburb: item?.fiscal_address?.suburb,
-      interior_number: item?.fiscal_address?.interior_number,
-      outdoor_number: item?.fiscal_address?.outdoor_number,
     });
   };
 
@@ -355,7 +362,11 @@ const ImssInformationNode = ({
           <Row>
             <Col span={24}>
               <Row>
-                <Title style={{ fontSize: "15px" }}>{labelForm}</Title>
+                <Title style={{ fontSize: "15px" }}>
+                  {isEdit
+                    ? "Editar Registro Patronal"
+                    : "Nuevo Registro Patronal"}
+                </Title>
               </Row>
               <Divider style={{ marginTop: "2px" }} />
               <FormPatronalRegistration
@@ -371,7 +382,6 @@ const ImssInformationNode = ({
               <FormFiscalAddress
                 fiscalAddress={patronalData && patronalData.fiscal_address}
                 form={formAddress}
-                pos_cod={cp}
               />
               <Row>
                 <Title style={{ fontSize: "15px" }}>
@@ -380,7 +390,7 @@ const ImssInformationNode = ({
               </Row>
               <Divider style={{ marginTop: "2px" }} />
               <JobRiskPremium
-                JobRiskPremium={patronalData && patronalData.job_risk_premium}
+                jobRisk={patronalData && patronalData.job_risk_premium}
                 form={formJobRisk}
               />
               <Row>
