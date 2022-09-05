@@ -246,7 +246,7 @@ const Home = ({ ...props }) => {
                 >
                   <img
                     className={"logoKhor"}
-                    src={"/images/iU_Khorplus.png"}
+                    src={props?.config?.concierge_logo_login ? props.config.concierge_logo_login : "/images/iU_Khorplus.png"}
                     width={200}
                     alt=""
                   />
