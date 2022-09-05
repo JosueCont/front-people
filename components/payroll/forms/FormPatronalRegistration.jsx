@@ -63,7 +63,7 @@ const FormPatronalRegistration = ({
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <Form.Item name="state" label="Tipo de contribución">
+          <Form.Item name="type_contribution" label="Tipo de contribución">
             <Input />
           </Form.Item>
         </Col>
