@@ -55,8 +55,8 @@ const Home = ({ ...props }) => {
             --secondaryColor: ${props.config
               ? props.config.concierge_secondary_color
               : "#1890ff"};
-            --login_image: ${props.config && props.config.concierge_logo
-              ? "url(" + props.config.concierge_logo + ")"
+            --login_image: ${props.config && props.config.concierge_logo_login
+              ? "url(" + props.config.concierge_logo_login + ")"
               : 'url("/images/login.jpg")'};
             --logo_login: ${props.config && props.config.concierge_logo
               ? "url(" + props.config.concierge_logo + ")"
@@ -184,7 +184,7 @@ const Home = ({ ...props }) => {
             }
 
             body {
-              background: transparent url("/images/banner_staff_iu.jpg") 70% 5%
+              background: transparent var(--login_image) 70% 5%
                 no-repeat padding-box;
               background-size: 100% 100%;
             }
