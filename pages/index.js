@@ -185,7 +185,7 @@ const Home = ({ ...props }) => {
             }
 
             body {
-              background: transparent var(--login_image) 70% 5%
+              background: transparent var(--background_image) 70% 5%
                 no-repeat padding-box;
               background-size: 100% 100%;
             }

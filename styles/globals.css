@@ -191,7 +191,7 @@ li.ant-menu-submenu-selected {
 }
 
 .backLogin {
-  background-image: var(--login_image) !important;
+  background-image: var(--background_image) !important;
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
