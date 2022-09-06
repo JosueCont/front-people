@@ -274,7 +274,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
         setLoading(false);
         message.success(messageUploadSuccess);
         setXmlImport(response.data);
-        console.log("se setea el modal aqui", response.data);
         processResume(response.data);
       })
       .catch((error) => {
