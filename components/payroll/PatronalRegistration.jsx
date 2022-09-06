@@ -25,6 +25,7 @@ import {
   messageSaveSuccess,
   messageUploadSuccess,
   messageDeleteSuccess,
+  messageUpdateSuccess,
 } from "../../utils/constant";
 import UploadFile from "../UploadFile";
 import WebApiFiscal from "../../api/WebApiFiscal";
@@ -189,12 +190,11 @@ const ImssInformationNode = ({
       if (patronalData.fiscal_address && patronalData.fiscal_address.id)
         data.address.id = patronalData.fiscal_address.id;
     }
-    console.log("SEND DATA-->> ", data);
 
     WebApiPeople.patronalRegistration(data)
       .then((response) => {
         resetForms();
-        message.success(messageSaveSuccess);
+        message.success(isEdit ? messageUpdateSuccess : messageSaveSuccess);
         setVisibleTable(true);
         getPatronalRegistration();
         setDisabledSwitch(false);
@@ -208,7 +208,6 @@ const ImssInformationNode = ({
   const deleteRegister = () => {
     WebApiPeople.deletePatronalRegistration(idRegister, currentNode.id)
       .then((response) => {
-        console.log("response", response);
         message.success(messageDeleteSuccess);
         getPatronalRegistration();
       })
