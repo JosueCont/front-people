@@ -17,17 +17,17 @@ const initialData = {
   cat_person_type: [],
   person_type_table: [],
   cat_groups: [],
-  cat_fractions:[],
+  cat_fractions: [],
   people_company: [],
   cat_level: [],
   cat_work_title: [],
   fixed_concept: [],
-  cat_cost_center:[],
-  cat_tags:[],
-  cat_accounts:[],
-  errorData:null,
-  cat_branches:[],
-  cat_patronal_registration:[],
+  cat_cost_center: [],
+  cat_tags: [],
+  cat_accounts: [],
+  errorData: null,
+  cat_branches: [],
+  cat_patronal_registration: [],
 };
 
 const RELATIONSHIP = "RELATIONSHIP";
@@ -52,7 +52,7 @@ const COST_CENTER = "COST_CENTER";
 const TAGS = "TAGS";
 const ACCOUNT = "ACCOUNT";
 const BRANCHES = "BRANCHES";
-const PATRONAL_REGISTRATION ="PATRONAL_REGISTRATION";
+const PATRONAL_REGISTRATION = "PATRONAL_REGISTRATION";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -94,17 +94,41 @@ const webReducer = (state = initialData, action) => {
     case COST_CENTER:
       return { ...state, cat_cost_center: action.payload };
     case TAGS:
-      return { ...state, cat_tags: action.payload.data, errorData: action.payload?.error };
+      return {
+        ...state,
+        cat_tags: action.payload.data,
+        errorData: action.payload?.error,
+      };
     case ACCOUNT:
-      return { ...state, cat_accounts: action.payload.data, errorData: action.payload?.error };
+      return {
+        ...state,
+        cat_accounts: action.payload.data,
+        errorData: action.payload?.error,
+      };
     case BRANCHES:
-      return { ...state, cat_branches: action.payload.data, errorData: action.payload?.error };
+      return {
+        ...state,
+        cat_branches: action.payload.data,
+        errorData: action.payload?.error,
+      };
     case PATRONAL_REGISTRATION:
-      return { ...state, cat_patronal_registration: action.payload.data, errorData: action.payload?.error };
+      return {
+        ...state,
+        cat_patronal_registration: action.payload.data,
+        errorData: action.payload?.error,
+      };
     case JOB_RISK:
-      return { ...state, cat_job_risk: action.payload.data, errorData: action.payload?.error };
+      return {
+        ...state,
+        cat_job_risk: action.payload.data,
+        errorData: action.payload?.error,
+      };
     case FRACTIONS:
-      return { ...state, cat_fractions: action.payload.data, errorData: action.payload?.error };
+      return {
+        ...state,
+        cat_fractions: action.payload.data,
+        errorData: action.payload?.error,
+      };
     default:
       return state;
   }
@@ -226,7 +250,7 @@ export const getDepartmets = (idCompany) => async (dispatch, getState) => {
 export const getJobs = (idCompany) => async (dispatch, getState) => {
   try {
     let response = await WebApiPeople.getJobs(idCompany);
-    dispatch({ type: JOB, payload: response.data});
+    dispatch({ type: JOB, payload: response.data });
   } catch (error) {
     dispatch({ type: JOB, payload: [] });
   }
@@ -295,77 +319,93 @@ export const getWorkTitle = (idCompany) => async (dispatch, getState) => {
 
 export const getCostCenter = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.centerCost(idCompany)
-      .then((response) => {
-        dispatch({ type: COST_CENTER, payload: response.data.results });
-      })
-      .catch((error) => {
-        dispatch({ type: COST_CENTER, payload: [] });
-      });
+    .then((response) => {
+      dispatch({ type: COST_CENTER, payload: response.data.results });
+    })
+    .catch((error) => {
+      dispatch({ type: COST_CENTER, payload: [] });
+    });
 };
 
 export const getTags = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.tags(idCompany)
-      .then((response) => {
-        dispatch({ type: TAGS, payload: {data:response.data.results, error:null} });
-      })
-      .catch((error) => {
-        dispatch({ type: TAGS, payload: {data:[],error:error} });
+    .then((response) => {
+      dispatch({
+        type: TAGS,
+        payload: { data: response.data.results, error: null },
       });
+    })
+    .catch((error) => {
+      dispatch({ type: TAGS, payload: { data: [], error: error } });
+    });
 };
 
-
-export const getAccountantAccount = (idCompany) => async (dispatch, getState) => {
-  await WebApiPeople.accountantAccount(idCompany)
+export const getAccountantAccount =
+  (idCompany) => async (dispatch, getState) => {
+    await WebApiPeople.accountantAccount(idCompany)
       .then((response) => {
-        dispatch({ type: ACCOUNT, payload: {data:response.data.results, error:null} });
+        dispatch({
+          type: ACCOUNT,
+          payload: { data: response.data.results, error: null },
+        });
       })
       .catch((error) => {
-        dispatch({ type: ACCOUNT, payload: {data:[],error:error} });
+        dispatch({ type: ACCOUNT, payload: { data: [], error: error } });
       });
-};
+  };
 
-export const getBranches = () => async (dispatch, getState) =>{
+export const getBranches = () => async (dispatch, getState) => {
   await WebApiPeople.getBranches()
-  .then((response)=>{
-    dispatch({ type: BRANCHES, payload: {data:response.data.results, error:null}});
-  })
-  .catch((error)=>{
-    dispatch({ type: BRANCHES, payload: {data:[],error:error}});
-  })
-}
-
-export const getPatronalRegistration = (idCompany) => async (dispatch, getState) =>{
-  await WebApiPeople.getPatronalRegistration(idCompany)
-    .then((response) =>{
-      dispatch({ type: PATRONAL_REGISTRATION, payload: {data:response.data, error:null}});
+    .then((response) => {
+      dispatch({
+        type: BRANCHES,
+        payload: { data: response.data.results, error: null },
+      });
     })
-    .catch((error)=>{
-      console.log("NO Exitoso", error);
-      dispatch({ type: PATRONAL_REGISTRATION, payload: {data:[],error:error}});
-    })
-}
+    .catch((error) => {
+      dispatch({ type: BRANCHES, payload: { data: [], error: error } });
+    });
+};
 
+export const getPatronalRegistration =
+  (idCompany) => async (dispatch, getState) => {
+    await WebApiPeople.getPatronalRegistration(idCompany)
+      .then((response) => {
+        dispatch({
+          type: PATRONAL_REGISTRATION,
+          payload: { data: response.data, error: null },
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: PATRONAL_REGISTRATION,
+          payload: { data: [], error: error },
+        });
+      });
+  };
 
-export const getJobRiskClass = (idCompany) => async (dispatch, getState) =>{
+export const getJobRiskClass = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.getJobRiskClass(idCompany)
-      .then((response) =>{
-        dispatch({ type: JOB_RISK, payload: {data:response.data.results, error:null}});
-      })
-      .catch((error)=>{
-        console.log("NO Exitoso", error);
-        dispatch({ type: JOB_RISK, payload: {data:[],error:error}});
-      })
-}
+    .then((response) => {
+      dispatch({
+        type: JOB_RISK,
+        payload: { data: response.data.results, error: null },
+      });
+    })
+    .catch((error) => {
+      dispatch({ type: JOB_RISK, payload: { data: [], error: error } });
+    });
+};
 
-
-export const getFractions = (idCompany) => async (dispatch, getState) =>{
+export const getFractions = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.getFractions(idCompany)
-      .then((response) =>{
-        dispatch({ type: FRACTIONS, payload: {data:response.data.results, error:null}});
-      })
-      .catch((error)=>{
-        console.log("NO Exitoso", error);
-        dispatch({ type: FRACTIONS, payload: {data:[],error:error}});
-      })
-}
-
+    .then((response) => {
+      dispatch({
+        type: FRACTIONS,
+        payload: { data: response.data.results, error: null },
+      });
+    })
+    .catch((error) => {
+      dispatch({ type: FRACTIONS, payload: { data: [], error: error } });
+    });
+};

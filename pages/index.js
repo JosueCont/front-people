@@ -49,12 +49,18 @@ const Home = ({ ...props }) => {
       <Global
         styles={css`
           :root {
-            --primaryColor: ${props.config
-              ? props.config.concierge_primary_color
+            --primaryColor: ${props.config && props.config.theme_color 
+              ? props.config.theme_color.primary_color
               : "#1890ff"};
+            --primaryAlternativeColor: ${props.config && props.config.theme_color
+            ? props.config.theme_color.primary_alternative_color
+            : "#1890ff"};
             --secondaryColor: ${props.config
               ? props.config.concierge_secondary_color
               : "#1890ff"};
+            --secondaryAlternativeColor: ${props.config && props.config.theme_color
+            ? props.config.theme_color.secondary_alternative_color
+            : "#1890ff"};
             --background_image: ${props.config &&
             props.config.concierge_logo_login
               ? "url(" + props.config.concierge_logo_login + ")"
