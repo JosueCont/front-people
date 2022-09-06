@@ -66,7 +66,7 @@ class WebApiFiscal {
   }
 
   static getSuburb(data) {
-    return WebApi.ApisType(`/fiscal/suburb/?postal_code=${data}`, "get");
+    return WebApi.ApisType(`/fiscal/suburb?search=${data}`, "get");
   }
 
   static getInternalPerceptions(data) {
@@ -99,7 +99,7 @@ class WebApiFiscal {
   }
 
   static getPostalCode(data, version) {
-    return WebApi.ApisType(`/fiscal/postal-code?code=${data}`, "get");
+    return WebApi.ApisType(`/fiscal/postal-code?search=${data}`, "get");
   }
 
   static getCfdiVersion() {
