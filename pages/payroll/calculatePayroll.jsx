@@ -1201,13 +1201,13 @@ const CalculatePayroll = ({ ...props }) => {
                               }
                             )
                           : downLoadFileBlob(
-                              (`${getDomain(
+                              `${getDomain(
                                 API_URL_TENANT
                               )}/payroll/payroll-report?payment_period=${
                                 periodSelected.id
                               }`,
                               "Nomina.xlsx",
-                              "GET")
+                              "GET"
                             );
                       }}
                     >
@@ -1271,6 +1271,8 @@ const CalculatePayroll = ({ ...props }) => {
                                       "File",
                                       info.fileList[0].originFileObj
                                     );
+                                    data.append('department',department)
+                                    data.append('job',job)
                                     data.append(
                                       "payment_period",
                                       periodSelected.id
@@ -1444,7 +1446,7 @@ const CalculatePayroll = ({ ...props }) => {
                       <Table
                         className="headers_transparent"
                         dataSource={payroll.map((item) => {
-                          item.key = item.person.id;
+                          item.key = item?.person?.id;
                           return item;
                         })}
                         columns={persons}

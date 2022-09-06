@@ -297,23 +297,24 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
     {
       title: "Salario diario",
       render: (item) => {
-        return <>{item.daily_salary ? item.daily_salary : "$ 0.00"}</>;
+        return <>{item.daily_salary ? ` $ ${item.daily_salary}` : "$ 0.00"}</>;
       },
       key: "name",
     },
-    // {
-    //   title: "Salario diario integrado",
-    //   render: (item) => {
-    //     return (
-    //       <>
-    //         {item.integrated_daily_salary
-    //           ? item.integrated_daily_salary
-    //           : "$ 0.00"}
-    //       </>
-    //     );
-    //   },
-    //   key: "name",
-    // },
+    {
+      title: "Salario diario integrado",
+      hidden:false,
+      render: (item) => {
+        return (
+          <>
+            {item.integrated_daily_salary
+              ? `$ ${item.integrated_daily_salary}`
+              : "$ 0.00"}
+          </>
+        );
+      },
+      key: "name",
+    },
     {
       title: "Movimiento",
       key: "id",
@@ -327,7 +328,33 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
         );
       },
     },
-  ];
+    {
+      title: "Fecha modificación",
+      render: (item) => {
+        return (
+            <>
+              {item?.timestamp
+                  ? moment(item.timestamp).format('DD/MM/YYYY hh:mm:ss a')
+                  : "--"}
+            </>
+        );
+      },
+      key: "name",
+    },
+    {
+      title: "Modificado por",
+      render: (item) => {
+        return (
+            <>
+              {item?.modified
+                  ? item?.modified
+                  : "Por sistema"}
+            </>
+        );
+      },
+      key: "name",
+    },
+  ].filter(item => !item.hidden);
 
   const PayrollList = () => {
     WebApiPayroll.getPayrollList({ person_id: person.id })
