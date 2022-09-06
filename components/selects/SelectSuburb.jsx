@@ -25,10 +25,7 @@ const SelectSuburb = ({
           return {
             key: item.id + item.code,
             value: item.id,
-            label:
-              item.postal_code && item.postal_code.state
-                ? `${item.postal_code.state.name} - ${item.description}`
-                : item.description,
+            label: item.description,
           };
         });
         setOptions(suburbs);
