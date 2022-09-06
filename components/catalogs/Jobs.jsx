@@ -29,6 +29,7 @@ import {
 import ListCatalogData from "../forms/ListCatalogData";
 import SelectCostCenter from "../selects/SelectCostCenter";
 import SelectTags from "../selects/SelectTags";
+import SelectProfile from "../selects/SelectProfile";
 
 const TabJobs = ({ permissions, currentNode, ...props }) => {
   const { Title } = Typography;
@@ -37,11 +38,12 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [deleted, setDeleted] = useState({});
-  const [id, setId] = useState("");
+  const [id, setId] = useState("");  
 
   const colJob = [
     {
       title: "Nombre",
+      show: true,
       render: (item) => {
         return <>{item.name}</>;
       },
@@ -49,6 +51,7 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
     },
     {
       title: "Código",
+      show: true,
       render: (item) => {
         return <>{item.code}</>;
       },
@@ -56,6 +59,7 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
     {
       title: "Centro de costos",
       dataIndex: "cost_center",
+      show: true,
       render:(item)=>{
         return <ListCatalogData catalog={'cat_cost_center'} attrName={'code'} items={item} />
       }
@@ -63,12 +67,19 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
     {
       title: "Etiquetas",
       dataIndex: "tag",
+      show: true,
       render:(item)=>{
         return <ListCatalogData catalog={'cat_tags'} attrName={'name'} items={item} />
       }
     },
     {
+      title: "Perfil de competencias",
+      dataIndex: ["skill_profile","name"],
+      show: props.config.kuiz_enabled
+    },
+    {
       title: "Acciones",
+      show: true,
       render: (item) => {
         return (
           <div>
@@ -117,11 +128,18 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
       form.setFieldsValue({code:undefined})
       value.code=undefined
     }
+     if(!(value?.skill_profile_id && value.skill_profile_id.trim())){
+      form.setFieldsValue({skill_profile_id:undefined})
+      value.skill_profile_id=undefined
+     }
     /**
      * Validamos que no puedan meter datos con puros espacios
      */
 
-    if(value.name===undefined || value.code===undefined){
+    if(value.name===undefined ||
+      value.code===undefined ||
+      value.skill_profile_id === undefined
+    ){
       form.validateFields()
       return
     }
@@ -165,6 +183,7 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
       node: item.node.id,
       name: item.name,
       code: item.code,
+      skill_profile_id: item.skill_profile?.id
     });
   };
 
@@ -268,6 +287,11 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
             <Col lg={6} xs={22} md={12}>
               <SelectTags required={false} multiple={true} viewLabel={'Etiquetas'}/>
             </Col>
+            {props.config.kuiz_enabled &&(
+              <Col lg={6} xs={22} md={12}>
+                <SelectProfile curretNode={currentNode}/>
+              </Col>
+            )}
           </Row>
           <Row justify={"end"} gutter={20} style={{ marginBottom: 20 }}>
             <Col>
@@ -283,7 +307,7 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
       )}
       <Spin tip="Cargando..." spinning={loading}>
         <Table
-          columns={colJob}
+          columns={colJob.filter(col => col.show)}
           dataSource={props.cat_job}
           locale={{
             emptyText: loading
@@ -299,6 +323,7 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
 const mapState = (state) => {
   return {
     cat_job: state.catalogStore.cat_job,
+    config: state.userStore.general_config,
   };
 };
 
