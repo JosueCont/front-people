@@ -8,15 +8,13 @@ import SelectMunicipality from "../../selects/SelectMunicipality";
 import SelectState from "../../selects/SelectState";
 import SelectSuburb from "../../selects/SelectSuburb";
 
-const FormFiscalAddress = ({ fiscalAddress, form, pos_cod, ...props }) => {
+const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
   const { Option } = Select;
   const [postalCode, setPostalCode] = useState([]);
   const [postalCodeSelect, setPostalCodeSelect] = useState(null);
   const [state, setState] = useState(null);
-  const [value, setValue] = useState(null);
 
   useEffect(() => {
-    console.log("fiscal adress",fiscalAddress);
     if (fiscalAddress) setForm(fiscalAddress);
   }, [fiscalAddress]);
 
@@ -31,42 +29,20 @@ const FormFiscalAddress = ({ fiscalAddress, form, pos_cod, ...props }) => {
         });
   };
 
-  const setForm =(data)=>{
+  const setForm = (data) => {
+    setState(data.state.id);
+    setPostalCodeSelect(data.postal_code);
     form.setFieldsValue({
       postal_code: data.postal_code.code,
       country: data?.country?.id,
       state: data?.state?.id,
       municipality: data?.municipality?.id,
       street: data.street,
-      suburb:data.suburb,
+      suburb: data.suburb,
       outdoor_number: data.outdoor_number,
-      interior_number: data.interior_number
-    })
-  }
-
-  // const setForm = (data) => {
-  //   console.log("setfomr data",data);
-  //   setState(data.state.id);
-  //   // setValue(data.postal_code);
-  //   setPostalCodeSelect(data.postal_code);
-  //   form.setFieldsValue({
-  //     postal_code: data.postal_code.code,
-  //     country: data.country.id,
-  //     state: data.state.id,
-  //     municipality: data.municipality.id,
-  //     street: data.street,
-  //     outdoor_number: data.outdoor_number,
-  //     interior_number: data.interior_number,
-  //     suburb: data.suburb,
-  //   });
-  // };
-
-  useEffect(() => {
-    if(pos_cod){
-      setPostalCodeSelect(pos_cod);
-    }
-  }, [pos_cod]);
-
+      interior_number: data.interior_number,
+    });
+  };
 
   const setPostalCodeSelected = (data) => {
     setState(data.state.id);
@@ -108,7 +84,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, pos_cod, ...props }) => {
                     return (
                       <>
                         (
-                        <Option key={item.code} value={item.id}>
+                        <Option key={item.id} value={item.id}>
                           {item.code}
                         </Option>
                         ; )
@@ -129,7 +105,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, pos_cod, ...props }) => {
           </Col>
           <Col lg={8} xs={22} md={6}>
             <SelectSuburb
-              postal_code={pos_cod}
+              postal_code={postalCodeSelect && postalCodeSelect.id}
             />
           </Col>
           <Col lg={8} xs={22} md={6}>
