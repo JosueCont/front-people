@@ -314,3 +314,32 @@ export const getCurrentURL = (tenant = false) => {
     }
   }
 };
+
+export const getHost =()=>{
+  if (typeof window !== "undefined") {
+    let host =  window.location.host.split('.');
+    if(host.length>1){
+      return host[1]
+    }
+
+  }else{
+    return ''
+  }
+}
+
+
+
+export const urlMyAccount = process.browser
+    ? process.env.NEXT_PUBLIC_BASE_URL_MYACCOUNT_TENANT
+    : process.env.BASE_URL_MYACCOUNT_TENANT;
+
+
+export const urlPeople = process.browser
+    ? process.env.NEXT_PUBLIC_BASE_URL_PEOPLE_TENANT
+    : process.env.BASE_URL_MYACCOUNT_TENANT;
+
+
+export const urlSocial = process.browser
+    ? process.env.NEXT_PUBLIC_BASE_URL_SOCIAL_TENANT
+    : process.env.BASE_URL_SOCIAL_TENANT;
+
