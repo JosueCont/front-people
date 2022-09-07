@@ -290,7 +290,7 @@ const businessForm = ({ ...props }) => {
         return (
           <div>
             <Row gutter={24}>
-              {props.permissions && props.permissions.edit && (
+              {props.permissions && props.permissions.edit && props.config.nomina_enabled && (
                 <Col className="gutter-row" span={6}>
                   <Link href={`/business/${item.id}`}>
                     <Tooltip title="Configuración">
@@ -631,6 +631,7 @@ const mapState = (state) => {
   return {
     permissions: state.userStore.permissions.company,
     user: state.userStore.user,
+    config: state.userStore.general_config,
     currentNode: state.userStore.current_node,
   };
 };
