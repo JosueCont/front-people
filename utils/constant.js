@@ -280,6 +280,14 @@ export const salaryDays = [
   },
 ];
 
+export const PaymentTypes = [
+  { value: 0, label: "Efectivo" },
+  { value: 1, label: "Cheques" },
+  { value: 3, label: "Transferencias" },
+  { value: 30, label: "Anticipo" },
+  { value: 99, label: "Por definir" },
+];
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
@@ -315,31 +323,25 @@ export const getCurrentURL = (tenant = false) => {
   }
 };
 
-export const getHost =()=>{
+export const getHost = () => {
   if (typeof window !== "undefined") {
-    let host =  window.location.host.split('.');
-    if(host.length>1){
-      return host[1]
+    let host = window.location.host.split(".");
+    if (host.length > 1) {
+      return host[1];
     }
-
-  }else{
-    return ''
+  } else {
+    return "";
   }
-}
-
-
+};
 
 export const urlMyAccount = process.browser
-    ? process.env.NEXT_PUBLIC_BASE_URL_MYACCOUNT_TENANT
-    : process.env.BASE_URL_MYACCOUNT_TENANT;
-
+  ? process.env.NEXT_PUBLIC_BASE_URL_MYACCOUNT_TENANT
+  : process.env.BASE_URL_MYACCOUNT_TENANT;
 
 export const urlPeople = process.browser
-    ? process.env.NEXT_PUBLIC_BASE_URL_PEOPLE_TENANT
-    : process.env.BASE_URL_MYACCOUNT_TENANT;
-
+  ? process.env.NEXT_PUBLIC_BASE_URL_PEOPLE_TENANT
+  : process.env.BASE_URL_MYACCOUNT_TENANT;
 
 export const urlSocial = process.browser
-    ? process.env.NEXT_PUBLIC_BASE_URL_SOCIAL_TENANT
-    : process.env.BASE_URL_SOCIAL_TENANT;
-
+  ? process.env.NEXT_PUBLIC_BASE_URL_SOCIAL_TENANT
+  : process.env.BASE_URL_SOCIAL_TENANT;

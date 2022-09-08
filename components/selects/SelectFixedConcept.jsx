@@ -7,7 +7,6 @@ const SelectFixedConcept = ({
   viewLabel = true,
   rules = [],
   type = 1,
-  name = "fixed_concept",
   placeholder = false,
   ...props
 }) => {
@@ -29,7 +28,16 @@ const SelectFixedConcept = ({
   }, [props.payment_alendar]);
 
   return (
-    <Form.Item name={name} label={viewLabel ? "Conceptos fijos" : ""}>
+    <Form.Item
+      name={type === 1 ? "fixed_concept" : "group_fixed_concept"}
+      label={
+        viewLabel
+          ? type === 1
+            ? "Conceptos fijos"
+            : "Grupo de conceptos fijos"
+          : ""
+      }
+    >
       <Select
         // options={concept}
         placeholder={placeholder && "Conceptos fijos"}

@@ -24,9 +24,11 @@ import {
   messageSaveSuccess,
   messageUpdateSuccess,
   movementType,
+  PaymentTypes,
 } from "../../../utils/constant";
 import SelectCostCenter from "../../selects/SelectCostCenter";
 import SelectTags from "../../selects/SelectTags";
+import SelectFixedConcept from "../../selects/SelectFixedConcept";
 
 const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const { Title } = Typography;
@@ -41,13 +43,6 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const [bankDisabled, setBankDisabled] = useState(false);
   const [disabledCalendar, setDisabledCalendar] = useState(false);
   const [lastDayPaid, setLastDayPaid] = useState("");
-  const PaymentTypes = [
-    { value: 0, label: "Efectivo" },
-    { value: 1, label: "Cheques" },
-    { value: 3, label: "Transferencias" },
-    { value: 30, label: "Anticipo" },
-    { value: 99, label: "Por definir" },
-  ];
   const [idPayroll, setIdPayroll] = useState(null);
   const [loading, setLoading] = useState(false);
   const [payrollPersonList, setPayrolPersonList] = useState([]);
@@ -160,7 +155,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
             integrated_daily_salary: item.integrated_daily_salary,
             apply_monthly_adjustment: item.apply_monthly_adjustment,
             tag: item?.tag,
-            cost_center: item?.cost_center
+            cost_center: item?.cost_center,
           });
           changePaymentType(item.payment_type);
           setLastDayPaid(item.last_day_paid);
@@ -303,7 +298,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
     },
     {
       title: "Salario diario integrado",
-      hidden:false,
+      hidden: false,
       render: (item) => {
         return (
           <>
@@ -332,11 +327,11 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
       title: "Fecha modificación",
       render: (item) => {
         return (
-            <>
-              {item?.timestamp
-                  ? moment(item.timestamp).format('DD/MM/YYYY hh:mm:ss a')
-                  : "--"}
-            </>
+          <>
+            {item?.timestamp
+              ? moment(item.timestamp).format("DD/MM/YYYY hh:mm:ss a")
+              : "--"}
+          </>
         );
       },
       key: "name",
@@ -344,17 +339,11 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
     {
       title: "Modificado por",
       render: (item) => {
-        return (
-            <>
-              {item?.modified
-                  ? item?.modified
-                  : "Por sistema"}
-            </>
-        );
+        return <>{item?.modified ? item?.modified : "Por sistema"}</>;
       },
       key: "name",
     },
-  ].filter(item => !item.hidden);
+  ].filter((item) => !item.hidden);
 
   const PayrollList = () => {
     WebApiPayroll.getPayrollList({ person_id: person.id })
@@ -390,16 +379,18 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     <Input maxLength={10} />
                   </Form.Item>
                 </Col>
-                {/* <Col lg={8} xs={22} md={12}>
-                  <Form.Item
-                    name="integrated_daily_salary"
-                    label="Salario diario integrado"
-                    maxLength={13}
-                    rules={[fourDecimal]}
-                  >
-                    <Input disabled />
-                  </Form.Item>
-                </Col> */}
+                {
+                  <Col lg={8} xs={22} md={12}>
+                    <Form.Item
+                      name="integrated_daily_salary"
+                      label="Salario diario integrado"
+                      maxLength={13}
+                      rules={[fourDecimal]}
+                    >
+                      <Input disabled />
+                    </Form.Item>
+                  </Col>
+                }
                 <Col lg={8} xs={22} md={12}>
                   <Form.Item
                     name="contract_type"
@@ -437,7 +428,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={22} md={12}>
+                <Col lg={4} xs={22} md={12}>
                   <Form.Item
                     name="unionized"
                     label="¿Sindicalizado?"
@@ -472,7 +463,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     </Form.Item>
                   </Col>
                 )}
-                <Col lg={8} xs={22} md={12}>
+                <Col lg={4} xs={22} md={12}>
                   <Form.Item
                     name="apply_monthly_adjustment"
                     label="¿Aplicar ajuste mensual?"
@@ -484,7 +475,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={22} md={12}>
+                <Col lg={4} xs={22} md={12}>
                   <Form.Item
                     name="apply_annual_adjustment"
                     label="¿Aplicar ajuste anual?"
@@ -505,11 +496,22 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={22} md={12}>
-                  <SelectCostCenter required={false} multiple={true} viewLabel={'Centro de costos'}/>
+                <Col lg={8} xs={22} md={12}>
+                  <SelectFixedConcept type={1} />
                 </Col>
-                <Col lg={6} xs={22} md={12}>
-                  <SelectTags required={false} multiple={true} viewLabel={'Etiquetas'}/>
+                <Col lg={8} xs={22} md={12}>
+                  <SelectCostCenter
+                    required={false}
+                    multiple={true}
+                    viewLabel={"Centro de costos"}
+                  />
+                </Col>
+                <Col lg={8} xs={22} md={12}>
+                  <SelectTags
+                    required={false}
+                    multiple={true}
+                    viewLabel={"Etiquetas"}
+                  />
                 </Col>
                 {paymentCalendars.length > 0 && (
                   <>
