@@ -360,8 +360,8 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   };
 
   const data_type = [
-    { value: 1, label: "Porcentaje" },
-    { value: 2, label: "Monto" },
+    { value: 1, label: "Monto" },
+    { value: 2, label: "Porcentaje" },
   ];
   const based_on = [
     { value: 1, label: "Salario" },
