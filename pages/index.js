@@ -64,7 +64,7 @@ const Home = ({ ...props }) => {
             --background_image: ${props.config &&
             props.config.concierge_logo_login
               ? "url(" + props.config.concierge_logo_login + ")"
-              : 'url("/images/login.jpg")'};
+              : ''};
             --logo_login: ${props.config && props.config.concierge_logo
               ? "url(" + props.config.concierge_logo + ")"
               : 'url("/images/Grupo Industrial Roche-Color.png")'};
