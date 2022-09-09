@@ -288,6 +288,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       other_payment_type: item.other_payment_type,
       "": item.perception_type ? 1 : item.deduction_type ? 2 : 3,
     });
+    setConceptType(item.perception_type ? 1 : item.deduction_type ? 2 : 3);
   };
 
   const updateRegister = async (value) => {
