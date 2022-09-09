@@ -278,7 +278,6 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
 
     form.setFieldsValue({
       name: item.name,
-      concept_type: item.concept_type,
       data_type: item.data_type,
       datum: item.datum,
       based_on: item.based_on,
