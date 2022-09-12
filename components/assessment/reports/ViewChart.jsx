@@ -1,6 +1,7 @@
-import React, {useEffect, useState, useLayoutEffect} from 'react';
+import React, {useEffect, useState, useLayoutEffect, useMemo} from 'react';
 import MyModal from '../../../common/MyModal';
 import { Row, Col } from 'antd';
+import dynamic from 'next/dynamic';
 import {
     Chart as ChartJS,
     RadialLinearScale,
@@ -11,6 +12,7 @@ import {
     Legend,
   } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
+import zoomPlugin from 'chartjs-plugin-zoom';
 
 ChartJS.register(
     RadialLinearScale,
@@ -18,7 +20,8 @@ ChartJS.register(
     LineElement,
     Filler,
     Tooltip,
-    Legend
+    Legend,
+    zoomPlugin
 );
 
 const ViewChart = ({
@@ -29,12 +32,14 @@ const ViewChart = ({
     ...props
 }) => {
 
+    const config = { labels: [], datasets : [] };
     const [activeCircular, setActiveCircular] = useState(false);
     const [fullName, setFullName] = useState('');
-    const [parameters, setParameters] = useState({ labels: [], datasets : []});
+    const [parameters, setParameters] = useState(config);
 
     useLayoutEffect(()=>{
         if(infoReport.length > 0) generateConfig();
+        else setParameters(config);
     },[infoReport])
 
     const getCompatibility = (value, string = true) => {
@@ -249,7 +254,6 @@ const ViewChart = ({
         if(typeReport == 'psc') return 2;
         return 1.5;
     }
-
     const options = {
         responsive: true,
         animation: {
@@ -266,16 +270,32 @@ const ViewChart = ({
                 }
             }
         },
-    };
-
+        plugins: {
+            zoom: {
+                zoom: {
+                  wheel: {
+                    enabled: true
+                  },
+                  mode: "xy",
+                  speed: 50,
+                },
+                pan: {
+                  enabled: true,
+                  mode: "xy",
+                  speed: 50
+                }
+            }
+        }
+    };   
+    
     return (
         <MyModal
             visible={visible}
             close={close}
             title={fullName}
-            // widthModal={700}
+            widthModal={800}
         >
-             <Radar
+            <Radar
                 data={parameters}
                 options={options}
             />
