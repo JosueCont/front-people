@@ -1,5 +1,5 @@
 import WebApi from "./webApi";
-import {getJobRisk} from "../redux/catalogCompany";
+import { getJobRisk } from "../redux/catalogCompany";
 
 class WebApiPeople {
   static getGeneralConfig() {
@@ -380,46 +380,14 @@ class WebApiPeople {
     return WebApi.ApisType(`/business/node-information/${url}`, type, data);
   }
 
-  static centerCost(nodeId, method='get', data){
-    return WebApi.ApisType(`/payroll/cost-center/?node=${nodeId}`,method);
+  static centerCost(nodeId, method = "get", data) {
+    return WebApi.ApisType(`/payroll/cost-center/?node=${nodeId}`, method);
   }
 
-  static tags(nodeId){
-    return WebApi.ApisType(`/business/tag/?node=${nodeId}`,'get');
+  static tags(nodeId) {
+    return WebApi.ApisType(`/business/tag/?node=${nodeId}`, "get");
   }
 
-  static accountantAccount(nodeId){
-    return WebApi.ApisType(`/payroll/accountant-account/?node=${nodeId}`,'get');
-  }
-
-  static getBranches(){
-    return WebApi.ApisType(`/business/branch-node/`,'get')
-  }
-  
-  static saveBranch(data){
-    return WebApi.ApisType(`/business/branch-node/`, "post", data)
-  }
-
-  static updateBranch(id, data) {
-    return WebApi.ApisType(`/business/branch-node/${id}/`, "patch", data);
-  }
-
-  static deleteBranch(id){
-    return WebApi.ApisType(`/business/branch-node/${id}/`, "delete")
-  }
-
-  static getPatronalRegistration(node){
-    return WebApi.ApisType(`/business/patronal-registration-data?node=${node}`,'get')
-  }
-
-  static getJobRiskClass(node){
-    return WebApi.ApisType(`/fiscal/job-risk-class/?node=${node}`,'get')
-  }
-
-  static getFractions(node){
-    return WebApi.ApisType(`/fiscal/fraction-rt/?node=${node}`,'get')
-  }
-  
   static accountantAccount(nodeId) {
     return WebApi.ApisType(
       `/payroll/accountant-account/?node=${nodeId}`,
@@ -427,27 +395,69 @@ class WebApiPeople {
     );
   }
 
-  static getPatronalRegistrationData(node){
-    return WebApi.ApisType(`/business/patronal-registration-data/?node=${node}`,'get');
+  static getBranches() {
+    return WebApi.ApisType(`/business/branch-node/`, "get");
   }
 
-  static savePatronalRegistration(idCompany, data){
-    return WebApi.ApisType(`/business/patronal-registration-data/?node=${idCompany}`,'post', data);
+  static saveBranch(data) {
+    return WebApi.ApisType(`/business/branch-node/`, "post", data);
   }
 
-  static updatePatronalRegistration(id, idCompany, data){
-    return WebApi.ApisType(`/business/patronal-registration-data/${id}/?node=${idCompany}`,'put', data);
+  static updateBranch(id, data) {
+    return WebApi.ApisType(`/business/branch-node/${id}/`, "patch", data);
   }
 
-  static deletePatronalRegistration(id, idCompany){
-    return WebApi.ApisType(`/business/patronal-registration-data/${id}/?node=${idCompany}`,'delete');
+  static deleteBranch(id) {
+    return WebApi.ApisType(`/business/branch-node/${id}/`, "delete");
   }
 
-  static sendCatalogData(url,data) {
+  static getPatronalRegistration(node) {
+    return WebApi.ApisType(
+      `/business/patronal-registration-data?node=${node}`,
+      "get"
+    );
+  }
+
+  static getJobRiskClass(node) {
+    return WebApi.ApisType(`/fiscal/job-risk-class/?node=${node}`, "get");
+  }
+
+  static getFractions(node) {
+    return WebApi.ApisType(`/fiscal/fraction-rt/?node=${node}`, "get");
+  }
+
+  static accountantAccount(nodeId) {
+    return WebApi.ApisType(
+      `/payroll/accountant-account/?node=${nodeId}`,
+      "get"
+    );
+  }
+
+  static getPatronalRegistrationData(node) {
+    return WebApi.ApisType(
+      `/business/patronal-registration-data/?node=${node}`,
+      "get"
+    );
+  }
+
+  static patronalRegistration(data) {
+    return WebApi.ApisType(
+      `/business/patronal-registration-data/`,
+      "post",
+      data
+    );
+  }
+
+  static deletePatronalRegistration(id, idCompany) {
+    return WebApi.ApisType(
+      `/business/patronal-registration-data/${id}/?node=${idCompany}`,
+      "delete"
+    );
+  }
+
+  static sendCatalogData(url, data) {
     return WebApi.ApisType(url, "post", data);
   }
-
 }
-
 
 export default WebApiPeople;

@@ -20,7 +20,7 @@ if (process.browser) {
 export const typeHttp = process.browser
   ? process.env.NEXT_PUBLIC_USE_HTTPS
   : process.env.USE_HTTPS;
-const domainApiWithTenant = `${tenant}.${domainApi}`;
+export const domainApiWithTenant = `${tenant}.${domainApi}`;
 
 export const config = {
   baseURL: `${typeHttp}://${domainApiWithTenant}/`,

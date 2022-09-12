@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import styled from '@emotion/styled';
 import { Card, Row, Col, Space, Button, Divider } from 'antd';
 import Cookies from "js-cookie";
-import { getCurrentURL } from '../../utils/constant';
+import { getCurrentURL, getHost, urlPeople, urlMyAccount, urlSocial } from '../../utils/constant';
 import { connect } from 'react-redux';
+import {domainApiWithTenant} from '../../api/axiosApi'
 
 const ContentApps = styled.div`
     & .ant-card{
@@ -72,7 +73,7 @@ const ContentApps = styled.div`
 const CardApps = ({user, config, ...props}) => {
     
     const defaultPhoto =
-    "https://cdn-icons-png.flaticon.com/512/219/219986.png";
+    "https://cdn-icons-png.flaticon.com/512/8415/8415113.png";
 
     const imgPsicometria =
     "https://www.nicepng.com/png/full/197-1975724_research-icon-png-marketing.png";
@@ -81,28 +82,28 @@ const CardApps = ({user, config, ...props}) => {
     "https://www.masadmin.net/imgs/icon12.png";
 
     const imgSocial =
-    "https://cdn-icons-png.flaticon.com/512/236/236822.png";
+    "https://cdn-icons-png.flaticon.com/512/2065/2065203.png";
 
     const imgPeople =
-    "https://www.ird.lk/wp-content/uploads/2018/11/kisspng-crowd-drawing-cartoon-community-5abe5e8dc735f1.335904791522425485816.png";
+    "https://cdn-icons-png.flaticon.com/512/3791/3791146.png";
 
     const linkToProfile = () =>{
         const token = user.jwt_data.metadata.at(-1).token;
-        const url = `${getCurrentURL(true)}.myaccount.hiumanlab.com/validation?token=${token}`;
+        const url = `${getCurrentURL(true)}.${urlMyAccount}/validation?token=${token}`;
         // const url = `${getCurrentURL(true)}.localhost:3001/validation?token=${token}`;
         redirectTo(url);
     }
 
     const linkToPeople = () =>{
         const token = user.jwt_data.metadata.at(-1).token;
-        const url = `${getCurrentURL(true)}.people.hiumanlab.com/validation?token=${token}`;
+        const url = `${getCurrentURL(true)}.${urlPeople}/validation?token=${token}`;
         // const url = `${getCurrentURL(true)}.localhost:3000/validation?token=${token}`;
         redirectTo(url)
     }
 
-    const linktToIsysa = () =>{
+    const linktToSocial = () =>{
         const token = user.jwt_data.metadata.at(-1).token;
-        const url = `https://isysa.social.hiumanlab.com/validation?token=${token}`;
+        const url = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token}`;
         redirectTo(url);
     }
 
@@ -126,6 +127,18 @@ const CardApps = ({user, config, ...props}) => {
                         >
                             <img src={defaultPhoto}/>
                             <p style={{marginBottom: '0px'}}>Mi perfil</p>
+                        </Space>
+                    </Col>
+                ) : null}
+                {user && (user.intranet_access===2 || user.intranet_access===3) ? (
+                    <Col span={8} >
+                        <Space
+                            direction='vertical'
+                            align='center'
+                            onClick={()=>linktToSocial()}
+                        >
+                            <img src={imgSocial}/>
+                            <p style={{marginBottom: '0px'}}>Red social</p>
                         </Space>
                     </Col>
                 ) : null}
