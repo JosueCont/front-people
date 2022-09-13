@@ -1,26 +1,12 @@
 import {React, useEffect, useState} from 'react'
-import {Avatar, Radio, Space,List} from 'antd'
+import {Avatar, Radio, Space, List, Checkbox, DatePicker, Select, Option} from 'antd'
+import { TopPeople } from './topPeople';
+import { PeopleMostActive } from './peopleMostActive';
+import  FilterDashboard from './FilterDashboard';
+import moment from 'moment/moment';
+import { format } from 'path';
 
 export const SidebarYnl = () => {
-    const data = [
-        {
-            title: 'Nombre usuario',
-        },
-        {
-            title: 'Nombre usuario',
-        },
-        {
-            title: 'Nombre usuario',
-        },
-        {
-            title: 'Nombre usuario',
-        },
-    ];
-    const [value, setValue] = useState(1);
-    const onChange = (e) => {
-        console.log('radio checked', e.target.value);
-        setValue(e.target.value);
-    };
   return (
     <div className='container-menu'>
         <div className='flex-item'>
@@ -34,7 +20,7 @@ export const SidebarYnl = () => {
                     xl: 100,
                     xxl: 100,
                     }}
-                    src="../../public/images/Recurso3.png"
+                    src="/images/LogoYnl.png"
                     style={{marginBottom:16}}
                 />
                 <div className='data-subtitle'>
@@ -46,51 +32,21 @@ export const SidebarYnl = () => {
         <hr />
         <div className='flex-item aligned-to-left subtitles'>
             <div>
-                <h3 className='subtitles'><b>Filtrar por:</b></h3>
-                <Radio.Group onChange={onChange} value={value}>
-                    <Space direction="vertical">
-                        <Radio value={1}>Departamento</Radio>
-                        <Radio value={2}>Por puesto</Radio>
-                        <Radio value={3}>Por grupo</Radio>
-                        <Radio value={4}>Todos</Radio>
-                    </Space>
-                </Radio.Group>
+                <FilterDashboard /> 
             </div>
         </div>
         <hr />
         <div className='flex-item'>
             <div>
                 <h3 className='aligned-to-left subtitles'><b>Top personas:</b></h3>
-                <List
-                    itemLayout="horizontal"
-                    dataSource={data}
-                    renderItem={(item) => (
-                    <List.Item>
-                        <List.Item.Meta
-                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                        title={<a href="https://ant.design">{item.title}</a>}
-                        />
-                    </List.Item>
-                    )}
-                />
+                <TopPeople />
             </div>
         </div>
         <hr />
         <div className='flex-item'>
             <div>
                 <h3 className='aligned-to-left subtitles'><b>Personas más activas:</b></h3>
-                <List
-                    itemLayout="horizontal"
-                    dataSource={data}
-                    renderItem={(item) => (
-                    <List.Item>
-                        <List.Item.Meta
-                        avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                        title={<a href="https://ant.design">{item.title}</a>}
-                        />
-                    </List.Item>
-                    )}
-                />
+                <PeopleMostActive />
             </div>
         </div>
     </div>

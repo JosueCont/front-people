@@ -17,7 +17,7 @@ const index = () => {
       <Global
         styles={css`
             :root {
-                --orange: #F44711;
+                --orange: #FF5E00;
             }
           .container-menu{
             display: block;
@@ -78,8 +78,15 @@ const index = () => {
             justify-content: center;
             align-items: center;
           }
+          .aligned-to-start{
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            margin-right: 4px;
+          }
           .ant-card-head{
-            background-color: var(--orange);
+            background-image: linear-gradient(180deg, #ff7c0d 0, #ff5e00 25%, #ff5e00 50%, #f33a00 75%, #ea1a2b 100%);
+            /**background-image: linear-gradient(180deg, #ff7c0d 0, #ff7c0d 25%, #ff5e00 50%, #f33a00 75%, #ea1a2b 100%);**/
             border-radius: 25px;
           }
           .ant-card-bordered{
@@ -116,10 +123,30 @@ const index = () => {
             font-weight: bold;
             font-size: 15px;
           }
+          .ant-table-tbody > tr > td{
+            padding: 4px 8px;
+          }
+          .ant-table-thead > tr > th{
+            padding: 8px 16px;
+          } 
           .ant-table > colgroup{
             width: 30%;
           }
+          .ant-checkbox-checked .ant-checkbox-inner{
+            background-color: var(--orange)!important;
+            border-color: var(--orange) !important;
+          }
+          .indicator-inspired{  border-radius: 50px; width: 15px; height: 15px; background-color: #ff457d; margin: 3px 3px;   }
+          .indicator-glad{  border-radius: 50px; width: 15px; height: 15px; background-color: #ffc700; margin: 3px 3px;  }
+          .indicator-open{  border-radius: 50px; width: 15px; height: 15px; background-color: #1a85ff; margin: 3px 3px; }
+          .indicator-depressed{  border-radius: 50px; width: 15px; height: 15px; background-color: #9c4fff; margin: 3px 3px;  }
+          .indicator-peace{  border-radius: 50px; width: 15px; height: 15px; background-color: #2fdaff; margin: 3px 3px;  }
+          .indicator-confused{  border-radius: 50px; width: 15px; height: 15px; background-color: #ff5e00; margin: 3px 3px;  }
+          .indicator-upset{ border-radius: 50px; width: 15px; height: 15px; background-color: #ff1111; margin: 3px 3px;  }
+          .ant-form-item{margin-bottom:8px;}
+          .ant-btn{color: white;}
         `}
+        
       />  
       <Breadcrumb>
         <Breadcrumb.Item
