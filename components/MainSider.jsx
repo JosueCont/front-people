@@ -181,16 +181,21 @@ const MainSider = ({
               >
                 Empresas
               </Menu.Item>
-              <Menu.Item
-                key="patronal"
-                onClick={() =>
-                  router.push({
-                    pathname: "/business/patronalRegistrationNode",
-                  })
-                }
-              >
-                Registros patronales
-              </Menu.Item>
+
+              {props.config && props.config.nomina_enabled && (
+                  <Menu.Item
+                      key="patronal"
+                      onClick={() =>
+                          router.push({
+                            pathname: "/business/patronalRegistrationNode",
+                          })
+                      }
+                  >
+                    Registros patronales
+                  </Menu.Item>
+
+              )}
+
               <Menu.Item
                 key="asign"
                 onClick={() =>

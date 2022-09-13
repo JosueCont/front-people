@@ -49,15 +49,22 @@ const Home = ({ ...props }) => {
       <Global
         styles={css`
           :root {
-            --primaryColor: ${props.config
-              ? props.config.concierge_primary_color
+            --primaryColor: ${props.config && props.config.theme_color 
+              ? props.config.theme_color.primary_color
               : "#1890ff"};
+            --primaryAlternativeColor: ${props.config && props.config.theme_color
+            ? props.config.theme_color.primary_alternative_color
+            : "#1890ff"};
             --secondaryColor: ${props.config
               ? props.config.concierge_secondary_color
               : "#1890ff"};
-            --login_image: ${props.config && props.config.concierge_logo_login
+            --secondaryAlternativeColor: ${props.config && props.config.theme_color
+            ? props.config.theme_color.secondary_alternative_color
+            : "#1890ff"};
+            --background_image: ${props.config &&
+            props.config.concierge_logo_login
               ? "url(" + props.config.concierge_logo_login + ")"
-              : 'url("/images/login.jpg")'};
+              : ''};
             --logo_login: ${props.config && props.config.concierge_logo
               ? "url(" + props.config.concierge_logo + ")"
               : 'url("/images/Grupo Industrial Roche-Color.png")'};
@@ -76,7 +83,7 @@ const Home = ({ ...props }) => {
           }
 
           body {
-            background: transparent var(--login_image) 70% 5% no-repeat
+            background: transparent var(--background_image) 70% 5% no-repeat
               padding-box;
             background-size: cover;
             opacity: 1;
@@ -184,7 +191,7 @@ const Home = ({ ...props }) => {
             }
 
             body {
-              background: transparent var(--login_image) 70% 5%
+              background: transparent var(--background_image) 70% 5%
                 no-repeat padding-box;
               background-size: 100% 100%;
             }
@@ -246,7 +253,11 @@ const Home = ({ ...props }) => {
                 >
                   <img
                     className={"logoKhor"}
-                    src={props?.config?.concierge_logo ? props.config.concierge_logo : "/images/iU_Khorplus.png"}
+                    src={
+                      props?.config?.concierge_logo
+                        ? props.config.concierge_logo
+                        : "/images/iU_Khorplus.png"
+                    }
                     width={200}
                     alt=""
                   />
