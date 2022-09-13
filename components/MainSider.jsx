@@ -183,17 +183,16 @@ const MainSider = ({
               </Menu.Item>
 
               {props.config && props.config.nomina_enabled && (
-                  <Menu.Item
-                      key="patronal"
-                      onClick={() =>
-                          router.push({
-                            pathname: "/business/patronalRegistrationNode",
-                          })
-                      }
-                  >
-                    Registros patronales
-                  </Menu.Item>
-
+                <Menu.Item
+                  key="patronal"
+                  onClick={() =>
+                    router.push({
+                      pathname: "/business/patronalRegistrationNode",
+                    })
+                  }
+                >
+                  Registros patronales
+                </Menu.Item>
               )}
 
               <Menu.Item
@@ -209,7 +208,7 @@ const MainSider = ({
           {props.permissions.person.view && (
             <SubMenu
               key="people"
-              title="People"
+              title="Colaboradores"
               className="subMainMenu"
               icon={<UserOutlined />}
             >

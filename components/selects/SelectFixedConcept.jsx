@@ -25,7 +25,7 @@ const SelectFixedConcept = ({
       });
     }
     setConcept(cats);
-  }, [props.payment_alendar]);
+  }, [props.fixed_concept, props.group_fixed_concept]);
 
   return (
     <Form.Item
@@ -40,10 +40,12 @@ const SelectFixedConcept = ({
     >
       <Select
         // options={concept}
+        mode={type === 1 && "multiple"}
         placeholder={placeholder && "Conceptos fijos"}
         showSearch
         optionFilterProp="children"
         disabled={disabled}
+        allowClear
       >
         {concept.map((item) => {
           return (

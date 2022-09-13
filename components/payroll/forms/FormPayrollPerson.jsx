@@ -156,6 +156,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
             apply_monthly_adjustment: item.apply_monthly_adjustment,
             tag: item?.tag,
             cost_center: item?.cost_center,
+            fixed_concept: item.fixed_concept,
           });
           changePaymentType(item.payment_type);
           setLastDayPaid(item.last_day_paid);
