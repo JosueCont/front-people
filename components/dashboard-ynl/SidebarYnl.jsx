@@ -1,7 +1,7 @@
 import {React, useEffect, useState} from 'react'
 import {Avatar, Radio, Space, List, Checkbox, DatePicker, Select, Option} from 'antd'
-import { TopPeople } from './topPeople';
-import { PeopleMostActive } from './peopleMostActive';
+import { TopPeople } from './TopPeople';
+import { PeopleMostActive } from './PeopleMostActive';
 import  FilterDashboard from './FilterDashboard';
 import moment from 'moment/moment';
 import { format } from 'path';
