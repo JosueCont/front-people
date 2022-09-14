@@ -5,8 +5,9 @@ import moment from 'moment/moment';
 import { format } from 'path';
 import { connect } from "react-redux";
 import WebApiYnl from '../../api/WebApiYnl';
+import { getDailyEmotions } from '../../redux/ynlDuck';
 
-const FilterDashboard = ({currentNode, ...props}) => {
+const FilterDashboard = ({currentNode, getDailyEmotions, ...props}) => {
     const [filterModule] = Form.useForm();
     const { RangePicker } = DatePicker;
     const [value, setValue] = useState(1);
@@ -49,6 +50,51 @@ const FilterDashboard = ({currentNode, ...props}) => {
         }
     }
 
+    // const getTopPersons = async (data) =>{
+    //     try {
+    //         let response = await WebApiYnl.getTopPersons(data);
+    //         console.log("respuesta top personas",response);
+    //     } catch (e) {
+    //         console.error(e.name + ": " + e.message);
+    //     }
+    // }
+
+    // const getDailyEmotions = async (data) =>{
+    //     try {
+    //         let response = await WebApiYnl.getDailyEmotions(data);
+    //         console.log("respuesta emociones diarias",response);
+    //     } catch (e) {
+    //         console.error(e.name + ": " + e.message);
+    //     }
+    // }
+
+    // const getEmotionalAspects = async (data) =>{
+    //     try {
+    //         let response = await WebApiYnl.getEmotionalAspects(data);
+    //         console.log("respuesta aspectos emocionales",response);
+    //     } catch (e) {
+    //         console.error(e.name + ": " + e.message);
+    //     }
+    // }
+
+    // const getReportUser = async (data) =>{
+    //     try {
+    //         let response = await WebApiYnl.getReportUser(data);
+    //         console.log("respuesta reporte usuario",response);
+    //     } catch (e) {
+    //         console.error(e.name + ": " + e.message);
+    //     }
+    // }
+
+    // const getEmotionChart = async (data) =>{
+    //     try {
+    //         let response = await WebApiYnl.getEmotionChart(data);
+    //         console.log("respuesta chart emociones",response);
+    //     } catch (e) {
+    //         console.error(e.name + ": " + e.message);
+    //     }
+    // }
+
     const onChange = (e) => {
         //console.log('radio checked', e.target.value);
         setValue(e.target.value);
@@ -78,9 +124,14 @@ const FilterDashboard = ({currentNode, ...props}) => {
             end_date: valueEnd,
             person_department_id: value == 1 ? dataForm.valuesSelected: [],
             person_employment_id: value == 2 ? dataForm.valuesSelected: [],
-            group_id: value == 3 ? dataForm.valuesSelected: [],
+            //group_id: value == 3 ? dataForm.valuesSelected: "",
         }
         console.log("Valores del filtro",data);
+        // getTopPersons(data);
+        getDailyEmotions(data);
+        // getEmotionalAspects(data);
+        // getReportUser(data);
+        // getEmotionChart(data);
     }
     const resetFilter = () =>{filterModule.resetFields();}
 
@@ -134,4 +185,4 @@ const mapState = (state) => {
     };
 };
   
-export default connect(mapState)(FilterDashboard);
+export default connect(mapState,{getDailyEmotions})(FilterDashboard);

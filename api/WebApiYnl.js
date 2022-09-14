@@ -15,6 +15,26 @@ class WebApiYnl {
       `/person/person/?node=${node}&is_active=${isActive}&is_deleted=${isDeleted}&ynl_access=${ynlAccess}`,"get"
     );
   }
+
+  static getTopPersons(data){
+    return WebApi.ApisType(`/ynl/report/top-persons/`, "post", data);
+  }
+
+  static getEmotionalAspects(data){
+    return WebApi.ApisType(`/ynl/report/emotional-aspects/`, "post", data);
+  }
+
+  static getDailyEmotions(data){
+    return WebApi.ApisType(`/ynl/report/daily-emotions/`, "post", data);
+  }
+
+  static getReportUser(data){
+    return WebApi.ApisType(`/ynl/report/user/`, "post", data);
+  }
+
+  static getEmotionChart(data){
+    return WebApi.ApisType(`/ynl/report/emotions-chart/`, "post", data);
+  }
 }
 
 export default WebApiYnl;

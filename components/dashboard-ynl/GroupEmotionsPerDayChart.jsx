@@ -6,24 +6,25 @@ import {Row,
     Tag,
     Space} from 'antd'
 import { blueGrey } from '@material-ui/core/colors';
+import { connect } from 'react-redux';
 
-export const GroupEmotionsPerDayChart = () => {
+const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
     const columns = [
         {
           title: 'Fecha',
-          dataIndex: 'name',
-          key: 'name',
+          dataIndex: 'init',
+          key: 'init',
           width:120,
           
         },
         {
           title: 'Estado de ánimo',
-          dataIndex: 'age',
-          key: 'age',
-          render:(_, { age }) => (
+          dataIndex: 'emotions',
+          key: 'emotions',
+          render:(_, { emotions }) => (
             <>
               <Row>
-                {Object.entries(age).map(([key, val])=>{
+                {Object.entries(emotions).map(([key, val])=>{
                   if (val == 1) {
                     return (
                       <Col>
@@ -77,29 +78,29 @@ export const GroupEmotionsPerDayChart = () => {
       ];
       const data = [
         {
-          key: '1',
-          name: '01/sep/2022',
-          age: [1,2,3,4,5,6,7]
+          key:1,
+          fecha: '01/sep/2022',
+          emociones: [1,2,3,4,5,6,7]
         },
         {
-          key: '2',
-          name: '02/sep/2022',
-          age: [1,1,5,6,7,7]
+          key:2,
+          fecha: '02/sep/2022',
+          emociones: [1,1,5,6,7,7]
         },
         {
-          key: '3',
-          name: '03/sep/2022',
-          age: [1,1,2,3,4,5,5,5,5,6,7,7]
+          key:3,
+          fecha: '03/sep/2022',
+          emociones: [1,1,2,3,4,5,5,5,5,6,7,7]
         },
         {
-            key: '4',
-            name: '04/sep/2022',
-            age: [1,1,2,2,3,3,4,4,5,6,7,7]
+            key:4,
+            fecha: '04/sep/2022',
+            emociones: [1,1,2,2,3,3,4,4,5,6,7,7]
         },        
         {
-            key: '5',
-            name: '05/sep/2022',
-            age: [1,4,2,1,4,5,1,5,5,3,7,3]
+            key:5,
+            fecha: '05/sep/2022',
+            emociones: [1,4,2,1,4,5,1,5,5,3,7,3]
           },
       ];
 
@@ -141,8 +142,15 @@ export const GroupEmotionsPerDayChart = () => {
                   <div><p>Molesto</p></div>
                 </Col> 
             </Row>
-            <Table columns={columns} dataSource={data} pagination={false} size={'100%'} />
+            <Table columns={columns} dataSource={ynlStore} pagination={false} size={'100%'} />
         </Card>
     </>
   )
 }
+const mapState = (state) => {
+  return {
+    ynlStore: state.ynlStore.dailyEmotions,
+  };
+};
+
+export default connect(mapState)(GroupEmotionsPerDayChart);
