@@ -1,6 +1,7 @@
 import { Form, Input, Button, Spin, Typography } from "antd";
 import { ruleRequired } from "../utils/rules";
-const { Text } = Typography;
+import React from "react";
+const { Text, Title } = Typography;
 
 const RecoveryPasswordForm = (props) => {
   const validatePassword = ({ getFieldValue }) => ({
@@ -15,6 +16,10 @@ const RecoveryPasswordForm = (props) => {
   return (
     <>
       <Spin tip="Cargando..." spinning={props.loading}>
+        <Title level={3} className={"font-color-khor"}>
+          Ingresa tu nueva contraseña
+        </Title>
+        <br/>
         <Form
           name="recoverPasswordform"
           layout="vertical"
