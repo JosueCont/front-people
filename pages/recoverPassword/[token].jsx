@@ -35,7 +35,7 @@ const PasswordRecovery = ({...props}) => {
     try {
       setLoading(true);
       const headers = {
-        "client-id": props[0].config.client_khonnect_id,
+        "client-id": props.config.client_khonnect_id,
         "Content-Type": "application/json",
       };
       const data = {
@@ -43,7 +43,7 @@ const PasswordRecovery = ({...props}) => {
         token: token,
       };
       let response = await Axios.post(
-        props[0].config.url_server_khonnect + "/user/password/change/",
+        props.config.url_server_khonnect + "/user/password/change/",
         data,
         { headers: headers }
       );
@@ -294,7 +294,7 @@ const PasswordRecovery = ({...props}) => {
                           <p
                               className={"font-color-khor pointer"}
                               onClick={() =>
-                                  router.push({ pathname: "/home/persons/" })
+                                  router.push({ pathname: "/" })
                               }
                           >
                             <ArrowLeftOutlined />
