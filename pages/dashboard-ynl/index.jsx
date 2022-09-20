@@ -48,7 +48,7 @@ const index = () => {
             text-align: center;
           }
           .container-circle {
-            border: 3px solid var(--orange);
+            border: 2px solid var(--orange);
             border-radius: 50px;
             width: 100px;
             height: 100px;
@@ -103,7 +103,7 @@ const index = () => {
             line-height: 1;
           }
           .ant-card-body{
-            padding: 8px;
+            padding: 16px;
           }
           .ant-card-head-title{
             text-align: center;
@@ -145,6 +145,11 @@ const index = () => {
           .indicator-upset{ border-radius: 50px; width: 15px; height: 15px; background-color: #ff1111; margin: 3px 3px;  }
           .ant-form-item{margin-bottom:8px;}
           .ant-btn{color: white;}
+          .indicator-emotion{ border-radius: 50px; width: 15px; height: 15px; margin: 3px 3px;  }
+          .ant-list-item-meta{
+            justify-content: center;
+            align-items: center;
+          }
         `}
         
       />  

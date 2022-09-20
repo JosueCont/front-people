@@ -1,12 +1,18 @@
 import {React, useEffect, useState} from 'react'
 import {Avatar, Radio, Space, List, Checkbox, DatePicker, Select, Option} from 'antd'
-import { TopPeople } from './TopPeople';
-import { PeopleMostActive } from './PeopleMostActive';
-import  FilterDashboard from './FilterDashboard';
+import PeopleMostActive from './PeopleMostActive';
+import FilterDashboard from './FilterDashboard';
+import TopPeople from './TopPeople';
 import moment from 'moment/moment';
+import 'moment/locale/es';
 import { format } from 'path';
+import { now } from 'lodash';
+
 
 export const SidebarYnl = () => {
+  moment.locale('es');
+  const date = moment().format('DD/MM/YYYY');
+  const day = moment().format('dddd');
   return (
     <div className='container-menu'>
         <div className='flex-item'>
@@ -24,8 +30,8 @@ export const SidebarYnl = () => {
                     style={{marginBottom:16}}
                 />
                 <div className='data-subtitle'>
-                    <h2 className='subtitles'><b>Martes</b></h2>
-                    <h2 className='subtitles'><b>06/Sep/22</b></h2>
+                    <h2 className='subtitles' style={{textTransform:"capitalize"}}><b>{day}</b></h2>
+                    <h2 className='subtitles'><b>{date}</b></h2>
                 </div> 
             </div>
         </div>

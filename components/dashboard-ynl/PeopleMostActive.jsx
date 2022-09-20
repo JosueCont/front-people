@@ -1,35 +1,37 @@
 import {React, useEffect, useState} from 'react'
 import {Avatar, List,} from 'antd'
+import { connect } from 'react-redux';
 
-export const PeopleMostActive = () => {
-    const data = [
-        {
-            title: 'Nombre usuario',
-        },
-        {
-            title: 'Nombre usuario',
-        },
-        {
-            title: 'Nombre usuario',
-        },
-        {
-            title: 'Nombre usuario',
-        },
-    ];  
+const PeopleMostActive = ({ynlStore,...props}) => {
+    const [dataTop, setDataTop] = useState([]);
+    useEffect(() => {
+        setDataTop(ynlStore);
+    }, [ynlStore]); 
   return (
-    <div>
+    <>
         <List
             itemLayout="horizontal"
-            dataSource={data}
+            dataSource={dataTop}
             renderItem={(item) => (
             <List.Item>
                 <List.Item.Meta
-                avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                title={<a href="https://ant.design">{item.title}</a>}
-                />
+                avatar={<Avatar src={item.avatar} />}
+                title={
+                <div>
+                    <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{item.firstName}</p>
+                    <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{item.lastName}</p>
+                </div>}
+            />
             </List.Item>
             )}
         />
-    </div>
+    </>
   )
 }
+
+const mapState = (state) =>{
+    return {
+        ynlStore: state.ynlStore.topPersons
+    }
+};
+export default connect(mapState)(PeopleMostActive);

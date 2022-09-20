@@ -1,17 +1,5 @@
-import React from 'react'
-import { Breadcrumb,
-    Tabs,
-    Row,
-    Col,
-    Select,
-    Form,
-    Menu,
-    Avatar,
-    Input, 
-    Radio, 
-    Space,
-    List,
-    Card} from 'antd'
+import {React, useEffect, useState} from 'react'
+import { Card} from 'antd'
 import {
         Chart as ChartJS,
         LinearScale,
@@ -26,6 +14,7 @@ import {
       } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 import faker from 'faker';
+import { connect } from 'react-redux';
 
 ChartJS.register(
     LinearScale,
@@ -38,30 +27,38 @@ ChartJS.register(
     LineController,
     BarController
 );
-const labels = ['January', 'February', 'March', 'April',];
-export const data = {
-    labels,
-    datasets: [
-      {
-        type: 'line',
-        label: 'Dataset 1',
-        borderColor: 'rgb(255, 251, 0)',
-        borderWidth: 2,
-        fill: false,
-        data: labels.map(() => faker.datatype.number({ min: 0, max: 10 })),
-      },
-      {
-        type: 'bar',
-        label: 'Dataset 2',
-        backgroundColor: 'rgb(255, 136, 0)',
-        data: labels.map(() => faker.datatype.number({ min: 0, max: 8 })),
-        borderColor: 'white',
-        borderWidth: 2,
-      },
-    ],
-  };
 
-export const SurveyStatisticsChart = () => {
+const SurveyStatisticsChart = ({ynlStore,...props}) => {
+  let data = {
+    labels: [],
+    datasets: [],
+  };
+  const [config, setConfig] = useState(data);
+  useEffect(() => {
+    if(ynlStore){
+      let labelsResults = []
+      let dataResults = []
+      Object.entries(ynlStore).map(([key,item]) =>{
+        labelsResults.push(key)
+        dataResults.push(item)
+      })
+      
+      let obj = {
+        labels: labelsResults,
+        datasets: [
+          {
+            type: 'bar',
+            label: 'Encuestas',
+            backgroundColor: '#FF5E00',
+            data: dataResults,
+            borderColor: 'white',
+            borderWidth: 2,
+          },
+        ],
+      };
+      setConfig(obj)
+    }
+  }, [ynlStore]);
   return (
     <>
         <Card  
@@ -70,8 +67,15 @@ export const SurveyStatisticsChart = () => {
             style={{
                 width: '100%',
             }}>
-            <Chart type='bar' data={data} />
+            <Chart type='bar' data={config} />
         </Card>
     </>
   )
 }
+
+const mapState = (state) =>{
+  return{
+    ynlStore: state.ynlStore.emotionalAspects,
+  };
+}
+export default connect(mapState)(SurveyStatisticsChart);

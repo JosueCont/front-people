@@ -43,11 +43,12 @@ export const getTopPersons = (data) =>
       dispatch({ type: TOPPERSONS, loadTopPersons: true, payload: [] });
       await WebApiYnl.getTopPersons(data)
       .then((response) => {
-        console.log("response desde el redux TOP", response);
-        dispatch({ type: TOPPERSONS, loadTopPersons: false, payload: response.data.data.users ?? [] });
+        //console.log("response desde el redux TOP", response);
+        dispatch({ type: TOPPERSONS, loadTopPersons: false, payload: response.data.data.users ?? []});
         return true;
       })
       .catch((error) => {
+        console.log("error", error);
         dispatch({ type: TOPPERSONS, loadTopPersons: false, payload: [] });
         return false;
         //console.log(error);
@@ -59,8 +60,8 @@ export const getDailyEmotions = (data) =>
     dispatch({ type: DAILYEMOTIONS, loadDailyEmotions: true, payload: [] });
     await WebApiYnl.getDailyEmotions(data)
     .then((response) => {
-      console.log("response desde el redux EMOTIONS", response);
-      dispatch({ type: DAILYEMOTIONS, loadDailyEmotions: false, payload: response.data.data });
+      //console.log("response desde el redux EMOTIONS", response);
+      dispatch({ type: DAILYEMOTIONS, loadDailyEmotions: false, payload: response.data.data ?? [] });
       return true;
     })
     .catch((error) => {
@@ -69,5 +70,52 @@ export const getDailyEmotions = (data) =>
       //console.log(error);
     });
 }
+
+export const getEmotionalAspects = (data) => 
+  async(dispatch, getState) =>{
+    dispatch({ type: EMOTIONALASPECTS, loadEmotionalAspects: true, payload: [] });
+    await WebApiYnl.getEmotionalAspects(data)
+    .then((response) => {
+      //console.log("response desde el redux EMOTIONAL ASPECTS", response.data.data);
+      dispatch({ type: EMOTIONALASPECTS, loadEmotionalAspects: false, payload: response.data.data ?? [] });
+      return true;
+    })
+    .catch((error) => {
+      dispatch({ type: EMOTIONALASPECTS, loadEmotionalAspects: false, payload: [] });
+      return false;
+      //console.log(error);
+    });
+}
+
+export const getReportUser= (data) => 
+  async(dispatch, getState) =>{
+    dispatch({ type: REPORTUSER, loadReportUser: true, payload: [] });
+    await WebApiYnl.getReportUser(data)
+    .then((response) => {
+      //console.log("response desde el redux REPORT USER", response);
+      dispatch({ type: REPORTUSER, loadReportUser: false, payload: response.data ?? [] });
+      return true;
+    })
+    .catch((error) => {
+      dispatch({ type: REPORTUSER, loadReportUser: false, payload: [] });
+      return false;
+      //console.log(error);
+    });
+}
+
+export const getEmotionChart = (data) =>
+  async(dispatch, getState) =>{
+    dispatch({ type: EMOTIONCHART, loadEmotionChart: true, payload: [] });
+    await WebApiYnl.getEmotionChart(data)
+    .then((response) => {
+      //console.log("response desde el redux EMOTION CHART",response.data.data);
+      dispatch({ type: EMOTIONCHART, loadEmotionChart: false, payload: response.data.data ?? []});
+      return true;
+    })
+    .catch((error) =>{
+      dispatch({ type: EMOTIONCHART, loadEmotionChart: false, payload: [] });
+      return false;
+    }) 
+  }
 
 export default ynlReducer;
