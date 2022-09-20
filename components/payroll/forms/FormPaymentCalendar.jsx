@@ -15,21 +15,26 @@ import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
-import { messageSaveSuccess, salaryDays } from "../../../utils/constant";
+import {
+  BelongTo,
+  messageSaveSuccess,
+  salaryDays,
+  VacationPayment,
+} from "../../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../../utils/rules";
 import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import SelectPeriodicity from "../../selects/SelectPeriodicity";
 import SelectTypeTax from "../../selects/SelectTypeTax";
 import { connect } from "react-redux";
+import { useRouter } from "next/router";
 
 const FormPaymentCalendar = ({
-  title,
   nodeId = null,
   idPaymentCalendar = null,
-  onCancel,
   ...props
 }) => {
+  const router = useRouter();
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
   const [perceptionType, setPerceptionType] = useState([]);
@@ -48,6 +53,7 @@ const FormPaymentCalendar = ({
   const [paymentSunday, setPaymentSunday] = useState(false);
   const [paymentCalendar, setPaymentCalendar] = useState(null);
   const [locked, setLocked] = useState(false);
+  const [politics, setPolitics] = useState(false);
 
   useEffect(() => {
     if (idPaymentCalendar) {
@@ -262,7 +268,7 @@ const FormPaymentCalendar = ({
           <Title style={{ fontSize: "20px" }}>
             {paymentCalendar && paymentCalendar.locked
               ? `Calendario: ${paymentCalendar.name}`
-              : title}
+              : "Nuevo calendario"}
           </Title>
         </Row>
         <Form
@@ -500,7 +506,65 @@ const FormPaymentCalendar = ({
                 disabled={paymentCalendar ? paymentCalendar.locked : false}
               />
             </Col>
+            <Col lg={8} xs={22}>
+              <Form.Item label="Politicas">
+                <Switch
+                  defaultChecked={politics}
+                  checkedChildren="Personalizado"
+                  unCheckedChildren="Por defecto"
+                  onChange={(value) => setPolitics(value)}
+                />
+              </Form.Item>
+            </Col>
           </Row>
+          {politics && (
+            <>
+              <hr />
+              <Title style={{ fontSize: "20px" }}>Políticas de nómina</Title>
+              <Row gutter={30} style={{ marginBottom: 20 }}>
+                <Col lg={8} xs={22}>
+                  <Form.Item
+                    name="belong_to"
+                    label="Pertenece a "
+                    rules={[ruleRequired]}
+                  >
+                    <Select maxLength={100} options={BelongTo} />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22}>
+                  <Form.Item
+                    name="belongs_to_id"
+                    label="Pertenece a "
+                    rules={[ruleRequired]}
+                  >
+                    <Select maxLength={100} options={BelongTo} />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22}>
+                  <Form.Item
+                    name="vacation_bonus_payment"
+                    label="Pago de prima vacacional "
+                    rules={[ruleRequired]}
+                  >
+                    <Select maxLength={100} options={VacationPayment} />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22}>
+                  <Form.Item
+                    name="vacation_bonus_payment"
+                    label="Calculo de ISR art. 174"
+                    rules={[ruleRequired]}
+                  >
+                    <Switch
+                      defaultChecked={false}
+                      checkedChildren="Personalizado"
+                      unCheckedChildren="Por defecto"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </>
+          )}
           <Row justify={"end"} gutter={10}>
             <Col md={5}>
               <Button
@@ -508,7 +572,9 @@ const FormPaymentCalendar = ({
                 className="close_modal"
                 htmlType="button"
                 style={{ marginRight: 10 }}
-                onClick={() => onCancel()}
+                onClick={() =>
+                  router.push({ pathname: "/payroll/paymentCalendar" })
+                }
               >
                 {locked ? "Cerrar" : "Cancelar"}
               </Button>

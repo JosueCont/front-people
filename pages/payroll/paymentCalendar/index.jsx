@@ -1,26 +1,15 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../../layout/MainLayout";
-import {
-  Row,
-  Col,
-  Table,
-  Breadcrumb,
-  Button,
-  Modal,
-  message,
-  Tooltip,
-} from "antd";
+import { Row, Col, Table, Breadcrumb, Button, message, Tooltip } from "antd";
 import { useRouter } from "next/router";
 import {
   EditOutlined,
   CalendarOutlined,
   PlusCircleOutlined,
   EyeOutlined,
-  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../../libs/auth";
 import { Global } from "@emotion/core";
-import FormPaymentCalendar from "../../../components/payroll/forms/FormPaymentCalendar";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { connect } from "react-redux";
 import { DeleteOutline } from "@material-ui/icons";
@@ -127,11 +116,11 @@ const PaymentCalendars = ({ ...props }) => {
                 padding: "0 30px",
                 background: "#7B25F1 !important",
               }}
-              onClick={() => {
-                setTitleModal("Crear");
-                setIsModalVisible(true);
-                setIdPaymentCalendar(null);
-              }}
+              onClick={() =>
+                route.push({
+                  pathname: "/payroll/paymentCalendar/calendar/paymentCalendar",
+                })
+              }
               key="btn_new"
               size="large"
             >
@@ -201,7 +190,16 @@ const PaymentCalendars = ({ ...props }) => {
                         <EyeOutlined
                           className="icon_actions"
                           key={"goEdit" + record.id}
-                          onClick={() => GotoEdit(record)}
+                          onClick={() =>
+                            route.push({
+                              pathname:
+                                "/payroll/paymentCalendar/calendar/paymentCalendar",
+                              query: {
+                                calendar_id: record.id,
+                                id: props.currentNode.id,
+                              },
+                            })
+                          }
                           style={{ color: "#fd893d" }}
                         />
                       </Tooltip>
@@ -211,14 +209,19 @@ const PaymentCalendars = ({ ...props }) => {
                           <EditOutlined
                             className="icon_actions"
                             key={"goEdit" + record.id}
-                            onClick={() => GotoEdit(record)}
+                            onClick={() =>
+                              route.push({
+                                pathname:
+                                  "/payroll/paymentCalendar/calendar/paymentCalendar",
+                                query: {
+                                  calendar_id: record.id,
+                                  id: props.currentNode.id,
+                                },
+                              })
+                            }
                             style={{ color: "#fd893d" }}
                           />
                         </Tooltip>
-                        {/* <UsergroupAddOutlined
-                          className="icon_actions"
-                          key={"goCalendar" + record.id}
-                        /> */}
                       </>
                     )}
                     <Tooltip title="Ver calendario">
@@ -245,7 +248,7 @@ const PaymentCalendars = ({ ...props }) => {
           </Col>
         </Row>
       </MainLayout>
-      <Modal
+      {/* <Modal
         className="modal_form"
         width={1000}
         destroyOnClose
@@ -264,7 +267,7 @@ const PaymentCalendars = ({ ...props }) => {
           nodeId={props.currentNode && props.currentNode.id}
           onCancel={handleCancel}
         />
-      </Modal>
+      </Modal> */}
     </>
   );
 };

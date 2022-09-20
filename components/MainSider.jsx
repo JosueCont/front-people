@@ -383,6 +383,14 @@ const MainSider = ({
                 >
                   Importar nómina con xml
                 </Menu.Item>
+                <Menu.Item
+                  key="imssMovements"
+                  onClick={() =>
+                    router.push({ pathname: "/payroll/imssMovements" })
+                  }
+                >
+                  Movientos IMSS
+                </Menu.Item>
               </>
             </SubMenu>
           )}
