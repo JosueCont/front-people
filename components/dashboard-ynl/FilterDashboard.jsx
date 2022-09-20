@@ -1,13 +1,24 @@
 import {React, useEffect, useState} from 'react'
-import {Avatar, Radio, Space, List, Checkbox, DatePicker, Select, Option, Form, Button, Row, Col} from 'antd'
+import {Avatar, Radio, Space, DatePicker, Select, Form, Button, Row, Col, ConfigProvider} from 'antd'
 import {SyncOutlined} from "@material-ui/icons";
 import moment from 'moment/moment';
 import { format } from 'path';
 import { connect } from "react-redux";
 import WebApiYnl from '../../api/WebApiYnl';
 import { getDailyEmotions } from '../../redux/ynlDuck';
+import { getTopPersons } from '../../redux/ynlDuck';
+import { getEmotionalAspects } from '../../redux/ynlDuck';
+import { getReportUser } from '../../redux/ynlDuck';
+import { getEmotionChart } from '../../redux/ynlDuck';
+import locale from 'antd/lib/date-picker/locale/es_ES';
 
-const FilterDashboard = ({currentNode, getDailyEmotions, ...props}) => {
+const FilterDashboard = ({currentNode,
+    getDailyEmotions,
+    getTopPersons,
+    getEmotionalAspects,
+    getReportUser,
+    getEmotionChart,
+    ...props}) => {
     const [filterModule] = Form.useForm();
     const { RangePicker } = DatePicker;
     const [value, setValue] = useState(1);
@@ -15,8 +26,21 @@ const FilterDashboard = ({currentNode, getDailyEmotions, ...props}) => {
     const [departaments, setDepartaments] = useState([]);
     const [people, setPeople] = useState([]);
     const [optionSelect, setOptionSelect] = useState([]);
-
+    
+    useEffect(() => { 
+      //Seteamos fecha actual al datepicker porque es el rango de la consulta al principio
+      filterModule.setFieldsValue({ filterDate: [moment(), moment()] });
+      //Consulta a los reportes con la fecha de hoy, solo al cargar la página al principio.
+      let dataToInicialize = {start_date : moment().format("YYYY-MM-DD"),end_date: moment().format("YYYY-MM-DD"),person_department_id: [],person_employment_id:[],}
+      getTopPersons(dataToInicialize);
+      getDailyEmotions(dataToInicialize);
+      getEmotionalAspects(dataToInicialize);
+      getReportUser(dataToInicialize);
+      getEmotionChart(dataToInicialize);  
+    }, []);
+    
     useEffect(() => {
+        //Consulta a las apis para llenar listas de departamentos, trabajos, personas
         getJobs();
         getDepartaments();
         getPeoples();
@@ -50,54 +74,11 @@ const FilterDashboard = ({currentNode, getDailyEmotions, ...props}) => {
         }
     }
 
-    // const getTopPersons = async (data) =>{
-    //     try {
-    //         let response = await WebApiYnl.getTopPersons(data);
-    //         console.log("respuesta top personas",response);
-    //     } catch (e) {
-    //         console.error(e.name + ": " + e.message);
-    //     }
-    // }
-
-    // const getDailyEmotions = async (data) =>{
-    //     try {
-    //         let response = await WebApiYnl.getDailyEmotions(data);
-    //         console.log("respuesta emociones diarias",response);
-    //     } catch (e) {
-    //         console.error(e.name + ": " + e.message);
-    //     }
-    // }
-
-    // const getEmotionalAspects = async (data) =>{
-    //     try {
-    //         let response = await WebApiYnl.getEmotionalAspects(data);
-    //         console.log("respuesta aspectos emocionales",response);
-    //     } catch (e) {
-    //         console.error(e.name + ": " + e.message);
-    //     }
-    // }
-
-    // const getReportUser = async (data) =>{
-    //     try {
-    //         let response = await WebApiYnl.getReportUser(data);
-    //         console.log("respuesta reporte usuario",response);
-    //     } catch (e) {
-    //         console.error(e.name + ": " + e.message);
-    //     }
-    // }
-
-    // const getEmotionChart = async (data) =>{
-    //     try {
-    //         let response = await WebApiYnl.getEmotionChart(data);
-    //         console.log("respuesta chart emociones",response);
-    //     } catch (e) {
-    //         console.error(e.name + ": " + e.message);
-    //     }
-    // }
-
     const onChange = (e) => {
-        //console.log('radio checked', e.target.value);
+        //Borramos los valores del select cuando se cambia de check
+        filterModule.setFieldsValue({ valuesSelected: undefined })
         setValue(e.target.value);
+        //Dependiendo del check cargamos la lista de las consultas previamente realizadas
         let results = [];
         if(e.target.value == 1){
             results = departaments.map(item => {
@@ -116,22 +97,23 @@ const FilterDashboard = ({currentNode, getDailyEmotions, ...props}) => {
     };
     
     const onFinishFilter = (dataForm) =>{
+        //Formateamos la fecha que viene del range picker
         let valueStart = "";
         let valueEnd = "";
         dataForm.filterDate.map((date, index) =>{if(index == 0){valueStart = moment(date._d).format("YYYY-MM-DD");}else if(index == 1){valueEnd = moment(date._d).format("YYYY-MM-DD");}})
+        //Armamos la data a enviar a la api de consultas
         let data = {
             start_date : valueStart,
             end_date: valueEnd,
-            person_department_id: value == 1 ? dataForm.valuesSelected: [],
-            person_employment_id: value == 2 ? dataForm.valuesSelected: [],
-            //group_id: value == 3 ? dataForm.valuesSelected: "",
+            person_department_id: value == 1 ? dataForm.valuesSelected?? []: [],
+            person_employment_id: value == 2 ? dataForm.valuesSelected?? []: [],
         }
-        console.log("Valores del filtro",data);
-        // getTopPersons(data);
+        //Consultas
+        getTopPersons(data);
         getDailyEmotions(data);
-        // getEmotionalAspects(data);
-        // getReportUser(data);
-        // getEmotionChart(data);
+        getEmotionalAspects(data);
+        getReportUser(data);
+        getEmotionChart(data);
     }
     const resetFilter = () =>{filterModule.resetFields();}
 
@@ -144,15 +126,15 @@ const FilterDashboard = ({currentNode, getDailyEmotions, ...props}) => {
             requiredMark={false}
             >
             <h3 className='subtitles'><b>Filtrar por:</b></h3>
-            <Form.Item name="filterDate">
-                <RangePicker />                          
+            <Form.Item name="filterDate" rules={[{ required: true, message: 'Es necesario un rango de fechas para realizar el filtro' }]}>
+                <RangePicker locale={locale} />                      
             </Form.Item>
             <Form.Item name="OptionSelected">
                 <Radio.Group onChange={onChange} value={value}>
                     <Space direction="vertical">
                         <Radio value={1}>Departamentos</Radio>
                         <Radio value={2}>Puesto</Radio>
-                        <Radio value={3}>Personas</Radio>
+                        {/* <Radio value={3}>Personas</Radio> */}
                     </Space>
                 </Radio.Group>                          
             </Form.Item>
@@ -185,4 +167,4 @@ const mapState = (state) => {
     };
 };
   
-export default connect(mapState,{getDailyEmotions})(FilterDashboard);
+export default connect(mapState,{getTopPersons, getDailyEmotions, getEmotionalAspects, getReportUser, getEmotionChart})(FilterDashboard);

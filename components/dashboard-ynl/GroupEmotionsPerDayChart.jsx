@@ -4,106 +4,67 @@ import {Row,
     Card,
     Table,
     Tag,
-    Space} from 'antd'
+    Space,
+    Tooltip} from 'antd'
 import { blueGrey } from '@material-ui/core/colors';
 import { connect } from 'react-redux';
+import { values } from 'lodash';
+import moment from 'moment/moment';
 
 const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
-    const columns = [
-        {
-          title: 'Fecha',
-          dataIndex: 'init',
-          key: 'init',
-          width:120,
-          
-        },
-        {
-          title: 'Estado de ánimo',
-          dataIndex: 'emotions',
-          key: 'emotions',
-          render:(_, { emotions }) => (
-            <>
-              <Row>
-                {Object.entries(emotions).map(([key, val])=>{
-                  if (val == 1) {
-                    return (
-                      <Col>
-                        <div className='indicator-inspired'></div>
-                      </Col>
-                    )
-                  }else if(val == 2){
-                    return (
-                      <Col>
-                        <div className='indicator-glad'></div>
-                      </Col>
-                    )
-                  }else if(val == 3){
-                    return (
-                      <Col>
-                        <div className='indicator-open'></div>
-                      </Col>
-                    )
-                  }else if(val == 4){
-                    return (
-                      <Col>
-                        <div className='indicator-depressed'></div>
-                      </Col>
-                    )
-                  }else if(val == 5){
-                    return (
-                      <Col>
-                        <div className='indicator-peace'></div>
-                      </Col>
-                    )
-                  }
-                  else if(val == 6){
-                    return (
-                      <Col>
-                        <div className='indicator-confused'></div>
-                      </Col>
-                    )
-                  }
-                  else if(val == 7){
-                    return (
-                      <Col>
-                        <div className='indicator-upset'></div>
-                      </Col>
-                    )
-                  }
-                })}
-              </Row>
-            </>
-          ),
-        },
-      ];
-      const data = [
-        {
-          key:1,
-          fecha: '01/sep/2022',
-          emociones: [1,2,3,4,5,6,7]
-        },
-        {
-          key:2,
-          fecha: '02/sep/2022',
-          emociones: [1,1,5,6,7,7]
-        },
-        {
-          key:3,
-          fecha: '03/sep/2022',
-          emociones: [1,1,2,3,4,5,5,5,5,6,7,7]
-        },
-        {
-            key:4,
-            fecha: '04/sep/2022',
-            emociones: [1,1,2,2,3,3,4,4,5,6,7,7]
-        },        
-        {
-            key:5,
-            fecha: '05/sep/2022',
-            emociones: [1,4,2,1,4,5,1,5,5,3,7,3]
-          },
-      ];
+    let colors = [
+      "#1a85ff",
+      "#ff457d",
+      "#2fdaff",
+      "#ffc700",
+      "#ff5e00",
+      "#ff1111",
+      "#9c4fff"
+    ]
+    const getEmotionsNum = (item) =>{
+      let check = [];
+      for (let i = 0; i < item.total; i++) {
+        check.push(item.id);
+      }
+      return (
+        item.total > 0 &&
+        check.map(() => (
+          <div
+            className={"indicator-emotion"}
+            style={{ background: colors[item.feeling_id-1] }}
+          />
+        ))
+      );
+    }
 
+    const columns = [  
+      {
+        title: 'Fecha',
+        dataIndex: 'end',
+        key: 'end',
+        width:120,
+        render: ( init ) => (
+            <div>
+              <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{moment(init).format("dddd")}</p> 
+              <p style={{marginBottom:0, textAlign:"center"}}>{moment(init).format("DD/MMM/YYYY")}</p>
+            </div>
+        )
+      },
+      {
+        title: "Estados de ánimo",
+        render: ({ emotions }) => (
+          <Row>
+            <Col style={{display:"flex"}}>
+              {
+                emotions.map((item) => {
+                  return getEmotionsNum(item); 
+                })
+              }
+            </Col>
+          </Row>
+        )
+      }
+    ];
   return (
     <>
         <Card  
@@ -142,7 +103,7 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
                   <div><p>Molesto</p></div>
                 </Col> 
             </Row>
-            <Table columns={columns} dataSource={ynlStore} pagination={false} size={'100%'} />
+            <Table columns={columns} dataSource={ynlStore} pagination={true} size={'100%'} />
         </Card>
     </>
   )

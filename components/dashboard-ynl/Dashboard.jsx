@@ -1,9 +1,9 @@
 import {React, useEffect, useState} from 'react'
 import { Row,Col,} from 'antd'
-import { ChartDonut } from './ChartDonut'
-import { SurveyStatisticsChart } from './SurveyStatisticsChart'
+import ChartDonut from './ChartDonut'
+import SurveyStatisticsChart from './SurveyStatisticsChart'
 import  GroupEmotionsPerDayChart  from './GroupEmotionsPerDayChart'
-import { UseOfYnl } from './UseOfYnl'
+import UseOfYnl from './UseOfYnl'
 
 export const Dashboard = () => {
   return (
