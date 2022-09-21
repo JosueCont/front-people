@@ -3,8 +3,9 @@ import { CaretRightOutlined } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
 import SuaMovements from "./suaMovements";
+import { connect } from "react-redux";
 
-const ImssMovements = () => {
+const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
 
   return (
@@ -45,7 +46,7 @@ const ImssMovements = () => {
                     key="1"
                     className="site-collapse-custom-panel"
                   >
-                    <SuaMovements />
+                    <SuaMovements node={props.currentNode} />
                   </Panel>
                   <Panel
                     header="Movimieintos directos"
@@ -78,4 +79,8 @@ const ImssMovements = () => {
   );
 };
 
-export default withAuthSync(ImssMovements);
+const mapState = (state) => {
+  return { currentNode: state.userStore.current_node };
+};
+
+export default connect(mapState)(withAuthSync(ImssMovements));

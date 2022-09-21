@@ -395,8 +395,8 @@ class WebApiPeople {
     );
   }
 
-  static getBranches() {
-    return WebApi.ApisType(`/business/branch-node/`, "get");
+  static getBranches(filter) {
+    return WebApi.ApisType(`/business/branch-node/${filter}`, "get");
   }
 
   static saveBranch(data) {
