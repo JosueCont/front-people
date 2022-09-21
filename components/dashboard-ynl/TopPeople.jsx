@@ -18,8 +18,8 @@ const TopPeople = ({ynlStore,...props}) => {
                 avatar={<Avatar src={item.avatar} />}
                 title={
                 <div>
-                    <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{item.firstName}</p>
-                    <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{item.lastName}</p>
+                    <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{item.firstName?.toLowerCase()}</p>
+                    <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{item.lastName?.toLowerCase()}</p>
                 </div>}
             />
             </List.Item>

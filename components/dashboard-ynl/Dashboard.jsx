@@ -9,16 +9,16 @@ export const Dashboard = () => {
   return (
     <>
         <Row gutter={[16,24]} className='container-dashboard'>
-            <Col lg={9} xs={24} className='item-dashboard'>
+            <Col xs={24} sm={24} md={10}  className='item-dashboard'>
                 <ChartDonut />
             </Col>
-            <Col lg={15} xs={24} className='item-dashboard'>
+            <Col xs={24} sm={24} md={14}  className='item-dashboard'>
                 <GroupEmotionsPerDayChart />
             </Col>
-            <Col lg={9} xs={24} className='item-dashboard'>
+            <Col xs={24} sm={24} md={10} className='item-dashboard'>
                 <UseOfYnl />
             </Col>
-            <Col lg={15} xs={24} className='item-dashboard'>
+            <Col xs={24} sm={24} md={14}  className='item-dashboard'>
                 <SurveyStatisticsChart />
             </Col>
         </Row>     
