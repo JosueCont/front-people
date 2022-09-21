@@ -36,15 +36,22 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
   const [config, setConfig] = useState(data);
   useEffect(() => {
     if(ynlStore){
+      let labelsFinish = []
       let labelsResults = []
       let dataResults = []
       Object.entries(ynlStore).map(([key,item]) =>{
-        labelsResults.push(key)
-        dataResults.push(item)
+        //Armamos array de etiquetas pero quitandoles los caracteres especiales
+        labelsResults.push(key.replace(/(\w+)_(\w+)/g, (_, [a, ...b], [c, ...d]) => 
+          `${a}${b.join('').toLowerCase()} ${c}${d.join('').toLowerCase()}`
+          ).trim());
+        dataResults.push(item);
       })
-      
+      //Armamos array final para darle formato al texto
+      labelsFinish = labelsResults.map((item) => {
+        return item.charAt(0).toUpperCase() + item.slice(1);
+      });
       let obj = {
-        labels: labelsResults,
+        labels: labelsFinish,
         datasets: [
           {
             type: 'bar',
