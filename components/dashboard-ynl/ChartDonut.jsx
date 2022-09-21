@@ -35,7 +35,7 @@ const ChartDonut = ({ynlStore, ...props}) => {
         colorsResults.push(`#${item.color}`)
       })
       let total = dataResults.reduce((a, b) => a + b, 0);
-      setTotalPeople(total == 1 ? total + " persona en el grupo" : total + " personas en el grupo"); 
+      setTotalPeople(total == 1 ? total + " emoción registrada" : total + " emociones registradas"); 
       let obj = {
         labels: labelsResults,
         datasets: [

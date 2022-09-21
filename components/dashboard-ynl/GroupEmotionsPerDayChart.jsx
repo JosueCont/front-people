@@ -8,7 +8,7 @@ import {Row,
     Tooltip} from 'antd'
 import { blueGrey } from '@material-ui/core/colors';
 import { connect } from 'react-redux';
-import { values } from 'lodash';
+import { set, values } from 'lodash';
 import moment from 'moment/moment';
 
 const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
@@ -22,18 +22,17 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
       "#9c4fff"
     ]
     const getEmotionsNum = (item) =>{
-      let check = [];
-      for (let i = 0; i < item.total; i++) {
-        check.push(item.id);
-      }
       return (
         item.total > 0 &&
-        check.map(() => (
-          <div
-            className={"indicator-emotion"}
-            style={{ background: colors[item.feeling_id-1] }}
-          />
-        ))
+        <Tooltip title={item.emotions[0].feeling_name + ": "+ item.total}>
+          <div className='aligned-to-center' style={{marginLeft:"5px"}}>
+            <div
+              className={"indicator-emotion"}
+              style={{ background: colors[item.feeling_id-1] }}
+            />
+            <p style={{marginBottom:0,}}><b>{item.total}</b></p>
+          </div>
+        </Tooltip> 
       );
     }
 
@@ -52,17 +51,35 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
       },
       {
         title: "Estados de ánimo",
-        render: ({ emotions }) => (
-          <Row>
-            <Col style={{display:"flex"}}>
-              {
-                emotions.map((item) => {
-                  return getEmotionsNum(item); 
-                })
-              }
-            </Col>
-          </Row>
-        )
+        render: ({ emotions }) => {
+          //Verificamos si hay emociones registradas
+          let totals = []
+          emotions.map((item)=>{totals.push(item.total)})
+          let sum = totals.reduce((a, b) => a + b, 0);
+          //Enseñamos texto
+          if(sum == 0){
+            return(
+              <Row>
+                <Col style={{display:"flex"}}>
+                  <p style={{marginBottom:"0px"}}><b>No se registraron emociones</b></p>
+                </Col>
+              </Row>
+            )
+          //Enseñamos emociones
+          }else{
+            return(
+              <Row>
+                <Col style={{display:"flex"}}>
+                  { 
+                    emotions.map((item) => {
+                      return getEmotionsNum(item); 
+                    })
+                  }
+                </Col>
+              </Row>
+            )
+          }
+        }
       }
     ];
   return (
