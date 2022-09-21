@@ -42,10 +42,10 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
         title: 'Fecha',
         dataIndex: 'end',
         key: 'end',
-        width:120,
+        width: 120,
         render: ( init ) => (
             <div>
-              <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{moment(init).format("dddd")}</p> 
+              <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{moment(init).format("dddd")}</p>
               <p style={{marginBottom:0, textAlign:"center"}}>{moment(init).format("DD/MMM/YYYY")}</p>
             </div>
         )
@@ -76,34 +76,42 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
             <Row>
                 <Col className='aligned-to-start'>
                   <div className='indicator-inspired'></div>
-                  <div><p>Inspirado</p></div>
+                  <div><span>Inspirado</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-glad'></div>
-                  <div><p>Contento</p></div>
+                  <div><span>Contento</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-open'></div>
-                  <div><p>Abierto</p></div>
+                  <div><span>Abierto</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-depressed'></div>
-                  <div><p>Deprimido</p></div>
+                  <div><span>Deprimido</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-peace'></div>
-                  <div><p>En paz</p></div>
+                  <div><span>En paz</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-confused'></div>
-                  <div><p>Confundido</p></div>
+                  <div><span>Confundido</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-upset'></div>
-                  <div><p>Molesto</p></div>
+                  <div><span>Molesto</span></div>
                 </Col> 
             </Row>
-            <Table columns={columns} dataSource={ynlStore} pagination={true} size={'100%'} />
+            <Table columns={columns} 
+              dataSource={ynlStore} 
+              pagination={{
+                pageSize: 5,
+                total: ynlStore.length,
+                position: ['bottomCenter'],
+                hideOnSinglePage: true
+               }}
+              size="small" />
         </Card>
     </>
   )

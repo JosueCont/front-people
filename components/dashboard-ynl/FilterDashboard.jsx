@@ -26,6 +26,7 @@ const FilterDashboard = ({currentNode,
     const [departaments, setDepartaments] = useState([]);
     const [people, setPeople] = useState([]);
     const [optionSelect, setOptionSelect] = useState([]);
+    const [visibilitySelect, setVisibilitySelect] = useState(true);
     
     useEffect(() => { 
       //Seteamos fecha actual al datepicker porque es el rango de la consulta al principio
@@ -75,6 +76,7 @@ const FilterDashboard = ({currentNode,
     }
 
     const onChange = (e) => {
+        setVisibilitySelect(false);
         //Borramos los valores del select cuando se cambia de check
         filterModule.setFieldsValue({ valuesSelected: undefined })
         setValue(e.target.value);
@@ -145,6 +147,7 @@ const FilterDashboard = ({currentNode,
                     style={{width: '100%',}}
                     placeholder="Selecciona"
                     options={optionSelect}
+                    disabled={visibilitySelect}
                      />
             </Form.Item>
             
