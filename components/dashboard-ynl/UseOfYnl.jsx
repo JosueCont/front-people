@@ -2,7 +2,8 @@ import {React, useEffect, useState} from 'react';
 import { Breadcrumb,
     Row,
     Col,
-    Card} from 'antd'
+    Card,
+    Tooltip} from 'antd'
 import { connect } from 'react-redux';
 
 const UseOfYnl = ({ynlStore, ...props}) => {
@@ -24,24 +25,32 @@ const UseOfYnl = ({ynlStore, ...props}) => {
             <Row className='aligned-to-center' gutter={[16,16]}>
                 <div>
                     <br />
-                    <Col span={24}><h3 className='subtitles'><b>Periodo anterior</b></h3></Col>
+                    <Col span={24}>
+                        <h3 className='subtitles'><b>Periodo anterior</b></h3>
+                    </Col>
                     <Col lg={12} xs={24}>
-                        <div className='container-circle'>
-                            <h1><b>{previuosPeriod}</b></h1>
-                            {previuosPeriod == 1 && <h2>Día</h2>}
-                            {previuosPeriod != 1 && <h2>Días</h2>}
-                        </div>
+                        <Tooltip title={"El periodo anterior corresponde a la misma cantidad de días del periodo actual, pero, anteriores con respecto a la fecha inicial"}>
+                            <div className='container-circle'>
+                                <h1><b>{previuosPeriod}</b></h1>
+                                {previuosPeriod == 1 && <h2>Día</h2>}
+                                {previuosPeriod != 1 && <h2>Días</h2>}
+                            </div>
+                        </Tooltip>
                     </Col>
                 </div>
                 <div>
                     <br />
-                    <Col span={24}><h3 className='subtitles'><b>Periodo actual</b></h3></Col>
+                    <Col span={24}>
+                        <h3 className='subtitles'><b>Periodo actual</b></h3>
+                    </Col>
                     <Col lg={12} xs={24}>
-                        <div className='container-circle'>
-                            <h1><b>{currentPeriod}</b></h1>
-                            {currentPeriod == 1 && <h2>Día</h2>}
-                            {currentPeriod != 1 && <h2>Días</h2>}
-                        </div>
+                        <Tooltip title={"El periodo actual corresponde al intervalo de días seleccionados en el filtro"}>
+                            <div className='container-circle'>
+                                <h1><b>{currentPeriod}</b></h1>
+                                {currentPeriod == 1 && <h2>Día</h2>}
+                                {currentPeriod != 1 && <h2>Días</h2>}
+                            </div>
+                        </Tooltip>
                     </Col>
                 </div>
             </Row>
