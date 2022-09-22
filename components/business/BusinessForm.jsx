@@ -430,7 +430,7 @@ const businessForm = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["business"]}>
+    <MainLayout currentKey={["business"]} defaultOpenKeys={["company"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}

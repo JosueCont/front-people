@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Breadcrumb } from "antd";
 import { css, Global } from "@emotion/core";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -15,11 +15,15 @@ import {
   AlertOutlined,
   QuestionCircleOutlined,
   AppstoreOutlined,
+  DesktopOutlined,
+  FileOutlined,
+  PieChartOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined } from "@material-ui/icons";
 
-const { Sider } = Layout;
+const { Sider, Header, Content, Footer } = Layout;
 
 const MainSider = ({
   hideMenu,
@@ -33,6 +37,8 @@ const MainSider = ({
   const router = useRouter();
   const [intranetAccess, setintanetAccess] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [theme, setTheme] = useState('light');
+  const [currentSelectedKey, setCurrentSelectedKey] = useState('company');
 
   useLayoutEffect(() => {
     if (props.config) {
@@ -40,126 +46,79 @@ const MainSider = ({
     }
   }, [props.config]);
 
+  function getItem(label, key, icon, children) {
+    return {
+      key,
+      icon,
+      children,
+      label
+    };
+  }
+
+  const onClickMenuItem= ({key}) => {
+    const pathRoutes = {
+      business: '/business',
+      asign: '/config/assignedCompanies',
+      patronal: '/business/patronalRegistrationNode',
+      persons: '/home/persons',
+      groups_people: '/home/groups',
+      catalogos: '/config/catalogs',
+      perfiles: '/config/groups',
+    }
+    router.push(pathRoutes[key]);
+  };
+
+  let items = []
+
+  if (typeof window !== 'undefined') {
+    // Menú Empresas
+    if (props?.permissions?.company?.view) {
+      let children = [
+        getItem('Empresas', 'business'),
+        getItem('Asignar empresa', 'asign')
+      ]
+      if (props?.config && props?.config?.nomina_enabled) {
+        children.push(getItem('Registros patronales', 'patronal'))
+      }
+      items.push(getItem('Empresa', 'company', <BankOutlined />, children))
+    }
+
+    // Menú People
+    if (props?.permissions?.person?.view) {
+      let children = [
+        getItem('Personas', 'persons'),
+        getItem('Grupos', 'groups_people'),
+      ]
+      items.push(getItem('People', 'people', <UserOutlined />, children))
+    }
+
+    // Menú Configuración
+    let children = [
+      getItem('Catálogos', 'catalogos'),
+      getItem('Perfiles de seguridad', 'perfiles'),
+    ]
+    items.push(getItem('Configuración', 'config', <SettingOutlined />, children))
+  }
+
   return (
+      <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)} theme={theme} >
+        <div className="logo" />
+        <Menu theme={theme} defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys} mode="inline" onClick={onClickMenuItem} items={items} />
+      </Sider>
+  );
+
+  /*return (
     <>
-      <Global
-        styles={css`
-          .mainSideMenu,
-          .ant-menu-inline-collapsed {
-            border-right: solid 1px #8070f2 !important;
-          }
-
-          .mainMenu .ant-menu-item {
-            text-align: ${collapsed ? "center;" : "left;"};
-          }
-          .mainSideMenu ul li {
-            padding: ${collapsed ? "auto" : "0px 30px !important;"};
-          }
-          .mainSideMenu ul li.ant-menu-item,
-          li.ant-menu-submenu {
-            padding: ${collapsed ? "auto" : "0px 30px !important;"};
-          }
-          .mainSideMenu ul li.ant-menu-submenu .ant-menu-submenu-title {
-            padding: ${collapsed ? "auto" : "0% !important;"};
-          }
-          .mainMenu {
-            margin-top: 50px;
-          }
-
-          //////Sider
-          .ant-layout-sider {
-            background: var(--secondaryColor) !important;
-          }
-
-          .ant-layout-sider .ant-menu {
-            background: var(--secondaryColor) !important;
-            color: white !important;
-          }
-
-          .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
-          .mainMenu li:hover > div.ant-menu-submenu-title > i::after {
-            background: red !important;
-          }
-
-          .subMainMenu .ant-menu .ant-menu-item {
-            padding: 0px 0px 0px 20px !important;
-          }
-
-          .mainMenu li:hover {
-            background: var(--primaryColor) !important;
-            opacity: 0.7;
-            color: white !important;
-          }
-          .mainMenu li:hover > div.ant-menu-submenu-title {
-            color: white !important;
-          }
-
-          .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
-          .mainMenu li:hover > div.ant-menu-submenu-title > i::after {
-            background: white !important;
-          }
-
-          .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item {
-            color: white !important;
-          }
-
-          .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item:hover {
-            background: var(--secondaryColor) !important;
-            color: white !important;
-          }
-
-          .ant-menu-submenu-open ul.ant-menu-sub li.ant-menu-item-selected {
-            text-decoration: underline;
-            font-weight: 500;
-          }
-
-          ///////Div sub menu selected
-          .ant-menu-submenu-open ul.ant-menu-sub {
-            background: var(--primaryColor) !important;
-            color: white !important;
-          }
-
-          ///////Expandible menu selected
-          .mainMenu li.ant-menu-submenu-selected {
-            background: var(--primaryColor) !important;
-            opacity: 1;
-          }
-
-          ///////Sub menu selected
-          .mainMenu li.ant-menu-item-selected {
-            background: var(--primaryAlternativeColor) !important;
-            opacity: 1;
-          }
-
-          .mainMenu li.ant-menu-item-selected span,
-          .mainMenu li.ant-menu-submenu-selected > div,
-          .mainMenu li.ant-menu-submenu-selected > ul li {
-            color: white !important;
-          }
-
-          .item_custom_icon .ant-menu-submenu-title {
-            white-space: break-spaces;
-          }
-
-          .custom_icon {
-            font-size: ${collapsed ? "19px !important;" : "16px !important;"};
-          }
-
-          .ant-layout-sider-trigger {
-            background: var(--primaryColor) !important;
-          }
-        `}
-      />
       <Sider className="mainSideMenu" width="250" collapsible>
         <div className="logo" />
         <Menu
-          theme="dark"
+          theme="light"
           className="mainMenu"
           defaultSelectedKeys={currentKey}
           defaultOpenKeys={defaultOpenKeys ? defaultOpenKeys : [""]}
           mode="inline"
         >
-          {/* {props.config && props.config.nomina_enabled && (
+          {/!* {props.config && props.config.nomina_enabled && (
             <Menu.Item
               key="dashboard"
               onClick={() => router.push({ pathname: "/dashboard" })}
@@ -167,7 +126,7 @@ const MainSider = ({
             >
               Dashboard
             </Menu.Item>
-          )} */}
+          )} *!/}
           {props.permissions.company.view && (
             <SubMenu
               key="company"
@@ -480,14 +439,14 @@ const MainSider = ({
               >
                 Reportes
               </Menu.Item>
-              {/* <Menu.Item
+              {/!* <Menu.Item
                 key="assignments"
                 onClick={() =>
                   router.push({ pathname: "/assessment/assignments" })
                 }
               >
                 Asignaciones
-              </Menu.Item> */}
+              </Menu.Item> *!/}
             </SubMenu>
           )}
           <Menu.Item
@@ -500,7 +459,7 @@ const MainSider = ({
         </Menu>
       </Sider>
     </>
-  );
+  );*/
 };
 
 const mapState = (state) => {
