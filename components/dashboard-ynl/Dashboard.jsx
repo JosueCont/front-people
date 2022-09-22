@@ -9,6 +9,13 @@ export const Dashboard = () => {
   return (
     <>
         <Row gutter={[16,24]} className='container-dashboard'>
+            <Col span={24}>
+                <div style={{backgroundColor:"#FF5E00", padding:"16px 8px", borderRadius:"25px"}}>
+                    <h2 style={{color:"white", textAlign:"center", marginBottom:"0px"}}>Aquí tienes un resumen de las emociones del personal de la empresa</h2>
+                </div>
+            </Col>
+        </Row>
+        <Row gutter={[16,24]} className='container-dashboard'>
             <Col xs={24} sm={24} md={10}  className='item-dashboard'>
                 <ChartDonut />
             </Col>
