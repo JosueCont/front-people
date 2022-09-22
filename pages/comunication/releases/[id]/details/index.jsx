@@ -80,7 +80,7 @@ const Details = () => {
           }
         `}
       />
-      <MainLayout currentKey="4.1">
+      <MainLayout currentKey={["releases"]} defaultOpenKeys={["comunication"]}>
         <Breadcrumb>
           <Breadcrumb.Item
             className={"pointer"}

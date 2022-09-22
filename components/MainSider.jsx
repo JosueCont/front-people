@@ -62,8 +62,10 @@ const MainSider = ({
       patronal: '/business/patronalRegistrationNode',
       persons: '/home/persons',
       groups_people: '/home/groups',
-      catalogos: '/config/catalogs',
-      perfiles: '/config/groups',
+      catalogs: '/config/catalogs',
+      securityGroups: '/config/groups',
+      releases: '/comunication/releases',
+      events: '/comunication/events',
     }
     router.push(pathRoutes[key]);
   };
@@ -94,10 +96,26 @@ const MainSider = ({
 
     // Menú Configuración
     let children = [
-      getItem('Catálogos', 'catalogos'),
-      getItem('Perfiles de seguridad', 'perfiles'),
+      getItem('Catálogos', 'catalogs'),
+      getItem('Perfiles de seguridad', 'securityGroups'),
     ]
     items.push(getItem('Configuración', 'config', <SettingOutlined />, children))
+
+    // Agregar división
+    items.push({type: 'divider'})
+
+    // Menú Comunicación
+    if (props?.config && props?.config?.nomina_enabled && (props?.permissions?.comunication?.view ||
+        props?.permissions?.event?.view)) {
+      let children = []
+      if (props?.permissions?.comunication?.view) {
+        children.push(getItem('Comunicados', 'releases'))
+      }
+      if (props?.permissions?.event?.view) {
+        children.push(getItem('Eventos', 'events'))
+      }
+      items.push(getItem('Comunicación', 'comunication', <MessageOutlined />, children))
+    }
   }
 
   return (

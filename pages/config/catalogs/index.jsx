@@ -36,7 +36,7 @@ const configBusiness = ({ ...props }) => {
 
   return (
     <>
-      <MainLayout currentKey={["catalogos"]} defaultOpenKeys={["config"]}>
+      <MainLayout currentKey={["catalogs"]} defaultOpenKeys={["config"]}>
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item
             className={"pointer"}

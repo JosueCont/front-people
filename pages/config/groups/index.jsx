@@ -128,7 +128,7 @@ const Groups = ({ ...props }) => {
     props.getProfileGroups(props.currentNode.id, props.config);
   };
   return (
-    <MainLayout currentKey={["perfiles"]} defaultOpenKeys={["config"]}>
+    <MainLayout currentKey={["securityGroups"]} defaultOpenKeys={["config"]}>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}
