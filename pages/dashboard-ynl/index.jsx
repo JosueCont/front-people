@@ -174,6 +174,14 @@ const index = () => {
                 <Dashboard/>
             </Col>
         </Row>
+        {/* <Row>
+            <Col lg={5} xs={24}>
+                <SidebarYnl/>
+            </Col>
+            <Col lg={19} xs={24}>
+                <DashboardPerPeople/>
+            </Col>
+        </Row> */}
       </div>
     </MainLayout>
   )

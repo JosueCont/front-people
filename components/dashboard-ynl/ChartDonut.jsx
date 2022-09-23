@@ -24,6 +24,13 @@ const ChartDonut = ({ynlStore, ...props}) => {
   const [config, setConfig] = useState(data);
   const [totalPeople, setTotalPeople] = useState("Personas en el grupo");
   const [loading, setLoading] = useState(false);
+  const options = {
+    plugins: {
+      legend: {
+        onClick: null
+      } 
+    }
+  }
   useEffect(() => {
     if(ynlStore.length > 0){
       let labelsResults = []
@@ -59,7 +66,7 @@ const ChartDonut = ({ynlStore, ...props}) => {
           style={{
               width: '100%',
           }}>
-            <Doughnut data={config} />
+            <Doughnut data={config} options={options} />
       </Card>
     </>
   )

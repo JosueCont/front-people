@@ -34,6 +34,16 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
     datasets: [],
   };
   const [config, setConfig] = useState(data);
+  const options = {
+    plugins: {
+      legend: {
+          display: false,
+          labels: {
+              color: 'rgb(255, 99, 132)'
+          }
+      }
+    }
+  }
   useEffect(() => {
     if(ynlStore){
       let labelsFinish = []
@@ -74,7 +84,7 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
             style={{
                 width: '100%',
             }}>
-            <Chart type='bar' data={config} />
+            <Chart type='bar' data={config} options={options} />
         </Card>
     </>
   )
