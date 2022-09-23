@@ -1,3 +1,6 @@
+export const defaulPhoto =
+  "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
+
 export const typeCalculate = [
   {
     label: "Bruto-Neto",

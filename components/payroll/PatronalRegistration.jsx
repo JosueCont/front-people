@@ -159,12 +159,7 @@ const ImssInformationNode = ({
       .catch((error) => {
         return false;
       });
-    console.log(
-      validformPatronal,
-      validformJobRisk,
-      validformAddress,
-      validformLegalRep
-    );
+
     if (
       validformPatronal &&
       validformJobRisk &&

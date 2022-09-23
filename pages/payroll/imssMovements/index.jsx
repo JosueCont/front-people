@@ -10,9 +10,6 @@ const ImssMovements = ({ ...props }) => {
 
   return (
     <>
-      <Row justify="center" style={{ padding: "20px" }}>
-        <Button onClick={() => dowloadFile()}>SUA</Button>
-      </Row>
       <MainLayout currentKey={["imssMovements"]} defaultOpenKeys={["payroll"]}>
         <Breadcrumb>
           <Breadcrumb.Item
@@ -80,7 +77,9 @@ const ImssMovements = ({ ...props }) => {
 };
 
 const mapState = (state) => {
-  return { currentNode: state.userStore.current_node };
+  return {
+    currentNode: state.userStore.current_node,
+  };
 };
 
 export default connect(mapState)(withAuthSync(ImssMovements));
