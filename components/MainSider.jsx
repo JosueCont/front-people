@@ -497,6 +497,13 @@ const MainSider = ({
               </Menu.Item> */}
             </SubMenu>
           )}
+          <Menu.Item
+            icon={<ProfileOutlined />}
+            key="dashboard-ynl"
+            onClick={() => router.push({ pathname: "/dashboard-ynl" })}
+          >
+            YNL
+          </Menu.Item>
         </Menu>
       </Sider>
     </>

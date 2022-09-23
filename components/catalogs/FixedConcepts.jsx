@@ -288,6 +288,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
       other_payment_type: item.other_payment_type,
       "": item.perception_type ? 1 : item.deduction_type ? 2 : 3,
     });
+    setConceptType(item.perception_type ? 1 : item.deduction_type ? 2 : 3);
   };
 
   const updateRegister = async (value) => {
@@ -360,8 +361,8 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
   };
 
   const data_type = [
-    { value: 1, label: "Porcentaje" },
-    { value: 2, label: "Monto" },
+    { value: 1, label: "Monto" },
+    { value: 2, label: "Porcentaje" },
   ];
   const based_on = [
     { value: 1, label: "Salario" },

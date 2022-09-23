@@ -13,6 +13,7 @@ import {
     Skeleton
 } from 'antd';
 import { connect } from 'react-redux';
+import dynamic from 'next/dynamic';
 import {
     CloseOutlined,
     UserOutlined,
@@ -29,7 +30,10 @@ import {
 import { FcInfo } from "react-icons/fc";
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { valueToFilter } from '../../../utils/functions';
-import ViewChart from './ViewChart';
+
+// Se renderiza en el navegador, donde existe el objeto windown.
+//Esta modificación es para la librería chartjs-plugin-zoom
+const ViewChart = dynamic(()=> import('./ViewChart'), { ssr: false });
 
 const ReportsCompetences = ({
     persons_company,
@@ -570,7 +574,7 @@ const ReportsCompetences = ({
             key: 'description_person',
             render: ({description_person}) =>{
                 return (
-                    <span>{description_person ? description_person : 'N/A'}</span>
+                    <span>{description_person ?? 'N/A'}</span>
                 )
             }
         },
@@ -585,7 +589,7 @@ const ReportsCompetences = ({
             key: 'description_profile',
             render: ({description_profile}) =>{
                 return (
-                    <span>{description_profile ? description_profile : 'N/A'}</span>
+                    <span>{description_profile ?? 'N/A'}</span>
                 )
             }
         },
@@ -778,10 +782,7 @@ const ReportsCompetences = ({
                         </Button>
                     </div>
                     <div className='content_inputs'>
-                        {/* {['p','pp'].includes(currentTab) && (
-                            
-                        )} */}
-                        {currentTab !== 'p' && (
+                        {currentTab == 'pp' && (
                             <div
                                 style={{alignItems:'center'}}
                                 className='content_inputs_element'
