@@ -35,7 +35,7 @@ export const Dashboard = ({stadistics, ...props}) => {
             </Col>
             <Col span={24}>
                 <div style={{backgroundColor: `#${colorFeeling}`, padding:"16px 8px", borderRadius:"25px"}}>
-                    <h2 style={{color:"white", textAlign:"center", marginBottom:"0px"}}>La emoción más fuerte en el periodo del {startDate} al {endDate} fue: {feeling}</h2>
+                    <h2 style={{color:"white", textAlign:"center", marginBottom:"0px"}}>La emoción más fuerte del personal en el periodo del {startDate} al {endDate} fue: {feeling}</h2>
                 </div>
             </Col>
         </Row>
