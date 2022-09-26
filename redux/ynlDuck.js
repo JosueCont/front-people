@@ -12,7 +12,8 @@ const initialData = {
   loadReportUser: false,
   reportUser:[],
   loadEmotionChart:false,
-  emotionChart: []
+  emotionChart: [],
+  stadistics: {}
 };
 
 const TOPPERSONS = "TOPPERSONS";
@@ -32,7 +33,7 @@ const ynlReducer = (state = initialData, action) => {
     case REPORTUSER:
       return{ ...state, loadReportUser:action.fetching, reportUser:action.payload}
     case EMOTIONCHART:
-      return{ ...state, loadEmotionChart:action.fetching, emotionChart:action.payload}       
+      return{ ...state, loadEmotionChart:action.fetching, emotionChart:action.payload, stadistics: action.stadistics}       
     default:
       return state;
   }
@@ -105,15 +106,20 @@ export const getReportUser= (data) =>
 
 export const getEmotionChart = (data) =>
   async(dispatch, getState) =>{
-    dispatch({ type: EMOTIONCHART, loadEmotionChart: true, payload: [] });
+    dispatch({ type: EMOTIONCHART, loadEmotionChart: true, payload: [], stadistics: {} });
     await WebApiYnl.getEmotionChart(data)
     .then((response) => {
       //console.log("response desde el redux EMOTION CHART",response.data.data);
-      dispatch({ type: EMOTIONCHART, loadEmotionChart: false, payload: response.data.data ?? []});
+      let resultsOrganized = response?.data?.data?.sort((a,b) =>{
+        return Number.parseInt(b.count) - Number.parseInt(a.count)
+      })
+      let obj = { start_date:data.start_date, end_date: data.end_date, feeling: resultsOrganized[0]};
+      //console.log('Mayor Valor: ', resultadosOrdenados[0]);
+      dispatch({ type: EMOTIONCHART, loadEmotionChart: false, payload: response.data.data ?? [], stadistics: obj});
       return true;
     })
     .catch((error) =>{
-      dispatch({ type: EMOTIONCHART, loadEmotionChart: false, payload: [] });
+      dispatch({ type: EMOTIONCHART, loadEmotionChart: false, payload: [], stadistics: {} });
       return false;
     }) 
   }
