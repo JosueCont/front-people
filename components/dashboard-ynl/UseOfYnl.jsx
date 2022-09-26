@@ -65,7 +65,9 @@ const UseOfYnl = ({ynlStore, ...props}) => {
                         { currentPeriod > previuosPeriod && (
                             <img src="/images/arrowUp.png" alt="" />
                         )}
-                        
+                        { currentPeriod == previuosPeriod && (
+                            <img src="/images/same.png" alt="" />
+                        )}
                     </Col>
                 </div>
             </Row>
