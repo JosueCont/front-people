@@ -10,7 +10,9 @@ import {
 } from "antd";
 import { useState } from "react";
 import { useEffect } from "react";
-import WebApiPeople from "../../api/WebApiPeople";
+import Axios from "axios";
+import { API_URL } from "../../config/config";
+import WebApi from "../../api/webApi";
 
 const FormGeneralData = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -27,7 +29,7 @@ const FormGeneralData = ({ person_id = null }) => {
   /* functions CRUD */
   const getGeneralData = async () => {
     try {
-      let response = await WebApiPeople.getGeneralDataPerson(person_id);
+      let response = await WebApi.getGeneralDataPerson(person_id);
       formGeneralData.setFieldsValue({
         place_birth: response.data.place_birth,
         nationality: response.data.nationality,
@@ -49,7 +51,7 @@ const FormGeneralData = ({ person_id = null }) => {
   };
   const saveGeneralData = async (data) => {
     try {
-      let response = await WebApiPeople.createGeneralDataPerson(data);
+      let response = await WebApi.createGeneralDataPerson(data);
       setIdGeneralP(response.data.id);
       message.success({
         content: "Guardado correctamente.",
@@ -61,10 +63,7 @@ const FormGeneralData = ({ person_id = null }) => {
   };
   const updateGeneralData = async (data) => {
     try {
-      let response = await WebApiPeople.updateGeneralDataPerson(
-        idGeneralP,
-        data
-      );
+      let response = await WebApi.updateGeneralDataPerson(idGeneralP, data);
       message.success({
         content: "Actualizado correctamente.",
         className: "custom-class",
@@ -103,54 +102,46 @@ const FormGeneralData = ({ person_id = null }) => {
         layout={"vertical"}
         form={formGeneralData}
         onFinish={formGeneralDataPerson}
-        className="inputs_form_responsive"
       >
-        <Row justify="center">
-          <Col span={23}>
-            <Row justify="space-betwen" gutter={20}>
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item name="place_birth" label="Lugar de nacimiento">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item name="nationality" label="Nacionalidad">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item name="other_nationality" label="Otra nacionalidad">
-                  <Input />
-                </Form.Item>
-              </Col>
+        <Row>
+          <Col lg={6} xs={22} offset={1}>
+            <Form.Item name="place_birth" label="Lugar de nacimiento">
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col lg={6} xs={22} offset={1}>
+            <Form.Item name="nationality" label="Nacionalidad">
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col lg={6} xs={22} offset={1}>
+            <Form.Item name="other_nationality" label="Otra nacionalidad">
+              <Input />
+            </Form.Item>
+          </Col>
 
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item name="allergies" label="Alergias">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item name="blood_type" label="Tipo de sangre">
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item
-                  name="availability_travel"
-                  label="Disponibilidad para viajar"
-                >
-                  <Checkbox onClick={checkTravel} checked={checkedTravel} />
-                </Form.Item>
-              </Col>
-              <Col lg={6} xs={22} md={12}>
-                <Form.Item label="Cambio de residencia">
-                  <Checkbox
-                    onClick={checkResidence}
-                    checked={checkedResidence}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
+          <Col lg={6} xs={22} offset={1}>
+            <Form.Item name="allergies" label="Alergias">
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col lg={6} xs={22} offset={1}>
+            <Form.Item name="blood_type" label="Tipo de sangre">
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col lg={6} xs={22} offset={1}>
+            <Form.Item
+              name="availability_travel"
+              label="Disponibilidad para viajar"
+            >
+              <Checkbox onClick={checkTravel} checked={checkedTravel} />
+            </Form.Item>
+          </Col>
+          <Col lg={6} xs={22} offset={1}>
+            <Form.Item label="Cambio de residencia">
+              <Checkbox onClick={checkResidence} checked={checkedResidence} />
+            </Form.Item>
           </Col>
         </Row>
         <Row justify={"end"}>

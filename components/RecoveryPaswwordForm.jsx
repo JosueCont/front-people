@@ -1,8 +1,11 @@
 import { Form, Input, Button, Spin, Typography } from "antd";
 import { ruleRequired } from "../utils/rules";
-const { Text } = Typography;
+import React from "react";
+const { Text, Title } = Typography;
 
 const RecoveryPasswordForm = (props) => {
+  const ruleRequired = { required: true, message: "Este campo es requerido" };
+
   const validatePassword = ({ getFieldValue }) => ({
     validator(rule, value) {
       if (!value || getFieldValue("passwordOne") === value) {
@@ -15,6 +18,10 @@ const RecoveryPasswordForm = (props) => {
   return (
     <>
       <Spin tip="Cargando..." spinning={props.loading}>
+        <Title level={3} className={"font-color-khor"}>
+          Ingresa tu nueva contraseña
+        </Title>
+        <br/>
         <Form
           name="recoverPasswordform"
           layout="vertical"
