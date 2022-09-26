@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl'
 import { useRouter } from 'next/router'
 import { css, Global } from "@emotion/core";
 import { SidebarYnl } from '../../components/dashboard-ynl/SidebarYnl';
-import { Dashboard } from '../../components/dashboard-ynl/Dashboard';
+import Dashboard from '../../components/dashboard-ynl/Dashboard';
 import { DashboardPerPeople } from '../../components/dashboard-ynl/personal-dashboard/DashboardPerPeople';
 
 
