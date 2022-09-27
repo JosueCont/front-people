@@ -304,7 +304,7 @@ export const VacationPayment = [
 
 export const SuaMovementsType = [
   { value: 1, label: "Alta" },
-  { value: 2, label: "Modificacion de salrio" },
+  { value: 2, label: "Modificacion de salario" },
   { value: 3, label: "Baja" },
 ];
 

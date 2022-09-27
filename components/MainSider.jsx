@@ -389,7 +389,7 @@ const MainSider = ({
                     router.push({ pathname: "/payroll/imssMovements" })
                   }
                 >
-                  Movientos IMSS
+                  Movimientos IMSS
                 </Menu.Item>
               </>
             </SubMenu>

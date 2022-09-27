@@ -143,7 +143,9 @@ const SuaMovements = ({ node }) => {
       };
       downLoadFileBlob(
         `${getDomain(API_URL_TENANT)}/payroll/sua-movements`,
-        "SuaMove.txt",
+        `Sua-Movimeinto-${
+          movementType === 1 ? "Alta" : movementType === 2 ? "Salario" : "Baja"
+        }.txt`,
         "POST",
         data
       );
@@ -186,7 +188,6 @@ const SuaMovements = ({ node }) => {
       <Form layout={"vertical"} form={form} onFinish={formFinish} size="large">
         <Row gutter={30} style={{ marginBottom: 20 }}>
           <Col lg={4} xs={22}>
-            {/* <SelectBranchNode onChange={(value) => setBranch(value)} /> */}
             <SelectPatronalRegistration
               currentNode={node.id}
               onChange={(value) => setPatronalSelected(value)}
