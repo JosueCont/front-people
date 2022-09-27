@@ -18,7 +18,7 @@ const LoginModal = ({
         visible={visible}
         onCancel={() => setModal(false)}
         footer={null}
-        width={"30%"}
+        width={"60%"}
       >
         <LoginForm recoveryPsw={false} setKhonnectId={setKhonnectId} />
       </Modal>
