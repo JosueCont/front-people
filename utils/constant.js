@@ -308,6 +308,12 @@ export const SuaMovementsType = [
   { value: 3, label: "Baja" },
 ];
 
+export const CalculationEmploymentSubsidy = [
+  { value: 1, label: "Alta" },
+  { value: 2, label: "Modificacion de salario" },
+  { value: 3, label: "Baja" },
+];
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";

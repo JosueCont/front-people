@@ -10,6 +10,7 @@ import {
   Typography,
   Select,
   Switch,
+  Checkbox,
 } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
@@ -17,6 +18,7 @@ import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import {
   BelongTo,
+  CalculationEmploymentSubsidy,
   messageSaveSuccess,
   salaryDays,
   VacationPayment,
@@ -54,6 +56,38 @@ const FormPaymentCalendar = ({
   const [paymentCalendar, setPaymentCalendar] = useState(null);
   const [locked, setLocked] = useState(false);
   const [politics, setPolitics] = useState(false);
+  const checks = [
+    {
+      name: "applied_isr_christmas_bonus",
+      label: "Cálculo de ISR de aguinaldo aplicando art. 174",
+      value: false,
+    },
+    {
+      name: "seventh_day_breakdown",
+      label: "¿Desgloce del septimo día?",
+      value: false,
+    },
+    {
+      name: "seventh_day_discount",
+      label: "¿Descuento proporción septimo dia?",
+      value: false,
+    },
+    {
+      name: "sua_absenteeism",
+      label: "¿Afectar ausentismos en SUA?",
+      value: false,
+    },
+    {
+      name: "import_issues",
+      label: "¿Importar incidencias con fecha?",
+      value: false,
+    },
+    {
+      name: "accumulate_vacation",
+      label: "¿Acumula vacaciones?",
+      value: true,
+    },
+  ];
 
   useEffect(() => {
     if (idPaymentCalendar) {
@@ -239,6 +273,29 @@ const FormPaymentCalendar = ({
     setMonthlyAdjustment(false);
     setPeriodActive(false);
     props.getPaymentCalendars();
+  };
+
+  const RenderChecks = ({ data }) => {
+    return data.map((item, i) => {
+      return (
+        <Col lg={6} xs={22} md={12}>
+          <Form.Item
+            initialValue={item.value}
+            valuePropName="checked"
+            name={item.name}
+            label={" "}
+          >
+            <Checkbox
+              id={item.name}
+              key={item.value + i}
+              className="CheckGroup"
+            >
+              <span style={{ color: "black" }}>{item.label}</span>
+            </Checkbox>
+          </Form.Item>
+        </Col>
+      );
+    });
   };
 
   return (
@@ -533,35 +590,26 @@ const FormPaymentCalendar = ({
                 </Col>
                 <Col lg={8} xs={22}>
                   <Form.Item
-                    name="belongs_to_id"
-                    label="Pertenece a "
-                    rules={[ruleRequired]}
-                  >
-                    <Select maxLength={100} options={BelongTo} />
-                  </Form.Item>
-                </Col>
-                <Col lg={8} xs={22}>
-                  <Form.Item
                     name="vacation_bonus_payment"
-                    label="Pago de prima vacacional "
+                    label="Pago de prima vacacional"
                     rules={[ruleRequired]}
                   >
                     <Select maxLength={100} options={VacationPayment} />
                   </Form.Item>
-                </Col>
+                </Col>{" "}
                 <Col lg={8} xs={22}>
                   <Form.Item
-                    name="vacation_bonus_payment"
-                    label="Calculo de ISR art. 174"
+                    name="calculation_employment_subsidy"
+                    label="Calculo de subsicio al empleo"
                     rules={[ruleRequired]}
                   >
-                    <Switch
-                      defaultChecked={false}
-                      checkedChildren="Personalizado"
-                      unCheckedChildren="Por defecto"
+                    <Select
+                      maxLength={100}
+                      options={CalculationEmploymentSubsidy}
                     />
                   </Form.Item>
                 </Col>
+                <RenderChecks data={checks} />
               </Row>
             </>
           )}
