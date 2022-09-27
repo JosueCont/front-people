@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl'
 import { useRouter } from 'next/router'
 import { css, Global } from "@emotion/core";
 import { SidebarYnl } from '../../components/dashboard-ynl/SidebarYnl';
-import { Dashboard } from '../../components/dashboard-ynl/Dashboard';
+import Dashboard from '../../components/dashboard-ynl/Dashboard';
 import { DashboardPerPeople } from '../../components/dashboard-ynl/personal-dashboard/DashboardPerPeople';
 
 
@@ -174,6 +174,14 @@ const index = () => {
                 <Dashboard/>
             </Col>
         </Row>
+        {/* <Row>
+            <Col lg={5} xs={24}>
+                <SidebarYnl/>
+            </Col>
+            <Col lg={19} xs={24}>
+                <DashboardPerPeople/>
+            </Col>
+        </Row> */}
       </div>
     </MainLayout>
   )
