@@ -3,9 +3,11 @@ import { CaretRightOutlined } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
 import SuaMovements from "./suaMovements";
+import EmaYEvaFiles from "./EmaYEvaFiles";
 import { connect } from "react-redux";
 
 const ImssMovements = ({ ...props }) => {
+  
   const { Panel } = Collapse;
 
   return (
@@ -61,12 +63,9 @@ const ImssMovements = ({ ...props }) => {
                 </Collapse>
               </Panel>
               <Panel header="EMA y EBA" key="2">
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Dignissimos, voluptatibus rerum, nostrum eveniet qui veniam
-                  illum eum asperiores impedit cum hic inventore earum similique
-                  temporibus optio dicta quae, quasi officiis.
-                </p>
+                <EmaYEvaFiles 
+                  files = {[]}
+                />
               </Panel>
             </Collapse>
           </div>
