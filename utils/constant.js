@@ -1,3 +1,6 @@
+export const defaulPhoto =
+  "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
+
 export const typeCalculate = [
   {
     label: "Bruto-Neto",
@@ -280,6 +283,37 @@ export const salaryDays = [
   },
 ];
 
+export const PaymentTypes = [
+  { value: 0, label: "Efectivo" },
+  { value: 1, label: "Cheques" },
+  { value: 3, label: "Transferencias" },
+  { value: 30, label: "Anticipo" },
+  { value: 99, label: "Por definir" },
+];
+
+export const BelongTo = [
+  { value: 1, label: "Empresa" },
+  { value: 2, label: "Registro patronal" },
+  { value: 3, label: "Sucursal" },
+];
+
+export const VacationPayment = [
+  { value: 1, label: "Aniversario" },
+  { value: 2, label: "Disfrute de vacaciones" },
+];
+
+export const SuaMovementsType = [
+  { value: 1, label: "Alta" },
+  { value: 2, label: "Modificacion de salario" },
+  { value: 3, label: "Baja" },
+];
+
+export const CalculationEmploymentSubsidy = [
+  { value: 1, label: "Alta" },
+  { value: 2, label: "Modificacion de salario" },
+  { value: 3, label: "Baja" },
+];
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
@@ -315,31 +349,13 @@ export const getCurrentURL = (tenant = false) => {
   }
 };
 
-export const getHost =()=>{
+export const getHost = () => {
   if (typeof window !== "undefined") {
-    let host =  window.location.host.split('.');
-    if(host.length>1){
-      return host[1]
+    let host = window.location.host.split(".");
+    if (host.length > 1) {
+      return host[1];
     }
-
-  }else{
-    return ''
+  } else {
+    return "";
   }
-}
-
-
-
-export const urlMyAccount = process.browser
-    ? process.env.NEXT_PUBLIC_BASE_URL_MYACCOUNT_TENANT
-    : process.env.BASE_URL_MYACCOUNT_TENANT;
-
-
-export const urlPeople = process.browser
-    ? process.env.NEXT_PUBLIC_BASE_URL_PEOPLE_TENANT
-    : process.env.BASE_URL_MYACCOUNT_TENANT;
-
-
-export const urlSocial = process.browser
-    ? process.env.NEXT_PUBLIC_BASE_URL_SOCIAL_TENANT
-    : process.env.BASE_URL_SOCIAL_TENANT;
-
+};

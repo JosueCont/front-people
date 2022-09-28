@@ -7,7 +7,6 @@ const SelectFixedConcept = ({
   viewLabel = true,
   rules = [],
   type = 1,
-  name = "fixed_concept",
   placeholder = false,
   ...props
 }) => {
@@ -26,16 +25,27 @@ const SelectFixedConcept = ({
       });
     }
     setConcept(cats);
-  }, [props.payment_alendar]);
+  }, [props.fixed_concept, props.group_fixed_concept]);
 
   return (
-    <Form.Item name={name} label={viewLabel ? "Conceptos fijos" : ""}>
+    <Form.Item
+      name={type === 1 ? "fixed_concept" : "group_fixed_concept"}
+      label={
+        viewLabel
+          ? type === 1
+            ? "Conceptos fijos"
+            : "Grupo de conceptos fijos"
+          : ""
+      }
+    >
       <Select
         // options={concept}
+        mode={type === 1 && "multiple"}
         placeholder={placeholder && "Conceptos fijos"}
         showSearch
         optionFilterProp="children"
         disabled={disabled}
+        allowClear
       >
         {concept.map((item) => {
           return (

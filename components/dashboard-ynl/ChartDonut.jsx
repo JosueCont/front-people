@@ -1,7 +1,7 @@
 import {React, useEffect, useState} from 'react';
 import { Breadcrumb,
-    Card, Row, Col, Spin} from 'antd'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+    Card, Row, Col, Spin, Empty} from 'antd'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { connect } from 'react-redux';
 
@@ -24,6 +24,7 @@ const ChartDonut = ({ynlStore, ...props}) => {
   const [config, setConfig] = useState(data);
   const [totalPeople, setTotalPeople] = useState("Personas en el grupo");
   const [loading, setLoading] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
   const options = {
     plugins: {
       legend: {
@@ -42,6 +43,7 @@ const ChartDonut = ({ynlStore, ...props}) => {
         colorsResults.push(`#${item.color}`)
       })
       let total = dataResults.reduce((a, b) => a + b, 0);
+      total != 0 ? setIsEmpty(false) : setIsEmpty(true);
       setTotalPeople(total == 1 ? total + " emoción registrada" : total + " emociones registradas"); 
       let obj = {
         labels: labelsResults,
@@ -66,7 +68,19 @@ const ChartDonut = ({ynlStore, ...props}) => {
           style={{
               width: '100%',
           }}>
-            <Doughnut data={config} options={options} />
+            { !isEmpty && (
+              <Doughnut data={config} options={options} /> 
+            )}
+            { isEmpty && (
+              <Empty 
+                image={Empty.PRESENTED_IMAGE_SIMPLE} 
+                description={
+                  <span>
+                    <b>No se registraron emociones</b>
+                  </span>
+                } 
+              />
+            )}
       </Card>
     </>
   )
