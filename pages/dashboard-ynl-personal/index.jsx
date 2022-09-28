@@ -5,8 +5,6 @@ import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/ico
 import { FormattedMessage } from 'react-intl'
 import { useRouter } from 'next/router'
 import { css, Global } from "@emotion/core";
-import { SidebarYnl } from '../../components/dashboard-ynl/SidebarYnl';
-import Dashboard from '../../components/dashboard-ynl/Dashboard';
 import { DashboardPerPeople } from '../../components/personal-dashboard/DashboardPerPeople';
 
 
@@ -14,7 +12,7 @@ const index = () => {
   const router = useRouter();
   
   return (
-    <MainLayout currentKey={["dashboard-ynl"]} defaultOpenKeys={["dashboard-ynl"]}>
+    <MainLayout currentKey={["dashboard-ynl-personal"]} defaultOpenKeys={["dashboard-ynl-personal"]}>
       <Global
         styles={css`
             :root {
@@ -151,6 +149,38 @@ const index = () => {
             justify-content: center;
             align-items: center;
           }
+          //PERSONAL DASHBOARD
+          .item-feeling{
+            padding: 8px 16px;
+            border-radius: 25px;
+            margin-bottom:8px;
+          }
+          .events {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+          }
+          .events .ant-badge-status {
+            width: 100%;
+            overflow: hidden;
+            font-size: 12px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+          .notes-month {
+            font-size: 28px;
+            text-align: center;
+          }
+          .notes-month section {
+            font-size: 28px;
+          }
+          .ant-badge-status-dot{
+            
+          }
+          .content-feeling-scroll{
+            max-height: 450px;
+            overflow: auto;
+          }
         `}
         
       />  
@@ -162,26 +192,15 @@ const index = () => {
           <FormattedMessage defaultMessage="Inicio" id="web.init" />
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          <FormattedMessage defaultMessage="dashboard-ynl" id="dashboard-ynl" />
+          <FormattedMessage defaultMessage="dashboard-ynl" id="dashboard-ynl-personal" />
         </Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row>
-            <Col lg={5} xs={24}>
-                <SidebarYnl/>
-            </Col>
-            <Col lg={19} xs={24}>
-                <Dashboard/>
-            </Col>
-        </Row>
-        {/* <Row>
-            <Col lg={5} xs={24}>
-                <SidebarYnl/>
-            </Col>
-            <Col lg={19} xs={24}>
+            <Col lg={24} xs={24}>
                 <DashboardPerPeople/>
             </Col>
-        </Row> */}
+        </Row>
       </div>
     </MainLayout>
   )
