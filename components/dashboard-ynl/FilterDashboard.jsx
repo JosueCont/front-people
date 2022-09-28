@@ -11,6 +11,7 @@ import { getEmotionalAspects } from '../../redux/ynlDuck';
 import { getReportUser } from '../../redux/ynlDuck';
 import { getEmotionChart } from '../../redux/ynlDuck';
 import locale from 'antd/lib/date-picker/locale/es_ES';
+import { subtract } from 'lodash';
 
 const FilterDashboard = ({currentNode,
     getDailyEmotions,
@@ -84,11 +85,11 @@ const FilterDashboard = ({currentNode,
         let results = [];
         if(e.target.value == 1){
             results = departaments.map(item => {
-            return { key: item.id, value: item.id, label: item.name }
+            return { key: item.id, value: item.code, label: item.name }
            }) 
         }else if(e.target.value == 2){
             results = jobs.map(item => {
-                return { key: item.id, value: item.id, label: item.name }
+                return { key: item.id, value: item.code, label: item.name }
             }) 
         }else if(e.target.value == 3){
             results = people.map(item => {
@@ -117,7 +118,22 @@ const FilterDashboard = ({currentNode,
         getReportUser(data);
         getEmotionChart(data);
     }
+
     const resetFilter = () =>{filterModule.resetFields();}
+
+    const disabledDate = (current) => { 
+        let start = moment().subtract(2,'years').startOf('year');
+        let end = moment().endOf('month');
+        if (current < moment(start)){
+            return true;
+        }
+        else if (current > moment(end)){
+            return true;
+        }
+        else {
+            return false; 
+        }
+    }
 
   return (
     <>
@@ -129,7 +145,9 @@ const FilterDashboard = ({currentNode,
             >
             <h3 className='subtitles'><b>Filtrar por:</b></h3>
             <Form.Item name="filterDate" rules={[{ required: true, message: 'Es necesario un rango de fechas para realizar el filtro' }]}>
-                <RangePicker locale={locale} />                      
+                <RangePicker
+                    locale={locale}
+                    disabledDate={disabledDate} />                     
             </Form.Item>
             <Form.Item name="OptionSelected">
                 <Radio.Group onChange={onChange} value={value}>
