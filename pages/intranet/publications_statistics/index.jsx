@@ -99,7 +99,7 @@ const index = (props) => {
 
   return (
     <>
-      <MainLayout currentKey="1">
+      <MainLayout currentKey={["publications_statistics"]} defaultOpenKeys={["intranet"]}>
         <ConfigProvider locale={esES}>
           <PublicationsStatisticsFilters
             style={{ margin: "30px 0px" }}

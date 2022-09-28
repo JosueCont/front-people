@@ -401,7 +401,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["importxml"]} defaultOpenKeys={["payroll"]}>
+    <MainLayout currentKey={["importMassivePayroll"]} defaultOpenKeys={["payroll"]}>
       {props.currentNode && (
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item

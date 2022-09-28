@@ -114,7 +114,7 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey="groups_kuiz" defaultOpenKeys={["kuiss"]}>
+    <MainLayout currentKey={["assessment_groups"]} defaultOpenKeys={["kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}

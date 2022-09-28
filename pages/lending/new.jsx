@@ -76,7 +76,7 @@ const LendingNew = () => {
   };
 
   return (
-    <MainLayout currentKey="7.1">
+    <MainLayout currentKey={["lending"]} defaultOpenKeys={["requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

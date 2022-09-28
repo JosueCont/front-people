@@ -152,7 +152,7 @@ const PreviewBulkUpload = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey="det-bulk">
+    <MainLayout currentKey={["bulk_upload"]} defaultOpenKeys={["uploads"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

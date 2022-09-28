@@ -26,7 +26,7 @@ const Index = ({
   },[currentNode])
   
   return (
-    <MainLayout currentKey="perfiles_kuiz" defaultOpenKeys={["kuiss"]}>
+    <MainLayout currentKey={["assessment_profiles"]} defaultOpenKeys={["kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}

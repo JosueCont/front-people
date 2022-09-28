@@ -238,7 +238,7 @@ const Detail = ({ assessmentStore, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey="2">
+    <MainLayout currentKey={["surveys"]} defaultOpenKeys={["kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item className={"pointer"} href="/home/persons/">
           Inicio

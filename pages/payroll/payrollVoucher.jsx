@@ -6,7 +6,7 @@ import CfdiVaucher from "../../components/payroll/cfdiVaucher";
 
 const PayrollVoucher = () => {
   return (
-    <MainLayout currentKey={["voucher"]} defaultOpenKeys={["payroll"]}>
+    <MainLayout currentKey={["payrollVoucher"]} defaultOpenKeys={["payroll"]}>
       <Breadcrumb>
         <Breadcrumb.Item href="/home/persons">Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Comprobantes fiscales</Breadcrumb.Item>

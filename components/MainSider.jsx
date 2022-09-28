@@ -55,6 +55,7 @@ const MainSider = ({
     };
   }
 
+  // Rutas menú
   const onClickMenuItem= ({key}) => {
     const pathRoutes = {
       business: '/business',
@@ -66,6 +67,26 @@ const MainSider = ({
       securityGroups: '/config/groups',
       releases: '/comunication/releases',
       events: '/comunication/events',
+      reports: '/reports',
+      lending: '/lending',
+      holidays: '/holidays',
+      permission: '/permission',
+      incapacity: '/incapacity',
+      bank_accounts: '/bank_accounts',
+      calculatePayroll: '/payroll/calculatePayroll',
+      paymentCalendar: '/payroll/paymentCalendar',
+      payrollVoucher: '/payroll/payrollVoucher',
+      calculatorSalary: '/payroll/calculatorSalary',
+      importMassivePayroll: '/payroll/importMasivePayroll',
+      bulk_upload: '/bulk_upload',
+      documentsLog: '/log/documentsLog',
+      intranet_groups: '/intranet/groups',
+      intranet_configuration: '/intranet/config',
+      publications_statistics: '/intranet/publications_statistics',
+      surveys: '/assessment/surveys',
+      assessment_groups: '/assessment/groups',
+      assessment_profiles: '/assessment/profiles',
+      assessment_reports: '/assessment/reports',
     }
     router.push(pathRoutes[key]);
   };
@@ -115,6 +136,71 @@ const MainSider = ({
         children.push(getItem('Eventos', 'events'))
       }
       items.push(getItem('Comunicación', 'comunication', <MessageOutlined />, children))
+    }
+
+    // Menú Reportes
+    if (props?.config && props?.config?.nomina_enabled && props?.permissions?.report?.view) {
+      items.push(getItem('Reportes', 'reports', <ProfileOutlined />))
+    }
+
+    // Menú Solicitudes
+    if (props?.config && props?.config?.nomina_enabled) {
+      let children = []
+      if (props?.permissions?.loan?.view) {
+        children.push(getItem('Préstamos', 'lending'))
+      }
+      if (props?.permissions?.vacation?.view) {
+        children.push(getItem('Vacaciones', 'holidays'))
+      }
+      children.push(getItem('Permisos', 'permission'))
+      children.push(getItem('Incapacidad', 'incapacity'))
+      children.push(getItem('Cuentas bancarias', 'bank_accounts'))
+      items.push(getItem('Solicitudes', 'requests', <FormOutlined />, children))
+    }
+
+    // Menú Nómina
+    if (props?.config && props?.config?.nomina_enabled) {
+      let children = [
+        getItem('Cálculo de nómina', 'calculatePayroll'),
+        getItem('Calendario de pagos', 'paymentCalendar'),
+        getItem('Comprobantes fiscales', 'payrollVoucher'),
+        getItem('Calculadora', 'calculatorSalary'),
+        getItem('Importar nómina con XML', 'importMassivePayroll')
+      ]
+      items.push(getItem('Nómina', 'payroll', <DollarOutlined />, children))
+    }
+
+    // Menú Registro de errores
+    if (props?.config && props?.config?.nomina_enabled) {
+      let children = [
+        getItem('Carga masiva de personas', 'bulk_upload'),
+        getItem('Carga de documentos', 'documentsLog')
+      ]
+      items.push(getItem('Registro de errores', 'uploads', <BugOutlined />, children))
+    }
+
+    // Menú Intranet
+    if (intranetAccess) {
+      let children = [
+        getItem('Configuración', 'intranet_configuration'),
+        getItem('Grupos', 'intranet_groups'),
+        getItem('Moderación', 'publications_statistics')
+      ]
+      items.push(getItem('Intranet', 'intranet', <img
+          className="anticon ant-menu-item-icon icon-intranet"
+          src={"/images/Intranet.svg"}
+      />, children))
+    }
+
+    // Menú Kuiz
+    if (props?.config && props?.config?.kuiz_enabled) {
+      let children = [
+        getItem('Evaluaciones', 'surveys'),
+        getItem('Grupos', 'assessment_groups'),
+        getItem('Perfiles', 'assessment_profiles'),
+        getItem('Reportes', 'assessment_reports')
+      ]
+      items.push(getItem('Kuiz', 'kuiz', <QuestionCircleOutlined />, children))
     }
   }
 

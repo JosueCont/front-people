@@ -161,7 +161,7 @@ const HolidaysDetails = (props) => {
   }, [route]);
 
   return (
-    <MainLayout currentKey="5">
+    <MainLayout currentKey={["holiday"]} defaultOpenKeys={["requests"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

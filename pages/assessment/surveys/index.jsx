@@ -400,7 +400,7 @@ const AssessmentScreen = ({
   ];
 
   return (
-    <MainLayout currentKey="surveys" defaultOpenKeys={["kuiss"]}>
+    <MainLayout currentKey={["surveys"]} defaultOpenKeys={["kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
