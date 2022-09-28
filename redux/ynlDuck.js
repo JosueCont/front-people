@@ -15,7 +15,9 @@ const initialData = {
   emotionChart: [],
   stadistics: {},
   loadPersons: false,
-  persons:[]
+  persons:[],
+  loadReportPerson: false,
+  reportPerson: []
 };
 
 const TOPPERSONS = "TOPPERSONS";
@@ -24,6 +26,7 @@ const DAILYEMOTIONS = "DAILYEMOTIONS";
 const REPORTUSER = "REPORTUSER";
 const EMOTIONCHART = "EMOTIONCHART";
 const PERSONS = "PERSONS";
+const REPORTPERSON = "REPORTPERSON"
 
 const ynlReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -38,7 +41,9 @@ const ynlReducer = (state = initialData, action) => {
     case EMOTIONCHART:
       return{ ...state, loadEmotionChart:action.fetching, emotionChart:action.payload, stadistics: action.stadistics}
     case PERSONS:
-      return{ ...state, loadPersons:action.fetching, persons:action.payload}          
+      return{ ...state, loadPersons:action.fetching, persons:action.payload} 
+    case REPORTPERSON:
+      return{ ...state, loadReportPerson:action.fetching, reportPerson:action.payload}           
     default:
       return state;
   }
@@ -134,7 +139,7 @@ export const getEmotionChart = (data) =>
     dispatch({ type: PERSONS, loadPersons: true, payload: [] });
     await WebApiYnl.getPersons()
     .then((response) => {
-      console.log("respuesta desde el redux get persons",response.data.data);
+      //console.log("respuesta desde el redux get persons",response.data.data);
       dispatch({ type: PERSONS, loadPersons: false, payload: response?.data?.data ?? []});
       return true;
     })
@@ -143,5 +148,21 @@ export const getEmotionChart = (data) =>
       return false;
     }) 
   }
+
+  export const getReportPerson= (data) => 
+  async(dispatch, getState) =>{
+    dispatch({ type: REPORTPERSON, loadReportPerson: true, payload: [] });
+    await WebApiYnl.getReportPerson(data)
+    .then((response) => {
+      console.log("response desde el redux REPORT PERSON", response);
+      dispatch({ type: REPORTPERSON, loadReportPerson: false, payload: response.data ?? [] });
+      return true;
+    })
+    .catch((error) => {
+      dispatch({ type: REPORTPERSON, loadReportPerson: true, payload: [] });
+      return false;
+      //console.log(error);
+    });
+}
 
 export default ynlReducer;
