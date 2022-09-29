@@ -80,7 +80,7 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
     <>
         <Card  
             className='card-dashboard'
-            title="Estadística de encuestas"
+            title="Estadística de"
             style={{
                 width: '100%',
             }}>

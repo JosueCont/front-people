@@ -78,7 +78,7 @@ const FeelingCalendar = () => {
     <>
         <Card  
             className='card-dashboard'
-            title="Emoción registrada por día"
+            title="Última emoción registrada por día"
             style={{
                 width: '100%',
             }}>

@@ -99,6 +99,8 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                                 <Select
                                     style={{width:"90%", marginLeft:"8px",}}
                                     allowClear
+                                    showSearch
+                                    filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
                                     placeholder="Seleccion persona"
                                     options={dataPersons}
                                     />
