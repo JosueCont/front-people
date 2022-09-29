@@ -59,7 +59,7 @@ const ListGroups = () => {
                 />
             </Col>   
         </Card>
-        <Modal title={`Miembros del grupo (${currentMembers && currentMembers.length})`} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title={`Miembros del grupo (${currentMembers && currentMembers.length})`} footer={[]} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
             <Col span={24} className='content-feeling-scroll scroll-bar'>
                 <List
                     itemLayout="horizontal"

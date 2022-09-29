@@ -6,9 +6,12 @@ import PersonalRecord from './PersonalRecord'
 import FilterDashboardPersonal from './FilterDashboardPersonal'
 import Calendar from './Calendar'
 import ListGroups from './ListGroups'
+import { useSelector } from 'react-redux'
 
 
 export const DashboardPerPeople = () => {
+  const reportPerson = useSelector((state) => state?.ynlStore?.reportPerson?.data)
+
   return (
     <>
         <Row gutter={[16,24]} className='container-dashboard'>
@@ -33,7 +36,7 @@ export const DashboardPerPeople = () => {
                                 }}
                                 src="/images/LogoYnl.png"
                             />
-                            <h2 style={{color:"white", textAlign:"left", marginBottom:"0px", marginLeft:"16px"}}>Nombre del usuario</h2>
+                            <h2 style={{color:"white", textAlign:"left", marginBottom:"0px", marginLeft:"16px"}}>{reportPerson && reportPerson[0]?.user?.firstName} {reportPerson && reportPerson[0]?.user?.lastName}</h2>
                         </Col>
                     </Row>
                 </div>
