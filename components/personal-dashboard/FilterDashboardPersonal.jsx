@@ -98,7 +98,7 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                     requiredMark={false}
                     >
                     <Row>
-                        <Col xs={22} md={8}>
+                        <Col xs={22} md={10}>
                             <Form.Item label="Rango de fechas" name="filterDate" rules={[{ required: true, message: 'Es necesario un rango de fechas para realizar el filtro' }]}>
                                 <RangePicker
                                     style={{width:"90%", marginLeft:"8px", marginRight:"8px"}}
@@ -107,7 +107,7 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                                     />                     
                             </Form.Item>
                         </Col>
-                        <Col xs={22} md={8}>
+                        <Col xs={22} md={10}>
                             <Form.Item label="Persona" name="valuesSelected">
                                 <Select
                                     style={{width:"90%", marginLeft:"8px",}}
@@ -121,8 +121,8 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                         </Col>
                         <Col xs={22} md={2} style={{display:"flex"}}>
                             <Button htmlType='submit' style={{marginLeft:"8px"}} >Filtrar</Button>
-                            <Button  onClick={resetFilter} style={{marginLeft:"8px"}}
-                            ><SyncOutlined /></Button>
+                            {/*<Button  onClick={resetFilter} style={{marginLeft:"8px"}}*/}
+                            {/*><SyncOutlined /></Button>*/}
                         </Col>
                     </Row>
                 </Form>
