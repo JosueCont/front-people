@@ -167,8 +167,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
             if (item[a.name]) checked.click();
           }
         });
-        // setEdit(true);
-        // setId(item.id);
       }
       setLoading(false);
     } catch (error) {
@@ -207,7 +205,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       });
   };
 
-  /* Events */
   const onChangeLastDayPaid = (date, dateString) => {
     setStartDate(dateString);
   };
@@ -222,7 +219,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     setPeriod(dateString);
   };
   const formFinish = (value) => {
-    // setLoading(true);
     value.node = props.currentNode.id;
     value.active = periodActive;
     value.monthly_adjustment = monthlyAdjustment;
@@ -271,16 +267,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
 
   const changePaymentSunday = (checked) => {
     setPaymentSunday(checked);
-  };
-
-  const closeModal = () => {
-    props.setIsModalVisible(false);
-    setPaymentSunday(false);
-    setPaymentSaturday(false);
-    setAnnualAdjustment(false);
-    setMonthlyAdjustment(false);
-    setPeriodActive(false);
-    // props.getPaymentCalendars();
   };
 
   const RenderChecks = ({ data }) => {
