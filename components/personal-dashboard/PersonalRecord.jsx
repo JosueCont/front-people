@@ -10,7 +10,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
     
     useEffect(() => {
       if(Object.keys(reportPerson).length > 0){
-        let globalData = [...reportPerson?.data?.at(-1).per_day];
+        let globalData = [...reportPerson?.data?.at(-1).per_day].reverse();
         let filterLast = globalData?.filter(item => Object.keys(item.last).length > 0); 
         setDataPerDay(filterLast);
       }
