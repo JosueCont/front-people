@@ -30,11 +30,14 @@ const FilterDashboard = ({currentNode,
     const [optionSelect, setOptionSelect] = useState([]);
     const [visibilitySelect, setVisibilitySelect] = useState(true);
     
-    useEffect(() => { 
+    useEffect(() => {
+        // Initial datepicker filter
+        const startOfMonth = moment().clone().startOf('month');
+        const endOfMonth = moment().clone().endOf('month');
       //Seteamos fecha actual al datepicker porque es el rango de la consulta al principio
-      filterModule.setFieldsValue({ filterDate: [moment(), moment()] });
+      filterModule.setFieldsValue({ filterDate: [startOfMonth, endOfMonth] });
       //Consulta a los reportes con la fecha de hoy, solo al cargar la página al principio.
-      let dataToInicialize = {start_date : moment().format("YYYY-MM-DD"),end_date: moment().format("YYYY-MM-DD"),person_department_id: [],person_employment_id:[],}
+      let dataToInicialize = {start_date : startOfMonth.format("YYYY-MM-DD"),end_date: endOfMonth.format("YYYY-MM-DD"),person_department_id: [],person_employment_id:[],}
       getTopPersons(dataToInicialize);
       getDailyEmotions(dataToInicialize);
       getEmotionalAspects(dataToInicialize);
