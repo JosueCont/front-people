@@ -129,6 +129,9 @@ const Calendar = ({ reportPerson, ...props}) => {
             .title-date{
                 padding: 10px;
             }
+            .calendarDaysHeader{
+                width:100%;
+            }
             .calendar_controls_content{
                 padding: 0 10px;
                 display:flex;
