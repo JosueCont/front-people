@@ -25,6 +25,8 @@ import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import SelectAccessIntranet from "../selects/SelectAccessIntranet";
 import { ruleRequired, nameLastname } from "../../utils/rules";
+import locale from "antd/lib/date-picker/locale/es_ES";
+import moment from "moment";
 
 const FormPerson = ({
   config = null,
@@ -91,6 +93,11 @@ const FormPerson = ({
     close(false);
     form.resetFields();
   };
+
+  
+  const disabledDate = (current) => {
+    return current && moment(current).startOf('day') > moment().startOf('day');
+  }
 
   return (
     <>
@@ -180,6 +187,8 @@ const FormPerson = ({
                       onChange={onChange}
                       moment={"YYYY-MM-DD"}
                       placeholder="Fecha de nacimiento"
+                      disabledDate={ disabledDate }
+                      locale = { locale }
                     />
                   </Form.Item>
                 </Col>
