@@ -1,71 +1,68 @@
-import React,{useEffect,useState} from 'react'
-import { 
-    Row,
-    Col,
-    Select,
-    Form,
-} from 'antd';
+import React, { useEffect, useState } from "react";
+import { Row, Col, Select, Form } from "antd";
 import { connect } from "react-redux";
-import WebApiPeople from '../../api/WebApiPeople';
-import { getPatronalRegistration } from '../../redux/catalogCompany';
+import WebApiPeople from "../../api/WebApiPeople";
+import { getPatronalRegistration } from "../../redux/catalogCompany";
 
-
-
-const SelectPatronalRegistration = ({ name,
-   value_form,
-   textLabel,
-   currentNode,
-   cat_patronal_registration, ...props}) => {
+const SelectPatronalRegistration = ({
+  name,
+  value_form,
+  textLabel,
+  currentNode = null,
+  cat_patronal_registration,
+  placeHolder = true,
+  ...props
+}) => {
   const { Option } = Select;
   const [options, setOptions] = useState([]);
-  
+
   useEffect(() => {
-    getPatronalRegistration(currentNode.id)
-    //console.log(cat_patronal_registration)
+    if (currentNode) getPatronalRegistration(currentNode.id);
   }, []);
 
   useEffect(() => {
-    if(cat_patronal_registration.length > 0){
+    if (cat_patronal_registration.length > 0) {
       setOptions(cat_patronal_registration);
-      //console.log("entramos aqui por que viene con datos");
     }
   }, [cat_patronal_registration]);
 
-
   return (
     <>
-        <Form.Item
-            name={name}
-            label={textLabel}
+      <Form.Item
+        name={name ? name : "patronal_registration"}
+        label={textLabel ? textLabel : "Registro patronal"}
+      >
+        <Select
+          key="SelectPatronalRegistration"
+          allowClear
+          placeholder={placeHolder && "Registro Patronal"}
+          onChange={props.onChange ? props.onChange : null}
+          notFoundContent={"No se encontraron resultados."}
+          showSearch
+          optionFilterProp="children"
         >
-            <Select
-                key="SelectPatronalRegistration"
-                allowClear
-                placeholder="Registro Patronal"
-                onChange={props.onChange ? props.onChange : null}
-                notFoundContent={"No se encontraron resultados."}
-                showSearch
-                optionFilterProp="children"
-            >
-              {options.map((item) => {
-                return (
-                  <>
-                    <Option key={item.id} value={item.id}>
-                      {item.code}
-                    </Option>;
-                  </>
-                );
-              })}
-            </Select>
-        </Form.Item>        
+          {options.map((item) => {
+            return (
+              <>
+                <Option key={item.id} value={item.id}>
+                  {item.code}
+                </Option>
+                ;
+              </>
+            );
+          })}
+        </Select>
+      </Form.Item>
     </>
-  )
-}
+  );
+};
 
 const mapState = (state) => {
-    return {
-        cat_patronal_registration: state.catalogStore.cat_patronal_registration,
-        errorData: state.catalogStore.errorData
-    };
+  return {
+    cat_patronal_registration: state.catalogStore.cat_patronal_registration,
+    errorData: state.catalogStore.errorData,
   };
-export default connect(mapState, { getPatronalRegistration })(SelectPatronalRegistration);
+};
+export default connect(mapState, { getPatronalRegistration })(
+  SelectPatronalRegistration
+);

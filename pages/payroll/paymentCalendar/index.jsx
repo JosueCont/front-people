@@ -1,26 +1,15 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../../layout/MainLayout";
-import {
-  Row,
-  Col,
-  Table,
-  Breadcrumb,
-  Button,
-  Modal,
-  message,
-  Tooltip,
-} from "antd";
+import { Row, Col, Table, Breadcrumb, Button, message, Tooltip } from "antd";
 import { useRouter } from "next/router";
 import {
   EditOutlined,
   CalendarOutlined,
   PlusCircleOutlined,
   EyeOutlined,
-  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../../libs/auth";
 import { Global } from "@emotion/core";
-import FormPaymentCalendar from "../../../components/payroll/forms/FormPaymentCalendar";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { connect } from "react-redux";
 import { DeleteOutline } from "@material-ui/icons";
@@ -32,6 +21,7 @@ const PaymentCalendars = ({ ...props }) => {
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [titleModal, setTitleModal] = useState("Crear");
   const [idPaymentCalendar, setIdPaymentCalendar] = useState(null);
 
@@ -75,19 +65,30 @@ const PaymentCalendars = ({ ...props }) => {
     setIsModalVisible(false);
   };
 
-  const deleteCalednar = (id) => {
-    setLoading(true);
-    WebApiPayroll.deletePaymentCalendar(id)
-      .then((response) => {
-        message.success(messageDeleteSuccess);
-        getPaymentCalendars();
-        setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-        message.error(messageError);
-      });
-  };
+  const handleDelteCalendar = (id) => {
+    setDeleteModalVisible(true)
+    setIdPaymentCalendar(id)
+  }
+  
+  const handleDeleteCancel = () => {
+    setDeleteModalVisible(false)
+  }
+
+const deleteCalendar = () => {
+  setLoading(true);
+  WebApiPayroll.deletePaymentCalendar(idPaymentCalendar)
+  .then((response) => {
+    message.success(messageDeleteSuccess);
+    getPaymentCalendars();
+    setLoading(false);
+    setDeleteModalVisible(false)
+   })
+   .catch((error) => {
+     setLoading(false);
+     setDeleteModalVisible(false)
+     message.error(messageError);
+   });
+};
 
   return (
     <>
@@ -127,11 +128,11 @@ const PaymentCalendars = ({ ...props }) => {
                 padding: "0 30px",
                 background: "#7B25F1 !important",
               }}
-              onClick={() => {
-                setTitleModal("Crear");
-                setIsModalVisible(true);
-                setIdPaymentCalendar(null);
-              }}
+              onClick={() =>
+                route.push({
+                  pathname: "/payroll/paymentCalendar/calendar/paymentCalendar",
+                })
+              }
               key="btn_new"
               size="large"
             >
@@ -201,7 +202,16 @@ const PaymentCalendars = ({ ...props }) => {
                         <EyeOutlined
                           className="icon_actions"
                           key={"goEdit" + record.id}
-                          onClick={() => GotoEdit(record)}
+                          onClick={() =>
+                            route.push({
+                              pathname:
+                                "/payroll/paymentCalendar/calendar/paymentCalendar",
+                              query: {
+                                calendar_id: record.id,
+                                id: props.currentNode.id,
+                              },
+                            })
+                          }
                           style={{ color: "#fd893d" }}
                         />
                       </Tooltip>
@@ -211,14 +221,19 @@ const PaymentCalendars = ({ ...props }) => {
                           <EditOutlined
                             className="icon_actions"
                             key={"goEdit" + record.id}
-                            onClick={() => GotoEdit(record)}
+                            onClick={() =>
+                              route.push({
+                                pathname:
+                                  "/payroll/paymentCalendar/calendar/paymentCalendar",
+                                query: {
+                                  calendar_id: record.id,
+                                  id: props.currentNode.id,
+                                },
+                              })
+                            }
                             style={{ color: "#fd893d" }}
                           />
                         </Tooltip>
-                        {/* <UsergroupAddOutlined
-                          className="icon_actions"
-                          key={"goCalendar" + record.id}
-                        /> */}
                       </>
                     )}
                     <Tooltip title="Ver calendario">
@@ -234,7 +249,7 @@ const PaymentCalendars = ({ ...props }) => {
                           style={{ fontSize: "22px", marginBottom: "-5px" }}
                           className="icon_actions"
                           key={"delCalendar" + record.id}
-                          onClick={() => deleteCalednar(record.id)}
+                          onClick={() => handleDelteCalendar(record.id)}
                         />
                       </Tooltip>
                     )}
@@ -245,7 +260,7 @@ const PaymentCalendars = ({ ...props }) => {
           </Col>
         </Row>
       </MainLayout>
-      <Modal
+      {/* <Modal
         className="modal_form"
         width={1000}
         destroyOnClose
@@ -264,6 +279,35 @@ const PaymentCalendars = ({ ...props }) => {
           nodeId={props.currentNode && props.currentNode.id}
           onCancel={handleCancel}
         />
+      </Modal> */}
+       <Modal
+        title="Eliminar calendario de pagos"
+        className="modal_form"
+        width={500}
+        destroyOnClose
+        visible={deleteModalVisible}
+        onCancel={handleDeleteCancel}
+        onOk={() => deleteCalendar()}
+        maskClosable={false}
+        confirmLoading={loading}
+        centered
+        okText="Si, eliminar"
+        cancelText="Cancelar"
+      >
+        <Row justify="center" align="middle">
+          <Col span={24} style={{textAlign: 'center', width: '100%'}}>
+            <Alert
+              type="warning"
+              showIcon
+              message="¿Está seguro de eliminar este calendario?"
+              description={
+                <p style={{textAlign: 'justify', paddingLeft: 45}}>
+                  Al eliminar este calendario no se podra recuperar
+                </p>
+              }
+            />
+          </Col>
+        </Row>
       </Modal>
     </>
   );
