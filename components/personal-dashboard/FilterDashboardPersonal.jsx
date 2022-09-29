@@ -7,9 +7,10 @@ import { connect } from "react-redux";
 import WebApiYnl from '../../api/WebApiYnl';
 import locale from 'antd/lib/date-picker/locale/es_ES';
 import { getPersons } from '../../redux/ynlDuck';
+import { getReportPerson } from '../../redux/ynlDuck';
 
 
-const FilterDashboardPersonal = ({persons, getPersons, ...props}) => {
+const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props}) => {
     const [filterModule] = Form.useForm();
     const { RangePicker } = DatePicker;
     const [dataPersons, setDataPersons] = useState([]);
@@ -21,7 +22,7 @@ const FilterDashboardPersonal = ({persons, getPersons, ...props}) => {
     useEffect(() => {
         //Armamos array para llenar el select
         let results = persons.map((item)=>{
-            return { key: item.id, value: item.id, label: item.firstName + " " + item.lastName } 
+            return { key: item.id, value: item.khonnect_id, label: item.firstName + " " + item.lastName } 
         })
         setDataPersons(results);
     }, [persons]);
@@ -35,9 +36,10 @@ const FilterDashboardPersonal = ({persons, getPersons, ...props}) => {
         let data = {
             start_date : valueStart,
             end_date: valueEnd,
-            person_id: value.valuesSelected ?? [],
+            khonnect_ids: [value.valuesSelected] ?? [],
         }
-        console.log("data",data);
+        console.log("Filtro que se envia a consulta",data);
+        getReportPerson(data);
     }
     const resetFilter = () =>{filterModule.resetFields();}
 
@@ -90,7 +92,8 @@ const FilterDashboardPersonal = ({persons, getPersons, ...props}) => {
 const mapState = (state) => {
     return {
       persons: state.ynlStore.persons,
+      reportPerson: state.ynlStore.reportPerson,
     };
 };
   
-export default connect(mapState,{getPersons})(FilterDashboardPersonal);
+export default connect(mapState,{getPersons, getReportPerson})(FilterDashboardPersonal);
