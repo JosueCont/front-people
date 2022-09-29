@@ -1,9 +1,19 @@
 import {React, useEffect, useState} from 'react'
 import {Avatar, List, Empty} from 'antd'
 import { connect } from 'react-redux';
+import { useRouter } from "next/router";
 
 const PeopleMostActive = ({ynlStore,...props}) => {
     const [dataTop, setDataTop] = useState([]);
+    const router = useRouter();
+
+    const onDetail=(member)=>{
+        const query = {user_id:member?.khonnect_id};
+        const url ={ pathname:`/dashboard-ynl-personal`, query  }
+        router.push(url,url,query)
+    }
+
+
     useEffect(() => {
         setDataTop(ynlStore);
     }, [ynlStore]); 
@@ -25,7 +35,7 @@ const PeopleMostActive = ({ynlStore,...props}) => {
                     <List.Item.Meta
                     avatar={<Avatar  src={item.avatar ? item.avatar : "/images/LogoYnl.png"} />}
                     title={
-                    <div>
+                    <div onClick={()=> onDetail(item)} style={{cursor:"pointer"}}>
                         <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{item.firstName?.toLowerCase()} {item.lastName?.toLowerCase()}</p>
                     </div>}
                 />
