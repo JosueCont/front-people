@@ -10,7 +10,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
     
     useEffect(() => {
       if(Object.keys(reportPerson).length > 0){
-        let globalData = [...reportPerson?.data?.at(-1).per_day].reverse();
+        let globalData = [...reportPerson?.data?.at(-1).per_day];
         let filterLast = globalData?.filter(item => Object.keys(item.last).length > 0); 
         setDataPerDay(filterLast);
       }
@@ -18,7 +18,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
 
     const ShowModalAllEmotions = (item) =>{
       setIsOpenModal(true)
-      setAllEmotions([...item.all].reverse())
+      setAllEmotions([...item.all])
     }
 
     const handleOk = () => {
