@@ -1,20 +1,23 @@
 import {React, useEffect, useState} from 'react'
 import MainLayout from '../../layout/MainLayout'
-import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Space} from 'antd'
+import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Space, Spin} from 'antd'
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 import { FormattedMessage } from 'react-intl'
 import { useRouter } from 'next/router'
 import { css, Global } from "@emotion/core";
+import { useSelector } from 'react-redux'
 import { DashboardPerPeople } from '../../components/personal-dashboard/DashboardPerPeople';
 
 
 const index = () => {
   const router = useRouter();
+    const reportPerson = useSelector((state) => state.ynlStore)
   
   return (
-    <MainLayout currentKey={["dashboard-ynl-personal"]} defaultOpenKeys={["dashboard-ynl-personal"]}>
-      <Global
-        styles={css`
+      <Spin spinning={reportPerson?.loadReportPerson}>
+          <MainLayout currentKey={["dashboard-ynl-personal"]} defaultOpenKeys={["dashboard-ynl-personal"]}>
+              <Global
+                  styles={css`
             :root {
                 --orange: #FF5E00;
             }
@@ -182,27 +185,29 @@ const index = () => {
             overflow: auto;
           }
         `}
-        
-      />  
-      <Breadcrumb>
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => router.push({ pathname: "/home/persons/" })}
-        >
-          <FormattedMessage defaultMessage="Inicio" id="web.init" />
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <FormattedMessage defaultMessage="dashboard-ynl" id="dashboard-ynl-personal" />
-        </Breadcrumb.Item>
-      </Breadcrumb>
-      <div className="container" style={{ width: "100%" }}>
-        <Row>
-            <Col lg={24} xs={24}>
-                <DashboardPerPeople/>
-            </Col>
-        </Row>
-      </div>
-    </MainLayout>
+
+              />
+              <Breadcrumb>
+                  <Breadcrumb.Item
+                      className={"pointer"}
+                      onClick={() => router.push({ pathname: "/home/persons/" })}
+                  >
+                      <FormattedMessage defaultMessage="Inicio" id="web.init" />
+                  </Breadcrumb.Item>
+                  <Breadcrumb.Item>
+                      <FormattedMessage defaultMessage="dashboard-ynl" id="dashboard-ynl-personal" />
+                  </Breadcrumb.Item>
+              </Breadcrumb>
+              <div className="container" style={{ width: "100%" }}>
+                  <Row>
+                      <Col lg={24} xs={24}>
+                          <DashboardPerPeople/>
+                      </Col>
+                  </Row>
+              </div>
+          </MainLayout>
+      </Spin>
+
   )
 }
 
