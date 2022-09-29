@@ -67,7 +67,7 @@ const FeelingPieChart = ({reportPerson,...props}) => {
                 width: '100%',
             }}>
               { !isEmpty && (
-                <Pie data={config} width="300px" height="300px" options={{maintainAspectRatio: false}} />
+                <Pie data={config} width="350px" height="350px" options={{maintainAspectRatio: false}} />
               )}
               { isEmpty && (
                 <div className='aligned-to-center'>

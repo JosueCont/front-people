@@ -43,6 +43,10 @@ class WebApiYnl {
   static getReportPerson(data){
     return WebApi.ApisType(`/ynl/report/personal-report/`, "post", data);
   }
+
+  static getSelectsData(){
+    return WebApi.ApisType(`/ynl/get-selects-data/`, "get");
+  }
 }
 
 export default WebApiYnl;
