@@ -27,6 +27,7 @@ const REPORTUSER = "REPORTUSER";
 const EMOTIONCHART = "EMOTIONCHART";
 const PERSONS = "PERSONS";
 const REPORTPERSON = "REPORTPERSON"
+const REPORTPERSON_FINISH = "REPORTPERSON_FINISH"
 
 const ynlReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -43,7 +44,9 @@ const ynlReducer = (state = initialData, action) => {
     case PERSONS:
       return{ ...state, loadPersons:action.fetching, persons:action.payload} 
     case REPORTPERSON:
-      return{ ...state, loadReportPerson:action.fetching, reportPerson:action.payload}           
+      return{ ...state, loadReportPerson:true, reportPerson:action.payload}
+    case REPORTPERSON_FINISH:
+      return{ ...state, loadReportPerson:false, reportPerson:action.payload}
     default:
       return state;
   }
@@ -151,15 +154,15 @@ export const getEmotionChart = (data) =>
 
   export const getReportPerson= (data) => 
   async(dispatch, getState) =>{
-    dispatch({ type: REPORTPERSON, loadReportPerson: true, payload: [] });
+    dispatch({ type: REPORTPERSON, payload: [] });
     await WebApiYnl.getReportPerson(data)
     .then((response) => {
-      //console.log("response desde el redux REPORT PERSON", response);
-      dispatch({ type: REPORTPERSON, loadReportPerson: false, payload: response.data ?? [] });
+      console.log("response desde el redux REPORT PERSON", response);
+      dispatch({ type: REPORTPERSON_FINISH, payload: response.data ?? [] });
       return true;
     })
     .catch((error) => {
-      dispatch({ type: REPORTPERSON, loadReportPerson: true, payload: [] });
+      dispatch({ type: REPORTPERSON_FINISH, payload: [] });
       return false;
       //console.log(error);
     });

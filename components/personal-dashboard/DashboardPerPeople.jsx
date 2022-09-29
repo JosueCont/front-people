@@ -1,9 +1,10 @@
 import {React, useEffect, useState} from 'react'
-import { Row,Col,Card, Avatar, Calendar} from 'antd'
+import { Row,Col,Card, Avatar} from 'antd'
 import FeelingCalendar from './FeelingCalendar'
 import FeelingPieChart from './FeelingPieChart'
 import PersonalRecord from './PersonalRecord'
 import FilterDashboardPersonal from './FilterDashboardPersonal'
+import Calendar from './Calendar'
 import ListGroups from './ListGroups'
 
 
@@ -43,7 +44,8 @@ export const DashboardPerPeople = () => {
                <FeelingPieChart/>
             </Col>
             <Col xs={24} sm={24} md={12} className='item-dashboard'>
-                <FeelingCalendar/>
+                {/* <Calendar/> */}
+                <FeelingCalendar />
             </Col>
             <Col xs={24} sm={24} md={12} className='item-dashboard'>
                 <PersonalRecord/>

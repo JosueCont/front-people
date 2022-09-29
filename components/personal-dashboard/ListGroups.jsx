@@ -1,56 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Avatar, List, Card, Row, Col, Modal } from 'antd';
-import { CloseOutlined, PeopleOutlineOutlined, EyeOutlined} from "@material-ui/icons";  
+import { Avatar, List, Card, Row, Col, Modal, Progress,Space } from 'antd';
+import { CloseOutlined, PeopleOutlineOutlined} from "@material-ui/icons";
+import { EyeOutlined,FundViewOutlined, PlusOutlined,MinusOutlined } from "@ant-design/icons";
+import { useSelector } from 'react-redux'
+import { useRouter } from "next/router";
 
 const ListGroups = () => {
     const [isOpenModal, setIsOpenModal] = useState(false);
-    const data = [
-        {
-            title: 'Mi familia',
-        },
-        {
-            title: 'Mis amigos',
-        },
-        {
-            title: 'Mi trabajo',
-        },
-        {
-            title: 'Videojuegos',
-        },
-        {
-            title: 'Mi familia',
-        },
-        {
-            title: 'Mis amigos',
-        },
-        {
-            title: 'Mi trabajo',
-        },
-        {
-            title: 'Videojuegos',
-        },
-    ];
-    const dataMembers = [
-        {
-            title: 'Gabriel Braga',
-        },
-        {
-            title: 'Irvin Albornoz',
-        },
-        {
-            title: 'Abraham Ciau',
-        },
-        {
-            title: 'Alberto Noh',
-        },
-        {
-            title: 'Luis López',
-        },
-        {
-            title: 'Gaspar Dzul',
-        },
-    ];
-    
+    const [currentMembers, setCurrentMembers] = useState([]);
+    const reportPerson = useSelector((state) => state.ynlStore.reportPerson)
+    const router = useRouter();
+
     const showModalMembers = (index) =>{
         setIsOpenModal(true);
         // console.log("abriendo modal", index);
@@ -61,7 +21,15 @@ const ListGroups = () => {
     
     const handleCancel = () => {
         setIsOpenModal(false);
-    }; 
+    };
+
+    const onDetail=(member)=>{
+        const query = {user_id:'63321b50fe9e6767abd17f8d'};
+        const url ={ pathname:`/dashboard-ynl-personal`, query  }
+        router.push(url,url,query)
+        setIsOpenModal(false)
+    }
+
   return (
     <>
         <Card  
@@ -73,35 +41,49 @@ const ListGroups = () => {
             <Col span={24} className='content-feeling-scroll scroll-bar'>
                 <List
                     itemLayout="horizontal"
-                    dataSource={data}
+                    dataSource={reportPerson?.data && (reportPerson?.data[0]?.groups?reportPerson?.data[0]?.groups:[])}
                     renderItem={(item, index) =>(
                         <List.Item 
                             key={item}
-                            actions={[<PeopleOutlineOutlined onClick={()=> showModalMembers(index)}/>]}
+                            actions={[<PeopleOutlineOutlined style={{cursor:'pointer'}} onClick={()=> {
+                                setCurrentMembers(reportPerson?.data && (reportPerson?.data[0]?.groups[index]?.members?reportPerson?.data[0]?.groups[index]?.members:[]))
+                                showModalMembers(index)
+                            }}/>]}
                         >
                             <List.Item.Meta
                             avatar={<Avatar src="/images/LogoYnl.png" />}
-                            title={<h1>{item.title}</h1>}
+                            title={<h1>{item.name}</h1>}
                             />
                         </List.Item>
                     )}
                 />
             </Col>   
         </Card>
-        <Modal title="Miembros del grupo" visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title={`Miembros del grupo (${currentMembers && currentMembers.length})`} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
             <Col span={24} className='content-feeling-scroll scroll-bar'>
                 <List
                     itemLayout="horizontal"
-                    dataSource={dataMembers}
+                    dataSource={currentMembers}
                     renderItem={(item, index) =>(
                         <List.Item 
-                            key={item}
-                            actions={[<PeopleOutlineOutlined/>]}
+                            key={index}
+                            actions={[<EyeOutlined onClick={()=> onDetail(item) } style={{cursor:'pointer',fontSize:20}} />]}
                         >
                             <List.Item.Meta
-                            avatar={<Avatar src="/images/LogoYnl.png" />}
-                            title={<span>{item.title}</span>}
+                            avatar={<Avatar  src="/images/LogoYnl.png" />}
+                            title={<><span>{item?.fullName} {item?.value < 50 ? <MinusOutlined/> : <PlusOutlined/>}</span>
+                                <Progress
+                                    strokeColor={item?.value<50? {
+                                        '0%': '#c10f0f',
+                                        '40%': '#c10f0f',
+                                    } : {
+                                        '0%': '#50c10f',
+                                        '60%': '#50c10f',
+                                    }}
+                                    percent={Math.round(item?.value)} />
+                            </>}
                             />
+
                         </List.Item>
                     )}
                 />
