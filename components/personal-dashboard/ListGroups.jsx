@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, List, Card, Row, Col, Modal, Progress,Space } from 'antd';
 import { CloseOutlined, PeopleOutlineOutlined} from "@material-ui/icons";
-import { EyeOutlined,FundViewOutlined } from "@ant-design/icons";
+import { EyeOutlined,FundViewOutlined, PlusOutlined,MinusOutlined } from "@ant-design/icons";
 import { useSelector } from 'react-redux'
+import { useRouter } from "next/router";
 
 const ListGroups = () => {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [currentMembers, setCurrentMembers] = useState([]);
     const reportPerson = useSelector((state) => state.ynlStore.reportPerson)
+    const router = useRouter();
 
     const showModalMembers = (index) =>{
         setIsOpenModal(true);
@@ -19,7 +21,15 @@ const ListGroups = () => {
     
     const handleCancel = () => {
         setIsOpenModal(false);
-    }; 
+    };
+
+    const onDetail=(member)=>{
+        const query = {user_id:'63321b50fe9e6767abd17f8d'};
+        const url ={ pathname:`/dashboard-ynl-personal`, query  }
+        router.push(url,url,query)
+        setIsOpenModal(false)
+    }
+
   return (
     <>
         <Card  
@@ -56,12 +66,12 @@ const ListGroups = () => {
                     dataSource={currentMembers}
                     renderItem={(item, index) =>(
                         <List.Item 
-                            key={item}
-                            actions={[<EyeOutlined style={{cursor:'pointer',fontSize:20}} />]}
+                            key={index}
+                            actions={[<EyeOutlined onClick={()=> onDetail(item) } style={{cursor:'pointer',fontSize:20}} />]}
                         >
                             <List.Item.Meta
                             avatar={<Avatar  src="/images/LogoYnl.png" />}
-                            title={<><span>{item?.fullName}</span>
+                            title={<><span>{item?.fullName} {item?.value < 50 ? <MinusOutlined/> : <PlusOutlined/>}</span>
                                 <Progress
                                     strokeColor={item?.value<50? {
                                         '0%': '#c10f0f',

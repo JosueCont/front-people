@@ -8,12 +8,29 @@ import WebApiYnl from '../../api/WebApiYnl';
 import locale from 'antd/lib/date-picker/locale/es_ES';
 import { getPersons } from '../../redux/ynlDuck';
 import { getReportPerson } from '../../redux/ynlDuck';
+import { useRouter } from "next/router";
 
 
 const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props}) => {
     const [filterModule] = Form.useForm();
     const { RangePicker } = DatePicker;
+    const router = useRouter();
     const [dataPersons, setDataPersons] = useState([]);
+
+
+    // Detectamos si tiene el queryparams de userid
+    useEffect(()=>{
+        if(router.query){
+            console.log(router.query)
+            const q = router?.query;
+            if(q.user_id){
+                filterModule.setFieldsValue({
+                    valuesSelected: q.user_id
+                })
+                filterModule.submit()
+            }
+        }
+    },[router])
 
     useEffect(() => {
         getPersons();
@@ -29,19 +46,31 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
 
     const onFinishFilter = (value) =>{
         //Formateamos la fecha que viene del range picker
-        let valueStart = "";
+        /*let valueStart = "";
         let valueEnd = "";
         value.filterDate.map((date, index) =>{if(index == 0){valueStart = moment(date._d).format("YYYY-MM-DD");}else if(index == 1){valueEnd = moment(date._d).format("YYYY-MM-DD");}})
+        */
+       const dates =  getDateFromPicker(value.filterDate)
+
         //Armamos la data a enviar a la api de consultas
         let data = {
-            start_date : valueStart,
-            end_date: valueEnd,
+            start_date : dates.valueStart,
+            end_date: dates.valueEnd,
             khonnect_ids: [value.valuesSelected] ?? [],
         }
         console.log("Filtro que se envia a consulta",data);
         getReportPerson(data);
     }
     const resetFilter = () =>{filterModule.resetFields();}
+
+    const getDateFromPicker=(filterDate)=>{
+        //Formateamos la fecha que viene del range picker
+        let valueStart = "";
+        let valueEnd = "";
+        filterDate.map((date, index) =>{if(index == 0){valueStart = moment(date._d).format("YYYY-MM-DD");}else if(index == 1){valueEnd = moment(date._d).format("YYYY-MM-DD");}})
+        return { valueStart, valueEnd}
+
+    }
 
   return (
     <>
