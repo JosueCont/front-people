@@ -25,6 +25,7 @@ import { connect } from "react-redux";
 import WebApi from "../../api/webApi";
 import Link from "next/link";
 import LoginModal from "../modal/LoginModal";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const CreatePerson = ({
   hideProfileSecurity = true,
@@ -279,6 +280,7 @@ const CreatePerson = ({
                     onChange={onChange}
                     moment={"YYYY-MM-DD"}
                     placeholder="Fecha de nacimiento"
+                    locale={locale}
                   />
                 </Form.Item>
               </Col>

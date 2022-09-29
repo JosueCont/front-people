@@ -21,6 +21,7 @@ const PaymentCalendars = ({ ...props }) => {
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [titleModal, setTitleModal] = useState("Crear");
   const [idPaymentCalendar, setIdPaymentCalendar] = useState(null);
 
@@ -64,19 +65,30 @@ const PaymentCalendars = ({ ...props }) => {
     setIsModalVisible(false);
   };
 
-  const deleteCalednar = (id) => {
-    setLoading(true);
-    WebApiPayroll.deletePaymentCalendar(id)
-      .then((response) => {
-        message.success(messageDeleteSuccess);
-        getPaymentCalendars();
-        setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-        message.error(messageError);
-      });
-  };
+  const handleDelteCalendar = (id) => {
+    setDeleteModalVisible(true)
+    setIdPaymentCalendar(id)
+  }
+  
+  const handleDeleteCancel = () => {
+    setDeleteModalVisible(false)
+  }
+
+const deleteCalendar = () => {
+  setLoading(true);
+  WebApiPayroll.deletePaymentCalendar(idPaymentCalendar)
+  .then((response) => {
+    message.success(messageDeleteSuccess);
+    getPaymentCalendars();
+    setLoading(false);
+    setDeleteModalVisible(false)
+   })
+   .catch((error) => {
+     setLoading(false);
+     setDeleteModalVisible(false)
+     message.error(messageError);
+   });
+};
 
   return (
     <>
@@ -237,7 +249,7 @@ const PaymentCalendars = ({ ...props }) => {
                           style={{ fontSize: "22px", marginBottom: "-5px" }}
                           className="icon_actions"
                           key={"delCalendar" + record.id}
-                          onClick={() => deleteCalednar(record.id)}
+                          onClick={() => handleDelteCalendar(record.id)}
                         />
                       </Tooltip>
                     )}
@@ -268,6 +280,35 @@ const PaymentCalendars = ({ ...props }) => {
           onCancel={handleCancel}
         />
       </Modal> */}
+       <Modal
+        title="Eliminar calendario de pagos"
+        className="modal_form"
+        width={500}
+        destroyOnClose
+        visible={deleteModalVisible}
+        onCancel={handleDeleteCancel}
+        onOk={() => deleteCalendar()}
+        maskClosable={false}
+        confirmLoading={loading}
+        centered
+        okText="Si, eliminar"
+        cancelText="Cancelar"
+      >
+        <Row justify="center" align="middle">
+          <Col span={24} style={{textAlign: 'center', width: '100%'}}>
+            <Alert
+              type="warning"
+              showIcon
+              message="¿Está seguro de eliminar este calendario?"
+              description={
+                <p style={{textAlign: 'justify', paddingLeft: 45}}>
+                  Al eliminar este calendario no se podra recuperar
+                </p>
+              }
+            />
+          </Col>
+        </Row>
+      </Modal>
     </>
   );
 };
