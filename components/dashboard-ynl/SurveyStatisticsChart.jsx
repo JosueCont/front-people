@@ -65,7 +65,7 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
         datasets: [
           {
             type: 'bar',
-            label: 'Encuestas',
+            label: 'Promedio',
             backgroundColor: '#FF5E00',
             data: dataResults,
             borderColor: 'white',
@@ -80,7 +80,7 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
     <>
         <Card  
             className='card-dashboard'
-            title="Estadística de"
+            title="Aspectos del usuario"
             style={{
                 width: '100%',
             }}>
