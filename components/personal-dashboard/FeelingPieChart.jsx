@@ -23,9 +23,10 @@ const FeelingPieChart = ({reportPerson,...props}) => {
   const [isEmpty, setIsEmpty] = useState(false);
   const options = {
     plugins: {
+      maintainAspectRatio: false, 
       legend: {
         onClick: null
-      } 
+      },
     }
   }
   useEffect(() => {
