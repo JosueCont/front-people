@@ -18,7 +18,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
 
     const ShowModalAllEmotions = (item) =>{
       setIsOpenModal(true)
-      setAllEmotions(item.all.reverse())
+      setAllEmotions([...item.all].reverse())
     }
 
     const handleOk = () => {
