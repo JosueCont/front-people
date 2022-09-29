@@ -497,13 +497,27 @@ const MainSider = ({
               </Menu.Item> */}
             </SubMenu>
           )}
-          <Menu.Item
-            icon={<ProfileOutlined />}
-            key="dashboard-ynl"
-            onClick={() => router.push({ pathname: "/dashboard-ynl" })}
-          >
-            YNL
-          </Menu.Item>
+          <SubMenu
+              key="ynl"
+              title="YNL"
+              className="subMainMenu"
+              icon={<UserOutlined />}
+            >
+              <Menu.Item
+                icon={<ProfileOutlined />}
+                key="dashboard-ynl"
+                onClick={() => router.push({ pathname: "/dashboard-ynl" })}
+              >
+                General
+              </Menu.Item>
+              <Menu.Item
+                icon={<ProfileOutlined />}
+                key="dashboard-ynl-personal"
+                onClick={() => router.push({ pathname: "/dashboard-ynl-personal" })}
+              >
+                Personal
+              </Menu.Item>
+            </SubMenu>
         </Menu>
       </Sider>
     </>
