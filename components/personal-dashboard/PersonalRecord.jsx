@@ -59,7 +59,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
             </Col>
                 
         </Card>
-        <Modal title={`Historial de emociones`} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title={`Historial de emociones`} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel} footer={[]}>
           <Col span={24} className='content-feeling-scroll scroll-bar'>
             <List
                 dataSource={allEmotions}
