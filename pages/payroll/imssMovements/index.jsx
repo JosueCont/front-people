@@ -7,7 +7,6 @@ import EmaYEvaFiles from "./EmaYEvaFiles";
 import { connect } from "react-redux";
 
 const ImssMovements = ({ ...props }) => {
-  
   const { Panel } = Collapse;
 
   return (
@@ -63,9 +62,7 @@ const ImssMovements = ({ ...props }) => {
                 </Collapse>
               </Panel>
               <Panel header="EMA y EBA" key="2">
-                <EmaYEvaFiles 
-                  files = {[]}
-                />
+                <EmaYEvaFiles files={[]} />
               </Panel>
             </Collapse>
           </div>

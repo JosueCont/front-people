@@ -18,15 +18,13 @@ import {
 } from "../../../utils/constant";
 import { ruleRequired } from "../../../utils/rules";
 import { SearchOutlined, SyncOutlined } from "@material-ui/icons";
-import SelectBranchNode from "../../../components/selects/SelectBranchNode";
 import SelectPatronalRegistration from "../../../components/selects/SelectPatronalRegistration";
 import WebApiPeople from "../../../api/WebApiPeople";
 import GenericModal from "../../../components/modal/genericModal";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
-import { useEffect } from "react";
 import { API_URL_TENANT } from "../../../config/config";
 
-const SuaMovements = ({ node }) => {
+const SuaMovements = ({ node = null }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
@@ -84,7 +82,7 @@ const SuaMovements = ({ node }) => {
   ];
 
   const filterPersonName = async () => {
-    filters.node = node.id;
+    filters.node = node?.id;
     setLoading(true);
     try {
       let response = await WebApiPeople.filterPerson(filters);
@@ -189,7 +187,7 @@ const SuaMovements = ({ node }) => {
         <Row gutter={30} style={{ marginBottom: 20 }}>
           <Col lg={4} xs={22}>
             <SelectPatronalRegistration
-              currentNode={node.id}
+              currentNode={node?.id}
               onChange={(value) => setPatronalSelected(value)}
             />
           </Col>
