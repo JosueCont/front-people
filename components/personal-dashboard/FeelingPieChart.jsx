@@ -62,7 +62,7 @@ const FeelingPieChart = ({reportPerson,...props}) => {
     <>
         <Card  
             className='card-dashboard'
-            title="Registros por emoción"
+            title="Total de emociones registradas"
             style={{
                 width: '100%',
             }}>
