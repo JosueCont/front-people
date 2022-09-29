@@ -31,11 +31,7 @@ import SelectTypeTax from "../../selects/SelectTypeTax";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 
-const FormPaymentCalendar = ({
-  nodeId = null,
-  idPaymentCalendar = null,
-  ...props
-}) => {
+const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const router = useRouter();
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
@@ -146,6 +142,9 @@ const FormPaymentCalendar = ({
           group_fixed_concept: item.group_fixed_concept,
           version_cfdi: item.version_cfdi,
           salary_days: item.salary_days,
+          belongs_to: item.belongs_to,
+          vacation_bonus_payment: item.vacation_bonus_payment,
+          calculation_employment_subsidy: item.calculation_employment_subsidy,
         });
         setAnnualAdjustment(item.annual_adjustment);
         setMonthlyAdjustment(item.monthly_adjustment);
@@ -157,6 +156,19 @@ const FormPaymentCalendar = ({
         setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
         setLocked(item.locked);
+        setPolitics(true);
+        checks.map((a) => {
+          let checked = document.getElementById(a.name);
+          if (a.name === "accumulate_vacation") {
+            if (!item[a.name]) {
+              checked.click();
+            }
+          } else {
+            if (item[a.name]) checked.click();
+          }
+        });
+        // setEdit(true);
+        // setId(item.id);
       }
       setLoading(false);
     } catch (error) {
@@ -168,15 +180,13 @@ const FormPaymentCalendar = ({
     await WebApiPayroll.createPaymentCalendar(data)
       .then((response) => {
         setLoading(false);
-        props.getPaymentCalendars();
         message.success({
           content: messageSaveSuccess,
           className: "custom-class",
         });
-        closeModal();
+        router.push({ pathname: "/payroll/paymentCalendar" });
       })
       .catch((err) => {
-        props.getPaymentCalendars();
         console.log(err);
         setLoading(false);
       });
@@ -189,7 +199,7 @@ const FormPaymentCalendar = ({
           content: "Guardado correctamente.",
           className: "custom-class",
         });
-        closeModal();
+        router.push({ pathname: "/payroll/paymentCalendar" });
       })
       .catch((error) => {
         setLoading(false);
@@ -212,8 +222,8 @@ const FormPaymentCalendar = ({
     setPeriod(dateString);
   };
   const formFinish = (value) => {
-    setLoading(true);
-    value.node = parseInt(nodeId);
+    // setLoading(true);
+    value.node = props.currentNode.id;
     value.active = periodActive;
     value.monthly_adjustment = monthlyAdjustment;
     value.annual_adjustment = annualAdjustment;
@@ -245,12 +255,10 @@ const FormPaymentCalendar = ({
 
   const changeMonthlyAdjustment = (checked) => {
     setMonthlyAdjustment(checked);
-    // setAnnualAdjustment(false);
   };
 
   const changeAnnualAdjustment = (checked) => {
     setAnnualAdjustment(checked);
-    // setMonthlyAdjustment(false);
   };
 
   const changePeriodActive = (checked) => {
@@ -272,7 +280,7 @@ const FormPaymentCalendar = ({
     setAnnualAdjustment(false);
     setMonthlyAdjustment(false);
     setPeriodActive(false);
-    props.getPaymentCalendars();
+    // props.getPaymentCalendars();
   };
 
   const RenderChecks = ({ data }) => {
@@ -581,7 +589,7 @@ const FormPaymentCalendar = ({
               <Row gutter={30} style={{ marginBottom: 20 }}>
                 <Col lg={8} xs={22}>
                   <Form.Item
-                    name="belong_to"
+                    name="belongs_to"
                     label="Pertenece a "
                     rules={[ruleRequired]}
                   >
@@ -645,6 +653,7 @@ const mapState = (state) => {
   return {
     catPerception: state.fiscalStore.cat_perceptions,
     catCfdiVersion: state.fiscalStore.cat_cfdi_version,
+    currentNode: state.userStore.current_node,
   };
 };
 

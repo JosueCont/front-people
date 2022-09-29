@@ -29,7 +29,6 @@ const PaymentCalendar = () => {
           style={{ padding: 24, minHeight: 380, height: "100%" }}
         >
           <FormPaymentCalendar
-            nodeId={route.query?.id || null}
             idPaymentCalendar={route.query?.calendar_id || null}
           />
         </div>
