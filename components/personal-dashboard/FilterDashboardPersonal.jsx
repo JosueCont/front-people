@@ -1,7 +1,7 @@
 import {React, useEffect, useState} from 'react'
 import {Avatar, Radio, Space, DatePicker, Select, Form, Button, Row, Col, ConfigProvider} from 'antd'
 import {SyncOutlined} from "@material-ui/icons";
-import moment from 'moment/moment';
+import moment from 'moment';
 import { format } from 'path';
 import { connect } from "react-redux";
 import WebApiYnl from '../../api/WebApiYnl';
@@ -18,15 +18,28 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
     const [dataPersons, setDataPersons] = useState([]);
 
 
+    const  getFirstDayOfMonth=(year, month)=> {
+        return new Date(year, month, 1);
+    }
     // Detectamos si tiene el queryparams de userid
     useEffect(()=>{
         if(router.query){
             console.log(router.query)
             const q = router?.query;
             if(q.user_id){
+                console.log('useR_id', q.user_id)
                 filterModule.setFieldsValue({
                     valuesSelected: q.user_id
                 })
+                /*Usamos del mes*/
+                const startOfMonth = moment().clone().startOf('month');
+                const endOfMonth = moment().clone().endOf('month');
+                if(!filterModule.getFieldValue('filterDate')){
+                    filterModule.setFieldsValue({
+                        filterDate:[startOfMonth, endOfMonth]
+                    })
+                }
+
                 filterModule.submit()
             }
         }
@@ -39,7 +52,7 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
     useEffect(() => {
         //Armamos array para llenar el select
         let results = persons.map((item)=>{
-            return { key: item.id, value: item.khonnect_id, label: item.firstName + " " + item.lastName } 
+            return { key: item.id, value: item.khonnect_id, label: `${item.firstName} ${item.lastName} - ${item.email}` }
         })
         setDataPersons(results);
     }, [persons]);
@@ -85,7 +98,7 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                     requiredMark={false}
                     >
                     <Row>
-                        <Col xs={22} md={8}>
+                        <Col xs={22} md={10}>
                             <Form.Item label="Rango de fechas" name="filterDate" rules={[{ required: true, message: 'Es necesario un rango de fechas para realizar el filtro' }]}>
                                 <RangePicker
                                     style={{width:"90%", marginLeft:"8px", marginRight:"8px"}}
@@ -94,7 +107,7 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                                     />                     
                             </Form.Item>
                         </Col>
-                        <Col xs={22} md={8}>
+                        <Col xs={22} md={10}>
                             <Form.Item label="Persona" name="valuesSelected">
                                 <Select
                                     style={{width:"90%", marginLeft:"8px",}}
@@ -108,8 +121,8 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                         </Col>
                         <Col xs={22} md={2} style={{display:"flex"}}>
                             <Button htmlType='submit' style={{marginLeft:"8px"}} >Filtrar</Button>
-                            <Button  onClick={resetFilter} style={{marginLeft:"8px"}}
-                            ><SyncOutlined /></Button>
+                            {/*<Button  onClick={resetFilter} style={{marginLeft:"8px"}}*/}
+                            {/*><SyncOutlined /></Button>*/}
                         </Col>
                     </Row>
                 </Form>

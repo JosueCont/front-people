@@ -1,6 +1,7 @@
 import {React, useEffect, useState} from 'react'
 import { Row, Col, Card, List, Avatar, Modal} from 'antd'
 import { connect } from "react-redux";
+import moment from 'moment/moment';
 
 const PersonalRecord = ({reportPerson,...props}) => {
     const [dataPerDay, setDataPerDay] = useState([]);
@@ -8,10 +9,11 @@ const PersonalRecord = ({reportPerson,...props}) => {
     const [allEmotions, setAllEmotions] = useState();
     
     useEffect(() => {
-      let globalData = reportPerson?.data?.at(-1).per_day.reverse();
-      //console.log("per_day",globalData);
-      let filterLast = globalData?.filter(item => Object.keys(item.last).length > 0); 
-      setDataPerDay(filterLast);
+      if(Object.keys(reportPerson).length > 0){
+        let globalData = [...reportPerson?.data?.at(-1).per_day].reverse();
+        let filterLast = globalData?.filter(item => Object.keys(item.last).length > 0); 
+        setDataPerDay(filterLast);
+      }
     }, [reportPerson]);
 
     const ShowModalAllEmotions = (item) =>{
@@ -30,7 +32,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
     <>
         <Card  
             className='card-dashboard'
-            title="Mi historial de emociones"
+            title="Historial de emociones"
             style={{
                 width: '100%',
             }}>
@@ -45,8 +47,10 @@ const PersonalRecord = ({reportPerson,...props}) => {
                                 <Avatar size={60} src={item.last.animation} />
                               </Col>
                               <Col span={16}>
-                                  <h2 style={{color:"white", textAlign:"left", marginBottom:"0px"}}> {item.last.name} </h2>
-                                  <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{item.last.createdAt.substring(0,10)}</p>
+                                  <h2 style={{color:"white", textAlign:"left", marginBottom:"0px"}}> {item.last.feeling_name} </h2>
+                                  <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item.last.name}</b></p>
+                                  <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{ moment(item.last.createdAt).format('LL')}</p>
+                                  <span style={{color:"white", textAlign:"rigth", marginBottom:"0px"}}> <b>{item.all.length}</b> {item.all.length > 1 ? " emociones registradas" : " emoción registrada"}</span>
                               </Col>
                           </Row>
                       </div> 
@@ -55,7 +59,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
             </Col>
                 
         </Card>
-        <Modal title={`Todas las emociones`} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title={`Historial de emociones`} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
           <Col span={24} className='content-feeling-scroll scroll-bar'>
             <List
                 dataSource={allEmotions}
@@ -66,8 +70,9 @@ const PersonalRecord = ({reportPerson,...props}) => {
                               <Avatar size={60} src={item?.animation} />
                             </Col>
                             <Col span={16}>
-                                <h2 style={{color:"white", textAlign:"left", marginBottom:"0px"}}> {item?.name} </h2>
-                                <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{item?.createdAt.substring(0,10)}</p>
+                                <h2 style={{color:"white", textAlign:"left", marginBottom:"0px"}}> {item?.feeling_name} </h2>
+                                <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item?.name}</b></p>
+                                <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{ moment(item?.createdAt).format('LLL')}</p>
                             </Col>
                         </Row>
                     </div> 
