@@ -154,7 +154,7 @@ export const getEmotionChart = (data) =>
     dispatch({ type: REPORTPERSON, loadReportPerson: true, payload: [] });
     await WebApiYnl.getReportPerson(data)
     .then((response) => {
-      console.log("response desde el redux REPORT PERSON", response);
+      //console.log("response desde el redux REPORT PERSON", response);
       dispatch({ type: REPORTPERSON, loadReportPerson: false, payload: response.data ?? [] });
       return true;
     })

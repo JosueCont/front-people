@@ -1,37 +1,62 @@
 import {React, useEffect, useState} from 'react'
-import { Card} from 'antd'
+import { Card, Empty} from 'antd'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+import { connect } from "react-redux";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const data = {
-  labels: ['Inspirado', 'Abierto', 'Confundido', 'Deprimido', 'Contento', 'En paz'],
-  datasets: [
-    {
-      label: '# of Votes',
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        '#ff0037',
-        '#0099ff',
-        'rgb(255, 183, 0)',
-        '#00ffff',
-        '#5a08ff',
-        '#ff8000',
-      ],
-      borderColor: [
-        '#ff0037',
-        '#0099ff',
-        'rgb(255, 183, 0)',
-        '#00ffff',
-        '#5a08ff',
-        '#ff8000',
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
-
-const FeelingPieChart = () => {
+const FeelingPieChart = ({reportPerson,...props}) => {
+  let colors = [
+    "#1a85ff",
+    "#ff457d",
+    "#2fdaff",
+    "#ffc700",
+    "#ff5e00",
+    "#ff1111",
+    "#9c4fff"
+  ]
+  let data = {
+    labels: [],
+    datasets: [],
+  };
+  const [config, setConfig] = useState(data);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const options = {
+    plugins: {
+      legend: {
+        onClick: null
+      } 
+    }
+  }
+  useEffect(() => {
+    //console.log("reporte personal",reportPerson?.data?.at(-1).global);
+    let globalData = reportPerson?.data?.at(-1).global;
+    if(globalData){
+      let labelsResults = [];
+      let dataResults = [];
+      let colorsResults = [];
+      globalData.map((item)=>{
+        labelsResults.push(item.name);
+        dataResults.push(item.count);
+        colorsResults.push(`#${item.color}`);
+      })
+      let total = dataResults.reduce((a, b) => a + b, 0);
+      total != 0 ? setIsEmpty(false) : setIsEmpty(true);
+      let obj = {
+        labels: labelsResults,
+        datasets: [
+          {
+            label: 'emoción',
+            data: dataResults,
+            backgroundColor: colorsResults,
+            borderColor: colorsResults,
+            borderWidth: 1,
+          },
+        ],
+      };
+      setConfig(obj)
+    }
+  }, [reportPerson]);
   return (
     <>
         <Card  
@@ -40,10 +65,32 @@ const FeelingPieChart = () => {
             style={{
                 width: '100%',
             }}>
-            <Pie data={data} width="300px" height="300px" options={{maintainAspectRatio: false}} /> 
+              { !isEmpty && (
+                <Pie data={config} width="300px" height="300px" options={{maintainAspectRatio: false}} />
+              )}
+              { isEmpty && (
+                <div className='aligned-to-center'>
+                  <Empty 
+                    image={Empty.PRESENTED_IMAGE_SIMPLE} 
+                    description={
+                      <span>
+                        <b>No se registraron emociones</b>
+                      </span>
+                    } 
+                  />
+                </div>
+              )}
+             
         </Card>
     </>
   )
 }
 
-export default FeelingPieChart
+const mapState = (state) => {
+  return {
+    persons: state.ynlStore.persons,
+    reportPerson: state.ynlStore.reportPerson,
+  };
+};
+
+export default connect(mapState)(FeelingPieChart);
