@@ -1,5 +1,5 @@
 import {React, useEffect, useState} from 'react'
-import {Card, Badge} from 'antd'
+import {Card, Badge, Col, Row} from 'antd'
 import moment from 'moment/moment';
 import Calendar from './Calendar'
 import { Global, css } from '@emotion/core';
@@ -82,6 +82,36 @@ const FeelingCalendar = () => {
             style={{
                 width: '100%',
             }}>
+            <Row style={{marginBottom:40}} align={'center'}>
+                <Col className='aligned-to-start'>
+                    <div className='indicator-inspired'></div>
+                    <div><span>Inspirado</span></div>
+                </Col>
+                <Col className='aligned-to-start'>
+                    <div className='indicator-glad'></div>
+                    <div><span>Contento</span></div>
+                </Col>
+                <Col className='aligned-to-start'>
+                    <div className='indicator-open'></div>
+                    <div><span>Abierto</span></div>
+                </Col>
+                <Col className='aligned-to-start'>
+                    <div className='indicator-depressed'></div>
+                    <div><span>Deprimido</span></div>
+                </Col>
+                <Col className='aligned-to-start'>
+                    <div className='indicator-peace'></div>
+                    <div><span>En paz</span></div>
+                </Col>
+                <Col className='aligned-to-start'>
+                    <div className='indicator-confused'></div>
+                    <div><span>Confundido</span></div>
+                </Col>
+                <Col className='aligned-to-start'>
+                    <div className='indicator-upset'></div>
+                    <div><span>Molesto</span></div>
+                </Col>
+            </Row>
             <Calendar  />    
         </Card>
     </>
