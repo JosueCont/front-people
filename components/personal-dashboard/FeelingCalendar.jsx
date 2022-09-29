@@ -1,6 +1,8 @@
 import {React, useEffect, useState} from 'react'
-import {Card, Calendar, Badge} from 'antd'
-import moment from 'moment/moment'
+import {Card, Badge} from 'antd'
+import moment from 'moment/moment';
+import Calendar from './Calendar'
+import { Global, css } from '@emotion/core';
 
 const FeelingCalendar = () => {
     const [value, setValue] = useState(moment('2017-01-25'));
@@ -80,7 +82,7 @@ const FeelingCalendar = () => {
             style={{
                 width: '100%',
             }}>
-            <Calendar fullscreen={false} onPanelChange={onPanelChange} />    
+            <Calendar  />    
         </Card>
     </>
   )
