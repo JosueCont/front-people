@@ -26,10 +26,11 @@ const ChartDonut = ({ynlStore, ...props}) => {
   const [loading, setLoading] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
   const options = {
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         onClick: null
-      } 
+      },
     }
   }
   useEffect(() => {
@@ -69,7 +70,7 @@ const ChartDonut = ({ynlStore, ...props}) => {
               width: '100%',
           }}>
             { !isEmpty && (
-              <Doughnut data={config} options={options} /> 
+              <Doughnut data={config} width="400px" height="400px" options={options} /> 
             )}
             { isEmpty && (
               <Empty 

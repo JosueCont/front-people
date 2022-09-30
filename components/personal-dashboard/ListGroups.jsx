@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Avatar, List, Card, Row, Col, Modal, Progress,Space } from 'antd';
+import { Avatar, List, Card, Row, Col, Modal, Progress,Space, Empty, Tooltip } from 'antd';
 import { CloseOutlined, PeopleOutlineOutlined} from "@material-ui/icons";
 import { EyeOutlined,FundViewOutlined, PlusOutlined,MinusOutlined, SmileOutlined, FrownOutlined, UserOutlined } from "@ant-design/icons";
 import { useSelector } from 'react-redux'
@@ -41,14 +41,15 @@ const ListGroups = () => {
             <Col span={24} className='content-feeling-scroll scroll-bar'>
                 <List
                     itemLayout="horizontal"
+                    locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se registraron emociones" />}}
                     dataSource={reportPerson?.data && (reportPerson?.data[0]?.groups?reportPerson?.data[0]?.groups:[])}
                     renderItem={(item, index) =>(
                         <List.Item 
                             key={item}
-                            actions={[<PeopleOutlineOutlined style={{cursor:'pointer'}} onClick={()=> {
+                            actions={[<Tooltip title="Ver miembros del grupo"><PeopleOutlineOutlined style={{cursor:'pointer'}} onClick={()=> {
                                 setCurrentMembers(reportPerson?.data && (reportPerson?.data[0]?.groups[index]?.members?reportPerson?.data[0]?.groups[index]?.members:[]))
                                 showModalMembers(index)
-                            }}/>]}
+                            }}/></Tooltip>]}
                         >
                             <List.Item.Meta
                             avatar={<Avatar src="/images/LogoYnl.png" />}

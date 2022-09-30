@@ -151,8 +151,7 @@ const Calendar = ({ reportPerson, ...props}) => {
                 <LeftOutlined onClick={() => prevMonth()} />
             </div>
             <div style={{ fontSize:20 }}>
-                {moment(currentMonth).format("MMMM").toUpperCase()} ,
-                {currentYear}
+                {moment(currentMonth).format("MMMM").toUpperCase()} {currentYear}
             </div>
             <div className='calendar_controls'>
                 <RightOutlined onClick={() => nextMonth() } />
