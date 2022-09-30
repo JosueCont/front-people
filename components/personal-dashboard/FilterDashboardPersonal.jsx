@@ -1,5 +1,5 @@
 import {React, useEffect, useState} from 'react'
-import {Avatar, Radio, Space, DatePicker, Select, Form, Button, Row, Col, ConfigProvider} from 'antd'
+import {Avatar, Radio, Space, DatePicker, Select, Form, Button, Row, Col,} from 'antd'
 import {SyncOutlined} from "@material-ui/icons";
 import moment from 'moment';
 import { format } from 'path';
@@ -47,6 +47,7 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
 
     useEffect(() => {
         getPersons();
+        filterModule.setFieldsValue({filterDate: [moment().startOf('month'), moment().endOf('month')]})
     }, []);
 
     useEffect(() => {
@@ -99,7 +100,7 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                     >
                     <Row>
                         <Col xs={22} md={10}>
-                            <Form.Item label="Rango de fechas" name="filterDate" rules={[{ required: true, message: 'Es necesario un rango de fechas para realizar el filtro' }]}>
+                            <Form.Item label={<label style={{ color: "white" }}><b>Rango de fechas</b></label>} name="filterDate" rules={[{ required: true, message: 'Es necesario un rango de fechas para realizar el filtro' }]}>
                                 <RangePicker
                                     style={{width:"90%", marginLeft:"8px", marginRight:"8px"}}
                                     locale={locale}
@@ -108,7 +109,7 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                             </Form.Item>
                         </Col>
                         <Col xs={22} md={10}>
-                            <Form.Item label="Persona" name="valuesSelected">
+                            <Form.Item label={<label style={{ color: "white" }}><b>Rango de fechas</b></label>} name="valuesSelected">
                                 <Select
                                     style={{width:"90%", marginLeft:"8px",}}
                                     allowClear

@@ -22,8 +22,8 @@ const FeelingPieChart = ({reportPerson,...props}) => {
   const [config, setConfig] = useState(data);
   const [isEmpty, setIsEmpty] = useState(false);
   const options = {
+    maintainAspectRatio: false,
     plugins: {
-      maintainAspectRatio: false, 
       legend: {
         onClick: null
       },
@@ -67,7 +67,7 @@ const FeelingPieChart = ({reportPerson,...props}) => {
                 width: '100%',
             }}>
               { !isEmpty && (
-                <Pie data={config} width="350px" height="350px" options={{maintainAspectRatio: false}} />
+                <Pie data={config} width="350px" height="350px" options={options} />
               )}
               { isEmpty && (
                 <div className='aligned-to-center'>

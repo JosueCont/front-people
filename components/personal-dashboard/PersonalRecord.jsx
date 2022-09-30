@@ -1,5 +1,5 @@
 import {React, useEffect, useState} from 'react'
-import { Row, Col, Card, List, Avatar, Modal} from 'antd'
+import { Row, Col, Card, List, Avatar, Modal, Empty} from 'antd'
 import { connect } from "react-redux";
 import moment from 'moment/moment';
 
@@ -18,7 +18,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
 
     const ShowModalAllEmotions = (item) =>{
       setIsOpenModal(true)
-      setAllEmotions([...item.all])
+      setAllEmotions([...item.all].reverse())
     }
 
     const handleOk = () => {
@@ -39,8 +39,9 @@ const PersonalRecord = ({reportPerson,...props}) => {
             <Col span={24} className='content-feeling-scroll scroll-bar'>
               <List
                   dataSource={dataPerDay}
+                  locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se registraron emociones" />}}
                   renderItem={(item) => (
-                      <div className='item-feeling' style={{backgroundColor: `#${item.last.color}` }}
+                      <div className='item-feeling' style={{backgroundColor: `#${item.last.color}`, cursor:"pointer" }}
                         onClick={() => ShowModalAllEmotions(item)}>
                           <Row>
                               <Col span={8} className="aligned-to-center">
