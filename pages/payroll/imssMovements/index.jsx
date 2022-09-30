@@ -20,8 +20,6 @@ const ImssMovements = ({ ...props }) => {
     props.currentNode && setCurrentNodeId(props.currentNode.id)
   },[])
 
-  console.log("Id, selectedPatronal", currentNodeId, patronalSelected)
-
   useEffect(() => {
     currentNodeId && patronalSelected && getFiles()
   },[patronalSelected])
