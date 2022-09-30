@@ -418,6 +418,13 @@ class WebApiPeople {
     );
   }
 
+  static listEbaAndEmaFiles(node, patronalRegistration) {
+    return WebApi.ApisType(
+      `/business/document/?node=${node}&patronal_registration=${patronalRegistration}`, 
+      "get"
+    );
+  }
+
   static getJobRiskClass(node) {
     return WebApi.ApisType(`/fiscal/job-risk-class/?node=${node}`, "get");
   }

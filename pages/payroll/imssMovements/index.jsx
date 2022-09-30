@@ -1,4 +1,7 @@
-import { Breadcrumb, Button, Collapse, Row, Space, Spin } from "antd";
+import { useEffect, useState } from "react";
+import SelectPatronalRegistration from "../../../components/selects/SelectPatronalRegistration";
+import WebApiPeople from "../../../api/WebApiPeople";
+import { Breadcrumb, Button, Collapse, Row, Col,Space, Spin } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
@@ -8,6 +11,34 @@ import { connect } from "react-redux";
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
+  const [ loading, setLoading ] = useState(false)
+  const [currentNodeId, setCurrentNodeId] = useState(null) 
+  const [patronalSelected, setPatronalSelected] = useState(null);
+  const [files, setFiles ] = useState([])
+
+  useEffect(() => {
+    props.currentNode && setCurrentNodeId(props.currentNode.id)
+  },[])
+
+  console.log("Id, selectedPatronal", currentNodeId, patronalSelected)
+
+  useEffect(() => {
+    currentNodeId && patronalSelected && getFiles()
+  },[patronalSelected])
+
+  const getFiles = () => {
+    setLoading(true)
+    WebApiPeople.listEbaAndEmaFiles(currentNodeId, patronalSelected)
+    .then((response) => {
+      setFiles(response.data.documents)
+      setLoading(false)
+      console.log('Response', response)
+    })
+    .catch((error) => {
+      setLoading(false)
+      console.log('error', error)
+    })
+  }
 
   return (
     <>
@@ -62,7 +93,16 @@ const ImssMovements = ({ ...props }) => {
                 </Collapse>
               </Panel>
               <Panel header="EMA y EBA" key="2">
-                <EmaYEvaFiles files={[]} />
+              <Col span={10}>
+                  <SelectPatronalRegistration
+                    currentNode={currentNodeId}
+                    onChange={(value) => setPatronalSelected(value)}
+                  />
+                </Col>
+                <EmaYEvaFiles 
+                  files = {files.length > 0? files : []}
+                  loading = { loading }
+                />
               </Panel>
             </Collapse>
           </div>
