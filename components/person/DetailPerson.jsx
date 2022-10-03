@@ -34,6 +34,7 @@ import {
   PhoneOutlined,
   UsergroupDeleteOutlined,
   WarningOutlined,
+  MedicineBoxOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import Router from "next/router";
@@ -211,6 +212,20 @@ const DetailPerson = ({
             key="tab_8"
           >
             <FormDocument person_id={person.id} node={person.node} />
+          </TabPane>
+          <TabPane 
+            tab={
+              <Tooltip title="IMSS/INFONAVIT">
+                <div className="container-title-tab">
+                <MedicineBoxOutlined />
+                  <div className="text-title-tab">IMSS/INFONAVIT</div>
+                </div>
+              </Tooltip>
+            }
+            key="tab_12"
+
+          >
+
           </TabPane>
           <TabPane
             tab={

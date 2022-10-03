@@ -301,7 +301,7 @@ const deleteCalendar = () => {
               showIcon
               message="¿Está seguro de eliminar este calendario?"
               description={
-                <p style={{textAlign: 'justify', paddingLeft: 45}}>
+                <p style={{textAlign: 'justify', paddingLeft: 15}}>
                   Al eliminar este calendario no se podra recuperar
                 </p>
               }
