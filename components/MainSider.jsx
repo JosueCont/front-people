@@ -87,11 +87,14 @@ const MainSider = ({
       assessment_groups: '/assessment/groups',
       assessment_profiles: '/assessment/profiles',
       assessment_reports: '/assessment/reports',
+      ynl_general_dashboard: '/ynl/general-dashboard',
+      ynl_personal_dashboard: '/ynl/personal-dashboard',
     }
     router.push(pathRoutes[key]);
   };
 
   let items = []
+  let children = []
 
   if (typeof window !== 'undefined') {
     // Menú Empresas
@@ -112,11 +115,11 @@ const MainSider = ({
         getItem('Personas', 'persons'),
         getItem('Grupos', 'groups_people'),
       ]
-      items.push(getItem('People', 'people', <UserOutlined />, children))
+      items.push(getItem('Colaboradores', 'people', <UserOutlined />, children))
     }
 
     // Menú Configuración
-    let children = [
+    children = [
       getItem('Catálogos', 'catalogs'),
       getItem('Perfiles de seguridad', 'securityGroups'),
     ]
@@ -202,10 +205,17 @@ const MainSider = ({
       ]
       items.push(getItem('Kuiz', 'kuiz', <QuestionCircleOutlined />, children))
     }
+
+    // Menú YNL
+    children = [
+      getItem('General', 'ynl_general_dashboard'),
+      getItem('Personal', 'ynl_personal_dashboard')
+    ]
+    items.push(getItem('YNL', 'ynl', <UserOutlined />, children))
   }
 
   return (
-      <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)} theme={theme} >
+      <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)} theme={theme} width={250} >
         <div className="logo" />
         <Menu theme={theme} defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys} mode="inline" onClick={onClickMenuItem} items={items} />
       </Sider>
@@ -568,15 +578,15 @@ const MainSider = ({
             >
               <Menu.Item
                 icon={<ProfileOutlined />}
-                key="dashboard-ynl"
-                onClick={() => router.push({ pathname: "/dashboard-ynl" })}
+                key="general-dashboard"
+                onClick={() => router.push({ pathname: "/general-dashboard" })}
               >
                 General
               </Menu.Item>
               <Menu.Item
                 icon={<ProfileOutlined />}
-                key="dashboard-ynl-personal"
-                onClick={() => router.push({ pathname: "/dashboard-ynl-personal" })}
+                key="general-dashboard-personal"
+                onClick={() => router.push({ pathname: "/general-dashboard-personal" })}
               >
                 Personal
               </Menu.Item>

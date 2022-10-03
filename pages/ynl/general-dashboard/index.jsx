@@ -1,20 +1,20 @@
 import {React, useEffect, useState} from 'react'
-import MainLayout from '../../layout/MainLayout'
+import MainLayout from '../../../layout/MainLayout'
 import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Space} from 'antd'
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 import { FormattedMessage } from 'react-intl'
 import { useRouter } from 'next/router'
 import { css, Global } from "@emotion/core";
-import { SidebarYnl } from '../../components/dashboard-ynl/SidebarYnl';
-import Dashboard from '../../components/dashboard-ynl/Dashboard';
-import { DashboardPerPeople } from '../../components/personal-dashboard/DashboardPerPeople';
+import { SidebarYnl } from '../../../components/dashboard-ynl/SidebarYnl';
+import Dashboard from '../../../components/dashboard-ynl/Dashboard';
+import { DashboardPerPeople } from '../../../components/personal-dashboard/DashboardPerPeople';
 
 
 const index = () => {
   const router = useRouter();
   
   return (
-    <MainLayout currentKey={["dashboard-ynl"]} defaultOpenKeys={["dashboard-ynl"]}>
+    <MainLayout currentKey={["ynl_general_dashboard"]} defaultOpenKeys={["ynl"]}>
       <Global
         styles={css`
             :root {

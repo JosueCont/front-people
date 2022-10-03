@@ -1,12 +1,12 @@
 import {React, useEffect, useState} from 'react'
-import MainLayout from '../../layout/MainLayout'
+import MainLayout from '../../../layout/MainLayout'
 import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Space, Spin} from 'antd'
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 import { FormattedMessage } from 'react-intl'
 import { useRouter } from 'next/router'
 import { css, Global } from "@emotion/core";
 import { useSelector } from 'react-redux'
-import { DashboardPerPeople } from '../../components/personal-dashboard/DashboardPerPeople';
+import { DashboardPerPeople } from '../../../components/personal-dashboard/DashboardPerPeople';
 
 
 const index = () => {
@@ -15,7 +15,7 @@ const index = () => {
   
   return (
       <Spin spinning={reportPerson?.loadReportPerson}>
-          <MainLayout currentKey={["dashboard-ynl-personal"]} defaultOpenKeys={["dashboard-ynl-personal"]}>
+          <MainLayout currentKey={["ynl_personal_dashboard"]} defaultOpenKeys={["ynl"]}>
               <Global
                   styles={css`
             :root {
