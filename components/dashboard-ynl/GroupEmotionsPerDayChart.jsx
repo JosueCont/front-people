@@ -45,7 +45,7 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
         render: ( init ) => (
             <div>
               <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{moment(init).format("dddd")}</p>
-              <p style={{marginBottom:0, textAlign:"center"}}>{moment(init).format("DD/MMM/YYYY")}</p>
+              <p style={{marginBottom:0, textAlign:"center"}}>{moment(init).format("DD/MM/YYYY")}</p>
             </div>
         )
       },
@@ -126,7 +126,8 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
                 pageSize: 5,
                 total: ynlStore.length,
                 position: ['bottomCenter'],
-                hideOnSinglePage: true
+                hideOnSinglePage: true,
+                showSizeChanger:false
                }}
               size="small" />
         </Card>

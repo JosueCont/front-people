@@ -21,3 +21,15 @@ export const API_ASSESSMENT = process.browser
 export const typeHttp = process.browser
   ? process.env.NEXT_PUBLIC_USE_HTTPS
   : process.env.USE_HTTPS;
+
+export const urlMyAccount = process.browser
+  ? process.env.NEXT_PUBLIC_BASE_URL_MYACCOUNT_TENANT
+  : process.env.BASE_URL_MYACCOUNT_TENANT;
+
+export const urlPeople = process.browser
+  ? process.env.NEXT_PUBLIC_BASE_URL_PEOPLE_TENANT
+  : process.env.BASE_URL_MYACCOUNT_TENANT;
+
+export const urlSocial = process.browser
+  ? process.env.NEXT_PUBLIC_BASE_URL_SOCIAL_TENANT
+  : process.env.BASE_URL_SOCIAL_TENANT;

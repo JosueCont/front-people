@@ -93,11 +93,11 @@ div#__next > section.layout{
   background: rgba(16, 16, 16, 0.41) !important;
 }
 
-.form_header_black{
-  background: #393D4A !important;
+.form_header_black {
+  background: #393d4a !important;
 }
 
-.form_header_black .ant-form-item-label label{
+.form_header_black .ant-form-item-label label {
   color: white !important;
 }
 

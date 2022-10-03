@@ -56,7 +56,7 @@ const SelectSuburb = ({
             return (
               <>
                 (
-                <Option key={item.id} value={item.id}>
+                <Option key={item.key} value={item.id}>
                   {item.label}
                 </Option>
                 ; )

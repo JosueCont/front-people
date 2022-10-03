@@ -335,7 +335,6 @@ export const getHiringRegime = (use_cfdi) => async (dispatch, getState) => {
 export const ImssDelegation = () => async (dispatch, getState) => {
   await WebApiFiscal.ImssDelegation()
     .then((response) => {
-      console.log(response.data);
       dispatch({
         type: IMSS_DELEGATION,
         payload: response.data.results,
@@ -349,7 +348,6 @@ export const ImssDelegation = () => async (dispatch, getState) => {
 export const ImssSubDelegation = () => async (dispatch, getState) => {
   await WebApiFiscal.ImssSubdelegation()
     .then((response) => {
-      console.log(response.data);
       dispatch({
         type: IMSS_SUBDELEGATION,
         payload: response.data.results,

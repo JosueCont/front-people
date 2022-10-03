@@ -2,8 +2,10 @@ import { Breadcrumb, Spin } from "antd";
 import PatronalRegistration from "../../components/payroll/PatronalRegistration";
 import MainLayout from "../../layout/MainLayout";
 import { withAuthSync } from "../../libs/auth";
+import { useRouter } from "next/router";
 
 const PatronalRegistartionNode = () => {
+  const router = useRouter();
   return (
     <MainLayout currentKey={["patronal"]} defaultOpenKeys={["company"]}>
       <Breadcrumb>

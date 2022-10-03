@@ -34,6 +34,16 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
     datasets: [],
   };
   const [config, setConfig] = useState(data);
+  const options = {
+    plugins: {
+      legend: {
+          display: false,
+          labels: {
+              color: 'rgb(255, 99, 132)'
+          }
+      }
+    }
+  }
   useEffect(() => {
     if(ynlStore){
       let labelsFinish = []
@@ -55,7 +65,7 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
         datasets: [
           {
             type: 'bar',
-            label: 'Encuestas',
+            label: 'Promedio',
             backgroundColor: '#FF5E00',
             data: dataResults,
             borderColor: 'white',
@@ -70,11 +80,11 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
     <>
         <Card  
             className='card-dashboard'
-            title="Estadística de encuestas"
+            title="Aspectos del usuario"
             style={{
                 width: '100%',
             }}>
-            <Chart type='bar' data={config} />
+            <Chart type='bar' data={config} options={options} />
         </Card>
     </>
   )
