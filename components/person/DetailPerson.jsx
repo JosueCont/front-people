@@ -213,7 +213,7 @@ const DetailPerson = ({
           >
             <FormDocument person_id={person.id} node={person.node} />
           </TabPane>
-          <TabPane 
+          {/* <TabPane 
             tab={
               <Tooltip title="IMSS/INFONAVIT">
                 <div className="container-title-tab">
@@ -226,7 +226,7 @@ const DetailPerson = ({
 
           >
 
-          </TabPane>
+          </TabPane> */}
           <TabPane
             tab={
               <Tooltip title="Cambiar contraseña">
