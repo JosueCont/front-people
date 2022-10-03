@@ -162,7 +162,7 @@ const index = () => {
           <FormattedMessage defaultMessage="Inicio" id="web.init" />
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          <FormattedMessage defaultMessage="dashboard-ynl" id="dashboard-ynl" />
+          <FormattedMessage defaultMessage="Dashboard general" id="ynl-general-dashboard" />
         </Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
