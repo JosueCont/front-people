@@ -1,27 +1,32 @@
 import React, { useState, useEffect } from 'react'
 import { Row, col, Table } from 'antd'
+import { DownloadOutlined } from "@ant-design/icons";
+import moment from 'moment';
 
-const EmaYEvaFiles = ({ files }) => {
+const EmaYEvaFiles = ({ files, loading }) => {
 
-  const [loading, setLoading] = useState(false)
 
   const colums = [
     {
       title: "Nombre del archivo",
-      dataIndex: 'name',
-      key:'name'
+      dataIndex: 'description',
+      key:'description'
     },
     {
       title: "Fecha de creación",
-      dataIndex: 'date',
-      key: 'date'
+      dataIndex: 'timestamp',
+      key: 'timestamp',
+      render: (timestamp) => moment(timestamp).format('YYYY-MM-DD')
     },
     {
       title: 'Descargar',
       key: 'actions',
-      render: (record) => {
-        <a href="#">link</a>
-      }
+      render: (record) => (
+          <a href={record.file}>
+            <DownloadOutlined />
+          </a>
+
+      )
     }
   ]
 
@@ -32,8 +37,16 @@ const EmaYEvaFiles = ({ files }) => {
       rowKey={"id"}
       size="small"
       loading = { loading }
+      dataSource = { files }
       locale={{
         emptyText: loading ? "Cargando..." : "No se encontraron resultados.",
+      }}
+      pagination = {{
+        pageSize: 10,
+        total: files && files.lenght
+      }}
+      scroll = {{
+        x: true
       }}
     />
   )

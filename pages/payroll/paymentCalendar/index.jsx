@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../../layout/MainLayout";
-import { Row, Col, Table, Breadcrumb, Button, message, Tooltip } from "antd";
+import { Row, Col, Table, Breadcrumb, Button, message, Tooltip, Modal, Alert } from "antd";
 import { useRouter } from "next/router";
 import {
   EditOutlined,
@@ -301,7 +301,7 @@ const deleteCalendar = () => {
               showIcon
               message="¿Está seguro de eliminar este calendario?"
               description={
-                <p style={{textAlign: 'justify', paddingLeft: 45}}>
+                <p style={{textAlign: 'justify', paddingLeft: 15}}>
                   Al eliminar este calendario no se podra recuperar
                 </p>
               }
