@@ -208,8 +208,8 @@ const MainSider = ({
 
     // Menú YNL
     children = [
-      getItem('General', 'ynl_general_dashboard'),
-      getItem('Personal', 'ynl_personal_dashboard')
+      getItem('Dashboard general', 'ynl_general_dashboard'),
+      getItem('Dashboard personal', 'ynl_personal_dashboard')
     ]
     items.push(getItem('YNL', 'ynl', <UserOutlined />, children))
   }
