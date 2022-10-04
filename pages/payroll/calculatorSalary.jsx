@@ -13,7 +13,7 @@ import {
   Tabs,
 } from "antd";
 import { Content } from "antd/lib/layout/layout";
-import { useState } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import SelectPeriodicity from "../../components/selects/SelectPeriodicity";
@@ -161,7 +161,12 @@ const calculatorSalary = ({ ...props }) => {
       />
       <Content className="site-layout">
         <Breadcrumb style={{ margin: "16px 0" }}>
-          <Breadcrumb.Item href="/home/">Inicio</Breadcrumb.Item>
+          <Breadcrumb.Item
+              className={"pointer"}
+              onClick={() => route.push({ pathname: "/home/persons/" })}
+          >
+            Inicio
+          </Breadcrumb.Item>
           <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Calculadora</Breadcrumb.Item>
         </Breadcrumb>

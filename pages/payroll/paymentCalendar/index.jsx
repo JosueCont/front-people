@@ -115,6 +115,7 @@ const deleteCalendar = () => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Nómina</Breadcrumb.Item>
           <Breadcrumb.Item>Calendario de pagos</Breadcrumb.Item>
         </Breadcrumb>
         <Row justify="end">

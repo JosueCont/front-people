@@ -1018,7 +1018,8 @@ const CalculatePayroll = ({ ...props }) => {
             >
               Inicio
             </Breadcrumb.Item>
-            <Breadcrumb.Item>Timbrado de nómina</Breadcrumb.Item>
+            <Breadcrumb.Item>Nómina</Breadcrumb.Item>
+            <Breadcrumb.Item>Cálculo de nómina</Breadcrumb.Item>
           </Breadcrumb>
 
           <Row gutter={[10, 10]}>

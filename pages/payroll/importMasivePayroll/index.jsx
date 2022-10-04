@@ -410,7 +410,8 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Importar nómina</Breadcrumb.Item>
+          <Breadcrumb.Item>Nómina</Breadcrumb.Item>
+          <Breadcrumb.Item>Importar nómina con XML</Breadcrumb.Item>
         </Breadcrumb>
       )}
       {alertMessage && (
