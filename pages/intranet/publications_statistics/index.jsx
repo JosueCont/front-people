@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { withAuthSync } from "../../../libs/auth";
 import moment from "moment";
-import { ConfigProvider, notification } from "antd";
+import {Breadcrumb, ConfigProvider, notification} from "antd";
 import esES from "antd/lib/locale/es_ES";
 import _ from "lodash";
 import MainLayout from "../../../layout/MainLayout";
@@ -10,6 +10,7 @@ import WebApiIntranet from "../../../api/WebApiIntranet";
 import { publicationsListAction } from "../../../redux/IntranetDuck";
 import PublicationsStatisticsTable from "../../../components/statistics/PublicationsStatisticsTable";
 import PublicationsStatisticsFilters from "../../../components/statistics/PublicationsStatisticsFilters";
+import {FormattedMessage} from "react-intl";
 
 const index = (props) => {
   const [publicationsList, setPublicationsList] = useState({});
@@ -100,6 +101,16 @@ const index = (props) => {
   return (
     <>
       <MainLayout currentKey={["publications_statistics"]} defaultOpenKeys={["intranet"]}>
+        <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
+          <Breadcrumb.Item
+              className={"pointer"}
+              onClick={() => router.push({ pathname: "/home/persons/" })}
+          >
+            <FormattedMessage defaultMessage="Inicio" id="web.init" />
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Intranet</Breadcrumb.Item>
+          <Breadcrumb.Item>Moderación</Breadcrumb.Item>
+        </Breadcrumb>
         <ConfigProvider locale={esES}>
           <PublicationsStatisticsFilters
             style={{ margin: "30px 0px" }}

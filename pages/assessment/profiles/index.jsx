@@ -8,6 +8,7 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import { getCompetences, getProfiles } from "../../../redux/assessmentDuck";
 import ProfilesSearch from "../../../components/assessment/profiles/ProfilesSearch";
 import ProfilesTable from "../../../components/assessment/profiles/ProfilesTable";
+import {FormattedMessage} from "react-intl";
 
 const Index = ({
   currentNode,
@@ -34,6 +35,7 @@ const Index = ({
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>KUIZ</Breadcrumb.Item>
         <Breadcrumb.Item>Perfiles</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

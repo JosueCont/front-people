@@ -21,12 +21,13 @@ import {
 import MainLayout from "../../../layout/MainLayout";
 const { confirm } = Modal;
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { withAuthSync } from "../../../libs/auth";
 import { connect } from "react-redux";
 import { deleteGroups } from "../../../api/apiKhonnect";
 import { messageDeleteSuccess, messageError } from "../../../utils/constant";
 import { getProfileGroups } from "../../../redux/catalogCompany";
+import {FormattedMessage} from "react-intl";
 
 const Groups = ({ ...props }) => {
   const router = useRouter();
@@ -136,6 +137,7 @@ const Groups = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Configuración</Breadcrumb.Item>
         <Breadcrumb.Item>Perfiles de seguridad</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

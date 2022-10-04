@@ -22,6 +22,7 @@ import jsCookie from "js-cookie";
 import { connect } from "react-redux";
 import WebApiPeople from "../../../api/WebApiPeople";
 import { messageError, messageSaveSuccess } from "../../../utils/constant";
+import {FormattedMessage} from "react-intl";
 
 const SelectCompany = ({ ...props }) => {
   const route = useRouter();
@@ -154,7 +155,8 @@ const SelectCompany = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Reportes</Breadcrumb.Item>
+        <Breadcrumb.Item>Empresa</Breadcrumb.Item>
+        <Breadcrumb.Item>Asignar empresa</Breadcrumb.Item>
       </Breadcrumb>
       <div
         className="container back-white"

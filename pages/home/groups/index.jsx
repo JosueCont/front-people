@@ -127,6 +127,7 @@ const GroupsPeople = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
         <Breadcrumb.Item>Grupos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

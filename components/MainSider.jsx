@@ -203,7 +203,7 @@ const MainSider = ({
         getItem('Perfiles', 'assessment_profiles'),
         getItem('Reportes', 'assessment_reports')
       ]
-      items.push(getItem('Kuiz', 'kuiz', <QuestionCircleOutlined />, children))
+      items.push(getItem('KUIZ', 'kuiz', <QuestionCircleOutlined />, children))
     }
 
     // Menú YNL

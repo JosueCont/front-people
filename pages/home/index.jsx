@@ -744,6 +744,7 @@ const homeScreen = ({ ...props }) => {
     <MainLayout currentKey="1">
       <Breadcrumb>
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
         <Breadcrumb.Item>Personas</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

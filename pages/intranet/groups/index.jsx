@@ -112,9 +112,8 @@ const GroupView = ({ ...props }) => {
         >
           <FormattedMessage defaultMessage="Inicio" id="web.init" />
         </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <FormattedMessage defaultMessage="Grupos" id="header.groups" />
-        </Breadcrumb.Item>
+        <Breadcrumb.Item>Intranet</Breadcrumb.Item>
+        <Breadcrumb.Item>Grupos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <div className="top-container-border-radius">

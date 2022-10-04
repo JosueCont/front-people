@@ -7,6 +7,7 @@ import { withAuthSync } from "../../../libs/auth";
 import { getCompetences, getProfiles } from "../../../redux/assessmentDuck";
 import { getPersonsCompany } from "../../../redux/UserDuck";
 import ReportsCompetences from "../../../components/assessment/reports/ReportsCompetences";
+import {FormattedMessage} from "react-intl";
 
 const Index = ({
   currentNode,
@@ -37,6 +38,7 @@ const Index = ({
         >
           Inicio
         </Breadcrumb.Item>
+          <Breadcrumb.Item>KUIZ</Breadcrumb.Item>
         <Breadcrumb.Item>Reportes</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

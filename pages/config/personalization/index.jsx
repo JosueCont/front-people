@@ -118,6 +118,7 @@ const personalizationConfig = () => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Configuración</Breadcrumb.Item>
           <Breadcrumb.Item>Personalización</Breadcrumb.Item>
         </Breadcrumb>
       </Breadcrumb>
