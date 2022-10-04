@@ -112,6 +112,7 @@ const Holidays = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

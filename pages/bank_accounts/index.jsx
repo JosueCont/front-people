@@ -175,6 +175,7 @@ const BankAccounts = ({ permissions, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item>Cuentas bancarias</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

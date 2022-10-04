@@ -52,7 +52,9 @@ const HolidaysNew = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Vacaciones</Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/holidays" })}>Vacaciones</Breadcrumb.Item>
         <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
       </Breadcrumb>
       <div

@@ -84,7 +84,9 @@ const LendingNew = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Préstamos</Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/lending/" })}>Préstamos</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>
       <div className="top-container-border-radius">

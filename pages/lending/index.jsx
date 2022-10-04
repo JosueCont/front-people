@@ -96,6 +96,7 @@ const Lending = ({ ...props }) => {
             >
               Inicio
             </Breadcrumb.Item>
+            <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
             <Breadcrumb.Item>Préstamos</Breadcrumb.Item>
           </Breadcrumb>
           <div className="container" style={{ width: "100%" }}>

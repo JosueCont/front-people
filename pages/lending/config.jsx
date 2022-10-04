@@ -101,7 +101,9 @@ const LendingConfig = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Préstamos</Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/lending" })}>Préstamos</Breadcrumb.Item>
         <Breadcrumb.Item>Configuración</Breadcrumb.Item>
       </Breadcrumb>
       <div

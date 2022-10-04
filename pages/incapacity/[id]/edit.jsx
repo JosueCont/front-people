@@ -95,6 +95,7 @@ const IncapacityEdit = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => route.push({ pathname: "/incapacity" })}

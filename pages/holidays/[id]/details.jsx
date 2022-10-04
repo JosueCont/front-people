@@ -169,7 +169,9 @@ const HolidaysDetails = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="/holidays">Vacaciones</Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/holidays" })}>Vacaciones</Breadcrumb.Item>
         <Breadcrumb.Item>Detalles</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container-border-radius">

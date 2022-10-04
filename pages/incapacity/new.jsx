@@ -69,7 +69,9 @@ const IncapacityNew = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Incapacidad</Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/incapacity" })}>Incapacidad</Breadcrumb.Item>
         <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
       </Breadcrumb>
       <div

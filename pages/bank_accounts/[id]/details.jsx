@@ -207,6 +207,7 @@ const BankAccountsDetails = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => {

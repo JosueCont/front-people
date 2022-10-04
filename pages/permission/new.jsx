@@ -51,7 +51,9 @@ const PermissionNew = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Permisos</Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/permission" })}>Permisos</Breadcrumb.Item>
         <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
       </Breadcrumb>
       <div

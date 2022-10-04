@@ -57,7 +57,7 @@ const Incapacity = ({ ...props }) => {
     status = null
   ) => {
     setLoading(true);
-    let url = `?person__node__id=${props.currentNode.id}&`;
+    let url = `?person__node__id=${props?.currentNode?.id}&`;
     if (collaborator) {
       url += `person__id=${collaborator}&`;
     }
@@ -116,6 +116,7 @@ const Incapacity = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item>Incapacidad</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
