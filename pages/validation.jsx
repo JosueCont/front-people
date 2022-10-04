@@ -64,9 +64,15 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         setLoading(false)
         setSuccess(true)
         delStorage("jwt")
-        setTimeout(()=>{
-            router.push({pathname: "/select-company"})
-        },2000)
+        if(router.query.company){
+            setTimeout(()=>{
+                router.push({pathname: "/select-company", query:{company:router.query.company}})
+            },2000)
+        }else{
+            setTimeout(()=>{
+                router.push({pathname: "/select-company"})
+            },2000)
+        }
     }
 
     const validateToken = async (token) =>{
