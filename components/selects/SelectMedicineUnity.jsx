@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 const { Option } = Select;
+import WebApiFiscal from "../../api/WebApiFiscal";
 
 const SelectMedicineUnity = ({
   viewLabel = true,
@@ -10,6 +11,20 @@ const SelectMedicineUnity = ({
   name = "medicine_unity",
   ...props
 }) => {
+
+  useEffect(() => {
+    FamilyMedicalUnits()
+  },[])
+
+  const FamilyMedicalUnits = async () => {
+    await WebApiFiscal.FamilyMedicalUnit()
+    .then((response) => {
+      console.log("Response", response)
+    })
+    .catch((error) => {
+      console.log("Error", error)
+    })
+  }
 
   return (
     <Form.Item
