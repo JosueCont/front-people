@@ -41,13 +41,13 @@ export const SidebarYnl = () => {
                 <FilterDashboard /> 
             </div>
         </div>
-        <hr />
-        <div className='flex-item'>
-            <div>
-                <h3 className='aligned-to-left subtitles'><b>Top personas:</b></h3>
-                <TopPeople />
-            </div>
-        </div>
+        {/*<hr />*/}
+        {/*<div className='flex-item'>*/}
+        {/*    <div>*/}
+        {/*        <h3 className='aligned-to-left subtitles'><b>Top personas:</b></h3>*/}
+        {/*        <TopPeople />*/}
+        {/*    </div>*/}
+        {/*</div>*/}
         <hr />
         <div className='flex-item'>
             <div>

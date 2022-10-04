@@ -26,14 +26,18 @@ const FilterDashboard = ({currentNode,
     const [jobs, setJobs] = useState([]);
     const [departaments, setDepartaments] = useState([]);
     const [people, setPeople] = useState([]);
+    const [groups, setGroups] = useState([]);
     const [optionSelect, setOptionSelect] = useState([]);
     const [visibilitySelect, setVisibilitySelect] = useState(true);
     
-    useEffect(() => { 
+    useEffect(() => {
+        // Initial datepicker filter
+        const startOfMonth = moment().clone().startOf('month');
+        const endOfMonth = moment().clone().endOf('month');
       //Seteamos fecha actual al datepicker porque es el rango de la consulta al principio
-      filterModule.setFieldsValue({ filterDate: [moment(), moment()] });
+      filterModule.setFieldsValue({ filterDate: [startOfMonth, endOfMonth] });
       //Consulta a los reportes con la fecha de hoy, solo al cargar la página al principio.
-      let dataToInicialize = {start_date : moment().format("YYYY-MM-DD"),end_date: moment().format("YYYY-MM-DD"),person_department_id: [],person_employment_id:[],}
+      let dataToInicialize = {start_date : startOfMonth.format("YYYY-MM-DD"),end_date: endOfMonth.format("YYYY-MM-DD"),person_department_id: [],person_employment_id:[],}
       getTopPersons(dataToInicialize);
       getDailyEmotions(dataToInicialize);
       getEmotionalAspects(dataToInicialize);
@@ -46,6 +50,7 @@ const FilterDashboard = ({currentNode,
         getJobs();
         getDepartaments();
         getPeoples();
+        getGroups();
     }, [currentNode]);
 
     const getJobs = async () =>{
@@ -76,6 +81,16 @@ const FilterDashboard = ({currentNode,
         }
     }
 
+    const getGroups = async () => {
+        try {
+            let response = await WebApiYnl.getSelectsData();
+            //console.log("respuesta api grupos", response.data.data);
+            setGroups(response.data.data.groups)
+        } catch (error) {
+            console.error(e.name + ": " + e.message);
+        }
+    }
+
     const onChange = (e) => {
         setVisibilitySelect(false);
         //Borramos los valores del select cuando se cambia de check
@@ -92,8 +107,8 @@ const FilterDashboard = ({currentNode,
                 return { key: item.id, value: item.code, label: item.name }
             }) 
         }else if(e.target.value == 3){
-            results = people.map(item => {
-                return { key: item.id, value: item.id, label: item.first_name }
+            results = groups.map(item => {
+                return { key: item.group_id, value: item.group_id , label: item.group_name }
             })
         }
         setOptionSelect(results)
@@ -110,7 +125,9 @@ const FilterDashboard = ({currentNode,
             end_date: valueEnd,
             person_department_id: value == 1 ? dataForm.valuesSelected?? []: [],
             person_employment_id: value == 2 ? dataForm.valuesSelected?? []: [],
+            groups: value == 3 ? dataForm.valuesSelected ?? [] : [],
         }
+        console.log("data a consultar",data);
         //Consultas
         getTopPersons(data);
         getDailyEmotions(data);
@@ -153,8 +170,8 @@ const FilterDashboard = ({currentNode,
                 <Radio.Group onChange={onChange} value={value}>
                     <Space direction="vertical">
                         <Radio value={1}>Departamentos</Radio>
-                        <Radio value={2}>Puesto</Radio>
-                        {/* <Radio value={3}>Personas</Radio> */}
+                        <Radio value={2}>Puestos</Radio>
+                        <Radio value={3}>Grupos</Radio>
                     </Space>
                 </Radio.Group>                          
             </Form.Item>
