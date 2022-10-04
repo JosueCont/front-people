@@ -61,7 +61,7 @@ const IncapacityNew = () => {
   };
 
   return (
-    <MainLayout currentKey="5">
+    <MainLayout currentKey={["incapacity"]} defaultOpenKeys={["requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -69,7 +69,9 @@ const IncapacityNew = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Incapacidad</Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/incapacity" })}>Incapacidad</Breadcrumb.Item>
         <Breadcrumb.Item>Nueva solicitud</Breadcrumb.Item>
       </Breadcrumb>
       <div

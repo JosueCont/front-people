@@ -31,6 +31,7 @@ import {
   sectionOrderAction,
   questionOrderAction,
 } from "../../../redux/assessmentDuck";
+import {FormattedMessage} from "react-intl";
 
 const Detail = ({ assessmentStore, ...props }) => {
   const { Panel } = Collapse;
@@ -238,12 +239,14 @@ const Detail = ({ assessmentStore, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey="2">
+    <MainLayout currentKey={["surveys"]} defaultOpenKeys={["kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item className={"pointer"} href="/home/persons/">
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item className={"pointer"} href="/assessment/surveys">
+        <Breadcrumb.Item>KUIZ</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => router.push({ pathname: "/assessment/surveys" })}>
           Evaluaciones
         </Breadcrumb.Item>
         <Breadcrumb.Item>

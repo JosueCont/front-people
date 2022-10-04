@@ -7,7 +7,7 @@ import { withAuthSync } from "../../../../libs/auth";
 const PaymentCalendar = () => {
   const route = useRouter();
   return (
-    <MainLayout currentKey={["calendario"]} defaultOpenKeys={["payroll"]}>
+    <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["payroll"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -15,6 +15,7 @@ const PaymentCalendar = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Nómina</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => route.push({ pathname: "/payroll/paymentCalendar" })}
