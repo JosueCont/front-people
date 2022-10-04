@@ -86,7 +86,7 @@ const FilterDashboard = ({currentNode,
             let response = await WebApiYnl.getSelectsData();
             //console.log("respuesta api grupos", response.data.data);
             setGroups(response.data.data.groups)
-        } catch (error) {
+        } catch (e) {
             console.error(e.name + ": " + e.message);
         }
     }

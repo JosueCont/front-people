@@ -30,13 +30,15 @@ import CostCenterCatalog from "../../../components/catalogs/CostCenterCatalog";
 import TagCatalog from "../../../components/catalogs/TagCatalog";
 import AccountantAccountCatalog from "../../../components/catalogs/AccountantAccountCatalog";
 import BranchCatalog from "../../../components/catalogs/BranchCatalog";
+import {FormattedMessage} from "react-intl";
+import React from "react";
 
 const configBusiness = ({ ...props }) => {
   const { TabPane } = Tabs;
 
   return (
     <>
-      <MainLayout currentKey={["catalogos"]} defaultOpenKeys={["config"]}>
+      <MainLayout currentKey={["catalogs"]} defaultOpenKeys={["config"]}>
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item
             className={"pointer"}
@@ -44,6 +46,7 @@ const configBusiness = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Configuración</Breadcrumb.Item>
           <Breadcrumb.Item>Catálogos</Breadcrumb.Item>
         </Breadcrumb>
 

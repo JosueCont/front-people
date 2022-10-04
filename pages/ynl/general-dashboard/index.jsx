@@ -1,23 +1,22 @@
 import {React, useEffect, useState} from 'react'
-import MainLayout from '../../layout/MainLayout'
-import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Space, Spin} from 'antd'
+import MainLayout from '../../../layout/MainLayout'
+import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Space} from 'antd'
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 import { FormattedMessage } from 'react-intl'
 import { useRouter } from 'next/router'
 import { css, Global } from "@emotion/core";
-import { useSelector } from 'react-redux'
-import { DashboardPerPeople } from '../../components/personal-dashboard/DashboardPerPeople';
+import { SidebarYnl } from '../../../components/dashboard-ynl/SidebarYnl';
+import Dashboard from '../../../components/dashboard-ynl/Dashboard';
+import { DashboardPerPeople } from '../../../components/personal-dashboard/DashboardPerPeople';
 
 
 const index = () => {
   const router = useRouter();
-    const reportPerson = useSelector((state) => state.ynlStore)
   
   return (
-      <Spin spinning={reportPerson?.loadReportPerson}>
-          <MainLayout currentKey={["dashboard-ynl-personal"]} defaultOpenKeys={["dashboard-ynl-personal"]}>
-              <Global
-                  styles={css`
+    <MainLayout currentKey={["ynl_general_dashboard"]} defaultOpenKeys={["ynl"]}>
+      <Global
+        styles={css`
             :root {
                 --orange: #FF5E00;
             }
@@ -152,62 +151,38 @@ const index = () => {
             justify-content: center;
             align-items: center;
           }
-          //PERSONAL DASHBOARD
-          .item-feeling{
-            padding: 8px 16px;
-            border-radius: 25px;
-            margin-bottom:8px;
-          }
-          .events {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-          }
-          .events .ant-badge-status {
-            width: 100%;
-            overflow: hidden;
-            font-size: 12px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-          }
-          .notes-month {
-            font-size: 28px;
-            text-align: center;
-          }
-          .notes-month section {
-            font-size: 28px;
-          }
-          .ant-badge-status-dot{
-            
-          }
-          .content-feeling-scroll{
-            max-height: 450px;
-            overflow: auto;
-          }
         `}
-
-              />
-              <Breadcrumb>
-                  <Breadcrumb.Item
-                      className={"pointer"}
-                      onClick={() => router.push({ pathname: "/home/persons/" })}
-                  >
-                      <FormattedMessage defaultMessage="Inicio" id="web.init" />
-                  </Breadcrumb.Item>
-                  <Breadcrumb.Item>
-                      <FormattedMessage defaultMessage="dashboard-ynl" id="dashboard-ynl-personal" />
-                  </Breadcrumb.Item>
-              </Breadcrumb>
-              <div className="container" style={{ width: "100%" }}>
-                  <Row>
-                      <Col lg={24} xs={24}>
-                          <DashboardPerPeople/>
-                      </Col>
-                  </Row>
-              </div>
-          </MainLayout>
-      </Spin>
-
+        
+      />  
+      <Breadcrumb>
+          <Breadcrumb.Item
+              className={"pointer"}
+              onClick={() => router.push({ pathname: "/home/persons/" })}
+          >
+          <FormattedMessage defaultMessage="Inicio" id="web.init" />
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>YNL</Breadcrumb.Item>
+          <Breadcrumb.Item>Dashboard general</Breadcrumb.Item>
+      </Breadcrumb>
+      <div className="container" style={{ width: "100%" }}>
+        <Row>
+            <Col lg={5} xs={24}>
+                <SidebarYnl/>
+            </Col>
+            <Col lg={19} xs={24}>
+                <Dashboard/>
+            </Col>
+        </Row>
+        {/* <Row>
+            <Col lg={5} xs={24}>
+                <SidebarYnl/>
+            </Col>
+            <Col lg={19} xs={24}>
+                <DashboardPerPeople/>
+            </Col>
+        </Row> */}
+      </div>
+    </MainLayout>
   )
 }
 

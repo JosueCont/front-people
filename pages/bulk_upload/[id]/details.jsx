@@ -110,7 +110,7 @@ const DetailsBulkUpload = () => {
   ];
 
   return (
-    <MainLayout currentKey="12.1">
+    <MainLayout currentKey={["bulk_upload"]} defaultOpenKeys={["uploads"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

@@ -430,7 +430,7 @@ const businessForm = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["business"]}>
+    <MainLayout currentKey={["business"]} defaultOpenKeys={["company"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -438,6 +438,7 @@ const businessForm = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Empresa</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => (treeTable ? "" : setTreeTable(true))}

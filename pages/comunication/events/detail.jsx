@@ -190,7 +190,7 @@ const addEvent = ({ ...props }) => {
   }, [props.currentNode]);
 
   return (
-    <MainLayout currentKey="4.2">
+    <MainLayout currentKey={["events"]} defaultOpenKeys={["comunication"]}>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}

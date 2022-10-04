@@ -43,7 +43,7 @@ const PermissionNew = () => {
   };
 
   return (
-    <MainLayout currentKey="5">
+    <MainLayout currentKey={["permission"]} defaultOpenKeys={["requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

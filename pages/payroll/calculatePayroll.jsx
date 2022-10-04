@@ -1010,7 +1010,7 @@ const CalculatePayroll = ({ ...props }) => {
           }
         `}
         />
-        <MainLayout currentKey={["timbrar"]} defaultOpenKeys={["payroll"]}>
+        <MainLayout currentKey={["calculatePayroll"]} defaultOpenKeys={["payroll"]}>
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item
               className={"pointer"}

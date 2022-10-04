@@ -107,7 +107,7 @@ const deleteCalendar = () => {
         }
       `}
       />
-      <MainLayout currentKey={["calendario"]} defaultOpenKeys={["payroll"]}>
+      <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["payroll"]}>
         <Breadcrumb className={"mainBreadcrumb"}>
           <Breadcrumb.Item
             className={"pointer"}

@@ -61,7 +61,7 @@ const IncapacityNew = () => {
   };
 
   return (
-    <MainLayout currentKey="5">
+    <MainLayout currentKey={["incapacity"]} defaultOpenKeys={["requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}

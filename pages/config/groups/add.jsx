@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Layout,
@@ -30,6 +30,7 @@ import {
   messageUpdateSuccess,
 } from "../../../utils/constant";
 import { getProfileGroups } from "../../../redux/catalogCompany";
+import {FormattedMessage} from "react-intl";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -584,7 +585,7 @@ const GroupAdd = ({ ...props }) => {
   ];
 
   return (
-    <MainLayout currentKey="3.2">
+    <MainLayout currentKey={['securityGroups']} defaultOpenKeys={['config']}>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -592,8 +593,8 @@ const GroupAdd = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Configuración</Breadcrumb.Item>
         <Breadcrumb.Item
-          href="/config/groups"
           className={"pointer"}
           onClick={() => router.push({ pathname: "/config/groups" })}
         >
