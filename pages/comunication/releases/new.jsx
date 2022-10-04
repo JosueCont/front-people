@@ -143,7 +143,9 @@ const Newrelease = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="./">Comunicados</Breadcrumb.Item>
+        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/comunication/releases" })}>Comunicados</Breadcrumb.Item>
         <Breadcrumb.Item>Nuevo</Breadcrumb.Item>
       </Breadcrumb>
       <div

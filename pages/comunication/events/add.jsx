@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Layout,
@@ -133,7 +133,9 @@ const addEvent = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href={"/comunication/events"}>Eventos</Breadcrumb.Item>
+        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => router.push({ pathname: "/comunication/events" })}>Eventos</Breadcrumb.Item>
         <Breadcrumb.Item>Crear evento</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
