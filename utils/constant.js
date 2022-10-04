@@ -83,6 +83,70 @@ export const typeStreet = [
   },
 ];
 
+export const typeEmployee = [
+  {
+    label: "Trab. permanente",
+    value: 1
+  },
+  {
+    label: "Trab. Ev. Ciudad",
+    value: 2
+  },
+  {
+    label: "Trab. Ev. Construcción",
+    value: 3
+  },
+  {
+    label: "Eventual del campo",
+    value: 4
+  },
+]
+
+export const typeSalary = [
+  {
+    label: "Salario fijo",
+    value: 0
+  },
+  {
+    label: "Salario variable",
+    value: 1
+  },
+  {
+    label: "Salario mixto",
+    value: 2
+  },
+]
+
+export const reduceDays = [
+  {  
+    label: 'un día',
+    value: 1
+  },
+  {
+    label: 'dos días',
+    value: 2
+  },
+  {
+    label: 'tres días',
+    value: 3
+  },{
+    label: 'cuatro días',
+    value: 4
+  },
+  {
+    label: 'cinco días',
+    value: 5
+  },
+  {
+    label: 'Jornada reducida',
+    value: 6
+  },
+  {
+    label: 'Jornada normal',
+    value: 0
+  }
+]
+
 export const periodicity = [
   {
     label: "Semanal",
