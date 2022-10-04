@@ -465,6 +465,7 @@ class WebApiPeople {
   static sendCatalogData(url, data) {
     return WebApi.ApisType(url, "post", data);
   }
+
 }
 
 export default WebApiPeople;
