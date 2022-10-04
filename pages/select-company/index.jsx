@@ -131,7 +131,7 @@ const SelectCompany = ({ ...props }) => {
           //console.log("datalist",dataList);
           let filterQuery = data.filter(item => item.id == router.query.company);
           //console.log("filterQuery",filterQuery.at(-1));
-          setCompanySelect(filterQuery);
+          setCompanySelect(filterQuery.at(-1));
         }
         setLoading(false);
       })
@@ -251,7 +251,7 @@ const SelectCompany = ({ ...props }) => {
         `}
       />
       {jwt && jwt.user_id ? (
-        <Spin tip="Verificando empresa..." spinning={isLoadCompany}>
+        <Spin tip="Seleccionando empresa..." spinning={isLoadCompany}>
           <MainLayout
           currentKey="8.5"
           hideMenu={true}
