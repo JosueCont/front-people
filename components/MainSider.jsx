@@ -78,6 +78,7 @@ const MainSider = ({
       payrollVoucher: '/payroll/payrollVoucher',
       calculatorSalary: '/payroll/calculatorSalary',
       importMassivePayroll: '/payroll/importMasivePayroll',
+      imssMovements: '/payroll/imssMovements',
       bulk_upload: '/bulk_upload',
       documentsLog: '/log/documentsLog',
       intranet_groups: '/intranet/groups',
@@ -168,7 +169,8 @@ const MainSider = ({
         getItem('Calendario de pagos', 'paymentCalendar'),
         getItem('Comprobantes fiscales', 'payrollVoucher'),
         getItem('Calculadora', 'calculatorSalary'),
-        getItem('Importar nómina con XML', 'importMassivePayroll')
+        getItem('Importar nómina con XML', 'importMassivePayroll'),
+        getItem('Movimientos IMSS', 'imssMovements')
       ]
       items.push(getItem('Nómina', 'payroll', <DollarOutlined />, children))
     }
