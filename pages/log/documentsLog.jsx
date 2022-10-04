@@ -100,7 +100,8 @@ const DocumentLog = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Registro de documentos de personas</Breadcrumb.Item>
+        <Breadcrumb.Item>Registro de errores</Breadcrumb.Item>
+        <Breadcrumb.Item>Carga de documentos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row>

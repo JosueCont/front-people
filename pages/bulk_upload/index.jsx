@@ -78,7 +78,8 @@ const ListBulkUpload = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Cargas masivas</Breadcrumb.Item>
+        <Breadcrumb.Item>Registro de errores</Breadcrumb.Item>
+        <Breadcrumb.Item>Carga masiva de personas</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row>

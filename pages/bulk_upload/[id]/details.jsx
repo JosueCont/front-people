@@ -113,10 +113,17 @@ const DetailsBulkUpload = () => {
     <MainLayout currentKey={["bulk_upload"]} defaultOpenKeys={["uploads"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
+            className={"pointer"}
+            onClick={() => route.push({ pathname: "/home/persons/" })}
+        >
+          Inicio
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Reporte de errores</Breadcrumb.Item>
+        <Breadcrumb.Item
           className={"pointer"}
           onClick={() => route.push({ pathname: "/bulk_upload" })}
         >
-          Cargas masivas
+          Carga masiva de personas
         </Breadcrumb.Item>
         <Breadcrumb.Item>Detalles de carga masiva</Breadcrumb.Item>
       </Breadcrumb>
