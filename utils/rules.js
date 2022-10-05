@@ -24,6 +24,16 @@ export const ruleWhiteSpace = {
   message: 'Este campo no puede estar vacío'
 }
 
+export const ruleURL = {
+  type: 'url',
+  message: 'Ingrese una url válida'
+}
+
+export const rulePhone = {
+  pattern: /^[0-9]{0,10}$/,
+  message: "El campo debe tener 10 dígitos numéricos",
+};
+
 export const ruleEmail = {
   type: "email",
   message: "Ingrese un correo electrónico válido",

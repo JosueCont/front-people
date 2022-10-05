@@ -15,9 +15,10 @@ import {
   AlertOutlined,
   QuestionCircleOutlined,
   AppstoreOutlined,
+  SolutionOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
-import { GroupOutlined } from "@material-ui/icons";
+import { GroupOutlined, WorkOutline  } from "@material-ui/icons";
 
 const { Sider } = Layout;
 
@@ -517,7 +518,28 @@ const MainSider = ({
               >
                 Personal
               </Menu.Item>
-            </SubMenu>
+          </SubMenu>
+          <SubMenu
+            key='job_bank'
+            title='Bolsa de trabajo'
+            className='subMainMenu'
+            icon={<SolutionOutlined />}
+          >
+            <Menu.Item
+              icon={<UserOutlined />}
+              key='jb_clients'
+              onClick={()=> router.push({ pathname: '/jobbank/clients'})}
+            >
+              Clientes
+            </Menu.Item>
+            <Menu.Item
+              icon={<WorkOutline />}
+              key='jb_vacancies'
+              onClick={()=> router.push({ pathname: '/jobbank/clients'})}
+            >
+              Vacantes
+            </Menu.Item>
+          </SubMenu>
         </Menu>
       </Sider>
     </>
