@@ -182,8 +182,8 @@ class WebApiPayroll {
     return WebApi.ApisType(`payroll/read-payroll-calculus`, "post", data);
   }
 
-  static medicineUnitys(id_person) {
-    return WebApi.ApisType(`payroll/infonavit-credit`, "post", id_person)
+  static getInfonavitCredit(data) {
+    return WebApi.ApisType(`payroll/infonavit-credit`, "post", data)
   }
 }
 

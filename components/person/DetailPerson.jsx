@@ -225,7 +225,7 @@ const DetailPerson = ({
             }
             key="tab_12"
           >
-            <FormIMSSINFONAVIT person_id={person.id} node={person.node} />
+            <FormIMSSINFONAVIT person={person} person_id={person.id} node={person.node} />
           </TabPane>
           <TabPane
             tab={
