@@ -33,7 +33,7 @@ const UserNotification = () => {
   }, [route]);
 
   return (
-    <MainLayout currentKey="4.1">
+    <MainLayout currentKey={["releases"]} defaultOpenKeys={["comunication"]}>
       <Breadcrumb key="Breadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
@@ -41,7 +41,9 @@ const UserNotification = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item key="releases" href="/comunication/releases">
+        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/comunication/releases" })}>
           Comunicados
         </Breadcrumb.Item>
         <Breadcrumb.Item key="releases">

@@ -152,7 +152,7 @@ const PreviewBulkUpload = ({ ...props }) => {
   };
 
   return (
-    <MainLayout currentKey="det-bulk">
+    <MainLayout currentKey={["bulk_upload"]} defaultOpenKeys={["uploads"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -160,6 +160,7 @@ const PreviewBulkUpload = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Registro de errores</Breadcrumb.Item>
         <Breadcrumb.Item>Vista previa de carga</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

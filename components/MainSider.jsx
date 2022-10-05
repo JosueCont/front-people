@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Breadcrumb } from "antd";
 import { css, Global } from "@emotion/core";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -15,11 +15,15 @@ import {
   AlertOutlined,
   QuestionCircleOutlined,
   AppstoreOutlined,
+  DesktopOutlined,
+  FileOutlined,
+  PieChartOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined } from "@material-ui/icons";
 
-const { Sider } = Layout;
+const { Sider, Header, Content, Footer } = Layout;
 
 const MainSider = ({
   hideMenu,
@@ -33,6 +37,8 @@ const MainSider = ({
   const router = useRouter();
   const [intranetAccess, setintanetAccess] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [theme, setTheme] = useState('light');
+  const [currentSelectedKey, setCurrentSelectedKey] = useState('company');
 
   useLayoutEffect(() => {
     if (props.config) {
@@ -40,126 +46,195 @@ const MainSider = ({
     }
   }, [props.config]);
 
+  function getItem(label, key, icon, children) {
+    return {
+      key,
+      icon,
+      children,
+      label
+    };
+  }
+
+  // Rutas menú
+  const onClickMenuItem= ({key}) => {
+    const pathRoutes = {
+      business: '/business',
+      asign: '/config/assignedCompanies',
+      patronal: '/business/patronalRegistrationNode',
+      persons: '/home/persons',
+      groups_people: '/home/groups',
+      catalogs: '/config/catalogs',
+      securityGroups: '/config/groups',
+      releases: '/comunication/releases',
+      events: '/comunication/events',
+      reports: '/reports',
+      lending: '/lending',
+      holidays: '/holidays',
+      permission: '/permission',
+      incapacity: '/incapacity',
+      bank_accounts: '/bank_accounts',
+      calculatePayroll: '/payroll/calculatePayroll',
+      paymentCalendar: '/payroll/paymentCalendar',
+      payrollVoucher: '/payroll/payrollVoucher',
+      calculatorSalary: '/payroll/calculatorSalary',
+      importMassivePayroll: '/payroll/importMasivePayroll',
+      imssMovements: '/payroll/imssMovements',
+      bulk_upload: '/bulk_upload',
+      documentsLog: '/log/documentsLog',
+      intranet_groups: '/intranet/groups',
+      intranet_configuration: '/intranet/config',
+      publications_statistics: '/intranet/publications_statistics',
+      surveys: '/assessment/surveys',
+      assessment_groups: '/assessment/groups',
+      assessment_profiles: '/assessment/profiles',
+      assessment_reports: '/assessment/reports',
+      ynl_general_dashboard: '/ynl/general-dashboard',
+      ynl_personal_dashboard: '/ynl/personal-dashboard',
+    }
+    router.push(pathRoutes[key]);
+  };
+
+  let items = []
+  let children = []
+
+  if (typeof window !== 'undefined') {
+    // Menú Empresas
+    if (props?.permissions?.company?.view) {
+      let children = [
+        getItem('Empresas', 'business'),
+        getItem('Asignar empresa', 'asign')
+      ]
+      if (props?.config && props?.config?.nomina_enabled) {
+        children.push(getItem('Registros patronales', 'patronal'))
+      }
+      items.push(getItem('Empresa', 'company', <BankOutlined />, children))
+    }
+
+    // Menú People
+    if (props?.permissions?.person?.view) {
+      let children = [
+        getItem('Personas', 'persons'),
+        getItem('Grupos', 'groups_people'),
+      ]
+      items.push(getItem('Colaboradores', 'people', <UserOutlined />, children))
+    }
+
+    // Menú Configuración
+    children = [
+      getItem('Catálogos', 'catalogs'),
+      getItem('Perfiles de seguridad', 'securityGroups'),
+    ]
+    items.push(getItem('Configuración', 'config', <SettingOutlined />, children))
+
+    // Agregar división
+    items.push({type: 'divider'})
+
+    // Menú Comunicación
+    if (props?.config && props?.config?.nomina_enabled && (props?.permissions?.comunication?.view ||
+        props?.permissions?.event?.view)) {
+      let children = []
+      if (props?.permissions?.comunication?.view) {
+        children.push(getItem('Comunicados', 'releases'))
+      }
+      if (props?.permissions?.event?.view) {
+        children.push(getItem('Eventos', 'events'))
+      }
+      items.push(getItem('Comunicación', 'comunication', <MessageOutlined />, children))
+    }
+
+    // Menú Reportes
+    if (props?.config && props?.config?.nomina_enabled && props?.permissions?.report?.view) {
+      items.push(getItem('Reportes', 'reports', <ProfileOutlined />))
+    }
+
+    // Menú Solicitudes
+    if (props?.config && props?.config?.nomina_enabled) {
+      let children = []
+      if (props?.permissions?.loan?.view) {
+        children.push(getItem('Préstamos', 'lending'))
+      }
+      if (props?.permissions?.vacation?.view) {
+        children.push(getItem('Vacaciones', 'holidays'))
+      }
+      children.push(getItem('Permisos', 'permission'))
+      children.push(getItem('Incapacidad', 'incapacity'))
+      children.push(getItem('Cuentas bancarias', 'bank_accounts'))
+      items.push(getItem('Solicitudes', 'requests', <FormOutlined />, children))
+    }
+
+    // Menú Nómina
+    if (props?.config && props?.config?.nomina_enabled) {
+      let children = [
+        getItem('Cálculo de nómina', 'calculatePayroll'),
+        getItem('Calendario de pagos', 'paymentCalendar'),
+        getItem('Comprobantes fiscales', 'payrollVoucher'),
+        getItem('Calculadora', 'calculatorSalary'),
+        getItem('Importar nómina con XML', 'importMassivePayroll'),
+        getItem('Movimientos IMSS', 'imssMovements')
+      ]
+      items.push(getItem('Nómina', 'payroll', <DollarOutlined />, children))
+    }
+
+    // Menú Registro de errores
+    if (props?.config && props?.config?.nomina_enabled) {
+      let children = [
+        getItem('Carga masiva de personas', 'bulk_upload'),
+        getItem('Carga de documentos', 'documentsLog')
+      ]
+      items.push(getItem('Registro de errores', 'uploads', <BugOutlined />, children))
+    }
+
+    // Menú Intranet
+    if (intranetAccess) {
+      let children = [
+        getItem('Configuración', 'intranet_configuration'),
+        getItem('Grupos', 'intranet_groups'),
+        getItem('Moderación', 'publications_statistics')
+      ]
+      items.push(getItem('Intranet', 'intranet', <img
+          className="anticon ant-menu-item-icon icon-intranet"
+          src={"/images/Intranet.svg"}
+      />, children))
+    }
+
+    // Menú Kuiz
+    if (props?.config && props?.config?.kuiz_enabled) {
+      let children = [
+        getItem('Evaluaciones', 'surveys'),
+        getItem('Grupos', 'assessment_groups'),
+        getItem('Perfiles', 'assessment_profiles'),
+        getItem('Reportes', 'assessment_reports')
+      ]
+      items.push(getItem('KUIZ', 'kuiz', <QuestionCircleOutlined />, children))
+    }
+
+    // Menú YNL
+    children = [
+      getItem('Dashboard general', 'ynl_general_dashboard'),
+      getItem('Dashboard personal', 'ynl_personal_dashboard')
+    ]
+    items.push(getItem('YNL', 'ynl', <UserOutlined />, children))
+  }
+
   return (
+      <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)} theme={theme} width={250} >
+        <div className="logo" />
+        <Menu theme={theme} defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys} mode="inline" onClick={onClickMenuItem} items={items} />
+      </Sider>
+  );
+
+  /*return (
     <>
-      <Global
-        styles={css`
-          .mainSideMenu,
-          .ant-menu-inline-collapsed {
-            border-right: solid 1px #8070f2 !important;
-          }
-
-          .mainMenu .ant-menu-item {
-            text-align: ${collapsed ? "center;" : "left;"};
-          }
-          .mainSideMenu ul li {
-            padding: ${collapsed ? "auto" : "0px 30px !important;"};
-          }
-          .mainSideMenu ul li.ant-menu-item,
-          li.ant-menu-submenu {
-            padding: ${collapsed ? "auto" : "0px 30px !important;"};
-          }
-          .mainSideMenu ul li.ant-menu-submenu .ant-menu-submenu-title {
-            padding: ${collapsed ? "auto" : "0% !important;"};
-          }
-          .mainMenu {
-            margin-top: 50px;
-          }
-
-          //////Sider
-          .ant-layout-sider {
-            background: var(--secondaryColor) !important;
-          }
-
-          .ant-layout-sider .ant-menu {
-            background: var(--secondaryColor) !important;
-            color: white !important;
-          }
-
-          .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
-          .mainMenu li:hover > div.ant-menu-submenu-title > i::after {
-            background: red !important;
-          }
-
-          .subMainMenu .ant-menu .ant-menu-item {
-            padding: 0px 0px 0px 20px !important;
-          }
-
-          .mainMenu li:hover {
-            background: var(--primaryColor) !important;
-            opacity: 0.7;
-            color: white !important;
-          }
-          .mainMenu li:hover > div.ant-menu-submenu-title {
-            color: white !important;
-          }
-
-          .mainMenu li:hover > div.ant-menu-submenu-title > i::before,
-          .mainMenu li:hover > div.ant-menu-submenu-title > i::after {
-            background: white !important;
-          }
-
-          .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item {
-            color: white !important;
-          }
-
-          .mainMenu li:hover > ul.ant-menu-sub li.ant-menu-item:hover {
-            background: var(--secondaryColor) !important;
-            color: white !important;
-          }
-
-          .ant-menu-submenu-open ul.ant-menu-sub li.ant-menu-item-selected {
-            text-decoration: underline;
-            font-weight: 500;
-          }
-
-          ///////Div sub menu selected
-          .ant-menu-submenu-open ul.ant-menu-sub {
-            background: var(--primaryColor) !important;
-            color: white !important;
-          }
-
-          ///////Expandible menu selected
-          .mainMenu li.ant-menu-submenu-selected {
-            background: var(--primaryColor) !important;
-            opacity: 1;
-          }
-
-          ///////Sub menu selected
-          .mainMenu li.ant-menu-item-selected {
-            background: var(--primaryAlternativeColor) !important;
-            opacity: 1;
-          }
-
-          .mainMenu li.ant-menu-item-selected span,
-          .mainMenu li.ant-menu-submenu-selected > div,
-          .mainMenu li.ant-menu-submenu-selected > ul li {
-            color: white !important;
-          }
-
-          .item_custom_icon .ant-menu-submenu-title {
-            white-space: break-spaces;
-          }
-
-          .custom_icon {
-            font-size: ${collapsed ? "19px !important;" : "16px !important;"};
-          }
-
-          .ant-layout-sider-trigger {
-            background: var(--primaryColor) !important;
-          }
-        `}
-      />
       <Sider className="mainSideMenu" width="250" collapsible>
         <div className="logo" />
         <Menu
-          theme="dark"
+          theme="light"
           className="mainMenu"
           defaultSelectedKeys={currentKey}
           defaultOpenKeys={defaultOpenKeys ? defaultOpenKeys : [""]}
           mode="inline"
         >
-          {/* {props.config && props.config.nomina_enabled && (
+          {/!* {props.config && props.config.nomina_enabled && (
             <Menu.Item
               key="dashboard"
               onClick={() => router.push({ pathname: "/dashboard" })}
@@ -167,7 +242,7 @@ const MainSider = ({
             >
               Dashboard
             </Menu.Item>
-          )} */}
+          )} *!/}
           {props.permissions.company.view && (
             <SubMenu
               key="company"
@@ -487,14 +562,14 @@ const MainSider = ({
               >
                 Reportes
               </Menu.Item>
-              {/* <Menu.Item
+              {/!* <Menu.Item
                 key="assignments"
                 onClick={() =>
                   router.push({ pathname: "/assessment/assignments" })
                 }
               >
                 Asignaciones
-              </Menu.Item> */}
+              </Menu.Item> *!/}
             </SubMenu>
           )}
           <SubMenu
@@ -505,15 +580,15 @@ const MainSider = ({
             >
               <Menu.Item
                 icon={<ProfileOutlined />}
-                key="dashboard-ynl"
-                onClick={() => router.push({ pathname: "/dashboard-ynl" })}
+                key="general-dashboard"
+                onClick={() => router.push({ pathname: "/general-dashboard" })}
               >
                 General
               </Menu.Item>
               <Menu.Item
                 icon={<ProfileOutlined />}
-                key="dashboard-ynl-personal"
-                onClick={() => router.push({ pathname: "/dashboard-ynl-personal" })}
+                key="general-dashboard-personal"
+                onClick={() => router.push({ pathname: "/general-dashboard-personal" })}
               >
                 Personal
               </Menu.Item>
@@ -521,7 +596,7 @@ const MainSider = ({
         </Menu>
       </Sider>
     </>
-  );
+  );*/
 };
 
 const mapState = (state) => {

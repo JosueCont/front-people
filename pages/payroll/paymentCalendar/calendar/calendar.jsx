@@ -73,7 +73,7 @@ const Calendars = () => {
   };
 
   return (
-    <MainLayout currentKey="9.4">
+    <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["payroll"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -81,6 +81,7 @@ const Calendars = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Nómina</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => route.push({ pathname: "/payroll/paymentCalendar" })}
