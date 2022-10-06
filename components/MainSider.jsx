@@ -184,14 +184,14 @@ const MainSider = ({
       items.push(getItem('Registro de errores', 'uploads', <BugOutlined />, children))
     }
 
-    // Menú Intranet
+    // Menú Khor Connect
     if (intranetAccess) {
       let children = [
         getItem('Configuración', 'intranet_configuration'),
         getItem('Grupos', 'intranet_groups'),
         getItem('Moderación', 'publications_statistics')
       ]
-      items.push(getItem('Intranet', 'intranet', <img
+      items.push(getItem('Khor Connect', 'intranet', <img
           className="anticon ant-menu-item-icon icon-intranet"
           src={"/images/Intranet.svg"}
       />, children))
