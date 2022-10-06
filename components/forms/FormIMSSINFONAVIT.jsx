@@ -12,6 +12,7 @@ const FormIMSSINFONAVIT = ({ person, person_id, node }) => {
   const { Title } = Typography;
   const [ formImssInfonavit ] = Form.useForm()
   const [loadingTable, setLoadingTable ] = useState(false)
+  const [ infonavitCredit, setInfonavitCredit ] = useState([])
 
   useEffect(() => {
     person && person_id && node && userCredit()
@@ -34,6 +35,7 @@ const FormIMSSINFONAVIT = ({ person, person_id, node }) => {
     WebApiPayroll.getInfonavitCredit(data)
     .then((response) => {
       setLoadingTable(false)
+      setInfonavitCredit([response.data.infonavit_credit])
       console.log('Response', response)
     })
     .catch((error) => {
@@ -42,46 +44,61 @@ const FormIMSSINFONAVIT = ({ person, person_id, node }) => {
     })
   }
 
-  const colBank = [
+  const colCredit = [
     {
-      title: "Banco",
-      render: (item) => {
-        return <>{item.bank.name}</>;
-      },
-      key: "id",
+      title: "Número",
+      dataIndex: "number",
+      key: "number",
+      width: 100
     },
     {
-      title: "Número de cuenta",
-      dataIndex: "account_number",
-      key: "account_number",
+      title: "Tipo de crédito",
+      dataIndex: "type",
+      key: "type",
+      width: 100
     },
     {
-      title: "Clabe interbancaria",
-      dataIndex: "interbank_key",
-      key: "interbank_key",
-    },
-    {
-      title: "Número de tarjeta",
-      dataIndex: "card_number",
-      key: "card_number",
-    },
-    {
-      title: "Fecha de vencimiento",
-      render: (item) => {
-        return (
-          <>
-            {item.expiration_month}/{item.expiration_year}
-          </>
-        );
-      },
+      title: "Fecha de inicio",
+      dataIndex: "start_date",
+      key: "start_date",
+      width: 100
     },
     {
       title: "Estatus",
-      render: (item) => {
-        return <>{item.status ? "Activo" : "Inactivo"}</>;
-        // <Switch checked={item.status} readOnly />;
-      },
+      dataIndex: "status",
+      key: "status",
+      width: 100
     },
+    {
+      title: "Monto",
+      dataIndex: "amount_payment",
+      key:"amount_payment",
+      width: 100
+    },
+    {
+      title: "Monto actual",
+      dataIndex: "current_payment",
+      key:"current_payment",
+      width: 100
+    },
+    {
+      title: "Numero de pago",
+      dataIndex: "number_payment",
+      key:"number_payment",
+      width: 100
+    },
+    {
+      title: "Ultima fecha de pago",
+      dataIndex: "date_last_payment",
+      key:"date_last_payment",
+      width: 100
+    },
+    {
+      title: "Monto total",
+      dataIndex: "total_amount",
+      key:"total_amount",
+      width: 100
+    }
     // {
     //   title: "Opciones",
     //   render: (item) => {
@@ -168,8 +185,12 @@ const FormIMSSINFONAVIT = ({ person, person_id, node }) => {
 
       <Spin tip="Cargando..." spinning={loadingTable}>
         <Table
-          columns={colBank}
-          dataSource={[]}
+          columns={colCredit}
+          scroll = {{
+            x: true
+          }}
+          rowKey = "id"
+          dataSource={infonavitCredit}
           locale={{
             emptyText: loadingTable
               ? "Cargando..."
