@@ -53,13 +53,11 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
     useEffect(() => {
         if(persons.length>0){
             //Armamos array para llenar el select
-            console.log("Hay personas esto viene de personas",persons)
             let results = persons.map((item)=>{
                 return { key: item.id, value: item.khonnect_id, label: `${item.firstName} ${item.lastName} - ${item.email}` }
             })
             setDataPersons(results);
         }else{
-            console.log("NO Hay personas esto viene de personas")
             setDataPersons([]);
         }
         
