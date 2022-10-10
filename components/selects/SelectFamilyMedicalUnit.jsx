@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import { connect } from "react-redux";
+import { FamilyMedicalUnit } from "../../redux/fiscalDuck";
 const { Option } = Select;
 const SelectFamilyMedicalUnit = ({
   disabled,
@@ -12,18 +13,22 @@ const SelectFamilyMedicalUnit = ({
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
+    props.FamilyMedicalUnit
+  },[])
+
+  useEffect(() => {
     setOptions([]);
-    if (props.cat_imss_subdelegation) {
-      let data = props.cat_imss_subdelegation.map((item, index) => {
+    if (props.cat_family_medical_unit) {
+      let data = props.cat_family_medical_unit.map((item, index) => {
         return {
-          label: item.code,
+          label: item.description,
           value: item.id,
           key: item.id + index,
         };
       });
       setOptions(data);
     }
-  }, [props.cat_imss_subdelegation]);
+  }, [props.cat_family_medical_unit]);
 
   return (
     <>
@@ -66,4 +71,4 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(SelectFamilyMedicalUnit);
+export default connect(mapState, { FamilyMedicalUnit })(SelectFamilyMedicalUnit);

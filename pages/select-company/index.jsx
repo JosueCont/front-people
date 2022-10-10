@@ -36,6 +36,7 @@ import Modal from "antd/lib/modal/Modal";
 import router from "next/router";
 import { messageError } from "../../utils/constant";
 import GenericModal from "../../components/modal/genericModal";
+import moment from "moment";
 
 const SelectCompany = ({ ...props }) => {
   const { Title } = Typography;
@@ -50,6 +51,7 @@ const SelectCompany = ({ ...props }) => {
   const [createNode, setCreateNode] = useState(false);
   const [modalCfdiVersion, setModalCfdiVersion] = useState(false);
   const [versionCfdiSelect, setVersionCfdiSelect] = useState(null);
+  const currentYear = moment().format('YYYY')
 
   let personId = userId();
   const isBrowser = () => typeof window !== "undefined";
@@ -254,13 +256,11 @@ const SelectCompany = ({ ...props }) => {
                       <Button onClick={changeView}>
                         {treeTable ? (
                           <>
-                            <AppstoreOutlined />
-                            Tarjetas
+                            <AppstoreOutlined />&nbsp;&nbsp;Tarjetas
                           </>
                         ) : (
                           <>
-                            <TableOutlined />
-                            Tabla
+                            <TableOutlined />&nbsp;&nbsp;Tabla
                           </>
                         )}
                       </Button>
@@ -359,6 +359,8 @@ const SelectCompany = ({ ...props }) => {
                   <b>Importar xml:</b> Se crea la empresa y el histórico de
                   nómina a base de una carga masiva de xml (nominas por
                   persona).
+
+                  Por favor importa todo tu año { currentYear }
                 </span>
               }
               type="warning"
