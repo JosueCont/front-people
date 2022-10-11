@@ -10,16 +10,36 @@ import { API_URL } from "../../../config/config";
 import { connect } from "react-redux";
 import WebApiIntranet from "../../../api/WebApiIntranet";
 
-const configIntranet = (props) => {
+const configIntranet = ({user, ...props}) => {
   const { currentNode } = props;
   const router = useRouter();
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(null);
   const [getImage, setImage] = useState(null);
+  const [validatePermition, setValidatePermition] = useState(true);
 
   useEffect(() => {
     getConfig();
   }, []);
+  
+  useEffect(() => {
+    let isUserKhor = user?.sync_from_khor
+    if(isUserKhor){
+      let permsUser = user?.khor_perms;
+      if( permsUser != null){
+        let permYnl = user?.khor_perms.filter(item => item === "Khor Plus Red Social")
+        if( permYnl.length > 0 ){
+          setValidatePermition(true);
+        }else{
+          setValidatePermition(false);
+        }
+      }else{
+        setValidatePermition(false);
+      }
+    }else{
+      setValidatePermition(true);
+    }
+  }, [user]);
 
   const getConfig = async () => {
     setLoading(true);
@@ -100,19 +120,25 @@ const configIntranet = (props) => {
           <Breadcrumb.Item>Intranet</Breadcrumb.Item>
           <Breadcrumb.Item>Configuración</Breadcrumb.Item>
       </Breadcrumb>
-      <div
-        className="container-border-radius"
-        style={{ padding: 24, minHeight: 380, height: "100%" }}
-      >
-        <FormConfig
-          nodeId={currentNode ? currentNode.id : ""}
-          config={config}
-          save={saveData}
-          saveImage={saveImage}
-          getImage={getImage}
-          loading={loading}
-        />
-      </div>
+      { validatePermition ? (
+        <div
+          className="container-border-radius"
+          style={{ padding: 24, minHeight: 380, height: "100%" }}
+        >
+          <FormConfig
+            nodeId={currentNode ? currentNode.id : ""}
+            config={config}
+            save={saveData}
+            saveImage={saveImage}
+            getImage={getImage}
+            loading={loading}
+          />
+        </div>
+      ) : (
+        <div className="notAllowed" />
+      )
+      }
+      
     </MainLayout>
   );
 };
@@ -120,6 +146,7 @@ const configIntranet = (props) => {
 const mapState = (state) => {
   return {
     currentNode: state.userStore.current_node,
+    user: state.userStore.user,
   };
 };
 

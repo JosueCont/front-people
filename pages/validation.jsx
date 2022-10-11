@@ -66,7 +66,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         delStorage("jwt")
         if(router.query.company){
             setTimeout(()=>{
-                router.push({pathname: "/select-company", query:{company:router.query.company}})
+                router.push({pathname: "/select-company", query:{company:router.query.company, app:router.query.app}})
             },2000)
         }else{
             setTimeout(()=>{

@@ -59,7 +59,11 @@ const SelectCompany = ({ ...props }) => {
     if(router.query.company){
       setIsLoadCompany(true);
     }
-},[router])
+  },[router])
+
+  useEffect(() => {
+    
+  }, [isLoadCompany]);
 
   useEffect(() => {
     props.resetCurrentnode();
@@ -152,7 +156,17 @@ const SelectCompany = ({ ...props }) => {
         props.doCompanySelectedCatalog();
         if(router.query.company){
           // setIsLoadCompany(false);
-          useRouter.push("ynl/general-dashboard");
+          switch (router.query.app) {
+            case "ynl":
+              useRouter.push("ynl/general-dashboard");
+              break;
+            case "khorconnect":
+              useRouter.push("intranet/publications_statistics");
+              break
+            default:
+              useRouter.push("home/persons");
+              break;
+          }
         }else{
           useRouter.push("home/persons");
         }
