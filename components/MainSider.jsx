@@ -209,11 +209,21 @@ const MainSider = ({
     }
 
     // Menú YNL
-    children = [
-      getItem('Dashboard general', 'ynl_general_dashboard'),
-      getItem('Dashboard personal', 'ynl_personal_dashboard')
-    ]
-    items.push(getItem('YNL', 'ynl', <UserOutlined />, children))
+    if (props?.configurationBackdoor && props?.configurationBackdoor?.length > 0) {
+      let show_ynl_module = false
+      props.configurationBackdoor.map(item=>{
+        if (item.app.code === "ynl") {
+          show_ynl_module = true
+        }
+      })
+      if (show_ynl_module) {
+        children = [
+          getItem('Dashboard general', 'ynl_general_dashboard'),
+          getItem('Dashboard personal', 'ynl_personal_dashboard')
+        ]
+        items.push(getItem('YNL', 'ynl', <UserOutlined />, children))
+      }
+    }
   }
 
   return (
@@ -604,6 +614,7 @@ const mapState = (state) => {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
     permissions: state.userStore.permissions,
+    configurationBackdoor: state.backdoorStore?.configurationBackdoor,
   };
 };
 export default connect(mapState)(MainSider);

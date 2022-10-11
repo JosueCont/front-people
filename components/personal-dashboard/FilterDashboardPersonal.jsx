@@ -51,11 +51,17 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
     }, []);
 
     useEffect(() => {
-        //Armamos array para llenar el select
-        let results = persons.map((item)=>{
-            return { key: item.id, value: item.khonnect_id, label: `${item.firstName} ${item.lastName} - ${item.email}` }
-        })
-        setDataPersons(results);
+        if(persons.length>0){
+            //Armamos array para llenar el select
+            let results = persons.map((item)=>{
+                return { key: item.id, value: item.khonnect_id, label: `${item.firstName} ${item.lastName} - ${item.email}` }
+            })
+            setDataPersons(results);
+        }else{
+            setDataPersons([]);
+        }
+        
+        
     }, [persons]);
 
     const onFinishFilter = (value) =>{

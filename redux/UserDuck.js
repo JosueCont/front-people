@@ -5,6 +5,7 @@ import { UserPermissions } from "../utils/functions";
 import { doCompanySelectedCatalog, getProfileGroups } from "./catalogCompany";
 import { doCompanySelectedPayroll } from "./payrollDuck";
 import { getCfdiVersion } from "./fiscalDuck";
+import { getListAppsBackdoor } from "./backdoorDuck";
 
 const initialData = {
   default: true,
@@ -119,6 +120,7 @@ export const companySelected = (data, config) => async (dispatch, getState) => {
       dispatch(doCompanySelectedCatalog(response.data.id));
       dispatch(getPeopleCompany(response.data.id));
       dispatch(getProfileGroups(response.data.id, config));
+      dispatch(getListAppsBackdoor(response.data.id,1))
       if (config.nomina_enabled) {
         dispatch(doCompanySelectedPayroll(response.data.id));
         dispatch(getCfdiVersion());
