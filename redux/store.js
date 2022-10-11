@@ -9,7 +9,7 @@ import userAndCompanyReducer from "./userAndCompanyFilterDuck";
 import assessmentReducer from "./assessmentDuck";
 import dataImportCalendar from "./ImportCalendarDuck"
 import ynlReducer from "./ynlDuck";
-import jobBankReducer from "./jobBankDuck";
+import backdoorReducer from "./backdoorDuck";
 
 const rootReducer = combineReducers({
   userStore: webReducerUser,
@@ -21,7 +21,7 @@ const rootReducer = combineReducers({
   assessmentStore: assessmentReducer,
   importCalendarStore: dataImportCalendar,
   ynlStore: ynlReducer,
-  jobBankStore: jobBankReducer
+  backdoorStore: backdoorReducer
 });
 const composeEnhancers =
     typeof window === 'object' &&

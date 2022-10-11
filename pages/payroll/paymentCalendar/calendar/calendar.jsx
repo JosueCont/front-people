@@ -24,7 +24,7 @@ const Calendars = () => {
 
   useEffect(() => {
     if (route.query.id) getPaymentCalendars();
-  }, [route.query.id]);
+  }, [route.query]);
 
   useEffect(() => {}, [style]);
 
@@ -36,6 +36,7 @@ const Calendars = () => {
     }
     setIsChecked(!isChecked);
   };
+
   const getPaymentCalendars = async () => {
     await WebApiPayroll.getDetailPaymentCalendar(route.query.id)
       .then((response) => {

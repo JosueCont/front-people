@@ -51,11 +51,17 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
     }, []);
 
     useEffect(() => {
-        //Armamos array para llenar el select
-        let results = persons.map((item)=>{
-            return { key: item.id, value: item.khonnect_id, label: `${item.firstName} ${item.lastName} - ${item.email}` }
-        })
-        setDataPersons(results);
+        if(persons.length>0){
+            //Armamos array para llenar el select
+            let results = persons.map((item)=>{
+                return { key: item.id, value: item.khonnect_id, label: `${item.firstName} ${item.lastName} - ${item.email}` }
+            })
+            setDataPersons(results);
+        }else{
+            setDataPersons([]);
+        }
+        
+        
     }, [persons]);
 
     const onFinishFilter = (value) =>{
@@ -109,13 +115,13 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                             </Form.Item>
                         </Col>
                         <Col xs={22} md={10}>
-                            <Form.Item label={<label style={{ color: "white" }}><b>Rango de fechas</b></label>} name="valuesSelected">
+                            <Form.Item label={<label style={{ color: "white" }}><b>Selecciona una persona</b></label>} name="valuesSelected">
                                 <Select
                                     style={{width:"90%", marginLeft:"8px",}}
                                     allowClear
                                     showSearch
                                     filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
-                                    placeholder="Seleccion persona"
+                                    placeholder="Selecciona una persona"
                                     options={dataPersons}
                                     />
                             </Form.Item>

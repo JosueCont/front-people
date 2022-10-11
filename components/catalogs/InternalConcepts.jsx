@@ -325,7 +325,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
     );
   };
 
-  const RenderForm = () => {
+  const RenderForm = ({ percepciones }) => {
     return (
       <>
         <Row gutter={20}>
@@ -348,7 +348,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
               <Select options={dataType} />
             </Form.Item>
           </Col>
-          <Col lg={6} xs={22} md={12}>
+          <Col lg={percepciones? 12 : 6} xs={22} md={percepciones? 24 : 12}>
             <RenderSelect
               data={
                 key == 1
@@ -434,7 +434,7 @@ const InternalConcepts = ({ permissions, currentNode, ...props }) => {
               form={form}
               onFinish={onFinishForm}
             >
-              <RenderForm />
+              <RenderForm  percepciones/>
             </Form>
           )}
         </TabPane>
