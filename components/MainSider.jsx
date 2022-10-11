@@ -228,6 +228,13 @@ const MainSider = ({
           items.push(getItem('YNL', 'ynl', <UserOutlined />, children))
         }
       }
+
+      //Menú Bolsa de trabajo
+      children = [
+        getItem('Clientes', 'jb_clients'),
+        getItem('Vacantes', 'jb_vacancies')
+      ]
+      items.push(getItem('Bolsa de trabajo', 'job_bank', <WorkOutline/>, children))
     }
 
     return items;
