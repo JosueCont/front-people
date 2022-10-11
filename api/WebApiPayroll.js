@@ -181,6 +181,10 @@ class WebApiPayroll {
   static importPayrollCaculate(data) {
     return WebApi.ApisType(`payroll/read-payroll-calculus`, "post", data);
   }
+
+  static getInfonavitCredit(data) {
+    return WebApi.ApisType(`payroll/infonavit-credit`, "post", data)
+  }
 }
 
 export default WebApiPayroll;
