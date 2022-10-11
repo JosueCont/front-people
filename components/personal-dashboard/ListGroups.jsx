@@ -25,7 +25,7 @@ const ListGroups = () => {
 
     const onDetail=(member)=>{
         const query = {user_id:member?.khonnect_id};
-        const url ={ pathname:`/dashboard-ynl-personal`, query  }
+        const url ={ pathname:`/ynl/personal-dashboard`, query  }
         router.push(url,url,query)
         setIsOpenModal(false)
     }

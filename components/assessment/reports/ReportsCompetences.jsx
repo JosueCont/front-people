@@ -210,7 +210,7 @@ const ReportsCompetences = ({
 
     const getObjProfile = (id) =>{
         let profile = profiles.find(record => record.id === id);
-        setProfilesSelected([profile]);
+        if(profile) setProfilesSelected([profile]);
     }
 
     const sendUser = (value) =>{

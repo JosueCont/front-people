@@ -18,7 +18,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
 
     const ShowModalAllEmotions = (item) =>{
       setIsOpenModal(true)
-      setAllEmotions([...item.all].reverse())
+      setAllEmotions([...item.all])
     }
 
     const handleOk = () => {
@@ -50,6 +50,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
                               <Col span={16}>
                                   <h2 style={{color:"white", textAlign:"left", marginBottom:"0px"}}> {item.last.feeling_name} </h2>
                                   <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item.last.name}</b></p>
+                                  <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item.last.comments}</b></p>
                                   <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{ moment(item.last.createdAt).format('LL')}</p>
                                   <span style={{color:"white", textAlign:"rigth", marginBottom:"0px"}}> <b>{item.all.length}</b> {item.all.length > 1 ? " emociones registradas" : " emoción registrada"}</span>
                               </Col>
@@ -73,6 +74,7 @@ const PersonalRecord = ({reportPerson,...props}) => {
                             <Col span={16}>
                                 <h2 style={{color:"white", textAlign:"left", marginBottom:"0px"}}> {item?.feeling_name} </h2>
                                 <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item?.name}</b></p>
+                                <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item?.comments}</b></p>
                                 <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{ moment(item?.createdAt).format('LLL')}</p>
                             </Col>
                         </Row>
