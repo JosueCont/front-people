@@ -16,9 +16,7 @@ const index = ({
     const router = useRouter();
 
     useEffect(()=>{
-        if(currentNode){
-            getClients(currentNode.id)
-        }
+        if(currentNode) getClients(currentNode.id);
     },[currentNode])
 
     return (

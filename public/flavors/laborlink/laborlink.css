@@ -153,9 +153,9 @@ header.ant-layout-header
   color: #000 !important;
 }
 
-li.ant-menu-submenu-selected {
+/*li.ant-menu-submenu-selected {
   background-color: #1d90ff !important;
-}
+}*/
 
 .formFilterReports .ant-col .ant-form-item {
   margin-bottom: 0% !important;

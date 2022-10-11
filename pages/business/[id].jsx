@@ -48,6 +48,7 @@ const ConfigCompany = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
+          <Breadcrumb.Item>Empresa</Breadcrumb.Item>
           <Breadcrumb.Item
             className={"pointer"}
             onClick={() => router.push({ pathname: "/business" })}

@@ -48,12 +48,8 @@ const ImssMovements = ({ ...props }) => {
           >
             Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item
-            className={"pointer"}
-            onClick={() => route.push({ pathname: "/payroll/imssMovements" })}
-          >
-            Movimientos IMSS
-          </Breadcrumb.Item>
+          <Breadcrumb.Item>Nómina</Breadcrumb.Item>
+          <Breadcrumb.Item>Movimientos IMSS</Breadcrumb.Item>
         </Breadcrumb>
         <Spin tip="Cargando..." spinning={false}>
           <div

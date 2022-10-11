@@ -15,6 +15,7 @@ const SearchClients = ({
 }) => {
 
     const [openModal, setOpenModal] = useState(false);
+    const [toSearch, setToSearch] = useState('');
 
     const onFinish = async (values) =>{
         try {
@@ -27,11 +28,24 @@ const SearchClients = ({
         }
     }
 
+    const onFinishSearch = () =>{
+        if(toSearch) getClients(currentNode.id, `&name=${toSearch}`);
+        else deleteFilter();
+    }
+
+    const deleteFilter = () =>{
+        setToSearch('')
+        getClients(currentNode.id)
+    }
+
     return (
         <>
             <Row gutter={[24,24]}>
                 <Col xs={18} sm={18} md={16} lg={12} style={{display: 'flex', gap: '16px'}}>
-                    <Input placeholder={'Buscar por nombre'}/>
+                    <Input
+                        placeholder={'Buscar por nombre'}
+                        onChange={e=> setToSearch(e.target.value.trim())}
+                    />
                     <Button icon={<SearchOutlined />} onClick={()=> onFinishSearch()}/>
                     <Button icon={<SyncOutlined />} onClick={()=> deleteFilter()} />
                 </Col>

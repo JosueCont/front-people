@@ -70,7 +70,7 @@ const ListBulkUpload = ({ ...props }) => {
       });
   }, []);
   return (
-    <MainLayout currentKey={["persons_upload"]} defaultOpenKeys={["uploads"]}>
+    <MainLayout currentKey={["bulk_upload"]} defaultOpenKeys={["uploads"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -78,7 +78,8 @@ const ListBulkUpload = ({ ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Cargas masivas</Breadcrumb.Item>
+        <Breadcrumb.Item>Registro de errores</Breadcrumb.Item>
+        <Breadcrumb.Item>Carga masiva de personas</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row>

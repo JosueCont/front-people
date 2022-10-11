@@ -177,7 +177,7 @@ const LendingDetails = (props) => {
   }, [route]);
 
   return (
-    <MainLayout currentKey="7.1">
+    <MainLayout currentKey={["lending"]} defaultOpenKeys={["requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -185,7 +185,9 @@ const LendingDetails = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="/lending/">Préstamos</Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/lending/" })}>Préstamos</Breadcrumb.Item>
         <Breadcrumb.Item>Detalles</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container back-white" style={{ width: "100%" }}>

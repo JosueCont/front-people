@@ -25,15 +25,15 @@ import {
 import { connect } from 'react-redux';
 import {
     getClients,
-    setPageClient
+    setPage
 } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const TableClients = ({
     list_clients,
-    load_clients,
-    setPageClient,
-    page_clients,
+    load_jobbank,
+    setPage,
+    page_jobbank,
     currentNode,
     getClients
 }) => {
@@ -55,9 +55,9 @@ const TableClients = ({
         }
     }
 
-    const actionDelete = async (checked, item) =>{
+    const actionActive = async (checked, item) =>{
         try {
-            await WebApiJobBank.deleteClient(item.id, {is_active: checked});
+            await WebApiJobBank.activeClient(item.id, {is_active: checked});
             getClients(currentNode.id)
             if(checked) message.success('Cliente activado');
             if(!checked) message.success ('Cliente desactivado');
@@ -69,6 +69,21 @@ const TableClients = ({
         }
     }
 
+    const actionDelete = async () =>{
+        let ids = itemsToDelete.map(item=> item.id);
+        try {
+            closeModalDelete();
+            getClients(currentNode.id);
+            console.log('eliminar is_deleted', ids)
+            if(ids.length > 0) message.success('Clientes eliminados');
+            if(ids.length <= 0) message.success('Cliente eliminado');
+        } catch (e) {
+            console.log(e)
+            if(ids.length > 0) message.error('Clientes no eliminados');
+            if(ids.length <= 0) message.error('Cliente no eliminado');
+        }
+    }
+
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
         setItemsKeys([])
@@ -76,7 +91,7 @@ const TableClients = ({
     }
 
     const openModalManyDelete = () =>{
-        if(itemsToDelete.length > 0){
+        if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
         }else{
             setOpenModalDelete(false)
@@ -95,7 +110,13 @@ const TableClients = ({
     }
 
     const onChangePage = ({current}) =>{
-        setPageClient(current)
+        setPage(current)
+        if (current == 1) getClients(currentNode?.id);
+        if (current > 1) {
+            const offset = (current - 1) * 10;
+            const queryParam = `&limit=10&offset=${offset}`;
+            getClients(currentNode?.id, queryParam, current)
+        } 
     }
 
     const rowSelection = {
@@ -181,30 +202,28 @@ const TableClients = ({
                     <Switch
                         size={'small'}
                         defaultChecked={item.is_active}
-                        onChange={(e)=> actionDelete(e, item)}
+                        onChange={(e)=> actionActive(e, item)}
                     />
                 )
             }
         },
         {
-            // title: ()=> {
-            //     return(
-            //         <Dropdown overlay={menuTable}>
-            //             <Button size={'small'}>
-            //                 <EllipsisOutlined />
-            //             </Button>
-            //         </Dropdown>
-            //     )
-            // },
-            title: 'Acciones',
+            title: ()=> {
+                return(
+                    <Dropdown overlay={menuTable}>
+                        <Button size={'small'}>
+                            <EllipsisOutlined />
+                        </Button>
+                    </Dropdown>
+                )
+            },
             render: (item) =>{
                 return (
-                    // <Dropdown overlay={()=> menuItem(item)}>
-                    //     <Button size={'small'}>
-                    //         <EllipsisOutlined />
-                    //     </Button>
-                    // </Dropdown>}
-                    <EditOutlined onClick={()=> openModalEdit(item)}/>
+                    <Dropdown overlay={()=> menuItem(item)}>
+                        <Button size={'small'}>
+                            <EllipsisOutlined />
+                        </Button>
+                    </Dropdown>
                 )
             }
         }
@@ -217,17 +236,17 @@ const TableClients = ({
                 rowKey={'id'}
                 columns={columns}
                 dataSource={list_clients.results}
-                loading={load_clients}
-                // rowSelection={rowSelection}
+                loading={load_jobbank}
+                rowSelection={rowSelection}
                 onChange={onChangePage}
                 locale={{
-                    emptyText: load_clients
+                    emptyText: load_jobbank
                         ? 'Cargando...'
                         : 'No se encontraron resultados.',
                 }}
                 pagination={{
                     total: list_clients.count,
-                    current: list_clients.page,
+                    current: page_jobbank,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
@@ -252,8 +271,8 @@ const TableClients = ({
 const mapState = (state) =>{
     return {
         list_clients: state.jobBankStore.list_clients,
-        load_clients: state.jobBankStore.load_clients,
-        page_clients: state.jobBankStore.page_clients,
+        load_jobbank: state.jobBankStore.load_jobbank,
+        page_jobbank: state.jobBankStore.page_jobbank,
         currentNode: state.userStore.current_node
     }
 }
@@ -261,6 +280,6 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         getClients,
-        setPageClient
+        setPage
     }
 )(TableClients);

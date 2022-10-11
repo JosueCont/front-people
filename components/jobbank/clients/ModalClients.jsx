@@ -1,8 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import MyModal from '../../../common/MyModal';
-import { Form, Input, Select, Row, Col, Button, Tabs } from 'antd';
-import { rulePhone, ruleRequired, ruleURL, ruleWhiteSpace, ruleEmail } from '../../../utils/rules';
-import { validateNum } from '../../../utils/functions';
+import {
+    Form,
+    Row,
+    Col,
+    Button,
+    Tabs
+} from 'antd';
+import TabClient from './TabClient';
+import TabContact from './TabContact';
+import TabDocuments from './TabDocuments';
 
 const ModalClients = ({
     actionForm = ()=> {}, //function
@@ -15,12 +22,7 @@ const ModalClients = ({
     const [formClient] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [currentTab, setCurrentTab] = useState('tab_1');
-    const options = [
-        {key: '9c5b2a3edf694717a04ffdda0fca13e7', value: '9c5b2a3edf694717a04ffdda0fca13e7', label: 'Sector 1'},
-        {key: '21bba3f0ae434e84810346f8f52bff24', value: '21bba3f0ae434e84810346f8f52bff24', label: 'Sector 2'},
-        {key: 'fb23dbe189074a0a83c0b10c427c3e1f', value: 'fb23dbe189074a0a83c0b10c427c3e1f', label: 'Sector 3'},
-        {key: '6e641b9e43f34ae4aa1ebd3aab074c70', value: '6e641b9e43f34ae4aa1ebd3aab074c70', label: 'Sector 4'}
-    ]
+    const [listDocs, setListDocs] = useState([]);
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length > 0) setValuesForm();
@@ -32,17 +34,23 @@ const ModalClients = ({
     }
 
     const onFinish = (values) =>{
+        let dataClient = new FormData();
+        // if(listDocs.length > 0) dataClient.append('documents', listDocs);
+        Object.entries(values).map(([key, val])=>{
+            if(val) dataClient.append(key, val);
+        });
         setLoading(true)
         setTimeout(()=>{
             onCloseModal()
             setLoading(false)
-            actionForm(values)
+            actionForm(dataClient)
             formClient.resetFields();
         },2000)
     }
 
     const onCloseModal = ()=>{
         close()
+        setListDocs([])
         setCurrentTab('tab_1')
         formClient.resetFields();
     }
@@ -95,102 +103,28 @@ const ModalClients = ({
                             onChange={e=> setCurrentTab(e)}
                             type={'card'}
                         >
-                            <Tabs.TabPane tab={'Información del cliente'} key={'tab_1'}>
-                                <Row gutter={[24,0]} style={{margin: '24px 12px'}}>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name={'name'}
-                                            rules={[ruleRequired, ruleWhiteSpace]}
-                                        >
-                                            <Input maxLength={50} placeholder={'Escriba un nombre'}/>
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name={'description'}
-                                            rules={[ruleRequired, ruleWhiteSpace]}
-                                        >
-                                            <Input maxLength={50} placeholder={'Escriba una descripción'}/>
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item rules={[ruleRequired]} name={'sector'}>
-                                            <Select
-                                                placeholder={'Seleccione un sector'}
-                                                notFoundContent={'No se encontraron resultados'}
-                                                options={options}
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item 
-                                            name={'website'}
-                                            rules={[ruleRequired, ruleURL]}
-                                        >
-                                            <Input placeholder={'Escriba la url de su sitio'}/>
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name={'business_name'}
-                                            rules={[ruleRequired, ruleWhiteSpace]}
-                                            style={{marginBottom: 0}}
-                                        >
-                                            <Input maxLength={50} placeholder={'Razón social'}/>
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name={'comments'}
-                                            rules={[ruleRequired, ruleWhiteSpace]}
-                                            style={{marginBottom: 0}}
-                                        >
-                                            <Input placeholder={'Comentarios'}/>
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
+                            <Tabs.TabPane
+                                tab={'Información del cliente'}
+                                key={'tab_1'}
+                            >
+                                <TabClient/>
                             </Tabs.TabPane>
-                            <Tabs.TabPane tab={'Información de contacto'} key={'tab_2'} forceRender>
-                                <Row gutter={[24,0]} style={{margin: '24px 12px'}}>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name={'contact_name'}
-                                            rules={[ruleRequired, ruleWhiteSpace]}
-                                        >
-                                            <Input maxLength={50} placeholder={'Nombre del contacto'}/>
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name={'job_contact'}
-                                            rules={[ruleRequired, ruleWhiteSpace]}
-                                        >
-                                            <Input placeholder={'Ocupación del contacto'}/>
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name={'email_contact'}
-                                            rules={[ruleRequired, ruleEmail]}
-                                            style={{marginBottom: 0}}
-                                        >
-                                            <Input maxLength={50} placeholder={'Correo del contacto'}/>
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name={'phone_contact'}
-                                            rules={[ruleRequired, rulePhone]}
-                                            style={{marginBottom: 0}}
-                                        >
-                                            <Input
-                                                placeholder={'Teléfono del contacto'}
-                                                maxLength={10}
-                                                onKeyPress={validateNum}
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
+                            <Tabs.TabPane
+                                tab={'Información de contacto'}
+                                key={'tab_2'}
+                                forceRender
+                            >
+                                <TabContact/>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane
+                                tab={'Documentos'}
+                                key={'tab_3'}
+                                forceRender
+                            >
+                                <TabDocuments
+                                    listDocs={listDocs}
+                                    setListDocs={setListDocs}
+                                />
                             </Tabs.TabPane>
                         </Tabs>
                     </Col>

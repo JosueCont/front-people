@@ -41,11 +41,13 @@ const EmployeeDetailPage = (...props) => {
           }
         `}
       />
-      <MainLayout currentKey="1">
+      <MainLayout currentKey={["persons"]} defaultOpenKeys={["people"]}>
         <Content className="site-layout">
           <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item href="/home/persons/">Inicio</Breadcrumb.Item>
-            <Breadcrumb.Item href="/home/persons/">Personas</Breadcrumb.Item>
+            <Breadcrumb.Item >Inicio</Breadcrumb.Item>
+            <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
+            <Breadcrumb.Item className={"pointer"}
+                             onClick={() => router.push({ pathname: "/home/persons/" })}>Personas</Breadcrumb.Item>
             <Breadcrumb.Item>Expediente de empleado</Breadcrumb.Item>
           </Breadcrumb>
           {person ? (

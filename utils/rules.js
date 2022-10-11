@@ -1,3 +1,5 @@
+import { max } from "lodash";
+
 export const ruleRequired = {
   required: true,
   message: "Este campo es requerido",
@@ -22,6 +24,22 @@ export const ruleMaxArray = (max) => {
 export const ruleWhiteSpace = {
   whitespace: true,
   message: 'Este campo no puede estar vacío'
+}
+
+export const ruleMinAge = (min)  => {
+  return{
+    type: 'number',
+    min: min,
+    message: `Edad mínima mayor igual a ${min}`
+  }
+}
+
+export const ruleMaxAge = (max) =>{
+  return{
+    type: 'number',
+    max: max,
+    message: `Edad máxima menor o igual a ${max}`
+  }
 }
 
 export const ruleURL = {

@@ -89,17 +89,16 @@ const configIntranet = (props) => {
   };
 
   return (
-    <MainLayout currentKey={["config"]} defaultOpenKeys={["intranet"]}>
+    <MainLayout currentKey={["intranet_configuration"]} defaultOpenKeys={["intranet"]}>
       <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
-        <Breadcrumb.Item
-          className={"pointer"}
-          onClick={() => router.push({ pathname: "/home/persons/" })}
-        >
+          <Breadcrumb.Item
+              className={"pointer"}
+              onClick={() => router.push({ pathname: "/home/persons/" })}
+          >
           <FormattedMessage defaultMessage="Inicio" id="web.init" />
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <FormattedMessage defaultMessage="Configuración" id="header.config" />
-        </Breadcrumb.Item>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Intranet</Breadcrumb.Item>
+          <Breadcrumb.Item>Configuración</Breadcrumb.Item>
       </Breadcrumb>
       <div
         className="container-border-radius"
