@@ -104,7 +104,7 @@ const Holidays = (props) => {
   };
 
   return (
-    <MainLayout currentKey={["vacaciones"]} defaultOpenKeys={["solicitudes"]}>
+    <MainLayout currentKey={["holidays"]} defaultOpenKeys={["requests"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -112,6 +112,7 @@ const Holidays = (props) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item>Vacaciones</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

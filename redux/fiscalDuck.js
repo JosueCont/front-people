@@ -171,11 +171,19 @@ export const getFiscalTaxRegime = (use_cfdi) => async (dispatch, getState) => {
 export const getPerceptions = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getPerseptions()
     .then((response) => {
+      let underorderPerseptions = response.data.results.filter(
+        (item) => Number(item.version_cfdi.version) <= use_cfdi
+      );
+
+      let orderedPerseptions = underorderPerseptions.sort((a, b) => {
+        if (a.description < b.description) return -1;
+        if (a.description > b.description) return 1;
+        return 0;
+      });
+
       dispatch({
         type: PERCEPTIONS,
-        payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi.version) <= use_cfdi
-        ),
+        payload: orderedPerseptions,
       });
     })
     .catch((error) => {
@@ -186,11 +194,18 @@ export const getPerceptions = (use_cfdi) => async (dispatch, getState) => {
 export const getDeductions = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getDeductions()
     .then((response) => {
+      let unorderDeductions = response.data.results.filter(
+        (item) => Number(item.version_cfdi.version) <= use_cfdi
+      );
+
+      let orderDeductions = unorderDeductions.sort((a, b) => {
+        if (a.description < b.description) return -1;
+        if (a.description > b.description) return 1;
+        return 0;
+      });
       dispatch({
         type: DEDUCTIONS,
-        payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi.version) <= use_cfdi
-        ),
+        payload: orderDeductions,
       });
     })
     .catch((error) => {
@@ -201,11 +216,19 @@ export const getDeductions = (use_cfdi) => async (dispatch, getState) => {
 export const getOtherPayments = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getOtherPayments()
     .then((response) => {
+      let unorderOtherPayments = response.data.results.filter(
+        (item) => Number(item.version_cfdi.version) <= use_cfdi
+      );
+
+      let orderOtherPayments = unorderOtherPayments.sort((a, b) => {
+        if (a.description < b.description) return -1;
+        if (a.description > b.description) return 1;
+        return 0;
+      });
+
       dispatch({
         type: OTHER_PAYMENTS,
-        payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi.version) <= use_cfdi
-        ),
+        payload: orderOtherPayments,
       });
     })
     .catch((error) => {
@@ -335,7 +358,6 @@ export const getHiringRegime = (use_cfdi) => async (dispatch, getState) => {
 export const ImssDelegation = () => async (dispatch, getState) => {
   await WebApiFiscal.ImssDelegation()
     .then((response) => {
-      console.log(response.data);
       dispatch({
         type: IMSS_DELEGATION,
         payload: response.data.results,
@@ -349,7 +371,6 @@ export const ImssDelegation = () => async (dispatch, getState) => {
 export const ImssSubDelegation = () => async (dispatch, getState) => {
   await WebApiFiscal.ImssSubdelegation()
     .then((response) => {
-      console.log(response.data);
       dispatch({
         type: IMSS_SUBDELEGATION,
         payload: response.data.results,

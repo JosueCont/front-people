@@ -86,8 +86,8 @@ const Lending = ({ ...props }) => {
     <>
       {props.permissions && props.configPermissions && (
         <MainLayout
-          currentKey={["prestamos"]}
-          defaultOpenKeys={["solicitudes"]}
+          currentKey={["lending"]}
+          defaultOpenKeys={["requests"]}
         >
           <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
             <Breadcrumb.Item
@@ -96,6 +96,7 @@ const Lending = ({ ...props }) => {
             >
               Inicio
             </Breadcrumb.Item>
+            <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
             <Breadcrumb.Item>Préstamos</Breadcrumb.Item>
           </Breadcrumb>
           <div className="container" style={{ width: "100%" }}>

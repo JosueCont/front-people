@@ -142,7 +142,7 @@ const Releases = ({ permissions, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["comunicados"]} defaultOpenKeys={["comuniction"]}>
+    <MainLayout currentKey={["releases"]} defaultOpenKeys={["comunication"]}>
       <Breadcrumb key="Breadcrumb">
         <Breadcrumb.Item
           className={"pointer"}
@@ -150,6 +150,7 @@ const Releases = ({ permissions, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
         <Breadcrumb.Item key="releases">Comunicados</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

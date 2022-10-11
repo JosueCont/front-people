@@ -2,8 +2,11 @@ import { Breadcrumb, Spin } from "antd";
 import PatronalRegistration from "../../components/payroll/PatronalRegistration";
 import MainLayout from "../../layout/MainLayout";
 import { withAuthSync } from "../../libs/auth";
+import { useRouter } from "next/router";
+import React from "react";
 
 const PatronalRegistartionNode = () => {
+  const router = useRouter();
   return (
     <MainLayout currentKey={["patronal"]} defaultOpenKeys={["company"]}>
       <Breadcrumb>
@@ -13,6 +16,7 @@ const PatronalRegistartionNode = () => {
         >
           Inicio
         </Breadcrumb.Item>
+          <Breadcrumb.Item>Empresa</Breadcrumb.Item>
         <Breadcrumb.Item className={"pointer"}>
           Registros patronales
         </Breadcrumb.Item>

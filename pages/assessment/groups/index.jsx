@@ -8,6 +8,7 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsSearch from "../../../components/assessment/groups/AssessmentsSearch";
 import AssessmentsTable from "../../../components/assessment/groups/AssessmentsTable";
 import { getCategories } from "../../../redux/assessmentDuck";
+import {FormattedMessage} from "react-intl";
 
 const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
   const router = useRouter();
@@ -114,7 +115,7 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey="groups_kuiz" defaultOpenKeys={["kuiss"]}>
+    <MainLayout currentKey={["assessment_groups"]} defaultOpenKeys={["kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -122,6 +123,7 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>KUIZ</Breadcrumb.Item>
         <Breadcrumb.Item>Grupos</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

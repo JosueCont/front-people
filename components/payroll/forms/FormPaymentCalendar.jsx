@@ -10,26 +10,29 @@ import {
   Typography,
   Select,
   Switch,
+  Checkbox,
 } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WebApiPayroll from "../../../api/WebApiPayroll";
-import { messageSaveSuccess, salaryDays } from "../../../utils/constant";
+import {
+  BelongTo,
+  CalculationEmploymentSubsidy,
+  messageSaveSuccess,
+  salaryDays,
+  VacationPayment,
+} from "../../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../../utils/rules";
 import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import SelectPeriodicity from "../../selects/SelectPeriodicity";
 import SelectTypeTax from "../../selects/SelectTypeTax";
 import { connect } from "react-redux";
+import { useRouter } from "next/router";
 
-const FormPaymentCalendar = ({
-  title,
-  nodeId = null,
-  idPaymentCalendar = null,
-  onCancel,
-  ...props
-}) => {
+const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
+  const router = useRouter();
   const { Title } = Typography;
   const [formPaymentCalendar] = Form.useForm();
   const [perceptionType, setPerceptionType] = useState([]);
@@ -48,6 +51,39 @@ const FormPaymentCalendar = ({
   const [paymentSunday, setPaymentSunday] = useState(false);
   const [paymentCalendar, setPaymentCalendar] = useState(null);
   const [locked, setLocked] = useState(false);
+  const [politics, setPolitics] = useState(false);
+  const checks = [
+    {
+      name: "applied_isr_christmas_bonus",
+      label: "Cálculo de ISR de aguinaldo aplicando art. 174",
+      value: false,
+    },
+    {
+      name: "seventh_day_breakdown",
+      label: "¿Desgloce del septimo día?",
+      value: false,
+    },
+    {
+      name: "seventh_day_discount",
+      label: "¿Descuento proporción septimo dia?",
+      value: false,
+    },
+    {
+      name: "sua_absenteeism",
+      label: "¿Afectar ausentismos en SUA?",
+      value: false,
+    },
+    {
+      name: "import_issues",
+      label: "¿Importar incidencias con fecha?",
+      value: false,
+    },
+    {
+      name: "accumulate_vacation",
+      label: "¿Acumula vacaciones?",
+      value: true,
+    },
+  ];
 
   useEffect(() => {
     if (idPaymentCalendar) {
@@ -106,6 +142,9 @@ const FormPaymentCalendar = ({
           group_fixed_concept: item.group_fixed_concept,
           version_cfdi: item.version_cfdi,
           salary_days: item.salary_days,
+          belongs_to: item.belongs_to,
+          vacation_bonus_payment: item.vacation_bonus_payment,
+          calculation_employment_subsidy: item.calculation_employment_subsidy,
         });
         setAnnualAdjustment(item.annual_adjustment);
         setMonthlyAdjustment(item.monthly_adjustment);
@@ -117,6 +156,17 @@ const FormPaymentCalendar = ({
         setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
         setLocked(item.locked);
+        setPolitics(true);
+        checks.map((a) => {
+          let checked = document.getElementById(a.name);
+          if (a.name === "accumulate_vacation") {
+            if (!item[a.name]) {
+              checked.click();
+            }
+          } else {
+            if (item[a.name]) checked.click();
+          }
+        });
       }
       setLoading(false);
     } catch (error) {
@@ -128,15 +178,13 @@ const FormPaymentCalendar = ({
     await WebApiPayroll.createPaymentCalendar(data)
       .then((response) => {
         setLoading(false);
-        props.getPaymentCalendars();
         message.success({
           content: messageSaveSuccess,
           className: "custom-class",
         });
-        closeModal();
+        router.push({ pathname: "/payroll/paymentCalendar" });
       })
       .catch((err) => {
-        props.getPaymentCalendars();
         console.log(err);
         setLoading(false);
       });
@@ -149,7 +197,7 @@ const FormPaymentCalendar = ({
           content: "Guardado correctamente.",
           className: "custom-class",
         });
-        closeModal();
+        router.push({ pathname: "/payroll/paymentCalendar" });
       })
       .catch((error) => {
         setLoading(false);
@@ -157,7 +205,6 @@ const FormPaymentCalendar = ({
       });
   };
 
-  /* Events */
   const onChangeLastDayPaid = (date, dateString) => {
     setStartDate(dateString);
   };
@@ -172,8 +219,7 @@ const FormPaymentCalendar = ({
     setPeriod(dateString);
   };
   const formFinish = (value) => {
-    setLoading(true);
-    value.node = parseInt(nodeId);
+    value.node = props.currentNode.id;
     value.active = periodActive;
     value.monthly_adjustment = monthlyAdjustment;
     value.annual_adjustment = annualAdjustment;
@@ -205,12 +251,10 @@ const FormPaymentCalendar = ({
 
   const changeMonthlyAdjustment = (checked) => {
     setMonthlyAdjustment(checked);
-    // setAnnualAdjustment(false);
   };
 
   const changeAnnualAdjustment = (checked) => {
     setAnnualAdjustment(checked);
-    // setMonthlyAdjustment(false);
   };
 
   const changePeriodActive = (checked) => {
@@ -225,14 +269,27 @@ const FormPaymentCalendar = ({
     setPaymentSunday(checked);
   };
 
-  const closeModal = () => {
-    props.setIsModalVisible(false);
-    setPaymentSunday(false);
-    setPaymentSaturday(false);
-    setAnnualAdjustment(false);
-    setMonthlyAdjustment(false);
-    setPeriodActive(false);
-    props.getPaymentCalendars();
+  const RenderChecks = ({ data }) => {
+    return data.map((item, i) => {
+      return (
+        <Col lg={6} xs={22} md={12}>
+          <Form.Item
+            initialValue={item.value}
+            valuePropName="checked"
+            name={item.name}
+            label={" "}
+          >
+            <Checkbox
+              id={item.name}
+              key={item.value + i}
+              className="CheckGroup"
+            >
+              <span style={{ color: "black" }}>{item.label}</span>
+            </Checkbox>
+          </Form.Item>
+        </Col>
+      );
+    });
   };
 
   return (
@@ -262,7 +319,7 @@ const FormPaymentCalendar = ({
           <Title style={{ fontSize: "20px" }}>
             {paymentCalendar && paymentCalendar.locked
               ? `Calendario: ${paymentCalendar.name}`
-              : title}
+              : "Nuevo calendario"}
           </Title>
         </Row>
         <Form
@@ -500,7 +557,56 @@ const FormPaymentCalendar = ({
                 disabled={paymentCalendar ? paymentCalendar.locked : false}
               />
             </Col>
+            <Col lg={8} xs={22}>
+              <Form.Item label="Politicas">
+                <Switch
+                  defaultChecked={politics}
+                  checkedChildren="Personalizado"
+                  unCheckedChildren="Por defecto"
+                  onChange={(value) => setPolitics(value)}
+                />
+              </Form.Item>
+            </Col>
           </Row>
+          {politics && (
+            <>
+              <hr />
+              <Title style={{ fontSize: "20px" }}>Políticas de nómina</Title>
+              <Row gutter={30} style={{ marginBottom: 20 }}>
+                <Col lg={8} xs={22}>
+                  <Form.Item
+                    name="belongs_to"
+                    label="Pertenece a "
+                    rules={[ruleRequired]}
+                  >
+                    <Select maxLength={100} options={BelongTo} />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={22}>
+                  <Form.Item
+                    name="vacation_bonus_payment"
+                    label="Pago de prima vacacional"
+                    rules={[ruleRequired]}
+                  >
+                    <Select maxLength={100} options={VacationPayment} />
+                  </Form.Item>
+                </Col>{" "}
+                <Col lg={8} xs={22}>
+                  <Form.Item
+                    name="calculation_employment_subsidy"
+                    label="Calculo de subsicio al empleo"
+                    rules={[ruleRequired]}
+                  >
+                    <Select
+                      maxLength={100}
+                      options={CalculationEmploymentSubsidy}
+                    />
+                  </Form.Item>
+                </Col>
+                <RenderChecks data={checks} />
+              </Row>
+            </>
+          )}
           <Row justify={"end"} gutter={10}>
             <Col md={5}>
               <Button
@@ -508,7 +614,9 @@ const FormPaymentCalendar = ({
                 className="close_modal"
                 htmlType="button"
                 style={{ marginRight: 10 }}
-                onClick={() => onCancel()}
+                onClick={() =>
+                  router.push({ pathname: "/payroll/paymentCalendar" })
+                }
               >
                 {locked ? "Cerrar" : "Cancelar"}
               </Button>
@@ -531,6 +639,7 @@ const mapState = (state) => {
   return {
     catPerception: state.fiscalStore.cat_perceptions,
     catCfdiVersion: state.fiscalStore.cat_cfdi_version,
+    currentNode: state.userStore.current_node,
   };
 };
 

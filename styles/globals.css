@@ -93,11 +93,11 @@ div#__next > section.layout{
   background: rgba(16, 16, 16, 0.41) !important;
 }
 
-.form_header_black{
-  background: #393D4A !important;
+.form_header_black {
+  background: #393d4a !important;
 }
 
-.form_header_black .ant-form-item-label label{
+.form_header_black .ant-form-item-label label {
   color: white !important;
 }
 
@@ -160,10 +160,6 @@ header.ant-layout-header
 .ant-input-disabled {
   /* background-color: #fff !important; */
   color: #000 !important;
-}
-
-li.ant-menu-submenu-selected {
-  background-color: #1d90ff !important;
 }
 
 .formFilterReports .ant-col .ant-form-item {

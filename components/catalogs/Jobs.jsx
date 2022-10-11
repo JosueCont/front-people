@@ -137,8 +137,7 @@ const TabJobs = ({ permissions, currentNode, ...props }) => {
      */
 
     if(value.name===undefined ||
-      value.code===undefined ||
-      value.skill_profile_id === undefined
+      value.code===undefined
     ){
       form.validateFields()
       return
