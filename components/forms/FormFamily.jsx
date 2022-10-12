@@ -25,6 +25,7 @@ import WebApiPeople from "../../api/WebApiPeople";
 import { messageDialogDelete, titleDialogDelete } from "../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../utils/rules";
 import { connect } from "react-redux";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const FormFamily = ({ person_id = null, ...props }) => {
   const { Title } = Typography;
@@ -298,6 +299,7 @@ const FormFamily = ({ person_id = null, ...props }) => {
               rules={[ruleRequired]}
             >
               <DatePicker
+                locale={ locale }
                 style={{ width: "100%" }}
                 onChange={onChangeBDFamily}
                 moment={"YYYY-MM-DD"}

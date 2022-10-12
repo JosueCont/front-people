@@ -18,6 +18,7 @@ import { withAuthSync } from "../../libs/auth";
 import { connect } from "react-redux";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import moment from "moment";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const Lendingform = (props) => {
   const [form] = Form.useForm();
@@ -242,6 +243,7 @@ const Lendingform = (props) => {
               key="date_apply_discount"
               style={{ width: "100%" }}
               onChange={props.changeDateApplyDiscount}
+              locale = { locale }
             />
           </Form.Item>
         </Col>
@@ -256,6 +258,7 @@ const Lendingform = (props) => {
               key="discount_start_date"
               style={{ width: "100%" }}
               onChange={props.changeDiscountStartDate}
+              locale = { locale }
             />
           </Form.Item>
         </Col>
@@ -270,6 +273,7 @@ const Lendingform = (props) => {
               key="loan_granting_date"
               style={{ width: "100%" }}
               onChange={props.changeLoanGratingDate}
+              locale = { locale }
             />
           </Form.Item>
         </Col>

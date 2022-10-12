@@ -26,6 +26,7 @@ import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 import TextArea from "antd/lib/input/TextArea";
 import { connect } from "react-redux";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -263,6 +264,7 @@ const addEvent = ({ ...props }) => {
                             moment={"YYYY-MM-DD"}
                             placeholder="Fecha"
                             value={dateEvent}
+                            locale = { locale }
                           />
                         </Form.Item>
                       </Col>
