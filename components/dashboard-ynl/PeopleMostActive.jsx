@@ -37,6 +37,7 @@ const PeopleMostActive = ({ynlStore,...props}) => {
                     title={
                     <div onClick={()=> onDetail(item)} style={{cursor:"pointer"}}>
                         <p style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{item.firstName?.toLowerCase()} {item.lastName?.toLowerCase()}</p>
+                        <small style={{ color:"#FF5E00" , marginBottom:0, textAlign:"center", textTransform:"capitalize"}} >Emociones registradas: <b>{item.total_emotions}</b></small>
                     </div>}
                 />
                 </List.Item>
