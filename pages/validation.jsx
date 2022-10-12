@@ -36,6 +36,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [personInfo, setPersonInfo] = useState();
 
     useEffect(()=>{
         doGetGeneralConfig()
@@ -64,9 +65,15 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         setLoading(false)
         setSuccess(true)
         delStorage("jwt")
-        setTimeout(()=>{
-            router.push({pathname: "/select-company"})
-        },2000)
+        if(router.query.company){
+            setTimeout(()=>{
+                router.push({pathname: "/select-company", query:{company:router.query.company, app:router.query.app}})
+            },2000)
+        }else{
+            setTimeout(()=>{
+                router.push({pathname: "/select-company"})
+            },2000)
+        }
     }
 
     const validateToken = async (token) =>{
@@ -110,10 +117,44 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
 
     const validateProfile = async (id) =>{
         try {
-            await WebApiPeople.getPerson(id);
-            validatePermissions()
+            let personInfoResponse = await WebApiPeople.getPerson(id);
+            if (personInfoResponse.data.sync_from_khor) {
+                validatePermissionsFromKhor(personInfoResponse.data)
+            }
+            else {
+                validatePermissions()
+            }
         } catch (e) {
             console.log(e)
+            accessDenied()
+        }
+    }
+
+    const validatePermissionsFromKhor = async (personData) => {
+        if (personData.khor_perms != null) {
+            switch (router.query.app) {
+                case 'ynl':
+                    let ynlPermission = personData.khor_perms.filter(item => item === "Khor Plus YNL")
+                    if (ynlPermission.length > 0) {
+                        validatePermissions()
+                    } else {
+                        accessDenied()
+                    }
+                    break
+
+                case 'khorconnect':
+                    let khorconnectPermission = personData.khor_perms.filter(item => item === "Khor Plus Red Social")
+                    if (khorconnectPermission.length > 0) {
+                        validatePermissions()
+                    } else {
+                        accessDenied()
+                    }
+                    break
+
+                default:
+                    accessDenied()
+            }
+        } else {
             accessDenied()
         }
     }
@@ -154,7 +195,8 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
 
 const mapState = (state) => {
     return {
-        general_config: state.userStore.general_config
+        general_config: state.userStore.general_config,
+        userInfo: state.userStore
     }
 };
 
