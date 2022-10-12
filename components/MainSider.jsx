@@ -232,11 +232,23 @@ const MainSider = ({
       }
 
       //Menú Bolsa de trabajo
-      children = [
-        getItem('Clientes', 'jb_clients'),
-        getItem('Vacantes', 'jb_vacancies')
-      ]
-      items.push(getItem('Bolsa de trabajo', 'job_bank', <WorkOutline/>, children))
+      if (props?.applications) {
+        let show_jobbank_module = false
+        for (let item in props.applications) {
+          if (item === 'jobbank') {
+            if (props.applications[item].active) {
+              show_jobbank_module = true
+            }
+          }
+        }
+        if (show_jobbank_module) {
+          children = [
+            getItem('Clientes', 'jb_clients'),
+            getItem('Vacantes', 'jb_vacancies')
+          ]
+          items.push(getItem('Bolsa de trabajo', 'job_bank', <WorkOutline/>, children))
+        }
+      }
     }
 
     return items;
