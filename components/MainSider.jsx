@@ -21,7 +21,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
-import { GroupOutlined } from "@material-ui/icons";
+import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -257,6 +257,15 @@ const MainSider = ({
           items.push(getItem("YNL", "ynl", <UserOutlined />, children));
         }
       }
+
+      //Menú Bolsa de trabajo
+      children = [
+        getItem("Clientes", "jb_clients"),
+        getItem("Vacantes", "jb_vacancies"),
+      ];
+      items.push(
+        getItem("Bolsa de trabajo", "job_bank", <WorkOutline />, children)
+      );
     }
 
     return items;
