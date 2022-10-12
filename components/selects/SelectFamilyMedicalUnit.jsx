@@ -13,8 +13,8 @@ const SelectFamilyMedicalUnit = ({
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    props.FamilyMedicalUnit
-  },[])
+    props.FamilyMedicalUnit;
+  }, []);
 
   useEffect(() => {
     setOptions([]);
@@ -34,8 +34,8 @@ const SelectFamilyMedicalUnit = ({
     <>
       <Form.Item
         key={"umf"}
-        name={props.name ? props.name : "job"}
-        label={viewLabel ? "Unidad medica familiar" : ""}
+        name={"family_medical_unit"}
+        label={"Unidad medica familiar"}
         rules={rules}
       >
         <Select
@@ -71,4 +71,6 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState, { FamilyMedicalUnit })(SelectFamilyMedicalUnit);
+export default connect(mapState, { FamilyMedicalUnit })(
+  SelectFamilyMedicalUnit
+);
