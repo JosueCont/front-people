@@ -185,6 +185,10 @@ class WebApiPayroll {
   static getInfonavitCredit(data) {
     return WebApi.ApisType(`payroll/infonavit-credit`, "post", data)
   }
+
+  static saveIMSSInfonavit(data) {
+    return WebApi.ApisType('payroll/imss-person/', 'post', data)
+  }
 }
 
 export default WebApiPayroll;

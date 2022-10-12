@@ -17,11 +17,13 @@ import { typeEmployee, typeSalary, reduceDays } from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
 import SelectMedicineUnity from "../../selects/SelectMedicineUnity";
 import WebApiPayroll from "../../../api/WebApiPayroll";
+import moment from "moment";
 
 const FormImssInfonavit = ({ person, person_id, node }) => {
   const { Title } = Typography;
   const [formImssInfonavit] = Form.useForm();
   const [loadingTable, setLoadingTable] = useState(false);
+  const [ loadingIMSS, setLodingIMSS ] = useState(false)
   const [infonavitCredit, setInfonavitCredit] = useState([]);
 
   useEffect(() => {
@@ -29,7 +31,20 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   }, [person_id]);
 
   const formImmssInfonavitAct = (values) => {
+    setLodingIMSS(true)
+    values.person = person_id
+    values.movement_date = values.movement_date ? moment(values.movement_date).format('YYYY-MM-DD') : ""
     console.log("Data", values);
+    // WebApiPayroll.saveIMSSInfonavit(values)
+    // .then((response) => {
+    //   console.log('Response', response)
+    //   setLodingIMSS(false)  
+    // })
+    // .catch((error) => {
+    //   console.log('Error -->', error)
+    //   setLodingIMSS(false)
+    // })
+    setLodingIMSS(false)
   };
 
   const userCredit = async () => {
@@ -186,7 +201,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         </Row>
         <Row justify={"end"}>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button loading = { loadingIMSS } type="primary" htmlType="submit">
               Guardar
             </Button>
           </Form.Item>
