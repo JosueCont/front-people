@@ -120,8 +120,8 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
                   <div><span>Molesto</span></div>
                 </Col> 
             </Row>
-            <Table columns={columns} 
-              dataSource={ynlStore} 
+            <Table columns={columns}
+              dataSource={ynlStore.sort((a, b) => new Date(a.end) - new Date(b.end) )} 
               pagination={{
                 pageSize: 5,
                 total: ynlStore.length,
