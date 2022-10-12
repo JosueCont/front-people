@@ -420,3 +420,9 @@ export const getPhoto = ({ photo }) => {
 export const getWork = ({ work_title }) => {
   return work_title ? (work_title.job ? work_title.job.name : "N/A") : "N/A";
 };
+
+export const validateNum = (e) =>{
+  if(e.which != 8 && isNaN(String.fromCharCode(e.which))){
+    e.preventDefault()
+  }
+}
