@@ -35,6 +35,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     values.person = person_id
     values.movement_date = values.movement_date ? moment(values.movement_date).format('YYYY-MM-DD') : ""
     console.log("Data", values);
+    // funcion WEB API
     // WebApiPayroll.saveIMSSInfonavit(values)
     // .then((response) => {
     //   console.log('Response', response)
