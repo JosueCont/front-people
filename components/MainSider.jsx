@@ -21,7 +21,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
-import { GroupOutlined } from "@material-ui/icons";
+import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -90,6 +90,8 @@ const MainSider = ({
       assessment_reports: '/assessment/reports',
       ynl_general_dashboard: '/ynl/general-dashboard',
       ynl_personal_dashboard: '/ynl/personal-dashboard',
+      jb_clients: '/jobbank/clients',
+      jb_vacancies: '/jobbank/vacancies'
     }
     router.push(pathRoutes[key]);
   };

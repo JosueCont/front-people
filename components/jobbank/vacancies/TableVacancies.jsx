@@ -74,9 +74,9 @@ const TableVacancies = ({
   const columns = [
     {
       title: 'Nombre',
-      render: ({name})=>{
+      render: ({job_position})=>{
         return(
-          <span>{name}</span>
+          <span>{job_position}</span>
         )
       }
     },
