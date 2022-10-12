@@ -119,7 +119,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         try {
             let personInfoResponse = await WebApiPeople.getPerson(id);
             if (personInfoResponse.data.sync_from_khor) {
-                validatePermissionFromKhor(personInfoResponse.data)
+                validatePermissionsFromKhor(personInfoResponse.data)
             }
             else {
                 validatePermissions()
@@ -130,7 +130,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         }
     }
 
-    const validatePermissionFromKhor = async (personData) => {
+    const validatePermissionsFromKhor = async (personData) => {
         if (personData.khor_perms != null) {
             switch (router.query.app) {
                 case 'ynl':
