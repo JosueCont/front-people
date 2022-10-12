@@ -16,6 +16,7 @@ import {
   Input,
   DatePicker,
 } from "antd";
+import locale from "antd/lib/date-picker/locale/es_ES";
 import { useRouter } from "next/router";
 import moment from "moment";
 
@@ -188,6 +189,7 @@ const Events = ({ permissions, ...props }) => {
                             style={{ width: "100%" }}
                             moment={"YYYY-MM-DD"}
                             placeholder="Fecha"
+                            locale = { locale }
                           />
                         </Form.Item>
                       </Col>

@@ -24,6 +24,7 @@ import { API_URL } from "../../../config/config";
 import Cookies from "js-cookie";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const Releases = ({ permissions, ...props }) => {
   /* React */
@@ -202,7 +203,7 @@ const Releases = ({ permissions, ...props }) => {
                           label="Fecha de envio"
                           key="send_date"
                         >
-                          <RangePicker onChange={onchangeRange} />
+                          <RangePicker onChange={onchangeRange} locale = { locale }/>
                         </Form.Item>
                       </Col>
                       <Col style={{ display: "flex" }}>

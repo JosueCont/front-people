@@ -21,6 +21,7 @@ import SelectCollaborator from "../selects/SelectCollaborator";
 import jsCookie from "js-cookie";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import { connect } from "react-redux";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const CollaboratorsReport = ({ permissions, ...props }) => {
   const route = useRouter();
@@ -252,7 +253,7 @@ const CollaboratorsReport = ({ permissions, ...props }) => {
                   name="date_of_admission"
                   label="Fecha"
                 >
-                  <DatePicker format={"YYYY-MM-DD"} onChange={changeDate} />
+                  <DatePicker format={"YYYY-MM-DD"} onChange={changeDate} locale = { locale }/>
                 </Form.Item>
               </Col>
               <Col style={{ display: "flex" }}>

@@ -53,6 +53,7 @@ import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
 import moment from "moment";
 import NumericInput from "../../components/inputNumeric";
+import locale from "antd/lib/date-picker/locale/es_ES";
 const formatNumber = (value) => new Intl.NumberFormat().format(value);
 
 const CalculatePayroll = ({ ...props }) => {
@@ -726,6 +727,7 @@ const CalculatePayroll = ({ ...props }) => {
                     moment={"YYYY"}
                     id="payment_date"
                     placeholder="Fecha de pago."
+                    locale = { locale }
                   />
                 </Form.Item>
               </Row>
