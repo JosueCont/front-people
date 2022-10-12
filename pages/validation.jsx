@@ -119,7 +119,12 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         try {
             let personInfoResponse = await WebApiPeople.getPerson(id);
             if (personInfoResponse.data.sync_from_khor) {
-                validatePermissionsFromKhor(personInfoResponse.data)
+                if (validateCompanyFromKhor(personInfoResponse.data)) {
+                    validatePermissionsFromKhor(personInfoResponse.data)
+                }
+                else {
+                    accessDenied()
+                }
             }
             else {
                 validatePermissions()
@@ -130,7 +135,7 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         }
     }
 
-    const validatePermissionsFromKhor = async (personData) => {
+    const validatePermissionsFromKhor = (personData) => {
         if (personData.khor_perms != null) {
             switch (router.query.app) {
                 case 'ynl':
@@ -157,6 +162,19 @@ const validation = ({general_config, setUserPermissions, doGetGeneralConfig, ...
         } else {
             accessDenied()
         }
+    }
+
+    const validateCompanyFromKhor = (personData) => {
+        let result = false
+        if (personData.nodes != null) {
+            for (let node in personData.nodes) {
+                if (parseInt(personData.nodes[node].id) === parseInt(router.query.company) && personData.nodes[node].active) {
+                    result = true
+                    break
+                }
+            }
+        }
+        return result
     }
 
     const validatePermissions = async () =>{
