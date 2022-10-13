@@ -11,7 +11,28 @@ import { DashboardPerPeople } from '../../../components/personal-dashboard/Dashb
 
 const index = () => {
   const router = useRouter();
-    const reportPerson = useSelector((state) => state.ynlStore)
+  const reportPerson = useSelector((state) => state.ynlStore)
+  const validateUser = useSelector((state) => state.userStore)
+  const [validatePermition, setValidatePermition] = useState(true);
+  
+  useEffect(() => {
+    let isUserKhor = validateUser?.user?.sync_from_khor
+    if(isUserKhor){
+      let permsUser = validateUser?.user?.khor_perms;
+      if( permsUser != null){
+        let permYnl = validateUser?.user?.khor_perms.filter(item => item === "Khor Plus YNL")
+        if( permYnl.length > 0 ){
+          setValidatePermition(true);
+        }else{
+          setValidatePermition(false);
+        }
+      }else{
+        setValidatePermition(false);
+      }
+    }else{
+      setValidatePermition(true);
+    }
+  }, [validateUser]);
   
   return (
       <Spin spinning={reportPerson?.loadReportPerson}>
@@ -184,6 +205,9 @@ const index = () => {
             max-height: 450px;
             overflow: auto;
           }
+          .ant-form-item-label > label{
+            color:#FFFFFF!important;
+          }
         `}
 
               />
@@ -197,13 +221,19 @@ const index = () => {
                   <Breadcrumb.Item>YNL</Breadcrumb.Item>
                   <Breadcrumb.Item>Dashboard personal</Breadcrumb.Item>
               </Breadcrumb>
-              <div className="container" style={{ width: "100%" }}>
+              { validatePermition ? (
+                <div className="container" style={{ width: "100%" }}>
                   <Row>
                       <Col lg={24} xs={24}>
                           <DashboardPerPeople/>
                       </Col>
                   </Row>
-              </div>
+                </div>
+              ) : (
+                <div className="notAllowed" />
+              )
+              }
+              
           </MainLayout>
       </Spin>
 

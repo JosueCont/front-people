@@ -164,7 +164,8 @@ const FilterDashboard = ({currentNode,
             <Form.Item name="filterDate" rules={[{ required: true, message: 'Es necesario un rango de fechas para realizar el filtro' }]}>
                 <RangePicker
                     locale={locale}
-                    disabledDate={disabledDate} />                     
+                    disabledDate={disabledDate}
+                    format={'DD/MM/YYYYY'} />                     
             </Form.Item>
             <Form.Item name="OptionSelected">
                 <Radio.Group onChange={onChange} value={value}>
