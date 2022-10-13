@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { Layout, Menu, Breadcrumb } from "antd";
-import { css, Global } from "@emotion/core";
+import { Layout, Menu } from "antd";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import {
@@ -12,16 +11,9 @@ import {
   DollarOutlined,
   BankOutlined,
   SettingOutlined,
-  AlertOutlined,
   QuestionCircleOutlined,
-  AppstoreOutlined,
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
 } from "@ant-design/icons";
-import { FormattedMessage } from "react-intl";
-import { GroupOutlined, WorkOutline } from "@material-ui/icons";
+import { WorkOutline } from "@material-ui/icons";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -33,12 +25,10 @@ const MainSider = ({
   onClickImage = true,
   ...props
 }) => {
-  const { SubMenu } = Menu;
   const router = useRouter();
   const [intranetAccess, setintanetAccess] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [theme, setTheme] = useState("light");
-  const [currentSelectedKey, setCurrentSelectedKey] = useState("company");
 
   useLayoutEffect(() => {
     if (props.config) {
