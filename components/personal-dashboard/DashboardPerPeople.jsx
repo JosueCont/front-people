@@ -22,7 +22,7 @@ export const DashboardPerPeople = () => {
         </Row>
         <Row gutter={[16,8]} className='container-dashboard'>
             <Col xs={24} sm={24} md={24}>
-                <div style={{backgroundColor:"#FF5E00", padding:"16px 8px", borderRadius:"25px"}}>
+                <div style={{backgroundColor:"#FFFFFF", padding:"16px 8px", borderRadius:"25px"}}>
                     <Row>
                         <Col xs={24} sm={24} md={24} className="aligned-to-center">
                             <Avatar
@@ -38,7 +38,7 @@ export const DashboardPerPeople = () => {
                                 src="/images/LogoYnl.png"
                             />
                             <div style={{display:"block"}}>
-                                <h2 style={{color:"white", textAlign:"left", marginBottom:"4px", marginLeft:"16px"}}>{reportPerson && reportPerson[0]?.user?.firstName} {reportPerson && reportPerson[0]?.user?.lastName}</h2>
+                                <h2 style={{color:"#FF5E00", textAlign:"left", marginBottom:"4px", marginLeft:"16px"}}>{reportPerson && reportPerson[0]?.user?.firstName} {reportPerson && reportPerson[0]?.user?.lastName}</h2>
                                 <div style={{display:"flex", alignItems:"center", justifyContent:"left"}}>
                                     { reportPerson && reportPerson[0]?.user?.is_happy &&
                                         <SmileOutlined style={{color:'green', fontSize:30, marginLeft:"16px", marginRight:"16px"}} />
