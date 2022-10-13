@@ -45,8 +45,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [versions, setVersions] = useState([]);
   const currentYear = moment().year()
 
-  console.log('Year', currentYear)
-
   /* Const switchs */
   const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
   const [annualAdjustment, setAnnualAdjustment] = useState(false);
@@ -88,6 +86,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       value: true,
     },
   ];
+
+  console.log('id', idPaymentCalendar)
 
   useEffect(() => {
     if (idPaymentCalendar) {
@@ -630,10 +630,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   router.push({ pathname: "/payroll/paymentCalendar" })
                 }
               >
-                {locked ? "Cerrar" : "Cancelar"}
+                {!locked ? "Cerrar" : "Cancelar"}
               </Button>
             </Col>
-            {!locked && (
+            {locked && (
               <Col md={5}>
                 <Button block className="" type="primary" htmlType="submit">
                   Guardar
