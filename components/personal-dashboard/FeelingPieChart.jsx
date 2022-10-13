@@ -23,7 +23,15 @@ const FeelingPieChart = ({reportPerson,...props}) => {
   const [config, setConfig] = useState(data);
   const [isEmpty, setIsEmpty] = useState(false);
   const [totalEmotions, setTotalEmotions] = useState("Total de emociones registradas");
-  const [configOptions, setConfigOptions] = useState({});
+  const [configOptions, setConfigOptions] = useState({
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        onClick: null
+      },
+      datalabels: {},
+    }
+  });
   useEffect(() => {
     //console.log("reporte personal",reportPerson?.data?.at(-1).global);
     let globalData = reportPerson?.data?.at(-1).global;
