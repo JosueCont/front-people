@@ -3,6 +3,7 @@ import { Card, Empty} from 'antd'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import { connect } from "react-redux";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const FeelingPieChart = ({reportPerson,...props}) => {
@@ -21,14 +22,16 @@ const FeelingPieChart = ({reportPerson,...props}) => {
   };
   const [config, setConfig] = useState(data);
   const [isEmpty, setIsEmpty] = useState(false);
-  const options = {
+  const [totalEmotions, setTotalEmotions] = useState("Total de emociones registradas");
+  const [configOptions, setConfigOptions] = useState({
     maintainAspectRatio: false,
     plugins: {
       legend: {
         onClick: null
       },
+      datalabels: {},
     }
-  }
+  });
   useEffect(() => {
     //console.log("reporte personal",reportPerson?.data?.at(-1).global);
     let globalData = reportPerson?.data?.at(-1).global;
@@ -43,6 +46,7 @@ const FeelingPieChart = ({reportPerson,...props}) => {
       })
       let total = dataResults.reduce((a, b) => a + b, 0);
       total != 0 ? setIsEmpty(false) : setIsEmpty(true);
+      setTotalEmotions("Total de emociones registradas: " + total); 
       let obj = {
         labels: labelsResults,
         datasets: [
@@ -53,21 +57,48 @@ const FeelingPieChart = ({reportPerson,...props}) => {
             borderColor: colorsResults,
             borderWidth: 1,
           },
+          
         ],
       };
+      let options = {
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            onClick: null
+          },
+          datalabels: {
+            formatter: (value, ctx) => {
+              if(value != 0 ){
+                let sum = 0;
+                dataResults.map(data => {
+                    sum += data;
+                });
+                let percentage = (value * 100 / sum).toFixed(2) + "%" ;
+                return percentage;
+              }else{
+                value = "";
+                return value;
+              }
+            },
+            color: '#ffffff',
+          },
+          
+        }
+      }
       setConfig(obj)
+      setConfigOptions(options)
     }
   }, [reportPerson]);
   return (
     <>
         <Card  
             className='card-dashboard'
-            title="Total de emociones registradas"
+            title={totalEmotions}
             style={{
                 width: '100%',
             }}>
               { !isEmpty && (
-                <Pie data={config} width="350px" height="350px" options={options} />
+                <Pie data={config} width="350px" height="350px" plugins={[ChartDataLabels]} options={configOptions} />
               )}
               { isEmpty && (
                 <div className='aligned-to-center'>

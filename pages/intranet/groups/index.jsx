@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { withAuthSync } from "../../../libs/auth";
 import AddPeopleGroup from "../../../components/intranet/AddPeopleGroup";
 import WebApiIntranet from "../../../api/WebApiIntranet";
+import { useSelector } from 'react-redux'
 
 const GroupView = ({ ...props }) => {
   const router = useRouter();
@@ -34,12 +35,33 @@ const GroupView = ({ ...props }) => {
   const [companyId, setCompanyId] = useState(null);
 
   const isBrowser = () => typeof window !== "undefined";
+  const validateUser = useSelector((state) => state.userStore)
+  const [validatePermition, setValidatePermition] = useState(true);
 
   useEffect(() => {
     if (isBrowser()) {
       setCompanyId(localStorage.getItem("data"));
     }
   }, []);
+
+  useEffect(() => {
+    let isUserKhor = validateUser?.user?.sync_from_khor
+    if(isUserKhor){
+      let permsUser = validateUser?.user?.khor_perms;
+      if( permsUser != null){
+        let permYnl = validateUser?.user?.khor_perms.filter(item => item === "Khor Plus YNL")
+        if( permYnl.length > 0 ){
+          setValidatePermition(true);
+        }else{
+          setValidatePermition(false);
+        }
+      }else{
+        setValidatePermition(false);
+      }
+    }else{
+      setValidatePermition(true);
+    }
+  }, [validateUser]);
 
   useEffect(() => {
     if (companyId) {
@@ -115,92 +137,99 @@ const GroupView = ({ ...props }) => {
         <Breadcrumb.Item>Intranet</Breadcrumb.Item>
         <Breadcrumb.Item>Grupos</Breadcrumb.Item>
       </Breadcrumb>
-      <div className="container" style={{ width: "100%" }}>
-        <div className="top-container-border-radius">
-          <Button type="primary" onClick={showModal}>
-            + Agregar nuevo
-          </Button>
-        </div>
+      { validatePermition ? (
+        <div className="container" style={{ width: "100%" }}>
+          <div className="top-container-border-radius">
+            <Button type="primary" onClick={showModal}>
+              + Agregar nuevo
+            </Button>
+          </div>
 
-        {isModalVisible && (
-          <FormGroup
-            isEdit={edit}
-            group={group}
-            companyId={companyId}
-            visible={isModalVisible}
-            close={handleCancel}
-          />
-        )}
-        {isDetail && (
-          <DetailGroup group={group} visible={isDetail} close={setIsDetail} />
-        )}
+          {isModalVisible && (
+            <FormGroup
+              isEdit={edit}
+              group={group}
+              companyId={companyId}
+              visible={isModalVisible}
+              close={handleCancel}
+            />
+          )}
+          {isDetail && (
+            <DetailGroup group={group} visible={isDetail} close={setIsDetail} />
+          )}
 
-        {modalAddVisible && (
-          <AddPeopleGroup
-            group={group}
-            visible={modalAddVisible}
-            setVisible={handleCancelAddUpdatePerson}
-          />
-        )}
+          {modalAddVisible && (
+            <AddPeopleGroup
+              group={group}
+              visible={modalAddVisible}
+              setVisible={handleCancelAddUpdatePerson}
+            />
+          )}
 
-        <Table
-          dataSource={groups}
-          key="table_groups"
-          loading={loading}
-          locale={{
-            emptyText: loading
-              ? "Cargando..."
-              : "No se encontraron resultados.",
-          }}
-        >
-          <Column
-            title="Imagen"
-            dataIndex="image"
-            key="image"
-            render={(image) =>
-              image ? <img src={image} style={{ width: 100 }} /> : "N/A"
-            }
-          />
-          <Column title="Nombre" dataIndex="name" key="name" />
-          <Column
-            title="Acciones"
-            key="actions"
-            render={(text, record) => (
-              <>
-                <UserOutlined
-                  className="icon_actions"
-                  onClick={() => goToAddUpdatePerson(record)}
-                  key={"goAddPersons_" + record.id}
-                />
-
-                <EyeOutlined
-                  className="icon_actions"
-                  onClick={() => goToDetails(record)}
-                  key={"goDetails_" + record.id}
-                />
-                <EditOutlined
-                  className="icon_actions"
-                  onClick={() => goToEdit(record)}
-                  key={"edit_" + record.id}
-                />
-
-                <Popconfirm
-                  title={"¿Deseas eliminar " + record.name + "?"}
-                  okText="Aceptar"
-                  cancelText="Cancelar"
-                  onConfirm={() => confirmDelete(record)}
-                  icon={<QuestionCircleOutlined style={{ color: "red" }} />}
-                >
-                  <DeleteOutlined
+          <Table
+            dataSource={groups}
+            key="table_groups"
+            loading={loading}
+            locale={{
+              emptyText: loading
+                ? "Cargando..."
+                : "No se encontraron resultados.",
+            }}
+          >
+            <Column
+              title="Imagen"
+              dataIndex="image"
+              key="image"
+              render={(image) =>
+                image ? <img src={image} style={{ width: 100 }} /> : "N/A"
+              }
+            />
+            <Column title="Nombre" dataIndex="name" key="name" />
+            <Column
+              title="Acciones"
+              key="actions"
+              render={(text, record) => (
+                <>
+                  <UserOutlined
                     className="icon_actions"
-                    key={"delete_" + record.id}
+                    onClick={() => goToAddUpdatePerson(record)}
+                    key={"goAddPersons_" + record.id}
                   />
-                </Popconfirm>
-              </>
-            )}
-          />
-        </Table>
-      </div>
+
+                  <EyeOutlined
+                    className="icon_actions"
+                    onClick={() => goToDetails(record)}
+                    key={"goDetails_" + record.id}
+                  />
+                  <EditOutlined
+                    className="icon_actions"
+                    onClick={() => goToEdit(record)}
+                    key={"edit_" + record.id}
+                  />
+
+                  <Popconfirm
+                    title={"¿Deseas eliminar " + record.name + "?"}
+                    okText="Aceptar"
+                    cancelText="Cancelar"
+                    onConfirm={() => confirmDelete(record)}
+                    icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+                  >
+                    <DeleteOutlined
+                      className="icon_actions"
+                      key={"delete_" + record.id}
+                    />
+                  </Popconfirm>
+                </>
+              )}
+            />
+          </Table>
+        </div>
+      ) : (
+        <div className="notAllowed" />
+      )
+
+      }
+      
     </MainLayout>
   );
 };

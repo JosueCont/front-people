@@ -224,7 +224,7 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
                 notFoundContent="No se encontraron resultados"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
-                  option.children.toCase().indexOf(input.toLowerCase()) >= 0
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                 }
                 filterSort={(optionA, optionB) =>
                   optionA.children
