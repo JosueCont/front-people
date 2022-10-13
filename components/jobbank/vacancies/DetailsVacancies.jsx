@@ -98,8 +98,6 @@ const DetailsVacancies = ({
 
     const onValuesChange = (values) =>{
         console.log('value', values)
-        // if(values?.rotative_turn) setTurnsIsDisabled(true);
-        // if(!values?.rotative_turn) setTurnsIsDisabled(false);
     }
 
     return (
@@ -126,9 +124,9 @@ const DetailsVacancies = ({
                         layout='vertical'
                         form={formJobBank}
                         onFinish={onFinish}
-                        onFinishFailed={onFailure}
+                        // onFinishFailed={onFailure}
                         requiredMark={false}
-                        onValuesChange={onValuesChange}
+                        // onValuesChange={onValuesChange}
                         initialValues={{
                             vo_bo: false,
                             rotative_turn: false,
