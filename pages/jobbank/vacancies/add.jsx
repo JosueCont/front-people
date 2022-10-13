@@ -12,7 +12,7 @@ const add = () => {
   },[])
 
   return (
-    <AddOrEditVancancies/>
+    <AddOrEditVancancies action='add'/>
   )
 }
 

@@ -38,8 +38,29 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'put', data)
     }
 
-    static deleteVacant(id, data){
-        return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
+    static deleteVacant(data){
+        // return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
+        return WebApi.ApisType('job-bank/vacant/massive_delete/', 'post', data)
+    }
+
+    static getSectors(id){
+        return WebApi.ApisType(`/job-bank/sector/?node=${id}`, 'get')
+    }
+
+    static getCompetences(id){
+        return WebApi.ApisType(`/job-bank/competence/?node=${id}`, 'get')
+    }
+
+    static getAcademics(id){
+        return WebApi.ApisType(`/job-bank/academics-degree/?node=${id}`, 'get')
+    }
+
+    static getMainCategories(id){
+        return WebApi.ApisType(`/job-bank/main-category/?node=${id}`, 'get')
+    }
+
+    static getSubCategories(id){
+        return WebApi.ApisType(`/job-bank/sub-category/?node=${id}`,'get')
     }
 }
 

@@ -1,14 +1,43 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MainLayout from '../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import DetailsVacancies from './DetailsVacancies';
+import { connect } from 'react-redux';
+import {
+  getInfoVacant,
+  getCompetences,
+  getAcademics,
+  getMainCategories,
+  getSubCategories
+} from '../../../redux/jobBankDuck';
 
 const AddOrEditVacancies = ({
-  action = 'add'
+  action = 'add',
+  currentNode,
+  getInfoVacant,
+  getCompetences,
+  getAcademics,
+  getMainCategories,
+  getSubCategories
 }) => {
 
   const router = useRouter();
+
+  useEffect(()=>{
+    if(currentNode){
+      getCompetences(currentNode.id)
+      getAcademics(currentNode.id)
+      getMainCategories(currentNode.id)
+      getSubCategories(currentNode.id)
+    }
+  },[currentNode])
+
+  useEffect(()=>{
+    if(router.query.id && action == 'edit'){
+      getInfoVacant(router.query.id)
+    }
+  },[router])
 
   return (
     <MainLayout currentKey={'jb_vacancies'} defaultOpenKeys={['job_bank']}>
@@ -35,4 +64,18 @@ const AddOrEditVacancies = ({
   )
 }
 
-export default AddOrEditVacancies;
+const mapState = (state) =>{
+  return{
+    currentNode: state.userStore.current_node
+  }
+}
+
+export default connect(
+  mapState, {
+    getInfoVacant,
+    getCompetences,
+    getAcademics,
+    getMainCategories,
+    getSubCategories
+  }
+)(AddOrEditVacancies);

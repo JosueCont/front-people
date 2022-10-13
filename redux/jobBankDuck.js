@@ -3,6 +3,11 @@ import WebApiJobBank from "../api/WebApiJobBank";
 const initialState = {
     list_clients: {},
     list_vacancies: {},
+    list_sectors: {},
+    list_competences: {},
+    list_academics: {},
+    list_main_categories: {},
+    list_sub_categories: {},
     info_vacant: {},
     load_jobbank: false,
     page_jobbank: 1
@@ -11,6 +16,11 @@ const initialState = {
 const SET_CLIENTS = "SET_CLIENTS";
 const SET_VACANCIES = "SET_VACANCIES";
 const SET_VACANT = "SET_VACANT";
+const SET_SECTORS = "SET_SECTORS";
+const SET_COMPETENCES = "SET_COMPETENCES";
+const SET_ACADEMICS = "SET_ACADEMICS";
+const SET_MAIN_CATEGORIES = "SET_MAIN_CATEGORIES";
+const SET_SUB_CATEGORIES = "SET_SUB_CATEGORIES";
 const SET_PAGE = "SET_PAGE";
 const SET_LOAD = "SET_LOAD";
 
@@ -27,6 +37,26 @@ const jobBankReducer = (state = initialState, action) =>{
                 list_vacancies: action.payload,
                 load_jobbank: action.fetching,
                 page_jobbank: action.page_num
+            }
+        case SET_SECTORS:
+            return {...state,
+                list_sectors: action.payload
+            }
+        case SET_COMPETENCES:
+            return {...state,
+                list_competences: action.payload
+            }
+        case SET_ACADEMICS:
+            return {...state,
+                list_academics: action.payload
+            }
+        case SET_MAIN_CATEGORIES:
+            return {...state,
+                list_main_categories: action.payload
+            }
+        case SET_SUB_CATEGORIES:
+            return {...state,
+                list_sub_categories: action.payload
             }
         case SET_VACANT:
             return {...state,
@@ -109,6 +139,66 @@ export const getClients = (node, query = '', page) => async (dispatch, getState)
     } catch (e) {
         console.log(e)
         dispatch(setClients(false))
+    }
+}
+
+export const getSectors = (node) => async (dispatch, getState) =>{
+    try {
+        let response = await WebApiJobBank.getSectors(node);
+        dispatch({
+            type: SET_SECTORS,
+            payload: response.data
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+export const getCompetences = (node) => async (dispatch, getState) =>{
+    try {
+        let response = await WebApiJobBank.getCompetences(node);
+        dispatch({
+            type: SET_COMPETENCES,
+            payload: response.data
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+export const getAcademics = (node) => async (dispatch, getState) =>{
+    try {
+        let response = await WebApiJobBank.getAcademics(node);
+        dispatch({
+            type: SET_ACADEMICS,
+            payload: response.data
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+export const getMainCategories = (node) => async (dispatch, getState) =>{
+    try {
+        let response = await WebApiJobBank.getMainCategories(node);
+        dispatch({
+            type: SET_MAIN_CATEGORIES,
+            payload: response.data
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+export const getSubCategories = (node) => async (dispatch, getState) =>{
+    try {
+        let response = await WebApiJobBank.getSubCategories(node);
+        dispatch({
+            type: SET_SUB_CATEGORIES,
+            payload: response.data
+        })
+    } catch (e) {
+        console.log(e)
     }
 }
 

@@ -71,16 +71,16 @@ const TableClients = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
+        closeModalDelete();
         try {
-            closeModalDelete();
             getClients(currentNode.id);
             console.log('eliminar is_deleted', ids)
-            if(ids.length > 0) message.success('Clientes eliminados');
-            if(ids.length <= 0) message.success('Cliente eliminado');
+            if(ids.length > 1) message.success('Clientes eliminados');
+            else message.success('Cliente eliminado');
         } catch (e) {
             console.log(e)
-            if(ids.length > 0) message.error('Clientes no eliminados');
-            if(ids.length <= 0) message.error('Cliente no eliminado');
+            if(ids.length > 1) message.error('Clientes no eliminados');
+            else message.error('Cliente no eliminado');
         }
     }
 

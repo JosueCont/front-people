@@ -17,51 +17,79 @@ import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { setLoadJobBank } from '../../../redux/jobBankDuck';
+import { setLoadJobBank, getInfoVacant } from '../../../redux/jobBankDuck';
+import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsVacancies = ({
     action,
     load_jobbank,
-    setLoadJobBank
+    setLoadJobBank,
+    info_vacant,
+    getInfoVacant
 }) => {
 
     const router = useRouter();
     const [formJobBank] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const [showTurns, setShowTurns] = useState(false);
+    const [listInterviewers, setListInterviewers] = useState([]);
+    const { setValuesForm, createData } = useProcessInfo({
+        formJobBank,
+        info_vacant
+    });
 
-    const onFinisUpdate = async () =>{
-        console.log('los valores update------->', values)
+    useEffect(()=>{
+        if(Object.keys(info_vacant).length > 0 && action == 'edit'){
+            console.log('info vacant---->', info_vacant)
+            setValuesForm();
+            setShowTurns(info_vacant.rotative_turn);
+            const { interviewers } = info_vacant.recruitment_process;
+            if(interviewers?.length > 0) setListInterviewers(interviewers);
+        }
+    },[info_vacant])
+
+    const onFinisUpdate = async (values) =>{
+        try {
+            await WebApiJobBank.updateVacant(info_vacant.id, values);
+            message.success('Vacante actualizada');
+            setLoading(false);
+            getInfoVacant(info_vacant.id);
+        } catch (e) {
+            console.log(e)
+            setLoading(false);
+            setLoadJobBank(false);
+            message.error('Vacante no actualizada');
+        }        
     }
 
     const onFinishCreate = async (values) =>{
-        console.log('los valores create------->', values)
-        // setLoading(true);
-        // setLoadJobBank(true);
         try {
-            let formatDate = values.assignment_date?.format('YYYY-MM-DD');
-            if(values.assignment_date) values.assignment_date = formatDate;
-            // let response = await WebApiJobBank.createVacant(values);
-            // console.log('response create------->', response);
+            let response = await WebApiJobBank.createVacant(values);
             message.success('Vancante registrada');
-            // setLoading(false);
-            // router.replace({
-            //     pathname: '/jobbank/vacancies/edit',
-            //     query: {id: 1}
-            // })
+            setLoading(false);
+            router.replace({
+                pathname: '/jobbank/vacancies/edit',
+                query: { id: response.data.id }
+            })
         } catch (e) {
-            console.log('el error----->', e)
+            console.log(e)
+            setLoading(false);
+            setLoadJobBank(false);
             message.error('Vacante no registrada')
-            // setLoading(false);
-            // setLoadJobBank(false);
         }
     }
 
-    const onFinish = (values) => {
+    const onFinish = async (values) => {
+        setLoading(true);
+        setLoadJobBank(true);
+        values.interviewers = listInterviewers;
+        const bodyData = await createData(values);
+        console.log('info a mandar---->', bodyData)
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
         };
-        actionFunction[action](values);
+        actionFunction[action](bodyData);
     }
 
     const onFailure = (error) =>{
@@ -100,7 +128,12 @@ const DetailsVacancies = ({
                         onFinish={onFinish}
                         onFinishFailed={onFailure}
                         requiredMark={false}
-                        // onValuesChange={onValuesChange}
+                        onValuesChange={onValuesChange}
+                        initialValues={{
+                            vo_bo: false,
+                            rotative_turn: false,
+                            requires_travel_availability: false
+                        }}
                     >
                         <Tabs type='card'>
                             <Tabs.TabPane
@@ -108,7 +141,10 @@ const DetailsVacancies = ({
                                 key={'tab_1'}
                             >
                                 <Spin spinning={load_jobbank}>
-                                    <TabFeatures/>
+                                    <TabFeatures
+                                        showTurns={showTurns}
+                                        setShowTurns={setShowTurns}
+                                    />
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
@@ -135,7 +171,10 @@ const DetailsVacancies = ({
                                 key={'tab_4'}
                             >
                                 <Spin spinning={load_jobbank}>
-                                    <TabRecruitment/>
+                                    <TabRecruitment
+                                        setListInterviewers={setListInterviewers}
+                                        listInterviewers={listInterviewers}
+                                    />
                                 </Spin>
                             </Tabs.TabPane>
                         </Tabs>
@@ -160,12 +199,14 @@ const DetailsVacancies = ({
 
 const mapState = (state) =>{
     return{
-        load_jobbank: state.jobBankStore.load_jobbank
+        load_jobbank: state.jobBankStore.load_jobbank,
+        info_vacant: state.jobBankStore.info_vacant
     }
 }
 
 export default connect(
     mapState, {
-        setLoadJobBank
+        setLoadJobBank,
+        getInfoVacant
     }
 )(DetailsVacancies);

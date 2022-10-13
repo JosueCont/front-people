@@ -19,9 +19,10 @@ import {
 } from '../../../utils/rules';
 import { validateNum } from '../../../utils/functions';
 
-const TabFeatures = () => {
-
-  const [showTurns, setShowTurns] = useState(false);
+const TabFeatures = ({
+  showTurns,
+  setShowTurns
+}) => {
 
   const styleDisabled = {
     width: 32,
@@ -88,7 +89,6 @@ const TabFeatures = () => {
         <Form.Item
           name='assignment_date'
           label='Fecha de asignación'
-          // rules={[ruleWhiteSpace]}
         >
           <DatePicker
             style={{width: '100%'}}
@@ -123,10 +123,15 @@ const TabFeatures = () => {
         <Form.Item
           name='num_project'
           label='Número de proyecto'
-          rules={[ruleWhiteSpace]}
         >
-          <Input
+          <InputNumber
+            type='number'
+            controls={false}
             placeholder='Número de proyecto'
+            style={{
+              width: '100%',
+              border: '1px solid black'
+            }}
             onKeyPress={validateNum}
           />
         </Form.Item>
@@ -277,6 +282,7 @@ const TabFeatures = () => {
         <Form.Item
           name='have_subordinates'
           label='¿Tendrá gente a su cargo?'
+          rules={[ruleWhiteSpace]}
         >
           <Input placeholder='Número y posiciones'/>
         </Form.Item>
@@ -293,7 +299,10 @@ const TabFeatures = () => {
           </Form.Item>
         </div>
         {showTurns && (
-          <Form.Item name='turns_to_rotate'>
+          <Form.Item
+            name='turns_to_rotate'
+            rules={[ruleWhiteSpace]}
+          >
             <Input placeholder='¿Cuáles?'/>
           </Form.Item>
         )}

@@ -4,19 +4,23 @@ import { Breadcrumb } from 'antd';
 import TableClients from '../../../components/jobbank/clients/TableClients';
 import SearchClients from '../../../components/jobbank/clients/SearchClients';
 import { connect } from 'react-redux';
-import { getClients } from '../../../redux/jobBankDuck';
+import { getClients, getSectors } from '../../../redux/jobBankDuck';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 
 const index = ({
     currentNode,
     getClients,
+    getSectors
 }) => {
 
     const router = useRouter();
 
     useEffect(()=>{
-        if(currentNode) getClients(currentNode.id);
+        if(currentNode){
+            getClients(currentNode.id);
+            getSectors(currentNode.id);
+        }
     },[currentNode])
 
     return (
@@ -53,6 +57,7 @@ const mapState = (state) => {
 
 export default connect(
     mapState, {
-        getClients
+        getClients,
+        getSectors
     }
 )(withAuthSync(index));
