@@ -1,3 +1,6 @@
+export const defaulPhoto =
+  "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
+
 export const typeCalculate = [
   {
     label: "Bruto-Neto",
@@ -79,6 +82,70 @@ export const typeStreet = [
     value: 3,
   },
 ];
+
+export const typeEmployee = [
+  {
+    label: "Trab. permanente",
+    value: 1
+  },
+  {
+    label: "Trab. Ev. Ciudad",
+    value: 2
+  },
+  {
+    label: "Trab. Ev. Construcción",
+    value: 3
+  },
+  {
+    label: "Eventual del campo",
+    value: 4
+  },
+]
+
+export const typeSalary = [
+  {
+    label: "Salario fijo",
+    value: 0
+  },
+  {
+    label: "Salario variable",
+    value: 1
+  },
+  {
+    label: "Salario mixto",
+    value: 2
+  },
+]
+
+export const reduceDays = [
+  {  
+    label: 'un día',
+    value: 1
+  },
+  {
+    label: 'dos días',
+    value: 2
+  },
+  {
+    label: 'tres días',
+    value: 3
+  },{
+    label: 'cuatro días',
+    value: 4
+  },
+  {
+    label: 'cinco días',
+    value: 5
+  },
+  {
+    label: 'Jornada reducida',
+    value: 6
+  },
+  {
+    label: 'Jornada normal',
+    value: 0
+  }
+]
 
 export const periodicity = [
   {
@@ -280,6 +347,36 @@ export const salaryDays = [
   },
 ];
 
+export const PaymentTypes = [
+  { value: 0, label: "Efectivo" },
+  { value: 1, label: "Cheques" },
+  { value: 3, label: "Transferencias" },
+  { value: 30, label: "Anticipo" },
+  { value: 99, label: "Por definir" },
+];
+
+export const BelongTo = [
+  { value: 1, label: "Empresa" },
+  { value: 2, label: "Registro patronal" },
+  { value: 3, label: "Sucursal" },
+];
+
+export const VacationPayment = [
+  { value: 1, label: "Aniversario" },
+  { value: 2, label: "Disfrute de vacaciones" },
+];
+
+export const SuaMovementsType = [
+  { value: 1, label: "Alta" },
+  { value: 2, label: "Modificacion de salario" },
+  { value: 3, label: "Baja" },
+];
+
+export const CalculationEmploymentSubsidy = [
+  { value: 1, label: "Periodo" },
+  { value: 2, label: "Mensual" },
+];
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
@@ -315,31 +412,13 @@ export const getCurrentURL = (tenant = false) => {
   }
 };
 
-export const getHost =()=>{
+export const getHost = () => {
   if (typeof window !== "undefined") {
-    let host =  window.location.host.split('.');
-    if(host.length>1){
-      return host[1]
+    let host = window.location.host.split(".");
+    if (host.length > 1) {
+      return host[1];
     }
-
-  }else{
-    return ''
+  } else {
+    return "";
   }
-}
-
-
-
-export const urlMyAccount = process.browser
-    ? process.env.NEXT_PUBLIC_BASE_URL_MYACCOUNT_TENANT
-    : process.env.BASE_URL_MYACCOUNT_TENANT;
-
-
-export const urlPeople = process.browser
-    ? process.env.NEXT_PUBLIC_BASE_URL_PEOPLE_TENANT
-    : process.env.BASE_URL_MYACCOUNT_TENANT;
-
-
-export const urlSocial = process.browser
-    ? process.env.NEXT_PUBLIC_BASE_URL_SOCIAL_TENANT
-    : process.env.BASE_URL_SOCIAL_TENANT;
-
+};

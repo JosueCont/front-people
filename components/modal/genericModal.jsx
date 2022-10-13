@@ -10,9 +10,11 @@ const GenericModal = ({
   titleActionButton = "Aceptar",
   viewActionButton = true,
   closeButton = "Cancelar",
+  maskClosable = true,
 }) => {
   return (
     <Modal
+      maskClosable={maskClosable}
       visible={visible}
       footer={
         <Col>

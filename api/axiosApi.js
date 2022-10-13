@@ -24,6 +24,7 @@ export const domainApiWithTenant = `${tenant}.${domainApi}`;
 
 export const config = {
   baseURL: `${typeHttp}://${domainApiWithTenant}/`,
+  // baseURL: domainApi,
   headers: { "Content-Type": "application/json" },
 };
 

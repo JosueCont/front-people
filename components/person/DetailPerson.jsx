@@ -20,6 +20,7 @@ import FormGeneralData from "../forms/FormGeneralData";
 import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
+import FormIMSSINFONAVIT from "../forms/FormIMSSINFONAVIT";
 import { useState } from "react";
 import {
   BankOutlined,
@@ -34,6 +35,7 @@ import {
   PhoneOutlined,
   UsergroupDeleteOutlined,
   WarningOutlined,
+  MedicineBoxOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import Router from "next/router";
@@ -120,6 +122,34 @@ const DetailPerson = ({
             key="tab_1"
           >
             <FormGeneralData person_id={person.id} />
+          </TabPane>
+          {config.nomina_enabled && (
+            <TabPane
+              tab={
+                <Tooltip title="Nómina">
+                  <div className="container-title-tab">
+                    <DollarOutlined />
+                    <div className="text-title-tab">Nómina</div>
+                  </div>
+                </Tooltip>
+              }
+              key="tab_10"
+            >
+              <FormPayrollPerson person={person} node={person.node} />
+            </TabPane>
+          )}
+                    <TabPane 
+            tab={
+              <Tooltip title="IMSS / INFONAVIT">
+                <div className="container-title-tab">
+                  <MedicineBoxOutlined />
+                  <div className="text-title-tab">IMSS / INFONAVIT</div>
+                </div>
+              </Tooltip>
+            }
+            key="tab_12"
+          >
+            <FormIMSSINFONAVIT person={person} person_id={person.id} node={person.node} />
           </TabPane>
           <TabPane
             tab={
@@ -212,6 +242,7 @@ const DetailPerson = ({
           >
             <FormDocument person_id={person.id} node={person.node} />
           </TabPane>
+
           <TabPane
             tab={
               <Tooltip title="Cambiar contraseña">
@@ -229,21 +260,6 @@ const DetailPerson = ({
             />
           </TabPane>
 
-          {config.nomina_enabled && (
-            <TabPane
-              tab={
-                <Tooltip title="Nómina">
-                  <div className="container-title-tab">
-                    <DollarOutlined />
-                    <div className="text-title-tab">Nómina</div>
-                  </div>
-                </Tooltip>
-              }
-              key="tab_10"
-            >
-              <FormPayrollPerson person={person} node={person.node} />
-            </TabPane>
-          )}
           {deletePerson && (
             <TabPane
               tab={

@@ -40,6 +40,7 @@ import {
 import { useFilter } from "../../../components/assessment/useFilter";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
+import {FormattedMessage} from "react-intl";
 
 const AssessmentScreen = ({
   assessmentStore,
@@ -400,7 +401,7 @@ const AssessmentScreen = ({
   ];
 
   return (
-    <MainLayout currentKey="surveys" defaultOpenKeys={["kuiss"]}>
+    <MainLayout currentKey={["surveys"]} defaultOpenKeys={["kuiz"]}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={"pointer"}
@@ -408,7 +409,8 @@ const AssessmentScreen = ({
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item> Evaluaciones </Breadcrumb.Item>
+        <Breadcrumb.Item>KUIZ</Breadcrumb.Item>
+        <Breadcrumb.Item>Evaluaciones</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Row>

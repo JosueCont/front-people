@@ -169,7 +169,7 @@ const HolidaysNew = () => {
   }, [route]);
 
   return (
-    <MainLayout currentKey="7.1">
+    <MainLayout currentKey={["lending"]} defaultOpenKeys={["requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -177,8 +177,10 @@ const HolidaysNew = () => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item href="/lending">Prestamos</Breadcrumb.Item>
-        <Breadcrumb.Item>Editar Solicitud</Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
+        <Breadcrumb.Item className={"pointer"}
+                         onClick={() => route.push({ pathname: "/lending" })}>Préstamos</Breadcrumb.Item>
+        <Breadcrumb.Item>Editar solicitud</Breadcrumb.Item>
       </Breadcrumb>
       <div
         className="container back-white"

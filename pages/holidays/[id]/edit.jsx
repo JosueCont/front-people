@@ -68,7 +68,7 @@ const HolidaysDetails = () => {
   }, [route]);
 
   return (
-    <MainLayout currentKey="5">
+    <MainLayout currentKey={["holiday"]} defaultOpenKeys={["requests"]}>
       <Breadcrumb key="Breadcrumb" className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -76,6 +76,7 @@ const HolidaysDetails = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => route.push({ pathname: "/holidays" })}

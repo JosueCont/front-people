@@ -143,8 +143,9 @@ const MainLayout = ({
 
           .ant-breadcrumb span {
             // color: var(--fontSpanColor);
-            color: #000;
+            // color: #000;
           }
+          /*
           .ant-menu-item,
           .ant-menu-submenu {
             color: var(--fontSpanColor);
@@ -152,6 +153,8 @@ const MainLayout = ({
           label {
             color: var(--fontSpanColor);
           }
+          
+           */
           .divider-primary {
             border-bottom: solid 1px var(--primaryColor);
             opacity: 0.5;

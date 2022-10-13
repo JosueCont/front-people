@@ -167,7 +167,7 @@ const BankAccounts = ({ permissions, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["cuentas"]} defaultOpenKeys={["solicitudes"]}>
+    <MainLayout currentKey={["bank_accounts"]} defaultOpenKeys={["requests"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -175,6 +175,7 @@ const BankAccounts = ({ permissions, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Solicitudes</Breadcrumb.Item>
         <Breadcrumb.Item>Cuentas bancarias</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

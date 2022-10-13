@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { withAuthSync } from "../../../libs/auth";
 import moment from "moment";
-import { ConfigProvider, notification } from "antd";
+import {Breadcrumb, ConfigProvider, notification} from "antd";
 import esES from "antd/lib/locale/es_ES";
 import _ from "lodash";
 import MainLayout from "../../../layout/MainLayout";
@@ -10,12 +10,34 @@ import WebApiIntranet from "../../../api/WebApiIntranet";
 import { publicationsListAction } from "../../../redux/IntranetDuck";
 import PublicationsStatisticsTable from "../../../components/statistics/PublicationsStatisticsTable";
 import PublicationsStatisticsFilters from "../../../components/statistics/PublicationsStatisticsFilters";
+import {FormattedMessage} from "react-intl";
 
-const index = (props) => {
+const index = ({user, ...props}) => {
   const [publicationsList, setPublicationsList] = useState({});
   const [loadingData, setLoadingData] = useState(true);
   const [processedPublications, setProcessedPubications] = useState([]);
   const [parameters, setParameters] = useState(null);
+  const [validatePermition, setValidatePermition] = useState(true);
+  
+  useEffect(() => {
+    let isUserKhor = user?.sync_from_khor
+    if(isUserKhor){
+      let permsUser = user?.khor_perms;
+      if( permsUser != null){
+        let permYnl = user?.khor_perms.filter(item => item === "Khor Plus Red Social")
+        if( permYnl.length > 0 ){
+          setValidatePermition(true);
+        }else{
+          setValidatePermition(false);
+        }
+      }else{
+        setValidatePermition(false);
+      }
+    }else{
+      setValidatePermition(true);
+    }
+  }, [user]);
+
   // Hook para traer la compania
 
   useEffect(() => {
@@ -99,27 +121,42 @@ const index = (props) => {
 
   return (
     <>
-      <MainLayout currentKey="1">
-        <ConfigProvider locale={esES}>
-          <PublicationsStatisticsFilters
-            style={{ margin: "30px 0px" }}
-            companyId={props.currentNode ? props.currentNode.id : null}
-            getPostsByFilter={props.publicationsListAction}
-            setParameters={setParameters}
-          />
-          <br />
-          <PublicationsStatisticsTable
-            style={{ marginTop: 20 }}
-            currentNode={props.currentNode ? props.currentNode.id : null}
-            current={publicationsList.data ? publicationsList.data.page : 1}
-            total={publicationsList.data ? publicationsList.data.count : 1}
-            fetching={loadingData}
-            processedPublicationsList={processedPublications}
-            changePage={props.publicationsListAction}
-            parameters={parameters}
-            changeStatus={changeStatus}
-          />
-        </ConfigProvider>
+      <MainLayout currentKey={["publications_statistics"]} defaultOpenKeys={["intranet"]}>
+        <Breadcrumb className={"mainBreadcrumb"} key="mainBreadcrumb">
+          <Breadcrumb.Item
+              className={"pointer"}
+              onClick={() => router.push({ pathname: "/home/persons/" })}
+          >
+            <FormattedMessage defaultMessage="Inicio" id="web.init" />
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Intranet</Breadcrumb.Item>
+          <Breadcrumb.Item>Moderación</Breadcrumb.Item>
+        </Breadcrumb>
+        { validatePermition ? (
+          <ConfigProvider locale={esES}>
+            <PublicationsStatisticsFilters
+              style={{ margin: "30px 0px" }}
+              companyId={props.currentNode ? props.currentNode.id : null}
+              getPostsByFilter={props.publicationsListAction}
+              setParameters={setParameters}
+            />
+            <br />
+            <PublicationsStatisticsTable
+              style={{ marginTop: 20 }}
+              currentNode={props.currentNode ? props.currentNode.id : null}
+              current={publicationsList.data ? publicationsList.data.page : 1}
+              total={publicationsList.data ? publicationsList.data.count : 1}
+              fetching={loadingData}
+              processedPublicationsList={processedPublications}
+              changePage={props.publicationsListAction}
+              parameters={parameters}
+              changeStatus={changeStatus}
+            />
+          </ConfigProvider>
+        ) : (
+          <div className="notAllowed" />
+        )
+        }
       </MainLayout>
     </>
   );
@@ -129,6 +166,7 @@ const mapState = (state) => {
   return {
     publicationsList: state.intranetStore.publicationsList,
     currentNode: state.userStore.current_node,
+    user: state.userStore.user,
   };
 };
 

@@ -24,7 +24,7 @@ const Calendars = () => {
 
   useEffect(() => {
     if (route.query.id) getPaymentCalendars();
-  }, [route.query.id]);
+  }, [route.query]);
 
   useEffect(() => {}, [style]);
 
@@ -36,6 +36,7 @@ const Calendars = () => {
     }
     setIsChecked(!isChecked);
   };
+
   const getPaymentCalendars = async () => {
     await WebApiPayroll.getDetailPaymentCalendar(route.query.id)
       .then((response) => {
@@ -73,7 +74,7 @@ const Calendars = () => {
   };
 
   return (
-    <MainLayout currentKey="9.4">
+    <MainLayout currentKey={["paymentCalendar"]} defaultOpenKeys={["payroll"]}>
       <Breadcrumb className={"mainBreadcrumb"}>
         <Breadcrumb.Item
           className={"pointer"}
@@ -81,6 +82,7 @@ const Calendars = () => {
         >
           Inicio
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Nómina</Breadcrumb.Item>
         <Breadcrumb.Item
           className={"pointer"}
           onClick={() => route.push({ pathname: "/payroll/paymentCalendar" })}

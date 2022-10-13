@@ -395,8 +395,8 @@ class WebApiPeople {
     );
   }
 
-  static getBranches() {
-    return WebApi.ApisType(`/business/branch-node/`, "get");
+  static getBranches(filter) {
+    return WebApi.ApisType(`/business/branch-node/${filter}`, "get");
   }
 
   static saveBranch(data) {
@@ -414,6 +414,13 @@ class WebApiPeople {
   static getPatronalRegistration(node) {
     return WebApi.ApisType(
       `/business/patronal-registration-data?node=${node}`,
+      "get"
+    );
+  }
+
+  static listEbaAndEmaFiles(node, patronalRegistration) {
+    return WebApi.ApisType(
+      `/business/document/?node=${node}&patronal_registration=${patronalRegistration}`, 
       "get"
     );
   }
@@ -458,6 +465,7 @@ class WebApiPeople {
   static sendCatalogData(url, data) {
     return WebApi.ApisType(url, "post", data);
   }
+
 }
 
 export default WebApiPeople;

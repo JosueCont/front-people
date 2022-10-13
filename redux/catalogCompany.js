@@ -108,8 +108,7 @@ const webReducer = (state = initialData, action) => {
     case BRANCHES:
       return {
         ...state,
-        cat_branches: action.payload.data,
-        errorData: action.payload?.error,
+        cat_branches: action.payload,
       };
     case PATRONAL_REGISTRATION:
       return {
@@ -157,7 +156,7 @@ export const doCompanySelectedCatalog =
         dispatch(getCostCenter(idCompany));
         dispatch(getTags(idCompany));
         dispatch(getAccountantAccount(idCompany));
-        dispatch(getBranches());
+        dispatch(getBranches(idCompany));
         dispatch(getPatronalRegistration(idCompany));
         return true;
       }
@@ -178,6 +177,7 @@ export const getRelationship = (idCompany) => async (dispatch, getState) => {
 export const getBanks = (idCompany) => async (dispatch, getState) => {
   try {
     let response = await WebApiPeople.getCatalogs("banks", idCompany);
+    console.log("Response banks", response)
     dispatch({ type: BANK, payload: response.data.results });
   } catch (error) {
     dispatch({ type: BANK, payload: [] });
@@ -354,16 +354,16 @@ export const getAccountantAccount =
       });
   };
 
-export const getBranches = () => async (dispatch, getState) => {
-  await WebApiPeople.getBranches()
+export const getBranches = (idCompany) => async (dispatch, getState) => {
+  await WebApiPeople.getBranches(`?node=${idCompany}`)
     .then((response) => {
       dispatch({
         type: BRANCHES,
-        payload: { data: response.data.results, error: null },
+        payload: response.data.results,
       });
     })
     .catch((error) => {
-      dispatch({ type: BRANCHES, payload: { data: [], error: error } });
+      dispatch({ type: BRANCHES, payload: [] });
     });
 };
 

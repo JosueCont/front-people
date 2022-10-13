@@ -73,10 +73,10 @@ const FormPatronalRegistration = ({
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssDelegation />
+          <SelectImssDelegation rules={[ruleRequired]} />
         </Col>
         <Col lg={6} xs={22}>
-          <SelectImssSubdelegation />
+          <SelectImssSubdelegation rules={[ruleRequired]} />
         </Col>
       </Row>
     </Form>
