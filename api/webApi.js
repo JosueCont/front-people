@@ -14,6 +14,8 @@ class WebApi {
         break;
       case "delete":
         return axiosApi.delete(url);
+      case "patch":
+        return axiosApi.patch(url, params);
         break;
     }
   };
