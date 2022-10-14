@@ -39,7 +39,6 @@ const PersonalRecord = ({reportPerson, user, dates, ...props}) => {
     }, [dates]);
 
     useEffect(() => {
-      console.log("ususario",user)
       setAppId(user?.general_config?.client_khonnect_id+"");
     }, [user]);
 
