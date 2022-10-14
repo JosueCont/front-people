@@ -162,10 +162,10 @@ const Calendar = ({ reportPerson, ...props}) => {
               <div class="cell-day brtl-1">Domingo</div>
               <div class="cell-day">Lunes</div>
               <div class="cell-day">Martes</div>
-              <div class="cell-day">Miercoles</div>
+              <div class="cell-day">Miércoles</div>
               <div class="cell-day">Jueves</div>
               <div class="cell-day">Viernes</div>
-              <div class="cell-day brtr-1">Sabado</div>
+              <div class="cell-day brtr-1">Sábado</div>
           </div>
         {currentInterval.map((day, idx) => {
             return (

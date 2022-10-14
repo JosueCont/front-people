@@ -1,21 +1,80 @@
 import {React, useEffect, useState} from 'react'
-import { Row, Col, Card, List, Avatar, Modal, Empty} from 'antd'
+import { Row, Col, Card, List, Avatar, Modal, Empty, Button} from 'antd'
 import { connect } from "react-redux";
 import moment from 'moment/moment';
-import { RightOutlined } from "@ant-design/icons";
+import { RightOutlined, DownloadOutlined, FileExcelOutlined } from "@ant-design/icons";
+import Axios from "axios";
 
-const PersonalRecord = ({reportPerson,...props}) => {
+const PersonalRecord = ({reportPerson, user, dates, ...props}) => {
     const [dataPerDay, setDataPerDay] = useState([]);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [allEmotions, setAllEmotions] = useState();
+    const [appId, setAppId] = useState("");
+    const [khonectId, setKhonectId] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [isLoadReport, setIsLoadReport] = useState(false);
+    const [dataUser, setDataUser] = useState({});
     
     useEffect(() => {
+      setIsLoadReport(false); 
       if(Object.keys(reportPerson).length > 0){
         let globalData = [...reportPerson?.data?.at(-1).per_day].reverse();
-        let filterLast = globalData?.filter(item => Object.keys(item.last).length > 0); 
-        setDataPerDay(filterLast);
+        let filterLast = globalData?.filter(item => Object.keys(item.last).length > 0);
+        setDataUser(reportPerson?.data.at(-1).user);
+        if(filterLast.length > 0){
+          setIsLoadReport(true); 
+        }
+        setDataPerDay(filterLast);   
       }
     }, [reportPerson]);
+
+    useEffect(() => {
+      if(Object.keys(dates).length > 0){
+        let KhId = dates?.khonnect_ids.toString();
+        setKhonectId(KhId+"");
+        setStartDate(dates?.start_date+"");
+        setEndDate(dates?.end_date+"");
+      }
+    }, [dates]);
+
+    useEffect(() => {
+      setAppId(user?.general_config?.client_khonnect_id+"");
+    }, [user]);
+
+    const downloadCsv = async () => {
+      let data = {
+        startdate: startDate,
+        enddate: endDate,
+        app_id: appId,
+        khonnect_id: khonectId
+      }
+      // console.log("data consulta csv", data);
+      try {
+        let response = await Axios.post(
+          `https://ynl-api.herokuapp.com/api/feeling-records/emotionsHistoryCsv`,
+          data
+        );
+        // console.log("respuesta api",response);
+        const type = response.headers["content-type"];
+        const blob = new Blob([response.data], {
+          type: type,
+          encoding: "UTF-8",
+        });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = dataUser
+        ? "Historial_de_Emociones(" +
+          (dataUser.firstName ? dataUser.firstName : null) +
+          "_" +
+          (dataUser.lastName ? dataUser.lastName : null) +
+          ").csv"
+        : "Historial_de_Emociones.csv";
+        link.click();
+      } catch (e) {
+        console.log(e);
+      }
+    };
 
     const ShowModalAllEmotions = (item) =>{
       setIsOpenModal(true)
@@ -38,6 +97,11 @@ const PersonalRecord = ({reportPerson,...props}) => {
                 width: '100%',
             }}>
             <Col span={24} className='content-feeling-scroll scroll-bar'>
+              { isLoadReport &&
+                <Row justify='end' >
+                  <Button style={{marginBottom:"8px"}} onClick={downloadCsv}><DownloadOutlined style={{color:'white', fontSize:15}} /><FileExcelOutlined style={{color:'white', fontSize:15}} /></Button>
+                </Row>
+              }
               <List
                   dataSource={dataPerDay}
                   locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se registraron emociones" />}}
@@ -94,6 +158,8 @@ const PersonalRecord = ({reportPerson,...props}) => {
 const mapState = (state) => {
   return {
     reportPerson: state.ynlStore.reportPerson,
+    user: state.userStore,
+    dates: state.ynlStore.dates,
   };
 };
 
