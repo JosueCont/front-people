@@ -88,7 +88,6 @@ export const useProcessInfo = ({
                 return { lang: item, domain: 1 };
             })
         }
-        console.log('info experiences------->', info.experiences)
         if(info.age_min && info.age_max) info.age_range = [info.age_min, info.age_max];
         if(info.academics_degree) info.academics_degree = [info.academics_degree];
         if(info.experiences) info.experiences = info.experiences.split(',');

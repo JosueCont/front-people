@@ -74,7 +74,7 @@ const TableClients = ({
         closeModalDelete();
         try {
             getClients(currentNode.id);
-            console.log('eliminar is_deleted', ids)
+            // console.log('eliminar is_deleted', ids)
             if(ids.length > 1) message.success('Clientes eliminados');
             else message.success('Cliente eliminado');
         } catch (e) {

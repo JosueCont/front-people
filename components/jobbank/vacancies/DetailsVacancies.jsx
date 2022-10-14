@@ -40,7 +40,7 @@ const DetailsVacancies = ({
 
     useEffect(()=>{
         if(Object.keys(info_vacant).length > 0 && action == 'edit'){
-            console.log('info vacant---->', info_vacant)
+            // console.log('info vacant---->', info_vacant)
             setValuesForm();
             setShowTurns(info_vacant.rotative_turn);
             const { interviewers } = info_vacant.recruitment_process;
@@ -84,7 +84,7 @@ const DetailsVacancies = ({
         setLoadJobBank(true);
         values.interviewers = listInterviewers;
         const bodyData = await createData(values);
-        console.log('info a mandar---->', bodyData)
+        // console.log('info a mandar---->', bodyData)
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
