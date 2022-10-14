@@ -116,7 +116,7 @@ const PersonalRecord = ({reportPerson, user, dates, ...props}) => {
                                   <h2 style={{color:"white", textAlign:"left", marginBottom:"0px"}}> {item.last.feeling_name} </h2>
                                   <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item.last.name}</b></p>
                                   <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item.last.comments}</b></p>
-                                  <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{ moment(item.last.createdAt).format('LL')}</p>
+                                  <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{ moment.parseZone(item.last.createdAt).format('LL')}</p>
                                   <span style={{color:"white", textAlign:"rigth", marginBottom:"0px"}}> <b>{item.all.length}</b> {item.all.length > 1 ? " emociones registradas" : " emoción registrada"}</span>
                               </Col>
                               <Col span={4} className="aligned-to-center">
@@ -143,7 +143,7 @@ const PersonalRecord = ({reportPerson, user, dates, ...props}) => {
                                 <h2 style={{color:"white", textAlign:"left", marginBottom:"0px"}}> {item?.feeling_name} </h2>
                                 <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item?.name}</b></p>
                                 <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item?.comments}</b></p>
-                                <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{ moment(item?.createdAt).format('LL')}, { moment.parseZone(item?.createdAt).format('LT')} </p>
+                                <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{ moment.parseZone(item?.createdAt).format('LL')}, { moment.parseZone(item?.createdAt).format('LT')} </p>
                             </Col>
                         </Row>
                     </div> 

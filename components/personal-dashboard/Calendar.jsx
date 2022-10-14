@@ -81,7 +81,7 @@ const Calendar = ({ reportPerson, ...props}) => {
             reportPerson?.data[0]?.per_day?.map(day => {
             /* console.log('day', day)
             console.log('day-format',moment(day.day).add(1, 'day') .format("YYYY-MM-DD")) */
-            if(moment(day.day).add(1, 'day') .format("YYYY-MM-DD") === date){
+            if(moment(day.day).format("YYYY-MM-DD") === date){
                 if(day.last.color){
                     console.log('OK => #', day.last.color, " =>", day.day );
                     color = {backgroundColor: `#${day.last.color}`}
