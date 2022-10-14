@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 const ListGroups = () => {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [currentMembers, setCurrentMembers] = useState([]);
+    const [nameGruop, setNameGruop] = useState("");
     const reportPerson = useSelector((state) => state.ynlStore.reportPerson)
     const router = useRouter();
 
@@ -25,7 +26,7 @@ const ListGroups = () => {
 
     const onDetail=(member)=>{
         const query = {user_id:member?.khonnect_id};
-        const url ={ pathname:`/dashboard-ynl-personal`, query  }
+        const url ={ pathname:`/ynl/personal-dashboard`, query  }
         router.push(url,url,query)
         setIsOpenModal(false)
     }
@@ -49,6 +50,7 @@ const ListGroups = () => {
                             actions={[<Tooltip title="Ver miembros del grupo"><PeopleOutlineOutlined style={{cursor:'pointer'}} onClick={()=> {
                                 setCurrentMembers(reportPerson?.data && (reportPerson?.data[0]?.groups[index]?.members?reportPerson?.data[0]?.groups[index]?.members:[]))
                                 showModalMembers(index)
+                                setNameGruop(item.name)
                             }}/></Tooltip>]}
                         >
                             <List.Item.Meta
@@ -60,7 +62,7 @@ const ListGroups = () => {
                 />
             </Col>   
         </Card>
-        <Modal title={`Miembros del grupo (${currentMembers && currentMembers.length})`} footer={[]} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title={`Grupo: ${nameGruop}(${currentMembers && currentMembers.length})`} footer={[]} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
             <Col span={24} className='content-feeling-scroll scroll-bar'>
                 <List
                     itemLayout="horizontal"

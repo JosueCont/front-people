@@ -21,7 +21,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
-import { GroupOutlined } from "@material-ui/icons";
+import { GroupOutlined, WorkOutline } from "@material-ui/icons";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -90,6 +90,8 @@ const MainSider = ({
       assessment_reports: '/assessment/reports',
       ynl_general_dashboard: '/ynl/general-dashboard',
       ynl_personal_dashboard: '/ynl/personal-dashboard',
+      jb_clients: '/jobbank/clients',
+      jb_vacancies: '/jobbank/vacancies'
     }
     router.push(pathRoutes[key]);
   };
@@ -97,139 +99,165 @@ const MainSider = ({
   let items = []
   let children = []
 
-  if (typeof window !== 'undefined') {
-    // Menú Empresas
-    if (props?.permissions?.company?.view) {
-      let children = [
-        getItem('Empresas', 'business'),
-        getItem('Asignar empresa', 'asign')
-      ]
-      if (props?.config && props?.config?.nomina_enabled) {
-        children.push(getItem('Registros patronales', 'patronal'))
-      }
-      items.push(getItem('Empresa', 'company', <BankOutlined />, children))
-    }
-
-    // Menú People
-    if (props?.permissions?.person?.view) {
-      let children = [
-        getItem('Personas', 'persons'),
-        getItem('Grupos', 'groups_people'),
-      ]
-      items.push(getItem('Colaboradores', 'people', <UserOutlined />, children))
-    }
-
-    // Menú Configuración
-    children = [
-      getItem('Catálogos', 'catalogs'),
-      getItem('Perfiles de seguridad', 'securityGroups'),
-    ]
-    items.push(getItem('Configuración', 'config', <SettingOutlined />, children))
-
-    // Agregar división
-    items.push({type: 'divider'})
-
-    // Menú Comunicación
-    if (props?.config && props?.config?.nomina_enabled && (props?.permissions?.comunication?.view ||
-        props?.permissions?.event?.view)) {
-      let children = []
-      if (props?.permissions?.comunication?.view) {
-        children.push(getItem('Comunicados', 'releases'))
-      }
-      if (props?.permissions?.event?.view) {
-        children.push(getItem('Eventos', 'events'))
-      }
-      items.push(getItem('Comunicación', 'comunication', <MessageOutlined />, children))
-    }
-
-    // Menú Reportes
-    if (props?.config && props?.config?.nomina_enabled && props?.permissions?.report?.view) {
-      items.push(getItem('Reportes', 'reports', <ProfileOutlined />))
-    }
-
-    // Menú Solicitudes
-    if (props?.config && props?.config?.nomina_enabled) {
-      let children = []
-      if (props?.permissions?.loan?.view) {
-        children.push(getItem('Préstamos', 'lending'))
-      }
-      if (props?.permissions?.vacation?.view) {
-        children.push(getItem('Vacaciones', 'holidays'))
-      }
-      children.push(getItem('Permisos', 'permission'))
-      children.push(getItem('Incapacidad', 'incapacity'))
-      children.push(getItem('Cuentas bancarias', 'bank_accounts'))
-      items.push(getItem('Solicitudes', 'requests', <FormOutlined />, children))
-    }
-
-    // Menú Nómina
-    if (props?.config && props?.config?.nomina_enabled) {
-      let children = [
-        getItem('Cálculo de nómina', 'calculatePayroll'),
-        getItem('Calendario de pagos', 'paymentCalendar'),
-        getItem('Comprobantes fiscales', 'payrollVoucher'),
-        getItem('Calculadora', 'calculatorSalary'),
-        getItem('Importar nómina con XML', 'importMassivePayroll'),
-        getItem('Movimientos IMSS', 'imssMovements')
-      ]
-      items.push(getItem('Nómina', 'payroll', <DollarOutlined />, children))
-    }
-
-    // Menú Registro de errores
-    if (props?.config && props?.config?.nomina_enabled) {
-      let children = [
-        getItem('Carga masiva de personas', 'bulk_upload'),
-        getItem('Carga de documentos', 'documentsLog')
-      ]
-      items.push(getItem('Registro de errores', 'uploads', <BugOutlined />, children))
-    }
-
-    // Menú Khor Connect
-    if (intranetAccess) {
-      let children = [
-        getItem('Configuración', 'intranet_configuration'),
-        getItem('Grupos', 'intranet_groups'),
-        getItem('Moderación', 'publications_statistics')
-      ]
-      items.push(getItem('Khor Connect', 'intranet', <img
-          className="anticon ant-menu-item-icon icon-intranet"
-          src={"/images/Intranet.svg"}
-      />, children))
-    }
-
-    // Menú Kuiz
-    if (props?.config && props?.config?.kuiz_enabled) {
-      let children = [
-        getItem('Evaluaciones', 'surveys'),
-        getItem('Grupos', 'assessment_groups'),
-        getItem('Perfiles', 'assessment_profiles'),
-        getItem('Reportes', 'assessment_reports')
-      ]
-      items.push(getItem('KUIZ', 'kuiz', <QuestionCircleOutlined />, children))
-    }
-
-    // Menú YNL
-    if (props?.configurationBackdoor && props?.configurationBackdoor?.length > 0) {
-      let show_ynl_module = false
-      props.configurationBackdoor.map(item=>{
-        if (item.app.code === "ynl") {
-          show_ynl_module = true
-        }
-      })
-      if (show_ynl_module) {
-        children = [
-          getItem('Dashboard general', 'ynl_general_dashboard'),
-          getItem('Dashboard personal', 'ynl_personal_dashboard')
+  // Función para obtener la lista de elementos del menú
+  function getMenuItems() {
+    if (typeof window !== 'undefined') {
+      // Menú Empresas
+      if (props?.permissions?.company?.view) {
+        let children = [
+          getItem('Empresas', 'business'),
+          getItem('Asignar empresa', 'asign')
         ]
-        items.push(getItem('YNL', 'ynl', <UserOutlined />, children))
+        if (props?.config && props?.config?.nomina_enabled) {
+          children.push(getItem('Registros patronales', 'patronal'))
+        }
+        items.push(getItem('Empresa', 'company', <BankOutlined />, children))
+      }
+
+      // Menú People
+      if (props?.permissions?.person?.view) {
+        let children = [
+          getItem('Personas', 'persons'),
+          getItem('Grupos', 'groups_people'),
+        ]
+        items.push(getItem('Colaboradores', 'people', <UserOutlined />, children))
+      }
+
+      // Menú Configuración
+      children = [
+        getItem('Catálogos', 'catalogs'),
+        getItem('Perfiles de seguridad', 'securityGroups'),
+      ]
+      items.push(getItem('Configuración', 'config', <SettingOutlined />, children))
+
+      // Agregar división
+      items.push({type: 'divider'})
+
+      // Menú Comunicación
+      if (props?.config && props?.config?.nomina_enabled && (props?.permissions?.comunication?.view ||
+          props?.permissions?.event?.view)) {
+        let children = []
+        if (props?.permissions?.comunication?.view) {
+          children.push(getItem('Comunicados', 'releases'))
+        }
+        if (props?.permissions?.event?.view) {
+          children.push(getItem('Eventos', 'events'))
+        }
+        items.push(getItem('Comunicación', 'comunication', <MessageOutlined />, children))
+      }
+
+      // Menú Reportes
+      if (props?.config && props?.config?.nomina_enabled && props?.permissions?.report?.view) {
+        items.push(getItem('Reportes', 'reports', <ProfileOutlined />))
+      }
+
+      // Menú Solicitudes
+      if (props?.config && props?.config?.nomina_enabled) {
+        let children = []
+        if (props?.permissions?.loan?.view) {
+          children.push(getItem('Préstamos', 'lending'))
+        }
+        if (props?.permissions?.vacation?.view) {
+          children.push(getItem('Vacaciones', 'holidays'))
+        }
+        children.push(getItem('Permisos', 'permission'))
+        children.push(getItem('Incapacidad', 'incapacity'))
+        children.push(getItem('Cuentas bancarias', 'bank_accounts'))
+        items.push(getItem('Solicitudes', 'requests', <FormOutlined />, children))
+      }
+
+      // Menú Nómina
+      if (props?.config && props?.config?.nomina_enabled) {
+        let children = [
+          getItem('Cálculo de nómina', 'calculatePayroll'),
+          getItem('Calendario de pagos', 'paymentCalendar'),
+          getItem('Comprobantes fiscales', 'payrollVoucher'),
+          getItem('Calculadora', 'calculatorSalary'),
+          getItem('Importar nómina con XML', 'importMassivePayroll'),
+          getItem('Movimientos IMSS', 'imssMovements')
+        ]
+        items.push(getItem('Nómina', 'payroll', <DollarOutlined />, children))
+      }
+
+      // Menú Registro de errores
+      if (props?.config && props?.config?.nomina_enabled) {
+        let children = [
+          getItem('Carga masiva de personas', 'bulk_upload'),
+          getItem('Carga de documentos', 'documentsLog')
+        ]
+        items.push(getItem('Registro de errores', 'uploads', <BugOutlined />, children))
+      }
+
+      // Menú Khor Connect
+      if (intranetAccess) {
+        let children = [
+          getItem('Configuración', 'intranet_configuration'),
+          getItem('Grupos', 'intranet_groups'),
+          getItem('Moderación', 'publications_statistics')
+        ]
+        items.push(getItem('Khor Connect', 'intranet', <img
+            className="anticon ant-menu-item-icon icon-intranet"
+            src={"/images/Intranet.svg"}
+        />, children))
+      }
+
+      // Menú Kuiz
+      if (props?.config && props?.config?.kuiz_enabled) {
+        let children = [
+          getItem('Evaluaciones', 'surveys'),
+          getItem('Grupos', 'assessment_groups'),
+          getItem('Perfiles', 'assessment_profiles'),
+          getItem('Reportes', 'assessment_reports')
+        ]
+        items.push(getItem('KUIZ', 'kuiz', <QuestionCircleOutlined />, children))
+      }
+
+      // Menú YNL
+      if (props?.applications) {
+        let show_ynl_module = false
+        for (let item in props.applications) {
+          if (item === 'ynl') {
+            if (props.applications[item].active) {
+              show_ynl_module = true
+            }
+          }
+        }
+        if (show_ynl_module) {
+          children = [
+            getItem('Dashboard general', 'ynl_general_dashboard'),
+            getItem('Dashboard personal', 'ynl_personal_dashboard')
+          ]
+          items.push(getItem('YNL', 'ynl', <UserOutlined />, children))
+        }
+      }
+
+      //Menú Bolsa de trabajo
+      if (props?.applications) {
+        let show_jobbank_module = false
+        for (let item in props.applications) {
+          if (item === 'jobbank') {
+            if (props.applications[item].active) {
+              show_jobbank_module = true
+            }
+          }
+        }
+        if (show_jobbank_module) {
+          children = [
+            getItem('Clientes', 'jb_clients'),
+            getItem('Vacantes', 'jb_vacancies')
+          ]
+          items.push(getItem('Bolsa de trabajo', 'job_bank', <WorkOutline/>, children))
+        }
       }
     }
+
+    return items;
   }
 
   return (
       <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)} theme={theme} width={250} >
         <div className="logo" />
-        <Menu theme={theme} defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys} mode="inline" onClick={onClickMenuItem} items={items} />
+        <Menu theme={theme} defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys} mode="inline" onClick={onClickMenuItem} items={getMenuItems()} />
       </Sider>
   );
 
@@ -614,7 +642,7 @@ const mapState = (state) => {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
     permissions: state.userStore.permissions,
-    configurationBackdoor: state.backdoorStore?.configurationBackdoor,
+    applications: state.userStore.applications
   };
 };
 export default connect(mapState)(MainSider);

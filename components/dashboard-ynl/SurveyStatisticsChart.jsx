@@ -60,6 +60,11 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
       labelsFinish = labelsResults.map((item) => {
         return item.charAt(0).toUpperCase() + item.slice(1);
       });
+      let found = labelsFinish.find(element => element === "Fisica");
+      if(found === "Fisica"){
+        let indexPhisica = labelsFinish.indexOf('Fisica');
+        labelsFinish[indexPhisica] = 'Física';
+      }
       let obj = {
         labels: labelsFinish,
         datasets: [
@@ -80,7 +85,7 @@ const SurveyStatisticsChart = ({ynlStore,...props}) => {
     <>
         <Card  
             className='card-dashboard'
-            title="Aspectos del usuario"
+            title="Aspectos del personal"
             style={{
                 width: '100%',
             }}>
