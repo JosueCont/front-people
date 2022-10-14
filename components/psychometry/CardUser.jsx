@@ -96,12 +96,12 @@ const CardUser = ({
                 <Col xs={24} sm={8} md={6} lg={8} xl={5}>
                   <ContentEnd>
                     <ContentButtons gap={'8px'}>
-                      <CustomBtn bg={'white'} cl={'black'} wd={'auto'}>
-                        <span>Enviar permalink</span><AiOutlineLink/>
-                      </CustomBtn>
-                      <CustomBtn bg={'#ed6432'} wd={'auto'}>
-                        <span>Enviar email</span><SiMinutemailer/>
-                      </CustomBtn>
+                      {/*<CustomBtn bg={'white'} cl={'black'} wd={'auto'}>*/}
+                      {/*  <span>Enviar permalink</span><AiOutlineLink/>*/}
+                      {/*</CustomBtn>*/}
+                      {/*<CustomBtn bg={'#ed6432'} wd={'auto'}>*/}
+                      {/*  <span>Enviar email</span><SiMinutemailer/>*/}
+                      {/*</CustomBtn>*/}
                     </ContentButtons>
                   </ContentEnd>
                 </Col>
