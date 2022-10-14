@@ -6,6 +6,7 @@ import { Global, css } from "@emotion/core";
 import { useRouter } from "next/router";
 import { withAuthSync } from "../../../../../libs/auth";
 import { API_URL } from "../../../../../config/config";
+import axiosApi from './../../../../../api/axiosApi';
 import Axios from "axios";
 
 const Details = () => {
@@ -20,8 +21,8 @@ const Details = () => {
   const getDetails = async () => {
     setLoading(true);
     try {
-      let response = await Axios.get(
-        API_URL + `/noticenter/notification/${id}`
+      let response = await axiosApi.get(
+        `/noticenter/notification/${id}`
       );
       let data = response.data;
       setDetails(data);

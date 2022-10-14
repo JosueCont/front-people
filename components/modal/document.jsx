@@ -11,6 +11,7 @@ import Axios from "axios";
 import { API_URL } from "../../config/config";
 import { connect } from "react-redux";
 import { ruleRequired } from "../../utils/rules";
+import axiosApi from "../../api/axiosApi";
 
 const documentModal = ({ person_id, node, ...props }) => {
   const [form] = Form.useForm();
@@ -47,7 +48,7 @@ const documentModal = ({ person_id, node, ...props }) => {
 
   const uploadDocument = (data) => {
     setDisabled(true);
-    Axios.post(API_URL + "/person/document/", data)
+    axiosApi.post("/person/document/", data)
       .then((response) => {
         message.success({
           content: "Cargado correctamente.",

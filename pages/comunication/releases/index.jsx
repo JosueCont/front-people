@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { SearchOutlined, PlusOutlined, SyncOutlined } from "@ant-design/icons";
 import moment from "moment-timezone";
+import axiosApi from '../../../api/axiosApi';
 import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import { EyeOutlined } from "@ant-design/icons";
@@ -74,7 +75,7 @@ const Releases = ({ permissions, ...props }) => {
         "Access-Control-Allow-Origin": "https://www.example.com",
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
       };
-      let response = await Axios.get(API_URL + url);
+      let response = await axiosApi.get(url);
       let data = response.data;
       setList(data.results);
     } catch (e) {
@@ -87,7 +88,7 @@ const Releases = ({ permissions, ...props }) => {
 
   const getAllPersons = async () => {
     try {
-      let response = await Axios.get(API_URL + `/person/person/`);
+      let response = await axiosApi.get(`/person/person/`);
       let data = response.data.results;
       data = data.map((a) => {
         return {

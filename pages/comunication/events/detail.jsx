@@ -26,6 +26,7 @@ import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 import TextArea from "antd/lib/input/TextArea";
 import { connect } from "react-redux";
+import axiosApi from "../../../api/axiosApi";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -69,8 +70,8 @@ const addEvent = ({ ...props }) => {
   };
 
   const getPersons = async () => {
-    axios
-      .post(API_URL + `/person/person/get_list_persons/`, {
+    axiosApi
+      .post(`/person/person/get_list_persons/`, {
         node: props.currentNode.id,
       })
       .then((response) => {
@@ -85,8 +86,8 @@ const addEvent = ({ ...props }) => {
   };
 
   const getNodes = async () => {
-    axios
-      .get(API_URL + `/business/node/?id=${props.currentNode.id}`)
+    axiosApi
+      .get(`/business/node/?id=${props.currentNode.id}`)
       .then((response) => {
         let data = response.data.results;
         data = data.map((a) => {
@@ -102,7 +103,7 @@ const addEvent = ({ ...props }) => {
   const getEvent = async (id) => {
     setLoading(true);
 
-    Axios.get(API_URL + `/person/event/${id}/`)
+    axiosApi.get(`/person/event/${id}/`)
       .then((response) => {
         let data = response.data;
         let node_id = null;
@@ -163,7 +164,7 @@ const addEvent = ({ ...props }) => {
     }
     setLoading(true);
 
-    Axios.put(API_URL + `/person/event/${datos.id}/`, datos)
+    axiosApi.put(`/person/event/${datos.id}/`, datos)
       .then((response) => {
         message.success("Editado correctamente");
         router.push("/comunication/events");
