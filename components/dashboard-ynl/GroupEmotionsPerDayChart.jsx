@@ -5,7 +5,8 @@ import {Row,
     Table,
     Tag,
     Space,
-    Tooltip} from 'antd'
+    Tooltip,
+    Empty} from 'antd'
 import { blueGrey } from '@material-ui/core/colors';
 import { connect } from 'react-redux';
 import { set, values } from 'lodash';
@@ -92,32 +93,32 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
             }}>
             <Row>
                 <Col className='aligned-to-start'>
-                  <div className='indicator-inspired'></div>
-                  <div><span>Inspirado</span></div>
-                </Col>
-                <Col className='aligned-to-start'>
-                  <div className='indicator-glad'></div>
-                  <div><span>Contento</span></div>
-                </Col>
-                <Col className='aligned-to-start'>
-                  <div className='indicator-open'></div>
-                  <div><span>Abierto</span></div>
-                </Col>
-                <Col className='aligned-to-start'>
                   <div className='indicator-depressed'></div>
                   <div><span>Deprimido</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
-                  <div className='indicator-peace'></div>
-                  <div><span>En paz</span></div>
+                  <div className='indicator-upset'></div>
+                  <div><span>Molesto</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
                   <div className='indicator-confused'></div>
                   <div><span>Confundido</span></div>
                 </Col>
                 <Col className='aligned-to-start'>
-                  <div className='indicator-upset'></div>
-                  <div><span>Molesto</span></div>
+                  <div className='indicator-glad'></div>
+                  <div><span>Contento</span></div>
+                </Col>
+                <Col className='aligned-to-start'>
+                  <div className='indicator-peace'></div>
+                  <div><span>En paz</span></div>
+                </Col>
+                <Col className='aligned-to-start'>
+                  <div className='indicator-inspired'></div>
+                  <div><span>Inspirado</span></div>
+                </Col>
+                <Col className='aligned-to-start'>
+                  <div className='indicator-open'></div>
+                  <div><span>Abierto</span></div>
                 </Col> 
             </Row>
             <Table columns={columns}
@@ -129,6 +130,7 @@ const GroupEmotionsPerDayChart = ({ynlStore,...props}) => {
                 hideOnSinglePage: true,
                 showSizeChanger:false
                }}
+              locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se registraron emociones" />}}
               size="small" />
         </Card>
     </>
