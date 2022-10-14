@@ -39,6 +39,7 @@ const PersonalRecord = ({reportPerson, user, dates, ...props}) => {
     }, [dates]);
 
     useEffect(() => {
+      console.log("ususario",user)
       setAppId(user?.general_config?.client_khonnect_id+"");
     }, [user]);
 
@@ -143,7 +144,7 @@ const PersonalRecord = ({reportPerson, user, dates, ...props}) => {
                                 <h2 style={{color:"white", textAlign:"left", marginBottom:"0px"}}> {item?.feeling_name} </h2>
                                 <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item?.name}</b></p>
                                 <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}><b>{item?.comments}</b></p>
-                                <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{ moment(item?.createdAt).format('LL')}, { moment(item?.createdAt).format('LT')} </p>
+                                <p style={{color:"white", textAlign:"left", marginBottom:"0px"}}>{ moment(item?.createdAt).format('LL')}, { moment.parseZone(item?.createdAt).format('LT')} </p>
                             </Col>
                         </Row>
                     </div> 
