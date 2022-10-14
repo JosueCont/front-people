@@ -149,7 +149,7 @@ const CardApps = ({ user, config, ...props }) => {
                 onClick={() => linktToSocial()}
               >
                 <img src={imgSocial} />
-                <p style={{ marginBottom: "0px" }}>KHOR Connect</p>
+                <p style={{ marginBottom: "0px" }}>Connect</p>
               </Space>
             </Col>
           ) : null}
