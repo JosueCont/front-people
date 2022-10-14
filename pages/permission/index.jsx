@@ -44,7 +44,7 @@ const Permission = ({ permissions, ...props }) => {
     status = null
   ) => {
     setLoading(true);
-    let url = `?person__node__id=${props.currentNode.id}&`;
+    let url = `?person__node__id=${props?.currentNode?.id}&`;
     if (collaborator) {
       url += `person__id=${collaborator}&`;
     }
@@ -123,7 +123,7 @@ const Permission = ({ permissions, ...props }) => {
                       </Col>
                       <Col>
                         <SelectDepartment
-                          companyId={props.currentNode.id}
+                          companyId={props?.currentNode?.id}
                           key="SelectDepartment"
                         />
                       </Col>
