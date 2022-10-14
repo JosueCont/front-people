@@ -40,7 +40,7 @@ const Permissionform = (props) => {
     if (value) {
       let index = await getCollaborator(value);
       formPermission.setFieldsValue({
-        job: index.work_title.job ? index.work_title.job.name : null,
+        job: index?.work_title?.job ? index?.work_title?.job.name : null,
       });
       setUrlPhoto(index.photo ? index.photo : null);
       setUrlPhoto(index.photo ? index.photo : null);
