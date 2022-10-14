@@ -7,6 +7,7 @@ import Moment from "moment";
 import { withAuthSync } from "../../../../../libs/auth";
 import Axios from "axios";
 import { API_URL } from "../../../../../config/config";
+import axiosApi from './../../../../../api/axiosApi';
 import { CheckOutlined } from "@ant-design/icons";
 
 const UserNotification = () => {
@@ -17,8 +18,8 @@ const UserNotification = () => {
 
   const getUsers = async () => {
     try {
-      let response = await Axios.get(
-        API_URL + `/noticenter/user-notification/?notification_id=${id}`
+      let response = await axiosApi.get(
+        `/noticenter/user-notification/?notification_id=${id}`
       );
       let data = response.data;
       setList(data.results);

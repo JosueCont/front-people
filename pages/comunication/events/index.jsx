@@ -32,6 +32,7 @@ import axios from "axios";
 import { API_URL } from "../../../config/config";
 import jsCookie from "js-cookie";
 import { connect } from "react-redux";
+import axiosApi from "../../../api/axiosApi";
 
 const Events = ({ permissions, ...props }) => {
   const { Column } = Table;
@@ -46,8 +47,8 @@ const Events = ({ permissions, ...props }) => {
   const getAllEvents = (filter) => {
     setLoading(true);
     if (filter === undefined) {
-      axios
-        .get(API_URL + `/person/event/`)
+      axiosApi
+        .get(`/person/event/`)
         .then((response) => {
           response.data.results.forEach((element) => {
             element.date = moment(element.date).format("DD-MM-YYYY");
@@ -62,8 +63,8 @@ const Events = ({ permissions, ...props }) => {
           console.log(e);
         });
     } else {
-      axios
-        .post(API_URL + `/person/event/event_filter/`, filter)
+      axiosApi
+        .post(`/person/event/event_filter/`, filter)
         .then((response) => {
           response.data.forEach((element) => {
             element.date = moment(element.date).format("DD-MM-YYYY");
@@ -83,8 +84,8 @@ const Events = ({ permissions, ...props }) => {
 
   const deleteEvent = async (id) => {
     setLoading(true);
-    axios
-      .delete(API_URL + `/person/event/${id}/`)
+    axiosApi
+      .delete(`/person/event/${id}/`)
       .then((response) => {
         if (response.status === 204) {
           setLoading(false);
