@@ -91,6 +91,7 @@ const MainSider = ({
       assessment_reports: "/assessment/reports",
       ynl_general_dashboard: "/ynl/general-dashboard",
       ynl_personal_dashboard: "/ynl/personal-dashboard",
+      integrationFactors: "/business/integrationFactors"
     };
     router.push(pathRoutes[key]);
   };
@@ -106,6 +107,7 @@ const MainSider = ({
         let children = [
           getItem("Empresas", "business"),
           getItem("Asignar empresa", "asign"),
+          getItem("Factores de integración", "integrationFactors")
         ];
         if (props?.config && props?.config?.nomina_enabled) {
           children.push(getItem("Registros patronales", "patronal"));

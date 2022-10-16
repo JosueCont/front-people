@@ -26,12 +26,8 @@ import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 import TextArea from "antd/lib/input/TextArea";
 import { connect } from "react-redux";
-<<<<<<< HEAD
-import locale from "antd/lib/date-picker/locale/es_ES";
-=======
 import axiosApi from "../../../api/axiosApi";
->>>>>>> aaf5d787aecdd68e4d7910d5ff23b1dc7da4c2bb
-
+import locale from "antd/lib/date-picker/locale/es_ES";
 const { Content } = Layout;
 const { Title } = Typography;
 const { RangePicker } = TimePicker;
