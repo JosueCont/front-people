@@ -17,6 +17,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import Axios from "axios";
+import axiosApi from '../../../api/axiosApi';
 import { API_URL } from "../../../config/config";
 import FormItemHTMLPlace from "../../../components/draft";
 
@@ -99,8 +100,8 @@ const Newrelease = ({ ...props }) => {
     }
     setSending(true);
     try {
-      let response = await Axios.post(
-        API_URL + `/noticenter/notification/`,
+      let response = await axiosApi.post(
+        `/noticenter/notification/`,
         datos,
         { headers: { "content-type": "multipart/form-data" } }
       );

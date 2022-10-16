@@ -25,8 +25,8 @@ import moment from "moment";
 import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 import { connect } from "react-redux";
+import axiosApi from "../../../api/axiosApi";
 import locale from "antd/lib/date-picker/locale/es_ES";
-
 const { Content } = Layout;
 const { Title } = Typography;
 const { RangePicker } = TimePicker;
@@ -67,8 +67,8 @@ const addEvent = (props) => {
   };
 
   const getPersons = async () => {
-    axios
-      .post(API_URL + `/person/person/get_list_persons/`, {
+    axiosApi
+      .post(`/person/person/get_list_persons/`, {
         node: props.currentNode.id,
       })
       .then((response) => {
@@ -83,8 +83,8 @@ const addEvent = (props) => {
   };
 
   const getNodes = async () => {
-    axios
-      .get(API_URL + `/business/node/?id=${props.currentNode.id}`)
+    axiosApi
+      .get(`/business/node/?id=${props.currentNode.id}`)
       .then((response) => {
         let data = response.data.results;
         data = data.map((a) => {
@@ -106,7 +106,7 @@ const addEvent = (props) => {
     datos.description = values.description;
     datos.node = parseInt(props.currentNode.id);
     if (values.guests) datos.guests = values.guests;
-    Axios.post(API_URL + `/person/event/`, datos)
+    axiosApi.post(`/person/event/`, datos)
       .then((response) => {
         message.success("Agregado correctamente");
         router.push("/comunication/events");

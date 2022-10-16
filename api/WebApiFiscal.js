@@ -124,6 +124,14 @@ class WebApiFiscal {
   static FamilyMedicalUnit(data) {
     return WebApi.ApisType(`fiscal/family-medical-unit`, "get");
   }
+
+  static getIntegrationFactors(node) {
+    return WebApi.ApisType(`fiscal/integration-factors-node-config/?node=${node}`, "get")
+  }
+
+  static saveIntegrationFactor(data) {
+    return WebApi.ApisType(`fiscal/integration-factors-node-config/`, 'post', data)
+  }
 }
 
 export default WebApiFiscal;

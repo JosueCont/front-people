@@ -205,6 +205,9 @@ const index = () => {
             max-height: 450px;
             overflow: auto;
           }
+          .ant-form-item-label > label{
+            color:#FFFFFF!important;
+          }
         `}
 
               />
