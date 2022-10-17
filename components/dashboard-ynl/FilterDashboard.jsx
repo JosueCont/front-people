@@ -28,8 +28,9 @@ const FilterDashboard = ({currentNode,
     const [people, setPeople] = useState([]);
     const [groups, setGroups] = useState([]);
     const [optionSelect, setOptionSelect] = useState([]);
+    const [isCompanySelected, setIsCompanySelected] = useState(false);
     const [visibilitySelect, setVisibilitySelect] = useState(true);
-    
+
     useEffect(() => {
         // Initial datepicker filter
         const startOfMonth = moment().clone().startOf('month');
@@ -93,6 +94,7 @@ const FilterDashboard = ({currentNode,
 
     const onChange = (e) => {
         setVisibilitySelect(false);
+        isCompanySelected(false)
         //Borramos los valores del select cuando se cambia de check
         filterModule.setFieldsValue({ valuesSelected: undefined })
         setValue(e.target.value);
@@ -111,6 +113,7 @@ const FilterDashboard = ({currentNode,
                 return { key: item.group_id, value: item.group_id , label: item.group_name }
             })
         }else if(e.target.value === 4){
+            isCompanySelected(true)
             let ynlOptions = {key: 0, value: 0, label: "Todos"}
             let ynlOptionsYNL = {key: 0, value: -1, label: "Sin empresa"}
             if (props?.userInfo?.user?.nodes.length > 0) {
@@ -137,7 +140,7 @@ const FilterDashboard = ({currentNode,
             person_department_id: value == 1 ? dataForm.valuesSelected?? []: [],
             person_employment_id: value == 2 ? dataForm.valuesSelected?? []: [],
             groups: value == 3 ? dataForm.valuesSelected ?? [] : [],
-            companies: value === 4 ? dataForm.valuesSelected ?? [] : []
+            companies: value === 4 ? [dataForm.valuesSelected] ?? [] : []
         }
         console.log("data a consultar",data);
         //Consultas
@@ -195,18 +198,31 @@ const FilterDashboard = ({currentNode,
                     </Space>
                 </Radio.Group>                          
             </Form.Item>
-            <Form.Item name="valuesSelected">
-                <Select
-                    mode="multiple"
-                    allowClear
-                    style={{width: '100%',}}
-                    placeholder="Selecciona"
-                    filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
-                    showSearch
-                    options={optionSelect}
-                    disabled={visibilitySelect}
-                     />
-            </Form.Item>
+            {
+                isCompanySelected ? <Form.Item name="valuesSelected">
+                    <Select
+                        mode="multiple"
+                        allowClear
+                        style={{width: '100%',}}
+                        placeholder="Selecciona"
+                        filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
+                        showSearch
+                        options={optionSelect}
+                        disabled={visibilitySelect}
+                    />
+                </Form.Item>:<Form.Item name="valuesSelected">
+                    <Select
+                        allowClear
+                        style={{width: '100%',}}
+                        placeholder="Selecciona"
+                        filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
+                        showSearch
+                        options={optionSelect}
+                        disabled={visibilitySelect}
+                    />
+                </Form.Item>
+            }
+
             
             <Row>
                 <Col span={12}>
