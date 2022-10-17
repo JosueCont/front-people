@@ -194,6 +194,8 @@ const FilterDashboard = ({currentNode,
                     allowClear
                     style={{width: '100%',}}
                     placeholder="Selecciona"
+                    filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
+                    showSearch
                     options={optionSelect}
                     disabled={visibilitySelect}
                      />
