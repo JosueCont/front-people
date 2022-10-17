@@ -1,5 +1,6 @@
 import {React, useEffect, useState} from 'react'
-import {Avatar, Radio, Space, List, Checkbox, DatePicker, Select, Option} from 'antd'
+import {Avatar, Radio, Space, List, Checkbox, DatePicker, Select, Option, Button, Row, Col} from 'antd'
+import { AppleFilled, AndroidFilled} from "@ant-design/icons";
 import PeopleMostActive from './PeopleMostActive';
 import FilterDashboard from './FilterDashboard';
 import TopPeople from './TopPeople';
@@ -54,6 +55,34 @@ export const SidebarYnl = () => {
                 <h3 className='aligned-to-left subtitles'><b>Personas más activas:</b></h3>
                 <PeopleMostActive />
             </div>
+        </div>
+        <div className='flex-item'>
+            <a href="https://play.google.com/store/apps/details?id=com.hiumanlab.ynl&hl=es_MX">
+                <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer"}} >
+                    <Row className="aligned-to-center">
+                        <Col span={6}>
+                            <AndroidFilled style={{color:"white", fontSize:"30px"}} />
+                        </Col>
+                        <Col span={18}>
+                            <span style={{color:"white"}}>Disponible para Android</span>
+                        </Col>
+                    </Row>
+                </div>
+            </a>
+        </div>
+        <div className='flex-item'>
+            <a href="https://apps.apple.com/mx/app/your-next-level/id1623871887">
+                <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer"}} >
+                    <Row className="aligned-to-center">
+                        <Col span={6}>
+                            <AppleFilled style={{color:"white", fontSize:"30px"}} />
+                        </Col>
+                        <Col span={18}>
+                            <span style={{color:"white"}}>Disponible para Apple</span>
+                        </Col>
+                    </Row>
+                </div>
+            </a> 
         </div>
     </div>
   )

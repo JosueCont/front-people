@@ -205,9 +205,9 @@ const FilterDashboard = ({currentNode,
                 <Col span={12}>
                     <Button htmlType='submit'>Filtrar</Button>
                 </Col>
-                <Col span={12}>
+                {/* <Col span={12}>
                     <Button onClick={resetFilter}><SyncOutlined /></Button>
-                </Col>
+                </Col> */}
             </Row>
         </Form>
 
