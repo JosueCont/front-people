@@ -148,7 +148,13 @@ const FilterDashboard = ({currentNode,
         getEmotionChart(data);
     }
 
-    const resetFilter = () =>{filterModule.resetFields();}
+    const resetFilter = () =>{
+        const startOfMonth = moment().clone().startOf('month');
+        const endOfMonth = moment().clone().endOf('month');
+        filterModule.resetFields();
+        filterModule.setFieldsValue({ filterDate: [startOfMonth, endOfMonth] });
+        filterModule.submit()
+    }
 
     const disabledDate = (current) => { 
         let start = moment().subtract(2,'years').startOf('year');
@@ -177,7 +183,7 @@ const FilterDashboard = ({currentNode,
                 <RangePicker
                     locale={locale}
                     disabledDate={disabledDate}
-                    format={'DD/MM/YYYYY'} />                     
+                    format={'DD/MM/YYYY'} />
             </Form.Item>
             <Form.Item name="OptionSelected">
                 <Radio.Group onChange={onChange} value={value}>
@@ -206,9 +212,9 @@ const FilterDashboard = ({currentNode,
                 <Col span={12}>
                     <Button htmlType='submit'>Filtrar</Button>
                 </Col>
-                {/* <Col span={12}>
-                    <Button onClick={resetFilter}><SyncOutlined /></Button>
-                </Col> */}
+                 <Col span={12}>
+                    <Button onClick={resetFilter}>Limpiar filtro</Button>
+                </Col>
             </Row>
         </Form>
 
