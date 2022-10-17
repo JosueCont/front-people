@@ -136,7 +136,7 @@ const FilterDashboard = ({currentNode,
             person_department_id: value == 1 ? dataForm.valuesSelected?? []: [],
             person_employment_id: value == 2 ? dataForm.valuesSelected?? []: [],
             groups: value == 3 ? dataForm.valuesSelected ?? [] : [],
-            companies: value === 4 ? dataForm.valuesSelected ?? [] : [],
+            companies: value === 4 ? dataForm.valuesSelected ?? [] : []
         }
         console.log("data a consultar",data);
         //Consultas
@@ -184,7 +184,7 @@ const FilterDashboard = ({currentNode,
                         <Radio value={1}>Departamentos</Radio>
                         <Radio value={2}>Puestos</Radio>
                         <Radio value={3}>Grupos</Radio>
-                        <Radio value={4}>Empresas</Radio>
+                        {/*<Radio value={4}>Empresas</Radio>*/}
                     </Space>
                 </Radio.Group>                          
             </Form.Item>
