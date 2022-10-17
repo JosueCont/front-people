@@ -2,6 +2,7 @@ import {React, useEffect, useState} from 'react'
 import { Row, Col, Card, List, Avatar, Modal, Empty, Button} from 'antd'
 import { connect } from "react-redux";
 import moment from 'moment/moment';
+import {API_YNL} from '../../api/axiosApi'
 import { RightOutlined, DownloadOutlined, FileExcelOutlined } from "@ant-design/icons";
 import Axios from "axios";
 
@@ -30,8 +31,10 @@ const PersonalRecord = ({reportPerson, user, dates, ...props}) => {
     }, [reportPerson]);
 
     useEffect(() => {
+        console.log('dates redux',dates)
+      if(dates)
       if(Object.keys(dates).length > 0){
-        let KhId = dates?.khonnect_ids.toString();
+        let KhId = dates?.khonnect_ids ? dates?.khonnect_ids.toString() : "";
         setKhonectId(KhId+"");
         setStartDate(dates?.start_date+"");
         setEndDate(dates?.end_date+"");
@@ -52,7 +55,7 @@ const PersonalRecord = ({reportPerson, user, dates, ...props}) => {
       // console.log("data consulta csv", data);
       try {
         let response = await Axios.post(
-          `https://ynl-api.herokuapp.com/api/feeling-records/emotionsHistoryCsv`,
+          `https://api.ynl.khorplus.com/api/feeling-records/emotionsHistoryCsv`,
           data
         );
         // console.log("respuesta api",response);

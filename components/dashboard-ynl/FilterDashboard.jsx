@@ -111,14 +111,15 @@ const FilterDashboard = ({currentNode,
                 return { key: item.group_id, value: item.group_id , label: item.group_name }
             })
         }else if(e.target.value === 4){
-            let ynlOptions = {key: 0, value: 0, label: "Todo YNL"}
+            let ynlOptions = {key: 0, value: 0, label: "Todos"}
+            let ynlOptionsYNL = {key: 0, value: -1, label: "Sin empresa"}
             if (props?.userInfo?.user?.nodes.length > 0) {
                 results = props?.userInfo?.user?.nodes?.map(item => {
                     if (item.active) {
                         return { key: item.id, value: item.id, label: item.name}
                     }
                 })
-                results = [ynlOptions, ...results]
+                results = [ynlOptions,ynlOptionsYNL, ...results]
             }
         }
         setOptionSelect(results)
