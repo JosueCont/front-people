@@ -110,6 +110,16 @@ const FilterDashboard = ({currentNode,
             results = groups.map(item => {
                 return { key: item.group_id, value: item.group_id , label: item.group_name }
             })
+        }else if(e.target.value === 4){
+            let ynlOptions = {key: 0, value: 0, label: "Todo YNL"}
+            if (props?.userInfo?.user?.nodes.length > 0) {
+                results = props?.userInfo?.user?.nodes?.map(item => {
+                    if (item.active) {
+                        return { key: item.id, value: item.id, label: item.name}
+                    }
+                })
+                results = [ynlOptions, ...results]
+            }
         }
         setOptionSelect(results)
     };
@@ -126,6 +136,7 @@ const FilterDashboard = ({currentNode,
             person_department_id: value == 1 ? dataForm.valuesSelected?? []: [],
             person_employment_id: value == 2 ? dataForm.valuesSelected?? []: [],
             groups: value == 3 ? dataForm.valuesSelected ?? [] : [],
+            companies: value === 4 ? dataForm.valuesSelected ?? [] : []
         }
         console.log("data a consultar",data);
         //Consultas
@@ -173,6 +184,7 @@ const FilterDashboard = ({currentNode,
                         <Radio value={1}>Departamentos</Radio>
                         <Radio value={2}>Puestos</Radio>
                         <Radio value={3}>Grupos</Radio>
+                        {/*<Radio value={4}>Empresas</Radio>*/}
                     </Space>
                 </Radio.Group>                          
             </Form.Item>
@@ -182,6 +194,8 @@ const FilterDashboard = ({currentNode,
                     allowClear
                     style={{width: '100%',}}
                     placeholder="Selecciona"
+                    filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
+                    showSearch
                     options={optionSelect}
                     disabled={visibilitySelect}
                      />
@@ -202,7 +216,8 @@ const FilterDashboard = ({currentNode,
 }
 const mapState = (state) => {
     return {
-      currentNode: state.userStore.current_node,
+        currentNode: state.userStore.current_node,
+        userInfo: state.userStore
     };
 };
   
