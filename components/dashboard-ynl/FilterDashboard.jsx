@@ -112,7 +112,7 @@ const FilterDashboard = ({currentNode,
             })
         }else if(e.target.value === 4){
             let ynlOptions = {key: 0, value: 0, label: "Todos"}
-            let ynlOptionsYNL = {key: 0, value: -1, label: "Sin empresa"}
+            let ynlOptionsYNL = {key: -1, value: -1, label: "Sin empresa"}
             if (props?.userInfo?.user?.nodes.length > 0) {
                 results = props?.userInfo?.user?.nodes?.map(item => {
                     if (item.active) {
@@ -137,7 +137,7 @@ const FilterDashboard = ({currentNode,
             person_department_id: value == 1 ? dataForm.valuesSelected?? []: [],
             person_employment_id: value == 2 ? dataForm.valuesSelected?? []: [],
             groups: value == 3 ? dataForm.valuesSelected ?? [] : [],
-            companies: value === 4 ? dataForm.valuesSelected ?? [] : []
+            companies: value === 4 ? [dataForm.valuesSelected] ?? [] : []
         }
         console.log("data a consultar",data);
         //Consultas
@@ -197,7 +197,7 @@ const FilterDashboard = ({currentNode,
             </Form.Item>
             <Form.Item name="valuesSelected">
                 <Select
-                    mode="multiple"
+                    mode={value === 4 ? "single" : "multiple"}
                     allowClear
                     style={{width: '100%',}}
                     placeholder="Selecciona"
