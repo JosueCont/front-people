@@ -47,7 +47,7 @@ const ynlReducer = (state = initialData, action) => {
     case REPORTPERSON:
       return{ ...state, loadReportPerson:true, reportPerson:action.payload}
     case REPORTPERSON_FINISH:
-      return{ ...state, loadReportPerson:false, reportPerson:action.payload, dates:action.dates}
+      return{ ...state, loadReportPerson:false, reportPerson:action.payload.data, dates:action.payload.dates}
     default:
       return state;
   }
@@ -160,7 +160,7 @@ export const getEmotionChart = (data) =>
     await WebApiYnl.getReportPerson(data)
     .then((response) => {
       console.log("response desde el redux REPORT PERSON", response);
-      dispatch({ type: REPORTPERSON_FINISH, payload: response.data ?? [], dates: dates });
+      dispatch({ type: REPORTPERSON_FINISH, payload: {data: response.data ?? [], dates: dates} });
       return true;
     })
     .catch((error) => {
