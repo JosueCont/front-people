@@ -191,7 +191,7 @@ const FilterDashboard = ({currentNode,
                         <Radio value={1}>Departamentos</Radio>
                         <Radio value={2}>Puestos</Radio>
                         <Radio value={3}>Grupos</Radio>
-                        {/*<Radio value={4}>Empresas</Radio>*/}
+                        <Radio value={4}>Empresas</Radio>
                     </Space>
                 </Radio.Group>                          
             </Form.Item>
