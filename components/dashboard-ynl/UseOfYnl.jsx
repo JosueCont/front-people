@@ -9,9 +9,11 @@ import { connect } from 'react-redux';
 const UseOfYnl = ({ynlStore, ...props}) => {
   const [previuosPeriod, setPreviuosPeriod] = useState(0);
   const [currentPeriod, setCurrentPeriod] = useState(0);
+  const [rangePeriod, setRangePeriod] = useState(0);
   useEffect(() => {
     setPreviuosPeriod(ynlStore.data?.previo);
     setCurrentPeriod(ynlStore.data?.actual);
+    setRangePeriod(ynlStore.data?.total_days);
   }, [ynlStore]);
 
   return (
@@ -21,7 +23,7 @@ const UseOfYnl = ({ynlStore, ...props}) => {
             title="Uso de YNL"
             style={{
                 width: '100%',
-            }}>
+            }}>  
             <Row style={{display:"flex", justifyContent:"space-evenly", alignItems:"center" }} gutter={[16,16]}>
                 <div>
                     <br />
@@ -30,7 +32,7 @@ const UseOfYnl = ({ynlStore, ...props}) => {
                     </Col>
                     <Col lg={12} xs={24}>
                         <div>
-                            <Tooltip title={"El periodo anterior corresponde a la misma cantidad de días del periodo actual, pero, anteriores con respecto a la fecha inicial"}>
+                            <Tooltip title={"El periodo anterior corresponde a la misma cantidad de días del periodo actual, pero anteriores con respecto a la fecha inicial"}>
                                 <div className='container-circle'>
                                     <h1><b>{previuosPeriod}</b></h1>
                                     {previuosPeriod == 1 && <h2>Día</h2>}
@@ -58,9 +60,13 @@ const UseOfYnl = ({ynlStore, ...props}) => {
                     </Col>
                 </div>
             </Row>
+            <Row className='aligned-to-center'>
+                <div>
+                    <h3 className='subtitles' style={{textAlign:"center", fontSize:"13px", marginTop:"8px"}}>Días del periodo de la consulta: {rangePeriod }</h3>
+                </div>
+            </Row>
             <Row style={{display:"flex", justifyContent:"space-evenly", alignItems:"center" }} gutter={[16,16]}>
                 <div>
-                    <br />
                     <Col span={24} style={{paddingLeft:0, paddingRight:0}} >
                         <h3 className='subtitles' style={{textAlign:"center"}}><b>Uso de la app</b></h3>
                     </Col>

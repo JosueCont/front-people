@@ -8,7 +8,10 @@ const PeopleMostActive = ({ynlStore,...props}) => {
     const router = useRouter();
 
     const onDetail=(member)=>{
-        const query = {user_id:member?.khonnect_id};
+        let query = {user_id:member?.khonnect_id};
+        if(member.provider!=='khor'){
+            query = {user_id:member?.id};
+        }
         const url ={ pathname:`/ynl/personal-dashboard`, query  }
         router.push(url,url,query)
     }

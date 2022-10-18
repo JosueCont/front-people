@@ -81,7 +81,7 @@ const Calendar = ({ reportPerson, ...props}) => {
             reportPerson?.data[0]?.per_day?.map(day => {
             /* console.log('day', day)
             console.log('day-format',moment(day.day).add(1, 'day') .format("YYYY-MM-DD")) */
-            if(moment(day.day).add(1, 'day') .format("YYYY-MM-DD") === date){
+            if(moment(day.day).format("YYYY-MM-DD") === date){
                 if(day.last.color){
                     console.log('OK => #', day.last.color, " =>", day.day );
                     color = {backgroundColor: `#${day.last.color}`}
@@ -162,10 +162,10 @@ const Calendar = ({ reportPerson, ...props}) => {
               <div class="cell-day brtl-1">Domingo</div>
               <div class="cell-day">Lunes</div>
               <div class="cell-day">Martes</div>
-              <div class="cell-day">Miercoles</div>
+              <div class="cell-day">Miércoles</div>
               <div class="cell-day">Jueves</div>
               <div class="cell-day">Viernes</div>
-              <div class="cell-day brtr-1">Sabado</div>
+              <div class="cell-day brtr-1">Sábado</div>
           </div>
         {currentInterval.map((day, idx) => {
             return (
