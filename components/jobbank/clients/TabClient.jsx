@@ -1,19 +1,33 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Row, Col, Form, Input, Select, Button} from 'antd';
 import {
     ruleRequired,
     ruleWhiteSpace,
     ruleURL
 } from '../../../utils/rules';
+import { useSelector } from 'react-redux';
 
 const TabClient = () =>{
 
-    const options = [
-        {key: '9c5b2a3edf694717a04ffdda0fca13e7', value: '9c5b2a3edf694717a04ffdda0fca13e7', label: 'Sector 1'},
-        {key: '21bba3f0ae434e84810346f8f52bff24', value: '21bba3f0ae434e84810346f8f52bff24', label: 'Sector 2'},
-        {key: 'fb23dbe189074a0a83c0b10c427c3e1f', value: 'fb23dbe189074a0a83c0b10c427c3e1f', label: 'Sector 3'},
-        {key: '6e641b9e43f34ae4aa1ebd3aab074c70', value: '6e641b9e43f34ae4aa1ebd3aab074c70', label: 'Sector 4'}
-    ]
+    const list_sectors = useSelector(state => state.jobBankStore.list_sectors);
+    const [optionsSectors, setOptionsSectors] = useState([]);
+
+    useEffect(()=>{
+        getOptionsSectors()
+    },[])
+
+    const getOptionsSectors = () =>{
+        if(Object.keys(list_sectors).length <= 0 ) return false;
+        if(list_sectors.results.length <= 0) return false;
+        let options = list_sectors.results.map(item=>{
+            return{
+                value: item.id,
+                key: item.id,
+                label: item.name
+            }
+        })
+        setOptionsSectors(options)
+    }
 
     return (
         <Row gutter={[24,0]} style={{margin: '24px 12px'}}>
@@ -38,7 +52,7 @@ const TabClient = () =>{
                     <Select
                         placeholder={'Seleccione un sector'}
                         notFoundContent={'No se encontraron resultados'}
-                        options={options}
+                        options={optionsSectors}
                     />
                 </Form.Item>
             </Col>

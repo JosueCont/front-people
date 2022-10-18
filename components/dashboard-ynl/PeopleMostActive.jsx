@@ -8,18 +8,31 @@ const PeopleMostActive = ({ynlStore,...props}) => {
     const router = useRouter();
 
     const onDetail=(member)=>{
-        const query = {user_id:member?.khonnect_id};
+        let query = {user_id:member?.khonnect_id};
+        if(member.provider!=='khor'){
+            query = {user_id:member?.id};
+        }
         const url ={ pathname:`/ynl/personal-dashboard`, query  }
         router.push(url,url,query)
     }
 
 
     useEffect(() => {
-        setDataTop(ynlStore);
+        console.log('ynlStore', ynlStore)
+        if(ynlStore){
+            let data = ynlStore.filter((item)=> {
+                    return item!==null
+            })
+            if(data){
+                setDataTop(data);
+            }
+
+        }
+
     }, [ynlStore]); 
   return (
     <>
-        {ynlStore.length > 0 &&(
+        {dataTop &&(
             <List
                 itemLayout="horizontal"
                 dataSource={dataTop}
@@ -31,12 +44,12 @@ const PeopleMostActive = ({ynlStore,...props}) => {
                     hideOnSinglePage: true
                 }}
                 renderItem={(item) => (
-                <List.Item>
+                <List.Item >
                     <List.Item.Meta
                     avatar={<Avatar  src={item.avatar ? item.avatar : "/images/LogoYnl.png"} />}
                     title={
                     <div onClick={()=> onDetail(item)} style={{cursor:"pointer"}}>
-                        <small style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{item.firstName?.toLowerCase()} {item.lastName?.toLowerCase()}</small>
+                        <small style={{marginBottom:0, textAlign:"center", textTransform:"capitalize"}}>{item.firstName?.toLowerCase()} {item.lastName?.toLowerCase()} {(!item?.lastName && !item.firstName) && item.email.toLowerCase()} </small>
                         <br />
                         <small style={{ color:"#FF5E00" , marginBottom:0, textAlign:"center", textTransform:"capitalize"}} >Emociones registradas: <b>{item.total_emotions}</b></small>
                     </div>}

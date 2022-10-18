@@ -111,14 +111,15 @@ const FilterDashboard = ({currentNode,
                 return { key: item.group_id, value: item.group_id , label: item.group_name }
             })
         }else if(e.target.value === 4){
-            let ynlOptions = {key: 0, value: 0, label: "Todo YNL"}
+            let ynlOptions = {key: 0, value: 0, label: "Todos"}
+            let ynlOptionsYNL = {key: -1, value: -1, label: "Sin empresa"}
             if (props?.userInfo?.user?.nodes.length > 0) {
                 results = props?.userInfo?.user?.nodes?.map(item => {
                     if (item.active) {
                         return { key: item.id, value: item.id, label: item.name}
                     }
                 })
-                results = [ynlOptions, ...results]
+                results = [ynlOptions,ynlOptionsYNL, ...results]
             }
         }
         setOptionSelect(results)
@@ -136,7 +137,7 @@ const FilterDashboard = ({currentNode,
             person_department_id: value == 1 ? dataForm.valuesSelected?? []: [],
             person_employment_id: value == 2 ? dataForm.valuesSelected?? []: [],
             groups: value == 3 ? dataForm.valuesSelected ?? [] : [],
-            companies: value === 4 ? dataForm.valuesSelected ?? [] : [],
+            companies: value === 4 ? [dataForm.valuesSelected] ?? [] : []
         }
         console.log("data a consultar",data);
         //Consultas
@@ -147,7 +148,13 @@ const FilterDashboard = ({currentNode,
         getEmotionChart(data);
     }
 
-    const resetFilter = () =>{filterModule.resetFields();}
+    const resetFilter = () =>{
+        const startOfMonth = moment().clone().startOf('month');
+        const endOfMonth = moment().clone().endOf('month');
+        filterModule.resetFields();
+        filterModule.setFieldsValue({ filterDate: [startOfMonth, endOfMonth] });
+        filterModule.submit()
+    }
 
     const disabledDate = (current) => { 
         let start = moment().subtract(2,'years').startOf('year');
@@ -176,7 +183,7 @@ const FilterDashboard = ({currentNode,
                 <RangePicker
                     locale={locale}
                     disabledDate={disabledDate}
-                    format={'DD/MM/YYYYY'} />                     
+                    format={'DD/MM/YYYY'} />
             </Form.Item>
             <Form.Item name="OptionSelected">
                 <Radio.Group onChange={onChange} value={value}>
@@ -190,10 +197,12 @@ const FilterDashboard = ({currentNode,
             </Form.Item>
             <Form.Item name="valuesSelected">
                 <Select
-                    mode="multiple"
+                    mode={value === 4 ? "single" : "multiple"}
                     allowClear
                     style={{width: '100%',}}
                     placeholder="Selecciona"
+                    filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
+                    showSearch
                     options={optionSelect}
                     disabled={visibilitySelect}
                      />
@@ -203,8 +212,8 @@ const FilterDashboard = ({currentNode,
                 <Col span={12}>
                     <Button htmlType='submit'>Filtrar</Button>
                 </Col>
-                <Col span={12}>
-                    <Button onClick={resetFilter}><SyncOutlined /></Button>
+                 <Col span={12}>
+                    <Button onClick={resetFilter}>Limpiar filtro</Button>
                 </Col>
             </Row>
         </Form>

@@ -35,6 +35,7 @@ const ModalClients = ({
 
     const onFinish = (values) =>{
         let dataClient = new FormData();
+        dataClient.append('is_active', true);
         // if(listDocs.length > 0) dataClient.append('documents', listDocs);
         Object.entries(values).map(([key, val])=>{
             if(val) dataClient.append(key, val);

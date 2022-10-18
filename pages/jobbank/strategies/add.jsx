@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { withAuthSync } from '../../../libs/auth';
-import AddOrEditVancancies from '../../../components/jobbank/vacancies/AddOrEditVancancies';
+import AddOrEditStrategies from '../../../components/jobbank/strategies/AddOrEditStrategies';
 
 const add = () => {
 
   const router = useRouter();
 
   useEffect(()=>{
-    router.prefetch('/jobbank/vacancies/edit');
+    router.prefetch('/jobbank/strategies/edit');
   },[])
 
   return (
-    <AddOrEditVancancies action='add'/>
+    <AddOrEditStrategies action='add'/>
   )
 }
 
