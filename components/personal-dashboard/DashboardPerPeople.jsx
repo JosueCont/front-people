@@ -7,7 +7,7 @@ import FilterDashboardPersonal from './FilterDashboardPersonal'
 import Calendar from './Calendar'
 import ListGroups from './ListGroups'
 import { useSelector } from 'react-redux'
-import { SmileOutlined, FrownOutlined } from "@ant-design/icons";
+import { SmileOutlined, FrownOutlined, PlusCircleOutlined, MinusCircleOutlined  } from "@ant-design/icons";
 
 
 export const DashboardPerPeople = () => {
@@ -38,7 +38,15 @@ export const DashboardPerPeople = () => {
                                 src="/images/LogoYnl.png"
                             />
                             <div style={{display:"block"}}>
-                                <h2 style={{color:"#FF5E00", textAlign:"left", marginBottom:"4px", marginLeft:"16px"}}>{reportPerson && reportPerson[0]?.user?.firstName} {reportPerson && reportPerson[0]?.user?.lastName}</h2>
+                                <h2 style={{color:"#FF5E00", textAlign:"center", marginBottom:"4px", marginLeft:"16px"}}>{reportPerson && reportPerson[0]?.user?.firstName} {reportPerson && reportPerson[0]?.user?.lastName}</h2>
+                                <div style={{display:"flex", alignItems:"center", justifyContent:"space-around"}}>
+                                    { reportPerson &&
+                                        <>
+                                            <MinusCircleOutlined style={{fontSize:"20px"}} />
+                                            <PlusCircleOutlined style={{fontSize:"20px"}} />
+                                        </> 
+                                    }   
+                                </div>
                                 <div style={{display:"flex", alignItems:"center", justifyContent:"left"}}>
                                     { reportPerson && reportPerson[0]?.user?.is_happy &&
                                         <SmileOutlined style={{color:'green', fontSize:30, marginLeft:"16px", marginRight:"16px"}} />
