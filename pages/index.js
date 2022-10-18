@@ -8,8 +8,9 @@ import { css, Global } from "@emotion/core";
 import { getRouteFlavor, getFlavor } from "../utils/brand";
 import Cookies from "js-cookie";
 import router from "next/router";
+import Head from "next/head";
 
-const Home = ({ ...props }) => {
+const Home = ({ pageTitle = "KhorPlus", ...props }) => {
   const [recoverPasswordShow, setRecoverPasswordShow] = useState(false);
   const [flavor, setFlavor] = useState({});
   const [routeFlavor, setRouteFlavor] = useState({});
@@ -46,6 +47,9 @@ const Home = ({ ...props }) => {
   }, [props.config]);
   return (
     <>
+      <Head>
+        <title>{pageTitle}</title>
+      </Head>
       <Global
         styles={css`
           :root {
