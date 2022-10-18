@@ -31,7 +31,7 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const TableClients = ({
     list_clients,
-    load_jobbank,
+    load_clients,
     setPage,
     page_jobbank,
     currentNode,
@@ -73,6 +73,7 @@ const TableClients = ({
         let ids = itemsToDelete.map(item=> item.id);
         closeModalDelete();
         try {
+            await WebApiJobBank.deleteClient({ids});
             getClients(currentNode.id);
             // console.log('eliminar is_deleted', ids)
             if(ids.length > 1) message.success('Clientes eliminados');
@@ -165,35 +166,23 @@ const TableClients = ({
     const columns = [
         {
             title: 'Nombre',
-            render: ({name})=>{
-                return(
-                    <span>{name}</span>
-                )
-            }
+            dataIndex: 'name',
+            key: 'name'
         },
         {
             title: 'Contacto',
-            render: ({job_contact}) =>{
-                return(
-                    <span>{job_contact}</span>
-                )
-            }
+            dataIndex: 'job_contact',
+            key: 'job_contact'
         },
         {
             title: 'Correo',
-            render: ({email_contact}) =>{
-                return (
-                    <span>{email_contact}</span>
-                )
-            }
+            dataIndex: 'email_contact',
+            key: 'email_contact'
         },
         {
             title: 'Teléfono',
-            render: ({phone_contact})=>{
-                return (
-                    <span>{phone_contact}</span>
-                )
-            }
+            dataIndex: 'phone_contact',
+            key: 'phone_contact'
         },
         {
             title: 'Activo',
@@ -236,11 +225,11 @@ const TableClients = ({
                 rowKey={'id'}
                 columns={columns}
                 dataSource={list_clients.results}
-                loading={load_jobbank}
+                loading={load_clients}
                 rowSelection={rowSelection}
                 onChange={onChangePage}
                 locale={{
-                    emptyText: load_jobbank
+                    emptyText: load_clients
                         ? 'Cargando...'
                         : 'No se encontraron resultados.',
                 }}
@@ -271,7 +260,7 @@ const TableClients = ({
 const mapState = (state) =>{
     return {
         list_clients: state.jobBankStore.list_clients,
-        load_jobbank: state.jobBankStore.load_jobbank,
+        load_clients: state.jobBankStore.load_clients,
         page_jobbank: state.jobBankStore.page_jobbank,
         currentNode: state.userStore.current_node
     }

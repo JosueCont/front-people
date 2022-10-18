@@ -17,47 +17,45 @@ import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { setLoadJobBank, getInfoVacant } from '../../../redux/jobBankDuck';
+import { setLoadVacancies, getInfoVacant } from '../../../redux/jobBankDuck';
 import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsVacancies = ({
     action,
-    load_jobbank,
-    setLoadJobBank,
+    load_vacancies,
+    setLoadVacancies,
     info_vacant,
     getInfoVacant
 }) => {
 
     const router = useRouter();
-    const [formJobBank] = Form.useForm();
-    const [loading, setLoading] = useState(false);
+    const [formVacancies] = Form.useForm();
     const [showTurns, setShowTurns] = useState(false);
     const [listInterviewers, setListInterviewers] = useState([]);
     const { setValuesForm, createData } = useProcessInfo({
-        formJobBank,
-        info_vacant
+        formVacancies,
+        info_vacant,
+        setListInterviewers,
+        listInterviewers
     });
 
     useEffect(()=>{
         if(Object.keys(info_vacant).length > 0 && action == 'edit'){
-            // console.log('info vacant---->', info_vacant)
             setValuesForm();
             setShowTurns(info_vacant.rotative_turn);
-            const { interviewers } = info_vacant.recruitment_process;
-            if(interviewers?.length > 0) setListInterviewers(interviewers);
         }
     },[info_vacant])
 
+    // Se utiliza la api de crear para actualizar pasándole una id,
+    // de la contratario estaría creando otro registro
     const onFinisUpdate = async (values) =>{
         try {
-            await WebApiJobBank.updateVacant(info_vacant.id, values);
+            await WebApiJobBank.createVacant({...values, id: info_vacant.id});
             message.success('Vacante actualizada');
-            setLoading(false);
             getInfoVacant(info_vacant.id);
         } catch (e) {
             console.log(e)
-            setLoading(false);
-            setLoadJobBank(false);
+            setLoadVacancies(false);
             message.error('Vacante no actualizada');
         }        
     }
@@ -65,39 +63,26 @@ const DetailsVacancies = ({
     const onFinishCreate = async (values) =>{
         try {
             let response = await WebApiJobBank.createVacant(values);
-            message.success('Vancante registrada');
-            setLoading(false);
+            message.success('Vacante registrada');
             router.replace({
                 pathname: '/jobbank/vacancies/edit',
                 query: { id: response.data.id }
             })
         } catch (e) {
             console.log(e)
-            setLoading(false);
-            setLoadJobBank(false);
+            setLoadVacancies(false);
             message.error('Vacante no registrada')
         }
     }
 
-    const onFinish = async (values) => {
-        setLoading(true);
-        setLoadJobBank(true);
-        values.interviewers = listInterviewers;
-        const bodyData = await createData(values);
-        // console.log('info a mandar---->', bodyData)
+    const onFinish = (values) => {
+        setLoadVacancies(true);
+        const bodyData = createData(values);
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
         };
         actionFunction[action](bodyData);
-    }
-
-    const onFailure = (error) =>{
-        console.log('el error-------->', error)
-    }
-
-    const onValuesChange = (values) =>{
-        console.log('value', values)
     }
 
     return (
@@ -120,13 +105,11 @@ const DetailsVacancies = ({
                 <Col span={24}>
                     <Form
                         className='tabs-vacancies'
-                        id='form-job-bank'
+                        id='form-vacancies'
                         layout='vertical'
-                        form={formJobBank}
+                        form={formVacancies}
                         onFinish={onFinish}
-                        // onFinishFailed={onFailure}
                         requiredMark={false}
-                        // onValuesChange={onValuesChange}
                         initialValues={{
                             vo_bo: false,
                             rotative_turn: false,
@@ -135,10 +118,10 @@ const DetailsVacancies = ({
                     >
                         <Tabs type='card'>
                             <Tabs.TabPane
-                                tab={'Características del puesto'}
-                                key={'tab_1'}
+                                tab='Características del puesto'
+                                key='tab_1'
                             >
-                                <Spin spinning={load_jobbank}>
+                                <Spin spinning={load_vacancies}>
                                     <TabFeatures
                                         showTurns={showTurns}
                                         setShowTurns={setShowTurns}
@@ -146,29 +129,29 @@ const DetailsVacancies = ({
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
-                                tab={'Educación, competencias y habilidades'}
+                                tab='Educación, competencias y habilidades'
                                 forceRender
-                                key={'tab_2'}
+                                key='tab_2'
                             >
-                                <Spin spinning={load_jobbank}>
+                                <Spin spinning={load_vacancies}>
                                     <TabEducation/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
-                                tab={'Sueldo de prestaciones'}
+                                tab='Sueldo de prestaciones'
                                 forceRender
-                                key={'tab_3'}
+                                key='tab_3'
                             >
-                                <Spin spinning={load_jobbank}>
+                                <Spin spinning={load_vacancies}>
                                     <TabSalary/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
-                                tab={'Proceso de reclutamiento'}
+                                tab='Proceso de reclutamiento'
                                 forceRender
-                                key={'tab_4'}
+                                key='tab_4'
                             >
-                                <Spin spinning={load_jobbank}>
+                                <Spin spinning={load_vacancies}>
                                     <TabRecruitment
                                         setListInterviewers={setListInterviewers}
                                         listInterviewers={listInterviewers}
@@ -179,13 +162,13 @@ const DetailsVacancies = ({
                     </Form>
                 </Col>
                 <Col span={24} className='tab-vacancies-btns'>
-                    <Button>
+                    {/* <Button>
                         Cancelar
-                    </Button>
+                    </Button> */}
                     <Button
-                        form='form-job-bank'
+                        form='form-vacancies'
                         htmlType='submit'
-                        loading={loading}
+                        loading={load_vacancies}
                     >
                         Guardar
                     </Button>
@@ -197,14 +180,14 @@ const DetailsVacancies = ({
 
 const mapState = (state) =>{
     return{
-        load_jobbank: state.jobBankStore.load_jobbank,
+        load_vacancies: state.jobBankStore.load_vacancies,
         info_vacant: state.jobBankStore.info_vacant
     }
 }
 
 export default connect(
     mapState, {
-        setLoadJobBank,
+        setLoadVacancies,
         getInfoVacant
     }
 )(DetailsVacancies);

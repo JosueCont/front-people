@@ -1,32 +1,54 @@
 import moment from 'moment';
+import { deleteKeyByValue } from '../../../../utils/constant';
 
 export const useProcessInfo = ({
-    formJobBank,
-    info_vacant
+    formVacancies,
+    info_vacant,
+    setListInterviewers,
+    listInterviewers
 }) =>{
 
-    const { setFieldsValue } = formJobBank;
+    const { setFieldsValue } = formVacancies;
 
-    const haveKeys = (obj) => Object.keys(obj).length > 0;
+    const haveProperties = (obj) => Object.keys(obj).length > 0;
 
-    const valuesFeatures = async () =>{
-        let info_obj = {};
-        if(info_vacant.age_range?.length > 0){
-            info_obj['age_min'] = info_vacant.age_range[0];
-            info_obj['age_max'] = info_vacant.age_range[1];
+    const getSubObj = () =>{
+        let features = {...info_vacant};
+        let education = {};
+        let salary = {};
+        let recruitment = {};
+
+        if(info_vacant.education_and_competence){
+            education = Object.assign(info_vacant.education_and_competence);
+            delete features.education_and_competence;
         }
-        if(info_vacant.assignment_date){
-            info_obj['assignment_date'] = moment(info_vacant.assignment_date);
+        if(info_vacant.salary_and_benefits_set){
+            salary = Object.assign(info_vacant.salary_and_benefits_set);
+            delete features.salary_and_benefits_set;
         }
-        return info_obj;
+        if(info_vacant.recruitment_process){
+            recruitment = Object.assign(info_vacant.recruitment_process);
+            delete features.recruitment_process;
+        }
+        return{ features, education, salary, recruitment };
     }
 
-    const valuesEducation = async () =>{
-        const have_info = haveKeys(info_vacant.education_and_competence);
-        if(!have_info) return {};
+    const valuesFeatures = ({features}) =>{
+        let details = {...features};
+        if(details.age_range?.length > 0){
+            details['age_min'] = details.age_range[0];
+            details['age_max'] = details.age_range[1];
+        }
+        if(details.assignment_date){
+            details['assignment_date'] = moment(details.assignment_date);
+        }
+        return details;
+    }
 
-        const { education_and_competence } = info_vacant;
-        let info_obj = {...education_and_competence};
+    const valuesEducation = ({education}) =>{
+        const have_info = haveProperties(education);
+        if(!have_info) return {};
+        let details = {...education};
         const {
             main_category,
             sub_category,
@@ -35,50 +57,54 @@ export const useProcessInfo = ({
             languajes,
             experiences,
             technical_skills
-        } = education_and_competence;
+        } = details;
 
-        if(main_category && Object.keys(main_category).length > 0) info_obj['main_category'] = main_category.id;
-        if(sub_category && Object.keys(sub_category).length > 0) info_obj['sub_category'] = sub_category.id;
-        if(academics_degree?.length > 0) info_obj['academics_degree'] = academics_degree.at(-1).id;
-        if(competences?.length > 0) info_obj['competences'] = competences.map(item=> item.id);
-        if(languajes?.length > 0) info_obj['languajes'] = languajes.map(item => item.lang);
-        if(experiences?.length > 0) info_obj['experiences'] = experiences.join(',\n');
-        if(experiences?.length <= 0) info_obj['experiences'] = null;
-        if(technical_skills?.length > 0) info_obj['technical_skills'] = technical_skills.join(',\n');
-        if(technical_skills?.length <= 0) info_obj['technical_skills'] = null;
-
-        return info_obj;
+        if(main_category && Object.keys(main_category).length > 0) details['main_category'] = main_category.id;
+        if(sub_category && Object.keys(sub_category).length > 0) details['sub_category'] = sub_category.id;
+        if(academics_degree?.length > 0) details['academics_degree'] = academics_degree.at(-1).id;
+        if(competences?.length > 0) details['competences'] = competences.map(item=> item.id);
+        if(languajes?.length > 0) details['languajes'] = languajes.map(item => item.lang);
+        if(experiences?.length > 0) details['experiences'] = experiences.join(',\n');
+        if(technical_skills?.length > 0) details['technical_skills'] = technical_skills.join(',\n');
+        
+        delete details.id;
+        return details;
     }
 
-    const valuesSalary = async () =>{
-        const have_info = haveKeys(info_vacant.salary_and_benefits_set);
+    const valuesSalary = ({salary}) =>{
+        const have_info = haveProperties(salary);
         if(!have_info) return {};
-        return info_vacant.salary_and_benefits_set
+        delete salary.id;
+        return salary;
     }
 
-    const valuesRecruitment = () =>{
-        const have_info = haveKeys(info_vacant.recruitment_process);
+    const valuesRecruitment = ({recruitment}) => {
+        const have_info = haveProperties(recruitment);
         if(!have_info) return {};
-        return info_vacant.recruitment_process
+        const { interviewers } = recruitment;
+        if(interviewers?.length > 0) setListInterviewers(interviewers);
+        delete recruitment.id;
+        return recruitment;
     }
 
     const setValuesForm = async () =>{
-        let info_features = await valuesFeatures();
-        let info_education = await valuesEducation();
-        let info_salary = await valuesSalary();
-        let info_recruitment = await valuesRecruitment();
-        
-        setFieldsValue({
-            ...info_vacant,
+        let vacant = getSubObj();
+        let info_features = valuesFeatures(vacant);
+        let info_education = valuesEducation(vacant);
+        let info_salary = valuesSalary(vacant);
+        let info_recruitment = valuesRecruitment(vacant);
+        let all_info = deleteKeyByValue({
             ...info_features,
             ...info_education,
             ...info_salary,
             ...info_recruitment
         });
+        setFieldsValue(all_info);
     }
 
-    const createData = async (obj) =>{
-        let info = Object.assign(obj);
+    const createData = (obj) =>{
+        let info = deleteKeyByValue(obj);
+
         if(info.assignment_date){
             let formatDate = info.assignment_date.format('YYYY-MM-DD');
             info.assignment_date = formatDate;
@@ -92,7 +118,7 @@ export const useProcessInfo = ({
         if(info.academics_degree) info.academics_degree = [info.academics_degree];
         if(info.experiences) info.experiences = info.experiences.split(',');
         if(info.technical_skills) info.technical_skills = info.technical_skills.split(',');
-        if(info.interviewers?.length <= 0) info.interviewers = undefined;
+        if(listInterviewers.length > 0) info.interviewers = listInterviewers;
 
         return info;
     }

@@ -18,6 +18,12 @@ import {
   ruleMaxAge
 } from '../../../utils/rules';
 import { validateNum } from '../../../utils/functions';
+import {
+  optionsSubproduct,
+  optionsTypeJob,
+  optionsTypeContract,
+  optionsGenders
+} from '../../../utils/constant';
 
 const TabFeatures = ({
   showTurns,
@@ -32,31 +38,6 @@ const TabFeatures = ({
     textAlign: 'center',
     background: '#ffff'
   }
-
-  const optionsSubproduct = [
-    {value: 1, key: 1, label: 'Ejecutivo'},
-    {value: 2, key: 2, label: 'Gerencial'},
-    {value: 3, key: 3, label: 'Operativo'},
-    {value: 4, key: 4, label: 'Sourcing'}
-  ]
-
-  const optionsTypeJob = [
-    {value: 1, key: 1, label: 'Presencial'},
-    {value: 2, key: 2, label: 'Hibrido'},
-    {value: 3, key: 3, label: 'Desde casa'}
-  ]
-
-  const optionsTypeContract = [
-    {value: 1, key: 1, label: 'Presencial'},
-    {value: 2, key: 2, label: 'Hibrido'},
-    {value: 3, key: 3, label: 'Desde casa'}
-  ]
-
-  const optionsGenders = [
-    {value: 1, key: 1, label: 'Masculino'},
-    {value: 2, key: 2, label: 'Femenino'},
-    {value: 3, key: 3, label: 'Otro'}
-  ]
   
   const ruleRangeAge = ({getFieldValue}, type) => ({
     validator(_, value){
@@ -139,10 +120,10 @@ const TabFeatures = ({
       <Col span={8}>
         <Form.Item
           name='job_position'
-          label='Nombre del puesto'
+          label='Nombre de la vacante'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='Nombre del puesto'/>
+          <Input placeholder='Nombre de la vacante'/>
         </Form.Item>
       </Col>
       <Col span={8}>

@@ -318,6 +318,11 @@
     align-items: center;
 }
 
+.title-action-border{
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
 .tabs-vacancies > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
     padding-top: 24px;
     border-top: 3px solid #f0f0f0;

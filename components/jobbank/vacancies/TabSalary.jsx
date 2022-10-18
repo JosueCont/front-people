@@ -12,16 +12,9 @@ import {
   ruleRequired,
   ruleWhiteSpace
 } from '../../../utils/rules';
+import { optionsPaymentPeriod } from '../../../utils/constant';
 
 const TabSalary = () => {
-
-  const optionsPeriod = [
-    {value: 1, key: 1, label: 'Diario'},
-    {value: 2, key: 2, label: 'Semanal'},
-    {value: 3, key: 3, label: 'Quincenal'},
-    {value: 4, key: 4, label: 'Mensual'},
-  ]
-
   return (
     <Row gutter={[24,0]}>
       <Col span={8}>
@@ -44,7 +37,7 @@ const TabSalary = () => {
           <Select
             placeholder='Periodo de pago'
             notFoundContent='No se encontraron resultados'
-            options={optionsPeriod}
+            options={optionsPaymentPeriod}
           />
         </Form.Item>
       </Col>

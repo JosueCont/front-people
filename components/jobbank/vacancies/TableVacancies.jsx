@@ -21,15 +21,17 @@ import {
   EyeInvisibleOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import { getVacancies } from '../../../redux/jobBankDuck';
+import { getVacancies, setPage } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import DeleteVacancies from './DeleteVacancies';
 
 const TableVacancies = ({
-  load_jobbank,
+  load_vacancies,
+  page_jobbank,
   list_vacancies,
   getVacancies,
+  setPage,
   currentNode
 }) => {
 
@@ -72,6 +74,16 @@ const TableVacancies = ({
     setOpenModalDelete(false)
     setItemsKeys([])
     setItemsToDelete([])
+  }
+
+  const onChangePage = ({current}) =>{
+    setPage(current)
+    if (current == 1) getVacancies(currentNode?.id);
+    if (current > 1) {
+      const offset = (current - 1) * 10;
+      const queryParam = `&limit=10&offset=${offset}`;
+      getVacancies(currentNode?.id, queryParam, current)
+    } 
   }
 
   const rowSelection = {
@@ -123,19 +135,13 @@ const TableVacancies = ({
   const columns = [
     {
       title: 'Nombre',
-      render: ({job_position})=>{
-        return(
-          <span>{job_position}</span>
-        )
-      }
+      dataIndex: 'job_position',
+      key: 'job_position'
     },
     {
       title: 'Descripción',
-      render: ({description}) =>{
-        return(
-          <span>{description}</span>
-        )
-      }
+      dataIndex: 'description',
+      key: 'description'
     },
     {
       title: ()=> {
@@ -165,12 +171,19 @@ const TableVacancies = ({
         size='small'
         rowKey='id'
         columns={columns}
-        loading={load_jobbank}
+        loading={load_vacancies}
         rowSelection={rowSelection}
+        onChange={onChangePage}
         dataSource={list_vacancies.results}
-        locale={{ emptyText: load_jobbank
+        locale={{ emptyText: load_vacancies
           ? 'Cargando...'
           : 'No se encontraron resultados'
+        }}
+        pagination={{
+          total: list_vacancies.count,
+          current: page_jobbank,
+          hideOnSinglePage: true,
+          showSizeChanger: false
         }}
       />
       <DeleteVacancies
@@ -186,13 +199,15 @@ const TableVacancies = ({
 const mapState = (state) =>{
   return{
     list_vacancies: state.jobBankStore.list_vacancies,
-    load_jobbank: state.jobBankStore.load_jobbank,
+    load_vacancies: state.jobBankStore.load_vacancies,
+    page_jobbank: state.jobBankStore.page_jobbank,
     currentNode: state.userStore.current_node
   }
 }
 
 export default connect(
   mapState, {
-    getVacancies
+    getVacancies,
+    setPage
   }
 )(TableVacancies);

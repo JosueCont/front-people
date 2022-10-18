@@ -11,6 +11,11 @@ import {
   ruleRequired,
   ruleWhiteSpace
 } from '../../../utils/rules';
+import {
+  optionsLevelAcademic,
+  optionsStatusVacant,
+  optionsLangVacant
+} from '../../../utils/constant';
 
 const TabEducation = () => {
 
@@ -20,30 +25,6 @@ const TabEducation = () => {
     list_main_categories,
     list_sub_categories
   } = useSelector(state => state.jobBankStore);
-
-  const optionsLevel = [
-    {value: 1, key: 1, label: 'Primaria'},
-    {value: 2, key: 2, label: 'Secundaria'},
-    {value: 3, key: 3, label: 'Bachillerato'},
-    {value: 4, key: 4, label: 'Bachillerato tecnológico'},
-    {value: 5, key: 5, label: 'Licenciatura'},
-    {value: 6, key: 6, label: 'Especialidad'},
-    {value: 7, key: 7, label: 'Maestría'},
-    {value: 8, key: 8, label: 'Doctorado'},
-  ]
-
-  const optionsStatus = [
-    {value: 1, key: 1, label: 'Activa'},
-    {value: 2, key: 2, label: 'Cancelada'},
-    {value: 3, key: 3, label: 'Standby'},
-    {value: 4, key: 4, label: 'Cubierta'},
-  ]
-
-  const optionsLang = [
-    {value: 1, key: 1, label: 'Inglés'},
-    {value: 2, key: 2, label: 'Francés'},
-    {value: 3, key: 3, label: 'Italiano'},
-  ]
 
   return (
     <Row gutter={[24,0]}>
@@ -91,7 +72,7 @@ const TabEducation = () => {
           <Select
             placeholder='Último grado de estudios'
             notFoundContent='No se encontraron resultados'
-            options={optionsLevel}
+            options={optionsLevelAcademic}
           />
         </Form.Item>
       </Col>
@@ -103,7 +84,7 @@ const TabEducation = () => {
           <Select
             placeholder='Estatus'
             notFoundContent='No se encontraron resultados'
-            options={optionsStatus}
+            options={optionsStatusVacant}
           />
         </Form.Item>
       </Col>
@@ -138,6 +119,7 @@ const TabEducation = () => {
         >
           <Select
             mode='multiple'
+            maxTagCount={2}
             placeholder='Competencias requeridas'
             notFoundContent='No se encontraron resultados'
           >
@@ -157,9 +139,10 @@ const TabEducation = () => {
         >
           <Select
             mode='multiple'
+            maxTagCount={2}
             placeholder='Idiomas'
             notFoundContent='No se encontraron resultados'
-            options={optionsLang}
+            options={optionsLangVacant}
           />
         </Form.Item>
       </Col>
