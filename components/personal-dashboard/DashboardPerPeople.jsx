@@ -38,7 +38,12 @@ export const DashboardPerPeople = () => {
                                 src="/images/LogoYnl.png"
                             />
                             <div style={{display:"block"}}>
-                                <h2 style={{color:"#FF5E00", textAlign:"center", marginBottom:"4px", marginLeft:"16px"}}>{(reportPerson && reportPerson[0]?.user?.firstName && reportPerson[0]?.user?.lastName) ? reportPerson[0]?.user?.firstName + " " + reportPerson[0]?.user?.lastName : reportPerson[0]?.user?.email}</h2>
+                                {reportPerson &&
+                                    <h2 style={{color:"#FF5E00", textAlign:"center", marginBottom:"4px", marginLeft:"16px"}}>
+                                        {(reportPerson[0]?.user?.firstName && reportPerson[0]?.user?.lastName) ?
+                                        `${reportPerson[0]?.user?.firstName} ${reportPerson[0]?.user?.lastName}` : reportPerson[0]?.user?.email}
+                                    </h2>
+                                }
                                 <div style={{display:"flex", alignItems:"center", justifyContent:"left"}}>
                                     { reportPerson && reportPerson[0]?.user?.is_happy &&
                                         <SmileOutlined style={{color:'green', fontSize:30, marginLeft:"16px", marginRight:"16px"}} />
