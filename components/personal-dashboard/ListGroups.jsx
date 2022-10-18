@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, List, Card, Row, Col, Modal, Progress,Space, Empty, Tooltip } from 'antd';
 import { CloseOutlined, PeopleOutlineOutlined} from "@material-ui/icons";
-import { EyeOutlined,FundViewOutlined, PlusOutlined,MinusOutlined, SmileOutlined, FrownOutlined, UserOutlined } from "@ant-design/icons";
+import { EyeOutlined,FundViewOutlined, PlusOutlined,MinusOutlined, SmileOutlined, FrownOutlined, UserOutlined, PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { useSelector } from 'react-redux'
 import { useRouter } from "next/router";
 
@@ -92,6 +92,10 @@ const ListGroups = () => {
                                         '60%': '#50c10f',
                                     }}
                                     percent={Math.round(item?.value)} />
+                                <div style={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
+                                    <MinusCircleOutlined style={{fontSize:"20px"}} />
+                                    <PlusCircleOutlined style={{fontSize:"20px", paddingRight:"36px"}}/>
+                                </div>
 
                             </>}
 
