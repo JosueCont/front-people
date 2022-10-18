@@ -42,7 +42,7 @@ const ListGroups = () => {
             <Col span={24} className='content-feeling-scroll scroll-bar'>
                 <List
                     itemLayout="horizontal"
-                    locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se registraron emociones" />}}
+                    locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="El usuario no es parte de un grupo" />}}
                     dataSource={reportPerson?.data && (reportPerson?.data[0]?.groups?reportPerson?.data[0]?.groups:[])}
                     renderItem={(item, index) =>(
                         <List.Item 
