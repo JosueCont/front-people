@@ -9,7 +9,7 @@ const TopPeople = ({ynlStore,...props}) => {
     }, [ynlStore]); 
   return (
     <>
-        {ynlStore.length > 0 &&(
+        {dataTop &&(
             <List
                 itemLayout="horizontal"
                 dataSource={dataTop}
@@ -21,7 +21,7 @@ const TopPeople = ({ynlStore,...props}) => {
                     hideOnSinglePage: true
                 }}
                 renderItem={(item) => (
-                <List.Item>
+                <List.Item key={item.avatar}>
                     <List.Item.Meta
                     avatar={<Avatar  src={item.avatar ? item.avatar : "/images/LogoYnl.png"} />}
                     title={
@@ -49,7 +49,7 @@ const TopPeople = ({ynlStore,...props}) => {
 
 const mapState = (state) =>{
     return {
-        ynlStore: state.ynlStore.topPersons
+        ynlStore: state.ynlStore?.topPersons
     }
 };
 export default connect(mapState)(TopPeople);
