@@ -7,7 +7,7 @@ import moment from 'moment/moment';
 import 'moment/locale/es';
 import { format } from 'path';
 import { now } from 'lodash';
-import {FaGooglePlay, FaAppStoreIos} from "react-icons/fa";
+import {FaGooglePlay, FaApple} from "react-icons/fa";
 
 
 export const SidebarYnl = () => {
@@ -58,10 +58,10 @@ export const SidebarYnl = () => {
         </div>
         <div className='flex-item'>
             <a href="https://play.google.com/store/apps/details?id=com.hiumanlab.ynl&hl=es_MX">
-                <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer"}} >
+                <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer", height:"70px"}} >
                     <Row className="aligned-to-center">
                         <Col span={6}>
-                            <FaGooglePlay style={{color:"white", fontSize:"30px"}} />
+                            <FaGooglePlay style={{color:"white", fontSize:"35px", marginTop:"5px"}} />
                         </Col>
                         <Col span={18}>
                             <span style={{color:"white"}}>Disponible en <br /> Google Play</span>
@@ -72,10 +72,10 @@ export const SidebarYnl = () => {
         </div>
         <div className='flex-item'>
             <a href="https://apps.apple.com/mx/app/your-next-level/id1623871887">
-                <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer"}} >
+                <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer", height:"70px"}} >
                     <Row className="aligned-to-center">
                         <Col span={6}>
-                            <FaAppStoreIos style={{color:"white", fontSize:"30px"}} />
+                            <FaApple style={{color:"white", fontSize:"45px"}} />
                         </Col>
                         <Col span={18}>
                             <span style={{color:"white"}}>Disponible en <br /> App Store</span>
