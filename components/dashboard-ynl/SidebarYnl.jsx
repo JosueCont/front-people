@@ -1,6 +1,6 @@
 import {React, useEffect, useState} from 'react'
 import {Avatar, Radio, Space, List, Checkbox, DatePicker, Select, Option, Button, Row, Col} from 'antd'
-import { AppleFilled, AndroidFilled} from "@ant-design/icons";
+import {AppleFilled, AndroidFilled, AppstoreOutlined} from "@ant-design/icons";
 import PeopleMostActive from './PeopleMostActive';
 import FilterDashboard from './FilterDashboard';
 import TopPeople from './TopPeople';
@@ -8,6 +8,7 @@ import moment from 'moment/moment';
 import 'moment/locale/es';
 import { format } from 'path';
 import { now } from 'lodash';
+import {FaAppStoreIos, FaGooglePlay} from "react-icons/all";
 
 
 export const SidebarYnl = () => {
@@ -61,10 +62,10 @@ export const SidebarYnl = () => {
                 <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer"}} >
                     <Row className="aligned-to-center">
                         <Col span={6}>
-                            <AndroidFilled style={{color:"white", fontSize:"30px"}} />
+                            <FaGooglePlay style={{color:"white", fontSize:"30px"}} />
                         </Col>
                         <Col span={18}>
-                            <span style={{color:"white"}}>Disponible para Android</span>
+                            <span style={{color:"white"}}>Disponible en <br /> Google Play</span>
                         </Col>
                     </Row>
                 </div>
@@ -75,10 +76,10 @@ export const SidebarYnl = () => {
                 <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer"}} >
                     <Row className="aligned-to-center">
                         <Col span={6}>
-                            <AppleFilled style={{color:"white", fontSize:"30px"}} />
+                            <FaAppStoreIos style={{color:"white", fontSize:"30px"}} />
                         </Col>
                         <Col span={18}>
-                            <span style={{color:"white"}}>Disponible para Apple</span>
+                            <span style={{color:"white"}}>Disponible en <br /> App Store</span>
                         </Col>
                     </Row>
                 </div>
