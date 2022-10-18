@@ -22,7 +22,7 @@ const MainLayout = ({
   hideSearch,
   hideLogo = false,
   nómina = false,
-    pageTitle = "KhorPlus",
+    pageTitle = "KHOR Plus",
   ...props
 }) => {
   const { Title } = Typography;

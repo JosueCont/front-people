@@ -10,7 +10,7 @@ import Cookies from "js-cookie";
 import router from "next/router";
 import Head from "next/head";
 
-const Home = ({ pageTitle = "KhorPlus", ...props }) => {
+const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
   const [recoverPasswordShow, setRecoverPasswordShow] = useState(false);
   const [flavor, setFlavor] = useState({});
   const [routeFlavor, setRouteFlavor] = useState({});
