@@ -20,9 +20,13 @@ const PeopleMostActive = ({ynlStore,...props}) => {
     useEffect(() => {
         console.log('ynlStore', ynlStore)
         if(ynlStore){
-            let data = ynlStore.map((item)=> item!==null && item)
-            if(data)
+            let data = ynlStore.filter((item)=> {
+                    return item!==null
+            })
+            if(data){
                 setDataTop(data);
+            }
+
         }
 
     }, [ynlStore]); 
