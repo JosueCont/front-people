@@ -55,7 +55,7 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
             //Armamos array para llenar el select
             let results = persons.map((item)=>{
                 console.log('item', item.provider, item )
-                return { key: item.id, value: item.khonnect_id?item.khonnect_id:item.id.toString(), label: `${item.provider}  ${(item.firstName !=='' && item.firstName !==null)?item.firstName:'' } ${(item.lastName !=='' && item.lastName !==null)?`${item.lastName} / `:''}  ${item.email}` }
+                return { key: item.id, value: item.khonnect_id?item.khonnect_id:item.id.toString(), label: `${(item.firstName !=='' && item.firstName !==null)?item.firstName:'' } ${(item.lastName !=='' && item.lastName !==null)?`${item.lastName} / `:''}  ${item.email}` }
             })
             console.log('results====',results)
             setDataPersons(results);
