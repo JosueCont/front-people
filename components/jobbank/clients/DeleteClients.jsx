@@ -54,7 +54,7 @@ const DeleteClients = ({
                     }}
                 >
                     <Button onClick={()=> close()}>
-                        Cerrar
+                        No
                     </Button>
                     <Button
                         loading={loading}
