@@ -377,6 +377,77 @@ export const CalculationEmploymentSubsidy = [
   { value: 2, label: "Mensual" },
 ];
 
+export const optionsSubproduct = [
+  {value: 1, key: 1, label: 'Ejecutivo'},
+  {value: 2, key: 2, label: 'Gerencial'},
+  {value: 3, key: 3, label: 'Operativo'},
+  {value: 4, key: 4, label: 'Sourcing'}
+];
+
+export const optionsTypeJob = [
+  {value: 1, key: 1, label: 'Presencial'},
+  {value: 2, key: 2, label: 'Hibrido'},
+  {value: 3, key: 3, label: 'Desde casa'}
+];
+
+export const optionsTypeContract = [
+  {value: 1, key: 1, label: 'Presencial'},
+  {value: 2, key: 2, label: 'Hibrido'},
+  {value: 3, key: 3, label: 'Desde casa'}
+];
+
+export const optionsGenders = [
+  {value: 1, key: 1, label: 'Masculino'},
+  {value: 2, key: 2, label: 'Femenino'},
+  {value: 3, key: 3, label: 'Otro'}
+];
+
+export const optionsLevelAcademic = [
+  {value: 1, key: 1, label: 'Primaria'},
+  {value: 2, key: 2, label: 'Secundaria'},
+  {value: 3, key: 3, label: 'Bachillerato'},
+  {value: 4, key: 4, label: 'Bachillerato tecnológico'},
+  {value: 5, key: 5, label: 'Licenciatura'},
+  {value: 6, key: 6, label: 'Especialidad'},
+  {value: 7, key: 7, label: 'Maestría'},
+  {value: 8, key: 8, label: 'Doctorado'},
+];
+
+export const optionsStatusVacant = [
+  {value: 1, key: 1, label: 'Activa'},
+  {value: 2, key: 2, label: 'Cancelada'},
+  {value: 3, key: 3, label: 'Standby'},
+  {value: 4, key: 4, label: 'Cubierta'},
+];
+
+export const optionsLangVacant= [
+  {value: 1, key: 1, label: 'Inglés'},
+  {value: 2, key: 2, label: 'Francés'},
+  {value: 3, key: 3, label: 'Italiano'},
+];
+
+export const optionsPaymentPeriod = [
+  {value: 1, key: 1, label: 'Diario'},
+  {value: 2, key: 2, label: 'Semanal'},
+  {value: 3, key: 3, label: 'Quincenal'},
+  {value: 4, key: 4, label: 'Mensual'},
+];
+
+export const optionsTypeSale = [
+  {value: 1, key: 1, label: 'Cliente activo recurrente'},
+  {value: 2, key: 2, label: 'Croselling'},
+  {value: 3, key: 3, label: 'Upselling'},
+];
+
+export const optionsJobBank = [
+  {value: 1, key: 1, label: 'Computrabajo'},
+  {value: 2, key: 2, label: 'OCC'},
+  {value: 3, key: 3, label: 'Universidades'},
+  {value: 4, key: 4, label: 'Indeed'},
+  {value: 5, key: 5, label: 'Talenteca'},
+  {value: 6, key: 6, label: 'HEX'}
+]
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
@@ -422,3 +493,12 @@ export const getHost = () => {
     return "";
   }
 };
+
+export const deleteKeyByValue = (obj) =>{
+  let new_obj = {...obj};
+  Object.entries(obj).map(([key, val]) =>{
+      if(!val) delete new_obj[key];
+      if(Array.isArray(val) && val.length <= 0) delete new_obj[key];
+  });
+  return new_obj;
+}
