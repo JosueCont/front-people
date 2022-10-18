@@ -25,7 +25,10 @@ const ListGroups = () => {
     };
 
     const onDetail=(member)=>{
-        const query = {user_id:member?.khonnect_id};
+        let query = {user_id:member?.khonnect_id};
+        if(!member?.khonnect_id){
+            query = {user_id:member?.user_id};
+        }
         const url ={ pathname:`/ynl/personal-dashboard`, query  }
         router.push(url,url,query)
         setIsOpenModal(false)
@@ -42,7 +45,7 @@ const ListGroups = () => {
             <Col span={24} className='content-feeling-scroll scroll-bar'>
                 <List
                     itemLayout="horizontal"
-                    locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se registraron emociones" />}}
+                    locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="El usuario no es parte de un grupo" />}}
                     dataSource={reportPerson?.data && (reportPerson?.data[0]?.groups?reportPerson?.data[0]?.groups:[])}
                     renderItem={(item, index) =>(
                         <List.Item 
@@ -74,7 +77,7 @@ const ListGroups = () => {
                         >
                             <List.Item.Meta
                             avatar={item?.is_happy ? <SmileOutlined style={{color:'green', fontSize:40}} /> :<FrownOutlined style={{color:'red',fontSize:40}}/>}
-                            title={<><span>{item?.fullName}</span>
+                            title={<><span>{(item?.fullName && item.fullName!=='null null') &&  item.fullName}</span>
                                 <br/>
                                 <small>{item.username}</small>
                                 <Progress
