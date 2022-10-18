@@ -40,7 +40,7 @@ export const DashboardPerPeople = () => {
                             <div style={{display:"block"}}>
                                 {reportPerson &&
                                     <h2 style={{color:"#FF5E00", textAlign:"center", marginBottom:"4px", marginLeft:"16px"}}>
-                                        {(reportPerson[0]?.user?.firstName && reportPerson[0]?.user?.lastName) ?
+                                        {(reportPerson[0]?.user?.firstName || reportPerson[0]?.user?.lastName) ?
                                         `${reportPerson[0]?.user?.firstName} ${reportPerson[0]?.user?.lastName}` : reportPerson[0]?.user?.email}
                                     </h2>
                                 }
