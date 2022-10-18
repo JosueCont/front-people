@@ -18,11 +18,17 @@ const PeopleMostActive = ({ynlStore,...props}) => {
 
 
     useEffect(() => {
-        setDataTop(ynlStore);
+        console.log('ynlStore', ynlStore)
+        if(ynlStore){
+            let data = ynlStore.map((item)=> item!==null && item)
+            if(data)
+                setDataTop(data);
+        }
+
     }, [ynlStore]); 
   return (
     <>
-        {ynlStore.length > 0 &&(
+        {dataTop &&(
             <List
                 itemLayout="horizontal"
                 dataSource={dataTop}
@@ -34,7 +40,7 @@ const PeopleMostActive = ({ynlStore,...props}) => {
                     hideOnSinglePage: true
                 }}
                 renderItem={(item) => (
-                <List.Item>
+                <List.Item >
                     <List.Item.Meta
                     avatar={<Avatar  src={item.avatar ? item.avatar : "/images/LogoYnl.png"} />}
                     title={
