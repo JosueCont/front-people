@@ -77,7 +77,7 @@ const ListGroups = () => {
                         >
                             <List.Item.Meta
                             avatar={item?.is_happy ? <SmileOutlined style={{color:'green', fontSize:40}} /> :<FrownOutlined style={{color:'red',fontSize:40}}/>}
-                            title={<><span>{item?.fullName}</span>
+                            title={<><span>{(item?.fullName && item.fullName!=='null null') &&  item.fullName}</span>
                                 <br/>
                                 <small>{item.username}</small>
                                 <Progress
