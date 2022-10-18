@@ -129,8 +129,20 @@ class WebApiFiscal {
     return WebApi.ApisType(`fiscal/integration-factors-node-config/?node=${node}`, "get")
   }
 
+  static getSpecificIntegratorFactor(id) {
+    return WebApi.ApisType(`fiscal/integration-factors-node-config/${id}`, "get")
+  }
+
   static saveIntegrationFactor(data) {
     return WebApi.ApisType(`fiscal/integration-factors-node-config/`, 'post', data)
+  }
+
+  static updateIntegratorFactor(data, id) {
+    return WebApi.ApisType(`fiscal/integration-factors-node-config/${id}`, 'patch', data)
+  }
+
+  static downloadIntegrationFactor(id) {
+    return WebApi.ApisType(`fiscal/integration-factors-report?integration_factor_id=${id}`, "get")
   }
 }
 

@@ -10,6 +10,7 @@ import {
   Tooltip,
   Modal,
   Alert,
+  Space,
 } from "antd";
 import {
   EditOutlined,
@@ -85,7 +86,19 @@ const integrationFactorsIndex = ({ ...props }) =>{
       title: 'Acciones',
       render: (item) => (
         <div>
-          Acciones
+          <Space>
+            <EditOutlined 
+              style={{ cursor: 'pointer' }}
+              onClick = { () => {
+                route.push({
+                  pathname: "/business/integrationFactors/add",
+                  query: {
+                    id: item.id
+                  }
+                })
+              }}
+            />
+          </Space>
         </div>
       )
     }
