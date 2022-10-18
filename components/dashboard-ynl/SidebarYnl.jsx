@@ -1,6 +1,5 @@
 import {React, useEffect, useState} from 'react'
 import {Avatar, Radio, Space, List, Checkbox, DatePicker, Select, Option, Button, Row, Col} from 'antd'
-import {AppleFilled, AndroidFilled, AppstoreOutlined} from "@ant-design/icons";
 import PeopleMostActive from './PeopleMostActive';
 import FilterDashboard from './FilterDashboard';
 import TopPeople from './TopPeople';
@@ -8,7 +7,7 @@ import moment from 'moment/moment';
 import 'moment/locale/es';
 import { format } from 'path';
 import { now } from 'lodash';
-import {FaAppStoreIos, FaGooglePlay} from "react-icons/all";
+import {FaGooglePlay, FaAppStoreIos} from "react-icons/fa";
 
 
 export const SidebarYnl = () => {
