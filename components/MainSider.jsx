@@ -48,7 +48,6 @@ const MainSider = ({
   // Rutas menú
   const onClickMenuItem = ({ key }) => {
     const pathRoutes = {
-<<<<<<< HEAD
       business: "/business",
       asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
@@ -65,7 +64,6 @@ const MainSider = ({
       incapacity: "/incapacity",
       bank_accounts: "/bank_accounts",
       calculatePayroll: "/payroll/calculatePayroll",
-      extraordinaryPayroll: "/payroll/extraordinaryPayroll",
       paymentCalendar: "/payroll/paymentCalendar",
       payrollVoucher: "/payroll/payrollVoucher",
       calculatorSalary: "/payroll/calculatorSalary",
@@ -82,45 +80,10 @@ const MainSider = ({
       assessment_reports: "/assessment/reports",
       ynl_general_dashboard: "/ynl/general-dashboard",
       ynl_personal_dashboard: "/ynl/personal-dashboard",
+      jb_clients: "/jobbank/clients",
+      jb_vacancies: "/jobbank/vacancies",
+      jb_strategies: "/jobbank/strategies",
     };
-=======
-      business: '/business',
-      asign: '/config/assignedCompanies',
-      patronal: '/business/patronalRegistrationNode',
-      persons: '/home/persons',
-      groups_people: '/home/groups',
-      catalogs: '/config/catalogs',
-      securityGroups: '/config/groups',
-      releases: '/comunication/releases',
-      events: '/comunication/events',
-      reports: '/reports',
-      lending: '/lending',
-      holidays: '/holidays',
-      permission: '/permission',
-      incapacity: '/incapacity',
-      bank_accounts: '/bank_accounts',
-      calculatePayroll: '/payroll/calculatePayroll',
-      paymentCalendar: '/payroll/paymentCalendar',
-      payrollVoucher: '/payroll/payrollVoucher',
-      calculatorSalary: '/payroll/calculatorSalary',
-      importMassivePayroll: '/payroll/importMasivePayroll',
-      imssMovements: '/payroll/imssMovements',
-      bulk_upload: '/bulk_upload',
-      documentsLog: '/log/documentsLog',
-      intranet_groups: '/intranet/groups',
-      intranet_configuration: '/intranet/config',
-      publications_statistics: '/intranet/publications_statistics',
-      surveys: '/assessment/surveys',
-      assessment_groups: '/assessment/groups',
-      assessment_profiles: '/assessment/profiles',
-      assessment_reports: '/assessment/reports',
-      ynl_general_dashboard: '/ynl/general-dashboard',
-      ynl_personal_dashboard: '/ynl/personal-dashboard',
-      jb_clients: '/jobbank/clients',
-      jb_vacancies: '/jobbank/vacancies',
-      jb_strategies: '/jobbank/strategies'
-    }
->>>>>>> e467f08c6752dc247e0d1a89ababca65034fe6a6
     router.push(pathRoutes[key]);
   };
 
@@ -299,11 +262,13 @@ const MainSider = ({
         }
         if (show_jobbank_module) {
           children = [
-            getItem('Clientes', 'jb_clients'),
-            getItem('Vacantes', 'jb_vacancies'),
-            getItem('Estrategias', 'jb_strategies')
-          ]
-          items.push(getItem('Bolsa de trabajo', 'job_bank', <WorkOutline/>, children))
+            getItem("Clientes", "jb_clients"),
+            getItem("Vacantes", "jb_vacancies"),
+            getItem("Estrategias", "jb_strategies"),
+          ];
+          items.push(
+            getItem("Bolsa de trabajo", "job_bank", <WorkOutline />, children)
+          );
         }
       }
     }
