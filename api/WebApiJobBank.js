@@ -18,16 +18,20 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/customer/${id}/`, 'patch', data);
     }
 
+    static deleteClient(data){
+        return WebApi.ApisType('/job-bank/customer/massive_delete/', 'post', data);
+    }
+
     static getSectors(id){
         return WebApi.ApisType(`/job-bank/sector/?node=${id}`, 'get');
     }
 
     static getVacancies(id, query){
-        return WebApi.ApisType(`/job-bank/vacant/?node=${id}${query}`, 'get')
+        return WebApi.ApisType(`/job-bank/vacant/?node=${id}${query}`, 'get');
     }
 
     static getInfoVacant(id){
-        return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'get')
+        return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'get');
     }
 
     static createVacant(data){
@@ -35,11 +39,48 @@ class WebApiJobBank {
     }
 
     static updateVacant(id, data){
-        return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'put', data)
+        return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'put', data);
     }
 
-    static deleteVacant(id, data){
-        return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
+    static deleteVacant(data){
+        // return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
+        return WebApi.ApisType('job-bank/vacant/massive_delete/', 'post', data);
+    }
+
+    static getSectors(id){
+        return WebApi.ApisType(`/job-bank/sector/?node=${id}`, 'get');
+    }
+
+    static getCompetences(id){
+        return WebApi.ApisType(`/job-bank/competence/?node=${id}`, 'get');
+    }
+
+    static getAcademics(id){
+        return WebApi.ApisType(`/job-bank/academics-degree/?node=${id}`, 'get');
+    }
+
+    static getMainCategories(id){
+        return WebApi.ApisType(`/job-bank/main-category/?node=${id}`, 'get');
+    }
+
+    static getSubCategories(id){
+        return WebApi.ApisType(`/job-bank/sub-category/?node=${id}`,'get');
+    }
+
+    static getStrategies(id, query){
+        return WebApi.ApisType(`/job-bank/strategy/?node=${id}${query}`, 'get')
+    }
+
+    static getInfoStrategy(id){
+        return WebApi.ApisType(`/job-bank/strategy/${id}/`, 'get');
+    }
+
+    static createStrategy(data){
+        return WebApi.ApisType('/job-bank/strategy/', 'post', data);
+    }
+
+    static updateStrategy(id, data){
+        return WebApi.ApisType(`/job-bank/strategy/${id}/`, 'put', data)
     }
 }
 

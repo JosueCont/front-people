@@ -21,17 +21,78 @@ import {
   EyeInvisibleOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import { getVacancies } from '../../../redux/jobBankDuck';
+import { getVacancies, setPage } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
+import DeleteVacancies from './DeleteVacancies';
 
 const TableVacancies = ({
-  load_jobbank,
+  load_vacancies,
+  page_jobbank,
   list_vacancies,
-  getVacancies
+  getVacancies,
+  setPage,
+  currentNode
 }) => {
 
   const router = useRouter();
+  const [itemsKeys, setItemsKeys] = useState([]);
+  const [itemsToDelete, setItemsToDelete] = useState([]);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+
+  const actionDelete = async () =>{
+    let ids = itemsToDelete.map(item=> item.id);
+    closeModalDelete();
+    try {
+      await WebApiJobBank.deleteVacant({ids});
+      getVacancies(currentNode.id)
+      // console.log('eliminar is_deleted', ids)
+      if(ids.length > 1) message.success('Vacantes eliminadas');
+      else message.success('Vacante eliminada');
+    } catch (e) {
+      console.log(e)
+      if(ids.length > 1) message.error('Vacantes no eliminadas');
+      else message.error('Vacante no eliminada');
+    }
+  }
+
+  const openModalManyDelete = () =>{
+    if(itemsToDelete.length > 1){
+      setOpenModalDelete(true)
+    }else{
+      setOpenModalDelete(false)
+      message.error('Selecciona al menos dos vacantes')
+    }
+  }
+
+  const openModalRemove = (item) =>{
+    setItemsToDelete([item])
+    setOpenModalDelete(true)
+  }
+
+  const closeModalDelete = () =>{
+    setOpenModalDelete(false)
+    setItemsKeys([])
+    setItemsToDelete([])
+  }
+
+  const onChangePage = ({current}) =>{
+    setPage(current)
+    if (current == 1) getVacancies(currentNode?.id);
+    if (current > 1) {
+      const offset = (current - 1) * 10;
+      const queryParam = `&limit=10&offset=${offset}`;
+      getVacancies(currentNode?.id, queryParam, current)
+    } 
+  }
+
+  const rowSelection = {
+    selectedRowKeys: itemsKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setItemsKeys(selectedRowKeys)
+      setItemsToDelete(selectedRows)
+    }
+  }
 
   const menuTable = () => {
     return (
@@ -63,7 +124,7 @@ const TableVacancies = ({
         <Menu.Item
           key={2}
           icon={<DeleteOutlined/>}
-          // onClick={()=> openModalRemove(item)}
+          onClick={()=> openModalRemove(item)}
         >
           Eliminar
         </Menu.Item>
@@ -74,19 +135,13 @@ const TableVacancies = ({
   const columns = [
     {
       title: 'Nombre',
-      render: ({job_position})=>{
-        return(
-          <span>{job_position}</span>
-        )
-      }
+      dataIndex: 'job_position',
+      key: 'job_position'
     },
     {
       title: 'Descripción',
-      render: ({description}) =>{
-        return(
-          <span>{description}</span>
-        )
-      }
+      dataIndex: 'description',
+      key: 'description'
     },
     {
       title: ()=> {
@@ -111,27 +166,48 @@ const TableVacancies = ({
   ]
 
   return (
-    <Table
-      columns={columns}
-      loading={load_jobbank}
-      dataSource={list_vacancies.results}
-      locale={{ emptyText: load_jobbank
-        ? 'Cargando...'
-        : 'No se encontraron resultados'
-      }}
-    />
+    <>
+      <Table
+        size='small'
+        rowKey='id'
+        columns={columns}
+        loading={load_vacancies}
+        rowSelection={rowSelection}
+        onChange={onChangePage}
+        dataSource={list_vacancies.results}
+        locale={{ emptyText: load_vacancies
+          ? 'Cargando...'
+          : 'No se encontraron resultados'
+        }}
+        pagination={{
+          total: list_vacancies.count,
+          current: page_jobbank,
+          hideOnSinglePage: true,
+          showSizeChanger: false
+        }}
+      />
+      <DeleteVacancies
+        visible={openModalDelete}
+        close={closeModalDelete}
+        itemsToDelete={itemsToDelete}
+        actionDelete={actionDelete}
+      />
+    </>
   )
 }
 
 const mapState = (state) =>{
   return{
     list_vacancies: state.jobBankStore.list_vacancies,
-    load_jobbank: state.jobBankStore.load_jobbank
+    load_vacancies: state.jobBankStore.load_vacancies,
+    page_jobbank: state.jobBankStore.page_jobbank,
+    currentNode: state.userStore.current_node
   }
 }
 
 export default connect(
   mapState, {
-    getVacancies
+    getVacancies,
+    setPage
   }
 )(TableVacancies);
