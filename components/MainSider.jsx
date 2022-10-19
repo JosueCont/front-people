@@ -64,6 +64,7 @@ const MainSider = ({
       incapacity: "/incapacity",
       bank_accounts: "/bank_accounts",
       calculatePayroll: "/payroll/calculatePayroll",
+      extraordinaryPayroll: "/payroll/extraordinaryPayroll",
       paymentCalendar: "/payroll/paymentCalendar",
       payrollVoucher: "/payroll/payrollVoucher",
       calculatorSalary: "/payroll/calculatorSalary",

@@ -88,7 +88,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cursor_pointer",
       render: (item) => (
         <div>
-          <NumberFormat prefix={"$"} number={item.bonus_payment} />
+          <NumberFormat prefix={"$"} number={item.bonus_amount} />
         </div>
       ),
     },
