@@ -232,23 +232,12 @@ const MainSider = ({
       // Menú Kuiz
       if (props?.config && props?.config?.kuiz_enabled) {
         let children = [
-<<<<<<< HEAD
-          getItem("Evaluaciones", "surveys"),
-          getItem("Grupos", "assessment_groups"),
-          getItem("Perfiles", "assessment_profiles"),
-          getItem("Reportes", "assessment_reports"),
-        ];
-        items.push(
-          getItem("KUIZ", "kuiz", <QuestionCircleOutlined />, children)
-        );
-=======
           getItem('Evaluaciones', 'surveys'),
           getItem('Grupos de evaluaciones', 'assessment_groups'),
           getItem('Perfiles de competencias', 'assessment_profiles'),
           getItem('Reportes de competencias', 'assessment_reports')
         ]
         items.push(getItem('Psicometría', 'kuiz', <QuestionCircleOutlined />, children))
->>>>>>> a49993daf3ebdc3ae12c9c3d691f9b602e9eb745
       }
 
       // Menú YNL
