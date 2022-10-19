@@ -138,7 +138,7 @@ class WebApiFiscal {
   }
 
   static updateIntegratorFactor(data, id) {
-    return WebApi.ApisType(`fiscal/integration-factors-node-config/${id}`, 'patch', data)
+    return WebApi.ApisType(`fiscal/integration-factors-node-config/${id}/`, 'patch', data)
   }
 
   static downloadIntegrationFactor(id) {

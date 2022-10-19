@@ -8,8 +8,14 @@ import {
   Upload,
   Form,
   message,
-  InputNumber
+  InputNumber,
+  Tabs,
+  Space
 } from "antd";
+import { API_URL_TENANT } from '../../config/config';
+import { downLoadFileBlob, getDomain } from '../../utils/functions';
+import { DownloadOutlined } from "@ant-design/icons";
+import UploadFile from '../UploadFile';
 import WebApiFiscal from '../../api/WebApiFiscal';
 import { toInteger } from 'lodash';
 import { useRouter } from 'next/router';
@@ -17,9 +23,11 @@ import { useRouter } from 'next/router';
 
 const IntegrationFactorsForm =  ({ nodeId, factor }) => {
 
-  const { Title } = Typography;
+  const { Title, Text } = Typography;
+  const { TabPane } = Tabs
   const [formFactor] = Form.useForm();
   const [ loading, setLoading ] = useState(false)
+  const [excel, setExcel] = useState(null);
   const route = useRouter();
 
   useEffect(() => {
@@ -32,6 +40,8 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
       })
     }
   },[factor])
+
+  excel && console.log("Excell", excel)
 
   const routeIndex = () => {
     route.push({ pathname: "/business/integrationFactors" })
@@ -50,7 +60,7 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
         setLoading(false)
         formFactor.resetFields()
         message.success('Configuración agregada')
-        setTimeout(routeIndex(), 2000)
+        setTimeout(routeIndex(), 3000)
       }
       
     })
@@ -71,8 +81,8 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
       if (response.data.message && response.data.message == 'success'){
         setLoading(false)
         formFactor.resetFields()
-        message.success('Configuración agregada')
-        setTimeout(routeIndex(), 2000)
+        message.success('Configuración Editada')
+        setTimeout(routeIndex(), 3000)
       }
       
     })
@@ -82,53 +92,151 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
     })
   }
 
+  const downloadIntegratorFactor = async () => {
+    setLoading(true)
+    downLoadFileBlob(
+      `${getDomain(API_URL_TENANT)}/fiscal/integration-factors-report?integration_factor_id=${factor.id}`,
+      `${factor && factor.description? factor.description + ".xlsx" : "Factor.xlsx"}`,
+      "GET"
+    );
+    setLoading(false);
+  }
+
+  const updatebyExcel = () => {
+     
+  }
+
   return (
-    <Form
-      layout={"vertical"}
-      form={formFactor}
-      onFinish = { factor? updateFactor : onSaveFactor } 
-      size="large"
+    <Tabs
+      defaultActiveKey="1"
     >
-      <Row gutter={30} style={{ marginBottom: 20 }}>
-          <Col lg={8} xs={12}>
-            <Form.Item label="Numero de dias de vacaciones" name="vacations_days">
-              <InputNumber max={30} min={1} style={{ width: '100%' }}/>
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={12}>
-            <Form.Item label="Porcentaje de prima vacacional" name="vacation_percent">
-              <InputNumber max={100} min={1} style={{ width: '100%' }}/>
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={12}>
-            <Form.Item label="Dias de aguinaldo" name="bonus_days">
-              <InputNumber max={30} min={1} style={{ width: '100%' }}/>
-            </Form.Item>
-          </Col>
-          <Col lg={8} xs={12}>
-            <Form.Item label="Descripción" name="description">
-              <Input.TextArea />
-            </Form.Item>
-          </Col>
-      </Row>
-      <Row justify={"end"}>
-        <Col>
-              <Button
-                className="close_modal"
-                htmlType="button"
-                style={{ marginRight: 10 }}
-                onClick={() =>
-                  route.push({ pathname: "/business/integrationFactors" })
-                }
-              >
-                {factor && factor.id ? "Cerrar" : "Cancelar"}
-              </Button>
-              <Button loading = { loading } type="primary" htmlType="submit">
-                  Guardar
-              </Button>
-            </Col>
-        </Row>
-    </Form>
+      <TabPane tab={factor? "Editar" : "Crear"} key={'1'}>
+        <Form
+          layout={"vertical"}
+          form={formFactor}
+          onFinish = { factor? updateFactor : onSaveFactor } 
+          size="large"
+        >
+          <Row gutter={30} style={{ marginBottom: 20 }}>
+              <Col lg={8} xs={12}>
+                <Form.Item label="Numero de dias de vacaciones" name="vacations_days">
+                  <InputNumber max={30} min={1} style={{ width: '100%' }}/>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={12}>
+                <Form.Item label="Porcentaje de prima vacacional" name="vacation_percent">
+                  <InputNumber max={100} min={1} style={{ width: '100%' }}/>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={12}>
+                <Form.Item label="Dias de aguinaldo" name="bonus_days">
+                  <InputNumber max={30} min={1} style={{ width: '100%' }}/>
+                </Form.Item>
+              </Col>
+              <Col lg={8} xs={12}>
+                <Form.Item label="Descripción" name="description">
+                  <Input.TextArea />
+                </Form.Item>
+              </Col>
+          </Row>
+          <Row justify={"end"}>
+            <Col>
+                  <Button
+                    className="close_modal"
+                    htmlType="button"
+                    style={{ marginRight: 10 }}
+                    onClick={() =>
+                      route.push({ pathname: "/business/integrationFactors" })
+                    }
+                  >
+                    {factor && factor.id ? "Cerrar" : "Cancelar"}
+                  </Button>
+                  <Button loading = { loading } type="primary" htmlType="submit">
+                      Guardar
+                  </Button>
+                </Col>
+            </Row>
+        </Form>
+      </TabPane>
+      {
+        factor &&
+        
+          <TabPane
+            tab='Editar con Excel'
+            key={2}
+          >
+            <Row gutter={30} style={{ marginBottom: 20, marginTop: 10 }}>
+              <Col span={24}>
+                <Text>
+                  Para editar el factor de integración primero descargue el archivo excel
+                  siga las intrucciones del documento descargado y suba el documento usando
+                  el boton de cargar Excel
+                </Text>
+              </Col>
+            </Row>
+            <Row gutter={30} style={{ marginBottom: 20, marginTop: 10 }}>
+              <Col lg={4}>
+                <Button
+                  className={"ml-20"}
+                  type="primary"
+                  style={{
+                    height: "40px",
+                    padding: '6.4px 15px',
+                    fontSize: 16
+                  }}
+                  icon={<DownloadOutlined />}
+                  size={{ size: "large" }}
+                  onClick={() => downloadIntegratorFactor()}
+                >
+                    Descargar excel
+                </Button>
+              </Col>
+              <Col lg={8}>
+              <UploadFile 
+                    textButton={"Cargar excel"}
+                    setFile={setExcel}
+                    showList={true}
+              />
+              </Col>
+            </Row>
+            <Row justify={"end"}>
+            <Col>
+                  <Button
+                    className="close_modal"
+                    htmlType="button"
+                    style={{ marginRight: 10 }}
+                    onClick={() =>
+                      route.push({ pathname: "/business/integrationFactors" })
+                    }
+                  >
+                    {factor && factor.id ? "Cerrar" : "Cancelar"}
+                  </Button>
+                  <Button loading = { loading } type="primary">
+                      Guardar
+                  </Button>
+                </Col>
+            </Row>
+
+            {/* <Form
+              form={ formExcel }
+              layout = 'vertical'
+              onFinish={ (values) => { console.log("Values", values) } }
+            >
+              <Row gutter={30} style={{ marginBottom: 20, marginTop: 10 }}>
+                <Form.Item>
+                  <UploadFile 
+                    textButton={"Cargar excel"}
+                    setFile={setExcel}
+                    showList={true}
+                  />
+                </Form.Item>
+              </Row>
+            </Form> */}
+          </TabPane>
+        
+      }
+    </Tabs>
+    
   )
 }
 
