@@ -223,12 +223,12 @@ const MainSider = ({
       if (props?.config && props?.config?.kuiz_enabled) {
         let children = [
           getItem("Evaluaciones", "surveys"),
-          getItem("Grupos", "assessment_groups"),
-          getItem("Perfiles", "assessment_profiles"),
-          getItem("Reportes", "assessment_reports"),
+          getItem("Grupos de evaluaciones", "assessment_groups"),
+          getItem("Perfiles de competencias", "assessment_profiles"),
+          getItem("Reportes de competencias", "assessment_reports"),
         ];
         items.push(
-          getItem("KUIZ", "kuiz", <QuestionCircleOutlined />, children)
+          getItem("Psicometría", "kuiz", <QuestionCircleOutlined />, children)
         );
       }
 

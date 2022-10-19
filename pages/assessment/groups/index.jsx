@@ -123,8 +123,8 @@ const GroupsKuiz = ({ getCategories, assessmentStore, ...props }) => {
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>KUIZ</Breadcrumb.Item>
-        <Breadcrumb.Item>Grupos</Breadcrumb.Item>
+        <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
+        <Breadcrumb.Item>Grupos de evaluaciones</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <AssessmentsSearch

@@ -409,7 +409,7 @@ const AssessmentScreen = ({
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>KUIZ</Breadcrumb.Item>
+        <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Evaluaciones</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
