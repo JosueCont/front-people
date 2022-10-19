@@ -2,45 +2,38 @@ import React, { useEffect } from 'react';
 import MainLayout from '../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
-import DetailsVacancies from './DetailsVacancies';
 import { connect } from 'react-redux';
-import {
-  getInfoVacant,
-  getCompetences,
-  getAcademics,
-  getMainCategories,
-  getSubCategories
-} from '../../../redux/jobBankDuck';
+import { getPersonsCompany } from '../../../redux/UserDuck';
+import { getInfoStrategy } from '../../../redux/jobBankDuck';
+import DetailsStrategies from './DetailsStrategies';
 
-const AddOrEditVacancies = ({
+const AddOrEditStrategies = ({
   action = 'add',
   currentNode,
-  getInfoVacant,
-  getCompetences,
-  getAcademics,
-  getMainCategories,
-  getSubCategories
+  getPersonsCompany,
+  getInfoStrategy
 }) => {
 
   const router = useRouter();
 
   useEffect(()=>{
     if(currentNode){
-      getCompetences(currentNode.id)
-      getAcademics(currentNode.id)
-      getMainCategories(currentNode.id)
-      getSubCategories(currentNode.id)
+      getPersonsCompany(currentNode.id)
+      // getCompetences(currentNode.id)
+      // getAcademics(currentNode.id)
+      // getMainCategories(currentNode.id)
+      // getSubCategories(currentNode.id)
     }
   },[currentNode])
 
   useEffect(()=>{
     if(router.query.id && action == 'edit'){
-      getInfoVacant(router.query.id)
+      getInfoStrategy(router.query.id)
     }
   },[router])
 
   return (
-    <MainLayout currentKey={'jb_vacancies'} defaultOpenKeys={['job_bank']}>
+    <MainLayout currentKey={'jb_strategies'} defaultOpenKeys={['job_bank']}>
       <Breadcrumb>
         <Breadcrumb.Item
           className={'pointer'}
@@ -51,14 +44,14 @@ const AddOrEditVacancies = ({
         <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
         <Breadcrumb.Item
           className={'pointer'}
-          onClick={() => router.push({ pathname: '/jobbank/vacancies'})}
+          onClick={() => router.push({ pathname: '/jobbank/strategies'})}
         >
-          Vacantes
+          Estrategias
         </Breadcrumb.Item>
         <Breadcrumb.Item>{action == 'add' ? 'Nueva' : 'Expediente'}</Breadcrumb.Item>
       </Breadcrumb>
       <div className={'container'}>
-        <DetailsVacancies action={action}/>
+        <DetailsStrategies action={action}/>
       </div>
     </MainLayout>
   )
@@ -71,11 +64,8 @@ const mapState = (state) =>{
 }
 
 export default connect(
-  mapState, {
-    getInfoVacant,
-    getCompetences,
-    getAcademics,
-    getMainCategories,
-    getSubCategories
+  mapState,{
+    getPersonsCompany,
+    getInfoStrategy
   }
-)(AddOrEditVacancies);
+)(AddOrEditStrategies);
