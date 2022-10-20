@@ -10,12 +10,15 @@ import {
   Tooltip,
   Modal,
   Alert,
+  Space,
 } from "antd";
 import {
   EditOutlined,
   CalendarOutlined,
   PlusCircleOutlined,
   EyeOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { withAuthSync } from '../../../libs/auth';
@@ -29,6 +32,7 @@ const integrationFactorsIndex = ({ ...props }) =>{
   const route = useRouter();
   const [ loading, setLoading ] = useState(false)
   const [ nodeId, setNodeId ] = useState(null)
+  const [ deleted, setDeleted ] = useState(null)
   const [ integratorFsctorsList, setIntegratorfactorsList ] = useState([])
 
   useEffect(() => {
@@ -38,6 +42,24 @@ const integrationFactorsIndex = ({ ...props }) =>{
   useEffect(() => {
     nodeId && getIntegrationFactors()
   }, [nodeId])
+
+  useEffect(() => {
+    if (deleted && deleted.id) {
+      Modal.confirm({
+        title: "¿Está seguro de eliminar este registro?",
+        content: "Si lo elimina no podrá recuperarlo",
+        icon: <ExclamationCircleOutlined />,
+        okText: "Sí, eliminar",
+        okButtonProps: {
+          danger: true,
+        },
+        cancelText: "Cancelar",
+        onOk() {
+          deleteRegister();
+        },
+      });
+    }
+  },[deleted])
 
 
   const getIntegrationFactors = async () => {
@@ -50,6 +72,29 @@ const integrationFactorsIndex = ({ ...props }) =>{
     .catch((error) => {
       setLoading(false)
       console.log('Error -->', error)
+    })
+  }
+
+  const setDeleteRegister = (data) => {
+    setDeleted(data);
+  };
+
+  const deleteRegister = () => {
+    setLoading(true)
+    WebApiFiscal.deleteIntegrationFactor(deleted.id)
+    .then((response) => {
+      setLoading(false)
+      getIntegrationFactors()
+      message.success('Registro eliminado')
+      // console.log('Response', response)
+      // let success = response.data.message == 'success'
+      // if(success){
+      //   message.success('Registro eliminado')
+      // }
+    })
+    .catch((error) => {
+      setLoading(false)
+      console.log('Error', error)
     })
   }
 
@@ -85,7 +130,23 @@ const integrationFactorsIndex = ({ ...props }) =>{
       title: 'Acciones',
       render: (item) => (
         <div>
-          Acciones
+          <Space>
+            <EditOutlined 
+              style={{ cursor: 'pointer' }}
+              onClick = { () => {
+                route.push({
+                  pathname: "/business/integrationFactors/add",
+                  query: {
+                    id: item.id
+                  }
+                })
+              }}
+            />
+            <DeleteOutlined 
+              style={{ cursor: 'pointer' }}
+              onClick = { () => setDeleteRegister(item)}
+            />
+          </Space>
         </div>
       )
     }

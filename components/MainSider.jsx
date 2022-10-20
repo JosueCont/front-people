@@ -59,6 +59,7 @@ const MainSider = ({
   const onClickMenuItem = ({ key }) => {
     const pathRoutes = {
       business: '/business',
+      integrationFactors: '/business/integrationFactors',
       asign: '/config/assignedCompanies',
       patronal: '/business/patronalRegistrationNode',
       persons: '/home/persons',
