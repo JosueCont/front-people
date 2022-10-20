@@ -131,21 +131,25 @@ const integrationFactorsIndex = ({ ...props }) =>{
       render: (item) => (
         <div>
           <Space>
-            <EditOutlined 
-              style={{ cursor: 'pointer' }}
-              onClick = { () => {
-                route.push({
-                  pathname: "/business/integrationFactors/add",
-                  query: {
-                    id: item.id
-                  }
-                })
-              }}
-            />
-            <DeleteOutlined 
-              style={{ cursor: 'pointer' }}
-              onClick = { () => setDeleteRegister(item)}
-            />
+            <Tooltip title="Editar">
+              <EditOutlined 
+                style={{ cursor: 'pointer' }}
+                onClick = { () => {
+                  route.push({
+                    pathname: "/business/integrationFactors/add",
+                    query: {
+                      id: item.id
+                    }
+                  })
+                }}
+              />
+            </Tooltip>
+            <Tooltip title="Eliminar">
+              <DeleteOutlined 
+                style={{ cursor: 'pointer' }}
+                onClick = { () => setDeleteRegister(item)}
+              />
+            </Tooltip>
           </Space>
         </div>
       )
@@ -220,6 +224,11 @@ const integrationFactorsIndex = ({ ...props }) =>{
                 emptyText: loading
                   ? "Cargando..."
                   : "No se encontraron resultados.",
+              }}
+              pagination = {{
+                pageSize: 10,
+                total: integratorFsctorsList?.count
+                
               }}
             />
           </Col>

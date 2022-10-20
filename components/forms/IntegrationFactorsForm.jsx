@@ -19,13 +19,14 @@ import UploadFile from '../UploadFile';
 import WebApiFiscal from '../../api/WebApiFiscal';
 import { toInteger } from 'lodash';
 import { useRouter } from 'next/router';
+import { ruleRequired } from '../../utils/rules';
 
 
 const IntegrationFactorsForm =  ({ nodeId, factor }) => {
 
   const { Title, Text } = Typography;
   const { TabPane } = Tabs
-  const [formFactor] = Form.useForm();
+  const [formFactor, ] = Form.useForm();
   const [ loading, setLoading ] = useState(false)
   const [excel, setExcel] = useState(null);
   const [ description, setDescription]  = useState('')
@@ -47,6 +48,23 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
   const routeIndex = () => {
     route.push({ pathname: "/business/integrationFactors" })
   }
+
+  const clearErrors = () => {
+    formFactor.setFields([
+      {
+        name: "vacations_days",
+        errors: [],
+      },
+      {
+        name: "vacation_percent",
+        errors: [],
+      },
+      {
+        name: 'bonus_days',
+        errors: []
+      }
+    ]);
+  };
 
   const onSaveFactor = async (values) => {
     setLoading(true)
@@ -138,18 +156,18 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
         >
           <Row gutter={30} style={{ marginBottom: 20 }}>
               <Col lg={8} xs={12}>
-                <Form.Item label="Numero de dias de vacaciones" name="vacations_days">
-                  <InputNumber max={30} min={1} style={{ width: '100%' }}/>
+                <Form.Item label="Numero de dias de vacaciones" name="vacations_days" rules={[ruleRequired]}>
+                  <InputNumber max={30} min={1} style={{ width: '100%' }} onFocus = { clearErrors }/>
                 </Form.Item>
               </Col>
               <Col lg={8} xs={12}>
-                <Form.Item label="Porcentaje de prima vacacional" name="vacation_percent">
-                  <InputNumber max={100} min={1} style={{ width: '100%' }}/>
+                <Form.Item label="Porcentaje de prima vacacional" name="vacation_percent" rules={[ruleRequired]}>
+                  <InputNumber max={100} min={1} style={{ width: '100%' }} onFocus = { clearErrors }/>
                 </Form.Item>
               </Col>
               <Col lg={8} xs={12}>
-                <Form.Item label="Dias de aguinaldo" name="bonus_days">
-                  <InputNumber max={30} min={1} style={{ width: '100%' }}/>
+                <Form.Item label="Dias de aguinaldo" name="bonus_days" rules={[ruleRequired]}>
+                  <InputNumber max={30} min={1} style={{ width: '100%' }} onFocus = { clearErrors }/>
                 </Form.Item>
               </Col>
               <Col lg={8} xs={12}>
