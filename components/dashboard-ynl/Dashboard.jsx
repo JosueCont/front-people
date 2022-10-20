@@ -56,7 +56,7 @@ export const Dashboard = ({stadistics, ...props}) => {
             </Col>
             <Col span={13}>
                 <div style={{backgroundColor: `#${colorFeeling}`, padding:"8px 8px", borderRadius:"15px", boxShadow:"rgba(0, 0, 0, 0.24) 0px 3px 8px"}}>
-                    <p style={{color:"white", textAlign:"center", marginBottom:"0px", fontSize:"15px"}}>Emoción mas frecuente del periodo seleccionado</p>
+                    <p style={{color:"white", textAlign:"center", marginBottom:"0px", fontSize:"15px"}}>Emoción más frecuente del periodo seleccionado</p>
                     <div className='aligned-to-center'>
                         <Row justify='center'>
                             { emotion != "" &&
