@@ -3,7 +3,7 @@ import { Layout, Menu, Breadcrumb } from "antd";
 import { css, Global } from "@emotion/core";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
-import {
+import Icon, {
   UserOutlined,
   MessageOutlined,
   ProfileOutlined,
@@ -22,6 +22,7 @@ import {
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
+import {IntranetIcon} from "./CustomIcons";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -196,10 +197,11 @@ const MainSider = ({
           getItem('Grupos', 'intranet_groups'),
           getItem('Moderación', 'publications_statistics')
         ]
-        items.push(getItem('Khor Connect', 'intranet', <img
+       /* items.push(getItem('Khor Connect', 'intranet', <img
             className="anticon ant-menu-item-icon icon-intranet"
             src={"/images/Intranet.svg"}
-        />, children))
+        />, children)) */
+        items.push(getItem('Khor Connect', 'intranet', <IntranetIcon/>, children))
       }
 
       // Menú Kuiz
@@ -257,10 +259,12 @@ const MainSider = ({
   }
 
   return (
-      <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)} theme={theme} width={250} >
-        <div className="logo" />
-        <Menu theme={theme} defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys} mode="inline" onClick={onClickMenuItem} items={getMenuItems()} />
-      </Sider>
+      <>
+        <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)} theme={theme} width={250} >
+          <div className="logo" />
+          <Menu theme={theme} defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys} mode="inline" onClick={onClickMenuItem} items={getMenuItems()} />
+        </Sider>
+      </>
   );
 
   /*return (
