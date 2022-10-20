@@ -3,7 +3,7 @@ import { Layout, Menu, Breadcrumb } from "antd";
 import { css, Global } from "@emotion/core";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
-import {
+import Icon, {
   UserOutlined,
   MessageOutlined,
   ProfileOutlined,
@@ -22,6 +22,7 @@ import {
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
+import {IntranetIcon} from "./CustomIcons";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -196,21 +197,22 @@ const MainSider = ({
           getItem('Grupos', 'intranet_groups'),
           getItem('Moderación', 'publications_statistics')
         ]
-        items.push(getItem('Khor Connect', 'intranet', <img
+       /* items.push(getItem('Khor Connect', 'intranet', <img
             className="anticon ant-menu-item-icon icon-intranet"
             src={"/images/Intranet.svg"}
-        />, children))
+        />, children)) */
+        items.push(getItem('Khor Connect', 'intranet', <IntranetIcon/>, children))
       }
 
       // Menú Kuiz
       if (props?.config && props?.config?.kuiz_enabled) {
         let children = [
           getItem('Evaluaciones', 'surveys'),
-          getItem('Grupos', 'assessment_groups'),
-          getItem('Perfiles', 'assessment_profiles'),
-          getItem('Reportes', 'assessment_reports')
+          getItem('Grupos de evaluaciones', 'assessment_groups'),
+          getItem('Perfiles de competencias', 'assessment_profiles'),
+          getItem('Reportes de competencias', 'assessment_reports')
         ]
-        items.push(getItem('KUIZ', 'kuiz', <QuestionCircleOutlined />, children))
+        items.push(getItem('Psicometría', 'kuiz', <QuestionCircleOutlined />, children))
       }
 
       // Menú YNL
