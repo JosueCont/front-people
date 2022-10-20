@@ -132,7 +132,7 @@ const MainLayout = ({
 
           .ant-layout-content {
             // background: var(--primaryColor) !important;
-            background: #f0f0f0 !important;
+            background: #E3E3E3 !important;
           }
 
           /* .ant-layout-content{
