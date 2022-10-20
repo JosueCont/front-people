@@ -5,32 +5,34 @@ import {
 } from '@ant-design/icons';
 import { Button, Input, Row, Col } from 'antd';
 import { connect } from 'react-redux';
-import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
+import { getStrategies } from '../../../redux/jobBankDuck';
 
 const SearchStrategies = ({
-  currentNode
+  currentNode,
+  getStrategies
 }) => {
 
   const router = useRouter();
   const [toSearch, setToSearch] = useState('');
 
   const onFinishSearch = () =>{
-    // if(toSearch) getVacancies(currentNode.id, `&name=${toSearch}`);
-    // else deleteFilter();
+    if(toSearch.trim()) getStrategies(currentNode.id, `&product=${toSearch.trim()}`);
+    else deleteFilter();
   }
 
   const deleteFilter = () =>{
     setToSearch('')
-    // getVacancies(currentNode.id)
+    getStrategies(currentNode.id)
   }
 
   return (
     <Row gutter={[24,24]}>
       <Col xs={18} sm={18} md={16} lg={12} style={{display: 'flex', gap: '16px'}}>
         <Input
+          value={toSearch}
           placeholder={'Buscar por nombre'}
-          onChange={e=> setToSearch(e.target.value.trim())}
+          onChange={e=> setToSearch(e.target.value)}
         />
         <Button icon={<SearchOutlined />} onClick={()=> onFinishSearch()}/>
         <Button icon={<SyncOutlined />} onClick={()=> deleteFilter()} />
@@ -49,5 +51,7 @@ const mapState = (state) =>{
 }
 
 export default connect(
-  mapState
+  mapState,{
+    getStrategies
+  }
 )(SearchStrategies)

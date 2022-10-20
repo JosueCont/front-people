@@ -82,6 +82,10 @@ class WebApiJobBank {
     static updateStrategy(id, data){
         return WebApi.ApisType(`/job-bank/strategy/${id}/`, 'put', data)
     }
+
+    static deleteStrategy(data){
+        return WebApi.ApisType('/job-bank/strategy/massive_delete/', 'post', data);
+    }
 }
 
 export default WebApiJobBank;

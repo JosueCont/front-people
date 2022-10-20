@@ -37,8 +37,7 @@ const TabEducation = () => {
             placeholder='Categoría de la vacante'
             notFoundContent='No se encontraron resultados'
           >
-            {list_main_categories.results?.length > 0 &&
-            list_main_categories.results.map(item => (
+            {list_main_categories?.length > 0 && list_main_categories.map(item => (
               <Select.Option value={item.id} key={item.name}>
                 {item.name}
               </Select.Option>
@@ -55,8 +54,7 @@ const TabEducation = () => {
             placeholder='Subcategoría'
             notFoundContent='No se encontraron resultados'
           >
-            {list_sub_categories.results?.length > 0 &&
-            list_sub_categories.results.map(item=> (
+            {list_sub_categories.length > 0 && list_sub_categories.map(item=> (
               <Select.Option value={item.id} key={item.id}>
                 {item.name}
               </Select.Option>
@@ -94,8 +92,7 @@ const TabEducation = () => {
             placeholder='Carrera'
             notFoundContent='No se encontraron resultados'
           >
-            {list_academics.results?.length > 0 &&
-            list_academics.results.map(item => (
+            {list_academics.length > 0 && list_academics.map(item => (
               <Select.Option value={item.id} key={item.id}>
                 {item.name}
               </Select.Option>
@@ -123,8 +120,7 @@ const TabEducation = () => {
             placeholder='Competencias requeridas'
             notFoundContent='No se encontraron resultados'
           >
-            {list_competences.results?.length > 0 &&
-            list_competences.results.map(item => (
+            {list_competences.length > 0 && list_competences.map(item => (
               <Select.Option value={item.id} key={item.id}>
                 {item.name}
               </Select.Option>
