@@ -17,7 +17,8 @@ const initialData = {
   loadPersons: false,
   persons:[],
   loadReportPerson: false,
-  reportPerson: []
+  reportPerson: [],
+  dates: {},
 };
 
 const TOPPERSONS = "TOPPERSONS";
@@ -154,11 +155,12 @@ export const getEmotionChart = (data) =>
 
   export const getReportPerson= (data) => 
   async(dispatch, getState) =>{
+    let dates = data;
     dispatch({ type: REPORTPERSON, payload: [] });
     await WebApiYnl.getReportPerson(data)
     .then((response) => {
       console.log("response desde el redux REPORT PERSON", response);
-      dispatch({ type: REPORTPERSON_FINISH, payload: response.data ?? [] });
+      dispatch({ type: REPORTPERSON_FINISH, payload: response?.data});
       return true;
     })
     .catch((error) => {

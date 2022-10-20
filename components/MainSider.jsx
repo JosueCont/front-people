@@ -58,41 +58,42 @@ const MainSider = ({
   // Rutas menú
   const onClickMenuItem = ({ key }) => {
     const pathRoutes = {
-      business: "/business",
-      asign: "/config/assignedCompanies",
-      patronal: "/business/patronalRegistrationNode",
-      persons: "/home/persons",
-      groups_people: "/home/groups",
-      catalogs: "/config/catalogs",
-      securityGroups: "/config/groups",
-      releases: "/comunication/releases",
-      events: "/comunication/events",
-      reports: "/reports",
-      lending: "/lending",
-      holidays: "/holidays",
-      permission: "/permission",
-      incapacity: "/incapacity",
-      bank_accounts: "/bank_accounts",
-      calculatePayroll: "/payroll/calculatePayroll",
-      extraordinaryPayroll: "/payroll/extraordinaryPayroll",
-      paymentCalendar: "/payroll/paymentCalendar",
-      payrollVoucher: "/payroll/payrollVoucher",
-      calculatorSalary: "/payroll/calculatorSalary",
-      importMassivePayroll: "/payroll/importMasivePayroll",
-      imssMovements: "/payroll/imssMovements",
-      bulk_upload: "/bulk_upload",
-      documentsLog: "/log/documentsLog",
-      intranet_groups: "/intranet/groups",
-      intranet_configuration: "/intranet/config",
-      publications_statistics: "/intranet/publications_statistics",
-      surveys: "/assessment/surveys",
-      assessment_groups: "/assessment/groups",
-      assessment_profiles: "/assessment/profiles",
-      assessment_reports: "/assessment/reports",
-      ynl_general_dashboard: "/ynl/general-dashboard",
-      ynl_personal_dashboard: "/ynl/personal-dashboard",
-      integrationFactors: "/business/integrationFactors"
-    };
+      business: '/business',
+      asign: '/config/assignedCompanies',
+      patronal: '/business/patronalRegistrationNode',
+      persons: '/home/persons',
+      groups_people: '/home/groups',
+      catalogs: '/config/catalogs',
+      securityGroups: '/config/groups',
+      releases: '/comunication/releases',
+      events: '/comunication/events',
+      reports: '/reports',
+      lending: '/lending',
+      holidays: '/holidays',
+      permission: '/permission',
+      incapacity: '/incapacity',
+      bank_accounts: '/bank_accounts',
+      calculatePayroll: '/payroll/calculatePayroll',
+      paymentCalendar: '/payroll/paymentCalendar',
+      payrollVoucher: '/payroll/payrollVoucher',
+      calculatorSalary: '/payroll/calculatorSalary',
+      importMassivePayroll: '/payroll/importMasivePayroll',
+      imssMovements: '/payroll/imssMovements',
+      bulk_upload: '/bulk_upload',
+      documentsLog: '/log/documentsLog',
+      intranet_groups: '/intranet/groups',
+      intranet_configuration: '/intranet/config',
+      publications_statistics: '/intranet/publications_statistics',
+      surveys: '/assessment/surveys',
+      assessment_groups: '/assessment/groups',
+      assessment_profiles: '/assessment/profiles',
+      assessment_reports: '/assessment/reports',
+      ynl_general_dashboard: '/ynl/general-dashboard',
+      ynl_personal_dashboard: '/ynl/personal-dashboard',
+      jb_clients: '/jobbank/clients',
+      jb_vacancies: '/jobbank/vacancies',
+      jb_strategies: '/jobbank/strategies'
+    }
     router.push(pathRoutes[key]);
   };
 
@@ -231,6 +232,7 @@ const MainSider = ({
       // Menú Kuiz
       if (props?.config && props?.config?.kuiz_enabled) {
         let children = [
+<<<<<<< HEAD
           getItem("Evaluaciones", "surveys"),
           getItem("Grupos", "assessment_groups"),
           getItem("Perfiles", "assessment_profiles"),
@@ -239,6 +241,14 @@ const MainSider = ({
         items.push(
           getItem("KUIZ", "kuiz", <QuestionCircleOutlined />, children)
         );
+=======
+          getItem('Evaluaciones', 'surveys'),
+          getItem('Grupos de evaluaciones', 'assessment_groups'),
+          getItem('Perfiles de competencias', 'assessment_profiles'),
+          getItem('Reportes de competencias', 'assessment_reports')
+        ]
+        items.push(getItem('Psicometría', 'kuiz', <QuestionCircleOutlined />, children))
+>>>>>>> a49993daf3ebdc3ae12c9c3d691f9b602e9eb745
       }
 
       // Menú YNL
@@ -273,7 +283,8 @@ const MainSider = ({
         if (show_jobbank_module) {
           children = [
             getItem('Clientes', 'jb_clients'),
-            getItem('Vacantes', 'jb_vacancies')
+            getItem('Vacantes', 'jb_vacancies'),
+            getItem('Estrategias', 'jb_strategies')
           ]
           items.push(getItem('Bolsa de trabajo', 'job_bank', <WorkOutline/>, children))
         }

@@ -35,8 +35,8 @@ const Index = ({
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>KUIZ</Breadcrumb.Item>
-        <Breadcrumb.Item>Perfiles</Breadcrumb.Item>
+        <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
+        <Breadcrumb.Item>Perfiles de competencias</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <ProfilesSearch/>

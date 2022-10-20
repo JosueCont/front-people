@@ -37,7 +37,7 @@ const RecoveryPasswordForm = (props) => {
             <Input
               style={{ marginTop: "5px" }}
               type="password"
-              placeholder="Correo electrónico"
+              placeholder="Nueva contraseña"
             />
           </Form.Item>
           <Form.Item
@@ -50,7 +50,7 @@ const RecoveryPasswordForm = (props) => {
             <Input
               style={{ marginTop: "5px" }}
               type="password"
-              placeholder="Contraseña"
+              placeholder="Confirmar contraseña"
             />
           </Form.Item>
 

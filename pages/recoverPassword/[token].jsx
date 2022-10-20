@@ -285,7 +285,7 @@ const PasswordRecovery = ({...props}) => {
             <div style={styles.divForm}>
               <div style={{ textAlign: "center", width: "100%", marginTop: "5%"}}>
                 <Row justify={"center"}>
-                  <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                  <Col xs={22} sm={22} md={20} lg={20} xl={20}>
                     {responseSuccess ? (
                         <>
                           <Title level={3} className={"font-color-khor"}>
