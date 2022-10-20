@@ -7,10 +7,10 @@ import {
 } from '../../../utils/rules';
 import { validateNum } from '../../../utils/functions';
 
-const TabContact = () => {
+const TabContact = ({ sizeCol = 12 }) => {
     return (
-        <Row gutter={[24,0]} style={{margin: '24px 12px'}}>
-            <Col span={12}>
+        <Row gutter={[24,0]} className='tab-contact'>
+            <Col span={sizeCol}>
                 <Form.Item
                     name={'contact_name'}
                     rules={[ruleWhiteSpace]}
@@ -18,7 +18,7 @@ const TabContact = () => {
                     <Input maxLength={50} placeholder={'Nombre del contacto'}/>
                 </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={sizeCol}>
                 <Form.Item
                     name={'job_contact'}
                     rules={[ruleWhiteSpace]}
@@ -26,20 +26,20 @@ const TabContact = () => {
                     <Input placeholder={'Ocupación del contacto'}/>
                 </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={sizeCol}>
                 <Form.Item
                     name={'email_contact'}
                     rules={[ruleEmail]}
-                    style={{marginBottom: 0}}
+                    // style={{marginBottom: 0}}
                 >
                     <Input maxLength={50} placeholder={'Correo del contacto'}/>
                 </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={sizeCol}>
                 <Form.Item
                     name={'phone_contact'}
                     rules={[rulePhone]}
-                    style={{marginBottom: 0}}
+                    // style={{marginBottom: 0}}
                 >
                     <Input
                         placeholder={'Teléfono del contacto'}

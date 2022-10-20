@@ -7,31 +7,13 @@ import {
 } from '../../../utils/rules';
 import { useSelector } from 'react-redux';
 
-const TabClient = () =>{
+const TabClient = ({ sizeCol = 12 }) =>{
 
     const list_sectors = useSelector(state => state.jobBankStore.list_sectors);
-    const [optionsSectors, setOptionsSectors] = useState([]);
-
-    useEffect(()=>{
-        getOptionsSectors()
-    },[])
-
-    const getOptionsSectors = () =>{
-        if(Object.keys(list_sectors).length <= 0 ) return false;
-        if(list_sectors.results.length <= 0) return false;
-        let options = list_sectors.results.map(item=>{
-            return{
-                value: item.id,
-                key: item.id,
-                label: item.name
-            }
-        })
-        setOptionsSectors(options)
-    }
 
     return (
-        <Row gutter={[24,0]} style={{margin: '24px 12px'}}>
-            <Col span={12}>
+        <Row gutter={[24,0]} className='tab-client'>
+            <Col span={sizeCol}>
                 <Form.Item
                     name={'name'}
                     rules={[ruleRequired, ruleWhiteSpace]}
@@ -39,7 +21,7 @@ const TabClient = () =>{
                     <Input maxLength={50} placeholder={'Escriba un nombre'}/>
                 </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={sizeCol}>
                 <Form.Item
                     name={'description'}
                     rules={[ruleWhiteSpace]}
@@ -47,16 +29,22 @@ const TabClient = () =>{
                     <Input maxLength={50} placeholder={'Escriba una descripción'}/>
                 </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={sizeCol}>
                 <Form.Item name={'sector'}>
                     <Select
+                        allowClear
                         placeholder={'Seleccione un sector'}
                         notFoundContent={'No se encontraron resultados'}
-                        options={optionsSectors}
-                    />
+                    >
+                        {list_sectors.length > 0 && list_sectors.map(item => (
+                            <Select.Option value={item.id} key={item.id}>
+                                {item.name}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={sizeCol}>
                 <Form.Item 
                     name={'website'}
                     rules={[ruleURL]}
@@ -64,7 +52,7 @@ const TabClient = () =>{
                     <Input placeholder={'Escriba la url de su sitio'}/>
                 </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={sizeCol}>
                 <Form.Item
                     name={'business_name'}
                     rules={[ruleWhiteSpace]}
@@ -73,7 +61,7 @@ const TabClient = () =>{
                     <Input maxLength={50} placeholder={'Razón social'}/>
                 </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={sizeCol}>
                 <Form.Item
                     name={'comments'}
                     rules={[ruleWhiteSpace]}

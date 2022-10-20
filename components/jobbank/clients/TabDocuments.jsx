@@ -39,7 +39,7 @@ const TabDocuments = ({
     }
 
     return (
-        <Row gutter={[24,8]} style={{padding: '12px 24px'}}>
+        <Row gutter={[24,8]} className='tab-documents'>
            <Col span={24} className={'head-list-files'}>
                 <p style={{marginBottom: 0}}>Archvios seleccionados ({listDocs.length})</p>
                 <Button
@@ -54,7 +54,7 @@ const TabDocuments = ({
                     onChange={setFileSelected}
                 />
             </Col>
-            <Col span={24}>
+            <Col span={24} style={{padding: 0}}>
                 {listDocs.length > 0 ? (
                     <div className={'body-list-files scroll-bar'}>
                         {listDocs.map((item, idx) => (
