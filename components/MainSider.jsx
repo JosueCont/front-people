@@ -259,12 +259,10 @@ const MainSider = ({
   }
 
   return (
-      <>
-        <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)} theme={theme} width={250} >
-          <div className="logo" />
-          <Menu theme={theme} defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys} mode="inline" onClick={onClickMenuItem} items={getMenuItems()} />
-        </Sider>
-      </>
+      <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)} theme={theme} width={250} >
+        <div className="logo" />
+        <Menu theme={theme} defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys} mode="inline" onClick={onClickMenuItem} items={getMenuItems()} />
+      </Sider>
   );
 
   /*return (
