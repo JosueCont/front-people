@@ -137,8 +137,16 @@ class WebApiFiscal {
     return WebApi.ApisType(`fiscal/integration-factors-node-config/`, 'post', data)
   }
 
+  static deleteIntegrationFactor(id) {
+    return WebApi.ApisType(`fiscal/integration-factors-node-config/${id}/`, 'delete')
+  }
+
   static updateIntegratorFactor(data, id) {
     return WebApi.ApisType(`fiscal/integration-factors-node-config/${id}/`, 'patch', data)
+  }
+
+  static updatebyExcel(data) {
+    return WebApi.ApisType(`fiscal/integration-factors-import`, 'post', data)
   }
 
   static downloadIntegrationFactor(id) {

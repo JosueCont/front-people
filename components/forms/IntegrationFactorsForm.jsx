@@ -28,6 +28,7 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
   const [formFactor] = Form.useForm();
   const [ loading, setLoading ] = useState(false)
   const [excel, setExcel] = useState(null);
+  const [ description, setDescription]  = useState('')
   const route = useRouter();
 
   useEffect(() => {
@@ -102,8 +103,26 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
     setLoading(false);
   }
 
-  const updatebyExcel = () => {
-     
+  const updatebyExcel = async () => {
+     setLoading(true)
+     let data = new FormData()
+     data.append("File", excel)
+     data.append("description", description)
+     data.append("integration_factor_id", factor.id)
+     WebApiFiscal.updatebyExcel(data)
+     .then((response) => {
+      console.log('Response', response)
+      let success = response.data.message == 'success'
+      if(success){
+        setLoading(false)
+        message.success('Configuración Editada')
+        setTimeout(routeIndex(), 3000)
+      }
+     })
+     .catch((e) => {
+      setLoading(false)
+      console.log('Error', e)
+     })
   }
 
   return (
@@ -151,7 +170,7 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
                   >
                     {factor && factor.id ? "Cerrar" : "Cancelar"}
                   </Button>
-                  <Button loading = { loading } type="primary" htmlType="submit">
+                  <Button loading = { loading } type="primary" htmlType='submit'>
                       Guardar
                   </Button>
                 </Col>
@@ -175,6 +194,13 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
               </Col>
             </Row>
             <Row gutter={30} style={{ marginBottom: 20, marginTop: 10 }}>
+              <Col lg={8}>
+                  <Input.TextArea
+                    style={{ height: "40px",}}
+                    onChange={({target}) => setDescription(target.value)}
+                    placeholder = "Descripción"
+                  />
+              </Col>
               <Col lg={4}>
                 <Button
                   className={"ml-20"}
@@ -211,7 +237,7 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
                   >
                     {factor && factor.id ? "Cerrar" : "Cancelar"}
                   </Button>
-                  <Button loading = { loading } type="primary">
+                  <Button loading = { loading } type="primary" onClick={ () => updatebyExcel() }>
                       Guardar
                   </Button>
                 </Col>
