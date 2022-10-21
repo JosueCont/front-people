@@ -8,19 +8,10 @@ import {
     Switch
 } from 'antd';
 import ModalClients from './ModalClients';
-import DeleteClients from './DeleteClients';
 import {
-    ClearOutlined,
-    SearchOutlined,
-    FileTextOutlined,
-    PlusCircleOutlined,
-    CloseOutlined,
     EllipsisOutlined,
     DeleteOutlined,
-    SyncOutlined,
     EditOutlined,
-    EyeOutlined,
-    EyeInvisibleOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
 import {
@@ -28,6 +19,7 @@ import {
     setPage
 } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import DeleteItems from '../../../common/DeleteItems';
 
 const TableClients = ({
     list_clients,
@@ -247,8 +239,14 @@ const TableClients = ({
                 close={()=> setOpenModal(false)}
                 itemToEdit={itemToEdit}
             />
-            <DeleteClients
+            <DeleteItems
+                title={itemsToDelete.length > 1
+                    ? '¿Estás seguro de eliminar estos clientes?'
+                    : '¿Estás seguro de eliminar este cliente?'
+                }
                 visible={openModalDelete}
+                keyTitle='name'
+                keyDescription='business_name'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}
