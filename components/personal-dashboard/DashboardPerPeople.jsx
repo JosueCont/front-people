@@ -26,10 +26,10 @@ export const DashboardPerPeople = () => {
                     <Row>
                         <Col xs={24} sm={24} md={24} className="aligned-to-center">
                             { reportPerson && reportPerson[0]?.user?.is_happy &&
-                                <SmileOutlined style={{color:'green', fontSize:40}} />
+                                <SmileOutlined style={{color:'green', fontSize:80}} />
                             }
                             { reportPerson && !reportPerson[0]?.user?.is_happy && 
-                                <FrownOutlined style={{color:'red',fontSize:40}}/>
+                                <FrownOutlined style={{color:'red',fontSize:80}}/>
                             }
                             <Avatar
                                 style={{marginLeft:"16px", marginRight:"16px"}}
