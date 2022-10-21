@@ -98,7 +98,7 @@ const ModalClients = ({
                 onFinishFailed={onFailure}
             >
                 <Row>
-                    <Col span={24}>
+                    <Col span={24} className='modal-tabs-clients'>
                         <Tabs
                             activeKey={currentTab}
                             onChange={e=> setCurrentTab(e)}

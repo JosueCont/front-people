@@ -21,18 +21,16 @@ import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 
 const FormStrategies = () => {
 
-    const persons_company = useSelector(state => state.userStore.persons_company);
-    const load_persons = useSelector(state => state.userStore.load_persons);
-
-    const optionsCustomer = [
-        {value: '556514e950aa47cf85a60f2c6bf11000', key: '556514e950aa47cf85a60f2c6bf11000', label: 'Cliente 1'},
-        {value: 'f5a3ca94949e4d9387bc107935961fa9', key: 'f5a3ca94949e4d9387bc107935961fa9', label: 'Cliente 2'}
-    ]
-
-    const optionsVacant = [
-        {value: '02fe534841da4d5cb4865d58bf889701', key: '02fe534841da4d5cb4865d58bf889701', label: 'Vacante 1'},
-        {value: '848572dc7e414c10b8f3c5265c2590d3', key: '848572dc7e414c10b8f3c5265c2590d3', label: 'Vacante 2'}
-    ]
+    const {
+        load_clients,
+        load_vacancies,
+        list_clients_options,
+        list_vacancies_options
+    } = useSelector(state => state.jobBankStore);
+    const {
+        load_persons,
+        persons_company
+    } = useSelector(state => state.userStore);
 
     return (
         <Row gutter={[24,0]}>
@@ -150,10 +148,20 @@ const FormStrategies = () => {
                     rules={[ruleRequired]}
                 >
                     <Select
+                        allowClear
+                        showSearch
+                        disabled={load_clients}
+                        loading={load_clients}
                         placeholder='Cliente'
                         notFoundContent='No se encontraron resultados'
-                        options={optionsCustomer}
-                    />
+                        optionFilterProp='children'
+                    >
+                        {list_clients_options.length > 0 && list_clients_options.map(item => (
+                            <Select.Option value={item.id} key={item.id}>
+                                {item.name}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 </Form.Item>
             </Col>
             <Col span={6}>
@@ -163,10 +171,20 @@ const FormStrategies = () => {
                     rules={[ruleRequired]}
                 >
                     <Select
+                        allowClear
+                        showSearch
+                        disabled={load_vacancies}
+                        loading={load_vacancies}
                         placeholder='Vacante'
                         notFoundContent='No se encontraron resultados'
-                        options={optionsVacant}
-                    />
+                        optionFilterProp='children'
+                    >
+                        {list_vacancies_options.length > 0 && list_vacancies_options.map(item => (
+                            <Select.Option value={item.id} key={item.id}>
+                                {item.job_position}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 </Form.Item>
             </Col>
             <Col span={6}>
@@ -288,7 +306,7 @@ const FormStrategies = () => {
                 >
                     <Select
                         mode='multiple'
-                        maxTagCount={2}
+                        maxTagCount={1}
                         placeholder='Bolsas de empleo'
                         notFoundContent='No se encontraron resultados'
                         options={optionsJobBank}

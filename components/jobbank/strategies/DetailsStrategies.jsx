@@ -19,6 +19,7 @@ import { setLoadStrategies, getInfoStrategy } from '../../../redux/jobBankDuck';
 
 const DetailsStrategies = ({
     action,
+    currentNode,
     load_strategies,
     info_strategy,
     setLoadStrategies,
@@ -52,7 +53,7 @@ const DetailsStrategies = ({
 
     const onFinishCreate = async (values) =>{
         try {
-            let response = await WebApiJobBank.createStrategy(values);
+            let response = await WebApiJobBank.createStrategy({...values, node: currentNode.id});
             message.success('Estrategia registrada');
             router.replace({
                 pathname: '/jobbank/strategies/edit',
@@ -67,13 +68,12 @@ const DetailsStrategies = ({
 
     const onFinish = (values) =>{
         setLoadStrategies(true)
-        const bodyForm = createData(values);
-        console.log('los valores-------->', bodyForm)
+        const bodyData = createData(values);
         const actionFunction = {
             edit: onFinishUpdate,
             add: onFinishCreate
         }
-        actionFunction[action](values);
+        actionFunction[action](bodyData);
     }
 
     return (
@@ -126,7 +126,8 @@ const DetailsStrategies = ({
 const mapState = (state) =>{
     return{
         load_strategies: state.jobBankStore.load_strategies,
-        info_strategy: state.jobBankStore.info_strategy
+        info_strategy: state.jobBankStore.info_strategy,
+        currentNode: state.userStore.current_node
     }
 }
 

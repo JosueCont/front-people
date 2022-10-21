@@ -116,7 +116,7 @@ const index = ({}) => {
           .ant-card-head{
             background-image: linear-gradient(180deg, #ff7c0d 0, #ff5e00 25%, #ff5e00 50%, #f33a00 75%, #ea1a2b 100%);
             /**background-image: linear-gradient(180deg, #ff7c0d 0, #ff7c0d 25%, #ff5e00 50%, #f33a00 75%, #ea1a2b 100%);**/
-            border-radius: 25px;
+            border-radius: 15px;
           }
           .ant-card-bordered{
             border-radius: 25px;
@@ -137,7 +137,11 @@ const index = ({}) => {
           .ant-card-head-title{
             text-align: center;
             color: white;
-            font-size: 20px;
+            font-size: 15px;
+            padding: 8px 0px;
+          }
+          .ant-card-head{
+            min-height: 36px
           }
           .ant-table{
             border-radius: 10px;

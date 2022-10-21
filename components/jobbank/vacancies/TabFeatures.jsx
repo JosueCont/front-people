@@ -121,7 +121,10 @@ const TabFeatures = ({
         <Form.Item
           name='job_position'
           label='Nombre de la vacante'
-          rules={[ruleWhiteSpace]}
+          rules={[
+            ruleRequired,
+            ruleWhiteSpace
+          ]}
         >
           <Input placeholder='Nombre de la vacante'/>
         </Form.Item>
