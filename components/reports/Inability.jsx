@@ -19,6 +19,7 @@ import { API_URL } from "../../config/config";
 import moment from "moment";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
 import { connect } from "react-redux";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const InabilityReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
@@ -299,7 +300,7 @@ const InabilityReport = ({ permissions, ...props }) => {
                   key="send_date"
                   labelCol={24}
                 >
-                  <RangePicker onChange={onchangeRange} />
+                  <RangePicker onChange={onchangeRange} locale = { locale }/>
                 </Form.Item>
               </Col>
               <Col style={{ display: "flex" }}>

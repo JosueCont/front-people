@@ -53,6 +53,7 @@ import SelectDepartment from "../../components/selects/SelectDepartment";
 import SelectJob from "../../components/selects/SelectJob";
 import moment from "moment";
 import NumericInput from "../../components/inputNumeric";
+import locale from "antd/lib/date-picker/locale/es_ES";
 const formatNumber = (value) => new Intl.NumberFormat().format(value);
 
 const CalculatePayroll = ({ ...props }) => {
@@ -539,6 +540,8 @@ const CalculatePayroll = ({ ...props }) => {
     setTotalIsr(null);
     setNetPay(null);
     setConsolidated(null);
+    if (department) dataToSend.department = department;
+    if (job) dataToSend.job = job;
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
         setLoading(false);
@@ -726,6 +729,7 @@ const CalculatePayroll = ({ ...props }) => {
                     moment={"YYYY"}
                     id="payment_date"
                     placeholder="Fecha de pago."
+                    locale={locale}
                   />
                 </Form.Item>
               </Row>
@@ -1010,7 +1014,10 @@ const CalculatePayroll = ({ ...props }) => {
           }
         `}
         />
-        <MainLayout currentKey={["calculatePayroll"]} defaultOpenKeys={["payroll"]}>
+        <MainLayout
+          currentKey={["calculatePayroll"]}
+          defaultOpenKeys={["payroll"]}
+        >
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item
               className={"pointer"}
@@ -1272,8 +1279,8 @@ const CalculatePayroll = ({ ...props }) => {
                                       "File",
                                       info.fileList[0].originFileObj
                                     );
-                                    data.append('department',department)
-                                    data.append('job',job)
+                                    data.append("department", department);
+                                    data.append("job", job);
                                     data.append(
                                       "payment_period",
                                       periodSelected.id
@@ -1439,6 +1446,8 @@ const CalculatePayroll = ({ ...props }) => {
                       calendar={calendarSelect.id}
                       period={periodSelected.id}
                       viewFilter={false}
+                      department={department}
+                      job={job}
                       setKeys={setCfdiCancel}
                       clickCancelStamp={cancelOneStamp}
                     />
