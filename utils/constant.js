@@ -502,3 +502,10 @@ export const deleteKeyByValue = (obj) =>{
   });
   return new_obj;
 }
+
+export const redirectTo = (url, newWindow = false) =>{
+  const link = document.createElement('a');
+  link.href = url;
+  link.target = newWindow ? '_blank' : '_self';
+  link.click();
+}
