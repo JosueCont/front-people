@@ -19,6 +19,7 @@ const SelectImssSubdelegation = ({
           label: item.description,
           value: item.id,
           key: item.id + index,
+          code: item.code
         };
       });
       setOptions(data);
@@ -48,7 +49,7 @@ const SelectImssSubdelegation = ({
             return (
               <>
                 <Option key={item.value} value={item.value}>
-                  {item.label}
+                  {item.label} { `(${item.code})` }
                 </Option>
                 ;
               </>

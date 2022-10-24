@@ -390,11 +390,11 @@ export const getJobRiskClass = (idCompany) => async (dispatch, getState) => {
       
       let unOrder = response.data.results  
 
-      let ordered = unOrder.sort((a, b) => {
+      let ordered = unOrder? unOrder.sort((a, b) => {
         if (a.percent > b.percent) return 1
         if (a.percent < b.percent) return -1
         return 0
-      })
+      }) : []
 
       dispatch({
         type: JOB_RISK,
