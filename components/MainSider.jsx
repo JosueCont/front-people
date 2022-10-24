@@ -13,13 +13,9 @@ import Icon, {
   SettingOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
-<<<<<<< HEAD
-import { WorkOutline } from "@material-ui/icons";
-=======
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
-import {IntranetIcon} from "./CustomIcons";
->>>>>>> b4adb690bc32fa668c981469e91b587d76ad7828
+import { IntranetIcon } from "./CustomIcons";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -208,15 +204,17 @@ const MainSider = ({
       // Menú Khor Connect
       if (intranetAccess) {
         let children = [
-          getItem('Configuración', 'intranet_configuration'),
-          getItem('Grupos', 'intranet_groups'),
-          getItem('Moderación', 'publications_statistics')
-        ]
-       /* items.push(getItem('Khor Connect', 'intranet', <img
+          getItem("Configuración", "intranet_configuration"),
+          getItem("Grupos", "intranet_groups"),
+          getItem("Moderación", "publications_statistics"),
+        ];
+        /* items.push(getItem('Khor Connect', 'intranet', <img
             className="anticon ant-menu-item-icon icon-intranet"
             src={"/images/Intranet.svg"}
         />, children)) */
-        items.push(getItem('Khor Connect', 'intranet', <IntranetIcon/>, children))
+        items.push(
+          getItem("Khor Connect", "intranet", <IntranetIcon />, children)
+        );
       }
 
       // Menú Kuiz
