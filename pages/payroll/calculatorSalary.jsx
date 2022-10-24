@@ -118,7 +118,7 @@ const calculatorSalary = ({ ...props }) => {
             color: black !important;
           }
           .col-form{
-            background-color: #7B25F1;
+            background-color: #B1B5BA;
             border-top-left-radius: 10px;
             border-bottom-left-radius: 10px;
           }

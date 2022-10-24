@@ -26,8 +26,12 @@
 .ant-menu-submenu:not(.ant-menu-submenu-selected):hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
     color: #121212 !important;
 }
-.ant-menu-submenu .ant-menu-item-icon{
+.ant-menu-item .ant-menu-item-icon, .ant-menu-submenu .ant-menu-item-icon{
     color: #F99543;
+}
+
+.ant-menu-item-selected .ant-menu-item-icon {
+    color: white;
 }
 
 .ant-menu-inline .ant-menu-item::after{

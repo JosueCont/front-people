@@ -610,7 +610,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                       <Col span={18} style={{ display: "" }}>
                         <span
                           style={{
-                            color: "white",
                             fontSize: "30px",
                             fontWeight: "bold",
                           }}
