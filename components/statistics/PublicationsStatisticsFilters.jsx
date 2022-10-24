@@ -10,6 +10,7 @@ import {
   message,
   Form,
 } from "antd";
+import locale from "antd/lib/date-picker/locale/es_ES";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import moment from "moment";
@@ -260,6 +261,7 @@ const PublicationsStatisticsFilters = (props) => {
                 /* value={datePickerValue ? datePickerValue : null} */
                 /* onChange={getSelectedDate} */
                 format={"YYYY-MM-DD"}
+                locale = { locale }
               />
             </Form.Item>
 

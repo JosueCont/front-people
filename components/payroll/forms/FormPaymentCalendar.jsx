@@ -30,6 +30,7 @@ import SelectPeriodicity from "../../selects/SelectPeriodicity";
 import SelectTypeTax from "../../selects/SelectTypeTax";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const router = useRouter();
@@ -42,6 +43,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [period, setPeriod] = useState("");
   const [incidenceStart, setIncidenceStart] = useState("");
   const [versions, setVersions] = useState([]);
+  const currentYear = moment().year()
 
   /* Const switchs */
   const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
@@ -84,6 +86,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       value: true,
     },
   ];
+
+  console.log('id', idPaymentCalendar)
 
   useEffect(() => {
     if (idPaymentCalendar) {
@@ -292,6 +296,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     });
   };
 
+  const disabledDate = current => {
+    return current && moment(current).year() < currentYear
+  }
+
   return (
     <>
       <Global
@@ -452,6 +460,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   disabledDate={(currentDate) => currentDate.year() < 2022}
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  locale = { locale }
                 />
               </Form.Item>
             </Col>
@@ -467,6 +476,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   moment={"YYYY-MM-DD"}
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  locale = { locale }
+                  disabledDate = { disabledDate }
                 />
               </Form.Item>
             </Col>
@@ -533,6 +544,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   placeholder=""
                   moment={"YYYY"}
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  locale = { locale }
                 />
               </Form.Item>
             </Col>
@@ -546,7 +558,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                 <Select
                   placeholder="Seleccione la version"
                   options={versions}
-                  disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  // disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>
             </Col>
@@ -554,7 +566,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               <SelectFixedConcept
                 type={2}
                 name={"group_fixed_concept"}
-                disabled={paymentCalendar ? paymentCalendar.locked : false}
+                // disabled={paymentCalendar ? paymentCalendar.locked : false}
               />
             </Col>
             <Col lg={8} xs={22}>
@@ -618,10 +630,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   router.push({ pathname: "/payroll/paymentCalendar" })
                 }
               >
-                {locked ? "Cerrar" : "Cancelar"}
+                {!locked ? "Cerrar" : "Cancelar"}
               </Button>
             </Col>
-            {!locked && (
+            {locked && (
               <Col md={5}>
                 <Button block className="" type="primary" htmlType="submit">
                   Guardar

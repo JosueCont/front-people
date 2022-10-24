@@ -27,6 +27,7 @@ import {
 } from "../../utils/constant";
 import { onlyNumeric, ruleRequired } from "../../utils/rules";
 import WebApiPeople from "../../api/WebApiPeople";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const FormTraining = ({ person_id = null }) => {
   const { Title } = Typography;
@@ -284,6 +285,7 @@ const FormTraining = ({ person_id = null }) => {
                   format={"YYYY-MM-DD"}
                   value={dateRange}
                   onChange={onChangeDateTrainig}
+                  locale = { locale }
                 />
               </Space>
             </Form.Item>
