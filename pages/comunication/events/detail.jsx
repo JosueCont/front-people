@@ -26,6 +26,7 @@ import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 import TextArea from "antd/lib/input/TextArea";
 import { connect } from "react-redux";
+import locale from "antd/lib/date-picker/locale/es_ES";
 import axiosApi from "../../../api/axiosApi";
 
 const { Content } = Layout;
@@ -103,7 +104,8 @@ const addEvent = ({ ...props }) => {
   const getEvent = async (id) => {
     setLoading(true);
 
-    axiosApi.get(`/person/event/${id}/`)
+    axiosApi
+      .get(`/person/event/${id}/`)
       .then((response) => {
         let data = response.data;
         let node_id = null;
@@ -164,7 +166,8 @@ const addEvent = ({ ...props }) => {
     }
     setLoading(true);
 
-    axiosApi.put(`/person/event/${datos.id}/`, datos)
+    axiosApi
+      .put(`/person/event/${datos.id}/`, datos)
       .then((response) => {
         message.success("Editado correctamente");
         router.push("/comunication/events");
@@ -200,8 +203,12 @@ const addEvent = ({ ...props }) => {
           Inicio
         </Breadcrumb.Item>
         <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
-        <Breadcrumb.Item className={"pointer"}
-                         onClick={() => router.push({ pathname: "/comunication/events" })}>Eventos</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => router.push({ pathname: "/comunication/events" })}
+        >
+          Eventos
+        </Breadcrumb.Item>
         <Breadcrumb.Item>Editar evento</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
@@ -264,6 +271,7 @@ const addEvent = ({ ...props }) => {
                             moment={"YYYY-MM-DD"}
                             placeholder="Fecha"
                             value={dateEvent}
+                            locale={locale}
                           />
                         </Form.Item>
                       </Col>

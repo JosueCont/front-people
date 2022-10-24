@@ -37,6 +37,8 @@ const CfdiVaucher = ({
   period = null,
   viewFilter = true,
   setKeys,
+  departmet = null,
+  job = null,
   ...props
 }) => {
   const router = useRouter();
@@ -185,7 +187,10 @@ const CfdiVaucher = ({
           period: period,
         });
       setCalendarSelect(calendar);
-      getVoucher(`calendar=${calendar}&period=${period}`);
+      let filter = `calendar=${calendar}&period=${period}`;
+      if (departmet) filter + `department=${departmet}`;
+      if (job) filter + `job=${job}`;
+      getVoucher(filter);
     }
   }, [router.query]);
 

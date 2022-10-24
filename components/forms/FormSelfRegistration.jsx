@@ -16,6 +16,7 @@ import LoginModal from "../modal/LoginModal";
 import { genders } from "../../utils/constant";
 
 import moment from "moment";
+import locale from "antd/lib/date-picker/locale/es_ES";
 import { ruleEmail, ruleRequired } from "../../utils/rules";
 import router from "next/router";
 
@@ -145,6 +146,7 @@ const FormSelfRegistration = ({
                 <Col lg={7} xs={22} offset={1}>
                   <Form.Item label="Fecha de nacimiento">
                     <DatePicker
+                      locale={ locale }
                       style={{ width: "100%" }}
                       onChange={onChange}
                       moment={"YYYY-MM-DD"}

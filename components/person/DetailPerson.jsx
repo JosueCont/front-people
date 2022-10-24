@@ -20,7 +20,7 @@ import FormGeneralData from "../forms/FormGeneralData";
 import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
-import FormIMSSINFONAVIT from "../forms/FormIMSSINFONAVIT";
+import FormImssInfonavit from "../payroll/forms/FormImssInfonavit";
 import { useState } from "react";
 import {
   BankOutlined,
@@ -138,7 +138,7 @@ const DetailPerson = ({
               <FormPayrollPerson person={person} node={person.node} />
             </TabPane>
           )}
-                    <TabPane 
+          <TabPane
             tab={
               <Tooltip title="IMSS / INFONAVIT">
                 <div className="container-title-tab">
@@ -149,7 +149,11 @@ const DetailPerson = ({
             }
             key="tab_12"
           >
-            <FormIMSSINFONAVIT person={person} person_id={person.id} node={person.node} />
+            <FormImssInfonavit
+              person={person}
+              person_id={person.id}
+              node={person.node}
+            />
           </TabPane>
           <TabPane
             tab={

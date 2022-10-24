@@ -18,6 +18,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import moment from "moment-timezone";
 import SelectCollaborator from "../selects/SelectCollaborator";
 import { connect } from "react-redux";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const LoanReport = ({ permissions, ...props }) => {
   const [form] = Form.useForm();
@@ -366,7 +367,7 @@ const LoanReport = ({ permissions, ...props }) => {
               </Col>
               <Col>
                 <Form.Item key="timestamp" name="timestamp" label="Fecha">
-                  <DatePicker format={"YYYY/MM/DD"} onChange={changeDate} />
+                  <DatePicker format={"YYYY/MM/DD"} onChange={changeDate} locale = { locale }/>
                 </Form.Item>
               </Col>
               <Col>
