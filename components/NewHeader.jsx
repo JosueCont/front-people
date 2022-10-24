@@ -148,7 +148,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             width: 100%;
             height: 100%;
             background: var(--primaryColor) !important;
-            opacity: 0.9;
+            //opacity: 0.9;
           }
           /* .ant-menu .ant-menu-item {
             margin: 0px !important;
