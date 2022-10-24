@@ -17,8 +17,10 @@ const SearchStrategies = ({
   const [toSearch, setToSearch] = useState('');
 
   const onFinishSearch = () =>{
-    if(toSearch.trim()) getStrategies(currentNode.id, `&product=${toSearch.trim()}`);
-    else deleteFilter();
+    if(toSearch.trim()){
+      let query = `&product__icontains=${toSearch.trim()}`;
+      getStrategies(currentNode.id, query);
+    } else deleteFilter();
   }
 
   const deleteFilter = () =>{

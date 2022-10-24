@@ -25,8 +25,14 @@ export const DashboardPerPeople = () => {
                 <div style={{backgroundColor:"#FFFFFF", padding:"16px 8px", borderRadius:"25px"}}>
                     <Row>
                         <Col xs={24} sm={24} md={24} className="aligned-to-center">
+                            { reportPerson && reportPerson[0]?.user?.is_happy &&
+                                <SmileOutlined style={{color:'green', fontSize:80}} />
+                            }
+                            { reportPerson && !reportPerson[0]?.user?.is_happy && 
+                                <FrownOutlined style={{color:'red',fontSize:80}}/>
+                            }
                             <Avatar
-                                style={{marginLeft:"16px"}}
+                                style={{marginLeft:"16px", marginRight:"16px"}}
                                 size={{
                                 xs: 80,
                                 sm: 80,
@@ -39,19 +45,13 @@ export const DashboardPerPeople = () => {
                             />
                             <div style={{display:"block"}}>
                                 {reportPerson &&
-                                    <h2 style={{color:"#FF5E00", textAlign:"center", marginBottom:"4px", marginLeft:"16px"}}>
+                                    <h2 style={{color:"#FF5E00", textAlign:"center", marginBottom:"0px"}}>
                                         {(reportPerson[0]?.user?.firstName || reportPerson[0]?.user?.lastName) ?
                                         `${reportPerson[0]?.user?.firstName} ${reportPerson[0]?.user?.lastName}` : reportPerson[0]?.user?.email}
                                     </h2>
                                 }
-                                <div style={{display:"flex", alignItems:"center", justifyContent:"left"}}>
-                                    { reportPerson && reportPerson[0]?.user?.is_happy &&
-                                        <SmileOutlined style={{color:'green', fontSize:30, marginLeft:"16px", marginRight:"16px"}} />
-                                    }
-                                    { reportPerson && !reportPerson[0]?.user?.is_happy && 
-                                        <FrownOutlined style={{color:'red',fontSize:30, marginLeft:"16px", marginRight:"16px"}}/>
-                                    }
-                                    <div style={{width:"300px", display:"block"}}>
+                                <div style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
+                                    <div style={{width:"300px", display:"block", marginBottom:"8px"}}>
                                         { reportPerson  &&
                                             <>
                                                 <Progress
