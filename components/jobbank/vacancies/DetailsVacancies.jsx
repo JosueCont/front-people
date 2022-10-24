@@ -22,6 +22,7 @@ import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsVacancies = ({
     action,
+    currentNode,
     load_vacancies,
     setLoadVacancies,
     info_vacant,
@@ -62,7 +63,7 @@ const DetailsVacancies = ({
 
     const onFinishCreate = async (values) =>{
         try {
-            let response = await WebApiJobBank.createVacant(values);
+            let response = await WebApiJobBank.createVacant({...values, node_id: currentNode.id});
             message.success('Vacante registrada');
             router.replace({
                 pathname: '/jobbank/vacancies/edit',
@@ -181,7 +182,8 @@ const DetailsVacancies = ({
 const mapState = (state) =>{
     return{
         load_vacancies: state.jobBankStore.load_vacancies,
-        info_vacant: state.jobBankStore.info_vacant
+        info_vacant: state.jobBankStore.info_vacant,
+        currentNode: state.userStore.current_node
     }
 }
 

@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import { setPage, getStrategies } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
+import DeleteItems from '../../../common/DeleteItems';
 
 const TableStrategies = ({
     list_strategies,
@@ -31,12 +32,27 @@ const TableStrategies = ({
     const [itemsToDelete, setItemsToDelete] = useState([]);
     const [openModalDelete, setOpenModalDelete] = useState(false);
 
+    const actionDelete = async () =>{
+        let ids = itemsToDelete.map(item => item.id);
+        closeModalDelete()
+        try {
+            await WebApiJobBank.deleteStrategy({ids});
+            getStrategies(currentNode.id);
+            if(ids.length > 1) message.success('Estrategias eliminadas');
+            else message.success('Estrategia eliminada');
+        } catch (e) {
+            console.log(e)
+            if(ids.length > 1) message.error('Estrategias no eliminadas');
+            else message.error('Estrategia no eliminada');
+        }
+    }
+
     const openModalManyDelete = () =>{
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
         }else{
             setOpenModalDelete(false)
-            message.error('Selecciona al menos dos vacantes')
+            message.error('Selecciona al menos dos estrategias')
         }
     }
 
@@ -61,12 +77,12 @@ const TableStrategies = ({
 
     const onChangePage = ({current}) =>{
         setPage(current)
-        // if (current == 1) getClients(currentNode?.id);
-        // if (current > 1) {
-        //     const offset = (current - 1) * 10;
-        //     const queryParam = `&limit=10&offset=${offset}`;
-        //     getClients(currentNode?.id, queryParam, current)
-        // } 
+        if (current == 1) getStrategies(currentNode?.id);
+        if (current > 1) {
+            const offset = (current - 1) * 10;
+            const queryParam = `&limit=10&offset=${offset}`;
+            getStrategies(currentNode?.id, queryParam, current)
+        } 
     }
 
     const menuTable = () => {
@@ -141,26 +157,40 @@ const TableStrategies = ({
     ]
 
     return (
-        <Table
-            size='small'
-            rowKey='id'
-            columns={columns}
-            dataSource={list_strategies.results}
-            loading={load_strategies}
-            rowSelection={rowSelection}
-            onChange={onChangePage}
-            locale={{
-                emptyText: load_strategies
-                    ? 'Cargando...'
-                    : 'No se encontraron resultados.',
-            }}
-            pagination={{
-                total: list_strategies.count,
-                current: page_jobbank,
-                hideOnSinglePage: true,
-                showSizeChanger: false
-            }}
-        />
+        <>
+            <Table
+                size='small'
+                rowKey='id'
+                columns={columns}
+                dataSource={list_strategies.results}
+                loading={load_strategies}
+                rowSelection={rowSelection}
+                onChange={onChangePage}
+                locale={{
+                    emptyText: load_strategies
+                        ? 'Cargando...'
+                        : 'No se encontraron resultados.',
+                }}
+                pagination={{
+                    total: list_strategies.count,
+                    current: page_jobbank,
+                    hideOnSinglePage: true,
+                    showSizeChanger: false
+                }}
+            />
+            <DeleteItems
+                title={itemsToDelete.length > 1
+                    ? '¿Estás seguro de eliminar estas estrategias?'
+                    : '¿Estás seguro de eliminar esta estrategia?'
+                }
+                visible={openModalDelete}
+                keyTitle='product'
+                keyDescription='assignment_date'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+            />
+        </>
     )
 }
 

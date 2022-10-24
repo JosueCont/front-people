@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import MyModal from '../../../common/MyModal';
+import MyModal from './MyModal';
 import { Row, Col, List, Button } from 'antd';
 
-const DeleteClients = ({
+const DeleteItems = ({
+    title = '', //string
     visible = false, //boolean
+    keyTitle = '', //string
+    keyDescription = '', //string
     close = () => {}, //function,
     itemsToDelete = [], //array
     actionDelete = ()=> {},//function
+    textCancel = 'Cancelar', //string
+    textDelete = 'Eliminar', //string
 }) =>{
 
     const [loading, setLoading] = useState(false);
@@ -21,10 +26,7 @@ const DeleteClients = ({
 
     return(
         <MyModal
-            title={itemsToDelete.length > 1
-                ? '¿Estás seguro de eliminar estos clientes?'
-                : '¿Estás seguro de eliminar este cliente?'
-            }
+            title={title}
             visible={visible}
             close={close}
             widthModal={400}
@@ -38,8 +40,8 @@ const DeleteClients = ({
                         renderItem={item => (
                             <List.Item key={item.id}>
                                 <List.Item.Meta
-                                    title={item.name}
-                                    description={item.business_name}
+                                    title={item[keyTitle]}
+                                    description={item[keyDescription]}
                                 />
                             </List.Item>
                         )}
@@ -54,13 +56,13 @@ const DeleteClients = ({
                     }}
                 >
                     <Button onClick={()=> close()}>
-                        No
+                        {textCancel}
                     </Button>
                     <Button
                         loading={loading}
                         onClick={()=> onFinish()}
                     >
-                        Sí
+                        {textDelete}
                     </Button>
                 </Col>
             </Row>
@@ -68,4 +70,4 @@ const DeleteClients = ({
     )
 }
 
-export default DeleteClients;
+export default DeleteItems;

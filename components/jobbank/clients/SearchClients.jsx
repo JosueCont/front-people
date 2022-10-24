@@ -10,15 +10,18 @@ import { getClients } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const SearchClients = ({
+    user,
     currentNode,
     getClients
 }) => {
 
     const [openModal, setOpenModal] = useState(false);
     const [toSearch, setToSearch] = useState('');
-
+    
     const onFinish = async (values) =>{
         try {
+            values.append('node', currentNode.id);
+            values.append('registered_by', user.id);
             await WebApiJobBank.createClient(values);
             getClients(currentNode?.id)
             message.success('Cliente agregado');
@@ -29,8 +32,10 @@ const SearchClients = ({
     }
 
     const onFinishSearch = () =>{
-        if(toSearch) getClients(currentNode.id, `&name=${toSearch}`);
-        else deleteFilter();
+        if(toSearch.trim()){
+            let query = `&name__icontains=${toSearch.trim()}`;
+            getClients(currentNode.id, query);
+        } else deleteFilter();
     }
 
     const deleteFilter = () =>{
@@ -43,8 +48,9 @@ const SearchClients = ({
             <Row gutter={[24,24]}>
                 <Col xs={18} sm={18} md={16} lg={12} style={{display: 'flex', gap: '16px'}}>
                     <Input
+                        value={toSearch}
                         placeholder={'Buscar por nombre'}
-                        onChange={e=> setToSearch(e.target.value.trim())}
+                        onChange={e=> setToSearch(e.target.value)}
                     />
                     <Button icon={<SearchOutlined />} onClick={()=> onFinishSearch()}/>
                     <Button icon={<SyncOutlined />} onClick={()=> deleteFilter()} />
@@ -66,6 +72,7 @@ const SearchClients = ({
 const mapState = (state) => {
     return{
         currentNode: state.userStore.current_node,
+        user: state.userStore.user
     }
 }
 

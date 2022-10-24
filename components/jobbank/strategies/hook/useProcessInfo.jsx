@@ -9,8 +9,7 @@ export const useProcessInfo = ({
     const { setFieldsValue } = formStrategies;
 
     const setValuesForm = () =>{
-        let info = Object.assign(info_strategy);
-        // let info = deleteKeyByValue(info_strategy);
+        let info = deleteKeyByValue(info_strategy);
         if(info.assignment_date){
             info.assignment_date = moment(info.assignment_date);
         }

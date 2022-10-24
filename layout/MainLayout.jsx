@@ -132,7 +132,7 @@ const MainLayout = ({
 
           .ant-layout-content {
             // background: var(--primaryColor) !important;
-            background: #f0f0f0 !important;
+            background: #E3E3E3 !important;
           }
 
           /* .ant-layout-content{
@@ -196,7 +196,7 @@ const MainLayout = ({
               background: transparent;
             } */
           .form_header {
-            background: #7b25f1 !important;
+            background: white !important;
           }
 
           .headers_transparent .ant-table-thead tr th {

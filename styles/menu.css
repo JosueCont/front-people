@@ -1,0 +1,46 @@
+.ant-menu-submenu-selected,
+.ant-menu-submenu-selected .ant-menu-submenu-arrow,
+.ant-menu-submenu-selected:hover .ant-menu-submenu-arrow {
+    background-color: #F99543 !important;
+    color: white !important;
+}
+.ant-menu-item-selected {
+    background-color: #121212 !important;
+    color: white;
+}
+
+.ant-menu-item{ margin: 0!important;}
+
+.ant-menu-submenu-selected .ant-menu-item-icon,
+.ant-menu-sub > .ant-menu-item-selected:hover,
+.ant-menu-submenu-open.ant-menu-submenu-selected:hover .ant-menu-submenu-title,
+.ant-menu-item-selected:hover,
+.ant-menu-submenu-selected .ant-menu-submenu-title:hover,
+.ant-menu-submenu-selected:hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
+    color: white !important;
+}
+
+.ant-menu-submenu-active,
+.ant-menu-submenu-title:hover,
+.ant-menu-item-active:hover,
+.ant-menu-submenu:not(.ant-menu-submenu-selected):hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
+    color: #121212 !important;
+}
+.ant-menu-item .ant-menu-item-icon, .ant-menu-submenu .ant-menu-item-icon{
+    color: #F99543;
+}
+
+.ant-menu-item-selected .ant-menu-item-icon {
+    color: white;
+}
+
+.ant-menu-inline .ant-menu-item::after{
+    border-color: #121212;
+}
+/*
+.ant-menu-inline .ant-menu-item::after{
+    border: 0;
+    content: none;
+}
+
+ */

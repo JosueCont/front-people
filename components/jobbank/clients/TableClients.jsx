@@ -5,22 +5,18 @@ import {
     Menu,
     Dropdown,
     message,
-    Switch
+    Switch,
+    Space,
+    Tag
 } from 'antd';
 import ModalClients from './ModalClients';
-import DeleteClients from './DeleteClients';
 import {
-    ClearOutlined,
-    SearchOutlined,
-    FileTextOutlined,
-    PlusCircleOutlined,
-    CloseOutlined,
     EllipsisOutlined,
     DeleteOutlined,
-    SyncOutlined,
     EditOutlined,
     EyeOutlined,
-    EyeInvisibleOutlined
+    EyeInvisibleOutlined,
+    FileTextOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
 import {
@@ -28,6 +24,7 @@ import {
     setPage
 } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import DeleteItems from '../../../common/DeleteItems';
 
 const TableClients = ({
     list_clients,
@@ -39,7 +36,7 @@ const TableClients = ({
 }) => {
 
     const [openModal, setOpenModal] = useState(false);
-    const [openModalDelete, setOpenModalDelete] = useState();
+    const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
@@ -75,7 +72,6 @@ const TableClients = ({
         try {
             await WebApiJobBank.deleteClient({ids});
             getClients(currentNode.id);
-            // console.log('eliminar is_deleted', ids)
             if(ids.length > 1) message.success('Clientes eliminados');
             else message.success('Cliente eliminado');
         } catch (e) {
@@ -83,6 +79,11 @@ const TableClients = ({
             if(ids.length > 1) message.error('Clientes no eliminados');
             else message.error('Cliente no eliminado');
         }
+    }
+
+    const closeModalEdit = () =>{
+        setOpenModal(false)
+        setItemToEdit({})
     }
 
     const closeModalDelete = () =>{
@@ -244,11 +245,17 @@ const TableClients = ({
                 title={'Editar cliente'}
                 visible={openModal}
                 actionForm={actionUpdate}
-                close={()=> setOpenModal(false)}
+                close={closeModalEdit}
                 itemToEdit={itemToEdit}
             />
-            <DeleteClients
+            <DeleteItems
+                title={itemsToDelete.length > 1
+                    ? '¿Estás seguro de eliminar estos clientes?'
+                    : '¿Estás seguro de eliminar este cliente?'
+                }
                 visible={openModalDelete}
+                keyTitle='name'
+                keyDescription='business_name'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}
