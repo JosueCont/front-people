@@ -30,6 +30,17 @@ const ProvisionsReport = ({ permissions, ...props }) => {
           <Title level={5}>Provisiones</Title>
           <hr />
         </Col>
+        <Col>
+          <Form
+            form={form}
+            name="filter"
+            layout="vertical"
+            key="formFilter"
+            className="formFilterReports"
+          >
+
+          </Form>
+        </Col>
       </Row>
     </>
   )
