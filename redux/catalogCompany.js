@@ -387,9 +387,18 @@ export const getPatronalRegistration =
 export const getJobRiskClass = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.getJobRiskClass(idCompany)
     .then((response) => {
+      
+      let unOrder = response.data.results  
+
+      let ordered = unOrder.sort((a, b) => {
+        if (a.percent > b.percent) return 1
+        if (a.percent < b.percent) return -1
+        return 0
+      })
+
       dispatch({
         type: JOB_RISK,
-        payload: { data: response.data.results, error: null },
+        payload: { data: ordered, error: null },
       });
     })
     .catch((error) => {
