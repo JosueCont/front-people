@@ -28,7 +28,7 @@ export const urlMyAccount = process.browser
 
 export const urlPeople = process.browser
   ? process.env.NEXT_PUBLIC_BASE_URL_PEOPLE_TENANT
-  : process.env.BASE_URL_MYACCOUNT_TENANT;
+  : process.env.BASE_URL_PEOPLE_TENANT;
 
 export const urlSocial = process.browser
   ? process.env.NEXT_PUBLIC_BASE_URL_SOCIAL_TENANT

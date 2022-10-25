@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Form,
     Row,
@@ -12,9 +12,7 @@ import TabClient from './TabClient';
 import TabContact from './TabContact';
 import TabDocuments from './TabDocuments';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { deleteKeyByValue } from '../../../utils/constant';
 import { connect } from 'react-redux';
-import { useEffect } from 'react';
 
 const RegisterClient = ({
     currentNode
@@ -22,30 +20,32 @@ const RegisterClient = ({
 
     const [formClient] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [listDocs, setListDocs] = useState([]);
+    const [prevDocs, setPrevDocs] = useState([]);
+    const [newDocs, setNewDocs] = useState([]);
 
-    // useEffect(()=>{
-    //     console.log('checa--------->', currentNode)
-    // },[currentNode])
+    const createData = (obj) =>{
+        let dataClient = new FormData();
+        dataClient.append('node', currentNode.id);
+        dataClient.append('auto_register', true);
+        if(newDocs.length > 0) newDocs.map(item => dataClient.append('files', item));
+        Object.entries(obj).map(([key, val])=>{ if(val) dataClient.append(key, val) });
+        return dataClient;
+    }
 
-    const getDataClient = (obj) =>{
-        let data = new FormData();
-        data.append('node', currentNode.id)
-        Object.entries(obj).map(([key, val]) =>{
-            if(val) data.append(key, val);
-        })
-        return data;
+    const onSuccessCreate = () =>{
+        Modal.success({ content: 'Cliente registrado' })
+        formClient.resetFields();
+        setPrevDocs([])
+        setNewDocs([])
+        setLoading(false)
     }
 
     const onFinish = async (values) =>{
         setLoading(true)
         try {
-            let body = deleteKeyByValue(values);
-            let data = getDataClient(body);
-            await WebApiJobBank.createClient(data);
-            Modal.success({ content: 'Cliente registrado' })
-            formClient.resetFields();
-            setLoading(false)
+            const bodyData = createData(values);
+            await WebApiJobBank.createClient(bodyData);
+            onSuccessCreate()
         } catch (e) {
             console.log(e)
             Modal.error({ content: 'Cliente no registrado' })
@@ -78,8 +78,10 @@ const RegisterClient = ({
                         </Divider>
                         <div style={{padding: '0px 12px'}}>
                             <TabDocuments
-                                listDocs={listDocs}
-                                setListDocs={setListDocs}
+                                newDocs={newDocs}
+                                prevDocs={prevDocs}
+                                setNewDocs={setNewDocs}
+                                setPrevDocs={setPrevDocs}
                             />
                         </div>
                     </Form>

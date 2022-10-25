@@ -17,8 +17,10 @@ const SearchVacancies = ({
     const [toSearch, setToSearch] = useState('');
 
     const onFinishSearch = () =>{
-        if(toSearch.trim()) getVacancies(currentNode.id, `&job_position=${toSearch.trim()}`);
-        else deleteFilter();
+        if(toSearch.trim()){
+            let query = `&job_position__icontains=${toSearch.trim()}`;
+            getVacancies(currentNode.id, query);
+        } else deleteFilter();
     }
 
     const deleteFilter = () =>{

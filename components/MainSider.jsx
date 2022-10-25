@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { Layout, Menu, Breadcrumb } from "antd";
-import { css, Global } from "@emotion/core";
+import { Layout, Menu } from "antd";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import Icon, {
@@ -12,17 +11,11 @@ import Icon, {
   DollarOutlined,
   BankOutlined,
   SettingOutlined,
-  AlertOutlined,
   QuestionCircleOutlined,
-  AppstoreOutlined,
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
-import {IntranetIcon} from "./CustomIcons";
+import { IntranetIcon } from "./CustomIcons";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -34,12 +27,10 @@ const MainSider = ({
   onClickImage = true,
   ...props
 }) => {
-  const { SubMenu } = Menu;
   const router = useRouter();
   const [intranetAccess, setintanetAccess] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [theme, setTheme] = useState("light");
-  const [currentSelectedKey, setCurrentSelectedKey] = useState("company");
 
   useLayoutEffect(() => {
     if (props.config) {
@@ -59,43 +50,43 @@ const MainSider = ({
   // Rutas menú
   const onClickMenuItem = ({ key }) => {
     const pathRoutes = {
-      business: '/business',
-      integrationFactors: '/business/integrationFactors',
-      asign: '/config/assignedCompanies',
-      patronal: '/business/patronalRegistrationNode',
-      persons: '/home/persons',
-      groups_people: '/home/groups',
-      catalogs: '/config/catalogs',
-      securityGroups: '/config/groups',
-      releases: '/comunication/releases',
-      events: '/comunication/events',
-      reports: '/reports',
-      lending: '/lending',
-      holidays: '/holidays',
-      permission: '/permission',
-      incapacity: '/incapacity',
-      bank_accounts: '/bank_accounts',
-      calculatePayroll: '/payroll/calculatePayroll',
-      paymentCalendar: '/payroll/paymentCalendar',
-      payrollVoucher: '/payroll/payrollVoucher',
-      calculatorSalary: '/payroll/calculatorSalary',
-      importMassivePayroll: '/payroll/importMasivePayroll',
-      imssMovements: '/payroll/imssMovements',
-      bulk_upload: '/bulk_upload',
-      documentsLog: '/log/documentsLog',
-      intranet_groups: '/intranet/groups',
-      intranet_configuration: '/intranet/config',
-      publications_statistics: '/intranet/publications_statistics',
-      surveys: '/assessment/surveys',
-      assessment_groups: '/assessment/groups',
-      assessment_profiles: '/assessment/profiles',
-      assessment_reports: '/assessment/reports',
-      ynl_general_dashboard: '/ynl/general-dashboard',
-      ynl_personal_dashboard: '/ynl/personal-dashboard',
-      jb_clients: '/jobbank/clients',
-      jb_vacancies: '/jobbank/vacancies',
-      jb_strategies: '/jobbank/strategies'
-    }
+      business: "/business",
+      asign: "/config/assignedCompanies",
+      patronal: "/business/patronalRegistrationNode",
+      persons: "/home/persons",
+      groups_people: "/home/groups",
+      catalogs: "/config/catalogs",
+      securityGroups: "/config/groups",
+      releases: "/comunication/releases",
+      events: "/comunication/events",
+      reports: "/reports",
+      lending: "/lending",
+      holidays: "/holidays",
+      permission: "/permission",
+      incapacity: "/incapacity",
+      bank_accounts: "/bank_accounts",
+      calculatePayroll: "/payroll/calculatePayroll",
+      extraordinaryPayroll: "/payroll/extraordinaryPayroll",
+      paymentCalendar: "/payroll/paymentCalendar",
+      payrollVoucher: "/payroll/payrollVoucher",
+      calculatorSalary: "/payroll/calculatorSalary",
+      importMassivePayroll: "/payroll/importMasivePayroll",
+      imssMovements: "/payroll/imssMovements",
+      bulk_upload: "/bulk_upload",
+      documentsLog: "/log/documentsLog",
+      intranet_groups: "/intranet/groups",
+      intranet_configuration: "/intranet/config",
+      publications_statistics: "/intranet/publications_statistics",
+      surveys: "/assessment/surveys",
+      assessment_groups: "/assessment/groups",
+      assessment_profiles: "/assessment/profiles",
+      assessment_reports: "/assessment/reports",
+      ynl_general_dashboard: "/ynl/general-dashboard",
+      ynl_personal_dashboard: "/ynl/personal-dashboard",
+      jb_clients: "/jobbank/clients",
+      jb_vacancies: "/jobbank/vacancies",
+      jb_strategies: "/jobbank/strategies",
+    };
     router.push(pathRoutes[key]);
   };
 
@@ -214,26 +205,30 @@ const MainSider = ({
       // Menú Khor Connect
       if (intranetAccess) {
         let children = [
-          getItem('Configuración', 'intranet_configuration'),
-          getItem('Grupos', 'intranet_groups'),
-          getItem('Moderación', 'publications_statistics')
-        ]
-       /* items.push(getItem('Khor Connect', 'intranet', <img
+          getItem("Configuración", "intranet_configuration"),
+          getItem("Grupos", "intranet_groups"),
+          getItem("Moderación", "publications_statistics"),
+        ];
+        /* items.push(getItem('Khor Connect', 'intranet', <img
             className="anticon ant-menu-item-icon icon-intranet"
             src={"/images/Intranet.svg"}
         />, children)) */
-        items.push(getItem('Khor Connect', 'intranet', <IntranetIcon/>, children))
+        items.push(
+          getItem("Khor Connect", "intranet", <IntranetIcon />, children)
+        );
       }
 
       // Menú Kuiz
       if (props?.config && props?.config?.kuiz_enabled) {
         let children = [
-          getItem('Evaluaciones', 'surveys'),
-          getItem('Grupos de evaluaciones', 'assessment_groups'),
-          getItem('Perfiles de competencias', 'assessment_profiles'),
-          getItem('Reportes de competencias', 'assessment_reports')
-        ]
-        items.push(getItem('Psicometría', 'kuiz', <QuestionCircleOutlined />, children))
+          getItem("Evaluaciones", "surveys"),
+          getItem("Grupos de evaluaciones", "assessment_groups"),
+          getItem("Perfiles de competencias", "assessment_profiles"),
+          getItem("Reportes de competencias", "assessment_reports"),
+        ];
+        items.push(
+          getItem("Psicometría", "kuiz", <QuestionCircleOutlined />, children)
+        );
       }
 
       // Menú YNL
@@ -257,21 +252,23 @@ const MainSider = ({
 
       //Menú Bolsa de trabajo
       if (props?.applications) {
-        let show_jobbank_module = false
+        let show_jobbank_module = false;
         for (let item in props.applications) {
-          if (item === 'jobbank') {
+          if (item === "jobbank") {
             if (props.applications[item].active) {
-              show_jobbank_module = true
+              show_jobbank_module = true;
             }
           }
         }
         if (show_jobbank_module) {
           children = [
-            getItem('Clientes', 'jb_clients'),
-            getItem('Vacantes', 'jb_vacancies'),
-            getItem('Estrategias', 'jb_strategies')
-          ]
-          items.push(getItem('Bolsa de trabajo', 'job_bank', <WorkOutline/>, children))
+            getItem("Clientes", "jb_clients"),
+            getItem("Vacantes", "jb_vacancies"),
+            getItem("Estrategias", "jb_strategies"),
+          ];
+          items.push(
+            getItem("Bolsa de trabajo", "job_bank", <WorkOutline />, children)
+          );
         }
       }
     }

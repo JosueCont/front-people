@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { Card, Row, Col, Space, Button, Divider } from "antd";
 import Cookies from "js-cookie";
-import { getCurrentURL } from "../../utils/constant";
+import { getCurrentURL, redirectTo } from "../../utils/constant";
 import { connect } from "react-redux";
 import { domainApiWithTenant } from "../../api/axiosApi";
 import { urlMyAccount, urlPeople, urlSocial } from "../../config/config";
@@ -95,33 +95,26 @@ const CardApps = ({ user, config, ...props }) => {
       true
     )}.${urlMyAccount}/validation?token=${token}`;
     // const url = `${getCurrentURL(true)}.localhost:3001/validation?token=${token}`;
-    redirectTo(url);
+    redirectTo(url, true);
   };
 
   const linkToPeople = () => {
     const token = user.jwt_data.metadata.at(-1).token;
     const url = `${getCurrentURL(true)}.${urlPeople}/validation?token=${token}`;
     // const url = `${getCurrentURL(true)}.localhost:3000/validation?token=${token}`;
-    redirectTo(url);
+    redirectTo(url, true);
   };
 
   const linktToSocial = () => {
     const token = user.jwt_data.metadata.at(-1).token;
     const url = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token}`;
-    redirectTo(url);
-  };
-
-  const redirectTo = (url) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.target = "_blank";
-    link.click();
+    redirectTo(url, true);
   };
 
   const linkToExternalApp = (app_name) => {
     const url = props.applications[app_name].front;
     // const url = `${getCurrentURL(true)}.localhost:3000/validation?token=${token}`;
-    redirectTo(url);
+    redirectTo(url, true);
   };
 
   return (
