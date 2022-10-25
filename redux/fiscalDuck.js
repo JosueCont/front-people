@@ -371,6 +371,7 @@ export const ImssDelegation = () => async (dispatch, getState) => {
 export const ImssSubDelegation = () => async (dispatch, getState) => {
   await WebApiFiscal.ImssSubdelegation()
     .then((response) => {
+      console.log('Response sub', response.data.results)
       dispatch({
         type: IMSS_SUBDELEGATION,
         payload: response.data.results,
