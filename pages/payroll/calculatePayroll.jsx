@@ -540,6 +540,8 @@ const CalculatePayroll = ({ ...props }) => {
     setTotalIsr(null);
     setNetPay(null);
     setConsolidated(null);
+    if (department) dataToSend.department = department;
+    if (job) dataToSend.job = job;
     await WebApiPayroll.calculatePayroll(dataToSend)
       .then((response) => {
         setLoading(false);
@@ -727,7 +729,7 @@ const CalculatePayroll = ({ ...props }) => {
                     moment={"YYYY"}
                     id="payment_date"
                     placeholder="Fecha de pago."
-                    locale = { locale }
+                    locale={locale}
                   />
                 </Form.Item>
               </Row>
@@ -1012,7 +1014,10 @@ const CalculatePayroll = ({ ...props }) => {
           }
         `}
         />
-        <MainLayout currentKey={["calculatePayroll"]} defaultOpenKeys={["payroll"]}>
+        <MainLayout
+          currentKey={["calculatePayroll"]}
+          defaultOpenKeys={["payroll"]}
+        >
           <Breadcrumb className={"mainBreadcrumb"}>
             <Breadcrumb.Item
               className={"pointer"}
@@ -1274,8 +1279,8 @@ const CalculatePayroll = ({ ...props }) => {
                                       "File",
                                       info.fileList[0].originFileObj
                                     );
-                                    data.append('department',department)
-                                    data.append('job',job)
+                                    data.append("department", department);
+                                    data.append("job", job);
                                     data.append(
                                       "payment_period",
                                       periodSelected.id
@@ -1441,6 +1446,8 @@ const CalculatePayroll = ({ ...props }) => {
                       calendar={calendarSelect.id}
                       period={periodSelected.id}
                       viewFilter={false}
+                      department={department}
+                      job={job}
                       setKeys={setCfdiCancel}
                       clickCancelStamp={cancelOneStamp}
                     />

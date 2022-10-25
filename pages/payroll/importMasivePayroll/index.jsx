@@ -498,7 +498,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                       <Col span={18} style={{ display: "" }}>
                         <span
                           style={{
-                            color: "white",
                             fontSize: "25px",
                             fontWeight: "bold",
                           }}
@@ -610,7 +609,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                       <Col span={18} style={{ display: "" }}>
                         <span
                           style={{
-                            color: "white",
                             fontSize: "30px",
                             fontWeight: "bold",
                           }}
@@ -623,7 +621,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                           style={{
                             background: "#fa8c16",
                             fontWeight: "bold",
-                            color: "white",
                             marginTop: "auto",
                           }}
                           onClick={() => setModal(true)}
@@ -656,7 +653,6 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                         style={{
                           background: "#fa8c16",
                           fontWeight: "bold",
-                          color: "white",
                           marginTop: "auto",
                         }}
                         onClick={() => setModal(true)}
