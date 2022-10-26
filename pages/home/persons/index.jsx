@@ -388,20 +388,20 @@ const homeScreen = ({ ...props }) => {
         );
       },
     },
-    {
-      title: "Asignaciones",
-      show: props.config?.kuiz_enabled,
-      render: (item) => {
-        return (
-          <Tooltip title="Ver asignaciones">
-            <EyeOutlined
-              style={{ cursor: "pointer" }}
-              onClick={() => OpenModalAssigns(item)}
-            />
-          </Tooltip>
-        );
-      },
-    },
+    // {
+    //   title: "Asignaciones",
+    //   show: props.config?.kuiz_enabled,
+    //   render: (item) => {
+    //     return (
+    //       <Tooltip title="Ver asignaciones">
+    //         <EyeOutlined
+    //           style={{ cursor: "pointer" }}
+    //           onClick={() => OpenModalAssigns(item)}
+    //         />
+    //       </Tooltip>
+    //     );
+    //   },
+    // },
     {
       title: "Acceso a intranet",
       show: props.config?.intranet_enabled,
@@ -533,6 +533,9 @@ const homeScreen = ({ ...props }) => {
                 <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
               </Menu.Item>
             )}
+            <Menu.Item key="4" icon={<EyeOutlined />}>
+              <Link href={`/assessment/listAssessments/${item.id}`}>Ver asignaciones</Link>
+            </Menu.Item>
             {permissions.create && (
               <Menu.Item
                 key="1"

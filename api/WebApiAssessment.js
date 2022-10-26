@@ -195,6 +195,20 @@ class WebApiAssessment {
   static getReportProfiles (data){
     return Axios.post(`${API_ASSESSMENT}/sittings/profiles-report/`, data)
   }
+
+  //Asignaciones por persona
+  static getUserListAssessments(data){
+    return WebApi.ApisType(`/person/person-assessments/user-assignments-list/`, "post", data);
+  }
+  static deleteAssessmentUser(data){
+    return WebApi.ApisType(`/person/person-assessments/delete-apply/`, "post", data);
+  }
+  static restartAssessmentUser(data){
+    return WebApi.ApisType(`/person/person-assessments/restart-apply/`, "post", data);
+  }
+  static resetAssessmentUser(data){
+    return WebApi.ApisType(`/person/person-assessments/reset-apply/`, "post", data);
+  }
 }
 
 export default WebApiAssessment;
