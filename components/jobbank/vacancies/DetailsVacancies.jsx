@@ -63,7 +63,7 @@ const DetailsVacancies = ({
 
     const onFinishCreate = async (values) =>{
         try {
-            let response = await WebApiJobBank.createVacant({...values, node: currentNode.id});
+            let response = await WebApiJobBank.createVacant({...values, node_id: currentNode.id});
             message.success('Vacante registrada');
             router.replace({
                 pathname: '/jobbank/vacancies/edit',

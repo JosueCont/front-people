@@ -38,7 +38,6 @@ const TableVacancies = ({
         try {
             await WebApiJobBank.deleteVacant({ids});
             getVacancies(currentNode.id)
-            // console.log('eliminar is_deleted', ids)
             if(ids.length > 1) message.success('Vacantes eliminadas');
             else message.success('Vacante eliminada');
         } catch (e) {

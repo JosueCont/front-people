@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { Layout, Menu, Breadcrumb } from "antd";
-import { css, Global } from "@emotion/core";
+import { Layout, Menu } from "antd";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import Icon, {
@@ -12,17 +11,11 @@ import Icon, {
   DollarOutlined,
   BankOutlined,
   SettingOutlined,
-  AlertOutlined,
   QuestionCircleOutlined,
-  AppstoreOutlined,
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
 } from "@ant-design/icons";
 import { FormattedMessage } from "react-intl";
 import { GroupOutlined, WorkOutline } from "@material-ui/icons";
-import {IntranetIcon} from "./CustomIcons";
+import { IntranetIcon } from "./CustomIcons";
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -34,12 +27,10 @@ const MainSider = ({
   onClickImage = true,
   ...props
 }) => {
-  const { SubMenu } = Menu;
   const router = useRouter();
   const [intranetAccess, setintanetAccess] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const [theme, setTheme] = useState('light');
-  const [currentSelectedKey, setCurrentSelectedKey] = useState('company');
+  const [theme, setTheme] = useState("light");
 
   useLayoutEffect(() => {
     if (props.config) {
@@ -52,205 +43,231 @@ const MainSider = ({
       key,
       icon,
       children,
-      label
+      label,
     };
   }
 
   // Rutas menú
-  const onClickMenuItem= ({key}) => {
+  const onClickMenuItem = ({ key }) => {
     const pathRoutes = {
-      business: '/business',
-      asign: '/config/assignedCompanies',
-      patronal: '/business/patronalRegistrationNode',
-      persons: '/home/persons',
-      groups_people: '/home/groups',
-      catalogs: '/config/catalogs',
-      securityGroups: '/config/groups',
-      releases: '/comunication/releases',
-      events: '/comunication/events',
-      reports: '/reports',
-      lending: '/lending',
-      holidays: '/holidays',
-      permission: '/permission',
-      incapacity: '/incapacity',
-      bank_accounts: '/bank_accounts',
-      calculatePayroll: '/payroll/calculatePayroll',
-      paymentCalendar: '/payroll/paymentCalendar',
-      payrollVoucher: '/payroll/payrollVoucher',
-      calculatorSalary: '/payroll/calculatorSalary',
-      importMassivePayroll: '/payroll/importMasivePayroll',
-      imssMovements: '/payroll/imssMovements',
-      bulk_upload: '/bulk_upload',
-      documentsLog: '/log/documentsLog',
-      intranet_groups: '/intranet/groups',
-      intranet_configuration: '/intranet/config',
-      publications_statistics: '/intranet/publications_statistics',
-      surveys: '/assessment/surveys',
-      assessment_groups: '/assessment/groups',
-      assessment_profiles: '/assessment/profiles',
-      assessment_reports: '/assessment/reports',
-      ynl_general_dashboard: '/ynl/general-dashboard',
-      ynl_personal_dashboard: '/ynl/personal-dashboard',
-      jb_clients: '/jobbank/clients',
-      jb_vacancies: '/jobbank/vacancies',
-      jb_strategies: '/jobbank/strategies'
-    }
+      business: "/business",
+      asign: "/config/assignedCompanies",
+      patronal: "/business/patronalRegistrationNode",
+      persons: "/home/persons",
+      groups_people: "/home/groups",
+      catalogs: "/config/catalogs",
+      securityGroups: "/config/groups",
+      releases: "/comunication/releases",
+      events: "/comunication/events",
+      reports: "/reports",
+      lending: "/lending",
+      holidays: "/holidays",
+      permission: "/permission",
+      incapacity: "/incapacity",
+      bank_accounts: "/bank_accounts",
+      calculatePayroll: "/payroll/calculatePayroll",
+      extraordinaryPayroll: "/payroll/extraordinaryPayroll",
+      paymentCalendar: "/payroll/paymentCalendar",
+      payrollVoucher: "/payroll/payrollVoucher",
+      calculatorSalary: "/payroll/calculatorSalary",
+      importMassivePayroll: "/payroll/importMasivePayroll",
+      imssMovements: "/payroll/imssMovements",
+      bulk_upload: "/bulk_upload",
+      documentsLog: "/log/documentsLog",
+      intranet_groups: "/intranet/groups",
+      intranet_configuration: "/intranet/config",
+      publications_statistics: "/intranet/publications_statistics",
+      surveys: "/assessment/surveys",
+      assessment_groups: "/assessment/groups",
+      assessment_profiles: "/assessment/profiles",
+      assessment_reports: "/assessment/reports",
+      ynl_general_dashboard: "/ynl/general-dashboard",
+      ynl_personal_dashboard: "/ynl/personal-dashboard",
+      jb_clients: "/jobbank/clients",
+      jb_vacancies: "/jobbank/vacancies",
+      jb_strategies: "/jobbank/strategies",
+    };
     router.push(pathRoutes[key]);
   };
 
-  let items = []
-  let children = []
+  let items = [];
+  let children = [];
 
   // Función para obtener la lista de elementos del menú
   function getMenuItems() {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // Menú Empresas
       if (props?.permissions?.company?.view) {
         let children = [
-          getItem('Empresas', 'business'),
-          getItem('Asignar empresa', 'asign')
-        ]
+          getItem("Empresas", "business"),
+          getItem("Asignar empresa", "asign"),
+        ];
         if (props?.config && props?.config?.nomina_enabled) {
-          children.push(getItem('Registros patronales', 'patronal'))
+          children.push(getItem("Registros patronales", "patronal"));
         }
-        items.push(getItem('Empresa', 'company', <BankOutlined />, children))
+        items.push(getItem("Empresa", "company", <BankOutlined />, children));
       }
 
       // Menú People
       if (props?.permissions?.person?.view) {
         let children = [
-          getItem('Personas', 'persons'),
-          getItem('Grupos', 'groups_people'),
-        ]
-        items.push(getItem('Colaboradores', 'people', <UserOutlined />, children))
+          getItem("Personas", "persons"),
+          getItem("Grupos", "groups_people"),
+        ];
+        items.push(
+          getItem("Colaboradores", "people", <UserOutlined />, children)
+        );
       }
 
       // Menú Configuración
       children = [
-        getItem('Catálogos', 'catalogs'),
-        getItem('Perfiles de seguridad', 'securityGroups'),
-      ]
-      items.push(getItem('Configuración', 'config', <SettingOutlined />, children))
+        getItem("Catálogos", "catalogs"),
+        getItem("Perfiles de seguridad", "securityGroups"),
+      ];
+      items.push(
+        getItem("Configuración", "config", <SettingOutlined />, children)
+      );
 
       // Agregar división
-      items.push({type: 'divider'})
+      items.push({ type: "divider" });
 
       // Menú Comunicación
-      if (props?.config && props?.config?.nomina_enabled && (props?.permissions?.comunication?.view ||
-          props?.permissions?.event?.view)) {
-        let children = []
+      if (
+        props?.config &&
+        props?.config?.nomina_enabled &&
+        (props?.permissions?.comunication?.view ||
+          props?.permissions?.event?.view)
+      ) {
+        let children = [];
         if (props?.permissions?.comunication?.view) {
-          children.push(getItem('Comunicados', 'releases'))
+          children.push(getItem("Comunicados", "releases"));
         }
         if (props?.permissions?.event?.view) {
-          children.push(getItem('Eventos', 'events'))
+          children.push(getItem("Eventos", "events"));
         }
-        items.push(getItem('Comunicación', 'comunication', <MessageOutlined />, children))
+        items.push(
+          getItem("Comunicación", "comunication", <MessageOutlined />, children)
+        );
       }
 
       // Menú Reportes
-      if (props?.config && props?.config?.nomina_enabled && props?.permissions?.report?.view) {
-        items.push(getItem('Reportes', 'reports', <ProfileOutlined />))
+      if (
+        props?.config &&
+        props?.config?.nomina_enabled &&
+        props?.permissions?.report?.view
+      ) {
+        items.push(getItem("Reportes", "reports", <ProfileOutlined />));
       }
 
       // Menú Solicitudes
       if (props?.config && props?.config?.nomina_enabled) {
-        let children = []
+        let children = [];
         if (props?.permissions?.loan?.view) {
-          children.push(getItem('Préstamos', 'lending'))
+          children.push(getItem("Préstamos", "lending"));
         }
         if (props?.permissions?.vacation?.view) {
-          children.push(getItem('Vacaciones', 'holidays'))
+          children.push(getItem("Vacaciones", "holidays"));
         }
-        children.push(getItem('Permisos', 'permission'))
-        children.push(getItem('Incapacidad', 'incapacity'))
-        children.push(getItem('Cuentas bancarias', 'bank_accounts'))
-        items.push(getItem('Solicitudes', 'requests', <FormOutlined />, children))
+        children.push(getItem("Permisos", "permission"));
+        children.push(getItem("Incapacidad", "incapacity"));
+        children.push(getItem("Cuentas bancarias", "bank_accounts"));
+        items.push(
+          getItem("Solicitudes", "requests", <FormOutlined />, children)
+        );
       }
 
       // Menú Nómina
       if (props?.config && props?.config?.nomina_enabled) {
         let children = [
-          getItem('Cálculo de nómina', 'calculatePayroll'),
-          getItem('Calendario de pagos', 'paymentCalendar'),
-          getItem('Comprobantes fiscales', 'payrollVoucher'),
-          getItem('Calculadora', 'calculatorSalary'),
-          getItem('Importar nómina con XML', 'importMassivePayroll'),
-          getItem('Movimientos IMSS', 'imssMovements')
-        ]
-        items.push(getItem('Nómina', 'payroll', <DollarOutlined />, children))
+          getItem("Cálculo de nómina", "calculatePayroll"),
+          getItem("Nóminas extraordinarias", "extraordinaryPayroll"),
+          getItem("Calendario de pagos", "paymentCalendar"),
+          getItem("Comprobantes fiscales", "payrollVoucher"),
+          getItem("Calculadora", "calculatorSalary"),
+          getItem("Importar nómina con XML", "importMassivePayroll"),
+          getItem("Movimientos IMSS", "imssMovements"),
+        ];
+        items.push(getItem("Nómina", "payroll", <DollarOutlined />, children));
       }
 
       // Menú Registro de errores
       if (props?.config && props?.config?.nomina_enabled) {
         let children = [
-          getItem('Carga masiva de personas', 'bulk_upload'),
-          getItem('Carga de documentos', 'documentsLog')
-        ]
-        items.push(getItem('Registro de errores', 'uploads', <BugOutlined />, children))
+          getItem("Carga masiva de personas", "bulk_upload"),
+          getItem("Carga de documentos", "documentsLog"),
+        ];
+        items.push(
+          getItem("Registro de errores", "uploads", <BugOutlined />, children)
+        );
       }
 
       // Menú Khor Connect
       if (intranetAccess) {
         let children = [
-          getItem('Configuración', 'intranet_configuration'),
-          getItem('Grupos', 'intranet_groups'),
-          getItem('Moderación', 'publications_statistics')
-        ]
-       /* items.push(getItem('Khor Connect', 'intranet', <img
+          getItem("Configuración", "intranet_configuration"),
+          getItem("Grupos", "intranet_groups"),
+          getItem("Moderación", "publications_statistics"),
+        ];
+        /* items.push(getItem('Khor Connect', 'intranet', <img
             className="anticon ant-menu-item-icon icon-intranet"
             src={"/images/Intranet.svg"}
         />, children)) */
-        items.push(getItem('Khor Connect', 'intranet', <IntranetIcon/>, children))
+        items.push(
+          getItem("Khor Connect", "intranet", <IntranetIcon />, children)
+        );
       }
 
       // Menú Kuiz
       if (props?.config && props?.config?.kuiz_enabled) {
         let children = [
-          getItem('Evaluaciones', 'surveys'),
-          getItem('Grupos de evaluaciones', 'assessment_groups'),
-          getItem('Perfiles de competencias', 'assessment_profiles'),
-          getItem('Reportes de competencias', 'assessment_reports')
-        ]
-        items.push(getItem('Psicometría', 'kuiz', <QuestionCircleOutlined />, children))
+          getItem("Evaluaciones", "surveys"),
+          getItem("Grupos de evaluaciones", "assessment_groups"),
+          getItem("Perfiles de competencias", "assessment_profiles"),
+          getItem("Reportes de competencias", "assessment_reports"),
+        ];
+        items.push(
+          getItem("Psicometría", "kuiz", <QuestionCircleOutlined />, children)
+        );
       }
 
       // Menú YNL
       if (props?.applications) {
-        let show_ynl_module = false
+        let show_ynl_module = false;
         for (let item in props.applications) {
-          if (item === 'ynl') {
+          if (item === "ynl") {
             if (props.applications[item].active) {
-              show_ynl_module = true
+              show_ynl_module = true;
             }
           }
         }
         if (show_ynl_module) {
           children = [
-            getItem('Dashboard general', 'ynl_general_dashboard'),
-            getItem('Dashboard personal', 'ynl_personal_dashboard')
-          ]
-          items.push(getItem('YNL', 'ynl', <UserOutlined />, children))
+            getItem("Dashboard general", "ynl_general_dashboard"),
+            getItem("Dashboard personal", "ynl_personal_dashboard"),
+          ];
+          items.push(getItem("YNL", "ynl", <UserOutlined />, children));
         }
       }
 
       //Menú Bolsa de trabajo
       if (props?.applications) {
-        let show_jobbank_module = false
+        let show_jobbank_module = false;
         for (let item in props.applications) {
-          if (item === 'jobbank') {
+          if (item === "jobbank") {
             if (props.applications[item].active) {
-              show_jobbank_module = true
+              show_jobbank_module = true;
             }
           }
         }
         if (show_jobbank_module) {
           children = [
-            getItem('Clientes', 'jb_clients'),
-            getItem('Vacantes', 'jb_vacancies'),
-            getItem('Estrategias', 'jb_strategies')
-          ]
-          items.push(getItem('Bolsa de trabajo', 'job_bank', <WorkOutline/>, children))
+            getItem("Clientes", "jb_clients"),
+            getItem("Vacantes", "jb_vacancies"),
+            getItem("Estrategias", "jb_strategies"),
+          ];
+          items.push(
+            getItem("Bolsa de trabajo", "job_bank", <WorkOutline />, children)
+          );
         }
       }
     }
@@ -259,10 +276,23 @@ const MainSider = ({
   }
 
   return (
-      <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)} theme={theme} width={250} >
-        <div className="logo" />
-        <Menu theme={theme} defaultSelectedKeys={currentKey} defaultOpenKeys={defaultOpenKeys} mode="inline" onClick={onClickMenuItem} items={getMenuItems()} />
-      </Sider>
+    <Sider
+      collapsible
+      collapsed={collapsed}
+      onCollapse={(value) => setCollapsed(value)}
+      theme={theme}
+      width={250}
+    >
+      <div className="logo" />
+      <Menu
+        theme={theme}
+        defaultSelectedKeys={currentKey}
+        defaultOpenKeys={defaultOpenKeys}
+        mode="inline"
+        onClick={onClickMenuItem}
+        items={getMenuItems()}
+      />
+    </Sider>
   );
 
   /*return (
@@ -646,7 +676,7 @@ const mapState = (state) => {
     currentNode: state.userStore.current_node,
     config: state.userStore.general_config,
     permissions: state.userStore.permissions,
-    applications: state.userStore.applications
+    applications: state.userStore.applications,
   };
 };
 export default connect(mapState)(MainSider);

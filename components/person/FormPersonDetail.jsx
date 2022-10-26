@@ -50,6 +50,7 @@ const { Content } = Layout;
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const personDetailForm = () => {
   const { TabPane } = Tabs;
@@ -1939,6 +1940,7 @@ const personDetailForm = () => {
                               <DatePicker
                                 onChange={onChangeDateAdmission}
                                 moment={"YYYY-MM-DD"}
+                                locale = { locale }
                               />
                             </Form.Item>
                             <Switch
@@ -1996,6 +1998,7 @@ const personDetailForm = () => {
                             onChange={onChangeIngPlatform}
                             moment={"YYYY-MM-DD"}
                             placeholder="Fecha de ingreso a la plataforma"
+                            locale = { locale }
                           />
                         </Form.Item>
                       </Col>
@@ -2064,6 +2067,7 @@ const personDetailForm = () => {
                             onChange={onChangeBirthDate}
                             moment={"YYYY-MM-DD"}
                             placeholder="Fecha de nacimiento"
+                            locale = { locale }
                           />
                         </Form.Item>
                       </Col>
@@ -2458,6 +2462,7 @@ const personDetailForm = () => {
                             style={{ width: "100%" }}
                             onChange={onChangeBDFamily}
                             moment={"YYYY-MM-DD"}
+                            locale = { locale }
                           />
                         </Form.Item>
                       </Col>
@@ -2624,6 +2629,7 @@ const personDetailForm = () => {
                             <RangePicker
                               style={{ width: "100%" }}
                               onChange={onChangeDateTrainig}
+                              locale = { locale }
                             />
                           </Space>
                         </Form.Item>

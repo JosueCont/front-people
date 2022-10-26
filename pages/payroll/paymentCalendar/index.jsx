@@ -200,7 +200,7 @@ const PaymentCalendars = ({ ...props }) => {
                 key="actions"
                 render={(text, record) => (
                   <>
-                    {record.locked ? (
+                    {/* {record.locked ? (
                       <Tooltip title="Ver detalle">
                         <EyeOutlined
                           className="icon_actions"
@@ -238,7 +238,30 @@ const PaymentCalendars = ({ ...props }) => {
                           />
                         </Tooltip>
                       </>
-                    )}
+                    )} */}
+                      {
+                        record.active && 
+                        <>
+                          <Tooltip title="Editar">
+                            <EditOutlined
+                              className="icon_actions"
+                              key={"goEdit" + record.id}
+                              onClick={() =>
+                                route.push({
+                                  pathname:
+                                    `/payroll/paymentCalendar/${record.id}/edit/`,
+                                  query: {
+                                    calendar_id: record.id,
+                                    id: props.currentNode.id,
+                                  },
+                                })
+                              }
+                              style={{ color: "#fd893d" }}
+                            />
+                          </Tooltip>
+                        </>
+                      }
+                       
                     <Tooltip title="Ver calendario">
                       <CalendarOutlined
                         className="icon_actions"

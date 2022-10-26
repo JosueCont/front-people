@@ -22,36 +22,45 @@ const ModalClients = ({
     const [formClient] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [currentTab, setCurrentTab] = useState('tab_1');
-    const [listDocs, setListDocs] = useState([]);
+    const [prevDocs, setPrevDocs] = useState([]);
+    const [newDocs, setNewDocs] = useState([]);
 
     useEffect(()=>{
-        if(Object.keys(itemToEdit).length > 0) setValuesForm();
+        if(Object.keys(itemToEdit).length > 0){
+            setPrevDocs(itemToEdit.files);
+            setValuesForm();
+        }
     },[itemToEdit])
-
 
     const setValuesForm = () =>{
         formClient.setFieldsValue(itemToEdit);
     }
 
-    const onFinish = (values) =>{
+    const createData = (obj) =>{
         let dataClient = new FormData();
-        dataClient.append('is_active', true);
-        // if(listDocs.length > 0) dataClient.append('documents', listDocs);
-        Object.entries(values).map(([key, val])=>{
-            if(val) dataClient.append(key, val);
-        });
+        if(newDocs.length > 0) newDocs.map(item => dataClient.append('files', item));
+        Object.entries(obj).map(([key, val])=>{ if(val) dataClient.append(key, val) });
+        let toDelete = prevDocs.filter(item => item.is_deleted);
+        const saveToDelete = (item, idx) => dataClient.append(`delete_files_id[${idx}]`, item.id);
+        if(toDelete.length > 0) toDelete.map(saveToDelete);
+        return dataClient;
+    }
+
+    const onFinish = (values) =>{
+        const bodyData = createData(values);
         setLoading(true)
         setTimeout(()=>{
             onCloseModal()
             setLoading(false)
-            actionForm(dataClient)
+            actionForm(bodyData)
             formClient.resetFields();
         },2000)
     }
 
     const onCloseModal = ()=>{
         close()
-        setListDocs([])
+        setPrevDocs([])
+        setNewDocs([])
         setCurrentTab('tab_1')
         formClient.resetFields();
     }
@@ -123,8 +132,10 @@ const ModalClients = ({
                                 forceRender
                             >
                                 <TabDocuments
-                                    listDocs={listDocs}
-                                    setListDocs={setListDocs}
+                                    newDocs={newDocs}
+                                    prevDocs={prevDocs}
+                                    setNewDocs={setNewDocs}
+                                    setPrevDocs={setPrevDocs}
                                 />
                             </Tabs.TabPane>
                         </Tabs>

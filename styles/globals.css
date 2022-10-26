@@ -90,15 +90,16 @@ div#__next > section.layout{
   margin-bottom: 0 !important;
 }
 .form_header_import {
-  background: rgba(16, 16, 16, 0.41) !important;
+  background: rgba(16, 16, 16, 0.02) !important;
 }
 
 .form_header_black {
-  background: #393d4a !important;
+  background: white !important;
 }
 
 .form_header_black .ant-form-item-label label {
-  color: white !important;
+  background-color: white;
+  /*color: white !important;*/
 }
 
 .icon_actions {

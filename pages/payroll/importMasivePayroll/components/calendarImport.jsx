@@ -68,13 +68,12 @@ const CalendarImport = ({
 
   return (
     <Col span={24}>
-      <Card className={'form_header_import'}>
+      <Card className={'form_header_import_'}>
         {periodicities.length > 0 && (
           <>
             <Row align="center" style={{ width: "100%", padding: "10px" }}>
               <span
                 style={{
-                  color: "white",
                   fontSize: "25px",
                   fontWeight: "bold",
                   marginRight: "10px",
@@ -93,7 +92,6 @@ const CalendarImport = ({
               <Col>
                 <span
                   style={{
-                    color: "white",
                     fontSize: "25px",
                     fontWeight: "bold",
                     marginTop: "-2px",
