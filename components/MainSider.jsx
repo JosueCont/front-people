@@ -53,6 +53,7 @@ const MainSider = ({
       business: "/business",
       asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
+
       persons: "/home/persons",
       groups_people: "/home/groups",
       catalogs: "/config/catalogs",
@@ -70,6 +71,7 @@ const MainSider = ({
       paymentCalendar: "/payroll/paymentCalendar",
       payrollVoucher: "/payroll/payrollVoucher",
       calculatorSalary: "/payroll/calculatorSalary",
+      integrationFactors: "/business/integrationFactors",
       importMassivePayroll: "/payroll/importMasivePayroll",
       imssMovements: "/payroll/imssMovements",
       bulk_upload: "/bulk_upload",
