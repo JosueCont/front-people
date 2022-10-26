@@ -11,8 +11,7 @@ import {
   DatePicker
 } from "antd";
 import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
-import Axios from "axios";
-import { API_URL } from "../../config/config";
+import WebApiFiscal from "../../api/WebApiFiscal";
 import moment from "moment";
 import { DownloadOutlined } from "@ant-design/icons";
 import SelectPatronalRegistration from "../selects/SelectPatronalRegistration";
@@ -20,7 +19,7 @@ import SelectDepartment from "../selects/SelectDepartment";
 import SelectPaymentCalendar from "../selects/SelectPaymentCalendar";
 import SelectJob from "../selects/SelectJob";
 import { connect } from "react-redux";
-import { monthsName } from "../../utils/constant";
+import { monthsName, bimestralMonths } from "../../utils/constant";
 import { toInteger } from "lodash";
 import locale from "antd/lib/date-picker/locale/es_ES";
 
@@ -30,6 +29,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
   const { Title } = Typography;
   const [ loading, setLoading ] = useState(false)
   const [calendar, setCalendar] = useState(null);
+  const [ report, setReport ] = useState(1);
 
 
   console.log('Calendars', props.payment_calendar)
@@ -119,17 +119,34 @@ const ProvisionsReport = ({ permissions, ...props }) => {
     },
   ];
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     console.log("Values", values)
     values.period = values.period? toInteger(moment(values.period).format('YYYY')) : null
-    let data = {
+
+    let data = report == 1? {
       period: values.period,
       month: values.month,
       patronal_registration: values.registro_patronal,
       department: values.department,
       job: values.job,
-      payment_calendar: calendar
+      payment_calendar: calendar,
+      method: 'export'
+      // tag: ""
+    } : {
+      period: values.period,
+      start_month: values.month,
+      end_month: values.month + 1,
+      payment_calendar: calendar,
+      method: 'export'
     }
+
+    WebApiFiscal.get_monthly_imss_provision(data)
+    .then((response) => {
+      console.log("Response", response)
+    })
+    .catch((e) => {
+      console.log('error', e)
+    })
     console.log('Data', data)
   }
 
@@ -148,8 +165,38 @@ const ProvisionsReport = ({ permissions, ...props }) => {
             key="formFilter"
             className="formFilterReports"
             onFinish={ onFinish }
+            defaultValue = {{
+              period: "",
+              month: "",
+              registro_patronal: "",
+              department: "",
+              job: "",
+              payment_calendar: "",
+            }}
           >
             <Row gutter={10}>
+            <Col lg={6} xs={22}>
+                <Form.Item key='report_type' name='report_type' label='Tipo de reporte'>
+                  <Select
+                    style={{ width: '100%' }}
+                    onChange={(e) => {
+                       e === 2 &&
+                      form.setFieldsValue({
+                        month: null
+                      })
+                      setReport(e)
+                    }}
+                    placeholder="Seleccionar reporte"
+                  >
+                    <Select.Option key={1} value={1}>
+                      Mensual
+                    </Select.Option>
+                    <Select.Option key={2} value={2}>
+                      Bimestral
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+              </Col>
               <Col lg={6} xs={22}>
                 <Form.Item key='period' name='period' label='Periodo'>
                   <DatePicker 
@@ -157,36 +204,57 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                     disabledDate={ disabledDate }
                     locale = { locale }
                     style = {{ width: '100%' }}
+                    placeholder = "Seleccionar año"
                   />
                 </Form.Item>
               </Col>
               <Col lg={6} xs={22}>
-                <Form.Item key='month' name="month" label="mes">
-                  <Select options={monthsName} style = {{ width: '100%' }}/>
+                <Form.Item key='month' name="month" label= { report == 1?  "Mes" : "Bimestre" }>       
+                    <Select 
+                      options={report === 1? monthsName : bimestralMonths } 
+                      style = {{ width: '100%' }} 
+                      placeholder={report === 1 ? "Seleccionar mes" : "Seleccionar bimestre"}/>
                 </Form.Item>
               </Col>
-              <Col lg={6} xs={22}>
-                <SelectPatronalRegistration
-                  name={"registro_patronal"}
-                  value_form={"registro_patronal"}
-                  textLabel={"Registro"}
-                  currentNode={props.currentNode}
-                />
-              </Col>
-              <Col lg={6} xs={22}>
-                <SelectDepartment/>
-              </Col>
-              <Col lg={6} xs={22} style={{ marginTop: '10px' }}>
-                <SelectJob />
-              </Col>
-              <Col lg={6} xs={22} style={{ marginTop: '10px' }}>
+              {
+                report === 1 &&
+
+                <Col lg={6} xs={22}>
+                  <SelectPatronalRegistration
+                    name={"registro_patronal"}
+                    value_form={"registro_patronal"}
+                    textLabel={"Registro"}
+                    currentNode={props.currentNode}
+                  />
+                </Col>
+
+              }
+
+              {
+                report === 1 &&
+
+                <Col lg={6} xs={22} style={{ marginTop: '10px' }}>
+                  <SelectDepartment/>
+                </Col>
+
+              }
+
+              {
+                report === 1 &&
+
+                <Col lg={6} xs={22} style={{ marginTop: '10px' }}>
+                  <SelectJob />
+                </Col>
+              }
+
+              <Col lg={6} xs={22} style={{ marginTop: report === 1 ? '10px' : '' }}>
                 <SelectPaymentCalendar
                     setCalendarId={(value) => setCalendar(value)}
                     name="calendar"
                     style={{ width: '100%' }}
                   />
               </Col>
-              <Col style={{ display: "flex" }}>
+              <Col style={{ display: "flex", marginTop: report === 1 ? '' : '10px' }}>
                 <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
                   <Button
                     style={{
@@ -202,7 +270,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                   </Button>
                 </Tooltip>
               </Col>
-              <Col style={{ display: "flex" }}>
+              <Col style={{ display: "flex", marginTop: report === 1 ? '' : '10px' }} >
                 <Tooltip
                   title="Limpiar filtro"
                   color={"#3d78b9"}
@@ -220,7 +288,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                   </Button>
                 </Tooltip>
               </Col>
-              <Col className="columnRightFilter">
+              <Col className="columnRightFilter" style={{marginTop: report === 1 ? '' : '10px'}}>
                 <Button
                   style={{
                     background: "#fa8c16",

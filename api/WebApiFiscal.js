@@ -152,6 +152,10 @@ class WebApiFiscal {
   static downloadIntegrationFactor(id) {
     return WebApi.ApisType(`fiscal/integration-factors-report?integration_factor_id=${id}`, "get")
   }
+
+  static get_monthly_imss_provision(data) {
+    return WebApi.ApisType('fiscal/monthly-imss-free/get_monthly_imss_provision/', 'post', data)
+  }
 }
 
 export default WebApiFiscal;
