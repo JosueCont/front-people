@@ -43,7 +43,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [period, setPeriod] = useState("");
   const [incidenceStart, setIncidenceStart] = useState("");
   const [versions, setVersions] = useState([]);
-  const currentYear = moment().year()
+  const currentYear = moment().year();
 
   /* Const switchs */
   const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
@@ -86,8 +86,6 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       value: true,
     },
   ];
-
-  console.log('id', idPaymentCalendar)
 
   useEffect(() => {
     if (idPaymentCalendar) {
@@ -296,9 +294,9 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     });
   };
 
-  const disabledDate = current => {
-    return current && moment(current).year() < currentYear
-  }
+  const disabledDate = (current) => {
+    return current && moment(current).year() < currentYear;
+  };
 
   return (
     <>
@@ -460,7 +458,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   disabledDate={(currentDate) => currentDate.year() < 2022}
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
-                  locale = { locale }
+                  locale={locale}
                 />
               </Form.Item>
             </Col>
@@ -476,8 +474,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   moment={"YYYY-MM-DD"}
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
-                  locale = { locale }
-                  disabledDate = { disabledDate }
+                  locale={locale}
+                  disabledDate={disabledDate}
                 />
               </Form.Item>
             </Col>
@@ -544,7 +542,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   placeholder=""
                   moment={"YYYY"}
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
-                  locale = { locale }
+                  locale={locale}
                 />
               </Form.Item>
             </Col>
@@ -630,10 +628,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   router.push({ pathname: "/payroll/paymentCalendar" })
                 }
               >
-                {!locked ? "Cerrar" : "Cancelar"}
+                {locked ? "Cerrar" : "Cancelar"}
               </Button>
             </Col>
-            {locked && (
+            {!locked && (
               <Col md={5}>
                 <Button block className="" type="primary" htmlType="submit">
                   Guardar
