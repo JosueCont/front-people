@@ -53,6 +53,7 @@ const MainSider = ({
       business: "/business",
       asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
+
       persons: "/home/persons",
       groups_people: "/home/groups",
       catalogs: "/config/catalogs",
@@ -70,6 +71,7 @@ const MainSider = ({
       paymentCalendar: "/payroll/paymentCalendar",
       payrollVoucher: "/payroll/payrollVoucher",
       calculatorSalary: "/payroll/calculatorSalary",
+      integrationFactors: "/business/integrationFactors",
       importMassivePayroll: "/payroll/importMasivePayroll",
       imssMovements: "/payroll/imssMovements",
       bulk_upload: "/bulk_upload",
@@ -101,6 +103,7 @@ const MainSider = ({
         let children = [
           getItem("Empresas", "business"),
           getItem("Asignar empresa", "asign"),
+          getItem("Factores de integración", "integrationFactors")
         ];
         if (props?.config && props?.config?.nomina_enabled) {
           children.push(getItem("Registros patronales", "patronal"));

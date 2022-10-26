@@ -789,7 +789,6 @@ const homeScreen = ({ ...props }) => {
                           options={genders}
                           notFoundContent={"No se encontraron resultado."}
                           placeholder="Todos"
-                          notFoundContent={"No se encontraron resultado."}
                         />
                       </Form.Item>
                     </Col>

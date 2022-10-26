@@ -18,6 +18,7 @@ import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
 import SelectMedicineUnity from "../../selects/SelectMedicineUnity";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import moment from "moment";
+import { ruleRequired } from "../../../utils/rules";
 
 const FormImssInfonavit = ({ person, person_id, node }) => {
   const { Title } = Typography;
@@ -53,7 +54,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     let data = {
       action: "getActiveCredit",
       node: node,
-      patronal_registration: person.branch_node.patronal_registration.id,
+      patronal_registration: person?.branch_node?.patronal_registration?.id,
       user: "ivan@grupogivel.com",
       password: "GHS080131bf7",
       person: person_id,
@@ -61,7 +62,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
     WebApiPayroll.getInfonavitCredit(data)
       .then((response) => {
         setLoadingTable(false);
-        setInfonavitCredit([response.data.infonavit_credit]);
+        response.data && setInfonavitCredit([response.data.infonavit_credit]);
         console.log("Response", response);
       })
       .catch((error) => {
@@ -164,7 +165,11 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
       >
         <Row>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="employee_type" label="Tipo de empleado">
+            <Form.Item 
+              name="employee_type" 
+              label="Tipo de empleado"
+              rules={[ruleRequired]}
+            >
               <Select
                 options={typeEmployee}
                 notFoundContent={"No se encontraron resultado."}
@@ -172,7 +177,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="salary_type" label="Tipo de salario">
+            <Form.Item name="salary_type" label="Tipo de salario" rules={[ruleRequired]}>
               <Select
                 options={typeSalary}
                 notFoundContent={"No se encontraron resultado."}
@@ -180,7 +185,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="reduce_days" label="Semana o jornada reducida">
+            <Form.Item name="reduce_days" label="Semana o jornada reducida" rules={[ruleRequired]}>
               <Select
                 options={reduceDays}
                 notFoundContent={"No se encontraron resultado."}
@@ -188,7 +193,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <Form.Item name="movement_date" label="Fecha de movimiento">
+            <Form.Item name="movement_date" label="Fecha de movimiento" rules={[ruleRequired]}>
               <DatePicker
                 locale={locale}
                 format="DD-MM-YYYY"
@@ -197,7 +202,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
             </Form.Item>
           </Col>
           <Col lg={6} xs={22} offset={1}>
-            <SelectFamilyMedicalUnit />
+            <SelectFamilyMedicalUnit/>
           </Col>
         </Row>
         <Row justify={"end"}>

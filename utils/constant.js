@@ -270,6 +270,33 @@ export const monthsName = [
   },
 ];
 
+export const bimestralMonths = [
+  {
+    label:"Enero - Febrero",
+    value: 1
+  },
+  {
+    label:"Marzo - Abril",
+    value: 3
+  },
+  {
+    label:"Mayo - Junio",
+    value: 5
+  },
+  {
+    label:"Julio - Agosto",
+    value: 7
+  },
+  {
+    label:"Septiembre - Octubre",
+    value: 9
+  },
+  {
+    label:"Noviembre - Diciembre",
+    value: 11
+  }
+]
+
 export const intranetAccess = [
   {
     label: "No",
