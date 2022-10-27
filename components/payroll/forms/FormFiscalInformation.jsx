@@ -16,7 +16,7 @@ const FormFiscalInformation = ({ form, fiscalData, ...props }) => {
 
   const setForm = (data) => {
     form.setFieldsValue({
-      company_sector: data.company_sector,
+      company_sector: data.company_sector? data.company_sector : 2,
       person_type: data.person_type,
       curp: data.curp,
       rfc: data.rfc,
@@ -27,8 +27,12 @@ const FormFiscalInformation = ({ form, fiscalData, ...props }) => {
     });
   };
 
+  const person = Form.useWatch('person_type', form)
+
+  console.log('Person', person)
+
   return (
-    <Form form={form} layout={"vertical"}>
+    <Form form={form} layout={"vertical"} defaultValue={{ rfc: '' }}>
       <Row gutter={20}>
         <Col lg={4} xs={22} md={12}>
           <Form.Item name="company_sector" label="Sector">
@@ -44,7 +48,7 @@ const FormFiscalInformation = ({ form, fiscalData, ...props }) => {
           <Form.Item
             name="person_type"
             label="Tipo de persona"
-            rules={[ruleRequired]}
+            // rules={[ruleRequired]}
           >
             <Select
               options={personType}
@@ -65,8 +69,8 @@ const FormFiscalInformation = ({ form, fiscalData, ...props }) => {
           </Col>
         )}
         <Col lg={8} xs={22} md={12}>
-          <Form.Item name="rfc" label="RFC" rules={[rfcFormat, ruleRequired]}>
-            <Input maxLength={13} />
+          <Form.Item name="rfc" label="RFC" rules={ person? [rfcFormat, ruleRequired] : []}>
+            <Input maxLength={person && person ===1? 13 : 12} />
           </Form.Item>
         </Col>
         <Col lg={8} xs={22} md={12}>
