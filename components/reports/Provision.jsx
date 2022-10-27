@@ -11,7 +11,9 @@ import {
   DatePicker
 } from "antd";
 import { SyncOutlined, SearchOutlined } from "@ant-design/icons";
+import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import WebApiFiscal from "../../api/WebApiFiscal";
+import { API_URL_TENANT } from "../../config/config";
 import moment from "moment";
 import { DownloadOutlined } from "@ant-design/icons";
 import SelectPatronalRegistration from "../selects/SelectPatronalRegistration";
@@ -22,6 +24,7 @@ import { connect } from "react-redux";
 import { monthsName, bimestralMonths } from "../../utils/constant";
 import { toInteger } from "lodash";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import { ruleRequired } from "../../utils/rules";
 
 const ProvisionsReport = ({ permissions, ...props }) => {
 
@@ -40,6 +43,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
 
   const clearFilter = () => {
     form.resetFields()
+    setReport(1)
   };
 
   const columns = [
@@ -121,6 +125,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
 
   const onFinish = async (values) => {
     console.log("Values", values)
+    let url = `${getDomain(API_URL_TENANT)}/fiscal/monthly-imss-free/get_monthly_imss_provision/`
     values.period = values.period? toInteger(moment(values.period).format('YYYY')) : null
 
     let data = report == 1? {
@@ -139,14 +144,22 @@ const ProvisionsReport = ({ permissions, ...props }) => {
       payment_calendar: calendar,
       method: 'export'
     }
+    
 
-    WebApiFiscal.get_monthly_imss_provision(data)
-    .then((response) => {
-      console.log("Response", response)
-    })
-    .catch((e) => {
-      console.log('error', e)
-    })
+    downLoadFileBlob(
+      url,
+      "Provision_Report.xlsx",
+      "POST",
+      data
+    )
+
+    // WebApiFiscal.get_monthly_imss_provision(data)
+    // .then((response) => {
+    //   console.log("Response", response)
+    // })
+    // .catch((e) => {
+    //   console.log('error', e)
+    // })
     console.log('Data', data)
   }
 
@@ -176,7 +189,12 @@ const ProvisionsReport = ({ permissions, ...props }) => {
           >
             <Row gutter={10}>
             <Col lg={6} xs={22}>
-                <Form.Item key='report_type' name='report_type' label='Tipo de reporte'>
+                <Form.Item 
+                  key='report_type' 
+                  name='report_type' 
+                  label='Tipo de reporte'
+                  rules={[ruleRequired]}
+                >
                   <Select
                     style={{ width: '100%' }}
                     onChange={(e) => {
@@ -198,7 +216,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                 </Form.Item>
               </Col>
               <Col lg={6} xs={22}>
-                <Form.Item key='period' name='period' label='Periodo'>
+                <Form.Item key='period' name='period' label='Periodo' rules={[ruleRequired]}>
                   <DatePicker 
                     picker="year"
                     disabledDate={ disabledDate }
@@ -209,7 +227,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                 </Form.Item>
               </Col>
               <Col lg={6} xs={22}>
-                <Form.Item key='month' name="month" label= { report == 1?  "Mes" : "Bimestre" }>       
+                <Form.Item key='month' name="month" label= { report == 1?  "Mes" : "Bimestre" } rules={[ruleRequired]}>       
                     <Select 
                       options={report === 1? monthsName : bimestralMonths } 
                       style = {{ width: '100%' }} 
@@ -251,10 +269,11 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                 <SelectPaymentCalendar
                     setCalendarId={(value) => setCalendar(value)}
                     name="calendar"
+                    rules = {[ruleRequired]}
                     style={{ width: '100%' }}
                   />
               </Col>
-              <Col style={{ display: "flex", marginTop: report === 1 ? '' : '10px' }}>
+              {/* <Col style={{ display: "flex", marginTop: report === 1 ? '' : '10px' }}>
                 <Tooltip title="Filtrar" color={"#3d78b9"} key={"#3d78b9"}>
                   <Button
                     style={{
@@ -269,7 +288,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                     <SearchOutlined />
                   </Button>
                 </Tooltip>
-              </Col>
+              </Col> */}
               <Col style={{ display: "flex", marginTop: report === 1 ? '' : '10px' }} >
                 <Tooltip
                   title="Limpiar filtro"
@@ -296,6 +315,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
                     color: "white",
                   }}
                   // onClick={() => download()}
+                  htmlType="submit"
                   key="btn_new"
                 >
                   Descargar
@@ -305,7 +325,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
           </Form>
         </Col>
       </Row>
-      <Row style={{ padding: "10px 20px 10px 0px", marginTop: 20 }}>
+      {/* <Row style={{ padding: "10px 20px 10px 0px", marginTop: 20 }}>
         <Col span={24}>
           <Table
             dataSource={[]}
@@ -320,7 +340,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
             }}
           ></Table>
         </Col>
-      </Row>
+      </Row> */}
     </>
   )
 }

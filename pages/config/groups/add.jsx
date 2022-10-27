@@ -401,18 +401,18 @@ const GroupAdd = ({ ...props }) => {
     let permss = views.filter(
       (perm) => perm.module !== "Catalogos"
     )
-      //   if (permss.length > 0) {
-      //   permss.forEach((element) => {
-      //   var chkBox = document.getElementById(element);
-      //   if (chkBox != "undefined" && chkBox !== null) {
-      //     if (chkBox.checked == false) {
-      //       chkBox.click();
-      //     } else {
-      //       chkBox.checked == true
-      //     }
-      //   }
-      // });
-    // }
+        if (check && permss.length > 0) {
+        permss.forEach((element) => {
+        var chkBox = document.getElementById(element);
+        if (chkBox != "undefined" && chkBox !== null) {
+          if (chkBox.checked == false) {
+            chkBox.click();
+          } else {
+            chkBox.checked == true
+          }
+        }
+      });
+    }
     console.log('Perms', permss)
     console.log('Check', check)
   }
@@ -720,7 +720,7 @@ const GroupAdd = ({ ...props }) => {
                       key="1"
                     >
                       <Col span={24}>
-                        <Row gutter={10} style={{ marginTop: 10 }}> 
+                        {/* <Row gutter={10} style={{ marginTop: 10 }}> 
                           <Col span={10}>
                             <Checkbox
                               name="allPermissions"
@@ -732,7 +732,7 @@ const GroupAdd = ({ ...props }) => {
                           <Col span={12}>
                           <Checkbox>Seleccionar todos los catálogos</Checkbox>
                           </Col>
-                        </Row>
+                        </Row> */}
                         <Row gutter={10}>
                           <Col xl={12} md={12} sm={24} xs={24}>
                             <Table

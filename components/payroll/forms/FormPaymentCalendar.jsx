@@ -28,6 +28,7 @@ import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import SelectPeriodicity from "../../selects/SelectPeriodicity";
 import SelectTypeTax from "../../selects/SelectTypeTax";
+import SelectIntegrationFactors from "../../selects/SelectIntegrationFactors"
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import locale from "antd/lib/date-picker/locale/es_ES";
@@ -146,6 +147,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
           salary_days: item.salary_days,
           belongs_to: item.belongs_to,
           vacation_bonus_payment: item.vacation_bonus_payment,
+          benefits: item.benefits,
           calculation_employment_subsidy: item.calculation_employment_subsidy,
         });
         setAnnualAdjustment(item.annual_adjustment);
@@ -613,6 +615,19 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                     />
                   </Form.Item>
                 </Col>
+                <Col lg={8} xs={22}>
+                    {/* <Select
+                      maxLength={100}
+                      options={CalculationEmploymentSubsidy}
+                    /> */}
+                    <SelectIntegrationFactors 
+                      rules = { [ruleRequired] }
+                    />
+                </Col>
+                {
+                  <div style={{ width: '100%' }}></div>
+                }
+                
                 <RenderChecks data={checks} />
               </Row>
             </>
