@@ -153,8 +153,6 @@ const PermissionDetails = () => {
               onFinish={null}
               loading={loading}
               sending={sending}
-              onChangeDepartureDate={onChangeDepartureDate}
-              onChangeReturnDate={onChangeReturnDate}
               onCancel={onCancel}
             />
           </Col>

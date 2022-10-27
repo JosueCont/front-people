@@ -7,8 +7,9 @@ import {
   message
 } from 'antd';
 import {
-  SearchOutlined,
-  SyncOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    SyncOutlined,
 } from "@ant-design/icons";
 import CreateProfile from './CreateProfile';
 import { connect } from 'react-redux';
@@ -68,7 +69,7 @@ const PerfilesSearch = ({
                     <Button icon={<SyncOutlined />} onClick={()=> deleteFilter()} />
                 </Col>
                 <Col span={12} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <Button onClick={()=>setOpenModal(true)}>Agregar perfil</Button>
+                    <Button onClick={()=>setOpenModal(true)}><PlusOutlined /> Agregar perfil</Button>
                 </Col>
             </Row>
             <CreateProfile

@@ -18,6 +18,7 @@ import { connect } from "react-redux";
 import WebApiPeople from "../../api/WebApiPeople";
 import { ruleRequired } from "../../utils/rules";
 import { getDifferenceDays } from "../../utils/functions";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const Permissionform = (props) => {
   const { Title } = Typography;
@@ -40,7 +41,7 @@ const Permissionform = (props) => {
     if (value) {
       let index = await getCollaborator(value);
       formPermission.setFieldsValue({
-        job: index.work_title.job ? index.work_title.job.name : null,
+        job: index?.work_title?.job ? index?.work_title?.job.name : null,
       });
       setUrlPhoto(index.photo ? index.photo : null);
       setUrlPhoto(index.photo ? index.photo : null);
@@ -183,6 +184,7 @@ const Permissionform = (props) => {
                     key="departure_date"
                     style={{ width: "100%" }}
                     onChange={changeDepartureDate}
+                    locale = { locale }
                   />
                 </Form.Item>
               </Col>

@@ -8,10 +8,38 @@ import { css, Global } from "@emotion/core";
 import { SidebarYnl } from '../../../components/dashboard-ynl/SidebarYnl';
 import Dashboard from '../../../components/dashboard-ynl/Dashboard';
 import { DashboardPerPeople } from '../../../components/personal-dashboard/DashboardPerPeople';
+import { useSelector } from 'react-redux'
 
 
-const index = () => {
+const index = ({}) => {
   const router = useRouter();
+  const validateUser = useSelector((state) => state.userStore)
+  const [validatePermition, setValidatePermition] = useState(true);
+
+  useEffect(() => {
+    let isUserKhor = validateUser?.user?.sync_from_khor
+    if(isUserKhor){
+      //console.log("Eres Usuario KHOR")
+      let permsUser = validateUser?.user?.khor_perms;
+      if( permsUser != null){
+        let permYnl = validateUser.user.khor_perms.filter(item => item === "Khor Plus YNL")
+        //console.log("Permiso: ", permYnl)
+        if( permYnl.length > 0 ){
+          //console.log("PERMITIDO")
+          setValidatePermition(true);
+        }else{
+          setValidatePermition(false);
+          //console.log("NO PERMITIDO")
+        }
+      }else{
+        setValidatePermition(false);
+        //console.log("USUARIO KHOR SIN PERMISOS")
+      }
+    }else{
+      //console.log("NO HAY VALIDACIÓN, NO ERES USUARIO KHOR")
+      setValidatePermition(true);
+    }
+  }, [validateUser]);
   
   return (
     <MainLayout currentKey={["ynl_general_dashboard"]} defaultOpenKeys={["ynl"]}>
@@ -88,7 +116,7 @@ const index = () => {
           .ant-card-head{
             background-image: linear-gradient(180deg, #ff7c0d 0, #ff5e00 25%, #ff5e00 50%, #f33a00 75%, #ea1a2b 100%);
             /**background-image: linear-gradient(180deg, #ff7c0d 0, #ff7c0d 25%, #ff5e00 50%, #f33a00 75%, #ea1a2b 100%);**/
-            border-radius: 25px;
+            border-radius: 15px;
           }
           .ant-card-bordered{
             border-radius: 25px;
@@ -109,7 +137,11 @@ const index = () => {
           .ant-card-head-title{
             text-align: center;
             color: white;
-            font-size: 20px;
+            font-size: 15px;
+            padding: 8px 0px;
+          }
+          .ant-card-head{
+            min-height: 36px
           }
           .ant-table{
             border-radius: 10px;
@@ -164,24 +196,30 @@ const index = () => {
           <Breadcrumb.Item>YNL</Breadcrumb.Item>
           <Breadcrumb.Item>Dashboard general</Breadcrumb.Item>
       </Breadcrumb>
-      <div className="container" style={{ width: "100%" }}>
-        <Row>
-            <Col lg={5} xs={24}>
-                <SidebarYnl/>
-            </Col>
-            <Col lg={19} xs={24}>
-                <Dashboard/>
-            </Col>
-        </Row>
-        {/* <Row>
-            <Col lg={5} xs={24}>
-                <SidebarYnl/>
-            </Col>
-            <Col lg={19} xs={24}>
-                <DashboardPerPeople/>
-            </Col>
-        </Row> */}
-      </div>
+      {validatePermition ?(
+        <div className="container" style={{ width: "100%" }}>
+          <Row>
+              <Col lg={5} xs={24}>
+                  <SidebarYnl/>
+              </Col>
+              <Col lg={19} xs={24}>
+                  <Dashboard/>
+              </Col>
+          </Row>
+          {/* <Row>
+              <Col lg={5} xs={24}>
+                  <SidebarYnl/>
+              </Col>
+              <Col lg={19} xs={24}>
+                  <DashboardPerPeople/>
+              </Col>
+          </Row> */}
+        </div>
+      ) :
+      (
+        <div className="notAllowed" />
+      )}
+      
     </MainLayout>
   )
 }

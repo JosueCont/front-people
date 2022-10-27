@@ -29,6 +29,7 @@ import {
 import SelectCostCenter from "../../selects/SelectCostCenter";
 import SelectTags from "../../selects/SelectTags";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const { Title } = Typography;
@@ -494,6 +495,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                       style={{ width: "100%" }}
                       onChange={onChangeLastDayPaid}
                       moment={"YYYY-MM-DD"}
+                      locale = { locale }
                     />
                   </Form.Item>
                 </Col>

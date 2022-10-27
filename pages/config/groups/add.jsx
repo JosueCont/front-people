@@ -320,7 +320,7 @@ const GroupAdd = ({ ...props }) => {
       setLoading(false);
       setGetperms(true);
       if (perms >= 0) {
-        checkPerms(arrayperms);
+        checkPerms(arrayperms)
       }
       //     }
     } else {
@@ -395,6 +395,27 @@ const GroupAdd = ({ ...props }) => {
       });
     }
   };
+
+  const checkAllpermisions = (check) => {
+
+    let permss = views.filter(
+      (perm) => perm.module !== "Catalogos"
+    )
+      //   if (permss.length > 0) {
+      //   permss.forEach((element) => {
+      //   var chkBox = document.getElementById(element);
+      //   if (chkBox != "undefined" && chkBox !== null) {
+      //     if (chkBox.checked == false) {
+      //       chkBox.click();
+      //     } else {
+      //       chkBox.checked == true
+      //     }
+      //   }
+      // });
+    // }
+    console.log('Perms', permss)
+    console.log('Check', check)
+  }
 
   const checkFunctions = () => {
     if (arrayFunctions.length > 0) {
@@ -699,6 +720,19 @@ const GroupAdd = ({ ...props }) => {
                       key="1"
                     >
                       <Col span={24}>
+                        <Row gutter={10} style={{ marginTop: 10 }}> 
+                          <Col span={10}>
+                            <Checkbox
+                              name="allPermissions"
+                              onClick={ (e) => checkAllpermisions(e.target.checked)}
+                            >
+                              Seleccionar todos los permisos
+                            </Checkbox>
+                          </Col>
+                          <Col span={12}>
+                          <Checkbox>Seleccionar todos los catálogos</Checkbox>
+                          </Col>
+                        </Row>
                         <Row gutter={10}>
                           <Col xl={12} md={12} sm={24} xs={24}>
                             <Table

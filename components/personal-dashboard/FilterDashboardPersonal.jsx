@@ -54,8 +54,10 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
         if(persons.length>0){
             //Armamos array para llenar el select
             let results = persons.map((item)=>{
-                return { key: item.id, value: item.khonnect_id, label: `${item.firstName} ${item.lastName} - ${item.email}` }
+                console.log('item', item.provider, item )
+                return { key: item.id, value: item.khonnect_id?item.khonnect_id:item.id.toString(), label: `${(item.firstName !=='' && item.firstName !==null)?item.firstName:'' } ${(item.lastName !=='' && item.lastName !==null)?`${item.lastName} / `:''}  ${item.email}` }
             })
+            console.log('results====',results)
             setDataPersons(results);
         }else{
             setDataPersons([]);
@@ -75,13 +77,32 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
         //Armamos la data a enviar a la api de consultas
         let data = {
             start_date : dates.valueStart,
-            end_date: dates.valueEnd,
-            khonnect_ids: [value.valuesSelected] ?? [],
+            end_date: dates.valueEnd
         }
+
+        if(isKhorID(value.valuesSelected)){
+            data = {
+                khonnect_ids: [value.valuesSelected] ?? [],
+                ynl_id: [],
+                ...data
+            }
+        }else{
+            data = {
+                khonnect_ids:[],
+                ynl_id: [value.valuesSelected]??[],
+                ...data
+            }
+        }
+
+
         console.log("Filtro que se envia a consulta",data);
         getReportPerson(data);
     }
     const resetFilter = () =>{filterModule.resetFields();}
+
+    const isKhorID = (valuesSelected) => {
+        return isNaN(valuesSelected)
+    }
 
     const getDateFromPicker=(filterDate)=>{
         //Formateamos la fecha que viene del range picker
@@ -115,13 +136,13 @@ const FilterDashboardPersonal = ({persons, getPersons, getReportPerson, ...props
                             </Form.Item>
                         </Col>
                         <Col xs={22} md={10}>
-                            <Form.Item label={<label style={{ color: "white" }}><b>Rango de fechas</b></label>} name="valuesSelected">
+                            <Form.Item label={<label style={{ color: "white" }}><b>Selecciona una persona</b></label>} name="valuesSelected">
                                 <Select
                                     style={{width:"90%", marginLeft:"8px",}}
                                     allowClear
                                     showSearch
                                     filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
-                                    placeholder="Seleccion persona"
+                                    placeholder="Selecciona una persona"
                                     options={dataPersons}
                                     />
                             </Form.Item>

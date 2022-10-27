@@ -177,6 +177,7 @@ export const getRelationship = (idCompany) => async (dispatch, getState) => {
 export const getBanks = (idCompany) => async (dispatch, getState) => {
   try {
     let response = await WebApiPeople.getCatalogs("banks", idCompany);
+    console.log("Response banks", response)
     dispatch({ type: BANK, payload: response.data.results });
   } catch (error) {
     dispatch({ type: BANK, payload: [] });
@@ -386,9 +387,18 @@ export const getPatronalRegistration =
 export const getJobRiskClass = (idCompany) => async (dispatch, getState) => {
   await WebApiPeople.getJobRiskClass(idCompany)
     .then((response) => {
+      
+      let unOrder = response.data.results  
+
+      let ordered = unOrder? unOrder.sort((a, b) => {
+        if (a.percent > b.percent) return 1
+        if (a.percent < b.percent) return -1
+        return 0
+      }) : []
+
       dispatch({
         type: JOB_RISK,
-        payload: { data: response.data.results, error: null },
+        payload: { data: ordered, error: null },
       });
     })
     .catch((error) => {

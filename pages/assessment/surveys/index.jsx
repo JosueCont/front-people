@@ -78,13 +78,13 @@ const AssessmentScreen = ({
     setLoading(assessmentStore.fetching);
     if (assessmentStore.assessments?.length > 0) {
       setAssessments(assessmentStore.assessments);
-      assessmentStore.active_modal === types.CREATE_ASSESSMENTS
+    }
+    assessmentStore.active_modal === types.CREATE_ASSESSMENTS
         ? setShowCreateAssessment(true)
         : setShowCreateAssessment(false);
       assessmentStore.active_modal === types.UPDATE_ASSESSMENTS
         ? setShowUpdateAssessment(true)
         : setShowUpdateAssessment(false);
-    }
   }, [assessmentStore]);
 
   const HandleCreateAssessment = () => {
@@ -409,7 +409,7 @@ const AssessmentScreen = ({
         >
           Inicio
         </Breadcrumb.Item>
-        <Breadcrumb.Item>KUIZ</Breadcrumb.Item>
+        <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
         <Breadcrumb.Item>Evaluaciones</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>

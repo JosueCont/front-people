@@ -8,6 +8,7 @@ import { css, Global } from "@emotion/core";
 import { getFlavor, getRouteFlavor } from "../utils/brand";
 import NewHeader from "../components/NewHeader";
 import MainSider from "../components/MainSider";
+import Head from "next/head";
 
 const { Content } = Layout;
 
@@ -21,6 +22,7 @@ const MainLayout = ({
   hideSearch,
   hideLogo = false,
   nómina = false,
+    pageTitle = "KHOR Plus",
   ...props
 }) => {
   const { Title } = Typography;
@@ -71,7 +73,10 @@ const MainLayout = ({
     setShowEvents(false);
   };
 
-  return (
+  return (<>
+        <Head>
+          <title>{pageTitle}</title>
+        </Head>
     <Layout className="layout" style={{ minHeight: "100vh" }}>
       <Global
         styles={css`
@@ -127,7 +132,7 @@ const MainLayout = ({
 
           .ant-layout-content {
             // background: var(--primaryColor) !important;
-            background: #f0f0f0 !important;
+            background: #E3E3E3 !important;
           }
 
           /* .ant-layout-content{
@@ -191,7 +196,7 @@ const MainLayout = ({
               background: transparent;
             } */
           .form_header {
-            background: #7b25f1 !important;
+            background: white !important;
           }
 
           .headers_transparent .ant-table-thead tr th {
@@ -261,6 +266,7 @@ const MainLayout = ({
         </Drawer>
       )}
     </Layout>
+    </>
   );
 };
 

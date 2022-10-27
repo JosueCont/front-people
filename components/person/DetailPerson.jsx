@@ -20,6 +20,7 @@ import FormGeneralData from "../forms/FormGeneralData";
 import FormChangePassword from "../forms/FormChangePassword";
 import FormDocument from "../forms/FormDocument";
 import FormPayrollPerson from "../payroll/forms/FormPayrollPerson";
+import FormImssInfonavit from "../payroll/forms/FormImssInfonavit";
 import { useState } from "react";
 import {
   BankOutlined,
@@ -122,6 +123,38 @@ const DetailPerson = ({
           >
             <FormGeneralData person_id={person.id} />
           </TabPane>
+          {config.nomina_enabled && (
+            <TabPane
+              tab={
+                <Tooltip title="Nómina">
+                  <div className="container-title-tab">
+                    <DollarOutlined />
+                    <div className="text-title-tab">Nómina</div>
+                  </div>
+                </Tooltip>
+              }
+              key="tab_10"
+            >
+              <FormPayrollPerson person={person} node={person.node} />
+            </TabPane>
+          )}
+          <TabPane
+            tab={
+              <Tooltip title="IMSS / INFONAVIT">
+                <div className="container-title-tab">
+                  <MedicineBoxOutlined />
+                  <div className="text-title-tab">IMSS / INFONAVIT</div>
+                </div>
+              </Tooltip>
+            }
+            key="tab_12"
+          >
+            <FormImssInfonavit
+              person={person}
+              person_id={person.id}
+              node={person.node}
+            />
+          </TabPane>
           <TabPane
             tab={
               <Tooltip title="Teléfono">
@@ -213,20 +246,7 @@ const DetailPerson = ({
           >
             <FormDocument person_id={person.id} node={person.node} />
           </TabPane>
-          {/* <TabPane 
-            tab={
-              <Tooltip title="IMSS/INFONAVIT">
-                <div className="container-title-tab">
-                <MedicineBoxOutlined />
-                  <div className="text-title-tab">IMSS/INFONAVIT</div>
-                </div>
-              </Tooltip>
-            }
-            key="tab_12"
 
-          >
-
-          </TabPane> */}
           <TabPane
             tab={
               <Tooltip title="Cambiar contraseña">
@@ -244,21 +264,6 @@ const DetailPerson = ({
             />
           </TabPane>
 
-          {config.nomina_enabled && (
-            <TabPane
-              tab={
-                <Tooltip title="Nómina">
-                  <div className="container-title-tab">
-                    <DollarOutlined />
-                    <div className="text-title-tab">Nómina</div>
-                  </div>
-                </Tooltip>
-              }
-              key="tab_10"
-            >
-              <FormPayrollPerson person={person} node={person.node} />
-            </TabPane>
-          )}
           {deletePerson && (
             <TabPane
               tab={

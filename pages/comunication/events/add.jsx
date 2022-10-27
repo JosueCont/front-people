@@ -25,6 +25,8 @@ import moment from "moment";
 import { withAuthSync } from "../../../libs/auth";
 import axios from "axios";
 import { connect } from "react-redux";
+import locale from "antd/lib/date-picker/locale/es_ES";
+import axiosApi from "../../../api/axiosApi";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -66,8 +68,8 @@ const addEvent = (props) => {
   };
 
   const getPersons = async () => {
-    axios
-      .post(API_URL + `/person/person/get_list_persons/`, {
+    axiosApi
+      .post(`/person/person/get_list_persons/`, {
         node: props.currentNode.id,
       })
       .then((response) => {
@@ -82,8 +84,8 @@ const addEvent = (props) => {
   };
 
   const getNodes = async () => {
-    axios
-      .get(API_URL + `/business/node/?id=${props.currentNode.id}`)
+    axiosApi
+      .get(`/business/node/?id=${props.currentNode.id}`)
       .then((response) => {
         let data = response.data.results;
         data = data.map((a) => {
@@ -105,7 +107,8 @@ const addEvent = (props) => {
     datos.description = values.description;
     datos.node = parseInt(props.currentNode.id);
     if (values.guests) datos.guests = values.guests;
-    Axios.post(API_URL + `/person/event/`, datos)
+    axiosApi
+      .post(`/person/event/`, datos)
       .then((response) => {
         message.success("Agregado correctamente");
         router.push("/comunication/events");
@@ -134,8 +137,12 @@ const addEvent = (props) => {
           Inicio
         </Breadcrumb.Item>
         <Breadcrumb.Item>Comunicación</Breadcrumb.Item>
-        <Breadcrumb.Item className={"pointer"}
-                         onClick={() => router.push({ pathname: "/comunication/events" })}>Eventos</Breadcrumb.Item>
+        <Breadcrumb.Item
+          className={"pointer"}
+          onClick={() => router.push({ pathname: "/comunication/events" })}
+        >
+          Eventos
+        </Breadcrumb.Item>
         <Breadcrumb.Item>Crear evento</Breadcrumb.Item>
       </Breadcrumb>
       <Content className="site-layout">
@@ -183,6 +190,7 @@ const addEvent = (props) => {
                             onChange={onChangeDate}
                             moment={"YYYY-MM-DD"}
                             placeholder="Fecha"
+                            locale={locale}
                           />
                         </Form.Item>
                       </Col>

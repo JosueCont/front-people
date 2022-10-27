@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { Card, Row, Col, Space, Button, Divider } from "antd";
 import Cookies from "js-cookie";
-import { getCurrentURL } from "../../utils/constant";
+import { getCurrentURL, redirectTo } from "../../utils/constant";
 import { connect } from "react-redux";
 import { domainApiWithTenant } from "../../api/axiosApi";
 import { urlMyAccount, urlPeople, urlSocial } from "../../config/config";
+import _ from "lodash"
 
 const ContentApps = styled.div`
   & .ant-card {
@@ -73,16 +74,20 @@ const ContentApps = styled.div`
 
 const CardApps = ({ user, config, ...props }) => {
   const defaultPhoto =
-    "https://cdn-icons-png.flaticon.com/512/8415/8415113.png";
+    "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/account.png";
 
   const imgPsicometria =
     "https://www.nicepng.com/png/full/197-1975724_research-icon-png-marketing.png";
 
   const imgNomina = "https://www.masadmin.net/imgs/icon12.png";
 
-  const imgSocial = "https://cdn-icons-png.flaticon.com/512/2065/2065203.png";
+  const imgSocial = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/khonect.png";
 
-  const imgPeople = "https://cdn-icons-png.flaticon.com/512/3791/3791146.png";
+  const imgPeople = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/people.png";
+
+  const imgKhorflix = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/khorflix.png";
+
+  const imgSukhaTv = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/sukha.png";
 
   const linkToProfile = () => {
     const token = user.jwt_data.metadata.at(-1).token;
@@ -90,27 +95,26 @@ const CardApps = ({ user, config, ...props }) => {
       true
     )}.${urlMyAccount}/validation?token=${token}`;
     // const url = `${getCurrentURL(true)}.localhost:3001/validation?token=${token}`;
-    redirectTo(url);
+    redirectTo(url, true);
   };
 
   const linkToPeople = () => {
     const token = user.jwt_data.metadata.at(-1).token;
     const url = `${getCurrentURL(true)}.${urlPeople}/validation?token=${token}`;
     // const url = `${getCurrentURL(true)}.localhost:3000/validation?token=${token}`;
-    redirectTo(url);
+    redirectTo(url, true);
   };
 
   const linktToSocial = () => {
     const token = user.jwt_data.metadata.at(-1).token;
     const url = `${getCurrentURL(true)}.${urlSocial}/validation?token=${token}`;
-    redirectTo(url);
+    redirectTo(url, true);
   };
 
-  const redirectTo = (url) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.target = "_blank";
-    link.click();
+  const linkToExternalApp = (app_name) => {
+    const url = props.applications[app_name].front;
+    // const url = `${getCurrentURL(true)}.localhost:3000/validation?token=${token}`;
+    redirectTo(url, true);
   };
 
   return (
@@ -138,7 +142,7 @@ const CardApps = ({ user, config, ...props }) => {
                 onClick={() => linktToSocial()}
               >
                 <img src={imgSocial} />
-                <p style={{ marginBottom: "0px" }}>Red social</p>
+                <p style={{ marginBottom: "0px" }}>Connect</p>
               </Space>
             </Col>
           ) : null}
@@ -152,6 +156,34 @@ const CardApps = ({ user, config, ...props }) => {
               <p style={{ marginBottom: "0px" }}>People</p>
             </Space>
           </Col>
+          {props?.applications &&
+          (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) ?
+              <Col span={8}>
+                <Space
+                    direction="vertical"
+                    align="center"
+                    onClick={() => linkToExternalApp("khorflix")}
+                >
+                  <img src={imgKhorflix} />
+                  <p style={{ marginBottom: "0px" }}>Khorflix</p>
+                </Space>
+              </Col>
+              : null
+          }
+          {props?.applications &&
+          (_.has(props.applications, "sukhatv") && props.applications["sukhatv"].active) ?
+              <Col span={8}>
+                <Space
+                    direction="vertical"
+                    align="center"
+                    onClick={() => linkToExternalApp("sukhatv")}
+                >
+                  <img src={imgSukhaTv} />
+                  <p style={{ marginBottom: "0px" }}>Sukha TV</p>
+                </Space>
+              </Col>
+              : null
+          }
         </Row>
         {/* <Divider style={{background: '#5f6368'}}/>
             <Row justify='center'>
@@ -172,6 +204,7 @@ const mapState = (state) => {
   return {
     user: state.userStore.user,
     config: state.userStore.general_config,
+    applications: state.userStore.applications
   };
 };
 

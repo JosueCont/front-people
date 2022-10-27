@@ -181,6 +181,18 @@ class WebApiPayroll {
   static importPayrollCaculate(data) {
     return WebApi.ApisType(`payroll/read-payroll-calculus`, "post", data);
   }
+
+  static getInfonavitCredit(data) {
+    return WebApi.ApisType(`payroll/infonavit-credit`, "post", data);
+  }
+
+  static saveIMSSInfonavit(data) {
+    return WebApi.ApisType("payroll/imss-person/", "post", data);
+  }
+
+  static christmasBonusCaculate(data) {
+    return WebApi.ApisType("/payroll/christmas-bonus", "post", data);
+  }
 }
 
 export default WebApiPayroll;

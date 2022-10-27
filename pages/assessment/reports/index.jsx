@@ -38,8 +38,8 @@ const Index = ({
         >
           Inicio
         </Breadcrumb.Item>
-          <Breadcrumb.Item>KUIZ</Breadcrumb.Item>
-        <Breadcrumb.Item>Reportes</Breadcrumb.Item>
+          <Breadcrumb.Item>Psicometría</Breadcrumb.Item>
+        <Breadcrumb.Item>Reportes de competencias</Breadcrumb.Item>
       </Breadcrumb>
       <div className="container" style={{ width: "100%" }}>
         <Tabs activeKey={currentKey} onChange={(key) => setCurrentKey(key)} type="card">

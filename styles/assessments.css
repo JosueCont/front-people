@@ -246,3 +246,210 @@
 }
 
 /* Termina diseño reportes kuiz */
+
+
+/* Diseño para bolsa de trabajo */
+
+.modal-tabs-clients .tab-client,
+.modal-tabs-clients .tab-contact {
+    margin-top: 24px;
+    margin-left: 12px!important;
+    margin-right: 12px!important;
+}
+
+.modal-tabs-clients .tab-documents{
+    margin: 12px!important;
+}
+
+.content-register-client .tab-documents{
+    padding: 12px;
+    background: #f0f0f0;
+    border-radius: 12px;
+}
+
+.content-register-client .item-list-files:hover{
+    background: #ffff;
+    transition: all 0.5s;
+}
+
+.head-list-files {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.placeholder-list-files{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+    margin-bottom: 24px;
+    opacity: 1;
+    transition: all 1s;
+}
+
+.placeholder-list-files p{
+    margin-bottom: 0px;
+    color: #d9d9d9;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.body-list-files{
+    display: flex;
+    flex-direction: column;
+    transition: all 1s;
+    min-height: 130px;
+    max-height: 200px;
+    overflow: auto;
+}
+
+.item-list-files{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 5px;
+    border-radius: 12px;
+    transition: all 0.5s;
+}
+
+.item-list-files:hover{
+    background: #f0f0f0;
+    transition: all 0.5s;
+}
+
+.item-list-files p{
+    margin-bottom: 0px;
+    max-width: 75%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-list-options {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.title-action-text{
+    margin-bottom: 0px;
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.title-action-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-action-border{
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.tabs-vacancies > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
+    padding-top: 24px;
+    border-top: 3px solid #f0f0f0;
+    transition: all 0.5s;
+}
+.tabs-vacancies > .ant-tabs-card > .ant-tabs-nav::before {
+    display: none;
+}
+.tabs-vacancies > .ant-tabs-card .ant-tabs-tab{
+    background: transparent;
+    border-color: transparent;
+}
+.tabs-vacancies > .ant-tabs-card .ant-tabs-tab-active {
+    background: #f0f0f0;
+    border-color: #f0f0f0;
+    transition: all 0.5s;
+}
+.tabs-vacancies .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active,
+.tabs-vacancies .ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav .ant-tabs-tab-active {
+    border-bottom-color: #f0f0f0;
+}
+
+.tab-vacancies-btns{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.turn_rotative{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.turn_rotative .ant-form-item-control-input{
+    min-height: 0px;
+}
+
+.turn_rotative_content{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: auto 0;
+}
+
+.range_age_content .ant-input-number{
+    width: calc(50% - 16px);
+    border: 1px solid black;
+    box-shadow: none;
+}
+
+.range_age_content .ant-input-number input{
+    text-align: center;
+}
+
+.range_age_content .ant-input-number.min_age{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-right: none;
+}
+
+.range_age_content .ant-input-number.max_age{
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: none;
+}
+
+.list_interviewers .ant-list-sm{
+    border-radius: 12px;
+    padding: 12px;
+    background: #f0f0f0;
+}
+
+.list_interviewers .ant-list-sm .ant-list-header{
+    padding-top: 0px;
+    border-bottom: 1px solid #cccc; 
+}
+
+.list_interviewers .ant-list-sm .ant-list-items{
+    max-height: 190px;
+    overflow: auto;
+}
+
+.list_interviewers .ant-list-sm .ant-list-item{
+    padding: 4px 8px;
+}
+
+.content-register-client,
+.content-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content-end{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Termina diseño bolsa de trabajo */

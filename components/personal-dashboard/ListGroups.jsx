@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, List, Card, Row, Col, Modal, Progress,Space, Empty, Tooltip } from 'antd';
 import { CloseOutlined, PeopleOutlineOutlined} from "@material-ui/icons";
-import { EyeOutlined,FundViewOutlined, PlusOutlined,MinusOutlined, SmileOutlined, FrownOutlined, UserOutlined } from "@ant-design/icons";
+import { EyeOutlined,FundViewOutlined, PlusOutlined,MinusOutlined, SmileOutlined, FrownOutlined, UserOutlined, PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { useSelector } from 'react-redux'
 import { useRouter } from "next/router";
 
 const ListGroups = () => {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [currentMembers, setCurrentMembers] = useState([]);
+    const [nameGruop, setNameGruop] = useState("");
     const reportPerson = useSelector((state) => state.ynlStore.reportPerson)
     const router = useRouter();
 
@@ -24,8 +25,11 @@ const ListGroups = () => {
     };
 
     const onDetail=(member)=>{
-        const query = {user_id:member?.khonnect_id};
-        const url ={ pathname:`/dashboard-ynl-personal`, query  }
+        let query = {user_id:member?.khonnect_id};
+        if(!member?.khonnect_id){
+            query = {user_id:member?.user_id};
+        }
+        const url ={ pathname:`/ynl/personal-dashboard`, query  }
         router.push(url,url,query)
         setIsOpenModal(false)
     }
@@ -41,7 +45,7 @@ const ListGroups = () => {
             <Col span={24} className='content-feeling-scroll scroll-bar'>
                 <List
                     itemLayout="horizontal"
-                    locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No se registraron emociones" />}}
+                    locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="El usuario no es parte de un grupo" />}}
                     dataSource={reportPerson?.data && (reportPerson?.data[0]?.groups?reportPerson?.data[0]?.groups:[])}
                     renderItem={(item, index) =>(
                         <List.Item 
@@ -49,6 +53,7 @@ const ListGroups = () => {
                             actions={[<Tooltip title="Ver miembros del grupo"><PeopleOutlineOutlined style={{cursor:'pointer'}} onClick={()=> {
                                 setCurrentMembers(reportPerson?.data && (reportPerson?.data[0]?.groups[index]?.members?reportPerson?.data[0]?.groups[index]?.members:[]))
                                 showModalMembers(index)
+                                setNameGruop(item.name)
                             }}/></Tooltip>]}
                         >
                             <List.Item.Meta
@@ -60,7 +65,7 @@ const ListGroups = () => {
                 />
             </Col>   
         </Card>
-        <Modal title={`Miembros del grupo (${currentMembers && currentMembers.length})`} footer={[]} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title={`Grupo: ${nameGruop}(${currentMembers && currentMembers.length})`} footer={[]} visible={isOpenModal} onOk={handleOk} onCancel={handleCancel}>
             <Col span={24} className='content-feeling-scroll scroll-bar'>
                 <List
                     itemLayout="horizontal"
@@ -72,7 +77,7 @@ const ListGroups = () => {
                         >
                             <List.Item.Meta
                             avatar={item?.is_happy ? <SmileOutlined style={{color:'green', fontSize:40}} /> :<FrownOutlined style={{color:'red',fontSize:40}}/>}
-                            title={<><span>{item?.fullName}</span>
+                            title={<><span>{(item?.fullName && item.fullName!=='null null') &&  item.fullName}</span>
                                 <br/>
                                 <small>{item.username}</small>
                                 <Progress
@@ -84,6 +89,10 @@ const ListGroups = () => {
                                         '60%': '#50c10f',
                                     }}
                                     percent={Math.round(item?.value)} />
+                                <div style={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
+                                    <MinusCircleOutlined style={{fontSize:"20px"}} />
+                                    <PlusCircleOutlined style={{fontSize:"20px", paddingRight:"36px"}}/>
+                                </div>
 
                             </>}
 

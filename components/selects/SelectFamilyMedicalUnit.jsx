@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import { connect } from "react-redux";
+import { FamilyMedicalUnit } from "../../redux/fiscalDuck";
+import { ruleRequired } from "../../utils/rules";
 const { Option } = Select;
+
 const SelectFamilyMedicalUnit = ({
   disabled,
   viewLabel = true,
@@ -12,26 +15,30 @@ const SelectFamilyMedicalUnit = ({
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
+    props.FamilyMedicalUnit;
+  }, []);
+
+  useEffect(() => {
     setOptions([]);
-    if (props.cat_imss_subdelegation) {
-      let data = props.cat_imss_subdelegation.map((item, index) => {
+    if (props.cat_family_medical_unit) {
+      let data = props.cat_family_medical_unit.map((item, index) => {
         return {
-          label: item.code,
+          label: item.description,
           value: item.id,
           key: item.id + index,
         };
       });
       setOptions(data);
     }
-  }, [props.cat_imss_subdelegation]);
+  }, [props.cat_family_medical_unit]);
 
   return (
     <>
       <Form.Item
         key={"umf"}
-        name={props.name ? props.name : "job"}
-        label={viewLabel ? "Unidad medica familiar" : ""}
-        rules={rules}
+        name={"family_medical_unit"}
+        label={"Unidad medica familiar"}
+        rules={rules && rules.length > 0 ? rules : [ruleRequired]}
       >
         <Select
           disabled={disabled}
@@ -66,4 +73,6 @@ const mapState = (state) => {
   };
 };
 
-export default connect(mapState)(SelectFamilyMedicalUnit);
+export default connect(mapState, { FamilyMedicalUnit })(
+  SelectFamilyMedicalUnit
+);
