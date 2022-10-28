@@ -102,7 +102,6 @@ const MainSider = ({
       if (props?.permissions?.company?.view) {
         let children = [
           getItem("Empresas", "business"),
-          getItem("Asignar empresa", "asign"),
           getItem("Factores de integración", "integrationFactors")
         ];
         if (props?.config && props?.config?.nomina_enabled) {
@@ -126,6 +125,7 @@ const MainSider = ({
       children = [
         getItem("Catálogos", "catalogs"),
         getItem("Perfiles de seguridad", "securityGroups"),
+        getItem("Asignar empresa", "asign"),
       ];
       items.push(
         getItem("Configuración", "config", <SettingOutlined />, children)
