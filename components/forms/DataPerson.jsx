@@ -39,6 +39,7 @@ import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
 import SelectPersonType from "../selects/SelectPersonType";
 import SelectWorkTitle from "../selects/SelectWorkTitle";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const DataPerson = ({ config, person = null, setPerson, ...props }) => {
   const { Title } = Typography;
@@ -400,6 +401,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                       label="Fecha de ingreso laboral"
                     >
                       <DatePicker
+                        locale={ locale }
                         onChange={onChangeDateAdmission}
                         moment={"YYYY-MM-DD"}
                         readOnly
@@ -494,6 +496,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                   label="Fecha de ingreso a la plataforma"
                 >
                   <DatePicker
+                    locale={ locale }
                     style={{ width: "100%" }}
                     onChange={onChangeIngPlatform}
                     moment={"YYYY-MM-DD"}
@@ -534,6 +537,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
               <Col lg={8} xs={24} md={12}>
                 <Form.Item name="birth_date" label="Fecha de nacimiento">
                   <DatePicker
+                    locale={ locale }
                     style={{ width: "100%" }}
                     onChange={onChangeBirthDate}
                     moment={"YYYY-MM-DD"}

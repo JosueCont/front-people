@@ -28,8 +28,10 @@ import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import SelectPeriodicity from "../../selects/SelectPeriodicity";
 import SelectTypeTax from "../../selects/SelectTypeTax";
+import SelectIntegrationFactors from "../../selects/SelectIntegrationFactors"
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const router = useRouter();
@@ -42,6 +44,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [period, setPeriod] = useState("");
   const [incidenceStart, setIncidenceStart] = useState("");
   const [versions, setVersions] = useState([]);
+  const currentYear = moment().year();
 
   /* Const switchs */
   const [monthlyAdjustment, setMonthlyAdjustment] = useState(false);
@@ -144,6 +147,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
           salary_days: item.salary_days,
           belongs_to: item.belongs_to,
           vacation_bonus_payment: item.vacation_bonus_payment,
+          benefits: item.benefits,
           calculation_employment_subsidy: item.calculation_employment_subsidy,
         });
         setAnnualAdjustment(item.annual_adjustment);
@@ -290,6 +294,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         </Col>
       );
     });
+  };
+
+  const disabledDate = (current) => {
+    return current && moment(current).year() < currentYear;
   };
 
   return (
@@ -452,6 +460,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   disabledDate={(currentDate) => currentDate.year() < 2022}
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  locale={locale}
                 />
               </Form.Item>
             </Col>
@@ -467,6 +476,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   moment={"YYYY-MM-DD"}
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  locale={locale}
+                  disabledDate={disabledDate}
                 />
               </Form.Item>
             </Col>
@@ -533,6 +544,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   placeholder=""
                   moment={"YYYY"}
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  locale={locale}
                 />
               </Form.Item>
             </Col>
@@ -546,7 +558,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                 <Select
                   placeholder="Seleccione la version"
                   options={versions}
-                  disabled={paymentCalendar ? paymentCalendar.locked : false}
+                  // disabled={paymentCalendar ? paymentCalendar.locked : false}
                 />
               </Form.Item>
             </Col>
@@ -554,7 +566,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               <SelectFixedConcept
                 type={2}
                 name={"group_fixed_concept"}
-                disabled={paymentCalendar ? paymentCalendar.locked : false}
+                // disabled={paymentCalendar ? paymentCalendar.locked : false}
               />
             </Col>
             <Col lg={8} xs={22}>
@@ -603,6 +615,19 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                     />
                   </Form.Item>
                 </Col>
+                <Col lg={8} xs={22}>
+                    {/* <Select
+                      maxLength={100}
+                      options={CalculationEmploymentSubsidy}
+                    /> */}
+                    <SelectIntegrationFactors 
+                      rules = { [ruleRequired] }
+                    />
+                </Col>
+                {
+                  <div style={{ width: '100%' }}></div>
+                }
+                
                 <RenderChecks data={checks} />
               </Row>
             </>

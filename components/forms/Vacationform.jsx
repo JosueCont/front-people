@@ -15,6 +15,7 @@ import SelectCollaborator from "../../components/selects/SelectCollaborator";
 import WebApiPeople from "../../api/WebApiPeople";
 import { ruleRequired } from "../../utils/rules";
 import { getDifferenceDays } from "../../utils/functions";
+import locale from "antd/lib/date-picker/locale/es_ES";
 
 const Vacationform = (props) => {
   const { Title } = Typography;
@@ -187,6 +188,7 @@ const Vacationform = (props) => {
                   style={{ width: "100%" }}
                   onChange={changeDepartureDate}
                   disabled={availableDays > 0 ? false : true}
+                  locale = { locale }
                 />
               </Form.Item>
             </Col>

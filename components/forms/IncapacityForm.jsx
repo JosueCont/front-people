@@ -21,6 +21,7 @@ import { connect } from "react-redux";
 import { ruleRequired } from "../../utils/rules";
 import WebApiPeople from "../../api/WebApiPeople";
 import WebApiFiscal from "../../api/WebApiFiscal";
+import locale from "antd/lib/date-picker/locale/es_ES";
 import { getDifferenceDays } from "../../utils/functions";
 
 const Incapacityform = (props) => {
@@ -455,6 +456,7 @@ const Incapacityform = (props) => {
                     key="departure_date"
                     style={{ width: "100%" }}
                     onChange={changeDepartureDate}
+                    locale = { locale }
                   />
                 </Form.Item>
               </Col>
@@ -469,6 +471,7 @@ const Incapacityform = (props) => {
                     key="return_date"
                     style={{ width: "100%" }}
                     onChange={changeReturnDate}
+                    locale = { locale }
                   />
                 </Form.Item>
               </Col>
@@ -496,6 +499,7 @@ const Incapacityform = (props) => {
                     key="payroll_apply_date"
                     style={{ width: "100%" }}
                     onChange={props.onChangePayrollApplyDate}
+                    locale = { locale }
                   />
                 </Form.Item>
               </Col>
