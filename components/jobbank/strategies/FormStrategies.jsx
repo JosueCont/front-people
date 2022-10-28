@@ -22,7 +22,7 @@ import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 const FormStrategies = () => {
 
     const {
-        load_clients,
+        load_clients_options,
         load_vacancies,
         list_clients_options,
         list_vacancies_options
@@ -73,7 +73,7 @@ const FormStrategies = () => {
                 <Form.Item
                     name='product'
                     label='Producto'
-                    rules={[ruleWhiteSpace]}
+                    rules={[ruleWhiteSpace, ruleRequired]}
                 >
                     <Input placeholder='Producto'/>
                 </Form.Item>
@@ -150,8 +150,8 @@ const FormStrategies = () => {
                     <Select
                         allowClear
                         showSearch
-                        disabled={load_clients}
-                        loading={load_clients}
+                        disabled={load_clients_options}
+                        loading={load_clients_options}
                         placeholder='Cliente'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'

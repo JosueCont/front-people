@@ -93,7 +93,8 @@ const MainSider = ({
       ynl_personal_dashboard: '/ynl/personal-dashboard',
       jb_clients: '/jobbank/clients',
       jb_vacancies: '/jobbank/vacancies',
-      jb_strategies: '/jobbank/strategies'
+      jb_strategies: '/jobbank/strategies',
+      jb_profiles: '/jobbank/profiles'
     }
     router.push(pathRoutes[key]);
   };
@@ -248,7 +249,8 @@ const MainSider = ({
           children = [
             getItem('Clientes', 'jb_clients'),
             getItem('Vacantes', 'jb_vacancies'),
-            getItem('Estrategias', 'jb_strategies')
+            getItem('Estrategias', 'jb_strategies'),
+            getItem('Perfiles de vacante', 'jb_profiles')
           ]
           items.push(getItem('Bolsa de trabajo', 'job_bank', <WorkOutline/>, children))
         }
