@@ -5,14 +5,21 @@ import WebApiAssessment from '../../../api/WebApiAssessment';
 import { useRouter } from 'next/router';
 import moment from 'moment/moment';
 import { useSelector } from 'react-redux'
+import { popupWindow, getCurrentURL } from '../../../utils/constant';
+import jwtEncode from "jwt-encode";
+import { domainKuiz } from '../../../api/axiosApi';
 
-const TableAssessments = () => {
+const TableAssessments = ({
+  user_profile,
+  ...props
+}) => {
   const infoPerson = useSelector((state) => state?.userStore?.people_company)
   const router = useRouter();
   moment.locale("es-mx");
   const [dataAssessments, setDataAssessments] = useState([]);
   const [idUser, setIdUser] = useState({});
   const [dataUser, setDataUser] = useState({});
+  const [loadResults, setLoadResults] = useState({});
   const dataExample = [
       {
           "id": "4dc2bd79af78455f942ffd10c7ee5311",
@@ -292,6 +299,51 @@ const TableAssessments = () => {
         dataIndex: 'name',
         key: 'name',
     },
+    {
+      title: 'Acciones',
+      width:150,
+      render: (record) => {
+        let isEmpty = record.applys.filter(item => item.status == 0)
+        if(isEmpty.length > 0){
+          return(
+            <>
+              <div style={{display:"flex", justifyContent:"space-around", alignItems:"center"}}>
+                <Button>
+                  <Tooltip title="Eliminar evaluación">
+                    <DeleteOutlined/>
+                  </Tooltip>
+                </Button>
+              </div>
+            </>
+          )
+        }else{
+          return(
+            <>
+              <div style={{display:"flex", justifyContent:"space-around", alignItems:"center"}}>
+                <Button onClick={()=> modalRestart(record)}>
+                  <Tooltip title="Reasignar evaluación">
+                  <RetweetOutlined />
+                  </Tooltip>
+                </Button>
+                <Button>
+                  <Tooltip title="Eliminar evaluación">
+                    <DeleteOutlined/>
+                  </Tooltip>
+                </Button>
+              </div>
+            </>
+          )
+        }
+      }
+    },    
+  ];
+
+  const columnsAssessmentsGroups = [
+    {
+        title: 'Evaluación',
+        dataIndex: 'name',
+        key: 'name',
+    },    
   ];
   
   const expandedRowRender = (item) => {
@@ -349,8 +401,8 @@ const TableAssessments = () => {
           }else if(record.status == 1) {
             return(
               <>
-                <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-                  <Button onClick={()=> modalRestart(record.id)}>
+                <div style={{display:"flex", justifyContent:"space-around", alignItems:"center"}}>
+                  <Button onClick={()=> modalReset(record.id)}>
                     <Tooltip title="Reiniciar evaluación">
                       <RedoOutlined />
                     </Tooltip>
@@ -366,15 +418,10 @@ const TableAssessments = () => {
           }else if(record.status ==2) {
             return(
               <>
-                <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-                  <Button>
+                <div style={{display:"flex", justifyContent:"space-around", alignItems:"center"}}>
+                  <Button onClick={()=> validateGetResults(item,record)}>
                     <Tooltip title="Ver resultados">
                       <EyeOutlined />
-                    </Tooltip>
-                  </Button>
-                  <Button onClick={()=> modalReset(record.id)}>
-                    <Tooltip title="Reasignar evaluación">
-                      <RetweetOutlined />
                     </Tooltip>
                   </Button>
                   <Button onClick={()=> modalDelete(record.id)}>
@@ -400,7 +447,7 @@ const TableAssessments = () => {
   useEffect(()=>{
     if(router.query.id){
       let info = infoPerson.filter(item => item.value === router.query.id);
-      setDataUser(info.at(-1));
+      setDataUser(info?.at(-1));
       let data = { person: router.query.id }
       // let data = {person: "a042f8935bc742f7a3404ebd7f09656d"}
       setIdUser(data);
@@ -432,7 +479,6 @@ const TableAssessments = () => {
   const deleteApply = async (data) => {
     try {
       let response = await WebApiAssessment.deleteAssessmentUser(data);
-      console.log("respuesta del apply eliminado",response);
       message.success("La asignación se elimino correctamente");
       getUserListAssessments(idUser);
     } catch (e) {
@@ -440,7 +486,7 @@ const TableAssessments = () => {
     }
   }
 
-  const modalRestart = (data) =>{
+  const modalReset = (data) =>{
     let dataApply = { apply_id: data}
     Modal.confirm({
       title: "¿Está seguro de reiniciar esta evaluación?",
@@ -454,7 +500,6 @@ const TableAssessments = () => {
   const restartApply = async (data) => {
     try {
       let response = await WebApiAssessment.restartAssessmentUser(data);
-      console.log("respuesta del apply reasignar",response);
       getUserListAssessments(idUser);
       message.success("La asignación se reasigno correctamente");
     } catch (e) {
@@ -462,8 +507,10 @@ const TableAssessments = () => {
     }
   }
 
-  const modalReset = (data) =>{
-    let dataApply = { apply_id: data}
+  const modalRestart = (data) =>{
+    console.log("data evaluación",data)
+    let dataApply = { assessment: data.id, user_id: idUser.person}
+    console.log("datos a enviar", dataApply)
     Modal.confirm({
       title: "¿Está seguro de reasignar esta evaluación?",
       content: "",
@@ -476,18 +523,128 @@ const TableAssessments = () => {
   const resetApply = async (data) =>{
     try {
       let response = await WebApiAssessment.resetAssessmentUser(data);
-      console.log("respuesta del apply reiniciar",response);
       message.success("La asignación se reinicio correctamente");
       getUserListAssessments(idUser);
     } catch (e) {
       console.error(e.name + ": " + e.message);
     }
   }
+
+  const validateGetResults = (item, record) =>{
+    setLoadResults({...loadResults, [item.code]: true})
+    let codes = [
+      '7_KHOR_EST_SOC',
+      '4_KHOR_PERF_MOT',
+      '16_KHOR_INT_EMO',
+      '48_KHOR_INV_VAL_ORG',
+      '5_KHOR_DOM_CER'
+    ]
+    if(codes.includes(item.code)){
+      getResults(item, record)
+    }else{
+      tokenToResults(item, record)
+    }
+  }
+
+  const getFieldResults = (item, resp) =>{
+    if(item.code == '7_KHOR_EST_SOC'){
+      let { resultados } = resp.data;
+      return resultados ? resultados : '';
+    }else if(item.code == '4_KHOR_PERF_MOT'){
+      let { summary_results } = resp.data;
+      return summary_results ? summary_results : '';
+    }else if(item.code == '16_KHOR_INT_EMO'){
+      let { results_string } = resp.data;
+      return results_string ? results_string.split('.')[0] : '';
+    }else if(item.code == '48_KHOR_INV_VAL_ORG'){
+      let { resultado } = resp.data;
+      return resultado ? resultado : '';
+    }else if(item.code == '5_KHOR_DOM_CER'){
+      let { dominant_factor, factors } = resp.data;
+      return dominant_factor && factors ? {
+        interpretation: dominant_factor,
+        results: { factors: factors}
+      } : '';
+    }
+  }
+
+  const getResults = async (item, record) => {
+    try {
+      let data = {
+        apply_id: record.id,
+      };
+      let response = await WebApiAssessment.getAssessmentResults(data);
+      tokenToResults(item, record, response);
+    } catch (e) {
+      message.error('Resultados no encontrados');
+      setLoadResults({...loadResults, [item.code]: false});
+      console.log(e)
+    }
+  }
+
+  const convertResults = (results) =>{
+    if(results){
+      if(typeof(results) == 'string'){
+        let obj = JSON.parse(results);
+        return obj.variable_results
+          ? obj.variable_results
+          : '';
+      }else{
+        return results.variable_results
+          ? results.variable_results
+          : '';
+      }
+    }else{
+      return '';
+    }
+  }
+
+  const getFieldDate = (apply, isObj) =>{
+    let endDate = apply.end_date ? apply.end_date : apply.apply_date;
+    let formatDate = 'DD/MM/YYYY';
+    let formatTime = 'hh:mm a';
+    let objDate = {
+      date: moment(endDate).format(formatDate),
+      time: moment(endDate).format(formatTime)
+    }
+    let stringDate = moment(endDate).format(`${formatDate} ${formatTime}`);
+    return isObj ? objDate : stringDate;
+  }
+
+  const tokenToResults = (item, record, response) =>{
+    let string_results = response
+      ? getFieldResults(item, response)
+      : convertResults(record);
+
+    if (string_results){
+      const body = {
+        assessment: item.id,
+        user_id: user_profile.id,
+        firstname: user_profile.first_name,
+        lastname: `${user_profile.flast_name} ${user_profile.mlast_name ? user_profile.mlast_name : ''}`,
+        user_photo_url: user_profile.photo,
+        company_id: user_profile.node,
+        url: getCurrentURL(),
+        assessment_date: getFieldDate(item, true),
+        assessment_results: string_results,
+        assessment_xtras: { stage: 2 },
+        profile_results: null,
+        apply_id: record.id
+      }
+      const token = jwtEncode(body, 'secret', 'HS256');
+      const url = `${domainKuiz}/?token=${token}`;
+      // const url = `http://humand.localhost:3002/?token=${token}`;
+      popupWindow(url)
+    }else{
+      message.error('Resultados no encontrados');
+    }
+    setLoadResults({...loadResults, [item.code]: false});
+  }
     
   return (
     <>
         <div style={{padding:"16px", backgroundColor:"white", borderRadius:"15px"}}>
-            <h2>Asignaciones de {dataUser?.label}</h2>
+            <h2 style={{textTransform:"capitalize"}}>Asignaciones de {dataUser?.label}</h2>
             <Tabs defaultActiveKey="1">
                 <Tabs.TabPane tab="Individuales" key="1" forceRender={true}>
                   <Table
@@ -506,7 +663,7 @@ const TableAssessments = () => {
                 <Tabs.TabPane tab="Grupales" key="2" forceRender={true}>
                   <Table
                     rowKey={record => record.id}
-                    columns={columnsAssessments}
+                    columns={columnsAssessmentsGroups}
                     expandable={{
                     expandedRowRender,
                     defaultExpandedRowKeys: ["id"],

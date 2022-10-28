@@ -533,7 +533,7 @@ const homeScreen = ({ ...props }) => {
                 <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
               </Menu.Item>
             )}
-            <Menu.Item key="4" icon={<EyeOutlined />}>
+            <Menu.Item key="5" icon={<EyeOutlined />}>
               <Link href={`/assessment/listAssessments/${item.id}`}>Ver asignaciones</Link>
             </Menu.Item>
             {permissions.create && (
