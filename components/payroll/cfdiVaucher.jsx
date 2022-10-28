@@ -19,6 +19,7 @@ import {
   Select,
   Table,
   Tooltip,
+  Pagination,
 } from "antd";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -31,6 +32,7 @@ import { downLoadFileBlob, getDomain } from "../../utils/functions";
 import { API_URL_TENANT } from "../../config/config";
 import SelectYear from "../../components/selects/SelectYear";
 import GenericModal from "../modal/genericModal";
+import { set } from "lodash";
 
 const CfdiVaucher = ({
   calendar = null,
@@ -49,6 +51,20 @@ const CfdiVaucher = ({
   const [calendarSelect, setCalendarSelect] = useState(null);
   const [personsKeys, setPersonsKeys] = useState([]);
   const [genericModal, setGenericModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [valuesFilter, setValuesFilter] = useState(null);
+  const [lenData, setLenData] = useState(0);
+  const [page, setPage] = useState(1);
+
+  const pagination = async (page, pageSize) => {
+    setPage(page);
+    if (calendar) {
+      getVoucher(`calendar=${calendar}&period=${period}`);
+    } else {
+      onFinish(valuesFilter);
+    }
+    setCurrentPage(page);
+  };
 
   const columns = [
     {
@@ -214,9 +230,15 @@ const CfdiVaucher = ({
     );
   };
 
-  const onFinish = (value) => {
+  const generate_url = (limit = 10) => {
+    return `&limit=${limit}&offset=${page}`;
+  };
+
+  const onFinish = (value, limit = 10) => {
+    setValuesFilter(value);
+
     setLoading(true);
-    let url = `node=${props.currentNode.id}`;
+    let url = `&node=${props.currentNode.id}`;
     if (value.calendar && value.calendar != "")
       url = url + `&calendar=${value.calendar}`;
     if (value.period && value.period != "")
@@ -228,11 +250,13 @@ const CfdiVaucher = ({
   };
 
   const getVoucher = (data) => {
+    data = data + generate_url();
     setLoading(true);
     setCfdis([]);
     WebApiPayroll.getCfdiPayrrol(data)
       .then((response) => {
-        let cfdi_data = response.data.map((item) => {
+        setLenData(response.data.count);
+        let cfdi_data = response.data.results.map((item) => {
           item.key = item.id;
           return item;
         });
@@ -379,8 +403,27 @@ const CfdiVaucher = ({
                   : "No se encontraron resultados.",
               }}
               rowSelection={rowSelectionPerson}
+              pagination={false}
             />
           </Col>
+          {lenData > 0 && (
+            <Col
+              span={24}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: 10,
+              }}
+            >
+              <Pagination
+                current={currentPage}
+                total={lenData}
+                onChange={pagination}
+                showSizeChanger={false}
+                // defaultPageSize={10}
+              />
+            </Col>
+          )}
         </Row>
       </div>
       {genericModal && (

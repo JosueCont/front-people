@@ -15,7 +15,7 @@ const ConfigCompany = ({ ...props }) => {
   const [company, setCompany] = useState();
   const { Title } = Typography;
   const { TabPane } = Tabs;
-  const [activeKey, setActiveKey] = useState("1");
+  const [activeKey, setActiveKey] = useState("2");
 
   useEffect(() => {
     if (router.query.tab) setActiveKey(String(router.query.tab));
@@ -71,11 +71,11 @@ const ConfigCompany = ({ ...props }) => {
             onChange={(value) => setActiveKey(value)}
             activeKey={activeKey}
           >
-            <TabPane tab="General" key={"1"}>
-              <GeneralData node_id={company && company.id} />
-            </TabPane>
             <TabPane tab="Información fiscal" key={"2"}>
               <FiscalInformationNode node_id={company && company.id} />
+            </TabPane>
+            <TabPane tab="General" key={"1"}>
+              <GeneralData node_id={company && company.id} />
             </TabPane>
             {/* <TabPane tab="Registro patronal" key={"3"}>
               <PatronalRegistration node_id={company && company.id} />

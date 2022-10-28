@@ -25,7 +25,7 @@ const SelectPaymentCalendar = ({
   };
 
   return (
-    <Form.Item name="calendar" label={viewLabel ? "Calendario de pago" : ""}>
+    <Form.Item name="calendar" label={viewLabel ? "Calendario de pago" : ""} rules={ rules && rules.length > 0? rules : [] }>
       <Select
         onChange={(value) => setCalendarSelect(value)}
         // options={calendar}
