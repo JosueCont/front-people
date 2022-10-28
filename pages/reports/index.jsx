@@ -9,6 +9,7 @@ import LoanReport from "../../components/reports/Loan";
 import HolidaysReport from "../../components/reports/Holidays";
 import InabilityReport from "../../components/reports/Inability";
 import PermissionsReport from "../../components/reports/Permissions";
+import ProvisionsReport from "../../components/reports/Provision";
 
 import { withAuthSync } from "../../libs/auth";
 
@@ -18,6 +19,7 @@ import NominaIcon from "../../components/icons/NominaIcon";
 import LoanIcon from "../../components/icons/Loan";
 import HealthIcon from "../../components/icons/Health";
 import PermissionIcon from "../../components/icons/Permissions";
+import ProvisionIcon from "../../components/icons/Provision";
 
 const Reports = () => {
   const route = useRouter();
@@ -62,6 +64,9 @@ const Reports = () => {
               </TabPane>
               <TabPane tab={<PermissionIcon />} key="6">
                 <PermissionsReport />
+              </TabPane>
+              <TabPane tab={<ProvisionIcon />} key="7">
+                <ProvisionsReport />
               </TabPane>
             </Tabs>
           </Col>

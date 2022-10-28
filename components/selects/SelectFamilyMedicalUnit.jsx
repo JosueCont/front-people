@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Select, Form } from "antd";
 import { connect } from "react-redux";
 import { FamilyMedicalUnit } from "../../redux/fiscalDuck";
+import { ruleRequired } from "../../utils/rules";
 const { Option } = Select;
+
 const SelectFamilyMedicalUnit = ({
   disabled,
   viewLabel = true,
@@ -36,7 +38,7 @@ const SelectFamilyMedicalUnit = ({
         key={"umf"}
         name={"family_medical_unit"}
         label={"Unidad medica familiar"}
-        rules={rules}
+        rules={rules && rules.length > 0 ? rules : [ruleRequired]}
       >
         <Select
           disabled={disabled}
