@@ -1,9 +1,11 @@
+import { useState, useEffect } from "react";
 import { Form, Input, Row, Col, Select } from "antd";
 import {
   onlyNumeric,
   ruleRequired,
   ruleWhiteSpace,
 } from "../../../utils/rules";
+import WebApiPeople from "../../../api/WebApiPeople";
 import SelectImssDelegation from "../../../components/selects/SelectImssDelegation";
 import SelectImssSubdelegation from "../../../components/selects/SelectImssSubdelegation";
 
@@ -12,8 +14,36 @@ const FormPatronalRegistration = ({
   form,
   patronalRegistration = {},
   pushed,
+  currentNodeId,
   ...props
 }) => {
+
+  const [ information, setInformation ] = useState(null)
+
+  useEffect(() => {
+    currentNodeId && getInformationfiscal()
+  },[currentNodeId])
+
+  const getInformationfiscal = () => {
+    WebApiPeople.getfiscalInformationNode(currentNodeId)
+    .then((response) => {
+      setInformation(response.data)
+    })
+    .catch((error) => {
+      console.log('Error', error)
+    })
+  }
+
+  useEffect(() => {
+    if(information){
+      form.setFieldsValue({
+        social_reason: information.business_name
+      })
+    }
+  },[information])
+
+  console.log('inf', information)
+
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">
       <Row gutter={20}>

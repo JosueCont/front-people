@@ -48,6 +48,7 @@ const ImssInformationNode = ({
   const [formAddress] = Form.useForm();
   const [formLegalRep] = Form.useForm();
   const [formJobRisk] = Form.useForm();
+  const [ fiscalData, setFiscalData ] = useState(null)
   const [patronalData, setPatronalData] = useState(null);
   const [acceptAgreement, setAcceptAgreement] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -112,6 +113,12 @@ const ImssInformationNode = ({
       getPatronalRegistration();
     }
   }, [currentNode]);
+
+  useEffect(() => {
+    if(fiscalData){
+      form
+    }
+  },[fiscalData])
 
   const getPatronalRegistration = () => {
     setLoadingData(true);
@@ -368,6 +375,7 @@ const ImssInformationNode = ({
                   patronalData && patronalData.patronal_registartion
                 }
                 form={formPatronal}
+                currentNodeId = { currentNode.id }
               />
               <Row>
                 <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
