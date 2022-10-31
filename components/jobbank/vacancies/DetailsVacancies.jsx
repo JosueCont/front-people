@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
     Card,
     Row,
@@ -29,9 +29,19 @@ const DetailsVacancies = ({
     getInfoVacant
 }) => {
 
+    const fetchingItem = { loading: false, disabled: true };
+    const fetchingParams = {
+        back: fetchingItem,
+        create: fetchingItem,
+        edit: fetchingItem
+    };
     const router = useRouter();
+    const btnSave = useRef(null);
     const [formVacancies] = Form.useForm();
+    const [loading, setLoading] = useState({});
+    const [actionType, setActionType] = useState('');
     const [showTurns, setShowTurns] = useState(false);
+    const [disabledClient, setDisabledClient] = useState(false);
     const [listInterviewers, setListInterviewers] = useState([]);
     const { setValuesForm, createData } = useProcessInfo({
         formVacancies,
@@ -47,11 +57,24 @@ const DetailsVacancies = ({
         }
     },[info_vacant])
 
+    useEffect(()=>{
+        if(router.query.customer && action == 'add'){
+            setDisabledClient(true)
+            formVacancies.setFieldsValue({
+                customer_id: router.query.customer
+            })
+        }else setDisabledClient(false)
+    },[router])
+
     // Se utiliza la api de crear para actualizar pasándole una id,
     // de la contratario estaría creando otro registro
     const onFinisUpdate = async (values) =>{
         try {
-            await WebApiJobBank.createVacant({...values, id: info_vacant.id});
+            await WebApiJobBank.createVacant({
+                ...values,
+                id: info_vacant.id,
+                node_id: currentNode.id
+            });
             message.success('Vacante actualizada');
             getInfoVacant(info_vacant.id);
         } catch (e) {
@@ -65,13 +88,11 @@ const DetailsVacancies = ({
         try {
             let response = await WebApiJobBank.createVacant({...values, node_id: currentNode.id});
             message.success('Vacante registrada');
-            router.replace({
-                pathname: '/jobbank/vacancies/edit',
-                query: { id: response.data.id }
-            })
+            actionSaveAnd(response.data.id)
         } catch (e) {
             console.log(e)
             setLoadVacancies(false);
+            setLoading({})
             message.error('Vacante no registrada')
         }
     }
@@ -84,6 +105,31 @@ const DetailsVacancies = ({
             add: onFinishCreate
         };
         actionFunction[action](bodyData);
+    }
+
+    const actionAddCreate = () =>{
+        formVacancies.resetFields();
+        setLoadVacancies(false)
+        setLoading({})
+    }
+
+    const actionSaveAnd = (id) =>{
+        const actionFunction = {
+            back: () => router.push('/jobbank/vacancies'),
+            create: actionAddCreate,
+            edit: ()=> router.replace({
+                pathname: '/jobbank/vacancies/edit',
+                query: { id }
+            })
+        }
+        actionFunction[actionType]();
+    }
+
+    const getSaveAnd = (type) =>{
+        setActionType(type)
+        const item = { loading: true, disabled: false };
+        setLoading({...fetchingParams, [type]: item });
+        btnSave.current.click();
     }
 
     return (
@@ -110,6 +156,7 @@ const DetailsVacancies = ({
                         layout='vertical'
                         form={formVacancies}
                         onFinish={onFinish}
+                        onFinishFailed={()=> setLoading({})}
                         requiredMark={false}
                         initialValues={{
                             vo_bo: false,
@@ -126,6 +173,7 @@ const DetailsVacancies = ({
                                     <TabFeatures
                                         showTurns={showTurns}
                                         setShowTurns={setShowTurns}
+                                        disabledClient={disabledClient}
                                     />
                                 </Spin>
                             </Tabs.TabPane>
@@ -139,7 +187,7 @@ const DetailsVacancies = ({
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
-                                tab='Sueldo de prestaciones'
+                                tab='Sueldo y prestaciones'
                                 forceRender
                                 key='tab_3'
                             >
@@ -163,16 +211,45 @@ const DetailsVacancies = ({
                     </Form>
                 </Col>
                 <Col span={24} className='tab-vacancies-btns'>
-                    {/* <Button>
-                        Cancelar
-                    </Button> */}
-                    <Button
-                        form='form-vacancies'
-                        htmlType='submit'
-                        loading={load_vacancies}
-                    >
-                        Guardar
-                    </Button>
+                    {action == 'add' ? (
+                        <>
+                            <button
+                                htmlType='submit'
+                                form='form-vacancies'
+                                ref={btnSave}
+                                style={{display:'none'}}
+                            />
+                            <Button
+                                onClick={()=>getSaveAnd('back')}
+                                disabled={loading['back']?.disabled}
+                                loading={loading['back']?.loading}
+                            >
+                                Guardar y regresar
+                            </Button>
+                            <Button
+                                onClick={()=>getSaveAnd('create')}
+                                disabled={loading['create']?.disabled}
+                                loading={loading['create']?.loading}
+                            >
+                                Guardar y registrar otra
+                            </Button>
+                            <Button
+                                onClick={()=>getSaveAnd('edit')}
+                                disabled={loading['edit']?.disabled}
+                                loading={loading['edit']?.loading}
+                            >
+                                Guardar y editar
+                            </Button>
+                        </>
+                    ):(
+                        <Button
+                            form='form-vacancies'
+                            htmlType='submit'
+                            loading={load_vacancies}
+                        >
+                            Guardar
+                        </Button>
+                    )}
                 </Col>
             </Row>
         </Card>

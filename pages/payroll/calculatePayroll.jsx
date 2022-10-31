@@ -30,7 +30,11 @@ import {
   UserOutlined,
   UploadOutlined,
   CheckCircleOutlined,
-  ExclamationCircleOutlined,
+  FileExcelOutlined,
+  FileDoneOutlined,
+  UnlockOutlined,
+  LockOutlined,
+  ExclamationCircleOutlined, DownloadOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -1132,32 +1136,80 @@ const CalculatePayroll = ({ ...props }) => {
                             }
                           />
                         </Col>
-                        <Col xxs={24} xl={4}>
+                        <Col xs={24} xl={6}>
                           <Button
-                            style={{ marginTop: "30px" }}
-                            size="large"
-                            onClick={() => {
-                              downLoadFileBlob(
-                                `${getDomain(
-                                  API_URL_TENANT
-                                )}/payroll/payroll-calculus`,
-                                "Nomina.xlsx",
-                                "POST",
-                                {
-                                  payment_period: periodSelected.id,
-                                  department: department,
-                                  job: job,
-                                  payroll: payroll.map((item) => {
-                                    item.person_id = item.person.id;
-                                    return item;
-                                  }),
-                                }
-                              );
-                            }}
+                              style={{ marginTop: "30px", marginRight:20 }}
+                              size="sm"
+                              icon={<DownloadOutlined />}
+                              onClick={() => {
+                                downLoadFileBlob(
+                                    `${getDomain(
+                                        API_URL_TENANT
+                                    )}/payroll/payroll-calculus`,
+                                    "Nomina.xlsx",
+                                    "POST",
+                                    {
+                                      payment_period: periodSelected.id,
+                                      department: department,
+                                      job: job,
+                                      payroll: payroll.map((item) => {
+                                        item.person_id = item.person.id;
+                                        return item;
+                                      }),
+                                    }
+                                );
+                              }}
                           >
                             Descargar plantilla
                           </Button>
+
+                          {(step === 0 ||
+                              isOpen ||
+                              (consolidated &&
+                                  !isOpen &&
+                                  consolidated.status != 3)) && (
+                              <Upload
+                                  {...{
+                                    showUploadList: false,
+                                    beforeUpload: (file) => {
+                                      const isXlsx = file.name.includes(".xlsx");
+                                      if (!isXlsx) {
+                                        message.error(`${file.name} no es un xlsx.`);
+                                      }
+                                      return isXlsx || Upload.LIST_IGNORE;
+                                    },
+                                    onChange(info) {
+                                      const { status } = info.file;
+                                      if (status !== "uploading") {
+                                        if (info.fileList.length > 0) {
+                                          let data = new FormData();
+                                          data.append(
+                                              "File",
+                                              info.fileList[0].originFileObj
+                                          );
+                                          data.append("department", department);
+                                          data.append("job", job);
+                                          data.append(
+                                              "payment_period",
+                                              periodSelected.id
+                                          );
+                                          importPayrollCaculate(data);
+                                          info.file = null;
+                                          info.fileList = [];
+                                        }
+                                      }
+                                    },
+                                  }}
+                              >
+                                <Button size="sm" icon={<UploadOutlined />}>
+                                  Subir nómina
+                                </Button>
+                              </Upload>
+                          )}
+
+
                         </Col>
+
                       </>
                     )}
                   </Row>
@@ -1171,7 +1223,7 @@ const CalculatePayroll = ({ ...props }) => {
                 <Steps current={step}>
                   <Steps.Step
                     title="Calcular"
-                    description="Calculo de nómina."
+                    description="Cálculo de nómina."
                   />
                   <Steps.Step title="Cerrar" description="Cierre de nómina." />
                   <Steps.Step title="Timbrar" description="Timbre fiscal." />
@@ -1180,62 +1232,66 @@ const CalculatePayroll = ({ ...props }) => {
                 <div
                   style={{
                     backgroundColor: "#fafafa",
-                    border: "1px dashed #e9e9e9",
-                    borderRadius: "2px",
+                    borderRadius: "15px",
+                    marginBottom:10
                   }}
                 >
-                  <Col md={5} offset={1}>
-                    <Button
-                      size="large"
-                      block
-                      htmlType="button"
-                      onClick={() => {
-                        isOpen
-                          ? downLoadFileBlob(
-                              `${getDomain(
-                                API_URL_TENANT
-                              )}/payroll/payroll-calculus`,
-                              "Nomina.xlsx",
-                              "POST",
-                              {
-                                payment_period: periodSelected.id,
-                                extended_report: "True",
-                                department: department,
-                                job: job,
-                                payroll: payroll.map((item) => {
-                                  item.person_id = item.person.id;
-                                  return item;
-                                }),
-                              }
-                            )
-                          : downLoadFileBlob(
-                              `${getDomain(
-                                API_URL_TENANT
-                              )}/payroll/payroll-report?payment_period=${
-                                periodSelected.id
-                              }`,
-                              "Nomina.xlsx",
-                              "GET"
-                            );
-                      }}
-                    >
-                      Descargar nómina
-                    </Button>
-                  </Col>
-                  {payroll.length > 0 && !genericModal && (
-                    <Row
-                      justify="end"
+                  <Row
+                      justify="start"
                       style={{
                         textAlign: "center",
                         padding: "20px",
                       }}
-                    >
+                  >
+
+                    <Col md={4}>
+                      <Button
+                          size="large"
+                          block
+                          htmlType="button"
+                          icon={<FileExcelOutlined />}
+                          onClick={() => {
+                            isOpen
+                                ? downLoadFileBlob(
+                                    `${getDomain(
+                                        API_URL_TENANT
+                                    )}/payroll/payroll-calculus`,
+                                    "Nomina.xlsx",
+                                    "POST",
+                                    {
+                                      payment_period: periodSelected.id,
+                                      extended_report: "True",
+                                      department: department,
+                                      job: job,
+                                      payroll: payroll.map((item) => {
+                                        item.person_id = item.person.id;
+                                        return item;
+                                      }),
+                                    }
+                                )
+                                : downLoadFileBlob(
+                                    `${getDomain(
+                                        API_URL_TENANT
+                                    )}/payroll/payroll-report?payment_period=${
+                                        periodSelected.id
+                                    }`,
+                                    "Nomina.xlsx",
+                                    "GET"
+                                );
+                          }}
+                      >
+                        Descargar nómina
+                      </Button>
+                    </Col>
+                  {payroll.length > 0 && !genericModal && (
+                      <>
                       {consolidated && (
                         <>
                           <Col md={5} offset={1}>
                             <Button
                               size="large"
                               block
+                              icon={<FileExcelOutlined />}
                               htmlType="button"
                               onClick={() =>
                                 downLoadFileBlob(
@@ -1254,51 +1310,7 @@ const CalculatePayroll = ({ ...props }) => {
                           </Col>
                         </>
                       )}
-                      {(step === 0 ||
-                        isOpen ||
-                        (consolidated &&
-                          !isOpen &&
-                          consolidated.status != 3)) && (
-                        <Col md={5} offset={1}>
-                          <Upload
-                            {...{
-                              showUploadList: false,
-                              beforeUpload: (file) => {
-                                const isXlsx = file.name.includes(".xlsx");
-                                if (!isXlsx) {
-                                  message.error(`${file.name} no es un xlsx.`);
-                                }
-                                return isXlsx || Upload.LIST_IGNORE;
-                              },
-                              onChange(info) {
-                                const { status } = info.file;
-                                if (status !== "uploading") {
-                                  if (info.fileList.length > 0) {
-                                    let data = new FormData();
-                                    data.append(
-                                      "File",
-                                      info.fileList[0].originFileObj
-                                    );
-                                    data.append("department", department);
-                                    data.append("job", job);
-                                    data.append(
-                                      "payment_period",
-                                      periodSelected.id
-                                    );
-                                    importPayrollCaculate(data);
-                                    info.file = null;
-                                    info.fileList = [];
-                                  }
-                                }
-                              },
-                            }}
-                          >
-                            <Button size="large" icon={<UploadOutlined />}>
-                              Subir nómina
-                            </Button>
-                          </Upload>
-                        </Col>
-                      )}
+
                       {step == 0 && calculate && (
                         <Col md={5} offset={1}>
                           <Button
@@ -1316,6 +1328,7 @@ const CalculatePayroll = ({ ...props }) => {
                           <Button
                             size="large"
                             block
+                            icon={<UnlockOutlined />}
                             htmlType="button"
                             onClick={() =>
                               setMessageModal(5, {
@@ -1358,6 +1371,7 @@ const CalculatePayroll = ({ ...props }) => {
                               <Button
                                 size="large"
                                 block
+                                icon={<LockOutlined />}
                                 htmlType="button"
                                 onClick={() => setMessageModal(2)}
                               >
@@ -1372,6 +1386,7 @@ const CalculatePayroll = ({ ...props }) => {
                                 <Button
                                   size="large"
                                   block
+                                  icon={<FileDoneOutlined />}
                                   htmlType="button"
                                   onClick={() => setMessageModal(3)}
                                 >
@@ -1384,6 +1399,7 @@ const CalculatePayroll = ({ ...props }) => {
                               <Button
                                 size="large"
                                 block
+                                icon={<StopOutlined />}
                                 htmlType="button"
                                 onClick={() =>
                                   setMessageModal(5, {
@@ -1418,8 +1434,9 @@ const CalculatePayroll = ({ ...props }) => {
                           )}
                         </>
                       )}
-                    </Row>
+                      </>
                   )}
+                    </Row>
                 </div>
                 {previousStep && (
                   <Button

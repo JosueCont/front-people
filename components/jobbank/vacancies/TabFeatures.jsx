@@ -24,11 +24,18 @@ import {
   optionsTypeContract,
   optionsGenders
 } from '../../../utils/constant';
+import { useSelector } from 'react-redux';
 
 const TabFeatures = ({
   showTurns,
-  setShowTurns
+  setShowTurns,
+  disabledClient
 }) => {
+
+  const {
+    load_clients_options,
+    list_clients_options
+  } = useSelector(state => state.jobBankStore);
 
   const styleDisabled = {
     width: 32,
@@ -66,6 +73,29 @@ const TabFeatures = ({
   
   return (
     <Row gutter={[24,0]}>
+      <Col span={8}>
+        <Form.Item
+          name='customer_id'
+          label='Cliente'
+          rules={[ruleRequired]}
+        >
+          <Select
+            allowClear
+            showSearch
+            disabled={disabledClient}
+            loading={load_clients_options}
+            placeholder='Cliente'
+            notFoundContent='No se encontraron resultados'
+            optionFilterProp='children'
+          >
+            {list_clients_options.length > 0 && list_clients_options.map(item => (
+              <Select.Option value={item.id} key={item.id}>
+                {item.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+      </Col>
       <Col span={8}>
         <Form.Item
           name='assignment_date'
@@ -282,16 +312,14 @@ const TabFeatures = ({
             <Checkbox onChange={e => setShowTurns(e.target.checked)}/>
           </Form.Item>
         </div>
-        {showTurns && (
-          <Form.Item
-            name='turns_to_rotate'
-            rules={[ruleWhiteSpace]}
-          >
-            <Input placeholder='¿Cuáles?'/>
-          </Form.Item>
-        )}
+        <Form.Item
+          name='turns_to_rotate'
+          rules={[ruleWhiteSpace]}
+        >
+          <Input placeholder='¿Cuáles?' disabled={!showTurns}/>
+        </Form.Item>
       </Col>
-      <Col span={24}>
+      <Col span={8} style={{display: 'flex'}}>
         <div className='turn_rotative'>
           <Form.Item
             name='requires_travel_availability'
@@ -301,8 +329,6 @@ const TabFeatures = ({
             <Checkbox/>
           </Form.Item>
           <label>¿Disponibilidad para viajar?</label>
-        </div>
-        <div className='turn_rotative'>
           <Form.Item
             name='vo_bo'
             valuePropName='checked'

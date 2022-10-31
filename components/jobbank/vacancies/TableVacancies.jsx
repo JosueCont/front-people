@@ -135,6 +135,11 @@ const TableVacancies = ({
         key: 'description'
     },
     {
+        title: 'Cliente',
+        dataIndex: ['customer', 'name'],
+        key: ['customer', 'name']
+    },
+    {
         title: ()=> {
             return(
                 <Dropdown overlay={menuTable}>
