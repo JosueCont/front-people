@@ -102,7 +102,6 @@ const MainSider = ({
       if (props?.permissions?.company?.view) {
         let children = [
           getItem("Empresas", "business"),
-          getItem("Asignar empresa", "asign"),
           getItem("Factores de integración", "integrationFactors")
         ];
         if (props?.config && props?.config?.nomina_enabled) {
@@ -122,14 +121,7 @@ const MainSider = ({
         );
       }
 
-      // Menú Configuración
-      children = [
-        getItem("Catálogos", "catalogs"),
-        getItem("Perfiles de seguridad", "securityGroups"),
-      ];
-      items.push(
-        getItem("Configuración", "config", <SettingOutlined />, children)
-      );
+
 
       // Agregar división
       items.push({ type: "divider" });
@@ -192,6 +184,17 @@ const MainSider = ({
         ];
         items.push(getItem("Nómina", "payroll", <DollarOutlined />, children));
       }
+
+
+      // Menú Configuración
+      children = [
+        getItem("Catálogos", "catalogs"),
+        getItem("Perfiles de seguridad", "securityGroups"),
+        getItem("Asignar empresa", "asign"),
+      ];
+      items.push(
+          getItem("Configuración", "config", <SettingOutlined />, children)
+      );
 
       // Menú Registro de errores
       if (props?.config && props?.config?.nomina_enabled) {
