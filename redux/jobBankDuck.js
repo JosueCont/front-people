@@ -215,7 +215,6 @@ export const getVacanciesOptions = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getVacancies(node, '&paginate=0');
-        console.log("🚀 ~ file: jobBankDuck.js ~ line 217 ~ getVacanciesOptions ~ response", response)
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
