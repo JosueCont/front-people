@@ -9,7 +9,7 @@ import {
   getCompetences,
   getAcademics,
   getMainCategories,
-  getSubCategories
+  getSubCategories,
 } from '../../../redux/jobBankDuck';
 
 const AddOrEditVacancies = ({
@@ -19,7 +19,7 @@ const AddOrEditVacancies = ({
   getCompetences,
   getAcademics,
   getMainCategories,
-  getSubCategories
+  getSubCategories,
 }) => {
 
   const router = useRouter();
@@ -76,6 +76,6 @@ export default connect(
     getCompetences,
     getAcademics,
     getMainCategories,
-    getSubCategories
+    getSubCategories,
   }
 )(AddOrEditVacancies);

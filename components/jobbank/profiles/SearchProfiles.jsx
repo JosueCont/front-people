@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react'
 import { Button, Input, Row, Col, Form, Select } from 'antd';
 import {
-  SearchOutlined,
-  SyncOutlined,
+    SearchOutlined,
+    SyncOutlined,
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import { getVacancies } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
 import { ruleWhiteSpace } from '../../../utils/rules';
+import { getProfilesList } from '../../../redux/jobBankDuck';
 
-const SearchVacancies = ({
-    load_clients_options,
-    list_clients_options,
+const SearchProfiles = ({
     currentNode,
-    getVacancies
+    getProfilesList,
+    load_clients_options,
+    list_clients_options
 }) => {
 
     const router = useRouter();
@@ -21,20 +21,20 @@ const SearchVacancies = ({
 
     const createQuerys = (obj) =>{
         let query = '';
-        if(obj.job_position) query += `&job_position__icontains=${obj.job_position}`;
+        if(obj.name) query += `&name__icontains=${obj.name}`;
         if(obj.customer) query += `&customer=${obj.customer}`;
         return query;
     }
 
     const onFinishSearch = (values) =>{
         const query = createQuerys(values);
-        if(query) getVacancies(currentNode.id, query);
+        if(query) getProfilesList(currentNode.id, query);
         else deleteFilter();
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        getVacancies(currentNode.id)
+        getProfilesList(currentNode.id)
     }
 
     return (
@@ -44,7 +44,7 @@ const SearchVacancies = ({
                     <Row style={{width: '100%'}}>
                         <Col span={14}>
                             <Form.Item
-                                name='job_position'
+                                name='name'
                                 rules={[ruleWhiteSpace]}
                                 style={{marginBottom: 0}}
                             >
@@ -77,7 +77,7 @@ const SearchVacancies = ({
                 </Form>
             </Col>
             <Col xs={6} sm={6} md={8}  lg={12} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                <Button onClick={()=> router.push('/jobbank/vacancies/add')}>Agregar</Button>
+                <Button onClick={()=> router.push({pathname: '/jobbank/profiles/add'})}>Agregar</Button>
             </Col>
         </Row>
     )
@@ -91,8 +91,4 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(
-    mapState,{
-        getVacancies
-    }
-)(SearchVacancies)
+export default connect(mapState, { getProfilesList })(SearchProfiles)
