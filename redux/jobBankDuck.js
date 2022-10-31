@@ -25,6 +25,7 @@ const initialState = {
     load_profiles: false,
     load_profiles_types: false,
     load_clients_options: false,
+    load_vacancies_options: false,
     page_jobbank: 1
 }
 
@@ -88,7 +89,7 @@ const jobBankReducer = (state = initialState, action) =>{
         case SET_VACANCIES_OPTIONS:
             return {...state,
                 list_vacancies_options: action.payload,
-                load_vacancies: action.fetching
+                load_vacancies_options: action.fetching
             }
         case SET_CLIENTS_OPTIONS:
             return {...state,
@@ -214,6 +215,7 @@ export const getVacanciesOptions = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getVacancies(node, '&paginate=0');
+        console.log("🚀 ~ file: jobBankDuck.js ~ line 217 ~ getVacanciesOptions ~ response", response)
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)

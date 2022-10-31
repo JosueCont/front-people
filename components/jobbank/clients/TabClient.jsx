@@ -3,7 +3,8 @@ import { Row, Col, Form, Input, Select, Button} from 'antd';
 import {
     ruleRequired,
     ruleWhiteSpace,
-    ruleURL
+    ruleURL,
+    rfcFormat
 } from '../../../utils/rules';
 import { useSelector } from 'react-redux';
 
@@ -15,26 +16,37 @@ const TabClient = ({ sizeCol = 12 }) =>{
         <Row gutter={[24,0]} className='tab-client'>
             <Col span={sizeCol}>
                 <Form.Item
-                    name={'name'}
+                    name='name'
                     rules={[ruleRequired, ruleWhiteSpace]}
                 >
-                    <Input maxLength={50} placeholder={'Escriba un nombre'}/>
+                    <Input maxLength={50} placeholder='Escriba un nombre'/>
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>
                 <Form.Item
-                    name={'description'}
-                    rules={[ruleWhiteSpace]}
+                    name='rfc'
+                    rules={[
+                        ruleRequired,
+                        rfcFormat
+                    ]}
                 >
-                    <Input maxLength={50} placeholder={'Escriba una descripción'}/>
+                    <Input placeholder='RFC' maxLength={13}/>
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>
-                <Form.Item name={'sector'}>
+                <Form.Item
+                    name='description'
+                    rules={[ruleWhiteSpace]}
+                >
+                    <Input maxLength={50} placeholder='Escriba una descripción'/>
+                </Form.Item>
+            </Col>
+            <Col span={sizeCol}>
+                <Form.Item name='sector'>
                     <Select
                         allowClear
-                        placeholder={'Seleccione un sector'}
-                        notFoundContent={'No se encontraron resultados'}
+                        placeholder='Seleccione un sector'
+                        notFoundContent='No se encontraron resultados'
                     >
                         {list_sectors.length > 0 && list_sectors.map(item => (
                             <Select.Option value={item.id} key={item.id}>
@@ -46,28 +58,28 @@ const TabClient = ({ sizeCol = 12 }) =>{
             </Col>
             <Col span={sizeCol}>
                 <Form.Item 
-                    name={'website'}
+                    name='website'
                     rules={[ruleURL]}
                 >
-                    <Input placeholder={'Escriba la url de su sitio'}/>
+                    <Input placeholder='Escriba la url de su sitio'/>
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>
                 <Form.Item
-                    name={'business_name'}
+                    name='business_name'
                     rules={[ruleWhiteSpace]}
                     // style={{marginBottom: 0}}
                 >
-                    <Input maxLength={50} placeholder={'Razón social'}/>
+                    <Input maxLength={50} placeholder='Razón social'/>
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>
                 <Form.Item
-                    name={'comments'}
+                    name='comments'
                     rules={[ruleWhiteSpace]}
                     // style={{marginBottom: 0}}
                 >
-                    <Input placeholder={'Comentarios'}/>
+                    <Input placeholder='Comentarios'/>
                 </Form.Item>
             </Col>
         </Row>

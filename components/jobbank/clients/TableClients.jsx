@@ -18,7 +18,8 @@ import {
     EyeOutlined,
     EyeInvisibleOutlined,
     FileTextOutlined,
-    PlusOutlined
+    PlusOutlined,
+    LinkOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
 import {
@@ -27,6 +28,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
+import Clipboard from '../../../components/Clipboard';
 
 const TableClients = ({
     list_clients,
@@ -135,8 +137,16 @@ const TableClients = ({
     const menuTable = () => {
         return (
             <Menu>
+                <Menu.Item key='1'>
+                    <Clipboard
+                        text={window.location.origin+"/ac/jb/"+currentNode.permanent_code}
+                        title='Autoregistro'
+                        border={false}
+                        tooltipTitle='Copiar link de autoregistro'
+                    />
+                </Menu.Item>
                 <Menu.Item
-                    key={1}
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=>openModalManyDelete()}
                 >
