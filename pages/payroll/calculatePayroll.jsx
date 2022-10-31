@@ -1223,7 +1223,7 @@ const CalculatePayroll = ({ ...props }) => {
                 <Steps current={step}>
                   <Steps.Step
                     title="Calcular"
-                    description="Calculo de nómina."
+                    description="Cálculo de nómina."
                   />
                   <Steps.Step title="Cerrar" description="Cierre de nómina." />
                   <Steps.Step title="Timbrar" description="Timbre fiscal." />
@@ -1399,6 +1399,7 @@ const CalculatePayroll = ({ ...props }) => {
                               <Button
                                 size="large"
                                 block
+                                icon={<StopOutlined />}
                                 htmlType="button"
                                 onClick={() =>
                                   setMessageModal(5, {
