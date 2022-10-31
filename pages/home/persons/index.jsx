@@ -534,7 +534,7 @@ const homeScreen = ({ ...props }) => {
               </Menu.Item>
             )}
             <Menu.Item key="5" icon={<EyeOutlined />}>
-              <Link href={`/assessment/listAssessments/${item.id}`}>Ver asignaciones</Link>
+              <Link href={`/assessment/persons/${item.id}`}>Ver asignaciones</Link>
             </Menu.Item>
             {permissions.create && (
               <Menu.Item

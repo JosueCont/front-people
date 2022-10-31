@@ -1,7 +1,7 @@
 import {React, useEffect, useState} from 'react'
 import MainLayout from '../../../layout/MainLayout'
 import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Space} from 'antd'
-import TableAssessments from '../../../components/assessment/listAssessments/TableAssessments'
+import TableAssessments from '../../../components/assessment/persons/TableAssessments'
 import { useRouter } from 'next/router';
 import WebApiPeople from '../../../api/WebApiPeople';
 
@@ -23,7 +23,7 @@ const ListAssessments = () => {
     }
   }
   return (
-    <MainLayout currentKey={["list_assessments"]} defaultOpenKeys={["list_assessments"]}> 
+    <MainLayout currentKey={["persons"]} defaultOpenKeys={["people"]}> 
         <Breadcrumb>
             <Breadcrumb.Item>Inicio</Breadcrumb.Item>
             <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
