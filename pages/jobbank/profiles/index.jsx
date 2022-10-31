@@ -1,28 +1,24 @@
 import React, { useEffect } from 'react';
 import MainLayout from '../../../layout/MainLayout';
-import { Breadcrumb } from 'antd';
-import TableVacancies from '../../../components/jobbank/vacancies/TableVacancies';
-import SearchVacancies from '../../../components/jobbank/vacancies/SearchVacancies';
-import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
+import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
-import { getVacancies } from '../../../redux/jobBankDuck';
+import { Breadcrumb } from 'antd';
+import SearchProfiles from '../../../components/jobbank/profiles/SearchProfiles';
+import TableProfiles from '../../../components/jobbank/profiles/TableProfiles';
+import { getProfilesList } from '../../../redux/jobBankDuck';
 
 const index = ({
-    getVacancies,
-    currentNode
+    currentNode,
+    getProfilesList
 }) => {
 
-    const router = useRouter();
-
     useEffect(()=>{
-        if(currentNode){
-            getVacancies(currentNode.id);
-        }
+        if(currentNode) getProfilesList(currentNode.id);
     },[currentNode])
 
     return (
-        <MainLayout currentKey={'jb_vacancies'} defaultOpenKeys={['job_bank']}>
+        <MainLayout  currentKey={'jb_profiles'} defaultOpenKeys={['job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -31,30 +27,27 @@ const index = ({
                     Inicio
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item>Vacantes</Breadcrumb.Item>
+                <Breadcrumb.Item>Perfiles de vacante</Breadcrumb.Item>
             </Breadcrumb>
             <div
-                className={'container'}
+                className='container'
                 style={{
                     display: 'flex',
                     gap: 24,
                     flexDirection: 'column',
-                }}>
-                <SearchVacancies/>
-                <TableVacancies/>
+                }}
+            >
+                <SearchProfiles/>
+                <TableProfiles/>    
             </div>
         </MainLayout>
     )
 }
 
-const mapState = (state) =>{
+const mapState = (state) => {
     return{
         currentNode: state.userStore.current_node,
     }
 }
 
-export default connect(
-    mapState,{
-        getVacancies
-    }
-)(withAuthSync(index));
+export default connect(mapState,{ getProfilesList })(withAuthSync(index));

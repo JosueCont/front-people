@@ -9,21 +9,21 @@ import {
     Spin,
     message
 } from 'antd';
-import { connect } from 'react-redux';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import FormStrategies from './FormStrategies';
+import { connect } from 'react-redux';
+import { useRouter } from 'next/router';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import FormProfiles from './FormProfiles';
+import { getInfoProfile, setLoadProfiles } from '../../../redux/jobBankDuck';
 import { useProcessInfo } from './hook/useProcessInfo';
-import { setLoadStrategies, getInfoStrategy } from '../../../redux/jobBankDuck';
 
-const DetailsStrategies = ({
+const DetailsProfiles = ({
     action,
     currentNode,
-    load_strategies,
-    info_strategy,
-    setLoadStrategies,
-    getInfoStrategy
+    info_profile,
+    load_profiles,
+    setLoadProfiles,
+    getInfoProfile
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -32,69 +32,99 @@ const DetailsStrategies = ({
         create: fetchingItem,
         edit: fetchingItem
     };
-    const btnSave = useRef(null);
     const router = useRouter();
-    const [formStrategies] = Form.useForm();
+    const btnSave = useRef(null);
+    const [formProfile] = Form.useForm();
+    const { setFieldsValue, resetFields } = formProfile;
+    const [disabledClient, setDisabledClient] = useState(false);
+    const [valuesDefault, setValuesDefault] = useState({});
+    const [disabledField, setDisabledField] = useState(false);
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const { createData, setValuesForm } = useProcessInfo({
-        info_strategy,
-        formStrategies
-    });
+    const { formatData, createData } = useProcessInfo();
 
     useEffect(()=>{
-        if(Object.keys(info_strategy).length > 0 && action == 'edit'){
+        if(router.query.customer && action == 'add'){
+            setDisabledClient(true)
+            let customer = router.query.customer;
+            setFieldsValue({ customer })
+        } else setDisabledClient(false)
+    },[router])
+
+    useEffect(()=>{
+        if(Object.keys(info_profile).length > 0 && action == 'edit'){
             setValuesForm()
         }
-    },[info_strategy])
+    },[info_profile])
 
-    const onFinishUpdate = async (values) =>{
+    const resetValues = () =>{
+        setDisabledField(false)
+    }
+
+    const setValuesForm = () => {
+        let result = formatData(info_profile.fields_name);
+        let all_info = {
+            ...result,
+            name: info_profile.name,
+            customer: info_profile.customer
+        };
+        if(info_profile.profile_type){
+            all_info['profile_type'] = info_profile.profile_type.id;
+            setDisabledField(!info_profile.profile_type.form_enable);
+        }
+        setValuesDefault(all_info);
+        setFieldsValue(all_info);
+    }
+
+    const onFinisUpdate = async (values) =>{
         try {
-            await WebApiJobBank.updateStrategy(info_strategy.id, values);
-            message.success('Estrategia actualizada');
-            getInfoStrategy(info_strategy.id);
+            await WebApiJobBank.updateProfile(info_profile.id, {...values, node: currentNode.id});
+            message.success('Perfil actualizado');
+            getInfoProfile(info_profile.id)
+            resetValues()
         } catch (e) {
+            message.error('Perfil no actualizado');
+            setLoadProfiles(false)
             console.log(e)
-            message.error('Estrategia no actualizada');
-            setLoadStrategies(false);
         }
     }
 
     const onFinishCreate = async (values) =>{
         try {
-            let response = await WebApiJobBank.createStrategy({...values, node: currentNode.id});
-            message.success('Estrategia registrada');
+            let response = await WebApiJobBank.createProfile({...values, node: currentNode.id});
+            message.success('Perfil registrado')
             actionSaveAnd(response.data.id)
         } catch (e) {
-            console.log(e)
-            setLoadStrategies(false)
+            message.error('Perfil no regustrado')
             setLoading({})
-            message.error('Estrategia no registrada');
+            setLoadProfiles(false)
+            console.log(e)
         }
     }
 
-    const onFinish = (values) =>{
-        setLoadStrategies(true)
+    const onFinish = (values) => {
+        setLoadProfiles(true)
         const bodyData = createData(values);
         const actionFunction = {
-            edit: onFinishUpdate,
+            edit: onFinisUpdate,
             add: onFinishCreate
-        }
+        };
         actionFunction[action](bodyData);
     }
 
     const actionAddCreate = () =>{
-        formStrategies.resetFields();
-        setLoadStrategies(false)
+        resetValues()
+        resetFields();
+        setLoadProfiles(false)
         setLoading({})
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: () => router.push('/jobbank/strategies'),
+            back: () => router.push('/jobbank/profiles'),
             create: actionAddCreate,
             edit: ()=> router.replace({
-                pathname: '/jobbank/strategies/edit',
+                pathname: '/jobbank/profiles/edit',
                 query: { id }
             })
         }
@@ -114,28 +144,34 @@ const DetailsStrategies = ({
                 <Col span={24} className='title-action-content title-action-border'>
                     <p className='title-action-text'>
                         {action == 'add'
-                            ? 'Registrar nueva estrategia'
-                            : 'Información de la estrategia'
+                            ? 'Registrar nuevo perfil'
+                            : 'Información del perfil'
                         }
                     </p>
                     <Button
-                        onClick={()=> router.push('/jobbank/strategies')}
+                        onClick={()=> router.push('/jobbank/profiles')}
                         icon={<ArrowLeftOutlined />}
                     >
                         Regresar
                     </Button>
                 </Col>
                 <Col span={24}>
-                    <Spin spinning={load_strategies}>
+                    <Spin spinning={load_profiles}>
                         <Form
-                            id='form-strategies'
-                            form={formStrategies}
-                            layout='vertical'
+                            id='form-profiles'
+                            form={formProfile}
                             onFinish={onFinish}
                             requiredMark={false}
                             onFinishFailed={()=> setLoading({})}
+                            initialValues={{profile_type: 'open_fields'}}
                         >
-                            <FormStrategies/>
+                            <FormProfiles
+                                valuesDefault={valuesDefault}
+                                formProfile={formProfile}
+                                disabledClient={disabledClient}
+                                disabledField={disabledField}
+                                setDisabledField={setDisabledField}
+                            />
                         </Form>
                     </Spin>
                 </Col>
@@ -144,7 +180,7 @@ const DetailsStrategies = ({
                         <>
                             <button
                                 htmlType='submit'
-                                form='form-strategies'
+                                form='form-profiles'
                                 ref={btnSave}
                                 style={{display:'none'}}
                             />
@@ -160,7 +196,7 @@ const DetailsStrategies = ({
                                 disabled={loading['create']?.disabled}
                                 loading={loading['create']?.loading}
                             >
-                                Guardar y registrar otra
+                                Guardar y crear otro
                             </Button>
                             <Button
                                 onClick={()=>getSaveAnd('edit')}
@@ -172,9 +208,9 @@ const DetailsStrategies = ({
                         </>
                     ):(
                         <Button
-                            form='form-strategies'
                             htmlType='submit'
-                            loading={load_strategies}
+                            form='form-profiles'
+                            loading={load_profiles}
                         >
                             Guardar
                         </Button>
@@ -187,15 +223,15 @@ const DetailsStrategies = ({
 
 const mapState = (state) =>{
     return{
-        load_strategies: state.jobBankStore.load_strategies,
-        info_strategy: state.jobBankStore.info_strategy,
+        load_profiles: state.jobBankStore.load_profiles,
+        info_profile: state.jobBankStore.info_profile,
         currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
     mapState, {
-        setLoadStrategies,
-        getInfoStrategy
+        setLoadProfiles,
+        getInfoProfile
     }
-)(DetailsStrategies);
+)(DetailsProfiles);
