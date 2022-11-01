@@ -127,12 +127,14 @@ const PublicationsStatisticsTable = ({
       dataIndex: "date",
       key: "date",
       className: "date-column",
+      width: 150,
     },
     {
       title: "Publicación",
       dataIndex: "publication",
       key: "publication",
       className: "publication-column",
+      width: 350,
       render: (publication) => (
         <>
           {publication && publication != "" ? (
@@ -169,6 +171,11 @@ const PublicationsStatisticsTable = ({
       title: "Clics",
       dataIndex: "clicks",
       key: "clicks",
+    },
+    {
+      title: "Reacciones",
+      dataIndex: "totalReactions",
+      key: "totalReactions",
     },
     {
       title: "Estatus",
