@@ -1,5 +1,5 @@
 import {React, useEffect, useState} from 'react'
-import { Tabs, Table, Button, Tooltip, Empty, Modal, message  } from 'antd'
+import { Tabs, Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select  } from 'antd'
 import { DeleteOutlined, RedoOutlined, RetweetOutlined, EyeOutlined } from '@ant-design/icons';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { useRouter } from 'next/router';
@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux'
 import { popupWindow, getCurrentURL } from '../../../utils/constant';
 import jwtEncode from "jwt-encode";
 import { domainKuiz } from '../../../api/axiosApi';
+import { valueToFilter } from '../../../utils/functions';
 
 const TableAssessments = ({
   user_profile,
@@ -20,8 +21,11 @@ const TableAssessments = ({
   const [idUser, setIdUser] = useState({});
   const [dataUser, setDataUser] = useState({});
   const [loadResults, setLoadResults] = useState({});
-  const [personalAssessments, setPersonalAssessments] = useState("Individuales");
-  const [groupalAssessments, setGroupalAssessments] = useState("Grupales");
+  const [numberAssessments, setNumberAssessments] = useState(0);
+  const [typeFilter, setTypeFilter] = useState(1);
+  const [nameAssessment, setNameAssessment] = useState("");
+  const [statusAssessment, setStatusAssessment] = useState(4);
+  const [fullAssessments, setfullAssessments] = useState([]);
 
   useEffect(()=>{
     if(router.query.id){
@@ -37,12 +41,16 @@ const TableAssessments = ({
   const getUserListAssessments = async (data) =>{
     try {
       let response = await WebApiAssessment.getUserListAssessments(data);
-      setDataAssessments(response.data);
+      let dataOriginal = response.data.map((item)=>{
+        return [item.id,item]
+      })
+      var dataMap = new Map(dataOriginal);
+      let dataToTable = [...dataMap.values()];
+      setDataAssessments(dataToTable);
+      setfullAssessments(dataToTable);
+      console.log("assessments",dataToTable)
+      setNumberAssessments(dataToTable.length)
       // setDataAssessments(dataExample);
-      let numberAssessmentsPersonal = response.data.filter(item => item.origin === "personal").length;
-      setPersonalAssessments(`Individuales (${numberAssessmentsPersonal})`);
-      let numberAssessmentsGroup = response.data.filter(item => item.origin === "group").length;
-      setGroupalAssessments(`Grupales (${numberAssessmentsGroup})`);
     } catch (e) {
       console.error(e.name + ": " + e.message);
     }
@@ -228,56 +236,120 @@ const TableAssessments = ({
     {
         title: 'Evaluación',
         render: (record) => {
-          return <span>{record.name} ({record.applys.length})</span>;
+          return <>
+              <span>{record.name} ({record.applys.length})</span>
+              {/* <DeleteOutlined style={{color:"red", cursor:"pointer"}} /> */}
+            </> ;
         }
     },
     {
+      title: 'Fecha inicio evaluación',
+      // dataIndex: "apply_date",
+      // render: record => record != null ? <span>{moment.parseZone(record).format('LL')}</span> : <span></span>
+      render: (record) => {
+        return record?.applys[0]?.apply_date != null ? <span>{moment.parseZone(record?.applys[0]?.apply_date).format('LL')}</span> : <span></span>;
+      }
+    },
+    {
+      title: 'Fecha fin evaluación',
+      // dataIndex: "end_date",
+      // render: record => record != null ? <span>{moment.parseZone(record).format('LL')}</span> : <span></span>
+      render: (record) => {
+        return record?.applys[0]?.end_date != null ? <span>{moment.parseZone(record?.applys[0]?.end_date).format('LL')}</span> : <span></span>;
+      }
+    },
+    {
+      title: 'Estatus',
+      render: (record) => {
+        if(record?.applys[0]?.status == 0){
+          return(
+            <span>Pendiente</span>
+          )
+        }else if(record?.applys[0]?.status == 1) {
+          return(
+            <span>Iniciada</span>
+          )
+        }else if(record?.applys[0]?.status ==2) {
+          return(
+            <span>Finalizada</span>
+          )
+        }
+      }
+    },
+    {
+      title: 'Progreso',
+      render: record => <span>{record?.applys[0]?.progress}%</span>,
+    },
+    {
       title: 'Acciones',
-      width:"20%",
       render: (record) => {
         let isEmpty = record.applys.filter(item => item.status == 0)
-        if(isEmpty.length > 0){
-          return(
-            <>
-              <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}}>
-                  <Tooltip title="Eliminar evaluación">
-                    <DeleteOutlined/>
-                  </Tooltip>
-                </Button>
-              </div>
-            </>
-          )
-        }else{
-          return(
-            <>
-              <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
+        return (
+          <>
+            <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
+              { isEmpty.length === 0 &&
                 <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalRestart(record)}>
                   <Tooltip title="Reasignar evaluación">
                   <RetweetOutlined />
                   </Tooltip>
                 </Button>
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}}>
+              }
+              { record?.applys[0]?.status === 1 &&
+                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record?.applys[0]?.id)}>
+                  <Tooltip title="Reiniciar evaluación">
+                    <RedoOutlined />
+                  </Tooltip>
+                </Button>
+              }
+              { record?.applys[0]?.status === 2 &&
+                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(record,record?.applys[0])}>
+                  <Tooltip title="Ver resultados">
+                    <EyeOutlined />
+                  </Tooltip>
+                </Button>
+              }
+              { record?.applys.length > 0 &&
+                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record?.applys[0]?.id)}>
                   <Tooltip title="Eliminar evaluación">
                     <DeleteOutlined/>
                   </Tooltip>
                 </Button>
-              </div>
-            </>
-          )
-        }
+              }
+            </div>
+          </>
+        )
       }
     },    
   ];
 
-  const columnsAssessmentsGroups = [
-    {
-        title: 'Evaluación',
-        render: (record) => {
-          return <span>{record.name} ({record.applys.length})</span>;
-        }
-    },    
-  ];
+  const onChange = (e) =>{
+    if(e.target.value == 1){
+      setTypeFilter(1)
+    }else{
+      setTypeFilter(2)
+    }
+  }
+
+  const onFilterName = ({target}) =>{
+    setNameAssessment(target.value);
+    console.log("valores:",target.value)
+    if((target.value).trim()){
+      let results = fullAssessments.filter((item)=> valueToFilter(item.name_es).includes(valueToFilter(target.value)));
+      setDataAssessments(results)
+    }else{
+      setDataAssessments(fullAssessments)
+    }
+  }
+
+  const onFilterStatus = (status) => {
+    setStatusAssessment(status);
+    if(status != 4){
+      let results = fullAssessments.filter(item => item?.applys[0]?.status == status)
+      setDataAssessments(results)
+    }else{
+      setDataAssessments(fullAssessments)
+    }
+  }
   
   const expandedRowRender = (item) => {
     const columnsHistory = [
@@ -380,37 +452,51 @@ const TableAssessments = ({
   return (
     <>
         <div style={{padding:"16px", backgroundColor:"white", borderRadius:"15px"}}>
-            <h2>Asignaciones de {user_profile.first_name} {user_profile.flast_name}</h2>
-            <Tabs defaultActiveKey="1">
-                <Tabs.TabPane tab={personalAssessments} key="1" forceRender={true}>
-                  <Table
-                    rowKey={record => record.id}
-                    columns={columnsAssessments}
-                    expandable={{
-                    expandedRowRender,
-                    defaultExpandedRowKeys: ["id"],
-                    }}
-                    dataSource={dataAssessments.filter(item => item.origin === "personal")}
-                    size="small"
-                    style={{marginTop:"16px"}}
-                    locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Sin asignaciones personales" />}}
-                  />
-                </Tabs.TabPane>
-                <Tabs.TabPane tab={groupalAssessments} key="2" forceRender={true}>
-                  <Table
-                    rowKey={record => record.id}
-                    columns={columnsAssessmentsGroups}
-                    expandable={{
-                    expandedRowRender,
-                    defaultExpandedRowKeys: ["id"],
-                    }}
-                    dataSource={dataAssessments.filter(item => item.origin === "group")}
-                    size="small"
-                    style={{marginTop:"16px"}}
-                    locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Sin asignaciones grupales" />}}
-                  />
-                </Tabs.TabPane>
-            </Tabs>
+            <h2>Asignaciones de {user_profile.first_name} {user_profile.flast_name} ({numberAssessments})</h2>
+            <Col
+              xs={24}
+              md={12}
+              lg={12}
+              style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+              }}
+            >
+              <Radio.Group defaultValue={1} onChange={onChange}>
+                  <Space direction="horizontal">
+                      <Radio value={1}>Evaluación</Radio>
+                      <Radio value={2}>Estatus</Radio>
+                  </Space>
+              </Radio.Group>
+              { typeFilter == 1 &&
+                <Input
+                  placeholder={'Buscar por nombre'}
+                  value={nameAssessment}
+                  onChange={onFilterName}
+                />
+              }
+              { typeFilter == 2 &&
+                <Select defaultValue={4} value={statusAssessment} onChange={onFilterStatus}>
+                  <Option value={4}>Todos</Option>
+                  <Option value={0}>Pendiente</Option>
+                  <Option value={1}>Iniciada</Option>
+                  <Option value={2}>Finalizada</Option>
+                </Select>
+              }
+            </Col>
+            <Table
+              rowKey={record => record.id}
+              columns={columnsAssessments}
+              expandable={{
+              expandedRowRender,
+              defaultExpandedRowKeys: ["id"],
+              }}
+              dataSource={dataAssessments}
+              size="small"
+              style={{marginTop:"16px"}}
+              locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Sin asignaciones" />}}
+            />
         </div>
     </>
   )
