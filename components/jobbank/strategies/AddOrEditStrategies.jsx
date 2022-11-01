@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { getPersonsCompany } from '../../../redux/UserDuck';
 import {
   getInfoStrategy,
-  getClientsOptions,
   getVacanciesOptions
 } from '../../../redux/jobBankDuck';
 import DetailsStrategies from './DetailsStrategies';
@@ -16,7 +15,6 @@ const AddOrEditStrategies = ({
   currentNode,
   getPersonsCompany,
   getInfoStrategy,
-  getClientsOptions,
   getVacanciesOptions
 }) => {
 
@@ -25,7 +23,6 @@ const AddOrEditStrategies = ({
   useEffect(()=>{
     if(currentNode){
       getPersonsCompany(currentNode.id)
-      getClientsOptions(currentNode.id)
       getVacanciesOptions(currentNode.id)
     }
   },[currentNode])
@@ -71,7 +68,6 @@ export default connect(
   mapState,{
     getPersonsCompany,
     getInfoStrategy,
-    getClientsOptions,
     getVacanciesOptions
   }
 )(AddOrEditStrategies);

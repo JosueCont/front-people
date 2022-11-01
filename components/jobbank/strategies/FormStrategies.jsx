@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Form,
     Row,
@@ -19,11 +19,11 @@ import { useSelector } from 'react-redux';
 import { getFullName } from '../../../utils/functions';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 
-const FormStrategies = () => {
+const FormStrategies = ({ clientSelected }) => {
 
     const {
-        load_clients,
-        load_vacancies,
+        load_clients_options,
+        load_vacancies_options,
         list_clients_options,
         list_vacancies_options
     } = useSelector(state => state.jobBankStore);
@@ -31,6 +31,12 @@ const FormStrategies = () => {
         load_persons,
         persons_company
     } = useSelector(state => state.userStore);
+    
+    const optionsByClient = () =>{
+        if(!clientSelected) return [];
+        const options = item => item.customer?.id === clientSelected;
+        return list_vacancies_options.filter(options);
+    }
 
     return (
         <Row gutter={[24,0]}>
@@ -73,7 +79,7 @@ const FormStrategies = () => {
                 <Form.Item
                     name='product'
                     label='Producto'
-                    rules={[ruleWhiteSpace]}
+                    rules={[ruleWhiteSpace, ruleRequired]}
                 >
                     <Input placeholder='Producto'/>
                 </Form.Item>
@@ -150,8 +156,8 @@ const FormStrategies = () => {
                     <Select
                         allowClear
                         showSearch
-                        disabled={load_clients}
-                        loading={load_clients}
+                        disabled={load_clients_options}
+                        loading={load_clients_options}
                         placeholder='Cliente'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
@@ -173,13 +179,13 @@ const FormStrategies = () => {
                     <Select
                         allowClear
                         showSearch
-                        disabled={load_vacancies}
-                        loading={load_vacancies}
+                        disabled={load_vacancies_options}
+                        loading={load_vacancies_options}
                         placeholder='Vacante'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                     >
-                        {list_vacancies_options.length > 0 && list_vacancies_options.map(item => (
+                        {optionsByClient().map(item => (
                             <Select.Option value={item.id} key={item.id}>
                                 {item.job_position}
                             </Select.Option>
