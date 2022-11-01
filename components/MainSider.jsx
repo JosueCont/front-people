@@ -121,7 +121,6 @@ const MainSider = ({
         );
       }
 
-<<<<<<< HEAD
       // Menú Configuración
       children = [
         getItem("Asignar empresa", "asign"),
@@ -131,9 +130,6 @@ const MainSider = ({
       items.push(
         getItem("Configuración", "config", <SettingOutlined />, children)
       );
-=======
-
->>>>>>> 597e5c61177fdc2d56f7e79243bf99ac505656a7
 
       // Agregar división
       items.push({ type: "divider" });
