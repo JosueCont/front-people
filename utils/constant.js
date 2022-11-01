@@ -270,6 +270,33 @@ export const monthsName = [
   },
 ];
 
+export const bimestralMonths = [
+  {
+    label:"Enero - Febrero",
+    value: 1
+  },
+  {
+    label:"Marzo - Abril",
+    value: 3
+  },
+  {
+    label:"Mayo - Junio",
+    value: 5
+  },
+  {
+    label:"Julio - Agosto",
+    value: 7
+  },
+  {
+    label:"Septiembre - Octubre",
+    value: 9
+  },
+  {
+    label:"Noviembre - Diciembre",
+    value: 11
+  }
+]
+
 export const intranetAccess = [
   {
     label: "No",
@@ -437,6 +464,7 @@ export const optionsTypeSale = [
   {value: 1, key: 1, label: 'Cliente activo recurrente'},
   {value: 2, key: 2, label: 'Croselling'},
   {value: 3, key: 3, label: 'Upselling'},
+  {value: 4, key: 4, label: 'Sourcing'}
 ];
 
 export const optionsJobBank = [

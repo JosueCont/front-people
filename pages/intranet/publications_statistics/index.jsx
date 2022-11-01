@@ -66,6 +66,7 @@ const index = ({user, ...props}) => {
             owner: `${publication.owner.first_name} ${publication.owner.flast_name}`,
             comments: publication.comments ? publication.comments.length : 0,
             clicks: publication.clicks ? publication.clicks : 0,
+            totalReactions: publication.reactions ? publication.reactions.length : 0,
             group: publication.group ? publication.group : "",
             prints: publication.prints ? publication.prints : 0,
             reactions: publication.count_by_reaction_type
@@ -101,6 +102,7 @@ const index = ({user, ...props}) => {
           owner: `${response.data.owner.first_name} ${response.data.owner.flast_name}`,
           comments: response.data.comments ? response.data.comments.length : 0,
           clicks: response.data.clicks ? response.data.clicks : 0,
+          totalReactions: response.reactions ? response.reactions.length : 0,
           prints: response.data.prints ? response.data.prints : 0,
           reactions: response.data.count_by_reaction_type
             ? response.data.count_by_reaction_type

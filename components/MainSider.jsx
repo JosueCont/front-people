@@ -70,6 +70,7 @@ const MainSider = ({
       paymentCalendar: "/payroll/paymentCalendar",
       payrollVoucher: "/payroll/payrollVoucher",
       calculatorSalary: "/payroll/calculatorSalary",
+      integrationFactors: "/business/integrationFactors",
       importMassivePayroll: "/payroll/importMasivePayroll",
       imssMovements: "/payroll/imssMovements",
       bulk_upload: "/bulk_upload",
@@ -86,6 +87,7 @@ const MainSider = ({
       jb_clients: "/jobbank/clients",
       jb_vacancies: "/jobbank/vacancies",
       jb_strategies: "/jobbank/strategies",
+      jb_profiles: "/jobbank/profiles"
     };
     router.push(pathRoutes[key]);
   };
@@ -100,7 +102,7 @@ const MainSider = ({
       if (props?.permissions?.company?.view) {
         let children = [
           getItem("Empresas", "business"),
-          getItem("Asignar empresa", "asign"),
+          getItem("Factores de integración", "integrationFactors")
         ];
         if (props?.config && props?.config?.nomina_enabled) {
           children.push(getItem("Registros patronales", "patronal"));
@@ -119,14 +121,7 @@ const MainSider = ({
         );
       }
 
-      // Menú Configuración
-      children = [
-        getItem("Catálogos", "catalogs"),
-        getItem("Perfiles de seguridad", "securityGroups"),
-      ];
-      items.push(
-        getItem("Configuración", "config", <SettingOutlined />, children)
-      );
+
 
       // Agregar división
       items.push({ type: "divider" });
@@ -189,6 +184,17 @@ const MainSider = ({
         ];
         items.push(getItem("Nómina", "payroll", <DollarOutlined />, children));
       }
+
+
+      // Menú Configuración
+      children = [
+        getItem("Catálogos", "catalogs"),
+        getItem("Perfiles de seguridad", "securityGroups"),
+        getItem("Asignar empresa", "asign"),
+      ];
+      items.push(
+          getItem("Configuración", "config", <SettingOutlined />, children)
+      );
 
       // Menú Registro de errores
       if (props?.config && props?.config?.nomina_enabled) {
@@ -264,6 +270,7 @@ const MainSider = ({
             getItem("Clientes", "jb_clients"),
             getItem("Vacantes", "jb_vacancies"),
             getItem("Estrategias", "jb_strategies"),
+            getItem("Perfiles de vacante", "jb_profiles")
           ];
           items.push(
             getItem("Bolsa de trabajo", "job_bank", <WorkOutline />, children)

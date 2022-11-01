@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Input, Row, Col, message } from 'antd';
+import { Button, Input, Row, Col, Form, Select } from 'antd';
 import {
   SearchOutlined,
   SyncOutlined,
@@ -7,39 +7,80 @@ import {
 import { connect } from 'react-redux';
 import { getVacancies } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
+import { ruleWhiteSpace } from '../../../utils/rules';
 
 const SearchVacancies = ({
-  currentNode,
-  getVacancies
+    load_clients_options,
+    list_clients_options,
+    currentNode,
+    getVacancies
 }) => {
 
     const router = useRouter();
-    const [toSearch, setToSearch] = useState('');
+    const [formSearch] = Form.useForm();
 
-    const onFinishSearch = () =>{
-        if(toSearch.trim()){
-            let query = `&job_position__icontains=${toSearch.trim()}`;
-            getVacancies(currentNode.id, query);
-        } else deleteFilter();
+    const createQuerys = (obj) =>{
+        let query = '';
+        if(obj.job_position) query += `&job_position__icontains=${obj.job_position}`;
+        if(obj.customer) query += `&customer=${obj.customer}`;
+        return query;
+    }
+
+    const onFinishSearch = (values) =>{
+        const query = createQuerys(values);
+        if(query) getVacancies(currentNode.id, query);
+        else deleteFilter();
     }
 
     const deleteFilter = () =>{
-        setToSearch('')
+        formSearch.resetFields();
         getVacancies(currentNode.id)
     }
 
     return (
         <Row gutter={[24,24]}>
-            <Col xs={18} sm={18} md={16} lg={12} style={{display: 'flex', gap: '16px'}}>
-                <Input
-                    value={toSearch}
-                    placeholder={'Buscar por nombre'}
-                    onChange={e=> setToSearch(e.target.value)}
-                />
-                <Button icon={<SearchOutlined />} onClick={()=> onFinishSearch()}/>
-                <Button icon={<SyncOutlined />} onClick={()=> deleteFilter()} />
+            <Col xs={18} xxl={14}>
+                <Form onFinish={onFinishSearch} form={formSearch} layout='inline' style={{width: '100%'}}>
+                    <Row style={{width: '100%'}}>
+                        <Col span={12}>
+                            <Form.Item
+                                name='job_position'
+                                rules={[ruleWhiteSpace]}
+                                style={{marginBottom: 0}}
+                            >
+                                <Input placeholder='Buscar por nombre'/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item name='customer' style={{marginBottom: 0}}>
+                                <Select
+                                    allowClear
+                                    showSearch
+                                    loading={load_clients_options}
+                                    placeholder='Cliente'
+                                    notFoundContent='No se encontraron resultados'
+                                    optionFilterProp='children'
+                                >
+                                    {list_clients_options.length > 0 && list_clients_options.map(item=> (
+                                        <Select.Option value={item.id} key={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                        <Col span={4} style={{display: 'flex', gap: '8px'}}>
+                            <Button htmlType='submit'>
+                                <SearchOutlined />
+                            </Button>
+                            <Button onClick={()=> deleteFilter()}>
+                                <SyncOutlined />
+                            </Button>
+                        </Col>
+                    </Row>
+                </Form>
             </Col>
-            <Col xs={6} sm={6} md={8}  lg={12} style={{display: 'flex', justifyContent: 'flex-end'}}>
+            <Col xs={6} xxl={10} style={{display: 'flex', justifyContent: 'flex-end'}}>
                 <Button onClick={()=> router.push('/jobbank/vacancies/add')}>Agregar</Button>
             </Col>
         </Row>
@@ -48,7 +89,9 @@ const SearchVacancies = ({
 
 const mapState = (state) =>{
     return{
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
+        load_clients_options: state.jobBankStore.load_clients_options,
+        list_clients_options: state.jobBankStore.list_clients_options,
     }
 }
 
