@@ -42,7 +42,6 @@ export const publicationsListAction =
     let data = `?node=${node}${
       page && page != "" ? `&page=${page}` : ""
     }${parameters && parameters !== "" ? parameters : ''}&is_moderator_view=true`;
-    console.log('data', data)
     await WebApiIntranet.publigationList(data)
       .then(({ status, data }) => {
         let dataAndResults = {
