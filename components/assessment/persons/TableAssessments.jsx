@@ -1,6 +1,6 @@
 import {React, useEffect, useState} from 'react'
-import { Tabs, Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select  } from 'antd'
-import { DeleteOutlined, RedoOutlined, RetweetOutlined, EyeOutlined } from '@ant-design/icons';
+import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row  } from 'antd'
+import { DeleteOutlined, RedoOutlined, RetweetOutlined, EyeOutlined, FileDoneOutlined, FileSyncOutlined, PercentageOutlined } from '@ant-design/icons';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { useRouter } from 'next/router';
 import moment from 'moment/moment';
@@ -9,6 +9,7 @@ import { popupWindow, getCurrentURL } from '../../../utils/constant';
 import jwtEncode from "jwt-encode";
 import { domainKuiz } from '../../../api/axiosApi';
 import { valueToFilter } from '../../../utils/functions';
+import CardGeneric from '../../dashboards-cards/CardGeneric';
 
 const TableAssessments = ({
   user_profile,
@@ -26,6 +27,9 @@ const TableAssessments = ({
   const [nameAssessment, setNameAssessment] = useState("");
   const [statusAssessment, setStatusAssessment] = useState(4);
   const [fullAssessments, setfullAssessments] = useState([]);
+  const [assessmentsComplete, setAssessmentsComplete] = useState(0);
+  const [assessmentsToAnswer, setAssessmentsToAnswer] = useState(0);
+  const [assessmentsProgress, setAssessmentsProgress] = useState(0);
 
   useEffect(()=>{
     if(router.query.id){
@@ -49,6 +53,8 @@ const TableAssessments = ({
       setDataAssessments(dataToTable);
       setfullAssessments(dataToTable);
       console.log("assessments",dataToTable)
+      calculateIndicatorsCards(dataToTable)
+      calculateProgressCard(dataToTable)
       setNumberAssessments(dataToTable.length)
       // setDataAssessments(dataExample);
     } catch (e) {
@@ -350,6 +356,40 @@ const TableAssessments = ({
       setDataAssessments(fullAssessments)
     }
   }
+
+  const calculateIndicatorsCards = (assessments) =>{
+    let toAnswer = 0;
+    let completed = 0;
+    assessments.map((item)=> {
+      if (item?.applys[0]){
+        if(
+          item?.applys[0]?.progress == 100 ||
+          item?.applys[0]?.status == 2 
+        ){
+          completed = completed + 1;
+        }else{
+          toAnswer = toAnswer + 1;
+        }
+      }else{
+        toAnswer = toAnswer + 1;
+      }
+    })
+    setAssessmentsComplete(completed)
+    setAssessmentsToAnswer(toAnswer)
+  }
+
+  const calculateProgressCard = (assessments) =>{
+    let progress = 0;
+    let percent = 100 / (assessments.length * 100);
+    assessments.map((item)=> {
+      if(item?.applys[0]){
+        progress = progress + item?.applys[0]?.progress;
+      }
+    })
+    let total = percent * progress;
+    console.log("progresso:",total.toFixed(2))
+    setAssessmentsProgress(`${total.toFixed(2)}%`)
+  }
   
   const expandedRowRender = (item) => {
     const columnsHistory = [
@@ -453,38 +493,67 @@ const TableAssessments = ({
     <>
         <div style={{padding:"16px", backgroundColor:"white", borderRadius:"15px"}}>
             <h2>Asignaciones de {user_profile.first_name} {user_profile.flast_name} ({numberAssessments})</h2>
-            <Col
-              xs={24}
-              md={12}
-              lg={12}
-              style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-              }}
-            >
-              <Radio.Group defaultValue={1} onChange={onChange}>
-                  <Space direction="horizontal">
-                      <Radio value={1}>Evaluación</Radio>
-                      <Radio value={2}>Estatus</Radio>
-                  </Space>
-              </Radio.Group>
-              { typeFilter == 1 &&
-                <Input
-                  placeholder={'Buscar por nombre'}
-                  value={nameAssessment}
-                  onChange={onFilterName}
+            <Row gutter={[16,16]} style={{marginBottom:"16px"}}>
+              <Col
+                xs={24}
+                md={24}
+                lg={24}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                }}
+              >
+                <Radio.Group defaultValue={1} onChange={onChange}>
+                    <Space direction="horizontal">
+                        <Radio value={1}>Evaluación</Radio>
+                        <Radio value={2}>Estatus</Radio>
+                    </Space>
+                </Radio.Group>
+                { typeFilter == 1 &&
+                  <Input
+                    placeholder={'Buscar por nombre'}
+                    value={nameAssessment}
+                    onChange={onFilterName}
+                    style={{width:"50%"}}
+                  />
+                }
+                { typeFilter == 2 &&
+                  <Select style={{width:"50%"}} defaultValue={4} value={statusAssessment} onChange={onFilterStatus}>
+                    <Option value={4}>Todos</Option>
+                    <Option value={0}>Pendiente</Option>
+                    <Option value={1}>Iniciada</Option>
+                    <Option value={2}>Finalizada</Option>
+                  </Select>
+                }
+              </Col>
+            </Row>
+            <Row gutter={[16,16]}>
+              <Col xs={12} sm={12} md={12} lg={8} xl={8}>
+                <CardGeneric
+                  title={'Evaluaciones completadas'}
+                  icon={<FileDoneOutlined />}
+                  color={'#ec6532'}
+                  numcard={assessmentsComplete}
                 />
-              }
-              { typeFilter == 2 &&
-                <Select defaultValue={4} value={statusAssessment} onChange={onFilterStatus}>
-                  <Option value={4}>Todos</Option>
-                  <Option value={0}>Pendiente</Option>
-                  <Option value={1}>Iniciada</Option>
-                  <Option value={2}>Finalizada</Option>
-                </Select>
-              }
-            </Col>
+              </Col>
+              <Col xs={12} sm={12} md={12} lg={8} xl={8}>
+                <CardGeneric
+                  title={'Evaluaciones por contestar'}
+                  icon={<FileSyncOutlined />}
+                  color={'#ec6532'}
+                  numcard={assessmentsToAnswer}
+                />
+              </Col>
+              <Col xs={12} sm={12} md={12} lg={8} xl={8}>
+                <CardGeneric
+                  title={'Porcentaje de avance'}
+                  icon={<PercentageOutlined />}
+                  color={'#ec6532'}
+                  numcard={assessmentsProgress}
+                />
+              </Col>
+            </Row>
             <Table
               rowKey={record => record.id}
               columns={columnsAssessments}
