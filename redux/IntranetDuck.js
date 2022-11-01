@@ -41,7 +41,7 @@ export const publicationsListAction =
     dispatch({ type: LOADING_PUBLICATIONS_LIST });
     let data = `?node=${node}${
       page && page != "" ? `&page=${page}` : ""
-    }&${parameters}&is_moderator_view=true`;
+    }${parameters && parameters !== "" ? parameters : ''}&is_moderator_view=true`;
     await WebApiIntranet.publigationList(data)
       .then(({ status, data }) => {
         let dataAndResults = {

@@ -203,15 +203,11 @@ const PublicationsStatisticsTable = ({
 
   const handleChange = (pagination) => {
     // if(props.parameters && props.parameters != '')
-    if (pagination.current === 1) {
-      changePage("", parameters + "&is_moderator_view=true");
-    } else {
-      changePage(
+    changePage(
         props.currentNode,
         pagination.current,
-        parameters + "&is_moderator_view=true"
-      );
-    }
+        parameters ? parameters : ''
+    );
   };
 
   return (
