@@ -17,28 +17,27 @@ const index = ({}) => {
   const [validatePermition, setValidatePermition] = useState(true);
 
   useEffect(() => {
-    let isUserKhor = validateUser?.user?.sync_from_khor
-    if(isUserKhor){
-      //console.log("Eres Usuario KHOR")
-      let permsUser = validateUser?.user?.khor_perms;
-      if( permsUser != null){
-        let permYnl = validateUser.user.khor_perms.filter(item => item === "Khor Plus YNL")
-        //console.log("Permiso: ", permYnl)
-        if( permYnl.length > 0 ){
-          //console.log("PERMITIDO")
+      let isUserKhor = validateUser?.user?.sync_from_khor;
+      let isAdmin = validateUser?.user?.is_admin;
+      if (isAdmin) {
           setValidatePermition(true);
-        }else{
-          setValidatePermition(false);
-          //console.log("NO PERMITIDO")
-        }
-      }else{
-        setValidatePermition(false);
-        //console.log("USUARIO KHOR SIN PERMISOS")
+      } else {
+          if (isUserKhor) {
+              let permsUser = validateUser?.user?.khor_perms;
+              if (permsUser != null) {
+                  let permYnl = validateUser.user.khor_perms.filter(item => item === "Khor Plus YNL")
+                  if (permYnl.length > 0 ) {
+                      setValidatePermition(true);
+                  } else {
+                      setValidatePermition(false);
+                  }
+              } else {
+                  setValidatePermition(false);
+              }
+          } else {
+              setValidatePermition(false);
+          }
       }
-    }else{
-      //console.log("NO HAY VALIDACIÓN, NO ERES USUARIO KHOR")
-      setValidatePermition(true);
-    }
   }, [validateUser]);
   
   return (
