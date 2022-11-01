@@ -112,6 +112,11 @@ const integrationFactorsIndex = ({ ...props }) =>{
       render: (timestamp) => moment(timestamp).format('YYYY-MM-DD')
     },
     {
+      title: "Dias de aguinaldo",
+      key: "bonus_days",
+      dataIndex: "bonus_days"
+    },
+    {
       title: "Numero de dias de vacaciones",
       key: "vacations_days",
       dataIndex: "vacations_days"
@@ -120,11 +125,6 @@ const integrationFactorsIndex = ({ ...props }) =>{
       title: "Porcentaje de prima vacacional",
       key: "vacation_percent",
       dataIndex: "vacation_percent"
-    },
-    {
-      title: "Dias de aguinaldo",
-      key: "bonus_days",
-      dataIndex: "bonus_days"
     },
     {
       title: 'Acciones',

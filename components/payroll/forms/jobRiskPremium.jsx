@@ -35,15 +35,24 @@ const JobRiskPremium = ({
   }, [jobRiskSelected, cat_job_risk]);
 
   useEffect(() => {
+    if(percent){
+      form.setFieldsValue({
+        risk_percent: percent
+      })
+    }
+  },[percent])
+
+  useEffect(() => {
     if (jobRisk) {
       form.setFieldsValue({
         job_risk_class: jobRisk.job_risk_class.id,
+        risk_percent: jobRisk.risk_percent,
         year: jobRisk.year,
         month: jobRisk.month,
         stps_accreditation: jobRisk.stps_accreditation,
         rt_fraction: jobRisk.rt_fraction,
       });
-      setPercent(jobRisk.job_risk_class.percent);
+      // setPercent(jobRisk.risk_percent)
     }
   }, [jobRisk]);
 
@@ -60,9 +69,9 @@ const JobRiskPremium = ({
         <Col lg={6} xs={22}>
           <Form.Item
             label="Porcentaje de riesgo"
-            rules={[treeDecimal, ruleRequired, ruleWhiteSpace]}
+            name='risk_percent'
           >
-            <Input value={percent} />
+            <Input/>
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>

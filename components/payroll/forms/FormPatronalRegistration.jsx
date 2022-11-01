@@ -42,7 +42,7 @@ const FormPatronalRegistration = ({
     }
   },[information])
 
-  console.log('inf', information)
+  console.log('inf', patronalRegistration)
 
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">

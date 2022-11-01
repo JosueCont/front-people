@@ -227,13 +227,17 @@ const ImssInformationNode = ({
   };
 
   const saveForms = () => {
+
+    let jobRiskData = formJobRisk.getFieldValue()
+    jobRiskData.risk_percent = parseFloat(jobRiskData.risk_percent)
     const data = {
       node: currentNode.id,
       patronal: formPatronal.getFieldsValue(),
       address: formAddress.getFieldsValue(),
       representative: formLegalRep.getFieldsValue(),
-      jobRisk: formJobRisk.getFieldValue(),
+      jobRisk: jobRiskData,
     };
+    
     saveRegister(data);
   };
 
@@ -327,6 +331,8 @@ const ImssInformationNode = ({
       contact_email: item?.legal_representative?.contact_email,
     });
   };
+
+  console.log('Patronal Data', patronalData)
 
   return (
     <>
