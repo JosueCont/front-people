@@ -30,6 +30,10 @@ export const useProcessInfo = ({
             recruitment = Object.assign(info_vacant.recruitment_process);
             delete features.recruitment_process;
         }
+        if(info_vacant.customer){
+            features.customer_id = info_vacant.customer?.id;
+            delete features.customer;
+        }
         return{ features, education, salary, recruitment };
     }
 
@@ -41,6 +45,9 @@ export const useProcessInfo = ({
         }
         if(details.assignment_date){
             details['assignment_date'] = moment(details.assignment_date);
+        }
+        if(details.customer){
+            details['customer_id'] = details.customer.id;
         }
         return details;
     }

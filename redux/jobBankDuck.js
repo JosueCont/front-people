@@ -1,22 +1,31 @@
 import WebApiJobBank from "../api/WebApiJobBank";
+import { userCompanyId } from "../libs/auth";
 
 const initialState = {
     list_clients: {},
     list_vacancies: {},
     list_strategies: {},
+    list_profiles: {},
     list_sectors: [],
     list_competences: [],
     list_academics: [],
     list_main_categories: [],
     list_sub_categories: [],
+    list_profiles_types: [],
     info_vacant: {},
     info_strategy: {},
+    info_profile: {},
     list_clients_options: [],
     list_vacancies_options: [],
+    list_vacancies_fields: {},
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
     load_jobbank: false,
+    load_profiles: false,
+    load_profiles_types: false,
+    load_clients_options: false,
+    load_vacancies_options: false,
     page_jobbank: 1
 }
 
@@ -24,6 +33,7 @@ const SET_CLIENTS = "SET_CLIENTS";
 const SET_CLIENTS_OPTIONS = "SET_CLIENTS_OPTIONS";
 
 const SET_VACANCIES = "SET_VACANCIES";
+const SET_VACANCIES_FIELDS = "SET_VACANCIES_FIELDS";
 const SET_VACANT_INFO = "SET_VACANT_INFO";
 const SET_VACANCIES_OPTIONS = "SET_VACANCIES_OPTIONS";
 const SET_VACANCIES_LOAD = "SET_VACANCIES_LOAD";
@@ -31,6 +41,11 @@ const SET_VACANCIES_LOAD = "SET_VACANCIES_LOAD";
 const SET_STRATEGIES = "SET_STRATEGIES";
 const SET_STRATEGIES_LOAD = "SET_STRATEGIES_LOAD";
 const SET_STRATEGY_INFO = "SET_STRATEGY_INFO";
+
+const SET_PROFILES = "SET_PROFILES";
+const SET_PROFILES_TYPES = "SET_PROFILES_TYPES";
+const SET_PROFILE_INFO = "SET_PROFILE_INFO";
+const SET_PROFILES_LOAD = "SET_PROFILES_LOAD";
 
 const SET_SECTORS = "SET_SECTORS";
 const SET_COMPETENCES = "SET_COMPETENCES";
@@ -74,12 +89,32 @@ const jobBankReducer = (state = initialState, action) =>{
         case SET_VACANCIES_OPTIONS:
             return {...state,
                 list_vacancies_options: action.payload,
-                load_vacancies: action.fetching
+                load_vacancies_options: action.fetching
             }
         case SET_CLIENTS_OPTIONS:
             return {...state,
                 list_clients_options: action.payload,
-                load_clients: action.fetching
+                load_clients_options: action.fetching
+            }
+        case SET_PROFILES:
+            return {...state,
+                list_profiles: action.payload,
+                load_profiles: action.fetching
+            }
+        case SET_PROFILES_TYPES:
+            return {...state,
+                list_profiles_types: action.payload,
+                load_profiles_types: action.fetching
+            }
+        case SET_VACANCIES_FIELDS:
+            return {...state,
+                list_vacancies_fields: action.payload,
+                load_vacancies: action.fetching
+            }
+        case SET_PROFILE_INFO:
+            return {...state,
+                info_profile: action.payload,
+                load_profiles: action.fetching
             }
         case SET_SECTORS:
             return {...state, list_sectors: action.payload }
@@ -99,6 +134,8 @@ const jobBankReducer = (state = initialState, action) =>{
             return {...state, load_strategies: action.payload }
         case SET_VACANCIES_LOAD:
             return {...state, load_vacancies: action.payload }
+        case SET_PROFILES_LOAD:
+            return {...state, load_profiles: action.payload }
         default:
             return state;
     }
@@ -116,8 +153,25 @@ export const setLoadStrategies = (fetching = false) => (dispatch) =>{
     dispatch({type: SET_STRATEGIES_LOAD, payload: fetching })
 }
 
+export const setLoadProfiles = (fetching = false) => (dispatch) =>{
+    dispatch({type: SET_PROFILES_LOAD, payload: fetching})
+}
+
 export const setPage = (num = 1) => (dispatch) =>{
     dispatch({type: SET_PAGE, payload: num})
+}
+
+export const getGeneralJobBank = (node, config) => async (dispatch) =>{
+    try {
+        const isActive = (item) => item.app == 'JOBBANK' && item.is_active;
+        let _isActive = config.applications?.some(isActive);
+        if(!_isActive) return false;
+        //Por ahora la lista de clientes es el que más
+        //se utliza en toda la app de Bolsa de trabajo
+        dispatch(getClientsOptions(node));
+    } catch (e) {
+        console.log(e)
+    }
 }
 
 export const getClients = (node, query = '', page = 1) => async (dispatch) => {
@@ -168,6 +222,18 @@ export const getVacanciesOptions = (node) => async (dispatch) =>{
     }
 }
 
+export const getVacantFields = (node) => async (dispatch) =>{
+    const typeFunction = { type: SET_VACANCIES_FIELDS, payload: {}, fetching: false };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getVacantFields(node);
+        dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
 export const getInfoVacant = (id) => async (dispatch) =>{
     const typeFunction = { type: SET_VACANT_INFO, payload: {}, fetching: false};
     dispatch({...typeFunction, fetching: true})
@@ -200,6 +266,42 @@ export const getInfoStrategy = (id) => async (dispatch) =>{
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e);
+        dispatch(typeFunction)
+    }
+}
+
+export const getProfilesList = (node, query = '', page = 1) => async (dispatch) =>{
+    const typeFunction = { type: SET_PROFILES, payload: {}, fetching: false, page_num: page };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getProfilesList(node, query);
+        dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getProfilesTypes = (node) => async (dispatch) =>{
+    const typeFunction = { type: SET_PROFILES_TYPES, payload: [], fetching: false};
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getProfilesTypes(node);
+        dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getInfoProfile = (id) => async (dispatch) =>{
+    const typeFunction = { type: SET_PROFILE_INFO, payload: {}, fetching: false};
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getInfoProfile(id);
+        dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
         dispatch(typeFunction)
     }
 }

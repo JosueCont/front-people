@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Table,
     Button,
@@ -7,28 +7,29 @@ import {
     message,
     Switch
 } from 'antd';
+import { connect } from 'react-redux';
 import {
     EllipsisOutlined,
     DeleteOutlined,
-    EditOutlined
+    EditOutlined,
 } from '@ant-design/icons';
-import { connect } from 'react-redux';
-import { setPage, getStrategies } from '../../../redux/jobBankDuck';
-import WebApiJobBank from '../../../api/WebApiJobBank';
+import {
+    setPage,
+    getProfilesList
+} from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
+import WebApiJobBank from '../../../api/WebApiJobBank';
 
-const TableStrategies = ({
-    list_strategies,
-    load_strategies,
+const TableProfiles = ({
     currentNode,
     page_jobbank,
-    setPage,
-    getStrategies,
+    list_profiles,
+    load_profiles,
     load_clients_options,
     list_clients_options,
-    load_vacancies_options,
-    list_vacancies_options
+    setPage,
+    getProfilesList
 }) => {
 
     const router = useRouter();
@@ -38,17 +39,25 @@ const TableStrategies = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
-        closeModalDelete()
+        closeModalDelete();
         try {
-            await WebApiJobBank.deleteStrategy({ids});
-            getStrategies(currentNode.id);
-            if(ids.length > 1) message.success('Estrategias eliminadas');
-            else message.success('Estrategia eliminada');
+            await WebApiJobBank.deleteProfile({ids});
+            getProfilesList(currentNode.id);
+            if(ids.length > 1) message.success('Perfiles eliminados');
+            else message.success('Perfil eliminado');
         } catch (e) {
             console.log(e)
-            if(ids.length > 1) message.error('Estrategias no eliminadas');
-            else message.error('Estrategia no eliminada');
+            if(ids.length > 1) message.error('Perfiles no eliminados');
+            else message.error('Perfil no eliminado');
         }
+    }
+
+    const getClient = (item) =>{
+        if(!item.customer) return null;
+        const client = record => record.id === item.customer;
+        let _client = list_clients_options.find(client);
+        if(!_client) return null;
+        return _client.name;
     }
 
     const openModalManyDelete = () =>{
@@ -56,7 +65,7 @@ const TableStrategies = ({
             setOpenModalDelete(true)
         }else{
             setOpenModalDelete(false)
-            message.error('Selecciona al menos dos estrategias')
+            message.error('Selecciona al menos dos perfiles')
         }
     }
 
@@ -71,20 +80,14 @@ const TableStrategies = ({
         setItemsToDelete([])
     }
 
-    const getClient = (item) =>{
-        if(!item.customer) return null;
-        const client = record => record.id === item.customer;
-        let client_ = list_clients_options.find(client);
-        if(!client_) return null;
-        return client_.name;
-    }
-
-    const getVacant = (item) =>{
-        if(!item.vacant) return null;
-        const vacant = record => record.id === item.vacant;
-        let vacant_ = list_vacancies_options.find(vacant);
-        if(!vacant_) return null;
-        return vacant_.job_position;
+    const onChangePage = ({current}) =>{
+        setPage(current)
+        if (current == 1) getProfilesList(currentNode?.id);
+        if (current > 1) {
+            const offset = (current - 1) * 10;
+            const queryParam = `&limit=10&offset=${offset}`;
+            getProfilesList(currentNode?.id, queryParam, current)
+        } 
     }
 
     const rowSelection = {
@@ -93,16 +96,6 @@ const TableStrategies = ({
             setItemsKeys(selectedRowKeys)
             setItemsToDelete(selectedRows)
         }
-    }
-
-    const onChangePage = ({current}) =>{
-        setPage(current)
-        if (current == 1) getStrategies(currentNode?.id);
-        if (current > 1) {
-            const offset = (current - 1) * 10;
-            const queryParam = `&limit=10&offset=${offset}`;
-            getStrategies(currentNode?.id, queryParam, current)
-        } 
     }
 
     const menuTable = () => {
@@ -126,7 +119,7 @@ const TableStrategies = ({
                     key={1}
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
-                        pathname: `/jobbank/strategies/edit`,
+                        pathname: `/jobbank/profiles/edit`,
                         query:{ id: item.id }
                     })}
                 >
@@ -145,33 +138,20 @@ const TableStrategies = ({
 
     const columns = [
         {
-            title: 'Producto',
-            dataIndex: 'product',
-            key: 'product'
+            title: 'Nombre',
+            dataIndex:'name',
+            key: 'name'
         },
         {
             title: 'Cliente',
             render: (item) =>{
-                return(
+                return (
                     <span>{getClient(item)}</span>
                 )
             }
         },
         {
-            title: 'Vacante',
-            render: (item) =>{
-                return(
-                    <span>{getVacant(item)}</span>
-                )
-            }
-        },
-        // {
-        //     title: 'Asignación',
-        //     dataIndex: 'assignment_date',
-        //     key: 'assignment_date'
-        // },
-        {
-            title: ()=> {
+            title: ()=>{
                 return(
                     <Dropdown overlay={menuTable}>
                         <Button size={'small'}>
@@ -198,17 +178,17 @@ const TableStrategies = ({
                 size='small'
                 rowKey='id'
                 columns={columns}
-                dataSource={list_strategies.results}
-                loading={load_strategies}
+                dataSource={list_profiles.results}
+                loading={load_profiles}
                 rowSelection={rowSelection}
                 onChange={onChangePage}
                 locale={{
-                    emptyText: load_strategies
+                    emptyText: load_profiles
                         ? 'Cargando...'
                         : 'No se encontraron resultados.',
                 }}
                 pagination={{
-                    total: list_strategies.count,
+                    total: list_profiles.count,
                     current: page_jobbank,
                     hideOnSinglePage: true,
                     showSizeChanger: false
@@ -216,12 +196,11 @@ const TableStrategies = ({
             />
             <DeleteItems
                 title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estas estrategias?'
-                    : '¿Estás seguro de eliminar esta estrategia?'
+                    ? '¿Estás seguro de eliminar estos perfiles?'
+                    : '¿Estás seguro de eliminar este perfil?'
                 }
                 visible={openModalDelete}
-                keyTitle='product'
-                keyDescription='assignment_date'
+                keyTitle='name'
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}
@@ -232,12 +211,10 @@ const TableStrategies = ({
 
 const mapState = (state) =>{
     return {
-        list_strategies: state.jobBankStore.list_strategies,
-        load_strategies: state.jobBankStore.load_strategies,
-        load_clients_options: state.jobBankStore.load_clients_options,
+        list_profiles: state.jobBankStore.list_profiles,
+        load_profiles: state.jobBankStore.load_profiles,
         list_clients_options: state.jobBankStore.list_clients_options,
-        load_vacancies_options: state.jobBankStore.load_vacancies_options,
-        list_vacancies_options: state.jobBankStore.list_vacancies_options,
+        load_clients_options: state.jobBankStore.load_clients_options,
         page_jobbank: state.jobBankStore.page_jobbank,
         currentNode: state.userStore.current_node
     }
@@ -246,6 +223,6 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         setPage,
-        getStrategies
+        getProfilesList
     }
-)(TableStrategies);
+)(TableProfiles);

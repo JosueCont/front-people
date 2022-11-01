@@ -5,7 +5,8 @@ import {
     Row,
     Col,
     Button,
-    Tabs
+    Tabs,
+    message
 } from 'antd';
 import TabClient from './TabClient';
 import TabContact from './TabContact';
@@ -49,11 +50,10 @@ const ModalClients = ({
     const onFinish = (values) =>{
         const bodyData = createData(values);
         setLoading(true)
-        setTimeout(()=>{
-            onCloseModal()
+        setTimeout(async ()=>{
             setLoading(false)
-            actionForm(bodyData)
-            formClient.resetFields();
+            actionForm(bodyData);
+            onCloseModal()
         },2000)
     }
 
