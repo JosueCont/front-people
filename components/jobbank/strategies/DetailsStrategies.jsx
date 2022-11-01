@@ -37,6 +37,7 @@ const DetailsStrategies = ({
     const [formStrategies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
+    const clientSelected = Form.useWatch('customer', formStrategies);
     const { createData, setValuesForm } = useProcessInfo({
         info_strategy,
         formStrategies
@@ -135,7 +136,7 @@ const DetailsStrategies = ({
                             requiredMark={false}
                             onFinishFailed={()=> setLoading({})}
                         >
-                            <FormStrategies/>
+                            <FormStrategies clientSelected={clientSelected}/>
                         </Form>
                     </Spin>
                 </Col>

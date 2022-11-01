@@ -48,7 +48,8 @@ const RegisterClient = ({
             onSuccessCreate()
         } catch (e) {
             console.log(e)
-            Modal.error({ content: 'Cliente no registrado' })
+            if(e.response?.data['rfc']) Modal.error({ content: 'Ya existe un cliente con el mismo RFC' });
+            else Modal.error({ content: 'Cliente no registrado' });
             setLoading(false)
         }
     }

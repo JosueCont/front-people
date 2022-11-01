@@ -24,7 +24,11 @@ const TableStrategies = ({
     currentNode,
     page_jobbank,
     setPage,
-    getStrategies
+    getStrategies,
+    load_clients_options,
+    list_clients_options,
+    load_vacancies_options,
+    list_vacancies_options
 }) => {
 
     const router = useRouter();
@@ -65,6 +69,22 @@ const TableStrategies = ({
         setOpenModalDelete(false)
         setItemsKeys([])
         setItemsToDelete([])
+    }
+
+    const getClient = (item) =>{
+        if(!item.customer) return null;
+        const client = record => record.id === item.customer;
+        let client_ = list_clients_options.find(client);
+        if(!client_) return null;
+        return client_.name;
+    }
+
+    const getVacant = (item) =>{
+        if(!item.vacant) return null;
+        const vacant = record => record.id === item.vacant;
+        let vacant_ = list_vacancies_options.find(vacant);
+        if(!vacant_) return null;
+        return vacant_.job_position;
     }
 
     const rowSelection = {
@@ -130,10 +150,26 @@ const TableStrategies = ({
             key: 'product'
         },
         {
-            title: 'Asignación',
-            dataIndex: 'assignment_date',
-            key: 'assignment_date'
+            title: 'Cliente',
+            render: (item) =>{
+                return(
+                    <span>{getClient(item)}</span>
+                )
+            }
         },
+        {
+            title: 'Vacante',
+            render: (item) =>{
+                return(
+                    <span>{getVacant(item)}</span>
+                )
+            }
+        },
+        // {
+        //     title: 'Asignación',
+        //     dataIndex: 'assignment_date',
+        //     key: 'assignment_date'
+        // },
         {
             title: ()=> {
                 return(
@@ -198,6 +234,10 @@ const mapState = (state) =>{
     return {
         list_strategies: state.jobBankStore.list_strategies,
         load_strategies: state.jobBankStore.load_strategies,
+        load_clients_options: state.jobBankStore.load_clients_options,
+        list_clients_options: state.jobBankStore.list_clients_options,
+        load_vacancies_options: state.jobBankStore.load_vacancies_options,
+        list_vacancies_options: state.jobBankStore.list_vacancies_options,
         page_jobbank: state.jobBankStore.page_jobbank,
         currentNode: state.userStore.current_node
     }
