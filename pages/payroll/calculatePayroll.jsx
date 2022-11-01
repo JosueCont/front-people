@@ -34,7 +34,9 @@ import {
   FileDoneOutlined,
   UnlockOutlined,
   LockOutlined,
-  ExclamationCircleOutlined, DownloadOutlined,
+  ExclamationCircleOutlined,
+  DownloadOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import { withAuthSync } from "../../libs/auth";
 import WebApiPayroll from "../../api/WebApiPayroll";
@@ -1138,78 +1140,77 @@ const CalculatePayroll = ({ ...props }) => {
                         </Col>
                         <Col xs={24} xl={6}>
                           <Button
-                              style={{ marginTop: "30px", marginRight:20 }}
-                              size="sm"
-                              icon={<DownloadOutlined />}
-                              onClick={() => {
-                                downLoadFileBlob(
-                                    `${getDomain(
-                                        API_URL_TENANT
-                                    )}/payroll/payroll-calculus`,
-                                    "Nomina.xlsx",
-                                    "POST",
-                                    {
-                                      payment_period: periodSelected.id,
-                                      department: department,
-                                      job: job,
-                                      payroll: payroll.map((item) => {
-                                        item.person_id = item.person.id;
-                                        return item;
-                                      }),
-                                    }
-                                );
-                              }}
+                            style={{ marginTop: "30px", marginRight: 20 }}
+                            size="sm"
+                            icon={<DownloadOutlined />}
+                            onClick={() => {
+                              downLoadFileBlob(
+                                `${getDomain(
+                                  API_URL_TENANT
+                                )}/payroll/payroll-calculus`,
+                                "Nomina.xlsx",
+                                "POST",
+                                {
+                                  payment_period: periodSelected.id,
+                                  department: department,
+                                  job: job,
+                                  payroll: payroll.map((item) => {
+                                    item.person_id = item.person.id;
+                                    return item;
+                                  }),
+                                }
+                              );
+                            }}
                           >
                             Descargar plantilla
                           </Button>
 
                           {(step === 0 ||
-                              isOpen ||
-                              (consolidated &&
-                                  !isOpen &&
-                                  consolidated.status != 3)) && (
-                              <Upload
-                                  {...{
-                                    showUploadList: false,
-                                    beforeUpload: (file) => {
-                                      const isXlsx = file.name.includes(".xlsx");
-                                      if (!isXlsx) {
-                                        message.error(`${file.name} no es un xlsx.`);
-                                      }
-                                      return isXlsx || Upload.LIST_IGNORE;
-                                    },
-                                    onChange(info) {
-                                      const { status } = info.file;
-                                      if (status !== "uploading") {
-                                        if (info.fileList.length > 0) {
-                                          let data = new FormData();
-                                          data.append(
-                                              "File",
-                                              info.fileList[0].originFileObj
-                                          );
-                                          data.append("department", department);
-                                          data.append("job", job);
-                                          data.append(
-                                              "payment_period",
-                                              periodSelected.id
-                                          );
-                                          importPayrollCaculate(data);
-                                          info.file = null;
-                                          info.fileList = [];
-                                        }
-                                      }
-                                    },
-                                  }}
-                              >
-                                <Button size="sm" icon={<UploadOutlined />}>
-                                  Subir nómina
-                                </Button>
-                              </Upload>
+                            isOpen ||
+                            (consolidated &&
+                              !isOpen &&
+                              consolidated.status != 3)) && (
+                            <Upload
+                              {...{
+                                showUploadList: false,
+                                beforeUpload: (file) => {
+                                  const isXlsx = file.name.includes(".xlsx");
+                                  if (!isXlsx) {
+                                    message.error(
+                                      `${file.name} no es un xlsx.`
+                                    );
+                                  }
+                                  return isXlsx || Upload.LIST_IGNORE;
+                                },
+                                onChange(info) {
+                                  const { status } = info.file;
+                                  if (status !== "uploading") {
+                                    if (info.fileList.length > 0) {
+                                      let data = new FormData();
+                                      data.append(
+                                        "File",
+                                        info.fileList[0].originFileObj
+                                      );
+                                      data.append("department", department);
+                                      data.append("job", job);
+                                      data.append(
+                                        "payment_period",
+                                        periodSelected.id
+                                      );
+                                      importPayrollCaculate(data);
+                                      info.file = null;
+                                      info.fileList = [];
+                                    }
+                                  }
+                                },
+                              }}
+                            >
+                              <Button size="sm" icon={<UploadOutlined />}>
+                                Subir nómina
+                              </Button>
+                            </Upload>
                           )}
-
-
                         </Col>
-
                       </>
                     )}
                   </Row>
@@ -1233,210 +1234,209 @@ const CalculatePayroll = ({ ...props }) => {
                   style={{
                     backgroundColor: "#fafafa",
                     borderRadius: "15px",
-                    marginBottom:10
+                    marginBottom: 10,
                   }}
                 >
                   <Row
-                      justify="start"
-                      style={{
-                        textAlign: "center",
-                        padding: "20px",
-                      }}
+                    justify="start"
+                    style={{
+                      textAlign: "center",
+                      padding: "20px",
+                    }}
                   >
-
                     <Col md={4}>
                       <Button
-                          size="large"
-                          block
-                          htmlType="button"
-                          icon={<FileExcelOutlined />}
-                          onClick={() => {
-                            isOpen
-                                ? downLoadFileBlob(
-                                    `${getDomain(
-                                        API_URL_TENANT
-                                    )}/payroll/payroll-calculus`,
-                                    "Nomina.xlsx",
-                                    "POST",
-                                    {
-                                      payment_period: periodSelected.id,
-                                      extended_report: "True",
-                                      department: department,
-                                      job: job,
-                                      payroll: payroll.map((item) => {
-                                        item.person_id = item.person.id;
-                                        return item;
-                                      }),
-                                    }
-                                )
-                                : downLoadFileBlob(
-                                    `${getDomain(
-                                        API_URL_TENANT
-                                    )}/payroll/payroll-report?payment_period=${
-                                        periodSelected.id
-                                    }`,
-                                    "Nomina.xlsx",
-                                    "GET"
-                                );
-                          }}
+                        size="large"
+                        block
+                        htmlType="button"
+                        icon={<FileExcelOutlined />}
+                        onClick={() => {
+                          isOpen
+                            ? downLoadFileBlob(
+                                `${getDomain(
+                                  API_URL_TENANT
+                                )}/payroll/payroll-calculus`,
+                                "Nomina.xlsx",
+                                "POST",
+                                {
+                                  payment_period: periodSelected.id,
+                                  extended_report: "True",
+                                  department: department,
+                                  job: job,
+                                  payroll: payroll.map((item) => {
+                                    item.person_id = item.person.id;
+                                    return item;
+                                  }),
+                                }
+                              )
+                            : downLoadFileBlob(
+                                `${getDomain(
+                                  API_URL_TENANT
+                                )}/payroll/payroll-report?payment_period=${
+                                  periodSelected.id
+                                }`,
+                                "Nomina.xlsx",
+                                "GET"
+                              );
+                        }}
                       >
                         Descargar nómina
                       </Button>
                     </Col>
-                  {payroll.length > 0 && !genericModal && (
+                    {payroll.length > 0 && !genericModal && (
                       <>
-                      {consolidated && (
-                        <>
+                        {consolidated && (
+                          <>
+                            <Col md={5} offset={1}>
+                              <Button
+                                size="large"
+                                block
+                                icon={<FileExcelOutlined />}
+                                htmlType="button"
+                                onClick={() =>
+                                  downLoadFileBlob(
+                                    `${getDomain(
+                                      API_URL_TENANT
+                                    )}/payroll/consolidated-payroll-report?period=${
+                                      periodSelected.id
+                                    }`,
+                                    "hoja_rayas.xlsx",
+                                    "GET"
+                                  )
+                                }
+                              >
+                                Descargar hoja de raya
+                              </Button>
+                            </Col>
+                          </>
+                        )}
+
+                        {step == 0 && calculate && (
                           <Col md={5} offset={1}>
                             <Button
                               size="large"
                               block
-                              icon={<FileExcelOutlined />}
                               htmlType="button"
-                              onClick={() =>
-                                downLoadFileBlob(
-                                  `${getDomain(
-                                    API_URL_TENANT
-                                  )}/payroll/consolidated-payroll-report?period=${
-                                    periodSelected.id
-                                  }`,
-                                  "hoja_rayas.xlsx",
-                                  "GET"
-                                )
-                              }
+                              onClick={() => reCalculatePayroll([...payroll])}
                             >
-                              Descargar hoja de raya
+                              Calcular
                             </Button>
                           </Col>
-                        </>
-                      )}
-
-                      {step == 0 && calculate && (
-                        <Col md={5} offset={1}>
-                          <Button
-                            size="large"
-                            block
-                            htmlType="button"
-                            onClick={() => reCalculatePayroll([...payroll])}
-                          >
-                            Calcular
-                          </Button>
-                        </Col>
-                      )}
-                      {step == 2 && consolidated && consolidated.status <= 2 && (
-                        <Col md={5} offset={1}>
-                          <Button
-                            size="large"
-                            block
-                            icon={<UnlockOutlined />}
-                            htmlType="button"
-                            onClick={() =>
-                              setMessageModal(5, {
-                                title: "Abrir nómina",
-                                description:
-                                  "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
-                                type_alert: "warning",
-                                action: () => openPayroll(1),
-                                title_action_button: "Abrir nómina",
-                                components: (
-                                  <>
-                                    <Row
-                                      style={{
-                                        width: "100%",
-                                        marginTop: "5px",
-                                      }}
-                                    >
-                                      <Input.TextArea
-                                        maxLength={290}
-                                        id="motive"
-                                        placeholder="Capture el motivo de reapertura."
-                                      />
-                                    </Row>
-                                  </>
-                                ),
-                              })
-                            }
-                          >
-                            Abrir
-                          </Button>
-                        </Col>
-                      )}
-                      {step >= 1 && (
-                        <>
-                          {((isOpen &&
-                            consolidated &&
-                            consolidated.status <= 2) ||
-                            (isOpen && !consolidated)) && (
-                            <Col md={5} offset={1}>
-                              <Button
-                                size="large"
-                                block
-                                icon={<LockOutlined />}
-                                htmlType="button"
-                                onClick={() => setMessageModal(2)}
-                              >
-                                Cerrar nómina
-                              </Button>
-                            </Col>
-                          )}
-                          {step == 2 &&
-                            consolidated &&
-                            consolidated.status < 3 && (
+                        )}
+                        {step == 2 && consolidated && consolidated.status <= 2 && (
+                          <Col md={5} offset={1}>
+                            <Button
+                              size="large"
+                              block
+                              icon={<UnlockOutlined />}
+                              htmlType="button"
+                              onClick={() =>
+                                setMessageModal(5, {
+                                  title: "Abrir nómina",
+                                  description:
+                                    "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                                  type_alert: "warning",
+                                  action: () => openPayroll(1),
+                                  title_action_button: "Abrir nómina",
+                                  components: (
+                                    <>
+                                      <Row
+                                        style={{
+                                          width: "100%",
+                                          marginTop: "5px",
+                                        }}
+                                      >
+                                        <Input.TextArea
+                                          maxLength={290}
+                                          id="motive"
+                                          placeholder="Capture el motivo de reapertura."
+                                        />
+                                      </Row>
+                                    </>
+                                  ),
+                                })
+                              }
+                            >
+                              Abrir
+                            </Button>
+                          </Col>
+                        )}
+                        {step >= 1 && (
+                          <>
+                            {((isOpen &&
+                              consolidated &&
+                              consolidated.status <= 2) ||
+                              (isOpen && !consolidated)) && (
                               <Col md={5} offset={1}>
                                 <Button
                                   size="large"
                                   block
-                                  icon={<FileDoneOutlined />}
+                                  icon={<LockOutlined />}
                                   htmlType="button"
-                                  onClick={() => setMessageModal(3)}
+                                  onClick={() => setMessageModal(2)}
                                 >
-                                  Timbrar nómina
+                                  Cerrar nómina
                                 </Button>
                               </Col>
                             )}
-                          {step == 3 && (
-                            <Col md={5} offset={1}>
-                              <Button
-                                size="large"
-                                block
-                                icon={<StopOutlined />}
-                                htmlType="button"
-                                onClick={() =>
-                                  setMessageModal(5, {
-                                    title: "Cancelar nómina",
-                                    description:
-                                      "Al cancelar nómina se debera iniciar el proceso de cierre de nómina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
-                                    type_alert: "warning",
-                                    action: () => cancelStamp(),
-                                    title_action_button: "Cancelar nómina",
-                                    components: (
-                                      <>
-                                        <Row
-                                          style={{
-                                            width: "100%",
-                                            marginTop: "5px",
-                                          }}
-                                        >
-                                          <Input.TextArea
-                                            maxLength={290}
-                                            id="motive"
-                                            placeholder="Capture el motivo de cancelacion."
-                                          />
-                                        </Row>
-                                      </>
-                                    ),
-                                  })
-                                }
-                              >
-                                Cancelar todos los cfdis
-                              </Button>
-                            </Col>
-                          )}
-                        </>
-                      )}
+                            {step == 2 &&
+                              consolidated &&
+                              consolidated.status < 3 && (
+                                <Col md={5} offset={1}>
+                                  <Button
+                                    size="large"
+                                    block
+                                    icon={<FileDoneOutlined />}
+                                    htmlType="button"
+                                    onClick={() => setMessageModal(3)}
+                                  >
+                                    Timbrar nómina
+                                  </Button>
+                                </Col>
+                              )}
+                            {step == 3 && (
+                              <Col md={5} offset={1}>
+                                <Button
+                                  size="large"
+                                  block
+                                  icon={<StopOutlined />}
+                                  htmlType="button"
+                                  onClick={() =>
+                                    setMessageModal(5, {
+                                      title: "Cancelar nómina",
+                                      description:
+                                        "Al cancelar nómina se debera iniciar el proceso de cierre de nómina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
+                                      type_alert: "warning",
+                                      action: () => cancelStamp(),
+                                      title_action_button: "Cancelar nómina",
+                                      components: (
+                                        <>
+                                          <Row
+                                            style={{
+                                              width: "100%",
+                                              marginTop: "5px",
+                                            }}
+                                          >
+                                            <Input.TextArea
+                                              maxLength={290}
+                                              id="motive"
+                                              placeholder="Capture el motivo de cancelacion."
+                                            />
+                                          </Row>
+                                        </>
+                                      ),
+                                    })
+                                  }
+                                >
+                                  Cancelar todos los cfdis
+                                </Button>
+                              </Col>
+                            )}
+                          </>
+                        )}
                       </>
-                  )}
-                    </Row>
+                    )}
+                  </Row>
                 </div>
                 {previousStep && (
                   <Button

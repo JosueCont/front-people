@@ -8,6 +8,7 @@ import { withAuthSync } from "../../../libs/auth";
 import SuaMovements from "./suaMovements";
 import EmaYEvaFiles from "./EmaYEvaFiles";
 import { connect } from "react-redux";
+import MovementsIMSS from "../../../components/payroll/fiscalMovements/MovementsIMSS";
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -56,7 +57,7 @@ const ImssMovements = ({ ...props }) => {
             className="container-border-radius"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
-            <Collapse>
+            <Collapse defaultActiveKey={['3']}>
               <Panel header="SUA" key="1">
                 <Collapse
                   expandIcon={({ isActive }) => (
@@ -97,6 +98,11 @@ const ImssMovements = ({ ...props }) => {
                   files = {files.length > 0? files : []}
                   loading = { loading }
                 />
+              </Panel>
+              <Panel header="Consulta de movimientos al IMSS" key="3">
+                <Col span={24}>
+                  <MovementsIMSS/>
+                </Col>
               </Panel>
             </Collapse>
           </div>
