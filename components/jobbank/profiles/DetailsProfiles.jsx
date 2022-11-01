@@ -57,10 +57,6 @@ const DetailsProfiles = ({
         }
     },[info_profile])
 
-    const resetValues = () =>{
-        setDisabledField(false)
-    }
-
     const setValuesForm = () => {
         let result = formatData(info_profile.fields_name);
         let all_info = {
@@ -81,7 +77,7 @@ const DetailsProfiles = ({
             await WebApiJobBank.updateProfile(info_profile.id, {...values, node: currentNode.id});
             message.success('Perfil actualizado');
             getInfoProfile(info_profile.id)
-            resetValues()
+            setDisabledField(false)
         } catch (e) {
             message.error('Perfil no actualizado');
             setLoadProfiles(false)
@@ -113,7 +109,7 @@ const DetailsProfiles = ({
     }
 
     const actionAddCreate = () =>{
-        resetValues()
+        setDisabledField(false)
         resetFields();
         setLoadProfiles(false)
         setLoading({})

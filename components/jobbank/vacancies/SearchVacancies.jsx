@@ -39,10 +39,10 @@ const SearchVacancies = ({
 
     return (
         <Row gutter={[24,24]}>
-            <Col xs={18} sm={18} md={16} lg={12}>
+            <Col xs={18} xxl={14}>
                 <Form onFinish={onFinishSearch} form={formSearch} layout='inline' style={{width: '100%'}}>
                     <Row style={{width: '100%'}}>
-                        <Col span={14}>
+                        <Col span={12}>
                             <Form.Item
                                 name='job_position'
                                 rules={[ruleWhiteSpace]}
@@ -69,14 +69,18 @@ const SearchVacancies = ({
                                 </Select>
                             </Form.Item>
                         </Col>
-                        <Col span={2} style={{display: 'flex', gap: '8px'}}>
-                            <Button icon={<SearchOutlined />} htmlType='submit'/>
-                            <Button icon={<SyncOutlined />} onClick={()=> deleteFilter()}/>
+                        <Col span={4} style={{display: 'flex', gap: '8px'}}>
+                            <Button htmlType='submit'>
+                                <SearchOutlined />
+                            </Button>
+                            <Button onClick={()=> deleteFilter()}>
+                                <SyncOutlined />
+                            </Button>
                         </Col>
                     </Row>
                 </Form>
             </Col>
-            <Col xs={6} sm={6} md={8}  lg={12} style={{display: 'flex', justifyContent: 'flex-end'}}>
+            <Col xs={6} xxl={10} style={{display: 'flex', justifyContent: 'flex-end'}}>
                 <Button onClick={()=> router.push('/jobbank/vacancies/add')}>Agregar</Button>
             </Col>
         </Row>
