@@ -9,6 +9,7 @@ import {
     Space,
     Tag
 } from 'antd';
+import { useRouter } from 'next/router';
 import ModalClients from './ModalClients';
 import {
     EllipsisOutlined,
@@ -16,7 +17,9 @@ import {
     EditOutlined,
     EyeOutlined,
     EyeInvisibleOutlined,
-    FileTextOutlined
+    FileTextOutlined,
+    PlusOutlined,
+    LinkOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
 import {
@@ -25,6 +28,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
+import Clipboard from '../../../components/Clipboard';
 
 const TableClients = ({
     list_clients,
@@ -35,6 +39,7 @@ const TableClients = ({
     getClients
 }) => {
 
+    const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
     const [itemsKeys, setItemsKeys] = useState([]);
@@ -132,8 +137,16 @@ const TableClients = ({
     const menuTable = () => {
         return (
             <Menu>
+                <Menu.Item key='1'>
+                    <Clipboard
+                        text={window.location.origin+"/ac/jb/"+currentNode.permanent_code}
+                        title='Autoregistro'
+                        border={false}
+                        tooltipTitle='Copiar link de autoregistro'
+                    />
+                </Menu.Item>
                 <Menu.Item
-                    key={1}
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=>openModalManyDelete()}
                 >
@@ -147,18 +160,39 @@ const TableClients = ({
         return (
             <Menu>
                 <Menu.Item
-                    key={1}
+                    key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> openModalEdit(item)}
                 >
                     Editar
                 </Menu.Item>
                 <Menu.Item
-                    key={2}
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
+                </Menu.Item>
+                <Menu.Divider/>
+                <Menu.Item
+                    key='3'
+                    icon={<PlusOutlined />}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/vacancies/add',
+                        query: { customer: item.id }
+                    })}
+                >
+                    Registrar vacante
+                </Menu.Item>
+                <Menu.Item
+                    key='4'
+                    icon={<PlusOutlined />}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/profiles/add',
+                        query: { customer: item.id }
+                    })}
+                >
+                    Registrar perfil
                 </Menu.Item>
             </Menu>
         );

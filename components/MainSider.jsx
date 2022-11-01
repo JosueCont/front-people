@@ -53,7 +53,6 @@ const MainSider = ({
       business: "/business",
       asign: "/config/assignedCompanies",
       patronal: "/business/patronalRegistrationNode",
-
       persons: "/home/persons",
       groups_people: "/home/groups",
       catalogs: "/config/catalogs",
@@ -88,6 +87,7 @@ const MainSider = ({
       jb_clients: "/jobbank/clients",
       jb_vacancies: "/jobbank/vacancies",
       jb_strategies: "/jobbank/strategies",
+      jb_profiles: "/jobbank/profiles"
     };
     router.push(pathRoutes[key]);
   };
@@ -102,7 +102,6 @@ const MainSider = ({
       if (props?.permissions?.company?.view) {
         let children = [
           getItem("Empresas", "business"),
-          getItem("Asignar empresa", "asign"),
           getItem("Factores de integración", "integrationFactors")
         ];
         if (props?.config && props?.config?.nomina_enabled) {
@@ -122,14 +121,7 @@ const MainSider = ({
         );
       }
 
-      // Menú Configuración
-      children = [
-        getItem("Catálogos", "catalogs"),
-        getItem("Perfiles de seguridad", "securityGroups"),
-      ];
-      items.push(
-        getItem("Configuración", "config", <SettingOutlined />, children)
-      );
+
 
       // Agregar división
       items.push({ type: "divider" });
@@ -192,6 +184,17 @@ const MainSider = ({
         ];
         items.push(getItem("Nómina", "payroll", <DollarOutlined />, children));
       }
+
+
+      // Menú Configuración
+      children = [
+        getItem("Catálogos", "catalogs"),
+        getItem("Perfiles de seguridad", "securityGroups"),
+        getItem("Asignar empresa", "asign"),
+      ];
+      items.push(
+          getItem("Configuración", "config", <SettingOutlined />, children)
+      );
 
       // Menú Registro de errores
       if (props?.config && props?.config?.nomina_enabled) {
@@ -267,6 +270,7 @@ const MainSider = ({
             getItem("Clientes", "jb_clients"),
             getItem("Vacantes", "jb_vacancies"),
             getItem("Estrategias", "jb_strategies"),
+            getItem("Perfiles de vacante", "jb_profiles")
           ];
           items.push(
             getItem("Bolsa de trabajo", "job_bank", <WorkOutline />, children)

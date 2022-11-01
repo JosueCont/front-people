@@ -22,12 +22,14 @@ const SearchClients = ({
         try {
             values.append('node', currentNode.id);
             values.append('registered_by', user.id);
+            values.append('is_active', true);
             await WebApiJobBank.createClient(values);
             getClients(currentNode?.id)
             message.success('Cliente agregado');
         } catch (e) {
-            message.error('Cliente no agregado');
             console.log(e)
+            if(e.response?.data['rfc']) message.error('Ya existe un cliente con el mismo RFC');
+            else message.error('Cliente no agregado');
         }
     }
 
@@ -52,8 +54,12 @@ const SearchClients = ({
                         placeholder={'Buscar por nombre'}
                         onChange={e=> setToSearch(e.target.value)}
                     />
-                    <Button icon={<SearchOutlined />} onClick={()=> onFinishSearch()}/>
-                    <Button icon={<SyncOutlined />} onClick={()=> deleteFilter()} />
+                    <Button onClick={()=> onFinishSearch()}>
+                        <SearchOutlined />
+                    </Button>
+                    <Button onClick={()=> deleteFilter()}>
+                        <SyncOutlined />
+                    </Button>
                 </Col>
                 <Col xs={6} sm={6} md={8}  lg={12} style={{display: 'flex', justifyContent: 'flex-end'}}>
                     <Button onClick={()=> setOpenModal(true)}>Agregar</Button>

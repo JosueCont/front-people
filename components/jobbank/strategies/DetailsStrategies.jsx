@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
     Card,
     Row,
@@ -26,8 +26,18 @@ const DetailsStrategies = ({
     getInfoStrategy
 }) => {
 
+    const fetchingItem = { loading: false, disabled: true };
+    const fetchingParams = {
+        back: fetchingItem,
+        create: fetchingItem,
+        edit: fetchingItem
+    };
+    const btnSave = useRef(null);
     const router = useRouter();
     const [formStrategies] = Form.useForm();
+    const [loading, setLoading] = useState({});
+    const [actionType, setActionType] = useState('');
+    const clientSelected = Form.useWatch('customer', formStrategies);
     const { createData, setValuesForm } = useProcessInfo({
         info_strategy,
         formStrategies
@@ -55,13 +65,11 @@ const DetailsStrategies = ({
         try {
             let response = await WebApiJobBank.createStrategy({...values, node: currentNode.id});
             message.success('Estrategia registrada');
-            router.replace({
-                pathname: '/jobbank/strategies/edit',
-                query: { id: response.data.id }
-            })
+            actionSaveAnd(response.data.id)
         } catch (e) {
             console.log(e)
             setLoadStrategies(false)
+            setLoading({})
             message.error('Estrategia no registrada');
         }
     }
@@ -74,6 +82,31 @@ const DetailsStrategies = ({
             add: onFinishCreate
         }
         actionFunction[action](bodyData);
+    }
+
+    const actionAddCreate = () =>{
+        formStrategies.resetFields();
+        setLoadStrategies(false)
+        setLoading({})
+    }
+
+    const actionSaveAnd = (id) =>{
+        const actionFunction = {
+            back: () => router.push('/jobbank/strategies'),
+            create: actionAddCreate,
+            edit: ()=> router.replace({
+                pathname: '/jobbank/strategies/edit',
+                query: { id }
+            })
+        }
+        actionFunction[actionType]();
+    }
+
+    const getSaveAnd = (type) =>{
+        setActionType(type)
+        const item = { loading: true, disabled: false };
+        setLoading({...fetchingParams, [type]: item });
+        btnSave.current.click();
     }
 
     return (
@@ -101,22 +134,52 @@ const DetailsStrategies = ({
                             layout='vertical'
                             onFinish={onFinish}
                             requiredMark={false}
+                            onFinishFailed={()=> setLoading({})}
                         >
-                            <FormStrategies/>
+                            <FormStrategies clientSelected={clientSelected}/>
                         </Form>
                     </Spin>
                 </Col>
                 <Col span={24} className='tab-vacancies-btns'>
-                    {/* <Button>
-                        Cancelar
-                    </Button> */}
-                    <Button
-                        form='form-strategies'
-                        htmlType='submit'
-                        loading={load_strategies}
-                    >
-                        Guardar
-                    </Button>
+                    {action == 'add' ? (
+                        <>
+                            <button
+                                htmlType='submit'
+                                form='form-strategies'
+                                ref={btnSave}
+                                style={{display:'none'}}
+                            />
+                            <Button
+                                onClick={()=>getSaveAnd('back')}
+                                disabled={loading['back']?.disabled}
+                                loading={loading['back']?.loading}
+                            >
+                                Guardar y regresar
+                            </Button>
+                            <Button
+                                onClick={()=>getSaveAnd('create')}
+                                disabled={loading['create']?.disabled}
+                                loading={loading['create']?.loading}
+                            >
+                                Guardar y registrar otra
+                            </Button>
+                            <Button
+                                onClick={()=>getSaveAnd('edit')}
+                                disabled={loading['edit']?.disabled}
+                                loading={loading['edit']?.loading}
+                            >
+                                Guardar y editar
+                            </Button>
+                        </>
+                    ):(
+                        <Button
+                            form='form-strategies'
+                            htmlType='submit'
+                            loading={load_strategies}
+                        >
+                            Guardar
+                        </Button>
+                    )}
                 </Col>
             </Row>
         </Card>

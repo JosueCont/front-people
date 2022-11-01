@@ -16,7 +16,9 @@ const index = ({
     const router = useRouter();
 
     useEffect(()=>{
-        if(currentNode) getVacancies(currentNode.id);
+        if(currentNode){
+            getVacancies(currentNode.id);
+        }
     },[currentNode])
 
     return (
