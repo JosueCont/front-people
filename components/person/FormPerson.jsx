@@ -115,6 +115,7 @@ const FormPerson = ({
           initialValues={{
             intranet_access: false,
           }}
+          layout={'vertical'}
           onFinish={onFinish}
           form={form}
         >
@@ -132,7 +133,6 @@ const FormPerson = ({
                   )}
                 <Col lg={8} xs={24}>
                   <SelectDepartment
-                    viewLabel={false}
                     name="person_department"
                     style={false}
                     onChange={(item) => setDepartmentSelected(item)}
@@ -140,7 +140,7 @@ const FormPerson = ({
                 </Col>
                 <Col lg={8} xs={24}>
                   <SelectJob
-                    viewLabel={false}
+                    viewLabel={true}
                     name="job"
                     style={false}
                     onChange={(item) => setJobSelected(item)}
@@ -150,7 +150,7 @@ const FormPerson = ({
                   <Col lg={8} xs={24}>
                     <SelectWorkTitle
                       name={"work_title_id"}
-                      viewLabel={false}
+                      viewLabel={true}
                       style={false}
                       forPerson={true}
                       department={departmentSelected}
@@ -161,50 +161,49 @@ const FormPerson = ({
                 )}
 
                 <Col lg={8} xs={24}>
-                  <Form.Item rules={[ruleRequired, nameLastname]} name="first_name">
-                    <Input type="text" placeholder="Nombre" />
+                  <Form.Item rules={[ruleRequired, nameLastname]} label='Nombre' name="first_name">
+                    <Input type="text" />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item rules={[ruleRequired,nameLastname]} name="flast_name">
-                    <Input type="text" placeholder="Apellido paterno" />
+                  <Form.Item rules={[ruleRequired,nameLastname]} label='Apellido paterno' name="flast_name">
+                    <Input type="text" />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item rules={[nameLastname]} name="mlast_name">
-                    <Input type="text" placeholder="Apellido materno" />
+                  <Form.Item rules={[nameLastname]} label='Apellido materno' name="mlast_name">
+                    <Input type="text"  />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item name="gender">
-                    <Select options={genders} placeholder="Género" />
+                  <Form.Item name="gender" label='Género'>
+                    <Select options={genders}  />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item>
+                  <Form.Item label='Fecha de nacimiento' >
                     <DatePicker
                       style={{ width: "100%" }}
                       onChange={onChange}
                       moment={"YYYY-MM-DD"}
-                      placeholder="Fecha de nacimiento"
                       disabledDate={ disabledDate }
                       locale = { locale }
                     />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item name="code">
-                    <Input type="text" placeholder="Núm. empleado" />
+                  <Form.Item name="code" label='Núm. empleado'>
+                    <Input type="text" />
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
                   <Form.Item
                     rules={[ruleEmail, payrrollActive && ruleRequired]}
                     name="email"
+                    label='Email'
                   >
                     <Input
                       type="email"
-                      placeholder="E-mail"
                       onBlur={(value) =>
                         form.setFieldsValue({
                           email: value.target.value.toLowerCase(),
@@ -233,12 +232,13 @@ const FormPerson = ({
                 {payrrollActive && (
                   <>
                     <Col lg={8} xs={24}>
-                      <Form.Item rules={[ruleRequired]} name="password">
-                        <Input.Password type="text" placeholder="Contraseña" />
+                      <Form.Item rules={[ruleRequired]} label='Contraseña' name="password">
+                        <Input.Password type="text" />
                       </Form.Item>
                     </Col>
                     <Col lg={8} xs={24}>
                       <Form.Item
+                      label='Confirmar contraseña'
                         rules={[
                           ruleRequired,
                           ({ getFieldValue }) => ({
@@ -258,7 +258,7 @@ const FormPerson = ({
                         ]}
                         name="passwordTwo"
                       >
-                        <Input.Password type="text" placeholder="Contraseña" />
+                        <Input.Password type="text" />
                       </Form.Item>
                     </Col>
                     {config.intranet_enabled && (
@@ -273,7 +273,7 @@ const FormPerson = ({
                       </Col>
                     )}
                     <Col lg={8} xs={24}>
-                      <SelectGroup />
+                      <SelectGroup viewLabel={true} />
                     </Col>
                   </>
                 )}

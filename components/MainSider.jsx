@@ -232,16 +232,26 @@ const MainSider = ({
       }
 
       // Menú Kuiz
-      if (props?.config && props?.config?.kuiz_enabled) {
-        let children = [
-          getItem("Evaluaciones", "surveys"),
-          getItem("Grupos de evaluaciones", "assessment_groups"),
-          getItem("Perfiles de competencias", "assessment_profiles"),
-          getItem("Reportes de competencias", "assessment_reports"),
-        ];
-        items.push(
-          getItem("Psicometría", "kuiz", <QuestionCircleOutlined />, children)
-        );
+      if (props?.applications) {
+        let show_kuiz_module = false;
+        for (let item in props.applications) {
+          if (item === "kuiz") {
+            if (props.applications[item].active) {
+              show_kuiz_module = true;
+            }
+          }
+        }
+        if (show_kuiz_module) {
+          children = [
+            getItem("Evaluaciones", "surveys"),
+            getItem("Grupos de evaluaciones", "assessment_groups"),
+            getItem("Perfiles de competencias", "assessment_profiles"),
+            getItem("Reportes de competencias", "assessment_reports"),
+          ];
+          items.push(
+              getItem("Psicometría", "kuiz", <QuestionCircleOutlined />, children)
+          );
+        }
       }
 
       // Menú YNL

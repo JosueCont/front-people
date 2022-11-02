@@ -182,7 +182,7 @@ const PublicationsStatisticsFilters = (props) => {
     props.getPostsByFilter(
       props.companyId,
       "",
-      `${userParam}${groupParam}${dateRange}${statusParam}&is_moderator_view=true`
+      `${userParam}${groupParam}${dateRange}${statusParam}`
     );
   };
 
