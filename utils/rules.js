@@ -75,6 +75,11 @@ export const fourDecimal = {
   message: "El campo no puede tener más de cuatro decimales",
 };
 
+export const fiveDecimal = {
+  pattern: /^\d+(?:\.\d{1,6})?$/,
+  message: "El campo no puede tener más de cinco decimales",
+}
+
 // {pattern: /^[\d]{0,16}$/, message: "El no  debe tener más de 16 dígitos" }, numero menor  a 16 digitos
 
 export const curpFormat = {

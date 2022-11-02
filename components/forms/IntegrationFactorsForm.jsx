@@ -26,7 +26,8 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
 
   const { Title, Text } = Typography;
   const { TabPane } = Tabs
-  const [formFactor, ] = Form.useForm();
+  const [formFactor ] = Form.useForm();
+  const [ formExcel ] = Form.useForm();
   const [ loading, setLoading ] = useState(false)
   const [excel, setExcel] = useState(null);
   const [ description, setDescription]  = useState('')
@@ -39,6 +40,9 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
         vacation_percent: factor.vacation_percent,
         bonus_days: factor.bonus_days,
         description: factor.description
+      })
+      formExcel.setFieldsValue({
+        excelDescription: factor.description
       })
     }
   },[factor])
@@ -107,6 +111,7 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
     })
     .catch((error) => {
       console.log("Error", error)
+      message.error("Error al actualizar configuración")
       setLoading(false)
     })
   }
@@ -171,7 +176,7 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={12}>
-                <Form.Item label="Descripción" name="description">
+                <Form.Item label="Descripción" name="description" rules={[ruleRequired]}>
                   <Input.TextArea />
                 </Form.Item>
               </Col>
@@ -212,12 +217,20 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
               </Col>
             </Row>
             <Row gutter={30} style={{ marginBottom: 20, marginTop: 10 }}>
-              <Col lg={8}>
-                  <Input.TextArea
-                    style={{ height: "40px",}}
-                    onChange={({target}) => setDescription(target.value)}
-                    placeholder = "Descripción"
-                  />
+            <Col lg={8}>
+              <Form
+                form={ formExcel }
+              >
+                  <Form.Item
+                    name="excelDescription"
+                  >
+                    <Input
+                      style={{ height: "40px", maxHeight: '40px', width: '100%'}}
+                      onChange={({target}) => setDescription(target.value)}
+                      placeholder = "Descripción"
+                    />
+                  </Form.Item>
+              </Form>
               </Col>
               <Col lg={4}>
                 <Button
