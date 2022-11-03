@@ -482,6 +482,12 @@ export const optionsJobBank = [
   {value: 6, key: 6, label: 'HEX'}
 ]
 
+export const optionsEconomicBenefits = [
+  {value: 1, key: 1, label: 'Sin prestaciones'},
+  {value: 2, key: 2, label: 'Prestaciones de ley'},
+  {value: 3, key: 3, label: 'Prestaciones superiores a la ley'}
+]
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
