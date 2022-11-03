@@ -12,7 +12,10 @@ import {
   ruleRequired,
   ruleWhiteSpace
 } from '../../../utils/rules';
-import { optionsPaymentPeriod } from '../../../utils/constant';
+import {
+  optionsPaymentPeriod,
+  optionsEconomicBenefits
+} from '../../../utils/constant';
 
 const TabSalary = () => {
   return (
@@ -46,25 +49,20 @@ const TabSalary = () => {
           name='economic_benefits'
           label='Prestaciones'
         >
-          <InputNumber
-            type='number'
-            controls={false}
-            placeholder='Prestaciones'
-            onKeyPress={validateNum}
-            style={{
-              width: '100%',
-              border: '1px solid black'
-            }}
+          <Select
+            placeholder='Seleccionar una prestación'
+            notFoundContent='No se encontraron resultados'
+            options={optionsEconomicBenefits}
           />
         </Form.Item>
       </Col>
       <Col span={8}>
         <Form.Item
           name='economic_benefits_description'
-          label='Prestaciones descripción'
+          label='Descripción de las prestaciones'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='Prestaciones descripción'/>
+          <Input placeholder='Especifica las prestaciones'/>
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -73,7 +71,7 @@ const TabSalary = () => {
           label='Beneficios'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='Beneficios'/>
+          <Input placeholder='Transporte, servicio de comer, etc.'/>
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -91,7 +89,7 @@ const TabSalary = () => {
           label='Herramientas de trabajo'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='Herramientas de trabajo'/>
+          <Input placeholder='Uniformes, equipos de computo, etc.'/>
         </Form.Item>
       </Col>
     </Row>
