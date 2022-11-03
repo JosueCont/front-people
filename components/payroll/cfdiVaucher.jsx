@@ -59,9 +59,9 @@ const CfdiVaucher = ({
   const pagination = async (page, pageSize) => {
     setPage(page);
     if (calendar) {
-      getVoucher(`calendar=${calendar}&period=${period}`);
+      getVoucher(`calendar=${calendar}&period=${period}`, page);
     } else {
-      onFinish(valuesFilter);
+      onFinish(valuesFilter, page);
     }
     setCurrentPage(page);
   };
@@ -230,11 +230,14 @@ const CfdiVaucher = ({
     );
   };
 
-  const generate_url = (limit = 10) => {
-    return `&limit=${limit}&offset=${page}`;
+  const generate_url = (new_page) => {
+    if (new_page) {
+      return `&page=${new_page}`;
+    }
+    return `&page=${page}`;
   };
 
-  const onFinish = (value, limit = 10) => {
+  const onFinish = (value, new_page) => {
     setValuesFilter(value);
 
     setLoading(true);
@@ -246,11 +249,11 @@ const CfdiVaucher = ({
     if (value.person && value.person != "")
       url = url + `&person=${value.person}`;
     if (value.year && value.year != "") url = url + `&year=${value.year}`;
-    getVoucher(url);
+    getVoucher(url, new_page);
   };
 
-  const getVoucher = (data) => {
-    data = data + generate_url();
+  const getVoucher = (data, new_page) => {
+    data = data + generate_url(new_page);
     setLoading(true);
     setCfdis([]);
     WebApiPayroll.getCfdiPayrrol(data)

@@ -20,9 +20,13 @@ import {
 const TabEducation = () => {
 
   const {
+    load_competences,
     list_competences,
+    load_academics,
     list_academics,
+    load_main_categories,
     list_main_categories,
+    load_sub_categories,
     list_sub_categories
   } = useSelector(state => state.jobBankStore);
 
@@ -36,6 +40,8 @@ const TabEducation = () => {
           <Select
             placeholder='Categoría de la vacante'
             notFoundContent='No se encontraron resultados'
+            disabled={load_main_categories}
+            loading={load_main_categories}
           >
             {list_main_categories?.length > 0 && list_main_categories.map(item => (
               <Select.Option value={item.id} key={item.name}>
@@ -53,6 +59,8 @@ const TabEducation = () => {
           <Select
             placeholder='Subcategoría'
             notFoundContent='No se encontraron resultados'
+            disabled={load_sub_categories}
+            loading={load_sub_categories}
           >
             {list_sub_categories.length > 0 && list_sub_categories.map(item=> (
               <Select.Option value={item.id} key={item.id}>
@@ -89,6 +97,8 @@ const TabEducation = () => {
       <Col span={8}>
         <Form.Item name='academics_degree' label='Carrera'>
           <Select
+            disabled={load_academics}
+            loading={load_academics}
             placeholder='Carrera'
             notFoundContent='No se encontraron resultados'
           >
@@ -117,6 +127,8 @@ const TabEducation = () => {
           <Select
             mode='multiple'
             maxTagCount={2}
+            disabled={load_competences}
+            loading={load_competences}
             placeholder='Competencias requeridas'
             notFoundContent='No se encontraron resultados'
           >

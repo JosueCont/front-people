@@ -4,27 +4,20 @@ import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getPersonsCompany } from '../../../redux/UserDuck';
-import {
-  getInfoStrategy,
-  getVacanciesOptions
-} from '../../../redux/jobBankDuck';
+import { getInfoStrategy } from '../../../redux/jobBankDuck';
 import DetailsStrategies from './DetailsStrategies';
 
 const AddOrEditStrategies = ({
   action = 'add',
   currentNode,
   getPersonsCompany,
-  getInfoStrategy,
-  getVacanciesOptions
+  getInfoStrategy
 }) => {
 
   const router = useRouter();
 
   useEffect(()=>{
-    if(currentNode){
-      getPersonsCompany(currentNode.id)
-      getVacanciesOptions(currentNode.id)
-    }
+    if(currentNode) getPersonsCompany(currentNode.id);
   },[currentNode])
 
   useEffect(()=>{
@@ -67,7 +60,6 @@ const mapState = (state) =>{
 export default connect(
   mapState,{
     getPersonsCompany,
-    getInfoStrategy,
-    getVacanciesOptions
+    getInfoStrategy
   }
 )(AddOrEditStrategies);

@@ -4,23 +4,23 @@ import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
-import { getStrategies } from '../../../redux/jobBankDuck';
-import TableStrategies from '../../../components/jobbank/strategies/TableStrategies';
-import SearchStrategies from '../../../components/jobbank/strategies/SearchStrategies';
+import SearchCandidates from '../../../components/jobbank/candidates/SearchCandidates';
+import TableCandidates from '../../../components/jobbank/candidates/TableCandidates';
+import { getCandidates } from '../../../redux/jobBankDuck';
 
 const index = ({
     currentNode,
-    getStrategies
+    getCandidates
 }) => {
 
     const router = useRouter();
 
     useEffect(()=>{
-        if(currentNode) getStrategies(currentNode.id);
+        if(currentNode) getCandidates(currentNode.id);
     },[currentNode])
 
     return (
-        <MainLayout currentKey={'jb_strategies'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey={'jb_candidates'} defaultOpenKeys={['job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -29,7 +29,7 @@ const index = ({
                     Inicio
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item>Estrategias</Breadcrumb.Item>
+                <Breadcrumb.Item>Candidatos</Breadcrumb.Item>
             </Breadcrumb>
             <div
                 className={'container'}
@@ -38,8 +38,8 @@ const index = ({
                     gap: 24,
                     flexDirection: 'column',
                 }}>
-                <SearchStrategies/>
-                <TableStrategies/>
+                <SearchCandidates/>
+                <TableCandidates/>
             </div>
         </MainLayout>
     )
@@ -52,5 +52,5 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState,{ getStrategies }
+    mapState,{ getCandidates }
 )(withAuthSync(index));

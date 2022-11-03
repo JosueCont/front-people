@@ -84,7 +84,7 @@ const TabFeatures = ({
             showSearch
             disabled={disabledClient}
             loading={load_clients_options}
-            placeholder='Cliente'
+            placeholder='Seleccionar un cliente'
             notFoundContent='No se encontraron resultados'
             optionFilterProp='children'
           >
@@ -103,7 +103,7 @@ const TabFeatures = ({
         >
           <DatePicker
             style={{width: '100%'}}
-            placeholder='Fecha de asignación'
+            placeholder='Seleccionar fecha'
             format='YYYY-MM-DD'
             inputReadOnly
           />
@@ -124,7 +124,7 @@ const TabFeatures = ({
           label='Subproducto'
         >
           <Select
-            placeholder='Subproducto'
+            placeholder='Seleccionar un subproducto'
             notFoundContent='No se encontraron resultados'
             options={optionsSubproduct}
           />
