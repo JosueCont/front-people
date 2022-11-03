@@ -139,7 +139,7 @@ const TableClients = ({
             <Menu>
                 <Menu.Item key='1'>
                     <Clipboard
-                        text={window.location.origin+"/ac/jb/"+currentNode.permanent_code}
+                        text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/client`}
                         title='Autoregistro'
                         border={false}
                         tooltipTitle='Copiar link de autoregistro'

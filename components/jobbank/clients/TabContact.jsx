@@ -23,7 +23,10 @@ const TabContact = ({ sizeCol = 12 }) => {
                     name={'job_contact'}
                     rules={[ruleWhiteSpace]}
                 >
-                    <Input placeholder={'Ocupación del contacto'}/>
+                    <Input
+                        maxLength={100}
+                        placeholder={'Ocupación del contacto'}
+                    />
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>

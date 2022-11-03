@@ -25,7 +25,7 @@ const RegisterClient = ({
 
     const createData = (obj) =>{
         let dataClient = new FormData();
-        dataClient.append('node', currentNode.id);
+        dataClient.append('node', currentNode?.id);
         dataClient.append('auto_register', true);
         if(newDocs.length > 0) newDocs.map(item => dataClient.append('files', item));
         Object.entries(obj).map(([key, val])=>{ if(val) dataClient.append(key, val) });
