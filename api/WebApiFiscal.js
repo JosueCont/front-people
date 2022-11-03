@@ -156,6 +156,10 @@ class WebApiFiscal {
   static get_monthly_imss_provision(data) {
     return WebApi.ApisType('fiscal/monthly-imss-free/get_monthly_imss_provision/', 'post', data)
   }
+
+  static get_geograp_area(year) {
+    return WebApi.ApisType(`/fiscal/geographic-area/?period=${year}`, 'get')
+  }
 }
 
 export default WebApiFiscal;

@@ -10,6 +10,7 @@ import { connect } from "react-redux";
 import SelectFractions from "../../selects/SelectFractions";
 import { monthsName } from "../../../utils/constant";
 import { generateYear } from "../../../utils/functions";
+import { PercentageOutlined } from "@ant-design/icons"
 
 const JobRiskPremium = ({
   node,
@@ -71,7 +72,7 @@ const JobRiskPremium = ({
             label="Porcentaje de riesgo"
             name='risk_percent'
           >
-            <Input/>
+            <Input suffix={<PercentageOutlined />} style={{ paddingLeft: '10px' }}/>
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>

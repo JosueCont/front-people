@@ -8,6 +8,7 @@ import {
 import WebApiPeople from "../../../api/WebApiPeople";
 import SelectImssDelegation from "../../../components/selects/SelectImssDelegation";
 import SelectImssSubdelegation from "../../../components/selects/SelectImssSubdelegation";
+import SelectGeographicArea from "../../selects/SelectGeographicArea";
 
 const FormPatronalRegistration = ({
   node,
@@ -98,9 +99,7 @@ const FormPatronalRegistration = ({
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <Form.Item name="geographic_area" label="Area geografica">
-            <Input />
-          </Form.Item>
+            <SelectGeographicArea />
         </Col>
         <Col lg={6} xs={22}>
           <SelectImssDelegation rules={[ruleRequired]} />

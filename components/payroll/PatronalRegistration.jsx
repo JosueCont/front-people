@@ -317,7 +317,7 @@ const ImssInformationNode = ({
       phone: item?.phone,
       id: item?.id,
       type_contribution: item?.type_contribution,
-      geographic_area: item?.geographic_area,
+      geograp_area: item?.geograp_area,
       imss_delegation: item?.imss_delegation,
       imss_subdelegation: item?.imss_subdelegation,
     });
