@@ -592,7 +592,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
             <Col lg={8} xs={22}>
               <Form.Item label="Politicas">
                 <Switch
-                  defaultChecked={politics}
+                  // defaultChecked={politics}
+                  checked = { politics }
                   checkedChildren="Personalizado"
                   unCheckedChildren="Por defecto"
                   onChange={(value) => setPolitics(value)}
