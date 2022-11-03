@@ -418,9 +418,9 @@ export const optionsTypeJob = [
 ];
 
 export const optionsTypeContract = [
-  {value: 1, key: 1, label: 'Presencial'},
-  {value: 2, key: 2, label: 'Hibrido'},
-  {value: 3, key: 3, label: 'Desde casa'}
+  {value: 1, key: 1, label: 'Indeterminado'},
+  {value: 2, key: 2, label: 'Temporal'},
+  {value: 3, key: 3, label: 'Prácticas'}
 ];
 
 export const optionsGenders = [
@@ -439,6 +439,12 @@ export const optionsLevelAcademic = [
   {value: 7, key: 7, label: 'Maestría'},
   {value: 8, key: 8, label: 'Doctorado'},
 ];
+
+export const optionsStatusAcademic = [
+  {value: 1, key: 1, label: 'En concurso'},
+  {value: 2, key: 2, label: 'Trunca'},
+  {value: 3, key: 3, label: 'Concluida'}
+]
 
 export const optionsStatusVacant = [
   {value: 1, key: 1, label: 'Activa'},
@@ -474,6 +480,12 @@ export const optionsJobBank = [
   {value: 4, key: 4, label: 'Indeed'},
   {value: 5, key: 5, label: 'Talenteca'},
   {value: 6, key: 6, label: 'HEX'}
+]
+
+export const optionsEconomicBenefits = [
+  {value: 1, key: 1, label: 'Sin prestaciones'},
+  {value: 2, key: 2, label: 'Prestaciones de ley'},
+  {value: 3, key: 3, label: 'Prestaciones superiores a la ley'}
 ]
 
 export const messageSaveSuccess = "Agregado correctamente.";
