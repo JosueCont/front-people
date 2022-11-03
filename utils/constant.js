@@ -440,6 +440,12 @@ export const optionsLevelAcademic = [
   {value: 8, key: 8, label: 'Doctorado'},
 ];
 
+export const optionsStatusAcademic = [
+  {value: 1, key: 1, label: 'En concurso'},
+  {value: 2, key: 2, label: 'Trunca'},
+  {value: 3, key: 3, label: 'Concluida'}
+]
+
 export const optionsStatusVacant = [
   {value: 1, key: 1, label: 'Activa'},
   {value: 2, key: 2, label: 'Cancelada'},

@@ -4,34 +4,15 @@ import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import DetailsVacancies from './DetailsVacancies';
 import { connect } from 'react-redux';
-import {
-  getInfoVacant,
-  getCompetences,
-  getAcademics,
-  getMainCategories,
-  getSubCategories,
-} from '../../../redux/jobBankDuck';
+import { getInfoVacant } from '../../../redux/jobBankDuck';
 
 const AddOrEditVacancies = ({
   action = 'add',
   currentNode,
-  getInfoVacant,
-  getCompetences,
-  getAcademics,
-  getMainCategories,
-  getSubCategories,
+  getInfoVacant
 }) => {
 
   const router = useRouter();
-
-  useEffect(()=>{
-    if(currentNode){
-      getCompetences(currentNode.id)
-      getAcademics(currentNode.id)
-      getMainCategories(currentNode.id)
-      getSubCategories(currentNode.id)
-    }
-  },[currentNode])
 
   useEffect(()=>{
     if(router.query.id && action == 'edit'){
@@ -71,11 +52,5 @@ const mapState = (state) =>{
 }
 
 export default connect(
-  mapState, {
-    getInfoVacant,
-    getCompetences,
-    getAcademics,
-    getMainCategories,
-    getSubCategories,
-  }
+  mapState, { getInfoVacant }
 )(AddOrEditVacancies);

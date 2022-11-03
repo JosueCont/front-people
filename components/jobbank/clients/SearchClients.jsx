@@ -22,7 +22,6 @@ const SearchClients = ({
         try {
             values.append('node', currentNode.id);
             values.append('registered_by', user.id);
-            values.append('is_active', true);
             await WebApiJobBank.createClient(values);
             getClients(currentNode?.id)
             message.success('Cliente agregado');

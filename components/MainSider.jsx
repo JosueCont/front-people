@@ -87,7 +87,8 @@ const MainSider = ({
       jb_clients: "/jobbank/clients",
       jb_vacancies: "/jobbank/vacancies",
       jb_strategies: "/jobbank/strategies",
-      jb_profiles: "/jobbank/profiles"
+      jb_profiles: "/jobbank/profiles",
+      jb_candidates: "/jobbank/candidates"
     };
     router.push(pathRoutes[key]);
   };
@@ -270,7 +271,8 @@ const MainSider = ({
             getItem("Clientes", "jb_clients"),
             getItem("Vacantes", "jb_vacancies"),
             getItem("Estrategias", "jb_strategies"),
-            getItem("Perfiles de vacante", "jb_profiles")
+            getItem("Perfiles de vacante", "jb_profiles"),
+            getItem("Candidatos", "jb_candidates")
           ];
           items.push(
             getItem("Bolsa de trabajo", "job_bank", <WorkOutline />, children)
