@@ -418,9 +418,9 @@ export const optionsTypeJob = [
 ];
 
 export const optionsTypeContract = [
-  {value: 1, key: 1, label: 'Presencial'},
-  {value: 2, key: 2, label: 'Hibrido'},
-  {value: 3, key: 3, label: 'Desde casa'}
+  {value: 1, key: 1, label: 'Indeterminado'},
+  {value: 2, key: 2, label: 'Temporal'},
+  {value: 3, key: 3, label: 'Prácticas'}
 ];
 
 export const optionsGenders = [
