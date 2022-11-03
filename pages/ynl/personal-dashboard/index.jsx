@@ -16,22 +16,27 @@ const index = () => {
   const [validatePermition, setValidatePermition] = useState(true);
   
   useEffect(() => {
-    let isUserKhor = validateUser?.user?.sync_from_khor
-    if(isUserKhor){
-      let permsUser = validateUser?.user?.khor_perms;
-      if( permsUser != null){
-        let permYnl = validateUser?.user?.khor_perms.filter(item => item === "Khor Plus YNL")
-        if( permYnl.length > 0 ){
+      let isUserKhor = validateUser?.user?.sync_from_khor;
+      let isAdmin = validateUser?.user?.is_admin;
+      if (isAdmin) {
           setValidatePermition(true);
-        }else{
-          setValidatePermition(false);
-        }
-      }else{
-        setValidatePermition(false);
+      } else {
+          if (isUserKhor){
+              let permsUser = validateUser?.user?.khor_perms;
+              if (permsUser != null) {
+                  let permYnl = validateUser.user.khor_perms.filter(item => item === "Khor Plus YNL")
+                  if (permYnl.length > 0 ) {
+                      setValidatePermition(true);
+                  } else {
+                      setValidatePermition(false);
+                  }
+              } else {
+                  setValidatePermition(false);
+              }
+          } else {
+              setValidatePermition(false);
+          }
       }
-    }else{
-      setValidatePermition(true);
-    }
   }, [validateUser]);
   
   return (
