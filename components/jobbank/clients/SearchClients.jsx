@@ -35,7 +35,7 @@ const SearchClients = ({
 
     const createQuerys = (obj) =>{
         let query = '';
-        if(obj.name) query += `&name__icontains=${obj.name}`;
+        if(obj.name) query += `&name__unaccent__icontains=${obj.name}`;
         return query;
     }
 

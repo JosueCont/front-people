@@ -89,6 +89,7 @@ const DetailsVacancies = ({
             let response = await WebApiJobBank.createVacant({...values, node_id: currentNode.id});
             message.success('Vacante registrada');
             actionSaveAnd(response.data.id)
+            formVacancies.resetFields()
         } catch (e) {
             console.log(e)
             setLoadVacancies(false);
@@ -108,14 +109,18 @@ const DetailsVacancies = ({
     }
 
     const actionAddCreate = () =>{
-        formVacancies.resetFields();
         setLoadVacancies(false)
         setLoading({})
     }
 
+    const actionBack = () =>{
+        if(router.query?.customer) router.push('/jobbank/clients');
+        else router.push('/jobbank/vacancies');
+    }
+
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: () => router.push('/jobbank/vacancies'),
+            back: actionBack,
             create: actionAddCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/vacancies/edit',
@@ -143,7 +148,7 @@ const DetailsVacancies = ({
                         }
                     </p>
                     <Button
-                        onClick={()=> router.push('/jobbank/vacancies')}
+                        onClick={()=> actionBack()}
                         icon={<ArrowLeftOutlined />}
                     >
                         Regresar
