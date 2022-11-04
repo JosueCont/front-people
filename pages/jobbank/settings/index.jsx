@@ -4,6 +4,7 @@ import { Breadcrumb, Card, Button } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
+import SettingsJobbank from '../../../components/jobbank/SettingsJobbank';
 
 const index = ({
     currentNode
@@ -23,10 +24,7 @@ const index = ({
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item>Configuraciones</Breadcrumb.Item>
             </Breadcrumb>
-            <div className='card-settings'>
-                <div className='card-catalog'>Catálogos</div>
-                <div className='card-catalog'>Otro</div>
-            </div>
+            <SettingsJobbank/>
         </MainLayout>
     )
 }

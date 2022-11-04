@@ -37,7 +37,6 @@ const DetailsStrategies = ({
     const [formStrategies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const clientSelected = Form.useWatch('customer', formStrategies);
     const { createData, setValuesForm } = useProcessInfo({
         info_strategy,
         formStrategies
@@ -66,6 +65,7 @@ const DetailsStrategies = ({
             let response = await WebApiJobBank.createStrategy({...values, node: currentNode.id});
             message.success('Estrategia registrada');
             actionSaveAnd(response.data.id)
+            formStrategies.resetFields();
         } catch (e) {
             console.log(e)
             setLoadStrategies(false)
@@ -85,7 +85,6 @@ const DetailsStrategies = ({
     }
 
     const actionAddCreate = () =>{
-        formStrategies.resetFields();
         setLoadStrategies(false)
         setLoading({})
     }
@@ -136,7 +135,7 @@ const DetailsStrategies = ({
                             requiredMark={false}
                             onFinishFailed={()=> setLoading({})}
                         >
-                            <FormStrategies clientSelected={clientSelected}/>
+                            <FormStrategies formStrategies={formStrategies}/>
                         </Form>
                     </Spin>
                 </Col>

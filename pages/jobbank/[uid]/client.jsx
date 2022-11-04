@@ -1,11 +1,17 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { getSectors } from '../../../redux/jobBankDuck';
 import AutoRegister from '../../../components/jobbank/AutoRegister';
 import RegisterClient from '../../../components/jobbank/clients/RegisterClient';
 
 const client = ({
-    currentNode
+    currentNode,
+    getSectors
 }) => {
+
+    useEffect(()=>{
+        if(currentNode) getSectors(currentNode.id);
+    },[currentNode])
 
     return (
         <AutoRegister>
@@ -20,4 +26,4 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState)(client);
+export default connect(mapState, { getSectors })(client);

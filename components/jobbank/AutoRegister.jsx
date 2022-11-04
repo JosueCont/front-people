@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import MainLayout from '../../layout/MainLayout';
 import WebApiPeople from '../../api/WebApiPeople';
-import { companySelected } from '../../redux/UserDuck';
+import { saveCurrentNode } from '../../redux/UserDuck';
 import { connect } from 'react-redux';
 
 const AutoRegister = ({
     children,
     generalConfig,
-    companySelected
+    saveCurrentNode
 }) => {
 
     const router = useRouter();
@@ -20,8 +20,7 @@ const AutoRegister = ({
     const getCompay = async (uid) =>{
         try {
             let response = await WebApiPeople.getCompanyPermanentCode(uid);
-            const idNode = response.data.results.at(-1).id;
-            companySelected(idNode, generalConfig);            
+            saveCurrentNode(response.data.results.at(-1))       
         } catch (e) {
             console.log(e)
         }
@@ -46,5 +45,5 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState, { companySelected }
+    mapState, { saveCurrentNode }
 )(AutoRegister);

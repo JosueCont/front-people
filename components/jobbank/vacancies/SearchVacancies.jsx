@@ -56,6 +56,7 @@ const SearchVacancies = ({
                                 <Select
                                     allowClear
                                     showSearch
+                                    disabled={load_clients_options}
                                     loading={load_clients_options}
                                     placeholder='Cliente'
                                     notFoundContent='No se encontraron resultados'
