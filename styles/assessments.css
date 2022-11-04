@@ -485,4 +485,21 @@
     border-color: #ffff;
 }
 
+.card-settings{
+    height: calc(100vh - 134px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+}
+
+.card-catalog{
+    text-align: center;
+    width: 150px;
+    background: #8e88e7;
+    padding: 12px 12px;
+    border-radius: 12px;
+    color: #f0f0f0;
+}
+
 /* Termina diseño bolsa de trabajo */
