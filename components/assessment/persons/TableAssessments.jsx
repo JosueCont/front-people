@@ -1,6 +1,8 @@
 import {React, useEffect, useState} from 'react'
 import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row  } from 'antd'
-import { DeleteOutlined, RedoOutlined, RetweetOutlined, EyeOutlined, FileDoneOutlined, FileSyncOutlined, PercentageOutlined } from '@ant-design/icons';
+import { DeleteOutlined, RedoOutlined, RetweetOutlined, 
+  EyeOutlined, FileDoneOutlined, FileSyncOutlined, 
+  PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined } from '@ant-design/icons';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { useRouter } from 'next/router';
 import moment from 'moment/moment';
@@ -36,7 +38,6 @@ const TableAssessments = ({
       let info = infoPerson.filter(item => item.value === router.query.id);
       setDataUser(info?.at(-1));
       let data = { person: router.query.id }
-      // let data = {person: "a042f8935bc742f7a3404ebd7f09656d"}
       setIdUser(data);
       getUserListAssessments(data)
     }
@@ -45,18 +46,26 @@ const TableAssessments = ({
   const getUserListAssessments = async (data) =>{
     try {
       let response = await WebApiAssessment.getUserListAssessments(data);
-      let dataOriginal = response.data.map((item)=>{
-        return [item.id,item]
-      })
-      var dataMap = new Map(dataOriginal);
-      let dataToTable = [...dataMap.values()];
-      setDataAssessments(dataToTable);
-      setfullAssessments(dataToTable);
-      console.log("assessments",dataToTable)
-      calculateIndicatorsCards(dataToTable)
-      calculateProgressCard(dataToTable)
-      setNumberAssessments(dataToTable.length)
-      // setDataAssessments(dataExample);
+      console.log("assessments sin eliminar", response.data);
+      let filterGroupal = response.data.reduce((prev, current) =>{
+        let isDuplicated = prev.some(item => item.id === current.id);
+        if(isDuplicated){
+          return prev.map(record =>{
+            if(record.id == current.id && record.origin ==="group"){
+              return{...record, is_duplicated: true};
+            }
+            return record;
+          })
+        }
+        return [...prev, current];
+      },[])
+      console.log("resultados",filterGroupal);
+      
+      setDataAssessments(filterGroupal);
+      setfullAssessments(filterGroupal);
+      calculateIndicatorsCards(filterGroupal)
+      calculateProgressCard(filterGroupal)
+      setNumberAssessments(filterGroupal.length)
     } catch (e) {
       console.error(e.name + ": " + e.message);
     }
@@ -242,24 +251,28 @@ const TableAssessments = ({
     {
         title: 'Evaluación',
         render: (record) => {
-          return <>
+          return record?.is_duplicated ? 
+          <>
               <span>{record.name} ({record.applys.length})</span>
-              {/* <DeleteOutlined style={{color:"red", cursor:"pointer"}} /> */}
-            </> ;
+              <Tooltip title="Asignada de manera individual"><SolutionOutlined style={{color:"#F99543", marginLeft:"8px"}} /></Tooltip> 
+          </> 
+            : <span>{record.name} ({record.applys.length})</span>;
         }
     },
     {
+      title: 'Grupo de evaluaciones',
+      render: (record) => {
+        return record?.group ? <span>{record.group.name}</span> : <span></span> ;
+      }
+  },
+    {
       title: 'Fecha inicio evaluación',
-      // dataIndex: "apply_date",
-      // render: record => record != null ? <span>{moment.parseZone(record).format('LL')}</span> : <span></span>
       render: (record) => {
         return record?.applys[0]?.apply_date != null ? <span>{moment.parseZone(record?.applys[0]?.apply_date).format('LL')}</span> : <span></span>;
       }
     },
     {
       title: 'Fecha fin evaluación',
-      // dataIndex: "end_date",
-      // render: record => record != null ? <span>{moment.parseZone(record).format('LL')}</span> : <span></span>
       render: (record) => {
         return record?.applys[0]?.end_date != null ? <span>{moment.parseZone(record?.applys[0]?.end_date).format('LL')}</span> : <span></span>;
       }
@@ -284,18 +297,21 @@ const TableAssessments = ({
     },
     {
       title: 'Progreso',
-      render: record => <span>{record?.applys[0]?.progress}%</span>,
+      render: (record) => {
+        return record?.applys[0]?.progress ? <span>{record?.applys[0]?.progress}%</span> : <span></span>;
+      }
     },
     {
       title: 'Acciones',
       render: (record) => {
         let isEmpty = record.applys.filter(item => item.status == 0)
+        let applysFinalized = record.applys.filter(item => item.status == 2)
         return (
           <>
             <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
               { isEmpty.length === 0 &&
                 <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalRestart(record)}>
-                  <Tooltip title="Reasignar evaluación">
+                  <Tooltip title="Contestar evaluación de nuevo">
                   <RetweetOutlined />
                   </Tooltip>
                 </Button>
@@ -314,7 +330,7 @@ const TableAssessments = ({
                   </Tooltip>
                 </Button>
               }
-              { record?.applys.length > 0 &&
+              { record?.applys[0]?.status != 2 && record?.applys.length > 0 &&
                 <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record?.applys[0]?.id)}>
                   <Tooltip title="Eliminar evaluación">
                     <DeleteOutlined/>
@@ -387,17 +403,11 @@ const TableAssessments = ({
       }
     })
     let total = percent * progress;
-    console.log("progresso:",total.toFixed(2))
     setAssessmentsProgress(`${total.toFixed(2)}%`)
   }
   
   const expandedRowRender = (item) => {
     const columnsHistory = [
-      {
-          title: 'ID',
-          dataIndex: 'id',
-          key: 'id',
-      },
       {
           title: 'Fecha inicio evaluación',
           dataIndex: "apply_date",
@@ -430,55 +440,84 @@ const TableAssessments = ({
       {
         title: 'Progreso',
         dataIndex: "progress",
-        render: record => <span>{record}%</span>,
+        render: record => record ? <span>{record}%</span> : <span></span>,
       },
       {
         title: 'Acciones',
         render: (record) => {
-          if(record.status == 0){
-            return(
-              <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
-                <Tooltip title="Eliminar evaluación">
-                  <DeleteOutlined />
-                </Tooltip>
-              </Button>
-            )
-          }else if(record.status == 1) {
-            return(
-              <>
-                <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
+          return (
+            <>
+              <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
+                { record.status === 1 &&
                   <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record.id)}>
                     <Tooltip title="Reiniciar evaluación">
                       <RedoOutlined />
                     </Tooltip>
                   </Button>
-                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
-                    <Tooltip title="Eliminar evaluación">
-                      <DeleteOutlined/>
-                    </Tooltip>
-                  </Button>
-                </div>
-              </>
-            )
-          }else if(record.status ==2) {
-            return(
-              <>
-                <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
+                }
+                { record.status === 2 &&
                   <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(item,record)}>
                     <Tooltip title="Ver resultados">
                       <EyeOutlined />
                     </Tooltip>
                   </Button>
+                }
+                { record.status != 2 && record.status == 0 &&
                   <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
                     <Tooltip title="Eliminar evaluación">
-                      <DeleteOutlined/>
+                      <DeleteOutlined />
                     </Tooltip>
                   </Button>
-                </div>
-              </>
-            )
-          }
+                }
+              </div>
+            </>
+          )
         }
+        // render: (record) => {
+        //   if(record.status == 0){
+        //     return(
+        //       <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
+        //         <Tooltip title="Eliminar evaluación">
+        //           <DeleteOutlined />
+        //         </Tooltip>
+        //       </Button>
+        //     )
+        //   }else if(record.status == 1) {
+        //     return(
+        //       <>
+        //         <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
+        //           <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record.id)}>
+        //             <Tooltip title="Reiniciar evaluación">
+        //               <RedoOutlined />
+        //             </Tooltip>
+        //           </Button>
+        //           <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
+        //             <Tooltip title="Eliminar evaluación">
+        //               <DeleteOutlined/>
+        //             </Tooltip>
+        //           </Button>
+        //         </div>
+        //       </>
+        //     )
+        //   }else if(record.status ==2) {
+        //     return(
+        //       <>
+        //         <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
+        //           <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(item,record)}>
+        //             <Tooltip title="Ver resultados">
+        //               <EyeOutlined />
+        //             </Tooltip>
+        //           </Button>
+        //           <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
+        //             <Tooltip title="Eliminar evaluación">
+        //               <DeleteOutlined/>
+        //             </Tooltip>
+        //           </Button>
+        //         </div>
+        //       </>
+        //     )
+        //   }
+        // }
       },
     ];
     return <Table columns={columnsHistory}
@@ -496,8 +535,8 @@ const TableAssessments = ({
             <Row gutter={[16,16]} style={{marginBottom:"16px"}}>
               <Col
                 xs={24}
-                md={24}
-                lg={24}
+                md={12}
+                lg={12}
                 style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -515,11 +554,11 @@ const TableAssessments = ({
                     placeholder={'Buscar por nombre'}
                     value={nameAssessment}
                     onChange={onFilterName}
-                    style={{width:"50%"}}
+                    style={{width:"100%"}}
                   />
                 }
                 { typeFilter == 2 &&
-                  <Select style={{width:"50%"}} defaultValue={4} value={statusAssessment} onChange={onFilterStatus}>
+                  <Select style={{width:"100%"}} defaultValue={4} value={statusAssessment} onChange={onFilterStatus}>
                     <Option value={4}>Todos</Option>
                     <Option value={0}>Pendiente</Option>
                     <Option value={1}>Iniciada</Option>
@@ -527,8 +566,58 @@ const TableAssessments = ({
                   </Select>
                 }
               </Col>
+              <Col
+                xs={24}
+                md={12}
+                lg={12}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    justifyContent:"end"
+                }}
+              >
+                <Row gutter={[16,16]}>
+                  <Col xs={12} sm={12} md={12} lg={8} xl={8}>
+                    <Tooltip title="Evaluaciones completadas">
+                      <div>
+                        <CardGeneric
+                          title={assessmentsComplete}
+                          icon={<FileDoneOutlined />}
+                          color={'#121212'}
+                          numcard={''}
+                        />
+                      </div>
+                    </Tooltip>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} lg={8} xl={8}>
+                    <Tooltip title="Evaluaciones por contestar">
+                        <div>
+                          <CardGeneric
+                            title={assessmentsToAnswer}
+                            icon={<FileSyncOutlined />}
+                            color={'#121212'}
+                            numcard={''}
+                          />
+                        </div>
+                    </Tooltip>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} lg={8} xl={8}>
+                    <Tooltip title="Porcentaje de avance">
+                      <div>
+                        <CardGeneric
+                          title={assessmentsProgress}
+                          icon={<PercentageOutlined />}
+                          color={'#121212'}
+                          numcard={''}
+                        />
+                      </div>
+                    </Tooltip>
+                  </Col>
+                </Row>
+              </Col>
             </Row>
-            <Row gutter={[16,16]}>
+            {/* <Row gutter={[16,16]}>
               <Col xs={12} sm={12} md={12} lg={8} xl={8}>
                 <CardGeneric
                   title={'Evaluaciones completadas'}
@@ -553,20 +642,28 @@ const TableAssessments = ({
                   numcard={assessmentsProgress}
                 />
               </Col>
-            </Row>
-            <Table
-              rowKey={record => record.id}
-              columns={columnsAssessments}
-              expandable={{
-              expandedRowRender,
-              defaultExpandedRowKeys: ["id"],
-              }}
-              dataSource={dataAssessments}
-              size="small"
-              style={{marginTop:"16px"}}
-              locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Sin asignaciones" />}}
-            />
+            </Row> */}
         </div>
+        <Table
+          rowKey={record => record.id}
+          columns={columnsAssessments}
+          expandable={{
+          expandedRowRender,
+          defaultExpandedRowKeys: ["id"],
+          showExpandColumn: true,
+          expandIcon: ({ expanded, onExpand, record }) =>
+          record.applys.length >= 2 ? (
+            expanded ? <MinusSquareOutlined onClick={e => onExpand(record, e)} /> : 
+            <PlusSquareOutlined onClick={e => onExpand(record, e)} />
+          ) : (
+            null
+          )
+          }}
+          dataSource={dataAssessments}
+          size="small"
+          style={{marginTop:"16px"}}
+          locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Sin asignaciones" />}}
+        />
     </>
   )
 }
