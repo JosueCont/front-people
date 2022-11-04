@@ -22,9 +22,9 @@ export const useProcessInfo = ({
             education = Object.assign(info_vacant.education_and_competence);
             delete features.education_and_competence;
         }
-        if(info_vacant.salary_and_benefits_set){
-            salary = Object.assign(info_vacant.salary_and_benefits_set);
-            delete features.salary_and_benefits_set;
+        if(info_vacant.salary_and_benefits){
+            salary = Object.assign(info_vacant.salary_and_benefits);
+            delete features.salary_and_benefits;
         }
         if(info_vacant.recruitment_process){
             recruitment = Object.assign(info_vacant.recruitment_process);

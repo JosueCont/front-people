@@ -105,6 +105,7 @@ const ModalClients = ({
                 form={formClient}
                 onFinish={onFinish}
                 onFinishFailed={onFailure}
+                initialValues={{is_active: true}}
             >
                 <Row>
                     <Col span={24} className='modal-tabs-clients'>

@@ -59,7 +59,7 @@ const TabDocuments = ({
     return (
         <Row gutter={[24,8]} className='tab-documents'>
            <Col span={24} className={'head-list-files'}>
-                <p style={{marginBottom: 0}}>Archvios seleccionados ({newDocs.length+prevDocs.length})</p>
+                <p style={{marginBottom: 0}}>Archivos seleccionados ({newDocs.length+prevDocs.length})</p>
                 <Button
                     size={'small'}
                     icon={<UploadOutlined />}

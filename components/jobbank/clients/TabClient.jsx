@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Row, Col, Form, Input, Select, Button} from 'antd';
+import { Row, Col, Form, Input, Select, Button, Checkbox} from 'antd';
 import {
     ruleRequired,
     ruleWhiteSpace,
@@ -10,10 +10,18 @@ import { useSelector } from 'react-redux';
 
 const TabClient = ({ sizeCol = 12 }) =>{
 
-    const list_sectors = useSelector(state => state.jobBankStore.list_sectors);
+    const {
+        list_sectors,
+        load_sectors
+    } = useSelector(state => state.jobBankStore);
 
     return (
         <Row gutter={[24,0]} className='tab-client'>
+            <Col span={12} style={{display: 'none'}}>
+                <Form.Item name='is_active' valuePropName='checked'>
+                    <Checkbox>¿Está activo?</Checkbox>
+                </Form.Item>
+            </Col>
             <Col span={sizeCol}>
                 <Form.Item
                     name='name'
@@ -45,6 +53,8 @@ const TabClient = ({ sizeCol = 12 }) =>{
                 <Form.Item name='sector'>
                     <Select
                         allowClear
+                        disabled={load_sectors}
+                        loading={load_sectors}
                         placeholder='Seleccione un sector'
                         notFoundContent='No se encontraron resultados'
                     >
@@ -61,7 +71,7 @@ const TabClient = ({ sizeCol = 12 }) =>{
                     name='website'
                     rules={[ruleURL]}
                 >
-                    <Input placeholder='Escriba la url de su sitio'/>
+                    <Input placeholder='Escriba la URL de su sitio'/>
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>
@@ -79,7 +89,14 @@ const TabClient = ({ sizeCol = 12 }) =>{
                     rules={[ruleWhiteSpace]}
                     // style={{marginBottom: 0}}
                 >
-                    <Input placeholder='Comentarios'/>
+                    <Input.TextArea
+                        maxLength={400}
+                        autoSize={{
+                            minRows: 3,
+                            maxRows: 3
+                        }}
+                        placeholder='Comentarios'
+                    />
                 </Form.Item>
             </Col>
         </Row>

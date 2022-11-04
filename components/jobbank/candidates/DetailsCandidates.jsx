@@ -7,23 +7,29 @@ import {
     Tabs,
     Form,
     Spin,
-    message
+    message,
+    Divider
 } from 'antd';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import FormProfiles from './FormProfiles';
-import { getInfoProfile, setLoadProfiles } from '../../../redux/jobBankDuck';
-import { useProcessInfo } from './hook/useProcessInfo';
+import TabGeneral from './TabGeneral';
+import TabSchool from './TabSchool';
+import TabExperience from './TabExperience';
+import TabPositions from './TabPositions';
+import {
+    getInfoCandidate,
+    setLoadCandidates
+} from '../../../redux/jobBankDuck';
 
-const DetailsProfiles = ({
+const DetailsCandidates = ({
     action,
     currentNode,
-    info_profile,
-    load_profiles,
-    setLoadProfiles,
-    getInfoProfile
+    load_candidates,
+    info_candidate,
+    getInfoCandidate,
+    setLoadCandidates
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -34,93 +40,65 @@ const DetailsProfiles = ({
     };
     const router = useRouter();
     const btnSave = useRef(null);
-    const [formProfile] = Form.useForm();
-    const { setFieldsValue, resetFields } = formProfile;
-    const [disabledClient, setDisabledClient] = useState(false);
-    const [valuesDefault, setValuesDefault] = useState({});
-    const [disabledField, setDisabledField] = useState(false);
+    const [formCandidate] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const { formatData, createData } = useProcessInfo();
 
     useEffect(()=>{
-        if(router.query.customer && action == 'add'){
-            setDisabledClient(true)
-            let customer = router.query.customer;
-            setFieldsValue({ customer })
-        } else setDisabledClient(false)
-    },[router])
-
-    useEffect(()=>{
-        if(Object.keys(info_profile).length > 0 && action == 'edit'){
+        if(Object.keys(info_candidate).length > 0 && action == 'edit'){
             setValuesForm()
         }
-    },[info_profile])
+    },[info_candidate])
 
     const setValuesForm = () => {
-        let result = formatData(info_profile.fields_name);
-        let all_info = {
-            ...result,
-            name: info_profile.name,
-            customer: info_profile.customer
-        };
-        if(info_profile.profile_type){
-            all_info['profile_type'] = info_profile.profile_type.id;
-            setDisabledField(!info_profile.profile_type.form_enable);
-        }
-        setValuesDefault(all_info);
-        setFieldsValue(all_info);
+        formCandidate.setFieldsValue({});
     }
 
     const onFinisUpdate = async (values) =>{
         try {
-            await WebApiJobBank.updateProfile(info_profile.id, {...values, node: currentNode.id});
-            message.success('Perfil actualizado');
-            getInfoProfile(info_profile.id)
-            setDisabledField(false)
+            // await WebApiJobBank.updateCandidate(info_candidate.id, {...values, node: currentNode.id});
+            message.success('Candidato actualizado');
+            getInfoCandidate(info_candidate.id)
         } catch (e) {
-            message.error('Perfil no actualizado');
-            setLoadProfiles(false)
+            message.error('Candidato no actualizado');
+            setLoadCandidates(false)
             console.log(e)
         }
     }
 
     const onFinishCreate = async (values) =>{
         try {
-            let response = await WebApiJobBank.createProfile({...values, node: currentNode.id});
-            message.success('Perfil registrado')
-            actionSaveAnd(response.data.id)
+            // let response = await WebApiJobBank.createCandidate({...values, node: currentNode.id});
+            message.success('Candidato registrado')
+            actionSaveAnd('l9zxzubn31h0qdbbb')
         } catch (e) {
-            message.error('Perfil no regustrado')
+            message.error('Candidato no regustrado')
             setLoading({})
-            setLoadProfiles(false)
+            setLoadCandidates(false)
             console.log(e)
         }
     }
 
     const onFinish = (values) => {
-        setLoadProfiles(true)
-        const bodyData = createData(values);
+        setLoadCandidates(true)
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
         };
-        actionFunction[action](bodyData);
+        actionFunction[action](values);
     }
 
     const actionAddCreate = () =>{
-        setDisabledField(false)
-        resetFields();
-        setLoadProfiles(false)
+        formCandidate.resetFields();
         setLoading({})
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: () => router.push('/jobbank/profiles'),
+            back: () => router.push('/jobbank/candidates'),
             create: actionAddCreate,
             edit: ()=> router.replace({
-                pathname: '/jobbank/profiles/edit',
+                pathname: '/jobbank/candidates/edit',
                 query: { id }
             })
         }
@@ -137,46 +115,75 @@ const DetailsProfiles = ({
     return (
         <Card>
             <Row gutter={[16,16]}>
-                <Col span={24} className='title-action-content title-action-border'>
+                <Col span={24} className='title-action-content'>
                     <p className='title-action-text'>
                         {action == 'add'
-                            ? 'Registrar nuevo perfil'
-                            : 'Información del perfil'
+                            ? 'Registrar nuevo candidato'
+                            : 'Información del candidato'
                         }
                     </p>
                     <Button
-                        onClick={()=> router.push('/jobbank/profiles')}
+                        onClick={()=> router.push('/jobbank/candidates')}
                         icon={<ArrowLeftOutlined />}
                     >
                         Regresar
                     </Button>
                 </Col>
                 <Col span={24}>
-                    <Spin spinning={load_profiles}>
-                        <Form
-                            id='form-profiles'
-                            form={formProfile}
-                            onFinish={onFinish}
-                            requiredMark={false}
-                            onFinishFailed={()=> setLoading({})}
-                            initialValues={{profile_type: 'open_fields'}}
-                        >
-                            <FormProfiles
-                                valuesDefault={valuesDefault}
-                                formProfile={formProfile}
-                                disabledClient={disabledClient}
-                                disabledField={disabledField}
-                                setDisabledField={setDisabledField}
-                            />
-                        </Form>
-                    </Spin>
+                    <Form
+                        className='tabs-vacancies'
+                        id='form-candidates'
+                        layout='vertical'
+                        form={formCandidate}
+                        onFinish={onFinish}
+                        requiredMark={false}
+                        onFinishFailed={()=> setLoading({})}
+                    >
+                        <Tabs type='card'>
+                            <Tabs.TabPane
+                                tab='Datos generales'
+                                key='1'
+                            >
+                                <Spin spinning={load_candidates}>
+                                    <TabGeneral/>
+                                </Spin>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane
+                                tab='Educación'
+                                forceRender
+                                key='2'
+                            >
+                                <Spin spinning={load_candidates}>
+                                    <TabSchool/>
+                                </Spin>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane
+                                tab='Experiencia y especialización'
+                                forceRender
+                                key='3'
+                            >
+                                <Spin spinning={load_candidates}>
+                                    <TabExperience/>
+                                </Spin>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane
+                                tab='Últimas posiciones'
+                                forceRender
+                                key='4'
+                            >
+                                <Spin spinning={load_candidates}>
+                                    <TabPositions/>
+                                </Spin>
+                            </Tabs.TabPane>
+                        </Tabs>    
+                    </Form>
                 </Col>
                 <Col span={24} className='tab-vacancies-btns'>
                     {action == 'add' ? (
                         <>
                             <button
                                 htmlType='submit'
-                                form='form-profiles'
+                                form='form-candidates'
                                 ref={btnSave}
                                 style={{display:'none'}}
                             />
@@ -205,8 +212,8 @@ const DetailsProfiles = ({
                     ):(
                         <Button
                             htmlType='submit'
-                            form='form-profiles'
-                            loading={load_profiles}
+                            form='form-candidates'
+                            loading={load_candidates}
                         >
                             Guardar
                         </Button>
@@ -219,15 +226,15 @@ const DetailsProfiles = ({
 
 const mapState = (state) =>{
     return{
-        load_profiles: state.jobBankStore.load_profiles,
-        info_profile: state.jobBankStore.info_profile,
+        load_candidates: state.jobBankStore.load_candidates,
+        info_candidate: state.jobBankStore.info_candidate,
         currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
     mapState, {
-        setLoadProfiles,
-        getInfoProfile
+        getInfoCandidate,
+        setLoadCandidates
     }
-)(DetailsProfiles);
+)(DetailsCandidates);
