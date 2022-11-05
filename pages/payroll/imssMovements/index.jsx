@@ -19,10 +19,10 @@ const ImssMovements = ({ ...props }) => {
 
   useEffect(() => {
     props.currentNode && setCurrentNodeId(props.currentNode.id)
-  },[])
+  },[props.currentNode])
 
   useEffect(() => {
-    currentNodeId && patronalSelected && getFiles()
+    patronalSelected && getFiles()
   },[patronalSelected])
 
   const getFiles = () => {
