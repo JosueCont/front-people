@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux';
 import { getFullName } from '../../../utils/functions';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 
-const FormStrategies = ({ clientSelected }) => {
+const FormStrategies = ({ formStrategies }) => {
 
     const {
         load_clients_options,
@@ -31,8 +31,10 @@ const FormStrategies = ({ clientSelected }) => {
         load_persons,
         persons_company
     } = useSelector(state => state.userStore);
+    const clientSelected = Form.useWatch('customer', formStrategies);
     
     const optionsByClient = () =>{
+        formStrategies.setFieldsValue({vacant: null});
         if(!clientSelected) return [];
         const options = item => item.customer?.id === clientSelected;
         return list_vacancies_options.filter(options);
@@ -179,7 +181,7 @@ const FormStrategies = ({ clientSelected }) => {
                     <Select
                         allowClear
                         showSearch
-                        disabled={load_vacancies_options}
+                        disabled={optionsByClient().length <= 0}
                         loading={load_vacancies_options}
                         placeholder='Vacante'
                         notFoundContent='No se encontraron resultados'
@@ -308,7 +310,6 @@ const FormStrategies = ({ clientSelected }) => {
                 <Form.Item
                     name='job_bank'
                     label='Bolsas de empleo'
-                    rules={[ruleWhiteSpace]}
                 >
                     <Select
                         mode='multiple'

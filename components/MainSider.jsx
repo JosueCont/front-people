@@ -292,7 +292,7 @@ const MainSider = ({
             getItem("Estrategias", "jb_strategies"),
             getItem("Perfiles de vacante", "jb_profiles"),
             getItem("Candidatos", "jb_candidates"),
-            getItem("Configuraciones", "jb_settings")
+            // getItem("Configuraciones", "jb_settings")
           ];
           items.push(
             getItem("Bolsa de trabajo", "job_bank", <WorkOutline />, children)
