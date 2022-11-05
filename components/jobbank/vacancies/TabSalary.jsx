@@ -59,7 +59,7 @@ const TabSalary = () => {
       <Col span={8}>
         <Form.Item
           name='economic_benefits_description'
-          label='Descripción de las prestaciones'
+          label='Prestaciones descripción'
           rules={[ruleWhiteSpace]}
         >
           <Input placeholder='Especifica las prestaciones'/>

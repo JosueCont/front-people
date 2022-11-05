@@ -206,23 +206,6 @@ export const setLoadCandidates = (fetching = false) => (dispatch) =>{
     dispatch({type: SET_CANDIDATES_LOAD, payload: fetching})
 }
 
-export const getGeneralJobBank = (node, config) => async (dispatch) =>{
-    try {
-        const isActive = (item) => item.app == 'JOBBANK' && item.is_active;
-        let isActive_ = config.applications?.some(isActive);
-        if(!isActive_) return false;
-        dispatch(getClientsOptions(node));
-        dispatch(getVacanciesOptions(node));
-        dispatch(getMainCategories(node));
-        dispatch(getSubCategories(node));
-        dispatch(getCompetences(node));
-        dispatch(getSectors(node));
-        dispatch(getAcademics(node));
-    } catch (e) {
-        console.log(e)
-    }
-}
-
 export const getClients = (node, query = '', page = 1) => async (dispatch) => {
     const typeFunction = { type: SET_CLIENTS, payload: {}, fetching: false, page_num: page };
     dispatch({...typeFunction, fetching: true})
