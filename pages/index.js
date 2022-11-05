@@ -115,7 +115,7 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
             width: 75% !important;
             margin: 0 auto;
             padding: 20px 50px 50px !important;
-            min-height: 510px;
+            /*min-height: 510px;*/
             background: #fff 0 0 no-repeat padding-box;
             box-shadow: 0 0 50px rgb(42 89 152 / 5%);
             border-radius: 10px;
@@ -129,6 +129,15 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
             letter-spacing: 0px;
             color: #ffffff !important;
             opacity: 1;
+          }
+
+          .login-text-bottom {
+            width: 75%;
+            margin: 25px auto 0;
+            text-align: center;
+            padding: 0 20px;
+            font-size: 10px;
+            color: white;
           }
 
           .textBottomblack {
@@ -227,6 +236,36 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
               width: 100% !important;
             }
           }
+
+          .login-form-title {
+            font-size: 30px !important;
+            text-align: center;
+            color: #F99543;
+            letter-spacing: 0;
+            font-weight: 700;
+            margin-bottom: 30px;
+            line-height: 35px;
+          }
+
+          .login-form input::placeholder {
+            text-align: center !important;
+          }
+
+          .login-form input {
+            text-align: center !important;
+          }
+
+          .login-form-button-in.ant-btn-primary {
+            background-color: #F99543 !important;
+            color: white !important;
+            border-color: #F99543 !important;
+            font-weight: bold !important;
+          }
+
+          .login-form-button-in:disabled {
+            opacity: 0.5;
+            color: #fff;
+          }
         `}
       />
       <Helmet>
@@ -267,11 +306,11 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
                   />
                 </div>
 
-                <p className={"textBottom"}>
+                {/* <p className={"textBottom"}>
                   KHOR A People Management Framework y PPP Personal Proficiency
                   Profile, son marcas registradas y propiedad de @-Hiuman, S.A.
                   de C.V.
-                </p>
+                </p> */}
               </div>
             </Col>
             <Col xs={24} md={0} sm={0}>
@@ -292,22 +331,29 @@ const Home = ({ pageTitle = "KHOR Plus", ...props }) => {
               </div>
             </Col>
 
-            <Col xs={24} md={12} sm={24}>
-              {recoverPasswordShow ? (
-                <div className={"divform"}>
-                  <PasswordRecover
-                    generalConfig={props.config}
-                    setRecoverPasswordShow={setRecoverPasswordShow}
-                  />
+            <Col xs={24} md={12} sm={24} style={{justifyContent: "center", alignItems: "center"}}>
+              <div>
+                {recoverPasswordShow ? (
+                  <div className={"divform"}>
+                    <PasswordRecover
+                      generalConfig={props.config}
+                      setRecoverPasswordShow={setRecoverPasswordShow}
+                    />
+                  </div>
+                ) : (
+                  <div className={"divform"}>
+                    <LoginForm
+                      generalConfig={props.config}
+                      setRecoverPasswordShow={setRecoverPasswordShow}
+                    />
+                  </div>
+                )}
+                <p className={"login-text-bottom"}>
+                    KHOR A People Management Framework y PPP Personal Proficiency
+                    Profile, son marcas registradas y propiedad de @-Hiuman, S.A.
+                    de C.V.
+                  </p>
                 </div>
-              ) : (
-                <div className={"divform"}>
-                  <LoginForm
-                    generalConfig={props.config}
-                    setRecoverPasswordShow={setRecoverPasswordShow}
-                  />
-                </div>
-              )}
             </Col>
 
             <Col xs={24} md={0} sm={0}>
