@@ -1,16 +1,35 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
-import { getInfoCandidate } from '../../../redux/jobBankDuck';
+import {
+    getInfoCandidate,
+    getMainCategories,
+    getSubCategories,
+    getCompetences,
+    getSectors
+} from '../../../redux/jobBankDuck';
 import AutoRegister from '../../../components/jobbank/AutoRegister';
 import RegisterCandidate from '../../../components/jobbank/candidates/RegisterCandidate';
 
 const candidate = ({
     currentNode,
-    getInfoCandidate
+    getInfoCandidate,
+    getSectors,
+    getMainCategories,
+    getSubCategories,
+    getCompetences
 }) => {
 
     const router = useRouter();
+
+    useEffect(()=>{
+        if(currentNode){
+            getSectors(currentNode.id);
+            getMainCategories(currentNode.id);
+            getSubCategories(currentNode.id);
+            getCompetences(currentNode.id);
+        }
+    },[currentNode])
 
     // useEffect(()=>{
     //     if(router.query.id) getInfoCandidate(router.query.id);
@@ -29,4 +48,12 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState, { getInfoCandidate })(candidate);
+export default connect(
+    mapState, {
+        getInfoCandidate,
+        getSectors,
+        getMainCategories,
+        getSubCategories,
+        getCompetences
+    }
+)(candidate);

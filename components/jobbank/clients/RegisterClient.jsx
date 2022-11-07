@@ -22,10 +22,10 @@ const RegisterClient = ({
     const [loading, setLoading] = useState(false);
     const [prevDocs, setPrevDocs] = useState([]);
     const [newDocs, setNewDocs] = useState([]);
-
+    
     const createData = (obj) =>{
         let dataClient = new FormData();
-        dataClient.append('node', currentNode?.id);
+        dataClient.append('node', currentNode.id);
         dataClient.append('auto_register', true);
         if(newDocs.length > 0) newDocs.map(item => dataClient.append('files', item));
         Object.entries(obj).map(([key, val])=>{ if(val) dataClient.append(key, val) });
@@ -48,7 +48,7 @@ const RegisterClient = ({
             onSuccessCreate()
         } catch (e) {
             console.log(e)
-            if(e.response?.data['rfc']) Modal.error({ content: 'Ya existe un cliente con el mismo RFC' });
+            if(e.response?.data['rfc']) Modal.error({ content: 'RFC ya registrado' });
             else Modal.error({ content: 'Cliente no registrado' });
             setLoading(false)
         }

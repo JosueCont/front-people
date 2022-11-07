@@ -425,7 +425,11 @@ export const getWork = ({ work_title }) => {
 };
 
 export const validateNum = (e) =>{
-  if(e.which != 8 && isNaN(String.fromCharCode(e.which))){
-    e.preventDefault()
-  }
+  if(e.which != 8
+    && isNaN(String.fromCharCode(e.which))
+  ) e.preventDefault();
+  if(e.target.maxLength
+    && e.target.value.length
+    == e.target.maxLength
+  ) e.preventDefault();
 }

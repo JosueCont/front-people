@@ -426,7 +426,7 @@ export const optionsTypeContract = [
 export const optionsGenders = [
   {value: 1, key: 1, label: 'Masculino'},
   {value: 2, key: 2, label: 'Femenino'},
-  {value: 3, key: 3, label: 'Otro'}
+  {value: 3, key: 3, label: 'Indistinto'}
 ];
 
 export const optionsLevelAcademic = [
