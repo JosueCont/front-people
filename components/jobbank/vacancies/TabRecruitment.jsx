@@ -89,6 +89,7 @@ const TabRecruitment = ({
               <Input.Group compact>
                 <Input
                   placeholder='Nombre'
+                  maxLength={50}
                   value={person}
                   onChange={e => setPerson(e.target.value)}
                   style={{
@@ -99,6 +100,7 @@ const TabRecruitment = ({
                 />
                 <Input
                   placeholder='Posición'
+                  maxLength={50}
                   value={position}
                   onChange={e=> setPosition(e.target.value)}
                   style={{
@@ -123,8 +125,9 @@ const TabRecruitment = ({
             >
               <InputNumber
                 type='number'
+                maxLength={2}
                 controls={false}
-                placeholder='Número de entrevistas'
+                placeholder='¿Cuántas entrevistas se realizarán?'
                 onKeyPress={validateNum}
                 style={{
                   width: '100%',
@@ -148,7 +151,7 @@ const TabRecruitment = ({
               label='Motivos potenciales al rechazo'
               rules={[ruleWhiteSpace]}
             >
-              <Input placeholder='Motivos potenciales al rechazo'/>
+              <Input placeholder='Especificar los motivos'/>
             </Form.Item>
           </Col>
           {/* <Col span={12}>

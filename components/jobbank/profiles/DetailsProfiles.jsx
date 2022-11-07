@@ -90,8 +90,9 @@ const DetailsProfiles = ({
             let response = await WebApiJobBank.createProfile({...values, node: currentNode.id});
             message.success('Perfil registrado')
             actionSaveAnd(response.data.id)
+            resetFields();
         } catch (e) {
-            message.error('Perfil no regustrado')
+            message.error('Perfil no registrado')
             setLoading({})
             setLoadProfiles(false)
             console.log(e)
@@ -99,8 +100,14 @@ const DetailsProfiles = ({
     }
 
     const onFinish = (values) => {
-        setLoadProfiles(true)
+        setLoadProfiles(true);
         const bodyData = createData(values);
+        if(Object.keys(bodyData.fields_name).length <= 0){
+            message.error('Seleccionar los campos del perfil');
+            setLoadProfiles(false);
+            setLoading({})
+            return false;
+        }
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
@@ -110,14 +117,18 @@ const DetailsProfiles = ({
 
     const actionAddCreate = () =>{
         setDisabledField(false)
-        resetFields();
         setLoadProfiles(false)
         setLoading({})
     }
 
+    const actionBack = () =>{
+        if(router.query?.customer) router.push('/jobbank/clients');
+        else router.push('/jobbank/profiles');
+    }
+
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: () => router.push('/jobbank/profiles'),
+            back: actionBack,
             create: actionAddCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/profiles/edit',
@@ -145,7 +156,7 @@ const DetailsProfiles = ({
                         }
                     </p>
                     <Button
-                        onClick={()=> router.push('/jobbank/profiles')}
+                        onClick={()=> actionBack()}
                         icon={<ArrowLeftOutlined />}
                     >
                         Regresar

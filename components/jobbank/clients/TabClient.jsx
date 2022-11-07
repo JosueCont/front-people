@@ -55,7 +55,7 @@ const TabClient = ({ sizeCol = 12 }) =>{
                         allowClear
                         disabled={load_sectors}
                         loading={load_sectors}
-                        placeholder='Seleccione un sector'
+                        placeholder='Seleccionar un sector'
                         notFoundContent='No se encontraron resultados'
                     >
                         {list_sectors.length > 0 && list_sectors.map(item => (
@@ -70,8 +70,9 @@ const TabClient = ({ sizeCol = 12 }) =>{
                 <Form.Item 
                     name='website'
                     rules={[ruleURL]}
+                    help=''
                 >
-                    <Input placeholder='Escriba la URL de su sitio'/>
+                    <Input placeholder='URL de su sitio, iniciar con http(s)://'/>
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>

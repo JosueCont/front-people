@@ -6,11 +6,15 @@ import SearchVacancies from '../../../components/jobbank/vacancies/SearchVacanci
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
-import { getVacancies } from '../../../redux/jobBankDuck';
+import {
+    getVacancies,
+    getClientsOptions
+} from '../../../redux/jobBankDuck';
 
 const index = ({
     getVacancies,
-    currentNode
+    currentNode,
+    getClientsOptions
 }) => {
 
     const router = useRouter();
@@ -18,6 +22,7 @@ const index = ({
     useEffect(()=>{
         if(currentNode){
             getVacancies(currentNode.id);
+            getClientsOptions(currentNode.id);
         }
     },[currentNode])
 
@@ -55,6 +60,7 @@ const mapState = (state) =>{
 
 export default connect(
     mapState,{
-        getVacancies
+        getVacancies,
+        getClientsOptions
     }
 )(withAuthSync(index));

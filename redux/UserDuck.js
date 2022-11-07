@@ -6,7 +6,6 @@ import { doCompanySelectedCatalog, getProfileGroups } from "./catalogCompany";
 import { doCompanySelectedPayroll } from "./payrollDuck";
 import { getCfdiVersion } from "./fiscalDuck";
 import { getListAppsBackdoor } from "./backdoorDuck";
-import { getGeneralJobBank } from "./jobBankDuck";
 
 const initialData = {
   default: true,
@@ -122,7 +121,6 @@ export const companySelected = (data, config) => async (dispatch, getState) => {
       dispatch(getPeopleCompany(response.data.id));
       dispatch(getProfileGroups(response.data.id, config));
       dispatch(getListAppsBackdoor(response.data.id,1))
-      dispatch(getGeneralJobBank(data, config));
       if (config.nomina_enabled) {
         dispatch(doCompanySelectedPayroll(response.data.id));
         dispatch(getCfdiVersion());
@@ -194,6 +192,10 @@ export const resetCurrentnode = () => async (dispatch, getState) => {
     dispatch({ type: COMPANY_SELCTED, payload: null });
   }
 };
+
+export const saveCurrentNode = (data) => async (dispatch) =>{
+  dispatch({ type: COMPANY_SELCTED, payload: data });
+}
 
 export const getPersonsCompany = (data) => async (dispatch, getState) => {
   dispatch({ type: PERSONS_COMPANY, payload: [], fetching: true });

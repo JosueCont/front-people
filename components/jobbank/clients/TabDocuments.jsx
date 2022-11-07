@@ -30,9 +30,9 @@ const TabDocuments = ({
         let nameFile = valueToFilter(files[0].name);
         const existNew = (item) => valueToFilter(item.name) == nameFile;
         const existPrev = (item) => valueToFilter(item.document.split('/').at(-1)) == nameFile;
-        let _existNew = newDocs.some(existNew);
-        let _existPrev = prevDocs.some(existPrev);
-        if(_existNew || _existPrev) return message.error('Archivo existente');
+        let existNew_ = newDocs.some(existNew);
+        let existPrev_ = prevDocs.some(existPrev);
+        if(existNew_ || existPrev_) return message.error('Archivo existente');
         let newList = [...newDocs, files[0]];
         setNewDocs(newList)
     }
