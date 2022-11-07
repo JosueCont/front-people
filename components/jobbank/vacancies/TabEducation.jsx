@@ -17,7 +17,7 @@ import {
   optionsLangVacant
 } from '../../../utils/constant';
 
-const TabEducation = () => {
+const TabEducation = ({ formVacancies }) => {
 
   const {
     load_competences,
@@ -29,6 +29,19 @@ const TabEducation = () => {
     load_sub_categories,
     list_sub_categories
   } = useSelector(state => state.jobBankStore);
+  const categorySelected = Form.useWatch('main_category', formVacancies);
+
+  const onChangeCategory = (value) =>{
+    formVacancies.setFieldsValue({
+      sub_category: null
+    })
+  }
+
+  const optionsByCategory = () =>{
+    if(!categorySelected) return [];
+    const options = item => item.category === categorySelected;
+    return list_sub_categories.filter(options);
+  }
 
   return (
     <Row gutter={[24,0]}>
@@ -45,6 +58,7 @@ const TabEducation = () => {
             optionFilterProp='children'
             disabled={load_main_categories}
             loading={load_main_categories}
+            onChange={onChangeCategory}
           >
             {list_main_categories?.length > 0 && list_main_categories.map(item => (
               <Select.Option value={item.id} key={item.name}>
@@ -64,11 +78,11 @@ const TabEducation = () => {
             showSearch
             placeholder='Seleccionar una subcategoría'
             notFoundContent='No se encontraron resultados'
-            disabled={load_sub_categories}
+            disabled={optionsByCategory().length <= 0}
             loading={load_sub_categories}
             optionFilterProp='children'
           >
-            {list_sub_categories.length > 0 && list_sub_categories.map(item=> (
+            {optionsByCategory().map(item=> (
               <Select.Option value={item.id} key={item.id}>
                 {item.name}
               </Select.Option>

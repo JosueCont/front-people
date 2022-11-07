@@ -188,7 +188,7 @@ const DetailsVacancies = ({
                                 key='tab_2'
                             >
                                 <Spin spinning={load_vacancies}>
-                                    <TabEducation/>
+                                    <TabEducation formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
