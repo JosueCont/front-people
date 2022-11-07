@@ -28,7 +28,7 @@ export const ruleMinAge = (min)  => {
   return{
     type: 'number',
     min: min,
-    message: `Edad mínima mayor igual a ${min}`
+    message: `Edad mínima mayor o igual a ${min}`
   }
 }
 
@@ -74,6 +74,11 @@ export const fourDecimal = {
   pattern: /^\d+(?:\.\d{1,4})?$/,
   message: "El campo no puede tener más de cuatro decimales",
 };
+
+export const numCommaAndDot = {
+  pattern: /^(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d{1,4})?$/,
+  message: 'Ingrese un valor y/o formato válido'
+}
 
 // {pattern: /^[\d]{0,16}$/, message: "El no  debe tener más de 16 dígitos" }, numero menor  a 16 digitos
 

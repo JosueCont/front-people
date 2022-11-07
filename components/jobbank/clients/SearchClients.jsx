@@ -26,10 +26,14 @@ const SearchClients = ({
             await WebApiJobBank.createClient(values);
             getClients(currentNode?.id)
             message.success('Cliente agregado');
+            return true;
         } catch (e) {
             console.log(e)
-            if(e.response?.data['rfc']) message.error('Ya existe un cliente con el mismo RFC');
-            else message.error('Cliente no agregado');
+            if(e.response?.data['rfc']){
+                message.error('RFC ya registrado');
+                return 'RFC_EXIST';
+            } else message.error('Cliente no agregado');
+            return false;
         }
     }
 

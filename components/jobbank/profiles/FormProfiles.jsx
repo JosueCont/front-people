@@ -35,7 +35,7 @@ const FormProfiles = ({
     const titleSection = {
         main: 'Características del puesto',
         education_and_competence: 'Educación, competencias y habilidades',
-        salary_and_benefits_set: 'Sueldo y prestaciones',
+        salary_and_benefits: 'Sueldo y prestaciones',
         recruitment_process: 'Proceso de reclutamiento'
     }
 
@@ -71,7 +71,7 @@ const FormProfiles = ({
                     style={{marginBottom: 0}}
                     rules={[ruleRequired, ruleWhiteSpace]}
                 >
-                    <Input placeholder='Nombre'/>
+                    <Input maxLength={100} placeholder='Nombre del perfil'/>
                 </Form.Item>
             </Col>
             <Col span={8}>
@@ -81,10 +81,11 @@ const FormProfiles = ({
                     style={{marginBottom: 0}}
                 >
                     <Select
+                        allowClear
                         showSearch
                         disabled={disabledClient}
                         loading={load_clients_options}
-                        placeholder='Cliente'
+                        placeholder='Seleccionar un cliente'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                     >
@@ -97,11 +98,17 @@ const FormProfiles = ({
                 </Form.Item>
             </Col>
             <Col span={6}>
-                <Form.Item name='profile_type' style={{marginBottom: 0}}>
+                <Form.Item
+                    name='profile_type'
+                    rules={[ruleRequired]}
+                    style={{marginBottom: 0}}
+                >
                     <Select
+                        showSearch
+                        allowClear
                         disabled={load_profiles_types}
                         loading={load_profiles_types}
-                        placeholder='Perfil de vacante'
+                        placeholder='Seleccionar un tipo'
                         notFoundContent='No se encontraron resultados'
                         onChange={onChangeType}
                     >

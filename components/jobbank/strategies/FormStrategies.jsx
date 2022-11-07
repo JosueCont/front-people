@@ -17,7 +17,7 @@ import {
 import { validateNum } from '../../../utils/functions';
 import { useSelector } from 'react-redux';
 import { getFullName } from '../../../utils/functions';
-import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
+import { ruleRequired, ruleWhiteSpace, numCommaAndDot } from '../../../utils/rules';
 
 const FormStrategies = ({ formStrategies }) => {
 
@@ -32,9 +32,34 @@ const FormStrategies = ({ formStrategies }) => {
         persons_company
     } = useSelector(state => state.userStore);
     const clientSelected = Form.useWatch('customer', formStrategies);
+    const salary = Form.useWatch('salary', formStrategies);
+    const percent = Form.useWatch('percentage_to_collect', formStrategies);
+
+    useEffect(()=>{
+        getAmount()
+    },[salary, percent])
+
+    const getAmount = () =>{
+        try {
+            let objReset = { amount_to_collect: null };
+            const setVal = (obj) => formStrategies.setFieldsValue(obj);
+            let validation = !salary || !percent; 
+            if(validation) return setVal(objReset);
+            let salary_ = parseFloat(salary.replace(',',''));
+            let amount = (salary_/100) * percent;
+            let formatAmount = amount.toLocaleString("es-MX", {maximumFractionDigits: 4});
+            let objSet = { amount_to_collect: formatAmount };
+            setVal(objSet);
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const onChangeClient = (value) =>{
+        formStrategies.setFieldsValue({vacant: null})
+    }
     
     const optionsByClient = () =>{
-        formStrategies.setFieldsValue({vacant: null});
         if(!clientSelected) return [];
         const options = item => item.customer?.id === clientSelected;
         return list_vacancies_options.filter(options);
@@ -49,7 +74,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <DatePicker
                         style={{width: '100%'}}
-                        placeholder='Fecha de asignación'
+                        placeholder='Seleccionar una fecha'
                         format='YYYY-MM-DD'
                         inputReadOnly
                     />
@@ -65,7 +90,7 @@ const FormStrategies = ({ formStrategies }) => {
                         showSearch
                         disabled={load_persons}
                         loading={load_persons}
-                        placeholder='Reclutador'
+                        placeholder='Seleccionar un reclutador'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                     >
@@ -83,7 +108,7 @@ const FormStrategies = ({ formStrategies }) => {
                     label='Producto'
                     rules={[ruleWhiteSpace, ruleRequired]}
                 >
-                    <Input placeholder='Producto'/>
+                    <Input maxLength={100} placeholder='Ej. Search'/>
                 </Form.Item>
             </Col>
             <Col span={6}>
@@ -92,8 +117,11 @@ const FormStrategies = ({ formStrategies }) => {
                     label='Subproducto'
                 >
                     <Select
-                        placeholder='Subproducto'
+                        allowClear
+                        showSearch
+                        placeholder='Seleccionar un subproducto'
                         notFoundContent='No se encontraron resultados'
+                        optionFilterProp='label'
                         options={optionsSubproduct}
                     />
                 </Form.Item>
@@ -104,8 +132,11 @@ const FormStrategies = ({ formStrategies }) => {
                     label='Tipo de venta'
                 >
                     <Select
-                        placeholder='Tipo de venta'
+                        allowClear
+                        showSearch
+                        placeholder='Seleccionar un tipo'
                         notFoundContent='No se encontraron resultados'
+                        optionFilterProp='label'
                         options={optionsTypeSale}
                     />
                 </Form.Item>
@@ -120,7 +151,7 @@ const FormStrategies = ({ formStrategies }) => {
                         showSearch
                         disabled={load_persons}
                         loading={load_persons}
-                        placeholder='Ejecutivo comercial'
+                        placeholder='Seleccionar un ejecutivo'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                     >
@@ -139,6 +170,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <InputNumber
                         type='number'
+                        maxLength={10}
                         controls={false}
                         placeholder='Número de proyecto'
                         onKeyPress={validateNum}
@@ -160,9 +192,10 @@ const FormStrategies = ({ formStrategies }) => {
                         showSearch
                         disabled={load_clients_options}
                         loading={load_clients_options}
-                        placeholder='Cliente'
+                        placeholder='Seleccionar un cliente'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
+                        onChange={onChangeClient}
                     >
                         {list_clients_options.length > 0 && list_clients_options.map(item => (
                             <Select.Option value={item.id} key={item.id}>
@@ -183,7 +216,7 @@ const FormStrategies = ({ formStrategies }) => {
                         showSearch
                         disabled={optionsByClient().length <= 0}
                         loading={load_vacancies_options}
-                        placeholder='Vacante'
+                        placeholder='Seleccionar una vacante'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                     >
@@ -202,6 +235,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <InputNumber
                         type='number'
+                        maxLength={10}
                         controls={false}
                         placeholder='Número de vacantes'
                         onKeyPress={validateNum}
@@ -218,8 +252,11 @@ const FormStrategies = ({ formStrategies }) => {
                     label='Estatus de la vacante'
                 >
                     <Select
-                        placeholder='Estatus de la vacante'
+                        allowClear
+                        showSearch
+                        placeholder='Seleccionar un estatus'
                         notFoundContent='No se encontraron resultados'
+                        optionFilterProp='label'
                         options={optionsStatusVacant}
                     />
                 </Form.Item>
@@ -227,18 +264,12 @@ const FormStrategies = ({ formStrategies }) => {
             <Col span={6}>
                 <Form.Item
                     name='salary'
-                    label='Sueldo'
-                    rules={[ruleRequired]}
+                    label='Sueldo (MXN)'
+                    rules={[ruleRequired, numCommaAndDot]}
                 >
-                    <InputNumber
-                        type='number'
-                        controls={false}
-                        placeholder='Sueldo'
-                        onKeyPress={validateNum}
-                        style={{
-                            width: '100%',
-                            border: '1px solid black'
-                        }}
+                    <Input
+                        maxLength={20}
+                        placeholder='Ej. 70,500.5999'
                     />
                 </Form.Item>
             </Col>
@@ -246,9 +277,14 @@ const FormStrategies = ({ formStrategies }) => {
                 <Form.Item
                     name='percentage_to_collect'
                     label='Porcentaje a cobrar'
+                    rules={[
+                        {type: 'number', min: 1, message: 'Mínimo de porcentaje mayor o igual a 1'},
+                        {type: 'number', max: 100, message: 'Máximo de porcentaje menor o igual a 100'}
+                    ]}
                 >
                     <InputNumber
                         type='number'
+                        maxLength={3}
                         controls={false}
                         placeholder='Porcentaje a cobrar'
                         onKeyPress={validateNum}
@@ -263,16 +299,12 @@ const FormStrategies = ({ formStrategies }) => {
                 <Form.Item
                     name='amount_to_collect'
                     label='Monto a cobrar'
+                    tooltip='El valor será calculado de manera automática según el sueldo y porcentaje a cobrar.'
                 >
-                    <InputNumber
-                        type='number'
+                    <Input
+                        disabled
                         controls={false}
                         placeholder='Monto a cobrar'
-                        onKeyPress={validateNum}
-                        style={{
-                            width: '100%',
-                            border: '1px solid black'
-                        }}
                     />
                 </Form.Item>
             </Col>
@@ -283,6 +315,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <InputNumber
                         type='number'
+                        maxLength={10}
                         controls={false}
                         placeholder='Estimado de facturación'
                         onKeyPress={validateNum}
@@ -300,7 +333,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <DatePicker
                         style={{width: '100%'}}
-                        placeholder='Fecha de envío de candidatos'
+                        placeholder='Seleccionar una fecha'
                         format='YYYY-MM-DD'
                         inputReadOnly
                     />
@@ -314,8 +347,9 @@ const FormStrategies = ({ formStrategies }) => {
                     <Select
                         mode='multiple'
                         maxTagCount={1}
-                        placeholder='Bolsas de empleo'
+                        placeholder='Seleccionar las opciones'
                         notFoundContent='No se encontraron resultados'
+                        optionFilterProp='label'
                         options={optionsJobBank}
                     />
                 </Form.Item>
@@ -326,7 +360,10 @@ const FormStrategies = ({ formStrategies }) => {
                     label='Búsquedas'
                     rules={[ruleWhiteSpace]}
                 >
-                    <Input placeholder='Búsquedas'/>
+                    <Input
+                        maxLength={100}
+                        placeholder='Ej. Búsqueda del Fruto KAM, La Central Ventas Mayoreo'
+                    />
                 </Form.Item>
             </Col>
             <Col span={6}>
@@ -336,7 +373,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <DatePicker
                         style={{width: '100%'}}
-                        placeholder='Fecha de aceptación de candidatos'
+                        placeholder='Seleccionar una fecha'
                         format='YYYY-MM-DD'
                         inputReadOnly
                     />
@@ -349,7 +386,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <DatePicker
                         style={{width: '100%'}}
-                        placeholder='Fecha de contratación / cancelación'
+                        placeholder='Seleccionar una fecha'
                         format='YYYY-MM-DD'
                         inputReadOnly
                     />
@@ -362,6 +399,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <InputNumber
                         type='number'
+                        maxLength={10}
                         controls={false}
                         placeholder='Días activos de la vacante'
                         onKeyPress={validateNum}
@@ -379,6 +417,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <InputNumber
                         type='number'
+                        maxLength={10}
                         controls={false}
                         placeholder='Días envío de candidatos'
                         onKeyPress={validateNum}
@@ -396,6 +435,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <InputNumber
                         type='number'
+                        maxLength={10}
                         controls={false}
                         placeholder='Días aceptación'
                         onKeyPress={validateNum}
@@ -413,6 +453,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <InputNumber
                         type='number'
+                        maxLength={10}
                         controls={false}
                         placeholder='Días contratación'
                         onKeyPress={validateNum}
@@ -430,7 +471,8 @@ const FormStrategies = ({ formStrategies }) => {
                     rules={[ruleWhiteSpace]}
                 >
                     <Input.TextArea
-                        placeholder='Empresas target'
+                        placeholder='Ej. Empresas del sector de consumo de alimentos y bebida'
+                        maxLength={400}
                         autoSize={{
                             minRows: 4,
                             maxRows: 4,
@@ -446,6 +488,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <Input.TextArea
                         placeholder='Comentarios'
+                        maxLength={400}
                         autoSize={{
                             minRows: 4,
                             maxRows: 4,
