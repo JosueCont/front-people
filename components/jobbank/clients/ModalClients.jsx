@@ -52,7 +52,8 @@ const ModalClients = ({
         setLoading(true)
         setTimeout(async ()=>{
             setLoading(false)
-            actionForm(bodyData);
+            let resp = await actionForm(bodyData);
+            if (resp == 'RFC_EXIST') return;
             onCloseModal()
         },2000)
     }
@@ -76,7 +77,8 @@ const ModalClients = ({
             'sector',
             'website',
             'business_name',
-            'comments'
+            'comments',
+            'rfc'
         ];
         let keysTab2 = [
             'contact_name',

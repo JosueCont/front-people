@@ -92,7 +92,7 @@ const DetailsProfiles = ({
             actionSaveAnd(response.data.id)
             resetFields();
         } catch (e) {
-            message.error('Perfil no regustrado')
+            message.error('Perfil no registrado')
             setLoading({})
             setLoadProfiles(false)
             console.log(e)
@@ -100,8 +100,14 @@ const DetailsProfiles = ({
     }
 
     const onFinish = (values) => {
-        setLoadProfiles(true)
+        setLoadProfiles(true);
         const bodyData = createData(values);
+        if(Object.keys(bodyData.fields_name).length <= 0){
+            message.error('Seleccionar los campos del perfil');
+            setLoadProfiles(false);
+            setLoading({})
+            return false;
+        }
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
