@@ -44,10 +44,9 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
       formExcel.setFieldsValue({
         excelDescription: factor.description
       })
+      setDescription(factor.description)
     }
   },[factor])
-
-  excel && console.log("Excell", excel)
 
   const routeIndex = () => {
     route.push({ pathname: "/business/integrationFactors" })
@@ -148,8 +147,11 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
       }
      })
      .catch((e) => {
+      let dataError = e.response.data || null
+      if(dataError && dataError.message == "Excepcion 'File'") { 
+          message.error('suba un archivo') 
+      } 
       setLoading(false)
-      console.log('Error', e)
      })
   }
 
@@ -275,7 +277,7 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
                   >
                     {factor && factor.id ? "Cerrar" : "Cancelar"}
                   </Button>
-                  <Button loading = { loading } type="primary" onClick={ () => updatebyExcel() }>
+                  <Button disabled = { excel? false : true } loading = { loading } type="primary" onClick={ () => updatebyExcel() }>
                       Guardar
                   </Button>
                 </Col>

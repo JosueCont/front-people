@@ -86,11 +86,6 @@ const integrationFactorsIndex = ({ ...props }) =>{
       setLoading(false)
       getIntegrationFactors()
       message.success('Registro eliminado')
-      // console.log('Response', response)
-      // let success = response.data.message == 'success'
-      // if(success){
-      //   message.success('Registro eliminado')
-      // }
     })
     .catch((error) => {
       setLoading(false)
@@ -131,6 +126,19 @@ const integrationFactorsIndex = ({ ...props }) =>{
       render: (item) => (
         <div>
           <Space>
+          <Tooltip title="Ver">
+              <EyeOutlined 
+                style={{ cursor: 'pointer' }}
+                onClick = { () => {
+                  route.push({
+                    pathname: "/business/integrationFactors/details",
+                    query: {
+                      id: item.id
+                    }
+                  })
+                }}
+              />
+            </Tooltip>
             <Tooltip title="Editar">
               <EditOutlined 
                 style={{ cursor: 'pointer' }}
