@@ -40,7 +40,6 @@ const DetailsVacancies = ({
     const [formVacancies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const [showTurns, setShowTurns] = useState(false);
     const [disabledClient, setDisabledClient] = useState(false);
     const [listInterviewers, setListInterviewers] = useState([]);
     const { setValuesForm, createData } = useProcessInfo({
@@ -53,7 +52,6 @@ const DetailsVacancies = ({
     useEffect(()=>{
         if(Object.keys(info_vacant).length > 0 && action == 'edit'){
             setValuesForm();
-            setShowTurns(info_vacant.rotative_turn);
         }
     },[info_vacant])
 
@@ -176,8 +174,7 @@ const DetailsVacancies = ({
                             >
                                 <Spin spinning={load_vacancies}>
                                     <TabFeatures
-                                        showTurns={showTurns}
-                                        setShowTurns={setShowTurns}
+                                        formVacancies={formVacancies}
                                         disabledClient={disabledClient}
                                     />
                                 </Spin>

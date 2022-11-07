@@ -70,7 +70,6 @@ const TabClient = ({ sizeCol = 12 }) =>{
                 <Form.Item 
                     name='website'
                     rules={[ruleURL]}
-                    help=''
                 >
                     <Input placeholder='URL de su sitio, iniciar con http(s)://'/>
                 </Form.Item>

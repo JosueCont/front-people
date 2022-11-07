@@ -100,7 +100,7 @@ const TabSalary = ({ formVacancies }) => {
                     label='Bonos'
                     rules={[ruleWhiteSpace]}
                 >
-                    <Input placeholder='Ej. Anual por resultados de la cia. de mes y medio de sueldo'/>
+                    <Input placeholder='Especifica los tipos de bono'/>
                 </Form.Item>
             </Col>
             <Col span={8}>

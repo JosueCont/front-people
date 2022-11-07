@@ -24,7 +24,7 @@ const SearchStrategies = ({
 
     const createQuerys = (obj) =>{
         let query = '';
-        if(obj.product) query += `&product__icontains=${obj.product}`;
+        if(obj.product) query += `&product__unaccent__icontains=${obj.product}`;
         if(obj.customer) query += `&customer=${obj.customer}`;
         if(obj.vacant) query += `&vacant=${obj.vacant}`;
         return query;

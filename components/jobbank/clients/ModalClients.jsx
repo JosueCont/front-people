@@ -6,7 +6,8 @@ import {
     Col,
     Button,
     Tabs,
-    message
+    message,
+    Spin
 } from 'antd';
 import TabClient from './TabClient';
 import TabContact from './TabContact';
@@ -51,8 +52,8 @@ const ModalClients = ({
         const bodyData = createData(values);
         setLoading(true)
         setTimeout(async ()=>{
-            setLoading(false)
             let resp = await actionForm(bodyData);
+            setLoading(false)
             if (resp == 'RFC_EXIST') return;
             onCloseModal()
         },2000)
@@ -102,6 +103,7 @@ const ModalClients = ({
             widthModal={700}
             close={onCloseModal}
             visible={visible}
+            closable={!loading}
         >
             <Form
                 form={formClient}
@@ -109,7 +111,7 @@ const ModalClients = ({
                 onFinishFailed={onFailure}
                 initialValues={{is_active: true}}
             >
-                <Row>
+                <Row gutter={[0,16]}>
                     <Col span={24} className='modal-tabs-clients'>
                         <Tabs
                             activeKey={currentTab}
@@ -120,26 +122,32 @@ const ModalClients = ({
                                 tab={'Información del cliente'}
                                 key={'tab_1'}
                             >
-                                <TabClient/>
+                                <Spin spinning={loading}>
+                                    <TabClient/>
+                                </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
                                 tab={'Información de contacto'}
                                 key={'tab_2'}
                                 forceRender
                             >
-                                <TabContact/>
+                                <Spin spinning={loading}>
+                                    <TabContact/>
+                                </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
                                 tab={'Documentos'}
                                 key={'tab_3'}
                                 forceRender
                             >
-                                <TabDocuments
-                                    newDocs={newDocs}
-                                    prevDocs={prevDocs}
-                                    setNewDocs={setNewDocs}
-                                    setPrevDocs={setPrevDocs}
-                                />
+                                <Spin spinning={loading}>
+                                    <TabDocuments
+                                        newDocs={newDocs}
+                                        prevDocs={prevDocs}
+                                        setNewDocs={setNewDocs}
+                                        setPrevDocs={setPrevDocs}
+                                    />
+                                </Spin>
                             </Tabs.TabPane>
                         </Tabs>
                     </Col>
@@ -147,13 +155,19 @@ const ModalClients = ({
                         span={24}
                         style={{
                             display: 'flex',
-                            gap: 8,
-                            marginTop: '24px',
-                            justifyContent: 'flex-end'
+                            alignItems: 'center',
+                            // justifyContent: 'flex-end'
                         }}
                     >
-                        <Button onClick={()=> onCloseModal()}>Cancelar</Button>
-                        <Button htmlType={'submit'} loading={loading}>Guardar</Button>
+                        {newDocs.length > 0 && loading && (
+                            <span style={{display: 'flex', marginRight: 'auto'}}>
+                                Espere un momento por favor, subiendo archivos.
+                            </span>
+                        )}
+                        <div style={{display: 'flex', gap: 8, marginLeft: 'auto'}}>
+                            <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>
+                            <Button htmlType={'submit'} loading={loading}>Guardar</Button>
+                        </div>
                     </Col>
                 </Row>
             </Form>

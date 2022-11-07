@@ -362,7 +362,7 @@ const FormStrategies = ({ formStrategies }) => {
                 >
                     <Input
                         maxLength={100}
-                        placeholder='Ej. Búsqueda del Fruto KAM, La Central Ventas Mayoreo'
+                        placeholder='Nombre(s) de clientes para encontrar una vacante similar'
                     />
                 </Form.Item>
             </Col>

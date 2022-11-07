@@ -201,7 +201,7 @@ const TabEducation = ({ formVacancies }) => {
         <Form.Item
           name='experiences'
           label='Experiencia requerida'
-          help='Separar cada experiencia con una coma'
+          extra='Separar cada experiencia con una coma'
           rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
@@ -217,7 +217,7 @@ const TabEducation = ({ formVacancies }) => {
         <Form.Item
           name='technical_skills'
           label='Habilidades técnicas'
-          help='Separar cada habilidad técnica con una coma'
+          extra='Separar cada habilidad técnica con una coma'
           rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
