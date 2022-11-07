@@ -209,6 +209,9 @@ class WebApiAssessment {
   static resetAssessmentUser(data){
     return WebApi.ApisType(`/person/person-assessments/reset-apply/`, "post", data);
   }
+  static deleteAssessmentPersonal(data){
+    return WebApi.ApisType(`/person/person-assessments/delete_person_assessment/`, "post", data);
+  }
 }
 
 export default WebApiAssessment;

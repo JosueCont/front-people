@@ -2,7 +2,7 @@ import {React, useEffect, useState} from 'react'
 import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row  } from 'antd'
 import { DeleteOutlined, RedoOutlined, RetweetOutlined, 
   EyeOutlined, FileDoneOutlined, FileSyncOutlined, 
-  PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined } from '@ant-design/icons';
+  PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined, MinusCircleOutlined  } from '@ant-design/icons';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { useRouter } from 'next/router';
 import moment from 'moment/moment';
@@ -130,6 +130,29 @@ const TableAssessments = ({
     try {
       let response = await WebApiAssessment.resetAssessmentUser(data);
       message.success("La asignación se reinicio correctamente");
+      getUserListAssessments(idUser);
+    } catch (e) {
+      console.error(e.name + ": " + e.message);
+    }
+  }
+
+  const modalDeleteAssessment = (data) =>{
+    console.log("data evaluación",data)
+    let dataApply = { assessment: data.id, user_id: idUser.person}
+    console.log("datos a enviar", dataApply)
+    Modal.confirm({
+      title: "¿Está seguro de retirar esta evaluación?",
+      content: "",
+      cancelText: "Cancelar",
+      okText: "Sí, retirar",
+      onOk: () => {deleteAssessment(dataApply)}
+    });
+  }
+
+  const deleteAssessment = async (data) =>{
+    try {
+      let response = await WebApiAssessment.deleteAssessmentPersonal(data);
+      message.success("La asignación fue retirada correctamente");
       getUserListAssessments(idUser);
     } catch (e) {
       console.error(e.name + ": " + e.message);
@@ -337,6 +360,13 @@ const TableAssessments = ({
                   </Tooltip>
                 </Button>
               }
+              { applysFinalized.length == 0 && record?.is_duplicated || record.origin == "personal" &&
+                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
+                  <Tooltip title="Quitar asignación">
+                    <MinusCircleOutlined />
+                  </Tooltip>
+                </Button>
+              }
             </div>
           </>
         )
@@ -403,7 +433,7 @@ const TableAssessments = ({
       }
     })
     let total = percent * progress;
-    setAssessmentsProgress(`${total.toFixed(2)}%`)
+    setAssessmentsProgress(`${total.toFixed(0)}%`)
   }
   
   const expandedRowRender = (item) => {
@@ -523,6 +553,7 @@ const TableAssessments = ({
     return <Table columns={columnsHistory}
               dataSource={item.applys}
               pagination={false}
+              showHeader={false}
               style={{marginTop:"8px", marginBottom:"8px"}}
               locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Sin historial de esta evaluación" />}}
             />;
