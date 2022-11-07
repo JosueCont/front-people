@@ -105,7 +105,17 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             >
               <Text>Editar perfil</Text>
             </p>
-            {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
+            
+            {/* {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
+              <p
+                className="text-menu"
+                onClick={() => router.push("/select-company")}
+              >
+                <Text>Cambiar de empresa</Text>
+              </p>
+            )} */}
+
+            {pathname !== "/select-company" && (
               <p
                 className="text-menu"
                 onClick={() => router.push("/select-company")}
@@ -113,6 +123,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 <Text>Cambiar de empresa</Text>
               </p>
             )}
+            
             {props.config &&
               props.config.applications &&
               props.config.applications.find(

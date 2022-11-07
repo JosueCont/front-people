@@ -139,11 +139,13 @@ const SelectCompany = ({ ...props }) => {
           //console.log("filterQuery",filterQuery.at(-1));
           setCompanySelect(filterQuery.at(-1));
         } else {
-          if (data.length === 1) {
+          setLoading(false);
+          /*if (data.length === 1) {
             setCompanySelect(data[0]);
           } else {
             setLoading(false);
           }
+          */
         }
       })
       .catch((error) => {
