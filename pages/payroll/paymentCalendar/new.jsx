@@ -4,6 +4,7 @@ import { Row, Col } from "antd";
 import { useRouter } from "next/router";
 import FormPaymentCalendar from "../../../components/payroll/forms/FormPaymentCalendar";
 import { connect } from "react-redux";
+
 const NewPaymentCalendar = ({ ...props }) => {
   const route = useRouter();
   return (

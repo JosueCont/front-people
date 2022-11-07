@@ -26,7 +26,8 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
 
   const { Title, Text } = Typography;
   const { TabPane } = Tabs
-  const [formFactor, ] = Form.useForm();
+  const [formFactor ] = Form.useForm();
+  const [ formExcel ] = Form.useForm();
   const [ loading, setLoading ] = useState(false)
   const [excel, setExcel] = useState(null);
   const [ description, setDescription]  = useState('')
@@ -40,10 +41,12 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
         bonus_days: factor.bonus_days,
         description: factor.description
       })
+      formExcel.setFieldsValue({
+        excelDescription: factor.description
+      })
+      setDescription(factor.description)
     }
   },[factor])
-
-  excel && console.log("Excell", excel)
 
   const routeIndex = () => {
     route.push({ pathname: "/business/integrationFactors" })
@@ -84,8 +87,12 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
       
     })
     .catch((error) => {
-      console.log("Error", error)
-      setLoading(false)
+      console.log('error', error)
+      setTimeout(() => {
+        message.error('Configuración existente')
+        setLoading(false)
+      }, 3000)
+      
     })
   }
 
@@ -103,11 +110,13 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
         message.success('Configuración Editada')
         setTimeout(routeIndex(), 3000)
       }
-      
     })
     .catch((error) => {
       console.log("Error", error)
-      setLoading(false)
+      setTimeout(() => {
+        message.error('Configuración existente')
+        setLoading(false)
+      }, 3000)
     })
   }
 
@@ -138,8 +147,11 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
       }
      })
      .catch((e) => {
+      let dataError = e.response.data || null
+      if(dataError && dataError.message == "Excepcion 'File'") { 
+          message.error('suba un archivo') 
+      } 
       setLoading(false)
-      console.log('Error', e)
      })
   }
 
@@ -156,7 +168,7 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
         >
           <Row gutter={30} style={{ marginBottom: 20 }}>
               <Col lg={8} xs={12}>
-                <Form.Item label="Numero de dias de vacaciones" name="vacations_days" rules={[ruleRequired]}>
+                <Form.Item label="Número de días de vacaciones" name="vacations_days" rules={[ruleRequired]}>
                   <InputNumber max={30} min={1} style={{ width: '100%' }} onFocus = { clearErrors }/>
                 </Form.Item>
               </Col>
@@ -166,13 +178,13 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={12}>
-                <Form.Item label="Dias de aguinaldo" name="bonus_days" rules={[ruleRequired]}>
+                <Form.Item label="Días de aguinaldo" name="bonus_days" rules={[ruleRequired]}>
                   <InputNumber max={30} min={1} style={{ width: '100%' }} onFocus = { clearErrors }/>
                 </Form.Item>
               </Col>
               <Col lg={8} xs={12}>
-                <Form.Item label="Descripción" name="description">
-                  <Input.TextArea />
+                <Form.Item label="Descripción" name="description" rules={[ruleRequired]}>
+                  <Input.TextArea maxLength={150} showCount={true}/>
                 </Form.Item>
               </Col>
           </Row>
@@ -205,19 +217,29 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
             <Row gutter={30} style={{ marginBottom: 20, marginTop: 10 }}>
               <Col span={24}>
                 <Text>
-                  Para editar el factor de integración primero descargue el archivo excel
+                  Para editar el factor de integración primero descargue el archivo excel,
                   siga las intrucciones del documento descargado y suba el documento usando
-                  el boton de cargar Excel
+                  el botón de Cargar Excel
                 </Text>
               </Col>
             </Row>
             <Row gutter={30} style={{ marginBottom: 20, marginTop: 10 }}>
-              <Col lg={8}>
-                  <Input.TextArea
-                    style={{ height: "40px",}}
-                    onChange={({target}) => setDescription(target.value)}
-                    placeholder = "Descripción"
-                  />
+            <Col lg={8}>
+              <Form
+                form={ formExcel }
+              >
+                  <Form.Item
+                    name="excelDescription"
+                  >
+                    <Input.TextArea
+                      style={{ height: "40px", maxHeight: '40px', width: '100%'}}
+                      onChange={({target}) => setDescription(target.value)}
+                      placeholder = "Descripción"
+                      maxLength={150}
+                      showCount={true}
+                    />
+                  </Form.Item>
+              </Form>
               </Col>
               <Col lg={4}>
                 <Button
@@ -255,7 +277,7 @@ const IntegrationFactorsForm =  ({ nodeId, factor }) => {
                   >
                     {factor && factor.id ? "Cerrar" : "Cancelar"}
                   </Button>
-                  <Button loading = { loading } type="primary" onClick={ () => updatebyExcel() }>
+                  <Button disabled = { excel? false : true } loading = { loading } type="primary" onClick={ () => updatebyExcel() }>
                       Guardar
                   </Button>
                 </Col>

@@ -42,8 +42,10 @@ const GroupAdd = ({ ...props }) => {
   const [loading, setLoading] = useState(null);
   const [edit, setEdit] = useState(false);
   const [perms, setPerms] = useState([]);
+  const [allPerms, setAllPerms] = useState([])
   const [getperms, setGetperms] = useState(false);
   const [permsFunction, setPermsFunction] = useState([]);
+  const [allCatalogs, setAllCatalogs] = useState([])
   const [arrayFunctions, setarrayFunctios] = useState([]);
   const [instruction, setInstruction] = useState(true);
   const [intranet_access, setintanetAccess] = useState(null);
@@ -245,15 +247,16 @@ const GroupAdd = ({ ...props }) => {
 
   const onFinish = (values) => {
     data = values;
-    data.perms = perms;
+    data.perms = allPerms.length > 0 ? allPerms : perms;
     let lst = [];
     if (getperms === true) {
-      lst = perms.concat(arrayFunctions);
+      lst = allPerms.length > 0 ? allPerms.concat(allCatalogs? allCatalogs : arrayFunctions) : perms.concat(allCatalogs? allCatalogs : arrayFunctions);
     } else {
-      lst = perms.concat(permsFunction);
+      lst = allPerms.length > 0 ? allPerms.concat(permsFunction) : perms.concat(permsFunction);
     }
 
     data.perms = lst;
+
     if (!edit) {
       saveGroup();
     } else {
@@ -264,6 +267,7 @@ const GroupAdd = ({ ...props }) => {
   const saveGroup = async () => {
     setLoading(true);
     data.company = props.currentNode.id;
+    
     let response = await createGroup(props.config, data);
     if (response) {
       props.getProfileGroups(props.currentNode.id, props.config);
@@ -353,20 +357,70 @@ const GroupAdd = ({ ...props }) => {
   }, [props.config]);
 
   function handleClick(e) {
-    let index = perms.indexOf(e.target.name);
-    if (index > -1) {
-      if (e.target.checked) {
-        setPerms([...perms, e.target.name]);
+    
+    if(allPerms.length > 0){
+      let index = allPerms.indexOf(e.target.name);
+      if (index > -1) {
+        if (e.target.checked) {
+          setAllPerms([...allPerms, e.target.name]);
+        } else {
+          allPerms.splice(index, 1);
+        }
       } else {
-        perms.splice(index, 1);
+        if (e.target.checked) {
+          setAllPerms([...allPerms, e.target.name]);
+        }
       }
     } else {
-      if (e.target.checked) {
-        setPerms([...perms, e.target.name]);
+      let index = perms.indexOf(e.target.name);
+      if (index > -1) {
+        if (e.target.checked) {
+          setPerms([...perms, e.target.name]);
+        } else {
+          perms.splice(index, 1);
+        }
+      } else {
+        if (e.target.checked) {
+          setPerms([...perms, e.target.name]);
+        }
       }
     }
+
   }
+
   function handleClickFunct(e) {
+
+    if(allCatalogs.length > 0){
+      if (getperms == false) {
+        let index = allCatalogs.indexOf(e.target.name);
+        if (index > -1) {
+          if (e.target.checked) {
+            setAllCatalogs([...allCatalogs, e.target.name]);
+          } else {
+            setAllCatalogs.splice(index, 1);
+          }
+        } else {
+          if (e.target.checked) {
+            setPermsFunction([...allCatalogs, e.target.name]);
+          }
+        }
+      }
+    } else {
+      if (getperms == false) {
+        let index = permsFunction.indexOf(e.target.name);
+        if (index > -1) {
+          if (e.target.checked) {
+            setPermsFunction([...permsFunction, e.target.name]);
+          } else {
+            permsFunction.splice(index, 1);
+          }
+        } else {
+          if (e.target.checked) {
+            setPermsFunction([...permsFunction, e.target.name]);
+          }
+        }
+      }
+    }
     if (getperms == false) {
       let index = permsFunction.indexOf(e.target.name);
       if (index > -1) {
@@ -396,25 +450,82 @@ const GroupAdd = ({ ...props }) => {
     }
   };
 
-  const checkAllpermisions = (check) => {
+  const checkAllpermisions = async (check) => {
 
-    let permss = views.filter(
+    let permsValue = []
+    let catalogsValue = []
+
+    let AllPerms = views.filter(
       (perm) => perm.module !== "Catalogos"
     )
-        if (check && permss.length > 0) {
-        permss.forEach((element) => {
-        var chkBox = document.getElementById(element);
+
+    let AllCatalogs = views.filter(
+      (perm) => perm.module === "Catalogos"
+    )
+
+    
+
+    AllPerms.forEach((perm, i) => {
+      permsValue.push(perm.value + ".can.view")
+      permsValue.push(perm.value + ".can.create")
+      permsValue.push(perm.value + ".can.edit")
+      permsValue.push(perm.value + ".can.delete") 
+    })
+
+    AllCatalogs.forEach((perm, i) => {
+      catalogsValue.push(perm.value + ".can.view")
+      catalogsValue.push(perm.value + ".can.create")
+      catalogsValue.push(perm.value + ".can.edit")
+      catalogsValue.push(perm.value + ".can.delete") 
+    })
+
+    if(check == false){
+      setPerms([])
+      setAllPerms([])
+      setAllCatalogs([])
+    } else {
+      setAllPerms(permsValue)
+      setAllCatalogs(catalogsValue)
+    }
+
+
+
+    if (permsValue.length > 0) {
+        permsValue.forEach( (element, i) => {
+
+        let chkBox = document.getElementById(element);
+        
         if (chkBox != "undefined" && chkBox !== null) {
+
           if (chkBox.checked == false) {
             chkBox.click();
-          } else {
-            chkBox.checked == true
+          }
+          if(!check){
+            chkBox.click();
           }
         }
       });
+
+      if (catalogsValue.length > 0) {
+        catalogsValue.forEach((element) => {
+          var chkBox = document.getElementById(element);
+          if (chkBox != "undefined" && chkBox !== null) {
+            if (chkBox.checked == false) {
+              chkBox.click();
+            }
+            if(!check){
+              chkBox.click();
+            }
+          }
+        });
+      }
+
+      
+
+      
     }
-    console.log('Perms', permss)
-    console.log('Check', check)
+
+
   }
 
   const checkFunctions = () => {
@@ -720,19 +831,24 @@ const GroupAdd = ({ ...props }) => {
                       key="1"
                     >
                       <Col span={24}>
-                        {/* <Row gutter={10} style={{ marginTop: 10 }}> 
-                          <Col span={10}>
+                        <Row gutter={10} style={{ marginTop: 10 }}> 
+                          <Col span={6}>
                             <Checkbox
-                              name="allPermissions"
+                              name="allCatalogs"
                               onClick={ (e) => checkAllpermisions(e.target.checked)}
                             >
                               Seleccionar todos los permisos
                             </Checkbox>
                           </Col>
-                          <Col span={12}>
-                          <Checkbox>Seleccionar todos los catálogos</Checkbox>
-                          </Col>
-                        </Row> */}
+                          {/* <Col span={6}>
+                            <Checkbox
+                              name="allFunctions"
+                              onClick={ () => checkAllfunctions()}
+                            >
+                              Seleccionar todas las funciones
+                            </Checkbox>
+                          </Col> */}
+                        </Row>
                         <Row gutter={10}>
                           <Col xl={12} md={12} sm={24} xs={24}>
                             <Table

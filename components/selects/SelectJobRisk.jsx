@@ -50,7 +50,7 @@ const SelectJobRisk = ({
                         return (
                             <>
                                 <Option key={item.value} value={item.value}>
-                                    {item.label}
+                                    {item.label} {`(${item.percent}%)`}
                                 </Option>
                                 ;
                             </>
