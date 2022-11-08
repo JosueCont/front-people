@@ -59,6 +59,7 @@ import PersonsGroup from "../../../components/person/groups/PersonsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 import SelectJob from "../../../components/selects/SelectJob";
+import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -1169,7 +1170,11 @@ const homeScreen = ({ ...props }) => {
                       >
                         Descargar plantilla
                       </Button>
+                      <ButtonDownloadConfronta/>
                     </Space>
+                  </Col>
+                  <Col>
+
                   </Col>
                 </Row>
               </div>

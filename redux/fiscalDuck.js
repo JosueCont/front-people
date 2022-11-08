@@ -1,4 +1,5 @@
 import WebApiFiscal from "../api/WebApiFiscal";
+import moment from "moment";
 import { getStorage, setStorage } from "../libs/auth";
 
 const initialData = {
@@ -17,6 +18,7 @@ const initialData = {
   cat_imss_delegation: [],
   cat_imss_subdelegation: [],
   cat_family_medical_unit: [],
+  cat_geographic_area: []
 };
 
 const BANKS = "BANKS";
@@ -37,6 +39,7 @@ const HIRING_REGIME = "HIRING_REGIME";
 const IMSS_DELEGATION = "IMSS_DELEGATION";
 const IMSS_SUBDELEGATION = "IMSS_SUBDELEGATION";
 const FAMILY_MEDICAL_UNIT = "FAMILY_MEDICAL_UNIT";
+const GEOGRAPHIC_AREA = "GEOGRAPHIC_AREA"
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -76,6 +79,8 @@ const webReducer = (state = initialData, action) => {
       return { ...state, cat_imss_subdelegation: action.payload };
     case FAMILY_MEDICAL_UNIT:
       return { ...state, cat_family_medical_unit: action.payload };
+    case GEOGRAPHIC_AREA: 
+      return { ...state, cat_geographic_area: action.payload };
     default:
       return state;
   }
@@ -132,6 +137,7 @@ export const doFiscalCatalogs =
         dispatch(ImssDelegation());
         dispatch(ImssSubDelegation());
         dispatch(FamilyMedicalUnit());
+        dispatch(getGeographicArea());
       }
     } catch (error) {
       console.log(error);
@@ -394,3 +400,20 @@ export const FamilyMedicalUnit = () => async (dispatch, getState) => {
       console.log(error);
     });
 };
+
+export const getGeographicArea = () => async (dispatch, getState) => {
+  
+  let currentYear = parseInt(moment().format('YYYY'))
+  
+  await WebApiFiscal.get_geograp_area(currentYear)
+  .then((response) => {
+    console.log('Response', response)
+    dispatch({
+      type: GEOGRAPHIC_AREA,
+      payload: response.data.results
+    })
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}

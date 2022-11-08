@@ -104,7 +104,7 @@ const MainSider = ({
       if (props?.permissions?.company?.view) {
         let children = [
           getItem("Empresas", "business"),
-          getItem("Factores de integración", "integrationFactors")
+          getItem("Prestaciones", "integrationFactors")
         ];
         if (props?.config && props?.config?.nomina_enabled) {
           children.push(getItem("Registros patronales", "patronal"));
@@ -123,7 +123,15 @@ const MainSider = ({
         );
       }
 
-
+      // Menú Configuración
+      // children = [
+      //   getItem("Asignar empresa", "asign"),
+      //   getItem("Catálogos", "catalogs"),
+      //   getItem("Perfiles de seguridad", "securityGroups"),
+      // ];
+      // items.push(
+      //   getItem("Configuración", "config", <SettingOutlined />, children)
+      // );
 
       // Agregar división
       items.push({ type: "divider" });
