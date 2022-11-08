@@ -118,7 +118,7 @@ const TableAssessments = ({
     let dataApply = { assessment: data.id, user_id: idUser.person}
     console.log("datos a enviar", dataApply)
     Modal.confirm({
-      title: "¿Está seguro de reasignar esta evaluación?",
+      title: "¿Volver a contestar esta evaluación?",
       content: "",
       cancelText: "Cancelar",
       okText: "Sí, reasignar",
@@ -332,7 +332,7 @@ const TableAssessments = ({
         return (
           <>
             <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
-              { isEmpty.length === 0 &&
+              { isEmpty.length === 0 && record?.applys[0]?.status != 1 &&
                 <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalRestart(record)}>
                   <Tooltip title="Contestar evaluación de nuevo">
                   <RetweetOutlined />
@@ -355,12 +355,19 @@ const TableAssessments = ({
               }
               { record?.applys[0]?.status != 2 && record?.applys.length > 0 &&
                 <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record?.applys[0]?.id)}>
-                  <Tooltip title="Eliminar evaluación">
+                  <Tooltip title={record?.applys[0]?.status == 0 ? "Eliminar evaluación pendiente" : record?.applys[0]?.status == 1 ? "Eliminar evaluación en curso" : ""}>
                     <DeleteOutlined/>
                   </Tooltip>
                 </Button>
               }
-              { applysFinalized.length == 0 && record?.is_duplicated || record.origin == "personal" &&
+              { applysFinalized.length == 0 && record?.is_duplicated && record.origin == "group" &&
+                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
+                  <Tooltip title="Quitar asignación">
+                    <MinusCircleOutlined />
+                  </Tooltip>
+                </Button>
+              }
+              { applysFinalized.length == 0 && record.origin == "personal" &&
                 <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
                   <Tooltip title="Quitar asignación">
                     <MinusCircleOutlined />
@@ -494,7 +501,7 @@ const TableAssessments = ({
                 }
                 { record.status != 2 && record.status == 0 &&
                   <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
-                    <Tooltip title="Eliminar evaluación">
+                    <Tooltip title={record.status == 0 ? "Eliminar evaluación pendiente" : record.status == 1 ? "Eliminar evaluación en curso" : ""}>
                       <DeleteOutlined />
                     </Tooltip>
                   </Button>
@@ -553,7 +560,6 @@ const TableAssessments = ({
     return <Table columns={columnsHistory}
               dataSource={item.applys}
               pagination={false}
-              showHeader={false}
               style={{marginTop:"8px", marginBottom:"8px"}}
               locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Sin historial de esta evaluación" />}}
             />;
