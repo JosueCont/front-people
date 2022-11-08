@@ -15,7 +15,11 @@ import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormStrategies from './FormStrategies';
 import { useProcessInfo } from './hook/useProcessInfo';
-import { setLoadStrategies, getInfoStrategy } from '../../../redux/jobBankDuck';
+import {
+    setLoadStrategies,
+    getInfoStrategy,
+    setInfoStrategy
+} from '../../../redux/jobBankDuck';
 
 const DetailsStrategies = ({
     action,
@@ -23,7 +27,8 @@ const DetailsStrategies = ({
     load_strategies,
     info_strategy,
     setLoadStrategies,
-    getInfoStrategy
+    getInfoStrategy,
+    setInfoStrategy
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -65,7 +70,6 @@ const DetailsStrategies = ({
             let response = await WebApiJobBank.createStrategy({...values, node: currentNode.id});
             message.success('Estrategia registrada');
             actionSaveAnd(response.data.id)
-            formStrategies.resetFields();
         } catch (e) {
             console.log(e)
             setLoadStrategies(false)
@@ -84,21 +88,27 @@ const DetailsStrategies = ({
         actionFunction[action](bodyData);
     }
 
-    const actionAddCreate = () =>{
+    const actionCreate = () =>{
+        formStrategies.resetFields();
         setLoadStrategies(false)
         setLoading({})
+    }
+
+    const actionEdit = (id) =>{
+        setInfoStrategy()
+        router.replace({
+            pathname: '/jobbank/strategies/edit',
+            query: { id }
+        })
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: () => router.push('/jobbank/strategies'),
-            create: actionAddCreate,
-            edit: ()=> router.replace({
-                pathname: '/jobbank/strategies/edit',
-                query: { id }
-            })
+            create: actionCreate,
+            edit: actionEdit
         }
-        actionFunction[actionType]();
+        actionFunction[actionType](id);
     }
 
     const getSaveAnd = (type) =>{
@@ -196,6 +206,7 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         setLoadStrategies,
-        getInfoStrategy
+        getInfoStrategy,
+        setInfoStrategy
     }
 )(DetailsStrategies);

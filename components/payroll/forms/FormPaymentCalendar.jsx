@@ -590,7 +590,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               />
             </Col>
             <Col lg={8} xs={22}>
-              <Form.Item label="Politicas">
+              <Form.Item label="Políticas">
                 <Switch
                   // defaultChecked={politics}
                   checked = { politics }
@@ -627,7 +627,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                 <Col lg={8} xs={22}>
                   <Form.Item
                     name="calculation_employment_subsidy"
-                    label="Calculo de subsicio al empleo"
+                    label="Cálculo de subsicio al empleo"
                     rules={[ruleRequired]}
                   >
                     <Select

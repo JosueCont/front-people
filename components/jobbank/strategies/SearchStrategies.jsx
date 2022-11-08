@@ -24,7 +24,7 @@ const SearchStrategies = ({
 
     const createQuerys = (obj) =>{
         let query = '';
-        if(obj.product) query += `&product__icontains=${obj.product}`;
+        if(obj.product) query += `&product__unaccent__icontains=${obj.product}`;
         if(obj.customer) query += `&customer=${obj.customer}`;
         if(obj.vacant) query += `&vacant=${obj.vacant}`;
         return query;
@@ -41,8 +41,11 @@ const SearchStrategies = ({
         getStrategies(currentNode.id)
     }
 
-    const optionsByClient = () =>{
+    const onChangeClient = (value) =>{
         formSearch.setFieldsValue({vacant: null});
+    }
+
+    const optionsByClient = () =>{
         if(!clientSelected) return [];
         const options = item => item.customer?.id === clientSelected;
         return list_vacancies_options.filter(options);
@@ -72,6 +75,7 @@ const SearchStrategies = ({
                                     placeholder='Cliente'
                                     notFoundContent='No se encontraron resultados'
                                     optionFilterProp='children'
+                                    onChange={onChangeClient}
                                 >
                                     {list_clients_options.length > 0 && list_clients_options.map(item=> (
                                         <Select.Option value={item.id} key={item.id}>

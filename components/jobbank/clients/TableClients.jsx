@@ -51,9 +51,14 @@ const TableClients = ({
             await WebApiJobBank.updateClient(itemToEdit.id, values);
             getClients(currentNode.id)
             message.success('Información actualizada');
+            return true;
         } catch (e) {
-            message.error('Información no actualizada');
             console.log(e)
+            if(e.response?.data['rfc']){
+                message.error('RFC ya registrado');
+                return 'RFC_EXIST';
+            } else message.error('Información no actualizada');
+            return false;
         }
     }
 
@@ -281,6 +286,7 @@ const TableClients = ({
                 actionForm={actionUpdate}
                 close={closeModalEdit}
                 itemToEdit={itemToEdit}
+                textSave='Actualizar'
             />
             <DeleteItems
                 title={itemsToDelete.length > 1
