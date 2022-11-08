@@ -272,11 +272,17 @@
     transition: all 0.5s;
 }
 
+.content-list-files{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 .head-list-files {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 12px;
+    padding-bottom: 6px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
@@ -301,7 +307,7 @@
     display: flex;
     flex-direction: column;
     transition: all 1s;
-    min-height: 130px;
+    min-height: 100px;
     max-height: 200px;
     overflow: auto;
 }
@@ -322,7 +328,7 @@
 
 .item-list-files p{
     margin-bottom: 0px;
-    max-width: 75%;
+    max-width: 70%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -483,6 +489,29 @@
 
 .section-list-fields .ant-checkbox-disabled.ant-checkbox-checked .ant-checkbox-inner::after {
     border-color: #ffff;
+}
+
+.card-settings{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: row wrap;
+    gap: 24px;
+}
+
+.card-catalog{
+    text-align: center;
+    width: 200px;
+    background: #f0f0f0;
+    padding: 12px 0px;
+    border-radius: 12px;
+    box-shadow: -3px 3px 5px 0px rgb(0 0 0 / 20%);
+    transition: all 0.3s ease-out;
+}
+
+.card-catalog:hover{
+    transition: all 0.3s ease-in;
+    transform: translateY(-5px);
 }
 
 /* Termina diseño bolsa de trabajo */

@@ -1,17 +1,14 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import MainLayout from '../../../layout/MainLayout';
-import RegisterClient from '../../../components/jobbank/clients/RegisterClient';
-import WebApiPeople from '../../../api/WebApiPeople';
-import { companySelected } from '../../../redux/UserDuck';
-import { getSectors } from '../../../redux/jobBankDuck';
+import MainLayout from '../../layout/MainLayout';
+import WebApiPeople from '../../api/WebApiPeople';
+import { saveCurrentNode } from '../../redux/UserDuck';
 import { connect } from 'react-redux';
 
-const index = ({
-    currentNode,
+const AutoRegister = ({
+    children,
     generalConfig,
-    getSectors,
-    companySelected
+    saveCurrentNode
 }) => {
 
     const router = useRouter();
@@ -23,9 +20,7 @@ const index = ({
     const getCompay = async (uid) =>{
         try {
             let response = await WebApiPeople.getCompanyPermanentCode(uid);
-            const idNode = response.data.results.at(-1).id;
-            getSectors(idNode);
-            companySelected(idNode, generalConfig);            
+            saveCurrentNode(response.data.results.at(-1))       
         } catch (e) {
             console.log(e)
         }
@@ -37,7 +32,7 @@ const index = ({
             onClickImage={false}
         >
             <div className='content-center'>
-                <RegisterClient/>   
+                {children}
             </div>
         </MainLayout>
     )
@@ -45,14 +40,10 @@ const index = ({
 
 const mapState = (state) =>{
     return{
-        currentNode: state.userStore.current_node,
         generalConfig: state.userStore.general_config
     }
 }
 
 export default connect(
-    mapState, {
-        companySelected,
-        getSectors
-    }
-)(index);
+    mapState, { saveCurrentNode }
+)(AutoRegister);

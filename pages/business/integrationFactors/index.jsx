@@ -86,11 +86,6 @@ const integrationFactorsIndex = ({ ...props }) =>{
       setLoading(false)
       getIntegrationFactors()
       message.success('Registro eliminado')
-      // console.log('Response', response)
-      // let success = response.data.message == 'success'
-      // if(success){
-      //   message.success('Registro eliminado')
-      // }
     })
     .catch((error) => {
       setLoading(false)
@@ -112,6 +107,11 @@ const integrationFactorsIndex = ({ ...props }) =>{
       render: (timestamp) => moment(timestamp).format('YYYY-MM-DD')
     },
     {
+      title: "Dias de aguinaldo",
+      key: "bonus_days",
+      dataIndex: "bonus_days"
+    },
+    {
       title: "Numero de dias de vacaciones",
       key: "vacations_days",
       dataIndex: "vacations_days"
@@ -122,15 +122,23 @@ const integrationFactorsIndex = ({ ...props }) =>{
       dataIndex: "vacation_percent"
     },
     {
-      title: "Dias de aguinaldo",
-      key: "bonus_days",
-      dataIndex: "bonus_days"
-    },
-    {
       title: 'Acciones',
       render: (item) => (
         <div>
           <Space>
+          <Tooltip title="Ver">
+              <EyeOutlined 
+                style={{ cursor: 'pointer' }}
+                onClick = { () => {
+                  route.push({
+                    pathname: "/business/integrationFactors/details",
+                    query: {
+                      id: item.id
+                    }
+                  })
+                }}
+              />
+            </Tooltip>
             <Tooltip title="Editar">
               <EditOutlined 
                 style={{ cursor: 'pointer' }}
@@ -185,7 +193,7 @@ const integrationFactorsIndex = ({ ...props }) =>{
             Inicio
           </Breadcrumb.Item>
           <Breadcrumb.Item>Empresa</Breadcrumb.Item>
-          <Breadcrumb.Item>Factores de integración</Breadcrumb.Item>
+          <Breadcrumb.Item>Prestaciones</Breadcrumb.Item>
         </Breadcrumb>
         <Row justify="end">
           <Col>

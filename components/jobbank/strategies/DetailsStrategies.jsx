@@ -15,7 +15,11 @@ import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormStrategies from './FormStrategies';
 import { useProcessInfo } from './hook/useProcessInfo';
-import { setLoadStrategies, getInfoStrategy } from '../../../redux/jobBankDuck';
+import {
+    setLoadStrategies,
+    getInfoStrategy,
+    setInfoStrategy
+} from '../../../redux/jobBankDuck';
 
 const DetailsStrategies = ({
     action,
@@ -23,7 +27,8 @@ const DetailsStrategies = ({
     load_strategies,
     info_strategy,
     setLoadStrategies,
-    getInfoStrategy
+    getInfoStrategy,
+    setInfoStrategy
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -37,7 +42,6 @@ const DetailsStrategies = ({
     const [formStrategies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const clientSelected = Form.useWatch('customer', formStrategies);
     const { createData, setValuesForm } = useProcessInfo({
         info_strategy,
         formStrategies
@@ -84,22 +88,27 @@ const DetailsStrategies = ({
         actionFunction[action](bodyData);
     }
 
-    const actionAddCreate = () =>{
+    const actionCreate = () =>{
         formStrategies.resetFields();
         setLoadStrategies(false)
         setLoading({})
     }
 
+    const actionEdit = (id) =>{
+        setInfoStrategy()
+        router.replace({
+            pathname: '/jobbank/strategies/edit',
+            query: { id }
+        })
+    }
+
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: () => router.push('/jobbank/strategies'),
-            create: actionAddCreate,
-            edit: ()=> router.replace({
-                pathname: '/jobbank/strategies/edit',
-                query: { id }
-            })
+            create: actionCreate,
+            edit: actionEdit
         }
-        actionFunction[actionType]();
+        actionFunction[actionType](id);
     }
 
     const getSaveAnd = (type) =>{
@@ -136,7 +145,7 @@ const DetailsStrategies = ({
                             requiredMark={false}
                             onFinishFailed={()=> setLoading({})}
                         >
-                            <FormStrategies clientSelected={clientSelected}/>
+                            <FormStrategies formStrategies={formStrategies}/>
                         </Form>
                     </Spin>
                 </Col>
@@ -197,6 +206,7 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         setLoadStrategies,
-        getInfoStrategy
+        getInfoStrategy,
+        setInfoStrategy
     }
 )(DetailsStrategies);

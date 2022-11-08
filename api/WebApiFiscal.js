@@ -137,6 +137,10 @@ class WebApiFiscal {
     return WebApi.ApisType(`fiscal/integration-factors-node-config/`, 'post', data)
   }
 
+  static detailsIntegratorFactor(id) {
+    return WebApi.ApisType(`fiscal/integration-factors-node-config/${id}/details/`, "get")
+  }
+
   static deleteIntegrationFactor(id) {
     return WebApi.ApisType(`fiscal/integration-factors-node-config/${id}/`, 'delete')
   }
@@ -155,6 +159,10 @@ class WebApiFiscal {
 
   static get_monthly_imss_provision(data) {
     return WebApi.ApisType('fiscal/monthly-imss-free/get_monthly_imss_provision/', 'post', data)
+  }
+
+  static get_geograp_area(year) {
+    return WebApi.ApisType(`/fiscal/geographic-area/?period=${year}`, 'get')
   }
 }
 

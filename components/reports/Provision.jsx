@@ -25,6 +25,7 @@ import { monthsName, bimestralMonths } from "../../utils/constant";
 import { toInteger } from "lodash";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import { ruleRequired } from "../../utils/rules";
+import axios from "axios";
 
 const ProvisionsReport = ({ permissions, ...props }) => {
 
@@ -125,7 +126,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
 
   const onFinish = async (values) => {
     console.log("Values", values)
-    let url = `${getDomain(API_URL_TENANT)}/fiscal/monthly-imss-free/get_monthly_imss_provision/`
+    let url = `${getDomain(API_URL_TENANT)}/fiscal/${ report === 1? 'monthly' : 'bimonthly' }-imss-free/get_${ report === 1? 'monthly' : 'bimonthly' }_imss_provision/`
     values.period = values.period? toInteger(moment(values.period).format('YYYY')) : null
 
     let data = report == 1? {
@@ -144,23 +145,14 @@ const ProvisionsReport = ({ permissions, ...props }) => {
       payment_calendar: calendar,
       method: 'export'
     }
-    
 
-    downLoadFileBlob(
-      url,
-      "Provision_Report.xlsx",
-      "POST",
-      data
-    )
-
-    // WebApiFiscal.get_monthly_imss_provision(data)
-    // .then((response) => {
-    //   console.log("Response", response)
-    // })
-    // .catch((e) => {
-    //   console.log('error', e)
-    // })
-    console.log('Data', data)
+      downLoadFileBlob(
+        url,
+        "Provision_Report.xlsx",
+        "POST",
+        data,
+        "No se encontraron colaboradores"
+      )
   }
 
   return (

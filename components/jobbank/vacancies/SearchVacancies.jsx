@@ -21,7 +21,7 @@ const SearchVacancies = ({
 
     const createQuerys = (obj) =>{
         let query = '';
-        if(obj.job_position) query += `&job_position__icontains=${obj.job_position}`;
+        if(obj.job_position) query += `&job_position__unaccent__icontains=${obj.job_position}`;
         if(obj.customer) query += `&customer=${obj.customer}`;
         return query;
     }
@@ -56,6 +56,7 @@ const SearchVacancies = ({
                                 <Select
                                     allowClear
                                     showSearch
+                                    disabled={load_clients_options}
                                     loading={load_clients_options}
                                     placeholder='Cliente'
                                     notFoundContent='No se encontraron resultados'

@@ -110,6 +110,26 @@ class WebApiJobBank {
     static deleteProfile(data){
         return WebApi.ApisType('/job-bank/profile/massive_delete/', 'post', data);
     }
+
+    static getCandidates(node, query){
+        // return WebApi.ApisType(`/job-bank/candidates/?=${node}${query}`, 'get');
+    }
+
+    static getInfoCandidate(id){
+        // return WebApi.ApisType(`/job-bank/candidates/${id}/`, 'get');
+    }
+
+    static createCandidate(data){
+        // return WebApi.ApisType('/job-bank/candidates/', 'post', data);
+    }
+
+    static updateCandidate(id, data){
+        // return WebApi.ApisType(`/job-bank/candidates/${id}/`, 'put', data);
+    }
+
+    static deleteCandidate(data){
+        // return WebApi.ApisType('/job-bank/candidates/massive_delete/', 'post', data);
+    }
 }
 
 export default WebApiJobBank;

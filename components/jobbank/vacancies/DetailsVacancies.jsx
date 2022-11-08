@@ -17,7 +17,11 @@ import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { setLoadVacancies, getInfoVacant } from '../../../redux/jobBankDuck';
+import {
+    setLoadVacancies,
+    setInfoVacant,
+    getInfoVacant
+} from '../../../redux/jobBankDuck';
 import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsVacancies = ({
@@ -26,7 +30,8 @@ const DetailsVacancies = ({
     load_vacancies,
     setLoadVacancies,
     info_vacant,
-    getInfoVacant
+    getInfoVacant,
+    setInfoVacant
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -40,7 +45,6 @@ const DetailsVacancies = ({
     const [formVacancies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const [showTurns, setShowTurns] = useState(false);
     const [disabledClient, setDisabledClient] = useState(false);
     const [listInterviewers, setListInterviewers] = useState([]);
     const { setValuesForm, createData } = useProcessInfo({
@@ -53,7 +57,6 @@ const DetailsVacancies = ({
     useEffect(()=>{
         if(Object.keys(info_vacant).length > 0 && action == 'edit'){
             setValuesForm();
-            setShowTurns(info_vacant.rotative_turn);
         }
     },[info_vacant])
 
@@ -107,22 +110,36 @@ const DetailsVacancies = ({
         actionFunction[action](bodyData);
     }
 
-    const actionAddCreate = () =>{
-        formVacancies.resetFields();
+    const onFinishFailed = (e) =>{
+        setLoading({})
+    }
+
+    const actionCreate = () =>{
+        formVacancies.resetFields()
         setLoadVacancies(false)
         setLoading({})
     }
 
+    const actionBack = () =>{
+        if(router.query?.customer) router.push('/jobbank/clients');
+        else router.push('/jobbank/vacancies');
+    }
+
+    const actionEdit = (id) =>{
+        setInfoVacant()
+        router.replace({
+            pathname: '/jobbank/vacancies/edit',
+            query: { id }
+        })
+    }
+
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: () => router.push('/jobbank/vacancies'),
-            create: actionAddCreate,
-            edit: ()=> router.replace({
-                pathname: '/jobbank/vacancies/edit',
-                query: { id }
-            })
+            back: actionBack,
+            create: actionCreate,
+            edit: actionEdit
         }
-        actionFunction[actionType]();
+        actionFunction[actionType](id);
     }
 
     const getSaveAnd = (type) =>{
@@ -143,7 +160,7 @@ const DetailsVacancies = ({
                         }
                     </p>
                     <Button
-                        onClick={()=> router.push('/jobbank/vacancies')}
+                        onClick={()=> actionBack()}
                         icon={<ArrowLeftOutlined />}
                     >
                         Regresar
@@ -156,7 +173,7 @@ const DetailsVacancies = ({
                         layout='vertical'
                         form={formVacancies}
                         onFinish={onFinish}
-                        onFinishFailed={()=> setLoading({})}
+                        onFinishFailed={onFinishFailed}
                         requiredMark={false}
                         initialValues={{
                             vo_bo: false,
@@ -171,8 +188,7 @@ const DetailsVacancies = ({
                             >
                                 <Spin spinning={load_vacancies}>
                                     <TabFeatures
-                                        showTurns={showTurns}
-                                        setShowTurns={setShowTurns}
+                                        formVacancies={formVacancies}
                                         disabledClient={disabledClient}
                                     />
                                 </Spin>
@@ -183,7 +199,7 @@ const DetailsVacancies = ({
                                 key='tab_2'
                             >
                                 <Spin spinning={load_vacancies}>
-                                    <TabEducation/>
+                                    <TabEducation formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
@@ -192,7 +208,7 @@ const DetailsVacancies = ({
                                 key='tab_3'
                             >
                                 <Spin spinning={load_vacancies}>
-                                    <TabSalary/>
+                                    <TabSalary formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
@@ -267,6 +283,7 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         setLoadVacancies,
-        getInfoVacant
+        getInfoVacant,
+        setInfoVacant
     }
 )(DetailsVacancies);

@@ -12,7 +12,14 @@ const CustomModal = styled(Modal)`
     }
 `;
 
-const MyModal = ({ title, visible, close, widthModal = 600, ...props}) =>{
+const MyModal = ({
+    title,
+    visible,
+    close,
+    widthModal = 600,
+    closable = true,
+    ...props
+}) =>{
 
     return(
         <CustomModal
@@ -22,6 +29,7 @@ const MyModal = ({ title, visible, close, widthModal = 600, ...props}) =>{
             visible={visible}
             footer={null}
             width={widthModal}
+            closable={closable}
         >
             <Row gutter={[0, 8]}>
                 <Col xs={24}>

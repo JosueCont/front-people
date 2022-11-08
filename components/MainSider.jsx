@@ -87,7 +87,9 @@ const MainSider = ({
       jb_clients: "/jobbank/clients",
       jb_vacancies: "/jobbank/vacancies",
       jb_strategies: "/jobbank/strategies",
-      jb_profiles: "/jobbank/profiles"
+      jb_profiles: "/jobbank/profiles",
+      jb_candidates: "/jobbank/candidates",
+      jb_settings: "/jobbank/settings"
     };
     router.push(pathRoutes[key]);
   };
@@ -102,7 +104,7 @@ const MainSider = ({
       if (props?.permissions?.company?.view) {
         let children = [
           getItem("Empresas", "business"),
-          getItem("Factores de integración", "integrationFactors")
+          getItem("Prestaciones", "integrationFactors")
         ];
         if (props?.config && props?.config?.nomina_enabled) {
           children.push(getItem("Registros patronales", "patronal"));
@@ -121,7 +123,15 @@ const MainSider = ({
         );
       }
 
-
+      // Menú Configuración
+      // children = [
+      //   getItem("Asignar empresa", "asign"),
+      //   getItem("Catálogos", "catalogs"),
+      //   getItem("Perfiles de seguridad", "securityGroups"),
+      // ];
+      // items.push(
+      //   getItem("Configuración", "config", <SettingOutlined />, children)
+      // );
 
       // Agregar división
       items.push({ type: "divider" });
@@ -224,16 +234,26 @@ const MainSider = ({
       }
 
       // Menú Kuiz
-      if (props?.config && props?.config?.kuiz_enabled) {
-        let children = [
-          getItem("Evaluaciones", "surveys"),
-          getItem("Grupos de evaluaciones", "assessment_groups"),
-          getItem("Perfiles de competencias", "assessment_profiles"),
-          getItem("Reportes de competencias", "assessment_reports"),
-        ];
-        items.push(
-          getItem("Psicometría", "kuiz", <QuestionCircleOutlined />, children)
-        );
+      if (props?.applications) {
+        let show_kuiz_module = false;
+        for (let item in props.applications) {
+          if (item === "kuiz") {
+            if (props.applications[item].active) {
+              show_kuiz_module = true;
+            }
+          }
+        }
+        if (show_kuiz_module) {
+          children = [
+            getItem("Evaluaciones", "surveys"),
+            getItem("Grupos de evaluaciones", "assessment_groups"),
+            getItem("Perfiles de competencias", "assessment_profiles"),
+            getItem("Reportes de competencias", "assessment_reports"),
+          ];
+          items.push(
+              getItem("Psicometría", "kuiz", <QuestionCircleOutlined />, children)
+          );
+        }
       }
 
       // Menú YNL
@@ -270,7 +290,9 @@ const MainSider = ({
             getItem("Clientes", "jb_clients"),
             getItem("Vacantes", "jb_vacancies"),
             getItem("Estrategias", "jb_strategies"),
-            getItem("Perfiles de vacante", "jb_profiles")
+            getItem("Perfiles de vacante", "jb_profiles"),
+            // getItem("Candidatos", "jb_candidates"),
+            // getItem("Configuraciones", "jb_settings")
           ];
           items.push(
             getItem("Bolsa de trabajo", "job_bank", <WorkOutline />, children)

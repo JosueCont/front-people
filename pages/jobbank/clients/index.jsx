@@ -4,7 +4,10 @@ import { Breadcrumb } from 'antd';
 import TableClients from '../../../components/jobbank/clients/TableClients';
 import SearchClients from '../../../components/jobbank/clients/SearchClients';
 import { connect } from 'react-redux';
-import { getClients, getSectors } from '../../../redux/jobBankDuck';
+import {
+    getClients,
+    getSectors
+} from '../../../redux/jobBankDuck';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
 

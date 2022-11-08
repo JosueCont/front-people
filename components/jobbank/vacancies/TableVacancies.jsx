@@ -132,7 +132,8 @@ const TableVacancies = ({
     {
         title: 'Descripción',
         dataIndex: 'description',
-        key: 'description'
+        key: 'description',
+        ellipsis: true,
     },
     {
         title: 'Cliente',
@@ -149,6 +150,7 @@ const TableVacancies = ({
                 </Dropdown>
             )
         },
+        width: 80, 
         render: (item) =>{
             return (
                 <Dropdown overlay={()=> menuItem(item)}>

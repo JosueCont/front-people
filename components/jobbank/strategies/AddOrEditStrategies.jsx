@@ -5,57 +5,60 @@ import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getPersonsCompany } from '../../../redux/UserDuck';
 import {
-  getInfoStrategy,
-  getVacanciesOptions
+    getInfoStrategy,
+    getClientsOptions,
+    getVacanciesOptions
 } from '../../../redux/jobBankDuck';
 import DetailsStrategies from './DetailsStrategies';
 
 const AddOrEditStrategies = ({
-  action = 'add',
-  currentNode,
-  getPersonsCompany,
-  getInfoStrategy,
-  getVacanciesOptions
+    action = 'add',
+    currentNode,
+    getPersonsCompany,
+    getInfoStrategy,
+    getClientsOptions,
+    getVacanciesOptions
 }) => {
 
-  const router = useRouter();
+    const router = useRouter();
 
-  useEffect(()=>{
-    if(currentNode){
-      getPersonsCompany(currentNode.id)
-      getVacanciesOptions(currentNode.id)
-    }
-  },[currentNode])
+    useEffect(()=>{
+        if(currentNode){
+            getClientsOptions(currentNode.id);
+            getVacanciesOptions(currentNode.id);
+            getPersonsCompany(currentNode.id);
+        }
+    },[currentNode])
 
-  useEffect(()=>{
-    if(router.query.id && action == 'edit'){
-      getInfoStrategy(router.query.id)
-    }
-  },[router])
+    useEffect(()=>{
+        if(router.query.id && action == 'edit'){
+            getInfoStrategy(router.query.id)
+        }
+    },[router])
 
-  return (
-    <MainLayout currentKey={'jb_strategies'} defaultOpenKeys={['job_bank']}>
-      <Breadcrumb>
-        <Breadcrumb.Item
-          className={'pointer'}
-          onClick={() => router.push({ pathname: '/home/persons/'})}
-        >
-          Inicio
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-        <Breadcrumb.Item
-          className={'pointer'}
-          onClick={() => router.push({ pathname: '/jobbank/strategies'})}
-        >
-          Estrategias
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>{action == 'add' ? 'Nueva' : 'Expediente'}</Breadcrumb.Item>
-      </Breadcrumb>
-      <div className={'container'}>
-        <DetailsStrategies action={action}/>
-      </div>
-    </MainLayout>
-  )
+    return (
+        <MainLayout currentKey={'jb_strategies'} defaultOpenKeys={['job_bank']}>
+            <Breadcrumb>
+                <Breadcrumb.Item
+                    className={'pointer'}
+                    onClick={() => router.push({ pathname: '/home/persons/'})}
+                >
+                    Inicio
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
+                <Breadcrumb.Item
+                    className={'pointer'}
+                    onClick={() => router.push({ pathname: '/jobbank/strategies'})}
+                >
+                    Estrategias
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>{action == 'add' ? 'Nueva' : 'Expediente'}</Breadcrumb.Item>
+            </Breadcrumb>
+            <div className={'container'}>
+                <DetailsStrategies action={action}/>
+            </div>
+        </MainLayout>
+    )
 }
 
 const mapState = (state) =>{
@@ -68,6 +71,7 @@ export default connect(
   mapState,{
     getPersonsCompany,
     getInfoStrategy,
+    getClientsOptions,
     getVacanciesOptions
   }
 )(AddOrEditStrategies);

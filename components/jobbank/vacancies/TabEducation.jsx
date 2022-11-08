@@ -17,14 +17,31 @@ import {
   optionsLangVacant
 } from '../../../utils/constant';
 
-const TabEducation = () => {
+const TabEducation = ({ formVacancies }) => {
 
   const {
+    load_competences,
     list_competences,
+    load_academics,
     list_academics,
+    load_main_categories,
     list_main_categories,
+    load_sub_categories,
     list_sub_categories
   } = useSelector(state => state.jobBankStore);
+  const categorySelected = Form.useWatch('main_category', formVacancies);
+
+  const onChangeCategory = (value) =>{
+    formVacancies.setFieldsValue({
+      sub_category: null
+    })
+  }
+
+  const optionsByCategory = () =>{
+    if(!categorySelected) return [];
+    const options = item => item.category === categorySelected;
+    return list_sub_categories.filter(options);
+  }
 
   return (
     <Row gutter={[24,0]}>
@@ -34,8 +51,14 @@ const TabEducation = () => {
           label='Categoría de la vacante'
         >
           <Select
-            placeholder='Categoría de la vacante'
+            allowClear
+            showSearch
+            placeholder='Seleccionar una categoría'
             notFoundContent='No se encontraron resultados'
+            optionFilterProp='children'
+            disabled={load_main_categories}
+            loading={load_main_categories}
+            onChange={onChangeCategory}
           >
             {list_main_categories?.length > 0 && list_main_categories.map(item => (
               <Select.Option value={item.id} key={item.name}>
@@ -51,10 +74,15 @@ const TabEducation = () => {
           label='Subcategoría'
         >
           <Select
-            placeholder='Subcategoría'
+            allowClear
+            showSearch
+            placeholder='Seleccionar una subcategoría'
             notFoundContent='No se encontraron resultados'
+            disabled={optionsByCategory().length <= 0}
+            loading={load_sub_categories}
+            optionFilterProp='children'
           >
-            {list_sub_categories.length > 0 && list_sub_categories.map(item=> (
+            {optionsByCategory().map(item=> (
               <Select.Option value={item.id} key={item.id}>
                 {item.name}
               </Select.Option>
@@ -68,8 +96,11 @@ const TabEducation = () => {
           label='Último grado de estudios'
         >
           <Select
-            placeholder='Último grado de estudios'
+            allowClear
+            showSearch
+            placeholder='Seleccionar un grado'
             notFoundContent='No se encontraron resultados'
+            optionFilterProp='label'
             options={optionsLevelAcademic}
           />
         </Form.Item>
@@ -80,8 +111,11 @@ const TabEducation = () => {
           label='Estatus'
         >
           <Select
-            placeholder='Estatus'
+            allowClear
+            showSearch
+            placeholder='Seleccionar un estatus'
             notFoundContent='No se encontraron resultados'
+            optionFilterProp='label'
             options={optionsStatusVacant}
           />
         </Form.Item>
@@ -89,7 +123,12 @@ const TabEducation = () => {
       <Col span={8}>
         <Form.Item name='academics_degree' label='Carrera'>
           <Select
-            placeholder='Carrera'
+            allowClear
+            showSearch
+            disabled={load_academics}
+            loading={load_academics}
+            optionFilterProp='children'
+            placeholder='Seleccionar una carrera'
             notFoundContent='No se encontraron resultados'
           >
             {list_academics.length > 0 && list_academics.map(item => (
@@ -106,7 +145,10 @@ const TabEducation = () => {
           label='Conocimientos requeridos'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='Conocimientos requeridos'/>
+          <Input
+            maxLength={400}
+            placeholder='Ej. Amplios conocimientos en canal Food Services'
+          />
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -116,9 +158,12 @@ const TabEducation = () => {
         >
           <Select
             mode='multiple'
-            maxTagCount={2}
-            placeholder='Competencias requeridas'
+            maxTagCount={1}
+            disabled={load_competences}
+            loading={load_competences}
+            placeholder='Seleccionar las competencias'
             notFoundContent='No se encontraron resultados'
+            optionFilterProp='children'
           >
             {list_competences.length > 0 && list_competences.map(item => (
               <Select.Option value={item.id} key={item.id}>
@@ -136,8 +181,9 @@ const TabEducation = () => {
           <Select
             mode='multiple'
             maxTagCount={2}
-            placeholder='Idiomas'
+            placeholder='Seleccionar los idiomas'
             notFoundContent='No se encontraron resultados'
+            optionFilterProp='label'
             options={optionsLangVacant}
           />
         </Form.Item>
@@ -148,18 +194,17 @@ const TabEducation = () => {
           label='¿Para qué actividades lo utiliza?'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='¿Para qué actividades lo utiliza?'/>
+          <Input maxLength={400} placeholder='Especificar según los idiomas seleccionados'/>
         </Form.Item>
       </Col>
       <Col span={8}>
         <Form.Item
           name='experiences'
           label='Experiencia requerida'
-          extra='Separar cada experiencia con una coma'
           rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
-            placeholder='Experiencia requerida'
+            placeholder='Separar cada experiencia con una coma'
             autoSize={{
               minRows: 5,
               maxRows: 5,
@@ -171,11 +216,10 @@ const TabEducation = () => {
         <Form.Item
           name='technical_skills'
           label='Habilidades técnicas'
-          extra='Separar cada habilidad técnica con una coma'
           rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
-            placeholder='Habilidades técnicas'
+            placeholder='Separar cada habilidad técnica con una coma'
             autoSize={{
               minRows: 5,
               maxRows: 5,

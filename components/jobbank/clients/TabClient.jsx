@@ -1,19 +1,28 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Row, Col, Form, Input, Select, Button} from 'antd';
+import { Row, Col, Form, Input, Select, Button, Checkbox} from 'antd';
 import {
     ruleRequired,
     ruleWhiteSpace,
     ruleURL,
     rfcFormat
 } from '../../../utils/rules';
+import { optionsBusinessName } from '../../../utils/constant';
 import { useSelector } from 'react-redux';
 
 const TabClient = ({ sizeCol = 12 }) =>{
 
-    const list_sectors = useSelector(state => state.jobBankStore.list_sectors);
+    const {
+        list_sectors,
+        load_sectors
+    } = useSelector(state => state.jobBankStore);
 
     return (
         <Row gutter={[24,0]} className='tab-client'>
+            <Col span={12} style={{display: 'none'}}>
+                <Form.Item name='is_active' valuePropName='checked'>
+                    <Checkbox>¿Está activo?</Checkbox>
+                </Form.Item>
+            </Col>
             <Col span={sizeCol}>
                 <Form.Item
                     name='name'
@@ -45,7 +54,9 @@ const TabClient = ({ sizeCol = 12 }) =>{
                 <Form.Item name='sector'>
                     <Select
                         allowClear
-                        placeholder='Seleccione un sector'
+                        disabled={load_sectors}
+                        loading={load_sectors}
+                        placeholder='Seleccionar un sector'
                         notFoundContent='No se encontraron resultados'
                     >
                         {list_sectors.length > 0 && list_sectors.map(item => (
@@ -61,16 +72,19 @@ const TabClient = ({ sizeCol = 12 }) =>{
                     name='website'
                     rules={[ruleURL]}
                 >
-                    <Input placeholder='Escriba la url de su sitio'/>
+                    <Input placeholder='URL de su sitio, iniciar con http(s)://'/>
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>
                 <Form.Item
                     name='business_name'
-                    rules={[ruleWhiteSpace]}
                     // style={{marginBottom: 0}}
                 >
-                    <Input maxLength={50} placeholder='Razón social'/>
+                    <Select
+                        allowClear
+                        placeholder='Razón social'
+                        options={optionsBusinessName}
+                    />
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>
@@ -79,7 +93,14 @@ const TabClient = ({ sizeCol = 12 }) =>{
                     rules={[ruleWhiteSpace]}
                     // style={{marginBottom: 0}}
                 >
-                    <Input placeholder='Comentarios'/>
+                    <Input.TextArea
+                        maxLength={400}
+                        autoSize={{
+                            minRows: 3,
+                            maxRows: 3
+                        }}
+                        placeholder='Comentarios'
+                    />
                 </Form.Item>
             </Col>
         </Row>
