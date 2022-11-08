@@ -17,7 +17,11 @@ import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { setLoadVacancies, getInfoVacant } from '../../../redux/jobBankDuck';
+import {
+    setLoadVacancies,
+    setInfoVacant,
+    getInfoVacant
+} from '../../../redux/jobBankDuck';
 import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsVacancies = ({
@@ -26,7 +30,8 @@ const DetailsVacancies = ({
     load_vacancies,
     setLoadVacancies,
     info_vacant,
-    getInfoVacant
+    getInfoVacant,
+    setInfoVacant
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -87,7 +92,6 @@ const DetailsVacancies = ({
             let response = await WebApiJobBank.createVacant({...values, node_id: currentNode.id});
             message.success('Vacante registrada');
             actionSaveAnd(response.data.id)
-            formVacancies.resetFields()
         } catch (e) {
             console.log(e)
             setLoadVacancies(false);
@@ -106,7 +110,12 @@ const DetailsVacancies = ({
         actionFunction[action](bodyData);
     }
 
-    const actionAddCreate = () =>{
+    const onFinishFailed = (e) =>{
+        setLoading({})
+    }
+
+    const actionCreate = () =>{
+        formVacancies.resetFields()
         setLoadVacancies(false)
         setLoading({})
     }
@@ -116,16 +125,21 @@ const DetailsVacancies = ({
         else router.push('/jobbank/vacancies');
     }
 
+    const actionEdit = (id) =>{
+        setInfoVacant()
+        router.replace({
+            pathname: '/jobbank/vacancies/edit',
+            query: { id }
+        })
+    }
+
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
-            create: actionAddCreate,
-            edit: ()=> router.replace({
-                pathname: '/jobbank/vacancies/edit',
-                query: { id }
-            })
+            create: actionCreate,
+            edit: actionEdit
         }
-        actionFunction[actionType]();
+        actionFunction[actionType](id);
     }
 
     const getSaveAnd = (type) =>{
@@ -159,7 +173,7 @@ const DetailsVacancies = ({
                         layout='vertical'
                         form={formVacancies}
                         onFinish={onFinish}
-                        onFinishFailed={()=> setLoading({})}
+                        onFinishFailed={onFinishFailed}
                         requiredMark={false}
                         initialValues={{
                             vo_bo: false,
@@ -269,6 +283,7 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         setLoadVacancies,
-        getInfoVacant
+        getInfoVacant,
+        setInfoVacant
     }
 )(DetailsVacancies);

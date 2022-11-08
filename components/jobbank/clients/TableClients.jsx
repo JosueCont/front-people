@@ -286,6 +286,7 @@ const TableClients = ({
                 actionForm={actionUpdate}
                 close={closeModalEdit}
                 itemToEdit={itemToEdit}
+                textSave='Actualizar'
             />
             <DeleteItems
                 title={itemsToDelete.length > 1

@@ -19,6 +19,7 @@ const ModalClients = ({
     visible = false, //boolean
     close = ()=> {}, //function
     itemToEdit = {}, //object
+    textSave = 'Guardar'//string
 }) => {
 
     const [formClient] = Form.useForm();
@@ -30,13 +31,9 @@ const ModalClients = ({
     useEffect(()=>{
         if(Object.keys(itemToEdit).length > 0){
             setPrevDocs(itemToEdit.files);
-            setValuesForm();
+            formClient.setFieldsValue(itemToEdit);
         }
     },[itemToEdit])
-
-    const setValuesForm = () =>{
-        formClient.setFieldsValue(itemToEdit);
-    }
 
     const createData = (obj) =>{
         let dataClient = new FormData();
@@ -146,6 +143,7 @@ const ModalClients = ({
                                         prevDocs={prevDocs}
                                         setNewDocs={setNewDocs}
                                         setPrevDocs={setPrevDocs}
+                                        showPrevDocs={Object.keys(itemToEdit).length > 0}
                                     />
                                 </Spin>
                             </Tabs.TabPane>
@@ -166,7 +164,9 @@ const ModalClients = ({
                         )}
                         <div style={{display: 'flex', gap: 8, marginLeft: 'auto'}}>
                             <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>
-                            <Button htmlType={'submit'} loading={loading}>Guardar</Button>
+                            <Button htmlType={'submit'} loading={loading}>
+                                {textSave}
+                            </Button>
                         </div>
                     </Col>
                 </Row>

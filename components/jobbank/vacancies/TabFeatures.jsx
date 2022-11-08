@@ -205,7 +205,7 @@ const TabFeatures = ({
           label='Horario laboral'
           rules={[ruleWhiteSpace]}
         >
-          <Input maxLength={100} placeholder='Ej. L-V 9.30AM a 6:00PM y Sábados 9:00 a 1PM'/>
+          <Input maxLength={100} placeholder='Ej. L-V 9:30 AM - 6:00 PM y Sábados de 9:00 AM - 1:00 PM'/>
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -323,7 +323,7 @@ const TabFeatures = ({
             valuePropName='checked'
             style={{marginBottom: 0}}
           >
-            <Checkbox/>
+            <Checkbox onChange={onChangeTurn}/>
           </Form.Item>
         </div>
         <Form.Item

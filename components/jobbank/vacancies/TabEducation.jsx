@@ -201,11 +201,10 @@ const TabEducation = ({ formVacancies }) => {
         <Form.Item
           name='experiences'
           label='Experiencia requerida'
-          extra='Separar cada experiencia con una coma'
           rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
-            placeholder='Experiencia requerida'
+            placeholder='Separar cada experiencia con una coma'
             autoSize={{
               minRows: 5,
               maxRows: 5,
@@ -217,11 +216,10 @@ const TabEducation = ({ formVacancies }) => {
         <Form.Item
           name='technical_skills'
           label='Habilidades técnicas'
-          extra='Separar cada habilidad técnica con una coma'
           rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
-            placeholder='Habilidades técnicas'
+            placeholder='Separar cada habilidad técnica con una coma'
             autoSize={{
               minRows: 5,
               maxRows: 5,

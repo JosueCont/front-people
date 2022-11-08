@@ -6,6 +6,7 @@ import {
     ruleURL,
     rfcFormat
 } from '../../../utils/rules';
+import { optionsBusinessName } from '../../../utils/constant';
 import { useSelector } from 'react-redux';
 
 const TabClient = ({ sizeCol = 12 }) =>{
@@ -77,10 +78,13 @@ const TabClient = ({ sizeCol = 12 }) =>{
             <Col span={sizeCol}>
                 <Form.Item
                     name='business_name'
-                    rules={[ruleWhiteSpace]}
                     // style={{marginBottom: 0}}
                 >
-                    <Input maxLength={50} placeholder='Razón social'/>
+                    <Select
+                        allowClear
+                        placeholder='Razón social'
+                        options={optionsBusinessName}
+                    />
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>

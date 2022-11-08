@@ -265,11 +265,12 @@ const FormStrategies = ({ formStrategies }) => {
                 <Form.Item
                     name='salary'
                     label='Sueldo (MXN)'
-                    rules={[ruleRequired, numCommaAndDot]}
+                    rules={[ruleRequired, numCommaAndDot()]}
                 >
                     <Input
                         maxLength={20}
                         placeholder='Ej. 70,500.5999'
+                        onKeyPress={e => e.which == 32 && e.preventDefault()}
                     />
                 </Form.Item>
             </Col>
