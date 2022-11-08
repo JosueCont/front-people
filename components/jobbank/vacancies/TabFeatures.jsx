@@ -28,15 +28,15 @@ import {
 import { useSelector } from 'react-redux';
 
 const TabFeatures = ({
-  showTurns,
-  setShowTurns,
-  disabledClient
+  disabledClient,
+  formVacancies
 }) => {
 
   const {
     load_clients_options,
     list_clients_options
   } = useSelector(state => state.jobBankStore);
+  const rotativeTurn = Form.useWatch('rotative_turn', formVacancies);
 
   const styleDisabled = {
     width: 32,
@@ -63,6 +63,12 @@ const TabFeatures = ({
       return Promise.resolve();
     }
   })
+
+  const onChangeTurn = ({ target: { checked } }) =>{
+    formVacancies.setFieldsValue({
+      turns_to_rotate: null
+    })
+  }
   
   return (
     <Row gutter={[24,0]}>
@@ -199,7 +205,7 @@ const TabFeatures = ({
           label='Horario laboral'
           rules={[ruleWhiteSpace]}
         >
-          <Input maxLength={100} placeholder='Ej. L-V 9.30AM a 6:00PM y Sábados 9:00 a 1PM'/>
+          <Input maxLength={100} placeholder='Ej. L-V 9:30 AM - 6:00 PM y Sábados de 9:00 AM - 1:00 PM'/>
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -317,14 +323,14 @@ const TabFeatures = ({
             valuePropName='checked'
             style={{marginBottom: 0}}
           >
-            <Checkbox onChange={e => setShowTurns(e.target.checked)}/>
+            <Checkbox onChange={onChangeTurn}/>
           </Form.Item>
         </div>
         <Form.Item
           name='turns_to_rotate'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='¿Cuáles?' disabled={!showTurns}/>
+          <Input placeholder='¿Cuáles?' disabled={!rotativeTurn}/>
         </Form.Item>
       </Col>
       <Col span={8} style={{display: 'flex'}}>

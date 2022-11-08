@@ -33,7 +33,7 @@ const SelectGeographicArea = ({
     <Form.Item
       key="geograp_area"
       name="geograp_area"
-      label={"Area geográfica"}
+      label={"Área geográfica"}
       rules={rules}
     >
       <Select

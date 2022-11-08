@@ -493,6 +493,10 @@ export const optionMovement = [
   {value: 2, label:"Finiquito"},
   {value: 3, label:"Liquidación"}
 ]
+export const optionsBusinessName = [
+  {value: "1", key: "1", label: 'Física'},
+  {value: "2", key: "2", label: 'Moral'}
+]
 
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";

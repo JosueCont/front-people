@@ -60,7 +60,7 @@ const FormPatronalRegistration = ({
         <Col lg={6} xs={22}>
           <Form.Item
             name="economic_activity"
-            label="Actividad economica"
+            label="Actividad económica"
             rules={[ruleRequired, ruleWhiteSpace]}
           >
             <Input />
