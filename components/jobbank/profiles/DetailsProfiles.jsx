@@ -14,7 +14,11 @@ import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import FormProfiles from './FormProfiles';
-import { getInfoProfile, setLoadProfiles } from '../../../redux/jobBankDuck';
+import {
+    getInfoProfile,
+    setLoadProfiles,
+    setInfoProfile
+} from '../../../redux/jobBankDuck';
 import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsProfiles = ({
@@ -23,7 +27,8 @@ const DetailsProfiles = ({
     info_profile,
     load_profiles,
     setLoadProfiles,
-    getInfoProfile
+    getInfoProfile,
+    setInfoProfile
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -90,7 +95,6 @@ const DetailsProfiles = ({
             let response = await WebApiJobBank.createProfile({...values, node: currentNode.id});
             message.success('Perfil registrado')
             actionSaveAnd(response.data.id)
-            resetFields();
         } catch (e) {
             message.error('Perfil no registrado')
             setLoading({})
@@ -116,6 +120,7 @@ const DetailsProfiles = ({
     }
 
     const actionAddCreate = () =>{
+        resetFields();
         setDisabledField(false)
         setLoadProfiles(false)
         setLoading({})
@@ -126,16 +131,21 @@ const DetailsProfiles = ({
         else router.push('/jobbank/profiles');
     }
 
+    const actionEdit = (id) =>{
+        setInfoProfile()
+        router.replace({
+            pathname: '/jobbank/profiles/edit',
+            query: { id }
+        })
+    }
+
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
             create: actionAddCreate,
-            edit: ()=> router.replace({
-                pathname: '/jobbank/profiles/edit',
-                query: { id }
-            })
+            edit: actionEdit
         }
-        actionFunction[actionType]();
+        actionFunction[actionType](id);
     }
 
     const getSaveAnd = (type) =>{
@@ -239,6 +249,7 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         setLoadProfiles,
-        getInfoProfile
+        getInfoProfile,
+        setInfoProfile
     }
 )(DetailsProfiles);
