@@ -130,11 +130,11 @@ const FormCaledanrXml = ({
                 <Form.Item
                   key="SelectSalaryDays"
                   name="salary_days"
-                  label="Dias a pagar"
+                  label="Días a pagar"
                   rules={[ruleRequired]}
                 >
                   <Select
-                    placeholder="Dias a pagar"
+                    placeholder="Días a pagar"
                     options={salaryDays}
                     onChange={(value) =>
                       (calendar.calendar.salary_days = value)

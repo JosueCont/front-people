@@ -300,6 +300,24 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     return current && moment(current).year() < currentYear;
   };
 
+  const disablePeriod = (current) => {
+    let month = moment(current).month() + 1
+    let year = moment(current).year()
+
+    let date = {
+      month,
+      year
+    }
+
+    if((date.month !== 1 && date.month !== 12 || date.year < currentYear - 1 )){
+      return true
+    } else {
+      if (date.month === 1 && date.year < currentYear ) return true
+      return false
+    }
+
+  }
+
   return (
     <>
       <Global
@@ -477,7 +495,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                   locale={locale}
-                  disabledDate={disabledDate}
+                  disabledDate={disablePeriod}
                 />
               </Form.Item>
             </Col>
@@ -545,6 +563,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   moment={"YYYY"}
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                   locale={locale}
+                  disabledDate = {disablePeriod}
+
                 />
               </Form.Item>
             </Col>
@@ -570,9 +590,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               />
             </Col>
             <Col lg={8} xs={22}>
-              <Form.Item label="Politicas">
+              <Form.Item label="Políticas">
                 <Switch
-                  defaultChecked={politics}
+                  // defaultChecked={politics}
+                  checked = { politics }
                   checkedChildren="Personalizado"
                   unCheckedChildren="Por defecto"
                   onChange={(value) => setPolitics(value)}
@@ -606,7 +627,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                 <Col lg={8} xs={22}>
                   <Form.Item
                     name="calculation_employment_subsidy"
-                    label="Calculo de subsicio al empleo"
+                    label="Cálculo de subsicio al empleo"
                     rules={[ruleRequired]}
                   >
                     <Select
