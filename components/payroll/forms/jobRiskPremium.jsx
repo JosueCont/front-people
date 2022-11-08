@@ -44,10 +44,14 @@ const JobRiskPremium = ({
   },[percent])
 
   useEffect(() => {
+    console.log('Jobrisk', jobRisk)
     if (jobRisk) {
       form.setFieldsValue({
         job_risk_class: jobRisk.job_risk_class.id,
-        risk_percent: jobRisk.risk_percent,
+        risk_percent: jobRisk.risk_percent == '0.00000'? 
+          jobRisk.job_risk_class.percent
+        : 
+          jobRisk.risk_percent,
         year: jobRisk.year,
         month: jobRisk.month,
         stps_accreditation: jobRisk.stps_accreditation,
