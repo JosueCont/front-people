@@ -25,6 +25,7 @@ import { monthsName, bimestralMonths } from "../../utils/constant";
 import { toInteger } from "lodash";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import { ruleRequired } from "../../utils/rules";
+import axios from "axios";
 
 const ProvisionsReport = ({ permissions, ...props }) => {
 
@@ -144,23 +145,14 @@ const ProvisionsReport = ({ permissions, ...props }) => {
       payment_calendar: calendar,
       method: 'export'
     }
-    
 
-    downLoadFileBlob(
-      url,
-      "Provision_Report.xlsx",
-      "POST",
-      data
-    )
-
-    // WebApiFiscal.get_monthly_imss_provision(data)
-    // .then((response) => {
-    //   console.log("Response", response)
-    // })
-    // .catch((e) => {
-    //   console.log('error', e)
-    // })
-    console.log('Data', data)
+      downLoadFileBlob(
+        url,
+        "Provision_Report.xlsx",
+        "POST",
+        data,
+        "No se encontraron colaboradores"
+      )
   }
 
   return (
