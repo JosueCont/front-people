@@ -568,6 +568,14 @@ const CalculatePayroll = ({ ...props }) => {
         console.log(error);
         setPayroll([]);
         form.resetFields();
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          setMessageModal(1, error.response.data.message);
+          setGenericModal(true);
+        } else message.error(messageError);
         setLoading(false);
       });
   };
