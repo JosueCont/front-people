@@ -126,7 +126,7 @@ const ProvisionsReport = ({ permissions, ...props }) => {
 
   const onFinish = async (values) => {
     console.log("Values", values)
-    let url = `${getDomain(API_URL_TENANT)}/fiscal/monthly-imss-free/get_monthly_imss_provision/`
+    let url = `${getDomain(API_URL_TENANT)}/fiscal/${ report === 1? 'monthly' : 'bimonthly' }-imss-free/get_${ report === 1? 'monthly' : 'bimonthly' }_imss_provision/`
     values.period = values.period? toInteger(moment(values.period).format('YYYY')) : null
 
     let data = report == 1? {

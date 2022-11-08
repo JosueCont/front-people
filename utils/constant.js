@@ -488,6 +488,12 @@ export const optionsEconomicBenefits = [
   {value: 3, key: 3, label: 'Prestaciones superiores a la ley'}
 ]
 
+export const optionMovement = [
+  {value: 1, label:"Aguinaldo"},
+  {value: 2, label:"Finiquito"},
+  {value: 3, label:"Liquidación"}
+]
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";

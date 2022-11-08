@@ -40,7 +40,7 @@ const SelectIntegrationFactors = ({
       <Select
         placeholder="Seleccionar beneficio"
       >
-        <Option key={'ley'} value={'ley'}>Utilizar factores de ley</Option>
+        <Option key={'ley'} value={'ley'}>Utilizar prestaciones de ley</Option>
         {
           options && options.map((option) => (
             <Option key={option.id}> { option.description } </Option>
