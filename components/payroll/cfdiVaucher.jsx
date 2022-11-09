@@ -39,7 +39,7 @@ const CfdiVaucher = ({
   period = null,
   viewFilter = true,
   setKeys,
-  departmet = null,
+  department = null,
   job = null,
   ...props
 }) => {
@@ -204,8 +204,8 @@ const CfdiVaucher = ({
         });
       setCalendarSelect(calendar);
       let filter = `calendar=${calendar}&period=${period}`;
-      if (departmet) filter + `department=${departmet}`;
-      if (job) filter + `job=${job}`;
+      if (department) filter = filter + `&department=${department}`;
+      if (job) filter = filter + `&job=${job}`;
       getVoucher(filter);
     }
   }, [router.query]);
@@ -254,6 +254,7 @@ const CfdiVaucher = ({
 
   const getVoucher = (data, new_page) => {
     data = data + generate_url(new_page);
+
     setLoading(true);
     setCfdis([]);
     WebApiPayroll.getCfdiPayrrol(data)
