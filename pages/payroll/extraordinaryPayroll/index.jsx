@@ -411,14 +411,13 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       });
   };
 
-  movementType && console.log('movementType', movementType)
-
-  const onSelectChange = (newSelectedRowKeys = []) => {
+  const onSelectChange = (newSelectedRowKeys) => {
     console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
   const rowSelectionPerson = {
+    
     selectedRowKeys,
     onChange: onSelectChange,
   }
