@@ -1,5 +1,5 @@
 import {React, useEffect, useState} from 'react'
-import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row  } from 'antd'
+import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row, DatePicker  } from 'antd'
 import { DeleteOutlined, RedoOutlined, RetweetOutlined, 
   EyeOutlined, FileDoneOutlined, FileSyncOutlined, 
   PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined, MinusCircleOutlined  } from '@ant-design/icons';
@@ -12,6 +12,7 @@ import jwtEncode from "jwt-encode";
 import { domainKuiz } from '../../../api/axiosApi';
 import { valueToFilter } from '../../../utils/functions';
 import CardGeneric from '../../dashboards-cards/CardGeneric';
+import index from '../../../pages/ynl/general-dashboard';
 
 const TableAssessments = ({
   user_profile,
@@ -20,6 +21,7 @@ const TableAssessments = ({
   const infoPerson = useSelector((state) => state?.userStore?.people_company)
   const router = useRouter();
   moment.locale("es-mx");
+  const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
   const [dataAssessments, setDataAssessments] = useState([]);
   const [idUser, setIdUser] = useState({});
   const [dataUser, setDataUser] = useState({});
@@ -382,10 +384,12 @@ const TableAssessments = ({
   ];
 
   const onChange = (e) =>{
-    if(e.target.value == 1){
+    if(e == 1){
       setTypeFilter(1)
-    }else{
+    }else if(e == 2){
       setTypeFilter(2)
+    }else if(e == 3){
+      setTypeFilter(3)
     }
   }
 
@@ -393,7 +397,7 @@ const TableAssessments = ({
     setNameAssessment(target.value);
     console.log("valores:",target.value)
     if((target.value).trim()){
-      let results = fullAssessments.filter((item)=> valueToFilter(item.name_es).includes(valueToFilter(target.value)));
+      let results = fullAssessments.filter(item => valueToFilter(item.name).includes(target.value) || valueToFilter(item?.group?.name).includes(target.value))
       setDataAssessments(results)
     }else{
       setDataAssessments(fullAssessments)
@@ -408,6 +412,10 @@ const TableAssessments = ({
     }else{
       setDataAssessments(fullAssessments)
     }
+  }
+
+  const onFilterDates = (date) => {
+    console.log("fecha elegida formateada",date._i);
   }
 
   const calculateIndicatorsCards = (assessments) =>{
@@ -514,7 +522,7 @@ const TableAssessments = ({
       },
     ];
     return <Table columns={columnsHistory}
-              dataSource={item.applys}
+              dataSource={item.applys.slice(1)}
               pagination={false}
               style={{marginTop:"8px", marginBottom:"8px"}}
               locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Sin historial de esta evaluación" />}}
@@ -536,15 +544,21 @@ const TableAssessments = ({
                     gap: '8px'
                 }}
               >
-                <Radio.Group defaultValue={1} onChange={onChange}>
-                    <Space direction="horizontal">
+                {/* <Radio.Group defaultValue={1} onChange={onChange}>
+                    <Space direction="vertical">
                         <Radio value={1}>Evaluación</Radio>
                         <Radio value={2}>Estatus</Radio>
+                        <Radio value={3}>Fecha</Radio>
                     </Space>
-                </Radio.Group>
+                </Radio.Group> */}
+                <Select style={{width:"100%"}} defaultValue={1} onChange={onChange}>
+                  <Option value={1}>Filtrar por evaluación</Option>
+                  <Option value={2}>Filtrar por estatus</Option>
+                  {/* <Option value={3}>Filtrar por fecha</Option> */}
+                </Select>
                 { typeFilter == 1 &&
                   <Input
-                    placeholder={'Buscar por nombre'}
+                    placeholder={'Buscar por evaluación o grupo'}
                     value={nameAssessment}
                     onChange={onFilterName}
                     style={{width:"100%"}}
@@ -557,6 +571,9 @@ const TableAssessments = ({
                     <Option value={1}>Iniciada</Option>
                     <Option value={2}>Finalizada</Option>
                   </Select>
+                }
+                { typeFilter == 3 &&
+                  <DatePicker style={{width:"100%"}} onChange={onFilterDates} defaultValue={moment('01/01/2015', dateFormatList[0])} format={dateFormatList} />
                 }
               </Col>
               <Col
