@@ -49,16 +49,12 @@ const FormProfiles = ({
         } 
         resetFields();
         if(value == 'open_fields'){
-            setFieldsValue({
-                ...valuesDefault,
-                ...keepValues,
-                profile_type: value
-            });
+            let info = {...valuesDefault, ...keepValues};
+            setFieldsValue(info);
             setDisabledField(false)
             return;
         }
         setFieldsValue(keepValues);
-        
         const type = item => item.id == value;
         let type_ = list_profiles_types.find(type);
         if(!type_) return;

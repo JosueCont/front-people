@@ -5,7 +5,8 @@ import {
   Menu,
   Dropdown,
   message,
-  Switch
+  Switch,
+  Tooltip
 } from 'antd';
 import {
   EllipsisOutlined,
@@ -13,18 +14,20 @@ import {
   EditOutlined,
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import { getVacancies, setPage } from '../../../redux/jobBankDuck';
+import { getVacancies, setJobbankPage } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
+import { optionsStatusVacant } from '../../../utils/constant';
 
 const TableVacancies = ({
     load_vacancies,
-    page_jobbank,
+    jobbank_page,
     list_vacancies,
     getVacancies,
-    setPage,
-    currentNode
+    setJobbankPage,
+    currentNode,
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -67,14 +70,28 @@ const TableVacancies = ({
         setItemsToDelete([])
     }
 
+    const getStatus = (item) =>{
+        if(!item.status) return null;
+        const status = (record) => record.value === item.status;
+        let status_ = optionsStatusVacant.find(status);
+        return status_.label;
+    }
+
     const onChangePage = ({current}) =>{
-        setPage(current)
-        if (current == 1) getVacancies(currentNode?.id);
-        if (current > 1) {
-            const offset = (current - 1) * 10;
-            const queryParam = `&limit=10&offset=${offset}`;
-            getVacancies(currentNode?.id, queryParam, current)
-        } 
+        setJobbankPage(current)
+        validateGetVacancies(current)
+    }
+
+    const validateGetVacancies = (current) =>{
+        let page = current ?? jobbank_page;
+        if(page > 1) getVacanciesWithFilters(page);
+        else getVacancies(currentNode?.id, jobbank_filters);
+    }
+
+    const getVacanciesWithFilters = (page) =>{
+        let offset = (page - 1) * 10;
+        let query = `&limit=10&offset=${offset}${jobbank_filters}`;
+        getVacancies(currentNode?.id, query, page);
     }
 
     const rowSelection = {
@@ -130,10 +147,18 @@ const TableVacancies = ({
         key: 'job_position'
     },
     {
-        title: 'Descripción',
-        dataIndex: 'description',
-        key: 'description',
-        ellipsis: true,
+        title: 'Categoría',
+        dataIndex: ['education_and_competence', 'main_category', 'name'],
+        key: ['education_and_competence', 'main_category', 'name']
+        
+    },
+    {
+        title: 'Estatus',
+        render: (item) =>{
+            return (
+                <span>{getStatus(item)}</span>
+            )
+        }
     },
     {
         title: 'Cliente',
@@ -150,7 +175,7 @@ const TableVacancies = ({
                 </Dropdown>
             )
         },
-        width: 80, 
+        // width: 80, 
         render: (item) =>{
             return (
                 <Dropdown overlay={()=> menuItem(item)}>
@@ -179,7 +204,7 @@ const TableVacancies = ({
             }}
             pagination={{
                 total: list_vacancies.count,
-                current: page_jobbank,
+                current: jobbank_page,
                 hideOnSinglePage: true,
                 showSizeChanger: false
             }}
@@ -204,7 +229,8 @@ const mapState = (state) =>{
     return{
         list_vacancies: state.jobBankStore.list_vacancies,
         load_vacancies: state.jobBankStore.load_vacancies,
-        page_jobbank: state.jobBankStore.page_jobbank,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
+        jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
@@ -212,6 +238,6 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         getVacancies,
-        setPage
+        setJobbankPage
     }
 )(TableVacancies);

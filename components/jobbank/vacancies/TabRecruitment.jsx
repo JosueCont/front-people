@@ -142,7 +142,7 @@ const TabRecruitment = ({
               label='Durante la entrevista'
               rules={[ruleWhiteSpace]}
             >
-              <Input placeholder='¿Qué particularidad es importante observar?'/>
+              <Input placeholder='Describa las particularidades a observar'/>
             </Form.Item>
           </Col>
           <Col span={12}>

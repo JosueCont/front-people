@@ -14,7 +14,7 @@ import {
     EditOutlined,
 } from '@ant-design/icons';
 import {
-    setPage
+    setJobbankPage
 } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
@@ -24,8 +24,8 @@ import Clipboard from '../../../components/Clipboard';
 
 const TableCandidates = ({
     currentNode,
-    page_jobbank,
-    setPage,
+    jobbank_page,
+    setJobbankPage,
     getCandidates,
     list_candidates,
     load_candidates
@@ -72,7 +72,7 @@ const TableCandidates = ({
     }
 
     const onChangePage = ({current}) =>{
-        setPage(current)
+        setJobbankPage(current)
         // if (current == 1) getCandidates(currentNode?.id);
         // if (current > 1) {
         //     const offset = (current - 1) * 10;
@@ -198,7 +198,7 @@ const TableCandidates = ({
                 }}
                 pagination={{
                     total: list_candidates.count,
-                    current: page_jobbank,
+                    current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
@@ -222,7 +222,7 @@ const mapState = (state) =>{
     return {
         list_candidates: state.jobBankStore.list_candidates,
         load_candidates: state.jobBankStore.load_candidates,
-        page_jobbank: state.jobBankStore.page_jobbank,
+        jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
@@ -230,6 +230,6 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         getCandidates,
-        setPage
+        setJobbankPage
     }
 )(TableCandidates);
