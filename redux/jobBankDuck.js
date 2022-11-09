@@ -23,7 +23,6 @@ const initialState = {
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
-    load_jobbank: false,
     load_profiles: false,
     load_sectors: false,
     load_competences: false,
@@ -34,7 +33,9 @@ const initialState = {
     load_main_categories: false,
     load_sub_categories: false,
     load_candidates: false,
-    page_jobbank: 1
+    jobbank_load: false,
+    jobbank_page: 1,
+    jobbank_filters: "",
 }
 
 const GET_CLIENTS = "GET_CLIENTS";
@@ -71,6 +72,7 @@ const GET_SUB_CATEGORIES = "GET_SUB_CATEGORIES";
 
 const SET_PAGE = "SET_PAGE";
 const SET_LOAD = "SET_LOAD";
+const SET_FILTERS = "SET_FILTERS";
 
 const jobBankReducer = (state = initialState, action) =>{
     switch (action.type){
@@ -78,31 +80,31 @@ const jobBankReducer = (state = initialState, action) =>{
             return {...state,
                 list_clients: action.payload,
                 load_clients: action.fetching,
-                page_jobbank: action.page_num
+                jobbank_page: action.page_num
             }
         case GET_VACANCIES:
             return {...state,
                 list_vacancies: action.payload,
                 load_vacancies: action.fetching,
-                page_jobbank: action.page_num
+                jobbank_page: action.page_num
             }
         case GET_STRATEGIES:
             return {...state,
                 list_strategies: action.payload,
                 load_strategies: action.fetching,
-                page_jobbank: action.page_num
+                jobbank_page: action.page_num
             }
         case GET_PROFILES:
             return {...state,
                 list_profiles: action.payload,
                 load_profiles: action.fetching,
-                page_jobbank: action.page_num
+                jobbank_page: action.page_num
             }
         case GET_CANDIDATES:
             return {...state,
                 list_candidates: action.payload,
                 load_candidates: action.fetching,
-                page_jobbank: action.page_num
+                jobbank_page: action.page_num
             }
         case GET_VACANT_INFO:
             return {...state,
@@ -186,20 +188,26 @@ const jobBankReducer = (state = initialState, action) =>{
         case SET_CANDIDATE_INFO:
             return {...state, info_candidate: action.payload }
         case SET_PAGE:
-            return {...state, page_jobbank: action.payload }
+            return {...state, jobbank_page: action.payload }
         case SET_LOAD:
-            return{...state, load_jobbank: action.payload }
+            return{...state, jobbank_load: action.payload }
+        case SET_FILTERS:
+            return {...state, jobbank_filters: action.payload}
         default:
             return state;
     }
 }
 
-export const setPage = (num = 1) => (dispatch) =>{
+export const setJobbankPage = (num = 1) => (dispatch) =>{
     dispatch({type: SET_PAGE, payload: num})
 }
 
-export const setLoadJobBank = (fetching = false) => (dispatch) =>{
+export const setJobbankLoad = (fetching = false) => (dispatch) =>{
     dispatch({type: SET_LOAD, payload: fetching})
+}
+
+export const setJobbankFilters = (data) => (dispatch) =>{
+    dispatch({type: SET_FILTERS, payload: data})
 }
 
 export const setLoadVacancies = (fetching = false) => (dispatch) =>{
