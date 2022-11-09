@@ -529,11 +529,11 @@ const homeScreen = ({ ...props }) => {
       <Menu>
         {props.config?.kuiz_enabled && (
           <>
-            {permissions.view && (
+            {/* {permissions.view && (
               <Menu.Item key="4" icon={<EyeOutlined />}>
                 <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
               </Menu.Item>
-            )}
+            )} */}
             <Menu.Item key="5" icon={<EyeOutlined />}>
               <Link href={`/assessment/persons/${item.id}`}>Ver asignaciones</Link>
             </Menu.Item>

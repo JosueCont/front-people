@@ -510,51 +510,7 @@ const TableAssessments = ({
             </>
           )
         }
-        // render: (record) => {
-        //   if(record.status == 0){
-        //     return(
-        //       <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
-        //         <Tooltip title="Eliminar evaluación">
-        //           <DeleteOutlined />
-        //         </Tooltip>
-        //       </Button>
-        //     )
-        //   }else if(record.status == 1) {
-        //     return(
-        //       <>
-        //         <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
-        //           <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record.id)}>
-        //             <Tooltip title="Reiniciar evaluación">
-        //               <RedoOutlined />
-        //             </Tooltip>
-        //           </Button>
-        //           <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
-        //             <Tooltip title="Eliminar evaluación">
-        //               <DeleteOutlined/>
-        //             </Tooltip>
-        //           </Button>
-        //         </div>
-        //       </>
-        //     )
-        //   }else if(record.status ==2) {
-        //     return(
-        //       <>
-        //         <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
-        //           <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(item,record)}>
-        //             <Tooltip title="Ver resultados">
-        //               <EyeOutlined />
-        //             </Tooltip>
-        //           </Button>
-        //           <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
-        //             <Tooltip title="Eliminar evaluación">
-        //               <DeleteOutlined/>
-        //             </Tooltip>
-        //           </Button>
-        //         </div>
-        //       </>
-        //     )
-        //   }
-        // }
+
       },
     ];
     return <Table columns={columnsHistory}
@@ -654,32 +610,6 @@ const TableAssessments = ({
                 </Row>
               </Col>
             </Row>
-            {/* <Row gutter={[16,16]}>
-              <Col xs={12} sm={12} md={12} lg={8} xl={8}>
-                <CardGeneric
-                  title={'Evaluaciones completadas'}
-                  icon={<FileDoneOutlined />}
-                  color={'#ec6532'}
-                  numcard={assessmentsComplete}
-                />
-              </Col>
-              <Col xs={12} sm={12} md={12} lg={8} xl={8}>
-                <CardGeneric
-                  title={'Evaluaciones por contestar'}
-                  icon={<FileSyncOutlined />}
-                  color={'#ec6532'}
-                  numcard={assessmentsToAnswer}
-                />
-              </Col>
-              <Col xs={12} sm={12} md={12} lg={8} xl={8}>
-                <CardGeneric
-                  title={'Porcentaje de avance'}
-                  icon={<PercentageOutlined />}
-                  color={'#ec6532'}
-                  numcard={assessmentsProgress}
-                />
-              </Col>
-            </Row> */}
         </div>
         <Table
           rowKey={record => record.id}

@@ -4,6 +4,7 @@ import { Breadcrumb, Tabs, Row, Col, Select,Form, Menu, Avatar, Input, Radio, Sp
 import TableAssessments from '../../../components/assessment/persons/TableAssessments'
 import { useRouter } from 'next/router';
 import WebApiPeople from '../../../api/WebApiPeople';
+import { css, Global } from "@emotion/core";
 
 const ListAssessments = () => {
   const router = useRouter();
@@ -23,7 +24,18 @@ const ListAssessments = () => {
     }
   }
   return (
-    <MainLayout currentKey={["persons"]} defaultOpenKeys={["people"]}> 
+    <MainLayout currentKey={["persons"]} defaultOpenKeys={["people"]}>
+      <Global
+        styles={css`
+            :root {
+                --orange: #FF5E00;
+            }
+          .ant-card{
+            cursor: auto!important;
+          }
+        `}
+        
+      /> 
         <Breadcrumb>
             <Breadcrumb.Item>Inicio</Breadcrumb.Item>
             <Breadcrumb.Item>Colaboradores</Breadcrumb.Item>
