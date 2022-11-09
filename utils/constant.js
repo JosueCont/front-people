@@ -413,7 +413,7 @@ export const optionsSubproduct = [
 
 export const optionsTypeJob = [
   {value: 1, key: 1, label: 'Presencial'},
-  {value: 2, key: 2, label: 'Hibrido'},
+  {value: 2, key: 2, label: 'Híbrido'},
   {value: 3, key: 3, label: 'Desde casa'}
 ];
 

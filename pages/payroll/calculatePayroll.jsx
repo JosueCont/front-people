@@ -636,6 +636,8 @@ const CalculatePayroll = ({ ...props }) => {
     const inputPaymentDate = document.getElementById("payment_date");
     if (inputPaymentDate.value != null && inputPaymentDate.value != "") {
       data.pay_date = inputPaymentDate.value;
+      if (department) data.department = department;
+      if (job) data.job = job;
       setGenericModal(false);
       setLoading(true);
       WebApiPayroll.stampPayroll(data)
@@ -1471,9 +1473,9 @@ const CalculatePayroll = ({ ...props }) => {
                       calendar={calendarSelect.id}
                       period={periodSelected.id}
                       viewFilter={false}
+                      setKeys={setCfdiCancel}
                       department={department}
                       job={job}
-                      setKeys={setCfdiCancel}
                       clickCancelStamp={cancelOneStamp}
                     />
                   ) : (

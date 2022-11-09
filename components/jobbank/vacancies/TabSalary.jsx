@@ -92,7 +92,7 @@ const TabSalary = ({ formVacancies }) => {
                     label='Beneficios'
                     rules={[ruleWhiteSpace]}
                 >
-                    <Input placeholder='Transporte, servicio de comer, etc.'/>
+                    <Input placeholder='Transporte, servicio de comedor, etc.'/>
                 </Form.Item>
             </Col>
             <Col span={8}>
@@ -101,7 +101,7 @@ const TabSalary = ({ formVacancies }) => {
                     label='Bonos'
                     rules={[ruleWhiteSpace]}
                 >
-                    <Input placeholder='Especificaar los bonos a otorgar'/>
+                    <Input placeholder='Especificar los bonos a otorgar'/>
                 </Form.Item>
             </Col>
             <Col span={8}>

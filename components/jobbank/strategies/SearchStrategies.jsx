@@ -7,7 +7,10 @@ import { Button, Input, Row, Col, Form, Select } from 'antd';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ruleWhiteSpace } from '../../../utils/rules';
-import { getStrategies } from '../../../redux/jobBankDuck';
+import {
+    getStrategies,
+    setJobbankFilters
+} from '../../../redux/jobBankDuck';
 
 const SearchStrategies = ({
   currentNode,
@@ -15,14 +18,15 @@ const SearchStrategies = ({
   load_clients_options,
   list_clients_options,
   load_vacancies_options,
-  list_vacancies_options
+  list_vacancies_options,
+  setJobbankFilters
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const clientSelected = Form.useWatch('customer', formSearch);
 
-    const createQuerys = (obj) =>{
+    const createFilters = (obj) =>{
         let query = '';
         if(obj.product) query += `&product__unaccent__icontains=${obj.product}`;
         if(obj.customer) query += `&customer=${obj.customer}`;
@@ -31,14 +35,17 @@ const SearchStrategies = ({
     }
 
     const onFinishSearch = (values) =>{
-        const query = createQuerys(values);
-        if(query) getStrategies(currentNode.id, query);
-        else deleteFilter();
+        let filters = createFilters(values);
+        if(filters){
+            setJobbankFilters(filters)
+            getStrategies(currentNode.id, query);
+        } else deleteFilter();
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        getStrategies(currentNode.id)
+        setJobbankFilters("");
+        getStrategies(currentNode.id);
     }
 
     const onChangeClient = (value) =>{
@@ -133,7 +140,8 @@ const mapState = (state) =>{
 }
 
 export default connect(
-  mapState,{
-    getStrategies
-  }
+    mapState,{
+        getStrategies,
+        setJobbankFilters
+    }
 )(SearchStrategies)
