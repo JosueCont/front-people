@@ -57,7 +57,7 @@ const CardGeneric = ({title, numcard, icon, color, filter}) => {
             <Row gutter={[32,0]}>
             <ColOne span={24}>
                 <div>{icon}</div>
-                <div><h1>{title}</h1></div>
+                <div><h1>&nbsp;{title}</h1></div>
             </ColOne>
             <ColTwo span={24}>
                 <h1>{numcard}</h1>
