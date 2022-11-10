@@ -181,13 +181,15 @@ const FormPerson = ({
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item label='Fecha de nacimiento' >
+                  <Form.Item 
+                    label='Fecha de nacimiento' >
                     <DatePicker
                       style={{ width: "100%" }}
                       onChange={onChange}
                       moment={"YYYY-MM-DD"}
                       disabledDate={ disabledDate }
                       locale = { locale }
+                      placeholder={""}
                     />
                   </Form.Item>
                 </Col>
@@ -264,6 +266,7 @@ const FormPerson = ({
                     {config.intranet_enabled && (
                       <Col lg={8} xs={24}>
                         <Form.Item
+                          label='Acceso a Khor Connect'
                           key="itemAccessIntranet"
                           name="intranet_access"
                           rules={[ruleRequired]}
@@ -278,7 +281,7 @@ const FormPerson = ({
                   </>
                 )}
 
-                <Col lg={22} xs={24}>
+                <Col lg={24} xs={24}>
                   <Form.Item labelAlign="right">
                     <Space style={{ float: "right" }}>
                       <Button onClick={() => closeDialog()} loading={loading}>
