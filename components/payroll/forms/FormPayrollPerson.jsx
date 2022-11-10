@@ -30,6 +30,7 @@ import SelectCostCenter from "../../selects/SelectCostCenter";
 import SelectTags from "../../selects/SelectTags";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import ButtonUpdateSalaryMovement from "../ImssMovements/ButtonUpdateSalaryMovement";
 
 const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const { Title } = Typography;
@@ -47,6 +48,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
   const [idPayroll, setIdPayroll] = useState(null);
   const [loading, setLoading] = useState(false);
   const [payrollPersonList, setPayrolPersonList] = useState([]);
+  const [payrollPerson, setPayrollPerson] = useState(null);
   const [perceptionTypes, setPerceptionTypes] = useState([]);
 
   useEffect(() => {
@@ -133,6 +135,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
       .then((response) => {
         if (response.data) {
           let item = response.data;
+          setPayrollPerson(item)
           formPayrollPerson.setFieldsValue({
             daily_salary: item.daily_salary,
             contract_type: item.contract_type ? item.contract_type.id : null,
@@ -556,6 +559,9 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                 )}
               </Row>
               <Row justify={"end"}>
+                <Form.Item>
+                  <ButtonUpdateSalaryMovement person={person} node={person.node} payrollPerson={payrollPerson} />
+                </Form.Item>
                 <Form.Item>
                   <Button type="primary" htmlType="submit">
                     Guardar
