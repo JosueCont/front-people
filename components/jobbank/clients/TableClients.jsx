@@ -24,7 +24,7 @@ import {
 import { connect } from 'react-redux';
 import {
     getClients,
-    setPage
+    setJobbankPage
 } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
@@ -33,10 +33,11 @@ import Clipboard from '../../../components/Clipboard';
 const TableClients = ({
     list_clients,
     load_clients,
-    setPage,
-    page_jobbank,
+    setJobbankPage,
+    jobbank_page,
     currentNode,
-    getClients
+    getClients,
+    jobbank_filters
 }) => {
 
     const router = useRouter();
@@ -49,23 +50,28 @@ const TableClients = ({
     const actionUpdate = async (values) =>{
         try {
             await WebApiJobBank.updateClient(itemToEdit.id, values);
-            getClients(currentNode.id)
+            validateGetClients();
             message.success('Información actualizada');
+            return true;
         } catch (e) {
-            message.error('Información no actualizada');
             console.log(e)
+            if(e.response?.data['rfc']){
+                message.error('RFC ya registrado');
+                return 'RFC_EXIST';
+            } else message.error('Información no actualizada');
+            return false;
         }
     }
 
     const actionActive = async (checked, item) =>{
         try {
             await WebApiJobBank.activeClient(item.id, {is_active: checked});
-            getClients(currentNode.id)
+            validateGetClients();
             if(checked) message.success('Cliente activado');
             if(!checked) message.success ('Cliente desactivado');
         } catch (e) {
             console.log(e)
-            getClients(currentNode.id)
+            validateGetClients();
             if(checked) message.error('Cliente no activado');
             if(!checked) message.error('Cliente no desactivado');
         }
@@ -76,7 +82,7 @@ const TableClients = ({
         closeModalDelete();
         try {
             await WebApiJobBank.deleteClient({ids});
-            getClients(currentNode.id);
+            validateGetClients();
             if(ids.length > 1) message.success('Clientes eliminados');
             else message.success('Cliente eliminado');
         } catch (e) {
@@ -117,13 +123,20 @@ const TableClients = ({
     }
 
     const onChangePage = ({current}) =>{
-        setPage(current)
-        if (current == 1) getClients(currentNode?.id);
-        if (current > 1) {
-            const offset = (current - 1) * 10;
-            const queryParam = `&limit=10&offset=${offset}`;
-            getClients(currentNode?.id, queryParam, current)
-        } 
+        setJobbankPage(current)
+        validateGetClients(current)
+    }
+
+    const validateGetClients = (current) =>{
+        let page = current ?? jobbank_page;
+        if (page > 1) getClientsWithFilters(page);
+        else getClients(currentNode?.id, jobbank_filters);
+    }
+
+    const getClientsWithFilters = (page) =>{
+        let offset = (page - 1) * 10;
+        let query = `&limit=10&offset=${offset}${jobbank_filters}`;
+        getClients(currentNode?.id, query, page)
     }
 
     const rowSelection = {
@@ -193,6 +206,16 @@ const TableClients = ({
                     })}
                 >
                     Registrar perfil
+                </Menu.Item>
+                <Menu.Item
+                    key='5'
+                    icon={<PlusOutlined />}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/strategies/add',
+                        query: { customer: item.id }
+                    })}
+                >
+                    Registrar estrategia
                 </Menu.Item>
             </Menu>
         );
@@ -270,7 +293,7 @@ const TableClients = ({
                 }}
                 pagination={{
                     total: list_clients.count,
-                    current: page_jobbank,
+                    current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
@@ -281,6 +304,7 @@ const TableClients = ({
                 actionForm={actionUpdate}
                 close={closeModalEdit}
                 itemToEdit={itemToEdit}
+                textSave='Actualizar'
             />
             <DeleteItems
                 title={itemsToDelete.length > 1
@@ -302,7 +326,8 @@ const mapState = (state) =>{
     return {
         list_clients: state.jobBankStore.list_clients,
         load_clients: state.jobBankStore.load_clients,
-        page_jobbank: state.jobBankStore.page_jobbank,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
+        jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
@@ -310,6 +335,6 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         getClients,
-        setPage
+        setJobbankPage
     }
 )(TableClients);

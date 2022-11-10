@@ -21,7 +21,7 @@ const SelectGeographicArea = ({
         return {
           key: op.id,
           value: op.id,
-          label: `${op.area} ($${op.min_salary})`
+          label: `${op.area === 1 ? 'Frontera Norte' : 'Resto del país'} ($${op.min_salary})`
         } 
       })
 

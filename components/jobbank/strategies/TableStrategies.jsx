@@ -13,7 +13,11 @@ import {
     EditOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import { setPage, getStrategies } from '../../../redux/jobBankDuck';
+import {
+    setJobbankPage,
+    getStrategies,
+    setJobbankFilters
+} from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
@@ -22,13 +26,15 @@ const TableStrategies = ({
     list_strategies,
     load_strategies,
     currentNode,
-    page_jobbank,
-    setPage,
+    jobbank_page,
+    setJobbankPage,
     getStrategies,
     load_clients_options,
     list_clients_options,
     load_vacancies_options,
-    list_vacancies_options
+    list_vacancies_options,
+    jobbank_filters,
+    setJobbankFilters
 }) => {
 
     const router = useRouter();
@@ -96,13 +102,20 @@ const TableStrategies = ({
     }
 
     const onChangePage = ({current}) =>{
-        setPage(current)
-        if (current == 1) getStrategies(currentNode?.id);
-        if (current > 1) {
-            const offset = (current - 1) * 10;
-            const queryParam = `&limit=10&offset=${offset}`;
-            getStrategies(currentNode?.id, queryParam, current)
-        } 
+        setJobbankPage(current)
+        validateGetStrategies(current)
+    }
+
+    const validateGetStrategies = (current) =>{
+        let page = current ?? jobbank_page;
+        if(page > 1) getStrategiesWithFilters(page);
+        else getStrategies(currentNode?.id, jobbank_filters);
+    }
+
+    const getStrategiesWithFilters = (page) =>{
+        let offset = (page - 1) * 10;
+        let query = `&limit=10&offset=${offset}${jobbank_filters}`;
+        getStrategies(currentNode?.id, query, page);
     }
 
     const menuTable = () => {
@@ -209,7 +222,7 @@ const TableStrategies = ({
                 }}
                 pagination={{
                     total: list_strategies.count,
-                    current: page_jobbank,
+                    current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
@@ -238,14 +251,16 @@ const mapState = (state) =>{
         list_clients_options: state.jobBankStore.list_clients_options,
         load_vacancies_options: state.jobBankStore.load_vacancies_options,
         list_vacancies_options: state.jobBankStore.list_vacancies_options,
-        page_jobbank: state.jobBankStore.page_jobbank,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
+        jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
     mapState, {
-        setPage,
-        getStrategies
+        setJobbankPage,
+        getStrategies,
+        setJobbankFilters
     }
 )(TableStrategies);

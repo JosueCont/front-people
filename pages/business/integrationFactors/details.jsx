@@ -79,7 +79,7 @@ const detailIntegrator = () => {
             Inicio
           </Breadcrumb.Item>
           <Breadcrumb.Item>Empresa</Breadcrumb.Item>
-          <Breadcrumb.Item>Factores de integración</Breadcrumb.Item>
+          <Breadcrumb.Item>Prestaciones</Breadcrumb.Item>
           <Breadcrumb.Item>Detalle</Breadcrumb.Item>
         </Breadcrumb>
 

@@ -34,11 +34,12 @@ const TabSalary = ({ formVacancies }) => {
                 <Form.Item
                     name='gross_salary'
                     label='Sueldo mensual bruto (MXN)'
-                    rules={[numCommaAndDot]}
+                    rules={[numCommaAndDot()]}
                 >
                     <Input
                         maxLength={20}
                         placeholder='Ej. 70,500.5999'
+                        onKeyPress={e => e.which == 32 && e.preventDefault()}
                     />
                 </Form.Item>
             </Col>
@@ -91,7 +92,7 @@ const TabSalary = ({ formVacancies }) => {
                     label='Beneficios'
                     rules={[ruleWhiteSpace]}
                 >
-                    <Input placeholder='Transporte, servicio de comer, etc.'/>
+                    <Input placeholder='Transporte, servicio de comedor, etc.'/>
                 </Form.Item>
             </Col>
             <Col span={8}>
@@ -100,7 +101,7 @@ const TabSalary = ({ formVacancies }) => {
                     label='Bonos'
                     rules={[ruleWhiteSpace]}
                 >
-                    <Input placeholder='Ej. Anual por resultados de la cia. de mes y medio de sueldo'/>
+                    <Input placeholder='Especificar los bonos a otorgar'/>
                 </Form.Item>
             </Col>
             <Col span={8}>
@@ -109,7 +110,7 @@ const TabSalary = ({ formVacancies }) => {
                     label='Herramientas de trabajo'
                     rules={[ruleWhiteSpace]}
                 >
-                    <Input placeholder='Uniformes, equipos de computo, etc.'/>
+                    <Input placeholder='Uniformes, equipos de cómputo, etc.'/>
                 </Form.Item>
             </Col>
         </Row>

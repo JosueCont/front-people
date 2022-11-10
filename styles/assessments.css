@@ -272,11 +272,17 @@
     transition: all 0.5s;
 }
 
+.content-list-files{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 .head-list-files {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 12px;
+    padding-bottom: 6px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
@@ -301,7 +307,7 @@
     display: flex;
     flex-direction: column;
     transition: all 1s;
-    min-height: 130px;
+    min-height: 100px;
     max-height: 200px;
     overflow: auto;
 }
@@ -322,7 +328,7 @@
 
 .item-list-files p{
     margin-bottom: 0px;
-    max-width: 75%;
+    max-width: 70%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

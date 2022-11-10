@@ -41,17 +41,19 @@ const FormProfiles = ({
 
 
     const onChangeType = (value) =>{
-        if(value == 'open_fields'){
-            setFieldsValue({...valuesDefault, profile_type: value});
-            setDisabledField(false)
-            return;
-        }
+        if(!value) setDisabledField(false);
         let keepValues = {
             name: getFieldValue('name'),
             customer: getFieldValue('customer'),
             profile_type: value
         } 
         resetFields();
+        if(value == 'open_fields'){
+            let info = {...valuesDefault, ...keepValues};
+            setFieldsValue(info);
+            setDisabledField(false)
+            return;
+        }
         setFieldsValue(keepValues);
         const type = item => item.id == value;
         let type_ = list_profiles_types.find(type);

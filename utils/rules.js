@@ -75,10 +75,22 @@ export const fourDecimal = {
   message: "El campo no puede tener más de cuatro decimales",
 };
 
-export const numCommaAndDot = {
-  pattern: /^(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d{1,4})?$/,
-  message: 'Ingrese un valor y/o formato válido'
-}
+// export const numCommaAndDot = {
+//   pattern: /^(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d{1,4})?$/,
+//   message: 'Ingrese un valor y/o formato válido'
+// }
+
+export const numCommaAndDot = () => ({
+  validator(_, value){
+    if (!value) return Promise.resolve();
+    let num = parseFloat(value.replace(',',''));
+    let pattern = /^(?:\d{0,3}(?:,\d{3})*|\d+)(?:\.\d{1,4})?$/;
+    if(isNaN(num) && value) return Promise.reject('Ingrese un valor numérico');
+    if(!pattern.test(value) && value) return Promise.reject('Ingrese un formato válido');
+    if(num < 1) return Promise.reject('Ingrese un valor mayor o igual a 1');
+    return Promise.resolve();
+  }
+})
 
 // {pattern: /^[\d]{0,16}$/, message: "El no  debe tener más de 16 dígitos" }, numero menor  a 16 digitos
 

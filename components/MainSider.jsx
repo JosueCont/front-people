@@ -104,7 +104,7 @@ const MainSider = ({
       if (props?.permissions?.company?.view) {
         let children = [
           getItem("Empresas", "business"),
-          getItem("Factores de integración", "integrationFactors")
+          getItem("Prestaciones", "integrationFactors")
         ];
         if (props?.config && props?.config?.nomina_enabled) {
           children.push(getItem("Registros patronales", "patronal"));

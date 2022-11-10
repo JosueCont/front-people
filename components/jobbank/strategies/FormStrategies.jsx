@@ -19,7 +19,10 @@ import { useSelector } from 'react-redux';
 import { getFullName } from '../../../utils/functions';
 import { ruleRequired, ruleWhiteSpace, numCommaAndDot } from '../../../utils/rules';
 
-const FormStrategies = ({ formStrategies }) => {
+const FormStrategies = ({
+    formStrategies,
+    disabledClient
+}) => {
 
     const {
         load_clients_options,
@@ -190,7 +193,7 @@ const FormStrategies = ({ formStrategies }) => {
                     <Select
                         allowClear
                         showSearch
-                        disabled={load_clients_options}
+                        disabled={disabledClient}
                         loading={load_clients_options}
                         placeholder='Seleccionar un cliente'
                         notFoundContent='No se encontraron resultados'
@@ -265,11 +268,12 @@ const FormStrategies = ({ formStrategies }) => {
                 <Form.Item
                     name='salary'
                     label='Sueldo (MXN)'
-                    rules={[ruleRequired, numCommaAndDot]}
+                    rules={[ruleRequired, numCommaAndDot()]}
                 >
                     <Input
                         maxLength={20}
                         placeholder='Ej. 70,500.5999'
+                        onKeyPress={e => e.which == 32 && e.preventDefault()}
                     />
                 </Form.Item>
             </Col>
@@ -358,11 +362,12 @@ const FormStrategies = ({ formStrategies }) => {
                 <Form.Item
                     name='searches'
                     label='Búsquedas'
+                    tooltip='Nombre(s) de clientes para encontrar una vacante similar'
                     rules={[ruleWhiteSpace]}
                 >
                     <Input
                         maxLength={100}
-                        placeholder='Ej. Búsqueda del Fruto KAM, La Central Ventas Mayoreo'
+                        placeholder='Nombre(s) de clientes para encontrar una vacante similar'
                     />
                 </Form.Item>
             </Col>

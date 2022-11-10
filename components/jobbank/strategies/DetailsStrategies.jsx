@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {
+    useEffect,
+    useState,
+    useRef,
+    useLayoutEffect
+} from 'react';
 import {
     Card,
     Row,
@@ -15,7 +20,11 @@ import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormStrategies from './FormStrategies';
 import { useProcessInfo } from './hook/useProcessInfo';
-import { setLoadStrategies, getInfoStrategy } from '../../../redux/jobBankDuck';
+import {
+    setLoadStrategies,
+    getInfoStrategy,
+    setInfoStrategy
+} from '../../../redux/jobBankDuck';
 
 const DetailsStrategies = ({
     action,
@@ -23,7 +32,8 @@ const DetailsStrategies = ({
     load_strategies,
     info_strategy,
     setLoadStrategies,
-    getInfoStrategy
+    getInfoStrategy,
+    setInfoStrategy
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -37,16 +47,36 @@ const DetailsStrategies = ({
     const [formStrategies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
+    const [disabledClient, setDisabledClient] = useState(false);
     const { createData, setValuesForm } = useProcessInfo({
         info_strategy,
         formStrategies
     });
 
+    useLayoutEffect(()=>{
+        setInfoStrategy()
+    },[])
+
+    useEffect(()=>{
+        if(router.query.customer && action == 'add'){
+            formStrategies.resetFields()
+            keepCustomer()
+        }else setDisabledClient(false);
+    },[router])
+
     useEffect(()=>{
         if(Object.keys(info_strategy).length > 0 && action == 'edit'){
+            formStrategies.resetFields();
             setValuesForm()
         }
     },[info_strategy])
+
+    const keepCustomer = () =>{
+        setDisabledClient(true)
+        formStrategies.setFieldsValue({
+            customer: router.query.customer
+        })
+    }
 
     const onFinishUpdate = async (values) =>{
         try {
@@ -65,7 +95,6 @@ const DetailsStrategies = ({
             let response = await WebApiJobBank.createStrategy({...values, node: currentNode.id});
             message.success('Estrategia registrada');
             actionSaveAnd(response.data.id)
-            formStrategies.resetFields();
         } catch (e) {
             console.log(e)
             setLoadStrategies(false)
@@ -84,15 +113,22 @@ const DetailsStrategies = ({
         actionFunction[action](bodyData);
     }
 
-    const actionAddCreate = () =>{
+    const actionBack = () =>{
+        if(router.query?.customer) router.push('/jobbank/clients');
+        else router.push('/jobbank/strategies');
+    }
+
+    const actionCreate = () =>{
+        formStrategies.resetFields();
+        if (router.query?.customer) keepCustomer();
         setLoadStrategies(false)
         setLoading({})
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: () => router.push('/jobbank/strategies'),
-            create: actionAddCreate,
+            back: actionBack,
+            create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/strategies/edit',
                 query: { id }
@@ -119,7 +155,7 @@ const DetailsStrategies = ({
                         }
                     </p>
                     <Button
-                        onClick={()=> router.push('/jobbank/strategies')}
+                        onClick={()=> actionBack()}
                         icon={<ArrowLeftOutlined />}
                     >
                         Regresar
@@ -135,7 +171,10 @@ const DetailsStrategies = ({
                             requiredMark={false}
                             onFinishFailed={()=> setLoading({})}
                         >
-                            <FormStrategies formStrategies={formStrategies}/>
+                            <FormStrategies
+                                formStrategies={formStrategies}
+                                disabledClient={disabledClient}
+                            />
                         </Form>
                     </Spin>
                 </Col>
@@ -176,7 +215,7 @@ const DetailsStrategies = ({
                             htmlType='submit'
                             loading={load_strategies}
                         >
-                            Guardar
+                            Actualizar
                         </Button>
                     )}
                 </Col>
@@ -196,6 +235,7 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         setLoadStrategies,
-        getInfoStrategy
+        getInfoStrategy,
+        setInfoStrategy
     }
 )(DetailsStrategies);

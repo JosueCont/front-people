@@ -13,7 +13,7 @@ import {
 } from '../../../utils/rules';
 import {
   optionsLevelAcademic,
-  optionsStatusVacant,
+  optionsStatusAcademic,
   optionsLangVacant
 } from '../../../utils/constant';
 
@@ -106,21 +106,6 @@ const TabEducation = ({ formVacancies }) => {
         </Form.Item>
       </Col>
       <Col span={8}>
-        <Form.Item
-          name='status_level_study'
-          label='Estatus'
-        >
-          <Select
-            allowClear
-            showSearch
-            placeholder='Seleccionar un estatus'
-            notFoundContent='No se encontraron resultados'
-            optionFilterProp='label'
-            options={optionsStatusVacant}
-          />
-        </Form.Item>
-      </Col>
-      <Col span={8}>
         <Form.Item name='academics_degree' label='Carrera'>
           <Select
             allowClear
@@ -137,6 +122,21 @@ const TabEducation = ({ formVacancies }) => {
               </Select.Option>
             ))}
           </Select>
+        </Form.Item>
+      </Col>
+      <Col span={8}>
+        <Form.Item
+          name='status_level_study'
+          label='Estatus de la carrera'
+        >
+          <Select
+            allowClear
+            showSearch
+            placeholder='Seleccionar un estatus'
+            notFoundContent='No se encontraron resultados'
+            optionFilterProp='label'
+            options={optionsStatusAcademic}
+          />
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -201,11 +201,10 @@ const TabEducation = ({ formVacancies }) => {
         <Form.Item
           name='experiences'
           label='Experiencia requerida'
-          help='Separar cada experiencia con una coma'
           rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
-            placeholder='Experiencia requerida'
+            placeholder='Separar cada experiencia con una coma'
             autoSize={{
               minRows: 5,
               maxRows: 5,
@@ -217,11 +216,10 @@ const TabEducation = ({ formVacancies }) => {
         <Form.Item
           name='technical_skills'
           label='Habilidades técnicas'
-          help='Separar cada habilidad técnica con una coma'
           rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
-            placeholder='Habilidades técnicas'
+            placeholder='Separar cada habilidad técnica con una coma'
             autoSize={{
               minRows: 5,
               maxRows: 5,

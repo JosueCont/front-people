@@ -667,13 +667,13 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                 {locked ? "Cerrar" : "Cancelar"}
               </Button>
             </Col>
-            {!locked && (
+
               <Col md={5}>
                 <Button block className="" type="primary" htmlType="submit">
                   Guardar
                 </Button>
               </Col>
-            )}
+
           </Row>
         </Form>
       </Spin>

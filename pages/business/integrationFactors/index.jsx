@@ -193,7 +193,7 @@ const integrationFactorsIndex = ({ ...props }) =>{
             Inicio
           </Breadcrumb.Item>
           <Breadcrumb.Item>Empresa</Breadcrumb.Item>
-          <Breadcrumb.Item>Factores de integración</Breadcrumb.Item>
+          <Breadcrumb.Item>Prestaciones</Breadcrumb.Item>
         </Breadcrumb>
         <Row justify="end">
           <Col>

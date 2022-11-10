@@ -413,7 +413,7 @@ export const optionsSubproduct = [
 
 export const optionsTypeJob = [
   {value: 1, key: 1, label: 'Presencial'},
-  {value: 2, key: 2, label: 'Hibrido'},
+  {value: 2, key: 2, label: 'Híbrido'},
   {value: 3, key: 3, label: 'Desde casa'}
 ];
 
@@ -486,6 +486,16 @@ export const optionsEconomicBenefits = [
   {value: 1, key: 1, label: 'Sin prestaciones'},
   {value: 2, key: 2, label: 'Prestaciones de ley'},
   {value: 3, key: 3, label: 'Prestaciones superiores a la ley'}
+]
+
+export const optionMovement = [
+  {value: 1, label:"Aguinaldo"},
+  {value: 2, label:"Finiquito"},
+  {value: 3, label:"Liquidación"}
+]
+export const optionsBusinessName = [
+  {value: "1", key: "1", label: 'Física'},
+  {value: "2", key: "2", label: 'Moral'}
 ]
 
 export const messageSaveSuccess = "Agregado correctamente.";
