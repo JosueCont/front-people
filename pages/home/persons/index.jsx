@@ -1167,7 +1167,9 @@ const homeScreen = ({ ...props }) => {
                       >
                         Descargar plantilla
                       </Button>
-                      <ButtonDownloadConfronta/>
+                      {props.config && props.config.nomina_enabled &&
+                          <ButtonDownloadConfronta/>
+                      }
                     </Space>
                   </Col>
                   <Col>
