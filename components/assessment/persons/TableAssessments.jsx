@@ -34,6 +34,20 @@ const TableAssessments = ({
   const [assessmentsComplete, setAssessmentsComplete] = useState(0);
   const [assessmentsToAnswer, setAssessmentsToAnswer] = useState(0);
   const [assessmentsProgress, setAssessmentsProgress] = useState(0);
+  const options = [
+    {
+      value: 1,
+      label: 'Filtrar por evaluación',
+    },
+    {
+      value: 2,
+      label: 'Filtrar por estatus',
+    },
+    // {
+    //   value: 3,
+    //   label: 'Filtrar por fecha',
+    // },
+  ]
 
   useEffect(()=>{
     if(router.query.id){
@@ -415,7 +429,9 @@ const TableAssessments = ({
   }
 
   const onFilterDates = (date) => {
-    console.log("fecha elegida formateada",date._i);
+    console.log("fecha elegida formateada",date);
+    let dateFilter = moment(date._d).format('L');  
+    console.log("filtro fecha:",dateFilter) 
   }
 
   const calculateIndicatorsCards = (assessments) =>{
@@ -551,11 +567,12 @@ const TableAssessments = ({
                         <Radio value={3}>Fecha</Radio>
                     </Space>
                 </Radio.Group> */}
-                <Select style={{width:"100%"}} defaultValue={1} onChange={onChange}>
-                  <Option value={1}>Filtrar por evaluación</Option>
-                  <Option value={2}>Filtrar por estatus</Option>
-                  {/* <Option value={3}>Filtrar por fecha</Option> */}
-                </Select>
+                <Select
+                    style={{width:"100%"}}
+                    onChange={onChange}
+                    options={options}
+                    defaultValue={1}
+                />
                 { typeFilter == 1 &&
                   <Input
                     placeholder={'Buscar por evaluación o grupo'}
