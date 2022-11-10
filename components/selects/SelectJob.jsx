@@ -38,7 +38,7 @@ const SelectJob = ({
           key="SelectJob"
           // options={options}
           size={size}
-          placeholder="Puesto de trabajo"
+          //placeholder="Puesto de trabajo"
           allowClear
           style={props.style ? props.style : {}}
           onChange={props.onChange ? props.onChange : null}
