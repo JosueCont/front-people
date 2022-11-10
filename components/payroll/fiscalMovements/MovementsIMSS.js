@@ -48,24 +48,7 @@ const MovementsIMSS=()=>{
 
 
     const data = [
-        {
-            key: '1',
-            name: '12/12/2022',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-        },
-        {
-            key: '2',
-            name: '12/12/2022',
-            age: 42,
-            address: 'London No. 1 Lake Park',
-        },
-        {
-            key: '3',
-            name: '12/12/2022',
-            age: 32,
-            address: 'Sidney No. 1 Lake Park',
-        },
+
     ];
 
 

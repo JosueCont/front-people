@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import {
     getProfilesTypes,
     getVacantFields,
-    getInfoProfile
+    getInfoProfile,
+    getClientsOptions
 } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
 
@@ -15,7 +16,8 @@ const AddorEditProfile = ({
     currentNode,
     getProfilesTypes,
     getVacantFields,
-    getInfoProfile
+    getInfoProfile,
+    getClientsOptions
 }) => {
 
     const router = useRouter();
@@ -24,6 +26,7 @@ const AddorEditProfile = ({
         if(currentNode){
             getProfilesTypes(currentNode.id)
             getVacantFields(currentNode.id)
+            getClientsOptions(currentNode.id)
         };
     },[currentNode])
 
@@ -68,6 +71,7 @@ export default connect(
     mapState,{
         getProfilesTypes,
         getVacantFields,
-        getInfoProfile
+        getInfoProfile,
+        getClientsOptions
     }
 )(AddorEditProfile);

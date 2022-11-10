@@ -59,6 +59,7 @@ import PersonsGroup from "../../../components/person/groups/PersonsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 import SelectJob from "../../../components/selects/SelectJob";
+import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -388,20 +389,20 @@ const homeScreen = ({ ...props }) => {
         );
       },
     },
-    {
-      title: "Asignaciones",
-      show: props.config?.kuiz_enabled,
-      render: (item) => {
-        return (
-          <Tooltip title="Ver asignaciones">
-            <EyeOutlined
-              style={{ cursor: "pointer" }}
-              onClick={() => OpenModalAssigns(item)}
-            />
-          </Tooltip>
-        );
-      },
-    },
+    // {
+    //   title: "Asignaciones",
+    //   show: props.config?.kuiz_enabled,
+    //   render: (item) => {
+    //     return (
+    //       <Tooltip title="Ver asignaciones">
+    //         <EyeOutlined
+    //           style={{ cursor: "pointer" }}
+    //           onClick={() => OpenModalAssigns(item)}
+    //         />
+    //       </Tooltip>
+    //     );
+    //   },
+    // },
     {
       title: "Acceso a intranet",
       show: props.config?.intranet_enabled,
@@ -528,11 +529,14 @@ const homeScreen = ({ ...props }) => {
       <Menu>
         {props.config?.kuiz_enabled && (
           <>
-            {permissions.view && (
+            {/* {permissions.view && (
               <Menu.Item key="4" icon={<EyeOutlined />}>
                 <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
               </Menu.Item>
-            )}
+            )} */}
+            <Menu.Item key="5" icon={<EyeOutlined />}>
+              <Link href={`/assessment/persons/${item.id}`}>Ver asignaciones</Link>
+            </Menu.Item>
             {permissions.create && (
               <Menu.Item
                 key="1"
@@ -1166,7 +1170,11 @@ const homeScreen = ({ ...props }) => {
                       >
                         Descargar plantilla
                       </Button>
+                      <ButtonDownloadConfronta/>
                     </Space>
+                  </Col>
+                  <Col>
+
                   </Col>
                 </Row>
               </div>

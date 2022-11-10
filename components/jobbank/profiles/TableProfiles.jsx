@@ -14,7 +14,7 @@ import {
     EditOutlined,
 } from '@ant-design/icons';
 import {
-    setPage,
+    setJobbankPage,
     getProfilesList
 } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
@@ -23,12 +23,12 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const TableProfiles = ({
     currentNode,
-    page_jobbank,
+    jobbank_page,
     list_profiles,
     load_profiles,
     load_clients_options,
     list_clients_options,
-    setPage,
+    setJobbankPage,
     getProfilesList
 }) => {
 
@@ -81,7 +81,7 @@ const TableProfiles = ({
     }
 
     const onChangePage = ({current}) =>{
-        setPage(current)
+        setJobbankPage(current)
         if (current == 1) getProfilesList(currentNode?.id);
         if (current > 1) {
             const offset = (current - 1) * 10;
@@ -189,7 +189,7 @@ const TableProfiles = ({
                 }}
                 pagination={{
                     total: list_profiles.count,
-                    current: page_jobbank,
+                    current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
@@ -215,14 +215,14 @@ const mapState = (state) =>{
         load_profiles: state.jobBankStore.load_profiles,
         list_clients_options: state.jobBankStore.list_clients_options,
         load_clients_options: state.jobBankStore.load_clients_options,
-        page_jobbank: state.jobBankStore.page_jobbank,
+        jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
     mapState, {
-        setPage,
+        setJobbankPage,
         getProfilesList
     }
 )(TableProfiles);

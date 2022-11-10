@@ -31,7 +31,7 @@ import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { Global } from "@emotion/core";
-import { messageError } from "../../../utils/constant";
+import { messageError, optionMovement } from "../../../utils/constant";
 
 const ExtraordinaryPayroll = ({ ...props }) => {
   const route = useRouter();
@@ -39,7 +39,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [form] = Form.useForm();
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [optionspPaymentCalendars, setOptionsPaymentCalendars] = useState([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [movementType, setMovementType] = useState(null)
   const [bonusChristmas, setBonusChristmas] = useState([]);
   const [calendarSelect, setCalendarSelect] = useState(null);
   const [periodSelected, setPeriodSelcted] = useState(null);
@@ -409,6 +411,18 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       });
   };
 
+  movementType && console.log('movementType', movementType)
+
+  const onSelectChange = (newSelectedRowKeys = []) => {
+    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelectionPerson = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  }
+
   return (
     <Spin tip="Cargando..." spinning={loading}>
       <Global
@@ -464,6 +478,25 @@ const ExtraordinaryPayroll = ({ ...props }) => {
               <Card className="form_header">
                 <Form form={form} layout="vertical">
                   <Row gutter={[16, 8]}>
+                    {
+                      periodSelected && 
+
+                      <>
+                        <Col xxs={24} xl={4}>
+                          <Form.Item name="movement_type" label="Tipo de movimento">
+                            <Select
+                              size="large"
+                              style={{ width: "100%" }}
+                              options={optionMovement}
+                              onChange = { (e) => setMovementType(e) }
+                              placeholder="Salario"
+                              notFoundContent={"No se encontraron resultados."}
+                              allowClear
+                            />
+                          </Form.Item>
+                        </Col>
+                      </>
+                    }
                     <Col xxs={24} xl={4}>
                       <Form.Item name="calendar" label="Calendario">
                         <Select
@@ -588,11 +621,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       ? "Cargando..."
                       : "No se encontraron resultados.",
                   }}
-                  // rowSelection={
-                  //   consolidated && step == 2 && consolidated.status < 3
-                  //     ? rowSelectionPerson
-                  //     : null
-                  // }
+                  rowSelection={
+                    movementType === 2 || movementType === 3
+                      ? rowSelectionPerson
+                      : null
+                  }
                 />
                 {totalBonus != null && totalIsr != null ? (
                   <Col sm={24} md={24} lg={24}>

@@ -15,27 +15,29 @@ import {
   ruleRequired,
   ruleWhiteSpace,
   ruleMinAge,
-  ruleMaxAge
+  ruleMaxAge,
+  onlyNumeric
 } from '../../../utils/rules';
 import { validateNum } from '../../../utils/functions';
 import {
   optionsSubproduct,
   optionsTypeJob,
   optionsTypeContract,
-  optionsGenders
+  optionsGenders,
+  optionsStatusVacant
 } from '../../../utils/constant';
 import { useSelector } from 'react-redux';
 
 const TabFeatures = ({
-  showTurns,
-  setShowTurns,
-  disabledClient
+  disabledClient,
+  formVacancies
 }) => {
 
   const {
     load_clients_options,
     list_clients_options
   } = useSelector(state => state.jobBankStore);
+  const rotativeTurn = Form.useWatch('rotative_turn', formVacancies);
 
   const styleDisabled = {
     width: 32,
@@ -45,31 +47,29 @@ const TabFeatures = ({
     textAlign: 'center',
     background: '#ffff'
   }
-  
-  const ruleRangeAge = ({getFieldValue}, type) => ({
+
+  const minAge = () => ({
     validator(_, value){
-      let intVal = parseInt(value);
-      if( type == 'min'
-        && intVal
-        && intVal < 18
-        || intVal > 100
-      ) return Promise.reject('Edad mínima mayor o igual a 18');
-      if(type == 'max'
-        && intVal
-        && intVal < 18
-        || intVal > 100
-      ) return Promise.reject('Edad máxima menor o igual a 70');
-      // if(type == 'min'
-      //   && intVal
-      //   && !getFieldValue('age_max')
-      // ) return Promise.reject('Edad máxima requerida');
-      // if(type == 'max'
-      //   && intVal
-      //   && !getFieldValue('age_min')
-      // ) return Promise.reject('Edad mínima requerida')
+      let age = parseInt(value);
+      if(age < 18) return Promise.reject('Edad mínima mayor o igual a 18');
       return Promise.resolve();
     }
   })
+
+  const maxAge = () => ({
+    validator(_, value){
+      if(!value) return Promise.reject('Ingrese un valor numérico');
+      let age = parseInt(value);
+      if(age > 100) return Promise.reject('Edad máxima menor o igual a 100');
+      return Promise.resolve();
+    }
+  })
+
+  const onChangeTurn = ({ target: { checked } }) =>{
+    formVacancies.setFieldsValue({
+      turns_to_rotate: null
+    })
+  }
   
   return (
     <Row gutter={[24,0]}>
@@ -115,7 +115,7 @@ const TabFeatures = ({
           label='Producto'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='Producto'/>
+          <Input maxLength={100} placeholder='Ej. Search'/>
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -124,8 +124,11 @@ const TabFeatures = ({
           label='Subproducto'
         >
           <Select
+            allowClear
+            showSearch
             placeholder='Seleccionar un subproducto'
             notFoundContent='No se encontraron resultados'
+            optionFilterProp='label'
             options={optionsSubproduct}
           />
         </Form.Item>
@@ -138,12 +141,13 @@ const TabFeatures = ({
           <InputNumber
             type='number'
             controls={false}
+            maxLength={10}
             placeholder='Número de proyecto'
+            onKeyPress={validateNum}
             style={{
               width: '100%',
               border: '1px solid black'
             }}
-            onKeyPress={validateNum}
           />
         </Form.Item>
       </Col>
@@ -156,33 +160,47 @@ const TabFeatures = ({
             ruleWhiteSpace
           ]}
         >
-          <Input placeholder='Nombre de la vacante'/>
+          <Input maxLength={100} placeholder='Nombre de la vacante'/>
+        </Form.Item>
+      </Col>
+      <Col span={8}>
+        <Form.Item
+          name='status'
+          label='Estatus de la vacante'
+        >
+          <Select
+            allowClear
+            placeholder='Seleccionar un estatus'
+            options={optionsStatusVacant}
+          />
         </Form.Item>
       </Col>
       <Col span={8}>
         <Form.Item
           name='qty'
           label='Número de posiciones a reclutar'
+          rules={[onlyNumeric]}
         >
           <InputNumber
             type='number'
             controls={false}
+            maxLength={10}
+            placeholder='Número de posiciones a reclutar'
+            onKeyPress={validateNum}
             style={{
               width: '100%',
               border: '1px solid black'
             }}
-            placeholder='Número de posiciones a reclutar'
-            onKeyPress={validateNum}
           />
         </Form.Item>
       </Col>
       <Col span={8}>
         <Form.Item
           name='description'
-          label='Descripción'
+          label='Descripción de la vacante'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='Descripción'/>
+          <Input maxLength={200} placeholder='Descripción de la vacante'/>
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -191,7 +209,7 @@ const TabFeatures = ({
           label='¿A quién reportar?'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='¿A quién reportar?'/>
+          <Input maxLength={100} placeholder='Ej. Jefa de área, Gerente de operaciones, etc.'/>
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -200,7 +218,7 @@ const TabFeatures = ({
           label='Horario laboral'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='Horario laboral'/>
+          <Input maxLength={100} placeholder='Ej. L-V 9:30 AM - 6:00 PM y Sábados de 9:00 AM - 1:00 PM'/>
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -209,8 +227,11 @@ const TabFeatures = ({
           label='Tipo de trabajo'
         >
           <Select
-            placeholder='Tipo de trabajo'
+            allowClear
+            showSearch
+            placeholder='Seleccionar un tipo'
             notFoundContent='No se encontraron resultados'
+            optionFilterProp='label'
             options={optionsTypeJob}
           />
         </Form.Item>
@@ -221,8 +242,11 @@ const TabFeatures = ({
           label='Tipo de contrato'
         >
           <Select
-            placeholder='Tipo de contrato'
+            allowClear
+            showSearch
+            placeholder='Seleccionar un tipo'
             notFoundContent='No se encontraron resultados'
+            optionFilterProp='label'
             options={optionsTypeContract}
           />
         </Form.Item>
@@ -245,12 +269,11 @@ const TabFeatures = ({
             <Form.Item
               name='age_min'
               noStyle
-              rules={[
-                // ruleWhiteSpace,
-                ruleMinAge(18)
-              ]}>
+              rules={[ruleMinAge(18)]}
+            >
               <InputNumber
                 type='number'
+                maxLength={2}
                 controls={false}
                 className='min_age'
                 onKeyPress={validateNum}
@@ -271,6 +294,7 @@ const TabFeatures = ({
             >
               <InputNumber
                 type='number'
+                maxLength={2}
                 controls={false}
                 className='max_age'
                 onKeyPress={validateNum}
@@ -283,11 +307,14 @@ const TabFeatures = ({
       <Col span={8}>
         <Form.Item
           name='gender'
-          label='Sexo'
+          label='Género'
         >
           <Select
-            placeholder='Sexo'
+            allowClear
+            showSearch
+            placeholder='Seleccionar un género'
             notFoundContent='No se encontraron resultados'
+            optionFilterProp='label'
             options={optionsGenders}
           />
         </Form.Item>
@@ -295,10 +322,10 @@ const TabFeatures = ({
       <Col span={8}>
         <Form.Item
           name='have_subordinates'
-          label='¿Tendrá gente a su cargo?'
+          label='¿Cuántas personas tendrá a su cargo?'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='Número y posiciones'/>
+          <Input maxLength={100} placeholder='Ej. 1 - Puesto del subordinado'/>
         </Form.Item>
       </Col>
       <Col span={8} className='turn_rotative_content'>
@@ -309,14 +336,14 @@ const TabFeatures = ({
             valuePropName='checked'
             style={{marginBottom: 0}}
           >
-            <Checkbox onChange={e => setShowTurns(e.target.checked)}/>
+            <Checkbox onChange={onChangeTurn}/>
           </Form.Item>
         </div>
         <Form.Item
           name='turns_to_rotate'
           rules={[ruleWhiteSpace]}
         >
-          <Input placeholder='¿Cuáles?' disabled={!showTurns}/>
+          <Input placeholder='¿Cuáles?' disabled={!rotativeTurn}/>
         </Form.Item>
       </Col>
       <Col span={8} style={{display: 'flex'}}>

@@ -20,7 +20,8 @@ const TabDocuments = ({
     newDocs,
     prevDocs,
     setNewDocs,
-    setPrevDocs
+    setPrevDocs,
+    showPrevDocs = true
 }) => {
 
     const inputFile = useRef(null);
@@ -30,9 +31,9 @@ const TabDocuments = ({
         let nameFile = valueToFilter(files[0].name);
         const existNew = (item) => valueToFilter(item.name) == nameFile;
         const existPrev = (item) => valueToFilter(item.document.split('/').at(-1)) == nameFile;
-        let _existNew = newDocs.some(existNew);
-        let _existPrev = prevDocs.some(existPrev);
-        if(_existNew || _existPrev) return message.error('Archivo existente');
+        let existNew_ = newDocs.some(existNew);
+        let existPrev_ = prevDocs.some(existPrev);
+        if(existNew_ || existPrev_) return message.error('Archivo existente');
         let newList = [...newDocs, files[0]];
         setNewDocs(newList)
     }
@@ -58,24 +59,49 @@ const TabDocuments = ({
 
     return (
         <Row gutter={[24,8]} className='tab-documents'>
-           <Col span={24} className={'head-list-files'}>
-                <p style={{marginBottom: 0}}>Archivos seleccionados ({newDocs.length+prevDocs.length})</p>
-                <Button
-                    size={'small'}
-                    icon={<UploadOutlined />}
-                    onClick={()=> openFile()}
-                />
-                <input
-                    type={'file'}
-                    style={{display: 'none'}}
-                    ref={inputFile}
-                    onChange={setFileSelected}
-                />
+            <Col span={24} className='content-list-files'>
+                <div className='head-list-files'>
+                    <p style={{marginBottom: 0}}>Nuevos archivos ({newDocs.length})</p>
+                    <Button
+                        size={'small'}
+                        icon={<UploadOutlined />}
+                        onClick={()=> openFile()}
+                    />
+                    <input
+                        type={'file'}
+                        style={{display: 'none'}}
+                        ref={inputFile}
+                        onChange={setFileSelected}
+                    />
+                </div>
+                <div className='body-list-files scroll-bar'>
+                    {newDocs.length > 0 ? newDocs.map((item, idx) => (
+                        <div
+                            key={`item_${idx}`}
+                            className='item-list-files'
+                            style={{color: '#28a745'}}
+                        >
+                            <p>{item.name}</p>
+                            <DeleteOutlined
+                                onClick={()=> deleteNewDocs(idx)}
+                            />
+                        </div>
+                    )) : (
+                        <Empty
+                            description='Ningún archivo nuevo'
+                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                            style={{margin: 0}}
+                        />
+                    )}
+                </div>
             </Col>
-            <Col span={24} style={{padding: 0}}>
-                {(prevDocs.length > 0 || newDocs.length > 0 ) ? (
+            {showPrevDocs && (
+                <Col span={24} className='content-list-files'>
+                    <div className='head-list-files'>
+                        <p style={{marginBottom: 0}}>Archivos existentes ({prevDocs.length})</p>
+                    </div>
                     <div className='body-list-files scroll-bar'>
-                        {prevDocs.length > 0 && prevDocs.map((item, idx) => (
+                        {prevDocs.length > 0 ? prevDocs.map((item, idx) => (
                             <div
                                 key={`item_${item.id}`}
                                 className='item-list-files'
@@ -83,37 +109,30 @@ const TabDocuments = ({
                             >
                                 <p>{item.name}</p>
                                 <div className='item-list-options'>
-                                    <SelectOutlined onClick={()=> redirectTo(item.document, true)}/>
+                                    <Tooltip title='Visualizar'>
+                                        <SelectOutlined onClick={()=> redirectTo(item.document, true)}/>
+                                    </Tooltip>
                                     {item.is_deleted ? (
-                                        <ReloadOutlined onClick={()=> deletePrevDocs(item, false)}
-                                        />
+                                        <Tooltip title='Restaurar'>
+                                            <ReloadOutlined onClick={()=> deletePrevDocs(item, false)}/>
+                                        </Tooltip>
                                     ): (
-                                        <DeleteOutlined onClick={()=> deletePrevDocs(item, true)}/>
+                                        <Tooltip placement='Eliminar'>
+                                            <DeleteOutlined onClick={()=> deletePrevDocs(item, true)}/>
+                                        </Tooltip>
                                     )}
                                 </div>
                             </div>
-                        ))}
-                        {newDocs.length > 0 && newDocs.map((item, idx) => (
-                            <div
-                                key={`item_${idx}`}
-                                className='item-list-files'
-                                style={{color: '#28a745'}}
-                            >
-                                <p>{item.name}</p>
-                                <DeleteOutlined
-                                    onClick={()=> deleteNewDocs(idx)}
-                                />
-                            </div>
-                        ))}
+                        )) : (
+                            <Empty
+                                description='Ningún archivo existente'
+                                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                style={{margin: 0}}
+                            />
+                        )}
                     </div>
-                ): (
-                    <Empty
-                        description={'Ningún archivo seleccionado'}
-                        image={Empty.PRESENTED_IMAGE_SIMPLE}
-                        style={{transition: 'all 1s'}}
-                    />
-                )}
-            </Col>
+                </Col>
+            )}
         </Row>
     )
 }

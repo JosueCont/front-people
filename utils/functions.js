@@ -1,5 +1,6 @@
 import axios from "axios";
 import WebApiPeople from "../api/WebApiPeople";
+import { message } from "antd";
 import { typeHttp } from "../config/config";
 
 export const generateYear = (year_init = 2020) => {
@@ -23,7 +24,8 @@ export const downLoadFileBlob = async (
   url,
   name = "Example.xlsx",
   type = "POST",
-  params = null
+  params = null,
+  Textmessage = null
 ) => {
   let headers = {
     method: type,
@@ -42,6 +44,7 @@ export const downLoadFileBlob = async (
       link.click();
     })
     .catch((e) => {
+      if(message) { message.error(Textmessage) }
       console.log(e);
     });
 };
@@ -422,7 +425,11 @@ export const getWork = ({ work_title }) => {
 };
 
 export const validateNum = (e) =>{
-  if(e.which != 8 && isNaN(String.fromCharCode(e.which))){
-    e.preventDefault()
-  }
+  if(e.which != 8
+    && isNaN(String.fromCharCode(e.which))
+  ) e.preventDefault();
+  if(e.target.maxLength
+    && e.target.value.length
+    == e.target.maxLength
+  ) e.preventDefault();
 }

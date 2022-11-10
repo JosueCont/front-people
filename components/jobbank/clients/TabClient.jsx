@@ -6,6 +6,7 @@ import {
     ruleURL,
     rfcFormat
 } from '../../../utils/rules';
+import { optionsBusinessName } from '../../../utils/constant';
 import { useSelector } from 'react-redux';
 
 const TabClient = ({ sizeCol = 12 }) =>{
@@ -55,7 +56,7 @@ const TabClient = ({ sizeCol = 12 }) =>{
                         allowClear
                         disabled={load_sectors}
                         loading={load_sectors}
-                        placeholder='Seleccione un sector'
+                        placeholder='Seleccionar un sector'
                         notFoundContent='No se encontraron resultados'
                     >
                         {list_sectors.length > 0 && list_sectors.map(item => (
@@ -71,16 +72,19 @@ const TabClient = ({ sizeCol = 12 }) =>{
                     name='website'
                     rules={[ruleURL]}
                 >
-                    <Input placeholder='Escriba la URL de su sitio'/>
+                    <Input placeholder='URL de su sitio, iniciar con http(s)://'/>
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>
                 <Form.Item
                     name='business_name'
-                    rules={[ruleWhiteSpace]}
                     // style={{marginBottom: 0}}
                 >
-                    <Input maxLength={50} placeholder='Razón social'/>
+                    <Select
+                        allowClear
+                        placeholder='Razón social'
+                        options={optionsBusinessName}
+                    />
                 </Form.Item>
             </Col>
             <Col span={sizeCol}>

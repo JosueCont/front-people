@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {
+    useEffect,
+    useState,
+    useRef,
+    useLayoutEffect
+} from 'react';
 import {
     Card,
     Row,
@@ -17,7 +22,11 @@ import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { setLoadVacancies, getInfoVacant } from '../../../redux/jobBankDuck';
+import {
+    setLoadVacancies,
+    setInfoVacant,
+    getInfoVacant
+} from '../../../redux/jobBankDuck';
 import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsVacancies = ({
@@ -26,7 +35,8 @@ const DetailsVacancies = ({
     load_vacancies,
     setLoadVacancies,
     info_vacant,
-    getInfoVacant
+    getInfoVacant,
+    setInfoVacant
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -40,7 +50,6 @@ const DetailsVacancies = ({
     const [formVacancies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const [showTurns, setShowTurns] = useState(false);
     const [disabledClient, setDisabledClient] = useState(false);
     const [listInterviewers, setListInterviewers] = useState([]);
     const { setValuesForm, createData } = useProcessInfo({
@@ -50,21 +59,30 @@ const DetailsVacancies = ({
         listInterviewers
     });
 
+    useLayoutEffect(()=>{
+        setInfoVacant()
+    },[])
+
     useEffect(()=>{
         if(Object.keys(info_vacant).length > 0 && action == 'edit'){
+            formVacancies.resetFields()
             setValuesForm();
-            setShowTurns(info_vacant.rotative_turn);
         }
     },[info_vacant])
 
     useEffect(()=>{
         if(router.query.customer && action == 'add'){
-            setDisabledClient(true)
-            formVacancies.setFieldsValue({
-                customer_id: router.query.customer
-            })
+            formVacancies.resetFields()
+            keepCustomer()
         }else setDisabledClient(false)
     },[router])
+
+    const keepCustomer = () =>{
+        setDisabledClient(true)
+        formVacancies.setFieldsValue({
+            customer_id: router.query.customer
+        })
+    }
 
     // Se utiliza la api de crear para actualizar pasándole una id,
     // de la contratario estaría creando otro registro
@@ -89,7 +107,6 @@ const DetailsVacancies = ({
             let response = await WebApiJobBank.createVacant({...values, node_id: currentNode.id});
             message.success('Vacante registrada');
             actionSaveAnd(response.data.id)
-            formVacancies.resetFields()
         } catch (e) {
             console.log(e)
             setLoadVacancies(false);
@@ -108,7 +125,15 @@ const DetailsVacancies = ({
         actionFunction[action](bodyData);
     }
 
-    const actionAddCreate = () =>{
+    const onFinishFailed = (e) =>{
+        setLoading({})
+        if(e.errorFields.length <= 0) return false;
+        message.error('Verificar que se han ingresado los valores requeridos/correctos');
+    }
+
+    const actionCreate = () =>{
+        formVacancies.resetFields()
+        if (router.query?.customer) keepCustomer();
         setLoadVacancies(false)
         setLoading({})
     }
@@ -121,13 +146,13 @@ const DetailsVacancies = ({
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
-            create: actionAddCreate,
+            create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/vacancies/edit',
                 query: { id }
             })
         }
-        actionFunction[actionType]();
+        actionFunction[actionType](id);
     }
 
     const getSaveAnd = (type) =>{
@@ -161,8 +186,7 @@ const DetailsVacancies = ({
                         layout='vertical'
                         form={formVacancies}
                         onFinish={onFinish}
-                        onFinishFailed={()=> setLoading({})}
-                        requiredMark={false}
+                        onFinishFailed={onFinishFailed}
                         initialValues={{
                             vo_bo: false,
                             rotative_turn: false,
@@ -176,8 +200,7 @@ const DetailsVacancies = ({
                             >
                                 <Spin spinning={load_vacancies}>
                                     <TabFeatures
-                                        showTurns={showTurns}
-                                        setShowTurns={setShowTurns}
+                                        formVacancies={formVacancies}
                                         disabledClient={disabledClient}
                                     />
                                 </Spin>
@@ -188,7 +211,7 @@ const DetailsVacancies = ({
                                 key='tab_2'
                             >
                                 <Spin spinning={load_vacancies}>
-                                    <TabEducation/>
+                                    <TabEducation formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
@@ -197,7 +220,7 @@ const DetailsVacancies = ({
                                 key='tab_3'
                             >
                                 <Spin spinning={load_vacancies}>
-                                    <TabSalary/>
+                                    <TabSalary formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
@@ -252,7 +275,7 @@ const DetailsVacancies = ({
                             htmlType='submit'
                             loading={load_vacancies}
                         >
-                            Guardar
+                            Actualizar
                         </Button>
                     )}
                 </Col>
@@ -272,6 +295,7 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         setLoadVacancies,
-        getInfoVacant
+        getInfoVacant,
+        setInfoVacant
     }
 )(DetailsVacancies);
