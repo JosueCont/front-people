@@ -40,7 +40,7 @@ const SelectDepartment = ({
           key="SelectDepartament"
           // options={options}
           size={size}
-          placeholder="Departamento"
+          //placeholder="Departamento"
           allowClear
           style={props.style ? props.style : {}}
           onChange={props.onChange ? props.onChange : null}

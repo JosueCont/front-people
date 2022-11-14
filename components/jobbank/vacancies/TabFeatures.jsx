@@ -23,7 +23,8 @@ import {
   optionsSubproduct,
   optionsTypeJob,
   optionsTypeContract,
-  optionsGenders
+  optionsGenders,
+  optionsStatusVacant
 } from '../../../utils/constant';
 import { useSelector } from 'react-redux';
 
@@ -160,6 +161,18 @@ const TabFeatures = ({
           ]}
         >
           <Input maxLength={100} placeholder='Nombre de la vacante'/>
+        </Form.Item>
+      </Col>
+      <Col span={8}>
+        <Form.Item
+          name='status'
+          label='Estatus de la vacante'
+        >
+          <Select
+            allowClear
+            placeholder='Seleccionar un estatus'
+            options={optionsStatusVacant}
+          />
         </Form.Item>
       </Col>
       <Col span={8}>

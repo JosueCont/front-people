@@ -128,8 +128,7 @@ const PasswordRecovery = ({...props}) => {
           .textBottom {
             bottom: 0;
             height: 45px;
-            position: absolute;
-            font-size: 12px;
+            font-size: 10px;
             letter-spacing: 0px;
             color: #ffffff !important;
             opacity: 1;
@@ -257,11 +256,11 @@ const PasswordRecovery = ({...props}) => {
                     alt=""
                 />
               </div>
-              <p className={"textBottom"}>
+{/*               <p className={"textBottom"}>
                 KHOR A People Management Framework y PPP Personal Proficiency
                 Profile, son marcas registradas y propiedad de @-Hiuman, S.A.
                 de C.V.
-              </p>
+              </p> */}
             </div>
           </Col>
           <Col xs={24} md={0} sm={0}>
@@ -281,7 +280,7 @@ const PasswordRecovery = ({...props}) => {
               />
             </div>
           </Col>
-          <Col xs={24} md={12} sm={24}>
+          <Col xs={24} md={12} sm={24} style={{justifyContent: "center", alignItems: "center"}}>
             <div style={styles.divForm}>
               <div style={{ textAlign: "center", width: "100%", marginTop: "5%"}}>
                 <Row justify={"center"}>
@@ -318,6 +317,13 @@ const PasswordRecovery = ({...props}) => {
                 </Row>
               </div>
             </div>
+            <div style={{ textAlign: "center", width: "100%", marginTop: "5%"}}>
+              <p className={"textBottom"}>
+                KHOR A People Management Framework y PPP Personal Proficiency
+                Profile, son marcas registradas y propiedad de @-Hiuman, S.A.
+                de C.V.
+              </p>
+            </div>
           </Col>
         </Row>
       </div>
@@ -329,7 +335,7 @@ const styles={
   divForm:{
     borderRadius:10,
     position:'relative',
-    width:'50%',
+    width:'60%',
     margin:'0 auto',
     marginTop:'8%',
     padding:'20px 10px 20px 10px',

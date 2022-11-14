@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {
+    useEffect,
+    useState,
+    useRef,
+    useLayoutEffect
+} from 'react';
 import {
     Card,
     Row,
@@ -42,16 +47,36 @@ const DetailsStrategies = ({
     const [formStrategies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
+    const [disabledClient, setDisabledClient] = useState(false);
     const { createData, setValuesForm } = useProcessInfo({
         info_strategy,
         formStrategies
     });
 
+    useLayoutEffect(()=>{
+        setInfoStrategy()
+    },[])
+
+    useEffect(()=>{
+        if(router.query.customer && action == 'add'){
+            formStrategies.resetFields()
+            keepCustomer()
+        }else setDisabledClient(false);
+    },[router])
+
     useEffect(()=>{
         if(Object.keys(info_strategy).length > 0 && action == 'edit'){
+            formStrategies.resetFields();
             setValuesForm()
         }
     },[info_strategy])
+
+    const keepCustomer = () =>{
+        setDisabledClient(true)
+        formStrategies.setFieldsValue({
+            customer: router.query.customer
+        })
+    }
 
     const onFinishUpdate = async (values) =>{
         try {
@@ -88,27 +113,28 @@ const DetailsStrategies = ({
         actionFunction[action](bodyData);
     }
 
+    const actionBack = () =>{
+        if(router.query?.customer) router.push('/jobbank/clients');
+        else router.push('/jobbank/strategies');
+    }
+
     const actionCreate = () =>{
         formStrategies.resetFields();
+        if (router.query?.customer) keepCustomer();
         setLoadStrategies(false)
         setLoading({})
     }
 
-    const actionEdit = (id) =>{
-        setInfoStrategy()
-        router.replace({
-            pathname: '/jobbank/strategies/edit',
-            query: { id }
-        })
-    }
-
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: () => router.push('/jobbank/strategies'),
+            back: actionBack,
             create: actionCreate,
-            edit: actionEdit
+            edit: ()=> router.replace({
+                pathname: '/jobbank/strategies/edit',
+                query: { id }
+            })
         }
-        actionFunction[actionType](id);
+        actionFunction[actionType]();
     }
 
     const getSaveAnd = (type) =>{
@@ -129,7 +155,7 @@ const DetailsStrategies = ({
                         }
                     </p>
                     <Button
-                        onClick={()=> router.push('/jobbank/strategies')}
+                        onClick={()=> actionBack()}
                         icon={<ArrowLeftOutlined />}
                     >
                         Regresar
@@ -145,7 +171,10 @@ const DetailsStrategies = ({
                             requiredMark={false}
                             onFinishFailed={()=> setLoading({})}
                         >
-                            <FormStrategies formStrategies={formStrategies}/>
+                            <FormStrategies
+                                formStrategies={formStrategies}
+                                disabledClient={disabledClient}
+                            />
                         </Form>
                     </Spin>
                 </Col>
@@ -186,7 +215,7 @@ const DetailsStrategies = ({
                             htmlType='submit'
                             loading={load_strategies}
                         >
-                            Guardar
+                            Actualizar
                         </Button>
                     )}
                 </Col>
