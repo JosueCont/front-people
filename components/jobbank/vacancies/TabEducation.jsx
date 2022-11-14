@@ -13,7 +13,7 @@ import {
 } from '../../../utils/rules';
 import {
   optionsLevelAcademic,
-  optionsStatusVacant,
+  optionsStatusAcademic,
   optionsLangVacant
 } from '../../../utils/constant';
 
@@ -106,21 +106,6 @@ const TabEducation = ({ formVacancies }) => {
         </Form.Item>
       </Col>
       <Col span={8}>
-        <Form.Item
-          name='status_level_study'
-          label='Estatus'
-        >
-          <Select
-            allowClear
-            showSearch
-            placeholder='Seleccionar un estatus'
-            notFoundContent='No se encontraron resultados'
-            optionFilterProp='label'
-            options={optionsStatusVacant}
-          />
-        </Form.Item>
-      </Col>
-      <Col span={8}>
         <Form.Item name='academics_degree' label='Carrera'>
           <Select
             allowClear
@@ -137,6 +122,21 @@ const TabEducation = ({ formVacancies }) => {
               </Select.Option>
             ))}
           </Select>
+        </Form.Item>
+      </Col>
+      <Col span={8}>
+        <Form.Item
+          name='status_level_study'
+          label='Estatus de la carrera'
+        >
+          <Select
+            allowClear
+            showSearch
+            placeholder='Seleccionar un estatus'
+            notFoundContent='No se encontraron resultados'
+            optionFilterProp='label'
+            options={optionsStatusAcademic}
+          />
         </Form.Item>
       </Col>
       <Col span={8}>

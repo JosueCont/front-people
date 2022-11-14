@@ -90,6 +90,7 @@ const RegisterClient = ({
                                     prevDocs={prevDocs}
                                     setNewDocs={setNewDocs}
                                     setPrevDocs={setPrevDocs}
+                                    showPrevDocs={false}
                                 />
                             </div>
                         </Spin>

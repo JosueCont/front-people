@@ -134,7 +134,7 @@ const PublicationsStatisticsTable = ({
       dataIndex: "publication",
       key: "publication",
       className: "publication-column",
-      width: 300,
+      width: 350,
       render: (publication) => (
         <>
           {publication && publication != "" ? (

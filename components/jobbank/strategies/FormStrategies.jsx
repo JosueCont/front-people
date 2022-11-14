@@ -19,7 +19,10 @@ import { useSelector } from 'react-redux';
 import { getFullName } from '../../../utils/functions';
 import { ruleRequired, ruleWhiteSpace, numCommaAndDot } from '../../../utils/rules';
 
-const FormStrategies = ({ formStrategies }) => {
+const FormStrategies = ({
+    formStrategies,
+    disabledClient
+}) => {
 
     const {
         load_clients_options,
@@ -190,7 +193,7 @@ const FormStrategies = ({ formStrategies }) => {
                     <Select
                         allowClear
                         showSearch
-                        disabled={load_clients_options}
+                        disabled={disabledClient}
                         loading={load_clients_options}
                         placeholder='Seleccionar un cliente'
                         notFoundContent='No se encontraron resultados'
@@ -359,6 +362,7 @@ const FormStrategies = ({ formStrategies }) => {
                 <Form.Item
                     name='searches'
                     label='Búsquedas'
+                    tooltip='Nombre(s) de clientes para encontrar una vacante similar'
                     rules={[ruleWhiteSpace]}
                 >
                     <Input

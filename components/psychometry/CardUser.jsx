@@ -52,8 +52,20 @@ const CardUser = ({
     let toAnswer = 0;
     let completed = 0;
     user_assessments.map((item)=> {
-      if (item.apply){
+      console.log("item---",item)
+      let isArray = true
+      if (Array.isArray(item.apply)) {
+        isArray = true
+        console.log("ARRAY---")
+      } else {
+        console.log("OBJETO---")
+        isArray = false
+      }
+      if (isArray ? item.apply[0] : item.apply){
         if(
+          isArray ? 
+          item.apply[0].progress == 100 ||
+          item.apply[0].status == 2 :
           item.apply.progress == 100 ||
           item.apply.status == 2
         ){

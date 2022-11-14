@@ -181,7 +181,7 @@ const LoginForm = ({
           onFinish={onFinish}
         >
           <Form.Item>
-            <p className={"form-title"}>A new people management system</p>
+            <p className={"login-form-title"}>A new people management system</p>
             <p className={"form-subtitle"}>Inicio de sesión</p>
           </Form.Item>
           <Form.Item
@@ -190,7 +190,7 @@ const LoginForm = ({
             className="font-color-khor"
           >
             <Input
-              style={{ marginTop: "5px" }}
+              style={{ marginTop: "5px", borderColor: "#F99543" }}
               placeholder="Correo electrónico"
               onBlur={(value) =>
                 loginForm.setFieldsValue({
@@ -207,7 +207,7 @@ const LoginForm = ({
             className="font-color-khor"
           >
             <Input.Password
-              style={{ marginTop: "5px" }}
+              style={{ marginTop: "5px", borderColor: "#F99543" }}
               type="password"
               placeholder="Contraseña"
               prefix={<EyeOutlined />}
@@ -224,14 +224,14 @@ const LoginForm = ({
             />
           )}
           {recoveryPsw && (
-            <Form.Item className={"font-color-khor"}>
-              <b>¿Olvidaste tu contraseña? </b>
+            <Form.Item style={{textAlign: "center"}}>
+              ¿Olvidaste tu contraseña? Haz clic
               <span
                 onClick={() => props.setRecoverPasswordShow(true)}
-                className={"pointer text-link"}
-                style={{ color: "blue", textDecoration: "underline" }}
+                className={"pointer"}
+                //style={{ color: "blue", textDecoration: "underline" }}
               >
-                haz clic aquí
+                &nbsp;aquí
               </span>
             </Form.Item>
           )}
@@ -253,7 +253,7 @@ const LoginForm = ({
               style={{ width: "100%" }}
               type="primary"
               htmlType="submit"
-              className="login-form-button"
+              className="login-form-button-in"
               disabled={
                 infoSite.terms_and_conditions_link
                   ? !termsAndConditionsAccept

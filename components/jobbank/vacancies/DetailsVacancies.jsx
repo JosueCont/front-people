@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {
+    useEffect,
+    useState,
+    useRef,
+    useLayoutEffect
+} from 'react';
 import {
     Card,
     Row,
@@ -54,20 +59,30 @@ const DetailsVacancies = ({
         listInterviewers
     });
 
+    useLayoutEffect(()=>{
+        setInfoVacant()
+    },[])
+
     useEffect(()=>{
         if(Object.keys(info_vacant).length > 0 && action == 'edit'){
+            formVacancies.resetFields()
             setValuesForm();
         }
     },[info_vacant])
 
     useEffect(()=>{
         if(router.query.customer && action == 'add'){
-            setDisabledClient(true)
-            formVacancies.setFieldsValue({
-                customer_id: router.query.customer
-            })
+            formVacancies.resetFields()
+            keepCustomer()
         }else setDisabledClient(false)
     },[router])
+
+    const keepCustomer = () =>{
+        setDisabledClient(true)
+        formVacancies.setFieldsValue({
+            customer_id: router.query.customer
+        })
+    }
 
     // Se utiliza la api de crear para actualizar pasándole una id,
     // de la contratario estaría creando otro registro
@@ -112,10 +127,13 @@ const DetailsVacancies = ({
 
     const onFinishFailed = (e) =>{
         setLoading({})
+        if(e.errorFields.length <= 0) return false;
+        message.error('Verificar que se han ingresado los valores requeridos/correctos');
     }
 
     const actionCreate = () =>{
         formVacancies.resetFields()
+        if (router.query?.customer) keepCustomer();
         setLoadVacancies(false)
         setLoading({})
     }
@@ -125,19 +143,14 @@ const DetailsVacancies = ({
         else router.push('/jobbank/vacancies');
     }
 
-    const actionEdit = (id) =>{
-        setInfoVacant()
-        router.replace({
-            pathname: '/jobbank/vacancies/edit',
-            query: { id }
-        })
-    }
-
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: actionEdit
+            edit: ()=> router.replace({
+                pathname: '/jobbank/vacancies/edit',
+                query: { id }
+            })
         }
         actionFunction[actionType](id);
     }
@@ -174,7 +187,6 @@ const DetailsVacancies = ({
                         form={formVacancies}
                         onFinish={onFinish}
                         onFinishFailed={onFinishFailed}
-                        requiredMark={false}
                         initialValues={{
                             vo_bo: false,
                             rotative_turn: false,
@@ -263,7 +275,7 @@ const DetailsVacancies = ({
                             htmlType='submit'
                             loading={load_vacancies}
                         >
-                            Guardar
+                            Actualizar
                         </Button>
                     )}
                 </Col>
