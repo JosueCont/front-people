@@ -12,7 +12,7 @@ import jwtEncode from "jwt-encode";
 import { domainKuiz } from '../../../api/axiosApi';
 import { valueToFilter } from '../../../utils/functions';
 import CardGeneric from '../../dashboards-cards/CardGeneric';
-import index from '../../../pages/ynl/general-dashboard';
+import locale from 'antd/lib/date-picker/locale/es_ES';
 
 const TableAssessments = ({
   user_profile,
@@ -21,7 +21,6 @@ const TableAssessments = ({
   const infoPerson = useSelector((state) => state?.userStore?.people_company)
   const router = useRouter();
   moment.locale("es-mx");
-  const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
   const [dataAssessments, setDataAssessments] = useState([]);
   const [idUser, setIdUser] = useState({});
   const [dataUser, setDataUser] = useState({});
@@ -43,10 +42,10 @@ const TableAssessments = ({
       value: 2,
       label: 'Filtrar por estatus',
     },
-    // {
-    //   value: 3,
-    //   label: 'Filtrar por fecha',
-    // },
+    {
+      value: 3,
+      label: 'Filtrar por fecha fin de evaluación',
+    },
   ]
 
   useEffect(()=>{
@@ -62,7 +61,6 @@ const TableAssessments = ({
   const getUserListAssessments = async (data) =>{
     try {
       let response = await WebApiAssessment.getUserListAssessments(data);
-      console.log("assessments sin eliminar", response.data);
       let filterGroupal = response.data.reduce((prev, current) =>{
         let isDuplicated = prev.some(item => item.id === current.id);
         if(isDuplicated){
@@ -75,7 +73,6 @@ const TableAssessments = ({
         }
         return [...prev, current];
       },[])
-      console.log("resultados",filterGroupal);
       
       setDataAssessments(filterGroupal);
       setfullAssessments(filterGroupal);
@@ -130,9 +127,7 @@ const TableAssessments = ({
   }
 
   const modalRestart = (data) =>{
-    console.log("data evaluación",data)
     let dataApply = { assessment: data.id, user_id: idUser.person}
-    console.log("datos a enviar", dataApply)
     Modal.confirm({
       title: "¿Volver a contestar esta evaluación?",
       content: "",
@@ -153,9 +148,7 @@ const TableAssessments = ({
   }
 
   const modalDeleteAssessment = (data) =>{
-    console.log("data evaluación",data)
     let dataApply = { assessment: data.id, user_id: idUser.person}
-    console.log("datos a enviar", dataApply)
     Modal.confirm({
       title: "¿Está seguro de retirar esta evaluación?",
       content: "",
@@ -409,7 +402,6 @@ const TableAssessments = ({
 
   const onFilterName = ({target}) =>{
     setNameAssessment(target.value);
-    console.log("valores:",target.value)
     if((target.value).trim()){
       let results = fullAssessments.filter(item => valueToFilter(item.name).includes(target.value) || valueToFilter(item?.group?.name).includes(target.value))
       setDataAssessments(results)
@@ -429,9 +421,18 @@ const TableAssessments = ({
   }
 
   const onFilterDates = (date) => {
-    console.log("fecha elegida formateada",date);
-    let dateFilter = moment(date._d).format('L');  
-    console.log("filtro fecha:",dateFilter) 
+    if(date){
+      let dateFilter = moment(date._d).format('L');  
+      if(dateFilter){
+        let applysWithData = fullAssessments.filter(item => item.applys.length > 0);
+        let results = applysWithData.filter(item =>  moment(item?.applys[0]?.end_date).format('L') == dateFilter  )
+        setDataAssessments(results)
+      }else{
+        setDataAssessments(fullAssessments)
+      }
+    }else{
+      setDataAssessments(fullAssessments)
+    }
   }
 
   const calculateIndicatorsCards = (assessments) =>{
@@ -456,15 +457,19 @@ const TableAssessments = ({
   }
 
   const calculateProgressCard = (assessments) =>{
-    let progress = 0;
-    let percent = 100 / (assessments.length * 100);
-    assessments.map((item)=> {
-      if(item?.applys[0]){
-        progress = progress + item?.applys[0]?.progress;
-      }
-    })
-    let total = percent * progress;
-    setAssessmentsProgress(`${total.toFixed(0)}%`)
+    if(assessments.length > 0){
+      let progress = 0;
+      let percent = 100 / (assessments.length * 100);
+      assessments.map((item)=> {
+        if(item?.applys[0]){
+          progress = progress + item?.applys[0]?.progress;
+        }
+      })
+      let total = percent * progress;
+      setAssessmentsProgress(`${total.toFixed(0)}%`)
+    }else{
+      setAssessmentsProgress(`0%`)
+    }
   }
   
   const expandedRowRender = (item) => {
@@ -590,7 +595,7 @@ const TableAssessments = ({
                   </Select>
                 }
                 { typeFilter == 3 &&
-                  <DatePicker style={{width:"100%"}} onChange={onFilterDates} defaultValue={moment('01/01/2015', dateFormatList[0])} format={dateFormatList} />
+                  <DatePicker locale={locale} style={{width:"100%"}} onChange={onFilterDates} defaultValue={moment()} format={'DD/MM/YYYY'} />
                 }
               </Col>
               <Col
