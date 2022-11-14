@@ -60,6 +60,7 @@ import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 import SelectJob from "../../../components/selects/SelectJob";
 import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
+import ButtonMovements from "../../../components/payroll/ImssMovements/ButtonMovements";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -1173,6 +1174,11 @@ const homeScreen = ({ ...props }) => {
                       {props.config && props.config.nomina_enabled &&
                           <ButtonDownloadConfronta/>
                       }
+
+                      {props.config && props.config.nomina_enabled &&
+                          <ButtonMovements/>
+                      }
+
                     </Space>
                   </Col>
                   <Col>
