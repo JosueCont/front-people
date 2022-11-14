@@ -27,6 +27,7 @@ import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import NumberFormat from "../../../components/formatter/numberFormat";
 import NumericInput from "../../../components/inputNumeric";
+import ModalConceptsPayroll from "../../../components/payroll/modals/ModalConceptsPayroll";
 import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
@@ -37,9 +38,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const route = useRouter();
   const { Text } = Typography;
   const [form] = Form.useForm();
+
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [optionspPaymentCalendars, setOptionsPaymentCalendars] = useState([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [personKeys, setPersonKeys] = useState([]);
+  const [personId, setPersonId] = useState(null);
+  const [listPersons, setListPersons ] = useState([])
   const [loading, setLoading] = useState(false);
   const [movementType, setMovementType] = useState(null)
   const [bonusChristmas, setBonusChristmas] = useState([]);
@@ -48,6 +52,13 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [totalBonus, setTotalBonus] = useState(null);
   const [totalIsr, setTotalIsr] = useState(null);
   const [netPay, setNetPay] = useState(null);
+  const [isOpen, setIsOpen] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [consolidated, setConsolidated] = useState(null);
+  const [step, setStep] = useState(0);
+  const [nextStep, setNextStep] = useState(true);
+  const [previousStep, setPreviuosStep] = useState(false);
+
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -114,42 +125,45 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         </div>
       ),
     },
-    // {
-    //   key: "actions",
-    //   className: "cell-actions",
-    //   render: (item) => (
-    //     <>
-    //       {item.payroll_cfdi_person &&
-    //       item.payroll_cfdi_person.is_open &&
-    //       step == 0 ? (
-    //         <Button
-    //           size="small"
-    //           onClick={() => {
-    //             setPersonId(item.person && item.person.id),
-    //               setModalVisible(true);
-    //           }}
-    //         >
-    //           <PlusOutlined />
-    //         </Button>
-    //       ) : (
-    //         isOpen &&
-    //         step == 0 &&
-    //         !consolidated && (
-    //           <Button
-    //             size="small"
-    //             onClick={() => {
-    //               setPersonId(item.person && item.person.id),
-    //                 setModalVisible(true);
-    //             }}
-    //           >
-    //             <PlusOutlined />
-    //           </Button>
-    //         )
-    //       )}
-    //     </>
-    //   ),
-    // },
+    {
+      key: "actions",
+      className: "cell-actions",
+      render: (item) => (
+        <>
+          {item.payroll_cfdi_person &&
+          item.payroll_cfdi_person.is_open &&
+          step == 0 ? (
+            <Button
+              size="small"
+              onClick={() => {
+                setPersonId(item.payroll_person && item.payroll_person.person.id),
+                setModalVisible(true);
+              }}
+            >
+              <PlusOutlined />
+            </Button>
+          ) : (
+            isOpen &&
+            step == 0 &&
+            !consolidated && (
+              <Button
+                size="small"
+                onClick={() => {
+                  setPersonId(item.payroll_person && item.payroll_person.person.id),
+                  setModalVisible(true);
+                }}
+              >
+                <PlusOutlined />
+              </Button>
+            )
+          )}
+        </>
+      ),
+    },
   ];
+
+  console.log('Person xd', listPersons)
+  console.log('PersonID && ismodalVsible', personId, modalVisible)
 
   const renderConceptsTable = (data) => {
     console.log(data);
@@ -411,17 +425,13 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       });
   };
 
-  movementType && console.log('movementType', movementType)
-
-  const onSelectChange = (newSelectedRowKeys = []) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
   const rowSelectionPerson = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  }
+    selectedRowKeys: personKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setPersonKeys(selectedRowKeys);
+      setListPersons(selectedRows)
+    },
+  };
 
   return (
     <Spin tip="Cargando..." spinning={loading}>
@@ -655,6 +665,20 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           </Col>
         </div>
       </MainLayout>
+      {personId && (
+        <ModalConceptsPayroll
+          visible={modalVisible}
+          setVisible={setModalVisible}
+          // calendar={{
+          //   payment_period: periodSelected.id,
+          // }}
+          person_id={personId}
+          // payroll={payroll}
+          setLoading={setLoading}
+          // sendCalculatePayroll={sendCalculatePayroll}
+          // payrollType={payrollType}
+        />
+      )}
     </Spin>
   );
 };

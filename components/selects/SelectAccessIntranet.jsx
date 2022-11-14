@@ -14,7 +14,7 @@ const SelectAccessIntranet = ({
       defaultValue={value||undefined}
       onChange={onChange}
       options={intranetAccess}
-      placeholder="Acceso a la intranet"
+      //placeholder="Acceso a Khor Connect"
     />
   );
 };
