@@ -1182,12 +1182,14 @@ const homeScreen = ({ ...props }) => {
                       {props.config && props.config.nomina_enabled &&
                           <ButtonMovements node={props.currentNode}/>
                       }
-
-
-                      <ImportButtonList personsList={rowSelectionPerson} node={props.currentNode}/>
-
                     </Space>
                   </Col>
+                  {props.config && props.config.nomina_enabled &&
+                      <Col>
+                        <ImportButtonList personsList={rowSelectionPerson} node={props.currentNode}/>
+                      </Col>
+                  }
+
                 </Row>
               </div>
               <Table

@@ -202,6 +202,11 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/imss-movement-log?node=${node}`,'get')
   }
 
+  static importSalaryModification(data){
+    //payroll/payroll-person/import_salary_modification/
+    return WebApi.ApisType(`/payroll/payroll-person/import_salary_modification/`, 'post', data)
+  }
+
 }
 
 export default WebApiPayroll;
