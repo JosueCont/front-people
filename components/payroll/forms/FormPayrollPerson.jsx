@@ -406,6 +406,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                       dropdownStyle={{ wordBreak: "break-word" }}
                       options={contrctsType}
                       notFoundContent={"No se encontraron resultados."}
+                      allowClear
                     />
                   </Form.Item>
                 </Col>
@@ -418,6 +419,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     <Select
                       options={hiringRegimeType}
                       notFoundContent={"No se encontraron resultados."}
+                      allowClear
                     />
                   </Form.Item>
                 </Col>
@@ -430,6 +432,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                     <Select
                       options={typeworkingday}
                       notFoundContent={"No se encontraron resultados."}
+                      allowClear
                     />
                   </Form.Item>
                 </Col>
@@ -455,6 +458,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                       options={PaymentTypes}
                       notFoundContent={"No se encontraron resultados."}
                       onChange={changePaymentType}
+                      allowClear
                     />
                   </Form.Item>
                 </Col>
@@ -464,6 +468,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                       <Select
                         options={banks}
                         notFoundContent={"No se encontraron resultados."}
+                        allowClear
                       />
                     </Form.Item>
                   </Col>
@@ -531,6 +536,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                           notFoundContent={"No se encontraron resultados."}
                           onChange={selectCalendar}
                           disabled={disabledCalendar}
+                          allowClear
                         />
                       </Form.Item>
                     </Col>
@@ -543,6 +549,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                           options={perceptionTypes}
                           notFoundContent={"No se encontraron resultados."}
                           disabled
+                          allowClear
                         />
                       </Form.Item>
                     </Col>
@@ -552,6 +559,7 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
                           options={typeTax}
                           notFoundContent={"No se encontraron resultados."}
                           disabled
+                          allowClear
                         />
                       </Form.Item>
                     </Col>
