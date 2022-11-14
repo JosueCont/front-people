@@ -88,7 +88,7 @@ const TableAssessments = ({
     let dataApply = { apply_id: data }
     Modal.confirm({
       title: "¿Está seguro de eliminar esta evaluación?",
-      content: "Si lo elimina no podrá recuperarlo",
+      content: "Si la elimina no podrá recuperarla",
       cancelText: "Cancelar",
       okText: "Sí, eliminar",
       onOk: () => {deleteApply(dataApply)}
@@ -403,7 +403,7 @@ const TableAssessments = ({
   const onFilterName = ({target}) =>{
     setNameAssessment(target.value);
     if((target.value).trim()){
-      let results = fullAssessments.filter(item => valueToFilter(item.name).includes(target.value) || valueToFilter(item?.group?.name).includes(target.value))
+      let results = fullAssessments.filter(item => valueToFilter(item.name).includes(target.value.toLowerCase()) || valueToFilter(item?.group?.name).includes(target.value.toLowerCase()))
       setDataAssessments(results)
     }else{
       setDataAssessments(fullAssessments)
