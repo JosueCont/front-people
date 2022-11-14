@@ -61,6 +61,7 @@ import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 import SelectJob from "../../../components/selects/SelectJob";
 import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
 import ButtonMovements from "../../../components/payroll/ImssMovements/ButtonMovements";
+import ImportButtonList from "../../../components/payroll/ImportGenericButton/ImportButtonList";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -947,6 +948,9 @@ const homeScreen = ({ ...props }) => {
     }
   }, [modalDeactivate]);
 
+
+
+
   const menuExportTemplate = (
     <Menu>
       <Menu.Item
@@ -1176,13 +1180,13 @@ const homeScreen = ({ ...props }) => {
                       }
 
                       {props.config && props.config.nomina_enabled &&
-                          <ButtonMovements/>
+                          <ButtonMovements node={props.currentNode}/>
                       }
 
-                    </Space>
-                  </Col>
-                  <Col>
 
+                      <ImportButtonList personsList={rowSelectionPerson} node={props.currentNode}/>
+
+                    </Space>
                   </Col>
                 </Row>
               </div>

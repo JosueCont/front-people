@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import {fourDecimal, onlyNumeric, ruleRequired} from "../../../utils/rules";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from 'moment'
+import WebApiPayroll from "../../../api/WebApiPayroll";
 
 
 const ButtonMovements=({person, node, payrollPerson,...props})=>{
@@ -15,7 +16,29 @@ const ButtonMovements=({person, node, payrollPerson,...props})=>{
     const [showModal, setShowModal] = useState(false)
     const [form] = Form.useForm();
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [movements, setMovements] = useState([]);
     //const regPatronal = useSelector(state => state.catalogStore.cat_patronal_registration);
+
+    useEffect(()=>{
+        if(showModal){
+            getMovements()
+        }
+
+    },[showModal])
+
+    const getMovements=async ()=>{
+        setLoading(true)
+        try{
+            const res = await WebApiPayroll.getMovementsIMSSLog(node?.id);
+            console.log(res)
+            setMovements(res.data)
+
+        }catch (e){
+
+        }finally {
+            setLoading(false)
+        }
+    }
 
     const onFinish=(values)=>{
         console.log(values)
@@ -23,38 +46,22 @@ const ButtonMovements=({person, node, payrollPerson,...props})=>{
 
     const columns = [
         {
-            title: 'Nombre',
-            dataIndex: 'name',
-        },
-        {
-            title: 'Tipo',
-            dataIndex: 'age',
-        },
-        {
             title: 'Descripción',
             dataIndex: 'description',
+            key:'dataIndex'
         },
         {
             title: 'Fecha',
             dataIndex: 'date',
+            key:'date'
         },
         {
             title: 'Vigencia',
-            dataIndex: 'from',
+            dataIndex: 'validity_date',
+            key:'validity_date'
         }
     ];
 
-    const data = [];
-    for (let i = 0; i < 46; i++) {
-        data.push({
-            key: i,
-            name: `gaspar dzul ${i}`,
-            description:'Baja voluntaria',
-            age: 'Baja de movimiento',
-            date: `12/12/2022`,
-            from: `17/12/2022`
-        });
-    }
 
     const start = () => {
         setLoading(true);
@@ -147,7 +154,7 @@ const ButtonMovements=({person, node, payrollPerson,...props})=>{
 
 
 
-                    <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+                    <Table rowSelection={rowSelection} columns={columns} dataSource={movements} />
                 </div>
 
             </Modal>

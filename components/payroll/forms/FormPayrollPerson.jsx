@@ -560,7 +560,11 @@ const FormPayrollPerson = ({ person = null, node = null, ...props }) => {
               </Row>
               <Row justify={"end"}>
                 <Form.Item>
-                  <ButtonUpdateSalaryMovement person={person} node={person.node} payrollPerson={payrollPerson} />
+                  <ButtonUpdateSalaryMovement onRefresh={()=>{
+                    getPayrollPerson();
+                    getPaymentCalendar();
+                    PayrollList();
+                  }} person={person} node={person.node} payrollPerson={payrollPerson} />
                 </Form.Item>
                 <Form.Item>
                   <Button type="primary" htmlType="submit">

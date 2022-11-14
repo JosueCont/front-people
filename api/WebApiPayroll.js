@@ -193,6 +193,15 @@ class WebApiPayroll {
   static christmasBonusCaculate(data) {
     return WebApi.ApisType("/payroll/christmas-bonus", "post", data);
   }
+
+  static setSalaryModification(data){
+    return WebApi.ApisType('/payroll/payroll-person/salary_modification/', "post", data)
+  }
+
+  static getMovementsIMSSLog(node){
+    return WebApi.ApisType(`/payroll/imss-movement-log?node=${node}`,'get')
+  }
+
 }
 
 export default WebApiPayroll;
