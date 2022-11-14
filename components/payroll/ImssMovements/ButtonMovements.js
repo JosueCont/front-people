@@ -51,14 +51,21 @@ const ButtonMovements=({person, node, payrollPerson,...props})=>{
             key:'dataIndex'
         },
         {
+            title: 'Tipo',
+            dataIndex: 'movement_type',
+            key:'movement_type'
+        },
+        {
             title: 'Fecha',
             dataIndex: 'date',
-            key:'date'
+            key:'date',
+            render:data=><p>{data && moment(data).format('DD/MM/YYYY')}</p>
         },
         {
             title: 'Vigencia',
             dataIndex: 'validity_date',
-            key:'validity_date'
+            key:'validity_date',
+            render:data=><p>{data && moment(data).format('DD/MM/YYYY')}</p>
         }
     ];
 
@@ -118,10 +125,8 @@ const ButtonMovements=({person, node, payrollPerson,...props})=>{
                 title="Movimientos IMSS"
                 visible={showModal}
                 width={1000}
-                onOk={()=> form.submit()}
+                footer={[]}
                 onCancel={()=>setShowModal(false)}
-                okText="Aceptar"
-                cancelText="Cancelar"
             >
                 <div
                     style={{
