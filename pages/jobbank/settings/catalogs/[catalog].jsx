@@ -4,19 +4,25 @@ import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
-import ListCatalogs from '../../../../components/jobbank/catalogs/ListCatalogs';
+import CrudCatalog from '../../../../components/jobbank/catalogs/CrudCatalog';
+import { useCatalog } from '../../../../components/jobbank/catalogs/hook/useCatalog';
 
-const index = ({
+const catalog = ({
     currentNode
 }) => {
 
     const router = useRouter();
+    const { infoCatalog, getCatalog } = useCatalog();
+
+    useEffect(()=>{
+        if(currentNode) getCatalog(currentNode.id);
+    },[currentNode])
 
     return (
         <MainLayout currentKey='jb_settings' defaultOpenKeys={['job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                    className='pointer'
+                    className={'pointer'}
                     onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
                     Inicio
@@ -24,11 +30,19 @@ const index = ({
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className='pointer'
-                    onClick={() => router.push({ pathname: '/jobbank/settings'})}
-                >Configuraciones</Breadcrumb.Item>
-                <Breadcrumb.Item>Catálogos</Breadcrumb.Item>
+                    onClick={() => router.replace('/jobbank/settings')}
+                >
+                    Configuraciones
+                </Breadcrumb.Item>
+                <Breadcrumb.Item
+                    className='pointer'
+                    onClick={() => router.replace('/jobbank/settings/catalogs')}
+                >
+                    Catálogos
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>{infoCatalog.titleBread}</Breadcrumb.Item>
             </Breadcrumb>
-            <ListCatalogs/>
+            <CrudCatalog/>
         </MainLayout>
     )
 }
@@ -39,4 +53,4 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState)(withAuthSync(index));
+export default connect(mapState)(withAuthSync(catalog));

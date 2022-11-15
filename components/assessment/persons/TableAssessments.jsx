@@ -61,6 +61,9 @@ const TableAssessments = ({
   const getUserListAssessments = async (data) =>{
     try {
       let response = await WebApiAssessment.getUserListAssessments(data);
+      response.data.sort((a, b) => {
+        if (a.name_es > b.name_es) { return 1; } if (a.name_es < b.name_es) { return -1;} return 0;
+      });
       let filterGroupal = response.data.reduce((prev, current) =>{
         let isDuplicated = prev.some(item => item.id === current.id);
         if(isDuplicated){
@@ -88,7 +91,7 @@ const TableAssessments = ({
     let dataApply = { apply_id: data }
     Modal.confirm({
       title: "¿Está seguro de eliminar esta evaluación?",
-      content: "Si lo elimina no podrá recuperarlo",
+      content: "Si la elimina no podrá recuperarla",
       cancelText: "Cancelar",
       okText: "Sí, eliminar",
       onOk: () => {deleteApply(dataApply)}
@@ -342,46 +345,46 @@ const TableAssessments = ({
           <>
             <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
               { isEmpty.length === 0 && record?.applys[0]?.status != 1 &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalRestart(record)}>
-                  <Tooltip title="Contestar evaluación de nuevo">
-                  <RetweetOutlined />
-                  </Tooltip>
-                </Button>
+                <Tooltip title="Contestar evaluación de nuevo">
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalRestart(record)}>
+                    <RetweetOutlined />
+                  </Button>
+                </Tooltip>
               }
               { record?.applys[0]?.status === 1 &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record?.applys[0]?.id)}>
-                  <Tooltip title="Reiniciar evaluación">
+                <Tooltip title="Reiniciar evaluación">
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record?.applys[0]?.id)}>
                     <RedoOutlined />
-                  </Tooltip>
-                </Button>
+                  </Button>
+                </Tooltip>
               }
               { record?.applys[0]?.status === 2 &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(record,record?.applys[0])}>
-                  <Tooltip title="Ver resultados">
+                <Tooltip title="Ver resultados">
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(record,record?.applys[0])}>
                     <EyeOutlined />
-                  </Tooltip>
-                </Button>
+                  </Button>
+                </Tooltip>
               }
               { record?.applys[0]?.status != 2 && record?.applys.length > 0 &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record?.applys[0]?.id)}>
-                  <Tooltip title={record?.applys[0]?.status == 0 ? "Eliminar evaluación pendiente" : record?.applys[0]?.status == 1 ? "Eliminar evaluación en curso" : ""}>
+                <Tooltip  title={record?.applys[0]?.status == 0 ? "Eliminar evaluación pendiente" : record?.applys[0]?.status == 1 ? "Eliminar evaluación en curso" : ""}>
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record?.applys[0]?.id)}>
                     <DeleteOutlined/>
-                  </Tooltip>
-                </Button>
+                  </Button>
+                </Tooltip>
               }
               { applysFinalized.length == 0 && record?.is_duplicated && record.origin == "group" &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
-                  <Tooltip title="Quitar asignación">
+                <Tooltip title="Quitar asignación">
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
                     <MinusCircleOutlined />
-                  </Tooltip>
-                </Button>
+                  </Button>
+                </Tooltip>
               }
               { applysFinalized.length == 0 && record.origin == "personal" &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
-                  <Tooltip title="Quitar asignación">
+                <Tooltip title="Quitar asignación">
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
                     <MinusCircleOutlined />
-                  </Tooltip>
-                </Button>
+                  </Button>
+                </Tooltip>
               }
             </div>
           </>
@@ -403,7 +406,7 @@ const TableAssessments = ({
   const onFilterName = ({target}) =>{
     setNameAssessment(target.value);
     if((target.value).trim()){
-      let results = fullAssessments.filter(item => valueToFilter(item.name).includes(target.value) || valueToFilter(item?.group?.name).includes(target.value))
+      let results = fullAssessments.filter(item => item.name.toLowerCase().includes(target.value.toLowerCase()) || item?.group?.name.toLowerCase().includes(target.value.toLowerCase()))
       setDataAssessments(results)
     }else{
       setDataAssessments(fullAssessments)
@@ -515,25 +518,25 @@ const TableAssessments = ({
             <>
               <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
                 { record.status === 1 &&
-                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record.id)}>
-                    <Tooltip title="Reiniciar evaluación">
+                  <Tooltip title="Reiniciar evaluación">
+                    <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record.id)}>
                       <RedoOutlined />
-                    </Tooltip>
-                  </Button>
+                    </Button>
+                  </Tooltip>
                 }
                 { record.status === 2 &&
-                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(item,record)}>
-                    <Tooltip title="Ver resultados">
+                  <Tooltip title="Ver resultados">
+                    <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(item,record)}>
                       <EyeOutlined />
-                    </Tooltip>
-                  </Button>
+                    </Button>
+                  </Tooltip>
                 }
                 { record.status != 2 && record.status == 0 &&
-                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
-                    <Tooltip title={record.status == 0 ? "Eliminar evaluación pendiente" : record.status == 1 ? "Eliminar evaluación en curso" : ""}>
-                      <DeleteOutlined />
-                    </Tooltip>
-                  </Button>
+                  <Tooltip title={record.status == 0 ? "Eliminar evaluación pendiente" : record.status == 1 ? "Eliminar evaluación en curso" : ""}>
+                    <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
+                        <DeleteOutlined />
+                    </Button>
+                  </Tooltip>
                 }
               </div>
             </>
