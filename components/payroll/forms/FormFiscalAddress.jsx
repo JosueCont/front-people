@@ -33,14 +33,14 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
   const setForm = (data) => {
     setState(data.state.id);
     setPostalCodeSelect(data.postal_code);
-    setSuburb(data.suburb.description);
+    if (data.suburb) setSuburb(data.suburb.description);
     form.setFieldsValue({
       postal_code: data.postal_code.code,
       country: data?.country?.id,
       state: data?.state?.id,
       municipality: data?.municipality?.id,
       street: data.street,
-      suburb: data.suburb.id,
+      suburb: data.suburb ? data.suburb.id : null,
       outdoor_number: data.outdoor_number,
       interior_number: data.interior_number,
     });
