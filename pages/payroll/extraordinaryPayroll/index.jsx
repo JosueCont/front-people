@@ -78,7 +78,18 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                   : defaulPhoto
               }
             />
-            {item.payroll_person.person && item.payroll_person.person.full_name}
+            {`${
+              item.payroll_person.person &&
+              item.payroll_person.person.mlast_name
+                ? item.payroll_person.person.first_name +
+                  " " +
+                  item.payroll_person.person.flast_name +
+                  " " +
+                  item.payroll_person.person.mlast_name
+                : item.payroll_person.personfirst_name +
+                  " " +
+                  item.payroll_person.person.flast_name
+            }`}
           </Space>
         </div>
       ),
@@ -449,6 +460,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     },
   };
 
+  useEffect(() => {
+    if (movementType && calendarSelect) changeCalendar(calendarSelect.id);
+  }, [movementType]);
+
   return (
     <Spin tip="Cargando..." spinning={loading}>
       <Global
@@ -514,11 +529,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             size="large"
                             style={{ width: "100%" }}
                             options={optionMovement}
-                            onChange={(e) => {
-                              setMovementType(e),
-                                calendarSelect &&
-                                  changeCalendar(calendarSelect.id);
-                            }}
+                            onChange={(e) => setMovementType(e)}
                             placeholder="Salario"
                             notFoundContent={"No se encontraron resultados."}
                             allowClear
