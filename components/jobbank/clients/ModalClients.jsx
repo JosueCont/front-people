@@ -107,6 +107,7 @@ const ModalClients = ({
                 onFinish={onFinish}
                 onFinishFailed={onFailure}
                 initialValues={{is_active: true}}
+                // requiredMark={false}
             >
                 <Row gutter={[0,16]}>
                     <Col span={24} className='modal-tabs-clients'>

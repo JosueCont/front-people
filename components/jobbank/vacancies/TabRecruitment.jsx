@@ -56,8 +56,8 @@ const TabRecruitment = ({
   }
 
   return (
-    <Row gutter={[24,2]}>
-      <Col span={8} className='list_interviewers'>
+    <Row gutter={[24,24]}>
+      <Col xs={24} xl={8} span={8} className='list_interviewers'>
         <List
           header='Entrevistadores'
           itemLayout='horizontal'
@@ -77,9 +77,9 @@ const TabRecruitment = ({
           )}
         />
       </Col>
-      <Col span={16}>
+      <Col xs={24} xl={16}>
         <Row gutter={[24,0]}>
-          <Col span={12}>
+          <Col xs={24} md={12}>
             <Form.Item
               name='interviewers'
               label='¿Quién(es) entrevista(n)?'
@@ -118,7 +118,7 @@ const TabRecruitment = ({
               </Input.Group>
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} md={12}>
             <Form.Item
               name='interviews_number'
               label='Número de entrevistas'
@@ -136,7 +136,7 @@ const TabRecruitment = ({
               />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} md={12}>
             <Form.Item
               name='observations'
               label='Durante la entrevista'
@@ -145,7 +145,7 @@ const TabRecruitment = ({
               <Input placeholder='Describa las particularidades a observar'/>
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} md={12}>
             <Form.Item
               name='rejection_reasons'
               label='Motivos potenciales al rechazo'
@@ -154,7 +154,7 @@ const TabRecruitment = ({
               <Input placeholder='Especificar los motivos'/>
             </Form.Item>
           </Col>
-          {/* <Col span={12}>
+          {/* <Col xs={24} md={12} xl={8} xxl={6}>
             <Form.Item label='Observaciones y comentarios adicionales'>
               <Input placeholder='Observaciones y comentarios adicionales'/>
             </Form.Item>

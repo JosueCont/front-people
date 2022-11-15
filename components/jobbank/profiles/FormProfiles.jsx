@@ -24,7 +24,7 @@ const FormProfiles = ({
 }) => {
     const {
         load_clients_options,
-        load_vacancies,
+        load_vacancies_fields,
         load_profiles_types,
         list_profiles_types,
         list_clients_options,
@@ -66,8 +66,8 @@ const FormProfiles = ({
     }
 
     return (
-        <Row gutter={[8,0]}>
-            <Col span={10}>
+        <Row gutter={[24,16]}>
+            <Col xs={24} lg={10}>
                 <Form.Item
                     name='name'
                     style={{marginBottom: 0}}
@@ -76,7 +76,7 @@ const FormProfiles = ({
                     <Input maxLength={100} placeholder='Nombre del perfil'/>
                 </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={12} lg={7}>
                 <Form.Item
                     name='customer'
                     rules={[ruleRequired]}
@@ -99,7 +99,7 @@ const FormProfiles = ({
                     </Select>
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} lg={7}>
                 <Form.Item
                     name='profile_type'
                     rules={[ruleRequired]}
@@ -126,16 +126,16 @@ const FormProfiles = ({
                 </Form.Item>
             </Col>
             <Col span={24}>
-                <Skeleton loading={load_vacancies} active>
+                <Skeleton loading={load_vacancies_fields} active>
                     <Row gutter={[8,8]} className='vacant-list-fields'>
                         {Object.keys(list_vacancies_fields).length > 0
                             && Object.entries(list_vacancies_fields).map(([key, val]) => (
                             <>
                                 <Divider plain>{titleSection[key]}</Divider>
-                                <Col span={24} style={{background: '#f0f0f0', padding: '8px 12px', borderRadius: '12px'}}>
+                                <Col span={24} style={{background: '#f0f0f0', padding: '8px 16px', borderRadius: '12px'}}>
                                     <Row gutter={[8,0]} className='section-list-fields'>
                                         {Array.isArray(val) && _.chunk(val, Math.ceil(val.length/4)).map((record, idx) => (
-                                            <Col xs={24} md={12} lg={6} key={`record_${idx}`} style={{display: 'flex', flexDirection: 'column'}}>
+                                            <Col xs={24} md={12} lg={8} xl={6} key={`record_${idx}`} style={{display: 'flex', flexDirection: 'column'}}>
                                                 {record.map((item, index) => (
                                                     <Form.Item name={`${key}|${item.field}`} key={`item_${idx}_${index}`} valuePropName='checked' noStyle>
                                                         <Checkbox style={{marginLeft: 0}} disabled={disabledField}>
