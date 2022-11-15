@@ -222,7 +222,7 @@ const ImportButtonList=({person, node, payrollPerson, personsList,...props})=>{
                         <ul>
                             {
                                 personsListErrors && personsListErrors.map((p)=>{
-                                    return <li style={{padding:10}}><Alert message={`${p['person:']} ${p.message}`} type="error" /></li>
+                                    return <li style={{padding:10}}><Alert message={`${p.person} ${p.message}`} type="error" /></li>
                                 })
                             }
                         </ul>
