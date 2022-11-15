@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import SelectWorkTitle from "../../selects/SelectWorkTitle";
 import {
   onlyNumeric,
+  ruleEmail,
+  rulePhone,
   ruleRequired,
   ruleWhiteSpace,
 } from "../../../utils/rules";
@@ -44,12 +46,12 @@ const LegalRepresentative = ({
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="email" label="Email">
+          <Form.Item name="email" label="Email" rules={[ruleEmail]}>
             <Input />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <Form.Item name="phone" label="Teléfono">
+          <Form.Item name="phone" label="Teléfono" rules={[rulePhone]}>
             <Input />
           </Form.Item>
         </Col>
@@ -59,7 +61,11 @@ const LegalRepresentative = ({
           </Form.Item>
         </Col>
         <Col lg={13} xs={22}>
-          <Form.Item name="contact_email" label="Correo de contacto adicional">
+          <Form.Item
+            name="contact_email"
+            label="Correo de contacto adicional"
+            rules={[ruleEmail]}
+          >
             <Input />
           </Form.Item>
         </Col>
