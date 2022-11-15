@@ -1,16 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '../../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
-import ListCatalogs from '../../../../components/jobbank/catalogs/ListCatalogs';
+import { getConnections } from '../../../../redux/jobBankDuck';
+import TabsConnections from '../../../../components/jobbank/connections/TabsConnections';
 
 const index = ({
-    currentNode
+    currentNode,
+    getConnections
 }) => {
 
     const router = useRouter();
+
+    useEffect(()=>{
+        if(currentNode) getConnections(currentNode.id);
+    },[currentNode])
 
     return (
         <MainLayout currentKey='jb_settings' defaultOpenKeys={['job_bank']}>
@@ -25,10 +31,12 @@ const index = ({
                 <Breadcrumb.Item
                     className='pointer'
                     onClick={() => router.push({ pathname: '/jobbank/settings'})}
-                >Configuraciones</Breadcrumb.Item>
-                <Breadcrumb.Item>Catálogos</Breadcrumb.Item>
+                >
+                    Configuraciones
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>Conexiones</Breadcrumb.Item>
             </Breadcrumb>
-            <ListCatalogs/>
+            <TabsConnections/>
         </MainLayout>
     )
 }
@@ -39,4 +47,6 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState)(withAuthSync(index));
+export default connect(
+    mapState, { getConnections }
+)(withAuthSync(index));
