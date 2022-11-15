@@ -1,9 +1,18 @@
 import { Form, Input, Row, Col } from "antd";
 import { useEffect } from "react";
 import SelectWorkTitle from "../../selects/SelectWorkTitle";
-import { onlyNumeric, ruleRequired, ruleWhiteSpace } from "../../../utils/rules";
+import {
+  onlyNumeric,
+  ruleRequired,
+  ruleWhiteSpace,
+} from "../../../utils/rules";
 
-const LegalRepresentative = ({ form, legalRepresentative, pushed, ...props }) => {
+const LegalRepresentative = ({
+  form,
+  legalRepresentative,
+  pushed,
+  ...props
+}) => {
   useEffect(() => {
     if (legalRepresentative) setForm(legalRepresentative);
   }, [legalRepresentative]);
@@ -24,7 +33,7 @@ const LegalRepresentative = ({ form, legalRepresentative, pushed, ...props }) =>
     <Form layout={"vertical"} form={form}>
       <Row>
         <Col lg={6} xs={22}>
-          <Form.Item name="name" label="Nombre" rules={[ruleRequired, ruleWhiteSpace]}>
+          <Form.Item name="name" label="Nombre">
             <Input />
           </Form.Item>
         </Col>
@@ -35,22 +44,22 @@ const LegalRepresentative = ({ form, legalRepresentative, pushed, ...props }) =>
           </Form.Item>
         </Col>
         <Col lg={6} xs={22} offset={1}>
-          <Form.Item name="email" label="Email" rules={[ruleRequired, ruleWhiteSpace]}>
+          <Form.Item name="email" label="Email">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-          <Form.Item name="phone" label="Teléfono" rules={[ruleRequired,onlyNumeric, ruleWhiteSpace]}>
+          <Form.Item name="phone" label="Teléfono">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={13} xs={22} offset={1}>
-          <Form.Item name="contact_name" label="Nombre de contacto">
+          <Form.Item name="contact_name" label="Nombre de contacto adicional">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={13} xs={22}>
-          <Form.Item name="contact_email" label="Correo de contacto">
+          <Form.Item name="contact_email" label="Correo de contacto adicional">
             <Input />
           </Form.Item>
         </Col>

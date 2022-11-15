@@ -48,7 +48,7 @@ const ImssInformationNode = ({
   const [formAddress] = Form.useForm();
   const [formLegalRep] = Form.useForm();
   const [formJobRisk] = Form.useForm();
-  const [ fiscalData, setFiscalData ] = useState(null)
+  const [fiscalData, setFiscalData] = useState(null);
   const [patronalData, setPatronalData] = useState(null);
   const [acceptAgreement, setAcceptAgreement] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -115,10 +115,10 @@ const ImssInformationNode = ({
   }, [currentNode]);
 
   useEffect(() => {
-    if(fiscalData){
-      form
+    if (fiscalData) {
+      form;
     }
-  },[fiscalData])
+  }, [fiscalData]);
 
   const getPatronalRegistration = () => {
     setLoadingData(true);
@@ -158,22 +158,8 @@ const ImssInformationNode = ({
       .catch((error) => {
         return false;
       });
-    let validformLegalRep = await formLegalRep
-      .validateFields()
-      .then((response) => {
-        return true;
-      })
-      .catch((error) => {
-        return false;
-      });
 
-    if (
-      validformPatronal &&
-      validformJobRisk &&
-      validformAddress &&
-      validformLegalRep
-    )
-      return true;
+    if (validformPatronal && validformJobRisk && validformAddress) return true;
     return false;
   };
 
@@ -227,9 +213,8 @@ const ImssInformationNode = ({
   };
 
   const saveForms = () => {
-
-    let jobRiskData = formJobRisk.getFieldValue()
-    jobRiskData.risk_percent = parseFloat(jobRiskData.risk_percent)
+    let jobRiskData = formJobRisk.getFieldValue();
+    jobRiskData.risk_percent = parseFloat(jobRiskData.risk_percent);
     const data = {
       node: currentNode.id,
       patronal: formPatronal.getFieldsValue(),
@@ -237,7 +222,7 @@ const ImssInformationNode = ({
       representative: formLegalRep.getFieldsValue(),
       jobRisk: jobRiskData,
     };
-    
+
     saveRegister(data);
   };
 
@@ -332,7 +317,7 @@ const ImssInformationNode = ({
     });
   };
 
-  console.log('Patronal Data', patronalData)
+  console.log("Patronal Data", patronalData);
 
   return (
     <>
@@ -381,7 +366,7 @@ const ImssInformationNode = ({
                   patronalData && patronalData.patronal_registartion
                 }
                 form={formPatronal}
-                currentNodeId = { currentNode.id }
+                currentNodeId={currentNode.id}
               />
               <Row>
                 <Title style={{ fontSize: "15px" }}>Dirección fiscal</Title>
