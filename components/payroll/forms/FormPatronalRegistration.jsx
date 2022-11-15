@@ -4,6 +4,7 @@ import {
   onlyNumeric,
   ruleRequired,
   ruleWhiteSpace,
+  ruleMaxPhoneNumber
 } from "../../../utils/rules";
 import WebApiPeople from "../../../api/WebApiPeople";
 import SelectImssDelegation from "../../../components/selects/SelectImssDelegation";
@@ -51,9 +52,6 @@ const FormPatronalRegistration = ({
       })
     }
   },[information])
-  
-  console.log('Social Reason', socialReason)
-  console.log('Information', information)
 
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">
@@ -100,7 +98,7 @@ const FormPatronalRegistration = ({
             label="Teléfono"
             rules={[ruleRequired, onlyNumeric, ruleWhiteSpace]}
           >
-            <Input />
+            <Input maxLength={10}/>
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>

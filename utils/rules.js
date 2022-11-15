@@ -40,6 +40,13 @@ export const ruleMaxAge = (max) =>{
   }
 }
 
+export const ruleMaxPhoneNumber = (max) => {
+  return{
+    max: max,
+    message: `se necesita un numero de teléfono de ${max} digitos`
+  }
+}
+
 export const ruleURL = {
   type: 'url',
   message: 'Ingrese una url válida'
