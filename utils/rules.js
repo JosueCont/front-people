@@ -91,9 +91,9 @@ export const numCommaAndDot = () => ({
   validator(_, value){
     if (!value) return Promise.resolve();
     let num = parseFloat(value.replace(',',''));
-    let pattern = /^(?:\d{0,3}(?:,\d{3})*|\d+)(?:\.\d{1,4})?$/;
-    if(isNaN(num) && value) return Promise.reject('Ingrese un valor numérico');
-    if(!pattern.test(value) && value) return Promise.reject('Ingrese un formato válido');
+    let pattern = /^(?:\d{0,3}(?:,\d{3})*|\d+)(?:\.\d+)?$/;
+    if(isNaN(num)) return Promise.reject('Ingrese un valor numérico');
+    if(!pattern.test(value)) return Promise.reject('Ingrese un formato válido');
     if(num < 1) return Promise.reject('Ingrese un valor mayor o igual a 1');
     return Promise.resolve();
   }

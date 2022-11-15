@@ -192,7 +192,7 @@ const DetailsProfiles = ({
                             id='form-profiles'
                             form={formProfile}
                             onFinish={onFinish}
-                            requiredMark={false}
+                            // requiredMark={false}
                             onFinishFailed={()=> setLoading({})}
                             initialValues={{profile_type: 'open_fields'}}
                         >
