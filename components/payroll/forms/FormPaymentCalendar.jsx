@@ -28,7 +28,7 @@ import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import SelectPeriodicity from "../../selects/SelectPeriodicity";
 import SelectTypeTax from "../../selects/SelectTypeTax";
-import SelectIntegrationFactors from "../../selects/SelectIntegrationFactors"
+import SelectIntegrationFactors from "../../selects/SelectIntegrationFactors";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import locale from "antd/lib/date-picker/locale/es_ES";
@@ -160,7 +160,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
         setLocked(item.locked);
-        setPolitics(true);
+        if (item.benefits) setPolitics(true);
         checks.map((a) => {
           let checked = document.getElementById(a.name);
           if (a.name === "accumulate_vacation") {
@@ -301,22 +301,24 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   };
 
   const disablePeriod = (current) => {
-    let month = moment(current).month() + 1
-    let year = moment(current).year()
+    let month = moment(current).month() + 1;
+    let year = moment(current).year();
 
     let date = {
       month,
-      year
-    }
+      year,
+    };
 
-    if((date.month !== 1 && date.month !== 12 || date.year < currentYear - 1 )){
-      return true
+    if (
+      (date.month !== 1 && date.month !== 12) ||
+      date.year < currentYear - 1
+    ) {
+      return true;
     } else {
-      if (date.month === 1 && date.year < currentYear ) return true
-      return false
+      if (date.month === 1 && date.year < currentYear) return true;
+      return false;
     }
-
-  }
+  };
 
   return (
     <>
@@ -563,8 +565,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   moment={"YYYY"}
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                   locale={locale}
-                  disabledDate = {disablePeriod}
-
+                  disabledDate={disablePeriod}
                 />
               </Form.Item>
             </Col>
@@ -593,7 +594,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               <Form.Item label="Políticas">
                 <Switch
                   // defaultChecked={politics}
-                  checked = { politics }
+                  checked={politics}
                   checkedChildren="Personalizado"
                   unCheckedChildren="Por defecto"
                   onChange={(value) => setPolitics(value)}
@@ -637,18 +638,13 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={22}>
-                    {/* <Select
+                  {/* <Select
                       maxLength={100}
                       options={CalculationEmploymentSubsidy}
                     /> */}
-                    <SelectIntegrationFactors 
-                      rules = { [ruleRequired] }
-                    />
+                  <SelectIntegrationFactors rules={[ruleRequired]} />
                 </Col>
-                {
-                  <div style={{ width: '100%' }}></div>
-                }
-                
+                {<div style={{ width: "100%" }}></div>}
                 <RenderChecks data={checks} />
               </Row>
             </>
@@ -668,12 +664,11 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               </Button>
             </Col>
 
-              <Col md={5}>
-                <Button block className="" type="primary" htmlType="submit">
-                  Guardar
-                </Button>
-              </Col>
-
+            <Col md={5}>
+              <Button block className="" type="primary" htmlType="submit">
+                Guardar
+              </Button>
+            </Col>
           </Row>
         </Form>
       </Spin>
