@@ -9,6 +9,7 @@ const SelectSuburb = ({
   labelText = "Colonia",
   name,
   postal_code = null,
+  suburb,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
@@ -17,23 +18,32 @@ const SelectSuburb = ({
     if (postal_code) getSuburb();
   }, [postal_code]);
 
+  useEffect(() => {
+    console.log("EFECT SUBURB");
+    if (suburb) getSuburb(suburb);
+  }, [suburb]);
+
   const getSuburb = (description) => {
-    setOptions([]);
-    WebApiFiscal.getSuburb(description)
-      .then((response) => {
-        let suburbs = response.data.results.map((item) => {
-          return {
-            key: item.id + item.code,
-            value: item.id,
-            label: item.description,
-          };
+    console.log("SUBurb-->", description);
+    if (description && description != "") {
+      console.log("entra suburb");
+      setOptions([]);
+      WebApiFiscal.getSuburb(description)
+        .then((response) => {
+          let suburbs = response.data.results.map((item) => {
+            return {
+              key: item.id + item.code,
+              value: item.id,
+              label: item.description,
+            };
+          });
+          setOptions(suburbs);
+        })
+        .catch((e) => {
+          setOptions([]);
+          console.log(e);
         });
-        setOptions(suburbs);
-      })
-      .catch((e) => {
-        setOptions([]);
-        console.log(e);
-      });
+    }
   };
 
   return (

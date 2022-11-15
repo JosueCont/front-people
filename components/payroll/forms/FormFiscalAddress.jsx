@@ -13,6 +13,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
   const [postalCode, setPostalCode] = useState([]);
   const [postalCodeSelect, setPostalCodeSelect] = useState(null);
   const [state, setState] = useState(null);
+  const [suburb, setSuburb] = useState(null);
 
   useEffect(() => {
     if (fiscalAddress) setForm(fiscalAddress);
@@ -32,13 +33,14 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
   const setForm = (data) => {
     setState(data.state.id);
     setPostalCodeSelect(data.postal_code);
+    setSuburb(data.suburb.description);
     form.setFieldsValue({
       postal_code: data.postal_code.code,
       country: data?.country?.id,
       state: data?.state?.id,
       municipality: data?.municipality?.id,
       street: data.street,
-      suburb: data.suburb,
+      suburb: data.suburb.id,
       outdoor_number: data.outdoor_number,
       interior_number: data.interior_number,
     });
@@ -106,6 +108,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
           <Col lg={8} xs={22} md={6}>
             <SelectSuburb
               postal_code={postalCodeSelect && postalCodeSelect.id}
+              suburb={suburb}
             />
           </Col>
           <Col lg={8} xs={22} md={6}>
