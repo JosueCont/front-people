@@ -20,6 +20,7 @@ const SelectState = ({
   }, []);
 
   const getStates = (country) => {
+    setOptions([]);
     WebApiFiscal.getStates(country)
       .then((response) => {
         if (response.data.results.length > 0) {

@@ -97,10 +97,10 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={6}>
-            <SelectCountry />
+            <SelectCountry disabled={true} />
           </Col>
           <Col lg={8} xs={22} md={6}>
-            <SelectState setState={setState} />
+            <SelectState disabled={true} setState={setState} />
           </Col>
           <Col lg={8} xs={22} md={6}>
             <SelectMunicipality state={state && state} />
