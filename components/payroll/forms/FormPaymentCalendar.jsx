@@ -160,8 +160,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
         setLocked(item.locked);
-        console.log(item);
-        setPolitics(true);
+        if (item.benefits) setPolitics(true);
         checks.map((a) => {
           let checked = document.getElementById(a.name);
           if (a.name === "accumulate_vacation") {
