@@ -1,5 +1,4 @@
 import WebApiJobBank from "../api/WebApiJobBank";
-import { userCompanyId } from "../libs/auth";
 
 const initialState = {
     list_clients: {},
@@ -13,13 +12,14 @@ const initialState = {
     list_main_categories: [],
     list_sub_categories: [],
     list_profiles_types: [],
+    list_clients_options: [],
+    list_vacancies_options: [],
+    list_vacancies_fields: {},
+    list_connections: [],
     info_vacant: {},
     info_strategy: {},
     info_profile: {},
     info_candidate: {},
-    list_clients_options: [],
-    list_vacancies_options: [],
-    list_vacancies_fields: {},
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -30,9 +30,11 @@ const initialState = {
     load_profiles_types: false,
     load_clients_options: false,
     load_vacancies_options: false,
+    load_vacancies_fields: false,
     load_main_categories: false,
     load_sub_categories: false,
     load_candidates: false,
+    load_connections: false,
     jobbank_load: false,
     jobbank_page: 1,
     jobbank_filters: "",
@@ -63,6 +65,8 @@ const GET_CANDIDATES = "GET_CANDIDATES";
 const GET_CANDIDATE_INFO = "GET_CANDIDATE_INFO";
 const SET_CANDIDATE_INFO = "SET_CANDIDATE_INFO";
 const SET_CANDIDATES_LOAD = "SET_CANDIDATES_LOAD";
+
+const GET_CONNECTIONS = "GET_CONNECTIONS";
 
 const GET_SECTORS = "GET_SECTORS";
 const GET_COMPETENCES = "GET_COMPETENCES";
@@ -144,7 +148,7 @@ const jobBankReducer = (state = initialState, action) =>{
         case GET_VACANCIES_FIELDS:
             return {...state,
                 list_vacancies_fields: action.payload,
-                load_vacancies: action.fetching
+                load_vacancies_fields: action.fetching
             }
         case GET_SECTORS:
             return {...state,
@@ -170,6 +174,11 @@ const jobBankReducer = (state = initialState, action) =>{
             return {...state,
                 list_sub_categories: action.payload,
                 load_sub_categories: action.fetching
+            }
+        case GET_CONNECTIONS:
+            return{...state,
+                list_connections: action.payload,
+                load_connections: action.fetching
             }
         case SET_STRATEGIES_LOAD:
             return {...state, load_strategies: action.payload }
@@ -488,6 +497,18 @@ export const getSubCategories = (node) => async (dispatch) =>{
     try {
         let response = await WebApiJobBank.getSubCategories(node);
         dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getConnections = (node) => async (dispatch) =>{
+    const typeFunction = { type: GET_CONNECTIONS, payload: [], fetching: false };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getConnections(node);
+        dispatch({...typeFunction, payload: response.data.results});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)

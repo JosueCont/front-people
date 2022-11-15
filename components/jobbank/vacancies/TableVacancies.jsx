@@ -12,6 +12,7 @@ import {
   EllipsisOutlined,
   DeleteOutlined,
   EditOutlined,
+  CopyOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { getVacancies, setJobbankPage } from '../../../redux/jobBankDuck';
@@ -120,7 +121,7 @@ const TableVacancies = ({
         return (
             <Menu>
                 <Menu.Item
-                    key={1}
+                    key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/vacancies/edit`,
@@ -130,11 +131,17 @@ const TableVacancies = ({
                     Editar
                 </Menu.Item>
                 <Menu.Item
-                    key={2}
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
+                </Menu.Item>
+                <Menu.Item
+                    key='3'
+                    icon={<CopyOutlined />}
+                >
+                    Duplicar
                 </Menu.Item>
             </Menu>
         );
@@ -142,15 +149,14 @@ const TableVacancies = ({
 
   const columns = [
     {
-        title: 'Nombre',
+        title: 'Vacante',
         dataIndex: 'job_position',
         key: 'job_position'
     },
     {
-        title: 'Categoría',
-        dataIndex: ['education_and_competence', 'main_category', 'name'],
-        key: ['education_and_competence', 'main_category', 'name']
-        
+        title: 'Cliente',
+        dataIndex: ['customer', 'name'],
+        key: ['customer', 'name']
     },
     {
         title: 'Estatus',
@@ -161,9 +167,10 @@ const TableVacancies = ({
         }
     },
     {
-        title: 'Cliente',
-        dataIndex: ['customer', 'name'],
-        key: ['customer', 'name']
+        title: 'Categoría',
+        dataIndex: ['education_and_competence', 'main_category', 'name'],
+        key: ['education_and_competence', 'main_category', 'name']
+        
     },
     {
         title: ()=> {
