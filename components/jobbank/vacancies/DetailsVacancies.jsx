@@ -128,7 +128,7 @@ const DetailsVacancies = ({
     const onFinishFailed = (e) =>{
         setLoading({})
         if(e.errorFields.length <= 0) return false;
-        message.error('Verificar que se han ingresado los valores requeridos/correctos');
+        message.error('Verificar que se han ingresado el Cliente y Nombre de la vacante');
     }
 
     const actionCreate = () =>{
@@ -187,10 +187,10 @@ const DetailsVacancies = ({
                         form={formVacancies}
                         onFinish={onFinish}
                         onFinishFailed={onFinishFailed}
+                        // requiredMark={false}
                         initialValues={{
                             vo_bo: false,
-                            rotative_turn: false,
-                            requires_travel_availability: false
+                            rotative_turn: false
                         }}
                     >
                         <Tabs type='card'>

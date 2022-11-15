@@ -20,6 +20,7 @@ const FormPatronalRegistration = ({
 }) => {
 
   const [ information, setInformation ] = useState(null)
+  const social_reason = Form.useWatch('social_reason', form)
 
   useEffect(() => {
     currentNodeId && getInformationfiscal()
@@ -36,14 +37,13 @@ const FormPatronalRegistration = ({
   }
 
   useEffect(() => {
+
     if(information){
       form.setFieldsValue({
-        social_reason: information.business_name
+        social_reason: social_reason !== ''? social_reason : information.business_name
       })
     }
   },[information])
-
-  console.log('inf', patronalRegistration)
 
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">

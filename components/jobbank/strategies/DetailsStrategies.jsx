@@ -168,7 +168,7 @@ const DetailsStrategies = ({
                             form={formStrategies}
                             layout='vertical'
                             onFinish={onFinish}
-                            requiredMark={false}
+                            // requiredMark={false}
                             onFinishFailed={()=> setLoading({})}
                         >
                             <FormStrategies

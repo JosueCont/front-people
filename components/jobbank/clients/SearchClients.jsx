@@ -44,7 +44,7 @@ const SearchClients = ({
     const createFilters = (obj) =>{
         let query = '';
         if(obj.name) query += `&name__unaccent__icontains=${obj.name}`;
-        if(obj.is_active) query += `&is_active=${obj.is_active}`;
+        if(obj.is_active !== undefined) query += `&is_active=${obj.is_active}`;
         return query;
     }
 
@@ -89,7 +89,7 @@ const SearchClients = ({
                                 >
                                     <Select
                                         allowClear
-                                        placeholder='Seleccionar un estatus'
+                                        placeholder='Estatus'
                                     >
                                         <Select.Option value={true} key={true}>Activo</Select.Option>
                                         <Select.Option value={false} key={false}>Inactivo</Select.Option>
