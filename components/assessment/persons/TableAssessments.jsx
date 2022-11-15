@@ -1,5 +1,5 @@
 import {React, useEffect, useState} from 'react'
-import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row  } from 'antd'
+import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row, DatePicker  } from 'antd'
 import { DeleteOutlined, RedoOutlined, RetweetOutlined, 
   EyeOutlined, FileDoneOutlined, FileSyncOutlined, 
   PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined, MinusCircleOutlined  } from '@ant-design/icons';
@@ -12,6 +12,7 @@ import jwtEncode from "jwt-encode";
 import { domainKuiz } from '../../../api/axiosApi';
 import { valueToFilter } from '../../../utils/functions';
 import CardGeneric from '../../dashboards-cards/CardGeneric';
+import locale from 'antd/lib/date-picker/locale/es_ES';
 
 const TableAssessments = ({
   user_profile,
@@ -32,6 +33,20 @@ const TableAssessments = ({
   const [assessmentsComplete, setAssessmentsComplete] = useState(0);
   const [assessmentsToAnswer, setAssessmentsToAnswer] = useState(0);
   const [assessmentsProgress, setAssessmentsProgress] = useState(0);
+  const options = [
+    {
+      value: 1,
+      label: 'Filtrar por evaluación',
+    },
+    {
+      value: 2,
+      label: 'Filtrar por estatus',
+    },
+    {
+      value: 3,
+      label: 'Filtrar por fecha fin de evaluación',
+    },
+  ]
 
   useEffect(()=>{
     if(router.query.id){
@@ -46,7 +61,6 @@ const TableAssessments = ({
   const getUserListAssessments = async (data) =>{
     try {
       let response = await WebApiAssessment.getUserListAssessments(data);
-      console.log("assessments sin eliminar", response.data);
       let filterGroupal = response.data.reduce((prev, current) =>{
         let isDuplicated = prev.some(item => item.id === current.id);
         if(isDuplicated){
@@ -59,7 +73,6 @@ const TableAssessments = ({
         }
         return [...prev, current];
       },[])
-      console.log("resultados",filterGroupal);
       
       setDataAssessments(filterGroupal);
       setfullAssessments(filterGroupal);
@@ -75,7 +88,7 @@ const TableAssessments = ({
     let dataApply = { apply_id: data }
     Modal.confirm({
       title: "¿Está seguro de eliminar esta evaluación?",
-      content: "Si lo elimina no podrá recuperarlo",
+      content: "Si la elimina no podrá recuperarla",
       cancelText: "Cancelar",
       okText: "Sí, eliminar",
       onOk: () => {deleteApply(dataApply)}
@@ -114,9 +127,7 @@ const TableAssessments = ({
   }
 
   const modalRestart = (data) =>{
-    console.log("data evaluación",data)
     let dataApply = { assessment: data.id, user_id: idUser.person}
-    console.log("datos a enviar", dataApply)
     Modal.confirm({
       title: "¿Volver a contestar esta evaluación?",
       content: "",
@@ -137,9 +148,7 @@ const TableAssessments = ({
   }
 
   const modalDeleteAssessment = (data) =>{
-    console.log("data evaluación",data)
     let dataApply = { assessment: data.id, user_id: idUser.person}
-    console.log("datos a enviar", dataApply)
     Modal.confirm({
       title: "¿Está seguro de retirar esta evaluación?",
       content: "",
@@ -333,46 +342,46 @@ const TableAssessments = ({
           <>
             <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
               { isEmpty.length === 0 && record?.applys[0]?.status != 1 &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalRestart(record)}>
-                  <Tooltip title="Contestar evaluación de nuevo">
-                  <RetweetOutlined />
-                  </Tooltip>
-                </Button>
+                <Tooltip title="Contestar evaluación de nuevo">
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalRestart(record)}>
+                    <RetweetOutlined />
+                  </Button>
+                </Tooltip>
               }
               { record?.applys[0]?.status === 1 &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record?.applys[0]?.id)}>
-                  <Tooltip title="Reiniciar evaluación">
+                <Tooltip title="Reiniciar evaluación">
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record?.applys[0]?.id)}>
                     <RedoOutlined />
-                  </Tooltip>
-                </Button>
+                  </Button>
+                </Tooltip>
               }
               { record?.applys[0]?.status === 2 &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(record,record?.applys[0])}>
-                  <Tooltip title="Ver resultados">
+                <Tooltip title="Ver resultados">
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(record,record?.applys[0])}>
                     <EyeOutlined />
-                  </Tooltip>
-                </Button>
+                  </Button>
+                </Tooltip>
               }
               { record?.applys[0]?.status != 2 && record?.applys.length > 0 &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record?.applys[0]?.id)}>
-                  <Tooltip title={record?.applys[0]?.status == 0 ? "Eliminar evaluación pendiente" : record?.applys[0]?.status == 1 ? "Eliminar evaluación en curso" : ""}>
+                <Tooltip  title={record?.applys[0]?.status == 0 ? "Eliminar evaluación pendiente" : record?.applys[0]?.status == 1 ? "Eliminar evaluación en curso" : ""}>
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record?.applys[0]?.id)}>
                     <DeleteOutlined/>
-                  </Tooltip>
-                </Button>
+                  </Button>
+                </Tooltip>
               }
               { applysFinalized.length == 0 && record?.is_duplicated && record.origin == "group" &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
-                  <Tooltip title="Quitar asignación">
+                <Tooltip title="Quitar asignación">
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
                     <MinusCircleOutlined />
-                  </Tooltip>
-                </Button>
+                  </Button>
+                </Tooltip>
               }
               { applysFinalized.length == 0 && record.origin == "personal" &&
-                <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
-                  <Tooltip title="Quitar asignación">
+                <Tooltip title="Quitar asignación">
+                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
                     <MinusCircleOutlined />
-                  </Tooltip>
-                </Button>
+                  </Button>
+                </Tooltip>
               }
             </div>
           </>
@@ -382,18 +391,19 @@ const TableAssessments = ({
   ];
 
   const onChange = (e) =>{
-    if(e.target.value == 1){
+    if(e == 1){
       setTypeFilter(1)
-    }else{
+    }else if(e == 2){
       setTypeFilter(2)
+    }else if(e == 3){
+      setTypeFilter(3)
     }
   }
 
   const onFilterName = ({target}) =>{
     setNameAssessment(target.value);
-    console.log("valores:",target.value)
     if((target.value).trim()){
-      let results = fullAssessments.filter((item)=> valueToFilter(item.name_es).includes(valueToFilter(target.value)));
+      let results = fullAssessments.filter(item => item.name.toLowerCase().includes(target.value.toLowerCase()) || item?.group?.name.toLowerCase().includes(target.value.toLowerCase()))
       setDataAssessments(results)
     }else{
       setDataAssessments(fullAssessments)
@@ -405,6 +415,21 @@ const TableAssessments = ({
     if(status != 4){
       let results = fullAssessments.filter(item => item?.applys[0]?.status == status)
       setDataAssessments(results)
+    }else{
+      setDataAssessments(fullAssessments)
+    }
+  }
+
+  const onFilterDates = (date) => {
+    if(date){
+      let dateFilter = moment(date._d).format('L');  
+      if(dateFilter){
+        let applysWithData = fullAssessments.filter(item => item.applys.length > 0);
+        let results = applysWithData.filter(item =>  moment(item?.applys[0]?.end_date).format('L') == dateFilter  )
+        setDataAssessments(results)
+      }else{
+        setDataAssessments(fullAssessments)
+      }
     }else{
       setDataAssessments(fullAssessments)
     }
@@ -432,15 +457,19 @@ const TableAssessments = ({
   }
 
   const calculateProgressCard = (assessments) =>{
-    let progress = 0;
-    let percent = 100 / (assessments.length * 100);
-    assessments.map((item)=> {
-      if(item?.applys[0]){
-        progress = progress + item?.applys[0]?.progress;
-      }
-    })
-    let total = percent * progress;
-    setAssessmentsProgress(`${total.toFixed(0)}%`)
+    if(assessments.length > 0){
+      let progress = 0;
+      let percent = 100 / (assessments.length * 100);
+      assessments.map((item)=> {
+        if(item?.applys[0]){
+          progress = progress + item?.applys[0]?.progress;
+        }
+      })
+      let total = percent * progress;
+      setAssessmentsProgress(`${total.toFixed(0)}%`)
+    }else{
+      setAssessmentsProgress(`0%`)
+    }
   }
   
   const expandedRowRender = (item) => {
@@ -486,25 +515,25 @@ const TableAssessments = ({
             <>
               <div style={{display:"flex", justifyContent:"left", alignItems:"center"}}>
                 { record.status === 1 &&
-                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record.id)}>
-                    <Tooltip title="Reiniciar evaluación">
+                  <Tooltip title="Reiniciar evaluación">
+                    <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalReset(record.id)}>
                       <RedoOutlined />
-                    </Tooltip>
-                  </Button>
+                    </Button>
+                  </Tooltip>
                 }
                 { record.status === 2 &&
-                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(item,record)}>
-                    <Tooltip title="Ver resultados">
+                  <Tooltip title="Ver resultados">
+                    <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> validateGetResults(item,record)}>
                       <EyeOutlined />
-                    </Tooltip>
-                  </Button>
+                    </Button>
+                  </Tooltip>
                 }
                 { record.status != 2 && record.status == 0 &&
-                  <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
-                    <Tooltip title={record.status == 0 ? "Eliminar evaluación pendiente" : record.status == 1 ? "Eliminar evaluación en curso" : ""}>
-                      <DeleteOutlined />
-                    </Tooltip>
-                  </Button>
+                  <Tooltip title={record.status == 0 ? "Eliminar evaluación pendiente" : record.status == 1 ? "Eliminar evaluación en curso" : ""}>
+                    <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDelete(record.id)}>
+                        <DeleteOutlined />
+                    </Button>
+                  </Tooltip>
                 }
               </div>
             </>
@@ -514,7 +543,7 @@ const TableAssessments = ({
       },
     ];
     return <Table columns={columnsHistory}
-              dataSource={item.applys}
+              dataSource={item.applys.slice(1)}
               pagination={false}
               style={{marginTop:"8px", marginBottom:"8px"}}
               locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Sin historial de esta evaluación" />}}
@@ -536,15 +565,22 @@ const TableAssessments = ({
                     gap: '8px'
                 }}
               >
-                <Radio.Group defaultValue={1} onChange={onChange}>
-                    <Space direction="horizontal">
+                {/* <Radio.Group defaultValue={1} onChange={onChange}>
+                    <Space direction="vertical">
                         <Radio value={1}>Evaluación</Radio>
                         <Radio value={2}>Estatus</Radio>
+                        <Radio value={3}>Fecha</Radio>
                     </Space>
-                </Radio.Group>
+                </Radio.Group> */}
+                <Select
+                    style={{width:"100%"}}
+                    onChange={onChange}
+                    options={options}
+                    defaultValue={1}
+                />
                 { typeFilter == 1 &&
                   <Input
-                    placeholder={'Buscar por nombre'}
+                    placeholder={'Buscar por evaluación o grupo'}
                     value={nameAssessment}
                     onChange={onFilterName}
                     style={{width:"100%"}}
@@ -557,6 +593,9 @@ const TableAssessments = ({
                     <Option value={1}>Iniciada</Option>
                     <Option value={2}>Finalizada</Option>
                   </Select>
+                }
+                { typeFilter == 3 &&
+                  <DatePicker locale={locale} style={{width:"100%"}} onChange={onFilterDates} defaultValue={moment()} format={'DD/MM/YYYY'} />
                 }
               </Col>
               <Col
