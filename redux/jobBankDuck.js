@@ -20,6 +20,7 @@ const initialState = {
     info_strategy: {},
     info_profile: {},
     info_candidate: {},
+    info_client: {},
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -41,6 +42,9 @@ const initialState = {
 }
 
 const GET_CLIENTS = "GET_CLIENTS";
+const GET_CLIENT_INFO = "GET_CLIENT_INFO";
+const SET_CLIENT_INFO = "SET_CLIENT_INFO";
+const SET_CLIENTS_LOAD = "SET_CLIENT_LOAD";
 const GET_CLIENTS_OPTIONS = "GET_CLIENTS_OPTIONS";
 
 const GET_VACANCIES = "GET_VACANCIES";
@@ -180,6 +184,12 @@ const jobBankReducer = (state = initialState, action) =>{
                 list_connections: action.payload,
                 load_connections: action.fetching
             }
+        case GET_CLIENT_INFO:{
+            return{...state,
+                info_client: action.payload,
+                load_clients: action.fetching
+            }
+        }
         case SET_STRATEGIES_LOAD:
             return {...state, load_strategies: action.payload }
         case SET_VACANCIES_LOAD:
@@ -188,6 +198,10 @@ const jobBankReducer = (state = initialState, action) =>{
             return {...state, load_profiles: action.payload }
         case SET_CANDIDATES_LOAD:
             return {...state, load_candidates: action.payload }
+        case SET_CLIENTS_LOAD:
+            return {...state, load_clients: action.payload }
+        case SET_CLIENT_INFO:
+            return {...state, info_client: action.payload }
         case SET_VACANT_INFO:
             return {...state, info_vacant: action.payload }
         case SET_PROFILE_INFO:
@@ -235,6 +249,10 @@ export const setLoadCandidates = (fetching = false) => (dispatch) =>{
     dispatch({type: SET_CANDIDATES_LOAD, payload: fetching})
 }
 
+export const setLoadClients = (fetching = false) => (dispatch) =>{
+    dispatch({type: SET_CLIENTS_LOAD, payload: fetching})
+}
+
 export const setInfoVacant = (data = {}) => (dispatch) => {
     dispatch({type: SET_VACANT_INFO, payload: data})
 }
@@ -249,6 +267,10 @@ export const setInfoProfile = (data = {}) => (dispatch) =>{
 
 export const setInfoCandidate = (data = {}) => (dispatch) =>{
     dispatch({type: SET_CANDIDATE_INFO, payload: data})
+}
+
+export const setInfoClient = (data = {}) => (dispatch) =>{
+    dispatch({type: SET_CLIENT_INFO, payload: data})
 }
 
 export const getClients = (node, query = '', page = 1) => async (dispatch) => {
@@ -268,6 +290,18 @@ export const getClientsOptions = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getClients(node,'&paginate=0');
+        dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getInfoClient = (id) => async (dispatch) =>{
+    const typeFunction = { type: GET_CLIENT_INFO, payload: {}, fetching: false };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getInfoClient(id);
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)

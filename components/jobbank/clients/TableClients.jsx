@@ -175,7 +175,11 @@ const TableClients = ({
                 <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
-                    onClick={()=> openModalEdit(item)}
+                    // onClick={()=> openModalEdit(item)}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/clients/edit',
+                        query: { id: item.id }
+                    })}
                 >
                     Editar
                 </Menu.Item>

@@ -9,13 +9,12 @@ import {
 } from '@ant-design/icons';
 import { valueToFilter } from '../../../utils/functions';
 import { ruleWhiteSpace } from '../../../utils/rules';
-import { useCatalog } from './hook/useCatalog';
+import { catalogsJobbank } from './hook/useCatalog';
 
 const ListCatalogs = () => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
-    const { catalogsJobbank } = useCatalog();
     const [listCatalogs, setLisCatalogs] = useState(catalogsJobbank);
     const [loading, setLoading] = useState(false);
 
