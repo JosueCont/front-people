@@ -190,8 +190,8 @@ class WebApiPayroll {
     return WebApi.ApisType("payroll/imss-person/", "post", data);
   }
 
-  static christmasBonusCaculate(data) {
-    return WebApi.ApisType("/payroll/christmas-bonus", "post", data);
+  static extraordinaryPayroll(data) {
+    return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
   }
 }
 

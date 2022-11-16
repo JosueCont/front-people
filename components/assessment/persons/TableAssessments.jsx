@@ -61,6 +61,9 @@ const TableAssessments = ({
   const getUserListAssessments = async (data) =>{
     try {
       let response = await WebApiAssessment.getUserListAssessments(data);
+      response.data.sort((a, b) => {
+        if (a.name_es > b.name_es) { return 1; } if (a.name_es < b.name_es) { return -1;} return 0;
+      });
       let filterGroupal = response.data.reduce((prev, current) =>{
         let isDuplicated = prev.some(item => item.id === current.id);
         if(isDuplicated){
