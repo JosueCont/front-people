@@ -97,7 +97,7 @@ const ModalClients = ({
     return (
         <MyModal
             title={title}
-            widthModal={700}
+            widthModal={800}
             close={onCloseModal}
             visible={visible}
             closable={!loading}

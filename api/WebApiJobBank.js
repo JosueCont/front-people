@@ -6,6 +6,10 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/customer/?node=${node}${query}`, 'get');
     }
 
+    static getInfoClient(id){
+        return WebApi.ApisType(`/job-bank/customer/${id}/`, 'get');
+    }
+
     static createClient(data){
         return WebApi.ApisType('/job-bank/customer/', 'post', data);
     }
@@ -126,15 +130,15 @@ class WebApiJobBank {
     }
 
     static createMainCategoy(data){
-        // return WebApi.ApisType('/job-bank/main-category/', 'post', data);
+        return WebApi.ApisType('/job-bank/main-category/', 'post', data);
     }
 
     static updateMainCategory(id, data){
-        // return WebApi.ApisType(`/job-bank/main-category/${id}/`, 'put', data);
+        return WebApi.ApisType(`/job-bank/main-category/${id}/`, 'put', data);
     }
 
     static deleteMainCategory(id){
-        // return WebApi.ApisType(`/job-bank/main-category/${id}/`, 'delete')
+        return WebApi.ApisType(`/job-bank/main-category/${id}/`, 'delete');
     }
 
     static getSubCategories(node){
