@@ -28,8 +28,10 @@ const FormStrategies = ({
     const {
         load_clients_options,
         load_vacancies_options,
+        load_jobvacant_options,
         list_clients_options,
-        list_vacancies_options
+        list_vacancies_options,
+        list_jobvacant_options,
     } = useSelector(state => state.jobBankStore);
     const {
         load_persons,
@@ -38,7 +40,6 @@ const FormStrategies = ({
     const clientSelected = Form.useWatch('customer', formStrategies);
     const salary = Form.useWatch('salary', formStrategies);
     const percent = Form.useWatch('percentage_to_collect', formStrategies);
-    const job_bank = Form.useWatch('job_bank', formStrategies);
 
     useEffect(()=>{
         getAmount()
@@ -68,14 +69,6 @@ const FormStrategies = ({
         if(!clientSelected) return [];
         const options = item => item.customer?.id === clientSelected;
         return list_vacancies_options.filter(options);
-    }
-
-    const onChangeJobBank = (values) =>{
-        let exist = values.some(item => item == 7);
-        if(exist) return true;
-        formStrategies.setFieldsValue({
-            others_job_bank: []
-        })
     }
 
     const disabledDate = (current) => {
@@ -360,48 +353,25 @@ const FormStrategies = ({
             </Col>
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    name='job_bank'
+                    name='job_vacancies'
                     label='Bolsas de empleo'
-                >
+                >   
                     <Select
                         mode='multiple'
-                        maxTagCount={1}
+                        disabled={load_jobvacant_options}
+                        loading={load_jobvacant_options}
                         placeholder='Seleccionar las opciones'
                         notFoundContent='No se encontraron resultados'
-                        optionFilterProp='label'
-                        onChange={onChangeJobBank}
-                        options={optionsJobBank}
-                    />
+                        optionFilterProp='children'
+                    >
+                        {list_jobvacant_options.length > 0 && list_jobvacant_options.map(item => (
+                            <Select.Option value={item.id} key={item.id}>
+                                {item.name}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 </Form.Item>
             </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
-                <Form.Item
-                    name='others_job_bank'
-                    label='Otras bolsas de empleo'
-                >
-                    <Select
-                        mode='tags'
-                        maxTagCount={1}
-                        disabled={!job_bank?.some(item=> item == 7)}
-                        placeholder='Agregar una o más'
-                        notFoundContent='No se encontraron resultados'
-                        options={[]}
-                    />
-                </Form.Item>
-            </Col>
-            {/* <Col xs={24} md={12} xl={8} xxl={6}>
-                <Form.Item
-                    name='searches'
-                    label='Búsquedas'
-                    tooltip='Nombre(s) de clientes para encontrar una vacante similar'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input
-                        maxLength={100}
-                        placeholder='Nombre(s) de clientes para encontrar una vacante similar'
-                    />
-                </Form.Item>
-            </Col> */}
             <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='candidate_acceptance_date'
@@ -500,51 +470,55 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
-                <Form.Item
-                    name='searches'
-                    label='Búsquedas'
-                    tooltip='Nombre(s) de clientes para encontrar una vacante similar'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input.TextArea
-                        maxLength={100}
-                        autoSize={{ minRows: 4, maxRows: 4 }}
-                        placeholder='Nombre(s) de clientes para encontrar una vacante similar'
-                    />
-                </Form.Item>
-            </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
-                <Form.Item
-                    name='target_company'
-                    label='Empresas target'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input.TextArea
-                        placeholder='Ej. Empresas del sector de consumo de alimentos y bebida'
-                        maxLength={400}
-                        autoSize={{
-                            minRows: 4,
-                            maxRows: 4,
-                        }}
-                    />
-                </Form.Item>
-            </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
-                <Form.Item
-                    name='comments'
-                    label='Comentarios'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input.TextArea
-                        placeholder='Comentarios'
-                        maxLength={400}
-                        autoSize={{
-                            minRows: 4,
-                            maxRows: 4,
-                        }}
-                    />
-                </Form.Item>
+            <Col span={24}>
+                <Row gutter={[24,0]}>
+                    <Col xs={24} md={12} xl={8}>
+                        <Form.Item
+                            name='searches'
+                            label='Búsquedas'
+                            tooltip='Nombre(s) de clientes para encontrar una vacante similar'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                maxLength={100}
+                                autoSize={{ minRows: 4, maxRows: 4 }}
+                                placeholder='Nombre(s) de clientes para encontrar una vacante similar'
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={8}>
+                        <Form.Item
+                            name='target_company'
+                            label='Empresas target'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                placeholder='Ej. Empresas del sector de consumo de alimentos y bebida'
+                                maxLength={400}
+                                autoSize={{
+                                    minRows: 4,
+                                    maxRows: 4,
+                                }}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={8}>
+                        <Form.Item
+                            name='comments'
+                            label='Comentarios'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                placeholder='Comentarios'
+                                maxLength={400}
+                                autoSize={{
+                                    minRows: 4,
+                                    maxRows: 4,
+                                }}
+                            />
+                        </Form.Item>
+                    </Col>
+                </Row>
             </Col>
         </Row>
     )

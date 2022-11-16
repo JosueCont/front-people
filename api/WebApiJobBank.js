@@ -18,7 +18,7 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/customer/${id}/`, 'put', data);
     }
 
-    static activeClient(id, data){
+    static updateClientStatus(id, data){
         return WebApi.ApisType(`/job-bank/customer/${id}/`, 'patch', data);
     }
 
@@ -42,8 +42,16 @@ class WebApiJobBank {
         return WebApi.ApisType('/job-bank/vacant/', 'post', data);
     }
 
+    static duplicateVacant(id){
+        return WebApi.ApisType(`/job-bank/vacant/${id}/duplicate/`, 'get');
+    }
+
     static updateVacant(id, data){
         return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'put', data);
+    }
+
+    static updateVacantStatus(id, data){
+        return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
     }
 
     static deleteVacant(data){
@@ -121,6 +129,26 @@ class WebApiJobBank {
 
     static updateConnection(id, data){
         return WebApi.ApisType(`/job-bank/sharin-setup/${id}/, 'put`, data);
+    }
+
+    static getPublications(node){
+        return WebApi.ApisType(`/job-bank/post-vacant/?node=${node}`, 'get');
+    }
+
+    static getInfoPublication(id){
+        return WebApi.ApisType(`/job-bank/post-vacant/${id}/`, 'get');
+    }
+
+    static createPublication(data){
+        return WebApi.ApisType('/job-bank/post-vacant/', 'post', data);
+    }
+
+    static updatePublication(id, data){
+        return WebApi.ApisType(`/job-bank/post-vacant/${id}/`, 'put', data);
+    }
+
+    static deletePublication(id){
+        return WebApi.ApisType(`/job-bank/post-vacant/${id}/`, 'delete');
     }
 
     //LISTADO DE CATÁLOGOS
@@ -219,6 +247,22 @@ class WebApiJobBank {
 
     static deleteProfileType(id){
         // return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'delete');
+    }
+
+    static getJobVacancies(node){
+        return WebApi.ApisType(`/job-bank/job-vacancies/?node=${node}`, 'get');
+    }
+
+    static createJobVacancies(data){
+        return WebApi.ApisType('/job-bank/job-vacancies/', 'post', data);
+    }
+
+    static updateJobVacancies(id, data){
+        return WebApi.ApisType(`/job-bank/job-vacancies/${id}/`, 'put', data);
+    }
+
+    static deleteJobVancancies(id){
+        return WebApi.ApisType(`/job-bank/job-vacancies/${id}/`, 'delete');
     }
 }
 

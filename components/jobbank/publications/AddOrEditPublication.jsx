@@ -3,44 +3,44 @@ import MainLayout from '../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
-import { getPersonsCompany } from '../../../redux/UserDuck';
 import {
-    getInfoStrategy,
-    getClientsOptions,
+    getInfoPublication,
+    getProfilesOptions,
     getVacanciesOptions,
-    getJobVacantOptions
+    getVacantFields,
+    getConnections
 } from '../../../redux/jobBankDuck';
-import DetailsStrategies from './DetailsStrategies';
+import DetailsPublication from './DetailsPublication';
 
-const AddOrEditStrategies = ({
+const AddOrEditPublication = ({
     action = 'add',
     currentNode,
-    getPersonsCompany,
-    getInfoStrategy,
-    getClientsOptions,
+    getInfoPublication,
+    getProfilesOptions,
     getVacanciesOptions,
-    getJobVacantOptions
+    getVacantFields,
+    getConnections
 }) => {
 
     const router = useRouter();
 
     useEffect(()=>{
         if(currentNode){
-            getClientsOptions(currentNode.id);
+            getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
-            getPersonsCompany(currentNode.id);
-            getJobVacantOptions(currentNode.id);
+            getVacantFields(currentNode.id);
+            getConnections(currentNode.id);
         }
     },[currentNode])
 
-    useEffect(()=>{
-        if(router.query.id && action == 'edit'){
-            getInfoStrategy(router.query.id)
-        }
-    },[router])
+    // useEffect(()=>{
+    //     if(router.query.id && action == 'edit'){
+    //         getInfoPublication(router.query.id)
+    //     }
+    // },[router])
 
     return (
-        <MainLayout currentKey={'jb_strategies'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_publications' defaultOpenKeys={['job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}
@@ -51,31 +51,31 @@ const AddOrEditStrategies = ({
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className={'pointer'}
-                    onClick={() => router.push({ pathname: '/jobbank/strategies'})}
+                    onClick={() => router.push({ pathname: '/jobbank/publications'})}
                 >
-                    Estrategias
+                    Publicaciones
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nueva' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
-            <div className={'container'}>
-                <DetailsStrategies action={action}/>
+            <div className='container'>
+               <DetailsPublication action={action}/>
             </div>
         </MainLayout>
     )
 }
 
 const mapState = (state) =>{
-  return{
-    currentNode: state.userStore.current_node
-  }
+    return{
+        currentNode: state.userStore.current_node
+    }
 }
 
 export default connect(
-  mapState,{
-    getPersonsCompany,
-    getInfoStrategy,
-    getClientsOptions,
-    getVacanciesOptions,
-    getJobVacantOptions
-  }
-)(AddOrEditStrategies);
+    mapState,{
+        getInfoPublication,
+        getProfilesOptions,
+        getVacanciesOptions,
+        getVacantFields,
+        getConnections
+    }
+)(AddOrEditPublication);
