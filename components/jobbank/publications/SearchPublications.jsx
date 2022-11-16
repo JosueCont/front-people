@@ -6,22 +6,19 @@ import {
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import {
-    getVacancies,
+    getPublications,
     setJobbankFilters
 } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
-import { getFullName } from '../../../utils/functions';
-import { ruleWhiteSpace } from '../../../utils/rules';
-import { optionsStatusVacant } from '../../../utils/constant';
 
-const SearchVacancies = ({
-    load_clients_options,
-    list_clients_options,
+const SearchPublications = ({
+    load_vacancies_options,
+    list_vacancies_options,
+    load_profiles_options,
+    list_profiles_options,
     currentNode,
-    getVacancies,
+    getPublications,
     setJobbankFilters,
-    load_persons,
-    persons_company
 }) => {
 
     const router = useRouter();
@@ -29,25 +26,25 @@ const SearchVacancies = ({
 
     const createFilters = (obj) =>{
         let query = '';
-        if(obj.job_position) query += `&job_position__unaccent__icontains=${obj.job_position}`;
-        if(obj.status) query+= `&status=${obj.status}`;
-        if(obj.customer) query += `&customer=${obj.customer}`;
-        if(obj.recruiter) query += `&strategy__recruiter_id=${obj.recruiter}`;
+        // if(obj.job_position) query += `&job_position__unaccent__icontains=${obj.job_position}`;
+        // if(obj.status) query+= `&status=${obj.status}`;
+        // if(obj.customer) query += `&customer=${obj.customer}`;
+        // if(obj.recruiter) query += `&strategy__recruiter_id=${obj.recruiter}`;
         return query;
     }
 
     const onFinishSearch = (values) =>{
-        let filters = createFilters(values);
-        if(filters){
-            setJobbankFilters(filters)
-            getVacancies(currentNode.id, filters);
-        }else deleteFilter();
+        // let filters = createFilters(values);
+        // if(filters){
+        //     setJobbankFilters(filters)
+        //     getPublications(currentNode.id, filters);
+        // }else deleteFilter();
     }
 
     const deleteFilter = () =>{
         setJobbankFilters("")
         formSearch.resetFields();
-        getVacancies(currentNode.id)
+        getPublications(currentNode.id);
     }
 
     return (
@@ -58,42 +55,34 @@ const SearchVacancies = ({
             style={{width: '100%'}}
         >
             <Row gutter={[0,8]} style={{width: '100%'}}>
-                <Col xs={24} sm={12} md={8} xl={7}>
-                    <Form.Item
-                        name='job_position'
-                        rules={[ruleWhiteSpace]}
-                        style={{marginBottom: 0}}
-                    >
-                        <Input placeholder='Buscar por vacante'/>
-                    </Form.Item>
-                </Col>
                 <Col xs={12} md={8} xl={4}>
                     <Form.Item
-                        name='status'
+                        name='code'
                         style={{marginBottom: 0}}
                     >
                         <Select
                             allowClear
-                            placeholder='Estatus'
-                            options={optionsStatusVacant}
+                            placeholder='Código'
+                            notFoundContent='No se encontraron resultados'
+                            options={[]}
                         />
                     </Form.Item>
                 </Col>
                 <Col xs={12} md={8} xl={4}>
                     <Form.Item
-                        name='customer'
+                        name='profile'
                         style={{marginBottom: 0}}
                     >
                         <Select
                             allowClear
                             showSearch
-                            disabled={load_clients_options}
-                            loading={load_clients_options}
-                            placeholder='Cliente'
+                            disabled={load_profiles_options}
+                            loading={load_profiles_options}
+                            placeholder='Perfil'
                             notFoundContent='No se encontraron resultados'
                             optionFilterProp='children'
                         >
-                            {list_clients_options.length > 0 && list_clients_options.map(item=> (
+                            {list_profiles_options.length > 0 && list_profiles_options.map(item=> (
                                 <Select.Option value={item.id} key={item.id}>
                                     {item.name}
                                 </Select.Option>
@@ -103,27 +92,27 @@ const SearchVacancies = ({
                 </Col>
                 <Col xs={11} sm={12} md={8} xl={4}>
                     <Form.Item
-                        name='recruiter'
+                        name='vacant'
                         style={{marginBottom: 0}}
                     >
                         <Select
                             allowClear
                             showSearch
-                            disabled={load_persons}
-                            loading={load_persons}
-                            placeholder='Reclutador'
+                            disabled={load_vacancies_options}
+                            loading={load_vacancies_options}
+                            placeholder='Vacante'
                             notFoundContent='No se encontraron resultados'
                             optionFilterProp='children'
                         >
-                            {persons_company.length > 0 && persons_company.map(item => (
+                            {list_vacancies_options.length > 0 && list_vacancies_options.map(item => (
                                 <Select.Option value={item.id} key={item.id}>
-                                    {getFullName(item)}
+                                    {item.job_position}
                                 </Select.Option>
                             ))}
                         </Select>
                     </Form.Item>
                 </Col>
-                <Col xs={12} sm={23} md={15} xl={5} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
+                <Col xs={12} sm={23} md={15} xl={12} style={{display: 'flex', justifyContent: 'space-between', marginTop: 'auto', gap: 8}}>
                     <div style={{display: 'flex', gap: 8}}>
                         <Button htmlType='submit'>
                             <SearchOutlined />
@@ -132,7 +121,7 @@ const SearchVacancies = ({
                             <SyncOutlined />
                         </Button>
                     </div>
-                    <Button onClick={()=> router.push('/jobbank/vacancies/add')}>Agregar</Button>
+                    <Button onClick={()=> router.push('/jobbank/publications/add')}>Agregar</Button>
                 </Col>
             </Row>
         </Form>
@@ -142,16 +131,16 @@ const SearchVacancies = ({
 const mapState = (state) =>{
     return{
         currentNode: state.userStore.current_node,
-        load_clients_options: state.jobBankStore.load_clients_options,
-        list_clients_options: state.jobBankStore.list_clients_options,
-        load_persons: state.userStore.load_persons,
-        persons_company: state.userStore.persons_company
+        load_vacancies_options: state.jobBankStore.load_vacancies_options,
+        list_vacancies_options: state.jobBankStore.list_vacancies_options,
+        load_profiles_options: state.jobBankStore.load_profiles_options,
+        list_profiles_options: state.jobBankStore.list_profiles_options,
     }
 }
 
 export default connect(
     mapState,{
-        getVacancies,
+        getPublications,
         setJobbankFilters
     }
-)(SearchVacancies)
+)(SearchPublications)
