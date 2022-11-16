@@ -26,7 +26,10 @@ const SelectMunicipality = ({
       .then((response) => {
         setMunicipality(response.data.results);
         let municipalities = response.data.results.map((item) => {
-          return { value: item.id, label: item.description };
+          return {
+            value: item.id,
+            label: `${item.code} - ${item.description}`,
+          };
         });
         setOptions(municipalities);
       })

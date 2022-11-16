@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Form, Input, Row, Col, Select } from "antd";
 import {
   onlyNumeric,
+  rulePhone,
   ruleRequired,
   ruleWhiteSpace,
 } from "../../../utils/rules";
@@ -18,32 +19,31 @@ const FormPatronalRegistration = ({
   currentNodeId,
   ...props
 }) => {
-
-  const [ information, setInformation ] = useState(null)
-  const social_reason = Form.useWatch('social_reason', form)
+  const [information, setInformation] = useState(null);
+  const social_reason = Form.useWatch("social_reason", form);
 
   useEffect(() => {
-    currentNodeId && getInformationfiscal()
-  },[currentNodeId])
+    currentNodeId && getInformationfiscal();
+  }, [currentNodeId]);
 
   const getInformationfiscal = () => {
     WebApiPeople.getfiscalInformationNode(currentNodeId)
-    .then((response) => {
-      setInformation(response.data)
-    })
-    .catch((error) => {
-      console.log('Error', error)
-    })
-  }
+      .then((response) => {
+        setInformation(response.data);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+      });
+  };
 
   useEffect(() => {
-
-    if(information){
+    if (information) {
       form.setFieldsValue({
-        social_reason: social_reason !== ''? social_reason : information.business_name
-      })
+        social_reason:
+          social_reason !== "" ? social_reason : information.business_name,
+      });
     }
-  },[information])
+  }, [information]);
 
   return (
     <Form layout={"vertical"} form={form} id="formGeneric">
@@ -61,7 +61,7 @@ const FormPatronalRegistration = ({
           <Form.Item
             name="economic_activity"
             label="Actividad económica"
-            rules={[ruleRequired, ruleWhiteSpace]}
+            rules={[ruleWhiteSpace]}
           >
             <Input />
           </Form.Item>
@@ -88,7 +88,7 @@ const FormPatronalRegistration = ({
           <Form.Item
             name="phone"
             label="Teléfono"
-            rules={[ruleRequired, onlyNumeric, ruleWhiteSpace]}
+            rules={[rulePhone, onlyNumeric, ruleWhiteSpace]}
           >
             <Input />
           </Form.Item>
@@ -99,7 +99,7 @@ const FormPatronalRegistration = ({
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>
-            <SelectGeographicArea />
+          <SelectGeographicArea rules={[ruleRequired]} />
         </Col>
         <Col lg={6} xs={22}>
           <SelectImssDelegation rules={[ruleRequired]} />
