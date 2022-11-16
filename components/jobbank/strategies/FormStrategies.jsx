@@ -325,12 +325,11 @@ const FormStrategies = ({
                     name='estimated_billing'
                     label='Estimado de facturación'
                 >
-                    <InputNumber
-                        type='number'
-                        maxLength={10}
-                        controls={false}
+                    <Input
+                        maxLength={20}
                         placeholder='Estimado de facturación'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={e=> e.which == 32 && e.preventDefault()}
                         style={{
                             width: '100%',
                             border: '1px solid black'
