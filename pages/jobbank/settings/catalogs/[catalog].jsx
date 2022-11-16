@@ -4,7 +4,6 @@ import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
-import SearchCatalogs from '../../../../components/jobbank/catalogs/SearchCatalogs';
 import TableCatalogs from '../../../../components/jobbank/catalogs/TableCatalogs';
 import { useCatalog } from '../../../../components/jobbank/catalogs/hook/useCatalog';
 
