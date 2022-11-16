@@ -141,7 +141,7 @@ const DetailsClients = ({
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: ()=> actionBack,
+            back: actionBack,
             create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/clients/edit',
@@ -183,6 +183,7 @@ const DetailsClients = ({
                         layout='vertical'
                         onFinish={onFinish}
                         onFinishFailed={onFinishFailed}
+                        initialValues={{is_active: true}}
                     >
                         <Tabs type='card'>
                             <Tabs.TabPane
