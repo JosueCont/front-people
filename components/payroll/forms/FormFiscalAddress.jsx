@@ -99,10 +99,10 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={6}>
-            <SelectCountry />
+            <SelectCountry disabled={true} />
           </Col>
           <Col lg={8} xs={22} md={6}>
-            <SelectState setState={setState} />
+            <SelectState disabled={true} setState={setState} />
           </Col>
           <Col lg={8} xs={22} md={6}>
             <SelectMunicipality state={state && state} />
@@ -120,12 +120,12 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
           </Col>
           <Col lg={8} xs={22} md={6}>
             <Form.Item name="outdoor_number" label="Número exterior">
-              <Input maxLength={10} />
+              <Input maxLength={100} />
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={6}>
             <Form.Item name="interior_number" label="Número interior">
-              <Input maxLength={10} />
+              <Input maxLength={100} />
             </Form.Item>
           </Col>
         </Row>

@@ -34,7 +34,7 @@ const SelectSuburb = ({
             return {
               key: item.id + item.code,
               value: item.id,
-              label: item.description,
+              label: `${item.code} - ${item.description}`,
             };
           });
           setOptions(suburbs);
