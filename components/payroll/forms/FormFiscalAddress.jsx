@@ -31,6 +31,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
   };
 
   const setForm = (data) => {
+    console.log('Data', data)
     setState(data.state.id);
     setPostalCodeSelect(data.postal_code);
     if (data.suburb) setSuburb(data.suburb.description);
@@ -47,6 +48,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
   };
 
   const setPostalCodeSelected = (data) => {
+    
     setState(data.state.id);
     setPostalCodeSelect(data);
 
