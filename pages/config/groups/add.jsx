@@ -248,15 +248,26 @@ const GroupAdd = ({ ...props }) => {
 
   const onFinish = (values) => {
     data = values;
-    data.perms = allPerms.length > 0 ? allPerms : perms;
-    let lst = [];
-    if (getperms === true) {
-      lst = allPerms.length > 0 ? allPerms.concat(allCatalogs? allCatalogs : arrayFunctions) : perms.concat(allCatalogs? allCatalogs : arrayFunctions);
-    } else {
-      lst = allPerms.length > 0 ? allPerms.concat(permsFunction) : perms.concat(permsFunction);
-    }
+    let permsList = []
+    let onlyPerms = allPerms.length > 0 ? allPerms : perms
+    let onlycatalogs = allCatalogs.length > 0? allCatalogs : arrayFunctions
+    let functions = newFunctions.length > 0? newFunctions : permsFunction
+    // if(getperms){
+    //   permsList = onlyPerms.concat(onlycatalogs).concat(functions)
+    // } else {
+    //   permsList = onlyPerms.concat(functions)
+    // }
+    permsList = onlyPerms.concat(onlycatalogs).concat(functions)
+    // console.log('Values', permsFunction)
+    // data.perms = allPerms.length > 0 ? allPerms : perms;
+    // let lst = [];
+    // if (getperms === true) {
+    //   lst = allPerms.length > 0 ? allPerms.concat(allCatalogs? allCatalogs : arrayFunctions) : perms.concat(allCatalogs? allCatalogs : arrayFunctions);
+    // } else {
+    //   lst = allPerms.length > 0 ? allPerms.concat(newFunctions.length> 0 ? newFunctions :  permsFunction) : perms.concat(newFunctions.length> 0 ? newFunctions :permsFunction);
+    // }
 
-    data.perms = lst;
+    data.perms = permsList;
 
     if (!edit) {
       saveGroup();
@@ -548,11 +559,42 @@ const GroupAdd = ({ ...props }) => {
         perm.module === "Prestamos" ||
         perm.module === "Vacaciones" ||
         perm.module === "Nómina" ||
-        perm.module === "SolicitudCuentas"
+        perm.module === "SolicitudCuentas" ||
+        perm.module === "Reportes" ||
+        perm.module === "Incapacidad" ||
+        perm.module === "Permisos" ||
+        perm.module === "Dashboard"
     )
 
-    console.log('Functions', allFunctions, check)
+    allFunctions.forEach((element) => {
+      functionsValue.push(element.value)
+    })
+
+    if(check == false){
+      setarrayFunctios([])
+      setPermsFunction([])
+      setNewFunctions([])
+    } else {
+      setNewFunctions(functionsValue)
+    }
+
+    if (functionsValue.length > 0) {
+      functionsValue.forEach((element) => {
+        var chkBox = document.getElementById(element);
+        if (chkBox != "undefined" && chkBox !== null) {
+          if (chkBox.checked == false) {
+            chkBox.click();
+          }
+          if(!check){
+            chkBox.click();
+          }
+        }
+      });
+    }
+
   }
+
+  // console.log('Allfunctions', newFunctions)
 
   const handleChangeTab = (activeKey) => {
     if (activeKey === "2") {
