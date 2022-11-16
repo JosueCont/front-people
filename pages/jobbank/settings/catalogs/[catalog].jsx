@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import MainLayout from '../../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
-import CrudCatalog from '../../../../components/jobbank/catalogs/CrudCatalog';
+import SearchCatalogs from '../../../../components/jobbank/catalogs/SearchCatalogs';
+import TableCatalogs from '../../../../components/jobbank/catalogs/TableCatalogs';
 import { useCatalog } from '../../../../components/jobbank/catalogs/hook/useCatalog';
 
 const catalog = ({
@@ -12,11 +13,12 @@ const catalog = ({
 }) => {
 
     const router = useRouter();
-    const { infoCatalog, getCatalog } = useCatalog();
+    const { getCatalog, infoCatalog } = useCatalog();
 
     useEffect(()=>{
         if(currentNode) getCatalog(currentNode.id);
     },[currentNode])
+
 
     return (
         <MainLayout currentKey='jb_settings' defaultOpenKeys={['job_bank']}>
@@ -42,7 +44,7 @@ const catalog = ({
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{infoCatalog.titleBread}</Breadcrumb.Item>
             </Breadcrumb>
-            <CrudCatalog/>
+            <TableCatalogs/>
         </MainLayout>
     )
 }

@@ -167,9 +167,9 @@ const TableVacancies = ({
         }
     },
     {
-        title: 'Categoría',
-        dataIndex: ['education_and_competence', 'main_category', 'name'],
-        key: ['education_and_competence', 'main_category', 'name']
+        title: 'Reclutador',
+        dataIndex: ['recruiter', 'full_name'],
+        key: ['recruiter', 'full_name']
         
     },
     {

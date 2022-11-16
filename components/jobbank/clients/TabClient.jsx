@@ -18,90 +18,108 @@ const TabClient = ({ sizeCol = 12 }) =>{
 
     return (
         <Row gutter={[24,0]} className='tab-client'>
-            <Col span={12} style={{display: 'none'}}>
-                <Form.Item name='is_active' valuePropName='checked'>
-                    <Checkbox>¿Está activo?</Checkbox>
-                </Form.Item>
+            <Col xs={24} xl={14} xxl={24}>
+                <Row gutter={[24,0]}>
+                    <Col xs={24} md={12} style={{display: 'none'}}>
+                        <Form.Item name='is_active' valuePropName='checked'>
+                            <Checkbox>¿Está activo?</Checkbox>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={12} xxl={8}>
+                        <Form.Item
+                            name='name'
+                            label='Nombre del cliente'
+                            rules={[ruleRequired, ruleWhiteSpace]}
+                        >
+                            <Input maxLength={50} placeholder='Escriba un nombre'/>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={12} xxl={8}>
+                        <Form.Item
+                            name='rfc'
+                            label='RFC del cliente'
+                            rules={[
+                                ruleRequired,
+                                rfcFormat
+                            ]}
+                        >
+                            <Input placeholder='RFC' maxLength={13}/>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={12} xxl={8}>
+                        <Form.Item label='Sector' name='sector'>
+                            <Select
+                                allowClear
+                                disabled={load_sectors}
+                                loading={load_sectors}
+                                placeholder='Seleccionar un sector'
+                                notFoundContent='No se encontraron resultados'
+                            >
+                                {list_sectors.length > 0 && list_sectors.map(item => (
+                                    <Select.Option value={item.id} key={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={12} xxl={8}>
+                        <Form.Item 
+                            name='website'
+                            label='URL de su sitio'
+                            rules={[ruleURL]}
+                        >
+                            <Input placeholder='Iniciar con http(s)://'/>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={12} xxl={8}>
+                        <Form.Item
+                            name='business_name'
+                            label='Razón social'
+                        >
+                            <Select
+                                allowClear
+                                placeholder='Razón social'
+                                options={optionsBusinessName}
+                            />
+                        </Form.Item>
+                    </Col>
+                </Row>
             </Col>
-            <Col span={sizeCol}>
-                <Form.Item
-                    name='name'
-                    rules={[ruleRequired, ruleWhiteSpace]}
-                >
-                    <Input maxLength={50} placeholder='Escriba un nombre'/>
-                </Form.Item>
-            </Col>
-            <Col span={sizeCol}>
-                <Form.Item
-                    name='rfc'
-                    rules={[
-                        ruleRequired,
-                        rfcFormat
-                    ]}
-                >
-                    <Input placeholder='RFC' maxLength={13}/>
-                </Form.Item>
-            </Col>
-            <Col span={sizeCol}>
-                <Form.Item
-                    name='description'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input maxLength={50} placeholder='Escriba una descripción'/>
-                </Form.Item>
-            </Col>
-            <Col span={sizeCol}>
-                <Form.Item name='sector'>
-                    <Select
-                        allowClear
-                        disabled={load_sectors}
-                        loading={load_sectors}
-                        placeholder='Seleccionar un sector'
-                        notFoundContent='No se encontraron resultados'
-                    >
-                        {list_sectors.length > 0 && list_sectors.map(item => (
-                            <Select.Option value={item.id} key={item.id}>
-                                {item.name}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-            </Col>
-            <Col span={sizeCol}>
-                <Form.Item 
-                    name='website'
-                    rules={[ruleURL]}
-                >
-                    <Input placeholder='URL de su sitio, iniciar con http(s)://'/>
-                </Form.Item>
-            </Col>
-            <Col span={sizeCol}>
-                <Form.Item
-                    name='business_name'
-                    // style={{marginBottom: 0}}
-                >
-                    <Select
-                        allowClear
-                        placeholder='Razón social'
-                        options={optionsBusinessName}
-                    />
-                </Form.Item>
-            </Col>
-            <Col span={sizeCol}>
-                <Form.Item
-                    name='comments'
-                    rules={[ruleWhiteSpace]}
-                    // style={{marginBottom: 0}}
-                >
-                    <Input.TextArea
-                        maxLength={400}
-                        autoSize={{
-                            minRows: 3,
-                            maxRows: 3
-                        }}
-                        placeholder='Comentarios'
-                    />
-                </Form.Item>
+            <Col xs={24} xl={10} xxl={24}>
+                <Row gutter={[24,0]}>
+                    <Col xs={24} lg={12} xl={24} xxl={12}>
+                        <Form.Item
+                            name='description'
+                            label='Descripción del cliente'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                placeholder='Escriba una breve descripción'
+                                autoSize={{
+                                    minRows: 3,
+                                    maxRows: 3
+                                }}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} lg={12} xl={24} xxl={12}>
+                        <Form.Item
+                            name='comments'
+                            label='Comentarios adicionales'
+                            rules={[ruleWhiteSpace]}
+                            // style={{marginBottom: 0}}
+                        >
+                            <Input.TextArea
+                                autoSize={{
+                                    minRows: 3,
+                                    maxRows: 3
+                                }}
+                                placeholder='Escriba los comentarios'
+                            />
+                        </Form.Item>
+                    </Col>
+                </Row>
             </Col>
         </Row>
     )
