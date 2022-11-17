@@ -15,9 +15,8 @@ import {
     optionsJobBank
 } from '../../../utils/constant';
 import moment from 'moment';
-import { validateNum } from '../../../utils/functions';
+import { validateNum, getFullName, validateMaxLength } from '../../../utils/functions';
 import { useSelector } from 'react-redux';
-import { getFullName } from '../../../utils/functions';
 import { ruleRequired, ruleWhiteSpace, numCommaAndDot } from '../../../utils/rules';
 
 const FormStrategies = ({
@@ -184,7 +183,8 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Número de proyecto'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
@@ -249,7 +249,8 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Número de vacantes'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
@@ -299,7 +300,8 @@ const FormStrategies = ({
                         maxLength={3}
                         controls={false}
                         placeholder='Porcentaje a cobrar'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
@@ -325,11 +327,12 @@ const FormStrategies = ({
                     name='estimated_billing'
                     label='Estimado de facturación'
                 >
-                    <Input
+                    <InputNumber
                         maxLength={20}
+                        controls={false}
                         placeholder='Estimado de facturación'
                         onKeyDown={validateNum}
-                        onKeyPress={e=> e.which == 32 && e.preventDefault()}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
@@ -397,7 +400,7 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
+            {/* <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='active_vacancy_days'
                     label='Días activos de la vacante'
@@ -407,15 +410,16 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Días activos de la vacante'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
                         }}
                     />
                 </Form.Item>
-            </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
+            </Col> */}
+            {/* <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='candidate_days_send'
                     label='Días envío de candidatos'
@@ -425,15 +429,16 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Días envío de candidatos'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
                         }}
                     />
                 </Form.Item>
-            </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
+            </Col> */}
+            {/* <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='acceptance_days'
                     label='Días aceptación'
@@ -443,15 +448,16 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Días aceptación'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
                         }}
                     />
                 </Form.Item>
-            </Col>
-            <Col xs={24} md={12} xl={8} xxl={6}>
+            </Col> */}
+            {/* <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='hiring_days'
                     label='Días contratación'
@@ -461,14 +467,15 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Días contratación'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
                         }}
                     />
                 </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={24}>
                 <Row gutter={[24,0]}>
                     <Col xs={24} md={12} xl={8}>
@@ -479,7 +486,6 @@ const FormStrategies = ({
                             rules={[ruleWhiteSpace]}
                         >
                             <Input.TextArea
-                                maxLength={100}
                                 autoSize={{ minRows: 4, maxRows: 4 }}
                                 placeholder='Nombre(s) de clientes para encontrar una vacante similar'
                             />
@@ -493,7 +499,6 @@ const FormStrategies = ({
                         >
                             <Input.TextArea
                                 placeholder='Ej. Empresas del sector de consumo de alimentos y bebida'
-                                maxLength={400}
                                 autoSize={{
                                     minRows: 4,
                                     maxRows: 4,
@@ -509,7 +514,6 @@ const FormStrategies = ({
                         >
                             <Input.TextArea
                                 placeholder='Comentarios'
-                                maxLength={400}
                                 autoSize={{
                                     minRows: 4,
                                     maxRows: 4,
