@@ -7,7 +7,8 @@ import { getPersonsCompany } from '../../../redux/UserDuck';
 import {
     getInfoStrategy,
     getClientsOptions,
-    getVacanciesOptions
+    getVacanciesOptions,
+    getJobVacantOptions
 } from '../../../redux/jobBankDuck';
 import DetailsStrategies from './DetailsStrategies';
 
@@ -17,7 +18,8 @@ const AddOrEditStrategies = ({
     getPersonsCompany,
     getInfoStrategy,
     getClientsOptions,
-    getVacanciesOptions
+    getVacanciesOptions,
+    getJobVacantOptions
 }) => {
 
     const router = useRouter();
@@ -27,6 +29,7 @@ const AddOrEditStrategies = ({
             getClientsOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
             getPersonsCompany(currentNode.id);
+            getJobVacantOptions(currentNode.id);
         }
     },[currentNode])
 
@@ -72,6 +75,7 @@ export default connect(
     getPersonsCompany,
     getInfoStrategy,
     getClientsOptions,
-    getVacanciesOptions
+    getVacanciesOptions,
+    getJobVacantOptions
   }
 )(AddOrEditStrategies);

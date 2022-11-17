@@ -1,5 +1,4 @@
 import WebApiJobBank from "../api/WebApiJobBank";
-import { userCompanyId } from "../libs/auth";
 
 const initialState = {
     list_clients: {},
@@ -13,13 +12,19 @@ const initialState = {
     list_main_categories: [],
     list_sub_categories: [],
     list_profiles_types: [],
+    list_profiles_options: [],
+    list_clients_options: [],
+    list_vacancies_options: [],
+    list_vacancies_fields: {},
+    list_connections: [],
+    list_jobvacant_options: [],
+    list_publications: {},
     info_vacant: {},
     info_strategy: {},
     info_profile: {},
     info_candidate: {},
-    list_clients_options: [],
-    list_vacancies_options: [],
-    list_vacancies_fields: {},
+    info_client: {},
+    info_publication: {},
     load_clients: false,
     load_vacancies: false,
     load_strategies: false,
@@ -30,15 +35,23 @@ const initialState = {
     load_profiles_types: false,
     load_clients_options: false,
     load_vacancies_options: false,
+    load_vacancies_fields: false,
     load_main_categories: false,
     load_sub_categories: false,
     load_candidates: false,
+    load_connections: false,
+    load_jobvacant_options: false,
+    load_publications: false,
+    load_profiles_options: false,
     jobbank_load: false,
     jobbank_page: 1,
     jobbank_filters: "",
 }
 
 const GET_CLIENTS = "GET_CLIENTS";
+const GET_CLIENT_INFO = "GET_CLIENT_INFO";
+const SET_CLIENT_INFO = "SET_CLIENT_INFO";
+const SET_CLIENTS_LOAD = "SET_CLIENT_LOAD";
 const GET_CLIENTS_OPTIONS = "GET_CLIENTS_OPTIONS";
 
 const GET_VACANCIES = "GET_VACANCIES";
@@ -58,17 +71,26 @@ const GET_PROFILES_TYPES = "GET_PROFILES_TYPES";
 const GET_PROFILE_INFO = "GET_PROFILE_INFO";
 const SET_PROFILE_INFO = "SET_PROFILE_INFO";
 const SET_PROFILES_LOAD = "SET_PROFILES_LOAD";
+const GET_PROFILES_OPTIONS = "GET_PROFILES_OPTIONS";
 
 const GET_CANDIDATES = "GET_CANDIDATES";
 const GET_CANDIDATE_INFO = "GET_CANDIDATE_INFO";
 const SET_CANDIDATE_INFO = "SET_CANDIDATE_INFO";
 const SET_CANDIDATES_LOAD = "SET_CANDIDATES_LOAD";
 
+const GET_PUBLICATIONS = "GET_PUBLICATIONS";
+const GET_PUBLICATION_INFO = "GET_PUBLICATION_INFO";
+const SET_PUBLICATION_INFO = "SET_PUBLICATION_INFO";
+const SET_PUBLICATIONS_LOAD = "SET_PUBLICATIONS_LOAD";
+
+const GET_CONNECTIONS = "GET_CONNECTIONS";
+
 const GET_SECTORS = "GET_SECTORS";
 const GET_COMPETENCES = "GET_COMPETENCES";
 const GET_ACADEMICS = "GET_ACADEMICS";
 const GET_MAIN_CATEGORIES = "GET_MAIN_CATEGORIES";
 const GET_SUB_CATEGORIES = "GET_SUB_CATEGORIES";
+const GET_JOB_VACANCIES = "GET_JOB_VACANCIES";
 
 const SET_PAGE = "SET_PAGE";
 const SET_LOAD = "SET_LOAD";
@@ -144,7 +166,7 @@ const jobBankReducer = (state = initialState, action) =>{
         case GET_VACANCIES_FIELDS:
             return {...state,
                 list_vacancies_fields: action.payload,
-                load_vacancies: action.fetching
+                load_vacancies_fields: action.fetching
             }
         case GET_SECTORS:
             return {...state,
@@ -171,6 +193,32 @@ const jobBankReducer = (state = initialState, action) =>{
                 list_sub_categories: action.payload,
                 load_sub_categories: action.fetching
             }
+        case GET_CONNECTIONS:
+            return{...state,
+                list_connections: action.payload,
+                load_connections: action.fetching
+            }
+        case GET_CLIENT_INFO:
+            return{...state,
+                info_client: action.payload,
+                load_clients: action.fetching
+            }
+        case GET_JOB_VACANCIES:
+            return{...state,
+                list_jobvacant_options: action.payload,
+                load_jobvacant_options: action.fetching
+            }
+        case GET_PUBLICATIONS:
+            return{...state,
+                list_publications: action.payload,
+                load_publications: action.payload,
+                jobbank_page: action.page_num
+            }
+        case GET_PROFILES_OPTIONS:
+            return{...state,
+                list_profiles_options: action.payload,
+                load_profiles_options: action.fetching
+            }
         case SET_STRATEGIES_LOAD:
             return {...state, load_strategies: action.payload }
         case SET_VACANCIES_LOAD:
@@ -179,6 +227,12 @@ const jobBankReducer = (state = initialState, action) =>{
             return {...state, load_profiles: action.payload }
         case SET_CANDIDATES_LOAD:
             return {...state, load_candidates: action.payload }
+        case SET_CLIENTS_LOAD:
+            return {...state, load_clients: action.payload }
+        case SET_PUBLICATIONS_LOAD:
+            return {...state, load_publications: action.payload }
+        case SET_CLIENT_INFO:
+            return {...state, info_client: action.payload }
         case SET_VACANT_INFO:
             return {...state, info_vacant: action.payload }
         case SET_PROFILE_INFO:
@@ -187,6 +241,8 @@ const jobBankReducer = (state = initialState, action) =>{
             return {...state, info_strategy: action.payload }
         case SET_CANDIDATE_INFO:
             return {...state, info_candidate: action.payload }
+        case SET_PUBLICATION_INFO:
+            return {...state, info_publication: action.payload }
         case SET_PAGE:
             return {...state, jobbank_page: action.payload }
         case SET_LOAD:
@@ -226,6 +282,14 @@ export const setLoadCandidates = (fetching = false) => (dispatch) =>{
     dispatch({type: SET_CANDIDATES_LOAD, payload: fetching})
 }
 
+export const setLoadPublications = (fetching = false) => (dispatch) =>{
+    dispatch({type: SET_PUBLICATIONS_LOAD, payload: fetching})
+}
+
+export const setLoadClients = (fetching = false) => (dispatch) =>{
+    dispatch({type: SET_CLIENTS_LOAD, payload: fetching})
+}
+
 export const setInfoVacant = (data = {}) => (dispatch) => {
     dispatch({type: SET_VACANT_INFO, payload: data})
 }
@@ -240,6 +304,14 @@ export const setInfoProfile = (data = {}) => (dispatch) =>{
 
 export const setInfoCandidate = (data = {}) => (dispatch) =>{
     dispatch({type: SET_CANDIDATE_INFO, payload: data})
+}
+
+export const setInfoClient = (data = {}) => (dispatch) =>{
+    dispatch({type: SET_CLIENT_INFO, payload: data})
+}
+
+export const setInfoPublication = (data = {}) => (dispatch)=>{
+    dispatch({type: SET_PUBLICATION_INFO, payload: data})
 }
 
 export const getClients = (node, query = '', page = 1) => async (dispatch) => {
@@ -259,6 +331,21 @@ export const getClientsOptions = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getClients(node,'&paginate=0');
+        //Se filtra por estatus activo/true
+        const _filter = item => item.is_active;
+        let results = response.data?.filter(_filter);
+        dispatch({...typeFunction, payload: results})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getInfoClient = (id) => async (dispatch) =>{
+    const typeFunction = { type: GET_CLIENT_INFO, payload: {}, fetching: false };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getInfoClient(id);
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
@@ -283,7 +370,10 @@ export const getVacanciesOptions = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getVacancies(node, '&paginate=0');
-        dispatch({...typeFunction, payload: response.data})
+        //Se filtra por estatus activo/1
+        const _filter = item => item.status == 1;
+        let results = response.data?.filter(_filter);
+        dispatch({...typeFunction, payload: results})
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
@@ -374,6 +464,18 @@ export const getInfoProfile = (id) => async (dispatch) =>{
     }
 }
 
+export const getProfilesOptions = (node) => async (dispatch) =>{
+    const typeFunction = { type: GET_PROFILES_OPTIONS, payload: [], fetching: false };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getProfilesList(node, '&paginate=0');
+        dispatch({...typeFunction, payload: response.data.results})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
 export const getCandidates = (node, query = '', page = 1) => async (dispatch) =>{
     const typeFunction = { type: GET_CANDIDATES, payload: {}, fetching: false, page_num: page }
     dispatch({...typeFunction, fetching: true})
@@ -434,6 +536,30 @@ export const getInfoCandidate = (id) => async (dispatch) =>{
     }
 }
 
+export const getPublications = (node, query = '', page = 1) => async (dispatch) =>{
+    const typeFunction = { type: GET_PUBLICATIONS, payload: {}, fetching: false, page_num: page };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getPublications(node, query);
+        dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getInfoPublication = (id) => async (dispatch) =>{
+    const typeFunction = { type: GET_PUBLICATION_INFO, payload: {}, fetching: false };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getInfoPublication(id);
+        dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
 export const getSectors = (node) => async (dispatch) =>{
     const typeFunction = { type: GET_SECTORS, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
@@ -488,6 +614,30 @@ export const getSubCategories = (node) => async (dispatch) =>{
     try {
         let response = await WebApiJobBank.getSubCategories(node);
         dispatch({...typeFunction, payload: response.data})
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getConnections = (node) => async (dispatch) =>{
+    const typeFunction = { type: GET_CONNECTIONS, payload: [], fetching: false };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getConnections(node);
+        dispatch({...typeFunction, payload: response.data.results});
+    } catch (e) {
+        console.log(e)
+        dispatch(typeFunction)
+    }
+}
+
+export const getJobVacantOptions = (node) => async(dispatch) => {
+    const typeFunction = { type: GET_JOB_VACANCIES, payload: [], fetching: false };
+    dispatch({...typeFunction, fetching: true})
+    try {
+        let response = await WebApiJobBank.getJobVacancies(node);
+        dispatch({...typeFunction, payload: response.data.results});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)

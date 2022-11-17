@@ -46,17 +46,17 @@ const AddOrEditVacancies = ({
         <MainLayout currentKey={'jb_vacancies'} defaultOpenKeys={['job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                className={'pointer'}
-                onClick={() => router.push({ pathname: '/home/persons/'})}
+                    className={'pointer'}
+                    onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
-                Inicio
+                    Inicio
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
-                className={'pointer'}
-                onClick={() => router.push({ pathname: '/jobbank/vacancies'})}
+                    className={'pointer'}
+                    onClick={() => router.push({ pathname: '/jobbank/vacancies'})}
                 >
-                Vacantes
+                    Vacantes
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nueva' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>

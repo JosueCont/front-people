@@ -6,12 +6,15 @@ import {
   Dropdown,
   message,
   Switch,
-  Tooltip
+  Tooltip,
+  Select
 } from 'antd';
 import {
   EllipsisOutlined,
   DeleteOutlined,
   EditOutlined,
+  CopyOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { getVacancies, setJobbankPage } from '../../../redux/jobBankDuck';
@@ -50,6 +53,34 @@ const TableVacancies = ({
         }
     }
 
+    const actionStatus = async (value, item) =>{
+        try {
+            await WebApiJobBank.updateVacantStatus(item.id, {status: value});
+            getVacancies(currentNode.id);
+            message.success('Estatus actualizado');
+        } catch (e) {
+            console.log(e)
+            message.error('Estatus no actualizado');
+        }
+    }
+
+    const actionDuplicate = async (item) =>{
+        const key = 'updatable';
+        try {
+            message.loading({content: 'Duplicando...', key});
+            await WebApiJobBank.duplicateVacant(item.id);
+            getVacancies(currentNode.id);
+            setTimeout(()=>{
+                message.success({content: 'Vacante duplicada', key});
+            },1000)
+        } catch (e) {
+            console.log(e)
+            setTimeout(()=>{
+                message.error({content: 'Vacante no duplicada', key});
+            },1000)
+        }
+    }
+
     const openModalManyDelete = () =>{
         if(itemsToDelete.length > 1){
             setOpenModalDelete(true)
@@ -70,12 +101,12 @@ const TableVacancies = ({
         setItemsToDelete([])
     }
 
-    const getStatus = (item) =>{
-        if(!item.status) return null;
-        const status = (record) => record.value === item.status;
-        let status_ = optionsStatusVacant.find(status);
-        return status_.label;
-    }
+    // const getStatus = (item) =>{
+    //     if(!item.status) return null;
+    //     const status = (record) => record.value === item.status;
+    //     let status_ = optionsStatusVacant.find(status);
+    //     return status_.label;
+    // }
 
     const onChangePage = ({current}) =>{
         setJobbankPage(current)
@@ -120,7 +151,7 @@ const TableVacancies = ({
         return (
             <Menu>
                 <Menu.Item
-                    key={1}
+                    key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/vacancies/edit`,
@@ -130,11 +161,28 @@ const TableVacancies = ({
                     Editar
                 </Menu.Item>
                 <Menu.Item
-                    key={2}
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
+                </Menu.Item>
+                <Menu.Item
+                    key='3'
+                    icon={<CopyOutlined />}
+                    onClick={()=> actionDuplicate(item)}
+                >
+                    Duplicar
+                </Menu.Item>
+                <Menu.Item
+                    key='3'
+                    icon={<SettingOutlined />}
+                    // onClick={()=> router.push({
+                    //     pathname: '/jobbank/vacancies/publication',
+                    //     query: { id: item.id }
+                    // })}
+                >
+                    Configurar publicación
                 </Menu.Item>
             </Menu>
         );
@@ -142,28 +190,37 @@ const TableVacancies = ({
 
   const columns = [
     {
-        title: 'Nombre',
+        title: 'Vacante',
         dataIndex: 'job_position',
         key: 'job_position'
-    },
-    {
-        title: 'Categoría',
-        dataIndex: ['education_and_competence', 'main_category', 'name'],
-        key: ['education_and_competence', 'main_category', 'name']
-        
-    },
-    {
-        title: 'Estatus',
-        render: (item) =>{
-            return (
-                <span>{getStatus(item)}</span>
-            )
-        }
     },
     {
         title: 'Cliente',
         dataIndex: ['customer', 'name'],
         key: ['customer', 'name']
+    },
+    {
+        title: 'Estatus',
+        render: (item) =>{
+            return (
+                // <span>{getStatus(item)}</span>
+                <Select
+                    size='small'
+                    style={{width: 101}}
+                    defaultValue={item.status}
+                    value={item.status}
+                    placeholder='Estatus'
+                    options={optionsStatusVacant}
+                    onChange={(e) => actionStatus(e, item)}
+                />
+            )
+        }
+    },
+    {
+        title: 'Reclutador',
+        dataIndex: ['recruiter', 'full_name'],
+        key: ['recruiter', 'full_name']
+        
     },
     {
         title: ()=> {

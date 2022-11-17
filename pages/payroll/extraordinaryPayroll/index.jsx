@@ -43,9 +43,9 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [optionspPaymentCalendars, setOptionsPaymentCalendars] = useState([]);
   const [personKeys, setPersonKeys] = useState([]);
   const [personId, setPersonId] = useState(null);
-  const [listPersons, setListPersons ] = useState([])
+  const [listPersons, setListPersons] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [movementType, setMovementType] = useState(null)
+  const [movementType, setMovementType] = useState(null);
   const [bonusChristmas, setBonusChristmas] = useState([]);
   const [calendarSelect, setCalendarSelect] = useState(null);
   const [periodSelected, setPeriodSelcted] = useState(null);
@@ -78,7 +78,18 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                   : defaulPhoto
               }
             />
-            {item.payroll_person.person && item.payroll_person.person.full_name}
+            {`${
+              item.payroll_person.person &&
+              item.payroll_person.person.mlast_name
+                ? item.payroll_person.person.first_name +
+                  " " +
+                  item.payroll_person.person.flast_name +
+                  " " +
+                  item.payroll_person.person.mlast_name
+                : item.payroll_person.personfirst_name +
+                  " " +
+                  item.payroll_person.person.flast_name
+            }`}
           </Space>
         </div>
       ),
@@ -93,7 +104,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       title: "Salario diario",
       key: "company",
       className: "cursor_pointer",
-      render: (item) => <div>{item.payroll_person.daily_salary}</div>,
+      render: (item) => (
+        <div>
+          <NumberFormat
+            prefix={"$"}
+            number={item.payroll_person.daily_salary}
+          />
+        </div>
+      ),
     },
     {
       title: "Total percepciones",
@@ -136,8 +154,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             <Button
               size="small"
               onClick={() => {
-                setPersonId(item.payroll_person && item.payroll_person.person.id),
-                setModalVisible(true);
+                setPersonId(
+                  item.payroll_person && item.payroll_person.person.id
+                ),
+                  setModalVisible(true);
               }}
             >
               <PlusOutlined />
@@ -149,8 +169,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
               <Button
                 size="small"
                 onClick={() => {
-                  setPersonId(item.payroll_person && item.payroll_person.person.id),
-                  setModalVisible(true);
+                  setPersonId(
+                    item.payroll_person && item.payroll_person.person.id
+                  ),
+                    setModalVisible(true);
                 }}
               >
                 <PlusOutlined />
@@ -162,8 +184,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     },
   ];
 
-  console.log('Person xd', listPersons)
-  console.log('PersonID && ismodalVsible', personId, modalVisible)
+  console.log("Person xd", listPersons);
+  console.log("PersonID && ismodalVsible", personId, modalVisible);
 
   const renderConceptsTable = (data) => {
     console.log(data);
@@ -399,7 +421,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       periodicity: calendar.periodicity.description,
       period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
     });
-    sendCalculateBonus({ payment_period: period.id, calendar: value });
+    sendCalculateExtraordinaryPayrroll({
+      payment_period: period.id,
+      calendar: value,
+      movementType: movementType,
+    });
   };
 
   const resetState = () => {
@@ -410,11 +436,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setTotalBonus(null);
     setTotalIsr(null);
     setNetPay(null);
+    setMovementType(null);
   };
 
-  const sendCalculateBonus = async (data) => {
+  const sendCalculateExtraordinaryPayrroll = async (data) => {
     setLoading(true);
-    await WebApiPayroll.christmasBonusCaculate(data)
+    await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
         setBonusChristmas(response.data);
         setLoading(false);
@@ -429,9 +456,13 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     selectedRowKeys: personKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setPersonKeys(selectedRowKeys);
-      setListPersons(selectedRows)
+      setListPersons(selectedRows);
     },
   };
+
+  useEffect(() => {
+    if (movementType && calendarSelect) changeCalendar(calendarSelect.id);
+  }, [movementType]);
 
   return (
     <Spin tip="Cargando..." spinning={loading}>
@@ -488,38 +519,39 @@ const ExtraordinaryPayroll = ({ ...props }) => {
               <Card className="form_header">
                 <Form form={form} layout="vertical">
                   <Row gutter={[16, 8]}>
-                    {
-                      periodSelected && 
-
-                      <>
-                        <Col xxs={24} xl={4}>
-                          <Form.Item name="movement_type" label="Tipo de movimento">
-                            <Select
-                              size="large"
-                              style={{ width: "100%" }}
-                              options={optionMovement}
-                              onChange = { (e) => setMovementType(e) }
-                              placeholder="Salario"
-                              notFoundContent={"No se encontraron resultados."}
-                              allowClear
-                            />
-                          </Form.Item>
-                        </Col>
-                      </>
-                    }
-                    <Col xxs={24} xl={4}>
-                      <Form.Item name="calendar" label="Calendario">
-                        <Select
-                          size="large"
-                          style={{ width: "100%" }}
-                          options={optionspPaymentCalendars}
-                          onChange={changeCalendar}
-                          placeholder="Calendarios"
-                          notFoundContent={"No se encontraron resultados."}
-                          allowClear
-                        />
-                      </Form.Item>
-                    </Col>
+                    <>
+                      <Col xxs={24} xl={4}>
+                        <Form.Item
+                          name="movement_type"
+                          label="Tipo de movimento"
+                        >
+                          <Select
+                            size="large"
+                            style={{ width: "100%" }}
+                            options={optionMovement}
+                            onChange={(e) => setMovementType(e)}
+                            placeholder="Salario"
+                            notFoundContent={"No se encontraron resultados."}
+                            allowClear
+                          />
+                        </Form.Item>
+                      </Col>
+                    </>
+                    {movementType && (
+                      <Col xxs={24} xl={4}>
+                        <Form.Item name="calendar" label="Calendario">
+                          <Select
+                            size="large"
+                            style={{ width: "100%" }}
+                            options={optionspPaymentCalendars}
+                            onChange={changeCalendar}
+                            placeholder="Calendarios"
+                            notFoundContent={"No se encontraron resultados."}
+                            allowClear
+                          />
+                        </Form.Item>
+                      </Col>
+                    )}
                     {periodSelected && (
                       <>
                         <Col xxs={24} xl={4}>

@@ -18,7 +18,7 @@ import {
   ruleMaxAge,
   onlyNumeric
 } from '../../../utils/rules';
-import { validateNum } from '../../../utils/functions';
+import { validateNum, validateMaxLength } from '../../../utils/functions';
 import {
   optionsSubproduct,
   optionsTypeJob,
@@ -27,6 +27,7 @@ import {
   optionsStatusVacant
 } from '../../../utils/constant';
 import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 const TabFeatures = ({
   disabledClient,
@@ -70,10 +71,14 @@ const TabFeatures = ({
       turns_to_rotate: null
     })
   }
+
+  const disabledDate = (current) => {
+    return current && current < moment().startOf("day");
+  };
   
   return (
     <Row gutter={[24,0]}>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='customer_id'
           label='Cliente'
@@ -96,7 +101,7 @@ const TabFeatures = ({
           </Select>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='assignment_date'
           label='Fecha de asignación'
@@ -104,12 +109,13 @@ const TabFeatures = ({
           <DatePicker
             style={{width: '100%'}}
             placeholder='Seleccionar fecha'
-            format='YYYY-MM-DD'
+            format='DD-MM-YYYY'
+            disabledDate={disabledDate}
             inputReadOnly
           />
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='product'
           label='Producto'
@@ -118,7 +124,7 @@ const TabFeatures = ({
           <Input maxLength={100} placeholder='Ej. Search'/>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='sub_product'
           label='Subproducto'
@@ -133,7 +139,7 @@ const TabFeatures = ({
           />
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='num_project'
           label='Número de proyecto'
@@ -143,7 +149,8 @@ const TabFeatures = ({
             controls={false}
             maxLength={10}
             placeholder='Número de proyecto'
-            onKeyPress={validateNum}
+            onKeyDown={validateNum}
+            onKeyPress={validateMaxLength}
             style={{
               width: '100%',
               border: '1px solid black'
@@ -151,7 +158,7 @@ const TabFeatures = ({
           />
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='job_position'
           label='Nombre de la vacante'
@@ -163,7 +170,7 @@ const TabFeatures = ({
           <Input maxLength={100} placeholder='Nombre de la vacante'/>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='status'
           label='Estatus de la vacante'
@@ -175,7 +182,7 @@ const TabFeatures = ({
           />
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='qty'
           label='Número de posiciones a reclutar'
@@ -186,7 +193,8 @@ const TabFeatures = ({
             controls={false}
             maxLength={10}
             placeholder='Número de posiciones a reclutar'
-            onKeyPress={validateNum}
+            onKeyDown={validateNum}
+            onKeyPress={validateMaxLength}
             style={{
               width: '100%',
               border: '1px solid black'
@@ -194,16 +202,7 @@ const TabFeatures = ({
           />
         </Form.Item>
       </Col>
-      <Col span={8}>
-        <Form.Item
-          name='description'
-          label='Descripción de la vacante'
-          rules={[ruleWhiteSpace]}
-        >
-          <Input maxLength={200} placeholder='Descripción de la vacante'/>
-        </Form.Item>
-      </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='report_to'
           label='¿A quién reportar?'
@@ -212,7 +211,7 @@ const TabFeatures = ({
           <Input maxLength={100} placeholder='Ej. Jefa de área, Gerente de operaciones, etc.'/>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='working_hours'
           label='Horario laboral'
@@ -221,7 +220,7 @@ const TabFeatures = ({
           <Input maxLength={100} placeholder='Ej. L-V 9:30 AM - 6:00 PM y Sábados de 9:00 AM - 1:00 PM'/>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='type_job'
           label='Tipo de trabajo'
@@ -236,7 +235,7 @@ const TabFeatures = ({
           />
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='type_of_contract'
           label='Tipo de contrato'
@@ -251,7 +250,7 @@ const TabFeatures = ({
           />
         </Form.Item>
       </Col>
-      {/* <Col span={8}>
+      {/* <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item label='Lugar de trabajo'>
           <Select
             placeholder='Lugar de trabajo'
@@ -260,7 +259,7 @@ const TabFeatures = ({
           />
         </Form.Item>
       </Col> */}
-      <Col span={8} className='range_age_content'>
+      <Col xs={24} md={12} xl={8} xxl={6} className='range_age_content'>
         <Form.Item
           name='age_range'
           label='Rango de edad'
@@ -276,7 +275,8 @@ const TabFeatures = ({
                 maxLength={2}
                 controls={false}
                 className='min_age'
-                onKeyPress={validateNum}
+                onKeyDown={validateNum}
+                onKeyPress={validateMaxLength}
                 placeholder='Edad mínima'
               />
             </Form.Item>
@@ -297,14 +297,15 @@ const TabFeatures = ({
                 maxLength={2}
                 controls={false}
                 className='max_age'
-                onKeyPress={validateNum}
+                onKeyDown={validateNum}
+                onKeyPress={validateMaxLength}
                 placeholder='Edad máxima'
               />
             </Form.Item>
           </Input.Group>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='gender'
           label='Género'
@@ -319,7 +320,7 @@ const TabFeatures = ({
           />
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='have_subordinates'
           label='¿Cuántas personas tendrá a su cargo?'
@@ -328,7 +329,7 @@ const TabFeatures = ({
           <Input maxLength={100} placeholder='Ej. 1 - Puesto del subordinado'/>
         </Form.Item>
       </Col>
-      <Col span={8} className='turn_rotative_content'>
+      <Col xs={24} md={12} xl={8} xxl={6} className='turn_rotative_content'>
         <div className='turn_rotative'>
           <label>¿Rola turnos?</label>
           <Form.Item
@@ -346,16 +347,23 @@ const TabFeatures = ({
           <Input placeholder='¿Cuáles?' disabled={!rotativeTurn}/>
         </Form.Item>
       </Col>
-      <Col span={8} style={{display: 'flex'}}>
-        <div className='turn_rotative'>
-          <Form.Item
-            name='requires_travel_availability'
-            valuePropName='checked'
-            noStyle
+      <Col xs={24} md={12} xl={8} xxl={6}>
+        <Form.Item
+          label='¿Disponibilidad para viajar?'
+          name='requires_travel_availability'
+        >
+          <Select
+            allowClear
+            placeholder='Seleccionar una opción'
+            notFoundContent='No se encontraron resultados'
           >
-            <Checkbox/>
-          </Form.Item>
-          <label>¿Disponibilidad para viajar?</label>
+            <Select.Option value={true} key={true}>Sí</Select.Option>
+            <Select.Option value={false} key={false}>No</Select.Option>
+          </Select>
+        </Form.Item>
+      </Col>
+      <Col xs={24} md={12} xl={8} xxl={6} style={{display: 'flex'}}>
+        <div className='turn_rotative'>
           <Form.Item
             name='vo_bo'
             valuePropName='checked'
@@ -365,6 +373,18 @@ const TabFeatures = ({
           </Form.Item>
           <label>Visto bueno</label>
         </div>
+      </Col>
+      <Col span={24}>
+        <Form.Item
+          name='description'
+          label='Descripción de la vacante'
+          rules={[ruleWhiteSpace]}
+        >
+          <Input.TextArea
+            autoSize={{minRows: 5, maxRows: 5}}
+            placeholder='Descripción de la vacante'
+          />
+        </Form.Item>
       </Col>
     </Row>
   )

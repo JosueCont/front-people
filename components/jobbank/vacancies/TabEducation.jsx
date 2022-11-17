@@ -45,7 +45,7 @@ const TabEducation = ({ formVacancies }) => {
 
   return (
     <Row gutter={[24,0]}>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='main_category'
           label='Categoría de la vacante'
@@ -68,7 +68,7 @@ const TabEducation = ({ formVacancies }) => {
           </Select>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='sub_category'
           label='Subcategoría'
@@ -90,7 +90,7 @@ const TabEducation = ({ formVacancies }) => {
           </Select>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='study_level'
           label='Último grado de estudios'
@@ -105,7 +105,7 @@ const TabEducation = ({ formVacancies }) => {
           />
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item name='academics_degree' label='Carrera'>
           <Select
             allowClear
@@ -124,7 +124,7 @@ const TabEducation = ({ formVacancies }) => {
           </Select>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='status_level_study'
           label='Estatus de la carrera'
@@ -139,19 +139,7 @@ const TabEducation = ({ formVacancies }) => {
           />
         </Form.Item>
       </Col>
-      <Col span={8}>
-        <Form.Item
-          name='knowledge'
-          label='Conocimientos requeridos'
-          rules={[ruleWhiteSpace]}
-        >
-          <Input
-            maxLength={400}
-            placeholder='Ej. Amplios conocimientos en canal Food Services'
-          />
-        </Form.Item>
-      </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='competences'
           label='Competencias requeridas'
@@ -173,7 +161,7 @@ const TabEducation = ({ formVacancies }) => {
           </Select>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col xs={24} md={12} xl={8} xxl={6}>
         <Form.Item
           name='languajes'
           label='Idiomas'
@@ -188,44 +176,69 @@ const TabEducation = ({ formVacancies }) => {
           />
         </Form.Item>
       </Col>
-      <Col span={8}>
-        <Form.Item
-          name='language_activities'
-          label='¿Para qué actividades lo utiliza?'
-          rules={[ruleWhiteSpace]}
-        >
-          <Input maxLength={400} placeholder='Especificar según los idiomas seleccionados'/>
-        </Form.Item>
-      </Col>
-      <Col span={8}>
-        <Form.Item
-          name='experiences'
-          label='Experiencia requerida'
-          rules={[ruleWhiteSpace]}
-        >
-          <Input.TextArea
-            placeholder='Separar cada experiencia con una coma'
-            autoSize={{
-              minRows: 5,
-              maxRows: 5,
-            }}
-          />
-        </Form.Item>
-      </Col>
-      <Col span={8}>
-        <Form.Item
-          name='technical_skills'
-          label='Habilidades técnicas'
-          rules={[ruleWhiteSpace]}
-        >
-          <Input.TextArea
-            placeholder='Separar cada habilidad técnica con una coma'
-            autoSize={{
-              minRows: 5,
-              maxRows: 5,
-            }}
-          />
-        </Form.Item>
+      <Col span={24}>
+        <Row gutter={[24,0]}>
+          <Col xs={24} md={12} xl={8} xxl={6}>
+            <Form.Item
+              name='language_activities'
+              label='¿Para qué actividades lo utiliza?'
+              rules={[ruleWhiteSpace]}
+            >
+              <Input.TextArea
+                placeholder='Especificar según los idiomas seleccionados'
+                autoSize={{
+                  minRows: 5,
+                  maxRows: 5,
+                }}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={12} xl={8} xxl={6}>
+            <Form.Item
+              name='knowledge'
+              label='Conocimientos requeridos'
+              rules={[ruleWhiteSpace]}
+            >
+              <Input.TextArea
+                placeholder='Ej. Amplios conocimientos en canal Food Services'
+                autoSize={{
+                  minRows: 5,
+                  maxRows: 5,
+                }}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={12} xl={8} xxl={6}>
+            <Form.Item
+              name='experiences'
+              label='Experiencia requerida'
+              rules={[ruleWhiteSpace]}
+            >
+              <Input.TextArea
+                placeholder='Separar cada experiencia con una coma'
+                autoSize={{
+                  minRows: 5,
+                  maxRows: 5,
+                }}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={12} xl={8} xxl={6}>
+            <Form.Item
+              name='technical_skills'
+              label='Habilidades técnicas'
+              rules={[ruleWhiteSpace]}
+            >
+              <Input.TextArea
+                placeholder='Separar cada habilidad técnica con una coma'
+                autoSize={{
+                  minRows: 5,
+                  maxRows: 5,
+                }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
       </Col>
     </Row>
   )

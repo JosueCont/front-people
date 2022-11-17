@@ -12,6 +12,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { ruleWhiteSpace } from '../../../utils/rules';
+import { useRouter } from 'next/router';
 
 const SearchClients = ({
     user,
@@ -20,6 +21,7 @@ const SearchClients = ({
     setJobbankFilters
 }) => {
 
+    const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
     
@@ -44,7 +46,7 @@ const SearchClients = ({
     const createFilters = (obj) =>{
         let query = '';
         if(obj.name) query += `&name__unaccent__icontains=${obj.name}`;
-        if(obj.is_active) query += `&is_active=${obj.is_active}`;
+        if(obj.is_active !== undefined) query += `&is_active=${obj.is_active}`;
         return query;
     }
 
@@ -89,7 +91,7 @@ const SearchClients = ({
                                 >
                                     <Select
                                         allowClear
-                                        placeholder='Seleccionar un estatus'
+                                        placeholder='Estatus'
                                     >
                                         <Select.Option value={true} key={true}>Activo</Select.Option>
                                         <Select.Option value={false} key={false}>Inactivo</Select.Option>
@@ -108,7 +110,7 @@ const SearchClients = ({
                     </Form>
                 </Col>
                 <Col span={4} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <Button onClick={()=> setOpenModal(true)}>Agregar</Button>
+                    <Button onClick={()=> router.push({pathname: '/jobbank/clients/add'})}>Agregar</Button>
                 </Col>
             </Row>
             <ModalClients

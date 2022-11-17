@@ -14,9 +14,9 @@ import {
     optionsStatusVacant,
     optionsJobBank
 } from '../../../utils/constant';
-import { validateNum } from '../../../utils/functions';
+import moment from 'moment';
+import { validateNum, getFullName, validateMaxLength } from '../../../utils/functions';
 import { useSelector } from 'react-redux';
-import { getFullName } from '../../../utils/functions';
 import { ruleRequired, ruleWhiteSpace, numCommaAndDot } from '../../../utils/rules';
 
 const FormStrategies = ({
@@ -27,8 +27,10 @@ const FormStrategies = ({
     const {
         load_clients_options,
         load_vacancies_options,
+        load_jobvacant_options,
         list_clients_options,
-        list_vacancies_options
+        list_vacancies_options,
+        list_jobvacant_options,
     } = useSelector(state => state.jobBankStore);
     const {
         load_persons,
@@ -48,7 +50,7 @@ const FormStrategies = ({
             const setVal = (obj) => formStrategies.setFieldsValue(obj);
             let validation = !salary || !percent; 
             if(validation) return setVal(objReset);
-            let salary_ = parseFloat(salary.replace(',',''));
+            let salary_ = parseFloat(salary.replaceAll(',',''));
             let amount = (salary_/100) * percent;
             let formatAmount = amount.toLocaleString("es-MX", {maximumFractionDigits: 4});
             let objSet = { amount_to_collect: formatAmount };
@@ -68,9 +70,13 @@ const FormStrategies = ({
         return list_vacancies_options.filter(options);
     }
 
+    const disabledDate = (current) => {
+        return current && current < moment().startOf("day");
+    };
+
     return (
         <Row gutter={[24,0]}>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='assignment_date'
                     label='Fecha de asignación'
@@ -78,12 +84,13 @@ const FormStrategies = ({
                     <DatePicker
                         style={{width: '100%'}}
                         placeholder='Seleccionar una fecha'
-                        format='YYYY-MM-DD'
+                        disabledDate={disabledDate}
+                        format='DD-MM-YYYY'
                         inputReadOnly
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='recruiter'
                     label='Reclutador'
@@ -105,7 +112,7 @@ const FormStrategies = ({
                     </Select>
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='product'
                     label='Producto'
@@ -114,7 +121,7 @@ const FormStrategies = ({
                     <Input maxLength={100} placeholder='Ej. Search'/>
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='sub_product'
                     label='Subproducto'
@@ -129,7 +136,7 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='sale_type'
                     label='Tipo de venta'
@@ -144,7 +151,7 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='business_executive'
                     label='Ejecutivo comercial'
@@ -166,7 +173,7 @@ const FormStrategies = ({
                     </Select>
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='num_project'
                     label='Número de proyecto'
@@ -176,7 +183,8 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Número de proyecto'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
@@ -184,7 +192,7 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='customer'
                     label='Cliente'
@@ -208,7 +216,7 @@ const FormStrategies = ({
                     </Select>
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='vacant'
                     label='Vacante'
@@ -231,17 +239,19 @@ const FormStrategies = ({
                     </Select>
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='qty_vacants'
                     label='Número de vacantes'
+                    rules={[ruleRequired]}
                 >
                     <InputNumber
                         type='number'
                         maxLength={10}
                         controls={false}
                         placeholder='Número de vacantes'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
@@ -249,7 +259,7 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='vacant_status'
                     label='Estatus de la vacante'
@@ -264,7 +274,7 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='salary'
                     label='Sueldo (MXN)'
@@ -277,11 +287,12 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='percentage_to_collect'
                     label='Porcentaje a cobrar'
                     rules={[
+                        ruleRequired,
                         {type: 'number', min: 1, message: 'Mínimo de porcentaje mayor o igual a 1'},
                         {type: 'number', max: 100, message: 'Máximo de porcentaje menor o igual a 100'}
                     ]}
@@ -291,7 +302,8 @@ const FormStrategies = ({
                         maxLength={3}
                         controls={false}
                         placeholder='Porcentaje a cobrar'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
@@ -299,7 +311,7 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='amount_to_collect'
                     label='Monto a cobrar'
@@ -312,17 +324,17 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='estimated_billing'
                     label='Estimado de facturación'
                 >
                     <InputNumber
-                        type='number'
-                        maxLength={10}
+                        maxLength={20}
                         controls={false}
                         placeholder='Estimado de facturación'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
@@ -330,7 +342,7 @@ const FormStrategies = ({
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='candidates_date_send'
                     label='Fecha de envío de candidatos'
@@ -338,40 +350,33 @@ const FormStrategies = ({
                     <DatePicker
                         style={{width: '100%'}}
                         placeholder='Seleccionar una fecha'
-                        format='YYYY-MM-DD'
+                        format='DD-MM-YYYY'
                         inputReadOnly
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
-                    name='job_bank'
+                    name='job_vacancies'
                     label='Bolsas de empleo'
-                >
+                >   
                     <Select
                         mode='multiple'
-                        maxTagCount={1}
+                        disabled={load_jobvacant_options}
+                        loading={load_jobvacant_options}
                         placeholder='Seleccionar las opciones'
                         notFoundContent='No se encontraron resultados'
-                        optionFilterProp='label'
-                        options={optionsJobBank}
-                    />
+                        optionFilterProp='children'
+                    >
+                        {list_jobvacant_options.length > 0 && list_jobvacant_options.map(item => (
+                            <Select.Option value={item.id} key={item.id}>
+                                {item.name}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 </Form.Item>
             </Col>
-            <Col span={6}>
-                <Form.Item
-                    name='searches'
-                    label='Búsquedas'
-                    tooltip='Nombre(s) de clientes para encontrar una vacante similar'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input
-                        maxLength={100}
-                        placeholder='Nombre(s) de clientes para encontrar una vacante similar'
-                    />
-                </Form.Item>
-            </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='candidate_acceptance_date'
                     label='Fecha de aceptación de candidatos'
@@ -379,12 +384,12 @@ const FormStrategies = ({
                     <DatePicker
                         style={{width: '100%'}}
                         placeholder='Seleccionar una fecha'
-                        format='YYYY-MM-DD'
+                        format='DD-MM-YYYY'
                         inputReadOnly
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='hiring_rejection_date'
                     label='Fecha de contratación / cancelación'
@@ -392,12 +397,12 @@ const FormStrategies = ({
                     <DatePicker
                         style={{width: '100%'}}
                         placeholder='Seleccionar una fecha'
-                        format='YYYY-MM-DD'
+                        format='DD-MM-YYYY'
                         inputReadOnly
                     />
                 </Form.Item>
             </Col>
-            <Col span={6}>
+            {/* <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='active_vacancy_days'
                     label='Días activos de la vacante'
@@ -407,15 +412,16 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Días activos de la vacante'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
                         }}
                     />
                 </Form.Item>
-            </Col>
-            <Col span={6}>
+            </Col> */}
+            {/* <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='candidate_days_send'
                     label='Días envío de candidatos'
@@ -425,15 +431,16 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Días envío de candidatos'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
                         }}
                     />
                 </Form.Item>
-            </Col>
-            <Col span={6}>
+            </Col> */}
+            {/* <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='acceptance_days'
                     label='Días aceptación'
@@ -443,15 +450,16 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Días aceptación'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
                         }}
                     />
                 </Form.Item>
-            </Col>
-            <Col span={6}>
+            </Col> */}
+            {/* <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='hiring_days'
                     label='Días contratación'
@@ -461,45 +469,61 @@ const FormStrategies = ({
                         maxLength={10}
                         controls={false}
                         placeholder='Días contratación'
-                        onKeyPress={validateNum}
+                        onKeyDown={validateNum}
+                        onKeyPress={validateMaxLength}
                         style={{
                             width: '100%',
                             border: '1px solid black'
                         }}
                     />
                 </Form.Item>
-            </Col>
-            <Col span={6}>
-                <Form.Item
-                    name='target_company'
-                    label='Empresas target'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input.TextArea
-                        placeholder='Ej. Empresas del sector de consumo de alimentos y bebida'
-                        maxLength={400}
-                        autoSize={{
-                            minRows: 4,
-                            maxRows: 4,
-                        }}
-                    />
-                </Form.Item>
-            </Col>
-            <Col span={6}>
-                <Form.Item
-                    name='comments'
-                    label='Comentarios'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input.TextArea
-                        placeholder='Comentarios'
-                        maxLength={400}
-                        autoSize={{
-                            minRows: 4,
-                            maxRows: 4,
-                        }}
-                    />
-                </Form.Item>
+            </Col> */}
+            <Col span={24}>
+                <Row gutter={[24,0]}>
+                    <Col xs={24} md={12} xl={8}>
+                        <Form.Item
+                            name='searches'
+                            label='Búsquedas'
+                            tooltip='Nombre(s) de clientes para encontrar una vacante similar'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                autoSize={{ minRows: 4, maxRows: 4 }}
+                                placeholder='Nombre(s) de clientes para encontrar una vacante similar'
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={8}>
+                        <Form.Item
+                            name='target_company'
+                            label='Empresas target'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                placeholder='Ej. Empresas del sector de consumo de alimentos y bebida'
+                                autoSize={{
+                                    minRows: 4,
+                                    maxRows: 4,
+                                }}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={8}>
+                        <Form.Item
+                            name='comments'
+                            label='Comentarios'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                placeholder='Comentarios'
+                                autoSize={{
+                                    minRows: 4,
+                                    maxRows: 4,
+                                }}
+                            />
+                        </Form.Item>
+                    </Col>
+                </Row>
             </Col>
         </Row>
     )

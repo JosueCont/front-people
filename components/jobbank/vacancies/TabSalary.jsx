@@ -30,7 +30,7 @@ const TabSalary = ({ formVacancies }) => {
 
     return (
         <Row gutter={[24,0]}>
-            <Col span={8}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='gross_salary'
                     label='Sueldo mensual bruto (MXN)'
@@ -43,7 +43,7 @@ const TabSalary = ({ formVacancies }) => {
                     />
                 </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='payment_period'
                     label='Periodo de pago'
@@ -58,7 +58,7 @@ const TabSalary = ({ formVacancies }) => {
                     />
                 </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} md={12} xl={8} xxl={6}>
                 <Form.Item
                     name='economic_benefits'
                     label='Prestaciones'
@@ -74,44 +74,58 @@ const TabSalary = ({ formVacancies }) => {
                     />
                 </Form.Item>
             </Col>
-            <Col span={8}>
-                <Form.Item
-                    name='economic_benefits_description'
-                    label='Descripción de prestaciones'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input
-                        disabled={benefitSelected !== 3}
-                        placeholder='Ej. Vales de despensa, seguro de vida, gastos médicos, etc.'
-                    />
-                </Form.Item>
-            </Col>
-            <Col span={8}>
-                <Form.Item
-                    name='benefits'
-                    label='Beneficios'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input placeholder='Transporte, servicio de comedor, etc.'/>
-                </Form.Item>
-            </Col>
-            <Col span={8}>
-                <Form.Item
-                    name='rewards'
-                    label='Bonos'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input placeholder='Especificar los bonos a otorgar'/>
-                </Form.Item>
-            </Col>
-            <Col span={8}>
-                <Form.Item
-                    name='work_tools'
-                    label='Herramientas de trabajo'
-                    rules={[ruleWhiteSpace]}
-                >
-                    <Input placeholder='Uniformes, equipos de cómputo, etc.'/>
-                </Form.Item>
+            <Col span={24}>
+                <Row gutter={[24,0]}>
+                    <Col xs={24} md={12} xl={8} xxl={6}>
+                        <Form.Item
+                            name='economic_benefits_description'
+                            label='Descripción de prestaciones'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                disabled={benefitSelected !== 3}
+                                placeholder='Ej. Vales de despensa, seguro de vida, gastos médicos, etc.'
+                                autoSize={{minRows: 5, maxRows: 5}}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={8} xxl={6}>
+                        <Form.Item
+                            name='benefits'
+                            label='Beneficios'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                placeholder='Transporte, servicio de comedor, etc.'
+                                autoSize={{minRows: 5, maxRows: 5}}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={8} xxl={6}>
+                        <Form.Item
+                            name='rewards'
+                            label='Bonos'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                placeholder='Especificar los bonos a otorgar'
+                                autoSize={{minRows: 5, maxRows: 5}}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} md={12} xl={8} xxl={6}>
+                        <Form.Item
+                            name='work_tools'
+                            label='Herramientas de trabajo'
+                            rules={[ruleWhiteSpace]}
+                        >
+                            <Input.TextArea
+                                placeholder='Uniformes, equipos de cómputo, etc.'
+                                autoSize={{minRows: 5, maxRows: 5}}
+                            />
+                        </Form.Item>
+                    </Col>
+                </Row>
             </Col>
         </Row>
     )

@@ -276,13 +276,16 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 12px;
 }
 
 .head-list-files {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 6px;
+    padding-bottom: 8px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
@@ -491,27 +494,122 @@
     border-color: #ffff;
 }
 
-.card-settings{
+.list-access{
     display: flex;
-    justify-content: center;
     align-items: center;
     flex-flow: row wrap;
     gap: 24px;
 }
 
-.card-catalog{
-    text-align: center;
-    width: 200px;
-    background: #f0f0f0;
-    padding: 12px 0px;
+.card-access{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    background: var(--primaryColor);
+    padding: 24px;
     border-radius: 12px;
     box-shadow: -3px 3px 5px 0px rgb(0 0 0 / 20%);
     transition: all 0.3s ease-out;
+    cursor: pointer;
 }
 
-.card-catalog:hover{
+.card-access .anticon{
+    color: #ffff;
+    font-size: 2rem;
+}
+
+.card-access p{
+    margin-bottom: 0px;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #ffff;
+}
+
+.card-access:hover{
     transition: all 0.3s ease-in;
     transform: translateY(-5px);
+}
+
+.tabs-connections > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
+    padding-top: 24px;
+    padding-right: 24px;
+    transition: all 0.5s;
+}
+.tabs-connections > .ant-tabs-card .ant-tabs-tab{
+    background: transparent;
+    border: none;
+    padding: 12px 24px;
+}
+
+.tabs-connections > div.ant-tabs-card div.ant-tabs-nav-list >  div.ant-tabs-tab:hover{
+    color: rgba(0, 0, 0, 0.25)!important;
+}
+
+.tabs-connections > .ant-tabs-card .ant-tabs-tab-active {
+    background: #f0f0f0;
+    border-color: #f0f0f0;
+    transition: all 0.5s;
+}
+
+.name-connection{
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+button.btn-login-facebook{
+    border-color: transparent!important;
+    background: linear-gradient(
+        to bottom right,
+        #3b5998,
+        #4e71ba
+    )
+}
+
+button.btn-login-facebook:hover,
+button.btn-login-facebook:visited,
+button.btn-login-facebook:active,
+button.btn-login-facebook:focus{
+    border-color: transparent!important;
+    background: linear-gradient(
+        to bottom right,
+        #3b5998,
+        #4e71ba
+    );
+}
+
+button.btn-login-facebook[disabled],
+button.btn-login-facebook[disabled]:hover,
+button.btn-login-facebook[disabled]:focus,
+button.btn-login-facebook[disabled]:active {
+    color: rgba(0, 0, 0, 1);
+    border-color: #d9d9d9;
+    background: linear-gradient(
+        to bottom right,
+        #3b5998,
+        #4e71ba
+    );
+    text-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+div.estatus-connection-error{
+    padding: 4px 15px;
+    color: #f0f0f0;
+    background-color: #dc3545
+}
+
+div.estatus-connection-success{
+    padding: 4px 15px;
+    color: #f0f0f0;
+    background-color: #28a745
+}
+
+div.estatus-connection p{
+    margin-bottom: 0px;
 }
 
 /* Termina diseño bolsa de trabajo */

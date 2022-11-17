@@ -4,8 +4,7 @@ import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
-import SearchCatalogs from '../../../../components/jobbank/catalogs/SearchCatalogs';
-import TableCatalogs from '../../../../components/jobbank/catalogs/TableCatalogs';
+import ListCatalogs from '../../../../components/jobbank/catalogs/ListCatalogs';
 
 const index = ({
     currentNode
@@ -29,10 +28,7 @@ const index = ({
                 >Configuraciones</Breadcrumb.Item>
                 <Breadcrumb.Item>Catálogos</Breadcrumb.Item>
             </Breadcrumb>
-            <div style={{display: 'flex', flexDirection: 'column', gap: '24px'}}>
-                <SearchCatalogs/>
-                <TableCatalogs/>
-            </div>
+            <ListCatalogs/>
         </MainLayout>
     )
 }

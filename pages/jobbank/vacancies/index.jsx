@@ -10,11 +10,13 @@ import {
     getVacancies,
     getClientsOptions
 } from '../../../redux/jobBankDuck';
+import { getPersonsCompany } from '../../../redux/UserDuck';
 
 const index = ({
     getVacancies,
     currentNode,
-    getClientsOptions
+    getClientsOptions,
+    getPersonsCompany
 }) => {
 
     const router = useRouter();
@@ -23,6 +25,7 @@ const index = ({
         if(currentNode){
             getVacancies(currentNode.id);
             getClientsOptions(currentNode.id);
+            getPersonsCompany(currentNode.id);
         }
     },[currentNode])
 
@@ -61,6 +64,7 @@ const mapState = (state) =>{
 export default connect(
     mapState,{
         getVacancies,
-        getClientsOptions
+        getClientsOptions,
+        getPersonsCompany
     }
 )(withAuthSync(index));
