@@ -11,6 +11,7 @@ import {
   Select,
   Space,
   Spin,
+  Steps,
   Table,
   Typography,
 } from "antd";
@@ -22,6 +23,13 @@ import {
   UploadOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
+  FileExcelOutlined,
+  FileDoneOutlined,
+  UnlockOutlined,
+  LockOutlined,
+  DownloadOutlined,
+  StopOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
@@ -33,6 +41,9 @@ import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { Global } from "@emotion/core";
 import { messageError, optionMovement } from "../../../utils/constant";
+import SelectDepartment from "../../../components/selects/SelectDepartment";
+import SelectJob from "../../../components/selects/SelectJob";
+import GenericModal from "../../../components/modal/genericModal";
 
 const ExtraordinaryPayroll = ({ ...props }) => {
   const route = useRouter();
@@ -46,7 +57,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [listPersons, setListPersons] = useState([]);
   const [loading, setLoading] = useState(false);
   const [movementType, setMovementType] = useState(null);
-  const [bonusChristmas, setBonusChristmas] = useState([]);
+  const [extraOrdinaryPayroll, setExtraOrdinaryPayroll] = useState([]);
   const [calendarSelect, setCalendarSelect] = useState(null);
   const [periodSelected, setPeriodSelcted] = useState(null);
   const [totalBonus, setTotalBonus] = useState(null);
@@ -58,6 +69,10 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [step, setStep] = useState(0);
   const [nextStep, setNextStep] = useState(true);
   const [previousStep, setPreviuosStep] = useState(false);
+  const [job, setJob] = useState(null);
+  const [department, setDepartment] = useState(null);
+  const [cfdiCancel, setCfdiCancel] = useState([]);
+  const [genericModal, setGenericModal] = useState(false);
 
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
@@ -148,9 +163,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       className: "cell-actions",
       render: (item) => (
         <>
-          {item.payroll_cfdi_person &&
-          item.payroll_cfdi_person.is_open &&
-          step == 0 ? (
+          {(movementType == 2 || movementType == 3) && (
             <Button
               size="small"
               onClick={() => {
@@ -162,30 +175,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             >
               <PlusOutlined />
             </Button>
-          ) : (
-            isOpen &&
-            step == 0 &&
-            !consolidated && (
-              <Button
-                size="small"
-                onClick={() => {
-                  setPersonId(
-                    item.payroll_person && item.payroll_person.person.id
-                  ),
-                    setModalVisible(true);
-                }}
-              >
-                <PlusOutlined />
-              </Button>
-            )
           )}
         </>
       ),
     },
   ];
-
-  console.log("Person xd", listPersons);
-  console.log("PersonID && ismodalVsible", personId, modalVisible);
 
   const renderConceptsTable = (data) => {
     console.log(data);
@@ -430,7 +424,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
   const resetState = () => {
     form.resetFields();
-    setBonusChristmas([]);
+    setExtraOrdinaryPayroll([]);
     setCalendarSelect(null);
     setPeriodSelcted(null);
     setTotalBonus(null);
@@ -443,7 +437,8 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setLoading(true);
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
-        setBonusChristmas(response.data);
+        console.log(response.data);
+        setExtraOrdinaryPayroll(response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -596,6 +591,35 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           </Form.Item>
                         </Col>
                         <Col xxs={24} xl={4}>
+                          <SelectDepartment
+                            size={"large"}
+                            onChange={(value) =>
+                              value && value != undefined
+                                ? setDepartment(value)
+                                : setDepartment(null)
+                            }
+                          />
+                        </Col>
+                        <Col xxs={24} xl={4}>
+                          <SelectJob
+                            size={"large"}
+                            onChange={(value) =>
+                              value && value != undefined
+                                ? setJob(value)
+                                : setJob(null)
+                            }
+                          />
+                        </Col>
+                        {(job || department) && (
+                          <Col xxs={1} xl={1}>
+                            <Button
+                              style={{ marginTop: "30px", marginRight: 20 }}
+                              size="large"
+                              icon={<SearchOutlined />}
+                            />
+                          </Col>
+                        )}
+                        <Col xxs={24} xl={4}>
                           <Button
                             style={{ marginTop: "30px" }}
                             size="large"
@@ -629,8 +653,251 @@ const ExtraordinaryPayroll = ({ ...props }) => {
             </Col>
           </Row>
           <Col span={24}>
-            <Card className="card_table">
-              {/* {step == 3 ? (
+            {calendarSelect && (
+              <>
+                <div style={{ marginTop: "10px" }}>
+                  <Steps current={step}>
+                    <Steps.Step
+                      title="Calcular"
+                      description="Cálculo de nómina."
+                    />
+                    <Steps.Step
+                      title="Cerrar"
+                      description="Cierre de nómina."
+                    />
+                    <Steps.Step title="Timbrar" description="Timbre fiscal." />
+                    <Steps.Step title="Comprobantes" description="XML y PDF." />
+                  </Steps>
+                  <div
+                    style={{
+                      backgroundColor: "#fafafa",
+                      borderRadius: "15px",
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Row
+                      justify="start"
+                      style={{
+                        textAlign: "center",
+                        padding: "20px",
+                      }}
+                    >
+                      <Col md={4}>
+                        <Button
+                          size="large"
+                          block
+                          htmlType="button"
+                          icon={<FileExcelOutlined />}
+                          // onClick={() => {
+                          //   isOpen
+                          //     ? downLoadFileBlob(
+                          //         `${getDomain(
+                          //           API_URL_TENANT
+                          //         )}/payroll/payroll-calculus`,
+                          //         "Nomina.xlsx",
+                          //         "POST",
+                          //         {
+                          //           payment_period: periodSelected.id,
+                          //           extended_report: "True",
+                          //           department: department,
+                          //           job: job,
+                          //           payroll: payroll.map((item) => {
+                          //             item.person_id = item.person.id;
+                          //             return item;
+                          //           }),
+                          //         }
+                          //       )
+                          //     : downLoadFileBlob(
+                          //         `${getDomain(
+                          //           API_URL_TENANT
+                          //         )}/payroll/payroll-report?payment_period=${
+                          //           periodSelected.id
+                          //         }`,
+                          //         "Nomina.xlsx",
+                          //         "GET"
+                          //       );
+                          // }}
+                        >
+                          Descargar nómina
+                        </Button>
+                      </Col>
+                      {/* {payroll.length > 0 && !genericModal && (
+                        <>
+                          {consolidated && (
+                            <>
+                              <Col md={5} offset={1}>
+                                <Button
+                                  size="large"
+                                  block
+                                  icon={<FileExcelOutlined />}
+                                  htmlType="button"
+                                  // onClick={() =>
+                                  //   downLoadFileBlob(
+                                  //     `${getDomain(
+                                  //       API_URL_TENANT
+                                  //     )}/payroll/consolidated-payroll-report?period=${
+                                  //       periodSelected.id
+                                  //     }`,
+                                  //     "hoja_rayas.xlsx",
+                                  //     "GET"
+                                  //   )
+                                  // }
+                                >
+                                  Descargar hoja de raya
+                                </Button>
+                              </Col>
+                            </>
+                          )}
+
+                          {step == 0 && calculate && (
+                            <Col md={5} offset={1}>
+                              <Button
+                                size="large"
+                                block
+                                htmlType="button"
+                                onClick={() => reCalculatePayroll([...payroll])}
+                              >
+                                Calcular
+                              </Button>
+                            </Col>
+                          )}
+                          {step == 2 &&
+                            consolidated &&
+                            consolidated.status <= 2 && (
+                              <Col md={5} offset={1}>
+                                <Button
+                                  size="large"
+                                  block
+                                  icon={<UnlockOutlined />}
+                                  htmlType="button"
+                                  // onClick={() =>
+                                  //   setMessageModal(5, {
+                                  //     title: "Abrir nómina",
+                                  //     description:
+                                  //       "Al abrir la nómina tendras acceso a recalcular los salarios de las personas. Para poder completar la reapertura es necesario capturar el motivo por el caul se abrira.",
+                                  //     type_alert: "warning",
+                                  //     action: () => openPayroll(1),
+                                  //     title_action_button: "Abrir nómina",
+                                  //     components: (
+                                  //       <>
+                                  //         <Row
+                                  //           style={{
+                                  //             width: "100%",
+                                  //             marginTop: "5px",
+                                  //           }}
+                                  //         >
+                                  //           <Input.TextArea
+                                  //             maxLength={290}
+                                  //             id="motive"
+                                  //             placeholder="Capture el motivo de reapertura."
+                                  //           />
+                                  //         </Row>
+                                  //       </>
+                                  //     ),
+                                  //   })
+                                  // }
+                                >
+                                  Abrir
+                                </Button>
+                              </Col>
+                            )}
+                          {step >= 1 && (
+                            <>
+                              {((isOpen &&
+                                consolidated &&
+                                consolidated.status <= 2) ||
+                                (isOpen && !consolidated)) && (
+                                <Col md={5} offset={1}>
+                                  <Button
+                                    size="large"
+                                    block
+                                    icon={<LockOutlined />}
+                                    htmlType="button"
+                                    onClick={() => setMessageModal(2)}
+                                  >
+                                    Cerrar nómina
+                                  </Button>
+                                </Col>
+                              )}
+                              {step == 2 &&
+                                consolidated &&
+                                consolidated.status < 3 && (
+                                  <Col md={5} offset={1}>
+                                    <Button
+                                      size="large"
+                                      block
+                                      icon={<FileDoneOutlined />}
+                                      htmlType="button"
+                                      onClick={() => setMessageModal(3)}
+                                    >
+                                      Timbrar nómina
+                                    </Button>
+                                  </Col>
+                                )}
+                              {step == 3 && (
+                                <Col md={5} offset={1}>
+                                  <Button
+                                    size="large"
+                                    block
+                                    icon={<StopOutlined />}
+                                    htmlType="button"
+                                    onClick={() =>
+                                      setMessageModal(5, {
+                                        title: "Cancelar nómina",
+                                        description:
+                                          "Al cancelar nómina se debera iniciar el proceso de cierre de nómina de nuevo. Para poder completar la cancelación es necesario capturar el motivo por el caul se cancela.",
+                                        type_alert: "warning",
+                                        action: () => cancelStamp(),
+                                        title_action_button: "Cancelar nómina",
+                                        components: (
+                                          <>
+                                            <Row
+                                              style={{
+                                                width: "100%",
+                                                marginTop: "5px",
+                                              }}
+                                            >
+                                              <Input.TextArea
+                                                maxLength={290}
+                                                id="motive"
+                                                placeholder="Capture el motivo de cancelacion."
+                                              />
+                                            </Row>
+                                          </>
+                                        ),
+                                      })
+                                    }
+                                  >
+                                    Cancelar todos los cfdis
+                                  </Button>
+                                </Col>
+                              )}
+                            </>
+                          )}
+                        </>
+                      )} */}
+                    </Row>
+                  </div>
+                  {previousStep && (
+                    <Button
+                      style={{ margin: "8px" }}
+                      onClick={() => changeStep(false)}
+                    >
+                      Previo
+                    </Button>
+                  )}
+                  {nextStep && (
+                    <Button
+                      style={{ margin: "8px" }}
+                      onClick={() => changeStep(true)}
+                    >
+                      Siguiente
+                    </Button>
+                  )}
+                </div>
+
+                <Card className="card_table">
+                  {/* {step == 3 ? (
               <CfdiVaucher
                 calendar={calendarSelect.id}
                 period={periodSelected.id}
@@ -639,77 +906,110 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                 clickCancelStamp={cancelOneStamp}
               />
             ) : ( */}
-              <>
-                <Table
-                  className="headers_transparent"
-                  dataSource={bonusChristmas.map((item) => {
-                    item.key = item?.payrrol_person?.person.id;
-                    return item;
-                  })}
-                  columns={persons}
-                  expandable={{
-                    expandedRowRender: (item) => renderConceptsTable(item),
-                    expandIcon: ({ expanded, onExpand, record }) =>
-                      expanded ? (
-                        <DownOutlined onClick={(e) => onExpand(record, e)} />
-                      ) : (
-                        <RightOutlined onClick={(e) => onExpand(record, e)} />
-                      ),
-                  }}
-                  hideExpandIcon
-                  loading={loading}
-                  locale={{
-                    emptyText: loading
-                      ? "Cargando..."
-                      : "No se encontraron resultados.",
-                  }}
-                  rowSelection={
-                    movementType === 2 || movementType === 3
-                      ? rowSelectionPerson
-                      : null
-                  }
-                />
-                {totalBonus != null && totalIsr != null ? (
-                  <Col sm={24} md={24} lg={24}>
-                    <Row justify="end">
-                      <Col span={4} style={{ fontWeight: "bold" }}>
-                        <div>Total de aguinaldos:</div>
-                        <div>Total de ISR:</div>
-                        <div>Total a pagar:</div>
+                  <>
+                    <Table
+                      className="headers_transparent"
+                      dataSource={extraOrdinaryPayroll.map((item) => {
+                        item.key = item?.payrrol_person?.person.id;
+                        return item;
+                      })}
+                      columns={persons}
+                      expandable={{
+                        expandedRowRender: (item) => renderConceptsTable(item),
+                        expandIcon: ({ expanded, onExpand, record }) =>
+                          expanded ? (
+                            <DownOutlined
+                              onClick={(e) => onExpand(record, e)}
+                            />
+                          ) : (
+                            <RightOutlined
+                              onClick={(e) => onExpand(record, e)}
+                            />
+                          ),
+                      }}
+                      hideExpandIcon
+                      loading={loading}
+                      locale={{
+                        emptyText: loading
+                          ? "Cargando..."
+                          : "No se encontraron resultados.",
+                      }}
+                      rowSelection={
+                        movementType === 2 || movementType === 3
+                          ? rowSelectionPerson
+                          : null
+                      }
+                    />
+                    {totalBonus != null && totalIsr != null ? (
+                      <Col sm={24} md={24} lg={24}>
+                        <Row justify="end">
+                          <Col span={4} style={{ fontWeight: "bold" }}>
+                            <div>Total de aguinaldos:</div>
+                            <div>Total de ISR:</div>
+                            <div>Total a pagar:</div>
+                          </Col>
+                          <Col span={3} style={{ fontWeight: "bold" }}>
+                            <div>
+                              <NumberFormat prefix={"$"} number={totalBonus} />
+                            </div>
+                            <div>
+                              <NumberFormat prefix={"$"} number={totalIsr} />
+                            </div>
+                            <div>
+                              <NumberFormat prefix={"$"} number={netPay} />
+                            </div>
+                          </Col>
+                        </Row>
                       </Col>
-                      <Col span={3} style={{ fontWeight: "bold" }}>
-                        <div>
-                          <NumberFormat prefix={"$"} number={totalBonus} />
-                        </div>
-                        <div>
-                          <NumberFormat prefix={"$"} number={totalIsr} />
-                        </div>
-                        <div>
-                          <NumberFormat prefix={"$"} number={netPay} />
-                        </div>
-                      </Col>
-                    </Row>
-                  </Col>
-                ) : null}
+                    ) : null}
+                  </>
+                  {/* )} */}
+                </Card>
               </>
-              {/* )} */}
-            </Card>
+            )}
           </Col>
         </div>
       </MainLayout>
       {personId && (
         <ModalConceptsPayroll
+          extraOrdinary={true}
           visible={modalVisible}
           setVisible={setModalVisible}
-          // calendar={{
-          //   payment_period: periodSelected.id,
-          // }}
+          calendar={{
+            payment_period: periodSelected.id,
+          }}
           person_id={personId}
-          // payroll={payroll}
+          payroll={extraOrdinaryPayroll}
           setLoading={setLoading}
-          // sendCalculatePayroll={sendCalculatePayroll}
+          sendCalculatePayroll={sendCalculateExtraordinaryPayrroll}
           // payrollType={payrollType}
         />
+      )}
+      {genericModal && (
+        <GenericModal
+          visible={genericModal}
+          setVisible={setGenericModal}
+          // title={infoGenericModal.title}
+          // viewActionButton={infoGenericModal.viewActionButton}
+          // actionButton={infoGenericModal.action}
+          // titleActionButton={infoGenericModal.title_action_button}
+          // closeButton={
+          //   infoGenericModal.closeButton
+          //     ? infoGenericModal.closeButton
+          //     : "Cerrar"
+          // }
+        >
+          <Row>
+            <Alert
+              style={{ width: "100%" }}
+              // message={infoGenericModal.title_message}
+              // description={infoGenericModal.description}
+              // type={infoGenericModal.type_alert}
+              showIcon
+            />
+            {/* {infoGenericModal.components && infoGenericModal.components} */}
+          </Row>
+        </GenericModal>
       )}
     </Spin>
   );
