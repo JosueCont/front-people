@@ -331,7 +331,10 @@ export const getClientsOptions = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getClients(node,'&paginate=0');
-        dispatch({...typeFunction, payload: response.data})
+        //Se filtra por estatus activo/true
+        const _filter = item => item.is_active;
+        let results = response.data?.filter(_filter);
+        dispatch({...typeFunction, payload: results})
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
@@ -367,7 +370,7 @@ export const getVacanciesOptions = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getVacancies(node, '&paginate=0');
-        //Se filtra por estatus 1 (Activo)
+        //Se filtra por estatus activo/1
         const _filter = item => item.status == 1;
         let results = response.data?.filter(_filter);
         dispatch({...typeFunction, payload: results})
@@ -466,7 +469,6 @@ export const getProfilesOptions = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getProfilesList(node, '&paginate=0');
-        console.log("🚀 ~ file: jobBankDuck.js ~ line 469 ~ getProfilesOptions ~ response", response)
         dispatch({...typeFunction, payload: response.data.results})
     } catch (e) {
         console.log(e)

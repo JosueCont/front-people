@@ -5,7 +5,7 @@ import {
     ruleEmail,
     rulePhone
 } from '../../../utils/rules';
-import { validateNum } from '../../../utils/functions';
+import { validateNum, validateMaxLength } from '../../../utils/functions';
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 
 const TabContact = ({
@@ -101,7 +101,8 @@ const TabContact = ({
                                 name='phone'
                                 placeholder='Teléfono del contacto'
                                 maxLength={10}
-                                onKeyPress={validateNum}
+                                onKeyDown={validateNum}
+                                onKeyPress={validateMaxLength}
                                 onChange={onChangeContact}
                             />
                         </Form.Item>
