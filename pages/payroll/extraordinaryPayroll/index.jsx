@@ -982,7 +982,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           payroll={extraOrdinaryPayroll}
           setLoading={setLoading}
           sendCalculatePayroll={sendCalculateExtraordinaryPayrroll}
-          // payrollType={payrollType}
         />
       )}
       {genericModal && (
