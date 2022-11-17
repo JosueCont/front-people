@@ -73,8 +73,8 @@ const RecoveryPasswordForm = (props) => {
           className="recover-form"
         >
           <Form.Item
-            /* name="passwordOne"
-            rules={[ruleRequired]}
+            name="passwordOne"
+            /* rules={[ruleRequired]}
             label={"Nueva contraseña"}
             labelAlign={"left"}
             className="login-form-font-color" */
@@ -85,8 +85,8 @@ const RecoveryPasswordForm = (props) => {
             />
           </Form.Item>
           <Form.Item
-            /* name="passwordTwo"
-            rules={[ruleRequired, validatePassword]}
+            name="passwordTwo"
+            /* rules={[ruleRequired, validatePassword]}
             label={"Confirmar contraseña"}
             labelAlign={"left"}
             className="font-color-khor" */
