@@ -243,6 +243,7 @@ const FormStrategies = ({
                 <Form.Item
                     name='qty_vacants'
                     label='Número de vacantes'
+                    rules={[ruleRequired]}
                 >
                     <InputNumber
                         type='number'
@@ -291,6 +292,7 @@ const FormStrategies = ({
                     name='percentage_to_collect'
                     label='Porcentaje a cobrar'
                     rules={[
+                        ruleRequired,
                         {type: 'number', min: 1, message: 'Mínimo de porcentaje mayor o igual a 1'},
                         {type: 'number', max: 100, message: 'Máximo de porcentaje menor o igual a 100'}
                     ]}
