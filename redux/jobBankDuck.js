@@ -17,7 +17,7 @@ const initialState = {
     list_vacancies_options: [],
     list_vacancies_fields: {},
     list_connections: [],
-    list_jobvacant_options: [],
+    list_jobboards_options: [],
     list_publications: {},
     info_vacant: {},
     info_strategy: {},
@@ -40,7 +40,7 @@ const initialState = {
     load_sub_categories: false,
     load_candidates: false,
     load_connections: false,
-    load_jobvacant_options: false,
+    load_jobboards_options: false,
     load_publications: false,
     load_profiles_options: false,
     jobbank_load: false,
@@ -205,8 +205,8 @@ const jobBankReducer = (state = initialState, action) =>{
             }
         case GET_JOB_VACANCIES:
             return{...state,
-                list_jobvacant_options: action.payload,
-                load_jobvacant_options: action.fetching
+                list_jobboards_options: action.payload,
+                load_jobboards_options: action.fetching
             }
         case GET_PUBLICATIONS:
             return{...state,
@@ -469,7 +469,7 @@ export const getProfilesOptions = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getProfilesList(node, '&paginate=0');
-        dispatch({...typeFunction, payload: response.data.results})
+        dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)
@@ -625,6 +625,7 @@ export const getConnections = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getConnections(node);
+        console.log("🚀 ~ file: jobBankDuck.js ~ line 628 ~ getConnections ~ response", response)
         dispatch({...typeFunction, payload: response.data.results});
     } catch (e) {
         console.log(e)
@@ -632,11 +633,11 @@ export const getConnections = (node) => async (dispatch) =>{
     }
 }
 
-export const getJobVacantOptions = (node) => async(dispatch) => {
+export const getJobBoards = (node) => async(dispatch) => {
     const typeFunction = { type: GET_JOB_VACANCIES, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
-        let response = await WebApiJobBank.getJobVacancies(node);
+        let response = await WebApiJobBank.getJobBoards(node);
         dispatch({...typeFunction, payload: response.data.results});
     } catch (e) {
         console.log(e)

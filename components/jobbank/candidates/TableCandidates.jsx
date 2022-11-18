@@ -38,7 +38,6 @@ const TableCandidates = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
-        closeModalDelete();
         try {
             // await WebApiJobBank.deleteCandidate({ids});
             // getCandidates(currentNode.id);

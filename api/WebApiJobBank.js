@@ -91,6 +91,10 @@ class WebApiJobBank {
         return WebApi.ApisType('/job-bank/profile/', 'post', data);
     }
 
+    static duplicateProfile(id){
+        return WebApi.ApisType(`/job-bank/profile/${id}/duplicate/`, 'get');
+    }
+
     static updateProfile(id, data){
         return WebApi.ApisType(`/job-bank/profile/${id}/`, 'put', data);
     }
@@ -128,7 +132,7 @@ class WebApiJobBank {
     }
 
     static updateConnection(id, data){
-        return WebApi.ApisType(`/job-bank/sharin-setup/${id}/, 'put`, data);
+        return WebApi.ApisType(`/job-bank/sharin-setup/${id}/`, 'put', data);
     }
 
     static getPublications(node){
@@ -174,15 +178,15 @@ class WebApiJobBank {
     }
 
     static createSubCategory(data){
-        // return WebApi.ApisType('/job-bank/sub-category/', 'post', data);
+        return WebApi.ApisType('/job-bank/sub-category/', 'post', data);
     }
 
     static updateSubCategory(id, data){
-        // return WebApi.ApisType(`/job-bank/sub-category/${id}/`, 'put', data);
+        return WebApi.ApisType(`/job-bank/sub-category/${id}/`, 'put', data);
     }
 
     static deleteSubCategory(id){
-        // return WebApi.ApisType(`/job-bank/sub-category/${id}/`, 'delete');
+        return WebApi.ApisType(`/job-bank/sub-category/${id}/`, 'delete');
     }
 
     static getCompetences(node){
@@ -190,15 +194,15 @@ class WebApiJobBank {
     }
 
     static createCompetence(data){
-        // return WebApi.ApisType('/job-bank/competence/', 'post', data);
+        return WebApi.ApisType('/job-bank/competence/', 'post', data);
     }
 
     static updateCompetence(id, data){
-        // return WebApi.ApisType(`/job-bank/competence/${id}/`, 'put', data);
+        return WebApi.ApisType(`/job-bank/competence/${id}/`, 'put', data);
     }
 
     static deleteCompetence(id){
-        // return WebApi.ApisType(`/job-bank/competence/${id}/`, 'delete');
+        return WebApi.ApisType(`/job-bank/competence/${id}/`, 'delete');
     }
 
     static getAcademics(node){
@@ -206,15 +210,15 @@ class WebApiJobBank {
     }
 
     static createAcademic(data){
-        // return WebApi.ApisType(`/job-bank/academics-degree/`, 'post', data);
+        return WebApi.ApisType(`/job-bank/academics-degree/`, 'post', data);
     }
 
     static updateAcademic(id, data){
-        // return WebApi.ApisType(`/job-bank/academics-degree/${id}/`, 'put', data);
+        return WebApi.ApisType(`/job-bank/academics-degree/${id}/`, 'put', data);
     }
 
     static deleteAcademic(id){
-        // return WebApi.ApisType(`/job-bank/academics-degree/${id}`, 'delete');
+        return WebApi.ApisType(`/job-bank/academics-degree/${id}`, 'delete');
     }
 
     static getSectors(node){
@@ -222,15 +226,15 @@ class WebApiJobBank {
     }
 
     static createSector(data){
-        // return WebApi.ApisType('/job-bank/sector/', 'post', data);
+        return WebApi.ApisType('/job-bank/sector/', 'post', data);
     }
 
     static updateSector(id, data){
-        // return WebApi.ApisType(`/job-bank/sector/${id}/`, 'put', data);
+        return WebApi.ApisType(`/job-bank/sector/${id}/`, 'put', data);
     }
 
     static deleteSector(id){
-        // return WebApi.ApisType(`/job-bank/sector/${id}/`, 'delete');
+        return WebApi.ApisType(`/job-bank/sector/${id}/`, 'delete');
     }
 
     static getProfilesTypes(node){
@@ -249,19 +253,19 @@ class WebApiJobBank {
         // return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'delete');
     }
 
-    static getJobVacancies(node){
+    static getJobBoards(node){
         return WebApi.ApisType(`/job-bank/job-vacancies/?node=${node}`, 'get');
     }
 
-    static createJobVacancies(data){
+    static createJobBoard(data){
         return WebApi.ApisType('/job-bank/job-vacancies/', 'post', data);
     }
 
-    static updateJobVacancies(id, data){
+    static updateJobBoard(id, data){
         return WebApi.ApisType(`/job-bank/job-vacancies/${id}/`, 'put', data);
     }
 
-    static deleteJobVancancies(id){
+    static deleteJobBoard(id){
         return WebApi.ApisType(`/job-bank/job-vacancies/${id}/`, 'delete');
     }
 }

@@ -95,12 +95,12 @@ const DetailsProfiles = ({
     const onFinisUpdate = async (values) =>{
         try {
             await WebApiJobBank.updateProfile(info_profile.id, {...values, node: currentNode.id});
-            message.success('Perfil actualizado');
+            message.success('Template actualizado');
             getInfoProfile(info_profile.id)
         } catch (e) {
             if(e.response?.data?.message == 'Este nombre ya existe'){
                 message.error(e.response?.data?.message);
-            } else message.error('Perfil no actualizado');
+            } else message.error('Template no actualizado');
             setLoadProfiles(false)
             console.log(e)
         }
@@ -109,12 +109,12 @@ const DetailsProfiles = ({
     const onFinishCreate = async (values) =>{
         try {
             let response = await WebApiJobBank.createProfile({...values, node: currentNode.id});
-            message.success('Perfil registrado')
+            message.success('Template registrado')
             actionSaveAnd(response.data.id)
         } catch (e) {
             if(e.response?.data?.message == 'Este nombre ya existe'){
                 message.error(e.response?.data?.message);
-            } else message.error('Perfil no registrado');
+            } else message.error('Template no registrado');
             setLoading({})
             setLoadProfiles(false)
             console.log(e)
@@ -125,7 +125,7 @@ const DetailsProfiles = ({
         setLoadProfiles(true);
         const bodyData = createData(values);
         if(Object.keys(bodyData.fields_name).length <= 0){
-            message.error('Seleccionar los campos del perfil');
+            message.error('Seleccionar los campos del template');
             setLoadProfiles(false);
             setLoading({})
             return false;
@@ -175,8 +175,8 @@ const DetailsProfiles = ({
                 <Col span={24} className='title-action-content title-action-border'>
                     <p className='title-action-text'>
                         {action == 'add'
-                            ? 'Registrar nuevo perfil'
-                            : 'Información del perfil'
+                            ? 'Registrar nuevo template'
+                            : 'Información del template'
                         }
                     </p>
                     <Button
