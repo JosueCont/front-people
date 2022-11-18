@@ -89,7 +89,8 @@ const MainSider = ({
       jb_strategies: "/jobbank/strategies",
       jb_profiles: "/jobbank/profiles",
       jb_candidates: "/jobbank/candidates",
-      jb_settings: "/jobbank/settings"
+      jb_settings: "/jobbank/settings",
+      jb_publications: "/jobbank/publications"
     };
     router.push(pathRoutes[key]);
   };
@@ -292,6 +293,7 @@ const MainSider = ({
             getItem("Estrategias", "jb_strategies"),
             getItem("Perfiles de vacante", "jb_profiles"),
             // getItem("Candidatos", "jb_candidates"),
+            getItem("Publicaciones", "jb_publications"),
             getItem("Configuraciones", "jb_settings")
           ];
           items.push(

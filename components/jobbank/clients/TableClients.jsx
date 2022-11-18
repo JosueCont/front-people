@@ -7,7 +7,8 @@ import {
     message,
     Switch,
     Space,
-    Tag
+    Tag,
+    Tooltip
 } from 'antd';
 import { useRouter } from 'next/router';
 import ModalClients from './ModalClients';
@@ -19,7 +20,8 @@ import {
     EyeInvisibleOutlined,
     FileTextOutlined,
     PlusOutlined,
-    LinkOutlined
+    LinkOutlined,
+    UserOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
 import {
@@ -29,6 +31,7 @@ import {
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
 import Clipboard from '../../../components/Clipboard';
+import ViewContacts from './ViewContacts';
 
 const TableClients = ({
     list_clients,
@@ -43,6 +46,7 @@ const TableClients = ({
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [openModalList, setOpenModalList] = useState(false);
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
@@ -63,15 +67,15 @@ const TableClients = ({
         }
     }
 
-    const actionActive = async (checked, item) =>{
+    const actionStatus = async (checked, item) =>{
         try {
-            await WebApiJobBank.activeClient(item.id, {is_active: checked});
+            await WebApiJobBank.updateClientStatus(item.id, {is_active: checked});
             validateGetClients();
             if(checked) message.success('Cliente activado');
             if(!checked) message.success ('Cliente desactivado');
         } catch (e) {
             console.log(e)
-            validateGetClients();
+            // validateGetClients();
             if(checked) message.error('Cliente no activado');
             if(!checked) message.error('Cliente no desactivado');
         }
@@ -95,6 +99,11 @@ const TableClients = ({
     const closeModalEdit = () =>{
         setOpenModal(false)
         setItemToEdit({})
+    }
+
+    const closeModalList = () =>{
+        setOpenModalList(false);
+        setItemToEdit({});
     }
 
     const closeModalDelete = () =>{
@@ -122,6 +131,11 @@ const TableClients = ({
         setOpenModal(true)
     }
 
+    const showModalList = (item) =>{
+        setOpenModalList(true);
+        setItemToEdit(item)
+    }
+
     const onChangePage = ({current}) =>{
         setJobbankPage(current)
         validateGetClients(current)
@@ -146,6 +160,27 @@ const TableClients = ({
             setItemsToDelete(selectedRows)
         }
     }
+
+    const ViewList = ({item}) => (
+        <Space>
+            {item.contact_list?.length > 0 ? (
+                <Tooltip title='Ver contactos'>
+                    <EyeOutlined
+                        style={{cursor: 'pointer'}}
+                        onClick={()=>showModalList(item)}
+                    />
+                </Tooltip>
+            ):(
+                <EyeInvisibleOutlined />
+            )}
+            <Tag
+                icon={<UserOutlined style={{color:'#52c41a'}} />}
+                color='green' style={{fontSize: '14px'}}
+            >
+                {item.contact_list ? item.contact_list.length : 0}
+            </Tag>
+        </Space>
+    )
 
     const menuTable = () => {
         return (
@@ -175,7 +210,11 @@ const TableClients = ({
                 <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
-                    onClick={()=> openModalEdit(item)}
+                    // onClick={()=> openModalEdit(item)}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/clients/edit',
+                        query: { id: item.id }
+                    })}
                 >
                     Editar
                 </Menu.Item>
@@ -228,28 +267,25 @@ const TableClients = ({
             key: 'name'
         },
         {
-            title: 'Contacto',
-            dataIndex: 'job_contact',
-            key: 'job_contact'
+            title: 'RFC',
+            dataIndex: 'rfc',
+            key: 'rfc'
         },
         {
-            title: 'Correo',
-            dataIndex: 'email_contact',
-            key: 'email_contact'
+            title: 'Contactos',
+            render: (item) => <ViewList item={item}/>
         },
         {
-            title: 'Teléfono',
-            dataIndex: 'phone_contact',
-            key: 'phone_contact'
-        },
-        {
-            title: 'Activo',
+            title: 'Estatus',
             render: (item) =>{
                 return(
                     <Switch
-                        size={'small'}
+                        size='small'
                         defaultChecked={item.is_active}
-                        onChange={(e)=> actionActive(e, item)}
+                        checked={item.is_active}
+                        checkedChildren="Activo"
+                        unCheckedChildren="Inactivo"
+                        onChange={(e)=> actionStatus(e, item)}
                     />
                 )
             }
@@ -258,7 +294,7 @@ const TableClients = ({
             title: ()=> {
                 return(
                     <Dropdown overlay={menuTable}>
-                        <Button size={'small'}>
+                        <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -267,7 +303,7 @@ const TableClients = ({
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
-                        <Button size={'small'}>
+                        <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -306,18 +342,27 @@ const TableClients = ({
                 itemToEdit={itemToEdit}
                 textSave='Actualizar'
             />
-            <DeleteItems
-                title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estos clientes?'
-                    : '¿Estás seguro de eliminar este cliente?'
-                }
-                visible={openModalDelete}
-                keyTitle='name'
-                keyDescription='business_name'
-                close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
-            />
+            {openModalDelete && (
+                <DeleteItems
+                    title={itemsToDelete.length > 1
+                        ? '¿Estás seguro de eliminar estos clientes?'
+                        : '¿Estás seguro de eliminar este cliente?'
+                    }
+                    visible={openModalDelete}
+                    keyTitle='name'
+                    keyDescription='business_name'
+                    close={closeModalDelete}
+                    itemsToDelete={itemsToDelete}
+                    actionDelete={actionDelete}
+                />
+            )}
+           {openModalList && (
+                <ViewContacts
+                    visible={openModalList}
+                    itemContact={itemToEdit}
+                    close={closeModalList}
+                />
+           )}
         </>
     )
 }
