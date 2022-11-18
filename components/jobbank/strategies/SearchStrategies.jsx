@@ -38,7 +38,7 @@ const SearchStrategies = ({
         let filters = createFilters(values);
         if(filters){
             setJobbankFilters(filters)
-            getStrategies(currentNode.id, query);
+            getStrategies(currentNode.id, filters);
         } else deleteFilter();
     }
 

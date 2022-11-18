@@ -276,13 +276,16 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 12px;
 }
 
 .head-list-files {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 6px;
+    padding-bottom: 8px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 

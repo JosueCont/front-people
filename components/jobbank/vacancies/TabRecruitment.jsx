@@ -8,7 +8,7 @@ import {
   List,
   Button
 } from 'antd';
-import { validateNum } from '../../../utils/functions';
+import { validateNum, validateMaxLength } from '../../../utils/functions';
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import {
   ruleRequired,
@@ -128,7 +128,8 @@ const TabRecruitment = ({
                 maxLength={2}
                 controls={false}
                 placeholder='¿Cuántas entrevistas se realizarán?'
-                onKeyPress={validateNum}
+                onKeyDown={validateNum}
+                onKeyPress={validateMaxLength}
                 style={{
                   width: '100%',
                   border: '1px solid black'
@@ -142,7 +143,10 @@ const TabRecruitment = ({
               label='Durante la entrevista'
               rules={[ruleWhiteSpace]}
             >
-              <Input placeholder='Describa las particularidades a observar'/>
+              <Input.TextArea
+                autoSize={{minRows: 3, maxRows: 3}}
+                placeholder='Describa las particularidades a observar'
+              />
             </Form.Item>
           </Col>
           <Col xs={24} md={12}>
@@ -151,7 +155,10 @@ const TabRecruitment = ({
               label='Motivos potenciales al rechazo'
               rules={[ruleWhiteSpace]}
             >
-              <Input placeholder='Especificar los motivos'/>
+              <Input.TextArea
+                autoSize={{minRows: 3, maxRows: 3}}
+                placeholder='Especificar los motivos'
+              />
             </Form.Item>
           </Col>
           {/* <Col xs={24} md={12} xl={8} xxl={6}>
