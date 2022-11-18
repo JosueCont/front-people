@@ -469,6 +469,7 @@ export const getProfilesOptions = (node) => async (dispatch) =>{
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getProfilesList(node, '&paginate=0');
+        console.log("🚀 ~ file: jobBankDuck.js ~ line 472 ~ getProfilesOptions ~ response", response)
         dispatch({...typeFunction, payload: response.data})
     } catch (e) {
         console.log(e)
@@ -620,13 +621,18 @@ export const getSubCategories = (node) => async (dispatch) =>{
     }
 }
 
-export const getConnections = (node) => async (dispatch) =>{
+export const getConnections = (node, isOptions = false) => async (dispatch) =>{
     const typeFunction = { type: GET_CONNECTIONS, payload: [], fetching: false };
     dispatch({...typeFunction, fetching: true})
     try {
         let response = await WebApiJobBank.getConnections(node);
-        console.log("🚀 ~ file: jobBankDuck.js ~ line 628 ~ getConnections ~ response", response)
-        dispatch({...typeFunction, payload: response.data.results});
+        //Se filtra por estatus activo/true
+        const _filter = item => item.is_active;
+        let results = response.data?.results.filter(_filter);
+        //IsOptions para pintar el listado en un select,
+        //por el momento solo se usa en publicaciones
+        let payload = isOptions ? results : response.data.results;
+        dispatch({...typeFunction, payload});
     } catch (e) {
         console.log(e)
         dispatch(typeFunction)

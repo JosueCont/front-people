@@ -123,7 +123,7 @@ const DetailsProfiles = ({
 
     const onFinish = (values) => {
         setLoadProfiles(true);
-        const bodyData = createData(values);
+        const bodyData = createData(values, 'fields_name');
         if(Object.keys(bodyData.fields_name).length <= 0){
             message.error('Seleccionar los campos del template');
             setLoadProfiles(false);

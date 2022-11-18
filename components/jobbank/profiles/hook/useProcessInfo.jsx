@@ -18,17 +18,17 @@ export const useProcessInfo = () => {
         return Object.entries(values).reduce(checkValue, {});
     }
 
-    const createData = (values) =>{
+    const createData = (values, keyConfig) =>{
         return Object.entries(values).reduce((obj, [key, val])=> {
             if(!val) return obj;
-            if(!key.includes('|')) return {...obj, [key]: val == 'open_fields' ? '' : val };
-            let fields = obj['fields_name'] ?? {};
+            if(!key.includes('|')) return {...obj, [key]: val};
+            let fields = obj[keyConfig] ?? {};
             let name = key.split('|');
             let prev = fields[name[0]] ?? [];
             let item = [...prev, name[1]];
             let config = {...fields, [name[0]]: item};
-            return {...obj, fields_name: config};
-        }, { fields_name: {} });
+            return {...obj, [keyConfig]: config};
+        }, { [keyConfig]: {} });
     }
 
     return {
