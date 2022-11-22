@@ -220,7 +220,7 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <div>
-            <Avatar src={item.photo ? item.photo : defaulPhoto} />
+            <Avatar src={item.photo_thumbnail ? item.photo_thumbnail : defaulPhoto} />
           </div>
         );
       },
@@ -348,7 +348,7 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <div>
-            <Avatar src={item.photo ? item.photo : defaulPhoto} />
+            <Avatar src={item.photo_thumbnail ? item.photo_thumbnail : defaulPhoto} />
           </div>
         );
       },
@@ -463,7 +463,7 @@ const homeScreen = ({ ...props }) => {
     };
     await WebApiPeople.changeStatusPerson(data)
       .then((response) => {
-        if (!response.data.photo) response.data.photo = defaulPhoto;
+        if (!response.data.photo_thumbnail) response.data.photo_thumbnail = defaulPhoto;
         response.data.key = value.key;
         person.map((a) => {
           if (a.id == response.data.id) a = response.data;
@@ -606,7 +606,7 @@ const homeScreen = ({ ...props }) => {
           return (
             <>
               <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo} />
+                <Avatar src={p.photo_thumbnail} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
             </>
@@ -747,7 +747,7 @@ const homeScreen = ({ ...props }) => {
           return (
             <>
               <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo} />
+                <Avatar src={p.photo_thumbnail} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
             </>
