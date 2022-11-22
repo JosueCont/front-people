@@ -105,7 +105,7 @@ const ButtonUpdateSalaryMovement=({person, node, payrollPerson,onRefresh,...prop
                         rules={[ruleRequired]}
                     >
                         <DatePicker
-                            disabledDate={disabledDate}
+                            // disabledDate={disabledDate}
                             locale={ locale }
                             defaultValue={moment().add(2,'d')}
                             style={{ width: "100%" }}

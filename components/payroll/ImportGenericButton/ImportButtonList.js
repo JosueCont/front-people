@@ -11,7 +11,8 @@ import WebApiPayroll from "../../../api/WebApiPayroll";
 
 
 const MOVEMENTS_TYPE={
-    UPDATE_SALARY:1
+    UPDATE_SALARY:1, // Esste es para la parte de actualizar salarios
+    IMSS_REGISTER:2, // para la alta de IMSS
 }
 
 const ImportButtonList=({person, node, payrollPerson, personsList,...props})=>{
@@ -48,8 +49,44 @@ const ImportButtonList=({person, node, payrollPerson, personsList,...props})=>{
             case MOVEMENTS_TYPE.UPDATE_SALARY:
                 importMovementUpdate(currentFile)
                 break;
+            case MOVEMENTS_TYPE.IMSS_REGISTER:
+                importImssPerson(currentFile)
+                break;
             default:
                 break;
+        }
+    }
+
+    const importImssPerson=async (file)=>{
+        console.log(file)
+        setLoading(true)
+        let formdata = new FormData()
+        formdata.append('modified_by', user.id)
+        formdata.append('node_id', node.id)
+        formdata.append('File',file)
+        try{
+            const resp = await  WebApiPayroll.importIMSSPerson(formdata)
+            console.log(resp)
+            message.info(resp.data.message)
+            if(resp.data?.data){
+                let arrPersonas =  resp.data.data.filter((person)=> !person?.status )
+                if(arrPersonas.length>0){
+                    setPersonsListErrors(arrPersonas)
+                    console.log(arrPersonas)
+                }else{
+                    setPersonsListErrors(null)
+                    setShowModal(false)
+                }
+            }
+
+        }catch (e){
+            message.error('Hubo un error al cargar la información, por favor intente nuevamente o revise su archivo.')
+            console.log(e)
+        }finally {
+            setLoading(false)
+            setFileName(null)
+            setCurrentFile(null)
+            //setShowModal(false)
         }
     }
 
@@ -108,6 +145,20 @@ const ImportButtonList=({person, node, payrollPerson, personsList,...props})=>{
                         description: 'Esta sección te permite actualizar salarios de manera masiva, descarga el template, modifica y vuelve a subirlo.'
                     }
                     break;
+                case MOVEMENTS_TYPE.IMSS_REGISTER:
+                    objGeneric = {
+                        title: 'Alta IMSS',
+                        urlDownload: '/payroll/export-layout-imss-register',
+                        typeImport:MOVEMENTS_TYPE.IMSS_REGISTER,
+                        paramsDownload:{
+                            person_ids:   [...personsList?.selectedRowKeys],
+                            node:node?.id
+                        },
+                        type:'POST',
+                        nameTemplate: 'alta_imss.xlsx',
+                        description: 'Esta sección te permite generar alta de persona con los datos mínimos de IMSS.'
+                    }
+                    break;
                 default:
                     break;
             }
@@ -123,6 +174,9 @@ const ImportButtonList=({person, node, payrollPerson, personsList,...props})=>{
             <Menu>
                 <Menu.Item key="1" onClick={() => openModal(MOVEMENTS_TYPE.UPDATE_SALARY)}>
                     <RightOutlined /> Actualizar salarios
+                </Menu.Item>
+                <Menu.Item key="2" onClick={() => openModal(MOVEMENTS_TYPE.IMSS_REGISTER)}>
+                    <RightOutlined /> Alta Imss
                 </Menu.Item>
             </Menu>
         );
@@ -186,7 +240,7 @@ const ImportButtonList=({person, node, payrollPerson, personsList,...props})=>{
                                         icon={<UploadOutlined />}
                                         style={{ marginBottom: "10px" }}
                                     >
-                                        Importar personas
+                                        Importar datos
                                     </Button>
                                 </Upload>
                                 <p>{'     '} {' '} {fileName}</p>
