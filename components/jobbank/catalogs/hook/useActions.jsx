@@ -17,7 +17,7 @@ export const useActions = () =>{
 
     const createMainCategory = async (values) =>{
         try {
-            await WebApiJobBank.createMainCategoy(values);
+            await WebApiJobBank.createMainCategoy({...values, node: currentNode.id});
             dispatch(getMainCategories(currentNode.id));
             message.success('Categoría registrada');
         } catch (e) {
@@ -213,25 +213,70 @@ export const useActions = () =>{
         }
     }
 
-    return{
-        createMainCategory,
-        updateMainCategory,
-        deleteMainCategory,
-        createSubCategory,
-        updateSubCategory,
-        deleteSubCategory,
-        createAcademic,
-        updateAcademic,
-        deleteAcademic,
-        createCompetence,
-        updateCompetence,
-        deleteCompetence,
-        createProfileType,
-        updateProfileType,
-        deleteProfileType,
-        createSector,
-        updateSector,
-        deleteSector
-    }
+    const listKeysCatalog = {
+        categories: {
+            data: 'list_main_categories',
+            load: 'load_main_categories',
+            titleBread: 'Categorías',
+            titleModal: 'categoría',
+            getAction: getMainCategories,
+            createAction: createMainCategory,
+            updateAction: updateMainCategory,
+            deleteAction: deleteMainCategory
+        },
+        academic: {
+            data: 'list_academics',
+            load: 'load_academics',
+            titleBread: 'Carreras',
+            titleModal: 'carrera',
+            getAction: getAcademics,
+            createAction: createAcademic,
+            updateAction: updateAcademic,
+            deleteAction: deleteAcademic
+        },
+        competences: {
+            data: 'list_competences',
+            load: 'load_competences',
+            titleBread: 'Competencias',
+            titleModal: 'competencia',
+            getAction: getCompetences,
+            createAction: createCompetence,
+            updateAction: updateCompetence,
+            deleteAction: deleteCompetence
+        },
+        profiles: {
+            data: 'list_profiles_types',
+            load: 'load_profiles_types',
+            titleBread: 'Perfiles template',
+            titleModal: 'perfil template',
+            getAction: getProfilesTypes,
+            deleteAction: deleteProfileType
+        },
+        sectors: {
+            data: 'list_sectors',
+            load: 'load_sectors',
+            titleBread: 'Sectores',
+            titleModal: 'sector',
+            getAction: getSectors,
+            createAction: createSector,
+            updateAction: updateSector,
+            deleteAction: deleteSector
+        },
+        subcategories: {
+            data: 'list_sub_categories',
+            load: 'load_sub_categories',
+            titleBread: 'Subcategorías',
+            titleModal: 'subcategoría',
+            getAction: (node) =>{
+                dispatch(getMainCategories(node));
+                dispatch(getSubCategories(node));
+            },
+            createAction: createSubCategory,
+            updateAction: updateSubCategory,
+            deleteAction: deleteSubCategory
+        }
+    };
+
+    return { listKeysCatalog };
 
 }

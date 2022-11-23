@@ -12,6 +12,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { ruleWhiteSpace } from '../../../utils/rules';
+import { useRouter } from 'next/router';
 
 const SearchClients = ({
     user,
@@ -20,6 +21,7 @@ const SearchClients = ({
     setJobbankFilters
 }) => {
 
+    const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
     
@@ -108,7 +110,7 @@ const SearchClients = ({
                     </Form>
                 </Col>
                 <Col span={4} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <Button onClick={()=> setOpenModal(true)}>Agregar</Button>
+                    <Button onClick={()=> router.push({pathname: '/jobbank/clients/add'})}>Agregar</Button>
                 </Col>
             </Row>
             <ModalClients

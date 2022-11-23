@@ -18,7 +18,7 @@ import {
   ruleMaxAge,
   onlyNumeric
 } from '../../../utils/rules';
-import { validateNum } from '../../../utils/functions';
+import { validateNum, validateMaxLength } from '../../../utils/functions';
 import {
   optionsSubproduct,
   optionsTypeJob,
@@ -149,7 +149,8 @@ const TabFeatures = ({
             controls={false}
             maxLength={10}
             placeholder='Número de proyecto'
-            onKeyPress={validateNum}
+            onKeyDown={validateNum}
+            onKeyPress={validateMaxLength}
             style={{
               width: '100%',
               border: '1px solid black'
@@ -192,7 +193,8 @@ const TabFeatures = ({
             controls={false}
             maxLength={10}
             placeholder='Número de posiciones a reclutar'
-            onKeyPress={validateNum}
+            onKeyDown={validateNum}
+            onKeyPress={validateMaxLength}
             style={{
               width: '100%',
               border: '1px solid black'
@@ -273,7 +275,8 @@ const TabFeatures = ({
                 maxLength={2}
                 controls={false}
                 className='min_age'
-                onKeyPress={validateNum}
+                onKeyDown={validateNum}
+                onKeyPress={validateMaxLength}
                 placeholder='Edad mínima'
               />
             </Form.Item>
@@ -294,7 +297,8 @@ const TabFeatures = ({
                 maxLength={2}
                 controls={false}
                 className='max_age'
-                onKeyPress={validateNum}
+                onKeyDown={validateNum}
+                onKeyPress={validateMaxLength}
                 placeholder='Edad máxima'
               />
             </Form.Item>
@@ -377,7 +381,6 @@ const TabFeatures = ({
           rules={[ruleWhiteSpace]}
         >
           <Input.TextArea
-            maxLength={200}
             autoSize={{minRows: 5, maxRows: 5}}
             placeholder='Descripción de la vacante'
           />

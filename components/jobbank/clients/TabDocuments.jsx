@@ -58,81 +58,69 @@ const TabDocuments = ({
     }
 
     return (
-        <Row gutter={[24,8]} className='tab-documents'>
-            <Col span={24} className='content-list-files'>
-                <div className='head-list-files'>
-                    <p style={{marginBottom: 0}}>Nuevos archivos ({newDocs.length})</p>
-                    <Button
-                        size={'small'}
-                        icon={<UploadOutlined />}
-                        onClick={()=> openFile()}
-                    />
-                    <input
-                        type={'file'}
-                        style={{display: 'none'}}
-                        ref={inputFile}
-                        onChange={setFileSelected}
-                    />
-                </div>
-                <div className='body-list-files scroll-bar'>
-                    {newDocs.length > 0 ? newDocs.map((item, idx) => (
-                        <div
-                            key={`item_${idx}`}
-                            className='item-list-files'
-                            style={{color: '#28a745'}}
-                        >
-                            <p>{item.name}</p>
-                            <DeleteOutlined
-                                onClick={()=> deleteNewDocs(idx)}
-                            />
+        <Row gutter={[24,24]} className='tab-documents'>
+            <Col span={24}>
+                <div className='content-list-files'>
+                    <div className='head-list-files'>
+                        <p style={{marginBottom: 0}}>Archivos cargados ({newDocs.length + prevDocs.length})</p>
+                        <Button
+                            size={'small'}
+                            icon={<UploadOutlined />}
+                            onClick={()=> openFile()}
+                        />
+                        <input
+                            type={'file'}
+                            style={{display: 'none'}}
+                            ref={inputFile}
+                            onChange={setFileSelected}
+                        />
+                    </div>
+                    {(prevDocs.length > 0 || newDocs.length > 0 ) ? (
+                        <div className='body-list-files scroll-bar'>
+                            {prevDocs.length > 0 && prevDocs.map((item, idx) => (
+                                <div
+                                    key={`item_${item.id}`}
+                                    className='item-list-files'
+                                    style={{color: item.is_deleted ? '#dc3545': 'black'}}
+                                >
+                                    <p>{item.name}</p>
+                                    <div className='item-list-options'>
+                                        <Tooltip title='Visualizar'>
+                                            <SelectOutlined onClick={()=> redirectTo(item.document, true)}/>
+                                        </Tooltip>
+                                        {item.is_deleted ? (
+                                            <Tooltip title='Restaurar'>
+                                                <ReloadOutlined onClick={()=> deletePrevDocs(item, false)}/>
+                                            </Tooltip>
+                                        ): (
+                                            <Tooltip placement='Eliminar'>
+                                                <DeleteOutlined onClick={()=> deletePrevDocs(item, true)}/>
+                                            </Tooltip>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                            {newDocs.length > 0 && newDocs.map((item, idx) => (
+                                <div
+                                    key={`item_${idx}`}
+                                    className='item-list-files'
+                                    style={{color: '#28a745'}}
+                                >
+                                    <p>{item.name}</p>
+                                    <DeleteOutlined
+                                        onClick={()=> deleteNewDocs(idx)}
+                                    />
+                                </div>
+                            ))}
                         </div>
-                    )) : (
+                    ): (
                         <Empty
-                            description='Ningún archivo nuevo'
+                            description={'Ningún archivo seleccionado'}
                             image={Empty.PRESENTED_IMAGE_SIMPLE}
-                            style={{margin: 0}}
                         />
                     )}
                 </div>
             </Col>
-            {showPrevDocs && (
-                <Col span={24} className='content-list-files'>
-                    <div className='head-list-files'>
-                        <p style={{marginBottom: 0}}>Archivos existentes ({prevDocs.length})</p>
-                    </div>
-                    <div className='body-list-files scroll-bar'>
-                        {prevDocs.length > 0 ? prevDocs.map((item, idx) => (
-                            <div
-                                key={`item_${item.id}`}
-                                className='item-list-files'
-                                style={{color: item.is_deleted ? '#dc3545': 'black'}}
-                            >
-                                <p>{item.name}</p>
-                                <div className='item-list-options'>
-                                    <Tooltip title='Visualizar'>
-                                        <SelectOutlined onClick={()=> redirectTo(item.document, true)}/>
-                                    </Tooltip>
-                                    {item.is_deleted ? (
-                                        <Tooltip title='Restaurar'>
-                                            <ReloadOutlined onClick={()=> deletePrevDocs(item, false)}/>
-                                        </Tooltip>
-                                    ): (
-                                        <Tooltip placement='Eliminar'>
-                                            <DeleteOutlined onClick={()=> deletePrevDocs(item, true)}/>
-                                        </Tooltip>
-                                    )}
-                                </div>
-                            </div>
-                        )) : (
-                            <Empty
-                                description='Ningún archivo existente'
-                                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                style={{margin: 0}}
-                            />
-                        )}
-                    </div>
-                </Col>
-            )}
         </Row>
     )
 }

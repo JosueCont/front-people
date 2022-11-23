@@ -185,7 +185,6 @@ const TabEducation = ({ formVacancies }) => {
               rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
-                maxLength={400}
                 placeholder='Especificar según los idiomas seleccionados'
                 autoSize={{
                   minRows: 5,
@@ -201,7 +200,6 @@ const TabEducation = ({ formVacancies }) => {
               rules={[ruleWhiteSpace]}
             >
               <Input.TextArea
-                maxLength={400}
                 placeholder='Ej. Amplios conocimientos en canal Food Services'
                 autoSize={{
                   minRows: 5,
