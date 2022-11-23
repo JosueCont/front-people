@@ -2,7 +2,7 @@ import {React, useEffect, useState} from 'react'
 import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row, DatePicker, List} from 'antd'
 import { DeleteOutlined, RedoOutlined, RetweetOutlined, 
   EyeOutlined, FileDoneOutlined, FileSyncOutlined, 
-  PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined, MinusCircleOutlined, TeamOutlined  } from '@ant-design/icons';
+  PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined, MinusCircleOutlined, TeamOutlined, UnorderedListOutlined  } from '@ant-design/icons';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { useRouter } from 'next/router';
 import moment from 'moment/moment';
@@ -328,8 +328,8 @@ const TableAssessments = ({
         <>
           <span>{record.group.name}</span>
           { record?.list_groups &&
-            <Tooltip title="Ver grupos asignados">
-              <TeamOutlined style={{color:"#F99543", marginLeft:"8px"}} onClick={()=> modalGroups(record.list_groups)} />
+            <Tooltip title="Ver grupos de evaluaciones">
+              <UnorderedListOutlined style={{color:"#F99543", marginLeft:"8px"}} onClick={()=> modalGroups(record.list_groups)} />
             </Tooltip> 
           }
         </>
