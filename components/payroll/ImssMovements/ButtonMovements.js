@@ -1,17 +1,14 @@
 import {connect} from "react-redux";
 import {UnorderedListOutlined, FileZipOutlined, SendOutlined } from "@ant-design/icons";
 import {Button, Modal, Form, Input, DatePicker, Alert, Table, Row, Col} from "antd";
-import {downLoadFileBlob, getDomain} from "../../../utils/functions";
-import {API_URL_TENANT} from "../../../config/config";
 import {useEffect, useState} from "react";
-import { useSelector } from 'react-redux';
-import {fourDecimal, onlyNumeric, ruleRequired} from "../../../utils/rules";
-import locale from "antd/lib/date-picker/locale/es_ES";
 import moment from 'moment'
-import WebApiPayroll from "../../../api/WebApiPayroll";
+import TableMovements from "./TableMovements";
+import {getMovementsIMSS} from "../../../redux/payrollDuck";
+import MovementsSection from "./MovementsSection";
 
 
-const ButtonMovements=({person, node, payrollPerson,...props})=>{
+const ButtonMovements=({person,getMovementsIMSS, node, payrollPerson,...props})=>{
     const [loading, setLoading] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [form] = Form.useForm();
@@ -20,55 +17,12 @@ const ButtonMovements=({person, node, payrollPerson,...props})=>{
     //const regPatronal = useSelector(state => state.catalogStore.cat_patronal_registration);
 
     useEffect(()=>{
-        if(showModal){
-            getMovements()
-        }
-
-    },[showModal])
-
-    const getMovements=async ()=>{
-        setLoading(true)
-        try{
-            const res = await WebApiPayroll.getMovementsIMSSLog(node?.id);
-            console.log(res)
-            setMovements(res.data)
-
-        }catch (e){
-
-        }finally {
-            setLoading(false)
-        }
-    }
+        getMovementsIMSS(node)
+    },[])
 
     const onFinish=(values)=>{
         console.log(values)
     }
-
-    const columns = [
-        {
-            title: 'Descripción',
-            dataIndex: 'description',
-            key:'dataIndex'
-        },
-        {
-            title: 'Tipo',
-            dataIndex: 'movement_type',
-            key:'movement_type'
-        },
-        {
-            title: 'Fecha',
-            dataIndex: 'date',
-            key:'date',
-            render:data=><p>{data && moment(data).format('DD/MM/YYYY')}</p>
-        },
-        {
-            title: 'Vigencia',
-            dataIndex: 'validity_date',
-            key:'validity_date',
-            render:data=><p>{data && moment(data).format('DD/MM/YYYY')}</p>
-        }
-    ];
-
 
     const start = () => {
         setLoading(true);
@@ -78,20 +32,6 @@ const ButtonMovements=({person, node, payrollPerson,...props})=>{
             setLoading(false);
         }, 1000);
     };
-
-
-    const onSelectChange = (newSelectedRowKeys) => {
-        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
-
-
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
-    const hasSelected = selectedRowKeys.length > 0;
-
 
     useEffect(()=>{
         if(payrollPerson?.daily_salary){
@@ -135,13 +75,13 @@ const ButtonMovements=({person, node, payrollPerson,...props})=>{
                 >
                     <Row gutter={36} style={{marginBottom:30}}>
                         <Col>
-                            <Button type="primary" icon={<FileZipOutlined />}  onClick={start} disabled={!hasSelected} loading={loading}>
+                            <Button type="primary" icon={<FileZipOutlined />}  onClick={start}  loading={loading}>
                                 Generar archivo
                             </Button>
                         </Col>
 
                         <Col>
-                            <Button type="primary" icon={<SendOutlined />} onClick={start} disabled={!hasSelected} loading={loading}>
+                            <Button type="primary" icon={<SendOutlined />} onClick={start} loading={loading}>
                                 Enviar movimientos
                             </Button>
                         </Col>
@@ -151,15 +91,13 @@ const ButtonMovements=({person, node, payrollPerson,...props})=>{
                                     marginLeft: 8,
                                 }}
                             >
-                              {hasSelected ? `Seleccionados ${selectedRowKeys.length} movimientos` : ''}
+                              {/*{hasSelected ? `Seleccionados ${selectedRowKeys.length} movimientos` : ''}*/}
                             </span>
                         </Col>
                     </Row>
 
+                    <MovementsSection/>
 
-
-
-                    <Table rowSelection={rowSelection} columns={columns} dataSource={movements} />
                 </div>
 
             </Modal>
@@ -169,5 +107,11 @@ const ButtonMovements=({person, node, payrollPerson,...props})=>{
     )
 }
 
+const mapState = (state) => {
+    return {
+        config: state.userStore.general_config,
+        permissions: state.userStore.permissions.person,
+    };
+};
 
-export default ButtonMovements;
+export default connect(mapState, {getMovementsIMSS})(ButtonMovements);

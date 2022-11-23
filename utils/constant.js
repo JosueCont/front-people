@@ -499,6 +499,14 @@ export const optionsBusinessName = [
   {value: "2", key: "2", label: 'Moral'}
 ]
 
+// para los tipos de movimientos imss
+export const movementsTypes = [
+  'No identificado',
+  'Alta/Reingreso',
+  'Modificación de salario',
+  'Baja'
+]
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
