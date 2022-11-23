@@ -613,4 +613,15 @@ div.estatus-connection p{
     margin-bottom: 0px;
 }
 
+.table-custom .ant-table-thead tr > th.ant-table-cell{
+    background: #f0f0f0;
+}
+
+.table-custom .ant-table-tbody > tr.ant-table-row:hover > td,
+.table-custom .ant-table-tbody > tr > td.ant-table-cell-row-hover,
+.table-custom .ant-table-tbody > tr.ant-table-placeholder:hover > td,
+.table-custom .ant-table-tbody{
+    background: #f0f0f0;
+}
+
 /* Termina diseño bolsa de trabajo */

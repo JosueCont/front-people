@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import ViewCategories from './viewsCatalogs/ViewCategories';
+import ViewCategories from './ViewsCatalogs/ViewCategories';
 import ViewSubcategories from './ViewsCatalogs/ViewSubcategories';
 import ViewAcademics from './ViewsCatalogs/ViewAcademics';
 import ViewCompetences from './ViewsCatalogs/ViewCompetences';

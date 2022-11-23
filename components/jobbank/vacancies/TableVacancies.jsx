@@ -176,10 +176,10 @@ const TableVacancies = ({
                 <Menu.Item
                     key='3'
                     icon={<SettingOutlined />}
-                    // onClick={()=> router.push({
-                    //     pathname: '/jobbank/vacancies/publication',
-                    //     query: { id: item.id }
-                    // })}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/publications/add',
+                        query: { vacant: item.id }
+                    })}
                 >
                     Configurar publicación
                 </Menu.Item>

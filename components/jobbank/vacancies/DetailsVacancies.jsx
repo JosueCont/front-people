@@ -22,21 +22,11 @@ import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import {
-    setLoadVacancies,
-    setInfoVacant,
-    getInfoVacant
-} from '../../../redux/jobBankDuck';
 import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsVacancies = ({
     action,
-    currentNode,
-    load_vacancies,
-    setLoadVacancies,
-    info_vacant,
-    getInfoVacant,
-    setInfoVacant
+    currentNode
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -52,23 +42,27 @@ const DetailsVacancies = ({
     const [actionType, setActionType] = useState('');
     const [disabledClient, setDisabledClient] = useState(false);
     const [listInterviewers, setListInterviewers] = useState([]);
+    const [fetching, setFetching] = useState(false);
+    const [infoVacant, setInfoVacant] = useState({});
     const { setValuesForm, createData } = useProcessInfo({
         formVacancies,
-        info_vacant,
+        infoVacant,
         setListInterviewers,
         listInterviewers
     });
 
-    useLayoutEffect(()=>{
-        setInfoVacant()
-    },[])
+    useEffect(()=>{
+        if(router.query.id && action == 'edit'){
+            getInfoVacant(router.query.id)
+        }
+    },[router])
 
     useEffect(()=>{
-        if(Object.keys(info_vacant).length > 0 && action == 'edit'){
+        if(Object.keys(infoVacant).length > 0 && action == 'edit'){
             formVacancies.resetFields()
             setValuesForm();
         }
-    },[info_vacant])
+    },[infoVacant])
 
     useEffect(()=>{
         if(router.query.customer && action == 'add'){
@@ -76,6 +70,19 @@ const DetailsVacancies = ({
             keepCustomer()
         }else setDisabledClient(false)
     },[router])
+
+
+    const getInfoVacant = async (id) =>{
+        try {
+            setFetching(true)
+            let response = await WebApiJobBank.getInfoVacant(id);
+            setInfoVacant(response.data)
+            setFetching(false)
+        } catch (e) {
+            console.log(e)
+            setFetching(false)
+        }
+    }
 
     const keepCustomer = () =>{
         setDisabledClient(true)
@@ -90,14 +97,14 @@ const DetailsVacancies = ({
         try {
             await WebApiJobBank.createVacant({
                 ...values,
-                id: info_vacant.id,
+                id: infoVacant.id,
                 node_id: currentNode.id
             });
             message.success('Vacante actualizada');
-            getInfoVacant(info_vacant.id);
+            getInfoVacant(infoVacant.id);
         } catch (e) {
             console.log(e)
-            setLoadVacancies(false);
+            setFetching(false);
             message.error('Vacante no actualizada');
         }        
     }
@@ -109,14 +116,14 @@ const DetailsVacancies = ({
             actionSaveAnd(response.data.id)
         } catch (e) {
             console.log(e)
-            setLoadVacancies(false);
+            setFetching(false);
             setLoading({})
             message.error('Vacante no registrada')
         }
     }
 
     const onFinish = (values) => {
-        setLoadVacancies(true);
+        setFetching(true);
         const bodyData = createData(values);
         const actionFunction = {
             edit: onFinisUpdate,
@@ -134,7 +141,7 @@ const DetailsVacancies = ({
     const actionCreate = () =>{
         formVacancies.resetFields()
         if (router.query?.customer) keepCustomer();
-        setLoadVacancies(false)
+        setFetching(false)
         setLoading({})
     }
 
@@ -198,7 +205,7 @@ const DetailsVacancies = ({
                                 tab='Características del puesto'
                                 key='tab_1'
                             >
-                                <Spin spinning={load_vacancies}>
+                                <Spin spinning={fetching}>
                                     <TabFeatures
                                         formVacancies={formVacancies}
                                         disabledClient={disabledClient}
@@ -210,7 +217,7 @@ const DetailsVacancies = ({
                                 forceRender
                                 key='tab_2'
                             >
-                                <Spin spinning={load_vacancies}>
+                                <Spin spinning={fetching}>
                                     <TabEducation formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
@@ -219,7 +226,7 @@ const DetailsVacancies = ({
                                 forceRender
                                 key='tab_3'
                             >
-                                <Spin spinning={load_vacancies}>
+                                <Spin spinning={fetching}>
                                     <TabSalary formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
@@ -228,7 +235,7 @@ const DetailsVacancies = ({
                                 forceRender
                                 key='tab_4'
                             >
-                                <Spin spinning={load_vacancies}>
+                                <Spin spinning={fetching}>
                                     <TabRecruitment
                                         setListInterviewers={setListInterviewers}
                                         listInterviewers={listInterviewers}
@@ -273,7 +280,7 @@ const DetailsVacancies = ({
                         <Button
                             form='form-vacancies'
                             htmlType='submit'
-                            loading={load_vacancies}
+                            loading={fetching}
                         >
                             Actualizar
                         </Button>
@@ -286,16 +293,8 @@ const DetailsVacancies = ({
 
 const mapState = (state) =>{
     return{
-        load_vacancies: state.jobBankStore.load_vacancies,
-        info_vacant: state.jobBankStore.info_vacant,
         currentNode: state.userStore.current_node
     }
 }
 
-export default connect(
-    mapState, {
-        setLoadVacancies,
-        getInfoVacant,
-        setInfoVacant
-    }
-)(DetailsVacancies);
+export default connect(mapState)(DetailsVacancies);

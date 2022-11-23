@@ -2,25 +2,23 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import {
-    getInfoCandidate,
     getMainCategories,
     getSubCategories,
     getCompetences,
-    getSectors
+    getSectors,
+    getSpecializationArea
 } from '../../../redux/jobBankDuck';
 import AutoRegister from '../../../components/jobbank/AutoRegister';
 import RegisterCandidate from '../../../components/jobbank/candidates/RegisterCandidate';
 
 const candidate = ({
     currentNode,
-    getInfoCandidate,
     getSectors,
     getMainCategories,
     getSubCategories,
-    getCompetences
+    getCompetences,
+    getSpecializationArea
 }) => {
-
-    const router = useRouter();
 
     useEffect(()=>{
         if(currentNode){
@@ -28,12 +26,9 @@ const candidate = ({
             getMainCategories(currentNode.id);
             getSubCategories(currentNode.id);
             getCompetences(currentNode.id);
+            getSpecializationArea(currentNode.id);
         }
     },[currentNode])
-
-    // useEffect(()=>{
-    //     if(router.query.id) getInfoCandidate(router.query.id);
-    // },[router])
 
     return (
         <AutoRegister>
@@ -50,10 +45,10 @@ const mapState = (state) =>{
 
 export default connect(
     mapState, {
-        getInfoCandidate,
         getSectors,
         getMainCategories,
         getSubCategories,
-        getCompetences
+        getCompetences,
+        getSpecializationArea
     }
 )(candidate);

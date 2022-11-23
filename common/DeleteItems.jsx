@@ -19,9 +19,9 @@ const DeleteItems = ({
     const onFinish = () =>{
         setLoading(true)
         setTimeout(()=>{
-            close()
             actionDelete()
             setLoading(false)
+            close()
         },2000)
     }
 

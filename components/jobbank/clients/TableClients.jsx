@@ -212,7 +212,7 @@ const TableClients = ({
                     // onClick={()=> openModalEdit(item)}
                     onClick={()=> router.push({
                         pathname: '/jobbank/clients/edit',
-                        query: { id: item.id }
+                        query: {...router.query, id: item.id }
                     })}
                 >
                     Editar
