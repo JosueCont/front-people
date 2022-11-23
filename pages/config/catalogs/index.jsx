@@ -281,7 +281,9 @@ const configBusiness = ({ ...props }) => {
                   }
                   key="tab_12"
                 >
-                  <BranchCatalog />
+                  <BranchCatalog 
+                  
+                  />
                 </TabPane>
                 )
               </Tabs>
