@@ -542,7 +542,8 @@
     padding: 12px 24px;
 }
 
-.tabs-connections > div.ant-tabs-card div.ant-tabs-nav-list >  div.ant-tabs-tab:hover{
+.tabs-connections > div.ant-tabs-card div.ant-tabs-nav-list >  div.ant-tabs-tab:hover,
+.tabs-vacancies > div.ant-tabs-card div.ant-tabs-nav-list >  div.ant-tabs-tab:hover{
     color: rgba(0, 0, 0, 0.25)!important;
 }
 
@@ -610,6 +611,17 @@ div.estatus-connection-success{
 
 div.estatus-connection p{
     margin-bottom: 0px;
+}
+
+.table-custom .ant-table-thead tr > th.ant-table-cell{
+    background: #f0f0f0;
+}
+
+.table-custom .ant-table-tbody > tr.ant-table-row:hover > td,
+.table-custom .ant-table-tbody > tr > td.ant-table-cell-row-hover,
+.table-custom .ant-table-tbody > tr.ant-table-placeholder:hover > td,
+.table-custom .ant-table-tbody{
+    background: #f0f0f0;
 }
 
 /* Termina diseño bolsa de trabajo */

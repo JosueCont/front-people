@@ -1,4 +1,5 @@
 import { Form, Input, Button, Spin, Alert, Typography } from "antd";
+import { MailOutlined } from "@ant-design/icons";
 const { Text, Title } = Typography;
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -52,7 +53,7 @@ const PasswordRecover = (props) => {
           onFinish={onFinish}
         >
           <Form.Item>
-            <p className={"form-title"}>A new people management system</p>
+            <p className={"login-form-title"}>A new people management system</p>
             <p className={"form-subtitle"}>Recuperar contraseña</p>
           </Form.Item>
           {sendSuccess ? (
@@ -68,12 +69,13 @@ const PasswordRecover = (props) => {
               <Form.Item
                 name="email"
                 rules={[ruleRequired]}
-                label="Correo electrónico"
+                //label="Correo electrónico"
                 className="font-color-khor"
               >
                 <Input
-                  style={{ marginTop: "5px" }}
+                  style={{ marginTop: "5px", borderColor: "#F99543" }}
                   placeholder="Correo electrónico"
+                  prefix={<MailOutlined />}
                 />
               </Form.Item>
               <Form.Item>
@@ -81,7 +83,7 @@ const PasswordRecover = (props) => {
                   style={{ width: "100%" }}
                   type="primary"
                   htmlType="submit"
-                  className="login-form-button"
+                  className="login-form-button-in"
                 >
                   Enviar
                 </Button>
@@ -101,7 +103,7 @@ const PasswordRecover = (props) => {
 
           <Form.Item style={{ textAlign: "right" }}>
             <Text
-              className={"font-color-khor pointer"}
+              className={"pointer"}
               onClick={() => props.setRecoverPasswordShow(false)}
             >
               Regresar al Login

@@ -6,24 +6,25 @@ import {
 } from '@ant-design/icons';
 import ModalClients from './ModalClients';
 import { connect } from 'react-redux';
-import {
-    getClients,
-    setJobbankFilters
-} from '../../../redux/jobBankDuck';
+import { getClients } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import { ruleWhiteSpace } from '../../../utils/rules';
 import { useRouter } from 'next/router';
+import { createFiltersJB } from '../../../utils/functions';
 
 const SearchClients = ({
     user,
     currentNode,
-    getClients,
-    setJobbankFilters
+    getClients
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
+
+    useEffect(()=>{
+        formSearch.setFieldsValue(router.query);
+    },[router])
     
     const onFinish = async (values) =>{
         try {
@@ -43,25 +44,17 @@ const SearchClients = ({
         }
     }
 
-    const createFilters = (obj) =>{
-        let query = '';
-        if(obj.name) query += `&name__unaccent__icontains=${obj.name}`;
-        if(obj.is_active !== undefined) query += `&is_active=${obj.is_active}`;
-        return query;
-    }
-
     const onFinishSearch = (values) =>{
-        let filters = createFilters(values);
-        if(filters){
-            setJobbankFilters(filters)
-            getClients(currentNode.id, filters);
-        }else deleteFilter();
+        let filters = createFiltersJB(values);
+        router.replace({
+            pathname: '/jobbank/clients/',
+            query: filters
+        }, undefined, {shallow: true});
     }
 
     const deleteFilter = () =>{
-        setJobbankFilters("")
         formSearch.resetFields();
-        getClients(currentNode.id);
+        router.replace('/jobbank/clients', undefined, {shallow: true});
     }
 
     return (
@@ -77,11 +70,11 @@ const SearchClients = ({
                         <Row style={{width: '100%'}}>
                             <Col span={14}>
                                 <Form.Item
-                                    name='name'
+                                    name='name__unaccent__icontains'
                                     rules={[ruleWhiteSpace]}
                                     style={{marginBottom: 0}}
                                 >
-                                    <Input placeholder='Buscar por nombre'/>
+                                    <Input allowClear placeholder='Buscar por nombre'/>
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -93,8 +86,8 @@ const SearchClients = ({
                                         allowClear
                                         placeholder='Estatus'
                                     >
-                                        <Select.Option value={true} key={true}>Activo</Select.Option>
-                                        <Select.Option value={false} key={false}>Inactivo</Select.Option>
+                                        <Select.Option value='true' key='true'>Activo</Select.Option>
+                                        <Select.Option value='false' key='false'>Inactivo</Select.Option>
                                     </Select>
                                 </Form.Item>
                             </Col>
@@ -110,7 +103,12 @@ const SearchClients = ({
                     </Form>
                 </Col>
                 <Col span={4} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <Button onClick={()=> router.push({pathname: '/jobbank/clients/add'})}>Agregar</Button>
+                    <Button onClick={()=> router.push({
+                        pathname: '/jobbank/clients/add',
+                        query: router.query
+                    })}>
+                        Agregar
+                    </Button>
                 </Col>
             </Row>
             <ModalClients
@@ -132,7 +130,6 @@ const mapState = (state) => {
 
 export default connect(
     mapState,{
-        getClients,
-        setJobbankFilters
+        getClients
     }
 )(SearchClients);

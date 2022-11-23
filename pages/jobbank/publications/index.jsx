@@ -23,7 +23,7 @@ const index = ({
 
     useEffect(()=>{
         if(currentNode){
-            // getPublications(currentNode.id);
+            getPublications(currentNode.id);
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
         }

@@ -34,7 +34,7 @@ const index = ({
                     Inicio
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item>Perfiles de vacante</Breadcrumb.Item>
+                <Breadcrumb.Item>Template de vacante</Breadcrumb.Item>
             </Breadcrumb>
             <div
                 className='container'
