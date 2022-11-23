@@ -147,12 +147,12 @@ const MovementsIMSS=({ currentNode })=>{
                         onChange={(value) => setPatronalSelected(value)}
                     />
                 </Col>
-                <Col span={10} style={{ display: 'flex', justifyContent: 'end' }}>
+                <Col span={10} style={{ display: 'flex', justifyContent: 'end'}}>
                     {/* <Col span={12}>
                         <UploadFile
-                            textButton={"Cargar DispMag"}
+                            textButton={"Importar EMa y EBA"}
                             setFile={setFile}
-                            validateExtension={".txt"}
+                            validateExtension={".zip"}
                         />
                     </Col> */}
                      <Col span={12}>

@@ -9,6 +9,7 @@ import SuaMovements from "./suaMovements";
 import EmaYEvaFiles from "./EmaYEvaFiles";
 import { connect } from "react-redux";
 import MovementsIMSS from "../../../components/payroll/fiscalMovements/MovementsIMSS";
+import UploadFile from "../../../components/UploadFile";
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -16,6 +17,7 @@ const ImssMovements = ({ ...props }) => {
   const [currentNodeId, setCurrentNodeId] = useState(null) 
   const [patronalSelected, setPatronalSelected] = useState(null);
   const [files, setFiles ] = useState([])
+  const [file, setFile]=useState(null)
 
   // useEffect(() => {
   //   props.currentNode && setCurrentNodeId(props.currentNode.id)
@@ -37,6 +39,18 @@ const ImssMovements = ({ ...props }) => {
       setLoading(false)
       console.log('error', error)
     })
+  }
+
+  const syncEmaandEva = async () => {
+    setLoading(true)
+    try {
+      let response = await WebApiPeople.forceListEbaAndEmaFiles(props.currentNode.id, patronalSelected)
+      console.log("Response", response)
+    } catch (error) {
+      console.error('Error', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -96,15 +110,19 @@ const ImssMovements = ({ ...props }) => {
                       />
                     </Col>
                     <Col span={10} style={{ display: 'flex', justifyContent: 'end' }}>
-                    {/* <Col span={12}>
+                    <Col span={12}>
                         <UploadFile
-                            textButton={"Cargar DispMag"}
+                            textButton={"Importar EMA y EBA"}
                             setFile={setFile}
-                            validateExtension={".txt"}
+                            validateExtension={".zip"}
+                            size = {'middle'}
                         />
-                    </Col> */}
+                    </Col>
                      <Col span={12}>
-                        <Button>
+                        <Button 
+                          onClick={ () => syncEmaandEva() }
+                          disabled = { patronalSelected?  false : true }
+                        >
                             Sincronizar
                         </Button>
                     </Col>
