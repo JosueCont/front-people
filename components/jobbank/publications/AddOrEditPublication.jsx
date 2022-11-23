@@ -8,7 +8,8 @@ import {
     getProfilesOptions,
     getVacanciesOptions,
     getVacantFields,
-    getConnections
+    getConnections,
+    getClientsOptions
 } from '../../../redux/jobBankDuck';
 import DetailsPublication from './DetailsPublication';
 
@@ -19,17 +20,21 @@ const AddOrEditPublication = ({
     getProfilesOptions,
     getVacanciesOptions,
     getVacantFields,
-    getConnections
+    getConnections,
+    getClientsOptions
 }) => {
 
     const router = useRouter();
 
     useEffect(()=>{
         if(currentNode){
+
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
             getVacantFields(currentNode.id);
-            getConnections(currentNode.id);
+            //isOptions/true
+            getConnections(currentNode.id, true);
+            getClientsOptions(currentNode.id);
         }
     },[currentNode])
 
@@ -76,6 +81,7 @@ export default connect(
         getProfilesOptions,
         getVacanciesOptions,
         getVacantFields,
-        getConnections
+        getConnections,
+        getClientsOptions
     }
 )(AddOrEditPublication);

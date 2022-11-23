@@ -83,7 +83,6 @@ const TableClients = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
-        closeModalDelete();
         try {
             await WebApiJobBank.deleteClient({ids});
             validateGetClients();

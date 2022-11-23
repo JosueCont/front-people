@@ -542,7 +542,8 @@
     padding: 12px 24px;
 }
 
-.tabs-connections > div.ant-tabs-card div.ant-tabs-nav-list >  div.ant-tabs-tab:hover{
+.tabs-connections > div.ant-tabs-card div.ant-tabs-nav-list >  div.ant-tabs-tab:hover,
+.tabs-vacancies > div.ant-tabs-card div.ant-tabs-nav-list >  div.ant-tabs-tab:hover{
     color: rgba(0, 0, 0, 0.25)!important;
 }
 

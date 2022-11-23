@@ -4,6 +4,7 @@ import { Row, Col, Button, Tabs, Card, Spin} from 'antd';
 import { FaFacebookSquare, FaLinkedin } from 'react-icons/fa';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { valueToFilter } from '../../../utils/functions';
+import useDimensions from '../../../utils/useDimensions';
 import TabFacebook from './TabFacebook';
 import TabLinkedin from './TabLinkedin';
 
@@ -12,16 +13,16 @@ const TabsConnections = ({
     load_connections
 }) => {
 
+    // const sizeWindow = useDimensions();
+
     const connections = {
         FB: {
             name: 'Facebook',
-            icon: <FaFacebookSquare/>,
-            component: (data) => <TabFacebook infoConnection={data}/>
+            icon: <FaFacebookSquare/>
         },
         LK: {
             name: 'Linkedin',
-            icon: <FaLinkedin/>,
-            component: (data) => <TabLinkedin infoConnection={data}/>
+            icon: <FaLinkedin/>
         } 
     }
 
@@ -40,16 +41,10 @@ const TabsConnections = ({
         return list_connections.find(check);
     }
 
-    const appAvailable = (code) =>{
-        if(!code) return false;
-        const check = item => valueToFilter(item.code) === valueToFilter(code);
-        return list_connections.some(check);
-    }
-
     return (
         <Card>
-            <Row>
-                <Col span={24} className='title-action-content title-action-border'>
+            <Row gutter={[16,16]}>
+                <Col span={24} className='title-action-content'>
                     <p className='title-action-text'>
                         Configurar conexiones
                     </p>
@@ -60,19 +55,10 @@ const TabsConnections = ({
                         Regresar
                     </Button>
                 </Col>
-                <Col span={24} className='tabs-connections'>
-                    <Tabs type='card' tabPosition='left'>
-                        {/* {list_connections.map(item => (
-                            <Tabs.TabPane
-                                key={item.code}
-                                tab={getNameTab(item.code)}
-                            >
-                                {connections[item.code].component(item)}
-                            </Tabs.TabPane>
-                        ))} */}
+                <Col span={24} className='tabs-vacancies'>
+                    <Tabs type='card' tabPosition='top'>
                         <Tabs.TabPane
                             key='FB'
-                            disabled={!appAvailable('FB')}
                             tab={getNameTab('FB')}
                         >
                             <Spin spinning={load_connections}>

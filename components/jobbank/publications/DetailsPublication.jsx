@@ -19,7 +19,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormPublications from './FormPublications';
-// import { useProcessInfo } from './hook/useProcessInfo';
+import { useProcessInfo } from '../profiles/hook/useProcessInfo';
 import {
     setLoadStrategies,
     getInfoStrategy,
@@ -50,6 +50,7 @@ const DetailsPublication = ({
     const [formPublications] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
+    const { createData } = useProcessInfo();
 
     useLayoutEffect(()=>{
         setInfoStrategy()
@@ -75,9 +76,7 @@ const DetailsPublication = ({
         })
     }
 
-    const createData = (values) =>{
-        return values;
-    }
+    
 
     const onFinishUpdate = async (values) =>{
         
@@ -88,13 +87,13 @@ const DetailsPublication = ({
     }
 
     const onFinish = (values) =>{
-        setLoadPublications(true)
-        const bodyData = createData(values);
-        const actionFunction = {
-            edit: onFinishUpdate,
-            add: onFinishCreate
-        }
-        actionFunction[action](bodyData);
+        // setLoadPublications(true)
+        const bodyData = createData(values, 'fields');
+        // const actionFunction = {
+        //     edit: onFinishUpdate,
+        //     add: onFinishCreate
+        // }
+        // actionFunction[action](bodyData);
     }
 
     const actionBack = () =>{
@@ -122,9 +121,9 @@ const DetailsPublication = ({
     }
 
     const getSaveAnd = (type) =>{
-        setActionType(type)
-        const item = { loading: true, disabled: false };
-        setLoading({...fetchingParams, [type]: item });
+        // setActionType(type)
+        // const item = { loading: true, disabled: false };
+        // setLoading({...fetchingParams, [type]: item });
         btnSave.current.click();
   }
 

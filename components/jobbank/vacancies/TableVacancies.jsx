@@ -40,7 +40,6 @@ const TableVacancies = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
-        closeModalDelete();
         try {
             await WebApiJobBank.deleteVacant({ids});
             getVacancies(currentNode.id)
@@ -69,9 +68,9 @@ const TableVacancies = ({
         try {
             message.loading({content: 'Duplicando...', key});
             await WebApiJobBank.duplicateVacant(item.id);
-            getVacancies(currentNode.id);
             setTimeout(()=>{
                 message.success({content: 'Vacante duplicada', key});
+                getVacancies(currentNode.id);
             },1000)
         } catch (e) {
             console.log(e)

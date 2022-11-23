@@ -27,10 +27,10 @@ const FormStrategies = ({
     const {
         load_clients_options,
         load_vacancies_options,
-        load_jobvacant_options,
+        load_jobboards_options,
         list_clients_options,
         list_vacancies_options,
-        list_jobvacant_options,
+        list_jobboards_options,
     } = useSelector(state => state.jobBankStore);
     const {
         load_persons,
@@ -39,29 +39,40 @@ const FormStrategies = ({
     const clientSelected = Form.useWatch('customer', formStrategies);
     const salary = Form.useWatch('salary', formStrategies);
     const percent = Form.useWatch('percentage_to_collect', formStrategies);
+    const vacant = Form.useWatch('vacant', formStrategies);
+
+    useEffect(()=>{
+        if(list_vacancies_options.length <= 0) return;
+        getSalary()
+    },[vacant, list_vacancies_options])
 
     useEffect(()=>{
         getAmount()
     },[salary, percent])
 
-    const getAmount = () =>{
-        try {
-            let objReset = { amount_to_collect: null };
-            const setVal = (obj) => formStrategies.setFieldsValue(obj);
-            let validation = !salary || !percent; 
-            if(validation) return setVal(objReset);
-            let salary_ = parseFloat(salary.replaceAll(',',''));
-            let amount = (salary_/100) * percent;
-            let formatAmount = amount.toLocaleString("es-MX", {maximumFractionDigits: 4});
-            let objSet = { amount_to_collect: formatAmount };
-            setVal(objSet);
-        } catch (e) {
-            console.log(e)
-        }
+    const setValue = (key, val) => formStrategies.setFieldsValue({[key]: val});
+    const setSalary = (val = null) => setValue('salary', val);
+    const setAmount = (val = null) => setValue('amount_to_collect', val);
+    const setVacant = (val = null) => setValue('vacant', val);
+
+    const getSalary = () =>{
+        let key = 'salary_and_benefits';
+        if(!vacant) return setSalary();
+        const _find = item => item.id == vacant;
+        let selected = list_vacancies_options.find(_find);
+        if(!selected) return setSalary();
+        let salaryNum = selected[key]?.gross_salary;
+        if(!salaryNum) return setSalary();
+        return setSalary(salaryNum);
     }
 
-    const onChangeClient = (value) =>{
-        formStrategies.setFieldsValue({vacant: null})
+    const getAmount = () =>{
+        let validation = !salary || !percent; 
+        if(validation) return setAmount();
+        let salary_ = parseFloat(salary.replaceAll(',',''));
+        let amount = (salary_/100) * percent;
+        let formatAmount = amount.toLocaleString("es-MX", {maximumFractionDigits: 4});
+        return setAmount(formatAmount);
     }
     
     const optionsByClient = () =>{
@@ -206,7 +217,7 @@ const FormStrategies = ({
                         placeholder='Seleccionar un cliente'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
-                        onChange={onChangeClient}
+                        onChange={(e)=> setVacant()}
                     >
                         {list_clients_options.length > 0 && list_clients_options.map(item => (
                             <Select.Option value={item.id} key={item.id}>
@@ -220,6 +231,7 @@ const FormStrategies = ({
                 <Form.Item
                     name='vacant'
                     label='Vacante'
+                    tooltip='El listado se habilita si el cliente seleccionado tiene vacantes registradas.'
                     rules={[ruleRequired]}
                 >
                     <Select
@@ -278,12 +290,17 @@ const FormStrategies = ({
                 <Form.Item
                     name='salary'
                     label='Sueldo (MXN)'
-                    rules={[ruleRequired, numCommaAndDot()]}
+                    tooltip='El valor se obtiene por medio de la vacante seleccionada, si esta la tiene.'
+                    rules={[
+                        ruleRequired,
+                        // numCommaAndDot()
+                    ]}
                 >
                     <Input
-                        maxLength={20}
+                        disabled
+                        // maxLength={20}
                         placeholder='Ej. 70,500.5999'
-                        onKeyPress={e => e.which == 32 && e.preventDefault()}
+                        // onKeyPress={e => e.which == 32 && e.preventDefault()}
                     />
                 </Form.Item>
             </Col>
@@ -362,13 +379,13 @@ const FormStrategies = ({
                 >   
                     <Select
                         mode='multiple'
-                        disabled={load_jobvacant_options}
-                        loading={load_jobvacant_options}
+                        disabled={load_jobboards_options}
+                        loading={load_jobboards_options}
                         placeholder='Seleccionar las opciones'
                         notFoundContent='No se encontraron resultados'
                         optionFilterProp='children'
                     >
-                        {list_jobvacant_options.length > 0 && list_jobvacant_options.map(item => (
+                        {list_jobboards_options.length > 0 && list_jobboards_options.map(item => (
                             <Select.Option value={item.id} key={item.id}>
                                 {item.name}
                             </Select.Option>

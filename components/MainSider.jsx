@@ -291,7 +291,7 @@ const MainSider = ({
             getItem("Clientes", "jb_clients"),
             getItem("Vacantes", "jb_vacancies"),
             getItem("Estrategias", "jb_strategies"),
-            getItem("Perfiles de vacante", "jb_profiles"),
+            getItem("Template de vacante", "jb_profiles"),
             // getItem("Candidatos", "jb_candidates"),
             getItem("Publicaciones", "jb_publications"),
             getItem("Configuraciones", "jb_settings")
