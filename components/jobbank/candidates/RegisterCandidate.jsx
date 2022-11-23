@@ -1,46 +1,20 @@
-import React, { useState } from 'react';
-import {
-    Card,
-    Row,
-    Col,
-    Button,
-    Form,
-    Tabs,
-    Spin
-} from 'antd';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import {Row, Col, Tabs } from 'antd';
 import TabGeneral from './TabGeneral';
 import TabSchool from './TabSchool';
 import TabExperience from './TabExperience';
 import TabPositions from './TabPositions';
 import { useRouter } from 'next/router';
-import {
-    getInfoCandidate,
-    setLoadCandidates
-} from '../../../redux/jobBankDuck';
 
-const RegisterCandidate = ({
-    currentNode,
-    getInfoCandidate,
-    setLoadCandidates,
-    load_candidates,
-    info_candidate
-}) => {
+const RegisterCandidate = () => {
 
     const router = useRouter();
-    const [formCandidate] = Form.useForm();
+    const [disableTab, setDisabledTab] = useState(true);
 
-    const onFinish = () =>{
-        setLoadCandidates(true)
-        setTimeout(()=>{
-            const url = `/jobbank/${router.query.uid}/candidate?id=${1}`;
-            router.replace(url, undefined, {shallow: true});
-            setLoadCandidates(false)
-        },2000)
-    }
+    const getAction = () => router.query?.id ? 'edit' : 'add';
 
     return (
-        <Row gutter={[0,8]} style={{width: '60%'}}>
+        <Row gutter={[0,24]} style={{width: '70%'}}>
             <Col span={24} className='content-center'>
                 <p style={{
                     marginBottom: 0,
@@ -54,64 +28,29 @@ const RegisterCandidate = ({
                 </p>
             </Col>
             <Col span={24}>
-                <Card>
-                    <Form
-                        className='tabs-vacancies'
-                        id='form-register-candidate'
-                        layout='vertical'
-                        form={formCandidate}
-                        onFinish={onFinish}
-                        requiredMark={false}
-                    >
-                        <Tabs type='card'>
-                            <Tabs.TabPane key='1' tab='Datos generales'>
-                                <Spin spinning={load_candidates}>
-                                    <TabGeneral sizeCol={12}/>
-                                </Spin>
-                            </Tabs.TabPane>
-                            <Tabs.TabPane forceRender key='2' tab='Eduación'>
-                                <Spin spinning={load_candidates}>
-                                    <TabSchool sizeCol={12}/>
-                                </Spin>
-                            </Tabs.TabPane>
-                            <Tabs.TabPane forceRender key='3' tab='Experiencia y especialización'>
-                                <Spin spinning={load_candidates}>
-                                    <TabExperience sizeCol={12}/>
-                                </Spin>
-                            </Tabs.TabPane>
-                            <Tabs.TabPane forceRender key='4' tab='Últimas posiciones'>
-                                <Spin spinning={load_candidates}>
-                                    <TabPositions sizeCol={12}/>
-                                </Spin>
-                            </Tabs.TabPane>
-                        </Tabs>
-                    </Form>
-                </Card>
-            </Col>
-            <Col span={24} className='content-end'>
-                <Button
-                    form='form-register-candidate'
-                    htmlType='submit'
-                    loading={load_candidates}
-                >
-                    Guardar
-                </Button>
+                <div className='tabs-vacancies' style={{background: '#ffff', padding: 24, borderRadius: 10}}>
+                    <Tabs type='card'>
+                        <Tabs.TabPane key='1' tab='Datos generales'>
+                            <TabGeneral
+                                isAutoRegister={true}
+                                action={getAction()}
+                                setDisabledTab={setDisabledTab}
+                            />
+                        </Tabs.TabPane>
+                        <Tabs.TabPane forceRender key='2' disabled={disableTab} tab='Eduación'>
+                            <TabSchool action={getAction()}/>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane forceRender key='3' disabled={disableTab} tab='Experiencia y especialización'>
+                            <TabExperience action={getAction()}/>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane forceRender key='4' disabled={disableTab} tab='Últimas posiciones'>
+                            <TabPositions action={getAction()}/>
+                        </Tabs.TabPane>
+                    </Tabs>
+                </div>
             </Col>
         </Row>
     )
 }
 
-const mapState = (state) =>{
-    return{
-        load_candidates: state.jobBankStore.load_candidates,
-        info_candidate: state.jobBankStore.info_candidate,
-        currentNode: state.userStore.current_node
-    }
-}
-
-export default connect(
-    mapState, {
-        getInfoCandidate,
-        setLoadCandidates
-    }
-)(RegisterCandidate);
+export default RegisterCandidate;

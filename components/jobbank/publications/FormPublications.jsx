@@ -6,7 +6,11 @@ import VacantFields from '../profiles/VacantFields';
 import { useProcessInfo } from '../profiles/hook/useProcessInfo';
 
 const FormPublications = ({
-    formPublications
+    formPublications,
+    valuesDefault = {},
+    disableField,
+    setDisabledField,
+    disabledVacant
 }) => {
 
     const {
@@ -17,20 +21,27 @@ const FormPublications = ({
         list_vacancies_options,
         list_profiles_options,
         list_clients_options,
-        load_clients_options
+        load_clients_options,
+        list_vacancies_fields
     } = useSelector(state => state.jobBankStore);
     const vacant = Form.useWatch('vacant', formPublications);
     const customer = Form.useWatch('customer', formPublications);
-    const [disableField, setDisabledField] = useState(false);
+    const profile = Form.useWatch('profile', formPublications);
     const { formatData } = useProcessInfo();
 
-    useEffect(()=>{
-        setProfile(null);
-    },[customer])
+    // useEffect(()=>{
+    //     onChangeCustomer();
+    // },[customer])
 
     useEffect(()=>{
-        clientByVacant()
-    },[vacant])
+        if(list_vacancies_options.length <= 0) return;
+        clientByVacant();
+    },[vacant, list_vacancies_options])
+
+    // useEffect(()=>{
+    //     if(list_profiles_options.length <= 0) return;
+    //     onChangeType(profile);
+    // },[profile, list_profiles_options])
 
     const setValue = (key, val) => formPublications.setFieldsValue({[key]: val});
     const setCustomer = (val) => setValue('customer', val);
@@ -51,44 +62,49 @@ const FormPublications = ({
         return list_profiles_options.filter(_filter);
     }
 
+    const onChangeCustomer = () =>{
+        setProfile(null);
+        resetVacantFields();
+        setDisabledField(false);
+    }
+
+    const resetVacantFields = () =>{
+        let resetValues = formatData(list_vacancies_fields, false, 'field');
+        formPublications.setFieldsValue(resetValues);
+    }
+
     const onChangeType = (value) =>{
         if(!value) setDisabledField(false);
-        let keepValues = {
-            vacant: formPublications.getFieldValue('vacant'),
-            customer: formPublications.getFieldValue('customer'),
-            code_post: formPublications.getFieldValue('code_post'),
-            profile: value
-        } 
-        formPublications.resetFields();
+        resetVacantFields();
         if(value == 'open_fields'){
-            // let info = {...valuesDefault, ...keepValues};
-            formPublications.setFieldsValue(keepValues);
-            setDisabledField(false)
+            formPublications.setFieldsValue(valuesDefault);
+            setDisabledField(false);
             return;
         }
-        formPublications.setFieldsValue(keepValues);
         const type = item => item.id == value;
         let type_ = list_profiles_options.find(type);
         if(!type_) return;
         if(Object.keys(type_).length <= 0) return;
         if(Object.keys(type_.fields_name).length <= 0) return;
-        if(type_.profile_type) setDisabledField(type_.profile_type.form_enable);
+        // if(type_.profile_type) setDisabledField(type_.profile_type.form_enable);
+        setDisabledField(true);
         let activeFields = formatData(type_.fields_name);
         formPublications.setFieldsValue(activeFields);
     }
 
     return (
-        <Row gutter={[24,16]}>
+        <Row gutter={[24,0]}>
             <Col span={6}>
                 <Form.Item
                     name='vacant'
                     label='Vacante'
+                    rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
                     <Select
                         allowClear
                         showSearch
-                        disabled={load_vacancies_options}
+                        disabled={disabledVacant}
                         loading={load_vacancies_options}
                         placeholder='Seleccionar una vacante'
                         notFoundContent='No se encontraron resultados'
@@ -103,9 +119,10 @@ const FormPublications = ({
                 </Form.Item>
             </Col>
             <Col span={6}>
-            <Form.Item
+                <Form.Item
                     name='customer'
                     label='Cliente de la vacante'
+                    tooltip='El cliente se obtiene por medio de la vacante, si esta está asociada a uno.'
                     rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
@@ -130,6 +147,7 @@ const FormPublications = ({
                 <Form.Item
                     name='profile'
                     label='Template de vacante'
+                    rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
                     <Select
@@ -157,6 +175,7 @@ const FormPublications = ({
                 <Form.Item
                     name='code_post'
                     label='Cuentas conectadas'
+                    rules={[ruleRequired]}
                     style={{marginBottom: 0}}
                 >
                     <Select

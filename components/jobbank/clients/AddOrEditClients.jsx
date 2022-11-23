@@ -4,16 +4,12 @@ import { Breadcrumb } from 'antd';
 import { useRouter } from 'next/router';
 import DetailsClients from './DetailsClients';
 import { connect } from 'react-redux';
-import {
-    getSectors,
-    getInfoClient
-} from '../../../redux/jobBankDuck';
+import { getSectors } from '../../../redux/jobBankDuck';
 
 const AddOrEditClients = ({
     action = 'add',
     currentNode,
-    getSectors,
-    getInfoClient
+    getSectors
 }) => {
 
     const router = useRouter();
@@ -21,12 +17,6 @@ const AddOrEditClients = ({
     useEffect(()=>{
         if(currentNode) getSectors(currentNode.id);
     },[currentNode])
-
-    useEffect(()=>{
-        if(router.query.id && action == 'edit'){
-            getInfoClient(router.query.id)
-        }
-    },[router])
 
     return (
         <MainLayout currentKey='jb_clients' defaultOpenKeys={['job_bank']}>
@@ -60,8 +50,5 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState, {
-        getSectors,
-        getInfoClient
-    }
+    mapState, { getSectors }
 )(AddOrEditClients);

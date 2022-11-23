@@ -32,17 +32,17 @@ const AddOrEditPublication = ({
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
             getVacantFields(currentNode.id);
+            getClientsOptions(currentNode.id);
             //isOptions/true
             getConnections(currentNode.id, true);
-            getClientsOptions(currentNode.id);
         }
     },[currentNode])
 
-    // useEffect(()=>{
-    //     if(router.query.id && action == 'edit'){
-    //         getInfoPublication(router.query.id)
-    //     }
-    // },[router])
+    useEffect(()=>{
+        if(router.query.id && action == 'edit'){
+            getInfoPublication(router.query.id);
+        }
+    },[router])
 
     return (
         <MainLayout currentKey='jb_publications' defaultOpenKeys={['job_bank']}>
