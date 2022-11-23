@@ -17,17 +17,17 @@ const ImssMovements = ({ ...props }) => {
   const [patronalSelected, setPatronalSelected] = useState(null);
   const [files, setFiles ] = useState([])
 
-  useEffect(() => {
-    props.currentNode && setCurrentNodeId(props.currentNode.id)
-  },[])
+  // useEffect(() => {
+  //   props.currentNode && setCurrentNodeId(props.currentNode.id)
+  // },[])
 
   useEffect(() => {
-    currentNodeId && patronalSelected && getFiles()
+    patronalSelected && getFiles()
   },[patronalSelected])
 
   const getFiles = () => {
     setLoading(true)
-    WebApiPeople.listEbaAndEmaFiles(currentNodeId, patronalSelected)
+    WebApiPeople.listEbaAndEmaFiles(props.currentNode.id, patronalSelected)
     .then((response) => {
       setFiles(response.data.documents)
       setLoading(false)
@@ -88,12 +88,28 @@ const ImssMovements = ({ ...props }) => {
                 </Collapse>
               </Panel>
               <Panel header="EMA y EBA" key="2">
-              <Col span={10}>
-                  <SelectPatronalRegistration
-                    currentNode={currentNodeId}
-                    onChange={(value) => setPatronalSelected(value)}
-                  />
+                <Row justify={'space-between'} style={{ marginTop: '20px' }}>
+                    <Col span={10}>
+                      <SelectPatronalRegistration
+                        currentNode={currentNodeId}
+                        onChange={(value) => setPatronalSelected(value)}
+                      />
+                    </Col>
+                    <Col span={10} style={{ display: 'flex', justifyContent: 'end' }}>
+                    {/* <Col span={12}>
+                        <UploadFile
+                            textButton={"Cargar DispMag"}
+                            setFile={setFile}
+                            validateExtension={".txt"}
+                        />
+                    </Col> */}
+                     <Col span={12}>
+                        <Button>
+                            Sincronizar
+                        </Button>
+                    </Col>
                 </Col>
+                </Row>
                 <EmaYEvaFiles 
                   files = {files.length > 0? files : []}
                   loading = { loading }
@@ -101,7 +117,9 @@ const ImssMovements = ({ ...props }) => {
               </Panel>
               <Panel header="Consulta de movimientos al IMSS" key="3">
                 <Col span={24}>
-                  <MovementsIMSS/>
+                  <MovementsIMSS
+                    currentNodeId = { currentNodeId }
+                  />
                 </Col>
               </Panel>
             </Collapse>

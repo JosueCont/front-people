@@ -44,7 +44,7 @@ export const downLoadFileBlob = async (
       link.click();
     })
     .catch((e) => {
-      if(message) { message.error(Textmessage) }
+      Textmessage && message.error(Textmessage) 
       console.log(e);
     });
 };
