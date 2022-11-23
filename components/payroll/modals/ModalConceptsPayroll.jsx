@@ -238,12 +238,13 @@ const ModalConceptsPayroll = ({
       console.log("Persona-->> ", item);
 
       if (item.person.id === person_id) {
-        item.perceptions.map((p) => {
-          if (p.type == "046") {
-            perceptions.push(p);
-            return;
-          }
-        });
+        if (item.perceptions)
+          item.perceptions.map((p) => {
+            if (p.type == "046") {
+              perceptions.push(p);
+              return;
+            }
+          });
         const obj = {
           person_id: person_id,
           perceptions: perceptions,

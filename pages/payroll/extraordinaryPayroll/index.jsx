@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import {
+  Alert,
   Avatar,
   Breadcrumb,
   Button,
   Card,
   Col,
+  DatePicker,
   Form,
   Input,
   Row,
@@ -44,6 +46,8 @@ import { messageError, optionMovement } from "../../../utils/constant";
 import SelectDepartment from "../../../components/selects/SelectDepartment";
 import SelectJob from "../../../components/selects/SelectJob";
 import GenericModal from "../../../components/modal/genericModal";
+import locale from "antd/lib/date-picker/locale/es_ES";
+import moment from "moment";
 
 const ExtraordinaryPayroll = ({ ...props }) => {
   const route = useRouter();
@@ -73,9 +77,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   const [department, setDepartment] = useState(null);
   const [cfdiCancel, setCfdiCancel] = useState([]);
   const [genericModal, setGenericModal] = useState(false);
+  const [objectSend, setObjectSend] = useState(null);
 
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
+
+  const [infoGenericModal, setInfoGenericModal] = useState(null);
 
   const persons = [
     {
@@ -161,30 +168,38 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     {
       key: "actions",
       className: "cell-actions",
-      render: (item) => (
-        <>
-          {(movementType == 2 || movementType == 3) && (
-            <Button
-              size="small"
-              onClick={() => {
-                setPersonId(
-                  item.payroll_person && item.payroll_person.person.id
-                ),
-                  setModalVisible(true);
-              }}
-            >
-              <PlusOutlined />
-            </Button>
-          )}
-        </>
-      ),
+      render: (item) =>
+        listPersons &&
+        listPersons.find((a) => a.key === item.key) && (
+          <>
+            {(movementType == 2 || movementType == 3) && (
+              <Button
+                size="small"
+                onClick={() => {
+                  setPersonId(
+                    item.payroll_person && item.payroll_person.person.id
+                  ),
+                    setModalVisible(true);
+                }}
+              >
+                <PlusOutlined />
+              </Button>
+            )}
+          </>
+        ),
     },
   ];
 
   const renderConceptsTable = (data) => {
-    console.log(data);
-    let dataPerceptions = [data.perception];
-    let dataDeductions = [data.deduction];
+    let dataPerceptions = [];
+    let dataDeductions = [];
+    if (movementType > 1) {
+      dataPerceptions = data?.perception?.items;
+      dataDeductions = data?.deduction?.items;
+    } else {
+      dataPerceptions = data?.perception;
+      dataDeductions = data?.deduction;
+    }
 
     const columnsPerceptions = [
       {
@@ -409,8 +424,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     if (!period) period = calendar.periods[0];
     setPeriodSelcted(period);
     setCalendarSelect(calendar);
-    // setActivePeriod(period.id);
-    // setPayrollType(calendar.perception_type.code);
     form.setFieldsValue({
       periodicity: calendar.periodicity.description,
       period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
@@ -435,11 +448,13 @@ const ExtraordinaryPayroll = ({ ...props }) => {
 
   const sendCalculateExtraordinaryPayrroll = async (data) => {
     setLoading(true);
+    setExtraOrdinaryPayroll([]);
     await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
         console.log(response.data);
         setExtraOrdinaryPayroll(response.data);
         setLoading(false);
+        setObjectSend(null);
       })
       .catch((error) => {
         console.log(error);
@@ -458,6 +473,41 @@ const ExtraordinaryPayroll = ({ ...props }) => {
   useEffect(() => {
     if (movementType && calendarSelect) changeCalendar(calendarSelect.id);
   }, [movementType]);
+
+  const ExpandedFunc = (expanded, onExpand, record) => {
+    if (movementType > 1 && record.worked_days)
+      return expanded ? (
+        <DownOutlined onClick={(e) => onExpand(record, e)} />
+      ) : (
+        <RightOutlined onClick={(e) => onExpand(record, e)} />
+      );
+    else if (movementType == 1) {
+      return expanded ? (
+        <DownOutlined onClick={(e) => onExpand(record, e)} />
+      ) : (
+        <RightOutlined onClick={(e) => onExpand(record, e)} />
+      );
+    }
+  };
+
+  const calculateExtra = () => {
+    setGenericModal(false);
+    const departureDate = document.getElementById("departure_date");
+    if (departureDate.value != null && departureDate.value != "") {
+      sendCalculateExtraordinaryPayrroll({
+        list: objectSend
+          ? objectSend.payroll
+          : listPersons.map((item) => {
+              return { person_id: item.key };
+            }),
+        departure_date: departureDate.value,
+        movementType: movementType,
+        calendar: calendarSelect.id,
+      });
+    } else {
+      message.error("Se requeiere una fecha de pago");
+    }
+  };
 
   return (
     <Spin tip="Cargando..." spinning={loading}>
@@ -619,7 +669,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             />
                           </Col>
                         )}
-                        <Col xxs={24} xl={4}>
+                        {/* <Col xxs={24} xl={4}>
                           <Button
                             style={{ marginTop: "30px" }}
                             size="large"
@@ -644,7 +694,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           >
                             Descargar plantilla
                           </Button>
-                        </Col>
+                        </Col> */}
                       </>
                     )}
                   </Row>
@@ -721,6 +771,63 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                           Descargar nómina
                         </Button>
                       </Col>
+
+                      {personKeys && personKeys.length > 0 && (
+                        <Col md={5} offset={1}>
+                          <Button
+                            size="large"
+                            block
+                            htmlType="button"
+                            onClick={() => (
+                              setInfoGenericModal({
+                                title: `Calcular ${
+                                  movementType === 2
+                                    ? "finiquito"
+                                    : "liquidacion"
+                                }`,
+                                title_message: "Selecciona una fecha de salida",
+                                description:
+                                  "Fecha de salida requerida para el calculo que quiere realizar.",
+                                type_alert: "warning",
+                                title_message: "Fecha de salida",
+
+                                closeButton: "Cerrar",
+                                action: () => calculateExtra(),
+                                components: (
+                                  <>
+                                    <Row
+                                      style={{
+                                        width: "100%",
+                                        marginTop: "10px",
+                                      }}
+                                      justify="center"
+                                    >
+                                      <Form.Item
+                                        label="Fecha de pago"
+                                        style={{ width: "40%" }}
+                                      >
+                                        <DatePicker
+                                          defaultValue={moment(
+                                            periodSelected?.payment_date
+                                          )}
+                                          moment={"YYYY"}
+                                          id="departure_date"
+                                          placeholder="Fecha de pago."
+                                          locale={locale}
+                                        />
+                                      </Form.Item>
+                                    </Row>
+                                  </>
+                                ),
+                              }),
+                              setGenericModal(true)
+                            )}
+                          >
+                            Calcular
+                          </Button>
+                        </Col>
+                      )}
+
                       {/* {payroll.length > 0 && !genericModal && (
                         <>
                           {consolidated && (
@@ -749,18 +856,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             </>
                           )}
 
-                          {step == 0 && calculate && (
-                            <Col md={5} offset={1}>
-                              <Button
-                                size="large"
-                                block
-                                htmlType="button"
-                                onClick={() => reCalculatePayroll([...payroll])}
-                              >
-                                Calcular
-                              </Button>
-                            </Col>
-                          )}
+                          
                           {step == 2 &&
                             consolidated &&
                             consolidated.status <= 2 && (
@@ -910,22 +1006,24 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                     <Table
                       className="headers_transparent"
                       dataSource={extraOrdinaryPayroll.map((item) => {
-                        item.key = item?.payrrol_person?.person.id;
+                        item.key = item?.person.id;
                         return item;
                       })}
                       columns={persons}
                       expandable={{
                         expandedRowRender: (item) => renderConceptsTable(item),
                         expandIcon: ({ expanded, onExpand, record }) =>
-                          expanded ? (
-                            <DownOutlined
-                              onClick={(e) => onExpand(record, e)}
-                            />
-                          ) : (
-                            <RightOutlined
-                              onClick={(e) => onExpand(record, e)}
-                            />
-                          ),
+                          ExpandedFunc(expanded, onExpand, record),
+
+                        // expanded ? (
+                        //   <DownOutlined
+                        //     onClick={(e) => onExpand(record, e)}
+                        //   />
+                        // ) : (
+                        //   <RightOutlined
+                        //     onClick={(e) => onExpand(record, e)}
+                        //   />
+                        // ),
                       }}
                       hideExpandIcon
                       loading={loading}
@@ -970,7 +1068,7 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           </Col>
         </div>
       </MainLayout>
-      {personId && (
+      {personId && periodSelected && (
         <ModalConceptsPayroll
           extraOrdinary={true}
           visible={modalVisible}
@@ -981,32 +1079,32 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           person_id={personId}
           payroll={extraOrdinaryPayroll}
           setLoading={setLoading}
-          sendCalculatePayroll={sendCalculateExtraordinaryPayrroll}
+          sendCalculatePayroll={setObjectSend}
         />
       )}
       {genericModal && (
         <GenericModal
           visible={genericModal}
           setVisible={setGenericModal}
-          // title={infoGenericModal.title}
-          // viewActionButton={infoGenericModal.viewActionButton}
-          // actionButton={infoGenericModal.action}
-          // titleActionButton={infoGenericModal.title_action_button}
-          // closeButton={
-          //   infoGenericModal.closeButton
-          //     ? infoGenericModal.closeButton
-          //     : "Cerrar"
-          // }
+          title={infoGenericModal.title}
+          viewActionButton={infoGenericModal.viewActionButton}
+          actionButton={infoGenericModal.action}
+          titleActionButton={infoGenericModal.title_action_button}
+          closeButton={
+            infoGenericModal.closeButton
+              ? infoGenericModal.closeButton
+              : "Cerrar"
+          }
         >
           <Row>
             <Alert
               style={{ width: "100%" }}
-              // message={infoGenericModal.title_message}
-              // description={infoGenericModal.description}
-              // type={infoGenericModal.type_alert}
+              message={infoGenericModal.title_message}
+              description={infoGenericModal.description}
+              type={infoGenericModal.type_alert}
               showIcon
             />
-            {/* {infoGenericModal.components && infoGenericModal.components} */}
+            {infoGenericModal.components && infoGenericModal.components}
           </Row>
         </GenericModal>
       )}
