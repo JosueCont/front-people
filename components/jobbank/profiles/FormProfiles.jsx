@@ -22,38 +22,32 @@ const FormProfiles = ({
         load_clients_options,
         load_profiles_types,
         list_profiles_types,
-        list_clients_options
+        list_clients_options,
+        list_vacancies_fields
     } = useSelector(state => state.jobBankStore);
     const { formatData } = useProcessInfo();
-    const { setFieldsValue, resetFields, getFieldValue } = formProfile;
 
     const onChangeType = (value) =>{
         if(!value) setDisabledField(false);
-        let keepValues = {
-            name: getFieldValue('name'),
-            customer: getFieldValue('customer'),
-            profile_type: value
-        } 
-        resetFields();
+        let resetValues = formatData(list_vacancies_fields, false, 'field');
+        formProfile.setFieldsValue(resetValues);
         if(value == 'open_fields'){
-            let info = {...valuesDefault, ...keepValues};
-            setFieldsValue(info);
-            setDisabledField(false)
+            formProfile.setFieldsValue(valuesDefault);
+            setDisabledField(false);
             return;
         }
-        setFieldsValue(keepValues);
         const type = item => item.id == value;
         let type_ = list_profiles_types.find(type);
         if(!type_) return;
         if(Object.keys(type_).length <= 0) return;
         if(Object.keys(type_.config).length <= 0) return;
-        setDisabledField(!type_.form_enable)
+        setDisabledField(!type_.form_enable);
         let activeFields = formatData(type_.config);
-        setFieldsValue(activeFields);
+        formProfile.setFieldsValue(activeFields);
     }
 
     return (
-        <Row gutter={[24,16]}>
+        <Row gutter={[24,0]}>
             <Col xs={24} lg={10}>
                 <Form.Item
                     name='name'

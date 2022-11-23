@@ -83,7 +83,6 @@ const TableClients = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
-        closeModalDelete();
         try {
             await WebApiJobBank.deleteClient({ids});
             validateGetClients();
@@ -213,7 +212,7 @@ const TableClients = ({
                     // onClick={()=> openModalEdit(item)}
                     onClick={()=> router.push({
                         pathname: '/jobbank/clients/edit',
-                        query: { id: item.id }
+                        query: {...router.query, id: item.id }
                     })}
                 >
                     Editar

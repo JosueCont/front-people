@@ -568,3 +568,13 @@ export const redirectTo = (url, newWindow = false) =>{
   link.target = newWindow ? '_blank' : '_self';
   link.click();
 }
+
+export const catalogsJobbank = [
+  {catalog: 'categories', name: 'Categorías'},
+  {catalog: 'subcategories', name: 'Subcategorías' },
+  {catalog: 'academic', name: 'Carreras'},
+  {catalog: 'competences', name: 'Competencias'},
+  // {catalog: 'profiles', name: 'Template de vacante'},
+  {catalog: 'sectors', name: 'Sectores'},
+  {catalog: 'jobboars', name: 'Bolsas de empleo'}
+];

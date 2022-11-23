@@ -12,6 +12,7 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
+    CopyOutlined
 } from '@ant-design/icons';
 import {
     setJobbankPage,
@@ -39,7 +40,6 @@ const TableProfiles = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
-        closeModalDelete();
         try {
             await WebApiJobBank.deleteProfile({ids});
             getProfilesList(currentNode.id);
@@ -49,6 +49,23 @@ const TableProfiles = ({
             console.log(e)
             if(ids.length > 1) message.error('Perfiles no eliminados');
             else message.error('Perfil no eliminado');
+        }
+    }
+
+    const actionDuplicate = async (item) =>{
+        const key = 'updatable';
+        try {
+            message.loading({content: 'Duplicando...', key});
+            await WebApiJobBank.duplicateProfile(item.id);
+            setTimeout(()=>{
+                message.success({content: 'Perfil duplicado', key});
+                getProfilesList(currentNode.id);
+            },1000);
+        } catch (e) {
+            console.log(e);
+            setTimeout(()=>{
+                message.error({content: 'Perfil no duplicada', key});
+            },1000)
         }
     }
 
@@ -116,7 +133,7 @@ const TableProfiles = ({
         return (
             <Menu>
                 <Menu.Item
-                    key={1}
+                    key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/profiles/edit`,
@@ -126,11 +143,18 @@ const TableProfiles = ({
                     Editar
                 </Menu.Item>
                 <Menu.Item
-                    key={2}
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
+                </Menu.Item>
+                <Menu.Item
+                    key='3'
+                    icon={<CopyOutlined />}
+                    onClick={()=> actionDuplicate(item)}
+                >
+                    Duplicar
                 </Menu.Item>
             </Menu>
         );
