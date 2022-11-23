@@ -13,6 +13,7 @@ const TableMovements=({movementType,title=null,...props})=>{
     const [data, setData] = useState([]);
     const movementsImss = useSelector(state => state.payrollStore.imss_movements);
 
+
     useEffect(()=>{
         if(movementsImss){
             let elementos = movementsImss.filter((ele)=> ele.movement_type === movementType)
@@ -27,6 +28,7 @@ const TableMovements=({movementType,title=null,...props})=>{
         onChange: (selectedRowKeys, selectedRows) => {
             console.log( selectedRowKeys, selectedRows)
             setMovementsKeys(selectedRowKeys)
+            props.onSelectRow(selectedRowKeys)
         },
     };
 

@@ -4,11 +4,10 @@ import {Button, Modal, Form, Input, DatePicker, Alert, Table, Row, Col} from "an
 import {useEffect, useState} from "react";
 import moment from 'moment'
 import TableMovements from "./TableMovements";
-import {getMovementsIMSS} from "../../../redux/payrollDuck";
 import MovementsSection from "./MovementsSection";
 
 
-const ButtonMovements=({person,getMovementsIMSS, node, payrollPerson,...props})=>{
+const ButtonMovements=({person, node, payrollPerson,...props})=>{
     const [loading, setLoading] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [form] = Form.useForm();
@@ -16,9 +15,7 @@ const ButtonMovements=({person,getMovementsIMSS, node, payrollPerson,...props})=
     const [movements, setMovements] = useState([]);
     //const regPatronal = useSelector(state => state.catalogStore.cat_patronal_registration);
 
-    useEffect(()=>{
-        getMovementsIMSS(node)
-    },[])
+
 
     const onFinish=(values)=>{
         console.log(values)
@@ -73,28 +70,6 @@ const ButtonMovements=({person,getMovementsIMSS, node, payrollPerson,...props})=
                         marginBottom: 16,
                     }}
                 >
-                    <Row gutter={36} style={{marginBottom:30}}>
-                        <Col>
-                            <Button type="primary" icon={<FileZipOutlined />}  onClick={start}  loading={loading}>
-                                Generar archivo
-                            </Button>
-                        </Col>
-
-                        <Col>
-                            <Button type="primary" icon={<SendOutlined />} onClick={start} loading={loading}>
-                                Enviar movimientos
-                            </Button>
-                        </Col>
-                        <Col span={24}>
-                            <span
-                                style={{
-                                    marginLeft: 8,
-                                }}
-                            >
-                              {/*{hasSelected ? `Seleccionados ${selectedRowKeys.length} movimientos` : ''}*/}
-                            </span>
-                        </Col>
-                    </Row>
 
                     <MovementsSection/>
 
@@ -114,4 +89,4 @@ const mapState = (state) => {
     };
 };
 
-export default connect(mapState, {getMovementsIMSS})(ButtonMovements);
+export default connect(mapState)(ButtonMovements);
