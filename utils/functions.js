@@ -436,3 +436,18 @@ export const validateMaxLength = (e) =>{
     == e.target.value.length
   ) e.preventDefault();
 }
+
+export const createFiltersJB = (obj = {}) =>{
+  let check = [undefined, null, '', ' '];
+  return Object.entries(obj).reduce((query, [key, val])=>{
+    if(check.includes(val)) return query;
+    let value = val.toString().trim();
+    return {...query, [key]: value}
+  }, {});
+}
+
+export const getFiltersJB = (obj = {}) =>{
+  return Object.entries(obj).reduce((query, [key, val])=>{
+    return query += `&${key}=${val}`;
+  }, '');
+}

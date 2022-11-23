@@ -74,6 +74,7 @@ const homeScreen = ({ ...props }) => {
   const [showModalAssigns, setShowModalAssigns] = useState(false);
   const [personSelected, setPersonSelected] = useState(false);
   const [personsKeys, setPersonsKeys] = useState([]);
+  const [namePerson, setNamePerson] = useState("");
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
   const inputFileRefAsim = useRef(null);
@@ -766,6 +767,7 @@ const homeScreen = ({ ...props }) => {
   };
 
   const HandleModalAssign = (item) => {
+    setNamePerson(item?.first_name + " " + item?.flast_name)
     setPersonsToDelete([item]);
     // setOpenAssignTest(true);
     setShowModalAssignTest(true);
@@ -1221,7 +1223,7 @@ const homeScreen = ({ ...props }) => {
         )}
         {showModalAssignTest && (
           <AssignAssessments
-            title={"Asignar evaluaciones"}
+            title={`Asignar evaluaciones a ${namePerson}`}
             visible={showModalAssignTest}
             close={HandleCloseGroup}
             actionForm={onFinishAssignAssessments}

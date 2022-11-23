@@ -4,21 +4,35 @@ import { Breadcrumb } from 'antd';
 import DetailsCandidates from './DetailsCandidates';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
-import { getInfoCandidate } from '../../../redux/jobBankDuck';
+import {
+    getMainCategories,
+    getSubCategories,
+    getCompetences,
+    getSectors,
+    getSpecializationArea
+} from '../../../redux/jobBankDuck';
 
 const AddOrEditCandidates = ({
     action = 'add',
     currentNode,
-    getInfoCandidate
+    getMainCategories,
+    getSubCategories,
+    getCompetences,
+    getSectors,
+    getSpecializationArea
 }) => {
 
     const router = useRouter();
 
     useEffect(()=>{
-        if(router.query.id && action == 'edit'){
-            getInfoCandidate(router.query.id)
+        if(currentNode){
+            getMainCategories(currentNode.id);
+            getSubCategories(currentNode.id);
+            getCompetences(currentNode.id);
+            getSectors(currentNode.id);
+            getSpecializationArea(currentNode.id);
         }
-    },[router])
+    },[currentNode])
 
     return (
         <MainLayout currentKey={'jb_candidates'} defaultOpenKeys={['job_bank']}>
@@ -32,13 +46,13 @@ const AddOrEditCandidates = ({
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
                 <Breadcrumb.Item
                     className={'pointer'}
-                    onClick={() => router.push({ pathname: '/jobbank/profiles'})}
+                    onClick={() => router.push({ pathname: '/jobbank/candidates'})}
                 >
                     Candidatos
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
-            <div className={'container'}>
+            <div className='container'>
                 <DetailsCandidates action={action}/>
             </div>
         </MainLayout>
@@ -52,5 +66,11 @@ const mapState = (state) =>{
 }
   
 export default connect(
-    mapState, { getInfoCandidate }
+    mapState, {
+        getMainCategories,
+        getSubCategories,
+        getCompetences,
+        getSectors,
+        getSpecializationArea
+    }
 )(AddOrEditCandidates);

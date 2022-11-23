@@ -1,98 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { useRouter } from 'next/router';
 import {
-    Row,
-    Col,
-    Input,
     Table,
-    Form,
     Dropdown,
     Button,
     Menu
 } from 'antd';
-import { useCatalog } from './hook/useCatalog';
 import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
-    SearchOutlined,
-    SyncOutlined,
-    SettingOutlined,
-    ArrowLeftOutlined,
 } from '@ant-design/icons';
-import { ruleWhiteSpace } from '../../../utils/rules';
-import { valueToFilter } from '../../../utils/functions';
 import ModalCatalogs from './ModalCatalogs';
 import DeleteItems from '../../../common/DeleteItems';
 
 const TableCatalogs = ({
-    currentNode
+    titleEdit = '',
+    titleCreate = '',
+    titleDelete = '',
+    actionCreate = ()=>{},
+    actionUpdate = ()=>{},
+    actionDelete =()=>{},
+    catalogResults = [],
+    catalogLoading = false,
+    setItemToEdit,
+    itemToEdit,
+    setItemsToDelete,
+    itemsToDelete,
+    openModal,
+    setOpenModal,
+    //No requeridos
+    useModal = true,
+    extraFields = <></>,
+    extraOptions = ()=> <></>
 }) => {
-
-    const router = useRouter();
-    const [formSearch] = Form.useForm();
-    const { currentCatalog, infoCatalog, setCurrentCatalog } = useCatalog();
-    const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
-    const [itemsKeys, setItemsKeys] = useState([]);
-    const [itemToEdit, setItemToEdit] = useState({});
-    const [itemsToDelete, setItemsToDelete] = useState([]);
-
-    const onFinishSearch = (values) =>{
-        if(!values.name) return;
-        setCurrentCatalog({...currentCatalog, loading: true});
-        const _filter = item => valueToFilter(item.name).includes(valueToFilter(values.name));
-        let results = infoCatalog.results?.filter(_filter);
-        setTimeout(()=>{
-            setCurrentCatalog({results, loading: false})
-        },1000)
-        
-    }
-
-    const deleteFilter = () =>{
-        formSearch.resetFields();
-        setCurrentCatalog({...currentCatalog, loading: true});
-        setTimeout(()=>{
-            setCurrentCatalog({
-                results: infoCatalog.results,
-                loading: false
-            });
-        },1000)
-    }
 
     const validateAction = () => Object.keys(itemToEdit).length > 0;
-
-    const getTitleModal = () =>{
-        let check = validateAction();
-        let actionName = check ? 'Editar' : 'Agregar';
-        return `${actionName} ${infoCatalog.titleModal}`;
-    }
-
-    const getTitleDelete = () =>{
-        let text = '¿Estás seguro de eliminar esta/este';
-        return `${text} ${infoCatalog.titleModal}?`;
-    }
-
-    const actionUpdate = (values) =>{
-        infoCatalog.updateAction(itemToEdit.id, values);
-    }
-
-    const actionDelete = () =>{
-        closeModalDelete();
-        let id = itemsToDelete.at(-1).id;
-        infoCatalog.deleteAction(id);
-    }
-
-    const getActionModal = () =>{
-        let check = validateAction();
-        return check ? actionUpdate : infoCatalog.createAction;
-    }
-
-    const getTextModal = () =>{
-        let check = validateAction();
-        return check ? 'Actualizar' : 'Guardar';
-    }
 
     const closeModal = () =>{
         setOpenModal(false)
@@ -107,11 +50,6 @@ const TableCatalogs = ({
     const openModalRemove = (item) =>{
         setItemsToDelete([item])
         setOpenModalDelete(true)
-    }
-
-    const openModalAdd = () =>{
-        setItemToEdit({})
-        setOpenModal(true)
     }
 
     const openModalEdit = (item)=>{
@@ -136,6 +74,7 @@ const TableCatalogs = ({
                 >
                     Eliminar
                 </Menu.Item>
+                {extraOptions(item)}
             </Menu>
         );
     };
@@ -162,88 +101,43 @@ const TableCatalogs = ({
 
     return (
         <>
-            <Row gutter={[0,24]}>
-                <Col span={24}>
-                    <Form
-                        onFinish={onFinishSearch}
-                        form={formSearch}
-                        layout='inline'
-                        style={{width: '100%'}}
-                    >
-                        <Row style={{width: '100%'}}>
-                            <Col span={8}>
-                                <Form.Item
-                                    name='name'
-                                    rules={[ruleWhiteSpace]}
-                                    style={{marginBottom: 0}}
-                                >
-                                    <Input placeholder='Buscar por nombre'/>
-                                </Form.Item>
-                            </Col>
-                            <Col span={8} style={{display: 'flex', gap: '8px'}}>
-                                <Button htmlType='submit'>
-                                    <SearchOutlined />
-                                </Button>
-                                <Button onClick={()=> deleteFilter()}>
-                                    <SyncOutlined />
-                                </Button>
-                            </Col>
-                            <Col span={8} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                <Button onClick={()=> openModalAdd(true)}>
-                                    Agregar
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Form>
-                </Col>
-                <Col span={24}>
-                    <Table
-                        size='small'
-                        rowKey='id'
-                        columns={columns}
-                        dataSource={currentCatalog.results}
-                        loading={currentCatalog.loading}
-                        locale={{ emptyText: currentCatalog.loading
-                            ? 'Cargando...'
-                            : 'No se encontraron resultados'
-                        }}
-                        pagination={{
-                            hideOnSinglePage: true,
-                            showSizeChanger: false
-                        }}
-                    />
-                </Col>
-            </Row>
-            {openModal && (
+            <Table
+                size='small'
+                rowKey='id'
+                columns={columns}
+                dataSource={catalogResults}
+                loading={catalogLoading}
+                locale={{ emptyText: catalogLoading
+                    ? 'Cargando...'
+                    : 'No se encontraron resultados'
+                }}
+                pagination={{
+                    hideOnSinglePage: true,
+                    showSizeChanger: false
+                }}
+            />
+            {openModal && useModal && (
                 <ModalCatalogs
-                    title={getTitleModal()}
+                    title={validateAction() ? titleEdit : titleCreate}
                     visible={openModal}
                     close={closeModal}
                     itemToEdit={itemToEdit}
-                    actionForm={getActionModal()}
-                    textSave={getTextModal()}
-                />
+                    actionForm={validateAction() ? actionUpdate : actionCreate}
+                    textSave={validateAction() ? 'Actualizar' : 'Guardar'}
+                >{extraFields}</ModalCatalogs>
             )}
             {openModalDelete && (
                 <DeleteItems
-                    title='¿Estás seguro de eliminarlo?'
+                    title={titleDelete}
                     visible={openModalDelete}
                     keyTitle='name'
                     close={closeModalDelete}
                     itemsToDelete={itemsToDelete}
                     actionDelete={actionDelete}
                 />
-            )}
+            )}  
         </>
     )
 }
 
-const mapState = (state) =>{
-    return{
-        currentNode: state.userStore.current_node,
-    }
-}
-
-export default connect(
-    mapState, {}
-)(TableCatalogs);
+export default TableCatalogs;

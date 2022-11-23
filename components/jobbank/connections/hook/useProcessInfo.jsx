@@ -20,7 +20,7 @@ export const useProcessInfo = () =>{
 
     const createData = (values) =>{
         return Object.entries(values).reduce((obj, [key, val])=> {
-            if(!val) return obj;
+            if(!val && !!val) return obj;
             if(!key.includes('|')) return {...obj, [key]: val};
             let fields = obj['data_config'] ?? {};
             let name = key.split('|');

@@ -19,7 +19,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import FormPublications from './FormPublications';
-// import { useProcessInfo } from './hook/useProcessInfo';
+import { useProcessInfo } from '../profiles/hook/useProcessInfo';
 import {
     setLoadStrategies,
     getInfoStrategy,
@@ -32,11 +32,13 @@ import {
 const DetailsPublication = ({
     action,
     currentNode,
+    currentUser,
     load_publications,
     info_publication,
     setLoadPublications,
     getInfoPublication,
-    setInfoPublication
+    setInfoPublication,
+    list_vacancies_options
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -50,46 +52,91 @@ const DetailsPublication = ({
     const [formPublications] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
+    const [disableField, setDisabledField] = useState(true);
+    const [disabledVacant, setDisabledVacant] = useState(false);
+    const { createData, formatData } = useProcessInfo();
 
     useLayoutEffect(()=>{
-        setInfoStrategy()
+        setInfoPublication()
     },[])
 
-    // useEffect(()=>{
-    //     if(router.query.customer && action == 'add'){
-    //         formPublications.resetFields()
-    //         keepCustomer()
-    //     }else setDisabledClient(false);
-    // },[router])
+    useEffect(()=>{
+        if(router.query.vacant && action == 'add'){
+            formPublications.resetFields()
+            keepVacant();
+        }else setDisabledVacant(false);
+    },[router])
 
-    // useEffect(()=>{
-    //     if(Object.keys(info_strategy).length > 0 && action == 'edit'){
-    //         formPublications.resetFields();
-    //         setValuesForm()
-    //     }
-    // },[info_strategy])
+    useEffect(()=>{
+        if(Object.keys(info_publication).length > 0 && action == 'edit'){
+            formPublications.resetFields();
+            setValuesForm();
+        }
+    },[info_publication])
 
     const keepVacant = () =>{
+        setDisabledVacant(true);
         formPublications.setFieldsValue({
             vacant: router.query.vacant
         })
     }
 
-    const createData = (values) =>{
-        return values;
+    const clientByVacant = (vacant) =>{
+        if(!vacant) return null;
+        const _find = item => item.id == vacant;
+        let result = list_vacancies_options.find(_find);
+        if(!result) return null;
+        if(!result.customer) return null;
+        return result.customer.id;
+    }
+
+    const setValuesForm = () =>{
+        let results = {};
+        let customer = clientByVacant(info_publication.vacant);
+        let haveFields = Object.keys(info_publication.fields).length > 0;
+        if(haveFields) results = formatData(info_publication.fields);
+        let all_info = {
+            ...results, customer,
+            vacant: info_publication.vacant,
+            profile: info_publication.profile ?? 'open_fields',
+            code_post: info_publication.code_post
+        }
+        formPublications.setFieldsValue(all_info);
+        if(info_publication.profile) setDisabledField(true);
+        else setDisabledField(false);
     }
 
     const onFinishUpdate = async (values) =>{
-        
+        try {
+            let body = {...values, node: currentNode.id, created_by: currentUser.id};
+            await WebApiJobBank.updatePublication(info_publication.id, body);
+            message.success('Publicación registrada');
+            getInfoPublication(info_publication.id);
+        } catch (e) {
+            console.log(e)
+            setLoadPublications(false);
+            message.error('Publicación no actualizada');
+        }
     }
 
     const onFinishCreate = async (values) =>{
-        
+        try {
+            let body = {...values, node: currentNode.id, created_by: currentUser.id};
+            let response = await WebApiJobBank.createPublication(body);
+            message.success('Publicación registrada');
+            actionSaveAnd(response.data.id);
+        } catch (e) {
+            console.log(e)
+            setLoadPublications(false);
+            setLoading({});
+            message.error('Publicación no registrada');
+        }
     }
 
     const onFinish = (values) =>{
         setLoadPublications(true)
-        const bodyData = createData(values);
+        let bodyData = createData(values, 'fields');
+        if(bodyData.profile) bodyData.fields = {};
         const actionFunction = {
             edit: onFinishUpdate,
             add: onFinishCreate
@@ -105,6 +152,7 @@ const DetailsPublication = ({
     const actionCreate = () =>{
         formPublications.resetFields();
         if (router.query?.vacant) keepVacant();
+        setDisabledField(false);
         setLoadStrategies(false)
         setLoading({})
     }
@@ -154,7 +202,12 @@ const DetailsPublication = ({
                             onFinish={onFinish}
                             onFinishFailed={()=> setLoading({})}
                         >
-                            <FormPublications formPublications={formPublications}/>
+                            <FormPublications
+                                disabledVacant={disabledVacant}
+                                formPublications={formPublications}
+                                disableField={disableField}
+                                setDisabledField={setDisabledField}
+                            />
                         </Form>
                     </Spin>
                 </Col>
@@ -208,6 +261,8 @@ const mapState = (state) =>{
   return{
         load_publications: state.jobBankStore.load_publications,
         info_publication: state.jobBankStore.info_publication,
+        list_vacancies_options: state.jobBankStore.list_vacancies_options,
+        currentUser: state.userStore.user,
         currentNode: state.userStore.current_node
     }
 }

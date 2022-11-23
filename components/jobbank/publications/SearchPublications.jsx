@@ -68,28 +68,6 @@ const SearchPublications = ({
                         />
                     </Form.Item>
                 </Col>
-                <Col xs={12} md={8} xl={4}>
-                    <Form.Item
-                        name='profile'
-                        style={{marginBottom: 0}}
-                    >
-                        <Select
-                            allowClear
-                            showSearch
-                            disabled={load_profiles_options}
-                            loading={load_profiles_options}
-                            placeholder='Perfil'
-                            notFoundContent='No se encontraron resultados'
-                            optionFilterProp='children'
-                        >
-                            {list_profiles_options.length > 0 && list_profiles_options.map(item=> (
-                                <Select.Option value={item.id} key={item.id}>
-                                    {item.name}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </Col>
                 <Col xs={11} sm={12} md={8} xl={4}>
                     <Form.Item
                         name='vacant'
@@ -107,6 +85,28 @@ const SearchPublications = ({
                             {list_vacancies_options.length > 0 && list_vacancies_options.map(item => (
                                 <Select.Option value={item.id} key={item.id}>
                                     {item.job_position}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                </Col>
+                <Col xs={12} md={8} xl={4}>
+                    <Form.Item
+                        name='profile'
+                        style={{marginBottom: 0}}
+                    >
+                        <Select
+                            allowClear
+                            showSearch
+                            disabled={load_profiles_options}
+                            loading={load_profiles_options}
+                            placeholder='Template'
+                            notFoundContent='No se encontraron resultados'
+                            optionFilterProp='children'
+                        >
+                            {list_profiles_options.length > 0 && list_profiles_options.map(item=> (
+                                <Select.Option value={item.id} key={item.id}>
+                                    {item.name}
                                 </Select.Option>
                             ))}
                         </Select>

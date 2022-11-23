@@ -3,7 +3,7 @@ import { deleteKeyByValue } from '../../../../utils/constant';
 
 export const useProcessInfo = ({
     formVacancies,
-    info_vacant,
+    infoVacant,
     setListInterviewers,
     listInterviewers
 }) =>{
@@ -13,25 +13,25 @@ export const useProcessInfo = ({
     const haveProperties = (obj) => Object.keys(obj).length > 0;
 
     const getSubObj = () =>{
-        let features = {...info_vacant};
+        let features = {...infoVacant};
         let education = {};
         let salary = {};
         let recruitment = {};
 
-        if(info_vacant.education_and_competence){
-            education = Object.assign(info_vacant.education_and_competence);
+        if(infoVacant.education_and_competence){
+            education = Object.assign(infoVacant.education_and_competence);
             delete features.education_and_competence;
         }
-        if(info_vacant.salary_and_benefits){
-            salary = Object.assign(info_vacant.salary_and_benefits);
+        if(infoVacant.salary_and_benefits){
+            salary = Object.assign(infoVacant.salary_and_benefits);
             delete features.salary_and_benefits;
         }
-        if(info_vacant.recruitment_process){
-            recruitment = Object.assign(info_vacant.recruitment_process);
+        if(infoVacant.recruitment_process){
+            recruitment = Object.assign(infoVacant.recruitment_process);
             delete features.recruitment_process;
         }
-        if(info_vacant.customer){
-            features.customer_id = info_vacant.customer?.id;
+        if(infoVacant.customer){
+            features.customer_id = infoVacant.customer?.id;
             delete features.customer;
         }
         return{ features, education, salary, recruitment };

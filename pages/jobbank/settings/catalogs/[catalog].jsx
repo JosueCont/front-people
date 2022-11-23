@@ -1,22 +1,28 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '../../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
-import TableCatalogs from '../../../../components/jobbank/catalogs/TableCatalogs';
-import { useCatalog } from '../../../../components/jobbank/catalogs/hook/useCatalog';
+import { catalogsJobbank } from '../../../../utils/constant';
+import GetViewCatalog from '../../../../components/jobbank/catalogs/GetViewCatalog';
 
 const catalog = ({
     currentNode
 }) => {
 
     const router = useRouter();
-    const { getCatalog, infoCatalog } = useCatalog();
+    const [nameCatalog, setNameCatalog] = useState('');
+
+    const getCatalog = () =>{
+        const _find = item => item.catalog == router.query.catalog;
+        let result = catalogsJobbank.find(_find);
+        setNameCatalog(result.name);
+    }
 
     useEffect(()=>{
-        if(currentNode) getCatalog(currentNode.id);
-    },[currentNode])
+        if(router.query.catalog) getCatalog();
+    },[router])
 
 
     return (
@@ -41,9 +47,9 @@ const catalog = ({
                 >
                     Catálogos
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>{infoCatalog.titleBread}</Breadcrumb.Item>
+                <Breadcrumb.Item>{nameCatalog}</Breadcrumb.Item>
             </Breadcrumb>
-            <TableCatalogs/>
+            <GetViewCatalog/>
         </MainLayout>
     )
 }
@@ -54,4 +60,6 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(mapState)(withAuthSync(catalog));
+export default connect(
+    mapState, {}
+)(withAuthSync(catalog));
