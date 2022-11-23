@@ -364,6 +364,17 @@ export const getHiringRegime = (use_cfdi) => async (dispatch, getState) => {
 export const ImssDelegation = () => async (dispatch, getState) => {
   await WebApiFiscal.ImssDelegation()
     .then((response) => {
+      
+      let unOrderList = response.data.results
+
+      let orderList = unOrderList.sort((a, b) => {
+        if (a.description < b.description) return -1;
+        if (a.description > b.description) return 1;
+        return 0;
+      })
+
+      console.log('Delegacíon ordenada', orderList)
+
       dispatch({
         type: IMSS_DELEGATION,
         payload: response.data.results,

@@ -709,7 +709,7 @@ const homeScreen = ({ ...props }) => {
 
   const resetFilter = () => {
     formFilter.resetFields();
-    filter();
+    // filter();
     filterPersonName();
   };
 

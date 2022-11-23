@@ -425,6 +425,18 @@ class WebApiPeople {
     );
   }
 
+  static forceListEbaAndEmaFiles(data) {
+    return WebApi.ApisType(
+      'business/document/', "post", data
+    )
+  }
+
+  static importEMAandEvaFiles(data) {
+    return WebApi.ApisType(
+      'payroll/import-emissions', "post", data
+    )
+  }
+
   static getJobRiskClass(node) {
     return WebApi.ApisType(`/fiscal/job-risk-class/?node=${node}`, "get");
   }

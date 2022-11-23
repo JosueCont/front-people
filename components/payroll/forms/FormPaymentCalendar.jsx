@@ -44,6 +44,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [period, setPeriod] = useState("");
   const [incidenceStart, setIncidenceStart] = useState("");
   const [versions, setVersions] = useState([]);
+  const [ selectPeriodicity, setSelectPeriodicity ] = useState(null)
   const currentYear = moment().year();
 
   /* Const switchs */
@@ -55,17 +56,42 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [paymentCalendar, setPaymentCalendar] = useState(null);
   const [locked, setLocked] = useState(false);
   const [politics, setPolitics] = useState(false);
-  const checks = [
+  const checks = 
+    selectPeriodicity && selectPeriodicity !== '95efb4e793974e318e6cb49ab30a1269'? [
+      {
+        name: "applied_isr_christmas_bonus",
+        label: "Cálculo de ISR de aguinaldo aplicando art. 174",
+        value: false,
+      },
+      {
+        name: "sua_absenteeism",
+        label: "¿Afectar ausentismos en SUA?",
+        value: false,
+      },
+      {
+        name: "import_issues",
+        label: "¿Importar incidencias con fecha?",
+        value: false,
+      },
+      {
+        name: "accumulate_vacation",
+        label: "¿Acumula vacaciones?",
+        value: true,
+      },
+
+    ] : [
     {
       name: "applied_isr_christmas_bonus",
       label: "Cálculo de ISR de aguinaldo aplicando art. 174",
       value: false,
     },
+
     {
       name: "seventh_day_breakdown",
       label: "¿Desgloce del septimo día?",
       value: false,
     },
+
     {
       name: "seventh_day_discount",
       label: "¿Descuento proporción septimo dia?",
@@ -86,7 +112,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       label: "¿Acumula vacaciones?",
       value: true,
     },
-  ];
+
+  ]
 
   useEffect(() => {
     if (idPaymentCalendar) {
@@ -160,7 +187,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
         setLocked(item.locked);
-        if (item.benefits) setPolitics(true);
+        setSelectPeriodicity(item.periodicity.id)
+        setPolitics(true);
         checks.map((a) => {
           let checked = document.getElementById(a.name);
           if (a.name === "accumulate_vacation") {
@@ -320,6 +348,13 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     }
   };
 
+  console.log('Calendar', paymentCalendar)
+  console.log('Periodicity', selectPeriodicity)
+
+  const onChangePeriodicy = (value) => {
+    setSelectPeriodicity(value)
+  }
+
   return (
     <>
       <Global
@@ -389,6 +424,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               <SelectPeriodicity
                 size={"large"}
                 disabled={paymentCalendar ? paymentCalendar.locked : false}
+                onChangePeriodicy = { onChangePeriodicy }
               />
             </Col>
             <Col lg={8} xs={22}>
