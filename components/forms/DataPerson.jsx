@@ -167,14 +167,13 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
 
   let numberPhoto = 0;
   const upImage = (info) => {
-    if (photo && photo.includes(info.file.name)) {
-    } else {
-      numberPhoto = numberPhoto + 1;
-      getBase64(info.file.originFileObj, (imageUrl) => setPhoto(imageUrl));
-      let data = new FormData();
-      data.append("id", person.id);
-      data.append("photo", info.file.originFileObj);
-      upImageProfile(data, info);
+    numberPhoto = numberPhoto + 1;
+    getBase64(info.file.originFileObj, (imageUrl) => setPhoto(imageUrl));
+    let data = new FormData();
+    data.append("id", person.id);
+    data.append("photo", info.file.originFileObj);
+    if (!loadImge){
+      upImageProfile(data, info, numberPhoto);
     }
   };
 
@@ -184,8 +183,8 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
     reader.readAsDataURL(img);
   }
 
-  const upImageProfile = async (data, img) => {
-    if (numberPhoto === 1) {
+  const upImageProfile = async (data, img, numaux) => {
+    if (numaux === 1) {
       try {
         setLoadImage(true);
         let response = await WebApiPeople.updatePhotoPerson(data);
