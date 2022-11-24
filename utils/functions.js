@@ -44,7 +44,7 @@ export const downLoadFileBlob = async (
       link.click();
     })
     .catch((e) => {
-      if(message) { message.error(Textmessage) }
+      Textmessage && message.error(Textmessage) 
       console.log(e);
     });
 };
@@ -428,8 +428,26 @@ export const validateNum = (e) =>{
   if(e.which != 8
     && isNaN(String.fromCharCode(e.which))
   ) e.preventDefault();
+}
+
+export const validateMaxLength = (e) =>{
   if(e.target.maxLength
-    && e.target.value.length
-    == e.target.maxLength
+    && e.target.maxLength
+    == e.target.value.length
   ) e.preventDefault();
+}
+
+export const createFiltersJB = (obj = {}) =>{
+  let check = [undefined, null, '', ' '];
+  return Object.entries(obj).reduce((query, [key, val])=>{
+    if(check.includes(val)) return query;
+    let value = val.toString().trim();
+    return {...query, [key]: value}
+  }, {});
+}
+
+export const getFiltersJB = (obj = {}) =>{
+  return Object.entries(obj).reduce((query, [key, val])=>{
+    return query += `&${key}=${val}`;
+  }, '');
 }

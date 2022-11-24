@@ -21,6 +21,7 @@ import moment from "moment";
 import { ruleRequired } from "../../../utils/rules";
 
 const FormImssInfonavit = ({ person, person_id, node }) => {
+  
   const { Title } = Typography;
   const [formImssInfonavit] = Form.useForm();
   const [loadingTable, setLoadingTable] = useState(false);
@@ -28,7 +29,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   const [infonavitCredit, setInfonavitCredit] = useState([]);
 
   useEffect(() => {
-    person && person_id && node && userCredit();
+    person.branch_node && person_id && node && userCredit();
   }, [person_id]);
 
   const formImmssInfonavitAct = (values) => {
@@ -51,14 +52,13 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
   const userCredit = async () => {
     setLoadingTable(true);
-    let data = {
-      action: "getActiveCredit",
-      node: node,
-      patronal_registration: person?.branch_node?.patronal_registration?.id,
-      user: "ivan@grupogivel.com",
-      password: "GHS080131bf7",
-      person: person_id,
-    };
+    let data = new FormData()
+    let patronal_registration = person?.branch_node?.patronal_registration?.id
+    
+    data.append("node", node)
+    data.append("person", person_id)
+    data.append("patronal_registration", patronal_registration)
+
     WebApiPayroll.getInfonavitCredit(data)
       .then((response) => {
         setLoadingTable(false);

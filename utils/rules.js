@@ -1,3 +1,6 @@
+import { toInteger } from "lodash";
+import moment from "moment";
+
 export const ruleRequired = {
   required: true,
   message: "Este campo es requerido",
@@ -40,6 +43,13 @@ export const ruleMaxAge = (max) =>{
   }
 }
 
+export const ruleMaxPhoneNumber = (max) => {
+  return{
+    max: max,
+    message: `se necesita un numero de teléfono de ${max} digitos`
+  }
+}
+
 export const ruleURL = {
   type: 'url',
   message: 'Ingrese una url válida'
@@ -64,6 +74,34 @@ export const twoDigit = {
   pattern: /^[0-9]{0,2}$/,
   message: "El campo debe tener 2 dígitos numéricos",
 };
+
+export const expMonths = {
+  validator(_, value){
+
+    let number = toInteger(value)
+
+    if(number >= 1 && number <= 12 ) {
+      return Promise.resolve()
+    } else {
+      return Promise.reject('Se necesita un numero entre 01 y 12')
+    }
+    
+  }
+}
+
+export const expYear = {
+  validator(_, value){
+
+    let year = parseInt(value)
+    let currentYear = parseInt(moment().format('YY'))
+
+    if(year >= currentYear){
+      return Promise.resolve()
+    }  else {
+      return Promise.reject('Año no válido')
+    }
+  }
+}
 
 export const treeDecimal = {
   pattern: /^\d+(?:\.\d{1,3})?$/,

@@ -5,6 +5,7 @@ import {
   rulePhone,
   ruleRequired,
   ruleWhiteSpace,
+  ruleMaxPhoneNumber
 } from "../../../utils/rules";
 import WebApiPeople from "../../../api/WebApiPeople";
 import SelectImssDelegation from "../../../components/selects/SelectImssDelegation";
@@ -19,8 +20,11 @@ const FormPatronalRegistration = ({
   currentNodeId,
   ...props
 }) => {
-  const [information, setInformation] = useState(null);
-  const social_reason = Form.useWatch("social_reason", form);
+
+  const [ information, setInformation ] = useState(null)
+  const socialReason = Form.useWatch('social_reason', form)
+  
+  
 
   useEffect(() => {
     currentNodeId && getInformationfiscal();
@@ -37,11 +41,16 @@ const FormPatronalRegistration = ({
   };
 
   useEffect(() => {
-    if (information) {
+
+    if(socialReason){
       form.setFieldsValue({
-        social_reason:
-          social_reason !== "" ? social_reason : information.business_name,
-      });
+        social_reason: socialReason
+      })
+    } else {
+            
+      form.setFieldsValue({
+        social_reason: information?.business_name
+      })
     }
   }, [information]);
 
@@ -90,7 +99,7 @@ const FormPatronalRegistration = ({
             label="Teléfono"
             rules={[rulePhone, onlyNumeric, ruleWhiteSpace]}
           >
-            <Input />
+            <Input maxLength={10}/>
           </Form.Item>
         </Col>
         <Col lg={6} xs={22}>

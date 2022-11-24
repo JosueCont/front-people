@@ -1,8 +1,8 @@
 import {React, useEffect, useState} from 'react'
-import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row, DatePicker  } from 'antd'
+import { Table, Button, Tooltip, Empty, Modal, message, Col, Input, Radio, Space, Select, Row, DatePicker, List} from 'antd'
 import { DeleteOutlined, RedoOutlined, RetweetOutlined, 
   EyeOutlined, FileDoneOutlined, FileSyncOutlined, 
-  PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined, MinusCircleOutlined  } from '@ant-design/icons';
+  PercentageOutlined, PlusSquareOutlined, MinusSquareOutlined, SolutionOutlined, MinusCircleOutlined, TeamOutlined, UnorderedListOutlined  } from '@ant-design/icons';
 import WebApiAssessment from '../../../api/WebApiAssessment';
 import { useRouter } from 'next/router';
 import moment from 'moment/moment';
@@ -33,6 +33,8 @@ const TableAssessments = ({
   const [assessmentsComplete, setAssessmentsComplete] = useState(0);
   const [assessmentsToAnswer, setAssessmentsToAnswer] = useState(0);
   const [assessmentsProgress, setAssessmentsProgress] = useState(0);
+  const [nameGroups, setNameGroups] = useState([]);
+  const [openModalGroups, setOpenModalGroups] = useState(false);
   const options = [
     {
       value: 1,
@@ -64,19 +66,23 @@ const TableAssessments = ({
       response.data.sort((a, b) => {
         if (a.name_es > b.name_es) { return 1; } if (a.name_es < b.name_es) { return -1;} return 0;
       });
-      let filterGroupal = response.data.reduce((prev, current) =>{
+      let filterGroupal = response.data.reduce((prev, current, index, array) =>{
         let isDuplicated = prev.some(item => item.id === current.id);
+        let is_personal = array.some(item => item.id === current.id && item.origin === "personal");
         if(isDuplicated){
           return prev.map(record =>{
-            if(record.id == current.id && record.origin ==="group"){
-              return{...record, is_duplicated: true};
+            if(record.id == current.id){
+              let currentRecord = record?.group?.name ?? "";
+              let currentList = record["list_groups"]??[];
+              let validationGroups = current.origin == "group";
+              let list_groups = validationGroups ? [...currentList, current.group.name, currentRecord] : currentList;
+              return{...record, is_duplicated: true, is_personal, list_groups};
             }
             return record;
           })
         }
         return [...prev, current];
       },[])
-      
       setDataAssessments(filterGroupal);
       setfullAssessments(filterGroupal);
       calculateIndicatorsCards(filterGroupal)
@@ -171,6 +177,26 @@ const TableAssessments = ({
     }
   }
 
+  const modalGroups = (data) =>{
+    let unicNames = data.reduce( (accArr, valor) => {
+      if (accArr.indexOf(valor) < 0) {
+        accArr.push(valor);
+      }
+      return accArr;
+    }, []);
+    setNameGroups(unicNames);
+    setOpenModalGroups(true);
+  }
+
+  const handleOk = () => {
+    setOpenModalGroups(false);
+  };
+
+  const handleCancel = () => {
+    setOpenModalGroups(false);
+  };
+
+  //INICIA APARTADO PARA VER RESULTADOS
   const validateGetResults = (item, record) =>{
     setLoadResults({...loadResults, [item.code]: true})
     let codes = [
@@ -281,12 +307,13 @@ const TableAssessments = ({
     }
     setLoadResults({...loadResults, [item.code]: false});
   }
+  //TERMINA APARTADO PARA VER RESULTADOS
 
   const columnsAssessments = [
     {
         title: 'Evaluación',
         render: (record) => {
-          return record?.is_duplicated ? 
+          return record?.is_personal ? 
           <>
               <span>{record.name} ({record.applys.length})</span>
               <Tooltip title="Asignada de manera individual"><SolutionOutlined style={{color:"#F99543", marginLeft:"8px"}} /></Tooltip> 
@@ -297,7 +324,16 @@ const TableAssessments = ({
     {
       title: 'Grupo de evaluaciones',
       render: (record) => {
-        return record?.group ? <span>{record.group.name}</span> : <span></span> ;
+        return record?.group ? 
+        <>
+          <span>{record.group.name}</span>
+          { record?.list_groups &&
+            <Tooltip title="Ver grupos de evaluaciones">
+              <UnorderedListOutlined style={{color:"#F99543", marginLeft:"8px"}} onClick={()=> modalGroups(record.list_groups)} />
+            </Tooltip> 
+          }
+        </>
+        : <><span></span></>;
       }
   },
     {
@@ -372,14 +408,14 @@ const TableAssessments = ({
                   </Button>
                 </Tooltip>
               }
-              { applysFinalized.length == 0 && record?.is_duplicated && record.origin == "group" &&
+              { applysFinalized.length == 0 && record?.is_personal &&
                 <Tooltip title="Quitar asignación">
                   <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
                     <MinusCircleOutlined />
                   </Button>
                 </Tooltip>
               }
-              { applysFinalized.length == 0 && record.origin == "personal" &&
+              { applysFinalized.length == 0 && record.origin === "personal" &&
                 <Tooltip title="Quitar asignación">
                   <Button style={{marginLeft:"8px", marginRigth:"8px"}} onClick={()=> modalDeleteAssessment(record)}>
                     <MinusCircleOutlined />
@@ -568,13 +604,6 @@ const TableAssessments = ({
                     gap: '8px'
                 }}
               >
-                {/* <Radio.Group defaultValue={1} onChange={onChange}>
-                    <Space direction="vertical">
-                        <Radio value={1}>Evaluación</Radio>
-                        <Radio value={2}>Estatus</Radio>
-                        <Radio value={3}>Fecha</Radio>
-                    </Space>
-                </Radio.Group> */}
                 <Select
                     style={{width:"100%"}}
                     onChange={onChange}
@@ -673,6 +702,15 @@ const TableAssessments = ({
           style={{marginTop:"16px"}}
           locale={{emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Sin asignaciones" />}}
         />
+        <Modal title={"Grupos asignados"} footer={[]} visible={openModalGroups} onOk={handleOk} onCancel={handleCancel}>
+            <Col span={24} className='content-feeling-scroll scroll-bar'>
+            <List
+              size="small"
+              dataSource={nameGroups}
+              renderItem={(item) => <><div style={{display:"flex", alignItems:"center", justifyContent:"flex-start"}}><TeamOutlined /><List.Item>{item}</List.Item></div></>}
+            />
+            </Col>
+        </Modal>
     </>
   )
 }

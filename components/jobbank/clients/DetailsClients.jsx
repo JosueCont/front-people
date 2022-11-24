@@ -21,21 +21,11 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 import TabClient from './TabClient';
 import TabContact from './TabContact';
 import TabDocuments from './TabDocuments';
-import {
-    setLoadClients,
-    setInfoClient,
-    getInfoClient
-} from '../../../redux/jobBankDuck';
 
 const DetailsClients = ({
     action,
     user,
     currentNode,
-    load_clients,
-    info_client,
-    setLoadClients,
-    setInfoClient,
-    getInfoClient
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -52,21 +42,37 @@ const DetailsClients = ({
     const [newDocs, setNewDocs] = useState([]);
     const [actionType, setActionType] = useState('');
     const [contactList, setContactList] = useState([]);
-
-    useLayoutEffect(()=>{
-        setInfoClient()
-    },[])
+    const [infoClient, setInfoClient] = useState({});
+    const [fetching, setFetching] = useState(false);
 
     useEffect(()=>{
-        if(Object.keys(info_client).length > 0 && action == 'edit'){
+        if(router.query.id && action == 'edit'){
+            getInfoClient(router.query.id)
+        }
+    },[router])
+
+    useEffect(()=>{
+        if(Object.keys(infoClient).length > 0 && action == 'edit'){
             formClients.resetFields();
-            let prev = info_client.files ?? [];
-            let contact = info_client.contact_list ?? [];
+            let prev = infoClient.files ?? [];
+            let contact = infoClient.contact_list ?? [];
             setPrevDocs(prev);
             setContactList(contact);
-            formClients.setFieldsValue(info_client);
+            formClients.setFieldsValue(infoClient);
         }
-    },[info_client])
+    },[infoClient])
+
+    const getInfoClient = async (id) =>{
+        try {
+            setFetching(true);
+            let response = await WebApiJobBank.getInfoClient(id);
+            setInfoClient(response.data);
+            setFetching(false);
+        } catch (e) {
+            console.log(e)
+            setFetching(false);
+        }
+    }
 
     const createData = (obj) =>{
         let dataClient = new FormData();
@@ -89,7 +95,7 @@ const DetailsClients = ({
             message.success('Cliente registrado');
         } catch (e) {
             console.log(e)
-            setLoadClients(false)
+            setFetching(false)
             setLoading({})
             if(e.response?.data['rfc']) message.error('RFC ya registrado');
             else message.error('Cliente no registrado');
@@ -99,24 +105,24 @@ const DetailsClients = ({
     const successUpdate = () =>{
         setNewDocs([])
         setPrevDocs([])
-        getInfoClient(info_client.id);    
+        getInfoClient(infoClient.id);    
     }
 
     const onFinisUpdate = async (values) =>{
         try {
-            await WebApiJobBank.updateClient(info_client.id, values);
+            await WebApiJobBank.updateClient(infoClient.id, values);
             successUpdate();
             message.success('Cliente actualizado');
         } catch (e) {
             console.log(e)
-            setLoadClients(false);
+            setFetching(false);
             if(e.response?.data['rfc']) message.error('RFC ya registrado');
             else message.error('Cliente no actualizado');
         }
     }
 
     const onFinish = (values) => {
-        setLoadClients(true);
+        setFetching(true);
         const bodyData = createData(values);
         const actionFunction = {
             edit: onFinisUpdate,
@@ -131,21 +137,25 @@ const DetailsClients = ({
 
     const actionCreate = () =>{
         formClients.resetFields();
-        setLoadClients(false)
+        setFetching(false)
         setLoading({})
     }
 
     const actionBack = () =>{
-        router.push('/jobbank/clients')
+        if(router.query?.id) delete router.query.id;
+        router.push({
+            pathname: '/jobbank/clients',
+            query: router.query
+        })
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: ()=> actionBack,
+            back: actionBack,
             create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/clients/edit',
-                query: { id }
+                query: {...router.query, id }
             })
         }
         actionFunction[actionType](id);
@@ -183,13 +193,14 @@ const DetailsClients = ({
                         layout='vertical'
                         onFinish={onFinish}
                         onFinishFailed={onFinishFailed}
+                        initialValues={{is_active: true}}
                     >
                         <Tabs type='card'>
                             <Tabs.TabPane
                                 tab='Información del cliente'
                                 key='tab_1'
                             >
-                                <Spin spinning={load_clients}>
+                                <Spin spinning={fetching}>
                                     <TabClient/>
                                 </Spin>
                             </Tabs.TabPane>
@@ -198,7 +209,7 @@ const DetailsClients = ({
                                 key='tab_2'
                                 forceRender
                             >
-                                <Spin spinning={load_clients}>
+                                <Spin spinning={fetching}>
                                     <TabContact
                                         formClients={formClients}
                                         contactList={contactList}
@@ -211,7 +222,7 @@ const DetailsClients = ({
                                 key='tab_3'
                                 forceRender
                             >
-                                <Spin spinning={load_clients}>
+                                <Spin spinning={fetching}>
                                     <TabDocuments
                                         newDocs={newDocs}
                                         prevDocs={prevDocs}
@@ -259,7 +270,7 @@ const DetailsClients = ({
                         <Button
                             form='form-clients'
                             htmlType='submit'
-                            loading={load_clients}
+                            loading={fetching}
                         >
                             Actualizar
                         </Button>
@@ -272,17 +283,9 @@ const DetailsClients = ({
 
 const mapState = (state) =>{
     return{
-        load_clients: state.jobBankStore.load_clients,
-        info_client: state.jobBankStore.info_client,
         currentNode: state.userStore.current_node,
         user: state.userStore.user
     }
 }
 
-export default connect(
-    mapState, {
-        setLoadClients,
-        getInfoClient,
-        setInfoClient
-    }
-)(DetailsClients);
+export default connect(mapState)(DetailsClients);

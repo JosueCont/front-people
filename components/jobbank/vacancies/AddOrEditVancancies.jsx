@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import DetailsVacancies from './DetailsVacancies';
 import { connect } from 'react-redux';
 import {
-    getInfoVacant,
     getClientsOptions,
     getMainCategories,
     getSubCategories,
@@ -16,7 +15,6 @@ import {
 const AddOrEditVacancies = ({
     action = 'add',
     currentNode,
-    getInfoVacant,
     getClientsOptions,
     getMainCategories,
     getSubCategories,
@@ -35,12 +33,6 @@ const AddOrEditVacancies = ({
             getCompetences(currentNode.id);
         }
     },[currentNode])
-
-    useEffect(()=>{
-        if(router.query.id && action == 'edit'){
-            getInfoVacant(router.query.id)
-        }
-    },[router])
 
     return (
         <MainLayout currentKey={'jb_vacancies'} defaultOpenKeys={['job_bank']}>
@@ -75,7 +67,6 @@ const mapState = (state) =>{
 
 export default connect(
     mapState, {
-        getInfoVacant,
         getClientsOptions,
         getMainCategories,
         getSubCategories,

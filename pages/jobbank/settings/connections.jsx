@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import MainLayout from '../../../../layout/MainLayout';
+import MainLayout from '../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
-import { withAuthSync } from '../../../../libs/auth';
+import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
-import { getConnections } from '../../../../redux/jobBankDuck';
-import TabsConnections from '../../../../components/jobbank/connections/TabsConnections';
+import { getConnections } from '../../../redux/jobBankDuck';
+import TabsConnections from '../../../components/jobbank/connections/TabsConnections';
 
 const index = ({
     currentNode,

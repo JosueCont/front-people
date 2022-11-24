@@ -30,7 +30,7 @@ const SearchVacancies = ({
     const createFilters = (obj) =>{
         let query = '';
         if(obj.job_position) query += `&job_position__unaccent__icontains=${obj.job_position}`;
-        if(obj.status) query+= `&strategy__vacant_status=${obj.status}`;
+        if(obj.status) query+= `&status=${obj.status}`;
         if(obj.customer) query += `&customer=${obj.customer}`;
         if(obj.recruiter) query += `&strategy__recruiter_id=${obj.recruiter}`;
         return query;

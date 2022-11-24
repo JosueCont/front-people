@@ -6,13 +6,15 @@ import {
   Dropdown,
   message,
   Switch,
-  Tooltip
+  Tooltip,
+  Select
 } from 'antd';
 import {
   EllipsisOutlined,
   DeleteOutlined,
   EditOutlined,
-  CopyOutlined
+  CopyOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { getVacancies, setJobbankPage } from '../../../redux/jobBankDuck';
@@ -38,7 +40,6 @@ const TableVacancies = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
-        closeModalDelete();
         try {
             await WebApiJobBank.deleteVacant({ids});
             getVacancies(currentNode.id)
@@ -48,6 +49,34 @@ const TableVacancies = ({
             console.log(e)
             if(ids.length > 1) message.error('Vacantes no eliminadas');
             else message.error('Vacante no eliminada');
+        }
+    }
+
+    const actionStatus = async (value, item) =>{
+        try {
+            await WebApiJobBank.updateVacantStatus(item.id, {status: value});
+            getVacancies(currentNode.id);
+            message.success('Estatus actualizado');
+        } catch (e) {
+            console.log(e)
+            message.error('Estatus no actualizado');
+        }
+    }
+
+    const actionDuplicate = async (item) =>{
+        const key = 'updatable';
+        try {
+            message.loading({content: 'Duplicando...', key});
+            await WebApiJobBank.duplicateVacant(item.id);
+            setTimeout(()=>{
+                message.success({content: 'Vacante duplicada', key});
+                getVacancies(currentNode.id);
+            },1000)
+        } catch (e) {
+            console.log(e)
+            setTimeout(()=>{
+                message.error({content: 'Vacante no duplicada', key});
+            },1000)
         }
     }
 
@@ -71,12 +100,12 @@ const TableVacancies = ({
         setItemsToDelete([])
     }
 
-    const getStatus = (item) =>{
-        if(!item.status) return null;
-        const status = (record) => record.value === item.status;
-        let status_ = optionsStatusVacant.find(status);
-        return status_.label;
-    }
+    // const getStatus = (item) =>{
+    //     if(!item.status) return null;
+    //     const status = (record) => record.value === item.status;
+    //     let status_ = optionsStatusVacant.find(status);
+    //     return status_.label;
+    // }
 
     const onChangePage = ({current}) =>{
         setJobbankPage(current)
@@ -140,8 +169,19 @@ const TableVacancies = ({
                 <Menu.Item
                     key='3'
                     icon={<CopyOutlined />}
+                    onClick={()=> actionDuplicate(item)}
                 >
                     Duplicar
+                </Menu.Item>
+                <Menu.Item
+                    key='3'
+                    icon={<SettingOutlined />}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/publications/add',
+                        query: { vacant: item.id }
+                    })}
+                >
+                    Configurar publicación
                 </Menu.Item>
             </Menu>
         );
@@ -162,7 +202,16 @@ const TableVacancies = ({
         title: 'Estatus',
         render: (item) =>{
             return (
-                <span>{getStatus(item)}</span>
+                // <span>{getStatus(item)}</span>
+                <Select
+                    size='small'
+                    style={{width: 101}}
+                    defaultValue={item.status}
+                    value={item.status}
+                    placeholder='Estatus'
+                    options={optionsStatusVacant}
+                    onChange={(e) => actionStatus(e, item)}
+                />
             )
         }
     },

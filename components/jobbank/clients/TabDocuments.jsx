@@ -59,10 +59,10 @@ const TabDocuments = ({
 
     return (
         <Row gutter={[24,24]} className='tab-documents'>
-            <Col xs={24} xl={showPrevDocs ? 12 : 24}>
+            <Col span={24}>
                 <div className='content-list-files'>
                     <div className='head-list-files'>
-                        <p style={{marginBottom: 0}}>Nuevos archivos ({newDocs.length})</p>
+                        <p style={{marginBottom: 0}}>Archivos cargados ({newDocs.length + prevDocs.length})</p>
                         <Button
                             size={'small'}
                             icon={<UploadOutlined />}
@@ -75,36 +75,9 @@ const TabDocuments = ({
                             onChange={setFileSelected}
                         />
                     </div>
-                    <div className='body-list-files scroll-bar'>
-                        {newDocs.length > 0 ? newDocs.map((item, idx) => (
-                            <div
-                                key={`item_${idx}`}
-                                className='item-list-files'
-                                style={{color: '#28a745'}}
-                            >
-                                <p>{item.name}</p>
-                                <DeleteOutlined
-                                    onClick={()=> deleteNewDocs(idx)}
-                                />
-                            </div>
-                        )) : (
-                            <Empty
-                                description='Ningún archivo nuevo'
-                                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                style={{margin: 0}}
-                            />
-                        )}
-                    </div>
-                </div>
-            </Col>
-            {showPrevDocs && (
-                <Col xs={24} xl={12}>
-                    <div className='content-list-files'>
-                        <div className='head-list-files'>
-                            <p style={{marginBottom: 0}}>Archivos existentes ({prevDocs.length})</p>
-                        </div>
+                    {(prevDocs.length > 0 || newDocs.length > 0 ) ? (
                         <div className='body-list-files scroll-bar'>
-                            {prevDocs.length > 0 ? prevDocs.map((item, idx) => (
+                            {prevDocs.length > 0 && prevDocs.map((item, idx) => (
                                 <div
                                     key={`item_${item.id}`}
                                     className='item-list-files'
@@ -126,17 +99,28 @@ const TabDocuments = ({
                                         )}
                                     </div>
                                 </div>
-                            )) : (
-                                <Empty
-                                    description='Ningún archivo existente'
-                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                    style={{margin: 0}}
-                                />
-                            )}
+                            ))}
+                            {newDocs.length > 0 && newDocs.map((item, idx) => (
+                                <div
+                                    key={`item_${idx}`}
+                                    className='item-list-files'
+                                    style={{color: '#28a745'}}
+                                >
+                                    <p>{item.name}</p>
+                                    <DeleteOutlined
+                                        onClick={()=> deleteNewDocs(idx)}
+                                    />
+                                </div>
+                            ))}
                         </div>
-                    </div>
-                </Col>
-            )}
+                    ): (
+                        <Empty
+                            description={'Ningún archivo seleccionado'}
+                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        />
+                    )}
+                </div>
+            </Col>
         </Row>
     )
 }

@@ -74,6 +74,7 @@ const homeScreen = ({ ...props }) => {
   const [showModalAssigns, setShowModalAssigns] = useState(false);
   const [personSelected, setPersonSelected] = useState(false);
   const [personsKeys, setPersonsKeys] = useState([]);
+  const [namePerson, setNamePerson] = useState("");
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
   const inputFileRefAsim = useRef(null);
@@ -218,7 +219,7 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <div>
-            <Avatar src={item.photo ? item.photo : defaulPhoto} />
+            <Avatar src={item.photo_thumbnail ? item.photo_thumbnail : defaulPhoto} />
           </div>
         );
       },
@@ -346,7 +347,7 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <div>
-            <Avatar src={item.photo ? item.photo : defaulPhoto} />
+            <Avatar src={item.photo_thumbnail ? item.photo_thumbnail : defaulPhoto} />
           </div>
         );
       },
@@ -461,7 +462,7 @@ const homeScreen = ({ ...props }) => {
     };
     await WebApiPeople.changeStatusPerson(data)
       .then((response) => {
-        if (!response.data.photo) response.data.photo = defaulPhoto;
+        if (!response.data.photo_thumbnail) response.data.photo_thumbnail = defaulPhoto;
         response.data.key = value.key;
         person.map((a) => {
           if (a.id == response.data.id) a = response.data;
@@ -604,7 +605,7 @@ const homeScreen = ({ ...props }) => {
           return (
             <>
               <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo} />
+                <Avatar src={p.photo_thumbnail} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
             </>
@@ -706,7 +707,7 @@ const homeScreen = ({ ...props }) => {
 
   const resetFilter = () => {
     formFilter.resetFields();
-    filter();
+    // filter();
     filterPersonName();
   };
 
@@ -745,7 +746,7 @@ const homeScreen = ({ ...props }) => {
           return (
             <>
               <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo} />
+                <Avatar src={p.photo_thumbnail} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
             </>
@@ -766,6 +767,7 @@ const homeScreen = ({ ...props }) => {
   };
 
   const HandleModalAssign = (item) => {
+    setNamePerson(item?.first_name + " " + item?.flast_name)
     setPersonsToDelete([item]);
     // setOpenAssignTest(true);
     setShowModalAssignTest(true);
@@ -1221,7 +1223,7 @@ const homeScreen = ({ ...props }) => {
         )}
         {showModalAssignTest && (
           <AssignAssessments
-            title={"Asignar evaluaciones"}
+            title={`Asignar evaluaciones a ${namePerson}`}
             visible={showModalAssignTest}
             close={HandleCloseGroup}
             actionForm={onFinishAssignAssessments}
