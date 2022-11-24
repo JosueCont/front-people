@@ -135,11 +135,18 @@ const SelectCompany = ({ ...props }) => {
         if(router.query.company){
           //console.log("query",router.query.company);
           //console.log("datalist",dataList);
-          let filterQuery = data.filter(item => item.id == router.query.company);
+          let filterQuery = data.filter(item => item.id === router.query.company);
           //console.log("filterQuery",filterQuery.at(-1));
           setCompanySelect(filterQuery.at(-1));
+        } else {
+          setLoading(false);
+          /*if (data.length === 1) {
+            setCompanySelect(data[0]);
+          } else {
+            setLoading(false);
+          }
+          */
         }
-        setLoading(false);
       })
       .catch((error) => {
         setLoading(false);

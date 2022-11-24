@@ -7,7 +7,8 @@ import {
     message,
     Switch,
     Space,
-    Tag
+    Tag,
+    Tooltip
 } from 'antd';
 import { useRouter } from 'next/router';
 import ModalClients from './ModalClients';
@@ -19,29 +20,33 @@ import {
     EyeInvisibleOutlined,
     FileTextOutlined,
     PlusOutlined,
-    LinkOutlined
+    LinkOutlined,
+    UserOutlined
 } from "@ant-design/icons";
 import { connect } from 'react-redux';
 import {
     getClients,
-    setPage
+    setJobbankPage
 } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
 import Clipboard from '../../../components/Clipboard';
+import ViewContacts from './ViewContacts';
 
 const TableClients = ({
     list_clients,
     load_clients,
-    setPage,
-    page_jobbank,
+    setJobbankPage,
+    jobbank_page,
     currentNode,
-    getClients
+    getClients,
+    jobbank_filters
 }) => {
 
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
     const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [openModalList, setOpenModalList] = useState(false);
     const [itemsKeys, setItemsKeys] = useState([]);
     const [itemToEdit, setItemToEdit] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
@@ -49,23 +54,28 @@ const TableClients = ({
     const actionUpdate = async (values) =>{
         try {
             await WebApiJobBank.updateClient(itemToEdit.id, values);
-            getClients(currentNode.id)
+            validateGetClients();
             message.success('Información actualizada');
+            return true;
         } catch (e) {
-            message.error('Información no actualizada');
             console.log(e)
+            if(e.response?.data['rfc']){
+                message.error('RFC ya registrado');
+                return 'RFC_EXIST';
+            } else message.error('Información no actualizada');
+            return false;
         }
     }
 
-    const actionActive = async (checked, item) =>{
+    const actionStatus = async (checked, item) =>{
         try {
-            await WebApiJobBank.activeClient(item.id, {is_active: checked});
-            getClients(currentNode.id)
+            await WebApiJobBank.updateClientStatus(item.id, {is_active: checked});
+            validateGetClients();
             if(checked) message.success('Cliente activado');
             if(!checked) message.success ('Cliente desactivado');
         } catch (e) {
             console.log(e)
-            getClients(currentNode.id)
+            // validateGetClients();
             if(checked) message.error('Cliente no activado');
             if(!checked) message.error('Cliente no desactivado');
         }
@@ -73,10 +83,9 @@ const TableClients = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item=> item.id);
-        closeModalDelete();
         try {
             await WebApiJobBank.deleteClient({ids});
-            getClients(currentNode.id);
+            validateGetClients();
             if(ids.length > 1) message.success('Clientes eliminados');
             else message.success('Cliente eliminado');
         } catch (e) {
@@ -89,6 +98,11 @@ const TableClients = ({
     const closeModalEdit = () =>{
         setOpenModal(false)
         setItemToEdit({})
+    }
+
+    const closeModalList = () =>{
+        setOpenModalList(false);
+        setItemToEdit({});
     }
 
     const closeModalDelete = () =>{
@@ -116,14 +130,26 @@ const TableClients = ({
         setOpenModal(true)
     }
 
+    const showModalList = (item) =>{
+        setOpenModalList(true);
+        setItemToEdit(item)
+    }
+
     const onChangePage = ({current}) =>{
-        setPage(current)
-        if (current == 1) getClients(currentNode?.id);
-        if (current > 1) {
-            const offset = (current - 1) * 10;
-            const queryParam = `&limit=10&offset=${offset}`;
-            getClients(currentNode?.id, queryParam, current)
-        } 
+        setJobbankPage(current)
+        validateGetClients(current)
+    }
+
+    const validateGetClients = (current) =>{
+        let page = current ?? jobbank_page;
+        if (page > 1) getClientsWithFilters(page);
+        else getClients(currentNode?.id, jobbank_filters);
+    }
+
+    const getClientsWithFilters = (page) =>{
+        let offset = (page - 1) * 10;
+        let query = `&limit=10&offset=${offset}${jobbank_filters}`;
+        getClients(currentNode?.id, query, page)
     }
 
     const rowSelection = {
@@ -134,12 +160,33 @@ const TableClients = ({
         }
     }
 
+    const ViewList = ({item}) => (
+        <Space>
+            {item.contact_list?.length > 0 ? (
+                <Tooltip title='Ver contactos'>
+                    <EyeOutlined
+                        style={{cursor: 'pointer'}}
+                        onClick={()=>showModalList(item)}
+                    />
+                </Tooltip>
+            ):(
+                <EyeInvisibleOutlined />
+            )}
+            <Tag
+                icon={<UserOutlined style={{color:'#52c41a'}} />}
+                color='green' style={{fontSize: '14px'}}
+            >
+                {item.contact_list ? item.contact_list.length : 0}
+            </Tag>
+        </Space>
+    )
+
     const menuTable = () => {
         return (
             <Menu>
                 <Menu.Item key='1'>
                     <Clipboard
-                        text={window.location.origin+"/ac/jb/"+currentNode.permanent_code}
+                        text={`${window.location.origin}/jobbank/${currentNode.permanent_code}/client`}
                         title='Autoregistro'
                         border={false}
                         tooltipTitle='Copiar link de autoregistro'
@@ -162,7 +209,11 @@ const TableClients = ({
                 <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
-                    onClick={()=> openModalEdit(item)}
+                    // onClick={()=> openModalEdit(item)}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/clients/edit',
+                        query: {...router.query, id: item.id }
+                    })}
                 >
                     Editar
                 </Menu.Item>
@@ -194,6 +245,16 @@ const TableClients = ({
                 >
                     Registrar perfil
                 </Menu.Item>
+                <Menu.Item
+                    key='5'
+                    icon={<PlusOutlined />}
+                    onClick={()=> router.push({
+                        pathname: '/jobbank/strategies/add',
+                        query: { customer: item.id }
+                    })}
+                >
+                    Registrar estrategia
+                </Menu.Item>
             </Menu>
         );
     };
@@ -205,28 +266,25 @@ const TableClients = ({
             key: 'name'
         },
         {
-            title: 'Contacto',
-            dataIndex: 'job_contact',
-            key: 'job_contact'
+            title: 'RFC',
+            dataIndex: 'rfc',
+            key: 'rfc'
         },
         {
-            title: 'Correo',
-            dataIndex: 'email_contact',
-            key: 'email_contact'
+            title: 'Contactos',
+            render: (item) => <ViewList item={item}/>
         },
         {
-            title: 'Teléfono',
-            dataIndex: 'phone_contact',
-            key: 'phone_contact'
-        },
-        {
-            title: 'Activo',
+            title: 'Estatus',
             render: (item) =>{
                 return(
                     <Switch
-                        size={'small'}
+                        size='small'
                         defaultChecked={item.is_active}
-                        onChange={(e)=> actionActive(e, item)}
+                        checked={item.is_active}
+                        checkedChildren="Activo"
+                        unCheckedChildren="Inactivo"
+                        onChange={(e)=> actionStatus(e, item)}
                     />
                 )
             }
@@ -235,7 +293,7 @@ const TableClients = ({
             title: ()=> {
                 return(
                     <Dropdown overlay={menuTable}>
-                        <Button size={'small'}>
+                        <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -244,7 +302,7 @@ const TableClients = ({
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
-                        <Button size={'small'}>
+                        <Button size='small'>
                             <EllipsisOutlined />
                         </Button>
                     </Dropdown>
@@ -270,7 +328,7 @@ const TableClients = ({
                 }}
                 pagination={{
                     total: list_clients.count,
-                    current: page_jobbank,
+                    current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
@@ -281,19 +339,29 @@ const TableClients = ({
                 actionForm={actionUpdate}
                 close={closeModalEdit}
                 itemToEdit={itemToEdit}
+                textSave='Actualizar'
             />
-            <DeleteItems
-                title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estos clientes?'
-                    : '¿Estás seguro de eliminar este cliente?'
-                }
-                visible={openModalDelete}
-                keyTitle='name'
-                keyDescription='business_name'
-                close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
-            />
+            {openModalDelete && (
+                <DeleteItems
+                    title={itemsToDelete.length > 1
+                        ? '¿Estás seguro de eliminar estos clientes?'
+                        : '¿Estás seguro de eliminar este cliente?'
+                    }
+                    visible={openModalDelete}
+                    keyTitle='name'
+                    keyDescription='business_name'
+                    close={closeModalDelete}
+                    itemsToDelete={itemsToDelete}
+                    actionDelete={actionDelete}
+                />
+            )}
+           {openModalList && (
+                <ViewContacts
+                    visible={openModalList}
+                    itemContact={itemToEdit}
+                    close={closeModalList}
+                />
+           )}
         </>
     )
 }
@@ -302,7 +370,8 @@ const mapState = (state) =>{
     return {
         list_clients: state.jobBankStore.list_clients,
         load_clients: state.jobBankStore.load_clients,
-        page_jobbank: state.jobBankStore.page_jobbank,
+        jobbank_filters: state.jobBankStore.jobbank_filters,
+        jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
@@ -310,6 +379,6 @@ const mapState = (state) =>{
 export default connect(
     mapState, {
         getClients,
-        setPage
+        setJobbankPage
     }
 )(TableClients);

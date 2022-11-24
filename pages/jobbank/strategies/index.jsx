@@ -4,13 +4,18 @@ import { Breadcrumb } from 'antd';
 import { connect } from 'react-redux';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
-import { getStrategies, getVacanciesOptions } from '../../../redux/jobBankDuck';
+import {
+    getStrategies,
+    getClientsOptions,
+    getVacanciesOptions
+} from '../../../redux/jobBankDuck';
 import TableStrategies from '../../../components/jobbank/strategies/TableStrategies';
 import SearchStrategies from '../../../components/jobbank/strategies/SearchStrategies';
 
 const index = ({
     currentNode,
     getStrategies,
+    getClientsOptions,
     getVacanciesOptions
 }) => {
 
@@ -19,6 +24,7 @@ const index = ({
     useEffect(()=>{
         if(currentNode){
             getStrategies(currentNode.id);
+            getClientsOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
         }
     },[currentNode])
@@ -58,6 +64,7 @@ const mapState = (state) =>{
 export default connect(
     mapState,{
         getStrategies,
+        getClientsOptions,
         getVacanciesOptions
     }
 )(withAuthSync(index));

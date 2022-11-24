@@ -46,6 +46,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
   }, []);
 
   const getPerson = async () => {
+      console.log(props);
     let user = Cookie.get();
     if (user && user != undefined && user.token) {
       user = JSON.parse(user.token);
@@ -104,6 +105,16 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
             >
               <Text>Editar perfil</Text>
             </p>
+            
+            {/* {pathname !== "/select-company" && props?.userInfo && props?.userInfo?.nodes && props?.userInfo?.nodes?.length > 1 && (
+              <p
+                className="text-menu"
+                onClick={() => router.push("/select-company")}
+              >
+                <Text>Cambiar de empresa</Text>
+              </p>
+            )} */}
+
             {pathname !== "/select-company" && (
               <p
                 className="text-menu"
@@ -112,6 +123,7 @@ const NewHeader = ({ hideSearch, mainLogo, hideLogo, ...props }) => {
                 <Text>Cambiar de empresa</Text>
               </p>
             )}
+            
             {props.config &&
               props.config.applications &&
               props.config.applications.find(
@@ -316,6 +328,7 @@ const mapState = (state) => {
   return {
     catCfdiVersion: state.fiscalStore.cat_cfdi_version,
     versionCfdi: state.fiscalStore.version_cfdi,
+    userInfo: state.userStore.user,
   };
 };
 

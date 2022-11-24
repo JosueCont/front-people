@@ -8,6 +8,8 @@ import { withAuthSync } from "../../../libs/auth";
 import SuaMovements from "./suaMovements";
 import EmaYEvaFiles from "./EmaYEvaFiles";
 import { connect } from "react-redux";
+import MovementsIMSS from "../../../components/payroll/fiscalMovements/MovementsIMSS";
+import UploadFile from "../../../components/UploadFile";
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -15,18 +17,19 @@ const ImssMovements = ({ ...props }) => {
   const [currentNodeId, setCurrentNodeId] = useState(null) 
   const [patronalSelected, setPatronalSelected] = useState(null);
   const [files, setFiles ] = useState([])
+  const [file, setFile]=useState(null)
+
+  // useEffect(() => {
+  //   props.currentNode && setCurrentNodeId(props.currentNode.id)
+  // },[])
 
   useEffect(() => {
-    props.currentNode && setCurrentNodeId(props.currentNode.id)
-  },[])
-
-  useEffect(() => {
-    currentNodeId && patronalSelected && getFiles()
+    patronalSelected && getFiles()
   },[patronalSelected])
 
   const getFiles = () => {
     setLoading(true)
-    WebApiPeople.listEbaAndEmaFiles(currentNodeId, patronalSelected)
+    WebApiPeople.listEbaAndEmaFiles(props.currentNode.id, patronalSelected)
     .then((response) => {
       setFiles(response.data.documents)
       setLoading(false)
@@ -36,6 +39,18 @@ const ImssMovements = ({ ...props }) => {
       setLoading(false)
       console.log('error', error)
     })
+  }
+
+  const syncEmaandEva = async () => {
+    setLoading(true)
+    try {
+      let response = await WebApiPeople.forceListEbaAndEmaFiles(props.currentNode.id, patronalSelected)
+      console.log("Response", response)
+    } catch (error) {
+      console.error('Error', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -56,7 +71,7 @@ const ImssMovements = ({ ...props }) => {
             className="container-border-radius"
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
-            <Collapse>
+            <Collapse defaultActiveKey={['3']}>
               <Panel header="SUA" key="1">
                 <Collapse
                   expandIcon={({ isActive }) => (
@@ -87,16 +102,43 @@ const ImssMovements = ({ ...props }) => {
                 </Collapse>
               </Panel>
               <Panel header="EMA y EBA" key="2">
-              <Col span={10}>
-                  <SelectPatronalRegistration
-                    currentNode={currentNodeId}
-                    onChange={(value) => setPatronalSelected(value)}
-                  />
+                <Row justify={'space-between'} style={{ marginTop: '20px' }}>
+                    <Col span={10}>
+                      <SelectPatronalRegistration
+                        currentNode={currentNodeId}
+                        onChange={(value) => setPatronalSelected(value)}
+                      />
+                    </Col>
+                    <Col span={10} style={{ display: 'flex', justifyContent: 'end' }}>
+                    <Col span={12}>
+                        <UploadFile
+                            textButton={"Importar EMA y EBA"}
+                            setFile={setFile}
+                            validateExtension={".zip"}
+                            size = {'middle'}
+                        />
+                    </Col>
+                     <Col span={12}>
+                        <Button 
+                          onClick={ () => syncEmaandEva() }
+                          disabled = { patronalSelected?  false : true }
+                        >
+                            Sincronizar
+                        </Button>
+                    </Col>
                 </Col>
+                </Row>
                 <EmaYEvaFiles 
                   files = {files.length > 0? files : []}
                   loading = { loading }
                 />
+              </Panel>
+              <Panel header="Consulta de movimientos al IMSS" key="3">
+                <Col span={24}>
+                  <MovementsIMSS
+                    currentNodeId = { currentNodeId }
+                  />
+                </Col>
               </Panel>
             </Collapse>
           </div>

@@ -13,6 +13,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
   const [postalCode, setPostalCode] = useState([]);
   const [postalCodeSelect, setPostalCodeSelect] = useState(null);
   const [state, setState] = useState(null);
+  const [suburb, setSuburb] = useState(null);
 
   useEffect(() => {
     if (fiscalAddress) setForm(fiscalAddress);
@@ -30,21 +31,24 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
   };
 
   const setForm = (data) => {
+    console.log('Data', data)
     setState(data.state.id);
     setPostalCodeSelect(data.postal_code);
+    if (data.suburb) setSuburb(data.suburb.description);
     form.setFieldsValue({
       postal_code: data.postal_code.code,
       country: data?.country?.id,
       state: data?.state?.id,
       municipality: data?.municipality?.id,
       street: data.street,
-      suburb: data.suburb,
+      suburb: data.suburb ? data.suburb.id : null,
       outdoor_number: data.outdoor_number,
       interior_number: data.interior_number,
     });
   };
 
   const setPostalCodeSelected = (data) => {
+    
     setState(data.state.id);
     setPostalCodeSelect(data);
 
@@ -95,10 +99,10 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={6}>
-            <SelectCountry />
+            <SelectCountry disabled={true} />
           </Col>
           <Col lg={8} xs={22} md={6}>
-            <SelectState setState={setState} />
+            <SelectState disabled={true} setState={setState} />
           </Col>
           <Col lg={8} xs={22} md={6}>
             <SelectMunicipality state={state && state} />
@@ -106,6 +110,7 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
           <Col lg={8} xs={22} md={6}>
             <SelectSuburb
               postal_code={postalCodeSelect && postalCodeSelect.id}
+              suburb={suburb}
             />
           </Col>
           <Col lg={8} xs={22} md={6}>
@@ -115,12 +120,12 @@ const FormFiscalAddress = ({ fiscalAddress, form, ...props }) => {
           </Col>
           <Col lg={8} xs={22} md={6}>
             <Form.Item name="outdoor_number" label="Número exterior">
-              <Input maxLength={10} />
+              <Input maxLength={100} />
             </Form.Item>
           </Col>
           <Col lg={8} xs={22} md={6}>
             <Form.Item name="interior_number" label="Número interior">
-              <Input maxLength={10} />
+              <Input maxLength={100} />
             </Form.Item>
           </Col>
         </Row>

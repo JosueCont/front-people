@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Row, Col, message} from 'antd';
+import { Button, Input, Row, Col, message, Form, Select, Tooltip} from 'antd';
 import {
     SearchOutlined,
     SyncOutlined,
@@ -8,6 +8,9 @@ import ModalClients from './ModalClients';
 import { connect } from 'react-redux';
 import { getClients } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import { ruleWhiteSpace } from '../../../utils/rules';
+import { useRouter } from 'next/router';
+import { createFiltersJB } from '../../../utils/functions';
 
 const SearchClients = ({
     user,
@@ -15,54 +18,97 @@ const SearchClients = ({
     getClients
 }) => {
 
+    const router = useRouter();
+    const [formSearch] = Form.useForm();
     const [openModal, setOpenModal] = useState(false);
-    const [toSearch, setToSearch] = useState('');
+
+    useEffect(()=>{
+        formSearch.setFieldsValue(router.query);
+    },[router])
     
     const onFinish = async (values) =>{
         try {
             values.append('node', currentNode.id);
             values.append('registered_by', user.id);
-            values.append('is_active', true);
             await WebApiJobBank.createClient(values);
             getClients(currentNode?.id)
             message.success('Cliente agregado');
+            return true;
         } catch (e) {
             console.log(e)
-            if(e.response?.data['rfc']) message.error('Ya existe un cliente con el mismo RFC');
-            else message.error('Cliente no agregado');
+            if(e.response?.data['rfc']){
+                message.error('RFC ya registrado');
+                return 'RFC_EXIST';
+            } else message.error('Cliente no agregado');
+            return false;
         }
     }
 
-    const onFinishSearch = () =>{
-        if(toSearch.trim()){
-            let query = `&name__icontains=${toSearch.trim()}`;
-            getClients(currentNode.id, query);
-        } else deleteFilter();
+    const onFinishSearch = (values) =>{
+        let filters = createFiltersJB(values);
+        router.replace({
+            pathname: '/jobbank/clients/',
+            query: filters
+        }, undefined, {shallow: true});
     }
 
     const deleteFilter = () =>{
-        setToSearch('')
-        getClients(currentNode.id)
+        formSearch.resetFields();
+        router.replace('/jobbank/clients', undefined, {shallow: true});
     }
 
     return (
         <>
             <Row gutter={[24,24]}>
-                <Col xs={18} sm={18} md={16} lg={12} style={{display: 'flex', gap: '16px'}}>
-                    <Input
-                        value={toSearch}
-                        placeholder={'Buscar por nombre'}
-                        onChange={e=> setToSearch(e.target.value)}
-                    />
-                    <Button onClick={()=> onFinishSearch()}>
-                        <SearchOutlined />
-                    </Button>
-                    <Button onClick={()=> deleteFilter()}>
-                        <SyncOutlined />
-                    </Button>
+                <Col span={20}>
+                    <Form
+                        onFinish={onFinishSearch}
+                        form={formSearch}
+                        layout='inline'
+                        style={{width: '100%'}}
+                    >
+                        <Row style={{width: '100%'}}>
+                            <Col span={14}>
+                                <Form.Item
+                                    name='name__unaccent__icontains'
+                                    rules={[ruleWhiteSpace]}
+                                    style={{marginBottom: 0}}
+                                >
+                                    <Input allowClear placeholder='Buscar por nombre'/>
+                                </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                                <Form.Item
+                                    name='is_active'
+                                    style={{marginBottom: 0}}
+                                >
+                                    <Select
+                                        allowClear
+                                        placeholder='Estatus'
+                                    >
+                                        <Select.Option value='true' key='true'>Activo</Select.Option>
+                                        <Select.Option value='false' key='false'>Inactivo</Select.Option>
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={4} style={{display: 'flex', gap: '8px'}}>
+                                <Button htmlType='submit'>
+                                    <SearchOutlined />
+                                </Button>
+                                <Button onClick={()=> deleteFilter()}>
+                                    <SyncOutlined />
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Form>
                 </Col>
-                <Col xs={6} sm={6} md={8}  lg={12} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <Button onClick={()=> setOpenModal(true)}>Agregar</Button>
+                <Col span={4} style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <Button onClick={()=> router.push({
+                        pathname: '/jobbank/clients/add',
+                        query: router.query
+                    })}>
+                        Agregar
+                    </Button>
                 </Col>
             </Row>
             <ModalClients
@@ -82,4 +128,8 @@ const mapState = (state) => {
     }
 }
 
-export default connect(mapState, { getClients })(SearchClients);
+export default connect(
+    mapState,{
+        getClients
+    }
+)(SearchClients);

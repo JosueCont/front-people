@@ -65,9 +65,21 @@ const TableAssessments = ({
     let progress = 0;
     let percent = 100 / (user_assessments.length * 100);
     user_assessments.map((item)=> {
-        if (item.apply){
-            progress = progress + item.apply.progress;
+      let isArray = true
+      if (Array.isArray(item.apply)) {
+        isArray = true
+      } else {
+        isArray = false
+      }
+      if(isArray){
+        if(item?.apply[0]){
+          progress = progress + item.apply[0].progress;
         }
+      }else{
+        if(item?.apply){
+          progress = progress + item.apply.progress;
+        }
+      }
     })
     let total = percent * progress;
     setGeneralPercent(total.toFixed(2))
@@ -141,10 +153,15 @@ const TableAssessments = ({
   }
 
   const getResults = async (item) => {
+    let isArray = true
+    if (Array.isArray(item.apply)) {
+      isArray = true
+    } else {
+      isArray = false
+    }
     try {
       let data = {
-        user_id: user_profile.id,
-        assessment_code: item.code
+        apply_id: isArray ? item.apply[0].id : item.apply.id
       };
       let response = await WebApiAssessment.getAssessmentResults(data);
       tokenToResults(item, response);
@@ -156,9 +173,15 @@ const TableAssessments = ({
   }
 
   const tokenToResults = (item, resp) =>{
+    let isArray = true
+    if (Array.isArray(item.apply)) {
+      isArray = true
+    } else {
+      isArray = false
+    }
     let string_results = resp
       ? getFieldResults(item, resp)
-      : convertResults(item.apply);
+      : convertResults(isArray ? item.apply[0] : item.apply);
 
     if (string_results){
       const body = {
@@ -172,7 +195,8 @@ const TableAssessments = ({
         assessment_date: getFieldDate(item, true),
         assessment_results: string_results,
         assessment_xtras: { stage: 2 },
-        profile_results: null
+        profile_results: null,
+        apply_id: isArray ? item.apply[0].id : item.apply.id,
       }
       const token = jwtEncode(body, 'secret', 'HS256');
       const url = `${domainKuiz}/?token=${token}`;
@@ -241,8 +265,14 @@ const TableAssessments = ({
     {
       title: 'AVANCE',
       render: (item)=>{
+        let isArray = true
+        if (Array.isArray(item.apply)) {
+          isArray = true
+        } else {
+          isArray = false
+        }
         return(
-          <Progress percent={item.apply?.progress} size={'small'}/>
+          <Progress percent={ isArray == true ? item?.apply[0]?.progress : item.apply?.progress} size={'small'}/>
         )
       }
     },
@@ -250,11 +280,18 @@ const TableAssessments = ({
       title: 'ACCIONES',
       width: 150,
       render: (item)=>{
+        let isArray = true
+        if (Array.isArray(item.apply)) {
+          isArray = true
+        } else {
+          isArray = false
+        }
         return(
           <>
             {(
-              item.apply?.progress >= 100 ||
-              item.apply?.status == 2
+              isArray == true ?
+              item?.apply[0]?.status == 2 :
+              item?.apply?.status == 2
             ) ? (
               <CustomBtn
                 size={'small'}

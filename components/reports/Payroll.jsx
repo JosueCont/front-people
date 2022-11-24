@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Table, Row, Col, Form, Button, Typography, Tooltip } from "antd";
+import {
+  Table,
+  Row,
+  Col,
+  Form,
+  Button,
+  Typography,
+  Tooltip,
+  Pagination,
+} from "antd";
 import { connect } from "react-redux";
 import WebApiPayroll from "../../api/WebApiPayroll";
 import SelectPaymentCalendar from "../selects/SelectPaymentCalendar";
@@ -15,6 +24,9 @@ const PayrollReport = ({ permissions, ...props }) => {
   const [loading, setLoading] = useState(false);
   const [calendar, setCalendar] = useState(null);
   const [payrollList, setPayrollList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lenData, setLenData] = useState(0);
+  const [valuesFilter, setValuesFilter] = useState(null);
 
   const columns = [
     {
@@ -87,13 +99,14 @@ const PayrollReport = ({ permissions, ...props }) => {
     setLoading(false);
   };
 
-  const onFinish = (value, exporter = "False") => {
+  const onFinish = (value, exporter = "False", page = 1) => {
+    setValuesFilter(value);
     let url = `node=${props.currentNode.id}&export=${exporter}`;
     if (value.calendar && value.calendar != "")
       url = url + `&calendar=${value.calendar}`;
     if (value.period && value.period != "")
       url = url + `&period=${value.period}`;
-    if (exporter === "False") getReportPayroll(url);
+    if (exporter === "False") getReportPayroll(url + `&page=${page}`);
     else
       downLoadFileBlob(
         `${getDomain(API_URL_TENANT)}/payroll/payroll-report?${url}`,
@@ -102,12 +115,18 @@ const PayrollReport = ({ permissions, ...props }) => {
       );
   };
 
+  const pagination = async (page) => {
+    onFinish(valuesFilter, "False", page);
+    setCurrentPage(page);
+  };
+
   const getReportPayroll = (url) => {
     setLoading(true);
     WebApiPayroll.getReportPayroll(url)
       .then((response) => {
         setLoading(false);
-        setPayrollList(response.data);
+        setLenData(response.data.count);
+        setPayrollList(response.data.results);
       })
       .catch((error) => {
         setLoading(false);
@@ -215,8 +234,27 @@ const PayrollReport = ({ permissions, ...props }) => {
                 ? "Cargando..."
                 : "No se encontraron resultados.",
             }}
+            pagination={false}
           ></Table>
         </Col>
+        {lenData > 0 && (
+          <Col
+            span={24}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: 10,
+            }}
+          >
+            <Pagination
+              current={currentPage}
+              total={lenData}
+              onChange={pagination}
+              showSizeChanger={false}
+              // defaultPageSize={10}
+            />
+          </Col>
+        )}
       </Row>
     </>
   );

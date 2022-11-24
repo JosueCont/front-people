@@ -6,15 +6,22 @@ import { useRouter } from 'next/router';
 import { Breadcrumb } from 'antd';
 import SearchProfiles from '../../../components/jobbank/profiles/SearchProfiles';
 import TableProfiles from '../../../components/jobbank/profiles/TableProfiles';
-import { getProfilesList } from '../../../redux/jobBankDuck';
+import {
+    getProfilesList,
+    getClientsOptions
+} from '../../../redux/jobBankDuck';
 
 const index = ({
     currentNode,
-    getProfilesList
+    getProfilesList,
+    getClientsOptions
 }) => {
 
     useEffect(()=>{
-        if(currentNode) getProfilesList(currentNode.id);
+        if(currentNode){
+            getProfilesList(currentNode.id);
+            getClientsOptions(currentNode.id);
+        }
     },[currentNode])
 
     return (
@@ -27,7 +34,7 @@ const index = ({
                     Inicio
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>Bolsa de trabajo</Breadcrumb.Item>
-                <Breadcrumb.Item>Perfiles de vacante</Breadcrumb.Item>
+                <Breadcrumb.Item>Template de vacante</Breadcrumb.Item>
             </Breadcrumb>
             <div
                 className='container'
@@ -50,4 +57,9 @@ const mapState = (state) => {
     }
 }
 
-export default connect(mapState,{ getProfilesList })(withAuthSync(index));
+export default connect(
+    mapState, {
+        getProfilesList,
+        getClientsOptions
+    }
+)(withAuthSync(index));

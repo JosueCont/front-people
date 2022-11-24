@@ -1,3 +1,6 @@
+import { toInteger } from "lodash";
+import moment from "moment";
+
 export const ruleRequired = {
   required: true,
   message: "Este campo es requerido",
@@ -28,7 +31,7 @@ export const ruleMinAge = (min)  => {
   return{
     type: 'number',
     min: min,
-    message: `Edad mínima mayor igual a ${min}`
+    message: `Edad mínima mayor o igual a ${min}`
   }
 }
 
@@ -37,6 +40,13 @@ export const ruleMaxAge = (max) =>{
     type: 'number',
     max: max,
     message: `Edad máxima menor o igual a ${max}`
+  }
+}
+
+export const ruleMaxPhoneNumber = (max) => {
+  return{
+    max: max,
+    message: `se necesita un numero de teléfono de ${max} digitos`
   }
 }
 
@@ -65,6 +75,34 @@ export const twoDigit = {
   message: "El campo debe tener 2 dígitos numéricos",
 };
 
+export const expMonths = {
+  validator(_, value){
+
+    let number = toInteger(value)
+
+    if(number >= 1 && number <= 12 ) {
+      return Promise.resolve()
+    } else {
+      return Promise.reject('Se necesita un numero entre 01 y 12')
+    }
+    
+  }
+}
+
+export const expYear = {
+  validator(_, value){
+
+    let year = parseInt(value)
+    let currentYear = parseInt(moment().format('YY'))
+
+    if(year >= currentYear){
+      return Promise.resolve()
+    }  else {
+      return Promise.reject('Año no válido')
+    }
+  }
+}
+
 export const treeDecimal = {
   pattern: /^\d+(?:\.\d{1,3})?$/,
   message: "El campo no puede tener más de tres decimales",
@@ -74,6 +112,23 @@ export const fourDecimal = {
   pattern: /^\d+(?:\.\d{1,4})?$/,
   message: "El campo no puede tener más de cuatro decimales",
 };
+
+// export const numCommaAndDot = {
+//   pattern: /^(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d{1,4})?$/,
+//   message: 'Ingrese un valor y/o formato válido'
+// }
+
+export const numCommaAndDot = () => ({
+  validator(_, value){
+    if (!value) return Promise.resolve();
+    let num = parseFloat(value.replace(',',''));
+    let pattern = /^(?:\d{0,3}(?:,\d{3})*|\d+)(?:\.\d+)?$/;
+    if(isNaN(num)) return Promise.reject('Ingrese un valor numérico');
+    if(!pattern.test(value)) return Promise.reject('Ingrese un formato válido');
+    if(num < 1) return Promise.reject('Ingrese un valor mayor o igual a 1');
+    return Promise.resolve();
+  }
+})
 
 // {pattern: /^[\d]{0,16}$/, message: "El no  debe tener más de 16 dígitos" }, numero menor  a 16 digitos
 

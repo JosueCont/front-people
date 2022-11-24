@@ -1,6 +1,7 @@
 import { Form, Input, Button, Spin, Typography } from "antd";
 import { ruleRequired } from "../utils/rules";
 import React from "react";
+import { css, Global } from "@emotion/core";
 const { Text, Title } = Typography;
 
 const RecoveryPasswordForm = (props) => {
@@ -17,39 +18,81 @@ const RecoveryPasswordForm = (props) => {
 
   return (
     <>
+      <Global
+        styles={css`
+          .login-form-title {
+            font-size: 30px !important;
+            text-align: center;
+            color: #F99543;
+            letter-spacing: 0;
+            font-weight: 700;
+            margin-bottom: 30px;
+            line-height: 35px;
+          }
+          
+          .login-form-font-color label {
+            color: #F99543 !important;
+            font-weight: bold;
+          }
+          
+          .login-form input {
+            text-align: center !important;
+          }
+
+          .recover-form input::placeholder {
+            text-align: center !important;
+          }
+
+          .recover-form input {
+            text-align: center !important;
+            border-color: "#F99543" !important;
+          }
+
+          .recover-form-button-in.ant-btn-primary {
+            background-color: #F99543 !important;
+            color: white !important;
+            border-color: #F99543 !important;
+            font-weight: bold !important;
+          }
+
+          .recover-form-button-in:disabled {
+            opacity: 0.5;
+            color: #fff;
+          }
+        `}
+      />
       <Spin tip="Cargando..." spinning={props.loading}>
-        <Title level={3} className={"font-color-khor"}>
+        <p className={"login-form-title"}>
           Ingresa tu nueva contraseña
-        </Title>
+        </p>
         <br/>
         <Form
           name="recoverPasswordform"
           layout="vertical"
           onFinish={props.onFinish}
+          className="recover-form"
         >
           <Form.Item
             name="passwordOne"
-            rules={[ruleRequired]}
+            /* rules={[ruleRequired]}
             label={"Nueva contraseña"}
             labelAlign={"left"}
-            className="font-color-khor"
+            className="login-form-font-color" */
           >
-            <Input
-              style={{ marginTop: "5px" }}
-              type="password"
+            <Input.Password
+              style={{ borderColor: "#F99543" }}
               placeholder="Nueva contraseña"
             />
           </Form.Item>
           <Form.Item
             name="passwordTwo"
-            rules={[ruleRequired, validatePassword]}
+            /* rules={[ruleRequired, validatePassword]}
             label={"Confirmar contraseña"}
             labelAlign={"left"}
-            className="font-color-khor"
+            className="font-color-khor" */
           >
-            <Input
-              style={{ marginTop: "5px" }}
-              type="password"
+            <Input.Password
+              style={{ borderColor: "#F99543" }}
               placeholder="Confirmar contraseña"
             />
           </Form.Item>
@@ -59,7 +102,7 @@ const RecoveryPasswordForm = (props) => {
               style={{ width: "100%" }}
               type="primary"
               htmlType="submit"
-              className="login-form-button"
+              className="recover-form-button-in"
               loading={props.loading}
             >
               Cambiar contraseña

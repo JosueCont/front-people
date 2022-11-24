@@ -190,8 +190,13 @@ class WebApiPayroll {
     return WebApi.ApisType("payroll/imss-person/", "post", data);
   }
 
-  static christmasBonusCaculate(data) {
-    return WebApi.ApisType("/payroll/christmas-bonus", "post", data);
+  static extraordinaryPayroll(data) {
+    return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
+  }
+
+  static getIMSSMovements(node, patronal_registration) {
+    return WebApi.ApisType(`/payroll/affiliate-movements?node=${node}&patronal_registration=${patronal_registration}`, "get"
+    )
   }
 }
 

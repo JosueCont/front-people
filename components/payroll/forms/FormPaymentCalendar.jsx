@@ -28,7 +28,7 @@ import { Global } from "@emotion/core";
 import SelectFixedConcept from "../../selects/SelectFixedConcept";
 import SelectPeriodicity from "../../selects/SelectPeriodicity";
 import SelectTypeTax from "../../selects/SelectTypeTax";
-import SelectIntegrationFactors from "../../selects/SelectIntegrationFactors"
+import SelectIntegrationFactors from "../../selects/SelectIntegrationFactors";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import locale from "antd/lib/date-picker/locale/es_ES";
@@ -44,6 +44,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [period, setPeriod] = useState("");
   const [incidenceStart, setIncidenceStart] = useState("");
   const [versions, setVersions] = useState([]);
+  const [ selectPeriodicity, setSelectPeriodicity ] = useState(null)
   const currentYear = moment().year();
 
   /* Const switchs */
@@ -55,17 +56,42 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
   const [paymentCalendar, setPaymentCalendar] = useState(null);
   const [locked, setLocked] = useState(false);
   const [politics, setPolitics] = useState(false);
-  const checks = [
+  const checks = 
+    selectPeriodicity && selectPeriodicity !== '95efb4e793974e318e6cb49ab30a1269'? [
+      {
+        name: "applied_isr_christmas_bonus",
+        label: "Cálculo de ISR de aguinaldo aplicando art. 174",
+        value: false,
+      },
+      {
+        name: "sua_absenteeism",
+        label: "¿Afectar ausentismos en SUA?",
+        value: false,
+      },
+      {
+        name: "import_issues",
+        label: "¿Importar incidencias con fecha?",
+        value: false,
+      },
+      {
+        name: "accumulate_vacation",
+        label: "¿Acumula vacaciones?",
+        value: true,
+      },
+
+    ] : [
     {
       name: "applied_isr_christmas_bonus",
       label: "Cálculo de ISR de aguinaldo aplicando art. 174",
       value: false,
     },
+
     {
       name: "seventh_day_breakdown",
       label: "¿Desgloce del septimo día?",
       value: false,
     },
+
     {
       name: "seventh_day_discount",
       label: "¿Descuento proporción septimo dia?",
@@ -86,7 +112,8 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
       label: "¿Acumula vacaciones?",
       value: true,
     },
-  ];
+
+  ]
 
   useEffect(() => {
     if (idPaymentCalendar) {
@@ -160,6 +187,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
         setIncidenceStart(item.incidence_start);
         setPeriod(item.period);
         setLocked(item.locked);
+        setSelectPeriodicity(item.periodicity.id)
         setPolitics(true);
         checks.map((a) => {
           let checked = document.getElementById(a.name);
@@ -300,6 +328,33 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
     return current && moment(current).year() < currentYear;
   };
 
+  const disablePeriod = (current) => {
+    let month = moment(current).month() + 1;
+    let year = moment(current).year();
+
+    let date = {
+      month,
+      year,
+    };
+
+    if (
+      (date.month !== 1 && date.month !== 12) ||
+      date.year < currentYear - 1
+    ) {
+      return true;
+    } else {
+      if (date.month === 1 && date.year < currentYear) return true;
+      return false;
+    }
+  };
+
+  console.log('Calendar', paymentCalendar)
+  console.log('Periodicity', selectPeriodicity)
+
+  const onChangePeriodicy = (value) => {
+    setSelectPeriodicity(value)
+  }
+
   return (
     <>
       <Global
@@ -369,6 +424,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               <SelectPeriodicity
                 size={"large"}
                 disabled={paymentCalendar ? paymentCalendar.locked : false}
+                onChangePeriodicy = { onChangePeriodicy }
               />
             </Col>
             <Col lg={8} xs={22}>
@@ -477,7 +533,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   placeholder=""
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                   locale={locale}
-                  disabledDate={disabledDate}
+                  disabledDate={disablePeriod}
                 />
               </Form.Item>
             </Col>
@@ -545,6 +601,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   moment={"YYYY"}
                   disabled={paymentCalendar ? paymentCalendar.locked : false}
                   locale={locale}
+                  disabledDate={disablePeriod}
                 />
               </Form.Item>
             </Col>
@@ -570,9 +627,10 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
               />
             </Col>
             <Col lg={8} xs={22}>
-              <Form.Item label="Politicas">
+              <Form.Item label="Políticas">
                 <Switch
-                  defaultChecked={politics}
+                  // defaultChecked={politics}
+                  checked={politics}
                   checkedChildren="Personalizado"
                   unCheckedChildren="Por defecto"
                   onChange={(value) => setPolitics(value)}
@@ -606,7 +664,7 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                 <Col lg={8} xs={22}>
                   <Form.Item
                     name="calculation_employment_subsidy"
-                    label="Calculo de subsicio al empleo"
+                    label="Cálculo de subsicio al empleo"
                     rules={[ruleRequired]}
                   >
                     <Select
@@ -616,18 +674,13 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={22}>
-                    {/* <Select
+                  {/* <Select
                       maxLength={100}
                       options={CalculationEmploymentSubsidy}
                     /> */}
-                    <SelectIntegrationFactors 
-                      rules = { [ruleRequired] }
-                    />
+                  <SelectIntegrationFactors rules={[ruleRequired]} />
                 </Col>
-                {
-                  <div style={{ width: '100%' }}></div>
-                }
-                
+                {<div style={{ width: "100%" }}></div>}
                 <RenderChecks data={checks} />
               </Row>
             </>
@@ -646,13 +699,12 @@ const FormPaymentCalendar = ({ idPaymentCalendar = null, ...props }) => {
                 {locked ? "Cerrar" : "Cancelar"}
               </Button>
             </Col>
-            {!locked && (
-              <Col md={5}>
-                <Button block className="" type="primary" htmlType="submit">
-                  Guardar
-                </Button>
-              </Col>
-            )}
+
+            <Col md={5}>
+              <Button block className="" type="primary" htmlType="submit">
+                Guardar
+              </Button>
+            </Col>
           </Row>
         </Form>
       </Spin>

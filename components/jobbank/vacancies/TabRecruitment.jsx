@@ -8,7 +8,7 @@ import {
   List,
   Button
 } from 'antd';
-import { validateNum } from '../../../utils/functions';
+import { validateNum, validateMaxLength } from '../../../utils/functions';
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import {
   ruleRequired,
@@ -56,8 +56,8 @@ const TabRecruitment = ({
   }
 
   return (
-    <Row gutter={[24,2]}>
-      <Col span={8} className='list_interviewers'>
+    <Row gutter={[24,24]}>
+      <Col xs={24} xl={8} span={8} className='list_interviewers'>
         <List
           header='Entrevistadores'
           itemLayout='horizontal'
@@ -77,9 +77,9 @@ const TabRecruitment = ({
           )}
         />
       </Col>
-      <Col span={16}>
+      <Col xs={24} xl={16}>
         <Row gutter={[24,0]}>
-          <Col span={12}>
+          <Col xs={24} md={12}>
             <Form.Item
               name='interviewers'
               label='¿Quién(es) entrevista(n)?'
@@ -89,6 +89,7 @@ const TabRecruitment = ({
               <Input.Group compact>
                 <Input
                   placeholder='Nombre'
+                  maxLength={50}
                   value={person}
                   onChange={e => setPerson(e.target.value)}
                   style={{
@@ -99,6 +100,7 @@ const TabRecruitment = ({
                 />
                 <Input
                   placeholder='Posición'
+                  maxLength={50}
                   value={position}
                   onChange={e=> setPosition(e.target.value)}
                   style={{
@@ -116,16 +118,18 @@ const TabRecruitment = ({
               </Input.Group>
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} md={12}>
             <Form.Item
               name='interviews_number'
               label='Número de entrevistas'
             >
               <InputNumber
                 type='number'
+                maxLength={2}
                 controls={false}
-                placeholder='Número de entrevistas'
-                onKeyPress={validateNum}
+                placeholder='¿Cuántas entrevistas se realizarán?'
+                onKeyDown={validateNum}
+                onKeyPress={validateMaxLength}
                 style={{
                   width: '100%',
                   border: '1px solid black'
@@ -133,25 +137,31 @@ const TabRecruitment = ({
               />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} md={12}>
             <Form.Item
               name='observations'
               label='Durante la entrevista'
               rules={[ruleWhiteSpace]}
             >
-              <Input placeholder='¿Qué particularidad es importante observar?'/>
+              <Input.TextArea
+                autoSize={{minRows: 3, maxRows: 3}}
+                placeholder='Describa las particularidades a observar'
+              />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} md={12}>
             <Form.Item
               name='rejection_reasons'
               label='Motivos potenciales al rechazo'
               rules={[ruleWhiteSpace]}
             >
-              <Input placeholder='Motivos potenciales al rechazo'/>
+              <Input.TextArea
+                autoSize={{minRows: 3, maxRows: 3}}
+                placeholder='Especificar los motivos'
+              />
             </Form.Item>
           </Col>
-          {/* <Col span={12}>
+          {/* <Col xs={24} md={12} xl={8} xxl={6}>
             <Form.Item label='Observaciones y comentarios adicionales'>
               <Input placeholder='Observaciones y comentarios adicionales'/>
             </Form.Item>

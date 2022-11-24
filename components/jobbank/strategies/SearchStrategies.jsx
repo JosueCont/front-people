@@ -7,7 +7,10 @@ import { Button, Input, Row, Col, Form, Select } from 'antd';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ruleWhiteSpace } from '../../../utils/rules';
-import { getStrategies } from '../../../redux/jobBankDuck';
+import {
+    getStrategies,
+    setJobbankFilters
+} from '../../../redux/jobBankDuck';
 
 const SearchStrategies = ({
   currentNode,
@@ -15,29 +18,44 @@ const SearchStrategies = ({
   load_clients_options,
   list_clients_options,
   load_vacancies_options,
-  list_vacancies_options
+  list_vacancies_options,
+  setJobbankFilters
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
+    const clientSelected = Form.useWatch('customer', formSearch);
 
-    const createQuerys = (obj) =>{
+    const createFilters = (obj) =>{
         let query = '';
-        if(obj.product) query += `&product__icontains=${obj.product}`;
+        if(obj.product) query += `&product__unaccent__icontains=${obj.product}`;
         if(obj.customer) query += `&customer=${obj.customer}`;
         if(obj.vacant) query += `&vacant=${obj.vacant}`;
         return query;
     }
 
     const onFinishSearch = (values) =>{
-        const query = createQuerys(values);
-        if(query) getStrategies(currentNode.id, query);
-        else deleteFilter();
+        let filters = createFilters(values);
+        if(filters){
+            setJobbankFilters(filters)
+            getStrategies(currentNode.id, filters);
+        } else deleteFilter();
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        getStrategies(currentNode.id)
+        setJobbankFilters("");
+        getStrategies(currentNode.id);
+    }
+
+    const onChangeClient = (value) =>{
+        formSearch.setFieldsValue({vacant: null});
+    }
+
+    const optionsByClient = () =>{
+        if(!clientSelected) return [];
+        const options = item => item.customer?.id === clientSelected;
+        return list_vacancies_options.filter(options);
     }
 
     return (
@@ -59,10 +77,12 @@ const SearchStrategies = ({
                                 <Select
                                     allowClear
                                     showSearch
+                                    disabled={load_clients_options}
                                     loading={load_clients_options}
                                     placeholder='Cliente'
                                     notFoundContent='No se encontraron resultados'
                                     optionFilterProp='children'
+                                    onChange={onChangeClient}
                                 >
                                     {list_clients_options.length > 0 && list_clients_options.map(item=> (
                                         <Select.Option value={item.id} key={item.id}>
@@ -77,12 +97,13 @@ const SearchStrategies = ({
                                 <Select
                                     allowClear
                                     showSearch
+                                    disabled={optionsByClient().length <= 0}
                                     loading={load_vacancies_options}
                                     placeholder='Vacante'
                                     notFoundContent='No se encontraron resultados'
                                     optionFilterProp='children'
                                 >
-                                    {list_vacancies_options.length > 0 && list_vacancies_options.map(item=> (
+                                    {optionsByClient().map(item=> (
                                         <Select.Option value={item.id} key={item.id}>
                                             {item.job_position}
                                         </Select.Option>
@@ -119,7 +140,8 @@ const mapState = (state) =>{
 }
 
 export default connect(
-  mapState,{
-    getStrategies
-  }
+    mapState,{
+        getStrategies,
+        setJobbankFilters
+    }
 )(SearchStrategies)

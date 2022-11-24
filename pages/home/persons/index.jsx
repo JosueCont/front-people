@@ -59,6 +59,7 @@ import PersonsGroup from "../../../components/person/groups/PersonsGroup";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import ViewAssigns from "../../../components/person/assignments/ViewAssigns";
 import SelectJob from "../../../components/selects/SelectJob";
+import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -73,6 +74,7 @@ const homeScreen = ({ ...props }) => {
   const [showModalAssigns, setShowModalAssigns] = useState(false);
   const [personSelected, setPersonSelected] = useState(false);
   const [personsKeys, setPersonsKeys] = useState([]);
+  const [namePerson, setNamePerson] = useState("");
   const [formFilter] = Form.useForm();
   const inputFileRef = useRef(null);
   const inputFileRefAsim = useRef(null);
@@ -217,7 +219,7 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <div>
-            <Avatar src={item.photo ? item.photo : defaulPhoto} />
+            <Avatar src={item.photo_thumbnail ? item.photo_thumbnail : defaulPhoto} />
           </div>
         );
       },
@@ -345,7 +347,7 @@ const homeScreen = ({ ...props }) => {
       render: (item) => {
         return (
           <div>
-            <Avatar src={item.photo ? item.photo : defaulPhoto} />
+            <Avatar src={item.photo_thumbnail ? item.photo_thumbnail : defaulPhoto} />
           </div>
         );
       },
@@ -388,20 +390,20 @@ const homeScreen = ({ ...props }) => {
         );
       },
     },
-    {
-      title: "Asignaciones",
-      show: props.config?.kuiz_enabled,
-      render: (item) => {
-        return (
-          <Tooltip title="Ver asignaciones">
-            <EyeOutlined
-              style={{ cursor: "pointer" }}
-              onClick={() => OpenModalAssigns(item)}
-            />
-          </Tooltip>
-        );
-      },
-    },
+    // {
+    //   title: "Asignaciones",
+    //   show: props.config?.kuiz_enabled,
+    //   render: (item) => {
+    //     return (
+    //       <Tooltip title="Ver asignaciones">
+    //         <EyeOutlined
+    //           style={{ cursor: "pointer" }}
+    //           onClick={() => OpenModalAssigns(item)}
+    //         />
+    //       </Tooltip>
+    //     );
+    //   },
+    // },
     {
       title: "Acceso a intranet",
       show: props.config?.intranet_enabled,
@@ -460,7 +462,7 @@ const homeScreen = ({ ...props }) => {
     };
     await WebApiPeople.changeStatusPerson(data)
       .then((response) => {
-        if (!response.data.photo) response.data.photo = defaulPhoto;
+        if (!response.data.photo_thumbnail) response.data.photo_thumbnail = defaulPhoto;
         response.data.key = value.key;
         person.map((a) => {
           if (a.id == response.data.id) a = response.data;
@@ -528,11 +530,14 @@ const homeScreen = ({ ...props }) => {
       <Menu>
         {props.config?.kuiz_enabled && (
           <>
-            {permissions.view && (
+            {/* {permissions.view && (
               <Menu.Item key="4" icon={<EyeOutlined />}>
                 <Link href={`/home/profile/${item.id}`}>Ver resultados</Link>
               </Menu.Item>
-            )}
+            )} */}
+            <Menu.Item key="5" icon={<EyeOutlined />}>
+              <Link href={`/assessment/persons/${item.id}`}>Ver asignaciones</Link>
+            </Menu.Item>
             {permissions.create && (
               <Menu.Item
                 key="1"
@@ -600,7 +605,7 @@ const homeScreen = ({ ...props }) => {
           return (
             <>
               <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo} />
+                <Avatar src={p.photo_thumbnail} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
             </>
@@ -702,7 +707,7 @@ const homeScreen = ({ ...props }) => {
 
   const resetFilter = () => {
     formFilter.resetFields();
-    filter();
+    // filter();
     filterPersonName();
   };
 
@@ -741,7 +746,7 @@ const homeScreen = ({ ...props }) => {
           return (
             <>
               <Row style={{ marginBottom: 15 }}>
-                <Avatar src={p.photo} />
+                <Avatar src={p.photo_thumbnail} />
                 <span>{" " + p.first_name + " " + p.flast_name}</span>
               </Row>
             </>
@@ -762,6 +767,7 @@ const homeScreen = ({ ...props }) => {
   };
 
   const HandleModalAssign = (item) => {
+    setNamePerson(item?.first_name + " " + item?.flast_name)
     setPersonsToDelete([item]);
     // setOpenAssignTest(true);
     setShowModalAssignTest(true);
@@ -1166,7 +1172,13 @@ const homeScreen = ({ ...props }) => {
                       >
                         Descargar plantilla
                       </Button>
+                      {props.config && props.config.nomina_enabled &&
+                          <ButtonDownloadConfronta/>
+                      }
                     </Space>
+                  </Col>
+                  <Col>
+
                   </Col>
                 </Row>
               </div>
@@ -1211,7 +1223,7 @@ const homeScreen = ({ ...props }) => {
         )}
         {showModalAssignTest && (
           <AssignAssessments
-            title={"Asignar evaluaciones"}
+            title={`Asignar evaluaciones a ${namePerson}`}
             visible={showModalAssignTest}
             close={HandleCloseGroup}
             actionForm={onFinishAssignAssessments}

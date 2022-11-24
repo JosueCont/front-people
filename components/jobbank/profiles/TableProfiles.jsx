@@ -12,9 +12,10 @@ import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
+    CopyOutlined
 } from '@ant-design/icons';
 import {
-    setPage,
+    setJobbankPage,
     getProfilesList
 } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
@@ -23,12 +24,12 @@ import WebApiJobBank from '../../../api/WebApiJobBank';
 
 const TableProfiles = ({
     currentNode,
-    page_jobbank,
+    jobbank_page,
     list_profiles,
     load_profiles,
     load_clients_options,
     list_clients_options,
-    setPage,
+    setJobbankPage,
     getProfilesList
 }) => {
 
@@ -39,7 +40,6 @@ const TableProfiles = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
-        closeModalDelete();
         try {
             await WebApiJobBank.deleteProfile({ids});
             getProfilesList(currentNode.id);
@@ -49,6 +49,23 @@ const TableProfiles = ({
             console.log(e)
             if(ids.length > 1) message.error('Perfiles no eliminados');
             else message.error('Perfil no eliminado');
+        }
+    }
+
+    const actionDuplicate = async (item) =>{
+        const key = 'updatable';
+        try {
+            message.loading({content: 'Duplicando...', key});
+            await WebApiJobBank.duplicateProfile(item.id);
+            setTimeout(()=>{
+                message.success({content: 'Perfil duplicado', key});
+                getProfilesList(currentNode.id);
+            },1000);
+        } catch (e) {
+            console.log(e);
+            setTimeout(()=>{
+                message.error({content: 'Perfil no duplicada', key});
+            },1000)
         }
     }
 
@@ -81,7 +98,7 @@ const TableProfiles = ({
     }
 
     const onChangePage = ({current}) =>{
-        setPage(current)
+        setJobbankPage(current)
         if (current == 1) getProfilesList(currentNode?.id);
         if (current > 1) {
             const offset = (current - 1) * 10;
@@ -116,7 +133,7 @@ const TableProfiles = ({
         return (
             <Menu>
                 <Menu.Item
-                    key={1}
+                    key='1'
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/profiles/edit`,
@@ -126,11 +143,18 @@ const TableProfiles = ({
                     Editar
                 </Menu.Item>
                 <Menu.Item
-                    key={2}
+                    key='2'
                     icon={<DeleteOutlined/>}
                     onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
+                </Menu.Item>
+                <Menu.Item
+                    key='3'
+                    icon={<CopyOutlined />}
+                    onClick={()=> actionDuplicate(item)}
+                >
+                    Duplicar
                 </Menu.Item>
             </Menu>
         );
@@ -189,7 +213,7 @@ const TableProfiles = ({
                 }}
                 pagination={{
                     total: list_profiles.count,
-                    current: page_jobbank,
+                    current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
@@ -215,14 +239,14 @@ const mapState = (state) =>{
         load_profiles: state.jobBankStore.load_profiles,
         list_clients_options: state.jobBankStore.list_clients_options,
         load_clients_options: state.jobBankStore.load_clients_options,
-        page_jobbank: state.jobBankStore.page_jobbank,
+        jobbank_page: state.jobBankStore.jobbank_page,
         currentNode: state.userStore.current_node
     }
 }
 
 export default connect(
     mapState, {
-        setPage,
+        setJobbankPage,
         getProfilesList
     }
 )(TableProfiles);

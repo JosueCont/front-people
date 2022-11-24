@@ -413,20 +413,20 @@ export const optionsSubproduct = [
 
 export const optionsTypeJob = [
   {value: 1, key: 1, label: 'Presencial'},
-  {value: 2, key: 2, label: 'Hibrido'},
+  {value: 2, key: 2, label: 'Híbrido'},
   {value: 3, key: 3, label: 'Desde casa'}
 ];
 
 export const optionsTypeContract = [
-  {value: 1, key: 1, label: 'Presencial'},
-  {value: 2, key: 2, label: 'Hibrido'},
-  {value: 3, key: 3, label: 'Desde casa'}
+  {value: 1, key: 1, label: 'Indeterminado'},
+  {value: 2, key: 2, label: 'Temporal'},
+  {value: 3, key: 3, label: 'Prácticas'}
 ];
 
 export const optionsGenders = [
   {value: 1, key: 1, label: 'Masculino'},
   {value: 2, key: 2, label: 'Femenino'},
-  {value: 3, key: 3, label: 'Otro'}
+  {value: 3, key: 3, label: 'Indistinto'}
 ];
 
 export const optionsLevelAcademic = [
@@ -439,6 +439,12 @@ export const optionsLevelAcademic = [
   {value: 7, key: 7, label: 'Maestría'},
   {value: 8, key: 8, label: 'Doctorado'},
 ];
+
+export const optionsStatusAcademic = [
+  {value: 1, key: 1, label: 'En concurso'},
+  {value: 2, key: 2, label: 'Trunca'},
+  {value: 3, key: 3, label: 'Concluida'}
+]
 
 export const optionsStatusVacant = [
   {value: 1, key: 1, label: 'Activa'},
@@ -473,7 +479,24 @@ export const optionsJobBank = [
   {value: 3, key: 3, label: 'Universidades'},
   {value: 4, key: 4, label: 'Indeed'},
   {value: 5, key: 5, label: 'Talenteca'},
-  {value: 6, key: 6, label: 'HEX'}
+  {value: 6, key: 6, label: 'HEX'},
+  {value: 7, key: 7, label: 'Otros'}
+]
+
+export const optionsEconomicBenefits = [
+  {value: 1, key: 1, label: 'Sin prestaciones'},
+  {value: 2, key: 2, label: 'Prestaciones de ley'},
+  {value: 3, key: 3, label: 'Prestaciones superiores a la ley'}
+]
+
+export const optionMovement = [
+  {value: 1, label:"Aguinaldo"},
+  {value: 2, label:"Finiquito"},
+  {value: 3, label:"Liquidación"}
+]
+export const optionsBusinessName = [
+  {value: "1", key: "1", label: 'Física'},
+  {value: "2", key: "2", label: 'Moral'}
 ]
 
 export const messageSaveSuccess = "Agregado correctamente.";
@@ -537,3 +560,13 @@ export const redirectTo = (url, newWindow = false) =>{
   link.target = newWindow ? '_blank' : '_self';
   link.click();
 }
+
+export const catalogsJobbank = [
+  {catalog: 'categories', name: 'Categorías'},
+  {catalog: 'subcategories', name: 'Subcategorías' },
+  {catalog: 'academic', name: 'Carreras'},
+  {catalog: 'competences', name: 'Competencias'},
+  // {catalog: 'profiles', name: 'Template de vacante'},
+  {catalog: 'sectors', name: 'Sectores'},
+  {catalog: 'jobboars', name: 'Bolsas de empleo'}
+];

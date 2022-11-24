@@ -4,9 +4,13 @@ import { Breadcrumb } from 'antd';
 import TableClients from '../../../components/jobbank/clients/TableClients';
 import SearchClients from '../../../components/jobbank/clients/SearchClients';
 import { connect } from 'react-redux';
-import { getClients, getSectors } from '../../../redux/jobBankDuck';
+import {
+    getClients,
+    getSectors
+} from '../../../redux/jobBankDuck';
 import { withAuthSync } from '../../../libs/auth';
 import { useRouter } from 'next/router';
+import { getFiltersJB } from '../../../utils/functions';
 
 const index = ({
     currentNode,
@@ -18,10 +22,11 @@ const index = ({
 
     useEffect(()=>{
         if(currentNode){
-            getClients(currentNode.id);
+            let filters = getFiltersJB(router.query);
+            getClients(currentNode.id, filters);
             getSectors(currentNode.id);
         }
-    },[currentNode])
+    },[currentNode, router])
 
     return (
         <MainLayout currentKey={'jb_clients'} defaultOpenKeys={['job_bank']}>

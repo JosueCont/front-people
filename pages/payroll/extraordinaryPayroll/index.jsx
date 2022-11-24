@@ -27,25 +27,38 @@ import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import NumberFormat from "../../../components/formatter/numberFormat";
 import NumericInput from "../../../components/inputNumeric";
+import ModalConceptsPayroll from "../../../components/payroll/modals/ModalConceptsPayroll";
 import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import { Global } from "@emotion/core";
-import { messageError } from "../../../utils/constant";
+import { messageError, optionMovement } from "../../../utils/constant";
 
 const ExtraordinaryPayroll = ({ ...props }) => {
   const route = useRouter();
   const { Text } = Typography;
   const [form] = Form.useForm();
+
   const [paymentCalendars, setPaymentCalendars] = useState([]);
   const [optionspPaymentCalendars, setOptionsPaymentCalendars] = useState([]);
+  const [personKeys, setPersonKeys] = useState([]);
+  const [personId, setPersonId] = useState(null);
+  const [listPersons, setListPersons] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [movementType, setMovementType] = useState(null);
   const [bonusChristmas, setBonusChristmas] = useState([]);
   const [calendarSelect, setCalendarSelect] = useState(null);
   const [periodSelected, setPeriodSelcted] = useState(null);
   const [totalBonus, setTotalBonus] = useState(null);
   const [totalIsr, setTotalIsr] = useState(null);
   const [netPay, setNetPay] = useState(null);
+  const [isOpen, setIsOpen] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [consolidated, setConsolidated] = useState(null);
+  const [step, setStep] = useState(0);
+  const [nextStep, setNextStep] = useState(true);
+  const [previousStep, setPreviuosStep] = useState(false);
+
   const defaulPhoto =
     "https://khorplus.s3.amazonaws.com/demo/people/person/images/photo-profile/1412021224859/placeholder-profile-sq.jpg";
 
@@ -65,7 +78,18 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                   : defaulPhoto
               }
             />
-            {item.payroll_person.person && item.payroll_person.person.full_name}
+            {`${
+              item.payroll_person.person &&
+              item.payroll_person.person.mlast_name
+                ? item.payroll_person.person.first_name +
+                  " " +
+                  item.payroll_person.person.flast_name +
+                  " " +
+                  item.payroll_person.person.mlast_name
+                : item.payroll_person.personfirst_name +
+                  " " +
+                  item.payroll_person.person.flast_name
+            }`}
           </Space>
         </div>
       ),
@@ -80,7 +104,14 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       title: "Salario diario",
       key: "company",
       className: "cursor_pointer",
-      render: (item) => <div>{item.payroll_person.daily_salary}</div>,
+      render: (item) => (
+        <div>
+          <NumberFormat
+            prefix={"$"}
+            number={item.payroll_person.daily_salary}
+          />
+        </div>
+      ),
     },
     {
       title: "Total percepciones",
@@ -112,42 +143,49 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         </div>
       ),
     },
-    // {
-    //   key: "actions",
-    //   className: "cell-actions",
-    //   render: (item) => (
-    //     <>
-    //       {item.payroll_cfdi_person &&
-    //       item.payroll_cfdi_person.is_open &&
-    //       step == 0 ? (
-    //         <Button
-    //           size="small"
-    //           onClick={() => {
-    //             setPersonId(item.person && item.person.id),
-    //               setModalVisible(true);
-    //           }}
-    //         >
-    //           <PlusOutlined />
-    //         </Button>
-    //       ) : (
-    //         isOpen &&
-    //         step == 0 &&
-    //         !consolidated && (
-    //           <Button
-    //             size="small"
-    //             onClick={() => {
-    //               setPersonId(item.person && item.person.id),
-    //                 setModalVisible(true);
-    //             }}
-    //           >
-    //             <PlusOutlined />
-    //           </Button>
-    //         )
-    //       )}
-    //     </>
-    //   ),
-    // },
+    {
+      key: "actions",
+      className: "cell-actions",
+      render: (item) => (
+        <>
+          {item.payroll_cfdi_person &&
+          item.payroll_cfdi_person.is_open &&
+          step == 0 ? (
+            <Button
+              size="small"
+              onClick={() => {
+                setPersonId(
+                  item.payroll_person && item.payroll_person.person.id
+                ),
+                  setModalVisible(true);
+              }}
+            >
+              <PlusOutlined />
+            </Button>
+          ) : (
+            isOpen &&
+            step == 0 &&
+            !consolidated && (
+              <Button
+                size="small"
+                onClick={() => {
+                  setPersonId(
+                    item.payroll_person && item.payroll_person.person.id
+                  ),
+                    setModalVisible(true);
+                }}
+              >
+                <PlusOutlined />
+              </Button>
+            )
+          )}
+        </>
+      ),
+    },
   ];
+
+  console.log("Person xd", listPersons);
+  console.log("PersonID && ismodalVsible", personId, modalVisible);
 
   const renderConceptsTable = (data) => {
     console.log(data);
@@ -383,7 +421,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
       periodicity: calendar.periodicity.description,
       period: `${period.name}.- ${period.start_date} - ${period.end_date}`,
     });
-    sendCalculateBonus({ payment_period: period.id, calendar: value });
+    sendCalculateExtraordinaryPayrroll({
+      payment_period: period.id,
+      calendar: value,
+      movementType: movementType,
+    });
   };
 
   const resetState = () => {
@@ -394,11 +436,12 @@ const ExtraordinaryPayroll = ({ ...props }) => {
     setTotalBonus(null);
     setTotalIsr(null);
     setNetPay(null);
+    setMovementType(null);
   };
 
-  const sendCalculateBonus = async (data) => {
+  const sendCalculateExtraordinaryPayrroll = async (data) => {
     setLoading(true);
-    await WebApiPayroll.christmasBonusCaculate(data)
+    await WebApiPayroll.extraordinaryPayroll(data)
       .then((response) => {
         setBonusChristmas(response.data);
         setLoading(false);
@@ -408,6 +451,18 @@ const ExtraordinaryPayroll = ({ ...props }) => {
         setLoading(false);
       });
   };
+
+  const rowSelectionPerson = {
+    selectedRowKeys: personKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setPersonKeys(selectedRowKeys);
+      setListPersons(selectedRows);
+    },
+  };
+
+  useEffect(() => {
+    if (movementType && calendarSelect) changeCalendar(calendarSelect.id);
+  }, [movementType]);
 
   return (
     <Spin tip="Cargando..." spinning={loading}>
@@ -464,19 +519,39 @@ const ExtraordinaryPayroll = ({ ...props }) => {
               <Card className="form_header">
                 <Form form={form} layout="vertical">
                   <Row gutter={[16, 8]}>
-                    <Col xxs={24} xl={4}>
-                      <Form.Item name="calendar" label="Calendario">
-                        <Select
-                          size="large"
-                          style={{ width: "100%" }}
-                          options={optionspPaymentCalendars}
-                          onChange={changeCalendar}
-                          placeholder="Calendarios"
-                          notFoundContent={"No se encontraron resultados."}
-                          allowClear
-                        />
-                      </Form.Item>
-                    </Col>
+                    <>
+                      <Col xxs={24} xl={4}>
+                        <Form.Item
+                          name="movement_type"
+                          label="Tipo de movimento"
+                        >
+                          <Select
+                            size="large"
+                            style={{ width: "100%" }}
+                            options={optionMovement}
+                            onChange={(e) => setMovementType(e)}
+                            placeholder="Salario"
+                            notFoundContent={"No se encontraron resultados."}
+                            allowClear
+                          />
+                        </Form.Item>
+                      </Col>
+                    </>
+                    {movementType && (
+                      <Col xxs={24} xl={4}>
+                        <Form.Item name="calendar" label="Calendario">
+                          <Select
+                            size="large"
+                            style={{ width: "100%" }}
+                            options={optionspPaymentCalendars}
+                            onChange={changeCalendar}
+                            placeholder="Calendarios"
+                            notFoundContent={"No se encontraron resultados."}
+                            allowClear
+                          />
+                        </Form.Item>
+                      </Col>
+                    )}
                     {periodSelected && (
                       <>
                         <Col xxs={24} xl={4}>
@@ -588,11 +663,11 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                       ? "Cargando..."
                       : "No se encontraron resultados.",
                   }}
-                  // rowSelection={
-                  //   consolidated && step == 2 && consolidated.status < 3
-                  //     ? rowSelectionPerson
-                  //     : null
-                  // }
+                  rowSelection={
+                    movementType === 2 || movementType === 3
+                      ? rowSelectionPerson
+                      : null
+                  }
                 />
                 {totalBonus != null && totalIsr != null ? (
                   <Col sm={24} md={24} lg={24}>
@@ -622,6 +697,20 @@ const ExtraordinaryPayroll = ({ ...props }) => {
           </Col>
         </div>
       </MainLayout>
+      {personId && (
+        <ModalConceptsPayroll
+          visible={modalVisible}
+          setVisible={setModalVisible}
+          // calendar={{
+          //   payment_period: periodSelected.id,
+          // }}
+          person_id={personId}
+          // payroll={payroll}
+          setLoading={setLoading}
+          // sendCalculatePayroll={sendCalculatePayroll}
+          // payrollType={payrollType}
+        />
+      )}
     </Spin>
   );
 };

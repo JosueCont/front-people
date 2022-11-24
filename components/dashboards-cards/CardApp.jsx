@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import { Card, Row, Col, Space, Button, Divider } from "antd";
+import { Card, Row, Col, Space, Button, Divider, Modal } from "antd";
 import Cookies from "js-cookie";
 import { getCurrentURL, redirectTo } from "../../utils/constant";
 import { connect } from "react-redux";
 import { domainApiWithTenant } from "../../api/axiosApi";
 import { urlMyAccount, urlPeople, urlSocial } from "../../config/config";
+import {FaGooglePlay, FaApple} from "react-icons/fa";
 import _ from "lodash"
 
 const ContentApps = styled.div`
@@ -89,6 +90,8 @@ const CardApps = ({ user, config, ...props }) => {
 
   const imgSukhaTv = "https://khorplus.s3.us-west-1.amazonaws.com/demo/people/site-configuration/images/sukha.png";
 
+  const [showYnlDownloadApp, setShowYnlDownloadApp] = useState(false);
+
   const linkToProfile = () => {
     const token = user.jwt_data.metadata.at(-1).token;
     const url = `${getCurrentURL(
@@ -146,7 +149,7 @@ const CardApps = ({ user, config, ...props }) => {
               </Space>
             </Col>
           ) : null}
-          <Col span={8}>
+          {/* <Col span={8}>
             <Space
               direction="vertical"
               align="center"
@@ -155,7 +158,7 @@ const CardApps = ({ user, config, ...props }) => {
               <img src={imgPeople} />
               <p style={{ marginBottom: "0px" }}>People</p>
             </Space>
-          </Col>
+          </Col> */}
           {props?.applications &&
           (_.has(props.applications, "khorflix") && props.applications["khorflix"].active) ?
               <Col span={8}>
@@ -184,6 +187,20 @@ const CardApps = ({ user, config, ...props }) => {
               </Col>
               : null
           }
+          {props?.applications &&
+          (_.has(props.applications, "ynl") && props.applications["ynl"].active) ?
+              <Col span={8}>
+                <Space
+                    direction="vertical"
+                    align="center"
+                    onClick={()=> setShowYnlDownloadApp(true)}
+                >
+                  <img src={"/images/LogoYnl.png"} />
+                  <p style={{ marginBottom: "0px" }}>YNL</p>
+                </Space>
+              </Col>
+              : null
+          }
         </Row>
         {/* <Divider style={{background: '#5f6368'}}/>
             <Row justify='center'>
@@ -196,6 +213,62 @@ const CardApps = ({ user, config, ...props }) => {
                 </Button>
             </Row> */}
       </Card>
+      <Modal
+        title="Descarga la aplicación de YNL"
+        centered
+        visible={showYnlDownloadApp}
+        onOk={()=> setShowYnlDownloadApp(false)}
+        onCancel={()=> setShowYnlDownloadApp(false)}
+        destroyOnClose={true}
+        footer={
+          <Col>
+            <Space>
+              <Button
+                size="large"
+                htmlType="button"
+                onClick={() => setShowYnlDownloadApp(false)}
+              >
+                Cerrar
+              </Button>
+            </Space>
+          </Col>
+        }
+      >
+        <Row>
+          <Col md={12} lg={12} xs={24}>
+            <div className='flex-item' style={{marginRight: "4px"}}>
+                <a href="https://play.google.com/store/apps/details?id=com.hiumanlab.ynl&hl=es_MX" target={"_blank"}>
+                    <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer", height:"70px"}} >
+                        <Row className="aligned-to-center">
+                            <Col span={10}>
+                                <FaGooglePlay style={{color:"white", fontSize:"35px", marginLeft:"25px", marginTop: "5px"}} />
+                            </Col>
+                            <Col span={14}>
+                                <span style={{color:"white"}}>Disponible en <br /> Google Play</span>
+                            </Col>
+                        </Row>
+                    </div>
+                </a>
+            </div>
+          </Col>
+          <Col md={12} lg={12} xs={24}>
+            <div className='flex-item'>
+                <a href="https://apps.apple.com/mx/app/your-next-level/id1623871887" target={"_blank"}>
+                    <div style={{backgroundColor:"#1C1B2B", padding:"10px", borderRadius:"15px", cursor:"pointer", height:"70px"}} >
+                        <Row className="aligned-to-center">
+                            <Col span={10}>
+                                <FaApple style={{color:"white", fontSize:"45px", marginLeft:"20px"}} />
+                            </Col>
+                            <Col span={14}>
+                                <span style={{color:"white"}}>Disponible en <br /> App Store</span>
+                            </Col>
+                        </Row>
+                    </div>
+                </a> 
+            </div>
+          </Col>
+        </Row>
+      </Modal>
     </ContentApps>
   );
 };

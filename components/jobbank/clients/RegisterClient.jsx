@@ -6,7 +6,8 @@ import {
     Divider,
     Card,
     Button,
-    Modal
+    Modal,
+    Spin
 } from 'antd';
 import TabClient from './TabClient';
 import TabContact from './TabContact';
@@ -22,12 +23,14 @@ const RegisterClient = ({
     const [loading, setLoading] = useState(false);
     const [prevDocs, setPrevDocs] = useState([]);
     const [newDocs, setNewDocs] = useState([]);
-
+    const [contactList, setContactList] = useState([]);
+    
     const createData = (obj) =>{
         let dataClient = new FormData();
         dataClient.append('node', currentNode.id);
         dataClient.append('auto_register', true);
         if(newDocs.length > 0) newDocs.map(item => dataClient.append('files', item));
+        if(contactList.length > 0) dataClient.append('contact_list', JSON.stringify(contactList));
         Object.entries(obj).map(([key, val])=>{ if(val) dataClient.append(key, val) });
         return dataClient;
     }
@@ -48,14 +51,14 @@ const RegisterClient = ({
             onSuccessCreate()
         } catch (e) {
             console.log(e)
-            if(e.response?.data['rfc']) Modal.error({ content: 'Ya existe un cliente con el mismo RFC' });
+            if(e.response?.data['rfc']) Modal.error({ content: 'RFC ya registrado' });
             else Modal.error({ content: 'Cliente no registrado' });
             setLoading(false)
         }
     }
 
     return (
-        <Row gutter={[0,24]} style={{width: '60%'}}>
+        <Row gutter={[0,24]} style={{width: '70%'}}>
             <Col span={24} className='content-center'>
                 <p style={{
                     marginBottom: 0,
@@ -63,33 +66,54 @@ const RegisterClient = ({
                     fontWeight: 700
                 }}>Formulario de registro</p>
             </Col>
-            <Col span={24} className='content-register-client'>
+            <Col span={24}>
                 <Card>
-                    <Form id='form-register-client' form={formClient} onFinish={onFinish}>
-                        <Divider plain>
-                            Información del cliente
-                        </Divider>
-                        <TabClient sizeCol={8}/>
-                        <Divider plain style={{marginTop: 0}}>
-                            Información del contacto
-                        </Divider>
-                        <TabContact sizeCol={8}/>
-                        <Divider plain style={{marginTop: 0}}>
-                            Carga de documentos
-                        </Divider>
-                        <div style={{padding: '0px 12px'}}>
+                    <Form
+                        id='form-register-client'
+                        layout='vertical'
+                        form={formClient}
+                        onFinish={onFinish}
+                        initialValues={{is_active: true}}
+                    >
+                        <Spin spinning={loading}>
+                            <Divider plain>
+                                Información del cliente
+                            </Divider>
+                            <TabClient sizeCol={8}/>
+                            <Divider plain style={{marginTop: 0}}>
+                                Información del contacto
+                            </Divider>
+                            <TabContact
+                                formClients={formClient}
+                                contactList={contactList}
+                                setContactList={setContactList}
+                            />
+                            <Divider plain style={{marginTop: 0}}>
+                                Carga de documentos
+                            </Divider>
                             <TabDocuments
                                 newDocs={newDocs}
                                 prevDocs={prevDocs}
                                 setNewDocs={setNewDocs}
                                 setPrevDocs={setPrevDocs}
+                                showPrevDocs={false}
                             />
-                        </div>
+                        </Spin>
                     </Form>
                 </Card>
             </Col>
-            <Col span={24} className='content-end'>
-                <Button form='form-register-client' htmlType='submit' loading={loading}>
+            <Col span={24} style={{display: 'flex', alignItems: 'center'}}>
+                {newDocs.length > 0 && loading && (
+                    <span style={{marginRight: 'auto'}}>
+                        Espere un momento por favor, subiendo archivos.
+                    </span>
+                )}
+                <Button
+                    form='form-register-client'
+                    htmlType='submit'
+                    loading={loading}
+                    style={{marginLeft: 'auto'}}
+                >
                     Guardar
                 </Button>
             </Col>

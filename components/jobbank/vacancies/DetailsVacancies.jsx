@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {
+    useEffect,
+    useState,
+    useRef,
+    useLayoutEffect
+} from 'react';
 import {
     Card,
     Row,
@@ -17,16 +22,11 @@ import TabEducation from './TabEducation';
 import TabSalary  from './TabSalary';
 import TabRecruitment from './TabRecruitment';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { setLoadVacancies, getInfoVacant } from '../../../redux/jobBankDuck';
 import { useProcessInfo } from './hook/useProcessInfo';
 
 const DetailsVacancies = ({
     action,
-    currentNode,
-    load_vacancies,
-    setLoadVacancies,
-    info_vacant,
-    getInfoVacant
+    currentNode
 }) => {
 
     const fetchingItem = { loading: false, disabled: true };
@@ -40,31 +40,56 @@ const DetailsVacancies = ({
     const [formVacancies] = Form.useForm();
     const [loading, setLoading] = useState({});
     const [actionType, setActionType] = useState('');
-    const [showTurns, setShowTurns] = useState(false);
     const [disabledClient, setDisabledClient] = useState(false);
     const [listInterviewers, setListInterviewers] = useState([]);
+    const [fetching, setFetching] = useState(false);
+    const [infoVacant, setInfoVacant] = useState({});
     const { setValuesForm, createData } = useProcessInfo({
         formVacancies,
-        info_vacant,
+        infoVacant,
         setListInterviewers,
         listInterviewers
     });
 
     useEffect(()=>{
-        if(Object.keys(info_vacant).length > 0 && action == 'edit'){
-            setValuesForm();
-            setShowTurns(info_vacant.rotative_turn);
+        if(router.query.id && action == 'edit'){
+            getInfoVacant(router.query.id)
         }
-    },[info_vacant])
+    },[router])
+
+    useEffect(()=>{
+        if(Object.keys(infoVacant).length > 0 && action == 'edit'){
+            formVacancies.resetFields()
+            setValuesForm();
+        }
+    },[infoVacant])
 
     useEffect(()=>{
         if(router.query.customer && action == 'add'){
-            setDisabledClient(true)
-            formVacancies.setFieldsValue({
-                customer_id: router.query.customer
-            })
+            formVacancies.resetFields()
+            keepCustomer()
         }else setDisabledClient(false)
     },[router])
+
+
+    const getInfoVacant = async (id) =>{
+        try {
+            setFetching(true)
+            let response = await WebApiJobBank.getInfoVacant(id);
+            setInfoVacant(response.data)
+            setFetching(false)
+        } catch (e) {
+            console.log(e)
+            setFetching(false)
+        }
+    }
+
+    const keepCustomer = () =>{
+        setDisabledClient(true)
+        formVacancies.setFieldsValue({
+            customer_id: router.query.customer
+        })
+    }
 
     // Se utiliza la api de crear para actualizar pasándole una id,
     // de la contratario estaría creando otro registro
@@ -72,14 +97,14 @@ const DetailsVacancies = ({
         try {
             await WebApiJobBank.createVacant({
                 ...values,
-                id: info_vacant.id,
+                id: infoVacant.id,
                 node_id: currentNode.id
             });
             message.success('Vacante actualizada');
-            getInfoVacant(info_vacant.id);
+            getInfoVacant(infoVacant.id);
         } catch (e) {
             console.log(e)
-            setLoadVacancies(false);
+            setFetching(false);
             message.error('Vacante no actualizada');
         }        
     }
@@ -91,14 +116,14 @@ const DetailsVacancies = ({
             actionSaveAnd(response.data.id)
         } catch (e) {
             console.log(e)
-            setLoadVacancies(false);
+            setFetching(false);
             setLoading({})
             message.error('Vacante no registrada')
         }
     }
 
     const onFinish = (values) => {
-        setLoadVacancies(true);
+        setFetching(true);
         const bodyData = createData(values);
         const actionFunction = {
             edit: onFinisUpdate,
@@ -107,22 +132,34 @@ const DetailsVacancies = ({
         actionFunction[action](bodyData);
     }
 
-    const actionAddCreate = () =>{
-        formVacancies.resetFields();
-        setLoadVacancies(false)
+    const onFinishFailed = (e) =>{
         setLoading({})
+        if(e.errorFields.length <= 0) return false;
+        message.error('Verificar que se han ingresado el Cliente y Nombre de la vacante');
+    }
+
+    const actionCreate = () =>{
+        formVacancies.resetFields()
+        if (router.query?.customer) keepCustomer();
+        setFetching(false)
+        setLoading({})
+    }
+
+    const actionBack = () =>{
+        if(router.query?.customer) router.push('/jobbank/clients');
+        else router.push('/jobbank/vacancies');
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: () => router.push('/jobbank/vacancies'),
-            create: actionAddCreate,
+            back: actionBack,
+            create: actionCreate,
             edit: ()=> router.replace({
                 pathname: '/jobbank/vacancies/edit',
                 query: { id }
             })
         }
-        actionFunction[actionType]();
+        actionFunction[actionType](id);
     }
 
     const getSaveAnd = (type) =>{
@@ -143,7 +180,7 @@ const DetailsVacancies = ({
                         }
                     </p>
                     <Button
-                        onClick={()=> router.push('/jobbank/vacancies')}
+                        onClick={()=> actionBack()}
                         icon={<ArrowLeftOutlined />}
                     >
                         Regresar
@@ -156,12 +193,11 @@ const DetailsVacancies = ({
                         layout='vertical'
                         form={formVacancies}
                         onFinish={onFinish}
-                        onFinishFailed={()=> setLoading({})}
-                        requiredMark={false}
+                        onFinishFailed={onFinishFailed}
+                        // requiredMark={false}
                         initialValues={{
                             vo_bo: false,
-                            rotative_turn: false,
-                            requires_travel_availability: false
+                            rotative_turn: false
                         }}
                     >
                         <Tabs type='card'>
@@ -169,10 +205,9 @@ const DetailsVacancies = ({
                                 tab='Características del puesto'
                                 key='tab_1'
                             >
-                                <Spin spinning={load_vacancies}>
+                                <Spin spinning={fetching}>
                                     <TabFeatures
-                                        showTurns={showTurns}
-                                        setShowTurns={setShowTurns}
+                                        formVacancies={formVacancies}
                                         disabledClient={disabledClient}
                                     />
                                 </Spin>
@@ -182,8 +217,8 @@ const DetailsVacancies = ({
                                 forceRender
                                 key='tab_2'
                             >
-                                <Spin spinning={load_vacancies}>
-                                    <TabEducation/>
+                                <Spin spinning={fetching}>
+                                    <TabEducation formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
@@ -191,8 +226,8 @@ const DetailsVacancies = ({
                                 forceRender
                                 key='tab_3'
                             >
-                                <Spin spinning={load_vacancies}>
-                                    <TabSalary/>
+                                <Spin spinning={fetching}>
+                                    <TabSalary formVacancies={formVacancies}/>
                                 </Spin>
                             </Tabs.TabPane>
                             <Tabs.TabPane
@@ -200,7 +235,7 @@ const DetailsVacancies = ({
                                 forceRender
                                 key='tab_4'
                             >
-                                <Spin spinning={load_vacancies}>
+                                <Spin spinning={fetching}>
                                     <TabRecruitment
                                         setListInterviewers={setListInterviewers}
                                         listInterviewers={listInterviewers}
@@ -245,9 +280,9 @@ const DetailsVacancies = ({
                         <Button
                             form='form-vacancies'
                             htmlType='submit'
-                            loading={load_vacancies}
+                            loading={fetching}
                         >
-                            Guardar
+                            Actualizar
                         </Button>
                     )}
                 </Col>
@@ -258,15 +293,8 @@ const DetailsVacancies = ({
 
 const mapState = (state) =>{
     return{
-        load_vacancies: state.jobBankStore.load_vacancies,
-        info_vacant: state.jobBankStore.info_vacant,
         currentNode: state.userStore.current_node
     }
 }
 
-export default connect(
-    mapState, {
-        setLoadVacancies,
-        getInfoVacant
-    }
-)(DetailsVacancies);
+export default connect(mapState)(DetailsVacancies);
