@@ -51,6 +51,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   };
 
   const userCredit = async () => {
+    
     setLoadingTable(true);
     let data = new FormData()
     let patronal_registration = person?.branch_node?.patronal_registration?.id

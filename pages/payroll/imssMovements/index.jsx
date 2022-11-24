@@ -23,6 +23,8 @@ const ImssMovements = ({ ...props }) => {
   //   props.currentNode && setCurrentNodeId(props.currentNode.id)
   // },[])
 
+  file && console.log('File', file)
+
   useEffect(() => {
     patronalSelected && getFiles()
   },[patronalSelected])
@@ -48,6 +50,25 @@ const ImssMovements = ({ ...props }) => {
       console.log("Response", response)
     } catch (error) {
       console.error('Error', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const importEBAEMAFiles = async () => {
+
+    setLoading(true)
+    let data = new FormData()
+
+    data.append('node', props.currentNode.id)
+    data.append('patronal_registration', patronalSelected)
+    data.append('File', file)
+
+    try {
+      let response = await WebApiPeople.importEMAandEvaFiles(data)
+      console.log('Response', response)
+    } catch (error) {
+      console.log('Error', error)
     } finally {
       setLoading(false)
     }
@@ -117,6 +138,9 @@ const ImssMovements = ({ ...props }) => {
                             validateExtension={".zip"}
                             size = {'middle'}
                         />
+                        <Button onClick={ () => importEBAEMAFiles()}>
+                          importar
+                        </Button>
                     </Col>
                      <Col span={12}>
                         <Button 
