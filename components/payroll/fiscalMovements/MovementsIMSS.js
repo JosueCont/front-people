@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { API_URL_TENANT, API_URL } from "../../../config/config";
 import { downLoadFileBlob, getDomain } from "../../../utils/functions";
-import { Table, Button, Upload, Row, Col } from 'antd';
+import { Table, Button, Upload, Row, Col, message } from 'antd';
 import WebApiPayroll from "../../../api/WebApiPayroll";
+import WebApiPeople from "../../../api/WebApiPeople";
 import SelectPatronalRegistration from "../../selects/SelectPatronalRegistration";
 import UploadFile from "../../UploadFile";
 import { connect } from "react-redux";
@@ -134,6 +135,30 @@ const MovementsIMSS=({ currentNode })=>{
             }
         },
     };
+    
+    const importAfiliateMovements = async () => {
+
+        setLoading(true)
+        let data = new FormData()
+
+        data.append('File', file)
+        data.append('node', currentNode.id)
+        data.append('patronal_registration', patronalSelected)
+
+        try {
+            let response = await WebApiPeople.importAfiliateMovement(data)
+            if(response){           
+                message.success('Movimientos importados correctamente')
+                getMovements()
+            }
+        } catch (error) {
+            console.log('Error', error)
+            message.error('Error al importar movimientos')
+        } finally {
+            setFile(null)
+            setLoading(false)
+        }
+    }
 
 
     return (
@@ -148,15 +173,27 @@ const MovementsIMSS=({ currentNode })=>{
                     />
                 </Col>
                 <Col span={10} style={{ display: 'flex', justifyContent: 'end'}}>
-                    {/* <Col span={12}>
+                    <Col span={13}>
                         <UploadFile
-                            textButton={"Importar EMa y EBA"}
+                            textButton={"Importar movimientos"}
                             setFile={setFile}
-                            validateExtension={".zip"}
+                            validateExtension={".txt"}
+                            size = {'middle'}
                         />
-                    </Col> */}
-                     <Col span={12}>
-                        <Button>
+                    </Col>
+                    <Col span={6}>
+                        <Button
+                            disabled = {  file && patronalSelected? false : true }
+                            onClick={ () => importAfiliateMovements()}
+                        >
+                          importar
+                        </Button>
+                    </Col>
+                     <Col span={6}>
+                        <Button 
+                        //   onClick={ () => syncEmaandEva() }
+                          disabled = { patronalSelected?  false : true }
+                        >
                             Sincronizar
                         </Button>
                     </Col>

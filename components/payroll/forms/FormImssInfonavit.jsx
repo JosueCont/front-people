@@ -28,9 +28,9 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   const [ loadingIMSS, setLodingIMSS ] = useState(false)
   const [infonavitCredit, setInfonavitCredit] = useState([]);
 
-  useEffect(() => {
-    person.branch_node && person_id && node && userCredit();
-  }, [person_id]);
+  // useEffect(() => {
+  //   person.branch_node && person_id && node && userCredit();
+  // }, [person_id]);
 
   const formImmssInfonavitAct = (values) => {
     setLodingIMSS(true)

@@ -20,12 +20,11 @@ const UploadFile = ({
             maxCount: 1,
             beforeUpload: (file) => {
               const isValid = file.name.includes(validateExtension);
-              const isSize = file.size > 30720
 
               if (!isValid) {
                 message.error(`${file.name} no es un ${validateExtension}.`);
               }
-              if (!isSize){
+              if (file.size > 30720){
                 message.error(`${file.name} es mayor a 30MB.`);
               }
               return isValid || Upload.LIST_IGNORE;
@@ -41,7 +40,7 @@ const UploadFile = ({
               }
             },
           }}
-          accept = ".zip"
+          accept = {validateExtension}
         >
           <Button size={size} icon={<UploadOutlined />}>
             {textButton}
