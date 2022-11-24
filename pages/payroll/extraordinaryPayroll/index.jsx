@@ -669,32 +669,6 @@ const ExtraordinaryPayroll = ({ ...props }) => {
                             />
                           </Col>
                         )}
-                        {/* <Col xxs={24} xl={4}>
-                          <Button
-                            style={{ marginTop: "30px" }}
-                            size="large"
-                            onClick={() => {
-                              // downLoadFileBlob(
-                              //   `${getDomain(
-                              //     API_URL_TENANT
-                              //   )}/payroll/payroll-calculus`,
-                              //   "Nomina.xlsx",
-                              //   "POST",
-                              //   {
-                              //     payment_period: periodSelected.id,
-                              //     department: department,
-                              //     job: job,
-                              //     payroll: payroll.map((item) => {
-                              //       item.person_id = item.person.id;
-                              //       return item;
-                              //     }),
-                              //   }
-                              // );
-                            }}
-                          >
-                            Descargar plantilla
-                          </Button>
-                        </Col> */}
                       </>
                     )}
                   </Row>
