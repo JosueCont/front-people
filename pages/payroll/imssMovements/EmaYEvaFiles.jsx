@@ -43,6 +43,7 @@ const EmaYEvaFiles = ({ files, loading }) => {
       }}
       pagination = {{
         pageSize: 10,
+        showSizeChanger: false,
         total: files && files.lenght
       }}
       scroll = {{

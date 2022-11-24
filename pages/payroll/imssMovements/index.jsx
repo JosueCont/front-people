@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import SelectPatronalRegistration from "../../../components/selects/SelectPatronalRegistration";
 import WebApiPeople from "../../../api/WebApiPeople";
-import { Breadcrumb, Button, Collapse, Row, Col,Space, Spin } from "antd";
+import { Breadcrumb, Button, Collapse, Row, Col,Space, Spin, message } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
@@ -45,9 +45,15 @@ const ImssMovements = ({ ...props }) => {
 
   const syncEmaandEva = async () => {
     setLoading(true)
+    let data = new FormData()
+    
+    data.append('node', props.currentNode.id)
+    data.append('patronal_registration', patronalSelected)
+
     try {
-      let response = await WebApiPeople.forceListEbaAndEmaFiles(props.currentNode.id, patronalSelected)
+      let response = await WebApiPeople.forceListEbaAndEmaFiles(data)
       console.log("Response", response)
+      setFiles(response.data.documents)
     } catch (error) {
       console.error('Error', error)
     } finally {
@@ -66,9 +72,13 @@ const ImssMovements = ({ ...props }) => {
 
     try {
       let response = await WebApiPeople.importEMAandEvaFiles(data)
-      console.log('Response', response)
+      if(response) {
+        message.success('Importacion correcta')
+        getFiles()
+      }
     } catch (error) {
-      console.log('Error', error)
+      console.log('Error', error.data)
+      
     } finally {
       setLoading(false)
     }
@@ -138,11 +148,13 @@ const ImssMovements = ({ ...props }) => {
                             validateExtension={".zip"}
                             size = {'middle'}
                         />
+                    </Col>
+                    <Col span={5}>
                         <Button onClick={ () => importEBAEMAFiles()}>
                           importar
                         </Button>
                     </Col>
-                     <Col span={12}>
+                     <Col span={7}>
                         <Button 
                           onClick={ () => syncEmaandEva() }
                           disabled = { patronalSelected?  false : true }
