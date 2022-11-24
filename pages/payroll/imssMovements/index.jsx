@@ -10,6 +10,8 @@ import EmaYEvaFiles from "./EmaYEvaFiles";
 import { connect } from "react-redux";
 import MovementsIMSS from "../../../components/payroll/fiscalMovements/MovementsIMSS";
 import UploadFile from "../../../components/UploadFile";
+import MovementsSection from "../../../components/payroll/ImssMovements/MovementsSection";
+import ButtonAltaImssImport from "../../../components/payroll/ImportGenericButton/ButtonAltaImssImport";
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -72,7 +74,9 @@ const ImssMovements = ({ ...props }) => {
             style={{ padding: 24, minHeight: 380, height: "100%" }}
           >
             <Collapse defaultActiveKey={['3']}>
-              <Panel header="SUA" key="1">
+              <Panel header="SUA Movimientos" key="1">
+                <MovementsSection/>
+
                 <Collapse
                   expandIcon={({ isActive }) => (
                     <CaretRightOutlined rotate={isActive ? 90 : 0} />

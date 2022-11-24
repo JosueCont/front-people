@@ -7,6 +7,7 @@ import TableMovements from "./TableMovements";
 import {getMovementsIMSS} from "../../../redux/payrollDuck";
 import SelectPatronalRegistration from "../../selects/SelectPatronalRegistration";
 import {FileZipOutlined, SendOutlined} from "@ant-design/icons";
+import ButtonAltaImssImport from "../ImportGenericButton/ButtonAltaImssImport";
 
 const { Title } = Typography;
 
@@ -17,7 +18,8 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
     const regPatronal = Form.useWatch('patronal_registration', form);
     const node = useSelector(state => state.userStore.current_node);
     const [altaRowSelected, setAltaRowSelected] = useState([]) // registros seleccionados de movimientos de Alta
-    const [updateRowSelected, setUpdateRowSelected] = useState([]) // registros seleccionados de movimientos de Alta
+    const [updateRowSelected, setUpdateRowSelected] = useState([]) // registros seleccionados de movimientos de Altaç
+    const patronal_registration = Form.useWatch('patronal_registration', form);
 
     useEffect(()=>{
         if(node?.id){
@@ -81,7 +83,11 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
                     layout={'vertical'}
                     form={form}
                 >
-                    <SelectPatronalRegistration/>
+                    <Row>
+                        <Col span={6}>
+                            <SelectPatronalRegistration/>
+                        </Col>
+                    </Row>
                 </Form>
                 <Tabs defaultActiveKey="1">
                     {
@@ -96,6 +102,9 @@ const MovementsSection=({getMovementsIMSS,...props})=>{
                                             <Button type="primary" disabled={thereIsDataSelected(t.key)} icon={<SendOutlined />} >
                                                 Enviar movimientos seleccionados
                                             </Button>
+                                            {
+                                                t.key===1 && <ButtonAltaImssImport node={node} regPatronal={patronal_registration}/>
+                                            }
                                         </Space>
                                     </Col>
                                 </Row>

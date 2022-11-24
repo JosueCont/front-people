@@ -35,6 +35,14 @@ const TableMovements=({movementType,title=null,...props})=>{
 
     const columns = [
         {
+            title: 'Colaborador',
+            key:'person',
+            render:(ele)=>{
+                return <p>{ele.person ? `${ele?.person?.first_name} ${ele?.person?.flast_name ? ele?.person?.flast_name : ''}` : '--'}  </p>
+            }
+
+        },
+        {
             title: 'Descripción',
             dataIndex: 'description',
             key:'dataIndex'

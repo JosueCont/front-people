@@ -62,6 +62,7 @@ import SelectJob from "../../../components/selects/SelectJob";
 import ButtonDownloadConfronta from "../../../components/payroll/ButtonDownloadConfronta";
 import ButtonMovements from "../../../components/payroll/ImssMovements/ButtonMovements";
 import ImportButtonList from "../../../components/payroll/ImportGenericButton/ImportButtonList";
+import ButtonUpdateSalary from "../../../components/payroll/ImportGenericButton/ButtonUpdateSalary";
 
 const homeScreen = ({ ...props }) => {
   const route = useRouter();
@@ -1181,14 +1182,15 @@ const homeScreen = ({ ...props }) => {
                           <ButtonDownloadConfronta/>
                       }
 
-                      {props.config && props.config.nomina_enabled &&
-                          <ButtonMovements node={props.currentNode}/>
-                      }
+                      {/*{props.config && props.config.nomina_enabled &&*/}
+                      {/*    <ButtonMovements node={props.currentNode}/>*/}
+                      {/*}*/}
                     </Space>
                   </Col>
+
                   {props.config && props.config.nomina_enabled &&
                       <Col>
-                        <ImportButtonList personsList={rowSelectionPerson} node={props.currentNode}/>
+                        <ButtonUpdateSalary personsList={rowSelectionPerson} node={props.currentNode}/>
                       </Col>
                   }
 
