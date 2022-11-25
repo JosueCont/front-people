@@ -50,7 +50,7 @@ const AddorEditProfile = ({
                     className={'pointer'}
                     onClick={() => router.push({ pathname: '/jobbank/profiles'})}
                 >
-                    Perfiles de vacante
+                    Template de vacante
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>

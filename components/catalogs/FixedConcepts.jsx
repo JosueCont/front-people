@@ -543,7 +543,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                 </Col>
                 <Col lg={6} xs={22} md={12}>
                   <Form.Item name="datum" label="Valor" rules={[ruleRequired]}>
-                    <Input type={"number"} />
+                    <Input type={"number"} min={0}/>
                   </Form.Item>
                 </Col>
                 <Col lg={6} xs={22} md={12}>
@@ -571,7 +571,7 @@ const FixedConcepts = ({ permissions, currentNode, ...props }) => {
                     name="max_delays"
                     label="Máximo de retardos"
                   >
-                    <Input type={"number"} />
+                    <Input type={"number"} min={0}/>
                   </Form.Item>
                 </Col>
                 <RenderConditions data={data} />

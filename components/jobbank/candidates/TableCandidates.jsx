@@ -38,10 +38,9 @@ const TableCandidates = ({
 
     const actionDelete = async () =>{
         let ids = itemsToDelete.map(item => item.id);
-        closeModalDelete();
         try {
-            // await WebApiJobBank.deleteCandidate({ids});
-            // getCandidates(currentNode.id);
+            await WebApiJobBank.deleteCandidate({ids});
+            getCandidates(currentNode.id);
             if(ids.length > 1) message.success('Perfiles eliminados');
             else message.success('Perfil eliminado');
         } catch (e) {
@@ -146,8 +145,11 @@ const TableCandidates = ({
     const columns = [
         {
             title: 'Nombre',
-            dataIndex:'name',
-            key: 'name'
+            render: (item) =>{
+                return(
+                    <span>{item?.fisrt_name} {item?.last_name}</span>
+                )
+            }
         },
         {
             title:'Correo',
@@ -156,8 +158,8 @@ const TableCandidates = ({
         },
         {
             title: 'Teléfono',
-            dataIndex: 'phone',
-            key: 'phone'
+            dataIndex: 'cell_phone',
+            key: 'cell_phone'
         },
         {
             title: ()=>{
@@ -203,17 +205,19 @@ const TableCandidates = ({
                     showSizeChanger: false
                 }}
             />
-            <DeleteItems
-                title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estos perfiles?'
-                    : '¿Estás seguro de eliminar este perfil?'
-                }
-                visible={openModalDelete}
-                keyTitle='name'
-                close={closeModalDelete}
-                itemsToDelete={itemsToDelete}
-                actionDelete={actionDelete}
-            />
+            {openModalDelete && (
+                <DeleteItems
+                    title={itemsToDelete.length > 1
+                        ? '¿Estás seguro de eliminar estos candidatos?'
+                        : '¿Estás seguro de eliminar este candidato?'
+                    }
+                    visible={openModalDelete}
+                    keyTitle='name'
+                    close={closeModalDelete}
+                    itemsToDelete={itemsToDelete}
+                    actionDelete={actionDelete}
+                />
+            )}
         </>
     )
 }

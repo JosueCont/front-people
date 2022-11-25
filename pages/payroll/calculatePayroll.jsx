@@ -103,7 +103,7 @@ const CalculatePayroll = ({ ...props }) => {
       "La nómina fue timbrada correctamente, puede visualizar los comprobantes fiscales o continuar calculando otras nominas.",
     type_alert: "success",
 
-    closeButton: "Cerrar",
+    closeButton: "Cancelar",
     viewActionButton: false,
   });
 

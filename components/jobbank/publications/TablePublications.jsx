@@ -14,29 +14,56 @@ import {
   DeleteOutlined,
   EditOutlined,
   CopyOutlined,
-  SettingOutlined
+  SettingOutlined,
+  ShareAltOutlined
 } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { setJobbankPage } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
-import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
 
 const TablePublications = ({
     currentNode,
-    jobbank_page
+    currentUser,
+    jobbank_page,
+    list_publications,
+    load_publications,
+    list_vacancies_options,
+    list_profiles_options
 }) => {
 
-    const data = [
-        {
-            "vacant": "b4df3afd0cbb4729a8641e059007b08c",
-            "profile": "b84a28e33e19492abf3210fdcd794f7a",
-            "fields": [],
-            "node": 10,
-            "code_post": "FB",
-            "created_by": "fcad1cc68c824a91b86ac369ea51ac8e"
+    const router = useRouter();
+
+    const actionShare = async (item) =>{
+        try {
+            let publishData = new FormData();
+            publishData.append('start_message', 'Hola demo');
+            publishData.append('end_message', 'Gracias demo');
+            publishData.append('person', currentUser.id);
+            await WebApiJobBank.sharePublication(item.id, publishData);
+            message.success('Vacante publicada');
+        } catch (e) {
+            console.log(e)
+            message.error('Vacante no publicada');
         }
-    ]
+    }
+
+    const getVacant = (item) =>{
+        if(!item.vacant) return null;
+        const vacant = record => record.id == item.vacant;
+        let vacant_ = list_vacancies_options.find(vacant);
+        if(!vacant_) return null;
+        return vacant_.job_position;
+    }
+
+    const getTemplate = (item) =>{
+        if(!item.profile) return 'Personalizado';
+        const template = record => record.id == item.profile;
+        let template_ = list_profiles_options.find(template);
+        if(!template_) return null;
+        return template_.name;
+    }
 
     const menuTable = () => {
         return (
@@ -72,6 +99,13 @@ const TablePublications = ({
                 >
                     Eliminar
                 </Menu.Item>
+                <Menu.Item
+                    key='2'
+                    icon={<ShareAltOutlined />}
+                    onClick={()=> actionShare(item)}
+                >
+                    Publicar
+                </Menu.Item>
             </Menu>
         );
     };
@@ -83,18 +117,18 @@ const TablePublications = ({
             key: 'code_post'
         },
         {
-            title: 'Perfíl',
+            title: 'Vacante',
             render: (item) =>{
                 return(
-                    <span>{item.profile}</span>
+                    <span>{getVacant(item)}</span>
                 )
             }
         },
         {
-            title: 'Vacante',
+            title: 'Template',
             render: (item) =>{
                 return(
-                    <span>{item.vacant}</span>
+                    <span>{getTemplate(item)}</span>
                 )
             }
         },
@@ -134,16 +168,16 @@ const TablePublications = ({
                 size='small'
                 rowKey='id'
                 columns={columns}
-                loading={false}
+                loading={load_publications}
                 // rowSelection={rowSelection}
                 // onChange={onChangePage}
-                dataSource={data}
-                // locale={{ emptyText: load_vacancies
-                //     ? 'Cargando...'
-                //     : 'No se encontraron resultados'
-                // }}
+                dataSource={list_publications.results}
+                locale={{ emptyText: load_publications
+                    ? 'Cargando...'
+                    : 'No se encontraron resultados'
+                }}
                 pagination={{
-                    // total: list_vacancies.count,
+                    total: list_publications.count,
                     current: jobbank_page,
                     hideOnSinglePage: true,
                     showSizeChanger: false
@@ -157,6 +191,11 @@ const TablePublications = ({
 const mapState = (state) =>{
     return{
         jobbank_page: state.jobBankStore.jobbank_page,
+        list_publications: state.jobBankStore.list_publications,
+        load_publications: state.jobBankStore.load_publications,
+        list_vacancies_options: state.jobBankStore.list_vacancies_options,
+        list_profiles_options: state.jobBankStore.list_profiles_options,
+        currentUser: state.userStore.user,
         currentNode: state.userStore.current_node
     }
 }

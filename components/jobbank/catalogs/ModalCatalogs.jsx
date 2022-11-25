@@ -23,15 +23,12 @@ const ModalCatalogs = ({
     visible = false, //boolean
     close = ()=> {}, //function
     itemToEdit = {}, //object
-    textSave = 'Guardar'//string
+    textSave = 'Guardar',//string
+    children,
 }) => {
 
     const [formCatalog] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const {
-        list_main_categories,
-        load_main_categories
-    } = useSelector(state => state.jobBankStore);
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;
@@ -74,27 +71,7 @@ const ModalCatalogs = ({
                         >
                             <Input placeholder='Nombre' maxLength={100}/>
                         </Form.Item>
-                        {/* <Form.Item
-                            name='category'
-                            label='Categoría'
-                            rules={[ruleRequired]}
-                        >
-                            <Select
-                                allowClear
-                                showSearch
-                                placeholder='Seleccionar una categoría'
-                                notFoundContent='No se encontraron resultados'
-                                optionFilterProp='children'
-                                disabled={load_main_categories}
-                                loading={load_main_categories}
-                            >
-                                {list_main_categories?.length > 0 && list_main_categories.map(item => (
-                                    <Select.Option value={item.id} key={item.name}>
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item> */}
+                        {children}
                     </Col>
                     <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>
                         <Button disabled={loading} onClick={()=> onCloseModal()}>Cancelar</Button>
