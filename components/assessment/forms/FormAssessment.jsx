@@ -74,7 +74,7 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
   const onFinish = (values) => {
     const body = {
       ...values,
-      image: imagen,
+      image: imageUrl,
       node: props.currentNode.id,
       description_es: descripcion,
       instructions_es: instruccions,
@@ -149,8 +149,10 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
     }
     // if (info.fileList.length > 0) {
     if (info.file.status === "done") {
-      setImagen(info.file.originFileObj);
+      console.log(info)
+      setImagen(info.fileList[0]);
       getBase64(info.file.originFileObj, (imageUrl) => {
+        console.log(imageUrl)
         setLoadingLogo(false);
         setImageUrl(imageUrl);
       });
@@ -240,41 +242,46 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
               </Select>
             </Form.Item>
           </Col>
-          <Col span={12}>
-            <Form.Item name="image" label={"Imagen"}>
-              <Upload
-                label="Imagen"
-                listType="picture-card"
-                className="large-uploader"
-                showUploadList={false}
-                onChange={handleChange}
-              >
-                {imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt="avatar"
-                    style={{ width: "100%", minHeight: "100%" }}
-                  />
-                ) : (
-                  uploadButton
-                )}
-              </Upload>
-            </Form.Item>
-          </Col>
+          {/*TODO hay que implementar la funcionalidad de agregar imagen*/}
+          {/*<Col span={12}>*/}
+          {/*  <Form.Item name="image" label={"Imagen"}>*/}
+          {/*    <Upload*/}
+          {/*      label="Imagen"*/}
+          {/*      listType="picture-card"*/}
+          {/*      className="large-uploader"*/}
+          {/*      accept="image/png, image/jpeg"*/}
+          {/*      showUploadList={false}*/}
+          {/*      onChange={handleChange}*/}
+          {/*    >*/}
+          {/*      {imageUrl ? (*/}
+          {/*        <img*/}
+          {/*          src={imageUrl}*/}
+          {/*          alt="avatar"*/}
+          {/*          style={{ width: "100%", minHeight: "100%" }}*/}
+          {/*        />*/}
+          {/*      ) : (*/}
+          {/*        uploadButton*/}
+          {/*      )}*/}
+          {/*    </Upload>*/}
+          {/*  </Form.Item>*/}
+          {/*</Col>*/}
+
+        </Row>
+        <Row gutter={[20]}>
           <Col span={12}>
             <FormItemHTML
-              html={descripcion}
-              setHTML={setDescripcion}
-              getLabel="Descripción"
-              getName="description_es"
+                html={descripcion}
+                setHTML={setDescripcion}
+                getLabel="Descripción"
+                getName="description_es"
             />
           </Col>
           <Col span={12}>
             <FormItemHTML
-              html={instruccions}
-              setHTML={setInstruccions}
-              getLabel="Instrucciones"
-              getName="instructions_es"
+                html={instruccions}
+                setHTML={setInstruccions}
+                getLabel="Instrucciones"
+                getName="instructions_es"
             />
           </Col>
         </Row>
