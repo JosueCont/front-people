@@ -42,7 +42,7 @@ import { useFilter } from "../../../components/assessment/useFilter";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
 import {FormattedMessage} from "react-intl";
-import es_ES from 'antd/es/locale/es_ES';
+import esES from "antd/lib/locale/es_ES";
 
 const AssessmentScreen = ({
   assessmentStore,
@@ -464,7 +464,7 @@ const AssessmentScreen = ({
         </Row>
         <Row>
           <Col span={24}>
-            <ConfigProvider locale={es_ES}>
+            <ConfigProvider locale={esES}>
               <Table
                 rowKey={"id"}
                 size={"small"}
