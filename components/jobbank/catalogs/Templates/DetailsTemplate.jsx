@@ -17,140 +17,109 @@ import {
 import { connect } from 'react-redux';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-import WebApiJobBank from '../../../api/WebApiJobBank';
-import FormStrategies from './FormStrategies';
-import { useProcessInfo } from './hook/useProcessInfo';
+import FormTemplate from './FormTemplate';
+import { useProcessInfo } from '../../profiles/hook/useProcessInfo';
+import WebApiJobBank from '../../../../api/WebApiJobBank';
 
-const DetailsStrategies = ({
+const DetailsTemplate = ({
     action,
     currentNode
 }) => {
 
+    
     const fetchingItem = { loading: false, disabled: true };
     const fetchingParams = {
         back: fetchingItem,
         create: fetchingItem,
         edit: fetchingItem
     };
-    const btnSave = useRef(null);
     const router = useRouter();
-    const [formStrategies] = Form.useForm();
+    const btnSave = useRef(null);
+    const [formTemplate] = Form.useForm();
     const [loading, setLoading] = useState({});
+    const [prevDocs, setPrevDocs] = useState([]);
+    const [newDocs, setNewDocs] = useState([]);
     const [actionType, setActionType] = useState('');
-    const [disabledClient, setDisabledClient] = useState(false);
-    const [infoStrategy, setInfoStrategy] = useState({});
+    const [infoTemplate, setInfoTemplate] = useState({});
     const [fetching, setFetching] = useState(false);
-    const { createData, setValuesForm } = useProcessInfo({
-        infoStrategy,
-        formStrategies
-    });
+    const { createData, formatData } = useProcessInfo();
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
-            getInfoStrategy(router.query.id);
+            getInfoTemplate(router.query.id);
         }
     },[router])
 
     useEffect(()=>{
-        if(router.query.client && action == 'add'){
-            formStrategies.resetFields()
-            keepClient()
-        }else setDisabledClient(false);
-    },[router])
-
-    useEffect(()=>{
-        if(Object.keys(infoStrategy).length > 0 && action == 'edit'){
-            formStrategies.resetFields();
-            setValuesForm()
+        if(Object.keys(infoTemplate).length > 0 && action == 'edit'){
+            formTemplate.resetFields();
+            let valuesCheks = formatData(infoTemplate.config);
+            formTemplate.setFieldsValue({
+                ...valuesCheks,
+                name: infoTemplate.name,
+                form_enable: infoTemplate.form_enable
+            })
         }
-    },[infoStrategy])
+    },[infoTemplate])
 
-
-    const getInfoStrategy = async (id) =>{
+    const getInfoTemplate = async (id) =>{
         try {
             setFetching(true)
-            let response = await WebApiJobBank.getInfoStrategy(id);
-            setInfoStrategy(response.data)
+            let response = await WebApiJobBank.getInfoProfileType(id);
+            setInfoTemplate(response.data)
             setFetching(false)
         } catch (e) {
             console.log(e)
             setFetching(false)
-        }
-    }
-
-    const keepClient = () =>{
-        setDisabledClient(true)
-        formStrategies.setFieldsValue({
-            customer: router.query.client
-        })
-    }
-
-    const onFinishUpdate = async (values) =>{
-        try {
-            await WebApiJobBank.updateStrategy(infoStrategy.id, values);
-            message.success('Estrategia actualizada');
-            getInfoStrategy(infoStrategy.id);
-        } catch (e) {
-            console.log(e)
-            message.error('Estrategia no actualizada');
-            setFetching(false);
         }
     }
 
     const onFinishCreate = async (values) =>{
         try {
-            let response = await WebApiJobBank.createStrategy({...values, node: currentNode.id});
-            message.success('Estrategia registrada');
-            actionSaveAnd(response.data.id)
+            let body = {...values, node: currentNode.id};
+            let response = await WebApiJobBank.createProfileType(body);
+            actionSaveAnd(response.data.id);
+            message.success('Tipo de template registrado');
         } catch (e) {
             console.log(e)
             setFetching(false)
             setLoading({})
-            message.error('Estrategia no registrada');
+            message.error('Tipo de template no registrado');
         }
     }
 
-    const onFinish = (values) =>{
-        setFetching(true)
-        const bodyData = createData(values);
-        const actionFunction = {
-            edit: onFinishUpdate,
-            add: onFinishCreate
+    const onFinisUpdate = async (values) =>{
+        try {
+            let body = {...values, node: currentNode.id};
+            await WebApiJobBank.updateProfileType(infoTemplate.id, body);
+            getInfoTemplate(router.query.id);
+            message.success('Tipo de template actualizado');
+        } catch (e) {
+            console.log(e)
+            setFetching(false);
+            message.error('Tipo de template no actualizado');
         }
+    }
+
+    const onFinish = (values) => {
+        setFetching(true);
+        const bodyData = createData(values, 'config');
+        const actionFunction = {
+            edit: onFinisUpdate,
+            add: onFinishCreate
+        };
         actionFunction[action](bodyData);
     }
 
-    const getNewFilters = () =>{
-        let newFilters = {...router.query};
-        if(newFilters.id) delete newFilters.id;
-        if(newFilters.client) delete newFilters.client;
-        return newFilters;
-    }
-
-    const actionBack = () =>{
-        let filters = getNewFilters();
-        if(router.query?.client) router.push({
-            pathname: '/jobbank/clients',
-            query: filters
-        });
-        else router.push({
-            pathname: '/jobbank/strategies',
-            query: filters
-        });
-    }
-
     const actionCreate = () =>{
-        formStrategies.resetFields();
-        if (router.query?.client) keepClient();
+        formTemplate.resetFields();
         setFetching(false)
         setLoading({})
     }
 
-    const actionEdit = (id) =>{
-        let filters = getNewFilters();
-        router.replace({
-            pathname: '/jobbank/strategies/edit',
-            query: {...filters, id }
+    const actionBack = () =>{
+        router.push({
+            pathname: '/jobbank/settings/catalogs/profiles',
         })
     }
 
@@ -158,9 +127,12 @@ const DetailsStrategies = ({
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: actionEdit
+            edit: ()=> router.replace({
+                pathname: '/jobbank/settings/catalogs/profiles/edit',
+                query: { id }
+            })
         }
-        actionFunction[actionType](id);
+        actionFunction[actionType]();
     }
 
     const getSaveAnd = (type) =>{
@@ -173,11 +145,11 @@ const DetailsStrategies = ({
     return (
         <Card>
             <Row gutter={[16,16]}>
-                <Col span={24} className='title-action-content title-action-border'>
+                <Col span={24} className='title-action-content'>
                     <p className='title-action-text'>
                         {action == 'add'
-                            ? 'Registrar nueva estrategia'
-                            : 'Información de la estrategia'
+                            ? 'Registrar nuevo tipo de template'
+                            : 'Información del tipo de template'
                         }
                     </p>
                     <Button
@@ -190,17 +162,13 @@ const DetailsStrategies = ({
                 <Col span={24}>
                     <Spin spinning={fetching}>
                         <Form
-                            id='form-strategies'
-                            form={formStrategies}
+                            form={formTemplate}
+                            id='form-template'
                             layout='vertical'
                             onFinish={onFinish}
-                            // requiredMark={false}
                             onFinishFailed={()=> setLoading({})}
                         >
-                            <FormStrategies
-                                formStrategies={formStrategies}
-                                disabledClient={disabledClient}
-                            />
+                            <FormTemplate/>   
                         </Form>
                     </Spin>
                 </Col>
@@ -209,7 +177,7 @@ const DetailsStrategies = ({
                         <>
                             <button
                                 htmlType='submit'
-                                form='form-strategies'
+                                form='form-template'
                                 ref={btnSave}
                                 style={{display:'none'}}
                             />
@@ -225,7 +193,7 @@ const DetailsStrategies = ({
                                 disabled={loading['create']?.disabled}
                                 loading={loading['create']?.loading}
                             >
-                                Guardar y registrar otra
+                                Guardar y registrar otro
                             </Button>
                             <Button
                                 onClick={()=>getSaveAnd('edit')}
@@ -237,7 +205,7 @@ const DetailsStrategies = ({
                         </>
                     ):(
                         <Button
-                            form='form-strategies'
+                            form='form-template'
                             htmlType='submit'
                             loading={fetching}
                         >
@@ -252,8 +220,8 @@ const DetailsStrategies = ({
 
 const mapState = (state) =>{
     return{
-        currentNode: state.userStore.current_node
+        currentNode: state.userStore.current_node,
     }
 }
 
-export default connect(mapState)(DetailsStrategies);
+export default connect(mapState)(DetailsTemplate);

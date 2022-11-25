@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Input, Row, Col, Form, Select } from 'antd';
 import {
   SearchOutlined,
@@ -7,31 +7,30 @@ import {
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ruleWhiteSpace } from '../../../utils/rules';
-import { getCandidates } from '../../../redux/jobBankDuck';
+import { createFiltersJB } from '../../../utils/functions';
 
 const SearchCandidates = ({
-    currentNode,
-    getCandidates
+    currentNode
 }) => {
 
     const router = useRouter();
     const [formSearch] = Form.useForm();
 
-    const createQuerys = (obj) =>{
-        let query = '';
-        if(obj.name) query += `&name__icontains=${obj.name}`;
-        return query;
-    }
+    useEffect(()=>{
+        formSearch.setFieldsValue(router.query);
+    },[router])
 
     const onFinishSearch = (values) =>{
-        const query = createQuerys(values);
-        // if(query) getCandidates(currentNode.id, query);
-        // else deleteFilter();
+        let filters = createFiltersJB(values);
+        router.replace({
+            pathname: '/jobbank/candidates/',
+            query: filters
+        }, undefined, {shallow: true});
     }
 
     const deleteFilter = () =>{
         formSearch.resetFields();
-        // getCandidates(currentNode.id);
+        router.replace('/jobbank/candidates', undefined, {shallow: true});
     }
 
     return (
@@ -41,7 +40,7 @@ const SearchCandidates = ({
                     <Row style={{width: '100%'}}>
                         <Col span={20}>
                             <Form.Item
-                                name='name'
+                                name='name__unaccent__icontains'
                                 rules={[ruleWhiteSpace]}
                                 style={{marginBottom: 0}}
                             >
@@ -60,7 +59,12 @@ const SearchCandidates = ({
                 </Form>
             </Col>
             <Col xs={6} xxl={10} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                <Button onClick={()=> router.push('/jobbank/candidates/add')}>Agregar</Button>
+                <Button onClick={()=> router.push({
+                    pathname: '/jobbank/candidates/add',
+                    query: router.query
+                })}>
+                    Agregar
+                </Button>
             </Col>
         </Row>
     )
@@ -72,6 +76,4 @@ const mapState = (state) =>{
     }
 }
 
-export default connect(
-    mapState,{ getCandidates }
-)(SearchCandidates)
+export default connect(mapState)(SearchCandidates)

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import {
     getProfilesTypes,
     getVacantFields,
-    getInfoProfile,
     getClientsOptions
 } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
@@ -16,7 +15,6 @@ const AddorEditProfile = ({
     currentNode,
     getProfilesTypes,
     getVacantFields,
-    getInfoProfile,
     getClientsOptions
 }) => {
 
@@ -29,12 +27,6 @@ const AddorEditProfile = ({
             getClientsOptions(currentNode.id)
         };
     },[currentNode])
-
-    useEffect(()=>{
-        if(router.query.id && action == 'edit'){
-            getInfoProfile(router.query.id)
-        }
-    },[router])
 
     return (
         <MainLayout currentKey={'jb_profiles'} defaultOpenKeys={['job_bank']}>
@@ -71,7 +63,6 @@ export default connect(
     mapState,{
         getProfilesTypes,
         getVacantFields,
-        getInfoProfile,
         getClientsOptions
     }
 )(AddorEditProfile);

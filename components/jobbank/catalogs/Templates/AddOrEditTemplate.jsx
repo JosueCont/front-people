@@ -1,29 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import MainLayout from '../../../../layout/MainLayout';
 import { Breadcrumb } from 'antd';
-import { connect } from 'react-redux';
-import { withAuthSync } from '../../../../libs/auth';
 import { useRouter } from 'next/router';
-import { catalogsJobbank } from '../../../../utils/constant';
-import GetViewCatalog from '../../../../components/jobbank/catalogs/GetViewCatalog';
+import { connect } from 'react-redux';
+import { getVacantFields } from '../../../../redux/jobBankDuck';
+import DetailsTemplate from './DetailsTemplate';
 
-const catalog = ({
-    currentNode
+const AddOrEditTemplate = ({
+    action = 'add',
+    currentNode,
+    getVacantFields
 }) => {
 
     const router = useRouter();
-    const [nameCatalog, setNameCatalog] = useState('');
-
-    const getCatalog = () =>{
-        const _find = item => item.catalog == router.query.catalog;
-        let result = catalogsJobbank.find(_find);
-        setNameCatalog(result.name);
-    }
 
     useEffect(()=>{
-        if(router.query.catalog) getCatalog();
-    },[router])
-
+        if(currentNode) getVacantFields(currentNode.id);
+    },[currentNode])
 
     return (
         <MainLayout currentKey='jb_settings' defaultOpenKeys={['job_bank']}>
@@ -47,19 +40,23 @@ const catalog = ({
                 >
                     Catálogos
                 </Breadcrumb.Item>
-                <Breadcrumb.Item>{nameCatalog}</Breadcrumb.Item>
+                <Breadcrumb.Item
+                     className='pointer'
+                     onClick={() => router.replace('/jobbank/settings/catalogs/profiles')}
+                >
+                    Tipos de template
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>{action == 'add' ? 'Nuevo' : 'Expediente'}</Breadcrumb.Item>
             </Breadcrumb>
-            <GetViewCatalog/>
+            <DetailsTemplate action={action}/>
         </MainLayout>
     )
 }
 
 const mapState = (state) =>{
     return{
-        currentNode: state.userStore.current_node,
+        currentNode: state.userStore.current_node
     }
 }
 
-export default connect(
-    mapState, {}
-)(withAuthSync(catalog));
+export default connect(mapState, { getVacantFields })(AddOrEditTemplate);

@@ -16,6 +16,7 @@ import {
     ruleRequired,
     ruleWhiteSpace
 } from '../../../utils/rules';
+import { useRouter } from 'next/router';
 
 const ModalCatalogs = ({
     actionForm = ()=> {}, //function
@@ -27,8 +28,16 @@ const ModalCatalogs = ({
     children,
 }) => {
 
+    const router = useRouter();
     const [formCatalog] = Form.useForm();
     const [loading, setLoading] = useState(false);
+
+    useEffect(()=>{
+        if(!router.query?.category) return;
+        formCatalog.setFieldsValue({
+            category: router.query.category
+        })
+    },[router])
 
     useEffect(()=>{
         if(Object.keys(itemToEdit).length <= 0) return;

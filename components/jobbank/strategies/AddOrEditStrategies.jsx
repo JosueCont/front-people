@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { getPersonsCompany } from '../../../redux/UserDuck';
 import {
-    getInfoStrategy,
     getClientsOptions,
     getVacanciesOptions,
     getJobBoards
@@ -16,7 +15,6 @@ const AddOrEditStrategies = ({
     action = 'add',
     currentNode,
     getPersonsCompany,
-    getInfoStrategy,
     getClientsOptions,
     getVacanciesOptions,
     getJobBoards
@@ -32,12 +30,6 @@ const AddOrEditStrategies = ({
             getJobBoards(currentNode.id);
         }
     },[currentNode])
-
-    useEffect(()=>{
-        if(router.query.id && action == 'edit'){
-            getInfoStrategy(router.query.id)
-        }
-    },[router])
 
     return (
         <MainLayout currentKey={'jb_strategies'} defaultOpenKeys={['job_bank']}>
@@ -73,7 +65,6 @@ const mapState = (state) =>{
 export default connect(
   mapState,{
     getPersonsCompany,
-    getInfoStrategy,
     getClientsOptions,
     getVacanciesOptions,
     getJobBoards

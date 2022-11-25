@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, message, Form, Select } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
-import { getAcademics } from '../../../../redux/jobBankDuck';
+import { getProfilesTypes } from '../../../../redux/jobBankDuck';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
+import { useRouter } from 'next/router';
 
-const ViewAcademics = () => {
+const ViewTemplates = () => {
 
     const {
-        list_academics,
-        load_academics
+        list_profiles_types,
+        load_profiles_types
     } = useSelector(state => state.jobBankStore);
     const currentNode = useSelector(state => state.userStore.current_node);
+    const router = useRouter();
     const dispatch = useDispatch();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -22,49 +24,34 @@ const ViewAcademics = () => {
 
     useEffect(()=>{
         if(!currentNode) return;
-        dispatch(getAcademics(currentNode.id));
+        dispatch(getProfilesTypes(currentNode.id));
     },[currentNode])
 
     useEffect(()=>{
-        setLoading(load_academics);
-    },[load_academics])
+        setLoading(load_profiles_types);
+    },[load_profiles_types])
     
     useEffect(()=>{
-        setMainData(list_academics);
-    },[list_academics])
-
-    const actionCreate = async (values) =>{
-        try {
-            await WebApiJobBank.createAcademic({...values, node: currentNode.id});
-            dispatch(getAcademics(currentNode.id));
-            message.success('Carrera registrada');
-        } catch (e) {
-            console.log(e)
-            message.error('Carrera no registrada');
-        }
-    }
-
-    const actionUpdate = async (values) =>{
-        try {
-            await WebApiJobBank.updateAcademic(itemToEdit.id, values);
-            dispatch(getAcademics(currentNode.id));
-            message.success('Carrera actualizada');
-        } catch (e) {
-            console.log(e)
-            message.error('Carrera no actualizada');
-        }
-    }
+        setMainData(list_profiles_types);
+    },[list_profiles_types])
 
     const actionDelete = async () =>{
         try {
             let id = itemsToDelete.at(-1).id;
-            await WebApiJobBank.deleteAcademic(id);
-            dispatch(getAcademics(currentNode.id));
-            message.success('Carrera eliminada')
+            await WebApiJobBank.deleteProfileType(id);
+            dispatch(getProfilesTypes(currentNode.id));
+            message.success('Template eliminado');
         } catch (e) {
             console.log(e)
-            message.error('Carrera no eliminada')
+            message.error('Template no eliminado');
         }
+    }
+
+    const openModalEdit = (item) =>{
+        router.push({
+            pathname: '/jobbank/settings/catalogs/profiles/edit',
+            query: { id: item.id}
+        })
     }
 
     return (
@@ -72,18 +59,16 @@ const ViewAcademics = () => {
             <Col span={24}>
                 <SearchCatalogs
                     setLoading={setLoading}
-                    listComplete={list_academics}
+                    actionBtn={()=> router.push('/jobbank/settings/catalogs/profiles/add')}
+                    listComplete={list_profiles_types}
                     setItemsFilter={setMainData}
-                    setOpenModal={setOpenModal}
                 />
             </Col>
             <Col span={24}>
                 <TableCatalogs
-                    titleCreate='Agregar carrera'
-                    titleEdit='Editar carrera'
-                    titleDelete='¿Estás seguro de eliminar esta carrera?'
-                    actionCreate={actionCreate}
-                    actionUpdate={actionUpdate}
+                    titleCreate='Agregar tipo de template'
+                    titleEdit='Editar tipo de template'
+                    titleDelete='¿Estás seguro de eliminar este tipo de template?'
                     actionDelete={actionDelete}
                     catalogResults={mainData}
                     catalogLoading={loading}
@@ -93,10 +78,11 @@ const ViewAcademics = () => {
                     setItemsToDelete={setItemsToDelete}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
+                    actionBtnEdit={openModalEdit}
                 />
             </Col>
         </Row> 
     )
 }
 
-export default ViewAcademics;
+export default ViewTemplates;

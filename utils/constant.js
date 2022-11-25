@@ -566,7 +566,8 @@ export const catalogsJobbank = [
   {catalog: 'subcategories', name: 'Subcategorías' },
   {catalog: 'academic', name: 'Carreras'},
   {catalog: 'competences', name: 'Competencias'},
-  // {catalog: 'profiles', name: 'Template de vacante'},
+  {catalog: 'profiles', name: 'Tipos de template'},
   {catalog: 'sectors', name: 'Sectores'},
-  {catalog: 'jobboars', name: 'Bolsas de empleo'}
+  {catalog: 'jobboars', name: 'Bolsas de empleo'},
+  {catalog: 'specialization', name: 'Áreas de especialización'}
 ];

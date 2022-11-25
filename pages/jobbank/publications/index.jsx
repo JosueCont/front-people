@@ -11,6 +11,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import SearchPublications from '../../../components/jobbank/publications/SearchPublications';
 import TablePublications from '../../../components/jobbank/publications/TablePublications';
+import { getFiltersJB } from '../../../utils/functions';
 
 const index = ({
     currentNode,
@@ -23,11 +24,18 @@ const index = ({
 
     useEffect(()=>{
         if(currentNode){
-            getPublications(currentNode.id);
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
         }
     },[currentNode])
+
+    useEffect(()=>{
+        if(currentNode){
+            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let filters = getFiltersJB(router.query);
+            getPublications(currentNode.id, filters, page);
+        }
+    },[currentNode, router])
 
     return (
         <MainLayout currentKey='jb_publications' defaultOpenKeys={['job_bank']}>
