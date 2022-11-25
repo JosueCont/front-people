@@ -30,9 +30,9 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   const daily_salary = Form.useWatch('daily_salary', formImssInfonavit);
   //const [integratedDailySalary, setIntegratedDailySalary] = useState(0);
 
-  useEffect(() => {
-    person.branch_node && person_id && node && userCredit();
-  }, [person_id]);
+  // useEffect(() => {
+  //   person.branch_node && person_id && node && userCredit();
+  // }, [person_id]);
 
   useEffect(()=>{
     console.log(daily_salary)
@@ -66,6 +66,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   };
 
   const userCredit = async () => {
+    
     setLoadingTable(true);
     let data = new FormData()
     let patronal_registration = person?.branch_node?.patronal_registration?.id
