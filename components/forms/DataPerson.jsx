@@ -34,6 +34,7 @@ import {
   minLengthNumber, nameLastname,
   onlyNumeric,
   rfcFormat,
+  ruleRequired
 } from "../../utils/rules";
 import { getGroupPerson } from "../../api/apiKhonnect";
 import SelectGroup from "../../components/selects/SelectGroup";
@@ -461,6 +462,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                   onChange={(item) => {
                     setJobSelected(item), setPersonWT(true);
                   }}
+                  rules = { [ruleRequired] }
                 />
               </Col>
               <Col lg={8} xs={24} md={12}>
@@ -471,6 +473,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                     job={jobSelected}
                     person={personWT}
                     name={"work_title_id"}
+                    rules = { [ruleRequired] }
                   />
                 ) : (
                   <Form.Item name="work_title" label="Plaza laboral">
@@ -561,12 +564,12 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24} md={12}>
-                <Form.Item name="curp" label="CURP" rules={[curpFormat]}>
+                <Form.Item name="curp" label="CURP" rules={[ruleRequired, curpFormat]}>
                   <Input maxLength={18} />
                 </Form.Item>
               </Col>
               <Col lg={8} xs={24} md={12}>
-                <Form.Item name="rfc" label="RFC" rules={[rfcFormat]}>
+                <Form.Item name="rfc" label="RFC" rules={[ruleRequired, rfcFormat]}>
                   <Input maxLength={13} />
                 </Form.Item>
               </Col>
@@ -574,7 +577,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
                 <Form.Item
                   name="imss"
                   label="IMSS"
-                  rules={[onlyNumeric, minLengthNumber]}
+                  rules={[ruleRequired, onlyNumeric, minLengthNumber]}
                 >
                   <Input maxLength={11} />
                 </Form.Item>

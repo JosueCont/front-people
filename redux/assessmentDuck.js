@@ -8,7 +8,6 @@ import WebApiAssessment from "../api/WebApiAssessment";
 const initialData = {
   assessments: [],
   pagination: {
-    pageSize: 10,
     current: 1,
     total: 0,
     hideOnSinglePage: true,
@@ -39,7 +38,7 @@ const assessmentReducer = (state = initialData, action) => {
     case types.LOAD_ASSESSMENTS:
       return {
         ...state,
-        assessments: action.payload.results,
+        assessments: action.payload,
         pagination: { ...state.pagination, total: action.payload.count },
         fetching: false,
       };
