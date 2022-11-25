@@ -14,7 +14,8 @@ import {
   Switch,
   Dropdown,
   Menu,
-  ConfigProvider
+  ConfigProvider,
+  Checkbox
 } from "antd";
 import {
   SearchOutlined,
@@ -63,6 +64,9 @@ const AssessmentScreen = ({
   const [openModalAddGroup, setOpenModalAddGroup] = useState(false);
   const [showModalCreateGroup, setShowModalCreateGroup] = useState(false);
   const [nameSearch, setNameSearch] = useState("");
+  const [configPagination, setConfigPagination] = useState({
+    showSizeChanger:true
+  });
   const [filterValues, filterActive, onFilterReset] = useFilter();
 
   useEffect(() => {
@@ -316,7 +320,21 @@ const AssessmentScreen = ({
       </Menu>
     );
   };
-
+  
+  const onChangeViewAllAssessments = (e) => {
+    console.log("Select: ", e.target.checked)
+    let isSelected = e.target.checked
+    if(isSelected){
+      setConfigPagination({
+        showSizeChanger: false, 
+        pageSize: filterActive ? filterValues.length : assessments.length 
+      })
+    }else{
+      setConfigPagination({
+        showSizeChanger: true,  
+      })
+    }
+  }
   const columns = [
     {
       title: "Nombre",
@@ -462,6 +480,9 @@ const AssessmentScreen = ({
             </Col>
           )}
         </Row>
+        <Row justify="end">
+          <Checkbox onChange={onChangeViewAllAssessments} style={{marginBottom:"4px"}} > <b>Ver todas las evaluaciones</b> </Checkbox>
+        </Row>
         <Row>
           <Col span={24}>
             <ConfigProvider locale={esES}>
@@ -478,7 +499,7 @@ const AssessmentScreen = ({
                     : "No se encontraron resultados.",
                 }}
                 rowSelection={rowSelectionGroup}
-                pagination={{showSizeChanger:true, pageSizeOptions:["10",filterActive ? filterValues.length : assessments.length],}}
+                pagination={configPagination}
                 onChange={onChangeTable}
               />
             </ConfigProvider>
