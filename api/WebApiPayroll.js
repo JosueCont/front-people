@@ -194,6 +194,25 @@ class WebApiPayroll {
     return WebApi.ApisType("/payroll/extraordinary-payroll", "post", data);
   }
 
+  static setSalaryModification(data){
+    return WebApi.ApisType('/payroll/payroll-person/salary_modification/', "post", data)
+  }
+
+  static getMovementsIMSSLog(node){
+    return WebApi.ApisType(`/payroll/imss-movement-log?node=${node}`,'get')
+  }
+
+  static importSalaryModification(data){
+    //payroll/payroll-person/import_salary_modification/
+    return WebApi.ApisType(`/payroll/payroll-person/import_salary_modification/`, 'post', data)
+  }
+
+  static importIMSSPerson(data){
+    //payroll/payroll-person/import_salary_modification/
+    return WebApi.ApisType(`/payroll/imss-person/import_imss_person/`, 'post', data)
+  }
+
+
   static getIMSSMovements(node, patronal_registration) {
     return WebApi.ApisType(`/payroll/affiliate-movements?node=${node}&patronal_registration=${patronal_registration}`, "get"
     )

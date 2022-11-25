@@ -13,12 +13,12 @@ import {
   DatePicker,
 } from "antd";
 import locale from "antd/lib/date-picker/locale/es_ES";
-import { typeEmployee, typeSalary, reduceDays } from "../../../utils/constant";
+import {typeEmployee, typeSalary, reduceDays, FACTOR_SDI} from "../../../utils/constant";
 import SelectFamilyMedicalUnit from "../../selects/SelectFamilyMedicalUnit";
 import SelectMedicineUnity from "../../selects/SelectMedicineUnity";
 import WebApiPayroll from "../../../api/WebApiPayroll";
 import moment from "moment";
-import { ruleRequired } from "../../../utils/rules";
+import {fourDecimal, minLengthNumber, onlyNumeric, ruleRequired} from "../../../utils/rules";
 
 const FormImssInfonavit = ({ person, person_id, node }) => {
   
@@ -27,10 +27,25 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   const [loadingTable, setLoadingTable] = useState(false);
   const [ loadingIMSS, setLodingIMSS ] = useState(false)
   const [infonavitCredit, setInfonavitCredit] = useState([]);
+  const daily_salary = Form.useWatch('daily_salary', formImssInfonavit);
+  //const [integratedDailySalary, setIntegratedDailySalary] = useState(0);
 
   useEffect(() => {
     person.branch_node && person_id && node && userCredit();
   }, [person_id]);
+
+  useEffect(()=>{
+    console.log(daily_salary)
+    if(daily_salary){
+      formImssInfonavit.setFieldsValue({
+          integrated_daily_salary:(daily_salary*FACTOR_SDI).toFixed(2)
+        })
+    }else{
+      formImssInfonavit.setFieldsValue({
+        integrated_daily_salary:0
+      })
+    }
+  },[daily_salary])
 
   const formImmssInfonavitAct = (values) => {
     setLodingIMSS(true)
@@ -203,6 +218,36 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <SelectFamilyMedicalUnit/>
+          </Col>
+          <Col lg={6} xs={22} offset={1}>
+            <Form.Item
+                name="imss"
+                label="IMSS"
+                rules={[ruleRequired, onlyNumeric, minLengthNumber]}
+            >
+              <Input maxLength={11} />
+            </Form.Item>
+          </Col>
+
+          <Col lg={6} xs={22} offset={1}>
+            <Form.Item
+                name="daily_salary"
+                label="Salario diario"
+                maxLength={13}
+                rules={[fourDecimal, ruleRequired]}
+            >
+              <Input maxLength={10} />
+            </Form.Item>
+          </Col>
+          <Col lg={6} xs={22} offset={1}>
+            <Form.Item
+                name="integrated_daily_salary"
+                label="Salario diario integrado"
+                maxLength={13}
+                rules={[fourDecimal]}
+            >
+              <Input disabled />
+            </Form.Item>
           </Col>
         </Row>
         <Row justify={"end"}>

@@ -499,6 +499,17 @@ export const optionsBusinessName = [
   {value: "2", key: "2", label: 'Moral'}
 ]
 
+// es el factor por el cual se calcula el SDI es (SD * FACTOR_SDI)
+export const FACTOR_SDI = 1.0452;
+
+// para los tipos de movimientos imss
+export const movementsTypes = [
+  'No identificado',
+  'Alta/Reingreso',
+  'Modificación de salario',
+  'Baja'
+]
+
 export const messageSaveSuccess = "Agregado correctamente.";
 export const messageSendSuccess = "Enviado correctamente.";
 export const messageUpdateSuccess = "Actualizado correctamente.";
