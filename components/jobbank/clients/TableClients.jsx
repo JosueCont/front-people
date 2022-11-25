@@ -73,10 +73,9 @@ const TableClients = ({
     }
 
     const getClientsWithFilters = () =>{
-        let page = parseInt(router.query?.page);
-        let num = isNaN(page) ? 1 : page;
+        let page = router.query.page ? parseInt(router.query.page) : 1;
         let filters = getFiltersJB(router.query);
-        getClients(currentNode.id, filters, num);
+        getClients(currentNode.id, filters, page);
     }
 
     const closeModalList = () =>{
