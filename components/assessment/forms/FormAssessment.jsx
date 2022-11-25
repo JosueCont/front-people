@@ -206,13 +206,19 @@ const FormAssessment = ({ assessmentStore, ...props }) => {
         requiredMark={false}
       >
         <Row gutter={[16, 16]}>
+
           <Col span={12}>
             <Form.Item name="code" label={"Código"} rules={[ruleRequired]}>
               <Input maxLength={200} allowClear={true} placeholder="Código" />
             </Form.Item>
+          </Col>
+          <Col span={12}>
             <Form.Item name="name" label={"Nombre"} rules={[ruleRequired]}>
               <Input maxLength={200} allowClear={true} placeholder="Nombre" />
             </Form.Item>
+          </Col>
+          <Col span={12}>
+
             <Form.Item
               name="categories"
               label={"Categoría"}
