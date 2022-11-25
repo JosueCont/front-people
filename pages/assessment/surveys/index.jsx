@@ -14,6 +14,7 @@ import {
   Switch,
   Dropdown,
   Menu,
+  ConfigProvider
 } from "antd";
 import {
   SearchOutlined,
@@ -41,6 +42,7 @@ import { useFilter } from "../../../components/assessment/useFilter";
 import WebApiAssessment from "../../../api/WebApiAssessment";
 import AssessmentsGroup from "../../../components/assessment/groups/AssessmentsGroup";
 import {FormattedMessage} from "react-intl";
+import es_ES from 'antd/es/locale/es_ES';
 
 const AssessmentScreen = ({
   assessmentStore,
@@ -67,7 +69,6 @@ const AssessmentScreen = ({
     if (props.currentNode) {
       props.assessmentLoadAction(
         props.currentNode.id,
-        "&paginate=true&limit=10&offset=0"
       );
       getCategories();
       updPagination(1);
@@ -124,19 +125,19 @@ const AssessmentScreen = ({
   };
 
   const onChangeTable = (pagination) => {
-    let nameFilter = nameSearch ? `&name=${nameSearch}` : "";
-    if (pagination.current > 1) {
-      const offset = (pagination.current - 1) * 10;
-      let queryParam = `&paginate=true&limit=10&offset=${offset}${nameFilter}`;
-      props.assessmentLoadAction(props.currentNode.id, queryParam);
-      updPagination(pagination.current);
-    } else if (pagination.current == 1) {
-      props.assessmentLoadAction(
-        props.currentNode.id,
-        `&paginate=true&limit=10&offset=0${nameFilter}`
-      );
-      updPagination(pagination.current);
-    }
+    // let nameFilter = nameSearch ? `&name=${nameSearch}` : "";
+    // if (pagination.current > 1) {
+    //   const offset = (pagination.current - 1) * 10;
+    //   let queryParam = `&paginate=true&limit=10&offset=${offset}${nameFilter}`;
+    //   props.assessmentLoadAction(props.currentNode.id, queryParam);
+    //   updPagination(pagination.current);
+    // } else if (pagination.current == 1) {
+    //   props.assessmentLoadAction(
+    //     props.currentNode.id,
+    //     `&paginate=true&limit=10&offset=0${nameFilter}`
+    //   );
+    //   updPagination(pagination.current);
+    // }
   };
 
   const HandleChangeStatus = (value) => {
@@ -207,7 +208,7 @@ const AssessmentScreen = ({
       setNameSearch(name);
       props.assessmentLoadAction(
         props.currentNode?.id,
-        `&paginate=true&limit=10&offset=0&name=${name}`
+        `&name=${name}`
       );
     } else {
       resetSearch();
@@ -218,8 +219,7 @@ const AssessmentScreen = ({
     form.resetFields();
     setNameSearch("");
     props.assessmentLoadAction(
-      props.currentNode?.id,
-      "&paginate=true&limit=10&offset=0"
+      props.currentNode?.id
     );
   };
 
@@ -464,22 +464,24 @@ const AssessmentScreen = ({
         </Row>
         <Row>
           <Col span={24}>
-            <Table
-              rowKey={"id"}
-              size={"small"}
-              className={"table-surveys"}
-              columns={columns}
-              dataSource={filterActive ? filterValues : assessments}
-              loading={loading}
-              locale={{
-                emptyText: loading
-                  ? "Cargando..."
-                  : "No se encontraron resultados.",
-              }}
-              rowSelection={rowSelectionGroup}
-              pagination={assessmentStore.pagination}
-              onChange={onChangeTable}
-            />
+            <ConfigProvider locale={es_ES}>
+              <Table
+                rowKey={"id"}
+                size={"small"}
+                className={"table-surveys"}
+                columns={columns}
+                dataSource={filterActive ? filterValues : assessments}
+                loading={loading}
+                locale={{
+                  emptyText: loading
+                    ? "Cargando..."
+                    : "No se encontraron resultados.",
+                }}
+                rowSelection={rowSelectionGroup}
+                pagination={{showSizeChanger:true, pageSizeOptions:["10",filterActive ? filterValues.length : assessments.length],}}
+                onChange={onChangeTable}
+              />
+            </ConfigProvider>
           </Col>
         </Row>
       </div>
