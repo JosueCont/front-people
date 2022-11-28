@@ -65,9 +65,9 @@ const DetailsVacancies = ({
     },[infoVacant])
 
     useEffect(()=>{
-        if(router.query.customer && action == 'add'){
+        if(router.query.client && action == 'add'){
             formVacancies.resetFields()
-            keepCustomer()
+            keepClient()
         }else setDisabledClient(false)
     },[router])
 
@@ -84,10 +84,10 @@ const DetailsVacancies = ({
         }
     }
 
-    const keepCustomer = () =>{
+    const keepClient = () =>{
         setDisabledClient(true)
         formVacancies.setFieldsValue({
-            customer_id: router.query.customer
+            customer_id: router.query.client
         })
     }
 
@@ -140,24 +140,43 @@ const DetailsVacancies = ({
 
     const actionCreate = () =>{
         formVacancies.resetFields()
-        if (router.query?.customer) keepCustomer();
+        if (router.query?.client) keepClient();
         setFetching(false)
         setLoading({})
     }
 
+    const getNewFilters = () =>{
+        let newFilters = {...router.query};
+        if(newFilters.id) delete newFilters.id;
+        if(newFilters.client) delete newFilters.client;
+        return newFilters;
+    }
+
     const actionBack = () =>{
-        if(router.query?.customer) router.push('/jobbank/clients');
-        else router.push('/jobbank/vacancies');
+        let filters = getNewFilters();
+        if(router.query?.client) router.push({
+            pathname: '/jobbank/clients',
+            query: filters
+        });
+        else router.push({
+            pathname: '/jobbank/vacancies',
+            query: filters
+        });
+    }
+
+    const actionEdit = (id) =>{
+        let filters = getNewFilters();
+        router.replace({
+            pathname: '/jobbank/vacancies/edit',
+            query: {...filters, id }
+        })
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
             back: actionBack,
             create: actionCreate,
-            edit: ()=> router.replace({
-                pathname: '/jobbank/vacancies/edit',
-                query: { id }
-            })
+            edit: actionEdit
         }
         actionFunction[actionType](id);
     }

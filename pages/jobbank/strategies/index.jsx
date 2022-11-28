@@ -11,6 +11,7 @@ import {
 } from '../../../redux/jobBankDuck';
 import TableStrategies from '../../../components/jobbank/strategies/TableStrategies';
 import SearchStrategies from '../../../components/jobbank/strategies/SearchStrategies';
+import { getFiltersJB } from '../../../utils/functions';
 
 const index = ({
     currentNode,
@@ -23,17 +24,24 @@ const index = ({
 
     useEffect(()=>{
         if(currentNode){
-            getStrategies(currentNode.id);
             getClientsOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
         }
     },[currentNode])
 
+    useEffect(()=>{
+        if(currentNode){
+            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let filters = getFiltersJB(router.query);
+            getStrategies(currentNode.id, filters, page);
+        }
+    },[currentNode, router])
+
     return (
-        <MainLayout currentKey={'jb_strategies'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_strategies' defaultOpenKeys={['job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
-                    className={'pointer'}
+                    className='pointer'
                     onClick={() => router.push({ pathname: '/home/persons/'})}
                 >
                     Inicio
@@ -42,7 +50,7 @@ const index = ({
                 <Breadcrumb.Item>Estrategias</Breadcrumb.Item>
             </Breadcrumb>
             <div
-                className={'container'}
+                className='container'
                 style={{
                     display: 'flex',
                     gap: 24,

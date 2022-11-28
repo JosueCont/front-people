@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { getCurrentURL, redirectTo } from "../../utils/constant";
 import { connect } from "react-redux";
 import { domainApiWithTenant } from "../../api/axiosApi";
-import { urlMyAccount, urlPeople, urlSocial } from "../../config/config";
+import { urlMyAccount, urlPeople, urlSocial, urlSukha } from "../../config/config";
 import {FaGooglePlay, FaApple} from "react-icons/fa";
 import _ from "lodash"
 
@@ -115,8 +115,9 @@ const CardApps = ({ user, config, ...props }) => {
   };
 
   const linkToExternalApp = (app_name) => {
-    const url = props.applications[app_name].front;
-    // const url = `${getCurrentURL(true)}.localhost:3000/validation?token=${token}`;
+    // const url = props.applications[app_name].front;
+    const token = user.jwt_data.metadata.at(-1).token;
+    const url = `https://demo.${urlSukha}/validation?token=${token}`;
     redirectTo(url, true);
   };
 

@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, message, Form, Select } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
+import { ruleRequired } from '../../../../utils/rules';
 import WebApiJobBank from '../../../../api/WebApiJobBank';
-import { getAcademics } from '../../../../redux/jobBankDuck';
+import { useRouter } from 'next/router';
+import { getSpecializationArea } from '../../../../redux/jobBankDuck';
 import SearchCatalogs from '../SearchCatalogs';
 import TableCatalogs from '../TableCatalogs';
 
-const ViewAcademics = () => {
+const ViewSpecializations = () => {
 
     const {
-        list_academics,
-        load_academics
+        list_specialization_area,
+        load_specialization_area
     } = useSelector(state => state.jobBankStore);
     const currentNode = useSelector(state => state.userStore.current_node);
+    const router = useRouter();
     const dispatch = useDispatch();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -22,48 +25,48 @@ const ViewAcademics = () => {
 
     useEffect(()=>{
         if(!currentNode) return;
-        dispatch(getAcademics(currentNode.id));
+        dispatch(getSpecializationArea(currentNode.id));
     },[currentNode])
 
     useEffect(()=>{
-        setLoading(load_academics);
-    },[load_academics])
+        setLoading(load_specialization_area);
+    },[load_specialization_area])
     
     useEffect(()=>{
-        setMainData(list_academics);
-    },[list_academics])
+        setMainData(list_specialization_area);
+    },[list_specialization_area])
 
     const actionCreate = async (values) =>{
         try {
-            await WebApiJobBank.createAcademic({...values, node: currentNode.id});
-            dispatch(getAcademics(currentNode.id));
-            message.success('Carrera registrada');
+            await WebApiJobBank.createSpecializationArea({...values, node: currentNode.id});
+            dispatch(getSpecializationArea(currentNode.id));
+            message.success('Especialización registrada');
         } catch (e) {
             console.log(e)
-            message.error('Carrera no registrada');
+            message.error('Especialización no registrada');
         }
     }
 
     const actionUpdate = async (values) =>{
         try {
-            await WebApiJobBank.updateAcademic(itemToEdit.id, values);
-            dispatch(getAcademics(currentNode.id));
-            message.success('Carrera actualizada');
+            await WebApiJobBank.updateSpecializationArea(itemToEdit.id, values);
+            dispatch(getSpecializationArea(currentNode.id));
+            message.success('Especialización actualizada');
         } catch (e) {
             console.log(e)
-            message.error('Carrera no actualizada');
+            message.error('Especialización no actualizada');
         }
     }
 
     const actionDelete = async () =>{
         try {
             let id = itemsToDelete.at(-1).id;
-            await WebApiJobBank.deleteAcademic(id);
-            dispatch(getAcademics(currentNode.id));
-            message.success('Carrera eliminada')
+            await WebApiJobBank.deleteSpecializationArea(id);
+            dispatch(getSpecializationArea(currentNode.id));
+            message.success('Especialización eliminada');
         } catch (e) {
             console.log(e)
-            message.error('Carrera no eliminada')
+            message.error('Especialización no eliminada');
         }
     }
 
@@ -72,16 +75,16 @@ const ViewAcademics = () => {
             <Col span={24}>
                 <SearchCatalogs
                     setLoading={setLoading}
-                    listComplete={list_academics}
-                    setItemsFilter={setMainData}
                     setOpenModal={setOpenModal}
+                    listComplete={list_specialization_area}
+                    setItemsFilter={setMainData}
                 />
             </Col>
             <Col span={24}>
                 <TableCatalogs
-                    titleCreate='Agregar carrera'
-                    titleEdit='Editar carrera'
-                    titleDelete='¿Estás seguro de eliminar esta carrera?'
+                    titleCreate='Agregar especialización'
+                    titleEdit='Editar especialización'
+                    titleDelete='¿Estás seguro de eliminar esta especialización?'
                     actionCreate={actionCreate}
                     actionUpdate={actionUpdate}
                     actionDelete={actionDelete}
@@ -99,4 +102,4 @@ const ViewAcademics = () => {
     )
 }
 
-export default ViewAcademics;
+export default ViewSpecializations;

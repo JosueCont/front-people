@@ -19,9 +19,11 @@ import {
 } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
-import { setJobbankPage } from '../../../redux/jobBankDuck';
+import { getPublications } from '../../../redux/jobBankDuck';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import DeleteItems from '../../../common/DeleteItems';
+import ModalPost from './ModalPost';
+import { getFiltersJB } from '../../../utils/functions';
 
 const TablePublications = ({
     currentNode,
@@ -30,23 +32,54 @@ const TablePublications = ({
     list_publications,
     load_publications,
     list_vacancies_options,
-    list_profiles_options
+    list_profiles_options,
+    getPublications
 }) => {
 
     const router = useRouter();
+    const [itemToPublish, setItemToPublish] = useState({});
+    const [openModalShare, setOpenModalShare] = useState(false);
+    const [itemsKeys, setItemsKeys] = useState([]);
+    const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [openModalDelete, setOpenModalDelete] = useState(false);
 
-    const actionShare = async (item) =>{
+    const actionShare = async (values) =>{
         try {
-            let publishData = new FormData();
-            publishData.append('start_message', 'Hola demo');
-            publishData.append('end_message', 'Gracias demo');
-            publishData.append('person', currentUser.id);
-            await WebApiJobBank.sharePublication(item.id, publishData);
+            await WebApiJobBank.sharePublication(itemToPublish.id, values);
             message.success('Vacante publicada');
         } catch (e) {
             console.log(e)
             message.error('Vacante no publicada');
         }
+    }
+
+    const actionDelete = async () =>{
+        try {
+            let id = itemsToDelete.at(-1).id;
+            await WebApiJobBank.deletePublication(id, {is_deleted: true});
+            getPublicationsWithFilters(currentNode.id);
+            message.success('Publicación eliminada');
+        } catch (e) {
+            console.log(e)
+            message.error('Publicación no eliminada');
+        }
+    }
+
+    const getPublicationsWithFilters = () =>{
+        let page = router.query.page ? parseInt(router.query.page) : 1;
+        let filters = getFiltersJB(router.query);
+        getPublications(currentNode.id, filters, page);
+    }
+
+    const openModalRemove = (item) =>{
+        setItemsToDelete([item])
+        setOpenModalDelete(true)
+    }
+
+    const closeModalDelete = () =>{
+        setOpenModalDelete(false)
+        setItemsKeys([])
+        setItemsToDelete([])
     }
 
     const getVacant = (item) =>{
@@ -59,17 +92,49 @@ const TablePublications = ({
 
     const getTemplate = (item) =>{
         if(!item.profile) return 'Personalizado';
-        const template = record => record.id == item.profile;
+        const template = record => record.id == item.profile.id;
         let template_ = list_profiles_options.find(template);
         if(!template_) return null;
         return template_.name;
+    }
+
+    const closeModalShare = () =>{
+        setItemToPublish({})
+        setOpenModalShare(false)
+    }
+
+    const showModalShare = (item) =>{
+        setItemToPublish(item)
+        setOpenModalShare(true)
+    }
+
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/publications',
+        query
+    })
+
+    const onChangePage = ({current}) =>{
+        if(current > 1) savePage({...router.query, page: current});
+        else{
+            let newQuery = {...router.query};
+            if(newQuery.page) delete newQuery.page;
+            savePage(newQuery)
+        };
+    }
+
+    const rowSelection = {
+        selectedRowKeys: itemsKeys,
+        onChange: (selectedRowKeys, selectedRows) => {
+            setItemsKeys(selectedRowKeys)
+            setItemsToDelete(selectedRows)
+        }
     }
 
     const menuTable = () => {
         return (
             <Menu>
                 <Menu.Item
-                    key={1}
+                    key='1'
                     icon={<DeleteOutlined/>}
                     // onClick={()=>openModalManyDelete()}
                 >
@@ -87,7 +152,7 @@ const TablePublications = ({
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/publications/edit`,
-                        query:{ id: item.id }
+                        query:{...router.query, id: item.id }
                     })}
                 >
                     Editar
@@ -95,14 +160,14 @@ const TablePublications = ({
                 <Menu.Item
                     key='2'
                     icon={<DeleteOutlined/>}
-                    // onClick={()=> openModalRemove(item)}
+                    onClick={()=> openModalRemove(item)}
                 >
                     Eliminar
                 </Menu.Item>
                 <Menu.Item
-                    key='2'
+                    key='3'
                     icon={<ShareAltOutlined />}
-                    onClick={()=> actionShare(item)}
+                    onClick={()=> showModalShare(item)}
                 >
                     Publicar
                 </Menu.Item>
@@ -141,15 +206,24 @@ const TablePublications = ({
         //     }
         // },
         {
-            title: ()=> {
+            title: 'Estatus',
+            render: (item) =>{
                 return(
-                    <Dropdown overlay={menuTable}>
-                        <Button size={'small'}>
-                            <EllipsisOutlined />
-                        </Button>
-                    </Dropdown>
+                    <span>{item.is_published ? 'Publicado' : 'En borrador'}</span>
                 )
-            },
+            }
+        },
+        {
+            // title: ()=> {
+            //     return(
+            //         <Dropdown overlay={menuTable}>
+            //             <Button size={'small'}>
+            //                 <EllipsisOutlined />
+            //             </Button>
+            //         </Dropdown>
+            //     )
+            // },
+            title: 'Acciones',
             render: (item) =>{
                 return (
                     <Dropdown overlay={()=> menuItem(item)}>
@@ -169,8 +243,8 @@ const TablePublications = ({
                 rowKey='id'
                 columns={columns}
                 loading={load_publications}
-                // rowSelection={rowSelection}
-                // onChange={onChangePage}
+                rowSelection={rowSelection}
+                onChange={onChangePage}
                 dataSource={list_publications.results}
                 locale={{ emptyText: load_publications
                     ? 'Cargando...'
@@ -182,6 +256,23 @@ const TablePublications = ({
                     hideOnSinglePage: true,
                     showSizeChanger: false
                 }}
+            />
+            <ModalPost
+                title='Publicar vacante'
+                visible={openModalShare}
+                actionForm={actionShare}
+                close={closeModalShare}
+            />
+            <DeleteItems
+                title={itemsToDelete.length > 1
+                    ? '¿Estás seguro de eliminar estas publicaciones?'
+                    : '¿Estás seguro de eliminar esta publicación?'
+                }
+                visible={openModalDelete}
+                keyTitle='code_post'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
             />
         </>
     )
@@ -201,7 +292,5 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState, {
-        setJobbankPage
-    }
+    mapState, { getPublications }
 )(TablePublications);

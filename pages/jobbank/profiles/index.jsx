@@ -10,6 +10,7 @@ import {
     getProfilesList,
     getClientsOptions
 } from '../../../redux/jobBankDuck';
+import { getFiltersJB } from '../../../utils/functions';
 
 const index = ({
     currentNode,
@@ -17,12 +18,21 @@ const index = ({
     getClientsOptions
 }) => {
 
+    const router = useRouter();
+
     useEffect(()=>{
         if(currentNode){
-            getProfilesList(currentNode.id);
             getClientsOptions(currentNode.id);
         }
     },[currentNode])
+
+    useEffect(()=>{
+        if(currentNode){
+            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let filters = getFiltersJB(router.query);
+            getProfilesList(currentNode.id, filters, page);
+        }
+    },[currentNode, router])
 
     return (
         <MainLayout  currentKey={'jb_profiles'} defaultOpenKeys={['job_bank']}>

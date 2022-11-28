@@ -19,7 +19,8 @@ const TableCatalogs = ({
     titleDelete = '',
     actionCreate = ()=>{},
     actionUpdate = ()=>{},
-    actionDelete =()=>{},
+    actionDelete = ()=>{},
+    actionBtnEdit,
     catalogResults = [],
     catalogLoading = false,
     setItemToEdit,
@@ -63,7 +64,10 @@ const TableCatalogs = ({
                 <Menu.Item
                     key='1'
                     icon={<EditOutlined/>}
-                    onClick={()=> openModalEdit(item)}
+                    onClick={()=> actionBtnEdit
+                        ? actionBtnEdit(item)
+                        : openModalEdit(item)
+                    }
                 >
                     Editar
                 </Menu.Item>
@@ -116,26 +120,22 @@ const TableCatalogs = ({
                     showSizeChanger: false
                 }}
             />
-            {openModal && useModal && (
-                <ModalCatalogs
-                    title={validateAction() ? titleEdit : titleCreate}
-                    visible={openModal}
-                    close={closeModal}
-                    itemToEdit={itemToEdit}
-                    actionForm={validateAction() ? actionUpdate : actionCreate}
-                    textSave={validateAction() ? 'Actualizar' : 'Guardar'}
-                >{extraFields}</ModalCatalogs>
-            )}
-            {openModalDelete && (
-                <DeleteItems
-                    title={titleDelete}
-                    visible={openModalDelete}
-                    keyTitle='name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-            )}  
+            <ModalCatalogs
+                title={validateAction() && openModal ? titleEdit : titleCreate}
+                visible={openModal}
+                close={closeModal}
+                itemToEdit={itemToEdit}
+                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+            >{extraFields}</ModalCatalogs>
+            <DeleteItems
+                title={titleDelete}
+                visible={openModalDelete}
+                keyTitle='name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+            />
         </>
     )
 }
