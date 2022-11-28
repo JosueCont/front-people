@@ -271,6 +271,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   const sendFiles = (data) => {
     WebApiPayroll.importPayrollMasiveXml(data)
       .then((response) => {
+        console.log("IMPORT XML-->>> ", response.data);
         setLoading(false);
         message.success(messageUploadSuccess);
         setXmlImport(response.data);
@@ -335,16 +336,16 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
       form_data.append("export", "False");
       form_data.append("save", "True");
       form_data.append("payroll", JSON.stringify(xmlImport));
-      console.log(xmlImport);
-      WebApiPayroll.importPayrollMasiveXml(form_data)
-        .then((response) => {
-          processResponseSave(response);
-        })
-        .catch((error) => {
-          message.error(messageError);
-          console.log(error);
-          setLoading(false);
-        });
+      console.log("IMPORT SEND-->>", xmlImport);
+      // WebApiPayroll.importPayrollMasiveXml(form_data)
+      //   .then((response) => {
+      //     processResponseSave(response);
+      //   })
+      //   .catch((error) => {
+      //     message.error(messageError);
+      //     console.log(error);
+      //     setLoading(false);
+      //   });
     }
   };
 
@@ -401,7 +402,10 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["importMassivePayroll"]} defaultOpenKeys={["payroll"]}>
+    <MainLayout
+      currentKey={["importMassivePayroll"]}
+      defaultOpenKeys={["payroll"]}
+    >
       {props.currentNode && (
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item
@@ -582,7 +586,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                 setPerson={setPerson}
               />
 
-              <Col span={24}>
+              {/* <Col span={24}>
                 <Card className="card_table">
                   <Table
                     size="small"
@@ -598,7 +602,7 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                     className={"mainTable headers_transparent"}
                   />
                 </Card>
-              </Col>
+              </Col> */}
             </>
           ) : (
             <>

@@ -405,7 +405,6 @@ export const getGeographicArea = () => async (dispatch, getState) => {
 
   await WebApiFiscal.get_geograp_area(currentYear)
     .then((response) => {
-      console.log("Response", response);
       dispatch({
         type: GEOGRAPHIC_AREA,
         payload: response.data.results,

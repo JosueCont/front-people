@@ -51,21 +51,19 @@ const SelectCompany = ({ ...props }) => {
   const [createNode, setCreateNode] = useState(false);
   const [modalCfdiVersion, setModalCfdiVersion] = useState(false);
   const [versionCfdiSelect, setVersionCfdiSelect] = useState(null);
-  const currentYear = moment().format('YYYY')
+  const currentYear = moment().format("YYYY");
   const [isLoadCompany, setIsLoadCompany] = useState(false);
 
   let personId = userId();
   const isBrowser = () => typeof window !== "undefined";
 
-  useEffect(()=>{
-    if(router.query.company){
+  useEffect(() => {
+    if (router.query.company) {
       setIsLoadCompany(true);
     }
-  },[router])
+  }, [router]);
 
-  useEffect(() => {
-    
-  }, [isLoadCompany]);
+  useEffect(() => {}, [isLoadCompany]);
 
   useEffect(() => {
     props.resetCurrentnode();
@@ -132,10 +130,12 @@ const SelectCompany = ({ ...props }) => {
       .then((response) => {
         let data = response.data.results.filter((a) => a.active);
         setDataList(data);
-        if(router.query.company){
+        if (router.query.company) {
           //console.log("query",router.query.company);
           //console.log("datalist",dataList);
-          let filterQuery = data.filter(item => item.id === router.query.company);
+          let filterQuery = data.filter(
+            (item) => item.id === router.query.company
+          );
           //console.log("filterQuery",filterQuery.at(-1));
           setCompanySelect(filterQuery.at(-1));
         } else {
@@ -158,12 +158,12 @@ const SelectCompany = ({ ...props }) => {
     //console.log("valor seleccionado",item)
     if (admin) sessionStorage.setItem("data", item.id);
     else sessionStorage.setItem("data", item.id);
-    localStorage.setItem('data',item.id)
+    localStorage.setItem("data", item.id);
     await props
       .companySelected(item.id, props.config)
       .then((response) => {
         props.doCompanySelectedCatalog();
-        if(router.query.company){
+        if (router.query.company) {
           // setIsLoadCompany(false);
           switch (router.query.app) {
             case "ynl":
@@ -171,12 +171,12 @@ const SelectCompany = ({ ...props }) => {
               break;
             case "khorconnect":
               useRouter.push("intranet/publications_statistics");
-              break
+              break;
             default:
               useRouter.push("home/persons");
               break;
           }
-        }else{
+        } else {
           useRouter.push("home/persons");
         }
       })
@@ -222,6 +222,10 @@ const SelectCompany = ({ ...props }) => {
   useEffect(() => {
     if (props.versionCfdi) setVersionCfdiSelect(props.versionCfdi);
   }, [props.versionCfdi]);
+
+  const handleOnError = (e) => {
+    e.target.src = "/images/empresas.svg";
+  };
 
   return (
     <>
@@ -276,156 +280,168 @@ const SelectCompany = ({ ...props }) => {
       {jwt && jwt.user_id ? (
         <Spin tip="Seleccionando empresa..." spinning={isLoadCompany}>
           <MainLayout
-          currentKey="8.5"
-          hideMenu={true}
-          hideSearch={true}
-          hideLogo={true}
-        >
-          <Breadcrumb className={"mainBreadcrumb"}>
-            <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>
-          </Breadcrumb>
-          <div className="container" style={{ width: "100%", padding: 20 }}>
-            <Spin tip="Cargando..." spinning={loading}>
-              <Row gutter={[36, 26]} justify="center">
-                <Col span={24} style={{ textAlign: "center" }}>
-                  <Title level={4} style={{ color: "black", marginTop: 50 }}>
-                    Elige la empresa donde colaboras
-                  </Title>
-                </Col>
-                <Col span={24}>
-                  <Row justify={"end"}>
-                    <Col style={{ margin: "1%" }}>
-                      <Button onClick={changeView}>
-                        {treeTable ? (
-                          <>
-                            <AppstoreOutlined />&nbsp;&nbsp;Tarjetas
-                          </>
-                        ) : (
-                          <>
-                            <TableOutlined />&nbsp;&nbsp;Tabla
-                          </>
-                        )}
-                      </Button>
-                    </Col>
-                    <Col style={{ margin: "1%" }}>
-                      <Button onClick={switchModal}>
-                        <PlusOutlined /> Agregar empresa
-                      </Button>
-                    </Col>
-                  </Row>
-                </Col>
-                {!treeTable &&
-                  dataList.map((item) => (
-                    <Col
-                      key={item.permanent_code}
-                      xl={5}
-                      lg={5}
-                      md={5}
-                      sm={8}
-                      xs={24}
-                    >
-                      <Card
-                        className="cardCompany"
-                        hoverable
-                        cover={
-                          <img
-                            alt="example"
-                            src={item.image}
-                            style={{ width: "50%" }}
-                          />
-                        }
-                        style={{
-                          backgroundColor: `#${Math.floor(
-                            Math.random() * 16777215
-                          ).toString(16)}`,
-                        }}
-                        onClick={() => setCompanySelect(item)}
+            currentKey="8.5"
+            hideMenu={true}
+            hideSearch={true}
+            hideLogo={true}
+          >
+            <Breadcrumb className={"mainBreadcrumb"}>
+              <Breadcrumb.Item>Seleccionar empresa</Breadcrumb.Item>
+            </Breadcrumb>
+            <div className="container" style={{ width: "100%", padding: 20 }}>
+              <Spin tip="Cargando..." spinning={loading}>
+                <Row gutter={[36, 26]} justify="center">
+                  <Col span={24} style={{ textAlign: "center" }}>
+                    <Title level={4} style={{ color: "black", marginTop: 50 }}>
+                      Elige la empresa donde colaboras
+                    </Title>
+                  </Col>
+                  <Col span={24}>
+                    <Row justify={"end"}>
+                      <Col style={{ margin: "1%" }}>
+                        <Button onClick={changeView}>
+                          {treeTable ? (
+                            <>
+                              <AppstoreOutlined />
+                              &nbsp;&nbsp;Tarjetas
+                            </>
+                          ) : (
+                            <>
+                              <TableOutlined />
+                              &nbsp;&nbsp;Tabla
+                            </>
+                          )}
+                        </Button>
+                      </Col>
+                      <Col style={{ margin: "1%" }}>
+                        <Button onClick={switchModal}>
+                          <PlusOutlined /> Agregar empresa
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Col>
+                  {!treeTable &&
+                    dataList.map((item) => (
+                      <Col
+                        key={item.permanent_code}
+                        xl={5}
+                        lg={5}
+                        md={5}
+                        sm={8}
+                        xs={24}
                       >
-                        {/* <span
+                        <Card
+                          className="cardCompany "
+                          hoverable
+                          cover={
+                            item.image ? (
+                              <img
+                                alt="example"
+                                src={item.image}
+                                style={{ width: "50%" }}
+                                onError={handleOnError}
+                              />
+                            ) : (
+                              <div className="center-content">
+                                <img
+                                  alt="example"
+                                  src="/images/empresas.svg"
+                                  style={{ width: "30%" }}
+                                  onError={handleOnError}
+                                />
+                              </div>
+                            )
+                          }
+                          style={{
+                            backgroundColor: `#${Math.floor(
+                              Math.random() * 16777215
+                            ).toString(16)}`,
+                          }}
+                          onClick={() => setCompanySelect(item)}
+                        >
+                          {/* <span
                           className="buttonEditCompany"
                           style={{ position: "absolute" }}
                         >
                           <EditOutlined />
                         </span> */}
-                        <Meta
-                          className="meta_company"
-                          title={item.name}
-                          description="Ultima vez: Hace 2 Hrs"
-                        />
-                      </Card>
+                          <Meta
+                            className="meta_company"
+                            title={item.name}
+                            description="Ultima vez: Hace 2 Hrs"
+                          />
+                        </Card>
+                      </Col>
+                    ))}
+                  {treeTable && dataList && (
+                    <Col span={24}>
+                      <Table
+                        className={"mainTable"}
+                        size="small"
+                        columns={columns}
+                        dataSource={dataList}
+                        loading={loading}
+                        locale={{
+                          emptyText: loading
+                            ? "Cargando..."
+                            : "No se encontraron resultados.",
+                        }}
+                      />
                     </Col>
-                  ))}
-                {treeTable && dataList && (
-                  <Col span={24}>
-                    <Table
-                      className={"mainTable"}
-                      size="small"
-                      columns={columns}
-                      dataSource={dataList}
-                      loading={loading}
-                      locale={{
-                        emptyText: loading
-                          ? "Cargando..."
-                          : "No se encontraron resultados.",
-                      }}
-                    />
-                  </Col>
-                )}
-              </Row>
-            </Spin>
-          </div>
-          <Modal
-            visible={modalSwitch}
-            onCancel={switchModal}
-            title={<b>Agregar empresa</b>}
-            footer={[
-              <Button
-                key="back"
-                onClick={() => router.push("/payroll/importMasivePayroll")}
-              >
-                Importar xml
-              </Button>,
-              <Button
-                key="submit"
-                onClick={() => {
-                  setModalSwitch(false), setCreateNode(true);
-                }}
-              >
-                Crear manualmente
-              </Button>,
-            ]}
-          >
-            <Alert
-              message={
-                <span>
-                  <b>Importar xml:</b> Se crea la empresa y el histórico de
-                  nómina a base de una carga masiva de xml (nominas por
-                  persona).
-
-                  Por favor importa todo tu año { currentYear }
-                </span>
-              }
-              type="warning"
+                  )}
+                </Row>
+              </Spin>
+            </div>
+            <Modal
+              visible={modalSwitch}
+              onCancel={switchModal}
+              title={<b>Agregar empresa</b>}
+              footer={[
+                <Button
+                  key="back"
+                  onClick={() => router.push("/payroll/importMasivePayroll")}
+                >
+                  Importar xml
+                </Button>,
+                <Button
+                  key="submit"
+                  onClick={() => {
+                    setModalSwitch(false), setCreateNode(true);
+                  }}
+                >
+                  Crear manualmente
+                </Button>,
+              ]}
+            >
+              <Alert
+                message={
+                  <span>
+                    <b>Importar xml:</b> Se crea la empresa y el histórico de
+                    nómina a base de una carga masiva de xml (nominas por
+                    persona). Por favor importa todo tu año {currentYear}
+                  </span>
+                }
+                type="warning"
+              />
+              <br />
+              <Alert
+                message={
+                  <span>
+                    <b>Crear manualmente:</b> Se crea de manera manual una
+                    empresa con la información basica necesaria.
+                  </span>
+                }
+                type="warning"
+              />
+            </Modal>
+            <ModalCreateBusiness
+              user={props.user}
+              visible={createNode}
+              setVisible={setCreateNode}
+              afterAction={(value) => personForKhonnectId(value)}
             />
-            <br />
-            <Alert
-              message={
-                <span>
-                  <b>Crear manualmente:</b> Se crea de manera manual una empresa
-                  con la información basica necesaria.
-                </span>
-              }
-              type="warning"
-            />
-          </Modal>
-          <ModalCreateBusiness
-            user={props.user}
-            visible={createNode}
-            setVisible={setCreateNode}
-            afterAction={(value) => personForKhonnectId(value)}
-          />
-        </MainLayout>
-        </Spin> 
+          </MainLayout>
+        </Spin>
       ) : (
         <div className="notAllowed" />
       )}
