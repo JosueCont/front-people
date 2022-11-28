@@ -22,6 +22,8 @@ import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import { validateNum } from '../../../utils/functions';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import { ToTopOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
+import { redirectTo } from '../../../utils/constant';
 
 const TabGeneral = ({
     sizeCol = 8,
@@ -39,11 +41,14 @@ const TabGeneral = ({
     };
     const router = useRouter();
     const btnSave = useRef(null);
+    const inputFile = useRef(null);
     const [formCandidate] = Form.useForm();
     const [infoCandidate, setInfoCandidate] = useState({});
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [actionType, setActionType] = useState('');
+    const [fileCV, setFileCV] = useState([]);
+    const [nameCV, setNameCV] = useState('');
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -56,6 +61,8 @@ const TabGeneral = ({
         if(Object.keys(infoCandidate).length <= 0) return;
         setDisabledTab(false)
         formCandidate.resetFields();
+        let name = infoCandidate.cv ? infoCandidate.cv.split('/').at(-1) : '';
+        setNameCV(name);
         formCandidate.setFieldsValue(infoCandidate);
     },[infoCandidate])
 
@@ -86,7 +93,7 @@ const TabGeneral = ({
 
     const onFinishCreate = async (values) =>{
         try {
-            let response = await WebApiJobBank.createCandidate({...values, node: currentNode.id});
+            let response = await WebApiJobBank.createCandidate(values);
             message.success('Candidato registrado');
             actionSaveAnd(response.data.id);
         } catch (e) {
@@ -96,37 +103,65 @@ const TabGeneral = ({
         }
     }
 
+    const createData = (obj) =>{
+        let dataCandidate = new FormData();
+        dataCandidate.append('node', currentNode.id);
+        Object.entries(obj).map(([key, val])=>{ if(val) dataCandidate.append(key, val) });
+        if(fileCV.length > 0) dataCandidate.append('cv', fileCV[0]);
+        return dataCandidate;
+    }
+
     const onFinish = (values) =>{
+        const body = createData(values);
         setFetching(true);
         const actionFunction = {
             edit: onFinisUpdate,
             add: onFinishCreate
         };
-        actionFunction[action](values);
+        actionFunction[action](body);
+    }
+
+    const getNewFilters = () =>{
+        let newFilters = {...router.query};
+        if(newFilters.id) delete newFilters.id;
+        return newFilters;
+    }
+
+    const actionBack = () =>{
+        let filters = getNewFilters();
+        router.push({
+            pathname: '/jobbank/candidates',
+            query: filters
+        })
     }
 
     const actionCreate = () =>{
         formCandidate.resetFields();
-        setInfoCandidate({});
         setFetching(false);
         setLoading({});
+        setFileImg([]);
+    }
+
+    const actionEdit = (id) =>{
+        let filters = getNewFilters();
+        router.replace({
+            pathname: '/jobbank/candidates/edit',
+            query: {...filters, id }
+        })
     }
 
     const actionSaveAnd = (id) =>{
         const actionFunction = {
-            back: () => router.push('/jobbank/candidates'),
+            back: actionBack,
             create: actionCreate,
-            edit: ()=> router.replace({
-                pathname: '/jobbank/candidates/edit',
-                query: { id }
-            }),
+            edit: actionEdit,
             default: () => router.replace({
                 pathname: `/jobbank/${router.query.uid}/candidate/`,
                 query: { id }
             }, undefined, { shallow: true })
         }
         let selected = isAutoRegister ? 'default' : actionType;
-        actionFunction[selected]();
+        actionFunction[selected](id);
     }
 
     const getSaveAnd = (type) =>{
@@ -134,6 +169,17 @@ const TabGeneral = ({
         const item = { loading: true, disabled: false };
         setLoading({...fetchingParams, [type]: item });
         btnSave.current.click();
+    }
+
+    const setFileSelected = ({target : { files }}) =>{
+        if(Object.keys(files).length <= 0) return false;
+        setNameCV(files[0].name);
+        setFileCV([files[0]]);
+    }
+
+    const openFile = () =>{
+        inputFile.current.value = null;
+        inputFile.current.click();
     }
 
     return (
@@ -148,7 +194,7 @@ const TabGeneral = ({
                         onFinishFailed={()=> setLoading({})}
                     >
                         <Row gutter={[24,0]}>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='fisrt_name'
                                     label='Nombre'
@@ -157,7 +203,7 @@ const TabGeneral = ({
                                     <Input maxLength={150} placeholder='Nombre del candidato'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='last_name'
                                     label='Apellidos'
@@ -166,7 +212,7 @@ const TabGeneral = ({
                                     <Input maxLength={150} placeholder='Apellidos del candidato'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='email'
                                     label='Correo'
@@ -175,7 +221,7 @@ const TabGeneral = ({
                                     <Input maxLength={150} placeholder='Correo'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='cell_phone'
                                     label='Teléfono celular'
@@ -184,7 +230,7 @@ const TabGeneral = ({
                                     <Input maxLength={10} placeholder='Teléfono celular'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='telephone'
                                     label='Teléfono fijo'
@@ -193,7 +239,7 @@ const TabGeneral = ({
                                     <Input maxLength={10} placeholder='Teléfono fijo'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='location'
                                     label='Localidad'
@@ -202,7 +248,7 @@ const TabGeneral = ({
                                     <Input maxLength={300} placeholder='Localidad'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='street_address'
                                     label='Dirección'
@@ -211,7 +257,7 @@ const TabGeneral = ({
                                     <Input placeholder='Dirección'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='postal_code'
                                     label='Código postal'
@@ -220,7 +266,45 @@ const TabGeneral = ({
                                     <Input maxLength={10} placeholder='Código postal'/>
                                 </Form.Item>
                             </Col>
-                            <Col span={sizeCol}>
+                            <Col span={24}>
+                                <Form.Item
+                                    label='CV'
+                                >
+                                    <Input.Group compact>
+                                        <Input
+                                            style={{
+                                                width: `calc(100% - ${infoCandidate.cv ? 64 : 32}px)`,
+                                                borderTopLeftRadius: 10,
+                                                borderBottomLeftRadius: 10
+                                            }}
+                                            value={nameCV}
+                                            placeholder='Archivo seleccionado'
+                                        />
+                                        {infoCandidate.cv && (
+                                            <Button
+                                                className='custom-btn'
+                                                onClick={()=> redirectTo(infoCandidate.cv, true)}
+                                                icon={<EyeOutlined />}
+                                            />
+                                        )}
+                                        <Button
+                                            icon={<ToTopOutlined />}
+                                            onClick={()=> openFile()}
+                                            style={{
+                                                borderTopRightRadius: 10,
+                                                borderBottomRightRadius: 10
+                                            }}
+                                        />
+                                        <input
+                                            type='file'
+                                            style={{display: 'none'}}
+                                            ref={inputFile}
+                                            onChange={setFileSelected}
+                                        />
+                                    </Input.Group>
+                                </Form.Item>
+                            </Col>
+                            <Col span={24}>
                                 <Form.Item
                                     name='about_me'
                                     label='Acerca de ti'
@@ -235,7 +319,7 @@ const TabGeneral = ({
                                     />
                                 </Form.Item>
                             </Col>
-                            {/* <Col span={sizeCol}>
+                            {/* <Col xs={24} md={12} xl={8} xxl={6}>
                                 <Form.Item
                                     name='date_birth'
                                     label='Fecha de nacimiento'

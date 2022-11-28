@@ -56,7 +56,7 @@ class WebApiJobBank {
 
     static deleteVacant(data){
         // return WebApi.ApisType(`/job-bank/vacant/${id}/`, 'patch', data);
-        return WebApi.ApisType('job-bank/vacant/massive_delete/', 'post', data);
+        return WebApi.ApisType('/job-bank/vacant/massive_delete/', 'post', data);
     }
 
     static getStrategies(node, query){
@@ -199,8 +199,8 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/post-vacant/${id}/`, 'put', data);
     }
 
-    static deletePublication(id){
-        return WebApi.ApisType(`/job-bank/post-vacant/${id}/`, 'delete');
+    static deletePublication(id, data){
+        return WebApi.ApisType(`/job-bank/post-vacant/${id}/`, 'patch', data);
     }
      
     static sharePublication(id, data){
@@ -293,16 +293,20 @@ class WebApiJobBank {
         return WebApi.ApisType(`/job-bank/profile-template/?node=${node}`, 'get');
     }
 
+    static getInfoProfileType(id){
+        return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'get');
+    }
+
     static createProfileType(data){
-        // return WebApi.ApisType('/job-bank/profile-template/', 'post', data);
+        return WebApi.ApisType('/job-bank/profile-template/', 'post', data);
     }
 
     static updateProfileType(id, data){
-        // return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'put', data);
+        return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'put', data);
     }
 
     static deleteProfileType(id){
-        // return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'delete');
+        return WebApi.ApisType(`/job-bank/profile-template/${id}/`, 'delete');
     }
 
     static getJobBoards(node){

@@ -11,6 +11,7 @@ import {
     getClientsOptions
 } from '../../../redux/jobBankDuck';
 import { getPersonsCompany } from '../../../redux/UserDuck';
+import { getFiltersJB } from '../../../utils/functions';
 
 const index = ({
     getVacancies,
@@ -23,14 +24,21 @@ const index = ({
 
     useEffect(()=>{
         if(currentNode){
-            getVacancies(currentNode.id);
             getClientsOptions(currentNode.id);
             getPersonsCompany(currentNode.id);
         }
     },[currentNode])
 
+    useEffect(()=>{
+        if(currentNode){
+            let page = router.query.page ? parseInt(router.query.page) : 1;
+            let filters = getFiltersJB(router.query);
+            getVacancies(currentNode.id, filters, page);
+        }
+    },[currentNode, router])
+
     return (
-        <MainLayout currentKey={'jb_vacancies'} defaultOpenKeys={['job_bank']}>
+        <MainLayout currentKey='jb_vacancies' defaultOpenKeys={['job_bank']}>
             <Breadcrumb>
                 <Breadcrumb.Item
                     className={'pointer'}

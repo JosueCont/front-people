@@ -2,14 +2,14 @@ import moment from 'moment';
 import { deleteKeyByValue } from '../../../../utils/constant';
 
 export const useProcessInfo = ({
-    info_strategy,
+    infoStrategy,
     formStrategies
 }) => {
 
     const { setFieldsValue } = formStrategies;
 
     const setValuesForm = () =>{
-        let info = deleteKeyByValue(info_strategy);
+        let info = deleteKeyByValue(infoStrategy);
         if(info.assignment_date) info.assignment_date = moment(info.assignment_date);
         if(info.candidates_date_send) info.candidates_date_send = moment(info.candidates_date_send);
         if(info.candidate_acceptance_date) info.candidate_acceptance_date = moment(info.candidate_acceptance_date);

@@ -94,7 +94,7 @@ const ViewCategories = () => {
                     setLoading={setLoading}
                     listComplete={list_main_categories}
                     setItemsFilter={setMainData}
-                    actionBtn={()=> setOpenModal(true)}
+                    setOpenModal={setOpenModal}
                 />
             </Col>
             <Col span={24}>
