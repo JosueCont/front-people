@@ -138,7 +138,7 @@ const PublicationsStatisticsTable = ({
       render: (publication) => (
         <>
           {publication && publication != "" ? (
-            publication
+          <div dangerouslySetInnerHTML={{__html: publication}}></div>
           ) : (
             <i>*Esta publicación es de contenido multimedia</i>
           )}
