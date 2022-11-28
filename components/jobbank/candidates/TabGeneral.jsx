@@ -182,6 +182,11 @@ const TabGeneral = ({
         inputFile.current.click();
     }
 
+    const resetCV = () =>{
+        setFileCV([]);
+        setNameCV('')
+    }
+
     return (
         <Row>
             <Col span={24}>
@@ -273,18 +278,24 @@ const TabGeneral = ({
                                     <Input.Group compact>
                                         <Input
                                             style={{
-                                                width: `calc(100% - ${infoCandidate.cv ? 64 : 32}px)`,
+                                                width: `calc(100% - 64px)`,
                                                 borderTopLeftRadius: 10,
                                                 borderBottomLeftRadius: 10
                                             }}
                                             value={nameCV}
                                             placeholder='Archivo seleccionado'
                                         />
-                                        {infoCandidate.cv && (
+                                        {infoCandidate.cv ? (
                                             <Button
                                                 className='custom-btn'
                                                 onClick={()=> redirectTo(infoCandidate.cv, true)}
                                                 icon={<EyeOutlined />}
+                                            />
+                                        ): (
+                                            <Button
+                                                className='custom-btn'
+                                                onClick={()=> resetCV()}
+                                                icon={<DeleteOutlined />}
                                             />
                                         )}
                                         <Button
