@@ -107,6 +107,7 @@ const ModalEducation = ({
                         <Form.Item
                             name='specialitation_area'
                             label='Área de especialización'
+                            rules={[ruleRequired]}
                         >
                             <Select
                                 placeholder='Área de especialización'
@@ -135,7 +136,7 @@ const ModalEducation = ({
                         <Form.Item
                             name='languajes'
                             label='Idiomas'
-                            rules={[ruleWhiteSpace]}
+                            rules={[ruleRequired, ruleWhiteSpace]}
                         >
                             <Input maxLength={150} placeholder='Idiomas'/>
                         </Form.Item>

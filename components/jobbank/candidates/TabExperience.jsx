@@ -246,26 +246,22 @@ const TabExperience = ({ sizeCol = 8, action }) => {
                     showSizeChanger: false
                 }}
             />
-            {openModal && (
-                <ModalExperience
-                    title={validateAction() ? 'Editar experiencia' : 'Agregar experiencia'}
-                    actionForm={validateAction() ? actionUpdate : actionCreate}
-                    close={closeModal}
-                    itemToEdit={itemToEdit}
-                    visible={openModal}
-                    textSave={validateAction() ? 'Actualizar' : 'Guardar'}
-                />
-            )}
-            {openModalDelete && (
-                <DeleteItems
-                    title='¿Estás seguro de eliminar esta experiencia?'
-                    visible={openModalDelete}
-                    keyTitle='experience_years'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-           )}
+            <ModalExperience
+                title={validateAction() && openModal ? 'Editar experiencia' : 'Agregar experiencia'}
+                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                close={closeModal}
+                itemToEdit={itemToEdit}
+                visible={openModal}
+                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+            />
+            <DeleteItems
+                title='¿Estás seguro de eliminar esta experiencia?'
+                visible={openModalDelete}
+                keyTitle='experience_years'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+            />
         </>
     )
 }
