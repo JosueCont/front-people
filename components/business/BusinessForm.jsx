@@ -80,14 +80,11 @@ const businessForm = ({ ...props }) => {
     setLoading(true);
     WebApiPeople.deleteNode(id)
       .then(function (response) {
-        if (response.status === 200) {
-          Router.push("/business");
-        }
         message.success(messageDeleteSuccess);
+        if (props.currentNode.id === id) Router.push("/select-company");
         getCopaniesList();
         setIsModalVisible(false);
         setIsModalDeleteVisible(false);
-        if (currentNode.id === id) Router.push("/select-company");
         setLoading(false);
       })
       .catch(function (error) {
@@ -290,15 +287,17 @@ const businessForm = ({ ...props }) => {
         return (
           <div>
             <Row gutter={24}>
-              {props.permissions && props.permissions.edit && props.config.nomina_enabled && (
-                <Col className="gutter-row" span={6}>
-                  <Link href={`/business/${item.id}`}>
-                    <Tooltip title="Configuración">
-                      <SettingOutlined />
-                    </Tooltip>
-                  </Link>
-                </Col>
-              )}
+              {props.permissions &&
+                props.permissions.edit &&
+                props.config.nomina_enabled && (
+                  <Col className="gutter-row" span={6}>
+                    <Link href={`/business/${item.id}`}>
+                      <Tooltip title="Configuración">
+                        <SettingOutlined />
+                      </Tooltip>
+                    </Link>
+                  </Col>
+                )}
               {props.permissions && props.permissions.edit && (
                 <Col className="gutter-row" span={6}>
                   <Tooltip title="Editar">

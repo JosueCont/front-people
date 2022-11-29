@@ -401,7 +401,10 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
   };
 
   return (
-    <MainLayout currentKey={["importMassivePayroll"]} defaultOpenKeys={["payroll"]}>
+    <MainLayout
+      currentKey={["importMassivePayroll"]}
+      defaultOpenKeys={["payroll"]}
+    >
       {props.currentNode && (
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item
@@ -575,12 +578,14 @@ const ImportMasivePayroll = ({ getTypeTax, ...props }) => {
                   </Row>
                 </Card>
               </Col>
-              <CalendarImport
-                patronalSelect={patronalSelect}
-                company={xmlImport.companies[companySelect]}
-                paymentPeriodicity={props.payment_periodicity}
-                setPerson={setPerson}
-              />
+              {props.payment_periodicity && (
+                <CalendarImport
+                  patronalSelect={patronalSelect}
+                  company={xmlImport.companies[companySelect]}
+                  paymentPeriodicity={props.payment_periodicity}
+                  setPerson={setPerson}
+                />
+              )}
 
               <Col span={24}>
                 <Card className="card_table">

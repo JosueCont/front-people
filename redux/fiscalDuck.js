@@ -18,7 +18,7 @@ const initialData = {
   cat_imss_delegation: [],
   cat_imss_subdelegation: [],
   cat_family_medical_unit: [],
-  cat_geographic_area: []
+  cat_geographic_area: [],
 };
 
 const BANKS = "BANKS";
@@ -39,7 +39,7 @@ const HIRING_REGIME = "HIRING_REGIME";
 const IMSS_DELEGATION = "IMSS_DELEGATION";
 const IMSS_SUBDELEGATION = "IMSS_SUBDELEGATION";
 const FAMILY_MEDICAL_UNIT = "FAMILY_MEDICAL_UNIT";
-const GEOGRAPHIC_AREA = "GEOGRAPHIC_AREA"
+const GEOGRAPHIC_AREA = "GEOGRAPHIC_AREA";
 
 const webReducer = (state = initialData, action) => {
   switch (action.type) {
@@ -79,7 +79,7 @@ const webReducer = (state = initialData, action) => {
       return { ...state, cat_imss_subdelegation: action.payload };
     case FAMILY_MEDICAL_UNIT:
       return { ...state, cat_family_medical_unit: action.payload };
-    case GEOGRAPHIC_AREA: 
+    case GEOGRAPHIC_AREA:
       return { ...state, cat_geographic_area: action.payload };
     default:
       return state;
@@ -162,11 +162,15 @@ export const getFiscalBanks = (use_cfdi) => async (dispatch, getState) => {
 export const getFiscalTaxRegime = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getTaxRegime()
     .then((response) => {
+      // dispatch({
+      //   type: TAX_REGIME,
+      //   payload: response.data.results.filter(
+      //     (item) => Number(item.version_cfdi.version) <= use_cfdi
+      //   ),
+      // });
       dispatch({
         type: TAX_REGIME,
-        payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi.version) <= use_cfdi
-        ),
+        payload: response.data.results,
       });
     })
     .catch((error) => {
@@ -304,11 +308,15 @@ export const getPaymentPeriodicity =
   (use_cfdi) => async (dispatch, getState) => {
     await WebApiFiscal.getPaymentPeriodicity()
       .then((response) => {
+        // dispatch({
+        //   type: PAYMENT_PERIODICITY,
+        //   payload: response.data.results.filter(
+        //     (item) => Number(item.version_cfdi.version) <= use_cfdi
+        //   ),
+        // });
         dispatch({
           type: PAYMENT_PERIODICITY,
-          payload: response.data.results.filter(
-            (item) => Number(item.version_cfdi.version) <= use_cfdi
-          ),
+          payload: response.data.results,
         });
       })
       .catch((error) => {
@@ -349,11 +357,15 @@ export const getJourneyType = (use_cfdi) => async (dispatch, getState) => {
 export const getHiringRegime = (use_cfdi) => async (dispatch, getState) => {
   await WebApiFiscal.getHiringRegimes()
     .then((response) => {
+      // dispatch({
+      //   type: HIRING_REGIME,
+      //   payload: response.data.results.filter(
+      //     (item) => Number(item.version_cfdi.version) <= use_cfdi
+      //   ),
+      // });
       dispatch({
         type: HIRING_REGIME,
-        payload: response.data.results.filter(
-          (item) => Number(item.version_cfdi.version) <= use_cfdi
-        ),
+        payload: response.data.results,
       });
     })
     .catch((error) => {
@@ -364,16 +376,13 @@ export const getHiringRegime = (use_cfdi) => async (dispatch, getState) => {
 export const ImssDelegation = () => async (dispatch, getState) => {
   await WebApiFiscal.ImssDelegation()
     .then((response) => {
-      
-      let unOrderList = response.data.results
+      let unOrderList = response.data.results;
 
       let orderList = unOrderList.sort((a, b) => {
         if (a.description < b.description) return -1;
         if (a.description > b.description) return 1;
         return 0;
-      })
-
-      console.log('Delegacíon ordenada', orderList)
+      });
 
       dispatch({
         type: IMSS_DELEGATION,
@@ -388,7 +397,6 @@ export const ImssDelegation = () => async (dispatch, getState) => {
 export const ImssSubDelegation = () => async (dispatch, getState) => {
   await WebApiFiscal.ImssSubdelegation()
     .then((response) => {
-      console.log('Response sub', response.data.results)
       dispatch({
         type: IMSS_SUBDELEGATION,
         payload: response.data.results,
@@ -413,18 +421,16 @@ export const FamilyMedicalUnit = () => async (dispatch, getState) => {
 };
 
 export const getGeographicArea = () => async (dispatch, getState) => {
-  
-  let currentYear = parseInt(moment().format('YYYY'))
-  
+  let currentYear = parseInt(moment().format("YYYY"));
+
   await WebApiFiscal.get_geograp_area(currentYear)
-  .then((response) => {
-    console.log('Response', response)
-    dispatch({
-      type: GEOGRAPHIC_AREA,
-      payload: response.data.results
+    .then((response) => {
+      dispatch({
+        type: GEOGRAPHIC_AREA,
+        payload: response.data.results,
+      });
     })
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-}
+    .catch((error) => {
+      console.log(error);
+    });
+};
