@@ -14,13 +14,11 @@ import {
     EditOutlined,
     CopyOutlined
 } from '@ant-design/icons';
-import {
-    setJobbankPage,
-    getProfilesList
-} from '../../../redux/jobBankDuck';
+import { getProfilesList } from '../../../redux/jobBankDuck';
 import { useRouter } from 'next/router';
 import DeleteItems from '../../../common/DeleteItems';
 import WebApiJobBank from '../../../api/WebApiJobBank';
+import { getFiltersJB } from '../../../utils/functions';
 
 const TableProfiles = ({
     currentNode,
@@ -29,7 +27,6 @@ const TableProfiles = ({
     load_profiles,
     load_clients_options,
     list_clients_options,
-    setJobbankPage,
     getProfilesList
 }) => {
 
@@ -42,7 +39,7 @@ const TableProfiles = ({
         let ids = itemsToDelete.map(item => item.id);
         try {
             await WebApiJobBank.deleteProfile({ids});
-            getProfilesList(currentNode.id);
+            getProfilesWithFilters();
             if(ids.length > 1) message.success('Perfiles eliminados');
             else message.success('Perfil eliminado');
         } catch (e) {
@@ -59,7 +56,7 @@ const TableProfiles = ({
             await WebApiJobBank.duplicateProfile(item.id);
             setTimeout(()=>{
                 message.success({content: 'Perfil duplicado', key});
-                getProfilesList(currentNode.id);
+                getProfilesWithFilters();
             },1000);
         } catch (e) {
             console.log(e);
@@ -67,6 +64,12 @@ const TableProfiles = ({
                 message.error({content: 'Perfil no duplicada', key});
             },1000)
         }
+    }
+
+    const getProfilesWithFilters = () =>{
+        let page = router.query.page ? parseInt(router.query.page) : 1;
+        let filters = getFiltersJB(router.query);
+        getProfilesList(currentNode.id, filters, page);
     }
 
     const getClient = (item) =>{
@@ -97,14 +100,18 @@ const TableProfiles = ({
         setItemsToDelete([])
     }
 
+    const savePage = (query) => router.replace({
+        pathname: '/jobbank/profiles',
+        query
+    })
+
     const onChangePage = ({current}) =>{
-        setJobbankPage(current)
-        if (current == 1) getProfilesList(currentNode?.id);
-        if (current > 1) {
-            const offset = (current - 1) * 10;
-            const queryParam = `&limit=10&offset=${offset}`;
-            getProfilesList(currentNode?.id, queryParam, current)
-        } 
+        if(current > 1) savePage({...router.query, page: current});
+        else{
+            let newQuery = {...router.query};
+            if(newQuery.page) delete newQuery.page;
+            savePage(newQuery)
+        };
     }
 
     const rowSelection = {
@@ -137,7 +144,7 @@ const TableProfiles = ({
                     icon={<EditOutlined/>}
                     onClick={()=> router.push({
                         pathname: `/jobbank/profiles/edit`,
-                        query:{ id: item.id }
+                        query:{...router.query, id: item.id }
                     })}
                 >
                     Editar
@@ -220,8 +227,8 @@ const TableProfiles = ({
             />
             <DeleteItems
                 title={itemsToDelete.length > 1
-                    ? '¿Estás seguro de eliminar estos perfiles?'
-                    : '¿Estás seguro de eliminar este perfil?'
+                    ? '¿Estás seguro de eliminar estos templates?'
+                    : '¿Estás seguro de eliminar este template?'
                 }
                 visible={openModalDelete}
                 keyTitle='name'
@@ -245,8 +252,5 @@ const mapState = (state) =>{
 }
 
 export default connect(
-    mapState, {
-        setJobbankPage,
-        getProfilesList
-    }
+    mapState, { getProfilesList }
 )(TableProfiles);

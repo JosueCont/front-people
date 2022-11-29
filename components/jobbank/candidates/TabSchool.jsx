@@ -232,26 +232,22 @@ const TabSchool = ({ sizeCol = 8, action }) => {
                     showSizeChanger: false
                 }}
             />
-           {openModal && (
-                <ModalEducation
-                    title={validateAction() ? 'Editar educación' : 'Agregar educación'}
-                    visible={openModal}
-                    close={closeModal}
-                    itemToEdit={itemToEdit}
-                    actionForm={validateAction() ? actionUpdate : actionCreate}
-                    textSave={validateAction() ? 'Actualizar' : 'Guardar'}
-                />
-           )}
-           {openModalDelete && (
-                <DeleteItems
-                    title='¿Estás seguro de eliminar esta educación?'
-                    visible={openModalDelete}
-                    keyTitle='institution_name'
-                    close={closeModalDelete}
-                    itemsToDelete={itemsToDelete}
-                    actionDelete={actionDelete}
-                />
-           )}
+            <ModalEducation
+                title={validateAction() && openModal ? 'Editar educación' : 'Agregar educación'}
+                visible={openModal}
+                close={closeModal}
+                itemToEdit={itemToEdit}
+                actionForm={validateAction() && openModal ? actionUpdate : actionCreate}
+                textSave={validateAction() && openModal ? 'Actualizar' : 'Guardar'}
+            />
+           <DeleteItems
+                title='¿Estás seguro de eliminar esta educación?'
+                visible={openModalDelete}
+                keyTitle='institution_name'
+                close={closeModalDelete}
+                itemsToDelete={itemsToDelete}
+                actionDelete={actionDelete}
+            />
         </>
     )
 }

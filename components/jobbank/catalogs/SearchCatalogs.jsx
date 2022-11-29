@@ -11,7 +11,8 @@ const SearchCatalogs = ({
     listComplete,
     setItemsFilter,
     setLoading,
-    actionBtn = ()=>{},
+    setOpenModal,
+    actionBtn,
     textBtn = 'Agregar',
     iconBtn = <></>
 }) => {
@@ -64,7 +65,7 @@ const SearchCatalogs = ({
                     </Button>
                 </Col>
                 <Col span={8} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <Button icon={iconBtn} onClick={()=> actionBtn()}>
+                    <Button icon={iconBtn} onClick={()=> actionBtn ? actionBtn() : setOpenModal(true)}>
                         {textBtn}
                     </Button>
                 </Col>

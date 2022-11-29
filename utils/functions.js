@@ -441,9 +441,9 @@ export const validateMaxLength = (e) =>{
 }
 
 export const createFiltersJB = (obj = {}) =>{
-  let check = [undefined, null, '', ' '];
+  let noValid = [undefined, null, '', ' '];
   return Object.entries(obj).reduce((query, [key, val])=>{
-    if(check.includes(val)) return query;
+    if(noValid.includes(val)) return query;
     let value = val.toString().trim();
     return {...query, [key]: value}
   }, {});
@@ -451,6 +451,10 @@ export const createFiltersJB = (obj = {}) =>{
 
 export const getFiltersJB = (obj = {}) =>{
   return Object.entries(obj).reduce((query, [key, val])=>{
+    if(key == 'page'){
+      let offset = (parseInt(val) - 1) * 10;
+      return query +=`&limit=10&offset=${offset}`;
+    }
     return query += `&${key}=${val}`;
   }, '');
 }
