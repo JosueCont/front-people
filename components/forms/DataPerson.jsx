@@ -27,6 +27,7 @@ import {
   messageError,
   messageUpdateSuccess,
   periodicity,
+  SukhaAccess
 } from "../../utils/constant";
 import WebApiPeople from "../../api/WebApiPeople";
 import {
@@ -65,6 +66,8 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
     setFormPerson(person);
   }, []);
 
+
+
   const setFormPerson = (person) => {
     setPersonWT(false);
 
@@ -84,6 +87,8 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
       report_to: person.report_to,
       periodicity: person.periodicity,
       intranet_access: person.intranet_access,
+      sukhatv_access: person.sukhatv_access,
+
     });
     if (person.work_title) {
       formPerson.setFieldsValue({
@@ -145,6 +150,7 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
       ? (value.groups = [value.groups])
       : delete value["groups"];
     updatePerson(value);
+
   };
 
   const updatePerson = async (data) => {
@@ -519,6 +525,17 @@ const DataPerson = ({ config, person = null, setPerson, ...props }) => {
               <Col lg={8} xs={24} md={12}>
                 <SelectGroup viewLabel={true} required={false} />
               </Col>
+              {config.applications.find(
+                  (item) => item.app === "SUKHATV" && item.is_active) && (
+                <Col lg={8} xs={24} md={12}>
+                  <Form.Item
+                    name="sukhatv_access"
+                    label="Acceso a Sukha Tv"
+                  >
+                    <Select options={SukhaAccess} />
+                  </Form.Item>
+                </Col>
+              )}
             </Row>
             <Row gutter={20}>
               <hr />

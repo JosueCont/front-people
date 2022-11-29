@@ -135,7 +135,7 @@ const SelectCompany = ({ ...props }) => {
         if(router.query.company){
           //console.log("query",router.query.company);
           //console.log("datalist",dataList);
-          let filterQuery = data.filter(item => item.id === router.query.company);
+          let filterQuery = data.filter(item => item.id === parseInt(router.query.company));
           //console.log("filterQuery",filterQuery.at(-1));
           setCompanySelect(filterQuery.at(-1));
         } else {
@@ -164,7 +164,20 @@ const SelectCompany = ({ ...props }) => {
       .then((response) => {
         props.doCompanySelectedCatalog();
         if(router.query.company){
-          // setIsLoadCompany(false);
+
+          if(router.query.type){
+            setIsLoadCompany(false);
+
+            switch (router.query.type) {
+              case "admin":
+                useRouter.push("home/persons");
+                break;
+                case "user":
+                useRouter.push("/business");
+                break
+            }
+          }else{
+       setIsLoadCompany(false);
           switch (router.query.app) {
             case "ynl":
               useRouter.push("ynl/general-dashboard");
@@ -176,6 +189,10 @@ const SelectCompany = ({ ...props }) => {
               useRouter.push("home/persons");
               break;
           }
+          }
+
+      
+            
         }else{
           useRouter.push("home/persons");
         }

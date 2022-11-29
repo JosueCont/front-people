@@ -1,28 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Row,
-    Col,
-    Form,
-    Input,
-    Select,
-    DatePicker,
     Table,
     Menu,
     Dropdown,
     Button,
-    message
+    message,
+    Tooltip,
+    Space,
+    Tag
 } from 'antd';
 import {
     EllipsisOutlined,
     DeleteOutlined,
     EditOutlined,
-    PlusOutlined
+    PlusOutlined,
+    EyeOutlined,
+    EyeInvisibleOutlined,
+    FileTextOutlined
 } from '@ant-design/icons';
 import WebApiJobBank from '../../../api/WebApiJobBank';
 import ModalExperience from './ModalExperience';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import DeleteItems from '../../../common/DeleteItems';
+import ListCompetences from './ListCompetences';
 
 const TabExperience = ({ sizeCol = 8, action }) => {
 
@@ -41,6 +42,8 @@ const TabExperience = ({ sizeCol = 8, action }) => {
     const [itemToEdit, setItemToEdit] = useState({});
     const [infoExperience, setInfoExperience] = useState({});
     const [itemsToDelete, setItemsToDelete] = useState([]);
+    const [openModalList, setOpenModalList] = useState(false);
+    const [itemSelected, setItemSelected] = useState({});
 
     useEffect(()=>{
         if(router.query.id && action == 'edit'){
@@ -104,6 +107,11 @@ const TabExperience = ({ sizeCol = 8, action }) => {
 
     const validateAction = () => Object.keys(itemToEdit).length > 0;
 
+    const showModalAdd = () =>{
+        setItemToEdit({})
+        setOpenModal(true)
+    }
+
     const closeModal = () =>{
         setOpenModal(false)
         setItemToEdit({})
@@ -122,6 +130,16 @@ const TabExperience = ({ sizeCol = 8, action }) => {
     const closeModalDelete = () =>{
         setOpenModalDelete(false)
         setItemsToDelete([])
+    }
+
+    const showModalList = (item) =>{
+        setItemSelected(item)
+        setOpenModalList(true)
+    }
+
+    const closeModalList = () =>{
+        setItemToEdit({})
+        setOpenModalList(false)
     }
 
     const getCategory = (item) =>{
@@ -146,7 +164,7 @@ const TabExperience = ({ sizeCol = 8, action }) => {
                 <Menu.Item
                     key='1'
                     icon={<PlusOutlined/>}
-                    onClick={()=> setOpenModal(true)}
+                    onClick={()=> showModalAdd()}
                 >
                     Agregar
                 </Menu.Item>
@@ -201,7 +219,24 @@ const TabExperience = ({ sizeCol = 8, action }) => {
             title: 'Competencias',
             render: (item) =>{
                 return(
-                    <span>{item.competences?.length}</span>
+                    <Space>
+                        {item.competences?.length > 0 ? (
+                            <Tooltip title='Ver competencias'>
+                                <EyeOutlined
+                                    style={{cursor: 'pointer'}}
+                                    onClick={()=>showModalList(item)}
+                                />
+                            </Tooltip>
+                        ):(
+                            <EyeInvisibleOutlined />
+                        )}
+                        <Tag
+                            icon={<FileTextOutlined style={{color:'#52c41a'}} />}
+                            color='green' style={{fontSize: '14px'}}
+                        >
+                            {item.competences ? item.competences.length : 0}
+                        </Tag>
+                    </Space>
                 )
             }
         },
@@ -261,6 +296,11 @@ const TabExperience = ({ sizeCol = 8, action }) => {
                 close={closeModalDelete}
                 itemsToDelete={itemsToDelete}
                 actionDelete={actionDelete}
+            />
+            <ListCompetences
+                itemSelected={itemSelected}
+                close={closeModalList}
+                visible={openModalList}
             />
         </>
     )

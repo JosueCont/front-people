@@ -190,7 +190,8 @@ const TableVacancies = ({
     {
         title: 'Vacante',
         dataIndex: 'job_position',
-        key: 'job_position'
+        key: 'job_position',
+        ellipsis: true
     },
     {
         title: 'Cliente',

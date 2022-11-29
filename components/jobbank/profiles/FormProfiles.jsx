@@ -32,7 +32,10 @@ const FormProfiles = ({
         let resetValues = formatData(list_vacancies_fields, false, 'field');
         formProfile.setFieldsValue(resetValues);
         if(value == 'open_fields'){
-            formProfile.setFieldsValue(valuesDefault);
+            formProfile.setFieldsValue({
+                ...valuesDefault,
+                profile_type: value
+            });
             setDisabledField(false);
             return;
         }
