@@ -202,6 +202,10 @@ class WebApiPayroll {
     return WebApi.ApisType(`/payroll/imss-movement-log?node=${node}`,'get')
   }
 
+  static getPersonalCredits(imssId){
+    return WebApi.ApisType(`/payroll/imss-person/${imssId}/`, 'get')
+  }
+
   static importSalaryModification(data){
     //payroll/payroll-person/import_salary_modification/
     return WebApi.ApisType(`/payroll/payroll-person/import_salary_modification/`, 'post', data)

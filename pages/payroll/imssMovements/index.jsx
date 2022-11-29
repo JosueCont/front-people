@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import SelectPatronalRegistration from "../../../components/selects/SelectPatronalRegistration";
 import WebApiPeople from "../../../api/WebApiPeople";
-import { Breadcrumb, Button, Collapse, Row, Col,Space, Spin, message } from "antd";
+import { Breadcrumb, Button, Collapse, Row, Col,Space, Spin, message, Modal, Typography } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 import MainLayout from "../../../layout/MainLayout";
 import { withAuthSync } from "../../../libs/auth";
@@ -12,6 +12,7 @@ import MovementsIMSS from "../../../components/payroll/fiscalMovements/Movements
 import UploadFile from "../../../components/UploadFile";
 import MovementsSection from "../../../components/payroll/ImssMovements/MovementsSection";
 import ButtonAltaImssImport from "../../../components/payroll/ImportGenericButton/ButtonAltaImssImport";
+const { Text  } = Typography
 
 const ImssMovements = ({ ...props }) => {
   const { Panel } = Collapse;
@@ -20,6 +21,7 @@ const ImssMovements = ({ ...props }) => {
   const [patronalSelected, setPatronalSelected] = useState(null);
   const [files, setFiles ] = useState([])
   const [file, setFile]=useState(null)
+  const [ modalVisible, setModalvisible ] = useState(false)
 
   // useEffect(() => {
   //   props.currentNode && setCurrentNodeId(props.currentNode.id)
@@ -84,6 +86,8 @@ const ImssMovements = ({ ...props }) => {
       
     } finally {
       setLoading(false)
+      setModalvisible(false)
+      setFile(null)
     }
   }
 
@@ -146,16 +150,18 @@ const ImssMovements = ({ ...props }) => {
                       />
                     </Col>
                     <Col span={10} style={{ display: 'flex', justifyContent: 'end' }}>
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <UploadFile
                             textButton={"Importar EMA y EBA"}
                             setFile={setFile}
                             validateExtension={".zip"}
                             size = {'middle'}
                         />
-                    </Col>
+                    </Col> */}
                     <Col span={5}>
-                        <Button onClick={ () => importEBAEMAFiles()}>
+                        <Button 
+                          disabled = { patronalSelected? false : true }
+                          onClick={ () => setModalvisible(true)}>
                           importar
                         </Button>
                     </Col>
@@ -185,6 +191,58 @@ const ImssMovements = ({ ...props }) => {
           </div>
         </Spin>
       </MainLayout>
+      <Modal
+        title="Importar EMA y EBA"
+        centered
+        visible = { modalVisible }
+        onCancel = { () => {
+            setModalvisible(false)
+            setFile(null)
+          } 
+        }
+        footer={[
+          <Button
+            key="back"
+            onClick={ () => {
+              setModalvisible(false)
+              setFile(null)
+            } 
+          }
+            style={{ padding: "0 10px", marginLeft: 15 }}
+          >
+            Cancelar
+          </Button>,
+          <Button
+            key="submit_modal"
+            type="primary"
+            onClick={() => importEBAEMAFiles()}
+            style={{ padding: "0 10px", marginLeft: 15 }}
+            loading = { loading }
+            disabled = { file? false : true }
+          >
+            Subir archivos
+          </Button>,
+        ]}
+      >
+          <Row justify='start'>
+            <Col span={24}>
+              <Text>
+                La importación de EMA/EBA puede ser solamente por período. 
+                Agrega los archivos descargados del imss a una carpeta comprimida 
+                en formato .zip
+              </Text>
+            </Col>
+            <Col span={24} style={{ marginTop: 20 }}>
+              <UploadFile
+                textButton={"Importar EMA y EBA"}
+                setFile={setFile}
+                validateExtension={".zip"}
+                size = {'middle'}
+                showList = {true}
+              />
+            </Col>
+          </Row>
+      </Modal>
     </>
   );
 };

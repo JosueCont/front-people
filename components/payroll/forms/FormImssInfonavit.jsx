@@ -27,12 +27,12 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
   const [loadingTable, setLoadingTable] = useState(false);
   const [ loadingIMSS, setLodingIMSS ] = useState(false)
   const [infonavitCredit, setInfonavitCredit] = useState([]);
-  const daily_salary = Form.useWatch('daily_salary', formImssInfonavit);
+  const daily_salary = Form.useWatch('sbc', formImssInfonavit);
   //const [integratedDailySalary, setIntegratedDailySalary] = useState(0);
 
-  // useEffect(() => {
-  //   person.branch_node && person_id && node && userCredit();
-  // }, [person_id]);
+  useEffect(() => {
+    person.branch_node && localUserCredit();
+  }, [person]);
 
   useEffect(()=>{
     console.log(daily_salary)
@@ -49,20 +49,25 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
   const formImmssInfonavitAct = (values) => {
     setLodingIMSS(true)
+
     values.person = person_id
     values.movement_date = values.movement_date ? moment(values.movement_date).format('YYYY-MM-DD') : ""
+    values.is_active = true
+    values.is_registered = true
+    values.modify_by = "System"
+    values.patronal_registration = person?.branch_node? person.branch_node.patronal_registration.id    : ""
     console.log("Data", values);
     // funcion WEB API
-    // WebApiPayroll.saveIMSSInfonavit(values)
-    // .then((response) => {
-    //   console.log('Response', response)
-    //   setLodingIMSS(false)  
-    // })
-    // .catch((error) => {
-    //   console.log('Error -->', error)
-    //   setLodingIMSS(false)
-    // })
-    setLodingIMSS(false)
+    WebApiPayroll.saveIMSSInfonavit(values)
+    .then((response) => {
+      console.log('Response', response)
+      setLodingIMSS(false)  
+    })
+    .catch((error) => {
+      console.log('Error -->', error)
+      setLodingIMSS(false)
+    })
+    // setLodingIMSS(false)
   };
 
   const userCredit = async () => {
@@ -86,6 +91,18 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
         console.log("Error", error);
       });
   };
+
+  const localUserCredit = async () => {
+    setLoadingTable(true)
+    try {
+      let response = await WebApiPayroll.getPersonalCredits(person.imss)
+      console.log('Response credits', response)
+    } catch (error) {
+      console.log('Error', error)
+    } finally {
+      setLoadingTable(false)
+    }
+  }
 
   const colCredit = [
     {
@@ -222,7 +239,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
           </Col>
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
-                name="imss"
+                name="nss"
                 label="IMSS"
                 rules={[ruleRequired, onlyNumeric, minLengthNumber]}
             >
@@ -232,7 +249,7 @@ const FormImssInfonavit = ({ person, person_id, node }) => {
 
           <Col lg={6} xs={22} offset={1}>
             <Form.Item
-                name="daily_salary"
+                name="sbc"
                 label="Salario diario"
                 maxLength={13}
                 rules={[fourDecimal, ruleRequired]}
