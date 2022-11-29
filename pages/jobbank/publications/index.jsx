@@ -29,7 +29,6 @@ const index = ({
             getProfilesOptions(currentNode.id);
             getVacanciesOptions(currentNode.id);
             getConnections(currentNode.id, true);
-
         }
     },[currentNode])
 

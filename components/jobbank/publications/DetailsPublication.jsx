@@ -117,7 +117,7 @@ const DetailsPublication = ({
         try {
             let body = {...values, node: currentNode.id, created_by: currentUser.id};
             await WebApiJobBank.updatePublication(infoPublication.id, body);
-            message.success('Publicación registrada');
+            message.success('Publicación actualizada');
             getInfoPublication(infoPublication.id);
         } catch (e) {
             console.log(e)
