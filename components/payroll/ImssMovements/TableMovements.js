@@ -8,10 +8,10 @@ const { Title } = Typography;
 
 
 const TableMovements=({movementType,title=null,...props})=>{
-    const [loading, setLoading] = useState(false)
     const [movementsKeys, setMovementsKeys] = useState([]);
     const [data, setData] = useState([]);
     const movementsImss = useSelector(state => state.payrollStore.imss_movements);
+    const loading = useSelector(state => state.payrollStore.loading);
 
 
     useEffect(()=>{
@@ -73,7 +73,7 @@ const TableMovements=({movementType,title=null,...props})=>{
                 {
                     title && <Title level={2}>{movementsTypes[movementType]}</Title>
                 }
-                <Table rowKey={"id"} key={movementType} rowSelection={rowSelection} columns={columns} dataSource={data} />
+                <Table loading={loading} rowKey={"id"} key={movementType} rowSelection={rowSelection} columns={columns} dataSource={data} />
             </Col>
 
         </Row>

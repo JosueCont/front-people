@@ -5,7 +5,8 @@ const initialData = {
   payment_calendar: [],
   fixed_concept: [],
   group_fixed_concept: [],
-  imss_movements:[]
+  imss_movements:[],
+  loading:false
 };
 
 const PAYMENT_CALENDAR = "PAYMENT_CALENDAR";
@@ -22,7 +23,7 @@ const webReducer = (state = initialData, action) => {
     case GROUP_FIXED_CONCEPT:
       return { ...state, group_fixed_concept: action.payload };
       case MOVEMENTS_IMSS:
-      return { ...state, imss_movements: action.payload };
+      return { ...state, imss_movements: action.payload?.data, loading: action.payload?.loading};
     default:
       return state;
   }
@@ -93,18 +94,32 @@ export const getGroupFixedConcept = (data) => async (dispatch, getState) => {
 
 
 
-export const getMovementsIMSS=(node)=> async (dispatch, getState) =>{
+export const getMovementsIMSS=(node, reg_patronal)=> async (dispatch, getState) =>{
+    dispatch({
+        type: MOVEMENTS_IMSS,
+        payload: {data:[], loading: true},
+    });
     try{
-        const res = await WebApiPayroll.getMovementsIMSSLog(node?.id);
-        dispatch({
-            type: MOVEMENTS_IMSS,
-            payload: res.data,
-        });
+        if(reg_patronal){
+            const res = await WebApiPayroll.getMovementsIMSSLog(node?.id, reg_patronal);
+            dispatch({
+                type: MOVEMENTS_IMSS,
+                payload: {data:res.data, loading: false},
+            });
+        }else  {
+            dispatch({
+                type: MOVEMENTS_IMSS,
+                payload: {data:[], loading: false},
+            });
+        }
+
 
     }catch (e){
         dispatch({
             type: MOVEMENTS_IMSS,
-            payload: [],
+            payload: {data:[], loading: false},
         });
+    }finally {
+
     }
 }
