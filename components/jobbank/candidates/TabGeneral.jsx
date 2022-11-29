@@ -86,7 +86,9 @@ const TabGeneral = ({
             setFetching(false)
         } catch (e) {
             console.log(e)
-            message.error('Candidato no actualizado');
+            let msgEmail = e.response?.data?.email;
+            if(msgEmail) message.error('Este correo ya existe');
+            else message.error('Candidato no actualizado');
             setFetching(false)
         }
     }
@@ -100,7 +102,9 @@ const TabGeneral = ({
             console.log(e);
             setFetching(false);
             setLoading({})
-            message.error('Candidato no registrado')
+            let msgEmail = e.response?.data?.email;
+            if(msgEmail) message.error('Este correo ya existe');
+            else message.error('Candidato no registrado');
         }
     }
 
