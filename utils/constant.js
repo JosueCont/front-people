@@ -312,6 +312,16 @@ export const intranetAccess = [
   },
 ];
 
+export const SukhaAccess = [
+  {
+    label: "Si",
+    value: true,
+  },
+  {
+    label: "No",
+    value: false,
+  }
+];
 export const statusActivePost = [
   {
     label: "Inactivo",
