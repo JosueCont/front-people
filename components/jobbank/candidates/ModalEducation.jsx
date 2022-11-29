@@ -5,6 +5,7 @@ import MyModal from '../../../common/MyModal';
 import { optionsLevelAcademic, optionsStatusAcademic } from '../../../utils/constant';
 import { ruleRequired, ruleWhiteSpace } from '../../../utils/rules';
 import moment from 'moment';
+import { optionsLangVacant } from '../../../utils/constant';
 
 const ModalEducation = ({
     title = '',
@@ -153,6 +154,14 @@ const ModalEducation = ({
                             rules={[ruleRequired, ruleWhiteSpace]}
                         >
                             <Input maxLength={150} placeholder='Idiomas'/>
+                            {/* <Select
+                                mode='multiple'
+                                maxTagCount={1}
+                                placeholder='Seleccionar los idiomas'
+                                notFoundContent='No se encontraron resultados'
+                                optionFilterProp='label'
+                                options={optionsLangVacant}
+                            /> */}
                         </Form.Item>
                     </Col>
                     <Col span={24} style={{display: 'flex', justifyContent: 'flex-end', gap: 8}}>
